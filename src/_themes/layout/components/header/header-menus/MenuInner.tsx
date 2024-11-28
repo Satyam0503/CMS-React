@@ -42,17 +42,6 @@ export function MenuInner() {
               hasBullet={true}
             />
           </MenuInnerWithSub>
-          <MenuInnerWithSub
-            title='Wizards'
-            to='/crafted/pages/wizards'
-            hasArrow={true}
-            hasBullet={true}
-            menuPlacement='right-start'
-            menuTrigger={`{default:'click', lg: 'hover'}`}
-          >
-            <MenuItem to='/crafted/pages/wizards/horizontal' title='Horizontal' hasBullet={true} />
-            <MenuItem to='/crafted/pages/wizards/vertical' title='Vertical' hasBullet={true} />
-          </MenuInnerWithSub>
         </MenuInnerWithSub>
 
         {/* ACCOUNT */}

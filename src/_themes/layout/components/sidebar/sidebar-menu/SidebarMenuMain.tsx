@@ -53,14 +53,6 @@ const SidebarMenuMain = () => {
           />
         </SidebarMenuItemWithSub>
 
-        <SidebarMenuItemWithSub to='/crafted/pages/wizards' title='Wizards' hasBullet={true}>
-          <SidebarMenuItem
-            to='/crafted/pages/wizards/horizontal'
-            title='Horizontal'
-            hasBullet={true}
-          />
-          <SidebarMenuItem to='/crafted/pages/wizards/vertical' title='Vertical' hasBullet={true} />
-        </SidebarMenuItemWithSub>
       </SidebarMenuItemWithSub>
       <SidebarMenuItemWithSub
         to='/crafted/accounts'
@@ -75,19 +67,7 @@ const SidebarMenuMain = () => {
         <SidebarMenuItem to='/error/404' title='Error 404' hasBullet={true} />
         <SidebarMenuItem to='/error/500' title='Error 500' hasBullet={true} />
       </SidebarMenuItemWithSub>
-      <SidebarMenuItemWithSub
-        to='/crafted/widgets'
-        title='Widgets'
-        icon='element-7'
-        fontIcon='bi-layers'
-      >
-        <SidebarMenuItem to='/crafted/widgets/lists' title='Lists' hasBullet={true} />
-        <SidebarMenuItem to='/crafted/widgets/statistics' title='Statistics' hasBullet={true} />
-        <SidebarMenuItem to='/crafted/widgets/charts' title='Charts' hasBullet={true} />
-        <SidebarMenuItem to='/crafted/widgets/mixed' title='Mixed' hasBullet={true} />
-        <SidebarMenuItem to='/crafted/widgets/tables' title='Tables' hasBullet={true} />
-        <SidebarMenuItem to='/crafted/widgets/feeds' title='Feeds' hasBullet={true} />
-      </SidebarMenuItemWithSub>
+     
       <div className='menu-item'>
         <div className='menu-content pt-8 pb-2'>
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Apps</span>
@@ -100,8 +80,6 @@ const SidebarMenuMain = () => {
         icon='message-text-2'
       >
         <SidebarMenuItem to='/apps/chat/private-chat' title='Private Chat' hasBullet={true} />
-        <SidebarMenuItem to='/apps/chat/group-chat' title='Group Chart' hasBullet={true} />
-        <SidebarMenuItem to='/apps/chat/drawer-chat' title='Drawer Chart' hasBullet={true} />
       </SidebarMenuItemWithSub>
       <SidebarMenuItem
         to='/apps/user-management/users'
@@ -109,18 +87,7 @@ const SidebarMenuMain = () => {
         title='User management'
         fontIcon='bi-layers'
       />
-      <div className='menu-item'>
-        <a
-          target='_blank'
-          className='menu-link'
-          href={import.meta.env.VITE_APP_PREVIEW_DOCS_URL + '/changelog'}
-        >
-          <span className='menu-icon'>
-            <KTIcon iconName='code' className='fs-2' />
-          </span>
-          <span className='menu-title'>Changelog {import.meta.env.VITE_APP_VERSION}</span>
-        </a>
-      </div>
+ 
     </>
   )
 }

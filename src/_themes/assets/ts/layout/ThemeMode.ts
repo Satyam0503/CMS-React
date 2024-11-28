@@ -1,6 +1,6 @@
 import {EventHandlerUtil} from '../_utils'
 
-type Mode = 'light' | 'dark' | 'system' | 'pink' 
+type Mode = 'light' | 'dark' | 'system' 
 
 class ThemeMode {
   menu: HTMLElement | null = null

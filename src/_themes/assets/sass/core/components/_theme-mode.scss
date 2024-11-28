@@ -36,17 +36,3 @@
 		background-color: var(--#{$prefix}body-bg) !important;	
 	}
 }
-// Dark mode
-@include color-mode(pink) {
-	.theme-light-show {
-		display: none !important;		
-	}
-
-	.theme-dark-bg-transparent {
-		background-color: transparent !important;	
-	}
-
-	.theme-dark-bg-body {
-		background-color: var(--#{$prefix}body-bg) !important;	
-	}
-}
