@@ -8,9 +8,9 @@ export function MenuInner() {
   return (
     <>
       <MenuItem title={intl.formatMessage({id: 'MENU.DASHBOARD'})} to='/dashboard' />
-      <MenuItem title={intl.formatMessage({id: 'MENU.LAYOUT_BUILDER'})} to='/builder' />
+      <MenuItem title={intl.formatMessage({id: 'MENU.CONTACTS'})} to='/builder' />
       <MenuInnerWithSub
-        title='Crafted'
+       title={intl.formatMessage({id: 'MENU.PROFILE'})}
         to='/crafted'
         menuPlacement='bottom-start'
         menuTrigger='click'
@@ -57,19 +57,6 @@ export function MenuInner() {
           <MenuItem to='/crafted/account/settings' title='Settings' hasBullet={true} />
         </MenuInnerWithSub>
 
-        {/* ERRORS */}
-        <MenuInnerWithSub
-          title='Errors'
-          to='/error'
-          fontIcon='bi-sticky'
-          hasArrow={true}
-          menuPlacement='right-start'
-          menuTrigger={`{default:'click', lg: 'hover'}`}
-        >
-          <MenuItem to='/error/404' title='Error 404' hasBullet={true} />
-          <MenuItem to='/error/500' title='Error 500' hasBullet={true} />
-        </MenuInnerWithSub>
-
         {/* Widgets */}
         <MenuInnerWithSub
           title='Widgets'
@@ -88,10 +75,10 @@ export function MenuInner() {
         </MenuInnerWithSub>
       </MenuInnerWithSub>
 
-      <MenuInnerWithSub title='Apps' to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
+      <MenuInnerWithSub       title={intl.formatMessage({id: 'MENU.RECRUITMENT'})} to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
         {/* PAGES */}
         <MenuInnerWithSub
-          title='Chat'
+          title='Applicants'
           to='/apps/chat'
           icon='message-text-2'
           hasArrow={true}
@@ -102,7 +89,38 @@ export function MenuInner() {
           <MenuItem to='/apps/chat/group-chat' title='Group Chart' hasBullet={true} />
           <MenuItem to='/apps/chat/drawer-chat' title='Drawer Chart' hasBullet={true} />
         </MenuInnerWithSub>
-        <MenuItem icon='abstract-28' to='/apps/user-management/users' title='User management' />
+        <MenuItem icon='abstract-28' to='/apps/user-management/users' title='Jobs' />
+      </MenuInnerWithSub>
+      <MenuInnerWithSub       title={intl.formatMessage({id: 'MENU.ADMIN'})} to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
+        {/* PAGES */}
+        <MenuInnerWithSub
+          title='Staff'
+          to='/apps/chat'
+          icon='message-text-2' 
+          hasArrow={true}
+          menuPlacement='right-start'
+          menuTrigger={`{default:'click', lg: 'hover'}`}
+        >
+          <MenuItem to='/apps/chat/private-chat' title='Private Chat' hasBullet={true} />
+          <MenuItem to='/apps/chat/group-chat' title='Group Chart' hasBullet={true} />
+          <MenuItem to='/apps/chat/drawer-chat' title='Drawer Chart' hasBullet={true} />
+        </MenuInnerWithSub>
+        <MenuItem icon='abstract-28' to='/apps/user-management/users' title='Role' />
+        <MenuItem icon='abstract-28' to='/apps/user-management/users' title='Process Log' />
+      </MenuInnerWithSub>
+      <MenuInnerWithSub       title={intl.formatMessage({id: 'MENU.SETTINGS'})} to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
+        {/* PAGES */}
+        <MenuInnerWithSub
+          title='Notification Settings'
+          to='/apps/chat'
+          icon='message-text-2'
+          hasArrow={true}
+          menuPlacement='right-start'
+          menuTrigger={`{default:'click', lg: 'hover'}`}
+        >
+          <MenuItem to='/apps/chat/private-chat' title='Private Chat' hasBullet={true} />
+          <MenuItem to='/apps/chat/group-chat' title='Group Chart' hasBullet={true} />
+        </MenuInnerWithSub>
       </MenuInnerWithSub>
 
       <MenuInnerWithSub

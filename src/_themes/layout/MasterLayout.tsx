@@ -34,7 +34,7 @@ const MasterLayout = () => {
           >
             <Sidebar />
             <div
-              className="app-main flex-column flex-row-fluid"
+              className="app-main flex-column flex-row-fluid bg-body "
               id="kt_app_main"
             >
               <div className="d-flex flex-column flex-column-fluid">

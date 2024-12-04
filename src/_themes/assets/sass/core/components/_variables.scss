@@ -32,6 +32,23 @@ $gray-700: #4B5675 !default;
 $gray-800: #252F4A !default;
 $gray-900: #071437 !default;
  
+// colors based on figma
+
+$purple-100: #E6D9F5 !default;
+$purple-500:   #9A56D3 !default;
+$purple-700: #7c41a3 !default;
+$orange-100: #FFF3E0 !default;
+$orange-200: #FFE2B8 !default;
+$orange-300: #FFD090!default;
+$orange-400:#FFBE78 !default;
+$orange-500: #FEBB68 !default;
+$orange-clarity:  rgba(#FEBB68, 50) !default;
+$salmon: #FF897C !default;
+$salmon-clarity: rgba(#FF897C33, 20) !default;
+$white-smoke: #f5f5f5 !default;
+$territory:#636D79 !default; //sidebar & text body
+
+
 // Bootstrap muted color
 $text-muted: $gray-500 !default;
 
@@ -50,15 +67,15 @@ $grays: (
 
 // Bootstrap contextual colors
 // Primary colors
-$primary:						#1B84FF !default;
-$primary-active:				#056EE9 !default;
-$primary-light: 				#E9F3FF !default;
-$primary-clarity: 				rgba(#1B84FF, 0.2) !default;
+$primary:					$purple-500 !default;
+$primary-active:				 $purple-700 !default;
+$primary-light: 				$purple-100!default;
+$primary-clarity: 				rgba($purple-700, 0.2) !default;
 $primary-inverse: 				$white !default; 
 
 // Secondary colors
-$secondary: 						$gray-200 !default;
-$secondary-active: 				$gray-400 !default;
+$secondary: 						$orange-500!default;
+$secondary-active: 			$orange-300 !default;
 $secondary-light: 				#F9F9F9 !default;
 $secondary-clarity:				rgba(#F9F9F9, 0.2) !default; 
 $secondary-inverse:				$gray-800 !default; 
@@ -243,7 +260,7 @@ $position-values: (
 // Body
 //
 // Settings for the `<body>` element.
-$body-bg:                   $white !default;
+$body-bg:                  $white-smoke  !default;
 $body-bg-rgb:               to-rgb($body-bg) !default;
 $body-color:                $gray-900 !default;
 $body-text-align:           null !default;
@@ -363,10 +380,11 @@ $gutters: (
 // Font family
 $font-family-sans-serif: Inter, Helvetica, "sans-serif" !default;
 
-$font-size-base: 1rem !default; // Assumes the browser default, typically `13px`
+$font-size-base: 1rem !default; // Assumes the browser default
 $font-size-lg: $font-size-base * 1.075 !default;   // 14.04px
 $font-size-xl: $font-size-base * 1.21 !default;   // 16.04px
-$font-size-sm: $font-size-base * .95 !default;   // 12.025px
+$font-size-md: $font-size-base * .87 !default;  
+$font-size-sm: $font-size-base * .75 !default;  
 
 $font-weight-lighter: lighter !default;
 $font-weight-light: 300 !default;
@@ -382,34 +400,33 @@ $line-height-base: 1.5 !default;
 $line-height-sm: 1.25 !default;
 $line-height-lg: 1.75 !default;
 
-// Keenthemes custom line heights
 $line-height-xl: 2 !default;
 $line-height-xxl: 2.25 !default;
 
 // Heading sizes
-$h1-font-size:  $font-size-base * 1.75 !default; // 22.75px
-$h2-font-size:  $font-size-base * 1.5 !default; // 19.50px
-$h3-font-size:  $font-size-base * 1.35 !default; // 17.55px
-$h4-font-size:  $font-size-base * 1.25 !default; // 16.25px
-$h5-font-size:  $font-size-base * 1.15 !default; // 14.95px
-$h6-font-size:  $font-size-base * 1.075 !default; // 13.97px
+$h1-font-size:  $font-size-base * 2.5 !default; // 40px
+$h2-font-size:  $font-size-base * 2 !default; // 32px
+$h3-font-size:  $font-size-base * 1.75 !default; // 28px
+$h4-font-size:  $font-size-base * 1.5 !default; // 24px
+$h5-font-size:  $font-size-base * 1.25 !default; // 20px
+$h6-font-size:  $font-size-base * 1 !default; // 16px
 
 // Font Sizes
 $font-sizes: (
-	1: $h1-font-size,   // 22.75px
-	2: $h2-font-size,   // 19.50px
-	3: $h3-font-size,   // 17.55px
-	4: $h4-font-size,   // 16.25px
-	5: $h5-font-size,   // 14.95px
-	6: $h6-font-size,   // 13.95px
+	1: $h1-font-size,  
+	2: $h2-font-size,   
+	3: $h3-font-size,  
+	4: $h4-font-size,  
+	5: $h5-font-size,   
+	6: $h6-font-size,   
 
-	7: $font-size-base * 0.95,  // 12.35px
-	8: $font-size-base * 0.85,  // 11.05px
-	9: $font-size-base * 0.75,  // 9.75px
-	10: $font-size-base * 0.5,  // 6.50px
+	7: $font-size-base * 0.95,  
+	8: $font-size-base * 0.85,  
+	9: $font-size-base * 0.75,  
+	10: $font-size-base * 0.5,  
 
 	sm: $font-size-sm,
-	base: $font-size-base, // 13px
+	base: $font-size-base, 
 	lg: $font-size-lg,
 	xl: $font-size-xl,
 	

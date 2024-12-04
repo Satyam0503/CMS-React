@@ -2,8 +2,16 @@
 
 {
   "MENU.DASHBOARD": "Instrumententafel",
-  "MENU.LAYOUT_BUILDER": "Layout Builder",
-
+  "MENU.EMP": "Employees",
+  "MENU.LEAVE_MGMT": "Leave Management",
+  "MENU.ATTENDANCE":"Attendance",
+  "MENU.CONTACTS":"Contacts",
+  "MENU.PROJ":"Projects",
+  "MENU.RECRUITMENT":"Recruitment",
+  "MENU.HOLIDAYS":"Holidays",
+  "MENU.PROFILE":"My Profile",
+  "MENU.SETTINGS":"Settings",
+  "MENU.ADMIN":"Admin",
 
 
 

@@ -45,7 +45,7 @@ const ChartsWidget1: FC<Props> = ({className}) => {
       <div className='card-header border-0 pt-5'>
         {/* begin::Title */}
         <h3 className='card-title align-items-start flex-column'>
-          <span className='card-label fw-bold fs-3 mb-1'>Recent Statistics</span>
+          <span className='card-label fw-bold fs-3 mb-1'>Total Applications</span>
 
           <span className='text-muted fw-semibold fs-7'>More than 400 new members</span>
         </h3>

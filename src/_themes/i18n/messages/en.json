@@ -1,12 +1,104 @@
 {
   "MENU.DASHBOARD": "Dashboard",
+  "MENU.EMP": "Employees",
+  "MENU.LEAVE_MGMT": "Leave Management",
+  "MENU.ATTENDANCE":"Attendance",
+  "MENU.CONTACTS":"Contacts",
+  "MENU.PROJ":"Projects",
+  "MENU.RECRUITMENT":"Recruitment",
+  "MENU.HOLIDAYS":"Holidays",
+  "MENU.PROFILE":"My Profile",
+  "MENU.SETTINGS":"Settings",
+  "MENU.ADMIN":"Admin",
+  
   "MENU.LAYOUT_BUILDER": "Layout Builder",
+  "MENU.WELCOME":"Welcome",
+  "MENU.TOTAL_EMP":"Total employees",
+  "MENU.TOTAL_APP":"Total Application",
+  "MENU.OPEN_POSITIONS": "Open Positions",
+  "POSITION.DOT_NET": ".NET Developer",
+  "POSITION.FULL_STACK":"Full Stack Developer",
+  "POSITION.INTERN":"Internship",
+  "POSITION.TA":"Talent Acquisition",
+  "POSITION.QA":"Quality Analyst",
+  "EMP.MALE":"Male",
+  "EMP.FEMALE":"Female",
+  "MENU.OTHER":"Other",
+  "MENU.DEPT":"Departments",
+ 
+  "MENU.LEAVE":"Employees on leave",
+  "MENU.BIRTHDAY":"Upcoming Birthdays",
+  "MENU.NOTICE_BOARD":"Notice Board",
+  "MENU.HELP":"Need Help?",
+  "MENU.HELP_INFO":"Do you have any query or problem while using this HR portal ?",
+  "MENU.INSTA":"Join us on Instagram",
+  "MENU.LEAVE_ALLOWANCE":"My Leave Allowance",
+  "MENU.ATTENDANCE_GRAPH":"My Attendance Graph of this year",
 
+  "MENU.ABOUT":"About",
+  "MENU.LEAVE_TRACKER":"Leave Tracker",
+  "MENU.PERFORMANCE":"Performance",
+  "MENU.WORK_HISTORY":"Work History",
+  "MENU.DOCUMENTS":"Documents",
+  "MENU.BDAY_MSG":"Birthday today!",
 
+  "PROFILE.PI":"Personal Information",
+  "PROFILE.SKILLS":"Skills",
+  "PROFILE.SKILLS_HOLDER":"Skills Holder",
+  "PROFILE.EDUCATION":"Education",
+  "PROFILE.CERTIFICATION":"Certification",
+  "PROFILE.EXP":"Years of experience",
+  "PROFILE.EXP_CURRENT":"Years in Codeji",
 
+  "PROFILE.CL":"Casual Leaves",
+  "PROFILE.ML":"Medical Leaves",
+  "PROFILE.EL":"Earned Leaves",
+  "PROFILE.Unpaid_LEAVES":"Unpaid Leaves",
+  "PROFILE.TYPE":"Leave Type",
+  "PROFILE.ALLOTTED":"Allotted",
+  "PROFILE.TAKEN":"TAKEN",
+  "PROFILE.AVAILABLE":"Available",
+  "PROFILE.STATUS":"Status",
+  "PROFILE.ACTION":"Action",
+  "PROFILE.COUNT":"Count",
+  "PROFILE.LEAVE.ML":"Not well",
+  "PROFILE.LEAVE.CL":"Personal",
 
+  "PERFORMANCE.FEEDBACK":"Feedback",
+  "PERFORMANCE.ACHIEVEMENTS":"Achievements",
+  "PERFORMANCE.MILE":"You are here",
+  "PERFORMANCE.RATING":"Performance Rating",
+  "PERFORMANCE.V_GOOD":"Very Good",
+  "ATTENDANCE.PRESENT":"Present",
+  "ATTENDANCE.ABSENT":"Absent",
+  "ATTENDANCE.LATE":"Late",
+
+  "POSITION.JOINED":"Joined Codeji",
+  "POSITION.SENIOR_DEVELOPER":"Promoted as Senior Developer",
+  "POSITION.TEAM_LEAD":"Promoted as Team Lead",
+  "POSITION.PROJECT_MANAGER":"Promoted as Project Manager",
+  "POSITION.SR_PROJECT_MANAGER":"Promoted as Senior Project Manager",
+  "POSITION.PROGRAMMING_DIRECTOR":"Promoted as Programming Director",
 
   "TRANSLATOR.SELECT": "Select your language",
+
+  "NOTIFICATIONS.APPLICATIONS":" New candidates have applied for position,",
+  "LINK.NOTIFICATION":"check the submissions",
+
+
+"BUTTON.CONTACT":"Contact",
+"STATUS.SHORT_LISTED":"Shortlisted",
+"STATUS.PENDING":"Pending",
+"STATUS.REJECTED":"Rejected",
+
+
+
+
+
+
+
+
+
   "MENU.NEW": "new",
   "MENU.ACTIONS": "Actions",
   "MENU.CREATE_POST": "Create New Post",

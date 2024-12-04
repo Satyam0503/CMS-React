@@ -5,9 +5,14 @@ import {LayoutProvider, LayoutSplashScreen} from '../_themes/layout/core'
 import {MasterInit} from '../_themes/layout/MasterInit'
 import {AuthInit} from './modules/auth'
 import { ThemeModeProvider } from '../_themes/partials'
+import { ThemeProvider } from '@mui/material'
+import { MuiTheme } from './modules/theme/MuiTheme'
+
+
 
 const App = () => {
   return (
+    <ThemeProvider theme={MuiTheme}>
     <Suspense fallback={<LayoutSplashScreen />}>
       <I18nProvider>
         <LayoutProvider>
@@ -20,6 +25,7 @@ const App = () => {
         </LayoutProvider>
       </I18nProvider>
     </Suspense>
+    </ThemeProvider>
   )
 }
 
