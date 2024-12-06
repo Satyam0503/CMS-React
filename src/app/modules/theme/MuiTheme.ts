@@ -805,7 +805,7 @@ export const MuiTheme = createTheme({
             zIndex: 5
           },
           '&:hover': {
-            color: colors.alpha.black[100]
+            color: themeColors.primary
           }
         }
       }

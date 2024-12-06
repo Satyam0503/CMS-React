@@ -3,8 +3,6 @@ import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
-import AboutUser from "./AboutUser";
-import { CalendarMonth } from "@mui/icons-material";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 
 export default function UserProfile() {

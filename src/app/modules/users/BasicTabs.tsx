@@ -44,12 +44,12 @@ export default function BasicTabs() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', marginTop:"15px", background:"white", }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Item One" {...a11yProps(0)} className='px-14' />
-          <Tab label="Item Two" {...a11yProps(1)}  className='px-13' />
-          <Tab label="Item Three" {...a11yProps(2)}  className='px-13' />
-          <Tab label="Item One" {...a11yProps(3)}  className='px-14' />
-          <Tab label="Item Two" {...a11yProps(4)}  className='px-13'  />
-          <Tab label="Item Three" {...a11yProps(5)}   className='px-14' />
+          <Tab label="About" {...a11yProps(0)} className='px-12' />
+          <Tab label="Leave Tracker" {...a11yProps(1)}  className='px-13' />
+          <Tab label="Performance" {...a11yProps(2)}  className='px-12' />
+          <Tab label="Work History" {...a11yProps(3)}  className='px-13' />
+          <Tab label="Documents" {...a11yProps(4)}  className='px-12'  />
+          <Tab label="Settings" {...a11yProps(5)}   className='px-12' />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>

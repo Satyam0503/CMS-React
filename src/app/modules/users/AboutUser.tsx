@@ -1,7 +1,7 @@
 import { Add, CalendarMonth, Delete, DeleteOutline, Edit, ModeEdit, School, SchoolTwoTone } from "@mui/icons-material";
 import { Card, Chip, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { KTIcon } from "../../../_themes/helpers";
+import BasicModal from "../components/BasicModal";
 
 export default function AboutUser() {
   const intl = useIntl();
@@ -18,11 +18,9 @@ export default function AboutUser() {
         </Typography> 
 </Stack>   
              
-        <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <ModeEdit/>
-                  </a></Stack>  
+        <Stack><BasicModal/></Stack>  
         </Stack>
-   
+       
         <Typography variant="body2">
           Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
@@ -44,39 +42,54 @@ export default function AboutUser() {
     
             
         <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <ModeEdit/>
+                  <ModeEdit/> 
                   </a></Stack>   
 
         </Stack>
 <Grid container>
-  <Grid item xs={12}><TextField className="w-100" id="outlined-basic" label="Address" variant="standard" /></Grid>
+  <Grid item xs={12}> <Typography variant="body2" className="text-muted">Address</Typography>
+  <Typography>NA</Typography></Grid>
 
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Email Address" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Phone number" variant="standard" /></Grid>
+
+  <Grid item xs={6}>    <Typography variant="body2" className="text-muted">Email</Typography>
+            <Typography variant="body1" >NA</Typography></Grid>
+  <Grid item xs={6}> <Typography variant="body2" className="text-muted" >Phone number</Typography>
+  <Typography variant="body1">NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Date of birth" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Gender" variant="standard" /></Grid>
+  <Grid item xs={6}> <Typography variant="body2" className="text-muted">Date of birth</Typography>
+  <Typography>NA</Typography></Grid>
+  <Grid item xs={6}> <Typography variant="body2" className="text-muted">Gender</Typography>
+  <Typography>NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Languages Known" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Date of joining" variant="standard" /></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Languages Known</Typography>
+<Typography>NA</Typography></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Date of joining</Typography>
+<Typography>NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Employee ID" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Department" variant="standard" /></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Employee ID</Typography>
+<Typography>NA</Typography></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Department</Typography>
+<Typography>NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Reporting Manager" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Team Lead" variant="standard" /></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Reporting Manager</Typography>
+<Typography>NA</Typography></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Team Lead</Typography>
+<Typography>NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Personal Email" variant="standard" /></Grid>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Emergency Contact" variant="standard" /></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Personal Email</Typography>
+<Typography>NA</Typography></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Emergency Contact</Typography>
+<Typography>NA</Typography></Grid>
 </Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Blood Group" variant="standard" /></Grid>
+<Grid item xs={6}> <Typography variant="body2" className="text-muted">Blood Group</Typography>
+<Typography>NA</Typography></Grid>
 </Grid>
 
 </Grid>
