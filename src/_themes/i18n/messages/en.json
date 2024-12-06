@@ -90,7 +90,10 @@
 "STATUS.SHORT_LISTED":"Shortlisted",
 "STATUS.PENDING":"Pending",
 "STATUS.REJECTED":"Rejected",
+"DOWNLOAD.SALARY_SLIP":"Salary slip",
+"DOWNLOAD.RESUME":"Resume",
 
+"USER.BLOOD_GROUP":"Blood Group",
 
 
 

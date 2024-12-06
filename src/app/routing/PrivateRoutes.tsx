@@ -8,6 +8,10 @@ import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
 import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import Test from "../pages/test";
+import UserDashboard from "../pages/userdashboard/UserDashboard";
+import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
+
+
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -29,6 +33,8 @@ const PrivateRoutes = () => {
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
         <Route path='test' element={<Test />} />
+        <Route path='userdashboard' element={<UserDashboard />} />
+        <Route path='myprofile' element={<ProfilePageWrapper/>} />
         
         {/* Lazy Modules */}
         <Route

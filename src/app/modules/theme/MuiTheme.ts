@@ -13,6 +13,7 @@ const themeColors = {
   primaryAlt: '#262626',
   subhead:"#4242427d",
   disabled:"#EBEBE4",
+  primaryLight:"#E6D9F5",
 };
 
 const colors = {
@@ -444,20 +445,21 @@ export const MuiTheme = createTheme({
     MuiChip: {
       styleOverrides: {
         colorSecondary: {
-          background: colors.alpha.black[5],
+          background: themeColors.primaryLight,
           color: colors.alpha.black[100],
 
           '&:hover': {
-            background: colors.alpha.black[10]
+            background: themeColors.primary
           }
         },
         deleteIcon: {
-          color: colors.error.light,
+          color: themeColors.primary,
 
           '&:hover': {
-            color: colors.error.main
+            color: themeColors.white
           }
-        }
+        },
+        
       }
     },
     MuiAccordion: {
@@ -594,6 +596,7 @@ export const MuiTheme = createTheme({
           borderRadius: 6
         }
       }
+      
     },
     MuiToggleButton: {
       defaultProps: {
@@ -1073,7 +1076,7 @@ export const MuiTheme = createTheme({
 
     },
     h2: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: 32,
       // color: themeColors.secondary
     },
@@ -1089,7 +1092,7 @@ export const MuiTheme = createTheme({
   
     },
     h5: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: 20,
     },
     h6: {

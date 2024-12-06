@@ -14,6 +14,12 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({id: 'MENU.DASHBOARD'})}
         fontIcon='bi-app-indicator'
       />
+            <SidebarMenuItem
+        to='/myprofile'
+        icon='element-11'
+        title={intl.formatMessage({id: 'MENU.PROFILE'})}
+        fontIcon='bi-app-indicator'
+      />
 
       <SidebarMenuItem
         to='/dashboard'

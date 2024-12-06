@@ -1,0 +1,22 @@
+
+.skills-chips{
+    .MuiButtonBase-root{
+        background-color: $purple-100  !important ;
+        color: $primary !important;
+        border-radius: 4px !important;
+    
+       &:hover{
+        background-color: $primary  !important ;
+        color: $white !important;
+        svg{
+            color: $white !important;
+        }
+        }
+    }
+}
+
+
+.css-1y0gfdp
+{
+    padding: 0px !important;
+}
