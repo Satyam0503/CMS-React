@@ -13,7 +13,7 @@ export default function AboutUser() {
  
       <Card className="p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4"> 
-          <Stack> <Typography variant="h5" className="text-primary">
+          <Stack> <Typography variant="h5">
           {intl.formatMessage({ id: "POSITION.DOT_NET" })}
         </Typography> 
 </Stack>   
@@ -35,15 +35,12 @@ export default function AboutUser() {
       </Card>
       <Card className="w-100 p-5">
         <Stack direction="row" className="d-flex justify-content-between">
-          <Stack>    <Typography variant="h5" className="text-primary">
+          <Stack>    <Typography variant="h5" >
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography> 
 </Stack>
     
-            
-        <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <ModeEdit/> 
-                  </a></Stack>   
+<Stack><BasicModal/></Stack>    
 
         </Stack>
 <Grid container>
@@ -101,9 +98,7 @@ export default function AboutUser() {
         </Typography></Stack>
      
         
-        <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <Add/>
-                  </a></Stack>    
+        <Stack><BasicModal/></Stack>   
 
         </Stack>
 
@@ -121,9 +116,7 @@ export default function AboutUser() {
         </Typography></Stack>
     
 
-        <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <Add/>
-                  </a></Stack>       
+        <Stack><BasicModal/></Stack>     
 
     
 
@@ -162,12 +155,10 @@ export default function AboutUser() {
     
            </Stack>
            <Stack direction="row">
-                  <a className="btn btn-sm bg-white border btn-active-light-primary p-1 me-4">
-                    <Edit/>
-                  </a>
-                  <a className="btn btn-sm bg-white border btn-active-light-danger p-1">
+                <Stack><BasicModal/></Stack>  
+                  <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
                   <DeleteOutline/>
-                  </a>
+                  </Stack>
                 </Stack>
          </Stack>
 
@@ -175,7 +166,7 @@ export default function AboutUser() {
            
          
            
-           <Stack direction="row" alignItems={"center"}>
+           <Stack direction="row" alignItems={"center"} >
          <School className="me-4"/>
              <Stack>
              <Typography
@@ -199,20 +190,20 @@ export default function AboutUser() {
               Jan 2010- June 2012
              </Typography>
              </Stack>
+
       
              </Stack>
+     
     
            </Stack>
            <Stack direction="row">
-                  <a className="btn btn-sm bg-white border btn-active-light-primary p-1 me-4">
-                    <Edit/>
-                  </a>
-                  <a className="btn btn-sm bg-white border btn-active-light-danger p-1">
+                <Stack><BasicModal/></Stack>  
+                  <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
                   <DeleteOutline/>
-                  </a>
+                  </Stack>
                 </Stack>
-         </Stack>
-        
+      
+           </Stack>
       </Card>
       <Card className="w-100 p-5">
       <Stack direction="row" className="d-flex justify-content-between mb-4">
@@ -220,9 +211,9 @@ export default function AboutUser() {
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography> </Stack>
       
-        <Stack>      <a className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <Add/>
-                  </a></Stack>       
+        <Stack>      <Stack>
+                 <BasicModal/>
+                  </Stack></Stack>       
 
         </Stack>
 
@@ -259,12 +250,12 @@ export default function AboutUser() {
     
            </Stack>
            <Stack direction="row">
-                  <a className="btn btn-sm bg-white border btn-active-light-primary p-1 me-4">
-                    <Edit/>
-                  </a>
-                  <a className="btn btn-sm bg-white border btn-active-light-danger p-1">
+                  <Stack>
+                    <BasicModal/>
+                  </Stack>
+                  <Stack className="btn btn-sm bg-white border btn-active-light-danger ms-3 p-1">
                   <DeleteOutline/>
-                  </a>
+                  </Stack>
                 </Stack>
          </Stack>
   

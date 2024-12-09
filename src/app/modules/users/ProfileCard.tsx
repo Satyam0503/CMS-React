@@ -23,7 +23,7 @@ export default function ProfileCard() {
         />
       </Stack>
       <Stack>
-        <Typography variant="h5">Ganesh Singh</Typography>
+        <Typography variant="h5" sx={{color:"white"}}>Ganesh Singh</Typography>
         <Typography
           variant="body2"
           className="rounded-pill p-1 bg-opacity-25 bg-white mt-1 text-center"

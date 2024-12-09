@@ -14,7 +14,7 @@ export default function PersonalInfoModal() {
 <Grid container>
   <Grid item xs={12}><TextField className="w-100" id="outlined-basic" label="Address" variant="standard" /></Grid>
 <Grid container spacing={4}>
-  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Email Address" variant="standard" /></Grid>
+  <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Email Address" variant="standard"  /></Grid>
   <Grid item xs={6}><TextField className="w-100" id="outlined-basic" label="Phone number" variant="standard" /></Grid>
 </Grid>
 <Grid container spacing={4}>

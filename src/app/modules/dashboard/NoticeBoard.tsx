@@ -11,8 +11,8 @@ export default function NoticeBoard() {
   return (
     <>
       <Grid container>
-        <Card className="p-5 w-100">
-          <Typography variant="h6" className="mb-3">
+        <Card sx={{p:"15px", width:"100%"}}>
+          <Typography variant="h6" sx={{mb:"5px"}}>
             {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
           </Typography>
           <Stack direction="row" spacing={2} className="mb-2 d-flex justify-content-between align-items-center">
@@ -82,13 +82,13 @@ export default function NoticeBoard() {
     
            </Stack>
            <Stack direction="row" className="d-flex align-items-center mb-5">
-                  <a className="btn btn-sm bg-white border btn-active-light-success p-2 me-4">
+                  <Stack className="btn btn-sm bg-white border btn-active-light-success p-2 me-4">
                     <KTIcon iconName="check" className="fs-4" />
-                  </a>
+                  </Stack>
 
-                  <a className="btn btn-sm bg-white border btn-active-light-primary p-2">
+                  <Stack className="btn btn-sm bg-white border btn-active-light-primary p-2">
                     <KTIcon iconName="eye" className="fs-4" />
-                  </a>
+                  </Stack>
                 </Stack>
          </Stack>
         </Card>

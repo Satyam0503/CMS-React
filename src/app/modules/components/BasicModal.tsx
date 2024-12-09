@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Edit, ModeEdit } from '@mui/icons-material';
+import { Grid, Stack } from '@mui/material';
 
 const style = {
   position: 'absolute',
@@ -23,10 +24,10 @@ export default function BasicModal() {
   const handleClose = () => setOpen(false);
 
   return (
-    <div>
-        <a onClick={handleOpen} className="btn btn-sm bg-white border btn-active-light-primary p-1">
+    <Grid item>
+        <Stack onClick={handleOpen} className="btn btn-sm bg-white border btn-active-light-primary p-1">
                   <ModeEdit/> 
-                  </a>
+                  </Stack>
       {/* <Button variant='text' onClick={handleOpen}><Edit/></Button> */}
       <Modal
         open={open}
@@ -43,6 +44,6 @@ export default function BasicModal() {
           </Typography>
         </Box>
       </Modal>
-    </div>
+    </Grid>
   );
 }
