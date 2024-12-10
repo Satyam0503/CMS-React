@@ -178,8 +178,8 @@ export const MuiTheme = createTheme({
 
     /// text of table
     text: {
-      primary:themeColors.primary,
-      secondary:themeColors.secondary,
+      primary:themeColors.neutral,
+    
     },
     background: {
       paper: themeColors.white,
@@ -268,7 +268,7 @@ export const MuiTheme = createTheme({
           pointerEvents: 'none'
         },
         '#nprogress .bar': {
-          background: themeColors.primary,
+          background: themeColors.secondary,
         },
         '#nprogress .spinner-icon': {
           borderTopColor: themeColors.primary,

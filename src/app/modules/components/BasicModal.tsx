@@ -4,18 +4,20 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Edit, ModeEdit } from '@mui/icons-material';
-import { Grid, Stack } from '@mui/material';
+import { Grid, Stack, TextField } from '@mui/material';
+import UserInfo from '../users/UserInfo';
+import Skills from '../users/Skills';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 800,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  borderRadius:2,
 };
 
 export default function BasicModal() {
@@ -36,12 +38,9 @@ export default function BasicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+        <TextField id="outlined-basic" label="Summary" variant="outlined" />
+  <UserInfo/>
+   <Skills/>
         </Box>
       </Modal>
     </Grid>
