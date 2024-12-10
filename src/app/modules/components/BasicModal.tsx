@@ -3,10 +3,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Edit, ModeEdit } from '@mui/icons-material';
 import { Grid, Stack, TextField } from '@mui/material';
-import UserInfo from '../users/UserInfo';
-import Skills from '../users/Skills';
+import { Edit } from '@mui/icons-material';
 
 const style = {
   position: 'absolute',
@@ -16,8 +14,8 @@ const style = {
   width: 800,
   bgcolor: 'background.paper',
   boxShadow: 24,
+  borderRadius: 2,
   p: 4,
-  borderRadius:2,
 };
 
 export default function BasicModal() {
@@ -26,11 +24,10 @@ export default function BasicModal() {
   const handleClose = () => setOpen(false);
 
   return (
-    <Grid item>
-        <Stack onClick={handleOpen} className="btn btn-sm bg-white border btn-active-light-primary p-1">
-                  <ModeEdit/> 
-                  </Stack>
-      {/* <Button variant='text' onClick={handleOpen}><Edit/></Button> */}
+    <Grid>
+         <Stack onClick={() => handleOpen()} className="btn btn-sm bg-white border btn-active-light-primary p-1">
+        <Edit />
+      </Stack>
       <Modal
         open={open}
         onClose={handleClose}
@@ -38,9 +35,10 @@ export default function BasicModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-        <TextField id="outlined-basic" label="Summary" variant="outlined" />
-  <UserInfo/>
-   <Skills/>
+        <Stack>
+              <Typography variant="h6">Summary</Typography>
+              <TextField id="outlined-basic" placeholder='Type..' variant="standard" fullWidth />
+            </Stack>
         </Box>
       </Modal>
     </Grid>

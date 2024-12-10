@@ -81,6 +81,11 @@ const SidebarMenuMain = () => {
         title="Settings"
         icon={<SettingsIcon />}
       />
+           <SidebarMenuItem
+        to="/employeeleave"
+        title={intl.formatMessage({ id: 'MENU.LEAVE_MGMT' })}
+        icon={<SettingsIcon />}
+      />
     </>
   );
 };

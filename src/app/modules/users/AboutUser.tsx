@@ -11,6 +11,10 @@ import {
 import { Card, Chip, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import BasicModal from "../components/BasicModal";
+import UserInfo from "./UserInfo";
+import Skills from "./Skills";
+import Education from "./Education";
+import Certification from "./Certification";
 
 export default function AboutUser() {
   const intl = useIntl();
@@ -53,7 +57,7 @@ export default function AboutUser() {
           </Stack>
 
           <Stack>
-            <BasicModal />
+            <UserInfo />
           </Stack>
         </Stack>
         <Grid container>
@@ -167,7 +171,7 @@ export default function AboutUser() {
           </Stack>
 
           <Stack>
-            <BasicModal />
+            <Skills />
           </Stack>
         </Stack>
 
@@ -211,7 +215,7 @@ export default function AboutUser() {
           </Stack>
 
           <Stack>
-            <BasicModal />
+            <Education/>
           </Stack>
         </Stack>
 
@@ -299,7 +303,7 @@ export default function AboutUser() {
 
           <Stack>
             <Stack>
-              <BasicModal />
+              <Certification />
             </Stack>
           </Stack>
         </Stack>

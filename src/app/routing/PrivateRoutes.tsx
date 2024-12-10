@@ -10,6 +10,7 @@ import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import Test from "../pages/test";
 import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
+import LeaveManagement from "../pages/leavemanagement/LeaveMangement";
 
 
 
@@ -35,6 +36,7 @@ const PrivateRoutes = () => {
         <Route path='test' element={<Test />} />
         <Route path='userdashboard' element={<UserDashboard />} />
         <Route path='myprofile' element={<ProfilePageWrapper/>} />
+        <Route path='employeeleave' element={<LeaveManagement/>} />
         
         {/* Lazy Modules */}
         <Route

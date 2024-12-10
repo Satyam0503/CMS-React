@@ -6,13 +6,7 @@ import {
     Typography,
   } from "@mui/material";
   import Grid from "@mui/material/Grid";
-  import { useIntl } from "react-intl";
-  import {
-    Login,
-    NotificationsOutlined,
-    SearchOutlined,
-  } from "@mui/icons-material";
-  
+  import { useIntl } from "react-intl";  
   export default function PageHeader() {
     const intl = useIntl();
     return (

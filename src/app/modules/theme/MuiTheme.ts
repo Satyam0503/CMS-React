@@ -92,7 +92,7 @@ const colors = {
       900: "#171717",
       100: "#F5F5F5",
     },
-    Warning: {
+    warning: {
       200: "#FFF2B3",
       300: "#FFE680",
       400: "#FFDA4D",
