@@ -1,10 +1,14 @@
 import {
+  Add,
   CalendarMonth,
+  Delete,
   DeleteOutline,
+  Edit,
+  ModeEdit,
   School,
-
+  SchoolTwoTone,
 } from "@mui/icons-material";
-import { Card, Chip, Grid, Stack, Typography } from "@mui/material";
+import { Card, Chip, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import BasicModal from "../components/BasicModal";
 
@@ -18,7 +22,6 @@ export default function AboutUser() {
       <Card className="p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>
-          
             <Typography variant="h5">
               {intl.formatMessage({ id: "POSITION.DOT_NET" })}
             </Typography>
@@ -44,7 +47,6 @@ export default function AboutUser() {
       <Card className="w-100 p-5">
         <Stack direction="row" className="d-flex justify-content-between">
           <Stack>
-          
             <Typography variant="h5">
               {intl.formatMessage({ id: "PROFILE.PI" })}
             </Typography>
@@ -56,7 +58,6 @@ export default function AboutUser() {
         </Stack>
         <Grid container>
           <Grid item xs={12}>
-          
             <Typography variant="body2" className="text-muted">
               Address
             </Typography>
@@ -65,14 +66,12 @@ export default function AboutUser() {
 
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Email
               </Typography>
               <Typography variant="body1">NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Phone number
               </Typography>
@@ -81,14 +80,12 @@ export default function AboutUser() {
           </Grid>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Date of birth
               </Typography>
               <Typography>NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Gender
               </Typography>
@@ -97,14 +94,12 @@ export default function AboutUser() {
           </Grid>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Languages Known
               </Typography>
               <Typography>NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Date of joining
               </Typography>
@@ -112,15 +107,13 @@ export default function AboutUser() {
             </Grid>
           </Grid>
           <Grid container spacing={4}>
-            <Grid item xs={6} >
-            
+            <Grid item xs={6}>
               <Typography variant="body2" className="text-muted">
                 Employee ID
               </Typography>
               <Typography>NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Department
               </Typography>
@@ -129,14 +122,12 @@ export default function AboutUser() {
           </Grid>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Reporting Manager
               </Typography>
               <Typography>NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Team Lead
               </Typography>
@@ -145,14 +136,12 @@ export default function AboutUser() {
           </Grid>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Personal Email
               </Typography>
               <Typography>NA</Typography>
             </Grid>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Emergency Contact
               </Typography>
@@ -161,7 +150,6 @@ export default function AboutUser() {
           </Grid>
           <Grid container spacing={4}>
             <Grid item xs={6}>
-            
               <Typography variant="body2" className="text-muted">
                 Blood Group
               </Typography>
@@ -173,7 +161,6 @@ export default function AboutUser() {
       <Card className="w-100 p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>
-          
             <Typography variant="h5" className="text-primary">
               {intl.formatMessage({ id: "PROFILE.SKILLS" })}
             </Typography>
@@ -218,7 +205,6 @@ export default function AboutUser() {
       <Card className="w-100 p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>
-          
             <Typography variant="h5" className="text-primary">
               {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
             </Typography>
@@ -306,14 +292,12 @@ export default function AboutUser() {
       <Card className="w-100 p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>
-          
             <Typography variant="h5" className="text-primary">
               {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
             </Typography>{" "}
           </Stack>
 
           <Stack>
-          
             <Stack>
               <BasicModal />
             </Stack>
