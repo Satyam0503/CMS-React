@@ -1,7 +1,4 @@
-import { toAbsoluteUrl } from "../../../../helpers";
 import { SidebarMenuMain } from "./SidebarMenuMain";
-import { Avatar, Grid } from "@mui/material";
-import { Stack } from "react-bootstrap";
 
 const SidebarMenu = () => {
   return (
@@ -17,13 +14,6 @@ const SidebarMenu = () => {
         data-kt-scroll-offset="5px"
         data-kt-scroll-save-state="true"
       >
-        <Stack>
-          <Avatar
-            alt=""
-            src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-            sx={{ width: 128, height: 128 }}
-          />
-        </Stack>
         <div
           className="menu menu-column menu-rounded menu-sub-indention px-3"
           id="#kt_app_sidebar_menu"

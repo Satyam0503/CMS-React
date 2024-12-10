@@ -1,7 +1,17 @@
 import { useIntl } from "react-intl";
-import { KTIcon } from "../../../../helpers";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ContactsIcon from "@mui/icons-material/Contacts";
 import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
+import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import FolderIcon from "@mui/icons-material/Folder";
+import EmailIcon from "@mui/icons-material/Email";
+import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 const SidebarMenuMain = () => {
   const intl = useIntl();
@@ -10,125 +20,66 @@ const SidebarMenuMain = () => {
     <>
       <SidebarMenuItem
         to="/test"
-        icon="element-11"
+        icon={<DashboardIcon />}
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
-        fontIcon="bi-app-indicator"
       />
       <SidebarMenuItem
-        to="/myprofile"
-        icon="element-11"
-        title={intl.formatMessage({ id: "MENU.PROFILE" })}
-        fontIcon="bi-app-indicator"
-      />
-
-      <SidebarMenuItem
-        to="/dashboard"
-        icon="element-11"
-        title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
-        fontIcon="bi-app-indicator"
-      />
-      <SidebarMenuItem
-        to="/builder"
-        icon="switch"
+        to="/employees"
+        icon={<ContactsIcon />}
         title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
-        fontIcon="bi-layers"
       />
-      <div className="menu-item">
-        <div className="menu-content pt-8 pb-2">
-          <span className="menu-section text-muted text-uppercase fs-8 ls-1">
-            Crafted
-          </span>
-        </div>
-      </div>
+      <SidebarMenuItem
+        to="/Attendance"
+        icon={<AccessTimeIcon />}
+        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+      />
+      <SidebarMenuItem
+        to="/LeaveManagement"
+        icon={<PermContactCalendarIcon />}
+        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+      />
+      <SidebarMenuItem
+        to="/Projects"
+        icon={<FolderIcon />}
+        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+      />
+      <SidebarMenuItem
+        to="/Clients"
+        icon={<SwitchAccountIcon />}
+        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+      />
       <SidebarMenuItemWithSub
         to="/crafted/pages"
         title="Pages"
         fontIcon="bi-archive"
-        icon="element-plus"
-      >
-        <SidebarMenuItemWithSub
-          to="/crafted/pages/profile"
-          title="Profile"
-          hasBullet={true}
-        >
-          <SidebarMenuItem
-            to="/crafted/pages/profile/overview"
-            title="Overview"
-            hasBullet={true}
-          />
-          <SidebarMenuItem
-            to="/crafted/pages/profile/projects"
-            title="Projects"
-            hasBullet={true}
-          />
-          <SidebarMenuItem
-            to="/crafted/pages/profile/campaigns"
-            title="Campaigns"
-            hasBullet={true}
-          />
-          <SidebarMenuItem
-            to="/crafted/pages/profile/documents"
-            title="Documents"
-            hasBullet={true}
-          />
-          <SidebarMenuItem
-            to="/crafted/pages/profile/connections"
-            title="Connections"
-            hasBullet={true}
-          />
-        </SidebarMenuItemWithSub>
-      </SidebarMenuItemWithSub>
-      <SidebarMenuItemWithSub
-        to="/crafted/accounts"
-        title="Accounts"
-        icon="profile-circle"
-        fontIcon="bi-person"
+        icon={<PersonSearchIcon />}
       >
         <SidebarMenuItem
-          to="/crafted/account/overview"
+          to="/crafted/pages/profile/overview"
           title="Overview"
-          hasBullet={true}
+          icon={<FolderIcon />}
         />
         <SidebarMenuItem
-          to="/crafted/account/settings"
-          title="Settings"
-          hasBullet={true}
+          to="/crafted/pages/profile/overview"
+          title="Overview"
+          icon={<EmailIcon />}
         />
-      </SidebarMenuItemWithSub>
-      <SidebarMenuItemWithSub
-        to="/error"
-        title="Errors"
-        fontIcon="bi-sticky"
-        icon="cross-circle"
-      >
-        <SidebarMenuItem to="/error/404" title="Error 404" hasBullet={true} />
-        <SidebarMenuItem to="/error/500" title="Error 500" hasBullet={true} />
       </SidebarMenuItemWithSub>
 
-      <div className="menu-item">
-        <div className="menu-content pt-8 pb-2">
-          <span className="menu-section text-muted text-uppercase fs-8 ls-1">
-            Apps
-          </span>
-        </div>
-      </div>
-      <SidebarMenuItemWithSub
-        to="/apps/chat"
-        title="Chat"
-        fontIcon="bi-chat-left"
-        icon="message-text-2"
-      >
-        <SidebarMenuItem
-          to="/apps/chat/private-chat"
-          title="Private Chat"
-          hasBullet={true}
-        />
-      </SidebarMenuItemWithSub>
       <SidebarMenuItem
-        to="/apps/user-management/users"
-        icon="abstract-28"
-        title="User management"
-        fontIcon="bi-layers"
+        to="/crafted/pages/profile/overview"
+        title="Overview"
+        icon={<CalendarTodayIcon />}
+      />
+      <SidebarMenuItem
+        to="/myprofile"
+        title={intl.formatMessage({ id: "MENU.PROFILE" })}
+        icon={<AccountCircleIcon />}
+      />
+      <SidebarMenuItem
+        to="/crafted/account/settings"
+        title="Settings"
+        icon={<SettingsIcon />}
       />
     </>
   );

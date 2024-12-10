@@ -1,127 +1,157 @@
 /* eslint-disable no-prototype-builtins */
-import clsx from 'clsx'
-import {useEffect, useRef} from 'react'
-import {ILayout, useLayout} from '../../core'
-import {SidebarMenu} from './sidebar-menu/SidebarMenu'
-import {SidebarFooter} from './SidebarFooter'
-import {SidebarLogo} from './SidebarLogo'
+import clsx from "clsx";
+import { useEffect, useRef } from "react";
+import { ILayout, useLayout } from "../../core";
+import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
+import { SidebarFooter } from "./SidebarFooter";
+import { SidebarLogo } from "./SidebarLogo";
+import { Avatar, Stack, Typography } from "@mui/material";
+import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 
 const Sidebar = () => {
-  const {config} = useLayout()
-  const sidebarRef = useRef<HTMLDivElement>(null)
+  const { config } = useLayout();
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    updateDOM(config)
-  }, [config])
+    updateDOM(config);
+  }, [config]);
 
   if (!config.app?.sidebar?.display) {
-    return null
+    return null;
   }
 
   return (
     <>
-      {(config.layoutType === 'dark-sidebar' || config.layoutType === 'light-sidebar') && (
+      {(config.layoutType === "dark-sidebar" ||
+        config.layoutType === "light-sidebar") && (
         <div
           ref={sidebarRef}
-          id='kt_app_sidebar'
-          className={clsx('app-sidebar', config.app?.sidebar?.default?.class)}
+          id="kt_app_sidebar"
+          className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
         >
-          <SidebarLogo sidebarRef={sidebarRef} />
+          <Stack padding={3} gap={4} alignItems="center" width="100%">
+            <SidebarLogo sidebarRef={sidebarRef} />
+            <Stack gap={1}>
+              <Avatar
+                alt=""
+                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                sx={{ width: 128, height: 128 }}
+              />
+              <Typography variant="h6" color="inherit" textAlign="center">
+                Aishwarya Rai
+              </Typography>
+            </Stack>
+          </Stack>
           <SidebarMenu />
           <SidebarFooter />
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
 const updateDOM = (config: ILayout) => {
-  if (config.layoutType === 'dark-sidebar' || config.layoutType === 'light-sidebar') {
+  if (
+    config.layoutType === "dark-sidebar" ||
+    config.layoutType === "light-sidebar"
+  ) {
     if (config.app?.sidebar?.default?.minimize?.desktop?.enabled) {
       if (config.app?.sidebar?.default?.minimize?.desktop?.default) {
-        document.body.setAttribute('data-kt-app-sidebar-minimize', 'on')
+        document.body.setAttribute("data-kt-app-sidebar-minimize", "on");
       }
 
       if (config.app?.sidebar?.default?.minimize?.desktop?.hoverable) {
-        document.body.setAttribute('data-kt-app-sidebar-hoverable', 'true')
+        document.body.setAttribute("data-kt-app-sidebar-hoverable", "true");
       }
     }
 
     if (config.app?.sidebar?.default?.minimize?.mobile?.enabled) {
       if (config.app?.sidebar?.default?.minimize?.mobile?.default) {
-        document.body.setAttribute('data-kt-app-sidebar-minimize-mobile', 'on')
+        document.body.setAttribute("data-kt-app-sidebar-minimize-mobile", "on");
       }
 
       if (config.app?.sidebar?.default?.minimize?.mobile?.hoverable) {
-        document.body.setAttribute('data-kt-app-sidebar-hoverable-mobile', 'true')
+        document.body.setAttribute(
+          "data-kt-app-sidebar-hoverable-mobile",
+          "true"
+        );
       }
     }
 
     if (config.app?.sidebar?.default?.collapse?.desktop?.enabled) {
       if (config.app?.sidebar?.default?.collapse?.desktop?.default) {
-        document.body.setAttribute('data-kt-app-sidebar-collapse', 'on')
+        document.body.setAttribute("data-kt-app-sidebar-collapse", "on");
       }
     }
 
     if (config.app?.sidebar?.default?.collapse?.mobile?.enabled) {
       if (config.app?.sidebar?.default?.collapse?.mobile?.default) {
-        document.body.setAttribute('data-kt-app-sidebar-collapse-mobile', 'on')
+        document.body.setAttribute("data-kt-app-sidebar-collapse-mobile", "on");
       }
     }
 
     if (config.app?.sidebar?.default?.push) {
       if (config.app?.sidebar?.default?.push?.header) {
-        document.body.setAttribute('data-kt-app-sidebar-push-header', 'true')
+        document.body.setAttribute("data-kt-app-sidebar-push-header", "true");
       }
 
       if (config.app?.sidebar?.default?.push?.toolbar) {
-        document.body.setAttribute('data-kt-app-sidebar-push-toolbar', 'true')
+        document.body.setAttribute("data-kt-app-sidebar-push-toolbar", "true");
       }
 
       if (config.app?.sidebar?.default?.push?.footer) {
-        document.body.setAttribute('data-kt-app-sidebar-push-footer', 'true')
+        document.body.setAttribute("data-kt-app-sidebar-push-footer", "true");
       }
     }
 
     if (config.app?.sidebar?.default?.stacked) {
-      document.body.setAttribute('app-sidebar-stacked', 'true')
+      document.body.setAttribute("app-sidebar-stacked", "true");
     }
 
-    document.body.setAttribute('data-kt-app-sidebar-enabled', 'true')
+    document.body.setAttribute("data-kt-app-sidebar-enabled", "true");
     document.body.setAttribute(
-      'data-kt-app-sidebar-fixed',
-      config.app?.sidebar?.default?.fixed?.desktop?.toString() || ''
-    )
+      "data-kt-app-sidebar-fixed",
+      config.app?.sidebar?.default?.fixed?.desktop?.toString() || ""
+    );
 
-    const appSidebarDefaultDrawerEnabled = config.app?.sidebar?.default?.drawer?.enabled
-    let appSidebarDefaultDrawerAttributes: {[attrName: string]: string} = {}
+    const appSidebarDefaultDrawerEnabled =
+      config.app?.sidebar?.default?.drawer?.enabled;
+    let appSidebarDefaultDrawerAttributes: { [attrName: string]: string } = {};
     if (appSidebarDefaultDrawerEnabled) {
-      appSidebarDefaultDrawerAttributes = config.app?.sidebar?.default?.drawer?.attributes as {
-        [attrName: string]: string
-      }
+      appSidebarDefaultDrawerAttributes = config.app?.sidebar?.default?.drawer
+        ?.attributes as {
+        [attrName: string]: string;
+      };
     }
 
-    const appSidebarDefaultStickyEnabled = config.app?.sidebar?.default?.sticky?.enabled
-    let appSidebarDefaultStickyAttributes: {[attrName: string]: string} = {}
+    const appSidebarDefaultStickyEnabled =
+      config.app?.sidebar?.default?.sticky?.enabled;
+    let appSidebarDefaultStickyAttributes: { [attrName: string]: string } = {};
     if (appSidebarDefaultStickyEnabled) {
-      appSidebarDefaultStickyAttributes = config.app?.sidebar?.default?.sticky?.attributes as {
-        [attrName: string]: string
-      }
+      appSidebarDefaultStickyAttributes = config.app?.sidebar?.default?.sticky
+        ?.attributes as {
+        [attrName: string]: string;
+      };
     }
 
     setTimeout(() => {
-      const sidebarElement = document.getElementById('kt_app_sidebar')
+      const sidebarElement = document.getElementById("kt_app_sidebar");
       // sidebar
       if (sidebarElement) {
         const sidebarAttributes = sidebarElement
           .getAttributeNames()
-          .filter((t) => t.indexOf('data-') > -1)
-        sidebarAttributes.forEach((attr) => sidebarElement.removeAttribute(attr))
+          .filter((t) => t.indexOf("data-") > -1);
+        sidebarAttributes.forEach((attr) =>
+          sidebarElement.removeAttribute(attr)
+        );
 
         if (appSidebarDefaultDrawerEnabled) {
           for (const key in appSidebarDefaultDrawerAttributes) {
             if (appSidebarDefaultDrawerAttributes.hasOwnProperty(key)) {
-              sidebarElement.setAttribute(key, appSidebarDefaultDrawerAttributes[key])
+              sidebarElement.setAttribute(
+                key,
+                appSidebarDefaultDrawerAttributes[key]
+              );
             }
           }
         }
@@ -129,13 +159,16 @@ const updateDOM = (config: ILayout) => {
         if (appSidebarDefaultStickyEnabled) {
           for (const key in appSidebarDefaultStickyAttributes) {
             if (appSidebarDefaultStickyAttributes.hasOwnProperty(key)) {
-              sidebarElement.setAttribute(key, appSidebarDefaultStickyAttributes[key])
+              sidebarElement.setAttribute(
+                key,
+                appSidebarDefaultStickyAttributes[key]
+              );
             }
           }
         }
       }
-    }, 0)
+    }, 0);
   }
-}
+};
 
-export {Sidebar}
+export { Sidebar };
