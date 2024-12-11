@@ -10,7 +10,9 @@ import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import Test from "../pages/test";
 import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
-import LeaveManagement from "../pages/leavemanagement/LeaveMangement";
+import {LeaveManagement} from "../pages/leavemanagement/LeaveMangement";
+import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
+import Contacts from "../modules/contacts/Contacts";
 
 
 
@@ -37,6 +39,8 @@ const PrivateRoutes = () => {
         <Route path='userdashboard' element={<UserDashboard />} />
         <Route path='myprofile' element={<ProfilePageWrapper/>} />
         <Route path='employeeleave' element={<LeaveManagement/>} />
+        <Route path='attendance' element={<EmployeeAttendance/>} />
+        <Route path='contacts' element={<Contacts/>} />
         
         {/* Lazy Modules */}
         <Route

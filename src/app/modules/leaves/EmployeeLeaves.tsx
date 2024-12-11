@@ -2,16 +2,15 @@ import {FC} from 'react'
 
 
 import { useIntl } from 'react-intl'
+import Contacts from '../contacts/Contacts'
 
 
-const EmployeeLeaves: FC = () => {
+export const EmployeeLeaves: FC = () => {
   const intl = useIntl()
   return (
     <>
 
-     hhhhhhhh
+    <Contacts/>
     </>
   )
 }
-
-export default EmployeeLeaves

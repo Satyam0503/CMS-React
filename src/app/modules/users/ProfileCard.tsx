@@ -23,7 +23,9 @@ export default function ProfileCard() {
         />
       </Stack>
       <Stack>
-        <Typography variant="h5" sx={{color:"white"}}>Ganesh Singh</Typography>
+        <Typography variant="h5" sx={{ color: "white" }}>
+          Ganesh Singh
+        </Typography>
         <Typography
           variant="body2"
           className="rounded-pill p-1 bg-opacity-25 bg-white mt-1 text-center"
@@ -42,7 +44,10 @@ export default function ProfileCard() {
           <Typography variant="h2" className="text-white">
             O+
           </Typography>
-          <Typography variant="body2"> {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}</Typography>
+          <Typography variant="body2">
+            {" "}
+            {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+          </Typography>
         </Stack>
       </Stack>
 

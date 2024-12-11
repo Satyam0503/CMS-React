@@ -3,9 +3,10 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Card, Grid, Stack, TextField } from '@mui/material';
+import { Card, FormControl, Grid, MenuItem, Select, SelectChangeEvent, Stack, TextField } from '@mui/material';
 import { Add, CalendarMonth, DeleteOutline, Edit, School } from '@mui/icons-material';
 import { useIntl } from 'react-intl';
+import CustomisedDatePicker from '../components/CustomisedDatePicker';
 
 const style = {
   position: 'absolute',
@@ -24,6 +25,11 @@ export default function Certification() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const intl = useIntl();
+  const [degree, setDegree] = React.useState('');
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setDegree(event.target.value as string);
+  };
   return (
     <Grid>
          <Stack onClick={() => handleOpen()} className="btn btn-sm bg-white border btn-active-light-primary p-1">
@@ -37,7 +43,7 @@ export default function Certification() {
       >
         <Box sx={style}>
 
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
+   
           <Stack>
           
             <Typography variant="h5" className="text-primary">
@@ -46,7 +52,56 @@ export default function Certification() {
           </Stack>
 
     
-        </Stack>
+       
+        <Stack>
+            <Typography>Title</Typography>
+            <TextField variant='outlined' ></TextField>
+          </Stack>
+          <Grid container className='d-flex' spacing={2}>
+          <Grid item xs={12} md={6}  className='w-100'>
+          <Typography>Start date</Typography>
+  <CustomisedDatePicker
+   />
+           
+          </Grid>
+          <Grid item xs={12} md={6}className='w-100'>
+          <Typography>End date</Typography>
+  <CustomisedDatePicker
+   /></Grid>
+           
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6} sx={{width:"100%"}}>
+            <Typography>Organization Name</Typography>
+        <TextField fullWidth/>
+            </Grid>
+            <Grid item xs={12} md={6}>
+            <Typography>Mode</Typography>
+            
+            <FormControl fullWidth>
+        
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          
+          label="Mode"
+          onChange={handleChange}
+        >
+           <MenuItem>Online</MenuItem>
+          <MenuItem >Offline</MenuItem>
+          
+        </Select>
+      </FormControl>
+            </Grid>
+          </Grid>
+    
+    <Grid container className='d-flex justify-content-end mt-4 gap-2'>
+      <Button variant='contained'>Cancel</Button>
+      <Button variant='contained'>Add New</Button>
+      <Button variant='contained'>Save</Button>
+    </Grid>
+    
+
 
        
      
