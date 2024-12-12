@@ -65,7 +65,6 @@ export const LeaveApplication: FC = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
-                  {" "}
                   {intl.formatMessage({ id: "PROFILE.TYPE" })}
                 </Typography>
                 <TextField fullWidth />
@@ -108,15 +107,9 @@ export const LeaveApplication: FC = () => {
               </Grid>
             </Grid>
             <Grid container className="d-flex justify-content-end mt-4 gap-2">
-              <Button variant="contained" className="bg-primary">
-                Cancel
-              </Button>
-              <Button variant="contained" className="bg-primary">
-                Add New
-              </Button>
-              <Button variant="contained" className="bg-primary">
-                Save
-              </Button>
+              <Button variant="contained">Cancel</Button>
+              <Button variant="contained">Add New</Button>
+              <Button variant="contained">Save</Button>
             </Grid>
           </Box>
         </Modal>

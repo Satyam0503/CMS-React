@@ -99,15 +99,9 @@ export default function Employment() {
           </Grid>
 
           <Grid container className="d-flex justify-content-end mt-4 gap-2">
-            <Button variant="contained" className="bg-primary">
-              Cancel
-            </Button>
-            <Button variant="contained" className="bg-primary">
-              Add New
-            </Button>
-            <Button variant="contained" className="bg-primary">
-              Save
-            </Button>
+            <Button variant="contained">Cancel</Button>
+            <Button variant="contained">Add New</Button>
+            <Button variant="contained">Save</Button>
           </Grid>
         </Box>
       </Modal>
