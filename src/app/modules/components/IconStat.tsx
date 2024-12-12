@@ -1,34 +1,35 @@
 import Typography from "@mui/material/Typography";
 import { Stack, useTheme } from "@mui/material";
-import PropTypes from "prop-types";
-import { SiteThemeColor } from "../theme/base";
+import { colors } from "../theme/MuiTheme";
 
 type Props = {
   icon: JSX.Element;
   number: string;
   title: string;
-  variant: string;
+  iconBg: string;
+  iconColor: string;
 };
-const IconStat = ({ icon, number, title, variant }: Props) => {
+const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
   const theme = useTheme();
   return (
-    <Stack spacing={2} alignItems="center">
+    <Stack spacing={1.2} alignItems="center" direction="row">
       <Stack
         sx={{
           width: 48,
           height: 48,
-          background: variant,
+          background: iconBg,
           borderRadius: "50%",
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        {icon}
+        <Stack color={iconColor}>{icon}</Stack>
       </Stack>
-      <Stack alignItems="center">
+      <Stack>
         <Typography variant="h2">{number}</Typography>
-        <Typography variant="body1">{title}</Typography>
+        <Typography variant="body2" color={colors.alpha.neutral[500]}>
+          {title}
+        </Typography>
       </Stack>
     </Stack>
   );
