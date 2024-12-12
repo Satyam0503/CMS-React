@@ -216,7 +216,7 @@ export default function AboutUser() {
           </Stack>
 
           <Stack>
-            <Employment/>
+            <Employment />
           </Stack>
         </Stack>
 
@@ -231,7 +231,7 @@ export default function AboutUser() {
                 variant="body1"
                 className="text-gray-800 text-hover-primary fw-semibold "
               >
-             Codeji Infotech Private Limited
+                Codeji Infotech Private Limited
               </Typography>
               <Stack direction="row" spacing={1}>
                 <Typography variant="body2" className="fw-semibold d-block ">
@@ -266,7 +266,7 @@ export default function AboutUser() {
           </Stack>
 
           <Stack>
-            <Education/>
+            <Education />
           </Stack>
         </Stack>
 

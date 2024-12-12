@@ -133,10 +133,12 @@ export default function UserInfo() {
                 xs={12}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <Button variant="contained" className="me-4">
+                <Button variant="contained" className="me-4 bg-primary">
                   Cancel
                 </Button>
-                <Button variant="contained">Save</Button>
+                <Button variant="contained" className="bg-primary">
+                  Save
+                </Button>
               </Grid>
             </Grid>
           </Grid>

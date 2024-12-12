@@ -1,22 +1,20 @@
-
-
 import { Button, Tooltip } from "@mui/material";
 import React from "react";
 import classNames from "classnames";
 
-type Props={
-  handleClick?:React.MouseEventHandler<HTMLButtonElement> | undefined
-  Icon?:React.JSX.Element
-  label?:string
-  tooltip?:string
-  className?:string
-  buttonSize?:string
-  disabled?:any
-  permission?:any
-  style?:any
-}
+type Props = {
+  handleClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  Icon?: React.JSX.Element;
+  label?: string;
+  tooltip?: string;
+  className?: string;
+  buttonSize?: string;
+  disabled?: any;
+  permission?: any;
+  style?: any;
+};
 
-const CustomizedButton = (props:Props) => {
+const CustomizedButton = (props: Props) => {
   const {
     handleClick,
     Icon,
@@ -29,7 +27,7 @@ const CustomizedButton = (props:Props) => {
     style = {},
   } = props;
 
-  const handleButtonSizeclasses = (buttonSize? :string) => {
+  const handleButtonSizeclasses = (buttonSize?: string) => {
     switch (buttonSize) {
       case "Large":
         return "button-large";

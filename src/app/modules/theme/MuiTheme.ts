@@ -1,3 +1,4 @@
+import { Padding } from "@mui/icons-material";
 import { alpha, createTheme, lighten, darken } from "@mui/material";
 
 const themeColors = {
@@ -297,7 +298,7 @@ export const MuiTheme = createTheme({
     MuiSelect: {
       styleOverrides: {
         iconOutlined: {
-          color: colors.alpha.neutral[500],
+          color: colors.alpha.primary[500],
         },
         icon: {
           top: "calc(50% - 14px)",
@@ -309,12 +310,13 @@ export const MuiTheme = createTheme({
         root: {
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
             paddingRight: 6,
+            borderColor: colors.alpha.secondary[500],
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colors.alpha.neutral[500],
+            borderColor: colors.alpha.primary[500],
           },
           "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: themeColors.primary,
+            borderColor: colors.alpha.primary[500],
           },
         },
       },
@@ -325,8 +327,8 @@ export const MuiTheme = createTheme({
           fontWeight: "bold",
           lineHeight: "40px",
           fontSize: 13,
-          background: colors.alpha.neutral[500],
-          color: colors.alpha.neutral[700],
+          background: colors.alpha.primary[500],
+          color: colors.alpha.primary[700],
         },
       },
     },
@@ -431,7 +433,7 @@ export const MuiTheme = createTheme({
             boxShadow: colors.shadows.medium,
           },
           "&.MuiButtonBase-root:hover": {
-            background: colors.alpha.neutral[500],
+            background: colors.alpha.primary[500],
           },
           "&.Mui-selected.MuiButtonBase-root:hover": {
             background: themeColors.primary,
@@ -463,7 +465,7 @@ export const MuiTheme = createTheme({
           border: "1px solid " + colors.alpha.neutral[300],
         },
         outlinedSecondary: {
-          backgroundColor: themeColors.white,
+          backgroundColor: themeColors.primary,
 
           "&:hover, &.MuiSelected": {
             backgroundColor: colors.alpha.neutral[500],
@@ -500,6 +502,8 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 6,
+          background: themeColors.white,
+          // border: ' 0px 0px 5px 0px solid ' + colors.primary.dark,
         },
       },
     },
@@ -525,6 +529,8 @@ export const MuiTheme = createTheme({
         root: {
           borderRadius: 8,
           padding: 8,
+          color: colors.alpha.neutral[500],
+          background: colors.alpha.neutral[100],
 
           "& .MuiTouchRipple-root": {
             borderRadius: 8,
@@ -740,7 +746,7 @@ export const MuiTheme = createTheme({
 
             "&:hover, &:active, &.active, &.Mui-selected": {
               color: colors.alpha.neutral[100],
-              background: alpha(themeColors.primary, 0.4),
+              background: themeColors.primary,
             },
           },
         },
@@ -770,7 +776,7 @@ export const MuiTheme = createTheme({
 
             "&:hover, &:active, &.active, &.Mui-selected": {
               color: colors.alpha.neutral[100],
-              background: lighten(themeColors.primary, 0.5),
+              background: themeColors.primary,
             },
           },
         },
@@ -832,13 +838,14 @@ export const MuiTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         head: {
-          background: colors.alpha.neutral[500],
+          background: themeColors.white,
+          color: themeColors.white,
         },
         root: {
           transition: "background-color .2s",
 
           "&.MuiTableRow-hover:hover": {
-            backgroundColor: colors.alpha.neutral[500],
+            backgroundColor: colors.alpha.primary[500],
           },
         },
       },
@@ -846,14 +853,14 @@ export const MuiTheme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottomColor: colors.alpha.neutral[100],
+          borderBottomColor: colors.alpha.primary[200],
           fontSize: 14,
         },
         head: {
-          textTransform: "uppercase",
+          textTransform: "none",
           fontSize: 13,
-          fontWeight: "bold",
-          // color: themeColors.primaryAlt
+          fontWeight: "semibold ",
+          color: themeColors.primary,
         },
       },
     },
