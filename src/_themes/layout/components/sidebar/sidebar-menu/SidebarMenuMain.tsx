@@ -24,19 +24,19 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
       <SidebarMenuItem
-        to="/employees"
+        to="/contacts"
         icon={<ContactsIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+        title={intl.formatMessage({ id: "MENU.CONTACTS" })}
       />
       <SidebarMenuItem
-        to="/Attendance"
+        to="/attendance"
         icon={<AccessTimeIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+        title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
       />
       <SidebarMenuItem
-        to="/LeaveManagement"
         icon={<PermContactCalendarIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
+        to="/employeeleave"
+        title={intl.formatMessage({ id: 'MENU.LEAVE_MGMT' })}
       />
       <SidebarMenuItem
         to="/Projects"
@@ -81,11 +81,7 @@ const SidebarMenuMain = () => {
         title="Settings"
         icon={<SettingsIcon />}
       />
-           <SidebarMenuItem
-        to="/employeeleave"
-        title={intl.formatMessage({ id: 'MENU.LEAVE_MGMT' })}
-        icon={<SettingsIcon />}
-      />
+
     </>
   );
 };

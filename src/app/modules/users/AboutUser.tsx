@@ -15,6 +15,7 @@ import UserInfo from "./UserInfo";
 import Skills from "./Skills";
 import Education from "./Education";
 import Certification from "./Certification";
+import Employment from "./Employment";
 
 export default function AboutUser() {
   const intl = useIntl();
@@ -210,12 +211,62 @@ export default function AboutUser() {
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>
             <Typography variant="h5" className="text-primary">
+              {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
+            </Typography>
+          </Stack>
+
+          <Stack>
+            <Employment />
+          </Stack>
+        </Stack>
+
+        <Stack
+          direction="row"
+          className="mb-2 d-flex justify-content-between align-items-center"
+        >
+          <Stack direction="row" alignItems={"center"}>
+            <School className="me-4" />
+            <Stack>
+              <Typography
+                variant="body1"
+                className="text-gray-800 text-hover-primary fw-semibold "
+              >
+                Codeji Infotech Private Limited
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <Typography variant="body2" className="fw-semibold d-block ">
+                  Graphic Era Hill, Dehradun
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className="text-muted fw-semibold d-block "
+                >
+                  <CalendarMonth sx={{ height: "14px" }} />
+                  Jan 2012- June 2016
+                </Typography>
+              </Stack>
+            </Stack>
+          </Stack>
+          <Stack direction="row">
+            <Stack>
+              <BasicModal />
+            </Stack>
+            <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
+              <DeleteOutline />
+            </Stack>
+          </Stack>
+        </Stack>
+      </Card>
+      <Card className="w-100 p-5">
+        <Stack direction="row" className="d-flex justify-content-between mb-4">
+          <Stack>
+            <Typography variant="h5" className="text-primary">
               {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
             </Typography>
           </Stack>
 
           <Stack>
-            <Education/>
+            <Education />
           </Stack>
         </Stack>
 
@@ -298,7 +349,7 @@ export default function AboutUser() {
           <Stack>
             <Typography variant="h5" className="text-primary">
               {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
-            </Typography>{" "}
+            </Typography>
           </Stack>
 
           <Stack>

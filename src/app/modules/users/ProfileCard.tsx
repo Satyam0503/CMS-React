@@ -23,10 +23,12 @@ export default function ProfileCard() {
         />
       </Stack>
       <Stack>
-        <Typography variant="h5" sx={{color:"white"}}>Ganesh Singh</Typography>
+        <Typography variant="h5" sx={{ color: "white" }}>
+          Ganesh Singh
+        </Typography>
         <Typography
           variant="body2"
-          className="rounded-pill p-1 bg-opacity-25 bg-white mt-1 text-center"
+          className="rounded-pill p-1 bg-opacity-25 bg-white mt-1 text-center text-white"
         >
           {intl.formatMessage({ id: "POSITION.DOT_NET" })}
         </Typography>
@@ -36,18 +38,26 @@ export default function ProfileCard() {
           <Typography variant="h2" className="text-white">
             27
           </Typography>
-          <Typography variant="body2">Years Old</Typography>
+          <Typography variant="body2" className="text-white">
+            Years Old
+          </Typography>
         </Stack>
         <Stack>
           <Typography variant="h2" className="text-white">
             O+
           </Typography>
-          <Typography variant="body2"> {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}</Typography>
+          <Typography variant="body2" className="text-white">
+            {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+          </Typography>
         </Stack>
       </Stack>
 
-      <Button variant="outlined" size="medium" className="border px-3">
-        <Typography variant="body2">
+      <Button
+        variant="outlined"
+        size="medium"
+        className="border px-3 bg-primary text-white"
+      >
+        <Typography variant="body2" className="text-white">
           <Download /> {intl.formatMessage({ id: "POSITION.DOT_NET" })}
         </Typography>
       </Button>

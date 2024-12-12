@@ -2,9 +2,9 @@ import {FC} from 'react'
 import {PageTitle} from '../../../_themes/layout/core'
 
 import { useIntl } from 'react-intl'
-import EmployeeLeaves from '../../modules/leaves/EmployeeLeaves'
+import {EmployeeLeaves} from '../../modules/leaves/EmployeeLeaves'
 
-const LeaveManagement: FC = () => {
+export const LeaveManagement: FC = () => {
   const intl = useIntl()
   return (
     <>
@@ -15,4 +15,4 @@ const LeaveManagement: FC = () => {
   )
 }
 
-export default LeaveManagement
+
