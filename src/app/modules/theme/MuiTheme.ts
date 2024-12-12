@@ -12,7 +12,7 @@ const themeColors = {
   territory: "636D79",
 };
 
-const colors = {
+export const colors = {
   shadows: {
     medium:
       "0px 1px 4px rgba(85, 105, 255, 0.25), 0px 3px 12px 2px rgba(85, 105, 255, 0.35)",
@@ -1062,3 +1062,25 @@ export const MuiTheme = createTheme({
     "none",
   ],
 });
+
+export function setColorsAsCSSVariables() {
+  Object.entries(colors).forEach(([group, values]) => {
+    if (typeof values === "object") {
+      Object.entries(values).forEach(([key, value]) => {
+        if (typeof value === "object") {
+          Object.entries(value).forEach(([subKey, subValue]) => {
+            document.documentElement.style.setProperty(
+              `--${group}-${key}-${subKey}`,
+              subValue as string
+            );
+          });
+        } else {
+          document.documentElement.style.setProperty(
+            `--${group}-${key}`,
+            value as string
+          );
+        }
+      });
+    }
+  });
+}
