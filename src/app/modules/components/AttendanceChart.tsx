@@ -3,7 +3,6 @@ import ApexCharts, { ApexOptions } from "apexcharts";
 import { useThemeMode } from "../../../_themes/partials/layout/theme-mode/ThemeModeProvider";
 
 import { Card, Grid, Stack, Typography } from "@mui/material";
-import { KTIcon } from "../../../_themes/helpers";
 import { getCSSVariableValue } from "../../../_themes/assets/ts/_utils";
 import { useIntl } from "react-intl";
 

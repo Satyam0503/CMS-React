@@ -67,6 +67,7 @@
   "LEAVE.ALLOTTED": "Allotted",
   "LEAVE.TAKEN": "Taken",
   "LEAVE.AVAILABLE": "Available",
+  "APPLICATION.DURATION": "Duration",
   "PROFILE.STATUS": "Status",
   "PROFILE.ACTION": "Action",
   "PROFILE.COUNT": "Count",
@@ -107,6 +108,23 @@
   "APPLICATION.HALF.DAY": "Half Day",
   "APPLICATION.NOS": " Total number of days",
   "APPLICATION.REASON": "Reason",
+
+  "PROMOTION.DIRECTOR": "Promoted as Programming Director",
+  "POSITION.DIRECTOR": "Programming Director",
+
+  "PROMOTION.SR_PROJECT_MANAGER": "Promoted as Senior Project Manager",
+  "POSITION.SR_PROJ_MANAGER": "Senior Project Manager",
+  "PROMOTION.PROJ_MANAGER": "Promoted as Project Manager",
+  "POSITION.PROJ_MANAGER": "Project Manager",
+
+  "PROMOTION.TEAM_LEAD": "Promoted as Team Lead",
+  "POSITION.TL": "Team Lead",
+
+  "PROMOTION.SR_DEVELOPER": "Promoted as Senior Developer",
+  "POSITION.SR_DEVELOPER": "Senior Developer",
+
+  "PROMOTION.JOINED": "Joined Codeji",
+  "POSITION.JR_DEVELOPER": "Junior Developer",
 
   "MENU.NEW": "new",
   "MENU.ACTIONS": "Actions",

@@ -65,33 +65,39 @@ export const LeaveApplication: FC = () => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "PROFILE.TYPE" })}
+                  {intl.formatMessage({ id: "LEAVE.TYPE" })}
                 </Typography>
                 <TextField fullWidth />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "PROFILE.AVAILABLE" })}
+                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
                 </Typography>
                 <TextField fullWidth />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "APPLICATION.DURATION" })}
+                </Typography>
+                <TextField fullWidth />
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "APPLICATION.START" })}
                 </Typography>
                 <CustomisedDatePicker />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "APPLICATION.END" })}
                 </Typography>
                 <CustomisedDatePicker />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  {intl.formatMessage({ id: "APPLICATION.HALF.DAY" })}
-                </Typography>
-                <TextField fullWidth />
+              <Grid item xs={12} sm={12}>
+                <Button>
+                  {" "}
+                  Add <Add />
+                </Button>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">

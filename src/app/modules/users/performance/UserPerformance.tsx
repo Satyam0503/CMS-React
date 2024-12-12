@@ -3,12 +3,14 @@ import { FC } from "react";
 
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../components/DonutApexChart";
+import Feedback from "./Feedback";
+import Achievements from "./Achievements";
 
 export const UserPerformance: FC = () => {
   const intl = useIntl();
   return (
     <>
-      <Grid container>
+      <Grid container className="d-flex gap-4">
         <Card className="p-5">
           <Typography variant="h5">
             {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
@@ -56,6 +58,8 @@ export const UserPerformance: FC = () => {
             </Stack>
           </Stack>
         </Card>
+        <Feedback />
+        <Achievements />
       </Grid>
     </>
   );

@@ -60,12 +60,11 @@ export default function BasicTabs() {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          <Tab label="About" {...a11yProps(0)} className="px-12" />
-          <Tab label="Leave Tracker" {...a11yProps(1)} className="px-13" />
-          <Tab label="Performance" {...a11yProps(2)} className="px-12" />
-          <Tab label="Work History" {...a11yProps(3)} className="px-13" />
-          <Tab label="Documents" {...a11yProps(4)} className="px-12" />
-          <Tab label="Settings" {...a11yProps(5)} className="px-12" />
+          <Tab label="About" {...a11yProps(0)} className="px-17" />
+          <Tab label="Leave Tracker" {...a11yProps(1)} className="px-16" />
+          <Tab label="Performance" {...a11yProps(2)} className="px-17" />
+          <Tab label="Work History" {...a11yProps(3)} className="px-17" />
+          <Tab label="Settings" {...a11yProps(4)} className="px-17" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -82,9 +81,6 @@ export default function BasicTabs() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
         Item Two
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={5}>
-        Item Three
       </CustomTabPanel>
     </Box>
   );

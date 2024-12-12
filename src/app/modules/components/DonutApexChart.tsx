@@ -57,7 +57,8 @@ const chartOptions: ApexOptions = {
   },
   labels: ["Casual", "Medical", "Earned", "Unpaid"],
   legend: {
-    show: false,
+    show: true,
+    position: "bottom",
   },
   stroke: {
     width: 0,
