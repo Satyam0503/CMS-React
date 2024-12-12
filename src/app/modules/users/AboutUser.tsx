@@ -23,7 +23,7 @@ export default function AboutUser() {
     console.info("You clicked the delete icon.");
   };
   return (
-    <Grid container className="d-flex gap-5 mt-2">
+    <Grid container className="d-flex gap-5 mt-2 ">
       <Card className="p-5">
         <Stack direction="row" className="d-flex justify-content-between mb-4">
           <Stack>

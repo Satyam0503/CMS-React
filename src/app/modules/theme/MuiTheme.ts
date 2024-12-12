@@ -451,6 +451,7 @@ export const MuiTheme = createTheme({
           textTransform: "none",
           paddingLeft: 16,
           paddingRight: 16,
+          background: themeColors.primary,
 
           ".MuiSvgIcon-root": {
             transition: "all .2s",
@@ -503,7 +504,9 @@ export const MuiTheme = createTheme({
         root: {
           borderRadius: 6,
           background: themeColors.white,
-          // border: ' 0px 0px 5px 0px solid ' + colors.primary.dark,
+          "&:focus, &.Mui-selected, &.Mui-selected:hover": {
+            borderBottom: " 2px solid " + colors.alpha.primary[500],
+          },
         },
       },
     },
@@ -557,6 +560,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiDivider: {
       styleOverrides: {
         root: {

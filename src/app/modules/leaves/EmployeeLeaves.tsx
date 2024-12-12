@@ -5,7 +5,7 @@ import { useIntl } from "react-intl";
 import IconStat from "../components/IconStat";
 import { colors } from "../theme/MuiTheme";
 
-const EmployeeLeaves: FC = () => {
+export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
   return (
     <>
@@ -22,5 +22,3 @@ const EmployeeLeaves: FC = () => {
     </>
   );
 };
-
-export default EmployeeLeaves;

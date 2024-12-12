@@ -4,6 +4,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import AboutUser from "./AboutUser";
 import { LeaveTracker } from "./leavetracker/LeaveTracker";
+import { Grid } from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -15,15 +16,16 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
+    <Grid
+      container
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
+      {value === index && <Box sx={{ p: 0 }}>{children}</Box>}
+    </Grid>
   );
 }
 
