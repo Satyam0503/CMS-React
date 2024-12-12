@@ -353,23 +353,25 @@ export const MuiTheme = createTheme({
     },
     MuiChip: {
       styleOverrides: {
-        colorSecondary: {
-          background: themeColors.primary,
-          color: colors.alpha.neutral[100],
+        root: {
+          borderRadius: 4,
+          background: colors.alpha.primary[100],
+          color: colors.alpha.primary[500],
+          deleteIcon: {
+            color: colors.alpha.primary[900],
+          },
 
           "&:hover": {
-            background: themeColors.primary,
+            background: colors.alpha.primary[500],
+            color: colors.alpha.primary[200],
           },
         },
         deleteIcon: {
-          color: themeColors.primary,
-
-          "&:hover": {
-            color: themeColors.white,
-          },
+          color: colors.alpha.primary[500],
         },
       },
     },
+
     MuiAccordion: {
       styleOverrides: {
         root: {
@@ -452,6 +454,10 @@ export const MuiTheme = createTheme({
           paddingLeft: 16,
           paddingRight: 16,
           background: themeColors.primary,
+          "&:hover, &.MuiSelected": {
+            backgroundColor: colors.alpha.primary[700],
+            color: themeColors.white,
+          },
 
           ".MuiSvgIcon-root": {
             transition: "all .2s",
@@ -461,7 +467,7 @@ export const MuiTheme = createTheme({
           marginRight: -8,
         },
         containedSecondary: {
-          backgroundColor: themeColors.primary,
+          backgroundColor: colors.alpha.primary[500],
           color: themeColors.white,
           border: "1px solid " + colors.alpha.neutral[300],
         },
@@ -532,8 +538,8 @@ export const MuiTheme = createTheme({
         root: {
           borderRadius: 8,
           padding: 8,
-          color: colors.alpha.neutral[500],
-          background: colors.alpha.neutral[100],
+          color: colors.alpha.primary[500],
+          background: colors.alpha.primary[100],
 
           "& .MuiTouchRipple-root": {
             borderRadius: 8,
@@ -661,10 +667,12 @@ export const MuiTheme = createTheme({
             },
           },
           "& .MuiListItem-root.MuiButtonBase-root.Mui-selected": {
-            backgroundColor: alpha(themeColors.primary, 0.4),
+            color: colors.alpha.primary[100],
+            background: themeColors.primary,
           },
           "& .MuiMenuItem-root.MuiButtonBase-root:active": {
-            backgroundColor: alpha(themeColors.primary, 0.4),
+            color: colors.alpha.primary[100],
+            background: themeColors.primary,
           },
           "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
             opacity: 0.2,
@@ -762,12 +770,12 @@ export const MuiTheme = createTheme({
           background: "transparent",
           transition: "all .2s",
 
-          "&:hover, &:active, &.active, &.Mui-selected": {
-            color: colors.alpha.neutral[100],
-            background: alpha(themeColors.primary, 0.4),
+          "&:hover, &:active, &.active": {
+            color: colors.alpha.primary[500],
+            background: colors.alpha.primary[100],
           },
           "&.Mui-selected:hover": {
-            background: alpha(themeColors.primary, 0.4),
+            background: colors.alpha.primary[500],
           },
         },
       },
@@ -777,6 +785,7 @@ export const MuiTheme = createTheme({
         root: {
           "&.MuiButtonBase-root": {
             color: themeColors.primary,
+            background: themeColors.primary,
 
             "&:hover, &:active, &.active, &.Mui-selected": {
               color: colors.alpha.neutral[100],

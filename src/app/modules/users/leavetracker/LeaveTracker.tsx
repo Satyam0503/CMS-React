@@ -1,4 +1,4 @@
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 
 import { useIntl } from "react-intl";
@@ -7,6 +7,7 @@ import { AttendanceChart } from "../../components/AttendanceChart";
 import CustomisedTable from "../../components/CustomisedTable";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { LeaveApplication } from "./LeaveApplication";
+import { Block } from "@mui/icons-material";
 
 export const LeaveTracker: FC = () => {
   const intl = useIntl();
@@ -24,16 +25,99 @@ export const LeaveTracker: FC = () => {
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <DonutApexChart />
+            <Card className="p-5 w-100">
+              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                <Typography variant="h6">
+                  {intl.formatMessage({ id: "LEAVE.CL" })}
+                </Typography>
+                <Typography variant="h4">5</Typography>
+              </Stack>
+
+              <DonutApexChart />
+              <Stack
+                spacing={4}
+                direction="row"
+                className="my-4 d-flex justify-content-center"
+              >
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
+                </Typography>
+              </Stack>
+            </Card>
           </Grid>
           <Grid item xs={6}>
-            <DonutApexChart />
+            <Card className="p-5 w-100">
+              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                <Typography variant="h6">
+                  {intl.formatMessage({ id: "LEAVE.ML" })}
+                </Typography>
+                <Typography variant="h4">4</Typography>
+              </Stack>
+
+              <DonutApexChart />
+              <Stack
+                spacing={4}
+                direction="row"
+                className="my-4 d-flex justify-content-center"
+              >
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
+                </Typography>
+              </Stack>
+            </Card>
           </Grid>
           <Grid item xs={6}>
-            <DonutApexChart />
+            <Card className="p-5 w-100">
+              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                <Typography variant="h6">
+                  {intl.formatMessage({ id: "LEAVE.EL" })}
+                </Typography>
+                <Typography variant="h4">5</Typography>
+              </Stack>
+
+              <DonutApexChart />
+              <Stack
+                spacing={4}
+                direction="row"
+                className="my-4 d-flex justify-content-center"
+              >
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
+                </Typography>
+              </Stack>
+            </Card>
           </Grid>
           <Grid item xs={6}>
-            <DonutApexChart />
+            <Card className="p-5 w-100">
+              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                <Typography variant="h6">
+                  {intl.formatMessage({ id: "LEAVE.UNPAID" })}
+                </Typography>
+                <Typography variant="h4">
+                  <Block />
+                </Typography>
+              </Stack>
+
+              <DonutApexChart />
+              <Stack
+                spacing={4}
+                direction="row"
+                className="my-4 d-flex justify-content-center"
+              >
+                <Typography variant="subtitle2">
+                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
+                </Typography>
+              </Stack>
+            </Card>
           </Grid>
         </Grid>
         <Grid container>

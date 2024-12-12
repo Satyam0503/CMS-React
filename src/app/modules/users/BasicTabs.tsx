@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import AboutUser from "./AboutUser";
 import { LeaveTracker } from "./leavetracker/LeaveTracker";
 import { Grid } from "@mui/material";
+import { UserPerformance } from "./performance/UserPerformance";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,7 +74,9 @@ export default function BasicTabs() {
       <CustomTabPanel value={value} index={1}>
         <LeaveTracker />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}></CustomTabPanel>
+      <CustomTabPanel value={value} index={2}>
+        <UserPerformance />
+      </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
         Item One
       </CustomTabPanel>

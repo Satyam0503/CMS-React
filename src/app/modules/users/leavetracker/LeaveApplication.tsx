@@ -79,13 +79,13 @@ export const LeaveApplication: FC = () => {
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "APPLICATION.START" })}
                 </Typography>
-                <TextField fullWidth />
+                <CustomisedDatePicker />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "APPLICATION.END" })}
                 </Typography>
-                <TextField fullWidth />
+                <CustomisedDatePicker />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">
@@ -108,7 +108,6 @@ export const LeaveApplication: FC = () => {
             </Grid>
             <Grid container className="d-flex justify-content-end mt-4 gap-2">
               <Button variant="contained">Cancel</Button>
-              <Button variant="contained">Add New</Button>
               <Button variant="contained">Save</Button>
             </Grid>
           </Box>

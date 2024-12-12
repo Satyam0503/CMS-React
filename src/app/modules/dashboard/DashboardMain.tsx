@@ -45,7 +45,31 @@ export default function DashboardMain() {
           <Grid item xs={12} md={8} className="d-flex flex-column gap-6">
             <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
               <Grid item xs={12} sm={6} className="h-100">
-                <DonutApexChart />
+                <Card className="p-5 w-100">
+                  <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                    <Typography variant="h6">
+                      {intl.formatMessage({ id: "MENU.TOTAL_EMP" })}
+                    </Typography>
+                    <Typography variant="h4">50</Typography>
+                  </Stack>
+
+                  <DonutApexChart />
+                  <Stack
+                    spacing={4}
+                    direction="row"
+                    className="my-4 d-flex justify-content-center"
+                  >
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "EMP.MALE" })}
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "EMP.FEMALE" })}
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "MENU.OTHER" })}
+                    </Typography>
+                  </Stack>
+                </Card>
               </Grid>
               <Grid item xs={12} sm={6} className="h-100">
                 <OpenPositions />
@@ -55,8 +79,35 @@ export default function DashboardMain() {
               <Grid item xs={12} md={6} className="h-100">
                 <StackedBarChart />
               </Grid>
-              <Grid item xs={12} md={6} className="h-100">
-                <DonutApexChart />
+              <Grid item xs={12} md={6}>
+                <Card className="p-5 w-100">
+                  <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+                    <Typography variant="h6">
+                      {intl.formatMessage({ id: "MENU.DEPT" })}
+                    </Typography>
+                    <Typography variant="h4">4</Typography>
+                  </Stack>
+
+                  <DonutApexChart />
+                  <Stack
+                    spacing={2}
+                    direction="row"
+                    className="my-4 d-flex justify-content-center"
+                  >
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "DEPT.DEVELOPMENT" })}
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "DEPT.TESTING" })}
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "DEPT.DESIGN" })}
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {intl.formatMessage({ id: "DEPT.HR" })}
+                    </Typography>
+                  </Stack>
+                </Card>
               </Grid>
             </Stack>
             <Stack>

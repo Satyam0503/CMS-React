@@ -23,17 +23,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 @include generate-color-classes($color-list);
 
 .skills-chips {
-  .MuiButtonBase-root {
-    background-color: $purple-100 !important ;
-    color: $primary !important;
-    border-radius: 4px !important;
-
-    &:hover {
-      background-color: $primary !important ;
-      color: $white !important;
-      svg {
-        color: $white !important;
-      }
-    }
+  svg :hover {
+    color: $white !important;
   }
 }

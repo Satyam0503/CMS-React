@@ -15,7 +15,28 @@ export default function UserProfile() {
         </Stack>
 
         <Stack>
-          <DonutApexChart />
+          <Card className="p-5 w-100">
+            <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+              <Typography variant="h6">
+                {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
+              </Typography>
+              <Typography variant="h4">4</Typography>
+            </Stack>
+
+            <DonutApexChart />
+            <Stack
+              spacing={2}
+              direction="row"
+              className="my-4 d-flex justify-content-center"
+            >
+              <Typography variant="subtitle2">
+                {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
+              </Typography>
+              <Typography variant="subtitle2">
+                {intl.formatMessage({ id: "LEAVE.TAKEN" })}
+              </Typography>
+            </Stack>
+          </Card>
         </Stack>
       </Grid>
       <Grid item xs={12} md={9}>
@@ -32,7 +53,6 @@ export default function UserProfile() {
               />
             </Stack>
             <Box>
-              
               <Typography variant="h2">14</Typography>
               <Typography variant="body2">
                 {intl.formatMessage({ id: "PROFILE.EXP" })}
@@ -71,7 +91,6 @@ export default function UserProfile() {
           </Grid>
         </Stack>
         <Stack className="w-100">
-          
           <BasicTabs />
           {/* <AboutUser /> */}
         </Stack>
