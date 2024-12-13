@@ -12,7 +12,7 @@ export const UserPerformance: FC = () => {
     <>
       <Grid container className="d-flex gap-4">
         <Card className="p-5">
-          <Typography variant="h5">
+          <Typography variant="h5" className="mb-3">
             {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
           </Typography>
           <Stack
@@ -20,7 +20,7 @@ export const UserPerformance: FC = () => {
             sx={{ display: "flex", justifyContent: "space-between" }}
           >
             <Stack>
-              <DonutApexChart />
+            <DonutApexChart series={[132,323]} labels={['Present','Holidays']} />
               <Stack
                 spacing={4}
                 direction="row"
@@ -30,22 +30,10 @@ export const UserPerformance: FC = () => {
               </Stack>
             </Stack>
             <Stack>
-              <DonutApexChart />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}
-                </Typography>
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
-                </Typography>
-              </Stack>
+            <DonutApexChart series={[132,323]} labels={['Present','Holidays']} />
             </Stack>
             <Stack>
-              <DonutApexChart />
+              <DonutApexChart series={[4]} labels={['Rating']} showLabelOnHover={true}/>
               <Stack
                 spacing={4}
                 direction="row"

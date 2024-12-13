@@ -11,6 +11,11 @@ import { Block } from "@mui/icons-material";
 
 export const LeaveTracker: FC = () => {
   const intl = useIntl();
+  const leavesLabels = ['Pending','Taken'];
+  const casualLeaves =[2,2];
+  const medicalLeaves =[3,1];
+  const earnedLeaves =[5,10];
+  const unpaidLeaves =[0,12];
   return (
     <>
       <Grid container className="d-flex flex-column gap-4">
@@ -32,20 +37,7 @@ export const LeaveTracker: FC = () => {
                 </Typography>
                 <Typography variant="h4">5</Typography>
               </Stack>
-
-              <DonutApexChart />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
-                </Typography>
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
-                </Typography>
-              </Stack>
+              <DonutApexChart series={casualLeaves}  labels={leavesLabels} />
             </Card>
           </Grid>
           <Grid item xs={6}>
@@ -56,20 +48,7 @@ export const LeaveTracker: FC = () => {
                 </Typography>
                 <Typography variant="h4">4</Typography>
               </Stack>
-
-              <DonutApexChart />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
-                </Typography>
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
-                </Typography>
-              </Stack>
+              <DonutApexChart series={medicalLeaves} labels={leavesLabels}/>
             </Card>
           </Grid>
           <Grid item xs={6}>
@@ -81,19 +60,7 @@ export const LeaveTracker: FC = () => {
                 <Typography variant="h4">5</Typography>
               </Stack>
 
-              <DonutApexChart />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
-                </Typography>
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
-                </Typography>
-              </Stack>
+              <DonutApexChart series={earnedLeaves} labels={leavesLabels}/>
             </Card>
           </Grid>
           <Grid item xs={6}>
@@ -106,17 +73,7 @@ export const LeaveTracker: FC = () => {
                   <Block />
                 </Typography>
               </Stack>
-
-              <DonutApexChart />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "LEAVE.TAKEN" })}
-                </Typography>
-              </Stack>
+              <DonutApexChart series={unpaidLeaves} labels={leavesLabels}/>
             </Card>
           </Grid>
         </Grid>
