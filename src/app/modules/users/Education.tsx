@@ -61,8 +61,8 @@ export default function Education() {
             </Typography>
           </Stack>
           <Stack>
-            <Typography>Title</Typography>
-            <TextField variant="outlined"></TextField>
+            <Typography variant="body1">Title</Typography>
+            <TextField variant="outlined" fullWidth />
           </Stack>
           <Grid container className="d-flex" spacing={2}>
             <Grid item xs={12} md={6} className="w-100">
@@ -70,17 +70,17 @@ export default function Education() {
               <CustomisedDatePicker />
             </Grid>
             <Grid item xs={12} md={6} className="w-100">
-              <Typography>End date</Typography>
+              <Typography variant="body1">End date</Typography>
               <CustomisedDatePicker />
             </Grid>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6} sx={{ width: "100%" }}>
-              <Typography>College Name</Typography>
-              <TextField fullWidth />
+              <Typography variant="body1">College Name</Typography>
+              <TextField variant="outlined" fullWidth />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography>Type</Typography>
+              <Typography variant="body1">Type</Typography>
 
               <FormControl fullWidth>
                 <Select

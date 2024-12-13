@@ -20,6 +20,8 @@ import {
 } from "@mui/icons-material";
 import EmployeeTable from "./EmployeeTable";
 import AddEmployee from "./AddEmployee";
+import DownloadCV from "./DownloadCV";
+import SortEmployee from "./SortEmployee";
 
 type Props = {
   className: string;
@@ -57,16 +59,9 @@ export default function Employees() {
               />
             </Stack>
             <Stack direction="row" spacing={1}>
-              <Button className="btn btn-sm bg-white border btn-active-light-primary">
-                <Sort style={{ color: "black" }} />
-              </Button>
-              <Button className="btn btn-sm bg-white border btn-active-light-primary">
-                <AddEmployee />
-              </Button>
-
-              <Button className="btn btn-sm bg-white border btn-active-light-primary">
-                <Download style={{ color: "black" }} />
-              </Button>
+              <SortEmployee />
+              <AddEmployee />
+              <DownloadCV />
             </Stack>
           </Stack>
           <Stack sx={{ mt: ".5rem" }}>

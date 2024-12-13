@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { Download, Edit } from "@mui/icons-material";
+import { Download, Edit, Image, Visibility } from "@mui/icons-material";
 
 export default function ProfileCard() {
   const intl = useIntl();
@@ -26,9 +26,21 @@ export default function ProfileCard() {
           style={{ height: "128px", width: "128px", top: "10px" }}
         />
 
-        <Button className="coverChange">
-          <Edit />
-        </Button>
+        <Stack className="coverChange">
+          <Image
+            sx={{
+              border: "1px solid white",
+              borderRadius: "4px",
+              marginRight: "5px",
+            }}
+          />
+          <Visibility
+            sx={{
+              border: "1px solid white",
+              borderRadius: "4px",
+            }}
+          />
+        </Stack>
       </Stack>
 
       <Stack>

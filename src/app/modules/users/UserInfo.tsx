@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useIntl } from "react-intl";
+import CustomisedDatePicker from "../components/CustomisedDatePicker";
 
 export default function UserInfo() {
   const style = {
@@ -53,24 +54,25 @@ export default function UserInfo() {
             </Stack>
             <Grid container spacing={2}>
               <Grid item xs={6}>
+                <Typography variant="body1">Email address</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Email Address"
                   variant="outlined"
                 />
               </Grid>
               <Grid item xs={6}>
+                <Typography variant="body1">Phone number</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Phone number"
                   variant="outlined"
                 />
               </Grid>
 
-              <Grid item xs={6}>
-                <TextField
+              <Grid item xs={6} className="pt-2">
+                <Typography variant="body1">Date of birth</Typography>
+                <CustomisedDatePicker
                   sx={{ width: "100%" }}
                   id="outlined-basic"
                   label="Date of birth"
@@ -78,6 +80,7 @@ export default function UserInfo() {
                 />
               </Grid>
               <Grid item xs={6}>
+                <Typography variant="body1">Gender</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
@@ -87,6 +90,7 @@ export default function UserInfo() {
               </Grid>
 
               <Grid item xs={6}>
+                <Typography variant="body1">Languages Known</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
@@ -95,35 +99,35 @@ export default function UserInfo() {
                 />
               </Grid>
               <Grid item xs={6}>
+                <Typography variant="body1">Personal Email</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Personal Email"
                   variant="outlined"
                 />
               </Grid>
 
               <Grid item xs={6}>
+                <Typography variant="body1">Emergency contact</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Emergency Contact"
                   variant="outlined"
                 />
               </Grid>
               <Grid item xs={6}>
+                <Typography variant="body1">Blood Group</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Blood Group"
                   variant="outlined"
                 />
               </Grid>
               <Grid item xs={12}>
+                <Typography variant="body1">Address</Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Address"
                   variant="outlined"
                 />
               </Grid>

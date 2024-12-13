@@ -78,7 +78,7 @@ export default function Skills() {
           </Grid>
           <Grid container className="d-flex justify-content-end gap-2 ">
             <Button variant="contained">Cancel</Button>
-            <Button variant="contained">Save</Button>
+            <Button variant="contained">Update</Button>
           </Grid>
         </Box>
       </Modal>

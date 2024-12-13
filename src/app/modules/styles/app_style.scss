@@ -30,13 +30,23 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 
 .coverChange {
   position: absolute !important;
-  left: 45px;
-  top: 80px;
+  left: 50px !important;
+  top: 60px;
   text-align: center;
   opacity: 0;
   transition: opacity 0.35s ease;
+  display: flex;
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 2px;
 }
 
 .container:hover .coverChange {
   opacity: 1;
+  background-color: transparent !important;
+}
+
+.container:hover .overlay {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
 }

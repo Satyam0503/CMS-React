@@ -75,7 +75,7 @@ export const LeaveApplication: FC = () => {
                 </Typography>
                 <TextField fullWidth />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={4} className="pt-8">
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "APPLICATION.DURATION" })}
                 </Typography>
