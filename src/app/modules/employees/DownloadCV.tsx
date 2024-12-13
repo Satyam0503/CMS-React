@@ -37,7 +37,7 @@ export default function DownloadCV() {
         onClick={() => handleOpen()}
         className="btn btn-sm bg-white border btn-active-light-primary p-1"
       >
-        <DownloadCV />
+        <Download />
       </Stack>
     </Grid>
   );
