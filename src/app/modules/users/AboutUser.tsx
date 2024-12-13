@@ -249,7 +249,7 @@ export default function AboutUser() {
           </Stack>
           <Stack direction="row">
             <Stack>
-              <BasicModal />
+              <Employment />
             </Stack>
             <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
               <DeleteOutline />
@@ -299,7 +299,7 @@ export default function AboutUser() {
           </Stack>
           <Stack direction="row">
             <Stack>
-              <BasicModal />
+              <Education />
             </Stack>
             <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
               <DeleteOutline />
@@ -336,7 +336,7 @@ export default function AboutUser() {
           </Stack>
           <Stack direction="row">
             <Stack>
-              <BasicModal />
+              <Education />
             </Stack>
             <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
               <DeleteOutline />
@@ -388,7 +388,7 @@ export default function AboutUser() {
           </Stack>
           <Stack direction="row">
             <Stack>
-              <BasicModal />
+              <Certification />
             </Stack>
             <Stack className="btn btn-sm bg-white border btn-active-light-danger ms-3 p-1">
               <DeleteOutline />

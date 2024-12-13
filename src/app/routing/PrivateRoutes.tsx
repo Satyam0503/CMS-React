@@ -10,11 +10,11 @@ import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import Test from "../pages/test";
 import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
-import {LeaveManagement} from "../pages/leavemanagement/LeaveMangement";
+import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
-import Contacts from "../modules/contacts/Contacts";
-
-
+import Contacts from "../modules/employees/Employees";
+import Employess from "../modules/employees/Employees";
+import Employees from "../modules/employees/Employees";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -35,13 +35,13 @@ const PrivateRoutes = () => {
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
-        <Route path='test' element={<Test />} />
-        <Route path='userdashboard' element={<UserDashboard />} />
-        <Route path='myprofile' element={<ProfilePageWrapper/>} />
-        <Route path='employeeleave' element={<LeaveManagement/>} />
-        <Route path='attendance' element={<EmployeeAttendance/>} />
-        <Route path='contacts' element={<Contacts/>} />
-        
+        <Route path="test" element={<Test />} />
+        <Route path="userdashboard" element={<UserDashboard />} />
+        <Route path="myprofile" element={<ProfilePageWrapper />} />
+        <Route path="employeeleave" element={<LeaveManagement />} />
+        <Route path="attendance" element={<EmployeeAttendance />} />
+        <Route path="employees" element={<Employees />} />
+
         {/* Lazy Modules */}
         <Route
           path="crafted/pages/profile/*"

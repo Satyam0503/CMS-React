@@ -1,4 +1,4 @@
-import { Padding } from "@mui/icons-material";
+import { BorderTop, Padding } from "@mui/icons-material";
 import { alpha, createTheme, lighten, darken } from "@mui/material";
 
 const themeColors = {
@@ -169,7 +169,7 @@ export const MuiTheme = createTheme({
     },
     background: {
       paper: themeColors.white,
-      default: colors.layout.general.bodyBg,
+      default: themeColors.white,
     },
     action: {
       active: colors.alpha.neutral[100],
@@ -852,13 +852,13 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         head: {
           background: themeColors.white,
-          color: themeColors.white,
+          color: themeColors.primary,
         },
         root: {
           transition: "background-color .2s",
 
           "&.MuiTableRow-hover:hover": {
-            backgroundColor: colors.alpha.primary[500],
+            backgroundColor: colors.alpha.primary[100],
           },
         },
       },
@@ -866,14 +866,15 @@ export const MuiTheme = createTheme({
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottomColor: colors.alpha.primary[200],
           fontSize: 14,
+          border: 0,
         },
         head: {
           textTransform: "none",
           fontSize: 13,
           fontWeight: "semibold ",
           color: themeColors.primary,
+          borderBottom: "1px solid " + colors.alpha.neutral[300],
         },
       },
     },

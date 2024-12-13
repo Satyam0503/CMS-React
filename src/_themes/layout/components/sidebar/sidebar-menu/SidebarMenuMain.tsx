@@ -24,9 +24,9 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
       <SidebarMenuItem
-        to="/contacts"
+        to="/employees"
         icon={<ContactsIcon />}
-        title={intl.formatMessage({ id: "MENU.CONTACTS" })}
+        title={intl.formatMessage({ id: "MENU.EMP" })}
       />
       <SidebarMenuItem
         to="/attendance"
@@ -36,7 +36,7 @@ const SidebarMenuMain = () => {
       <SidebarMenuItem
         icon={<PermContactCalendarIcon />}
         to="/employeeleave"
-        title={intl.formatMessage({ id: 'MENU.LEAVE_MGMT' })}
+        title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
       />
       <SidebarMenuItem
         to="/Projects"
@@ -81,7 +81,6 @@ const SidebarMenuMain = () => {
         title="Settings"
         icon={<SettingsIcon />}
       />
-
     </>
   );
 };
