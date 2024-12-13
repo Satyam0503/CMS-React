@@ -1,17 +1,10 @@
-import {FC} from 'react'
+import { FC } from "react";
 
-
-import { useIntl } from 'react-intl'
-
+import { useIntl } from "react-intl";
 
 const EmployeeAttendance: FC = () => {
-  const intl = useIntl()
-  return (
-    <>
+  const intl = useIntl();
+  return <>hhhhhhhh</>;
+};
 
-     hhhhhhhh
-    </>
-  )
-}
-
-export default EmployeeAttendance
+export default EmployeeAttendance;

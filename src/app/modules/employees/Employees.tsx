@@ -1,0 +1,74 @@
+import {
+  Typography,
+  Card,
+  Grid,
+  Stack,
+  Button,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
+import { useIntl } from "react-intl";
+import { KTIcon, toAbsoluteUrl } from "../../../_themes/helpers";
+import {
+  AccountCircle,
+  Add,
+  Download,
+  Filter,
+  Filter1,
+  SearchOutlined,
+  Sort,
+} from "@mui/icons-material";
+import EmployeeTable from "./EmployeeTable";
+import AddEmployee from "./AddEmployee";
+import DownloadCV from "./DownloadCV";
+import SortEmployee from "./SortEmployee";
+
+type Props = {
+  className: string;
+};
+
+export default function Employees() {
+  const intl = useIntl();
+  return (
+    <>
+      <Grid container sx={{ maxWidth: "1200px", m: "auto" }} spacing={2}>
+        <Stack>
+          <Typography variant="h4" className="mb-2">
+            {intl.formatMessage({ id: "MENU.EMP" })}
+          </Typography>
+        </Stack>
+
+        <Card sx={{ p: "15px", width: "100%" }}>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+          >
+            <Stack>
+              <TextField
+                id="input-with-icon-textfield"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchOutlined />
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                placeholder="Search something ..."
+              />
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <SortEmployee />
+              <AddEmployee />
+              <DownloadCV />
+            </Stack>
+          </Stack>
+          <Stack sx={{ mt: ".5rem" }}>
+            <EmployeeTable />
+          </Stack>
+        </Card>
+      </Grid>
+    </>
+  );
+}

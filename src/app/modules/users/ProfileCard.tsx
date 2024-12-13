@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Grid,
   ListItem,
   ListItemText,
   Stack,
@@ -8,20 +9,40 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { Download } from "@mui/icons-material";
+import { Download, Edit, Image, Visibility } from "@mui/icons-material";
 
 export default function ProfileCard() {
   const intl = useIntl();
   return (
     <Card className="bg-primary text-white d-flex flex-column align-items-center p-6 w-100 gap-6">
-      <Stack className="rounded-circle border p-2">
+      <Stack
+        className="container  position-relative border rounded-circle align-content-center"
+        style={{ height: "150px", width: "150px" }}
+      >
         <img
           src={toAbsoluteUrl("media/avatars/300-6.jpg")}
           alt=""
-          className="rounded-circle"
-          style={{ height: "128px" }}
+          className="rounded-circle position-absolute   "
+          style={{ height: "128px", width: "128px", top: "10px" }}
         />
+
+        <Stack className="coverChange">
+          <Image
+            sx={{
+              border: "1px solid white",
+              borderRadius: "4px",
+              marginRight: "5px",
+            }}
+          />
+          <Visibility
+            sx={{
+              border: "1px solid white",
+              borderRadius: "4px",
+            }}
+          />
+        </Stack>
       </Stack>
+
       <Stack>
         <Typography variant="h5" sx={{ color: "white" }}>
           Ganesh Singh
