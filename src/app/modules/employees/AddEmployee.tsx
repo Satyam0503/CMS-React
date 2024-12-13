@@ -32,7 +32,7 @@ export default function AddEmployee() {
   const handleClose = () => setOpen(false);
 
   return (
-    <Grid container>
+    <Grid container className="pb-10">
       <Stack
         onClick={() => handleOpen()}
         className="btn btn-sm bg-white border btn-active-light-primary p-1"
