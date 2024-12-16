@@ -1,22 +1,52 @@
-
-.skills-chips{
-    .MuiButtonBase-root{
-        background-color: $purple-100  !important ;
-        color: $primary !important;
-        border-radius: 4px !important;
-    
-       &:hover{
-        background-color: $primary  !important ;
-        color: $white !important;
-        svg{
-            color: $white !important;
+// Mixin to generate classes for specified scales
+@mixin generate-color-classes($colors) {
+  @each $color in $colors {
+    @for $scale from 100 through 900 {
+      // Generate classes for valid scales (100, 200, ..., 900)
+      @if $scale % 100 == 0 {
+        .text-#{$color}-#{$scale} {
+          color: var(--alpha-#{$color}-#{$scale});
         }
+        .bg-#{$color}-#{$scale} {
+          background-color: var(--alpha-#{$color}-#{$scale});
         }
+      }
     }
+  }
 }
 
+// List of colors
+$color-list: primary, secondary, success, info, neutral, warning, error,
+  territory;
 
-.css-1y0gfdp
-{
-    padding: 0px !important;
+// Generate classes
+@include generate-color-classes($color-list);
+
+.skills-chips {
+  svg :hover {
+    color: $white !important;
+  }
+}
+
+.coverChange {
+  position: absolute !important;
+  left: 50px !important;
+  top: 60px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 2px;
+}
+
+.container:hover .coverChange {
+  opacity: 1;
+  background-color: transparent !important;
+}
+
+.container:hover .overlay {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
 }

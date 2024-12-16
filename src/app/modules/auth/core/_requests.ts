@@ -6,7 +6,7 @@ const API_URL = "http://localhost:3000/api/v1/users";
 
 console.log("API ::", API_URL);
 
-export const GET_USER_BY_ACCESSTOKEN_URL = `http://localhost:3000/api/annonymous/verify_token`;
+export const GET_USER_BY_ACCESSTOKEN_URL = `http://localhost:3000/api/anonymous/verify_token`;
 export const LOGIN_URL = `http://localhost:3000/api/users/getToken`;
 export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
