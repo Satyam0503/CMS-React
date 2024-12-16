@@ -45,7 +45,7 @@ const Card5: FC<Props> = ({
             data-kt-menu-placement='bottom-end'
             data-kt-menu-flip='top-end'
           >
-            <KTIcon iconName='category' className='fs-3 text-primary' />
+            <KTIcon iconName='category' className='fs-3' />
           </button>
 
           <Dropdown1 />

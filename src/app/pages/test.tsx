@@ -6,7 +6,7 @@ import DashboardMain from '../modules/dashboard/DashboardMain';
 export default function FullWidthGrid() {
   return (
 
-<Grid container   sx={{ maxWidth: "1200px" }} className='m-auto'>
+<Grid container   sx={{ maxWidth: "1200px", m:"auto"}} >
   <PageHeader/>
   <DashboardMain/>
 </Grid>
