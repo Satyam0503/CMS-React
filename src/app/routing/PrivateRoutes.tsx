@@ -15,6 +15,7 @@ import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
 import Contacts from "../modules/employees/Employees";
 import Employess from "../modules/employees/Employees";
 import Employees from "../modules/employees/Employees";
+import EmployeePageWrapper from "../pages/employees/EmployeeWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -40,7 +41,7 @@ const PrivateRoutes = () => {
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagement />} />
         <Route path="attendance" element={<EmployeeAttendance />} />
-        <Route path="employees" element={<Employees />} />
+        <Route path="employees" element={<EmployeePageWrapper />} />
 
         {/* Lazy Modules */}
         <Route
