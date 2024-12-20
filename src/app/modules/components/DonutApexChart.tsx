@@ -125,7 +125,7 @@ function DonutApexChart(props:DonutApexChartProps) {
   };
 
   return (
-    <Grid item xs={12} spacing={4}>
+    <Grid item xs={12}>
       <Chart
         height={height || 180}
         options={chartOptions}

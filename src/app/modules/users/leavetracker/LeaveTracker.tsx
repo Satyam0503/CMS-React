@@ -4,7 +4,7 @@ import { FC } from "react";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../components/DonutApexChart";
 import { AttendanceChart } from "../../components/AttendanceChart";
-import CustomisedTable from "../../components/CustomisedTable";
+// import CustomisedTable from "../../components/CustomisedTable";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { LeaveApplication } from "./LeaveApplication";
 import { Block } from "@mui/icons-material";
@@ -85,10 +85,10 @@ export const LeaveTracker: FC = () => {
           />
         </Grid>
         <Stack className="w-100">
-          <CustomisedTable />
+          {/* <CustomisedTable /> */}
         </Stack>
         <Stack className="w-100 ">
-          <CustomisedTable />
+          {/* <CustomisedTable /> */}
         </Stack>
       </Grid>
     </>

@@ -2,6 +2,13 @@ import { Card, Grid, Stack, Typography } from "@mui/material";
 import Chart from "react-apexcharts";
 import { useIntl } from "react-intl";
 
+interface StackedBarChartProps {
+  series: {
+    name:string;
+    date:Array<number>;
+  }[]
+}
+
 export default function StackedBarChart() {
   const intl = useIntl();
   

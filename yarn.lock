@@ -11588,6 +11588,13 @@
   "resolved" "https://registry.npmjs.org/react-table/-/react-table-7.8.0.tgz"
   "version" "7.8.0"
 
+"react-toastify@^11.0.0":
+  "integrity" "sha512-NLTt0hNNlVZPLnY+uzUvmE2H2jRHUpaPi7H3+84+3fMjZSpfngyL/r+2VcaepNItWuN0BCBiZdVluXixXYSFmw=="
+  "resolved" "https://registry.npmjs.org/react-toastify/-/react-toastify-11.0.0.tgz"
+  "version" "11.0.0"
+  dependencies:
+    "clsx" "^2.1.1"
+
 "react-topbar-progress-indicator@4.1.1":
   "integrity" "sha512-Oy3ENNKfymt16zoz5SYy/WOepMurB0oeZEyvuHm8JZ3jrTCe1oAUD7fG6HhYt5sg8Wcg5gdkzSWItaFF6c6VhA=="
   "resolved" "https://registry.npmjs.org/react-topbar-progress-indicator/-/react-topbar-progress-indicator-4.1.1.tgz"

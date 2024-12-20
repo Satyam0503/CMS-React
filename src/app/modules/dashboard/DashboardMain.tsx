@@ -17,7 +17,7 @@ export default function DashboardMain() {
   return (
     <>
       <Grid container className="d-flex justify-content-center gap-5">
-        <Grid container className="d-flex justify-content-between">
+        <Grid container className="d-flex justify-content-between gap-4">
           <Stack>
             <Typography variant="h2" className="mb-2">
               {intl.formatMessage({ id: "MENU.WELCOME" })} Aishwarya !

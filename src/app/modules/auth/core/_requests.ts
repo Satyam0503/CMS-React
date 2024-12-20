@@ -1,11 +1,11 @@
 import axios from "axios";
 import { AuthModel, UserModel } from "./_models";
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_BASEURL || 'http://localhost:3000/api';
 
 console.log("API ::", API_URL);
 
-export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/annonymous/verify_token`;
+export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/anonymous/verify_token`;
 export const LOGIN_URL = `${API_URL}/users/getToken`;
 export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
