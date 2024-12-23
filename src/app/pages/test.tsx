@@ -1,14 +1,13 @@
-import { Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import PageHeader from '../modules/dashboard/PageHeader';
 import DashboardMain from '../modules/dashboard/DashboardMain';
 
 
 export default function FullWidthGrid() {
   return (
-
-<Grid container   sx={{ maxWidth: "1200px", m:"auto"}} >
-  <PageHeader/>
-  <DashboardMain/>
-</Grid>
+    <Container sx={{p:"16px"}}>
+          <PageHeader/>
+          <DashboardMain/>
+    </Container>
   );
 }

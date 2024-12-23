@@ -14,7 +14,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 
@@ -46,7 +46,7 @@ export default function Education() {
         onClick={() => handleOpen()}
         className="btn btn-sm bg-white border btn-active-light-primary p-1"
       >
-        <Add />
+        <Edit />
       </Stack>
       <Modal
         open={open}
@@ -99,7 +99,7 @@ export default function Education() {
           </Grid>
 
           <Grid container className="d-flex justify-content-end mt-4 gap-2">
-            <Button variant="contained">Cancel</Button>
+            <Button variant="contained" onClick={handleClose}>Cancel</Button>
             <Button variant="contained">Add New</Button>
             <Button variant="contained">Save</Button>
           </Grid>

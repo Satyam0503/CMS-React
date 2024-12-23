@@ -33,7 +33,7 @@ export default function Certification() {
   return (
     <Grid>
          <Stack onClick={() => handleOpen()} className="btn btn-sm bg-white border btn-active-light-primary p-1">
-        <Add/>
+        <Edit/>
       </Stack>
       <Modal
         open={open}

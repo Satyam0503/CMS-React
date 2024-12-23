@@ -7,13 +7,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Grid } from "@mui/material";
+import { Avatar, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
+
 
 interface Column {
   id: "Sno" | "name" | "email" | "phone" | "department" | "address" | "action";
   label: string;
   minWidth?: number;
-  align?: "right";
+  align?: "right" |"left";
   format?: (value: number) => string;
 }
 
@@ -25,25 +27,25 @@ const columns: readonly Column[] = [
     id: "phone",
     label: "Phone number",
     minWidth: 170,
-    align: "right",
+    align: "left",
   },
   {
     id: "department",
     label: "Department",
     minWidth: 170,
-    align: "right",
+    align: "left",
   },
   {
     id: "address",
     label: "Address",
     minWidth: 170,
-    align: "right",
+    align: "left",
   },
   {
     id: "action",
     label: "Action",
     minWidth: 170,
-    align: "right",
+    align: "left",
   },
 ];
 
@@ -129,11 +131,36 @@ export default function EmployeeTable() {
                   <TableRow hover role="checkbox" tabIndex={-1}>
                     {columns.map((column) => {
                       const value = row[column.id];
-                      return (
+                      return ( 
                         <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === "number"
-                            ? column.format(value)
-                            : value}
+                          {
+                            column.id === "name" ?
+                            <Stack direction="row" spacing={1}>
+                              <Avatar>{row.name.at(0)?.toLocaleUpperCase()}</Avatar> 
+                              <Stack direction="column">
+                                <Typography variant="body1" className="fw-semibold d-block">{row.name}</Typography>
+                                <Typography variant="body2" className="text-muted">{row.name}</Typography>
+                              </Stack>
+                            </Stack>:
+                            (column.id==="address") ? 
+                            <IconButton>
+                              <Place/>
+                            </IconButton> :
+                            (column.id==="action") ?
+                            <Stack direction='row' spacing={2}>
+                                <IconButton onClick={()=>{}}>
+                                  <Edit/>
+                                </IconButton>
+                                <IconButton>
+                                  <Delete/>
+                                </IconButton>
+                                <IconButton>
+                                  <Visibility/>
+                                </IconButton>
+                            </Stack> :
+                            value 
+                          }
+                       
                         </TableCell>
                       );
                     })}

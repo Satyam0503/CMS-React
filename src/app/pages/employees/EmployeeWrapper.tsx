@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 import { Grid } from "@mui/material";
 import Employees from "../../modules/employees/Employees";
 
-const BuilderPageWrapper: FC = () => {
+const EmployeePageWrapper: FC = () => {
   const intl = useIntl();
   return (
     <>
@@ -18,4 +18,4 @@ const BuilderPageWrapper: FC = () => {
   );
 };
 
-export default BuilderPageWrapper;
+export default EmployeePageWrapper;

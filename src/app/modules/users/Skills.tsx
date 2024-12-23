@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Chip, Grid, Paper, Stack, styled, TextField } from "@mui/material";
-import { Edit, TagFacesOutlined } from "@mui/icons-material";
+import { Add, Edit, TagFacesOutlined } from "@mui/icons-material";
 
 interface ChipData {
   key: number;
@@ -50,7 +50,7 @@ export default function Skills() {
         onClick={() => handleOpen()}
         className="btn btn-sm bg-white border btn-active-light-primary p-1"
       >
-        <Edit />
+        <Add />
       </Stack>
       <Modal
         open={open}
