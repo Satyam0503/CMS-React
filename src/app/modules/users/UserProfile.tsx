@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Grid, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, Container, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
@@ -7,8 +7,13 @@ import { toAbsoluteUrl } from "../../../_themes/helpers";
 
 export default function UserProfile() {
   const intl = useIntl();
+
+  const leaveAllowanceLables =['Pending','Taken'];
+  const leaveAllowanceValue =[13,10];
+
   return (
-    <Grid container spacing={4} sx={{ maxWidth: "1200px" }} className="m-auto">
+    <Container sx={{ p:"16px" }}>
+    <Grid container spacing={4}  >
       <Grid item xs={12} md={3} className="d-flex flex-column gap-5">
         <Stack>
           <ProfileCard />
@@ -22,20 +27,7 @@ export default function UserProfile() {
               </Typography>
               <Typography variant="h4">4</Typography>
             </Stack>
-
-            <DonutApexChart />
-            <Stack
-              spacing={2}
-              direction="row"
-              className="my-4 d-flex justify-content-center"
-            >
-              <Typography variant="subtitle2">
-                {intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
-              </Typography>
-              <Typography variant="subtitle2">
-                {intl.formatMessage({ id: "LEAVE.TAKEN" })}
-              </Typography>
-            </Stack>
+            <DonutApexChart series={leaveAllowanceValue} labels={leaveAllowanceLables} showDataLabels={true}/>
           </Card>
         </Stack>
       </Grid>
@@ -95,6 +87,7 @@ export default function UserProfile() {
           {/* <AboutUser /> */}
         </Stack>
       </Grid>
-    </Grid>
+      </Grid>
+    </Container>
   );
 }

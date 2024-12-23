@@ -7,19 +7,19 @@ import { SidebarFooter } from "./SidebarFooter";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
+import { useAuth } from "../../../../app/modules/auth";
 
 const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
-
+  const { currentUser } = useAuth();
   useEffect(() => {
     updateDOM(config);
   }, [config]);
 
   if (!config.app?.sidebar?.display) {
     return null;
-  }
-
+  }  
   return (
     <>
       {(config.layoutType === "dark-sidebar" ||
@@ -38,7 +38,7 @@ const Sidebar = () => {
                 sx={{ width: 128, height: 128 }}
               />
               <Typography variant="h6" color="inherit" textAlign="center">
-                Aishwarya Rai
+               {currentUser?.firstName} {currentUser?.lastName && currentUser?.lastName}
               </Typography>
             </Stack>
           </Stack>

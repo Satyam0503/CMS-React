@@ -77,7 +77,8 @@
   "PROFILE.COUNT": "Count",
   "PROFILE.LEAVE.ML": "Not well",
   "PROFILE.LEAVE.CL": "Personal",
-  "UPDATE.EMP.INFO": "Update employee detail",
+  "UPDATE.EMP.INFO": "Update Employee Details",
+  "ADD.EMP.INFO":"Add New Employee",
 
   "PERFORMANCE.FEEDBACK": "Feedback",
   "PERFORMANCE.ACHIEVEMENTS": "Achievements",
@@ -135,6 +136,7 @@
   "USER.ROLE": "Role",
   "USER.DOJ": "Date of joining",
   "USER.DOB": "Date of birth",
+  "USER.JOBROLE":"Job Role",
   "USER.EMERGENCY_CONTACT": "Emergency Contact",
   "USER.EMP_ID": "Emp ID",
   "USER.GENDER": "Gender",

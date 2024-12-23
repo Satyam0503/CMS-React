@@ -1,6 +1,6 @@
 /** @format */
 
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -11,8 +11,16 @@ const currentDate = date.getDate();
 const currentYear = date.getFullYear();
 const currentMonth = date.getMonth() + 1;
 
-const CustomisedDatePicker = (props:any) => {
-  const { label, value, setValue, dependentValue, setPage, className } = props;
+interface PropsTypes {
+  value : Dayjs | null;
+  setValue:(newDate:Dayjs | null)=>void;
+  label?:string;
+  maxDate?:Dayjs;
+  minDate?:Dayjs ;
+}
+
+const CustomisedDatePicker = (props:PropsTypes) => {
+  const { label, value, setValue, maxDate } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -20,21 +28,23 @@ const CustomisedDatePicker = (props:any) => {
           <DatePicker
             label={label}
             value={value}
-            onChange={(newValue) => {
-              setValue(newValue);
-              setPage(1);
+            onChange={(newDate) => {
+              // setValue(newValue);
+              // setPage(1);
+              setValue(newDate);
             }}
-            className={`text-dark ${className}`}
-            shouldDisableDate={(date) =>
-              label === "From Date"
-                ? dayjs(date).isSame(dayjs(dependentValue)) ||
-                  dayjs(date).isAfter(dayjs(dependentValue))
-                : dayjs(date).isSame(dayjs(dependentValue)) ||
-                  dayjs(date).isBefore(dayjs(dependentValue)) ||
-                  dayjs(date).isAfter(
-                    dayjs(`${currentYear}-${currentMonth}-${currentDate}`)
-                  )
-            }
+            maxDate={maxDate}
+            // className={`text-dark ${className}`}
+            // shouldDisableDate={(date) =>
+            //   label === "From Date"
+            //     ? dayjs(date).isSame(dayjs(dependentValue)) ||
+            //       dayjs(date).isAfter(dayjs(dependentValue))
+            //     : dayjs(date).isSame(dayjs(dependentValue)) ||
+            //       dayjs(date).isBefore(dayjs(dependentValue)) ||
+            //       dayjs(date).isAfter(
+            //         dayjs(`${currentYear}-${currentMonth}-${currentDate}`)
+            //       )
+            // }
             slotProps={{
               textField: {
                 inputProps: {

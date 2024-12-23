@@ -300,9 +300,6 @@ export const MuiTheme = createTheme({
         iconOutlined: {
           color: colors.alpha.primary[500],
         },
-        icon: {
-          top: "calc(50% - 14px)",
-        },
       },
     },
     MuiOutlinedInput: {
@@ -458,7 +455,10 @@ export const MuiTheme = createTheme({
             backgroundColor: colors.alpha.primary[700],
             color: themeColors.white,
           },
-
+          "&.Mui-disabled": {
+            backgroundColor: colors.alpha.primary[700],
+            color: themeColors.white,
+          },
           ".MuiSvgIcon-root": {
             transition: "all .2s",
           },
@@ -531,6 +531,9 @@ export const MuiTheme = createTheme({
       },
     },
     MuiIconButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
         root: {
           borderRadius: 8,
@@ -540,6 +543,10 @@ export const MuiTheme = createTheme({
 
           "& .MuiTouchRipple-root": {
             borderRadius: 8,
+          },
+          "&:hover, &.Mui-selected, &.Mui-selected:hover": {
+            color: themeColors.white,
+            background: themeColors.primary,
           },
         },
         sizeSmall: {
@@ -825,6 +832,17 @@ export const MuiTheme = createTheme({
     },
     MuiTablePagination: {
       styleOverrides: {
+        root: {
+          marginTop: "1rem",
+          "& .MuiTablePagination-selectLabel": {
+            margin: "0px",
+            fontSize: "14px",
+          },
+          "& .MuiTablePagination-displayedRows": {
+            marginBottom: "0px",
+            fontSize: "14px",
+          },
+        },
         toolbar: {
           "& .MuiIconButton-root": {
             padding: 8,
@@ -840,6 +858,7 @@ export const MuiTheme = createTheme({
     MuiToolbar: {
       styleOverrides: {
         root: {
+          fontSize: "14px",
           minHeight: "0 !important",
           padding: "0 !important",
         },
