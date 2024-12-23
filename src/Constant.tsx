@@ -1,14 +1,15 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./common_types";
+import { EmployeesDataTypes } from "./utils/common_types";
 
 export const BaseUrl = import.meta.env.VITE_BASEURL || 'http://localhost:3000/api';
 
 export const ServiceUrl = {
-    ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
     GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
+    ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
     GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
+    DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
 }
 
 export const Gender = [
@@ -92,29 +93,36 @@ export const EmployeeTabTableColumnList = [
         label: "Address",
         minWidth: 140,
         align: "left",
-        build: (row: EmployeesDataTypes, handleEmployeeEdit: (row: EmployeesDataTypes) => void) => (
-            <ActionComponent row={row} handleEdit={handleEmployeeEdit} />
+        build: (row: EmployeesDataTypes, 
+                handleEmployeeEdit: (row: EmployeesDataTypes) => void,
+                openConfirmationModal:(id:string)=>void ) => (
+            <ActionComponent row={row} handleEdit={handleEmployeeEdit} openConfirmationModal={openConfirmationModal} />
         )
     },
 ]
 
 interface ActionComponentProps<Row,> {
     row: Row,
-    handleEdit?: (row: Row) => void
+    handleEdit?: (row: Row) => void,
+    openConfirmationModal?:(id:string) => void
 }
-const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-    const { row, handleEdit } = props;
+const ActionComponent = <Row extends {id:string}, >(props: ActionComponentProps<Row>) => {
+    const { row, handleEdit,openConfirmationModal } = props;
     return (
         <Stack direction={"row"} spacing={1}>
             {
                 handleEdit &&
-                <IconButton onClick={()=>handleEdit(row)}>
+                <IconButton onClick={() => handleEdit(row)}>
                     <Edit />
                 </IconButton>
             }
-            <IconButton>
-                <Delete />
-            </IconButton>
+            {
+                openConfirmationModal &&
+                <IconButton onClick={()=> openConfirmationModal(row.id )}>
+                    <Delete />
+                </IconButton>
+            }
+
             <IconButton>
                 <Visibility />
             </IconButton>

@@ -11,23 +11,21 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 import { bloodGroups, Gender } from "../../../Constant";
 import { employeeSchema } from "./employeeFormSchema";
 import { getAllRoles } from "./employeeServices";
-import { EmployeesDataTypes, RolesType } from "../../../common_types";
+import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
-import { Send } from "@mui/icons-material";
 
 interface PropsTypes {
   initialValues: EmployeesDataTypes;
   isEdit: boolean
   open: boolean;
   handleClose: () => void;
-  // setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   SaveAddEditEmployee: (value: EmployeesDataTypes) => void;
 }
 
@@ -35,18 +33,16 @@ const { token } = JSON.parse(localStorage.getItem('kt-auth-react-v') || "{}");
 
 export default function AddUpdateEmployee(props: PropsTypes) {
 
-  const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } = props
-  const [loading, setLoading] = useState(false);
+  const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } = props;
   const [roles, setRoles] = useState<RolesType[]>([]);
   const intl = useIntl();
 
-  const { values, touched, errors, isSubmitting, handleSubmit, handleReset, getFieldProps } = useFormik({
+  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps } = useFormik({
     initialValues: initialValues,
     validationSchema: employeeSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(isSubmitting);
       SaveAddEditEmployee(values);
-      // setSubmitting(false)
+      setSubmitting(false)
     },
   });
   function handleDateofJoiningChange(newDate: Dayjs | null) {
@@ -79,14 +75,14 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     >
       <DialogContent>
         <Stack direction="column">
-          <Typography variant="h5" className="text-primary mb-4">
+          <Typography variant="h4" className="text-primary mb-6">
             {isEdit
               ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
               : intl.formatMessage({ id: "ADD.EMP.INFO" })
             }
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={{ xs: 1, md: 2 }} >
+            <Grid container spacing={{ xs: 1, md: 2 }} columnSpacing={3} >
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "USER.FIRST_NAME" })}

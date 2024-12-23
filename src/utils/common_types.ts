@@ -1,5 +1,11 @@
 import { Dayjs } from "dayjs";
 
+export interface ApiResponse {
+   success:boolean;
+   message?:string;
+   statusCode?:number;
+}
+
 export interface RolesType {
     id: string
     roleName: string,
@@ -29,6 +35,10 @@ export interface EmployeesDataTypes {
   dateOfJoining: Dayjs | null,
   personalEmail: string,
   emergencyContact: string,
+  skills?: null | string[],
+  summary?:string| null,
+  createdAt?: string,
+  updatedAt?:string
   profilePicture?: string | File | null,
 }
 
@@ -45,7 +55,7 @@ export interface ResponseData<T> {
 
 export type GetAllEmployeeResponseData = ResponseData<{
     totalEmployees:number;
-    record:any[];
+    record:EmployeesDataTypes[];
 }>
 
 export type GetAllRolesResponseData = ResponseData<RolesType[]>

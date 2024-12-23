@@ -1,4 +1,7 @@
 {
+  "BUTTON.CLOSE":"Close",
+  "BUTTON.SAVE":"Save",
+  "BUTTON.SUBMIT":"Submit",
   "MENU.DASHBOARD": "Dashboard",
   "MENU.EMP": "Employees",
   "MENU.LEAVE_MGMT": "Leave Management",
