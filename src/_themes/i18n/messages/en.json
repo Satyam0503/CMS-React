@@ -10,6 +10,10 @@
   "MENU.PROFILE": "My Profile",
   "MENU.SETTINGS": "Settings",
   "MENU.ADMIN": "Admin",
+  "MENU.MGMT": "Management",
+  "MENU.USER": "User",
+  "MENU.SUP.ADMIN": "Super Admin",
+  "MENU.MODULE": "Area/Module",
 
   "MENU.LAYOUT_BUILDER": "Layout Builder",
   "MENU.WELCOME": "Welcome",
@@ -141,6 +145,9 @@
   "USER.REPORTING_MANAGER": "Reporting manager",
   "USER.TEAM_LEAD": "Team Lead",
   "USER.DEPARTMENT": "Department",
+
+  "COMPANY.PRESENT": "Codeji Infotech Private Limited",
+  "MENU.USER_PERMISSION": "User Permission",
 
   "MENU.NEW": "new",
   "MENU.ACTIONS": "Actions",

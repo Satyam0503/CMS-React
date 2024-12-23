@@ -2,9 +2,12 @@ import {
   Button,
   Card,
   Grid,
+  IconButton,
+  Input,
   ListItem,
   ListItemText,
   Stack,
+  styled,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -13,33 +16,54 @@ import { Download, Edit, Image, Visibility } from "@mui/icons-material";
 
 export default function ProfileCard() {
   const intl = useIntl();
+  const Input = styled("input")({
+    display: "none",
+  });
   return (
     <Card className="bg-primary text-white d-flex flex-column align-items-center p-6 w-100 gap-6">
       <Stack
-        className="container  position-relative border rounded-circle align-content-center"
-        style={{ height: "150px", width: "150px" }}
+        className="container"
+        sx={{
+          height: "150px",
+          width: "150px",
+          position: "relative",
+          borderRadius: "50%",
+          alignItems: "center",
+          border: "1px solid white",
+        }}
       >
         <img
           src={toAbsoluteUrl("media/avatars/300-6.jpg")}
           alt=""
-          className="rounded-circle position-absolute   "
-          style={{ height: "128px", width: "128px", top: "10px" }}
+          style={{
+            height: "128px",
+            width: "128px",
+            top: "10px",
+            position: "absolute",
+            borderRadius: "50%",
+          }}
         />
 
         <Stack className="coverChange">
-          <Image
-            sx={{
-              border: "1px solid white",
-              borderRadius: "4px",
-              marginRight: "5px",
-            }}
+          <Input
+            accept="image/*"
+            id="icon-button-file"
+            name="icon-button-file"
+            type="file"
           />
-          <Visibility
-            sx={{
-              border: "1px solid white",
-              borderRadius: "4px",
-            }}
-          />
+          <label htmlFor="icon-button-file">
+            <IconButton
+              component="span"
+              sx={{ background: "transparent", zIndex: "2" }}
+            >
+              <Image sx={{ fill: "white" }} />
+            </IconButton>
+          </label>
+          <Input />
+
+          {/* <IconButton component="span" sx={{ background: "transparent" }}>
+            <Visibility sx={{ fill: "white" }} />
+          </IconButton> */}
         </Stack>
       </Stack>
 

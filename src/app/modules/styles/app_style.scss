@@ -30,7 +30,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 
 .coverChange {
   position: absolute !important;
-  left: 50px !important;
+  left: 55px !important;
   top: 60px;
   text-align: center;
   opacity: 0;
@@ -38,15 +38,16 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
   display: flex;
   flex-direction: row !important;
   justify-content: center;
-  gap: 2px;
+  gap: 8px;
 }
 
 .container:hover .coverChange {
   opacity: 1;
   background-color: transparent !important;
+  z-index: 3 !important;
 }
 
-.container:hover .overlay {
-  display: block;
-  background: rgba(0, 0, 0, 0.3);
+.container:hover img {
+  opacity: 0.2 !important;
+  z-index: 1 !important;
 }

@@ -12,6 +12,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { AdminPanelSettings } from "@mui/icons-material";
 
 const SidebarMenuMain = () => {
   const intl = useIntl();
@@ -39,12 +40,12 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
       />
       <SidebarMenuItem
-        to="/Projects"
+        to="/projects"
         icon={<FolderIcon />}
         title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
       />
       <SidebarMenuItem
-        to="/Clients"
+        to="/clients"
         icon={<SwitchAccountIcon />}
         title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
       />
@@ -80,6 +81,11 @@ const SidebarMenuMain = () => {
         to="/crafted/account/settings"
         title="Settings"
         icon={<SettingsIcon />}
+      />
+      <SidebarMenuItem
+        to="/admin"
+        icon={<AdminPanelSettings />}
+        title={intl.formatMessage({ id: "MENU.ADMIN" })}
       />
     </>
   );

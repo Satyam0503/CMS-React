@@ -510,9 +510,6 @@ export const MuiTheme = createTheme({
         root: {
           borderRadius: 6,
           background: themeColors.white,
-          "&:focus, &.Mui-selected, &.Mui-selected:hover": {
-            borderBottom: " 2px solid " + colors.alpha.primary[500],
-          },
         },
       },
     },
@@ -538,8 +535,8 @@ export const MuiTheme = createTheme({
         root: {
           borderRadius: 8,
           padding: 8,
-          color: colors.alpha.primary[500],
-          background: colors.alpha.primary[100],
+          color: colors.alpha.neutral[800],
+          border: " 1px solid " + colors.alpha.neutral[200],
 
           "& .MuiTouchRipple-root": {
             borderRadius: 8,
@@ -933,8 +930,8 @@ export const MuiTheme = createTheme({
             colors.alpha.neutral[100],
         },
         track: {
-          backgroundColor: colors.alpha.neutral[500],
-          border: "1px solid " + colors.alpha.neutral[100],
+          // backgroundColor: colors.alpha.neutral[500],
+          border: "1px solid " + colors.alpha.neutral[200],
           boxShadow: "inset 0px 1px 1px " + colors.alpha.neutral[100],
           opacity: 1,
         },
@@ -944,7 +941,7 @@ export const MuiTheme = createTheme({
           },
 
           "&.Mui-checked .MuiSwitch-thumb": {
-            backgroundColor: themeColors.primary,
+            color: colors.alpha.primary[500],
           },
         },
       },
@@ -955,6 +952,16 @@ export const MuiTheme = createTheme({
           paddingTop: 20,
           paddingBottom: 20,
           background: colors.alpha.neutral[500],
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: colors.alpha.neutral[200],
+          "&.Mui-checked": {
+            color: colors.alpha.primary[500],
+          },
         },
       },
     },
@@ -1043,11 +1050,11 @@ export const MuiTheme = createTheme({
       color: colors.alpha.neutral[500],
     },
     subtitle1: {
-      fontSize: 14,
+      fontSize: 10,
+      fontWeight: 600,
     },
     subtitle2: {
-      fontWeight: 400,
-      fontSize: 12,
+      fontSize: 10,
     },
     overline: {
       fontSize: 13,
