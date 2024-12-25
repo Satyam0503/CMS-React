@@ -10,56 +10,53 @@ import {
 } from "@mui/icons-material";
 import { Card, Chip, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import BasicModal from "../components/BasicModal";
-import UserInfo from "./UserInfo";
+import UpdateUserInfo from "./UpdateUserInfo";
 import Skills from "./Skills";
 import Education from "./Education";
 import Certification from "./Certification";
 import Employment from "./Employment";
+import { useUserDetails } from "./UserDataProvider";
+import { AddUpdateUserSummary } from "./AddUpdateUserSummary";
+import { useState } from "react";
 
 export default function AboutUser() {
   const intl = useIntl();
+  const [isUserUpdateModalOpen,setUserUpdateModalOpen ]= useState(false);
+  const userData= useUserDetails();
+  const currentUser= userData?.userDetails;
   const handleDelete = () => {
     console.info("You clicked the delete icon.");
   };
   return (
-    <Grid container className="d-flex gap-5 mt-2 ">
-      <Card className="p-5">
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
-          <Stack>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-            </Typography>
+    <Grid container className="d-flex gap-5 mt-2">
+      <Grid item sm={12}>
+        <Card className="p-5">
+          <Stack direction="row" className="d-flex justify-content-between mb-4">
+            <Stack>
+              <Typography variant="h5">
+                {currentUser?.jobRole}
+              </Typography>
+            </Stack>
+            <Stack>
+              <AddUpdateUserSummary/>
+            </Stack>
           </Stack>
-
-          <Stack>
-            <BasicModal />
-          </Stack>
-        </Stack>
-
-        <Typography variant="body2">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem.
-        </Typography>
-      </Card>
+          <Typography variant="body2">{currentUser?.summary || "Add Your Summary"}</Typography>
+        </Card>
+      </Grid>
       <Card className="w-100 p-5">
-        <Stack direction="row" className="d-flex justify-content-between">
+        <Stack direction="row" className="d-flex justify-content-between  mb-4">
           <Stack>
             <Typography variant="h5">
               {intl.formatMessage({ id: "PROFILE.PI" })}
             </Typography>
           </Stack>
-
-          <Stack>
-            <UserInfo />
+          <Stack onClick={() =>setUserUpdateModalOpen(true)} className="btn btn-sm bg-white border btn-active-light-primary p-1">
+            <Edit />
           </Stack>
+          {
+            isUserUpdateModalOpen && <UpdateUserInfo open={isUserUpdateModalOpen} setOpen={setUserUpdateModalOpen}/>
+          }
         </Stack>
         <Grid container>
           <Grid item xs={12}>

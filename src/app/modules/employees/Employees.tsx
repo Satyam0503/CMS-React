@@ -18,14 +18,12 @@ import {
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
-import DownloadCV from "./DownloadCV";
-import SortEmployee from "./SortEmployee";
 import { useEffect, useState } from "react";
 import { addEmployee, deleteEmployee, getAllEmployees, updateEmployee } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../Constant";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
@@ -66,7 +64,7 @@ export default function Employees() {
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [isEdit, setEdit] = useState(false);
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);  
 
   function handleClose() {
     setModalOpen(false);

@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 export const employeeSchema = Yup.object().shape({
     firstName:Yup.string().required("First name is required").matches(/^[A-Za-z]+$/,'Invalid Name'),
     lastName:Yup.string().required("last name is required").matches(/^[A-Za-z]+$/,'Invalid Name'),
-    email:Yup.string().email().required("Email is required").matches(/^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Email must be a valid email"),
+    email:Yup.string().required("Email is required").matches(/^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Email must be a valid email"),
     employeeId:Yup.string().required("Employee Id is required"),
     address:Yup.string().required("Address is required"),
     jobRole:Yup.string().required("Job role is required"),
@@ -26,5 +26,6 @@ export const employeeSchema = Yup.object().shape({
     emergencyContact:Yup.string().matches(
         /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
         'Emergency Contact is not valid'
-      ).required("Emergency Contact is required")
+      ).required("Emergency Contact is required"),
+    languagesKnown:Yup.string().required("languages Required")
 }) 

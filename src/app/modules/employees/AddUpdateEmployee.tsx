@@ -51,7 +51,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   function handleDOBChange(newDate: Dayjs | null) {
     values.dateOfBirth = newDate;
   }
-
+  
   useEffect(() => {
     getAllRoles(token)
       .then((res) => {

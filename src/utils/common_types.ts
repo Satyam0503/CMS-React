@@ -38,7 +38,11 @@ export interface EmployeesDataTypes {
   skills?: null | string[],
   summary?:string| null,
   createdAt?: string,
-  updatedAt?:string
+  updatedAt?:string,
+  Education?:any[],
+  Certifications?:any[],
+  Employements?:any[],
+  languagesKnown?:string,
   profilePicture?: string | File | null,
 }
 
@@ -59,3 +63,7 @@ export type GetAllEmployeeResponseData = ResponseData<{
 }>
 
 export type GetAllRolesResponseData = ResponseData<RolesType[]>
+
+export type GetEmployeeDetailsResponseData = ResponseData<EmployeesDataTypes>
+
+export type AddUpdateSummaryResponseData = ResponseData<EmployeesDataTypes>

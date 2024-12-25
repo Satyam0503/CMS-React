@@ -4,19 +4,46 @@ import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
+import {  useState } from "react";
+import { EmployeesDataTypes } from "../../../utils/common_types";
+import { useUserDetails } from "./UserDataProvider";
+import dayjs from "dayjs";
+// import { getEmployeeDetails } from "./userservices";
 
 export default function UserProfile() {
   const intl = useIntl();
-
+  const userData = useUserDetails();
   const leaveAllowanceLables =['Pending','Taken'];
   const leaveAllowanceValue =[13,10];
+  const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+  const [loading,setLoading]= useState(false);
+  const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
+
+  if(!userData){
+    return (
+      <Typography>{"Failed To Fetch User Data"}</Typography>
+    )
+  }
+  if(userData.error){
+    return (
+      <Typography>{userData.error}</Typography>
+    )
+  }
+
+  const currentUser= userData.userDetails;
+  const profileCardPayload={
+    name:`${currentUser?.firstName} ${currentUser?.lastName}`,
+    designation:currentUser?.jobRole,
+    bloodGroup:currentUser?.bloodGroup,
+    age:dayjs(new Date()).diff(currentUser?.dateOfBirth,"year"),
+  }
 
   return (
     <Container sx={{ p:"16px" }}>
-    <Grid container spacing={4}  >
+    <Grid container spacing={4}>
       <Grid item xs={12} md={3} className="d-flex flex-column gap-5">
         <Stack>
-          <ProfileCard />
+          <ProfileCard  {...profileCardPayload}/>
         </Stack>
 
         <Stack>
@@ -75,7 +102,7 @@ export default function UserProfile() {
               />
             </Stack>
             <Box>
-              <Typography variant="h2">25+</Typography>
+              <Typography variant="h2">{currentUser?.skills?.length ||0}+</Typography>
               <Typography variant="body2">
                 {intl.formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
               </Typography>

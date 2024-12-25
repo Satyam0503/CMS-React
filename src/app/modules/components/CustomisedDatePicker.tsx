@@ -1,7 +1,6 @@
 /** @format */
 
-import dayjs, { Dayjs } from "dayjs";
-import React from "react";
+import { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -16,21 +15,21 @@ interface PropsTypes {
   setValue:(newDate:Dayjs | null)=>void;
   label?:string;
   maxDate?:Dayjs;
-  minDate?:Dayjs ;
+  minDate?:Dayjs;
+  name?:string;
 }
 
 const CustomisedDatePicker = (props:PropsTypes) => {
-  const { label, value, setValue, maxDate } = props;
+  const { label, value, setValue, maxDate,name } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
           <DatePicker
+            name={name}
             label={label}
             value={value}
             onChange={(newDate) => {
-              // setValue(newValue);
-              // setPage(1);
               setValue(newDate);
             }}
             maxDate={maxDate}

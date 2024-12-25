@@ -10,6 +10,9 @@ export const ServiceUrl = {
     ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
     GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
     DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
+    GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
+    UPDATE_USER_AVATAR:`${BaseUrl}/users/updateAvatarImage`,
+    ADD_UPDATE_USER_SUMMARY:`${BaseUrl}/employees/addEmployeeSummary`,
 }
 
 export const Gender = [
