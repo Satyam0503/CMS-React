@@ -1,46 +1,46 @@
 export interface AuthModel {
-  token: string
-  refreshToken?: string
+  token: string;
+  refreshToken?: string;
 }
 
 export interface UserAddressModel {
-  addressLine: string
-  city: string
-  state: string
-  postCode: string
+  addressLine: string;
+  city: string;
+  state: string;
+  postCode: string;
 }
 
 export interface UserCommunicationModel {
-  email: boolean
-  sms: boolean
-  phone: boolean
+  email: boolean;
+  sms: boolean;
+  phone: boolean;
 }
 
 export interface UserEmailSettingsModel {
-  emailNotification?: boolean
-  sendCopyToPersonalEmail?: boolean
+  emailNotification?: boolean;
+  sendCopyToPersonalEmail?: boolean;
   activityRelatesEmail?: {
-    youHaveNewNotifications?: boolean
-    youAreSentADirectMessage?: boolean
-    someoneAddsYouAsAsAConnection?: boolean
-    uponNewOrder?: boolean
-    newMembershipApproval?: boolean
-    memberRegistration?: boolean
-  }
+    youHaveNewNotifications?: boolean;
+    youAreSentADirectMessage?: boolean;
+    someoneAddsYouAsAsAConnection?: boolean;
+    uponNewOrder?: boolean;
+    newMembershipApproval?: boolean;
+    memberRegistration?: boolean;
+  };
   updatesFromKeenthemes?: {
-    newsAboutKeenthemesProductsAndFeatureUpdates?: boolean
-    tipsOnGettingMoreOutOfKeen?: boolean
-    thingsYouMissedSindeYouLastLoggedIntoKeen?: boolean
-    newsAboutStartOnPartnerProductsAndOtherServices?: boolean
-    tipsOnStartBusinessProducts?: boolean
-  }
+    newsAboutKeenthemesProductsAndFeatureUpdates?: boolean;
+    tipsOnGettingMoreOutOfKeen?: boolean;
+    thingsYouMissedSindeYouLastLoggedIntoKeen?: boolean;
+    newsAboutStartOnPartnerProductsAndOtherServices?: boolean;
+    tipsOnStartBusinessProducts?: boolean;
+  };
 }
 
 export interface UserSocialNetworksModel {
-  linkedIn: string
-  facebook: string
-  twitter: string
-  instagram: string
+  linkedIn: string;
+  facebook: string;
+  twitter: string;
+  instagram: string;
 }
 
 export interface UserModel {
@@ -48,24 +48,20 @@ export interface UserModel {
   username: string;
   password: string | undefined;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   fullname?: string;
   occupation?: string;
   companyName?: string;
-  phoneNumber?: string;
-  roleId:string;
+  phone?: string;
   roles?: Array<number>;
   pic?: string;
   language?: "en" | "de" | "es" | "fr" | "ja" | "zh" | "ru";
   timeZone?: string;
   website?: "https://keenthemes.com";
-  // emailSettings?: UserEmailSettingsModel;
+  emailSettings?: UserEmailSettingsModel;
   auth?: AuthModel;
   communication?: UserCommunicationModel;
   address?: UserAddressModel;
   socialNetworks?: UserSocialNetworksModel;
-  isDeleted:boolean | null;
-  createdAt:string,
-  updatedAt:string,
 }
