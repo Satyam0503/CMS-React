@@ -29,6 +29,7 @@
   "MENU.OTHER": "Other",
   "MENU.DEPT": "Departments",
 
+  "MENU.EMPLOYEE_DETAILS":"Employee Details",
   "MENU.LEAVE": "Employees on leave",
   "MENU.BIRTHDAY": "Upcoming Birthdays",
   "MENU.NOTICE_BOARD": "Notice Board",
@@ -37,7 +38,6 @@
   "MENU.INSTA": "Join us on Instagram",
   "MENU.LEAVE_ALLOWANCE": "Leave Allowance",
   "MENU.ATTENDANCE_GRAPH": "My Attendance Graph of this year",
-
   "MENU.ABOUT": "About",
   "MENU.LEAVE_TRACKER": "Leave Tracker",
   "MENU.PERFORMANCE": "Overall Performance",

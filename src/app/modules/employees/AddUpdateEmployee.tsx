@@ -16,23 +16,24 @@ import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 import { bloodGroups, Gender } from "../../../Constant";
-import { employeeSchema } from "./employeeFormSchema";
 import { getAllRoles } from "./employeeServices";
 import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
+import { employeeSchema } from "../../../utils/validation_schemas";
+import { CustomisedModal } from "../components/CustomizedModal";
+import CustomisedButton from "../components/CustomisedButton";
 
 interface PropsTypes {
   initialValues: EmployeesDataTypes;
   isEdit: boolean
   open: boolean;
   handleClose: () => void;
-  SaveAddEditEmployee: (value: EmployeesDataTypes) => void;
+  SaveAddEditEmployee: (values: EmployeesDataTypes, setSubmitting: (isSubmitting: boolean) => void)=>void
 }
 
 const { token } = JSON.parse(localStorage.getItem('kt-auth-react-v') || "{}");
 
 export default function AddUpdateEmployee(props: PropsTypes) {
-
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } = props;
   const [roles, setRoles] = useState<RolesType[]>([]);
   const intl = useIntl();
@@ -41,8 +42,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     initialValues: initialValues,
     validationSchema: employeeSchema,
     onSubmit: (values, { setSubmitting }) => {
-      SaveAddEditEmployee(values);
-      setSubmitting(false)
+      SaveAddEditEmployee(values, setSubmitting);
     },
   });
   function handleDateofJoiningChange(newDate: Dayjs | null) {
@@ -51,7 +51,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   function handleDOBChange(newDate: Dayjs | null) {
     values.dateOfBirth = newDate;
   }
-  
+
   useEffect(() => {
     getAllRoles(token)
       .then((res) => {
@@ -64,25 +64,16 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   }, [])
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullScreen={false}
-      maxWidth={"md"}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      className="overflow-auto"
-    >
-      <DialogContent>
-        <Stack direction="column">
-          <Typography variant="h4" className="text-primary mb-6">
+    <CustomisedModal open={open} handleClose={handleClose}>
+        <Stack direction="column" spacing={2}>
+          <Typography variant="h4" className="text-primary">
             {isEdit
               ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
               : intl.formatMessage({ id: "ADD.EMP.INFO" })
             }
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={{ xs: 1, md: 2 }} columnSpacing={3} >
+            <Grid container spacing={{ xs: 1, md: 2 }} columnSpacing={2} >
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -175,9 +166,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                {/* <Typography variant="body1">
-                  {intl.formatMessage({ id: "USER.ROLE" })}
-                </Typography> */}
                 <InputLabel id="employee_role">{intl.formatMessage({ id: "USER.ROLE" })}</InputLabel>
                 <Select
                   fullWidth
@@ -365,7 +353,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   variant="outlined"
                   error={touched.profilePicture && Boolean(errors.profilePicture)}
                   helperText={(touched.profilePicture && errors.profilePicture) && errors.profilePicture}
-                // onChange={handleFileChange}
                 />
               </Grid>
               <FormHelperText>{(touched.profilePicture && errors.profilePicture) && errors.profilePicture}</FormHelperText>
@@ -373,26 +360,14 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 item
                 xs={12}
                 sx={{ marginBlockStart: "1rem", display: "flex", justifyContent: "flex-end" }}
+                gap={1}
               >
-                <Button variant="contained" className="me-4 bg-primary" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button
-                  disabled={isSubmitting}
-                  variant="contained"
-                  className="bg-primary" 
-                  type="submit" 
-                  endIcon={ isSubmitting && <span className='spinner-border spinner-border-sm align-middle ms-2'></span>}
-                >
-                  {
-                    isEdit ? "Save" : "Add"
-                  }
-                </Button>
+                <CustomisedButton variant="outlined" label="Cancel" handleClick={handleClose}/>
+                <CustomisedButton label={isEdit ? "Update" : "Add" } type="submit" disabled={isSubmitting} />
               </Grid>
             </Grid>
           </form>
         </Stack>
-      </DialogContent>
-    </Dialog >
+    </CustomisedModal>
   );
 }

@@ -10,27 +10,16 @@ import { useUserDetails } from "./UserDataProvider";
 import dayjs from "dayjs";
 // import { getEmployeeDetails } from "./userservices";
 
+// get token and id from store
+const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
+const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+
 export default function UserProfile() {
   const intl = useIntl();
-  const userData = useUserDetails();
+  const {userDetails:currentUser,setUserDetails,setRefresh} = useUserDetails();
   const leaveAllowanceLables =['Pending','Taken'];
   const leaveAllowanceValue =[13,10];
-  const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
-  const [loading,setLoading]= useState(false);
-  const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
 
-  if(!userData){
-    return (
-      <Typography>{"Failed To Fetch User Data"}</Typography>
-    )
-  }
-  if(userData.error){
-    return (
-      <Typography>{userData.error}</Typography>
-    )
-  }
-
-  const currentUser= userData.userDetails;
   const profileCardPayload={
     name:`${currentUser?.firstName} ${currentUser?.lastName}`,
     designation:currentUser?.jobRole,

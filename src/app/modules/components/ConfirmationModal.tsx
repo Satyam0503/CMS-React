@@ -1,24 +1,28 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+import {  Stack, Typography } from "@mui/material"
 import { useIntl } from "react-intl";
+import { CustomisedModal } from "./CustomizedModal";
+import CustomisedButton from "./CustomisedButton";
 
 interface PropsTypes {
-    open:boolean;
-    title:string;
-    content:string;
-    handleClose: ()=>void;
-    handleConfirmation:(res:string)=>void;
+    open: boolean;
+    title: string;
+    content: string;
+    handleClose: () => void;
+    handleConfirmation: (res: string) => void;
 }
-export const ConfirmationModal= (props:PropsTypes)=>{
-    const intl= useIntl();
-    const { open,handleClose,handleConfirmation ,title,content}=props;
+export const ConfirmationModal = (props: PropsTypes) => {
+    const intl = useIntl();
+    const { open, handleClose, handleConfirmation, title, content } = props;
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth={"sm"} aria-modal sx={{ "& .MuiDialog-paper": { minWidth: 300 } }}>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogContent>{content}</DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose}>{intl.formatMessage({ id: "BUTTON.CLOSE" })}</Button>
-                <Button onClick={()=>handleConfirmation("ok")}>Delete</Button>
-            </DialogActions>
-        </Dialog>
+        <CustomisedModal open={open} handleClose={handleClose}>
+            <Stack spacing={1.5}>
+                <Typography variant="h5">{title}</Typography>
+                <Typography>{content}</Typography>
+                <Stack direction={"row"} spacing={1} sx={{ justifyContent: "flex-end" }}>
+                    <CustomisedButton label="Cancel" handleClick={handleClose} variant="outlined" />
+                    <CustomisedButton label="Delete" handleClick={() => handleConfirmation("ok")} />
+                </Stack>
+            </Stack>
+        </CustomisedModal>
     )
 }

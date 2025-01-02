@@ -534,8 +534,8 @@ export const MuiTheme = createTheme({
       },
     },
     MuiIconButton: {
-      defaultProps:{
-        disableRipple:true
+      defaultProps: {
+        disableRipple: true,
       },
       styleOverrides: {
         root: {
@@ -549,7 +549,7 @@ export const MuiTheme = createTheme({
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             color: themeColors.white,
             background: themeColors.primary,
-          }
+          },
         },
         sizeSmall: {
           padding: 4,
@@ -834,16 +834,16 @@ export const MuiTheme = createTheme({
     },
     MuiTablePagination: {
       styleOverrides: {
-        root :{
-          marginTop:"1rem",
-          "& .MuiTablePagination-selectLabel":{
-            margin:"0px",
-            fontSize:"14px"
+        root: {
+          marginTop: "1rem",
+          "& .MuiTablePagination-selectLabel": {
+            margin: "0px",
+            fontSize: "14px",
           },
-          "& .MuiTablePagination-displayedRows":{
-            marginBottom:"0px",
-            fontSize:"14px"
-          }
+          "& .MuiTablePagination-displayedRows": {
+            marginBottom: "0px",
+            fontSize: "14px",
+          },
         },
         toolbar: {
           "& .MuiIconButton-root": {
@@ -860,7 +860,7 @@ export const MuiTheme = createTheme({
     MuiToolbar: {
       styleOverrides: {
         root: {
-          fontSize:"14px",
+          fontSize: "14px",
           minHeight: "0 !important",
           padding: "0 !important",
         },
@@ -910,7 +910,39 @@ export const MuiTheme = createTheme({
         },
       },
     },
-
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: "16px",
+          "@media (min-width:600px)": {
+            padding: "24px",
+          },
+          "@media (min-width:900px)": {
+            padding: "32px",
+          },
+          "@media (min-width:1280px)": {
+            padding: "48px",
+          },
+        },
+      },
+    },
+    MuiDialog:{
+      styleOverrides:{
+        paper: {
+          maxWidth:"720px",
+          minWidth: '300px', // Default min-width for small screens
+          '@media (min-width:600px)': {
+            minWidth: '400px', // For small and up screens
+          },
+          '@media (min-width:900px)': {
+            minWidth: '500px', // For medium and up screens
+          },
+          '@media (min-width:1200px)': {
+            minWidth: '600px', // For large screens and up
+          },
+        },
+      }
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {

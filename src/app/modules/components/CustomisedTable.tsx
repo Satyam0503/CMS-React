@@ -23,10 +23,11 @@ interface PropsTypes<Row, Columns> {
   handleEdit?:(row:Row)=>void;
   setRowPerPage: React.Dispatch<React.SetStateAction<number>>
   setPage: React.Dispatch<React.SetStateAction<number>>
+  openViewModal?:(id:string)=>void;
 }
 
 export const CustomisedTable = <Row extends { id: string }, Column extends ColumnTypes>(props: PropsTypes<Row, Column>) => {
-  const { rows, columns, page, rowsPerPage, setRowPerPage, setPage,handleEdit, loading ,totalRecords,openConfirmationModal } = props;
+  const { rows, columns, page, rowsPerPage, setRowPerPage, setPage,handleEdit, loading ,totalRecords,openConfirmationModal,openViewModal } = props;
 
   function handlePageChange(event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) {
     setPage(newPage)
@@ -85,7 +86,7 @@ export const CustomisedTable = <Row extends { id: string }, Column extends Colum
                                         ? <AvatarCell title={value} subTitle={row.jobRole} />
                                         : column.build 
                                         ? ( column.id === "action") 
-                                        ? column.build(row,handleEdit,openConfirmationModal)
+                                        ? column.build(row,handleEdit,openConfirmationModal,openViewModal)
                                         : column.build(value)
                                         : value
                                     }
