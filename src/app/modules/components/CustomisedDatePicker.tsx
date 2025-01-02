@@ -5,6 +5,7 @@ import React from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { styled } from "@mui/material";
 
 const date = new Date();
 const currentDate = date.getDate();
@@ -12,14 +13,15 @@ const currentYear = date.getFullYear();
 const currentMonth = date.getMonth() + 1;
 
 interface PropsTypes {
-  value : Dayjs | null;
-  setValue:(newDate:Dayjs | null)=>void;
-  label?:string;
-  maxDate?:Dayjs;
-  minDate?:Dayjs ;
+  sx?: { width: string };
+  value?: Dayjs | null;
+  setValue: (newDate: Dayjs | null) => void;
+  label?: string;
+  maxDate?: Dayjs;
+  minDate?: Dayjs;
 }
 
-const CustomisedDatePicker = (props:PropsTypes) => {
+const CustomisedDatePicker = (props: PropsTypes) => {
   const { label, value, setValue, maxDate } = props;
   return (
     <>
@@ -55,7 +57,13 @@ const CustomisedDatePicker = (props:PropsTypes) => {
                 },
               },
             }}
-            sx={{ minWidth: { xl: "100% !important", sm: "100% !important" } }}
+            sx={{
+              minWidth: {
+                xl: "100% !important",
+                sm: "100% !important",
+                overflow: "hidden",
+              },
+            }}
           />
         </DemoContainer>
       </LocalizationProvider>

@@ -1,110 +1,112 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
+import { Add, Check, Download, Edit, Sort } from "@mui/icons-material";
 import {
-  Card,
-  FormControl,
   Grid,
-  InputLabel,
+  IconButton,
   MenuItem,
   Select,
-  SelectChangeEvent,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
-import { Add, Edit } from "@mui/icons-material";
+import React, { useState } from "react";
 import { useIntl } from "react-intl";
+import { CustomisedModal } from "../components/CustomisedModal";
+import CustomisedButton from "../components/CustomisedButton";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 800,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: 2,
-  p: 4,
-};
+export default function AddLeaves() {
+  const intl = useIntl();
 
-export default function Education() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const intl = useIntl();
-  const [degree, setDegree] = React.useState("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setDegree(event.target.value as string);
-  };
   return (
-    <Grid>
-      <Stack
-        onClick={() => handleOpen()}
-        className="btn btn-sm bg-white border btn-active-light-primary p-1"
-      >
-        <Edit />
-      </Stack>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
+    <Grid container>
+      <IconButton onClick={() => setOpen(true)}>
+        <Add />
+      </IconButton>
+      <CustomisedModal open={open} handleClose={handleClose}>
+        <Grid container className="d-flex mt-2">
           <Stack>
-            <Typography variant="h5" className="text-primary">
+            <Typography variant="h5" className="text-primary mb-2">
               {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
             </Typography>
           </Stack>
-          <Stack>
-            <Typography variant="body1">Title</Typography>
-            <TextField variant="outlined" fullWidth />
-          </Stack>
-          <Grid container className="d-flex" spacing={2}>
-            <Grid item xs={12} md={6} className="w-100">
-              <Typography>Start date</Typography>
-              <CustomisedDatePicker />
-            </Grid>
-            <Grid item xs={12} md={6} className="w-100">
-              <Typography variant="body1">End date</Typography>
-              <CustomisedDatePicker />
-            </Grid>
-          </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6} sx={{ width: "100%" }}>
-              <Typography variant="body1">College Name</Typography>
-              <TextField variant="outlined" fullWidth />
+            <Grid item xs={12}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "INFO.TITLE" })}
+              </Typography>
+              <TextField fullWidth id="outlined-basic" variant="outlined" />
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body1">Type</Typography>
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({
+                  id: "APPLICATION.START",
+                })}
+              </Typography>
+              <CustomisedDatePicker />
+            </Grid>
 
-              <FormControl fullWidth>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Degree"
-                  onChange={handleChange}
-                >
-                  <MenuItem>Degree</MenuItem>
-                  <MenuItem>Ten</MenuItem>
-                  <MenuItem>Twenty</MenuItem>
-                  <MenuItem>Thirty</MenuItem>
-                </Select>
-              </FormControl>
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({
+                  id: "APPLICATION.END",
+                })}
+              </Typography>
+              <CustomisedDatePicker />
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({
+                  id: "MENU.COLLEGE.NAME",
+                })}
+              </Typography>
+              <TextField fullWidth id="outlined-basic" variant="outlined" />
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "MENU.MODE" })}
+              </Typography>
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Online</MenuItem>
+                <MenuItem>Offline</MenuItem>
+              </Select>
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+              }}
+            >
+              <CustomisedButton
+                variant="outlined"
+                size="medium"
+                label="Cancel"
+              />
+              <CustomisedButton
+                variant="outlined"
+                size="medium"
+                label="Add New"
+                Icon={<Add />}
+              />
+              <CustomisedButton
+                variant="contained"
+                size="medium"
+                label="Save"
+                Icon={<Check />}
+              />
             </Grid>
           </Grid>
-
-          <Grid container className="d-flex justify-content-end mt-4 gap-2">
-            <Button variant="contained" onClick={handleClose}>Cancel</Button>
-            <Button variant="contained">Add New</Button>
-            <Button variant="contained">Save</Button>
-          </Grid>
-        </Box>
-      </Modal>
+        </Grid>
+      </CustomisedModal>
     </Grid>
   );
 }

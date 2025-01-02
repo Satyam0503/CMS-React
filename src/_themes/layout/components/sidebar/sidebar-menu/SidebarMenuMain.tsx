@@ -12,7 +12,11 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { AdminPanelSettings } from "@mui/icons-material";
+import {
+  AdminPanelSettings,
+  HolidayVillageSharp,
+  TimeToLeave,
+} from "@mui/icons-material";
 
 const SidebarMenuMain = () => {
   const intl = useIntl();
@@ -68,6 +72,17 @@ const SidebarMenuMain = () => {
       </SidebarMenuItemWithSub>
 
       <SidebarMenuItem
+        to="/recruitment"
+        icon={<TimeToLeave />}
+        title={intl.formatMessage({ id: "MENU.RECRUITMENT" })}
+      />
+      <SidebarMenuItem
+        to="/jobs"
+        icon={<TimeToLeave />}
+        title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
+      />
+
+      <SidebarMenuItem
         to="/crafted/pages/profile/overview"
         title="Overview"
         icon={<CalendarTodayIcon />}
@@ -81,6 +96,11 @@ const SidebarMenuMain = () => {
         to="/crafted/account/settings"
         title="Settings"
         icon={<SettingsIcon />}
+      />
+      <SidebarMenuItem
+        to="/holidays"
+        icon={<TimeToLeave />}
+        title={intl.formatMessage({ id: "MENU.HOLIDAYS" })}
       />
       <SidebarMenuItem
         to="/admin"

@@ -28,10 +28,14 @@ export default function Admin() {
   const intl = useIntl();
   return (
     <>
-      <Grid container sx={{ maxWidth: "1200px", m: "auto" }} spacing={2}>
+      <Grid
+        container
+        sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
+        spacing={2}
+      >
         <Stack>
-          <Typography variant="h4" className="mb-2">
-            {intl.formatMessage({ id: "MENU.EMP" })}
+          <Typography variant="h4" sx={{ pb: "20px" }}>
+            {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
           </Typography>
         </Stack>
 

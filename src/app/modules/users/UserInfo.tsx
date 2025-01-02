@@ -1,4 +1,4 @@
-import { Edit } from "@mui/icons-material";
+import { Check, Edit } from "@mui/icons-material";
 import {
   Grid,
   TextField,
@@ -7,10 +7,14 @@ import {
   Modal,
   Box,
   Typography,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import React from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
+import { Dayjs } from "dayjs";
+import CustomisedButton from "../components/CustomisedButton";
 
 export default function UserInfo() {
   const style = {
@@ -47,84 +51,101 @@ export default function UserInfo() {
       >
         <Box sx={style}>
           <Grid container className="d-flex mt-2">
-            <Stack>
-              <Typography variant="h5" className="text-primary mb-2">
-                {intl.formatMessage({ id: "PROFILE.PI" })}
-              </Typography>
-            </Stack>
             <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body1">Email address</Typography>
-                <TextField
-                  sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  variant="outlined"
-                />
+              <Grid item xs={12}>
+                <Typography variant="h5" className="text-primary mb-2">
+                  {intl.formatMessage({ id: "PROFILE.PI" })}
+                </Typography>
               </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1">Phone number</Typography>
-                <TextField
-                  sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  variant="outlined"
-                />
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                </Typography>
+                <TextField fullWidth id="outlined-basic" variant="outlined" />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "USER.PHONE" })}
+                </Typography>
+                <TextField fullWidth id="outlined-basic" variant="outlined" />
               </Grid>
 
-              <Grid item xs={6} className="pt-2">
-                <Typography variant="body1">Date of birth</Typography>
+              <Grid item xs={12} md={6} className="pt-2">
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "USER.DOB" })}
+                </Typography>
                 <CustomisedDatePicker
                   sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  label="Date of birth"
-                  variant="outlined"
+                  setValue={function (newDate: Dayjs | null): void {
+                    throw new Error("Function not implemented.");
+                  }}
                 />
               </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1">Gender</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "USER.GENDER" })}
+                </Typography>
+                <Select fullWidth id="outlined-basic" variant="outlined">
+                  <MenuItem>Male</MenuItem>
+                  <MenuItem>Female</MenuItem>
+                  <MenuItem>Other</MenuItem>
+                </Select>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "TRANSLATOR.LANGUAGES" })}
+                </Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Gender"
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({
+                    id: "USER.PERSONAL_EMAIL",
+                  })}
+                </Typography>
+                <TextField
+                  sx={{ width: "100%" }}
+                  id="outlined-basic"
                   variant="outlined"
                 />
               </Grid>
 
-              <Grid item xs={6}>
-                <Typography variant="body1">Languages Known</Typography>
-                <TextField
-                  sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  label="Languages Known"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1">Personal Email</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({
+                    id: "USER.EMERGENCY_CONTACT",
+                  })}
+                </Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
                   variant="outlined"
                 />
               </Grid>
-
-              <Grid item xs={6}>
-                <Typography variant="body1">Emergency contact</Typography>
-                <TextField
-                  sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1">Blood Group</Typography>
-                <TextField
-                  sx={{ width: "100%" }}
-                  id="outlined-basic"
-                  variant="outlined"
-                />
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({
+                    id: "USER.BLOOD_GROUP",
+                  })}
+                </Typography>
+                <Select fullWidth id="outlined-basic" variant="outlined">
+                  <MenuItem>O+</MenuItem>
+                  <MenuItem>A+</MenuItem>
+                  <MenuItem>B+</MenuItem>
+                  <MenuItem>AB+</MenuItem>
+                </Select>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1">Address</Typography>
+                <Typography variant="body1">
+                  {intl.formatMessage({
+                    id: "USER.ADDRESS",
+                  })}
+                </Typography>
                 <TextField
                   sx={{ width: "100%" }}
                   id="outlined-basic"
@@ -135,14 +156,23 @@ export default function UserInfo() {
               <Grid
                 item
                 xs={12}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "10px",
+                }}
               >
-                <Button variant="contained" className="me-4 bg-primary">
-                  Cancel
-                </Button>
-                <Button variant="contained" className="bg-primary">
-                  Save
-                </Button>
+                <CustomisedButton
+                  variant="outlined"
+                  size="medium"
+                  label="Cancel"
+                />
+                <CustomisedButton
+                  variant="contained"
+                  size="medium"
+                  label="Save"
+                  Icon={<Check />}
+                />
               </Grid>
             </Grid>
           </Grid>

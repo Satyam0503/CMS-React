@@ -1,8 +1,13 @@
-import { Typography, Card, Grid, Stack } from "@mui/material";
+import { Typography, Card, Grid, Stack, IconButton } from "@mui/material";
 import { useIntl } from "react-intl";
-import { FeedbackOutlined, FeedbackTwoTone } from "@mui/icons-material";
+import {
+  Announcement,
+  FeedbackOutlined,
+  FeedbackTwoTone,
+} from "@mui/icons-material";
 import HalfRating from "../../components/HalfRating";
 import { CalendarIcon } from "@mui/x-date-pickers";
+import { colors } from "../../theme/MuiTheme";
 
 type Props = {
   className: string;
@@ -22,8 +27,14 @@ export default function Feedback() {
             spacing={2}
             className="mb-2 align-items-center"
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: 1,
+              }}
+            >
+              <Announcement sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
               <Typography
@@ -49,8 +60,14 @@ export default function Feedback() {
             spacing={2}
             className="mb-2 align-items-center"
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: 1,
+              }}
+            >
+              <Announcement sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
               <Typography

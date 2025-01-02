@@ -4,7 +4,13 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Chip, Grid, Paper, Stack, styled, TextField } from "@mui/material";
-import { Add, Edit, TagFacesOutlined } from "@mui/icons-material";
+import {
+  Add,
+  Check,
+  CheckBox,
+  CheckBoxOutlineBlank,
+} from "@mui/icons-material";
+import CustomisedButton from "../components/CustomisedButton";
 
 interface ChipData {
   key: number;
@@ -66,7 +72,6 @@ export default function Skills() {
             </Typography>
             <TextField variant="outlined" placeholder="Type"></TextField>
           </Stack>
-
           <Grid container>
             {chipData.map((data) => {
               return (
@@ -76,9 +81,22 @@ export default function Skills() {
               );
             })}
           </Grid>
-          <Grid container className="d-flex justify-content-end gap-2 ">
-            <Button variant="contained">Cancel</Button>
-            <Button variant="contained">Update</Button>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "10px",
+            }}
+          >
+            <CustomisedButton variant="outlined" size="medium" label="Cancel" />
+            <CustomisedButton
+              variant="contained"
+              size="medium"
+              label="Update"
+              Icon={<Check />}
+            />
           </Grid>
         </Box>
       </Modal>

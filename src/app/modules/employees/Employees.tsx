@@ -20,13 +20,17 @@ import AddUpdateEmployee from "./AddUpdateEmployee";
 import DownloadCV from "./DownloadCV";
 import SortEmployee from "./SortEmployee";
 import { useEffect, useState } from "react";
-import { addEmployee, getAllEmployees, updateEmployee } from "./employeeServices";
+import {
+  addEmployee,
+  getAllEmployees,
+  updateEmployee,
+} from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../Constant";
 import dayjs, { Dayjs } from "dayjs";
 import { EmployeesDataTypes } from "../../../common_types";
-const { token } = JSON.parse(localStorage.getItem('kt-auth-react-v') || "{}");
+const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 // export interface employeeInitialValueType {
 //   id?:string;
@@ -70,12 +74,13 @@ const employeeInitialValue: EmployeesDataTypes = {
   dateOfJoining: null,
   personalEmail: "",
   emergencyContact: "",
-  profilePicture: ""
-}
+  profilePicture: "",
+};
 export default function Employees() {
   const intl = useIntl();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [employeeInitialValues, setEmployeeInitialValues] = useState(employeeInitialValue);
+  const [employeeInitialValues, setEmployeeInitialValues] =
+    useState(employeeInitialValue);
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [employeeList, setEmployeeList] = useState<any[]>([]);
@@ -89,65 +94,64 @@ export default function Employees() {
     setModalOpen(false);
     setEmployeeInitialValues(employeeInitialValue);
     setEdit(false);
-  }  
+  }
 
   function SaveAddEditEmployee(values: EmployeesDataTypes) {
-      setLoading(true);
-      if (isEdit) {
-        console.log(values);
-        const employeeId = values.id;
-        const payload = {
-          ...values,
-        }
-        updateEmployee(employeeId, payload, token)
-          .then((res) => {
-            const { success, message } = res.data;
-            if (success) {
-              toast.success(message);
-              setRefresh(!isRefresh);
-              handleClose();
-            }
-          })
-          .catch((res) => {
-            console.log(res);
-            toast.error("Network Error.Try Again");
-          })
-      }
-      else {
-        const payload = {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          gender: values.gender,
-          employeeId: values.employeeId,
-          dateOfBirth: values.dateOfBirth,
-          email: values.email,
-          jobRole: values.jobRole,
-          role: values.role,
-          department: values.department,
-          reportingManager: values.reportingManager,
-          teamLead: values.teamLead,
-          phoneNumber: values.phoneNumber,
-          bloodGroup: values.bloodGroup,
-          personalEmail: values.personalEmail,
-          emergencyContact: values.emergencyContact,
-          dateOfJoining: values.dateOfJoining,
-          status: values.status,
-          address: values.address,
-        }
-        addEmployee(payload, token)
-          .then(res => {
-            console.log(res);
-            setLoading(false);
+    setLoading(true);
+    if (isEdit) {
+      console.log(values);
+      const employeeId = values.id;
+      const payload = {
+        ...values,
+      };
+      updateEmployee(employeeId, payload, token)
+        .then((res) => {
+          const { success, message } = res.data;
+          if (success) {
+            toast.success(message);
             setRefresh(!isRefresh);
-            toast.success(res.data.message)
             handleClose();
-          })
-          .catch(error => {
-            setLoading(false)
-            toast.error(error.message)
-            console.log(error);
-          })
-      }
+          }
+        })
+        .catch((res) => {
+          console.log(res);
+          toast.error("Network Error.Try Again");
+        });
+    } else {
+      const payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        gender: values.gender,
+        employeeId: values.employeeId,
+        dateOfBirth: values.dateOfBirth,
+        email: values.email,
+        jobRole: values.jobRole,
+        role: values.role,
+        department: values.department,
+        reportingManager: values.reportingManager,
+        teamLead: values.teamLead,
+        phoneNumber: values.phoneNumber,
+        bloodGroup: values.bloodGroup,
+        personalEmail: values.personalEmail,
+        emergencyContact: values.emergencyContact,
+        dateOfJoining: values.dateOfJoining,
+        status: values.status,
+        address: values.address,
+      };
+      addEmployee(payload, token)
+        .then((res) => {
+          console.log(res);
+          setLoading(false);
+          setRefresh(!isRefresh);
+          toast.success(res.data.message);
+          handleClose();
+        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error(error.message);
+          console.log(error);
+        });
+    }
   }
 
   function handleEmployeeEdit(row: EmployeesDataTypes) {
@@ -181,8 +185,8 @@ export default function Employees() {
     const payload = {
       pageNo: page + 1,
       limit: rowPerPage,
-      name: search
-    }
+      name: search,
+    };
     const timeOutId = setTimeout(() => {
       getAllEmployees(payload, token)
         .then((res) => {
@@ -194,8 +198,8 @@ export default function Employees() {
           }
         })
         .catch((res) => {
-          toast.error(res)
-        })
+          toast.error(res);
+        });
     }, 1500);
     return () => clearTimeout(timeOutId);
   }, [page, rowPerPage, isRefresh, search]);
@@ -218,16 +222,26 @@ export default function Employees() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchOutlined sx={{ color: "#000000" }} />
+                      <SearchOutlined />
                     </InputAdornment>
                   ),
                   endAdornment: (
-                    <InputAdornment position="end" >
-                      <IconButton onClick={() => setSearch("")}>
-                        <Close sx={{ color: "#000000" }} />
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setSearch("")}
+                        sx={{
+                          border: 0,
+                          padding: "2px",
+                          "&:hover, &.Mui-selected, &.Mui-selected:hover": {
+                            border: "none",
+                            background: "none",
+                          },
+                        }}
+                      >
+                        <Close />
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}
                 variant="outlined"
                 placeholder="Search something ..."
@@ -239,7 +253,10 @@ export default function Employees() {
               <IconButton aria-label="filter employee">
                 <FilterList />
               </IconButton>
-              <IconButton aria-label="add employee" onClick={() => setModalOpen(true)}>
+              <IconButton
+                aria-label="add employee"
+                onClick={() => setModalOpen(true)}
+              >
                 <Add />
               </IconButton>
               <IconButton aria-label="import excel">
@@ -263,8 +280,7 @@ export default function Employees() {
           </Stack>
         </Card>
       </Stack>
-      {
-        isModalOpen &&
+      {isModalOpen && (
         <AddUpdateEmployee
           open={isModalOpen}
           isEdit={isEdit}
@@ -273,7 +289,7 @@ export default function Employees() {
           initialValues={employeeInitialValues}
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
-      }
+      )}
     </Container>
   );
 }

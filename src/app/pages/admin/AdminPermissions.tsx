@@ -30,30 +30,18 @@ export default function AdminPermissions() {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ color: colors.alpha.neutral[800] }}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: "600" }}>
-                {intl.formatMessage({ id: "MENU.MODULE" })}
-              </Typography>
+            <TableCell>{intl.formatMessage({ id: "MENU.MODULE" })}</TableCell>
+            <TableCell align="center">
+              {intl.formatMessage({ id: "MENU.SUP.ADMIN" })}
             </TableCell>
-            <TableCell sx={{ color: colors.alpha.neutral[800] }} align="right">
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: "600" }}>
-                {intl.formatMessage({ id: "MENU.SUP.ADMIN" })}
-              </Typography>
+            <TableCell align="center">
+              {intl.formatMessage({ id: "MENU.ADMIN" })}
             </TableCell>
-            <TableCell align="right" sx={{ color: colors.alpha.neutral[800] }}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: "600" }}>
-                {intl.formatMessage({ id: "MENU.ADMIN" })}
-              </Typography>
+            <TableCell align="center">
+              {intl.formatMessage({ id: "MENU.MGMT" })}
             </TableCell>
-            <TableCell align="right" sx={{ color: colors.alpha.neutral[800] }}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: "600" }}>
-                {intl.formatMessage({ id: "MENU.MGMT" })}
-              </Typography>
-            </TableCell>
-            <TableCell align="right" sx={{ color: colors.alpha.neutral[800] }}>
-              <Typography variant="body2" sx={{ mb: 1, fontWeight: "600" }}>
-                {intl.formatMessage({ id: "MENU.USER" })}
-              </Typography>
+            <TableCell align="center">
+              {intl.formatMessage({ id: "MENU.USER" })}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -65,24 +53,25 @@ export default function AdminPermissions() {
                 "&:last-child td, &:last-child th": { border: 0 },
               }}
             >
+              <TableCell component="th" scope="row">
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: "600", color: colors.alpha.neutral[800] }}
+                >
+                  {row.name}
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Checkbox {...label} defaultChecked />
+              </TableCell>
+              <TableCell align="center">
+                <Checkbox {...label} defaultChecked />
+              </TableCell>
+              <TableCell align="center">
+                <Checkbox {...label} defaultChecked />
+              </TableCell>
               <TableCell
-                component="th"
-                scope="row"
-                sx={{ color: colors.alpha.neutral[800] }}
-              >
-                {row.name}
-              </TableCell>
-              <TableCell align="right">
-                <Checkbox {...label} defaultChecked />
-              </TableCell>
-              <TableCell align="right">
-                <Checkbox {...label} defaultChecked />
-              </TableCell>
-              <TableCell color="primary" align="right">
-                <Checkbox {...label} defaultChecked />
-              </TableCell>
-              <TableCell
-                align="right"
+                align="center"
                 sx={{ color: colors.alpha.primary[500] }}
               >
                 <Checkbox {...label} defaultChecked />

@@ -4,7 +4,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import AboutUser from "./AboutUser";
 import { LeaveTracker } from "./leavetracker/LeaveTracker";
-import { Grid } from "@mui/material";
+import { Grid, Theme, useMediaQuery } from "@mui/material";
 import { UserPerformance } from "./performance/UserPerformance";
 import { WorkHistory } from "./workhistory/WorkHistory";
 import { colors } from "../theme/MuiTheme";
@@ -46,6 +46,10 @@ export default function BasicTabs() {
     setValue(newValue);
   };
 
+  const isSmallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+
   return (
     <Box sx={{ borderRadius: "8px" }}>
       <Box
@@ -61,6 +65,9 @@ export default function BasicTabs() {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          variant={isSmallScreen ? "scrollable" : "standard"}
+          scrollButtons="auto"
+          allowScrollButtonsMobile={true}
         >
           <Tab
             label="About"

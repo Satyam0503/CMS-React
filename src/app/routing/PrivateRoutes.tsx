@@ -14,6 +14,10 @@ import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
 import Employees from "../modules/employees/Employees";
 import Admin from "../pages/admin/Admin";
+import Holidays from "../pages/holidays/Holidays";
+import Recruitment from "../pages/recruitment/Recruitment";
+import Jobs from "../pages/recruitment/Jobs";
+import Applications from "../pages/recruitment/Applications";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -41,6 +45,9 @@ const PrivateRoutes = () => {
         <Route path="attendance" element={<EmployeeAttendance />} />
         <Route path="employees" element={<Employees />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="holidays" element={<Holidays />} />
+        <Route path="recruitment" element={<Recruitment />} />
+        <Route path="jobs" element={<Jobs />} />
 
         {/* Lazy Modules */}
         <Route

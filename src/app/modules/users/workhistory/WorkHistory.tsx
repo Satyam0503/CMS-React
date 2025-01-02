@@ -21,18 +21,15 @@ export const WorkHistory: FC = () => {
               spacing={2}
               className="mb-2 align-items-center "
             >
-              <IconButton
+              <Stack
                 sx={{
                   background: colors.alpha.primary[100],
-                  color: colors.alpha.primary[500],
-                  " &:hover, &:focus:hover": {
-                    background: colors.alpha.primary[100],
-                    color: colors.alpha.primary[500],
-                  },
+                  borderRadius: "4px",
+                  p: "12px",
                 }}
               >
-                <CorporateFare />
-              </IconButton>
+                <CorporateFare sx={{ color: colors.alpha.primary[500] }} />
+              </Stack>
               <Stack>
                 <Typography
                   variant="body1"
@@ -59,19 +56,14 @@ export const WorkHistory: FC = () => {
               spacing={2}
               className="mb-2 align-items-center"
             >
-              <Stack>
-                <IconButton
-                  sx={{
-                    background: colors.alpha.primary[100],
-                    color: colors.alpha.primary[500],
-                    " &:hover, &:focus:hover:hover": {
-                      background: colors.alpha.primary[100],
-                      color: colors.alpha.primary[500],
-                    },
-                  }}
-                >
-                  <CorporateFare />
-                </IconButton>
+              <Stack
+                sx={{
+                  background: colors.alpha.primary[100],
+                  borderRadius: "4px",
+                  p: "12px",
+                }}
+              >
+                <CorporateFare sx={{ color: colors.alpha.primary[500] }} />
               </Stack>
               <Stack>
                 <Typography

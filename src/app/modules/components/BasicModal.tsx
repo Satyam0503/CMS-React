@@ -4,7 +4,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Grid, Stack, TextField } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import { Check, Edit } from "@mui/icons-material";
+import CustomisedButton from "./CustomisedButton";
 
 const style = {
   position: "absolute",
@@ -49,9 +50,22 @@ export default function BasicModal() {
             />
           </Stack>
 
-          <Grid container className="d-flex justify-content-end gap-2">
-            <Button variant="contained">Cancel</Button>
-            <Button variant="contained">Save</Button>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "10px",
+            }}
+          >
+            <CustomisedButton variant="outlined" size="medium" label="Cancel" />
+            <CustomisedButton
+              variant="contained"
+              size="medium"
+              label="Save"
+              Icon={<Check sx={{ px: "2px" }} />}
+            />
           </Grid>
         </Box>
       </Modal>

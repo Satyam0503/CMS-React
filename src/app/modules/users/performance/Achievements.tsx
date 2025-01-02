@@ -1,8 +1,18 @@
 import { Typography, Card, Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { FeedbackOutlined } from "@mui/icons-material";
+import {
+  Announcement,
+  Celebration,
+  FeedbackOutlined,
+  LocalCafe,
+  LocalFlorist,
+  Stars,
+  Whatshot,
+  Work,
+} from "@mui/icons-material";
 import HalfRating from "../../components/HalfRating";
 import { CalendarIcon } from "@mui/x-date-pickers";
+import { colors } from "../../theme/MuiTheme";
 
 type Props = {
   className: string;
@@ -20,16 +30,20 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ opacity: ".5", mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <Whatshot sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.DIRECTOR" })}
               </Typography>
               <Stack direction="row" spacing={1} alignItems={"center"}>
@@ -46,16 +60,20 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ opacity: ".5", mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <Celebration sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.SR_PROJECT_MANAGER" })}
               </Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>
@@ -71,16 +89,20 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ opacity: ".5", mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <LocalFlorist sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.PROJ_MANAGER" })}
               </Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>
@@ -96,16 +118,20 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ opacity: ".5", mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <Stars sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.TEAM_LEAD" })}
               </Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>
@@ -121,10 +147,17 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <LocalCafe sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
               <Typography
@@ -146,10 +179,17 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            className="mb-2 align-items-center"
+            sx={{ mb: "10px" }}
+            alignItems={"center"}
           >
-            <Stack>
-              <FeedbackOutlined />
+            <Stack
+              sx={{
+                background: colors.alpha.primary[100],
+                borderRadius: "4px",
+                p: "12px",
+              }}
+            >
+              <Work sx={{ color: colors.alpha.primary[500] }} />
             </Stack>
             <Stack>
               <Typography
