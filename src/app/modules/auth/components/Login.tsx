@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import { getUserByToken, login } from "../core/_requests";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { useAuth } from "../core/Auth";
+import { log } from "node:console";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -20,8 +21,8 @@ const loginSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  email: "admin@demo.com",
-  password: "demo",
+  email: "admin@email.com",
+  password: "Admin123",
 };
 
 /*
@@ -40,16 +41,9 @@ export function Login() {
     onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
       try {
-        const { data: methodResult } = await login(
-          values.email,
-          values.password
-        );
-
-        saveAuth(methodResult.methodResult);
-        const { data: user } = await getUserByToken(
-          methodResult.methodResult.token
-        );
-
+        const { data: auth } = await login(values.email, values.password);
+        saveAuth(auth);
+        const { data: user } = await getUserByToken(auth.api_token);
         setCurrentUser(user);
       } catch (error) {
         console.error(error);

@@ -86,8 +86,8 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
       }
     };
 
-    if (auth && auth.token) {
-      requestUser(auth.token);
+    if (auth && auth.api_token) {
+      requestUser(auth.api_token);
     } else {
       logout();
       setShowSplashScreen(false);

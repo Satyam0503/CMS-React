@@ -4,6 +4,7 @@ import { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { styled } from "@mui/material";
 
 const date = new Date();
 const currentDate = date.getDate();
@@ -11,16 +12,17 @@ const currentYear = date.getFullYear();
 const currentMonth = date.getMonth() + 1;
 
 interface PropsTypes {
-  value : Dayjs | null;
-  setValue:(newDate:Dayjs | null)=>void;
-  label?:string;
-  maxDate?:Dayjs;
-  minDate?:Dayjs;
-  name?:string;
+  value: Dayjs | null;
+  setValue: (newDate: Dayjs | null) => void;
+  label?: string;
+  maxDate?: Dayjs;
+  minDate?: Dayjs;
+  name?: string;
+  sx?: string;
 }
 
-const CustomisedDatePicker = (props:PropsTypes) => {
-  const { label, value, setValue, maxDate,name } = props;
+const CustomisedDatePicker = (props: PropsTypes) => {
+  const { sx, label, value, setValue, maxDate, name } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -54,7 +56,13 @@ const CustomisedDatePicker = (props:PropsTypes) => {
                 },
               },
             }}
-            sx={{ minWidth: { xl: "100% !important", sm: "100% !important" } }}
+            sx={{
+              minWidth: {
+                xl: "100% !important",
+                sm: "100% !important",
+                overflow: "hidden",
+              },
+            }}
           />
         </DemoContainer>
       </LocalizationProvider>

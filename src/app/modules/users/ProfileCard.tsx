@@ -13,21 +13,28 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { AttachFile, CloudUploadOutlined, Download, Edit, Image, Visibility } from "@mui/icons-material";
+import {
+  AttachFile,
+  CloudUploadOutlined,
+  Download,
+  Edit,
+  Image,
+  Visibility,
+} from "@mui/icons-material";
 import { useState } from "react";
-import { CustomisedModal } from "../components/CustomizedModal";
 import { updateUserAvatar } from "./userservices";
 import { toast } from "react-toastify";
+import { CustomisedModal } from "../components/CustomisedModal";
 
 const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 // const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
 
-type ProfileInfo= {
-  name?:string,
-  age?:number,
-  bloodGroup?:string,
-  designation?:string
-}
+type ProfileInfo = {
+  name?: string;
+  age?: number;
+  bloodGroup?: string;
+  designation?: string;
+};
 
 export default function ProfileCard(props:ProfileInfo) {
   const [open, setOpen] = useState(false);

@@ -15,18 +15,18 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 
 import { useUserDetails } from "./UserDataProvider";
-import { CustomisedModal } from "../components/CustomizedModal";
 import dayjs, { Dayjs } from "dayjs";
 import { bloodGroups, Gender } from "../../../Constant";
 import { userSchema } from "../../../utils/validation_schemas";
 import { updateUserDetails } from "./userservices";
 import { toast } from "react-toastify";
 import CustomisedButton from "../components/CustomisedButton";
+import { CustomisedModal } from "../components/CustomisedModal";
 
 type PropsType = {
-  open: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 //  get the token and user id from store
 const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
@@ -50,44 +50,48 @@ export default function UserInfo(props: PropsType) {
     personalEmail: currentUser?.personalEmail,
     emergencyContact: currentUser?.emergencyContact,
     bloodGroup: currentUser?.bloodGroup,
-    address: currentUser?.address
-  }
+    address: currentUser?.address,
+  };
 
   function handleClose() {
     setOpen(false);
   }
 
-  function handleUserDataUpdate(values: typeof initialValues, setSubmitting: (isSubmitting: boolean) => void) {
+  function handleUserDataUpdate(
+    values: typeof initialValues,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     const payload = {
       ...values,
-    }
+    };
     setTimeout(() => {
       updateUserDetails(id, payload, token)
-        .then(res => {
+        .then((res) => {
           const { success, message } = res.data;
           if (success) {
-            setRefresh(!isRefresh)
+            setRefresh(!isRefresh);
             setSubmitting(false);
             handleClose();
             toast.success(message);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           handleClose();
           setSubmitting(false);
           toast.error("Failed To Update User Details.");
-        })
+        });
     }, 2000);
   }
 
-  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps } = useFormik({
-    initialValues: initialValues,
-    validationSchema: userSchema,
-    onSubmit: (values, { setSubmitting }) => {
-      handleUserDataUpdate(values, setSubmitting);
-    },
-  });
+  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps } =
+    useFormik({
+      initialValues: initialValues,
+      validationSchema: userSchema,
+      onSubmit: (values, { setSubmitting }) => {
+        handleUserDataUpdate(values, setSubmitting);
+      },
+    });
 
   function setNewDob(newDate: Dayjs | null) {
     values.dateOfBirth = newDate;
@@ -111,8 +115,10 @@ export default function UserInfo(props: PropsType) {
                   placeholder="First Name"
                   variant="outlined"
                   error={touched.firstName && Boolean(errors.firstName)}
-                  {...getFieldProps('firstName')}
-                  helperText={(touched.firstName && errors.firstName) && errors.firstName}
+                  {...getFieldProps("firstName")}
+                  helperText={
+                    touched.firstName && errors.firstName && errors.firstName
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -122,8 +128,10 @@ export default function UserInfo(props: PropsType) {
                   placeholder="Last Name"
                   variant="outlined"
                   error={touched.lastName && Boolean(errors.lastName)}
-                  {...getFieldProps('lastName')}
-                  helperText={(touched.lastName && errors.lastName) && errors.lastName}
+                  {...getFieldProps("lastName")}
+                  helperText={
+                    touched.lastName && errors.lastName && errors.lastName
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6} className="pt-2">
@@ -134,7 +142,11 @@ export default function UserInfo(props: PropsType) {
                   setValue={setNewDob}
                   maxDate={dayjs()}
                 />
-                <FormHelperText sx={{ color: '#d32f2f' }}>{(touched.dateOfBirth && errors.dateOfBirth) && errors.dateOfBirth}</FormHelperText>
+                <FormHelperText sx={{ color: "#d32f2f" }}>
+                  {touched.dateOfBirth &&
+                    errors.dateOfBirth &&
+                    errors.dateOfBirth}
+                </FormHelperText>
               </Grid>
               <Grid item xs={12} sm={6} className="pt-2">
                 <Typography variant="body1">Email address</Typography>
@@ -143,8 +155,8 @@ export default function UserInfo(props: PropsType) {
                   placeholder="Email"
                   variant="outlined"
                   error={touched.email && Boolean(errors.email)}
-                  {...getFieldProps('email')}
-                  helperText={(touched.email && errors.email) && errors.email}
+                  {...getFieldProps("email")}
+                  helperText={touched.email && errors.email && errors.email}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -154,7 +166,11 @@ export default function UserInfo(props: PropsType) {
                   variant="outlined"
                   error={touched.phoneNumber && Boolean(errors.phoneNumber)}
                   {...getFieldProps("phoneNumber")}
-                  helperText={(touched.phoneNumber && errors.phoneNumber) && errors.phoneNumber}
+                  helperText={
+                    touched.phoneNumber &&
+                    errors.phoneNumber &&
+                    errors.phoneNumber
+                  }
                 />
               </Grid>
 
@@ -163,16 +179,18 @@ export default function UserInfo(props: PropsType) {
                 <Select
                   fullWidth
                   error={touched.bloodGroup && Boolean(errors.bloodGroup)}
-                  {...getFieldProps('bloodGroup')}
+                  {...getFieldProps("bloodGroup")}
                 >
                   <MenuItem value={""}>None</MenuItem>
-                  {
-                    bloodGroups.map(item => (
-                      <MenuItem key={item.id} value={item.value}>{item.label}</MenuItem>
-                    ))
-                  }
+                  {bloodGroups.map((item) => (
+                    <MenuItem key={item.id} value={item.value}>
+                      {item.label}
+                    </MenuItem>
+                  ))}
                 </Select>
-                <FormHelperText sx={{ color: "#d32f2f" }}>{(touched.bloodGroup && errors.bloodGroup) && errors.bloodGroup}</FormHelperText>
+                <FormHelperText sx={{ color: "#d32f2f" }}>
+                  {touched.bloodGroup && errors.bloodGroup && errors.bloodGroup}
+                </FormHelperText>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="body1">Personal Email</Typography>
@@ -180,8 +198,12 @@ export default function UserInfo(props: PropsType) {
                   fullWidth
                   error={touched.personalEmail && Boolean(errors.personalEmail)}
                   variant="outlined"
-                  helperText={touched.personalEmail && errors.personalEmail && errors.personalEmail}
-                  {...getFieldProps('personalEmail')}
+                  helperText={
+                    touched.personalEmail &&
+                    errors.personalEmail &&
+                    errors.personalEmail
+                  }
+                  {...getFieldProps("personalEmail")}
                 />
               </Grid>
 
@@ -190,10 +212,16 @@ export default function UserInfo(props: PropsType) {
                 <TextField
                   fullWidth
                   placeholder="Emergency Contact"
-                  error={touched.emergencyContact && Boolean(errors.emergencyContact)}
-                  helperText={(touched.emergencyContact && errors.emergencyContact) && errors.emergencyContact}
+                  error={
+                    touched.emergencyContact && Boolean(errors.emergencyContact)
+                  }
+                  helperText={
+                    touched.emergencyContact &&
+                    errors.emergencyContact &&
+                    errors.emergencyContact
+                  }
                   variant="outlined"
-                  {...getFieldProps('emergencyContact')}
+                  {...getFieldProps("emergencyContact")}
                 />
               </Grid>
 
@@ -202,8 +230,10 @@ export default function UserInfo(props: PropsType) {
                 <TextField
                   fullWidth
                   error={touched.address && Boolean(errors.address)}
-                  helperText={(touched.address && errors.address) && errors.address}
-                  {...getFieldProps('address')}
+                  helperText={
+                    touched.address && errors.address && errors.address
+                  }
+                  {...getFieldProps("address")}
                 />
               </Grid>
               <Grid
@@ -211,9 +241,22 @@ export default function UserInfo(props: PropsType) {
                 xs={12}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <Stack spacing={1} direction={"row"} sx={{ justifyContent: "flex-end" }} >
-                  <CustomisedButton label="Cancel" handleClick={handleClose} variant="outlined" />
-                  <CustomisedButton label="Save" type="submit" variant="contained" disabled={isSubmitting} />
+                <Stack
+                  spacing={1}
+                  direction={"row"}
+                  sx={{ justifyContent: "flex-end" }}
+                >
+                  <CustomisedButton
+                    label="Cancel"
+                    handleClick={handleClose}
+                    variant="outlined"
+                  />
+                  <CustomisedButton
+                    label="Save"
+                    type="submit"
+                    variant="contained"
+                    disabled={isSubmitting}
+                  />
                 </Stack>
               </Grid>
             </Grid>

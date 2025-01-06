@@ -6,7 +6,15 @@ import {
   Edit,
   School,
 } from "@mui/icons-material";
-import { Card, Chip, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+  Card,
+  Chip,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import UpdateUserInfo from "./UpdateUserInfo";
 import AddUpdateCertification from "./AddUpdateCertification";
@@ -17,12 +25,20 @@ import { dateFormatter } from "../../../utils/common";
 import { AddUpdateSkills } from "./AddUpdateSkills";
 import AddUpdateEducation from "./AddUpdateEducation";
 import dayjs from "dayjs";
-import { CertificationsType, UserCertificationType, UserEducationType } from "../../../utils/common_types";
-import { addUpdateUserCertification, addUpdateUserSummary, addUserEducation, updateUserEducation } from "./userservices";
+import {
+  CertificationsType,
+  UserCertificationType,
+  UserEducationType,
+} from "../../../utils/common_types";
+import {
+  addUpdateUserCertification,
+  addUpdateUserSummary,
+  addUserEducation,
+  updateUserEducation,
+} from "./userservices";
 import { toast } from "react-toastify";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import CustomisedButton from "../components/CustomisedButton";
-
 
 const userId = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007"; // get the user id and token from store
 const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
@@ -32,16 +48,16 @@ const initialEducationValues: UserEducationType = {
   startDate: null,
   endDate: null,
   collegeName: "",
-  type: ""
-}
+  type: "",
+};
 
 const initialCertificationValues: UserCertificationType = {
   title: "",
   startDate: null,
   endDate: null,
   organizationName: "",
-  type: ""
-}
+  type: "",
+};
 
 export default function AboutUser() {
   const intl = useIntl();
@@ -50,13 +66,16 @@ export default function AboutUser() {
   const [isSkillsModalOpen, setSkillsModalOpen] = useState(false);
   const [isEducationModalOpen, setEducationModalOpen] = useState(false);
   const [isCertificationModalOpen, setCertificationModalOpen] = useState(false);
-  const [initialEducationValue, setInitialEducationValue] = useState<UserEducationType>(initialEducationValues);
-  const [initialCertificationValue, setInitialCertificationValue] = useState(initialCertificationValues);
+  const [initialEducationValue, setInitialEducationValue] =
+    useState<UserEducationType>(initialEducationValues);
+  const [initialCertificationValue, setInitialCertificationValue] = useState(
+    initialCertificationValues
+  );
   const [openConfirmationModal, setConfirmationModal] = useState(false);
 
   const [isEdit, setEdit] = useState(false);
   const { userDetails: currentUser, isRefresh, setRefresh } = useUserDetails();
-  const summary= useRef("");  // can replace with state variable
+  const summary = useRef(""); // can replace with state variable
   const skills = currentUser?.skills || [];
   const educations = currentUser?.Education || [];
   const certifications = currentUser?.Certifications || [];
@@ -69,8 +88,8 @@ export default function AboutUser() {
       startDate: dayjs(education.startDate),
       endDate: dayjs(education.endDate),
       type: education.type,
-      collegeName: education.collegeName
-    }
+      collegeName: education.collegeName,
+    };
     setInitialEducationValue(value);
     setEducationModalOpen(true);
   }
@@ -81,24 +100,26 @@ export default function AboutUser() {
     setInitialEducationValue(initialEducationValues);
   }
 
-  function handleAddUpdateEducation(values: UserEducationType, setSubmitting: (isSubmitting: boolean) => void) {
+  function handleAddUpdateEducation(
+    values: UserEducationType,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     if (isEdit) {
       const payload = {
         ...values,
         startDate: dayjs(values.startDate),
         endDate: dayjs(values.endDate),
         id: values.id,
-      }
-      updateUserEducation()  //  handle user education update.
-    }
-    else {
+      };
+      updateUserEducation(); //  handle user education update.
+    } else {
       const payload = {
         ...values,
         startDate: dayjs(values.startDate),
         endDate: dayjs(values.endDate),
-      }
+      };
       addUserEducation(userId, payload, token)
-        .then(res => {
+        .then((res) => {
           const { success, message } = res.data;
           if (success) {
             setSubmitting(false);
@@ -107,10 +128,10 @@ export default function AboutUser() {
             handleEducationModalClose();
           }
         })
-        .catch(error => {
+        .catch((error) => {
           toast.error("Something went Wrong");
           handleEducationModalClose();
-        })
+        });
     }
   }
 
@@ -123,13 +144,16 @@ export default function AboutUser() {
       endDate: dayjs(certification.endDate),
       organizationName: certification.certificationName,
       type: certification.type,
-      id: certification.id
-    }
+      id: certification.id,
+    };
     setInitialCertificationValue(value);
     setCertificationModalOpen(true);
   }
 
-  function handleAddUpdateCertification(values: UserCertificationType, setSubmitting: (isSubmitting: boolean) => void) {
+  function handleAddUpdateCertification(
+    values: UserCertificationType,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     if (isEdit) {
       const payload = {
         id: values.id,
@@ -138,22 +162,20 @@ export default function AboutUser() {
         endDate: dayjs(values.endDate),
         certificationName: values.organizationName, // remove this line later
         // organizationName:values.organizationName,
-        type: values.type
-      }
+        type: values.type,
+      };
       // updateUserCertification()   // replace comment with updating certification logic
-
-    }
-    else {
+    } else {
       const payload = {
         title: values.title,
         startDate: dayjs(values.startDate),
         endDate: dayjs(values.endDate),
         certificationName: values.organizationName, // remove this line later
         // organizationName:values.organizationName,
-        type: values.type
-      }
+        type: values.type,
+      };
       addUpdateUserCertification(userId, payload, token)
-        .then(res => {
+        .then((res) => {
           const { success, message } = res.data;
           if (success) {
             toast.success(message);
@@ -162,10 +184,10 @@ export default function AboutUser() {
             setRefresh(!isRefresh);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           toast.error("Failed to add certification");
           handleCertificationModalClose();
-        })
+        });
     }
   }
 
@@ -180,8 +202,8 @@ export default function AboutUser() {
   }
 
   function handleUpdateSummary() {
-    addUpdateUserSummary(userId, { summary:summary.current }, token)
-      .then(res => {
+    addUpdateUserSummary(userId, { summary: summary.current }, token)
+      .then((res) => {
         const { success, message, methodResult } = res.data;
         if (success) {
           toast.success("Summary Updated");
@@ -189,57 +211,70 @@ export default function AboutUser() {
           // userData?.setUserDetails(methodResult)
         }
       })
-      .catch(error => {
+      .catch((error) => {
         toast.error("Failed To Update Summary");
-      })
-      summary.current="";
+      });
+    summary.current = "";
   }
-  
 
   return (
     <>
       <Grid container className="d-flex gap-5 mt-2">
         <Grid item sm={12}>
           <Card className="p-5">
-            <Stack direction="row" className="d-flex justify-content-between mb-4">
-              <Typography variant="h5">
-                {currentUser?.jobRole}
-              </Typography>
-              {
-                isSummaryEdit ?
-                  <CustomisedButton label="Update" variant="contained" handleClick={handleUpdateSummary} Icon={<Check />} /> :
-                  <IconButton onClick={() => setSummaryEdit(true)}>
-                    <Edit />
-                  </IconButton>
-              }
+            <Stack
+              direction="row"
+              className="d-flex justify-content-between mb-4"
+            >
+              <Typography variant="h5">{currentUser?.jobRole}</Typography>
+              {isSummaryEdit ? (
+                <CustomisedButton
+                  label="Update"
+                  variant="contained"
+                  handleClick={handleUpdateSummary}
+                  Icon={<Check />}
+                />
+              ) : (
+                <IconButton onClick={() => setSummaryEdit(true)}>
+                  <Edit />
+                </IconButton>
+              )}
             </Stack>
-            {
-              isSummaryEdit ?
-                <TextField
-                  fullWidth
-                  multiline
-                  id="user_summary"
-                  placeholder="Type..."
-                  variant="outlined"
-                  // value={summary.current}
-                  onChange={(e) => summary.current = e.target.value }
-                /> :
-                <Typography variant="body2">{currentUser?.summary || "Add Your Summary"}</Typography>
-            }
+            {isSummaryEdit ? (
+              <TextField
+                fullWidth
+                multiline
+                id="user_summary"
+                placeholder="Type..."
+                variant="outlined"
+                // value={summary.current}
+                onChange={(e) => (summary.current = e.target.value)}
+              />
+            ) : (
+              <Typography variant="body2">
+                {currentUser?.summary || "Add Your Summary"}
+              </Typography>
+            )}
           </Card>
         </Grid>
         <Grid item sm={12}>
           <Card className="p-5">
-            <Stack direction="row" className="d-flex justify-content-between  mb-4">
+            <Stack
+              direction="row"
+              className="d-flex justify-content-between  mb-4"
+            >
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.PI" })}
               </Typography>
               <IconButton onClick={() => setUserUpdateModalOpen(true)}>
                 <Edit />
               </IconButton>
-              {
-                isUserModalOpen && <UpdateUserInfo open={isUserModalOpen} setOpen={setUserUpdateModalOpen} />
-              }
+              {isUserModalOpen && (
+                <UpdateUserInfo
+                  open={isUserModalOpen}
+                  setOpen={setUserUpdateModalOpen}
+                />
+              )}
             </Stack>
             <Grid container>
               <Grid item xs={12}>
@@ -254,13 +289,17 @@ export default function AboutUser() {
                   <Typography variant="body2" className="text-muted">
                     Email
                   </Typography>
-                  <Typography variant="body1">{currentUser?.email || "NA"}</Typography>
+                  <Typography variant="body1">
+                    {currentUser?.email || "NA"}
+                  </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" className="text-muted">
                     Phone number
                   </Typography>
-                  <Typography variant="body1">{currentUser?.phoneNumber || "NA"}</Typography>
+                  <Typography variant="body1">
+                    {currentUser?.phoneNumber || "NA"}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
@@ -268,7 +307,9 @@ export default function AboutUser() {
                   <Typography variant="body2" className="text-muted">
                     Date of birth
                   </Typography>
-                  <Typography>{dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}</Typography>
+                  <Typography>
+                    {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}
+                  </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" className="text-muted">
@@ -288,7 +329,9 @@ export default function AboutUser() {
                   <Typography variant="body2" className="text-muted">
                     Date of joining
                   </Typography>
-                  <Typography>{dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}</Typography>
+                  <Typography>
+                    {dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
@@ -310,7 +353,9 @@ export default function AboutUser() {
                   <Typography variant="body2" className="text-muted">
                     Reporting Manager
                   </Typography>
-                  <Typography>{currentUser?.reportingManager || "NA"}</Typography>
+                  <Typography>
+                    {currentUser?.reportingManager || "NA"}
+                  </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" className="text-muted">
@@ -330,7 +375,9 @@ export default function AboutUser() {
                   <Typography variant="body2" className="text-muted">
                     Emergency Contact
                   </Typography>
-                  <Typography>{currentUser?.emergencyContact || "NA"}</Typography>
+                  <Typography>
+                    {currentUser?.emergencyContact || "NA"}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
@@ -346,32 +393,47 @@ export default function AboutUser() {
         </Grid>
         <Grid item sm={12}>
           <Card className="p-5">
-            <Stack direction="row" className="d-flex justify-content-between mb-4">
+            <Stack
+              direction="row"
+              className="d-flex justify-content-between mb-4"
+            >
               <Typography variant="h5" className="text-primary">
                 {intl.formatMessage({ id: "PROFILE.SKILLS" })}
               </Typography>
               <IconButton onClick={() => setSkillsModalOpen(true)}>
                 <Add />
               </IconButton>
-              {
-                isSkillsModalOpen && <AddUpdateSkills skills={skills} open={isSkillsModalOpen} setOpen={setSkillsModalOpen} />
-              }
+              {isSkillsModalOpen && (
+                <AddUpdateSkills
+                  skills={skills}
+                  open={isSkillsModalOpen}
+                  setOpen={setSkillsModalOpen}
+                />
+              )}
             </Stack>
 
-            <Stack direction="row" gap={1} className="skills-chips" sx={{ flexWrap: "wrap" }}>
-              {
-                skills?.length === 0
-                  ? <Typography variant="body2">Please Add Your Skills</Typography>
-                  : skills?.map((skill, index) => (
-                    <Chip key={index} label={skill} />
-                  ))
-              }
+            <Stack
+              direction="row"
+              gap={1}
+              className="skills-chips"
+              sx={{ flexWrap: "wrap" }}
+            >
+              {skills?.length === 0 ? (
+                <Typography variant="body2">Please Add Your Skills</Typography>
+              ) : (
+                skills?.map((skill, index) => (
+                  <Chip key={index} label={skill} />
+                ))
+              )}
             </Stack>
           </Card>
         </Grid>
         <Grid item sm={12}>
           <Card className="p-5">
-            <Stack direction="row" className="d-flex justify-content-between mb-4">
+            <Stack
+              direction="row"
+              className="d-flex justify-content-between mb-4"
+            >
               <Typography variant="h5" className="text-primary">
                 {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
               </Typography>
@@ -380,56 +442,67 @@ export default function AboutUser() {
               </IconButton>
             </Stack>
             <Stack spacing={2}>
-              {
-                educations.length === 0 ?
-                  <Typography>Please Add Your Education Details</Typography> :
-                  educations.map(education => (
-                    <Stack
-                      key={education.id}
-                      direction="row"
-                      className="justify-content-between align-items-center"
-                    >
-                      <Stack direction="row" sx={{ alignItems: "center" }} >
-                        <School className="me-4" />
-                        <Stack>
+              {educations.length === 0 ? (
+                <Typography>Please Add Your Education Details</Typography>
+              ) : (
+                educations.map((education) => (
+                  <Stack
+                    key={education.id}
+                    direction="row"
+                    className="justify-content-between align-items-center"
+                  >
+                    <Stack direction="row" sx={{ alignItems: "center" }}>
+                      <School className="me-4" />
+                      <Stack>
+                        <Typography
+                          variant="body1"
+                          className="text-gray-800 text-hover-primary fw-semibold "
+                        >
+                          {education.title}
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
                           <Typography
-                            variant="body1"
-                            className="text-gray-800 text-hover-primary fw-semibold "
+                            variant="body2"
+                            className="fw-semibold d-block "
                           >
-                            {education.title}
+                            {education.collegeName}
                           </Typography>
-                          <Stack direction="row" spacing={1}>
-                            <Typography variant="body2" className="fw-semibold d-block ">
-                              {education.collegeName}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              className="text-muted fw-semibold d-block "
-                            >
-                              <CalendarMonth sx={{ height: "14px" }} />
-                              {dateFormatter(education.startDate, "MMM YYYY")} - {dateFormatter(education.endDate, "MMM YYYY")}
-                            </Typography>
-                          </Stack>
+                          <Typography
+                            variant="body2"
+                            className="text-muted fw-semibold d-block "
+                          >
+                            <CalendarMonth sx={{ height: "14px" }} />
+                            {dateFormatter(
+                              education.startDate,
+                              "MMM YYYY"
+                            )} - {dateFormatter(education.endDate, "MMM YYYY")}
+                          </Typography>
                         </Stack>
                       </Stack>
-                      <Stack direction="row" spacing={1}>
-                        <IconButton onClick={() => handleEducationUpdate(education)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton>
-                          <DeleteOutline />
-                        </IconButton>
-                      </Stack>
                     </Stack>
-                  ))
-              }
+                    <Stack direction="row" spacing={1}>
+                      <IconButton
+                        onClick={() => handleEducationUpdate(education)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton>
+                        <DeleteOutline />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                ))
+              )}
             </Stack>
           </Card>
         </Grid>
 
         <Grid item sm={12}>
           <Card className="w-100 p-5">
-            <Stack direction="row" className="d-flex justify-content-between mb-4">
+            <Stack
+              direction="row"
+              className="d-flex justify-content-between mb-4"
+            >
               <Typography variant="h5" className="text-primary">
                 {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
               </Typography>
@@ -439,71 +512,86 @@ export default function AboutUser() {
             </Stack>
 
             <Stack spacing={2}>
-              {
-                certifications.length === 0 ?
-                  <Typography>Please Add Your Certification Details</Typography> :
-                  certifications.map(certification => (
-                    <Stack
-                      key={certification.id}
-                      direction="row"
-                      className="mb-2 d-flex justify-content-between align-items-center"
-                    >
-                      <Stack direction="row" alignItems={"center"}>
-                        <School className="me-4" />
-                        <Stack>
+              {certifications.length === 0 ? (
+                <Typography>Please Add Your Certification Details</Typography>
+              ) : (
+                certifications.map((certification) => (
+                  <Stack
+                    key={certification.id}
+                    direction="row"
+                    className="mb-2 d-flex justify-content-between align-items-center"
+                  >
+                    <Stack direction="row" alignItems={"center"}>
+                      <School className="me-4" />
+                      <Stack>
+                        <Typography
+                          variant="body1"
+                          className="text-gray-800 text-hover-primary fw-semibold "
+                        >
+                          {certification.title}
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
                           <Typography
-                            variant="body1"
-                            className="text-gray-800 text-hover-primary fw-semibold "
+                            variant="body2"
+                            className="fw-semibold d-block "
                           >
-                            {certification.title}
+                            {certification.certificationName},{" "}
+                            {certification.type}
                           </Typography>
-                          <Stack direction="row" spacing={1}>
-                            <Typography variant="body2" className="fw-semibold d-block ">
-                              {certification.certificationName}, {certification.type}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              className="text-muted fw-semibold d-block "
-                            >
-                              <CalendarMonth sx={{ height: "14px" }} />
-                              {dateFormatter(dayjs(certification.startDate), "MMM YYYY")}- {dateFormatter(dayjs(certification.endDate), "MMM YYYY")}
-                            </Typography>
-                          </Stack>
+                          <Typography
+                            variant="body2"
+                            className="text-muted fw-semibold d-block "
+                          >
+                            <CalendarMonth sx={{ height: "14px" }} />
+                            {dateFormatter(
+                              dayjs(certification.startDate),
+                              "MMM YYYY"
+                            )}
+                            -{" "}
+                            {dateFormatter(
+                              dayjs(certification.endDate),
+                              "MMM YYYY"
+                            )}
+                          </Typography>
                         </Stack>
                       </Stack>
-                      <Stack direction="row" spacing={1}>
-                        <IconButton onClick={() => handleCertificationUpdate(certification)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton>
-                          <DeleteOutline onClick={() => deleteCertification(certification.id)} />
-                        </IconButton>
-                      </Stack>
                     </Stack>
-                  ))
-              }
+                    <Stack direction="row" spacing={1}>
+                      <IconButton
+                        onClick={() => handleCertificationUpdate(certification)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton>
+                        <DeleteOutline
+                          onClick={() => deleteCertification(certification.id)}
+                        />
+                      </IconButton>
+                    </Stack>
+                  </Stack>
+                ))
+              )}
             </Stack>
           </Card>
         </Grid>
       </Grid>
 
-      {
-        isEducationModalOpen &&
+      {isEducationModalOpen && (
         <AddUpdateEducation
           open={isEducationModalOpen}
           initialValues={initialEducationValue}
           handleAddUpdateEducation={handleAddUpdateEducation}
-          handleClose={handleEducationModalClose} />
-      }
-      {
-        isCertificationModalOpen &&
+          handleClose={handleEducationModalClose}
+        />
+      )}
+      {isCertificationModalOpen && (
         <AddUpdateCertification
           open={isCertificationModalOpen}
           initialValues={initialCertificationValue}
           handleClose={handleCertificationModalClose}
           handleAddUpdateCertification={handleAddUpdateCertification}
         />
-      }
+      )}
       <ConfirmationModal
         open={openConfirmationModal}
         handleClose={() => setConfirmationModal(false)}

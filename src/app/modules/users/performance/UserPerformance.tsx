@@ -16,11 +16,14 @@ export const UserPerformance: FC = () => {
             {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
           </Typography>
           <Stack
-            direction="row"
+            direction={{ xs: "column", sm: "row" }}
             sx={{ display: "flex", justifyContent: "space-between" }}
           >
             <Stack>
-            <DonutApexChart series={[132,323]} labels={['Present','Holidays']} />
+              <DonutApexChart
+                series={[132, 323]}
+                labels={["Present", "Holidays"]}
+              />
               <Stack
                 spacing={4}
                 direction="row"
@@ -30,10 +33,17 @@ export const UserPerformance: FC = () => {
               </Stack>
             </Stack>
             <Stack>
-            <DonutApexChart series={[132,323]} labels={['Present','Holidays']} />
+              <DonutApexChart
+                series={[132, 323]}
+                labels={["Present", "Holidays"]}
+              />
             </Stack>
             <Stack>
-              <DonutApexChart series={[4]} labels={['Rating']} showLabelOnHover={true}/>
+              <DonutApexChart
+                series={[4]}
+                labels={["Rating"]}
+                showLabelOnHover={true}
+              />
               <Stack
                 spacing={4}
                 direction="row"
