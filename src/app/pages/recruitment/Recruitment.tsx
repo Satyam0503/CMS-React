@@ -106,10 +106,6 @@ export default function Recruitment() {
           </TableContainer>
         </Stack>
       </Card>
-
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogContent sx={{ width: "100%" }}></DialogContent>
-      </Dialog>
     </Grid>
   );
 }

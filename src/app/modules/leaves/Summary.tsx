@@ -11,7 +11,7 @@ function createData(sno: number, name: string, absent: string) {
   return { sno, name, absent };
 }
 
-const rows = [createData(1, "Name", "Absent")];
+const rows = [createData(1, "Ganesh Singh", "Full Day")];
 
 export default function Summary() {
   return (
@@ -19,8 +19,8 @@ export default function Summary() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>#</TableCell>
-            <TableCell align="right">Name</TableCell>
+            <TableCell align="left">#</TableCell>
+            <TableCell align="left">Name</TableCell>
             <TableCell align="right">Absent</TableCell>
           </TableRow>
         </TableHead>
@@ -33,7 +33,7 @@ export default function Summary() {
               <TableCell component="th" scope="row">
                 {row.sno}
               </TableCell>
-              <TableCell align="right">{row.name}</TableCell>
+              <TableCell align="left">{row.name}</TableCell>
               <TableCell align="right">{row.absent}</TableCell>
             </TableRow>
           ))}

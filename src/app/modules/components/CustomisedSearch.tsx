@@ -21,6 +21,7 @@ import {
 import React from "react";
 
 import HolidayForm from "../../pages/holidays/HolidayForm";
+import { components } from "../../../_themes/assets/ts";
 
 export default function CustomisedSearch() {
   const intl = useIntl();

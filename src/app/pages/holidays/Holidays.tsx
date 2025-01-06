@@ -21,6 +21,8 @@ import { useIntl } from "react-intl";
 
 import HolidayForm from "./HolidayForm";
 import CustomisedSearch from "../../modules/components/CustomisedSearch";
+import { auto } from "@popperjs/core";
+import { Delete, DeleteOutline, Edit } from "@mui/icons-material";
 
 function createData(
   sno: number,
@@ -42,7 +44,7 @@ const rows = [
     "1 Jan'25",
     "3 Jan'25",
     "Celebrations",
-    "Delete"
+    ""
   ),
 ];
 
@@ -63,11 +65,7 @@ export default function Holidays() {
   };
 
   return (
-    <Grid
-      container
-      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
-      spacing={2}
-    >
+    <Grid container sx={{ maxWidth: "1200px" }} mx={auto} my={6} spacing={2}>
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
           {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
@@ -100,7 +98,15 @@ export default function Holidays() {
                     <TableCell align="right">{row.startdate}</TableCell>
                     <TableCell align="right">{row.enddate}</TableCell>
                     <TableCell align="right">{row.description}</TableCell>
-                    <TableCell align="right">{row.action}</TableCell>
+                    <TableCell align="right">
+                      {row.action}
+                      <IconButton sx={{ mr: 1 }}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton>
+                        <DeleteOutline />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

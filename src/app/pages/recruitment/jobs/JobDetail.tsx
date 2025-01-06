@@ -8,8 +8,8 @@ import {
 import { Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../modules/components/CustomisedModal";
-import CustomisedButton from "../../modules/components/CustomisedButton";
+import { CustomisedModal } from "../../../modules/components/CustomisedModal";
+import CustomisedButton from "../../../modules/components/CustomisedButton";
 
 export default function JobDetail() {
   const intl = useIntl();

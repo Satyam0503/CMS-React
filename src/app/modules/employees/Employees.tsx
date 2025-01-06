@@ -17,43 +17,24 @@ import {
 } from "@mui/icons-material";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
-import DownloadCV from "./DownloadCV";
-import SortEmployee from "./SortEmployee";
+import * as XLSX from "xlsx";
 import { useEffect, useState } from "react";
 import {
   addEmployee,
+  deleteEmployee,
   getAllEmployees,
   updateEmployee,
 } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../Constant";
-import dayjs, { Dayjs } from "dayjs";
-import { EmployeesDataTypes } from "../../../common_types";
+import dayjs from "dayjs";
+import { EmployeesDataTypes } from "../../../utils/common_types";
+import { ConfirmationModal } from "../components/ConfirmationModal";
+import { employeesListMapperforExport } from "../../../utils/common";
+import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
-// export interface employeeInitialValueType {
-//   id?:string;
-//   firstName: string;
-//   lastName: string;
-//   gender: string;
-//   email: string;
-//   role: string;
-//   employeeId: string;
-//   department: string;
-//   dateOfBirth: Dayjs | null;
-//   reportingManager: string;
-//   teamLead: string;
-//   phoneNumber: string;
-//   bloodGroup: string;
-//   status: string,
-//   address: string,
-//   jobRole: string,
-//   dateOfJoining: Dayjs | null,
-//   personalEmail: string,
-//   emergencyContact: string,
-//   profilePicture?: string | File | null,
-// }
 const employeeInitialValue: EmployeesDataTypes = {
   id: "",
   firstName: "",
@@ -81,14 +62,19 @@ export default function Employees() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
+  const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
+  const [selectedEmployeeData, setSelectedEmployeeData] =
+    useState<EmployeesDataTypes>({} as EmployeesDataTypes);
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
-  const [employeeList, setEmployeeList] = useState<any[]>([]);
+  const [employeeList, setEmployeeList] = useState<EmployeesDataTypes[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [isEdit, setEdit] = useState(false);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isViewModalOpen, setViewModalOpen] = useState(false);
 
   function handleClose() {
     setModalOpen(false);
@@ -96,10 +82,17 @@ export default function Employees() {
     setEdit(false);
   }
 
-  function SaveAddEditEmployee(values: EmployeesDataTypes) {
+  function closeConfirmationModal() {
+    setConfirmModalOpen(false);
+    setSelectedEmployee(null);
+  }
+
+  function SaveAddEditEmployee(
+    values: EmployeesDataTypes,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     setLoading(true);
     if (isEdit) {
-      console.log(values);
       const employeeId = values.id;
       const payload = {
         ...values,
@@ -108,7 +101,8 @@ export default function Employees() {
         .then((res) => {
           const { success, message } = res.data;
           if (success) {
-            toast.success(message);
+            toast.success("Employee Details Updated Successfully");
+            setSubmitting(false);
             setRefresh(!isRefresh);
             handleClose();
           }
@@ -140,11 +134,14 @@ export default function Employees() {
       };
       addEmployee(payload, token)
         .then((res) => {
-          console.log(res);
-          setLoading(false);
-          setRefresh(!isRefresh);
-          toast.success(res.data.message);
-          handleClose();
+          const { success, message } = res.data;
+          if (success) {
+            setLoading(false);
+            setRefresh(!isRefresh);
+            toast.success(message);
+            setSubmitting(false);
+            handleClose();
+          }
         })
         .catch((error) => {
           setLoading(false);
@@ -154,6 +151,41 @@ export default function Employees() {
     }
   }
 
+  function handleEmployeeDeletion(res: string) {
+    if (res !== "ok" || selectedEmployee === null) {
+      toast.error("Please try again");
+      closeConfirmationModal();
+    } else {
+      const employeeId = selectedEmployee;
+      deleteEmployee(employeeId, token)
+        .then((res) => {
+          const { success, message } = res.data;
+          if (success) {
+            toast.success(message);
+            closeConfirmationModal();
+            setRefresh(!isRefresh);
+          }
+        })
+        .catch((error) => {
+          toast.error("Please try again");
+          closeConfirmationModal();
+        });
+    }
+  }
+
+  const openConfirmationModal = (employeeId: string) => {
+    setConfirmModalOpen(true);
+    setSelectedEmployee(employeeId);
+  };
+
+  function openViewModal(id: string) {
+    setViewModalOpen(true);
+    setSelectedEmployee(id);
+    const employeeDetails = employeeList.find((employee) => employee.id === id);
+    if (employeeDetails) {
+      setSelectedEmployeeData(employeeDetails);
+    }
+  }
   function handleEmployeeEdit(row: EmployeesDataTypes) {
     setEmployeeInitialValues({
       id: row.id,
@@ -178,6 +210,14 @@ export default function Employees() {
     });
     setModalOpen(true);
     setEdit(true);
+  }
+
+  function handleEmployeeExport() {
+    const mappedEmployeeData = employeesListMapperforExport(employeeList);
+    const worksheet = XLSX.utils.json_to_sheet(mappedEmployeeData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+    XLSX.writeFile(workbook, "Employees.xlsx");
   }
 
   useEffect(() => {
@@ -259,7 +299,10 @@ export default function Employees() {
               >
                 <Add />
               </IconButton>
-              <IconButton aria-label="import excel">
+              <IconButton
+                aria-label="import excel"
+                onClick={handleEmployeeExport}
+              >
                 <Download />
               </IconButton>
             </Stack>
@@ -276,6 +319,8 @@ export default function Employees() {
               rowsPerPage={rowPerPage}
               setRowPerPage={setRowPerPage}
               handleEdit={handleEmployeeEdit}
+              openConfirmationModal={openConfirmationModal}
+              openViewModal={openViewModal}
             />
           </Stack>
         </Card>
@@ -285,11 +330,24 @@ export default function Employees() {
           open={isModalOpen}
           isEdit={isEdit}
           handleClose={handleClose}
-          // setRefresh={setRefresh}
           initialValues={employeeInitialValues}
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
       )}
+      {isViewModalOpen && (
+        <ViewEmployeeDetails
+          open={isViewModalOpen}
+          setOpen={setViewModalOpen}
+          employeeData={selectedEmployeeData}
+        />
+      )}
+      <ConfirmationModal
+        title={"Delete Employee"}
+        content="Are You Sure"
+        open={isConfirmModalOpen}
+        handleClose={closeConfirmationModal}
+        handleConfirmation={handleEmployeeDeletion}
+      />
     </Container>
   );
 }

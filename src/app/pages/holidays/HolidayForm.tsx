@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../modules/components/CustomisedDatePicker";
+import CustomisedButton from "../../modules/components/CustomisedButton";
+import { Check } from "@mui/icons-material";
 
 interface HolidayFormProps {
   handleCloseModal: () => void;
@@ -54,13 +56,13 @@ const HolidayForm: React.FC<HolidayFormProps> = ({
           />
         </Grid>
 
-        <Grid item xs={6} className="pt-2">
+        <Grid item xs={6}>
           <Typography variant="body1">
             {intl.formatMessage({ id: "APPLICATION.START" })}*
           </Typography>
           <CustomisedDatePicker sx={{ width: "100%" }} />
         </Grid>
-        <Grid item xs={6} className="pt-2">
+        <Grid item xs={6}>
           <Typography variant="body1">
             {intl.formatMessage({ id: "APPLICATION.END" })}*
           </Typography>
@@ -80,12 +82,17 @@ const HolidayForm: React.FC<HolidayFormProps> = ({
           />
         </Grid>
         <Grid item xs={12} display={"flex"} justifyContent={"end"} gap={2}>
-          <Button onClick={handleCloseModal} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddHoliday} color="primary">
-            Save
-          </Button>
+          <CustomisedButton
+            variant="outlined"
+            label="Cancel"
+            handleClick={handleCloseModal}
+          />
+          <CustomisedButton
+            variant="contained"
+            label="Save"
+            Icon={<Check />}
+            handleClick={handleAddHoliday}
+          />
         </Grid>
       </Grid>
     </Stack>

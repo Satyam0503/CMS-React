@@ -13,20 +13,20 @@ import {
   Stack,
   TextField,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
-  Add,
-  AddOutlined,
   Close,
   Download,
   FilterList,
-  SearchOutlined,
+  ListAltOutlined,
+  Search,
+  Undo,
+  Visibility,
 } from "@mui/icons-material";
+import AddNotice from "./AddNotice";
 import CustomisedButton from "../../modules/components/CustomisedButton";
+import MyNoticeBoard from "./MyNoticeBoard";
 
 function createData(
   sno: number,
@@ -48,11 +48,11 @@ const rows = [
     "1 Jan'25",
     "3 Jan'25",
     "Celebrations",
-    "Delete"
+    ""
   ),
 ];
 
-export default function Applications() {
+export default function NoticeBoard() {
   const intl = useIntl();
   const [openModal, setOpenModal] = React.useState(false);
 
@@ -76,7 +76,7 @@ export default function Applications() {
     >
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+          {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
         </Typography>
       </Stack>
       <Card sx={{ width: "100%", p: "16px" }}>
@@ -90,11 +90,13 @@ export default function Applications() {
             <TextField
               InputProps={{
                 startAdornment: (
-                  <InputAdornment position="start">Applications</InputAdornment>
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
                 ),
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton>
+                    <IconButton sx={{ border: "none" }}>
                       <Close />
                     </IconButton>
                   </InputAdornment>
@@ -105,12 +107,14 @@ export default function Applications() {
             />
           </Stack>
           <Stack direction="row" spacing={1}>
+            <MyNoticeBoard />
+
             <IconButton aria-label="filter employee">
               <FilterList />
             </IconButton>
-            <IconButton onClick={handleOpenModal}>
-              <Add />
-            </IconButton>
+            <Stack onClick={handleOpenModal}>
+              <AddNotice />
+            </Stack>
             <IconButton aria-label="import excel">
               <Download />
             </IconButton>
@@ -127,7 +131,7 @@ export default function Applications() {
                   <TableCell align="right">Start Date</TableCell>
                   <TableCell align="right">End Date</TableCell>
                   <TableCell align="right">Description</TableCell>
-                  <TableCell align="right">Action</TableCell>
+                  <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -139,7 +143,17 @@ export default function Applications() {
                     <TableCell align="right">{row.startdate}</TableCell>
                     <TableCell align="right">{row.enddate}</TableCell>
                     <TableCell align="right">{row.description}</TableCell>
-                    <TableCell align="right">{row.action}</TableCell>
+                    <TableCell align="right">
+                      {row.action}
+
+                      <IconButton sx={{ mr: 1 }}>
+                        <Undo />
+                      </IconButton>
+
+                      <IconButton>
+                        <Visibility />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -147,11 +161,6 @@ export default function Applications() {
           </TableContainer>
         </Stack>
       </Card>
-
-      <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogContent sx={{ width: "100%" }}></DialogContent>
-      </Dialog>
-      <CustomisedButton className={"button-large"} label={"Save"} />
     </Grid>
   );
 }

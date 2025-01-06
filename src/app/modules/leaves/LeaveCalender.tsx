@@ -27,7 +27,7 @@ export const LeaveCalender: FC = () => {
   const intl = useIntl();
 
   return (
-    <FormControl sx={{ minWidth: 120 }}>
+    <FormControl sx={{ minWidth: 120, border: "none" }}>
       <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
@@ -40,6 +40,7 @@ export const LeaveCalender: FC = () => {
 
           return "";
         }}
+        sx={{ background: "white" }}
       >
         <MenuItem value={19}>Today</MenuItem>
         <MenuItem value={20}>This Week</MenuItem>

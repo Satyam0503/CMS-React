@@ -30,9 +30,11 @@ interface PropsTypes<Row, Columns> {
   totalRecords: number;
   page: number;
   rowsPerPage: number;
+  openConfirmationModal?: (id: string) => void;
   handleEdit?: (row: Row) => void;
   setRowPerPage: React.Dispatch<React.SetStateAction<number>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  openViewModal?: (id: string) => void;
 }
 
 export const CustomisedTable = <
@@ -51,6 +53,8 @@ export const CustomisedTable = <
     handleEdit,
     loading,
     totalRecords,
+    openConfirmationModal,
+    openViewModal,
   } = props;
 
   function handlePageChange(
@@ -121,7 +125,12 @@ export const CustomisedTable = <
                               />
                             ) : column.build ? (
                               column.id === "action" ? (
-                                column.build(row, handleEdit)
+                                column.build(
+                                  row,
+                                  handleEdit,
+                                  openConfirmationModal,
+                                  openViewModal
+                                )
                               ) : (
                                 column.build(value)
                               )

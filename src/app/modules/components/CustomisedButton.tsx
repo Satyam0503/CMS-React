@@ -1,10 +1,8 @@
-/** @format */
-
 import { Button, Tooltip } from "@mui/material";
 import React from "react";
-import classNames from "classnames";
 
 type Props = {
+  type?: "submit" | "button" | "reset";
   handleClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   Icon?: React.JSX.Element;
   variant?: "outlined" | "contained" | "text";
@@ -12,16 +10,16 @@ type Props = {
   tooltip?: string;
   className?: string;
   size?: "small" | "medium" | "large";
-  disabled?: any;
-  permission?: any;
-  style?: any;
+  disabled?: boolean;
+  permission?: boolean;
+  style?: React.CSSProperties;
   iconPosition?: "start" | "end";
 };
 
 const CustomisedButton = (props: Props) => {
   const {
     handleClick,
-    variant,
+    variant = "contained",
     Icon,
     label,
     tooltip,
@@ -31,6 +29,7 @@ const CustomisedButton = (props: Props) => {
     permission = true,
     style = {},
     iconPosition = "end",
+    type = "button",
   } = props;
 
   const handleButtonSizeclasses = (buttonSize?: string) => {
@@ -59,6 +58,7 @@ const CustomisedButton = (props: Props) => {
             disabled={disabled}
             size={size}
             className={className}
+            type={type}
           >
             {iconPosition === "start" && Icon}
             {label}

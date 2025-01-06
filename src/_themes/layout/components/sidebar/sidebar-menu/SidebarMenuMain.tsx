@@ -14,9 +14,12 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AdminPanelSettings,
-  HolidayVillageSharp,
-  TimeToLeave,
+  ColorLens,
+  Mail,
+  ToggleOn,
+  Work,
 } from "@mui/icons-material";
+import { CalendarIcon } from "@mui/x-date-pickers";
 
 const SidebarMenuMain = () => {
   const intl = useIntl();
@@ -43,16 +46,7 @@ const SidebarMenuMain = () => {
         to="/employeeleave"
         title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
       />
-      <SidebarMenuItem
-        to="/projects"
-        icon={<FolderIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
-      />
-      <SidebarMenuItem
-        to="/clients"
-        icon={<SwitchAccountIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
-      />
+
       <SidebarMenuItemWithSub
         to="/crafted/pages"
         title="Pages"
@@ -71,15 +65,20 @@ const SidebarMenuMain = () => {
         />
       </SidebarMenuItemWithSub>
 
-      <SidebarMenuItem
+      {/* <SidebarMenuItem
         to="/recruitment"
         icon={<TimeToLeave />}
         title={intl.formatMessage({ id: "MENU.RECRUITMENT" })}
-      />
+      /> */}
       <SidebarMenuItem
         to="/jobs"
-        icon={<TimeToLeave />}
+        icon={<Work />}
         title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
+      />
+      <SidebarMenuItem
+        to="/applications"
+        icon={<Mail />}
+        title={intl.formatMessage({ id: "USER.APPLICATIONS" })}
       />
 
       <SidebarMenuItem
@@ -99,13 +98,23 @@ const SidebarMenuMain = () => {
       />
       <SidebarMenuItem
         to="/holidays"
-        icon={<TimeToLeave />}
+        icon={<CalendarIcon />}
         title={intl.formatMessage({ id: "MENU.HOLIDAYS" })}
       />
       <SidebarMenuItem
-        to="/admin"
+        to="/permissions"
+        icon={<ToggleOn />}
+        title={intl.formatMessage({ id: "MENU.PERMISSIONS" })}
+      />
+      <SidebarMenuItem
+        to="/theme"
+        icon={<ColorLens />}
+        title={intl.formatMessage({ id: "MENU.THEME" })}
+      />
+      <SidebarMenuItem
+        to="/noticeboard"
         icon={<AdminPanelSettings />}
-        title={intl.formatMessage({ id: "MENU.ADMIN" })}
+        title={intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
       />
     </>
   );

@@ -5,15 +5,13 @@ import {
   Button,
   IconButton,
   Stack,
+  Typography,
 } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useIntl } from "react-intl";
 import IconStat from "../components/IconStat";
 import { colors } from "../theme/MuiTheme";
 import {
-  Add,
-  AddAPhoto,
-  ArrowBack,
   Home,
   HourglassBottom,
   HourglassTop,
@@ -31,8 +29,19 @@ export const EmployeeLeaves: FC = () => {
   return (
     <Grid
       container
-      sx={{ maxWidth: "1200px", m: "auto", display: "flex", gap: "10px" }}
+      sx={{
+        maxWidth: "1200px",
+        mx: "auto",
+        my: 4,
+        display: "flex",
+        gap: "10px",
+      }}
     >
+      <Stack>
+        <Typography variant="h4">
+          {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+        </Typography>
+      </Stack>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
           <Card>

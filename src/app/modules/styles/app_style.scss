@@ -30,17 +30,19 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 
 .coverChange {
   position: absolute !important;
-  left: 55px !important;
-  top: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.35s ease;
   display: flex;
-  flex-direction: row !important;
   justify-content: center;
-  gap: 8px;
+  gap: 0.25rem;
 }
-
+.MuiButtonBase-root-MuiIconButton-root {
+  background-color: red;
+}
 .container:hover .coverChange {
   opacity: 1;
   background-color: transparent !important;

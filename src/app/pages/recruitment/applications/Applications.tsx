@@ -16,7 +16,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -26,18 +25,14 @@ import {
   Delete,
   DeleteOutline,
   Download,
-  FileCopyOutlined,
+  Edit,
   FilterList,
-  LinkOutlined,
+  Search,
   SearchOutlined,
   Visibility,
 } from "@mui/icons-material";
-import CustomisedButton from "../../modules/components/CustomisedButton";
-import CustomisedSearch from "../../modules/components/CustomisedSearch";
-import Holidays from "../holidays/Holidays";
-import { CustomisedModal } from "../../modules/components/CustomisedModal";
-import JobDescription from "./JobDescription";
-import JobDetail from "./JobDetail";
+import CustomisedButton from "../../../modules/components/CustomisedButton";
+import ApplicationPreview from "./ApplicationPreview";
 
 function createData(
   sno: number,
@@ -63,12 +58,21 @@ const rows = [
   ),
 ];
 
-export default function Jobs() {
+export default function Applications() {
   const intl = useIntl();
-  const [open, setOpen] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleAddHoliday = () => {
+    handleCloseModal();
+  };
 
   return (
     <Grid
@@ -78,12 +82,47 @@ export default function Jobs() {
     >
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
+          {intl.formatMessage({ id: "USER.APPLICATIONS" })}
         </Typography>
       </Stack>
       <Card sx={{ width: "100%", p: "16px" }}>
-        <Stack alignItems={"center"}>
-          <CustomisedSearch />
+        <Stack
+          direction="row"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <Stack>
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton sx={{ border: "none" }}>
+                      <Close />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
+              placeholder="Search ..."
+            />
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            <IconButton aria-label="filter employee">
+              <FilterList />
+            </IconButton>
+            <IconButton onClick={handleOpenModal}>
+              <Add />
+            </IconButton>
+            <IconButton aria-label="import excel">
+              <Download />
+            </IconButton>
+          </Stack>
         </Stack>
         <Stack sx={{ mt: "1rem" }}>
           <TableContainer>
@@ -96,7 +135,7 @@ export default function Jobs() {
                   <TableCell align="right">Start Date</TableCell>
                   <TableCell align="right">End Date</TableCell>
                   <TableCell align="right">Description</TableCell>
-                  <TableCell align="center">Action</TableCell>
+                  <TableCell align="right">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -110,26 +149,22 @@ export default function Jobs() {
                     <TableCell align="right">{row.description}</TableCell>
                     <TableCell
                       align="right"
-                      sx={{
-                        display: "flex",
-                        gap: "4px",
-                        mr: "10px",
-                      }}
+                      sx={{ display: "flex", gap: "5px" }}
                     >
                       {row.action}
+
+                      <IconButton>
+                        <Download />
+                      </IconButton>
                       <Stack>
-                        <JobDetail />
+                        <ApplicationPreview />
                       </Stack>
 
                       <IconButton>
                         <DeleteOutline />
                       </IconButton>
-
-                      <Stack>
-                        <JobDescription />
-                      </Stack>
                       <IconButton>
-                        <LinkOutlined />
+                        <Edit />
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -139,6 +174,10 @@ export default function Jobs() {
           </TableContainer>
         </Stack>
       </Card>
+
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogContent sx={{ width: "100%" }}></DialogContent>
+      </Dialog>
     </Grid>
   );
 }

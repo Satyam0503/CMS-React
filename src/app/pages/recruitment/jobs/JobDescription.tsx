@@ -1,5 +1,6 @@
 import {
   Add,
+  Check,
   EditOutlined,
   FileCopyOutlined,
   FileOpenOutlined,
@@ -7,13 +8,32 @@ import {
   LinkOutlined,
   Visibility,
 } from "@mui/icons-material";
-import { Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../modules/components/CustomisedModal";
-import CustomisedButton from "../../modules/components/CustomisedButton";
+import { CustomisedModal } from "../../../modules/components/CustomisedModal";
+import CustomisedButton from "../../../modules/components/CustomisedButton";
+import { TextEditor } from "../../../modules/components/TextEditor";
 
-export default function JobDescription() {
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+  handleCommentsSubmission: (value: any) => void;
+  userComment: string;
+  handleChange: (value: any) => void;
+};
+
+const JobDescription = (props: Props) => {
+  const { handleCommentsSubmission, userComment, handleChange } = props;
+
   const intl = useIntl();
 
   const [open, setOpen] = useState(false);
@@ -24,7 +44,7 @@ export default function JobDescription() {
   return (
     <Grid container>
       <IconButton onClick={() => setOpen(true)}>
-        <FileCopyOutlined />
+        <Add />
       </IconButton>
       <CustomisedModal open={open} handleClose={handleClose}>
         <Grid container display={"flex"} direction={"column"} gap={1}>
@@ -50,7 +70,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Fullstack Developer</MenuItem>
+                <MenuItem>Frontend Developer</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -60,7 +83,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Senior</MenuItem>
+                <MenuItem>Junior</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -80,7 +106,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Development</MenuItem>
+                <MenuItem>Design</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -90,7 +119,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Online</MenuItem>
+                <MenuItem>Offline</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -100,7 +132,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Full-time</MenuItem>
+                <MenuItem>Part-time</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -110,7 +145,10 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>AK SINGH</MenuItem>
+                <MenuItem>MOHIT RAI</MenuItem>
+              </Select>
             </Grid>
           </Grid>
           <Grid item xs={12} display={"flex"}>
@@ -131,12 +169,36 @@ export default function JobDescription() {
               </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField />
+              <Select fullWidth id="outlined-basic" variant="outlined">
+                <MenuItem>Active</MenuItem>
+                <MenuItem>Inactive</MenuItem>
+              </Select>
             </Grid>
           </Grid>
         </Grid>
 
         <hr />
+
+        {/* <Grid container>
+          <TextEditor
+            value={userComment}
+            onChange={handleChange}
+            placeholder="Add Comments"
+            helperText={String("Please fill comment section")}
+            className="rounded-5 "
+            error={Boolean(!userComment)}
+          />
+        </Grid> */}
+        <Grid container>
+          <TextEditor
+            value={userComment}
+            onChange={handleChange}
+            placeholder="Add Comments"
+            helperText={String("Please fill comment section")}
+            className="rounded-5 "
+            error={Boolean(!userComment)}
+          />
+        </Grid>
 
         <Grid container></Grid>
         <Grid
@@ -163,14 +225,16 @@ export default function JobDescription() {
           />
           <CustomisedButton variant="outlined" size="medium" label="Close " />
           <CustomisedButton
-            variant="outlined"
+            variant="contained"
             size="medium"
-            label="Apply"
-            Icon={<EditOutlined />}
+            label="Publish"
+            Icon={<Check />}
             iconPosition="start"
           />
         </Grid>
       </CustomisedModal>
     </Grid>
   );
-}
+};
+
+export default JobDescription;

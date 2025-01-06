@@ -29,12 +29,12 @@ function createData(
   secondhalf: number,
   wfh: number,
   total: number,
-  action: number
+  action: string
 ) {
   return { date, absent, firsthalf, secondhalf, wfh, total, action };
 }
 
-const rows = [createData("10/12/24", 159, 6, 24, 4, 5, 6)];
+const rows = [createData("10/12/24", 159, 6, 24, 4, 5, "")];
 
 export default function LeaveSummary() {
   const [open, setOpen] = React.useState(false);
@@ -48,12 +48,12 @@ export default function LeaveSummary() {
         <TableHead>
           <TableRow>
             <TableCell>Date</TableCell>
-            <TableCell align="right">Absent</TableCell>
-            <TableCell align="right">First Half</TableCell>
-            <TableCell align="right">Second Half</TableCell>
-            <TableCell align="right">Working From Home</TableCell>
-            <TableCell align="right">Total</TableCell>
-            <TableCell align="right">Action</TableCell>
+            <TableCell align="left">Absent</TableCell>
+            <TableCell align="left">First Half</TableCell>
+            <TableCell align="left">Second Half</TableCell>
+            <TableCell align="left">Working From Home</TableCell>
+            <TableCell align="left">Total</TableCell>
+            <TableCell align="left">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -65,11 +65,11 @@ export default function LeaveSummary() {
               <TableCell component="th" scope="row">
                 {row.absent}
               </TableCell>
-              <TableCell align="right">{row.firsthalf}</TableCell>
-              <TableCell align="right">{row.secondhalf}</TableCell>
-              <TableCell align="right">{row.wfh}</TableCell>
-              <TableCell align="right">{row.total}</TableCell>
-              <TableCell align="right">
+              <TableCell align="left">{row.firsthalf}</TableCell>
+              <TableCell align="left">{row.secondhalf}</TableCell>
+              <TableCell align="left">{row.wfh}</TableCell>
+              <TableCell align="left">{row.total}</TableCell>
+              <TableCell align="left">
                 {row.action}
                 <IconButton onClick={() => setOpen(true)}>
                   <Visibility />

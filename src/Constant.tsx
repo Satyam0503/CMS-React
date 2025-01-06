@@ -1,24 +1,25 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./common_types";
+import { EmployeesDataTypes } from "./utils/common_types";
+import CustomisedButton from "./app/modules/components/CustomisedButton";
+import { CustomisedModal } from "./app/modules/components/CustomisedModal";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
 
 export const ServiceUrl = {
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
   GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
+  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
+  DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
+  GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
+  UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
+  ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
+  UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
+  ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
+  ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
+  ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [
@@ -36,6 +37,24 @@ export const Gender = [
     id: 3,
     label: "Other",
     value: "other",
+  },
+];
+
+export const EducationType = [
+  {
+    id: 1,
+    label: "Graduation",
+    value: "Graduation",
+  },
+  {
+    id: 2,
+    label: "Post Graduation",
+    value: "Post Graduation",
+  },
+  {
+    id: 3,
+    label: "Diploma",
+    value: "Diploma",
   },
 ];
 
@@ -102,146 +121,30 @@ export const EmployeeTabTableColumnList = [
     align: "left",
     build: (
       row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
-    ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
-  },
-];
-export const EmployeeLeaves = [
-  {
-    id: "serialNo",
-    label: "#",
-    minWidth: 30,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "name",
-    label: "Name",
-    minWidth: 180,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "type",
-    label: "Type",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "from",
-    label: "From",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "to",
-    label: "To",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "remaining",
-    label: "Remaining",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "reason",
-    label: "Reason",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "status",
-    label: "Status",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "action",
-    label: "Address",
-    minWidth: 140,
-    align: "left",
-    build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
-    ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
-  },
-];
-export const EmployeeAbsentSummary = [
-  {
-    id: "date",
-    label: "Date",
-    minWidth: 50,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "absent",
-    label: "Absent",
-    minWidth: 180,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "firsthalf",
-    label: "First Half",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "second half",
-    label: "Seconf Half",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "wfh",
-    label: "Work from Home",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "total",
-    label: "Total",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 140,
-    align: "left",
-    build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
-    ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
-  },
-];
-export const AbsentSummary = [
-  {
-    id: "sno",
-    label: "#",
-    minWidth: 50,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "name",
-    label: "Name",
-    minWidth: 180,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "absent",
-    label: "Absent",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
+      handleEmployeeEdit: (row: EmployeesDataTypes) => void,
+      openConfirmationModal: (id: string) => void,
+      openViewModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleEmployeeEdit}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal={openViewModal}
+      />
+    ),
   },
 ];
 
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
+  openConfirmationModal?: (id: string) => void;
+  openViewModal?: (id: string) => void;
 }
-const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit } = props;
+const ActionComponent = <Row extends { id: string }>(
+  props: ActionComponentProps<Row>
+) => {
+  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
@@ -249,12 +152,16 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
           <Edit />
         </IconButton>
       )}
-      <IconButton>
-        <Delete />
-      </IconButton>
-      <IconButton>
-        <Visibility />
-      </IconButton>
+      {openConfirmationModal && (
+        <IconButton onClick={() => openConfirmationModal(row.id)}>
+          <Delete />
+        </IconButton>
+      )}
+      {openViewModal && (
+        <IconButton onClick={() => openViewModal(row.id)}>
+          <Visibility />
+        </IconButton>
+      )}
     </Stack>
   );
 };
@@ -269,21 +176,15 @@ const AddressDetailsIcon = (props: { address: string }) => {
       <IconButton onClick={() => setOpen(true)}>
         <Place />
       </IconButton>
-      <Dialog
-        onClose={handleClose}
-        open={open}
-        aria-modal
-        maxWidth={"sm"}
-        sx={{ "& .MuiDialog-paper": { minWidth: 250 } }}
-      >
-        <DialogTitle>Address</DialogTitle>
-        <DialogContent>
+      <CustomisedModal open={open} handleClose={handleClose}>
+        <Stack spacing={2}>
+          <Typography variant="h5">Address</Typography>
           <Typography>{props.address}</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
+          <Stack sx={{ alignSelf: "flex-end" }}>
+            <CustomisedButton label="Close" handleClick={handleClose} />
+          </Stack>
+        </Stack>
+      </CustomisedModal>
     </>
   );
 };

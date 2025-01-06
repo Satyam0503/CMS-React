@@ -6,9 +6,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { colors } from "../../modules/theme/MuiTheme";
-import { Checkbox, Typography } from "@mui/material";
+import { colors } from "../../../modules/theme/MuiTheme";
+import { Checkbox, Grid, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
+import CustomisedButton from "../../../modules/components/CustomisedButton";
+import { Check, Undo } from "@mui/icons-material";
 
 function createData(name: string) {
   return { name };
@@ -26,21 +28,21 @@ export default function AdminPermissions() {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const intl = useIntl();
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ p: 3 }}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
             <TableCell>{intl.formatMessage({ id: "MENU.MODULE" })}</TableCell>
-            <TableCell align="center">
+            <TableCell align="left">
               {intl.formatMessage({ id: "MENU.SUP.ADMIN" })}
             </TableCell>
-            <TableCell align="center">
+            <TableCell align="left">
               {intl.formatMessage({ id: "MENU.ADMIN" })}
             </TableCell>
-            <TableCell align="center">
+            <TableCell align="left">
               {intl.formatMessage({ id: "MENU.MGMT" })}
             </TableCell>
-            <TableCell align="center">
+            <TableCell align="left">
               {intl.formatMessage({ id: "MENU.USER" })}
             </TableCell>
           </TableRow>
@@ -61,25 +63,36 @@ export default function AdminPermissions() {
                   {row.name}
                 </Typography>
               </TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
                 <Checkbox {...label} defaultChecked />
               </TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
                 <Checkbox {...label} defaultChecked />
               </TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
                 <Checkbox {...label} defaultChecked />
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ color: colors.alpha.primary[500] }}
-              >
+              <TableCell align="left">
                 <Checkbox {...label} defaultChecked />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Grid container display={"flex"} justifyContent={"end"} gap={2}>
+        <CustomisedButton
+          variant="outlined"
+          Icon={<Undo />}
+          iconPosition="start"
+          label="Reset"
+        />
+        <CustomisedButton
+          variant="contained"
+          Icon={<Check />}
+          iconPosition="start"
+          label="Save Changes"
+        />
+      </Grid>
     </TableContainer>
   );
 }

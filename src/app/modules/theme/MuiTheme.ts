@@ -1,4 +1,4 @@
-import { BorderTop, Padding } from "@mui/icons-material";
+import { BorderColor, BorderTop, Padding } from "@mui/icons-material";
 import { alpha, createTheme, lighten, darken } from "@mui/material";
 
 const themeColors = {
@@ -311,9 +311,9 @@ export const MuiTheme = createTheme({
             paddingRight: 6,
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
-            borderColor: colors.alpha.primary[500],
+            border: " none ",
           },
-          "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
+          "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline, ": {
             borderColor: colors.alpha.primary[500],
           },
         },
@@ -579,8 +579,8 @@ export const MuiTheme = createTheme({
             borderRadius: 8,
           },
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
-            border: " 1px solid " + colors.alpha.neutral[200],
-            background: colors.alpha.neutral[100],
+            color: themeColors.white,
+            background: themeColors.primary,
           },
         },
         sizeSmall: {

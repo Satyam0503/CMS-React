@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
+import { CustomisedModal } from "../components/CustomisedModal";
 
 export default function AddLeaves() {
   const intl = useIntl();
