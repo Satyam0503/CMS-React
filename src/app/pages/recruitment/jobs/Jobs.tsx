@@ -179,8 +179,6 @@ export default function Jobs() {
           </TableContainer>
         </Stack>
       </Card>
-
-      <Setting />
     </Grid>
   );
 }

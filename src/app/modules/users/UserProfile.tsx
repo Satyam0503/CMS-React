@@ -43,14 +43,27 @@ export default function UserProfile() {
   return (
     <Container sx={{ p: "16px" }}>
       <Grid container spacing={4}>
-        <Grid item xs={12} md={3} className="d-flex flex-column gap-5">
+        <Grid
+          item
+          xs={12}
+          md={3}
+          display={"flex"}
+          flexDirection={"column"}
+          gap={4}
+        >
           <Stack>
             <ProfileCard {...profileCardPayload} />
           </Stack>
 
           <Stack>
-            <Card className="p-5 w-100">
-              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+            <Card sx={{ p: 5, width: "100%" }}>
+              <Stack
+                mb={5}
+                display={"flex"}
+                justifyContent={"space-between"}
+                flexDirection={"row"}
+                alignItems={"center"}
+              >
                 <Typography variant="h6">
                   {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
                 </Typography>
@@ -67,9 +80,11 @@ export default function UserProfile() {
         <Grid item xs={12} md={9}>
           <Stack
             direction="row"
-            className="d-flex justify-content-evenly w-100 bg-white p-4 rounded "
+            display={"flex"}
+            justifyContent={"space-evenly"}
+            className="w-100 bg-white p-4 rounded "
           >
-            <Grid item xs={4} className="d-flex align-items-center">
+            <Grid item xs={4} display={"flex"} alignItems={"center"}>
               <Stack className="me-4 symbol symbol-45px">
                 <img
                   src={toAbsoluteUrl("media/Icons/calender.svg")}
@@ -84,7 +99,7 @@ export default function UserProfile() {
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4} className="d-flex align-items-center">
+            <Grid item xs={4} display={"flex"} alignItems={"center"}>
               <Stack className="me-4 symbol symbol-45px">
                 <img
                   src={toAbsoluteUrl("media/Icons/experience.svg")}
@@ -99,7 +114,7 @@ export default function UserProfile() {
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={4} className="d-flex align-items-center">
+            <Grid item xs={4} display={"flex"} alignItems={"center"}>
               <Stack className="me-4 symbol symbol-45px">
                 <img
                   src={toAbsoluteUrl("media/Icons/skills.svg")}
@@ -117,9 +132,8 @@ export default function UserProfile() {
               </Box>
             </Grid>
           </Stack>
-          <Stack className="w-100">
+          <Stack sx={{ width: "100%" }}>
             <BasicTabs />
-            {/* <AboutUser /> */}
           </Stack>
         </Grid>
       </Grid>

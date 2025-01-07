@@ -8,7 +8,7 @@ import { Grid, Theme, useMediaQuery } from "@mui/material";
 import { UserPerformance } from "./performance/UserPerformance";
 import { WorkHistory } from "./workhistory/WorkHistory";
 import { colors } from "../theme/MuiTheme";
-import NotificationSetting from "./usersetting/NotificationSetting";
+import Setting from "./usersetting/Setting";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -135,7 +135,7 @@ export default function BasicTabs() {
         <WorkHistory />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
-        <NotificationSetting />
+        <Setting />
       </CustomTabPanel>
     </Box>
   );

@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useUserDetails } from "./UserDataProvider";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { useIntl } from "react-intl";
 
 type PropsType = {
   open: boolean;
@@ -33,6 +34,7 @@ export const AddUpdateSkills = (props: PropsType) => {
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(props.skills);
   const { open, setOpen } = props;
+  const intl = useIntl();
 
   function handleDelete(skill: string) {
     setSkills(skills.filter((item) => item !== skill));
@@ -67,7 +69,12 @@ export const AddUpdateSkills = (props: PropsType) => {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction={"column"} spacing={2}>
-        <Typography variant="h5">Skills</Typography>
+        <Typography variant="h5">
+          {" "}
+          {intl.formatMessage({
+            id: "  PROFILE.SKILLS",
+          })}
+        </Typography>
         <Stack>
           <TextField
             InputProps={{
@@ -95,11 +102,7 @@ export const AddUpdateSkills = (props: PropsType) => {
           </Stack>
         </Stack>
 
-        <Stack
-          direction={"row"}
-          spacing={1}
-          sx={{ justifyContent: "flex-end" }}
-        >
+        <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
           <CustomisedButton
             variant="outlined"
             label="Cancel"

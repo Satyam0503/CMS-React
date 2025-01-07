@@ -11,21 +11,17 @@ export const WorkHistory: FC = () => {
   return (
     <>
       <Grid container>
-        <Card className="p-5 w-100">
-          <Typography variant="h5" sx={{ mb: 1 }}>
+        <Card sx={{ p: 5, width: "100%" }}>
+          <Typography variant="h5" mb={1}>
             {intl.formatMessage({ id: "MENU.WORK_HISTORY" })}
           </Typography>
-          <Grid item xs={12} className="w-100 d-flex flex-column gap-4">
-            <Stack
-              direction="row"
-              spacing={2}
-              className="mb-2 align-items-center "
-            >
+          <Grid item xs={12} display={"flex"} flexDirection={"column"} gap={4}>
+            <Stack direction="row" spacing={2} alignItems={"center"} mb={1}>
               <Stack
                 sx={{
                   background: colors.alpha.primary[100],
                   borderRadius: "4px",
-                  p: "12px",
+                  p: 2,
                 }}
               >
                 <CorporateFare sx={{ color: colors.alpha.primary[500] }} />
@@ -41,21 +37,17 @@ export const WorkHistory: FC = () => {
                   {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems={"center"}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: "600" }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
                     Kuwan wala, Dehradun
                   </Typography>
-                  <Typography variant="subtitle2" className="text-muted">
+                  <Typography variant="subtitle2">
                     <CalendarIcon />
                     Jan 2023- Jun 2024 (1 Year 5 Months)
                   </Typography>
                 </Stack>
               </Stack>
             </Stack>
-            <Stack
-              direction="row"
-              spacing={2}
-              className="mb-2 align-items-center"
-            >
+            <Stack direction="row" spacing={2} alignItems={"center"} mb={1}>
               <Stack
                 sx={{
                   background: colors.alpha.primary[100],
@@ -76,7 +68,7 @@ export const WorkHistory: FC = () => {
                   {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                 </Typography>
                 <Stack direction="row" spacing={1} alignItems={"center"}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: "600" }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
                     Kuwan wala, Dehradun
                   </Typography>
                   <Typography variant="subtitle2" className="text-muted">

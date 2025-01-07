@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { EmployeesDataTypes } from "../../../utils/common_types";
 import { getUserDetails } from "./userservices";
 import { Typography } from "@mui/material";
+import { useIntl } from "react-intl";
 
 type UserDataContextType = {
   userDetails: EmployeesDataTypes | undefined;
@@ -30,6 +31,7 @@ export const UserDetailsProvider = (props: PropTypes) => {
   const [isRefresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
+  const intl = useIntl();
 
   useEffect(() => {
     setLoading(true);
@@ -50,7 +52,12 @@ export const UserDetailsProvider = (props: PropTypes) => {
   }, [isRefresh]);
 
   if (loading) {
-    return <Typography variant="h4">Loding Employee Details ...</Typography>;
+    return (
+      <Typography variant="h4">
+        {" "}
+        {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
+      </Typography>
+    );
   }
   if (error) {
     return (

@@ -18,12 +18,11 @@ import {
 import { useIntl } from "react-intl";
 import UpdateUserInfo from "./UpdateUserInfo";
 import AddUpdateCertification from "./AddUpdateCertification";
-import Employment from "./Employment";
 import { useUserDetails } from "./UserDataProvider";
 import { useRef, useState } from "react";
 import { dateFormatter } from "../../../utils/common";
 import { AddUpdateSkills } from "./AddUpdateSkills";
-import AddUpdateEducation from "./AddUpdateEducation";
+import AddUpdateEducation from "./Education";
 import dayjs from "dayjs";
 import {
   CertificationsType,
@@ -219,12 +218,14 @@ export default function AboutUser() {
 
   return (
     <>
-      <Grid container className="d-flex gap-5 mt-2">
+      <Grid container display={"flex"} gap={2} mt={1}>
         <Grid item sm={12}>
-          <Card className="p-5">
+          <Card sx={{ p: 5 }}>
             <Stack
               direction="row"
-              className="d-flex justify-content-between mb-4"
+              display={"flex"}
+              justifyContent={"space-between"}
+              mb={1}
             >
               <Typography variant="h5">{currentUser?.jobRole}</Typography>
               {isSummaryEdit ? (
@@ -258,10 +259,12 @@ export default function AboutUser() {
           </Card>
         </Grid>
         <Grid item sm={12}>
-          <Card className="p-5">
+          <Card sx={{ p: 4 }}>
             <Stack
               direction="row"
-              className="d-flex justify-content-between  mb-4"
+              display={"flex"}
+              justifyContent={"space-between"}
+              mb={1}
             >
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.PI" })}
@@ -278,24 +281,24 @@ export default function AboutUser() {
             </Stack>
             <Grid container>
               <Grid item xs={12}>
-                <Typography variant="body2" className="text-muted">
-                  Address
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.ADDRESS" })}
                 </Typography>
                 <Typography>{currentUser?.address || "NA"} </Typography>
               </Grid>
 
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Email
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                   </Typography>
                   <Typography variant="body1">
                     {currentUser?.email || "NA"}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Phone number
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.PHONE" })}
                   </Typography>
                   <Typography variant="body1">
                     {currentUser?.phoneNumber || "NA"}
@@ -304,30 +307,30 @@ export default function AboutUser() {
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Date of birth
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.DOB" })}
                   </Typography>
                   <Typography>
                     {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Gender
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.GENDER" })}
                   </Typography>
                   <Typography>{currentUser?.gender}</Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Languages Known
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "TRANSLATOR.LANGUAGES" })}
                   </Typography>
                   <Typography>{currentUser?.languagesKnown || "NA"}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Date of joining
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.DOJ" })}
                   </Typography>
                   <Typography>
                     {dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}
@@ -336,44 +339,44 @@ export default function AboutUser() {
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Employee ID
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.EMP_ID" })}
                   </Typography>
                   <Typography>{currentUser?.employeeId}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Department
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.DEPARTMENT" })}
                   </Typography>
                   <Typography>{currentUser?.department || "NA"}</Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Reporting Manager
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
                   </Typography>
                   <Typography>
                     {currentUser?.reportingManager || "NA"}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Team Lead
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.TEAM_LEAD" })}
                   </Typography>
                   <Typography>{currentUser?.teamLead || "NA"}</Typography>
                 </Grid>
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Personal Email
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
                   </Typography>
                   <Typography>{currentUser?.personalEmail || "NA"}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Emergency Contact
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
                   </Typography>
                   <Typography>
                     {currentUser?.emergencyContact || "NA"}
@@ -382,8 +385,8 @@ export default function AboutUser() {
               </Grid>
               <Grid container spacing={4}>
                 <Grid item xs={6}>
-                  <Typography variant="body2" className="text-muted">
-                    Blood Group
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
                   </Typography>
                   <Typography>{currentUser?.bloodGroup || "NA"}</Typography>
                 </Grid>
@@ -392,12 +395,14 @@ export default function AboutUser() {
           </Card>
         </Grid>
         <Grid item sm={12}>
-          <Card className="p-5">
+          <Card sx={{ p: 4 }}>
             <Stack
               direction="row"
-              className="d-flex justify-content-between mb-4"
+              display={"flex"}
+              justifyContent={"space-between"}
+              mb={1}
             >
-              <Typography variant="h5" className="text-primary">
+              <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.SKILLS" })}
               </Typography>
               <IconButton onClick={() => setSkillsModalOpen(true)}>
@@ -416,10 +421,12 @@ export default function AboutUser() {
               direction="row"
               gap={1}
               className="skills-chips"
-              sx={{ flexWrap: "wrap" }}
+              flexWrap={"wrap"}
             >
               {skills?.length === 0 ? (
-                <Typography variant="body2">Please Add Your Skills</Typography>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "ADD.SKILLS" })}
+                </Typography>
               ) : (
                 skills?.map((skill, index) => (
                   <Chip key={index} label={skill} />
@@ -429,12 +436,14 @@ export default function AboutUser() {
           </Card>
         </Grid>
         <Grid item sm={12}>
-          <Card className="p-5">
+          <Card sx={{ p: 4 }}>
             <Stack
               direction="row"
-              className="d-flex justify-content-between mb-4"
+              display={"flex"}
+              justifyContent={"space-between"}
+              mb={1}
             >
-              <Typography variant="h5" className="text-primary">
+              <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
               </Typography>
               <IconButton onClick={() => setEducationModalOpen(true)}>
@@ -443,16 +452,19 @@ export default function AboutUser() {
             </Stack>
             <Stack spacing={2}>
               {educations.length === 0 ? (
-                <Typography>Please Add Your Education Details</Typography>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "ADD.EDUCATION" })}
+                </Typography>
               ) : (
                 educations.map((education) => (
                   <Stack
                     key={education.id}
                     direction="row"
-                    className="justify-content-between align-items-center"
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
                   >
-                    <Stack direction="row" sx={{ alignItems: "center" }}>
-                      <School className="me-4" />
+                    <Stack direction="row" alignItems={"center"}>
+                      <School sx={{ marginInlineEnd: 1 }} />
                       <Stack>
                         <Typography
                           variant="body1"
@@ -498,12 +510,14 @@ export default function AboutUser() {
         </Grid>
 
         <Grid item sm={12}>
-          <Card className="w-100 p-5">
+          <Card sx={{ p: 4 }}>
             <Stack
               direction="row"
-              className="d-flex justify-content-between mb-4"
+              display={"flex"}
+              justifyContent={"space-between"}
+              mb={1}
             >
-              <Typography variant="h5" className="text-primary">
+              <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
               </Typography>
               <IconButton onClick={() => setCertificationModalOpen(true)}>
@@ -513,20 +527,25 @@ export default function AboutUser() {
 
             <Stack spacing={2}>
               {certifications.length === 0 ? (
-                <Typography>Please Add Your Certification Details</Typography>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
+                </Typography>
               ) : (
                 certifications.map((certification) => (
                   <Stack
                     key={certification.id}
                     direction="row"
-                    className="mb-2 d-flex justify-content-between align-items-center"
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
                   >
                     <Stack direction="row" alignItems={"center"}>
-                      <School className="me-4" />
+                      <School sx={{ marginInlineEnd: 4 }} />
                       <Stack>
                         <Typography
                           variant="body1"
-                          className="text-gray-800 text-hover-primary fw-semibold "
+                          className="text-gray-800 text-hover-primary "
+                          fontWeight={500}
                         >
                           {certification.title}
                         </Typography>
@@ -535,12 +554,13 @@ export default function AboutUser() {
                             variant="body2"
                             className="fw-semibold d-block "
                           >
-                            {certification.certificationName},{" "}
+                            {certification.certificationName},
                             {certification.type}
                           </Typography>
                           <Typography
                             variant="body2"
-                            className="text-muted fw-semibold d-block "
+                            sx={{ display: "block" }}
+                            fontWeight={500}
                           >
                             <CalendarMonth sx={{ height: "14px" }} />
                             {dateFormatter(

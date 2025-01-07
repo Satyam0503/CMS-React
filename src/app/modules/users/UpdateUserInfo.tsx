@@ -101,15 +101,18 @@ export default function UserInfo(props: PropsType) {
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>
         <form onSubmit={handleSubmit}>
-          <Grid container className="d-flex mt-2">
+          <Grid container display={"flex"}>
             <Grid item xs={12}>
-              <Typography variant="h5" className="text-primary mb-4">
+              <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.PI" })}
               </Typography>
             </Grid>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">First Name</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.FIRST_NAME" })}
+                </Typography>
                 <TextField
                   fullWidth
                   placeholder="First Name"
@@ -121,8 +124,11 @@ export default function UserInfo(props: PropsType) {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">Last Name</Typography>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.LAST_NAME" })}
+                </Typography>
                 <TextField
                   fullWidth
                   placeholder="Last Name"
@@ -134,22 +140,28 @@ export default function UserInfo(props: PropsType) {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6} className="pt-2">
-                <Typography variant="body1">Date of birth</Typography>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.DOB" })}
+                </Typography>
                 <CustomisedDatePicker
                   name="dateOfBirth"
                   value={dayjs(currentUser?.dateOfBirth)}
                   setValue={setNewDob}
                   maxDate={dayjs()}
                 />
-                <FormHelperText sx={{ color: "#d32f2f" }}>
+                <FormHelperText>
                   {touched.dateOfBirth &&
                     errors.dateOfBirth &&
                     errors.dateOfBirth}
                 </FormHelperText>
               </Grid>
-              <Grid item xs={12} sm={6} className="pt-2">
-                <Typography variant="body1">Email address</Typography>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                </Typography>
                 <TextField
                   fullWidth
                   placeholder="Email"
@@ -159,8 +171,11 @@ export default function UserInfo(props: PropsType) {
                   helperText={touched.email && errors.email && errors.email}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">Phone number</Typography>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.PHONE" })}
+                </Typography>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -174,8 +189,11 @@ export default function UserInfo(props: PropsType) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">Blood Group</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+                </Typography>
                 <Select
                   fullWidth
                   error={touched.bloodGroup && Boolean(errors.bloodGroup)}
@@ -188,12 +206,15 @@ export default function UserInfo(props: PropsType) {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText sx={{ color: "#d32f2f" }}>
+                <FormHelperText>
                   {touched.bloodGroup && errors.bloodGroup && errors.bloodGroup}
                 </FormHelperText>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">Personal Email</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.PERSONAL.EMAIL" })}
+                </Typography>
                 <TextField
                   fullWidth
                   error={touched.personalEmail && Boolean(errors.personalEmail)}
@@ -207,8 +228,11 @@ export default function UserInfo(props: PropsType) {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">Emergency contact</Typography>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
+                </Typography>
                 <TextField
                   fullWidth
                   placeholder="Emergency Contact"
@@ -226,7 +250,10 @@ export default function UserInfo(props: PropsType) {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="body1">Address</Typography>
+                <Typography variant="body1">
+                  {" "}
+                  {intl.formatMessage({ id: "USER.ADDRESS" })}
+                </Typography>
                 <TextField
                   fullWidth
                   error={touched.address && Boolean(errors.address)}
@@ -236,15 +263,11 @@ export default function UserInfo(props: PropsType) {
                   {...getFieldProps("address")}
                 />
               </Grid>
-              <Grid
-                item
-                xs={12}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-              >
+              <Grid item xs={12} display={"flex"} justifyContent={"flex-end"}>
                 <Stack
                   spacing={1}
                   direction={"row"}
-                  sx={{ justifyContent: "flex-end" }}
+                  justifyContent={"flex-end"}
                 >
                   <CustomisedButton
                     label="Cancel"
