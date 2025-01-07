@@ -22,7 +22,8 @@ import { useUserDetails } from "./UserDataProvider";
 import { useRef, useState } from "react";
 import { dateFormatter } from "../../../utils/common";
 import { AddUpdateSkills } from "./AddUpdateSkills";
-import AddUpdateEducation from "./Education";
+import AddUpdateEducation from "./AddUpdateEducation";
+
 import dayjs from "dayjs";
 import {
   CertificationsType,
