@@ -7,7 +7,6 @@ import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
 import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
-import Test from "../pages/test";
 import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
 import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
@@ -20,12 +19,14 @@ import Applications from "../pages/recruitment/applications/Applications";
 import Jobs from "../pages/recruitment/jobs/Jobs";
 import Themes from "../pages/admin/themes/Themes";
 import NoticeBoard from "../pages/noticeboard/NoticeBoard";
+import MyNoticeBoard from "../pages/noticeboard/MyNoticeBoard";
+import AdminDashboard from "../pages/admindashboard/AdminDashboard";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
   const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
   const Setting = lazy(() => import("../pages/admin/Settings"));
-  const Recruitment = lazy(()=>import("../pages/recruitment/Recruitment"));
+  const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
   // const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
   // const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   // const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
@@ -42,7 +43,7 @@ const PrivateRoutes = () => {
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
-        <Route path="test" element={<Test />} />
+        <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagement />} />
@@ -50,14 +51,15 @@ const PrivateRoutes = () => {
         <Route path="employees" element={<Employees />} />
         <Route path="holidays" element={<Holidays />} />
         <Route path="noticeboard" element={<NoticeBoard />} />
+        <Route path="mynoticeboard" element={<MyNoticeBoard />} />
 
         {/* Lazy Modules */}
 
-        <Route 
+        <Route
           path="recruitment/*"
           element={
             <SuspensedView>
-              <Recruitment/>
+              <Recruitment />
             </SuspensedView>
           }
         />

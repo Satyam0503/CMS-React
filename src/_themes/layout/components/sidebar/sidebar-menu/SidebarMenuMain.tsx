@@ -27,7 +27,7 @@ const SidebarMenuMain = () => {
   return (
     <>
       <SidebarMenuItem
-        to="/test"
+        to="/admindashboard"
         icon={<DashboardIcon />}
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
@@ -47,7 +47,7 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
       />
 
-      <SidebarMenuItemWithSub
+      {/* <SidebarMenuItemWithSub
         to="/crafted/pages"
         title="Pages"
         fontIcon="bi-archive"
@@ -63,7 +63,7 @@ const SidebarMenuMain = () => {
           title="Overview"
           icon={<EmailIcon />}
         />
-      </SidebarMenuItemWithSub>
+      </SidebarMenuItemWithSub> */}
 
       <SidebarMenuItem
         to="/myprofile"
@@ -78,7 +78,7 @@ const SidebarMenuMain = () => {
       >
         <SidebarMenuItem
           to="/recruitment/jobs"
-          icon={<Work/>}
+          icon={<Work />}
           title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
         />
         <SidebarMenuItem
@@ -90,7 +90,7 @@ const SidebarMenuMain = () => {
 
       <SidebarMenuItemWithSub
         to="/setting"
-        title="Setting"
+        title="Admin"
         icon={<SettingsIcon />}
       >
         <SidebarMenuItem

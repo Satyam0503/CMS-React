@@ -16,30 +16,6 @@ export default function PageHeader() {
           {intl.formatMessage({ id: "MENU.DASHBOARD" })}
         </Typography>
       </Stack>
-
-      {/* <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <TextField
-          id="input-with-icon-textfield"
-          InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-               <SearchOutlined />
-                </InputAdornment>
-              ),
-          }}
-          variant="standard"
-            placeholder="Search something ..."
-        />
-           
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <IconButton aria-label="Notification" size="small">
-                <NotificationsOutlined />
-              </IconButton>
-              <IconButton aria-label="Notification" size="small">
-                <Login />
-              </IconButton>
-            </Stack>
-          </Stack> */}
     </Grid>
   );
 }

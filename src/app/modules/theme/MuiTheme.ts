@@ -33,7 +33,7 @@ export const colors = {
       menuItemBg: themeColors.white,
       menuItemBgActive: "#f2f5f9",
       menuItemIconColor: lighten(themeColors.secondary, 0.3),
-      menuItemIconColorActive: themeColors.primary,
+      menuItemIconColorActive: themeColors.secondary,
       menuItemHeadingColor: darken(themeColors.secondary, 0.3),
     },
   },
@@ -165,7 +165,7 @@ export const MuiTheme = createTheme({
 
     /// text of table
     text: {
-      primary: themeColors.neutral,
+      primary: colors.alpha.neutral[800],
     },
     background: {
       paper: themeColors.white,
@@ -257,22 +257,22 @@ export const MuiTheme = createTheme({
           background: themeColors.secondary,
         },
         "#nprogress .spinner-icon": {
-          borderTopColor: themeColors.primary,
-          borderLeftColor: themeColors.primary,
+          borderTopColor: colors.alpha.primary[500],
+          borderLeftColor: colors.alpha.primary[500],
         },
         "#nprogress .peg": {
           boxShadow:
             "0 0 15px " +
-            themeColors.primary +
+            colors.alpha.primary[500] +
             ", 0 0 8px" +
-            themeColors.primary,
+            colors.alpha.primary[500],
         },
         ":root": {
-          "--swiper-theme-color": themeColors.primary,
+          "--swiper-theme-color": colors.alpha.primary[500],
         },
         code: {
-          background: themeColors.primary,
-          color: themeColors.primary,
+          background: colors.alpha.primary[500],
+          color: colors.alpha.primary[500],
           borderRadius: 4,
           padding: 4,
         },
@@ -438,13 +438,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    MuiDialogContent: {
-      styleOverrides: {
-        root: {
-          padding: "50px 40px",
-        },
-      },
-    },
+    // MuiDialogContent: {
+    //   styleOverrides: {
+    //     root: {
+    //       padding: "50px 40px",
+    //     },
+    //   },
+    // },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -461,7 +461,7 @@ export const MuiTheme = createTheme({
             background: colors.alpha.primary[500],
           },
           "&.Mui-selected.MuiButtonBase-root:hover": {
-            background: themeColors.primary,
+            background: colors.alpha.primary[500],
           },
         },
       },
@@ -552,13 +552,13 @@ export const MuiTheme = createTheme({
       },
       styleOverrides: {
         root: {
-          color: themeColors.primary,
+          color: colors.alpha.primary[500],
           background: themeColors.white,
           transition: "all .2s",
 
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             color: themeColors.white,
-            background: themeColors.primary,
+            background: colors.alpha.primary[500],
           },
         },
       },
@@ -580,7 +580,7 @@ export const MuiTheme = createTheme({
           },
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             color: themeColors.white,
-            background: themeColors.primary,
+            background: colors.alpha.primary[500],
           },
         },
         sizeSmall: {
@@ -664,6 +664,7 @@ export const MuiTheme = createTheme({
     MuiLink: {
       defaultProps: {
         underline: "hover",
+        color: colors.alpha.neutral[800],
       },
     },
     MuiLinearProgress: {
@@ -800,7 +801,7 @@ export const MuiTheme = createTheme({
 
             "&:hover, &:active, &.active, &.Mui-selected": {
               color: colors.alpha.neutral[100],
-              background: themeColors.primary,
+              background: colors.alpha.primary[500],
             },
           },
         },
@@ -826,12 +827,12 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           "&.MuiButtonBase-root": {
-            color: themeColors.primary,
-            background: themeColors.primary,
+            color: colors.alpha.primary[500],
+            background: colors.alpha.primary[500],
 
             "&:hover, &:active, &.active, &.Mui-selected": {
               color: colors.alpha.neutral[100],
-              background: themeColors.primary,
+              background: colors.alpha.primary[500],
             },
           },
         },
@@ -849,21 +850,21 @@ export const MuiTheme = createTheme({
             },
         },
         clearIndicator: {
-          background: themeColors.primary,
-          color: themeColors.primary,
+          background: colors.alpha.primary[500],
+          color: colors.alpha.primary[500],
           marginRight: 8,
 
           "&:hover": {
-            background: themeColors.primary,
-            color: themeColors.primary,
+            background: colors.alpha.primary[500],
+            color: colors.alpha.primary[500],
           },
         },
         popupIndicator: {
           color: colors.alpha.neutral[500],
 
           "&:hover": {
-            background: themeColors.primary,
-            color: themeColors.primary,
+            background: colors.alpha.primary[500],
+            color: colors.alpha.primary[500],
           },
         },
       },
@@ -940,7 +941,7 @@ export const MuiTheme = createTheme({
           fontSize: 14,
         },
         standardInfo: {
-          color: themeColors.primary,
+          color: colors.alpha.primary[500],
         },
         action: {
           color: colors.alpha.neutral[700],
@@ -963,22 +964,22 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiDialog:{
-      styleOverrides:{
+    MuiDialog: {
+      styleOverrides: {
         paper: {
-          maxWidth:"720px",
-          minWidth: '300px', // Default min-width for small screens
-          '@media (min-width:600px)': {
-            minWidth: '400px', // For small and up screens
+          maxWidth: "720px",
+          minWidth: "300px", // Default min-width for small screens
+          "@media (min-width:600px)": {
+            minWidth: "400px", // For small and up screens
           },
-          '@media (min-width:900px)': {
-            minWidth: '500px', // For medium and up screens
+          "@media (min-width:900px)": {
+            minWidth: "500px", // For medium and up screens
           },
-          '@media (min-width:1200px)': {
-            minWidth: '600px', // For large screens and up
+          "@media (min-width:1200px)": {
+            minWidth: "600px", // For large screens and up
           },
         },
-      }
+      },
     },
     MuiTooltip: {
       styleOverrides: {
@@ -1061,7 +1062,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           "&.MuiStepIcon-completed": {
-            color: themeColors.primary,
+            color: colors.alpha.primary[500],
           },
         },
       },
@@ -1098,6 +1099,7 @@ export const MuiTheme = createTheme({
   typography: {
     fontFamily:
       '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+
     h1: {
       fontWeight: 600,
       fontSize: 40,
@@ -1114,24 +1116,21 @@ export const MuiTheme = createTheme({
     h4: {
       fontWeight: 600,
       fontSize: 24,
-      color: colorThemeText.heading,
+      color: colors.alpha.neutral[800],
     },
     h5: {
       fontWeight: 500,
       fontSize: 20,
-      color: colorThemeText.secondaryHeading,
     },
     h6: {
       fontSize: 16,
-      color: colorThemeText.heading,
     },
     body1: {
       fontSize: 14,
-      color: colorThemeText.bodyText,
+      fontWeight: 500,
     },
     body2: {
       fontSize: 12,
-      color: colorThemeText.bodyText,
     },
     button: {
       fontWeight: 600,

@@ -6,7 +6,6 @@ import {
   Button,
   TextField,
   InputAdornment,
-  InputLabel,
   IconButton,
   FormControl,
   Select,
@@ -59,9 +58,7 @@ export default function Themes() {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <InputLabel shrink htmlFor="bootstrap-input">
-                Light Mode
-              </InputLabel>
+              <Typography>Light Mode</Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -76,9 +73,7 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <InputLabel shrink htmlFor="bootstrap-input">
-                Dark Mode
-              </InputLabel>
+              <Typography>Dark Mode</Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -94,9 +89,7 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={6}>
-              <InputLabel shrink htmlFor="bootstrap-input">
-                Company Name
-              </InputLabel>
+              <Typography>Company Name</Typography>
               <TextField fullWidth />
             </Grid>
           </Grid>
@@ -111,9 +104,9 @@ export default function Themes() {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.PRIMARY" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -126,9 +119,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SECONDARY" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -142,9 +135,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.TERRITORY" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -157,9 +150,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.INFO" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -173,9 +166,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.NEUTRAL" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -188,9 +181,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SUCCESS" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -204,9 +197,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.WARNING" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -219,9 +212,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.DANGER" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -235,9 +228,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.HEADING" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -253,9 +246,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SECONDARY_HEADING" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -273,9 +266,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.BODY" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -291,9 +284,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.LINK" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -311,9 +304,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -329,9 +322,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR_TEXT" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -349,9 +342,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR_LINK" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -367,9 +360,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.BODY_BG" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -395,9 +388,9 @@ export default function Themes() {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.PRIMARY" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -410,9 +403,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SECONDARY" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -426,9 +419,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.TERRITORY" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -441,9 +434,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.INFO" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -457,9 +450,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.NEUTRAL" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -472,9 +465,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SUCCESS" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -488,9 +481,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.WARNING" })}
-              </InputLabel>
+              </Typography>
               <TextField
                 fullWidth
                 InputProps={{
@@ -503,9 +496,9 @@ export default function Themes() {
               />
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.DANGER" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <TextField
                   InputProps={{
@@ -519,9 +512,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.HEADING" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -537,9 +530,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SECONDARY_HEADING" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -557,9 +550,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.BODY" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -575,9 +568,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.LINK" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -595,9 +588,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -613,9 +606,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR_TEXT" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -633,9 +626,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.SIDEBAR_LINK" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -651,9 +644,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "COLOR.BODY_BG" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -682,9 +675,9 @@ export default function Themes() {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H1" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -700,9 +693,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H2" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -720,9 +713,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H3" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -738,9 +731,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H4" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -758,9 +751,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H5" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -776,9 +769,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H6" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -796,9 +789,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "Body" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -822,9 +815,9 @@ export default function Themes() {
             </Grid>
 
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H1" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -840,9 +833,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H2" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -860,9 +853,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H3" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -878,9 +871,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H4" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -898,9 +891,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H5" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"
@@ -916,9 +909,9 @@ export default function Themes() {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "H6" })}
-              </InputLabel>
+              </Typography>
               <Stack>
                 <FormControl fullWidth>
                   <Select
@@ -936,9 +929,9 @@ export default function Themes() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={3}>
-              <InputLabel shrink htmlFor="bootstrap-input">
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "Body" })}
-              </InputLabel>
+              </Typography>
               <FormControl fullWidth>
                 <Select
                   labelId="demo-simple-select-label"

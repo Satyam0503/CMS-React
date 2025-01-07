@@ -4,10 +4,6 @@ import { useIntl } from "react-intl";
 import AdminPermissions from "./AdminPermissions";
 import { auto } from "@popperjs/core";
 
-type Props = {
-  className: string;
-};
-
 export default function Admin() {
   const intl = useIntl();
   return (

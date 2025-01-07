@@ -2,171 +2,359 @@ import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { AttendanceChart } from "../components/AttendanceChart";
+import { colors } from "../theme/MuiTheme";
+import CustomisedButton from "../components/CustomisedButton";
+import { ContactEmergency, ContactPage, Message } from "@mui/icons-material";
 export default function DynamicContent() {
   const intl = useIntl();
   return (
     <>
-      <Grid container className="d-flex flex-column gap-6">
+      <Grid container gap={3}>
         <AttendanceChart
           className="card-xxl-stretch mb-xl-3"
           chartColor="primary"
-          chartHeight="179px"
+          chartHeight="170px"
         />
 
-        <Stack direction={{ sm: "row", md: "column" }} className="d-flex gap-6">
-          <Card className="py-4 w-100 px-6">
-            <Typography variant="h6" className="card-label  text-gray-900 mb-4">
+        <Stack direction={{ sm: "row", md: "column" }} gap={3} width={"100%"}>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6" mb={1}>
               {intl.formatMessage({ id: "MENU.LEAVE" })}
             </Typography>
             <Stack
               direction="row"
-              className="mb-2 d-flex justify-content-between align-items-center"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
-                <Stack className="me-4 symbol symbol-45px">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
                     src={toAbsoluteUrl("media/avatars/300-6.jpg")}
                     alt=""
-                    className="rounded-circle"
+                    style={{ borderRadius: "50%" }}
                   />
                 </Stack>
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-semibold "
-                  >
-                    Deepak Chaurasiya
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-muted fw-semibold d-block "
-                  >
+                  <Typography variant="body1">Deepak Chaurasiya</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
                     {intl.formatMessage({ id: "POSITION.QA" })}
                   </Typography>
                 </Stack>
               </Stack>
               <Stack>
-                <Typography variant="subtitle2" className="text-primary">
-                  Today
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  5-Dec to 25-Dec
                 </Typography>
               </Stack>
             </Stack>
             <Stack
               direction="row"
-              className="mb-2 d-flex justify-content-between align-items-center"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
               <Stack direction="row">
-                <Stack className="me-4 symbol symbol-45px">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
                     src={toAbsoluteUrl("media/avatars/300-6.jpg")}
                     alt=""
-                    className="rounded-circle"
+                    style={{ borderRadius: "50%" }}
                   />
                 </Stack>
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-semibold "
-                  >
-                    Satish Singh
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-muted fw-semibold d-block "
-                  >
+                  <Typography variant="body1">Satish Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
                     {intl.formatMessage({ id: "POSITION.QA" })}
                   </Typography>
                 </Stack>
               </Stack>
               <Stack>
-                <Typography variant="subtitle2" className="text-primary">
-                  5-Dec - 10-Dec
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  Today
                 </Typography>
               </Stack>
             </Stack>
           </Card>
-          <Card className="py-4 px-6 w-100">
-            <Typography variant="h6" className="card-label  text-gray-900 mb-4">
-              {intl.formatMessage({ id: "MENU.BIRTHDAY" })}
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6" mb={1}>
+              {intl.formatMessage({ id: "MENU.TOP_PUNCTUAL" })}
             </Typography>
             <Stack
               direction="row"
-              className="mb-2 d-flex justify-content-between align-items-center"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
-                <Stack className="me-4 symbol symbol-45px">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
                     src={toAbsoluteUrl("media/avatars/300-6.jpg")}
                     alt=""
-                    className="rounded-circle"
+                    style={{ borderRadius: "50%" }}
                   />
                 </Stack>
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-semibold "
-                  >
-                    Deepa Chauhan
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-muted fw-semibold d-block "
-                  >
+                  <Typography variant="body1">Deepak Chaurasiya</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
                     {intl.formatMessage({ id: "POSITION.QA" })}
                   </Typography>
                 </Stack>
               </Stack>
               <Stack>
-                <Typography variant="subtitle2" className="text-primary">
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  1st
+                </Typography>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Mohan Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  2nd
+                </Typography>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Mohan Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  3rd
+                </Typography>
+              </Stack>
+            </Stack>
+          </Card>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6" mb={1}>
+              {intl.formatMessage({ id: "MENU.BIRTHDAY" })}
+            </Typography>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Deepak Chaurasiya</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
                   Today
                 </Typography>
               </Stack>
             </Stack>
             <Stack
               direction="row"
-              className="mb-2 d-flex justify-content-between align-items-center"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
               <Stack direction="row">
-                <Stack className="me-4 symbol symbol-45px">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
                     src={toAbsoluteUrl("media/avatars/300-6.jpg")}
                     alt=""
-                    className="rounded-circle"
+                    style={{ borderRadius: "50%" }}
                   />
                 </Stack>
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-semibold "
-                  >
-                    Pankaj Purohit
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className="text-muted fw-semibold d-block "
-                  >
-                    {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
+                  <Typography variant="body1">Mohan Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
                   </Typography>
                 </Stack>
               </Stack>
               <Stack>
-                <Typography variant="subtitle2" className="text-primary">
-                  {" "}
-                  10-Dec
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  5-Jan
+                </Typography>
+              </Stack>
+            </Stack>
+          </Card>
+          <Card sx={{ p: 2 }}>
+            <Typography variant="h6" mb={1}>
+              {intl.formatMessage({ id: "MENU.EMP_OF_MONTH" })}
+            </Typography>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              mb={1}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Deepak Chaurasiya</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  1st
+                </Typography>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Mohan Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  2nd
+                </Typography>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Ramesh Singh</Typography>
+                  <Typography variant="body2" color={colors.alpha.neutral[400]}>
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  3rd
                 </Typography>
               </Stack>
             </Stack>
           </Card>
         </Stack>
 
-        <Card className="py-4 px-6 w-100">
-          <Typography variant="h5">
+        <Card sx={{ p: 2 }}>
+          <Typography variant="h6">
             {intl.formatMessage({ id: "MENU.HELP" })}
           </Typography>
-          <Typography variant="body2" className="text-muted d-block my-2 ">
+          <Typography variant="body2" color={colors.alpha.neutral[400]} my={1}>
             {intl.formatMessage({ id: "MENU.HELP_INFO" })}
           </Typography>
-          <Button variant="contained">Contact</Button>
+          <CustomisedButton
+            variant="contained"
+            label="Contact"
+            Icon={<Message />}
+            iconPosition="start"
+          />
         </Card>
       </Grid>
     </>

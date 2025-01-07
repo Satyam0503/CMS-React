@@ -1,55 +1,36 @@
 import { Card, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useIntl } from "react-intl";
-import {toAbsoluteUrl } from "../../../_themes/helpers";
+import { toAbsoluteUrl } from "../../../_themes/helpers";
+import { colors } from "../theme/MuiTheme";
 
 export default function OpenPositions() {
   const intl = useIntl();
   return (
     <>
-      <Grid container className="d-block">
-        <Card className="p-6 w-100">
-         
+      <Grid container>
+        <Card sx={{ px: 3, width: "100%", py: 2, minHeight: "280px" }}>
           <Stack>
-            <Stack className="mb-4 d-flex flex-row justify-content-between align-items-center">
+            <Stack
+              display={"flex"}
+              justifyContent={"space-between"}
+              flexDirection={"row"}
+              alignItems={"center"}
+              mb={1}
+            >
               <Typography variant="h6">
                 {intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
               </Typography>
-            <Typography variant="h4">15</Typography>
+              <Typography variant="h4">15</Typography>
             </Stack>
 
-            <Grid className="card-body pt-2">
-              <Grid className="d-flex align-items-center mb-3">
-                <Grid className="me-4 symbol symbol-45px">
-                    <img src={toAbsoluteUrl('media/avatars/300-6.jpg')} alt='' />
+            <Grid item display={"flex"} direction={"column"} gap={1}>
+              <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                <Grid className=" symbol symbol-45px">
+                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
                 </Grid>
 
-                <Grid className="flex-grow-1">
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-bold "
-                  >
-                   
-                    {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-                  </Typography>
-
-                  <Typography variant="body2"  className="text-muted d-block">
-                    6-26 years
-                  </Typography>
-                </Grid>
-
-                <Typography variant="h6">
-                  2
-                </Typography>
-              </Grid>
-
-              <Grid className="d-flex align-items-center mb-3">
-
-                <Grid className="me-4 symbol symbol-45px">
-                    <img src={toAbsoluteUrl('media/avatars/300-6.jpg')} alt='' />
-                </Grid>
-
-                <Grid className="flex-grow-1">
+                <Grid flexGrow={1}>
                   <Typography
                     variant="body1"
                     className="text-gray-800 text-hover-primary fw-bold fs-6"
@@ -57,61 +38,78 @@ export default function OpenPositions() {
                     {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
                   </Typography>
 
-                  <Typography variant="body2" className="text-muted  d-block">
+                  <Typography
+                    variant="body2"
+                    sx={{ color: colors.alpha.neutral[400] }}
+                  >
                     5-25 years
                   </Typography>
                 </Grid>
 
-                <Typography variant ="h6" >
-                  2
-                </Typography>
+                <Typography variant="h6">2</Typography>
               </Grid>
 
-              <Grid className="d-flex align-items-center mb-3">
-
-                <Grid className="me-4 symbol symbol-45px">
-                    <img src={toAbsoluteUrl('media/avatars/300-6.jpg')} alt='' />
+              <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                <Grid className=" symbol symbol-45px">
+                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
                 </Grid>
 
-                <Grid className="flex-grow-1">
+                <Grid flexGrow={1}>
+                  <Typography variant="body1">
+                    {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
+                  </Typography>
+
                   <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-bold fs-6"
+                    variant="body2"
+                    sx={{ color: colors.alpha.neutral[400] }}
                   >
+                    5-25 years
+                  </Typography>
+                </Grid>
+
+                <Typography variant="h6">2</Typography>
+              </Grid>
+
+              <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                <Grid className=" symbol symbol-45px">
+                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
+                </Grid>
+
+                <Grid flexGrow={1}>
+                  <Typography variant="body1">
                     {intl.formatMessage({ id: "POSITION.INTERN" })}
                   </Typography>
 
-                  <Typography variant="body2"  className="text-muted  d-block">
+                  <Typography
+                    variant="body2"
+                    sx={{ color: colors.alpha.neutral[400] }}
+                  >
                     Technical Graduate
                   </Typography>
                 </Grid>
 
-                <Typography variant="h6" >
-                  10
-                </Typography>
+                <Typography variant="h6">10</Typography>
               </Grid>
 
-              <Grid className="d-flex align-items-center">
-              <Grid className=" me-4 symbol symbol-45px">
-                    <img src={toAbsoluteUrl('media/avatars/300-6.jpg')} alt='' />
+              <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                <Grid className="symbol symbol-45px">
+                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
                 </Grid>
 
-                <Grid className="flex-grow-1">
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-bold fs-6"
-                  >
+                <Grid flexGrow={1}>
+                  <Typography variant="body1">
                     {intl.formatMessage({ id: "POSITION.TA" })}
                   </Typography>
 
-                  <Typography variant="body2"  className="text-muted  d-block">
-                 2-5 years
+                  <Typography
+                    variant="body2"
+                    sx={{ color: colors.alpha.neutral[400] }}
+                  >
+                    2-5 years
                   </Typography>
                 </Grid>
 
-                <Typography variant="h6">
-                  1
-                </Typography>
+                <Typography variant="h6">1</Typography>
               </Grid>
             </Grid>
           </Stack>

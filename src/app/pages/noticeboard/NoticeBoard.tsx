@@ -6,16 +6,19 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import {
+  Button,
   Card,
   Grid,
   IconButton,
   InputAdornment,
+  Link,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
+  ArrowBack,
   Close,
   Download,
   FilterList,
@@ -54,19 +57,11 @@ const rows = [
 
 export default function NoticeBoard() {
   const intl = useIntl();
-  const [openModal, setOpenModal] = React.useState(false);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
+  const [open, setOpen] = React.useState(false);
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleAddHoliday = () => {
-    handleCloseModal();
-  };
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <Grid
@@ -106,18 +101,28 @@ export default function NoticeBoard() {
               placeholder="Search ..."
             />
           </Stack>
-          <Stack direction="row" spacing={1}>
-            <MyNoticeBoard />
+          <Stack direction={"row"} spacing={1}>
+            <Button
+              startIcon={<ListAltOutlined />}
+              variant="outlined"
+              size="small"
+            >
+              <Link href="mynoticeboard" underline="hover">
+                {"My Notice Board"}
+              </Link>
+            </Button>
 
-            <IconButton aria-label="filter employee">
-              <FilterList />
-            </IconButton>
-            <Stack onClick={handleOpenModal}>
-              <AddNotice />
+            <Stack direction="row" spacing={1}>
+              <IconButton aria-label="filter employee">
+                <FilterList />
+              </IconButton>
+              <Stack onClick={() => setOpen(true)}>
+                <AddNotice />
+              </Stack>
+              <IconButton aria-label="import excel">
+                <Download />
+              </IconButton>
             </Stack>
-            <IconButton aria-label="import excel">
-              <Download />
-            </IconButton>
           </Stack>
         </Stack>
         <Stack sx={{ mt: "1rem" }}>
