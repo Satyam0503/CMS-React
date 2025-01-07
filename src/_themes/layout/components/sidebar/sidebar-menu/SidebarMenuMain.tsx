@@ -65,51 +65,50 @@ const SidebarMenuMain = () => {
         />
       </SidebarMenuItemWithSub>
 
-      {/* <SidebarMenuItem
-        to="/recruitment"
-        icon={<TimeToLeave />}
-        title={intl.formatMessage({ id: "MENU.RECRUITMENT" })}
-      /> */}
-      <SidebarMenuItem
-        to="/jobs"
-        icon={<Work />}
-        title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
-      />
-      <SidebarMenuItem
-        to="/applications"
-        icon={<Mail />}
-        title={intl.formatMessage({ id: "USER.APPLICATIONS" })}
-      />
-
-      <SidebarMenuItem
-        to="/crafted/pages/profile/overview"
-        title="Overview"
-        icon={<CalendarTodayIcon />}
-      />
       <SidebarMenuItem
         to="/myprofile"
         title={intl.formatMessage({ id: "MENU.PROFILE" })}
         icon={<AccountCircleIcon />}
       />
-      <SidebarMenuItem
-        to="/crafted/account/settings"
-        title="Settings"
+
+      <SidebarMenuItemWithSub
+        to="/recruitment"
+        title="Recruitment"
+        icon={<PersonSearchIcon />}
+      >
+        <SidebarMenuItem
+          to="/recruitment/jobs"
+          icon={<Work/>}
+          title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
+        />
+        <SidebarMenuItem
+          to="/recruitment/applications"
+          icon={<Mail />}
+          title={intl.formatMessage({ id: "USER.APPLICATIONS" })}
+        />
+      </SidebarMenuItemWithSub>
+
+      <SidebarMenuItemWithSub
+        to="/setting"
+        title="Setting"
         icon={<SettingsIcon />}
-      />
+      >
+        <SidebarMenuItem
+          to="/setting/permissions"
+          icon={<ToggleOn />}
+          title={intl.formatMessage({ id: "MENU.PERMISSIONS" })}
+        />
+        <SidebarMenuItem
+          to="/setting/theme"
+          icon={<ColorLens />}
+          title={intl.formatMessage({ id: "MENU.THEME" })}
+        />
+      </SidebarMenuItemWithSub>
+
       <SidebarMenuItem
         to="/holidays"
         icon={<CalendarIcon />}
         title={intl.formatMessage({ id: "MENU.HOLIDAYS" })}
-      />
-      <SidebarMenuItem
-        to="/permissions"
-        icon={<ToggleOn />}
-        title={intl.formatMessage({ id: "MENU.PERMISSIONS" })}
-      />
-      <SidebarMenuItem
-        to="/theme"
-        icon={<ColorLens />}
-        title={intl.formatMessage({ id: "MENU.THEME" })}
       />
       <SidebarMenuItem
         to="/noticeboard"

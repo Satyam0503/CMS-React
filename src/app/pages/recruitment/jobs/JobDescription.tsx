@@ -21,31 +21,33 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
-import { TextEditor } from "../../../modules/components/TextEditor";
+import  TextEditor  from "../../../modules/components/TextEditor";
 
 type Props = {
   open: boolean;
   handleClose: () => void;
-  handleCommentsSubmission: (value: any) => void;
-  userComment: string;
-  handleChange: (value: any) => void;
+  // handleCommentsSubmission: (value: any) => void;
+  // userComment: string;
+  // handleChange: (value: any) => void;
 };
 
-const JobDescription = (props: Props) => {
-  const { handleCommentsSubmission, userComment, handleChange } = props;
-
+const JobDescription = (props:Props) => {
+  const [value,setValue]= useState("");
   const intl = useIntl();
+  const {open, handleClose} = props;
 
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => setOpen(false);
+ 
+  console.log(value);
+  
   return (
     <Grid container>
-      <IconButton onClick={() => setOpen(true)}>
+      {/* <IconButton onClick={() => setOpen(true)}>
         <Add />
-      </IconButton>
+      </IconButton> */}
       <CustomisedModal open={open} handleClose={handleClose}>
         <Grid container display={"flex"} direction={"column"} gap={1}>
           <Grid item xs={12}>
@@ -189,18 +191,11 @@ const JobDescription = (props: Props) => {
             error={Boolean(!userComment)}
           />
         </Grid> */}
-        <Grid container>
-          <TextEditor
-            value={userComment}
-            onChange={handleChange}
-            placeholder="Add Comments"
-            helperText={String("Please fill comment section")}
-            className="rounded-5 "
-            error={Boolean(!userComment)}
-          />
-        </Grid>
-
-        <Grid container></Grid>
+        <Stack>
+          <Grid item xs={12}>
+            <TextEditor value={value} setValue={setValue}/>
+          </Grid>
+        </Stack>
         <Grid
           item
           xs={12}

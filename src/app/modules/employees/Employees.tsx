@@ -268,15 +268,8 @@ export default function Employees() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
+                        sx={{ border: "none" }}
                         onClick={() => setSearch("")}
-                        sx={{
-                          border: 0,
-                          padding: "2px",
-                          "&:hover, &.Mui-selected, &.Mui-selected:hover": {
-                            border: "none",
-                            background: "none",
-                          },
-                        }}
                       >
                         <Close />
                       </IconButton>

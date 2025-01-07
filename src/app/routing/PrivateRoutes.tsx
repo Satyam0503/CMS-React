@@ -24,6 +24,8 @@ import NoticeBoard from "../pages/noticeboard/NoticeBoard";
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
   const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
+  const Setting = lazy(() => import("../pages/admin/Settings"));
+  const Recruitment = lazy(()=>import("../pages/recruitment/Recruitment"));
   // const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
   // const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   // const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
@@ -46,15 +48,27 @@ const PrivateRoutes = () => {
         <Route path="employeeleave" element={<LeaveManagement />} />
         <Route path="attendance" element={<EmployeeAttendance />} />
         <Route path="employees" element={<Employees />} />
-        <Route path="permissions" element={<Admin />} />
         <Route path="holidays" element={<Holidays />} />
-        <Route path="recruitment" element={<Recruitment />} />
-        <Route path="jobs" element={<Jobs />} />
-        <Route path="applications" element={<Applications />} />
-        <Route path="theme" element={<Themes />} />
         <Route path="noticeboard" element={<NoticeBoard />} />
 
         {/* Lazy Modules */}
+
+        <Route 
+          path="recruitment/*"
+          element={
+            <SuspensedView>
+              <Recruitment/>
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="setting/*"
+          element={
+            <SuspensedView>
+              <Setting />
+            </SuspensedView>
+          }
+        />
         <Route
           path="crafted/pages/profile/*"
           element={

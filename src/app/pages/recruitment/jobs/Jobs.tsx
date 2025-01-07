@@ -13,30 +13,20 @@ import {
   Stack,
   TextField,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
-  AttachEmail,
   AttachFile,
-  AttachFileOutlined,
   Close,
-  Delete,
   DeleteOutline,
   Download,
   Edit,
-  FileCopyOutlined,
   FilterList,
   LinkOutlined,
   Search,
 } from "@mui/icons-material";
-import CustomisedSearch from "../../../modules/components/CustomisedSearch";
 import JobDetail from "./JobDetail";
-import NotificationSetting from "../../../modules/users/usersetting/NotificationSetting";
 import JobDescription from "./JobDescription";
 import Setting from "../../../modules/users/usersetting/Setting";
 
@@ -122,9 +112,12 @@ export default function Jobs() {
             <IconButton aria-label="filter employee">
               <FilterList />
             </IconButton>
-            <Stack onClick={handleOpenModal}>
-              <JobDescription />
-            </Stack>
+            <IconButton onClick={() => setOpenModal(true)}>
+              <Add />
+            </IconButton>
+            {
+              openModal && <JobDescription open={openModal} handleClose={handleCloseModal} />
+            }
             <IconButton aria-label="import excel">
               <Download />
             </IconButton>

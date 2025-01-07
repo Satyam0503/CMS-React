@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router";
@@ -8,7 +8,7 @@ import { useLayout } from "../../../core";
 type Props = {
   to: string;
   title: string;
-  icon?: string;
+  icon?: ReactNode;
   fontIcon?: string;
   hasBullet?: boolean;
 };
