@@ -16,7 +16,7 @@ export default function DynamicContent() {
           chartHeight="170px"
         />
 
-        <Stack direction={{ sm: "row", md: "column" }} gap={3} width={"100%"}>
+        <Stack direction={"column"} gap={3} width={"100%"}>
           <Card sx={{ p: 2 }}>
             <Typography variant="h6" mb={1}>
               {intl.formatMessage({ id: "MENU.LEAVE" })}
@@ -57,6 +57,7 @@ export default function DynamicContent() {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
@@ -123,6 +124,7 @@ export default function DynamicContent() {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
@@ -153,6 +155,7 @@ export default function DynamicContent() {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
@@ -188,6 +191,7 @@ export default function DynamicContent() {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
@@ -284,6 +288,7 @@ export default function DynamicContent() {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              mb={1}
             >
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
