@@ -10,6 +10,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { KTIcon, toAbsoluteUrl } from "../../../_themes/helpers";
@@ -25,113 +26,94 @@ export default function NoticeBoard() {
   const intl = useIntl();
   return (
     <>
-      <Grid container gap={3}>
-        <Card sx={{ width: "100%", p: 2 }}>
-          <Typography variant="h6" mb={1}>
-            {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
-          </Typography>
-          <Stack
-            display={"flex"}
-            justifyContent={"space-between"}
-            flexDirection={"row"}
-            alignItems={"center"}
-            mb={1}
-            gap={4}
-          >
-            <Stack direction="row" gap={1}>
-              <Stack className="symbol symbol-45px">
-                <img
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                  alt=""
-                  style={{ borderRadius: "50%" }}
-                />
-              </Stack>
-              <Stack>
-                <Typography variant="body1">Dinesh Chauhan</Typography>
-                <Typography variant="body2">
-                  Outlines keep you honest. They stop you from indulging in
-                  poorly thought-out metaphors about driving and keep you
-                  focused on the overall structure of your post
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.alpha.primary[500]}
-                >
-                  10 mins ago
-                </Typography>
-              </Stack>
+      <Card
+        sx={{
+          width: "100%",
+          p: 2,
+          height: "100%",
+          overflow: "auto",
+        }}
+      >
+        <Typography variant="h6" mb={1}>
+          {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
+        </Typography>
+        <Stack
+          display={"flex"}
+          justifyContent={"space-between"}
+          flexDirection={"row"}
+          alignItems={"center"}
+          mb={1}
+          gap={4}
+        >
+          <Stack direction="row" gap={1}>
+            <Stack className="symbol symbol-45px">
+              <img
+                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                alt=""
+                style={{ borderRadius: "50%" }}
+              />
             </Stack>
-            <Stack
-              direction="row"
-              display={"flex"}
-              alignItems={"center"}
-              gap={1}
-            >
-              <IconButton>
-                <Check />
-              </IconButton>
-
-              <IconButton>
-                <Visibility />
-              </IconButton>
+            <Stack>
+              <Typography variant="body1">Dinesh Chauhan</Typography>
+              <Typography variant="body2">Outlines keep you honest.</Typography>
+              <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+                10 mins ago
+              </Typography>
             </Stack>
           </Stack>
+          <Stack direction="row" display={"flex"} alignItems={"center"} gap={1}>
+            <IconButton>
+              <Check />
+            </IconButton>
 
-          <Grid className="separator mb-4"></Grid>
-          <Stack
-            display={"flex"}
-            justifyContent={"space-between"}
-            flexDirection={"row"}
-            alignItems={"center"}
-            mb={1}
-            gap={4}
-          >
-            <Stack direction="row" gap={1}>
-              <Stack className="symbol symbol-45px">
-                <img
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                  alt=""
-                  style={{ borderRadius: "50%" }}
-                />
-              </Stack>
-              <Stack>
-                <Typography variant="body1">Ajay Rana</Typography>
-                <Typography variant="body2">
-                  Outlines keep you honest. They stop you from indulging in
-                  poorly thought-out metaphors about driving and keep you
-                  focused on the overall structure of your post
-                </Typography>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.alpha.primary[500]}
-                >
-                  1 Hour ago
-                </Typography>
-              </Stack>
+            <IconButton>
+              <Visibility />
+            </IconButton>
+          </Stack>
+        </Stack>
+
+        <Grid className="separator mb-4"></Grid>
+        <Stack
+          display={"flex"}
+          justifyContent={"space-between"}
+          flexDirection={"row"}
+          alignItems={"center"}
+          mb={1}
+          gap={4}
+        >
+          <Stack direction="row" gap={1}>
+            <Stack className="symbol symbol-45px">
+              <img
+                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                alt=""
+                style={{ borderRadius: "50%" }}
+              />
             </Stack>
-            <Stack
-              direction="row"
-              display={"flex"}
-              alignItems={"center"}
-              gap={1}
-            >
-              <IconButton>
-                <Check />
-              </IconButton>
-
-              <IconButton>
-                <Visibility />
-              </IconButton>
+            <Stack>
+              <Typography variant="body1">Ajay Rana</Typography>
+              <Typography variant="body2">
+                Outlines keep you honest. They stop you from indulging in poorly
+                thought-out
+              </Typography>
+              <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+                1 Hour ago
+              </Typography>
             </Stack>
           </Stack>
-        </Card>
-        <Card sx={{ width: "100%", p: 2 }}>
-          <Typography variant="h6" mb={1}>
-            {intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}
-          </Typography>
-          <EmployeePerformance />
-        </Card>
-      </Grid>
+          <Stack direction="row" display={"flex"} alignItems={"center"} gap={1}>
+            <IconButton>
+              <Check />
+            </IconButton>
+
+            <IconButton>
+              <Visibility />
+            </IconButton>
+          </Stack>
+        </Stack>
+        <Link href="noticeboard" underline="always">
+          {"See more"}
+        </Link>
+      </Card>
     </>
   );
 }

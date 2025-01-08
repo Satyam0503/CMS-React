@@ -1,61 +1,69 @@
-import {useEffect} from 'react'
-import {ILayout, useLayout} from '../../core'
+import { useEffect } from "react";
+import { ILayout, useLayout } from "../../core";
 
 const Footer = () => {
-  const {config} = useLayout()
+  const { config } = useLayout();
   useEffect(() => {
-    updateDOM(config)
-  }, [config])
+    updateDOM(config);
+  }, [config]);
   return (
     <>
-      <div className='text-gray-900 order-2 order-md-1'>
-        <span className='text-muted fw-semibold me-1'>
+      <div className="text-gray-900 order-2 order-md-1">
+        <span className="text-muted fw-semibold me-1">
           {new Date().getFullYear().toString()}&copy;
         </span>
         <a
-          href='https://keenthemes.com/'
-          target='_blank'
-          className='text-gray-800 text-hover-primary'
+          href="https://codeji.in/"
+          target="_blank"
+          className="text-gray-800 text-hover-primary"
         >
-          Keenthemes
+          Codeji Infotech
         </a>
       </div>
 
-      <ul className='menu menu-gray-600 menu-hover-primary fw-semibold order-1'>
-        <li className='menu-item'>
-          <a href='https://keenthemes.com/' target='_blank' className='menu-link px-2'>
+      <ul className="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+        <li className="menu-item">
+          <a
+            href="https://codeji.in/"
+            target="_blank"
+            className="menu-link px-2"
+          >
             About
           </a>
         </li>
 
-        <li className='menu-item'>
-          <a href='https://devs.keenthemes.com/' target='_blank' className='menu-link px-2'>
+        <li className="menu-item">
+          <a
+            href="https://codeji.in/"
+            target="_blank"
+            className="menu-link px-2"
+          >
             Support
           </a>
         </li>
 
-        <li className='menu-item'>
+        <li className="menu-item">
           <a
-            href='https://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469'
-            target='_blank'
-            className='menu-link px-2'
+            href="https://codeji.in/"
+            target="_blank"
+            className="menu-link px-2"
           >
             Purchase
           </a>
         </li>
       </ul>
     </>
-  )
-}
+  );
+};
 
 const updateDOM = (config: ILayout) => {
   if (config.app?.footer?.fixed?.desktop) {
-    document.body.classList.add('data-kt-app-footer-fixed', 'true')
+    document.body.classList.add("data-kt-app-footer-fixed", "true");
   }
 
   if (config.app?.footer?.fixed?.mobile) {
-    document.body.classList.add('data-kt-app-footer-fixed-mobile', 'true')
+    document.body.classList.add("data-kt-app-footer-fixed-mobile", "true");
   }
-}
+};
 
-export {Footer}
+export { Footer };
