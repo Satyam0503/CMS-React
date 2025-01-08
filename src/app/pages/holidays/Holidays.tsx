@@ -11,13 +11,20 @@ import { useIntl } from "react-intl";
 
 import HolidayForm from "./HolidayForm";
 import { auto } from "@popperjs/core";
-import { Add, Close, Download, FilterList, SearchOutlined } from "@mui/icons-material";
+import {
+  Add,
+  Close,
+  Download,
+  FilterList,
+  SearchOutlined,
+} from "@mui/icons-material";
 import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import { HolidayTabTableColumnList } from "../../../Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
+import { CustomisedSearch } from "../../modules/components/CustomisedSearch";
 
 // remove this array later
 const rows = [
@@ -27,7 +34,7 @@ const rows = [
     startDate: new Date(),
     endDate: new Date(),
     description: "Test",
-  }
+  },
 ];
 
 const initialValues: HolidayType = {
@@ -36,11 +43,12 @@ const initialValues: HolidayType = {
   type: "",
   startDate: dayjs(Date.now()),
   endDate: dayjs(Date.now()),
-  description: ""
-}
+  description: "",
+};
 
 export default function Holidays() {
-  const [initialHolidayValues, setInitialHolidayValues] = useState(initialValues);
+  const [initialHolidayValues, setInitialHolidayValues] =
+    useState(initialValues);
   const [searchValue, setSearchValue] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [holidayList, setHolidayList] = useState<any[]>(rows);
@@ -50,7 +58,9 @@ export default function Holidays() {
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
-  const [selectedHolidayId, setSelectedHolidayId] = useState<string | null>(null);
+  const [selectedHolidayId, setSelectedHolidayId] = useState<string | null>(
+    null
+  );
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
 
   const intl = useIntl();
@@ -60,25 +70,28 @@ export default function Holidays() {
     setInitialHolidayValues(initialValues);
   };
 
-  const handleAddUpdateHoliday = (values: HolidayType, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleAddUpdateHoliday = (
+    values: HolidayType,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
     // write logic to add-update holidays
     console.log(values);
-  }
+  };
 
   const handleHolidayEdit = (row: any) => {
     //  set initial values with updated holiday value
-    setEdit(true)
+    setEdit(true);
     setModalOpen(true);
-  }
+  };
 
   const handleHolidayDeletion = () => {
     // logic for holiday deletion
-  }
+  };
 
   const openConfirmationModal = (holidayId: string) => {
     setConfirmModalOpen(true);
     setSelectedHolidayId(holidayId);
-  }
+  };
   function closeConfirmationModal() {
     setConfirmModalOpen(false);
     setSelectedHolidayId(null);
@@ -99,31 +112,7 @@ export default function Holidays() {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Stack>
-              <TextField
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchOutlined />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        sx={{ border: "none" }}
-                        onClick={() => setSearchValue("")}
-                      >
-                        <Close />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                placeholder="Search something ..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
-            </Stack>
+            <CustomisedSearch />
             <Stack direction="row" spacing={1}>
               <IconButton aria-label="filter employee">
                 <FilterList />
@@ -156,17 +145,15 @@ export default function Holidays() {
           </Stack>
         </Card>
       </Grid>
-      {
-        isModalOpen &&
+      {isModalOpen && (
         <HolidayForm
           open={isModalOpen}
           handleClose={handleCloseModal}
           initialValues={initialHolidayValues}
           handleAddUpdateHoliday={handleAddUpdateHoliday}
         />
-      }
-      {
-        isConfirmModalOpen &&
+      )}
+      {isConfirmModalOpen && (
         <ConfirmationModal
           title="Delete Holiday"
           content="Are you sure you want to delete this holiday?"
@@ -174,7 +161,7 @@ export default function Holidays() {
           handleClose={closeConfirmationModal}
           handleConfirmation={handleHolidayDeletion}
         />
-      }
+      )}
     </>
   );
 }

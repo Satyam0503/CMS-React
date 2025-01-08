@@ -11,10 +11,16 @@ import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "../components/OpenPositions";
 import NoticeBoard from "./NoticeBoard";
-import DynamicContent from "./DynamicContent";
 import StackedBarChart from "../components/StackedBarChart";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";
+import EmpOnLeave from "./daynamic/EmpOnLeave";
+import Punctual from "./daynamic/Punctual";
+import UpcomingBirthday from "./daynamic/UpcomingBirthday";
+import EmpOfMonth from "./daynamic/EmpOfMonth";
+import Help from "./daynamic/Help";
+import { AttendanceChart } from "../components/AttendanceChart";
+import EmployeePerformance from "./EmployeePerformance";
 
 export default function DashboardAdmin() {
   const intl = useIntl();
@@ -101,7 +107,7 @@ export default function DashboardAdmin() {
               <StackedBarChart />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Card sx={{ p: 3, height: "100%" }}>
+              <Card sx={{ px: 3, height: "100%", py: 2 }}>
                 <Stack
                   display={"flex"}
                   flexDirection={"row"}
@@ -122,12 +128,63 @@ export default function DashboardAdmin() {
             </Grid>
 
             <Grid item xs={12}>
-              <NoticeBoard />
+              <Stack spacing={3}>
+                <NoticeBoard />
+
+                <EmployeePerformance />
+              </Stack>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} lg={4}>
-          <DynamicContent />
+          <Stack direction={"column"} gap={3} width={"100%"}>
+            <Card sx={{ height: "100%" }}>
+              <Stack p={2}>
+                <Typography variant="h6">
+                  {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+                </Typography>
+
+                <Stack
+                  direction={"row"}
+                  spacing={8}
+                  display={"flex"}
+                  justifyContent={"flex-start"}
+                  mt={1}
+                >
+                  <Stack>
+                    <Typography variant="body2">
+                      {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}
+                    </Typography>
+                    <Typography variant="h6">185</Typography>
+                  </Stack>
+                  <Stack>
+                    <Typography variant="body2">
+                      {intl.formatMessage({ id: "ATTENDANCE.ABSENT" })}
+                    </Typography>
+                    <Typography variant="h6">16</Typography>
+                  </Stack>
+                  <Stack>
+                    <Typography variant="body2">
+                      {intl.formatMessage({ id: "ATTENDANCE.LATE" })}
+                    </Typography>
+                    <Typography variant="h6">9</Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
+
+              <AttendanceChart
+                className="card-xxl-stretch "
+                chartColor="primary"
+                chartHeight="180px"
+              />
+            </Card>
+
+            <EmpOnLeave />
+            <Punctual />
+            <UpcomingBirthday />
+            <EmpOfMonth />
+            <Help />
+          </Stack>
         </Grid>
       </Grid>
     </>

@@ -22,28 +22,39 @@ import { HolidayTypes } from "../../../Constant";
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
-  handleAddUpdateHoliday: (values: HolidayType, setSubmitting: (isSubmitting: boolean) => void) => void;
+  handleAddUpdateHoliday: (
+    values: HolidayType,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => void;
   initialValues: HolidayType;
-}
+};
 
 const HolidayForm: React.FC<PropsTypes> = (props) => {
   const intl = useIntl();
   const { open, handleClose, handleAddUpdateHoliday, initialValues } = props;
-  const { values, errors, touched, getFieldProps, handleSubmit, setFieldValue,isSubmitting } = useFormik({
+  const {
+    values,
+    errors,
+    touched,
+    getFieldProps,
+    handleSubmit,
+    setFieldValue,
+    isSubmitting,
+  } = useFormik({
     initialValues: initialValues,
     validationSchema: holidaySchema,
     onSubmit: (values, { setSubmitting }) => {
       handleAddUpdateHoliday(values, setSubmitting);
-    }
+    },
   });
 
-  const handleStartDateChange = (newDate: dayjs.Dayjs |null) => {
+  const handleStartDateChange = (newDate: dayjs.Dayjs | null) => {
     setFieldValue("startDate", newDate);
   };
-  const handleEndDateChange = (newDate:dayjs.Dayjs | null)=>{
-    setFieldValue("endDate",newDate);
-  }
-  
+  const handleEndDateChange = (newDate: dayjs.Dayjs | null) => {
+    setFieldValue("endDate", newDate);
+  };
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -52,7 +63,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
             {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
           </Typography>
         </Stack>
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography variant="body1">
@@ -62,7 +73,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                 fullWidth
                 placeholder="Holiday Title"
                 error={touched.title && Boolean(errors.title)}
-                helperText={(touched.title && errors.title) && errors.title}
+                helperText={touched.title && errors.title && errors.title}
                 {...getFieldProps("title")}
               />
             </Grid>
@@ -77,11 +88,11 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                 {...getFieldProps("type")}
               >
                 <MenuItem value={""}>None</MenuItem>
-                {
-                  HolidayTypes.map(holiday=>(
-                    <MenuItem key={holiday.id} value={holiday.value}>{holiday.label}</MenuItem>
-                  ))
-                }
+                {HolidayTypes.map((holiday) => (
+                  <MenuItem key={holiday.id} value={holiday.value}>
+                    {holiday.label}
+                  </MenuItem>
+                ))}
               </Select>
               <FormHelperText sx={{ color: "#d32f2f" }}>
                 {touched.type && errors.type && errors.type}
@@ -99,9 +110,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                 minDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
-                {touched.startDate &&
-                  errors.startDate &&
-                  errors.startDate}
+                {touched.startDate && errors.startDate && errors.startDate}
               </FormHelperText>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -115,9 +124,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                 minDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
-                {touched.endDate &&
-                  errors.endDate &&
-                  errors.endDate}
+                {touched.endDate && errors.endDate && errors.endDate}
               </FormHelperText>
             </Grid>
 
@@ -125,13 +132,18 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               <Typography variant="body1">
                 {intl.formatMessage({
                   id: "INFO.DESCRIPTION",
-                })}*
+                })}
+                *
               </Typography>
               <TextField
                 fullWidth
                 placeholder="Holiday Description"
                 error={touched.description && Boolean(errors.description)}
-                helperText={(touched.description && errors.description)&& errors.description}
+                helperText={
+                  touched.description &&
+                  errors.description &&
+                  errors.description
+                }
                 {...getFieldProps("description")}
               />
             </Grid>

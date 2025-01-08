@@ -1,7 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-} from "@mui/material";
+import { Dialog, DialogContent } from "@mui/material";
 
 type PropsTypes = {
   open: boolean;
@@ -13,12 +10,7 @@ type PropsTypes = {
 export const CustomisedModal = (props: PropsTypes) => {
   const { open, handleClose, children, title } = props;
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      maxWidth={"md"}
-      aria-modal
-    >
+    <Dialog open={open} onClose={handleClose} maxWidth={"md"} aria-modal>
       <DialogContent>{children}</DialogContent>
     </Dialog>
   );

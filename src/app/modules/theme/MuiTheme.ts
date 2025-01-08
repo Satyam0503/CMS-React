@@ -663,8 +663,9 @@ export const MuiTheme = createTheme({
     },
     MuiLink: {
       defaultProps: {
-        underline: "hover",
-        color: colors.alpha.neutral[800],
+        color: colors.alpha.secondary[500],
+        fontWeight: 500,
+        fontSize: 12,
       },
     },
     MuiLinearProgress: {
@@ -1121,6 +1122,7 @@ export const MuiTheme = createTheme({
     h5: {
       fontWeight: 500,
       fontSize: 20,
+      color: colors.alpha.primary[500],
     },
     h6: {
       fontSize: 16,
@@ -1131,6 +1133,7 @@ export const MuiTheme = createTheme({
     },
     body2: {
       fontSize: 12,
+      color: colors.alpha.neutral[400],
     },
     button: {
       fontWeight: 600,
