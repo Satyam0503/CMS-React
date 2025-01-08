@@ -20,6 +20,7 @@ import Help from "./daynamic/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
 import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
+import AttendanceTable from "./daynamic/AttendanceTable";
 
 export default function DashboardUser() {
   const intl = useIntl();
@@ -124,12 +125,26 @@ export default function DashboardUser() {
             <Grid item xs={12} sm={6}>
               <OpenPositions />
             </Grid>
+
             <Grid item xs={12}>
-              <AttendanceChart
-                className="card-xxl-stretch mb-xl-3"
-                chartColor="secondary"
-                chartHeight="170px"
-              />
+              <Card>
+                <Stack p={2}>
+                  <Typography variant="h6">
+                    {intl.formatMessage({ id: "ATTENDANCE.GRAPH" })}
+                  </Typography>
+                </Stack>
+
+                <AttendanceChart
+                  className="card-xxl-stretch "
+                  chartColor="secondary"
+                  chartHeight="180px"
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <AttendanceTable />
+              </Card>
             </Grid>
           </Grid>
         </Grid>
