@@ -6,7 +6,6 @@ import {
   Avatar,
   Container,
   Link,
-  colors,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
@@ -15,8 +14,9 @@ import NoticeBoard from "./NoticeBoard";
 import DynamicContent from "./DynamicContent";
 import StackedBarChart from "../components/StackedBarChart";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
+import { colors } from "../theme/MuiTheme";
 
-export default function DashboardMain() {
+export default function DashboardUser() {
   const intl = useIntl();
   const series = [21, 12, 0];
   const labels = ["Male", "Female", "Other"];
@@ -25,14 +25,27 @@ export default function DashboardMain() {
   const teamSize = [8, 2, 4, 3];
   return (
     <>
-      <Grid container display={"flex"} justifyContent={"space-between"} gap={4}>
+      <Grid
+        container
+        display={"flex"}
+        justifyContent={"space-between"}
+        mb={2}
+        gap={4}
+      >
         <Stack>
           <Typography variant="h2">
             {intl.formatMessage({ id: "MENU.WELCOME" })} Aishwarya !
           </Typography>
-          <Typography variant="body1">
+          <Typography
+            variant="body1"
+            sx={{ color: colors.alpha.neutral[600], mt: 1 }}
+          >
             4{intl.formatMessage({ id: "NOTIFICATIONS.APPLICATIONS" })}
-            <Link href="#" underline="hover" sx={{ color: "orange" }}>
+            <Link
+              href="#"
+              underline="always"
+              sx={{ color: colors.alpha.secondary[500] }}
+            >
               {"Check the submissions"}
             </Link>
           </Typography>
@@ -47,7 +60,7 @@ export default function DashboardMain() {
           </Stack>
           <Stack alignItems={"end"}>
             <Typography variant="h3">Monday</Typography>
-            <Typography variant="body2">25 Nov 2024</Typography>
+            <Typography variant="body1">25 Nov 2024</Typography>
           </Stack>
         </Stack>
       </Grid>
@@ -117,8 +130,6 @@ export default function DashboardMain() {
           <DynamicContent />
         </Grid>
       </Grid>
-
-      {/* <Grid container className="d-flex justify-content-center gap-5"></Grid> */}
     </>
   );
 }

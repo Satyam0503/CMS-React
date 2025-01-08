@@ -32,6 +32,11 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
       <SidebarMenuItem
+        to="/userdashboard"
+        icon={<DashboardIcon />}
+        title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
+      />
+      <SidebarMenuItem
         to="/employees"
         icon={<ContactsIcon />}
         title={intl.formatMessage({ id: "MENU.EMP" })}

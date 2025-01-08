@@ -1,8 +1,21 @@
-import { Typography, Card, Grid, Stack, IconButton } from "@mui/material";
+import {
+  Typography,
+  Card,
+  Grid,
+  Stack,
+  IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import { KTIcon, toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";
 import { Check, Visibility } from "@mui/icons-material";
+import EmployeePerformance from "./EmployeePerformance";
 
 type Props = {
   className: string;
@@ -12,7 +25,7 @@ export default function NoticeBoard() {
   const intl = useIntl();
   return (
     <>
-      <Grid container>
+      <Grid container gap={3}>
         <Card sx={{ width: "100%", p: 2 }}>
           <Typography variant="h6" mb={1}>
             {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
@@ -111,6 +124,12 @@ export default function NoticeBoard() {
               </IconButton>
             </Stack>
           </Stack>
+        </Card>
+        <Card sx={{ width: "100%", p: 2 }}>
+          <Typography variant="h6" mb={1}>
+            {intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}
+          </Typography>
+          <EmployeePerformance />
         </Card>
       </Grid>
     </>

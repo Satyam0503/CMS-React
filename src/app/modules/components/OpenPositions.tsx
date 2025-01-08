@@ -31,10 +31,7 @@ export default function OpenPositions() {
                 </Grid>
 
                 <Grid flexGrow={1}>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-bold fs-6"
-                  >
+                  <Typography variant="body1">
                     {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
                   </Typography>
 

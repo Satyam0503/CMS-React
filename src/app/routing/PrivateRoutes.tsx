@@ -2,25 +2,19 @@ import { lazy, FC, Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
-import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
-import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
 import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
 import Employees from "../modules/employees/Employees";
-import Admin from "../pages/admin/permissions/Admin";
 import Holidays from "../pages/holidays/Holidays";
-import Recruitment from "../pages/recruitment/Recruitment";
-import Applications from "../pages/recruitment/applications/Applications";
-import Jobs from "../pages/recruitment/jobs/Jobs";
-import Themes from "../pages/admin/themes/Themes";
+
 import NoticeBoard from "../pages/noticeboard/NoticeBoard";
 import MyNoticeBoard from "../pages/noticeboard/MyNoticeBoard";
-import AdminDashboard from "../pages/admindashboard/AdminDashboard";
+import AdminDashboard from "../pages/dashboards/AdminDashboard";
+import UserDashboard from "../pages/dashboards/UserDashboard";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -40,8 +34,6 @@ const PrivateRoutes = () => {
         {/* Redirect to Dashboard after success login/registartion */}
         <Route path="auth/*" element={<Navigate to="/dashboard" />} />
         {/* Pages */}
-        <Route path="dashboard" element={<DashboardWrapper />} />
-        <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
         <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />
