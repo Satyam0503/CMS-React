@@ -15,8 +15,8 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { CustomisedModal } from "../components/CustomizedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useFormik } from "formik";
-import { userCertificationSchema } from "../../../utils/validation_schemas";
 import { UserCertificationType } from "../../../utils/common_types";
+import { userCertificationSchema } from "../../../utils/Schema/userSchema";
 
 type PropTypes = {
   open: boolean;

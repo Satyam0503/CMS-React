@@ -8,15 +8,9 @@ export interface UserEducationType {
   collegeName: string;
   type: string;
 }
-export interface UserCertificationType {
-  id?: string;
-  title: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  organizationName: string;
-  type: string;
-  
-}
+export type UserCertificationType = Omit<UserEducationType ,"collegeName" > & {organizationName:string};
+
+export type HolidayType = Omit<UserEducationType, "collegeName" > & { description:string };
 
 export interface ApiResponse {
   success: boolean;
@@ -75,6 +69,16 @@ export interface EmployeesDataTypes {
   languagesKnown?: string;
   profilePicture?: string | File | null;
 }
+
+export type ColumnListTypes= {
+  id: string;
+  label: string;
+  align?: "center" | "left" | "right" | "inherit" | "justify";
+  minWidth?: number;
+  build?: (any);
+  format?: (value: any) => any;
+}
+
 
 // Api respone data types
 export interface ResponseData<T> {

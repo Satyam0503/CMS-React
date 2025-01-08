@@ -17,11 +17,11 @@ import { useFormik } from "formik";
 import { useUserDetails } from "./UserDataProvider";
 import dayjs, { Dayjs } from "dayjs";
 import { bloodGroups, Gender } from "../../../Constant";
-import { userSchema } from "../../../utils/validation_schemas";
 import { updateUserDetails } from "./userservices";
 import { toast } from "react-toastify";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { userSchema } from "../../../utils/Schema/userSchema";
 
 type PropsType = {
   open: boolean;
@@ -124,7 +124,7 @@ export default function UserInfo(props: PropsType) {
                   }
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {" "}
                   {intl.formatMessage({ id: "USER.LAST_NAME" })}
@@ -140,7 +140,7 @@ export default function UserInfo(props: PropsType) {
                   }
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {" "}
                   {intl.formatMessage({ id: "USER.DOB" })}
@@ -157,7 +157,7 @@ export default function UserInfo(props: PropsType) {
                     errors.dateOfBirth}
                 </FormHelperText>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {" "}
                   {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
@@ -171,7 +171,7 @@ export default function UserInfo(props: PropsType) {
                   helperText={touched.email && errors.email && errors.email}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {" "}
                   {intl.formatMessage({ id: "USER.PHONE" })}

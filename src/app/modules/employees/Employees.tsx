@@ -81,12 +81,6 @@ export default function Employees() {
     setEmployeeInitialValues(employeeInitialValue);
     setEdit(false);
   }
-
-  function closeConfirmationModal() {
-    setConfirmModalOpen(false);
-    setSelectedEmployee(null);
-  }
-
   function SaveAddEditEmployee(
     values: EmployeesDataTypes,
     setSubmitting: (isSubmitting: boolean) => void
@@ -177,6 +171,11 @@ export default function Employees() {
     setConfirmModalOpen(true);
     setSelectedEmployee(employeeId);
   };
+
+  function closeConfirmationModal() {
+    setConfirmModalOpen(false);
+    setSelectedEmployee(null);
+  }
 
   function openViewModal(id: string) {
     setViewModalOpen(true);
@@ -336,7 +335,7 @@ export default function Employees() {
       )}
       <ConfirmationModal
         title={"Delete Employee"}
-        content="Are You Sure"
+        content="Are you sure you want to delete this employee?"
         open={isConfirmModalOpen}
         handleClose={closeConfirmationModal}
         handleConfirmation={handleEmployeeDeletion}

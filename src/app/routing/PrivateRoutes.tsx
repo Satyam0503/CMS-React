@@ -15,6 +15,8 @@ import NoticeBoard from "../pages/noticeboard/NoticeBoard";
 import MyNoticeBoard from "../pages/noticeboard/MyNoticeBoard";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
+import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
+import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -34,6 +36,8 @@ const PrivateRoutes = () => {
         {/* Redirect to Dashboard after success login/registartion */}
         <Route path="auth/*" element={<Navigate to="/dashboard" />} />
         {/* Pages */}
+        <Route path="dashboard" element={<DashboardWrapper />} />
+        <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
         <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />

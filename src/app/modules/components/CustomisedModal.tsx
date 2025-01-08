@@ -1,9 +1,6 @@
 import {
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
 } from "@mui/material";
 
 type PropsTypes = {
@@ -21,14 +18,8 @@ export const CustomisedModal = (props: PropsTypes) => {
       onClose={handleClose}
       maxWidth={"md"}
       aria-modal
-      sx={{ "& .MuiDialog-paper": { minWidth: 300 } }}
     >
-      {/* {/* <DialogTitle>{title}</DialogTitle> */}
       <DialogContent>{children}</DialogContent>
-      {/* <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
-        <Button onClick={hand}>Close</Button>
-      </DialogActions> */}
     </Dialog>
   );
 };

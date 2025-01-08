@@ -19,9 +19,9 @@ import { bloodGroups, Gender } from "../../../Constant";
 import { getAllRoles } from "./employeeServices";
 import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
-import { employeeSchema } from "../../../utils/validation_schemas";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { employeeSchema } from "../../../utils/Schema/employeeSchema";
 
 interface PropsTypes {
   initialValues: EmployeesDataTypes;
@@ -43,7 +43,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const [roles, setRoles] = useState<RolesType[]>([]);
   const intl = useIntl();
 
-  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps } =
+  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps,setFieldValue } =
     useFormik({
       initialValues: initialValues,
       validationSchema: employeeSchema,
@@ -52,10 +52,10 @@ export default function AddUpdateEmployee(props: PropsTypes) {
       },
     });
   function handleDateofJoiningChange(newDate: Dayjs | null) {
-    values.dateOfJoining = newDate;
+    setFieldValue("dateOfJoining", newDate);
   }
   function handleDOBChange(newDate: Dayjs | null) {
-    values.dateOfBirth = newDate;
+    setFieldValue("dateOfBirth", newDate);
   }
 
   useEffect(() => {

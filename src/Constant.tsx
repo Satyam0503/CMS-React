@@ -1,9 +1,10 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./utils/common_types";
+import { ColumnListTypes, EmployeesDataTypes } from "./utils/common_types";
 import CustomisedButton from "./app/modules/components/CustomisedButton";
 import { CustomisedModal } from "./app/modules/components/CustomisedModal";
+import { dateFormatter } from "./utils/common";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -58,6 +59,11 @@ export const EducationType = [
   },
 ];
 
+export const HolidayTypes = [
+  {id:1, label:"Public Holiday", value:"Public Holiday"},
+  {id:2, label:"Custom Holiday", value:"Custom Holiday"}
+]
+
 export const bloodGroups = [
   { id: 1, label: "A+", value: "A+" },
   { id: 2, label: "A-", value: "A-" },
@@ -76,7 +82,7 @@ enum cellContentAlignment {
   JUSTIFY = "justify",
 }
 
-export const EmployeeTabTableColumnList = [
+export const EmployeeTabTableColumnList:ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "#",
@@ -92,32 +98,27 @@ export const EmployeeTabTableColumnList = [
   {
     id: "email",
     label: "Email",
-    minWidth: 140,
     align: cellContentAlignment.LEFT,
   },
   {
     id: "phoneNumber",
     label: "Phone Number",
-    minWidth: 140,
     align: cellContentAlignment.LEFT,
   },
   {
     id: "department",
     label: "Department",
-    minWidth: 140,
     align: cellContentAlignment.LEFT,
   },
   {
     id: "address",
     label: "Address",
-    minWidth: 140,
     align: "left",
     build: (address: string) => <AddressDetailsIcon address={address} />,
   },
   {
     id: "action",
-    label: "Address",
-    minWidth: 140,
+    label: "Action",
     align: "left",
     build: (
       row: EmployeesDataTypes,
@@ -134,6 +135,52 @@ export const EmployeeTabTableColumnList = [
     ),
   },
 ];
+
+export const HolidayTabTableColumnList:ColumnListTypes[] =[
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id:"title",
+    label:"Title",
+  },
+  {
+    id:"type",
+    label:"Type",
+  },
+  {
+    id:"startDate",
+    label:"Start Date",
+    format:(value)=> dateFormatter(value,"DD MMMM YYYY")
+  },
+  {
+    id:"endDate",
+    label:"End Date",
+    format:(value)=> dateFormatter(value,"DD MMMM YYYY")
+  },
+  {
+    id:"description",
+    label:"Description",
+  },
+  {
+    id:"action",
+    label:"Action",
+    build:(
+      row:any,
+      handleHolidayEdit:(row:any)=>void,
+      openConfirmationModal:(id:string)=>void
+    )=>(
+      <ActionComponent 
+        row={row}
+        handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    )
+  }
+];
+
 
 interface ActionComponentProps<Row> {
   row: Row;

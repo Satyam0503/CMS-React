@@ -4,7 +4,6 @@ import { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { styled } from "@mui/material";
 
 const date = new Date();
 const currentDate = date.getDate();
@@ -18,11 +17,10 @@ interface PropsTypes {
   maxDate?: Dayjs;
   minDate?: Dayjs;
   name?: string;
-  sx?: string;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { sx, label, value, setValue, maxDate, name } = props;
+  const { label, value, setValue, maxDate, name ,minDate } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -35,6 +33,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
               setValue(newDate);
             }}
             maxDate={maxDate}
+            minDate={minDate}
             // className={`text-dark ${className}`}
             // shouldDisableDate={(date) =>
             //   label === "From Date"

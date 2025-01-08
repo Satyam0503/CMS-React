@@ -13,10 +13,10 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import CustomisedButton from "../components/CustomisedButton";
 import { useFormik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { userEducationSchema } from "../../../utils/validation_schemas";
 import { EducationType } from "../../../Constant";
 import { UserEducationType } from "../../../utils/common_types";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { userEducationSchema } from "../../../utils/Schema/userSchema";
 
 type PropTypes = {
   open: boolean;

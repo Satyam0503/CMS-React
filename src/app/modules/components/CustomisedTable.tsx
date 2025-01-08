@@ -11,16 +11,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-
-interface ColumnTypes {
-  id: string;
-  // align?: "center" | "left" | "right" | "inherit" | "justify";
-  align?: any;
-  label: string;
-  minWidth: number;
-  build?: any;
-  format?: (value: any) => any;
-}
+import { ColumnListTypes } from "../../../utils/common_types";
 
 interface PropsTypes<Row, Columns> {
   tabName: string;
@@ -37,10 +28,7 @@ interface PropsTypes<Row, Columns> {
   openViewModal?: (id: string) => void;
 }
 
-export const CustomisedTable = <
-  Row extends { id: string },
-  Column extends ColumnTypes
->(
+export const CustomisedTable = <Row extends { id: string }, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
   const {
@@ -76,8 +64,8 @@ export const CustomisedTable = <
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column?.align}
-                  style={{ minWidth: column.minWidth }}
+                  align={column?.align || "left" }
+                  style={{ minWidth: column.minWidth || 150 }}
                 >
                   {column.label}
                 </TableCell>
@@ -114,8 +102,8 @@ export const CustomisedTable = <
                         return (
                           <TableCell
                             key={column.id}
-                            align={column?.align}
-                            sx={{ minWidth: column.minWidth }}
+                            align={column?.align || "left"}
+                            sx={{ minWidth: column.minWidth || 140 }}
                           >
                             {column.id === "name" ||
                             column.id === "jobTitle" ? (

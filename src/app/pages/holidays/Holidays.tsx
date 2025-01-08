@@ -1,10 +1,3 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import {
   Card,
   Grid,
@@ -13,107 +6,175 @@ import {
   Stack,
   TextField,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
 import HolidayForm from "./HolidayForm";
-import CustomisedSearch from "../../modules/components/CustomisedSearch";
 import { auto } from "@popperjs/core";
-import { Delete, DeleteOutline, Edit } from "@mui/icons-material";
+import { Add, Close, Download, FilterList, SearchOutlined } from "@mui/icons-material";
+import { HolidayType } from "../../../utils/common_types";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { CustomisedTable } from "../../modules/components/CustomisedTable";
+import { HolidayTabTableColumnList } from "../../../Constant";
+import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 
-function createData(
-  sno: number,
-  title: string,
-  type: string,
-  startdate: string,
-  enddate: string,
-  description: string,
-  action: string
-) {
-  return { sno, title, type, startdate, enddate, description, action };
-}
-
+// remove this array later
 const rows = [
-  createData(
-    1,
-    "New Year",
-    "Public Holiday",
-    "1 Jan'25",
-    "3 Jan'25",
-    "Celebrations",
-    ""
-  ),
+  {
+    title: "Test",
+    type: "Custom Holiday",
+    startDate: Date.now(),
+    endDate: Date.now(),
+    description: "Test",
+  }
 ];
 
+const initialValues: HolidayType = {
+  id: "",
+  title: "",
+  type: "",
+  startDate: dayjs(Date.now()),
+  endDate: dayjs(Date.now()),
+  description: ""
+}
+
 export default function Holidays() {
+  const [initialHolidayValues, setInitialHolidayValues] = useState(initialValues);
+  const [searchValue, setSearchValue] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [holidayList, setHolidayList] = useState<any[]>(rows);
+  const [page, setPage] = useState(0);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [rowPerPage, setRowPerPage] = useState<number>(10);
+  const [isLoading, setLoading] = useState(false);
+  const [isRefresh, setRefresh] = useState(false);
+  const [isEdit, setEdit] = useState(false);
+  const [selectedHolidayId, setSelectedHolidayId] = useState<string | null>(null);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+
   const intl = useIntl();
-  const [openModal, setOpenModal] = React.useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
   const handleCloseModal = () => {
-    setOpenModal(false);
+    setModalOpen(false);
+    setEdit(false);
+    setInitialHolidayValues(initialValues);
   };
 
-  const handleAddInfo = () => {
-    handleCloseModal();
-  };
+  const handleAddUpdateHoliday = (values: HolidayType, setSubmitting: (isSubmitting: boolean) => void) => {
+    // write logic to add-update holidays
+    console.log(values);
+  }
+
+  const handleHolidayEdit = (row: any) => {
+    //  set initial values with updated holiday value
+    setEdit(true)
+    setModalOpen(true);
+  }
+
+  const handleHolidayDeletion = () => {
+    // logic for holiday deletion
+  }
+
+  const openConfirmationModal = (holidayId: string) => {
+    setConfirmModalOpen(true);
+    setSelectedHolidayId(holidayId);
+  }
+  function closeConfirmationModal() {
+    setConfirmModalOpen(false);
+    setSelectedHolidayId(null);
+  }
 
   return (
-    <Grid container sx={{ maxWidth: "1200px" }} mx={auto} my={6} spacing={2}>
-      <Stack>
-        <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
-        </Typography>
-      </Stack>
-      <Card sx={{ width: "100%", p: "16px" }}>
+    <>
+      <Grid container sx={{ maxWidth: "1200px" }} mx={auto} my={6} spacing={2}>
         <Stack>
-          <CustomisedSearch />
+          <Typography variant="h4" sx={{ pb: "20px" }}>
+            {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+          </Typography>
         </Stack>
-        <Stack sx={{ mt: "1rem" }}>
-          <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">#</TableCell>
-                  <TableCell align="left">Title</TableCell>
-                  <TableCell align="left">Type</TableCell>
-                  <TableCell align="right">Start Date</TableCell>
-                  <TableCell align="right">End Date</TableCell>
-                  <TableCell align="right">Description</TableCell>
-                  <TableCell align="right">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.sno}>
-                    <TableCell>{row.sno}</TableCell>
-                    <TableCell>{row.title}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell align="right">{row.startdate}</TableCell>
-                    <TableCell align="right">{row.enddate}</TableCell>
-                    <TableCell align="right">{row.description}</TableCell>
-                    <TableCell align="right">
-                      {row.action}
-                      <IconButton sx={{ mr: 1 }}>
-                        <Edit />
+        <Card sx={{ width: "100%", p: "16px" }}>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Stack>
+              <TextField
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchOutlined />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{ border: "none" }}
+                        onClick={() => setSearchValue("")}
+                      >
+                        <Close />
                       </IconButton>
-                      <IconButton>
-                        <DeleteOutline />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
-      </Card>
-    </Grid>
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                placeholder="Search something ..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              <IconButton aria-label="filter employee">
+                <FilterList />
+              </IconButton>
+              <IconButton
+                aria-label="Add Holiday"
+                onClick={() => setModalOpen(true)}
+              >
+                <Add />
+              </IconButton>
+              <IconButton aria-label="import excel">
+                <Download />
+              </IconButton>
+            </Stack>
+          </Stack>
+          <Stack sx={{ mt: "1rem" }}>
+            <CustomisedTable
+              tabName="Holiday"
+              columns={HolidayTabTableColumnList}
+              rows={holidayList}
+              page={page}
+              setPage={setPage}
+              totalRecords={totalRecords}
+              rowsPerPage={rowPerPage}
+              setRowPerPage={setRowPerPage}
+              loading={isLoading}
+              handleEdit={handleHolidayEdit}
+              openConfirmationModal={openConfirmationModal}
+            />
+          </Stack>
+        </Card>
+      </Grid>
+      {
+        isModalOpen &&
+        <HolidayForm
+          open={isModalOpen}
+          handleClose={handleCloseModal}
+          initialValues={initialHolidayValues}
+          handleAddUpdateHoliday={handleAddUpdateHoliday}
+        />
+      }
+      {
+        isConfirmModalOpen &&
+        <ConfirmationModal
+          title="Delete Holiday"
+          content="Are you sure you want to delete this holiday?"
+          open={isConfirmModalOpen}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={handleHolidayDeletion}
+        />
+      }
+    </>
   );
 }
