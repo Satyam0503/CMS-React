@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
-import { CustomisedModal } from "../components/CustomizedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useFormik } from "formik";
 import { UserCertificationType } from "../../../utils/common_types";
 import { userCertificationSchema } from "../../../utils/Schema/userSchema";
+import { CustomisedModal } from "../components/CustomisedModal";
 
 type PropTypes = {
   open: boolean;
