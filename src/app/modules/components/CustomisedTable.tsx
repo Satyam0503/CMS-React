@@ -111,7 +111,10 @@ export const CustomisedTable = <Row extends { id: string }, Column extends Colum
                                 title={value}
                                 subTitle={row.jobRole}
                               />
-                            ) : column.build ? (
+                            )
+                            : column.format 
+                            ? column.format(value) 
+                            : column.build ? (
                               column.id === "action" ? (
                                 column.build(
                                   row,

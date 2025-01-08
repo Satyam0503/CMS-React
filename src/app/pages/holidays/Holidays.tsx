@@ -24,8 +24,8 @@ const rows = [
   {
     title: "Test",
     type: "Custom Holiday",
-    startDate: Date.now(),
-    endDate: Date.now(),
+    startDate: new Date(),
+    endDate: new Date(),
     description: "Test",
   }
 ];
