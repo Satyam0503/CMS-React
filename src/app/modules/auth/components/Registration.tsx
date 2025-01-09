@@ -10,7 +10,11 @@ import {
   Box,
   Checkbox,
   Container,
+  FormControl,
   Grid,
+  Input,
+  InputAdornment,
+  InputLabel,
   Stack,
   TextField,
   Typography,
@@ -18,6 +22,7 @@ import {
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { colors } from "../../theme/MuiTheme";
+import { AccountCircle, Check } from "@mui/icons-material";
 
 const initialValues = {
   firstname: "",
@@ -104,7 +109,7 @@ export function Registration() {
             {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
           </Typography>
         </Stack>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Stack>
             <Typography variant="body1">
               {intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -115,18 +120,26 @@ export function Registration() {
               type="text"
               autoComplete="off"
               fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Check />
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
               {...formik.getFieldProps("firstname")}
-              className={clsx(
-                "form-control bg-transparent",
-                {
-                  "is-invalid":
-                    formik.touched.firstname && formik.errors.firstname,
-                },
-                {
-                  "is-valid":
-                    formik.touched.firstname && !formik.errors.firstname,
-                }
-              )}
+              // className={clsx(
+              //   "form-control bg-transparent",
+              //   {
+              //     "is-invalid":
+              //       formik.touched.firstname && formik.errors.firstname,
+              //   },
+              //   {
+              //     "is-valid":
+              //       formik.touched.firstname && !formik.errors.firstname,
+              //   }
+              // )}
             />
             {formik.touched.firstname && formik.errors.firstname && (
               <Box
@@ -147,19 +160,27 @@ export function Registration() {
               placeholder="Last name"
               type="text"
               autoComplete="off"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Check />
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
               fullWidth
               {...formik.getFieldProps("lastname")}
-              className={clsx(
-                "form-control bg-transparent",
-                {
-                  "is-invalid":
-                    formik.touched.lastname && formik.errors.lastname,
-                },
-                {
-                  "is-valid":
-                    formik.touched.lastname && !formik.errors.lastname,
-                }
-              )}
+              // className={clsx(
+              //   "form-control bg-transparent",
+              //   {
+              //     "is-invalid":
+              //       formik.touched.lastname && formik.errors.lastname,
+              //   },
+              //   {
+              //     "is-valid":
+              //       formik.touched.lastname && !formik.errors.lastname,
+              //   }
+              // )}
             />
             {formik.touched.lastname && formik.errors.lastname && (
               <Box
@@ -175,24 +196,33 @@ export function Registration() {
             <Typography variant="body1">
               {intl.formatMessage({ id: "COMPANY.NAME" })}
             </Typography>
+
             <TextField
               sx={{ my: 1, bgcolor: "transparent" }}
               placeholder="Company name"
               type="text"
               autoComplete="off"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Check />
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
               fullWidth
               {...formik.getFieldProps("companyname")}
-              className={clsx(
-                "form-control ",
-                {
-                  "is-invalid":
-                    formik.touched.companyname && formik.errors.companyname,
-                },
-                {
-                  "is-valid":
-                    formik.touched.companyname && !formik.errors.companyname,
-                }
-              )}
+              // className={clsx(
+              //   "form-control ",
+              //   {
+              //     "is-invalid":
+              //       formik.touched.companyname && formik.errors.companyname,
+              //   },
+              //   {
+              //     "is-valid":
+              //       formik.touched.companyname && !formik.errors.companyname,
+              //   }
+              // )}
             />
             {formik.touched.companyname && formik.errors.companyname && (
               <Box
@@ -213,17 +243,25 @@ export function Registration() {
               placeholder="Email Id"
               type="email"
               autoComplete="off"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Check />
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
               fullWidth
               {...formik.getFieldProps("email")}
-              className={clsx(
-                "form-control bg-transparent",
-                {
-                  "is-invalid": formik.touched.email && formik.errors.email,
-                },
-                {
-                  "is-valid": formik.touched.email && !formik.errors.email,
-                }
-              )}
+              // className={clsx(
+              //   "form-control bg-transparent",
+              //   {
+              //     "is-invalid": formik.touched.email && formik.errors.email,
+              //   },
+              //   {
+              //     "is-valid": formik.touched.email && !formik.errors.email,
+              //   }
+              // )}
             />
             {formik.touched.email && formik.errors.email && (
               <Box
@@ -247,19 +285,27 @@ export function Registration() {
                   fullWidth
                   type="password"
                   placeholder="Password"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Check />
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="outlined"
                   autoComplete="off"
                   {...formik.getFieldProps("password")}
-                  className={clsx(
-                    "form-control bg-transparent",
-                    {
-                      "is-invalid":
-                        formik.touched.password && formik.errors.password,
-                    },
-                    {
-                      "is-valid":
-                        formik.touched.password && !formik.errors.password,
-                    }
-                  )}
+                  // className={clsx(
+                  //   "form-control bg-transparent",
+                  //   {
+                  //     "is-invalid":
+                  //       formik.touched.password && formik.errors.password,
+                  //   },
+                  //   {
+                  //     "is-valid":
+                  //       formik.touched.password && !formik.errors.password,
+                  //   }
+                  // )}
                 />
                 {formik.touched.password && formik.errors.password && (
                   <Stack>
@@ -351,20 +397,28 @@ export function Registration() {
               type="password"
               placeholder="Password confirmation"
               autoComplete="off"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Check />
+                  </InputAdornment>
+                ),
+              }}
+              variant="outlined"
               {...formik.getFieldProps("changepassword")}
-              className={clsx(
-                "form-control bg-transparent",
-                {
-                  "is-invalid":
-                    formik.touched.changepassword &&
-                    formik.errors.changepassword,
-                },
-                {
-                  "is-valid":
-                    formik.touched.changepassword &&
-                    !formik.errors.changepassword,
-                }
-              )}
+              // className={clsx(
+              //   "form-control bg-transparent",
+              //   {
+              //     "is-invalid":
+              //       formik.touched.changepassword &&
+              //       formik.errors.changepassword,
+              //   },
+              //   {
+              //     "is-valid":
+              //       formik.touched.changepassword &&
+              //       !formik.errors.changepassword,
+              //   }
+              // )}
             />
             {formik.touched.changepassword && formik.errors.changepassword && (
               <Stack>
