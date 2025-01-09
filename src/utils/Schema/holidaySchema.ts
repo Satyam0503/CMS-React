@@ -8,8 +8,8 @@ const holidaySchema = Yup.object().shape({
     .min(new Date(), "Start date cannot be in the past"),
   endDate: Yup.date()
     .required("End Date is Required")
-    .min(Yup.ref('startDate'), 'End date cannot be before start date')
-    .min(new Date(),"End date cannot be in past"),
+    .min(new Date(),"End date cannot be in past")
+    .min(Yup.ref('startDate'), 'End date cannot be before start date'),
   description: Yup.string()
     .required("Description is required"),
   type: Yup.string().required("Holiday type is required"),

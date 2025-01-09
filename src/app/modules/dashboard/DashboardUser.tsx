@@ -20,7 +20,7 @@ import Help from "./daynamic/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
 import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
-import AttendanceTable from "./daynamic/AttendanceTable";
+import AttendanceTable from "./daynamic/LeaveTable";
 
 export default function DashboardUser() {
   const intl = useIntl();

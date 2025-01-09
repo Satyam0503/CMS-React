@@ -35,6 +35,7 @@ const Sidebar = () => {
               <Avatar
                 alt=""
                 src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                // use media query for avatar
                 sx={{ width: 128, height: 128 }}
               />
               <Typography variant="h6" color="inherit" textAlign="center">

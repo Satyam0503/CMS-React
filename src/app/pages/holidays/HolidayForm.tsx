@@ -54,7 +54,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
   const handleEndDateChange = (newDate: dayjs.Dayjs | null) => {
     setFieldValue("endDate", newDate);
   };
-
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
