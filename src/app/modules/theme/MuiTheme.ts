@@ -519,19 +519,22 @@ export const MuiTheme = createTheme({
         },
         sizeMedium: {
           padding: "7px 20px",
-          fontWeight: 600,
+          fontWeight: 500,
         },
         sizeLarge: {
           padding: "11px 24px",
+          fontWeight: 500,
         },
         textSizeSmall: {
           padding: "7px 12px",
         },
         textSizeMedium: {
           padding: "9px 16px",
+          fontSize: 12,
         },
         textSizeLarge: {
           padding: "12px 16px",
+          fontSize: 12,
         },
       },
     },

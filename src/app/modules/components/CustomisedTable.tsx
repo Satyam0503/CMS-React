@@ -28,7 +28,10 @@ interface PropsTypes<Row, Columns> {
   openViewModal?: (id: string) => void;
 }
 
-export const CustomisedTable = <Row extends { id: string }, Column extends ColumnListTypes>(
+export const CustomisedTable = <
+  Row extends { id: string },
+  Column extends ColumnListTypes
+>(
   props: PropsTypes<Row, Column>
 ) => {
   const {
@@ -64,7 +67,7 @@ export const CustomisedTable = <Row extends { id: string }, Column extends Colum
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column?.align || "left" }
+                  align={column?.align || "left"}
                   style={{ minWidth: column.minWidth || 150 }}
                 >
                   {column.label}
@@ -111,10 +114,9 @@ export const CustomisedTable = <Row extends { id: string }, Column extends Colum
                                 title={value}
                                 subTitle={row.jobRole}
                               />
-                            )
-                            : column.format 
-                            ? column.format(value) 
-                            : column.build ? (
+                            ) : column.format ? (
+                              column.format(value)
+                            ) : column.build ? (
                               column.id === "action" ? (
                                 column.build(
                                   row,
