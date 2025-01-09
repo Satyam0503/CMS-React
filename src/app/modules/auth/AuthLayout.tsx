@@ -20,7 +20,8 @@ const AuthLayout = () => {
     <Container>
       <Grid
         container
-        p={{ xs: 2, md: 3 }}
+        py={4}
+        gap={4}
         display={"flex"}
         justifyContent={"space-between"}
       >
@@ -31,10 +32,10 @@ const AuthLayout = () => {
           display={"flex"}
           flexDirection={"column"}
           justifyContent={"center"}
-          order={{ xs: "2", sm: "inherit" }}
+          order={{ xs: "2", md: "inherit" }}
           width={"100%"}
         >
-          <Grid item>
+          <Grid item xs={12}>
             <Outlet />
           </Grid>
 
@@ -65,18 +66,19 @@ const AuthLayout = () => {
           flexDirection={"column"}
           textAlign={"center"}
           justifyContent={"center"}
+          gap={2}
         >
           <Grid item>
             <img
               alt="Logo"
               src={toAbsoluteUrl("media/logos/favicon.png")}
-              style={{ width: "300px" }}
+              style={{ maxWidth: "250px" }}
             />
           </Grid>
 
           <Typography variant="h2">Fast, Efficient and Productive</Typography>
 
-          <Typography>
+          <Typography variant="body1">
             We can help you achieve a strong web presence and provide you strong
             SEO & brand development that gives you an advantage over your
             competition in online marketing.
