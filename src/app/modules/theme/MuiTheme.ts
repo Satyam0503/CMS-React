@@ -505,7 +505,7 @@ export const MuiTheme = createTheme({
           "&:hover, &.MuiSelected": {
             backgroundColor: colors.alpha.neutral[100],
             color: colors.alpha.neutral[800],
-            border: " 1px solid " + colors.alpha.neutral[200],
+            border: "1px solid " + colors.alpha.neutral[200],
           },
         },
         text: {

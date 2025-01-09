@@ -31,7 +31,7 @@ type PropTypes = {
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
   const { open, initialValues, handleClose, handleAddUpdateEducation } = props;
-  const { values, handleSubmit, getFieldProps, touched, errors, isSubmitting } =
+  const { values, handleSubmit, getFieldProps, touched, errors, isSubmitting, isValid,dirty, setFieldValue } =
     useFormik({
       initialValues: initialValues,
       validationSchema: userEducationSchema,
@@ -40,6 +40,16 @@ export default function AddUpdateEducation(props: PropTypes) {
       },
     });
 
+     const handleStartDateChange = (newDate: dayjs.Dayjs | null) => {
+          touched.startDate=true;
+          setFieldValue("startDate", newDate);
+        };
+    
+      const handleEndDateChange = (newDate: dayjs.Dayjs | null) => {
+          touched.endDate=true;
+          setFieldValue("endDate", newDate);
+        };
+    
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -71,7 +81,7 @@ export default function AddUpdateEducation(props: PropTypes) {
             <CustomisedDatePicker
               name="startDate"
               value={values.startDate}
-              setValue={(newDate) => (values.startDate = newDate)}
+              setValue={handleStartDateChange}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.startDate && errors.startDate && errors.startDate}
@@ -88,7 +98,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               name="endDate"
               value={values.endDate}
               minDate={dayjs(values.startDate)}
-              setValue={(newDate) => (values.endDate = newDate)}
+              setValue={handleEndDateChange}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.endDate && errors.endDate && errors.endDate}
@@ -157,7 +167,7 @@ export default function AddUpdateEducation(props: PropTypes) {
             size="medium"
             label="Save"
             type="submit"
-            disabled={isSubmitting}
+            disabled={ !(isValid && dirty) || isSubmitting}
             Icon={<Check />}
           />
         </Stack>
