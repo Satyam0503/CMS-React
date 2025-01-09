@@ -483,8 +483,8 @@ export const MuiTheme = createTheme({
             color: themeColors.white,
           },
           "&.Mui-disabled": {
-            backgroundColor: themeColors.white,
-            color: colors.alpha.neutral[300],
+            backgroundColor: colors.alpha.primary[400],
+            color: themeColors.white,
           },
           ".MuiSvgIcon-root": {
             transition: "all .2s",
