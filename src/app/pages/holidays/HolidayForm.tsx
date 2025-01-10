@@ -17,7 +17,7 @@ import { HolidayType } from "../../../utils/common_types";
 import { useFormik } from "formik";
 import holidaySchema from "../../../utils/Schema/holidaySchema";
 import dayjs from "dayjs";
-import { HolidayTypes } from "../../../Constant";
+import { HolidayTypes } from "../../../utils/constant/Constant";
 
 type PropsTypes = {
   open: boolean;

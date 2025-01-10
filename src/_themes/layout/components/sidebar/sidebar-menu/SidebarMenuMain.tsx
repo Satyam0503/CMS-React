@@ -34,7 +34,7 @@ const SidebarMenuMain = () => {
       <SidebarMenuItem
         to="/userdashboard"
         icon={<DashboardIcon />}
-        title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
+        title={intl.formatMessage({ id: "User Dashboard" })}
       />
       <SidebarMenuItem
         to="/employees"

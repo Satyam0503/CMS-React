@@ -79,9 +79,9 @@ const AuthLayout = () => {
           <Typography variant="h2">Fast, Efficient and Productive</Typography>
 
           <Typography variant="body1">
-            We can help you achieve a strong web presence and provide you strong
-            SEO & brand development that gives you an advantage over your
-            competition in online marketing.
+            We can help you with an easy way to manage all of your website‘s
+            content without needing to manually edit your site’s code any time
+            you want to make a change.
           </Typography>
         </Grid>
       </Grid>

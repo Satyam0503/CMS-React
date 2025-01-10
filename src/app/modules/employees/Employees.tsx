@@ -24,10 +24,10 @@ import {
   deleteEmployee,
   getAllEmployees,
   updateEmployee,
-} from "./employeeServices";
+} from "./components/employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
-import { EmployeeTabTableColumnList } from "../../../Constant";
+import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
 import { EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";

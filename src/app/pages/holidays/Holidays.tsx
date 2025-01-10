@@ -22,7 +22,7 @@ import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
-import { HolidayTabTableColumnList } from "../../../Constant";
+import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { CustomisedSearch } from "../../modules/components/CustomisedSearch";
 

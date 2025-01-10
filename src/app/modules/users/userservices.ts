@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { ServiceUrl } from "../../../Constant";
+import { ServiceUrl } from "../../../utils/constant/Constant";
 import { getRequest, postRequest } from "../../../server/axios";
 import {
   AddCertificationResponseData,

@@ -16,7 +16,7 @@ import { useFormik } from "formik";
 
 import { useUserDetails } from "./UserDataProvider";
 import dayjs, { Dayjs } from "dayjs";
-import { bloodGroups, Gender } from "../../../Constant";
+import { bloodGroups, Gender } from "../../../utils/constant/Constant";
 import { updateUserDetails } from "./userservices";
 import { toast } from "react-toastify";
 import CustomisedButton from "../components/CustomisedButton";

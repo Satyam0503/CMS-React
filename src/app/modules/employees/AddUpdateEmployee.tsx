@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
-import { bloodGroups, Gender } from "../../../Constant";
-import { getAllRoles } from "./employeeServices";
+import { bloodGroups, Gender } from "../../../utils/constant/Constant";
+import { getAllRoles } from "./components/employeeServices";
 import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
@@ -43,14 +43,21 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const [roles, setRoles] = useState<RolesType[]>([]);
   const intl = useIntl();
 
-  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps,setFieldValue } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: employeeSchema,
-      onSubmit: (values, { setSubmitting }) => {
-        SaveAddEditEmployee(values, setSubmitting);
-      },
-    });
+  const {
+    values,
+    touched,
+    errors,
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+    setFieldValue,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: employeeSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      SaveAddEditEmployee(values, setSubmitting);
+    },
+  });
   function handleDateofJoiningChange(newDate: Dayjs | null) {
     setFieldValue("dateOfJoining", newDate);
   }
