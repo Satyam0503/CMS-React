@@ -33,6 +33,8 @@ import { EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
+import { SearchInput } from "../components/SearchInput";
+import { CustomIconButton } from "../components/CustomIconButton";
 const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 const employeeInitialValue: EmployeesDataTypes = {
@@ -256,47 +258,25 @@ export default function Employees() {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Stack>
-              <TextField
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchOutlined />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        sx={{ border: "none" }}
-                        onClick={() => setSearch("")}
-                      >
-                        <Close />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                placeholder="Search something ..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </Stack>
+            <SearchInput search={search} setSearch={setSearch} />
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton
-                aria-label="add employee"
-                onClick={() => setModalOpen(true)}
-              >
-                <Add />
-              </IconButton>
-              <IconButton
-                aria-label="import excel"
-                onClick={handleEmployeeExport}
-              >
-                <Download />
-              </IconButton>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Employee"
+                handleClick={() => {}}
+              />
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+                tooltip="Add Employee"
+                ariaLabel="Add employee"
+              />
+              <CustomIconButton
+                icon={<Download />}
+                handleClick={handleEmployeeExport}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
             </Stack>
           </Stack>
           <Stack sx={{ mt: "1rem" }}>

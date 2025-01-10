@@ -40,6 +40,8 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
     handleSubmit,
     setFieldValue,
     isSubmitting,
+    isValid,
+    dirty
   } = useFormik({
     initialValues: initialValues,
     validationSchema: holidaySchema,
@@ -49,12 +51,15 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
   });
 
   const handleStartDateChange = (newDate: dayjs.Dayjs | null) => {
+    touched.startDate=true;
     setFieldValue("startDate", newDate);
   };
+
   const handleEndDateChange = (newDate: dayjs.Dayjs | null) => {
+    touched.endDate=true;
     setFieldValue("endDate", newDate);
   };
-
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -155,7 +160,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               />
               <CustomisedButton
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!(isValid || dirty) || isSubmitting }
                 variant="contained"
                 label="Save"
                 Icon={<Check />}

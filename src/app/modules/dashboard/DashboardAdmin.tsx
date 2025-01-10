@@ -26,7 +26,6 @@ export default function DashboardAdmin() {
   const intl = useIntl();
   const series = [21, 12, 0];
   const labels = ["Male", "Female", "Other"];
-
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
   return (

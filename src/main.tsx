@@ -10,26 +10,14 @@ import './_themes/assets/fonticon/fonticon.css'
 import './_themes/assets/keenicons/duotone/style.css'
 import './_themes/assets/keenicons/outline/style.css'
 import './_themes/assets/keenicons/solid/style.css'
-/**
- * TIP: Replace this style import with rtl styles to enable rtl mode
- *
- * import './_themes/assets/css/style.rtl.css'
- **/
+
 import './_themes/assets/sass/style.scss'
 import {AppRoutes} from './app/routing/AppRoutes'
 import {AuthProvider, setupAxios} from './app/modules/auth'
 import { I18nProvider } from './_themes/i18n/Metronici18n'
-/**
- * Creates `axios-mock-adapter` instance for provided `axios` instance, add
- * basic Metronic mocks and returns it.
- *
- * @see https://github.com/ctimmerm/axios-mock-adapter
- */
-/**
- * Inject Metronic interceptors for axios.
- *
- * @see https://github.com/axios/axios#interceptors
- */
+import { Provider } from 'react-redux'
+import { store } from './app/Redux/store'
+
 setupAxios(axios)
 Chart.register(...registerables)
 
@@ -39,9 +27,11 @@ if (container) {
   createRoot(container).render(
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        <Provider store={store}>
         <AuthProvider>
           <AppRoutes />
         </AuthProvider>
+        </Provider>
       </I18nProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

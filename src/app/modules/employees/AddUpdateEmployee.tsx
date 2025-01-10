@@ -51,6 +51,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     handleSubmit,
     getFieldProps,
     setFieldValue,
+    isValid,
+    dirty,
   } = useFormik({
     initialValues: initialValues,
     validationSchema: employeeSchema,
@@ -58,10 +60,14 @@ export default function AddUpdateEmployee(props: PropsTypes) {
       SaveAddEditEmployee(values, setSubmitting);
     },
   });
+  console.log(isValid);
+
   function handleDateofJoiningChange(newDate: Dayjs | null) {
+    touched.dateOfJoining = true;
     setFieldValue("dateOfJoining", newDate);
   }
   function handleDOBChange(newDate: Dayjs | null) {
+    touched.dateOfBirth = true;
     setFieldValue("dateOfBirth", newDate);
   }
 
@@ -442,7 +448,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <CustomisedButton
                 label={isEdit ? "Update" : "Add"}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!(isValid && dirty) || isSubmitting}
               />
             </Grid>
           </Grid>

@@ -24,7 +24,9 @@ import { useState } from "react";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { CustomisedSearch } from "../../modules/components/CustomisedSearch";
+import { SearchInput } from "../../modules/components/SearchInput";
+import { CustomIconButton } from "../../modules/components/CustomIconButton";
+
 
 // remove this array later
 const rows = [
@@ -112,20 +114,11 @@ export default function Holidays() {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <CustomisedSearch />
+            <SearchInput search={searchValue} setSearch={setSearchValue} />
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton
-                aria-label="Add Holiday"
-                onClick={() => setModalOpen(true)}
-              >
-                <Add />
-              </IconButton>
-              <IconButton aria-label="import excel">
-                <Download />
-              </IconButton>
+              <CustomIconButton tooltip="Filter List" icon={<FilterList/>}  />
+              <CustomIconButton tooltip="Add Holiday" icon={<Add/>} handleClick={()=>setModalOpen(true)}/>
+              <CustomIconButton tooltip="Import Excel" icon={<Download/>} />
             </Stack>
           </Stack>
           <Stack sx={{ mt: "1rem" }}>

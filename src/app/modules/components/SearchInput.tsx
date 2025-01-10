@@ -1,33 +1,26 @@
 import {
-  Button,
-  Card,
-  Grid,
   IconButton,
   InputAdornment,
-  Stack,
   TextField,
-  useTheme,
 } from "@mui/material";
-import CustomisedButton from "./CustomisedButton";
 import {
-  Add,
   Close,
-  Download,
-  FilterList,
   SearchOutlined,
 } from "@mui/icons-material";
+import { FC } from "react";
 
-export const CustomisedSearch = () => {
-  const theme = useTheme();
+
+type PropsType ={
+  search:string;
+  setSearch:React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const SearchInput:FC<PropsType> = (props) => {
+  const {search,setSearch} = props;
+  const handleClearSearch =()=>{
+    setSearch("");
+  }
   return (
-    <Grid item>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Stack>
           <TextField
             InputProps={{
               startAdornment: (
@@ -37,17 +30,16 @@ export const CustomisedSearch = () => {
               ),
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton sx={{ border: "none" }}>
+                  <IconButton sx={{ border: "none" }} onClick={handleClearSearch}>
                     <Close />
                   </IconButton>
                 </InputAdornment>
               ),
             }}
+            value={search}
+            onChange={(e)=>setSearch(e.target.value)}
             variant="outlined"
             placeholder="Search something ..."
           />
-        </Stack>
-      </Stack>
-    </Grid>
   );
 };

@@ -1,10 +1,11 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { ColumnListTypes, EmployeesDataTypes } from "../common_types";
-import CustomisedButton from "../../app/modules/components/CustomisedButton";
-import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
-import { dateFormatter } from "../common";
+import { ColumnListTypes, EmployeesDataTypes } from "./utils/common_types";
+import CustomisedButton from "./app/modules/components/CustomisedButton";
+import { CustomisedModal } from "./app/modules/components/CustomisedModal";
+import { dateFormatter } from "./utils/common";
+import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -181,6 +182,46 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
 ];
 
+export const DashBoardLeaveTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    id: "title",
+    label: "Title",
+  },
+  {
+    id: "type",
+    label: "Type",
+  },
+  {
+    id: "count",
+    label: "Count",
+  },
+  {
+    id: "reason",
+    label: "Reaseon",
+  },
+  {
+    id: "status",
+    label: "Status",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleEdit: () => void,
+      openConfirmationModal: (leaveId: string) => void
+    ) => {
+      <ActionComponent
+        row={row}
+        handleEdit={handleEdit}
+        openConfirmationModal={openConfirmationModal}
+      />;
+    },
+  },
+];
+
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
@@ -194,19 +235,28 @@ const ActionComponent = <Row extends { id: string }>(
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
-        <IconButton onClick={() => handleEdit(row)}>
-          <Edit />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => handleEdit(row)}
+          icon={<Edit />}
+          tooltip="Edit"
+          ariaLabel="Edit"
+        />
       )}
       {openConfirmationModal && (
-        <IconButton onClick={() => openConfirmationModal(row.id)}>
-          <Delete />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => openConfirmationModal(row.id)}
+          icon={<Delete />}
+          tooltip="Delete"
+          ariaLabel="Delete"
+        />
       )}
       {openViewModal && (
-        <IconButton onClick={() => openViewModal(row.id)}>
-          <Visibility />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => openViewModal(row.id)}
+          icon={<Visibility />}
+          tooltip="View"
+          ariaLabel="View"
+        />
       )}
     </Stack>
   );
@@ -219,9 +269,12 @@ const AddressDetailsIcon = (props: { address: string }) => {
   }
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <Place />
-      </IconButton>
+      <CustomIconButton
+        handleClick={() => setOpen(true)}
+        icon={<Place />}
+        tooltip="Address"
+        ariaLabel="Address"
+      />
       <CustomisedModal open={open} handleClose={handleClose}>
         <Stack spacing={2}>
           <Typography variant="h5">Address</Typography>
