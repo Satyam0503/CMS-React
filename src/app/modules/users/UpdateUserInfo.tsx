@@ -37,8 +37,6 @@ export default function UserInfo(props: PropsType) {
   const { userDetails: currentUser, setRefresh, isRefresh } = useUserDetails();
   const { open, setOpen } = props;
 
-  console.log(currentUser);
-
   const initialValues = {
     firstName: currentUser?.firstName,
     lastName: currentUser?.lastName,
@@ -56,6 +54,32 @@ export default function UserInfo(props: PropsType) {
   function handleClose() {
     setOpen(false);
   }
+
+  const {
+    values,
+    touched,
+    errors,
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+    setFieldTouched,
+    setFieldValue,
+    isValid,
+    dirty,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: userSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      handleUserDataUpdate(values, setSubmitting);
+    },
+  });
+
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
 
   function handleUserDataUpdate(
     values: typeof initialValues,
@@ -83,20 +107,6 @@ export default function UserInfo(props: PropsType) {
         });
     }, 2000);
   }
-
-  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: userSchema,
-      onSubmit: (values, { setSubmitting }) => {
-        handleUserDataUpdate(values, setSubmitting);
-      },
-    });
-
-  function setNewDob(newDate: Dayjs | null) {
-    values.dateOfBirth = newDate;
-  }
-
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>
@@ -147,8 +157,8 @@ export default function UserInfo(props: PropsType) {
                 </Typography>
                 <CustomisedDatePicker
                   name="dateOfBirth"
-                  value={dayjs(currentUser?.dateOfBirth)}
-                  setValue={setNewDob}
+                  value={dayjs(values?.dateOfBirth)}
+                  setValue={handleDateChange("dateOfBirth")}
                   maxDate={dayjs()}
                 />
                 <FormHelperText>
@@ -278,7 +288,7 @@ export default function UserInfo(props: PropsType) {
                     label="Save"
                     type="submit"
                     variant="contained"
-                    disabled={isSubmitting}
+                    disabled={ !(isValid && dirty) || isSubmitting}
                   />
                 </Stack>
               </Grid>

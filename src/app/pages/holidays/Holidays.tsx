@@ -31,6 +31,7 @@ import { CustomIconButton } from "../../modules/components/CustomIconButton";
 // remove this array later
 const rows = [
   {
+    id:"2",
     title: "Test",
     type: "Custom Holiday",
     startDate: new Date(),
@@ -44,7 +45,7 @@ const initialValues: HolidayType = {
   title: "",
   type: "",
   startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
+  endDate: null,
   description: "",
 };
 
