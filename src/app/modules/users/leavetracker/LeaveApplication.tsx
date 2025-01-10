@@ -95,7 +95,6 @@ export const LeaveApplication: FC = () => {
               </Grid>
               <Grid item xs={12} sm={12}>
                 <Button>
-                  {" "}
                   Add <Add />
                 </Button>
               </Grid>
@@ -113,7 +112,7 @@ export const LeaveApplication: FC = () => {
               </Grid>
             </Grid>
             <Grid container className="d-flex justify-content-end mt-4 gap-2">
-              <Button variant="contained">Cancel</Button>
+              <Button variant="outlined">Cancel</Button>
               <Button variant="contained">Save</Button>
             </Grid>
           </Box>

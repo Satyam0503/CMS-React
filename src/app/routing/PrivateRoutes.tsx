@@ -2,23 +2,27 @@ import { lazy, FC, Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
-import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
-import Test from "../pages/test";
-import UserDashboard from "../pages/userdashboard/UserDashboard";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
 import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
-import Contacts from "../modules/employees/Employees";
-import Employess from "../modules/employees/Employees";
 import Employees from "../modules/employees/Employees";
+import Holidays from "../pages/holidays/Holidays";
+
+import NoticeBoard from "../pages/noticeboard/NoticeBoard";
+import MyNoticeBoard from "../pages/noticeboard/MyNoticeBoard";
+import AdminDashboard from "../pages/dashboards/AdminDashboard";
+import UserDashboard from "../pages/dashboards/UserDashboard";
+import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
+import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
   const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
+  const Setting = lazy(() => import("../pages/admin/Settings"));
+  const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
   // const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
   // const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   // const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
@@ -35,14 +39,34 @@ const PrivateRoutes = () => {
         <Route path="dashboard" element={<DashboardWrapper />} />
         <Route path="builder" element={<BuilderPageWrapper />} />
         <Route path="menu-test" element={<MenuTestPage />} />
-        <Route path="test" element={<Test />} />
+        <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagement />} />
         <Route path="attendance" element={<EmployeeAttendance />} />
         <Route path="employees" element={<Employees />} />
+        <Route path="holidays" element={<Holidays />} />
+        <Route path="noticeboard" element={<NoticeBoard />} />
+        <Route path="mynoticeboard" element={<MyNoticeBoard />} />
 
         {/* Lazy Modules */}
+
+        <Route
+          path="recruitment/*"
+          element={
+            <SuspensedView>
+              <Recruitment />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="setting/*"
+          element={
+            <SuspensedView>
+              <Setting />
+            </SuspensedView>
+          }
+        />
         <Route
           path="crafted/pages/profile/*"
           element={

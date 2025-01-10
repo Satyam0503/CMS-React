@@ -7,6 +7,8 @@ import { AuthInit } from "./modules/auth";
 import { ThemeModeProvider } from "../_themes/partials";
 import { ThemeProvider } from "@mui/material";
 import { MuiTheme, setColorsAsCSSVariables } from "./modules/theme/MuiTheme";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   useEffect(() => {
@@ -25,6 +27,16 @@ const App = () => {
             </ThemeModeProvider>
           </LayoutProvider>
         </I18nProvider>
+        <ToastContainer position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={true}
+          pauseOnFocusLoss
+          pauseOnHover
+          stacked={true}
+          theme="light"
+          />
       </Suspense>
     </ThemeProvider>
   );

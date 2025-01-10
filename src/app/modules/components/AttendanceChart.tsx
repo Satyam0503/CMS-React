@@ -45,45 +45,11 @@ const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
 
   return (
     <Grid container>
-      <Card className="p-5 w-100">
-        <Stack className="card-header border-0 mb-4">
-          <Typography variant="h6">
-            {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
-          </Typography>
-        </Stack>
-
-        <Stack
-          spacing={8}
-          direction="row"
-          className="d-flex justify-content-start"
-        >
-          <Stack>
-            {" "}
-            <Typography variant="subtitle2" className="text-muted">
-              {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}{" "}
-            </Typography>
-            <Typography variant="h6">185</Typography>
-          </Stack>
-          <Stack>
-            {" "}
-            <Typography variant="subtitle2" className="text-muted">
-              {intl.formatMessage({ id: "ATTENDANCE.ABSENT" })}
-            </Typography>
-            <Typography variant="h6">16</Typography>
-          </Stack>
-          <Stack>
-            {" "}
-            <Typography variant="subtitle2" className="text-muted">
-              {intl.formatMessage({ id: "ATTENDANCE.LATE" })}
-            </Typography>
-            <Typography variant="h6">9</Typography>
-          </Stack>
-        </Stack>
-
+      <Card sx={{ width: "100%" }}>
         <Stack
           ref={chartRef}
           className="mixed-widget-5-chart card-rounded-top"
-        ></Stack>
+        />
       </Card>
     </Grid>
   );

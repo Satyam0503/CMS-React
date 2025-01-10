@@ -2,19 +2,16 @@
   "MENU.DASHBOARD": "Tablero",
   "MENU.EMP": "Employees",
   "MENU.LEAVE_MGMT": "Leave Management",
-  "MENU.ATTENDANCE":"Attendance",
-  "MENU.CONTACTS":"Contacts",
-  "MENU.PROJ":"Projects",
-  "MENU.RECRUITMENT":"Recruitment",
-  "MENU.HOLIDAYS":"Holidays",
-  "MENU.PROFILE":"My Profile",
-  "MENU.SETTINGS":"Settings",
-  "MENU.ADMIN":"Admin",
+  "MENU.ATTENDANCE": "Attendance",
+  "MENU.CONTACTS": "Contacts",
+  "MENU.PROJ": "Projects",
+  "MENU.RECRUITMENT": "Recruitment",
+  "MENU.HOLIDAYS": "Holidays",
+  "MENU.PROFILE": "My Profile",
+  "MENU.SETTINGS": "Settings",
+  "MENU.ADMIN": "Admin",
+  "AUTH.REGISTER.TITLE": "Registration",
 
-
-
-
-  
   "TRANSLATOR.SELECT": "Elige tu idioma",
   "MENU.NEW": "nuevo",
   "MENU.ACTIONS": "Comportamiento",
@@ -36,7 +33,7 @@
   "AUTH.FORGOT.TITLE": "Contraseña olvidada?",
   "AUTH.FORGOT.DESC": "Ingrese su correo electrónico para restablecer su contraseña",
   "AUTH.FORGOT.SUCCESS": "Your account has been successfully reset.",
-  "AUTH.REGISTER.TITLE": "Sign Up",
+
   "AUTH.REGISTER.DESC": "Enter your details to create your account",
   "AUTH.REGISTER.SUCCESS": "Your account has been successfuly registered.",
   "AUTH.INPUT.EMAIL": "Email",

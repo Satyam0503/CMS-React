@@ -14,9 +14,10 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Check } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
+import CustomisedButton from "../components/CustomisedButton";
 
 const style = {
   position: "absolute",
@@ -56,31 +57,41 @@ export default function Employment() {
       >
         <Box sx={style}>
           <Stack>
-            <Typography variant="h5" className="text-primary">
+            <Typography variant="h5">
               {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
             </Typography>
           </Stack>
           <Stack>
-            <Typography>Title</Typography>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "FORM.TITLE" })}
+            </Typography>
             <TextField variant="outlined"></TextField>
           </Stack>
-          <Grid container className="d-flex" spacing={2}>
-            <Grid item xs={12} md={6} className="w-100">
-              <Typography>Start date</Typography>
+          <Grid container display={"flex"} spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "APPLICATION.START" })}
+              </Typography>
               <CustomisedDatePicker />
             </Grid>
-            <Grid item xs={12} md={6} className="w-100">
-              <Typography>End date</Typography>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "APPLICATION.END" })}
+              </Typography>
               <CustomisedDatePicker />
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6} sx={{ width: "100%" }}>
-              <Typography>College Name</Typography>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "PROFILE.COLLEGE" })}
+              </Typography>
               <TextField fullWidth />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography>Type</Typography>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "PROFILE.TYPE" })}
+              </Typography>
 
               <FormControl fullWidth>
                 <Select
@@ -98,10 +109,26 @@ export default function Employment() {
             </Grid>
           </Grid>
 
-          <Grid container className="d-flex justify-content-end mt-4 gap-2">
-            <Button variant="contained">Cancel</Button>
-            <Button variant="contained">Add New</Button>
-            <Button variant="contained">Save</Button>
+          <Grid
+            container
+            display={"flex"}
+            justifyContent={"flex-end"}
+            gap={2}
+            mt={1}
+          >
+            <CustomisedButton variant="outlined" label="Cancel" />
+            <CustomisedButton
+              variant="outlined"
+              label="Add New"
+              Icon={<Add />}
+              iconPosition="start"
+            />
+            <CustomisedButton
+              variant="outlined"
+              label="Save"
+              Icon={<Check />}
+              iconPosition="start"
+            />
           </Grid>
         </Box>
       </Modal>

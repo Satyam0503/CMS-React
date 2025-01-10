@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import clsx from "clsx";
 import { useLocation } from "react-router";
 import { checkIsActive, KTIcon, WithChildren } from "../../../../helpers";
@@ -7,7 +7,7 @@ import { useLayout } from "../../../core";
 type Props = {
   to: string;
   title: string;
-  icon?: string;
+  icon?: ReactNode;
   fontIcon?: string;
   hasBullet?: boolean;
 };

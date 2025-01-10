@@ -18,6 +18,7 @@ import {
 } from "../../../_themes/partials/widgets";
 import { ToolbarWrapper } from "../../../_themes/layout/components/toolbar";
 import { Content } from "../../../_themes/layout/components/content";
+import { Container } from "@mui/material";
 
 const DashboardPage: FC = () => (
   <>
@@ -121,10 +122,12 @@ const DashboardWrapper: FC = () => {
   const intl = useIntl();
   return (
     <>
-      <PageTitle breadcrumbs={[]}>
-        {intl.formatMessage({ id: "MENU.DASHBOARD" })}
-      </PageTitle>
-      <DashboardPage />
+      <Container>
+        <PageTitle breadcrumbs={[]}>
+          {intl.formatMessage({ id: "MENU.DASHBOARD" })}
+        </PageTitle>
+        <DashboardPage />
+      </Container>
     </>
   );
 };

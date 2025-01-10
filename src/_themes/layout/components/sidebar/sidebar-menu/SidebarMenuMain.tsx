@@ -12,6 +12,14 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  AdminPanelSettings,
+  ColorLens,
+  Mail,
+  ToggleOn,
+  Work,
+} from "@mui/icons-material";
+import { CalendarIcon } from "@mui/x-date-pickers";
 
 const SidebarMenuMain = () => {
   const intl = useIntl();
@@ -19,7 +27,12 @@ const SidebarMenuMain = () => {
   return (
     <>
       <SidebarMenuItem
-        to="/test"
+        to="/admindashboard"
+        icon={<DashboardIcon />}
+        title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
+      />
+      <SidebarMenuItem
+        to="/userdashboard"
         icon={<DashboardIcon />}
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
@@ -38,17 +51,8 @@ const SidebarMenuMain = () => {
         to="/employeeleave"
         title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
       />
-      <SidebarMenuItem
-        to="/Projects"
-        icon={<FolderIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
-      />
-      <SidebarMenuItem
-        to="/Clients"
-        icon={<SwitchAccountIcon />}
-        title={intl.formatMessage({ id: "MENU.LAYOUT_BUILDER" })}
-      />
-      <SidebarMenuItemWithSub
+
+      {/* <SidebarMenuItemWithSub
         to="/crafted/pages"
         title="Pages"
         fontIcon="bi-archive"
@@ -64,22 +68,57 @@ const SidebarMenuMain = () => {
           title="Overview"
           icon={<EmailIcon />}
         />
-      </SidebarMenuItemWithSub>
+      </SidebarMenuItemWithSub> */}
 
-      <SidebarMenuItem
-        to="/crafted/pages/profile/overview"
-        title="Overview"
-        icon={<CalendarTodayIcon />}
-      />
       <SidebarMenuItem
         to="/myprofile"
         title={intl.formatMessage({ id: "MENU.PROFILE" })}
         icon={<AccountCircleIcon />}
       />
-      <SidebarMenuItem
-        to="/crafted/account/settings"
-        title="Settings"
+
+      <SidebarMenuItemWithSub
+        to="/recruitment"
+        title="Recruitment"
+        icon={<PersonSearchIcon />}
+      >
+        <SidebarMenuItem
+          to="/recruitment/jobs"
+          icon={<Work />}
+          title={intl.formatMessage({ id: "RECRUITMENT.JOBS" })}
+        />
+        <SidebarMenuItem
+          to="/recruitment/applications"
+          icon={<Mail />}
+          title={intl.formatMessage({ id: "USER.APPLICATIONS" })}
+        />
+      </SidebarMenuItemWithSub>
+
+      <SidebarMenuItemWithSub
+        to="/setting"
+        title="Admin"
         icon={<SettingsIcon />}
+      >
+        <SidebarMenuItem
+          to="/setting/permissions"
+          icon={<ToggleOn />}
+          title={intl.formatMessage({ id: "MENU.PERMISSIONS" })}
+        />
+        <SidebarMenuItem
+          to="/setting/theme"
+          icon={<ColorLens />}
+          title={intl.formatMessage({ id: "MENU.THEME" })}
+        />
+      </SidebarMenuItemWithSub>
+
+      <SidebarMenuItem
+        to="/holidays"
+        icon={<CalendarIcon />}
+        title={intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+      />
+      <SidebarMenuItem
+        to="/noticeboard"
+        icon={<AdminPanelSettings />}
+        title={intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
       />
     </>
   );
