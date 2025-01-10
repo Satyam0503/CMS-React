@@ -20,7 +20,7 @@ import Help from "./components/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
 import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
-import AttendanceTable from "./components/AttendanceTable";
+import AttendanceTable from "./components/LeaveTable";
 
 export default function DashboardUser() {
   const intl = useIntl();

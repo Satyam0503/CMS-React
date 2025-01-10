@@ -1,11 +1,12 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { ColumnListTypes, EmployeesDataTypes } from "./utils/common_types";
-import CustomisedButton from "./app/modules/components/CustomisedButton";
-import { CustomisedModal } from "./app/modules/components/CustomisedModal";
-import { dateFormatter } from "./utils/common";
-import { CustomIconButton } from "./app/modules/components/CustomIconButton";
+
+import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
+import { ColumnListTypes, EmployeesDataTypes } from "../common_types";
+import { dateFormatter } from "../common";
+import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
+import CustomisedButton from "../../app/modules/components/CustomisedButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -186,6 +187,8 @@ export const DashBoardLeaveTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "#",
+  },
+  {
     id: "title",
     label: "Title",
   },

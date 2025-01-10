@@ -17,11 +17,11 @@ import {
   HourglassTop,
   WorkOff,
 } from "@mui/icons-material";
-import { LeaveCalender } from "./LeaveCalender";
 import BasicTable from "../components/BasicTable";
 import AddLeaves from "./AddLeaves";
 import LeaveAssignment from "./LeaveAssignment";
 import LeaveSummary from "./LeaveSummary";
+import { LeaveCalender } from "./components/LeaveCalender";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
