@@ -26,11 +26,13 @@ import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { Pagination } from "../../modules/components/Pagination";
 
 
 // remove this array later
 const rows = [
   {
+    id:"2",
     title: "Test",
     type: "Custom Holiday",
     startDate: new Date(),
@@ -44,7 +46,7 @@ const initialValues: HolidayType = {
   title: "",
   type: "",
   startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
+  endDate: null,
   description: "",
 };
 
@@ -127,14 +129,21 @@ export default function Holidays() {
               columns={HolidayTabTableColumnList}
               rows={holidayList}
               page={page}
-              setPage={setPage}
-              totalRecords={totalRecords}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
               loading={isLoading}
               handleEdit={handleHolidayEdit}
               openConfirmationModal={openConfirmationModal}
             />
+            {
+              ( totalRecords > rowPerPage ) &&
+              <Pagination
+                page={page}
+                setPage={setPage}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                totalRecords={totalRecords}
+              />
+            }
           </Stack>
         </Card>
       </Grid>

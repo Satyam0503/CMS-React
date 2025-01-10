@@ -14,17 +14,14 @@ import {
 import { ColumnListTypes } from "../../../utils/common_types";
 
 interface PropsTypes<Row, Columns> {
-  tabName: string;
-  loading: boolean;
+  tabName?: string;
+  loading?: boolean;
   rows: Row[];
   columns: Columns[];
-  totalRecords: number;
   page: number;
   rowsPerPage: number;
   openConfirmationModal?: (id: string) => void;
   handleEdit?: (row: Row) => void;
-  setRowPerPage: React.Dispatch<React.SetStateAction<number>>;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
   openViewModal?: (id: string) => void;
 }
 
@@ -39,25 +36,12 @@ export const CustomisedTable = <
     columns,
     page,
     rowsPerPage,
-    setRowPerPage,
-    setPage,
     handleEdit,
     loading,
-    totalRecords,
     openConfirmationModal,
     openViewModal,
   } = props;
 
-  function handlePageChange(
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) {
-    setPage(newPage);
-  }
-  function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
-    setRowPerPage(+event.target.value);
-    setPage(0);
-  }
   return (
     <Grid container>
       <TableContainer sx={{ minHeight: 600 }}>
@@ -141,16 +125,6 @@ export const CustomisedTable = <
           )}
         </Table>
       </TableContainer>
-      <Grid item xs={12}>
-        <TablePagination
-          count={totalRecords && totalRecords}
-          component="div"
-          page={page}
-          onPageChange={handlePageChange}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Grid>
     </Grid>
   );
 };

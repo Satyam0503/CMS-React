@@ -217,11 +217,13 @@ export default function AboutUser() {
     summary.current = "";
   }
 
+  console.log(summary);
+  
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
         <Grid item sm={12}>
-          <Card sx={{ p: 5 }}>
+          <Card sx={{ p: 4 }}>
             <Stack
               direction="row"
               display={"flex"}
@@ -231,10 +233,11 @@ export default function AboutUser() {
               <Typography variant="h5">{currentUser?.jobRole}</Typography>
               {isSummaryEdit ? (
                 <CustomisedButton
-                  label="Update"
-                  variant="contained"
-                  handleClick={handleUpdateSummary}
-                  Icon={<Check />}
+                label="Update"
+                variant="contained"
+                handleClick={handleUpdateSummary}
+                Icon={<Check />}
+                // disabled={summary.current.length===0}
                 />
               ) : (
                 <IconButton onClick={() => setSummaryEdit(true)}>
@@ -249,11 +252,10 @@ export default function AboutUser() {
                 id="user_summary"
                 placeholder="Type..."
                 variant="outlined"
-                // value={summary.current}
                 onChange={(e) => (summary.current = e.target.value)}
               />
             ) : (
-              <Typography variant="body2">
+              <Typography variant="body1">
                 {currentUser?.summary || "Add Your Summary"}
               </Typography>
             )}

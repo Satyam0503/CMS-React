@@ -1,12 +1,15 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-
-import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
-import { ColumnListTypes, EmployeesDataTypes } from "../common_types";
-import { dateFormatter } from "../common";
-import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
-import CustomisedButton from "../../app/modules/components/CustomisedButton";
+import {
+  ColumnListTypes,
+  EmployeesDataTypes,
+  RolesType,
+} from "./utils/common_types";
+import CustomisedButton from "./app/modules/components/CustomisedButton";
+import { CustomisedModal } from "./app/modules/components/CustomisedModal";
+import { dateFormatter } from "./utils/common";
+import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -183,45 +186,75 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const DashBoardLeaveTableColumnList: ColumnListTypes[] = [
+// export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
+//   {
+//     id: "serialNo",
+//     label:"#",
+//   },
+//   {
+//     id:"type",
+//     label:"Type",
+//   },
+//   {
+//     id:"count",
+//     label:"Count"
+//   },
+//   {
+//     id:"reason",
+//     label:"Reaseon"
+//   },
+//   {
+//     id:"status",
+//     label:"Status"
+//   },
+//   {
+//     id:"action",
+//     label:"Action",
+//     build:(
+//       row:any,
+//       handleEdit:()=>void,
+//       openConfirmationModal:(leaveId:string)=>void
+//     )=>{
+//       <ActionComponent
+//         row={row}
+//         handleEdit={handleEdit}
+//         openConfirmationModal={openConfirmationModal}
+//       />
+//     }
+//   }
+// ];
+
+export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "#",
+    minWidth: 40,
   },
   {
-    id: "title",
-    label: "Title",
+    id: "roleName",
+    label: "Role Name",
+    minWidth: 150,
   },
   {
-    id: "type",
-    label: "Type",
+    id: "description",
+    label: "Description",
+    minWidth: 200,
   },
   {
-    id: "count",
-    label: "Count",
-  },
-  {
-    id: "reason",
-    label: "Reaseon",
-  },
-  {
-    id: "status",
-    label: "Status",
+    id: "accessToApp",
+    label: "Access To Application",
+    minWidth: 180,
   },
   {
     id: "action",
     label: "Action",
-    build: (
-      row: any,
-      handleEdit: () => void,
-      openConfirmationModal: (leaveId: string) => void
-    ) => {
-      <ActionComponent
-        row={row}
-        handleEdit={handleEdit}
-        openConfirmationModal={openConfirmationModal}
-      />;
-    },
+    minWidth: 180,
+    build: (row: RolesType, handleEdit: (role: RolesType) => void) => (
+      <CustomisedButton
+        label="Edit Permission"
+        handleClick={() => handleEdit(row)}
+      />
+    ),
   },
 ];
 

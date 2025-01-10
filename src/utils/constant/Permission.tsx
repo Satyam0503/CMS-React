@@ -1,17 +1,23 @@
-export const Permission = [
+export const CompanyRoles = [
   {
-    Titles: "Company Administrator",
-    Description:
+    id:"1",
+    roleName: "Company Administrator",
+    description:
       "Administrators have all permissions in the app. Limit this role to employees who will be in charge the client account",
+      accessToApp:""
   },
   {
-    Titles: "HR Manager",
-    Description:
+    id:"2",
+    roleName: "HR Manager",
+    description:
       "The HR employee can: Add & Edit colleagues, -Edit engagement surveys and view results for all departments, -Assign roles to other",
+    accessToApp:"Has no access"
   },
   {
-    Titles: "Employee",
-    Description: "Regular Employee",
+    id:"3",
+    roleName: "Employee",
+    description: "Regular Employee",
+    accessToApp:"Has no access"
   },
 ];
 

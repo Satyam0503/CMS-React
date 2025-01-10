@@ -23,11 +23,6 @@ export const SearchInput:FC<PropsType> = (props) => {
   return (
           <TextField
             InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchOutlined />
-                </InputAdornment>
-              ),
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton sx={{ border: "none" }} onClick={handleClearSearch}>
@@ -39,7 +34,7 @@ export const SearchInput:FC<PropsType> = (props) => {
             value={search}
             onChange={(e)=>setSearch(e.target.value)}
             variant="outlined"
-            placeholder="Search something ..."
+            placeholder="Search Something ..."
           />
   );
 };

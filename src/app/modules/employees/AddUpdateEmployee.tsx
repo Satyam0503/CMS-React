@@ -53,6 +53,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     setFieldValue,
     isValid,
     dirty,
+    setFieldTouched,
   } = useFormik({
     initialValues: initialValues,
     validationSchema: employeeSchema,
@@ -60,7 +61,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
       SaveAddEditEmployee(values, setSubmitting);
     },
   });
-  console.log(isValid);
 
   function handleDateofJoiningChange(newDate: Dayjs | null) {
     touched.dateOfJoining = true;
@@ -70,6 +70,13 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     touched.dateOfBirth = true;
     setFieldValue("dateOfBirth", newDate);
   }
+
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
 
   useEffect(() => {
     getAllRoles(token)
@@ -171,8 +178,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "USER.DOB" })}
               </Typography>
               <CustomisedDatePicker
+                name={"dateOfBirth"}
                 value={values.dateOfBirth}
-                setValue={handleDOBChange}
+                setValue={handleDateChange("dateOfBirth")}
                 maxDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
@@ -369,8 +377,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "USER.DOJ" })}
               </Typography>
               <CustomisedDatePicker
+                name="dateOfJoining"
                 value={values.dateOfJoining}
-                setValue={handleDateofJoiningChange}
+                setValue={handleDateChange("dateOfJoining")}
                 maxDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
