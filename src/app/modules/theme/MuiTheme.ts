@@ -929,7 +929,7 @@ export const MuiTheme = createTheme({
         },
         head: {
           textTransform: "none",
-          padding: "10px",
+          // padding: "10px",
           fontSize: 12,
           fontWeight: "bold",
           color: colors.alpha.neutral[800],

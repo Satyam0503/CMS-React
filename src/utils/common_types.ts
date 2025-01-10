@@ -22,9 +22,10 @@ export interface RolesType {
   id: string;
   roleName: string;
   description: string;
-  isDeleted: boolean | null;
-  createdAt: string;
-  updatedAt: string;
+  accessToApp?: string;
+  isDeleted?: boolean | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CertificationsType {

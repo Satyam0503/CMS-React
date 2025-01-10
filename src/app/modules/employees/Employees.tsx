@@ -35,6 +35,7 @@ import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
+import { Pagination } from "../components/Pagination";
 const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 const employeeInitialValue: EmployeesDataTypes = {
@@ -282,18 +283,24 @@ export default function Employees() {
           <Stack sx={{ mt: "1rem" }}>
             <CustomisedTable
               tabName="Employee"
-              totalRecords={totalRecords}
               loading={isLoading}
               rows={employeeList}
               columns={EmployeeTabTableColumnList}
               page={page}
-              setPage={setPage}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
               handleEdit={handleEmployeeEdit}
               openConfirmationModal={openConfirmationModal}
               openViewModal={openViewModal}
             />
+            {totalRecords > rowPerPage && (
+              <Pagination
+                page={page}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                setPage={setPage}
+                totalRecords={totalRecords}
+              />
+            )}
           </Stack>
         </Card>
       </Stack>

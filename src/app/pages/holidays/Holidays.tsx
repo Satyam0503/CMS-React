@@ -26,6 +26,7 @@ import { HolidayTabTableColumnList } from "../../../Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { Pagination } from "../../modules/components/Pagination";
 
 
 // remove this array later
@@ -128,14 +129,21 @@ export default function Holidays() {
               columns={HolidayTabTableColumnList}
               rows={holidayList}
               page={page}
-              setPage={setPage}
-              totalRecords={totalRecords}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
               loading={isLoading}
               handleEdit={handleHolidayEdit}
               openConfirmationModal={openConfirmationModal}
             />
+            {
+              ( totalRecords > rowPerPage ) &&
+              <Pagination
+                page={page}
+                setPage={setPage}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                totalRecords={totalRecords}
+              />
+            }
           </Stack>
         </Card>
       </Grid>

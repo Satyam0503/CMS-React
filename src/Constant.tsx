@@ -1,7 +1,11 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { ColumnListTypes, EmployeesDataTypes } from "./utils/common_types";
+import {
+  ColumnListTypes,
+  EmployeesDataTypes,
+  RolesType,
+} from "./utils/common_types";
 import CustomisedButton from "./app/modules/components/CustomisedButton";
 import { CustomisedModal } from "./app/modules/components/CustomisedModal";
 import { dateFormatter } from "./utils/common";
@@ -182,42 +186,73 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
+// export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
+//   {
+//     id: "serialNo",
+//     label:"#",
+//   },
+//   {
+//     id:"type",
+//     label:"Type",
+//   },
+//   {
+//     id:"count",
+//     label:"Count"
+//   },
+//   {
+//     id:"reason",
+//     label:"Reaseon"
+//   },
+//   {
+//     id:"status",
+//     label:"Status"
+//   },
+//   {
+//     id:"action",
+//     label:"Action",
+//     build:(
+//       row:any,
+//       handleEdit:()=>void,
+//       openConfirmationModal:(leaveId:string)=>void
+//     )=>{
+//       <ActionComponent
+//         row={row}
+//         handleEdit={handleEdit}
+//         openConfirmationModal={openConfirmationModal}
+//       />
+//     }
+//   }
+// ];
+
+export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:"#",
+    label: "#",
+    minWidth: 40,
   },
   {
-    id:"type",
-    label:"Type",
+    id: "roleName",
+    label: "Role Name",
+    minWidth: 150,
   },
   {
-    id:"count",
-    label:"Count"
+    id: "description",
+    label: "Description",
+    minWidth: 200,
   },
   {
-    id:"reason",
-    label:"Reaseon"
+    id: "accessToApp",
+    label: "Access To Application",
+    minWidth: 180,
   },
   {
-    id:"status",
-    label:"Status"
+    id: "action",
+    label: "Action",
+    minWidth: 180,
+    build: (row: RolesType, handleEdit: (role: RolesType) => void) => (
+      <CustomisedButton label="Edit Permission" handleClick={()=>handleEdit(row)} />
+    ),
   },
-  {
-    id:"action",
-    label:"Action",
-    build:(
-      row:any,
-      handleEdit:()=>void,
-      openConfirmationModal:(leaveId:string)=>void
-    )=>{
-      <ActionComponent 
-        row={row}
-        handleEdit={handleEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    }
-  }
 ];
 
 interface ActionComponentProps<Row> {
