@@ -204,6 +204,7 @@
   "USER.FIRST_NAME": "First name",
   "USER.LAST_NAME": "Last name",
   "USER.ROLE": "Role",
+  "USER.DASHBOARD": "User Dashboard",
   "USER.DOJ": "Date of joining",
   "USER.DOB": "Date of birth",
   "USER.JOBROLE": "Job Role",

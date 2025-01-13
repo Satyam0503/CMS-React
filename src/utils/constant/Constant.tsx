@@ -5,11 +5,11 @@ import {
   ColumnListTypes,
   EmployeesDataTypes,
   RolesType,
-} from "./utils/common_types";
-import CustomisedButton from "./app/modules/components/CustomisedButton";
-import { CustomisedModal } from "./app/modules/components/CustomisedModal";
-import { dateFormatter } from "./utils/common";
-import { CustomIconButton } from "./app/modules/components/CustomIconButton";
+} from "../common_types";
+import { dateFormatter } from "../common";
+import CustomisedButton from "../../app/modules/components/CustomisedButton";
+import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
+import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -67,6 +67,11 @@ export const EducationType = [
 export const HolidayTypes = [
   { id: 1, label: "Public Holiday", value: "Public Holiday" },
   { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
+];
+export const NoticeTypes = [
+  { id: 1, label: "General", value: "General" },
+  { id: 2, label: "Important", value: "Important" },
+  { id: 3, label: "Urgent", value: "Urgent" },
 ];
 
 export const bloodGroups = [
@@ -180,6 +185,45 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
       <ActionComponent
         row={row}
         handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
+  },
+];
+export const NoticeBoardTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id: "name",
+    label: "Name",
+  },
+  {
+    id: "datetime",
+    label: "Date/Time",
+  },
+
+  {
+    id: "type",
+    label: "Type",
+  },
+  {
+    id: "message",
+    label: "Message",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleNoticeEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleNoticeEdit}
         openConfirmationModal={openConfirmationModal}
       />
     ),

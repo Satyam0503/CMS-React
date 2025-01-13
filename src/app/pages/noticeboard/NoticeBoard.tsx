@@ -22,10 +22,10 @@ import { CustomIconButton } from "../../modules/components/CustomIconButton";
 import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import HolidayForm from "../holidays/HolidayForm";
-import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
+import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 
 // function createData(
 //   sno: number,
