@@ -1,21 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface AuthenticationState {
-  isUserAuthorized: boolean;
+  isUserAuthenticated: boolean;
 }
 
 const initialState: AuthenticationState = {
-  isUserAuthorized: false,
+  isUserAuthenticated: false,
 };
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     setAuth: (state) => {
-      state.isUserAuthorized = true;
+      state.isUserAuthenticated = true;
     },
     userLogout: (state) => {
-      state.isUserAuthorized = false;
+      state.isUserAuthenticated = false;
     },
   },
 });

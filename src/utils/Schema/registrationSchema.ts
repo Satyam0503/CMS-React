@@ -20,11 +20,12 @@ export const registrationSchema = Yup.object().shape({
     password: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
+      .matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,"Use 8 or more characters with a mix of letters, numbers & symbols")
       .required("Password is required"),
     changePassword: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Password confirmation is required")
       .oneOf([Yup.ref("password")], "Password and Confirm Password didn't match"),
-    acceptTerms: Yup.bool().required("You must accept the terms and conditions"),
+      acceptTerms: Yup.boolean().oneOf([true], 'You must accept the terms and conditions').required('Accepting terms is required'),
   });

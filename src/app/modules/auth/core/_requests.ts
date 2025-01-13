@@ -1,8 +1,9 @@
-import axios from "axios";
-import { AuthModel, UserModel } from "./_models";
-import { Http } from "@mui/icons-material";
+import axios, { AxiosResponse } from "axios";
+import { AuthModel, CompanyRegisterModel, UserModel } from "./_models";
+import { postRequest } from "../../../../server/axios";
+import { ServiceUrl } from "../../../../utils/constant/Constant";
 
-const API_URL = import.meta.env.VITE_APP_API_URL;
+const API_URL = import.meta.env.VITE_BASEURL;
 
 console.log("API ::", API_URL);
 
@@ -10,6 +11,10 @@ export const GET_USER_BY_ACCESSTOKEN_URL = `${API_URL}/verify_token`;
 export const LOGIN_URL = `${API_URL}/login`;
 export const REGISTER_URL = `${API_URL}/register`;
 export const REQUEST_PASSWORD_URL = `${API_URL}/forgot_password`;
+
+export const registerCompany = (payload:CompanyRegisterModel):Promise<AxiosResponse<CompanyRegisterModel>> =>{
+  return postRequest(ServiceUrl.REGISTER_COMPANY,payload,{},false);
+}
 
 interface resultModel<T = object> {
   success: boolean;

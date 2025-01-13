@@ -17,20 +17,19 @@ const AuthLayout = () => {
   }, []);
 
   return (
-    <Container>
+    <Container maxWidth={"lg"}>
       <Grid
         container
         py={4}
         gap={4}
-        display={"flex"}
-        justifyContent={"space-between"}
+        justifyContent={"space-evenly"}
+        sx={{alignItems:"center"}}
       >
         <Grid
           item
           xs={12}
           md={5}
-          display={"flex"}
-          flexDirection={"column"}
+          direction={"column"}
           justifyContent={"center"}
           order={{ xs: "2", md: "inherit" }}
           width={"100%"}
@@ -62,8 +61,7 @@ const AuthLayout = () => {
           item
           xs={12}
           md={5}
-          display={"flex"}
-          flexDirection={"column"}
+          direction={"column"}
           textAlign={"center"}
           justifyContent={"center"}
           gap={2}

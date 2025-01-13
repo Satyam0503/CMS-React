@@ -1,5 +1,5 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   ColumnListTypes,
@@ -10,11 +10,13 @@ import { dateFormatter } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
 
 export const ServiceUrl = {
+  REGISTER_COMPANY: `${BaseUrl}/registerCompany`,
   GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
   ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
@@ -293,11 +295,10 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     minWidth: 180,
-    build: (row: RolesType, handleEdit: (role: RolesType) => void) => (
-      <CustomisedButton
-        label="Edit Permission"
-        handleClick={() => handleEdit(row)}
-      />
+    build: (row: RolesType) => (
+      <Link to={"/setting/editpermission"} state={{...row}}>
+        <Button variant="contained">Edit Permission</Button>
+      </Link>
     ),
   },
 ];

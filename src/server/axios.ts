@@ -24,14 +24,14 @@ export const getRequest = (
   });
 };
 
-export const postRequest = <D,>(
+export const postRequest = <D,R>(
   path: string,
   data?: D,
   config?: AxiosRequestConfig,
   isformData: boolean = false,
   tokenData: string = token
 ) => {
-  return axios.post(path, data, {
+  return axios.post<R>(path, data, {
     ...config,
     headers: {
       "Access-Control-Allow-Origin": "*",
