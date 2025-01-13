@@ -979,7 +979,7 @@ export const MuiTheme = createTheme({
             minWidth: "500px", // For medium and up screens
           },
           "@media (min-width:1200px)": {
-            minWidth: "600px", // For large screens and up
+            minWidth: "1000px", // For large screens and up
           },
         },
       },
@@ -1054,6 +1054,11 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
+          background: colors.alpha.neutral[100],
+          "&.Mui-disabled": {
+            color: colors.alpha.neutral[200],
+          },
+
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
           },

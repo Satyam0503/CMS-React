@@ -1,10 +1,11 @@
 import { Typography, Grid, Stack, Container } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedTable } from "../../../modules/components/CustomisedTable";
+
 import { useState } from "react";
 import { RolesType } from "../../../../utils/common_types";
-import { CompanyRoles } from "../../../../utils/constant/Permission";
 import { RoleTableColumnList } from "../../../../utils/constant/Constant";
+import { CompanyRoles } from "../../../../utils/constant/Permission";
 
 export const Roles = () => {
   const intl = useIntl();

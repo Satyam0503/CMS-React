@@ -6,7 +6,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { colors } from "../../../modules/theme/MuiTheme";
-import { Checkbox, Grid, Stack, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,7 +37,7 @@ export const EditPermission = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  
+
   useEffect(() => {
     if (!state) {
       navigate("/error/404", { replace: true });
@@ -37,67 +45,175 @@ export const EditPermission = () => {
   }, []);
 
   return (
-    <Stack spacing={2}>
-      <Typography variant="h4">Edit Role</Typography>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>{intl.formatMessage({ id: "MENU.MODULE" })}</TableCell>
-              <TableCell align="left">
-                {intl.formatMessage({ id: "MENU.SUP.ADMIN" })}
-              </TableCell>
-              <TableCell align="left">
-                {intl.formatMessage({ id: "MENU.ADMIN" })}
-              </TableCell>
-              <TableCell align="left">
-                RolesType, {intl.formatMessage({ id: "MENU.MGMT" })}
-              </TableCell>
-              <TableCell align="left">
-                {intl.formatMessage({ id: "MENU.USER" })}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: "600",
-                      color: colors.alpha.neutral[800],
-                    }}
-                  >
-                    {row.name}
-                  </Typography>
-                </TableCell>
-                <TableCell align="left">
-                  <Checkbox {...label} defaultChecked />
-                </TableCell>
-                <TableCell align="left">
-                  <Checkbox {...label} defaultChecked />
-                </TableCell>
-                <TableCell align="left">
-                  <Checkbox {...label} defaultChecked />
-                </TableCell>
-                <TableCell align="left">
-                  <Checkbox {...label} defaultChecked />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Container>
+      <Stack position={"sticky"}>
+        <Typography variant="h4" mb={2}>
+          {intl.formatMessage({ id: "ROLES.EDIT" })}
+        </Typography>
+        <TextField variant="standard" label="Role Name" fullWidth />
+        <TextField variant="standard" label="Description" fullWidth />
+      </Stack>
+      <Typography variant="h5" my={2}>
+        {intl.formatMessage({ id: "Permissions" })}
+      </Typography>
+
+      <Stack
+        sx={{
+          border: "1px solid",
+          borderColor: colors.alpha.neutral[200],
+          p: 5,
+          borderRadius: 1,
+          my: 2,
+        }}
+        spacing={3}
+      >
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "USER.DASHBOARD" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.EMP" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+
+        {/* <Stack>
+            <Stack>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+              </Typography>
+            </Stack>
+            <Stack direction="row">
+              <FormControlLabel control={<Checkbox disabled />} label="View" />
+              <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+              <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            </Stack>
+          </Stack> */}
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.PROJ" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+        {/* <Stack>
+            <Stack>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "MENU.CLIENTS" })}
+              </Typography>
+            </Stack>
+            <Stack direction="row">
+              <FormControlLabel control={<Checkbox />} label="View" />
+              <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+              <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            </Stack>
+          </Stack> */}
+
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+
+        {/* User profile */}
+        <Stack spacing={1}>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "USER.PROFILE" })}
+          </Typography>
+
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit introduction"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit personal informantion"
+            />
+            <FormControlLabel control={<Checkbox />} label="Edit skills" />
+            <FormControlLabel control={<Checkbox />} label="Edit education" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit certification"
+            />
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit pending for approval leaves"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit work history"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit notifications settings"
+            />
+            <FormControlLabel control={<Checkbox />} label="Change Password" />
+            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+          </Stack>
+        </Stack>
+      </Stack>
       <Grid container display={"flex"} justifyContent={"end"} gap={2}>
-        <CustomisedButton variant="outlined" label="Cancel" />
+        <CustomisedButton
+          variant="outlined"
+          // handleClick={handleClose}
+          label="Cancel"
+        />
         <CustomisedButton label="Update" />
       </Grid>
-    </Stack>
+    </Container>
   );
 };

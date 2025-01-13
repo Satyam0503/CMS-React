@@ -11,7 +11,9 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AdminPanelSettings,
   ColorLens,
+  Folder,
   Mail,
+  SwitchAccount,
   ToggleOn,
   Work,
 } from "@mui/icons-material";
@@ -30,7 +32,7 @@ const SidebarMenuMain = () => {
       <SidebarMenuItem
         to="/userdashboard"
         icon={<DashboardIcon />}
-        title={intl.formatMessage({ id: "USER.DASHBOARD" })}
+        title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
       <SidebarMenuItem
         to="/employees"
@@ -38,14 +40,24 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.EMP" })}
       />
       <SidebarMenuItem
+        icon={<PermContactCalendarIcon />}
+        to="/employeeleave"
+        title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+      />
+      <SidebarMenuItem
         to="/attendance"
         icon={<AccessTimeIcon />}
         title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
       />
       <SidebarMenuItem
-        icon={<PermContactCalendarIcon />}
-        to="/employeeleave"
-        title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+        to="/projects"
+        icon={<Folder />}
+        title={intl.formatMessage({ id: "MENU.PROJECTS" })}
+      />
+      <SidebarMenuItem
+        to="/clients"
+        icon={<SwitchAccount />}
+        title={intl.formatMessage({ id: "MENU.CLIENTS" })}
       />
 
       {/* <SidebarMenuItemWithSub
