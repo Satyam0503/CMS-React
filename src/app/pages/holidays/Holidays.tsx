@@ -1,5 +1,6 @@
 import {
   Card,
+  Container,
   Grid,
   IconButton,
   InputAdornment,
@@ -28,11 +29,10 @@ import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
 import { Pagination } from "../../modules/components/Pagination";
 
-
 // remove this array later
 const rows = [
   {
-    id:"2",
+    id: "2",
     title: "Test",
     type: "Custom Holiday",
     startDate: new Date(),
@@ -118,9 +118,13 @@ export default function Holidays() {
           >
             <SearchInput search={searchValue} setSearch={setSearchValue} />
             <Stack direction="row" spacing={1}>
-              <CustomIconButton tooltip="Filter List" icon={<FilterList/>}  />
-              <CustomIconButton tooltip="Add Holiday" icon={<Add/>} handleClick={()=>setModalOpen(true)}/>
-              <CustomIconButton tooltip="Import Excel" icon={<Download/>} />
+              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+              <CustomIconButton
+                tooltip="Add Holiday"
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+              />
+              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
             </Stack>
           </Stack>
           <Stack sx={{ mt: "1rem" }}>
@@ -134,8 +138,7 @@ export default function Holidays() {
               handleEdit={handleHolidayEdit}
               openConfirmationModal={openConfirmationModal}
             />
-            {
-              ( totalRecords > rowPerPage ) &&
+            {totalRecords > rowPerPage && (
               <Pagination
                 page={page}
                 setPage={setPage}
@@ -143,7 +146,7 @@ export default function Holidays() {
                 setRowPerPage={setRowPerPage}
                 totalRecords={totalRecords}
               />
-            }
+            )}
           </Stack>
         </Card>
       </Grid>

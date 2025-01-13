@@ -5,12 +5,8 @@ import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import FolderIcon from "@mui/icons-material/Folder";
-import EmailIcon from "@mui/icons-material/Email";
-import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {
   AdminPanelSettings,

@@ -23,7 +23,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>
         <Stack direction={"column"} spacing={3}>
-          <Typography variant="h4" className="text-primary">
+          <Typography variant="h4">
             {intl.formatMessage({ id: "MENU.EMPLOYEE_DETAILS" })}
           </Typography>
           <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>

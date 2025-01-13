@@ -1,20 +1,6 @@
-import {
-  Typography,
-  Card,
-  Stack,
-  TextField,
-  InputAdornment,
-  Container,
-  IconButton,
-} from "@mui/material";
+import { Typography, Card, Stack, Container } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  Close,
-  Download,
-  FilterList,
-  SearchOutlined,
-} from "@mui/icons-material";
+import { Add, Close, Download, FilterList } from "@mui/icons-material";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";

@@ -34,7 +34,18 @@ export default function AddUpdateCertification(props: PropTypes) {
   const { open, initialValues, handleAddUpdateCertification, handleClose } =
     props;
 
-  const { values, errors, touched, handleSubmit, getFieldProps, isValid, dirty ,isSubmitting ,setFieldValue, setFieldTouched  } = useFormik({
+  const {
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    getFieldProps,
+    isValid,
+    dirty,
+    isSubmitting,
+    setFieldValue,
+    setFieldTouched,
+  } = useFormik({
     initialValues: initialValues,
     validationSchema: userCertificationSchema,
     onSubmit: (values, { setSubmitting }) => {
@@ -42,12 +53,12 @@ export default function AddUpdateCertification(props: PropTypes) {
     },
   });
 
-  const handleDateChange = (fieldName:string)=>{
-    return (newDate:Dayjs | null)=>{
-      setFieldTouched(fieldName,true);
-      setFieldValue(fieldName,newDate)
-    }
-  }
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Typography variant="h5" className="text-primary mb-4">
@@ -139,9 +150,9 @@ export default function AddUpdateCertification(props: PropTypes) {
             handleClick={handleClose}
             variant="outlined"
           />
-          <CustomisedButton 
-            label="Save" 
-            type="submit"  
+          <CustomisedButton
+            label="Save"
+            type="submit"
             disabled={!(isValid && dirty) || isSubmitting}
           />
         </Stack>

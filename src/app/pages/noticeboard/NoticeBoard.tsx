@@ -1,171 +1,198 @@
 import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+
 import {
   Button,
   Card,
+  Container,
   Grid,
-  IconButton,
-  InputAdornment,
   Link,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
-  ArrowBack,
-  Close,
+  Add,
   Download,
   FilterList,
   ListAltOutlined,
-  Search,
-  Undo,
-  Visibility,
 } from "@mui/icons-material";
-import AddNotice from "./AddNotice";
-import CustomisedButton from "../../modules/components/CustomisedButton";
-import MyNoticeBoard from "./MyNoticeBoard";
 
-function createData(
-  sno: number,
-  title: string,
-  type: string,
-  startdate: string,
-  enddate: string,
-  description: string,
-  action: string
-) {
-  return { sno, title, type, startdate, enddate, description, action };
-}
+import { SearchInput } from "../../modules/components/SearchInput";
+import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { colors } from "../../modules/theme/MuiTheme";
+import { CustomisedTable } from "../../modules/components/CustomisedTable";
+import HolidayForm from "../holidays/HolidayForm";
+import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
+import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
+import { HolidayType } from "../../../utils/common_types";
+import dayjs from "dayjs";
+
+// function createData(
+//   sno: number,
+//   title: string,
+//   type: string,
+//   startdate: string,
+//   enddate: string,
+//   description: string,
+//   action: string
+// ) {
+//   return { sno, title, type, startdate, enddate, description, action };
+// }
+
+// const rows = [
+//   createData(
+//     1,
+//     "New Year",
+//     "Public Holiday",
+//     "1 Jan'25",
+//     "3 Jan'25",
+//     "Celebrations",
+//     ""
+//   ),
+// ];
 
 const rows = [
-  createData(
-    1,
-    "New Year",
-    "Public Holiday",
-    "1 Jan'25",
-    "3 Jan'25",
-    "Celebrations",
-    ""
-  ),
+  {
+    title: "Test",
+    type: "Custom Notice",
+    startDate: new Date(),
+    endDate: new Date(),
+    description: "Test",
+  },
 ];
 
+const initialValues: HolidayType = {
+  id: "",
+  title: "",
+  type: "",
+  startDate: dayjs(Date.now()),
+  endDate: dayjs(Date.now()),
+  description: "",
+};
+
 export default function NoticeBoard() {
+  const [initialNoticeValues, setInitialNoticeValues] =
+    React.useState(initialValues);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [NoticeList, setNoticeList] = React.useState<any[]>(rows);
+  const [page, setPage] = React.useState(0);
+  const [totalRecords, setTotalRecords] = React.useState(0);
+  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
+  const [isLoading, setLoading] = React.useState(false);
+  const [isRefresh, setRefresh] = React.useState(false);
+  const [isEdit, setEdit] = React.useState(false);
+  const [selectedNoticeId, setSelectedNoticeId] = React.useState<string | null>(
+    null
+  );
+  const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
+
   const intl = useIntl();
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setEdit(false);
+    setInitialNoticeValues(initialValues);
+  };
 
-  const [open, setOpen] = React.useState(false);
+  const handleAddUpdateNotice = (
+    values: HolidayType,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    console.log(values);
+  };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleNoticeEdit = (row: any) => {
+    setEdit(true);
+    setModalOpen(true);
+  };
+
+  const handleNoticeDeletion = () => {};
+
+  const openConfirmationModal = (noticeId: string) => {
+    setConfirmModalOpen(true);
+    setSelectedNoticeId(noticeId);
+  };
+  function closeConfirmationModal() {
+    setConfirmModalOpen(false);
+    setSelectedNoticeId(null);
+  }
 
   return (
-    <Grid
-      container
-      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
-      spacing={2}
-    >
-      <Stack>
-        <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
-        </Typography>
-      </Stack>
-      <Card sx={{ width: "100%", p: "16px" }}>
-        <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Stack>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton sx={{ border: "none" }}>
-                      <Close />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              placeholder="Search ..."
-            />
-          </Stack>
-          <Stack direction={"row"} spacing={1}>
-            <Button
-              startIcon={<ListAltOutlined />}
-              variant="outlined"
-              size="small"
-            >
-              <Link href="mynoticeboard" underline="hover">
-                {"My Notice Board"}
-              </Link>
-            </Button>
+    <Container>
+      <Grid container my={6} spacing={2}>
+        <Stack>
+          <Typography variant="h4" sx={{ pb: "20px" }}>
+            {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
+          </Typography>
+        </Stack>
+        <Card sx={{ width: "100%", p: "16px" }}>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <SearchInput search={searchValue} setSearch={setSearchValue} />
+            <Stack direction={"row"} spacing={1}>
+              <Button
+                startIcon={<ListAltOutlined />}
+                variant="outlined"
+                size="small"
+              >
+                <Link
+                  href="mynoticeboard"
+                  underline="hover"
+                  color={colors.alpha.neutral[800]}
+                >
+                  {"My Notice Board"}
+                </Link>
+              </Button>
 
-            <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <Stack onClick={() => setOpen(true)}>
-                <AddNotice />
+              <Stack direction="row" spacing={1}>
+                <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+                <CustomIconButton
+                  tooltip="Post notice"
+                  icon={<Add />}
+                  handleClick={() => setModalOpen(true)}
+                />
+                <CustomIconButton tooltip="Import Excel" icon={<Download />} />
               </Stack>
-              <IconButton aria-label="import excel">
-                <Download />
-              </IconButton>
             </Stack>
           </Stack>
-        </Stack>
-        <Stack sx={{ mt: "1rem" }}>
-          <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">#</TableCell>
-                  <TableCell align="left">Title</TableCell>
-                  <TableCell align="left">Type</TableCell>
-                  <TableCell align="right">Start Date</TableCell>
-                  <TableCell align="right">End Date</TableCell>
-                  <TableCell align="right">Description</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.sno}>
-                    <TableCell>{row.sno}</TableCell>
-                    <TableCell>{row.title}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell align="right">{row.startdate}</TableCell>
-                    <TableCell align="right">{row.enddate}</TableCell>
-                    <TableCell align="right">{row.description}</TableCell>
-                    <TableCell align="right">
-                      {row.action}
-
-                      <IconButton sx={{ mr: 1 }}>
-                        <Undo />
-                      </IconButton>
-
-                      <IconButton>
-                        <Visibility />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
-      </Card>
-    </Grid>
+          <Stack sx={{ mt: "1rem" }}>
+            <CustomisedTable
+              tabName="Notice"
+              columns={NoticeBoardTableColumnList}
+              rows={NoticeList}
+              page={page}
+              setPage={setPage}
+              totalRecords={totalRecords}
+              rowsPerPage={rowPerPage}
+              setRowPerPage={setRowPerPage}
+              loading={isLoading}
+              handleEdit={handleNoticeEdit}
+              openConfirmationModal={openConfirmationModal}
+            />
+          </Stack>
+        </Card>
+      </Grid>
+      {isModalOpen && (
+        <HolidayForm
+          open={isModalOpen}
+          handleClose={handleCloseModal}
+          initialValues={initialNoticeValues}
+          handleAddUpdateHoliday={handleAddUpdateNotice}
+        />
+      )}
+      {isConfirmModalOpen && (
+        <ConfirmationModal
+          title="Delete Notice"
+          content="Are you sure you want to delete this notice?"
+          open={isConfirmModalOpen}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={handleNoticeDeletion}
+        />
+      )}
+    </Container>
   );
 }

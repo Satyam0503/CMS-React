@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 export const registrationSchema = Yup.object().shape({
-    firstname: Yup.string()
+    firstName: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("First name is required"),
@@ -9,11 +9,11 @@ export const registrationSchema = Yup.object().shape({
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Email is required"),
-    lastname: Yup.string()
+    lastName: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Last name is required"),
-    companyname: Yup.string()
+    companyName: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Company name is required"),
@@ -21,7 +21,7 @@ export const registrationSchema = Yup.object().shape({
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Password is required"),
-    changepassword: Yup.string()
+    changePassword: Yup.string()
       .min(3, "Minimum 3 symbols")
       .max(50, "Maximum 50 symbols")
       .required("Password confirmation is required")
