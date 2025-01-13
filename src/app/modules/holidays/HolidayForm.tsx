@@ -9,10 +9,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../modules/components/CustomisedDatePicker";
-import CustomisedButton from "../../modules/components/CustomisedButton";
+import CustomisedDatePicker from "../components/CustomisedDatePicker";
+import CustomisedButton from "../components/CustomisedButton";
 import { Check } from "@mui/icons-material";
-import { CustomisedModal } from "../../modules/components/CustomisedModal";
+import { CustomisedModal } from "../components/CustomisedModal";
 import { HolidayType } from "../../../utils/common_types";
 import { useFormik } from "formik";
 import holidaySchema from "../../../utils/Schema/holidaySchema";

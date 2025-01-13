@@ -929,12 +929,16 @@ export const MuiTheme = createTheme({
         },
         head: {
           textTransform: "none",
-          // padding: "10px",
+
           fontSize: 12,
-          fontWeight: "bold",
+          fontWeight: "bolder",
           color: colors.alpha.neutral[800],
           borderBottom: "1px solid " + colors.alpha.neutral[300],
         },
+        // body: {
+
+        //   fontWeight: "bold",
+        // },
       },
     },
     MuiAlert: {

@@ -9,10 +9,10 @@ import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
 import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
 import Employees from "../modules/employees/Employees";
-import Holidays from "../pages/holidays/Holidays";
+import Holidays from "../pages/holidays/Holidays.tsx";
 
 import NoticeBoard from "../pages/noticeboard/NoticeBoard";
-import MyNoticeBoard from "../pages/noticeboard/MyNoticeBoard";
+import MyNoticeBoard from "../modules/noticeboard/MyNoticeBoard.tsx";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";

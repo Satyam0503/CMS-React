@@ -1,6 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import Jobs from "./jobs/Jobs";
-import Applications from "./applications/Applications";
+import Jobs from "../../modules/recruitment/jobs/Jobs";
+import Applications from "../../modules/recruitment/applications/Applications";
 
 const Recruitment = () => {
   return (

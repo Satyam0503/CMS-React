@@ -29,8 +29,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../modules/components/CustomisedModal";
-import CustomisedButton from "../../modules/components/CustomisedButton";
+import { CustomisedModal } from "../components/CustomisedModal";
+import CustomisedButton from "../components/CustomisedButton";
 import AddNotice from "./AddNotice";
 function createData(
   sno: number,

@@ -98,7 +98,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             : intl.formatMessage({ id: "ADD.EMP.INFO" })}
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={{ xs: 1, md: 2 }} columnSpacing={2}>
+          <Grid container spacing={{ xs: 1, md: 2 }} alignItems={"center"}>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -312,7 +312,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {...getFieldProps("phoneNumber")}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            {/* <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
               </Typography>
@@ -332,8 +332,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <FormHelperText sx={{ color: "#d32f2f" }}>
                 {touched.bloodGroup && errors.bloodGroup && errors.bloodGroup}
               </FormHelperText>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid> */}
+            {/* <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
               </Typography>
@@ -371,37 +371,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 }
                 {...getFieldProps("emergencyContact")}
               />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.DOJ" })}
-              </Typography>
-              <CustomisedDatePicker
-                name="dateOfJoining"
-                value={values.dateOfJoining}
-                setValue={handleDateChange("dateOfJoining")}
-                maxDate={dayjs()}
-              />
-              <FormHelperText sx={{ color: "#d32f2f" }}>
-                {touched.dateOfJoining &&
-                  errors.dateOfJoining &&
-                  errors.dateOfJoining}
-              </FormHelperText>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.ADDRESS" })}
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Address"
-                id="outlined-basic"
-                variant="outlined"
-                error={touched.address && Boolean(errors.address)}
-                helperText={touched.address && errors.address && errors.address}
-                {...getFieldProps("address")}
-              />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "PROFILE.STATUS" })}
@@ -418,6 +388,39 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
+                {intl.formatMessage({ id: "USER.DOJ" })}
+              </Typography>
+
+              <CustomisedDatePicker
+                name="dateOfJoining"
+                value={values.dateOfJoining}
+                setValue={handleDateChange("dateOfJoining")}
+                maxDate={dayjs()}
+              />
+              <FormHelperText>
+                {touched.dateOfJoining &&
+                  errors.dateOfJoining &&
+                  errors.dateOfJoining}
+              </FormHelperText>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "USER.ADDRESS" })}
+              </Typography>
+              <TextField
+                fullWidth
+                placeholder="Address"
+                id="outlined-basic"
+                variant="outlined"
+                error={touched.address && Boolean(errors.address)}
+                helperText={touched.address && errors.address && errors.address}
+                {...getFieldProps("address")}
+              />
+            </Grid>
+
+            {/* <Grid item xs={12} md={6}>
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.PROFILE_PICTURE" })}
               </Typography>
               <TextField
@@ -433,12 +436,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   errors.profilePicture
                 }
               />
-            </Grid>
-            <FormHelperText>
+            </Grid> */}
+            {/* <FormHelperText>
               {touched.profilePicture &&
                 errors.profilePicture &&
                 errors.profilePicture}
-            </FormHelperText>
+            </FormHelperText> */}
             <Grid
               item
               xs={12}
