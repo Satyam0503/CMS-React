@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
-import { bloodGroups, Gender } from "../../../Constant";
-import { getAllRoles } from "./employeeServices";
+import { bloodGroups, Gender } from "../../../utils/constant/Constant";
+import { getAllRoles } from "./components/employeeServices";
 import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
@@ -43,20 +43,40 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const [roles, setRoles] = useState<RolesType[]>([]);
   const intl = useIntl();
 
-  const { values, touched, errors, isSubmitting, handleSubmit, getFieldProps,setFieldValue } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: employeeSchema,
-      onSubmit: (values, { setSubmitting }) => {
-        SaveAddEditEmployee(values, setSubmitting);
-      },
-    });
+  const {
+    values,
+    touched,
+    errors,
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+    setFieldValue,
+    isValid,
+    dirty,
+    setFieldTouched,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: employeeSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      SaveAddEditEmployee(values, setSubmitting);
+    },
+  });
+
   function handleDateofJoiningChange(newDate: Dayjs | null) {
+    touched.dateOfJoining = true;
     setFieldValue("dateOfJoining", newDate);
   }
   function handleDOBChange(newDate: Dayjs | null) {
+    touched.dateOfBirth = true;
     setFieldValue("dateOfBirth", newDate);
   }
+
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
 
   useEffect(() => {
     getAllRoles(token)
@@ -158,8 +178,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "USER.DOB" })}
               </Typography>
               <CustomisedDatePicker
+                name={"dateOfBirth"}
                 value={values.dateOfBirth}
-                setValue={handleDOBChange}
+                setValue={handleDateChange("dateOfBirth")}
                 maxDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
@@ -356,8 +377,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "USER.DOJ" })}
               </Typography>
               <CustomisedDatePicker
+                name="dateOfJoining"
                 value={values.dateOfJoining}
-                setValue={handleDateofJoiningChange}
+                setValue={handleDateChange("dateOfJoining")}
                 maxDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
@@ -435,7 +457,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <CustomisedButton
                 label={isEdit ? "Update" : "Add"}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!(isValid && dirty) || isSubmitting}
               />
             </Grid>
           </Grid>

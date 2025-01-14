@@ -1,15 +1,22 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { ColumnListTypes, EmployeesDataTypes } from "./utils/common_types";
-import CustomisedButton from "./app/modules/components/CustomisedButton";
-import { CustomisedModal } from "./app/modules/components/CustomisedModal";
-import { dateFormatter } from "./utils/common";
+import {
+  ColumnListTypes,
+  EmployeesDataTypes,
+  RolesType,
+} from "../common_types";
+import { dateFormatter } from "../common";
+import CustomisedButton from "../../app/modules/components/CustomisedButton";
+import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
+import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
 
 export const ServiceUrl = {
+  REGISTER_COMPANY: `${BaseUrl}/registerCompany`,
   GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
   ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
@@ -60,9 +67,14 @@ export const EducationType = [
 ];
 
 export const HolidayTypes = [
-  {id:1, label:"Public Holiday", value:"Public Holiday"},
-  {id:2, label:"Custom Holiday", value:"Custom Holiday"}
-]
+  { id: 1, label: "Public Holiday", value: "Public Holiday" },
+  { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
+];
+export const NoticeTypes = [
+  { id: 1, label: "General", value: "General" },
+  { id: 2, label: "Important", value: "Important" },
+  { id: 3, label: "Urgent", value: "Urgent" },
+];
 
 export const bloodGroups = [
   { id: 1, label: "A+", value: "A+" },
@@ -82,7 +94,7 @@ enum cellContentAlignment {
   JUSTIFY = "justify",
 }
 
-export const EmployeeTabTableColumnList:ColumnListTypes[] = [
+export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "#",
@@ -136,51 +148,160 @@ export const EmployeeTabTableColumnList:ColumnListTypes[] = [
   },
 ];
 
-export const HolidayTabTableColumnList:ColumnListTypes[] =[
+export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "#",
     minWidth: 30,
   },
   {
-    id:"title",
-    label:"Title",
+    id: "title",
+    label: "Title",
   },
   {
-    id:"type",
-    label:"Type",
+    id: "type",
+    label: "Type",
   },
   {
-    id:"startDate",
-    label:"Start Date",
-    format:(value)=> dateFormatter(value,"DD MMMM YYYY")
+    id: "startDate",
+    label: "Start Date",
+    format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
-    id:"endDate",
-    label:"End Date",
-    format:(value)=> dateFormatter(value,"DD MMMM YYYY")
+    id: "endDate",
+    label: "End Date",
+    format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
-    id:"description",
-    label:"Description",
+    id: "description",
+    label: "Description",
   },
   {
-    id:"action",
-    label:"Action",
-    build:(
-      row:any,
-      handleHolidayEdit:(row:any)=>void,
-      openConfirmationModal:(id:string)=>void
-    )=>(
-      <ActionComponent 
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleHolidayEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
         row={row}
         handleEdit={handleHolidayEdit}
         openConfirmationModal={openConfirmationModal}
       />
-    )
-  }
+    ),
+  },
+];
+export const NoticeBoardTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id: "name",
+    label: "Name",
+  },
+  {
+    id: "datetime",
+    label: "Date/Time",
+  },
+
+  {
+    id: "type",
+    label: "Type",
+  },
+  {
+    id: "message",
+    label: "Message",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleNoticeEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleNoticeEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
+  },
 ];
 
+// export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
+//   {
+//     id: "serialNo",
+//     label:"#",
+//   },
+//   {
+//     id:"type",
+//     label:"Type",
+//   },
+//   {
+//     id:"count",
+//     label:"Count"
+//   },
+//   {
+//     id:"reason",
+//     label:"Reaseon"
+//   },
+//   {
+//     id:"status",
+//     label:"Status"
+//   },
+//   {
+//     id:"action",
+//     label:"Action",
+//     build:(
+//       row:any,
+//       handleEdit:()=>void,
+//       openConfirmationModal:(leaveId:string)=>void
+//     )=>{
+//       <ActionComponent
+//         row={row}
+//         handleEdit={handleEdit}
+//         openConfirmationModal={openConfirmationModal}
+//       />
+//     }
+//   }
+// ];
+
+export const RoleTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 40,
+  },
+  {
+    id: "roleName",
+    label: "Role Name",
+    minWidth: 150,
+  },
+  {
+    id: "description",
+    label: "Description",
+    minWidth: 200,
+  },
+  {
+    id: "accessToApp",
+    label: "Access To Application",
+    minWidth: 180,
+  },
+  {
+    id: "action",
+    label: "Action",
+    minWidth: 180,
+    build: (row: RolesType) => (
+      <Link to={"/setting/editpermission"} state={{...row}}>
+        <Button variant="contained">Edit Permission</Button>
+      </Link>
+    ),
+  },
+];
 
 interface ActionComponentProps<Row> {
   row: Row;
@@ -195,19 +316,28 @@ const ActionComponent = <Row extends { id: string }>(
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
-        <IconButton onClick={() => handleEdit(row)}>
-          <Edit />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => handleEdit(row)}
+          icon={<Edit />}
+          tooltip="Edit"
+          ariaLabel="Edit"
+        />
       )}
       {openConfirmationModal && (
-        <IconButton onClick={() => openConfirmationModal(row.id)}>
-          <Delete />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => openConfirmationModal(row.id)}
+          icon={<Delete />}
+          tooltip="Delete"
+          ariaLabel="Delete"
+        />
       )}
       {openViewModal && (
-        <IconButton onClick={() => openViewModal(row.id)}>
-          <Visibility />
-        </IconButton>
+        <CustomIconButton
+          handleClick={() => openViewModal(row.id)}
+          icon={<Visibility />}
+          tooltip="View"
+          ariaLabel="View"
+        />
       )}
     </Stack>
   );
@@ -220,9 +350,12 @@ const AddressDetailsIcon = (props: { address: string }) => {
   }
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <Place />
-      </IconButton>
+      <CustomIconButton
+        handleClick={() => setOpen(true)}
+        icon={<Place />}
+        tooltip="Address"
+        ariaLabel="Address"
+      />
       <CustomisedModal open={open} handleClose={handleClose}>
         <Stack spacing={2}>
           <Typography variant="h5">Address</Typography>

@@ -1,5 +1,6 @@
 import {
   Card,
+  Container,
   Grid,
   IconButton,
   InputAdornment,
@@ -22,13 +23,16 @@ import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
-import { HolidayTabTableColumnList } from "../../../Constant";
+import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { CustomisedSearch } from "../../modules/components/CustomisedSearch";
+import { SearchInput } from "../../modules/components/SearchInput";
+import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { Pagination } from "../../modules/components/Pagination";
 
 // remove this array later
 const rows = [
   {
+    id: "2",
     title: "Test",
     type: "Custom Holiday",
     startDate: new Date(),
@@ -42,7 +46,7 @@ const initialValues: HolidayType = {
   title: "",
   type: "",
   startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
+  endDate: null,
   description: "",
 };
 
@@ -112,20 +116,15 @@ export default function Holidays() {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <CustomisedSearch />
+            <SearchInput search={searchValue} setSearch={setSearchValue} />
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton
-                aria-label="Add Holiday"
-                onClick={() => setModalOpen(true)}
-              >
-                <Add />
-              </IconButton>
-              <IconButton aria-label="import excel">
-                <Download />
-              </IconButton>
+              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+              <CustomIconButton
+                tooltip="Add Holiday"
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+              />
+              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
             </Stack>
           </Stack>
           <Stack sx={{ mt: "1rem" }}>
@@ -134,14 +133,20 @@ export default function Holidays() {
               columns={HolidayTabTableColumnList}
               rows={holidayList}
               page={page}
-              setPage={setPage}
-              totalRecords={totalRecords}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
               loading={isLoading}
               handleEdit={handleHolidayEdit}
               openConfirmationModal={openConfirmationModal}
             />
+            {totalRecords > rowPerPage && (
+              <Pagination
+                page={page}
+                setPage={setPage}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                totalRecords={totalRecords}
+              />
+            )}
           </Stack>
         </Card>
       </Grid>

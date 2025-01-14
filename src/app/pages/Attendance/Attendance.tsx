@@ -7,7 +7,6 @@ const BuilderPageWrapper: FC = () => {
   const intl = useIntl()
   return (
     <>
-
       <PageTitle breadcrumbs={[]}>{intl.formatMessage({id: 'MENU.ATTENDANCE'})}</PageTitle>
       <EmployeeAttendance/>
     </>

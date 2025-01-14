@@ -1,11 +1,11 @@
 import { AxiosResponse } from "axios";
-import { getRequest, postRequest } from "../../../server/axios";
+import { getRequest, postRequest } from "../../../../server/axios";
 import {
   ApiResponse,
   GetAllEmployeeResponseData,
   GetAllRolesResponseData,
-} from "../../../utils/common_types";
-import { ServiceUrl } from "../../../Constant";
+} from "../../../../utils/common_types";
+import { ServiceUrl } from "../../../../utils/constant/Constant";
 
 interface GetAllEmployeePayload {
   pageNo: number;

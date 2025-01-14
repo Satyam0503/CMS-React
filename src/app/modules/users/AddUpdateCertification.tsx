@@ -17,6 +17,7 @@ import { useFormik } from "formik";
 import { UserCertificationType } from "../../../utils/common_types";
 import { userCertificationSchema } from "../../../utils/Schema/userSchema";
 import { CustomisedModal } from "../components/CustomisedModal";
+import dayjs, { Dayjs } from "dayjs";
 
 type PropTypes = {
   open: boolean;
@@ -33,7 +34,18 @@ export default function AddUpdateCertification(props: PropTypes) {
   const { open, initialValues, handleAddUpdateCertification, handleClose } =
     props;
 
-  const { values, errors, touched, handleSubmit, getFieldProps } = useFormik({
+  const {
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    getFieldProps,
+    isValid,
+    dirty,
+    isSubmitting,
+    setFieldValue,
+    setFieldTouched,
+  } = useFormik({
     initialValues: initialValues,
     validationSchema: userCertificationSchema,
     onSubmit: (values, { setSubmitting }) => {
@@ -41,6 +53,12 @@ export default function AddUpdateCertification(props: PropTypes) {
     },
   });
 
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Typography variant="h5" className="text-primary mb-4">
@@ -69,8 +87,9 @@ export default function AddUpdateCertification(props: PropTypes) {
             </Typography>
             <CustomisedDatePicker
               name="startDate"
-              value={values.endDate}
-              setValue={(newDate) => (values.startDate = newDate)}
+              value={values.startDate}
+              setValue={handleDateChange("startDate")}
+              maxDate={dayjs()}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.startDate && errors.startDate && errors.startDate}
@@ -81,7 +100,8 @@ export default function AddUpdateCertification(props: PropTypes) {
             <CustomisedDatePicker
               name="endDate"
               value={values.endDate}
-              setValue={(newDate) => (values.endDate = newDate)}
+              setValue={handleDateChange("endDate")}
+              minDate={values.startDate || dayjs()}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.endDate && errors.endDate && errors.endDate}
@@ -130,7 +150,11 @@ export default function AddUpdateCertification(props: PropTypes) {
             handleClick={handleClose}
             variant="outlined"
           />
-          <CustomisedButton label="Save" type="submit" />
+          <CustomisedButton
+            label="Save"
+            type="submit"
+            disabled={!(isValid && dirty) || isSubmitting}
+          />
         </Stack>
       </form>
     </CustomisedModal>

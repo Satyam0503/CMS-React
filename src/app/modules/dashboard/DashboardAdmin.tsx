@@ -10,23 +10,22 @@ import {
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "../components/OpenPositions";
-import NoticeBoard from "./NoticeBoard";
+import NoticeBoard from "./components/NoticeBoard";
 import StackedBarChart from "../components/StackedBarChart";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";
-import EmpOnLeave from "./daynamic/EmpOnLeave";
-import Punctual from "./daynamic/Punctual";
-import UpcomingBirthday from "./daynamic/UpcomingBirthday";
-import EmpOfMonth from "./daynamic/EmpOfMonth";
-import Help from "./daynamic/Help";
+import EmpOnLeave from "./components/EmpOnLeave";
+import Punctual from "./components/Punctual";
+import UpcomingBirthday from "./components/UpcomingBirthday";
+import EmpOfMonth from "./components/EmpOfMonth";
+import Help from "./components/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
-import EmployeePerformance from "./EmployeePerformance";
+import EmployeePerformance from "./components/EmployeePerformance";
 
 export default function DashboardAdmin() {
   const intl = useIntl();
   const series = [21, 12, 0];
   const labels = ["Male", "Female", "Other"];
-
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
   return (

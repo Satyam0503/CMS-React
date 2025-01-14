@@ -306,7 +306,6 @@ export const MuiTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          paddingInline: 0,
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
             paddingRight: 6,
           },
@@ -505,7 +504,7 @@ export const MuiTheme = createTheme({
           "&:hover, &.MuiSelected": {
             backgroundColor: colors.alpha.neutral[100],
             color: colors.alpha.neutral[800],
-            border: " 1px solid " + colors.alpha.neutral[200],
+            border: "1px solid " + colors.alpha.neutral[200],
           },
         },
         text: {
@@ -930,7 +929,7 @@ export const MuiTheme = createTheme({
         },
         head: {
           textTransform: "none",
-          padding: "10px",
+          // padding: "10px",
           fontSize: 12,
           fontWeight: "bold",
           color: colors.alpha.neutral[800],

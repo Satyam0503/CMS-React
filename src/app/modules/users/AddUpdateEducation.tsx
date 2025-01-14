@@ -13,7 +13,7 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import CustomisedButton from "../components/CustomisedButton";
 import { useFormik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { EducationType } from "../../../Constant";
+import { EducationType } from "../../../utils/constant/Constant";
 import { UserEducationType } from "../../../utils/common_types";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { userEducationSchema } from "../../../utils/Schema/userSchema";
@@ -30,16 +30,33 @@ type PropTypes = {
 
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
-  const { open, initialValues, handleClose, handleAddUpdateEducation } = props;
-  const { values, handleSubmit, getFieldProps, touched, errors, isSubmitting } =
-    useFormik({
-      initialValues: initialValues,
-      validationSchema: userEducationSchema,
-      onSubmit: (values, { setSubmitting }) => {
-        handleAddUpdateEducation(values, setSubmitting);
-      },
-    });
+  const { open, initialValues, handleClose, handleAddUpdateEducation, } = props;
+  const {
+    values,
+    handleSubmit,
+    getFieldProps,
+    touched,
+    errors,
+    isSubmitting,
+    isValid,
+    dirty,
+    setFieldValue,
+    setFieldTouched
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: userEducationSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      handleAddUpdateEducation(values, setSubmitting);
+    },
+  });
 
+  const handleDateChange = (fieldName:string)=>{
+      return (newDate:Dayjs | null)=>{
+        setFieldTouched(fieldName,true);
+        setFieldValue(fieldName,newDate)
+      }
+  }
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -71,7 +88,8 @@ export default function AddUpdateEducation(props: PropTypes) {
             <CustomisedDatePicker
               name="startDate"
               value={values.startDate}
-              setValue={(newDate) => (values.startDate = newDate)}
+              setValue={handleDateChange("startDate")}
+              maxDate={dayjs()}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.startDate && errors.startDate && errors.startDate}
@@ -87,8 +105,8 @@ export default function AddUpdateEducation(props: PropTypes) {
             <CustomisedDatePicker
               name="endDate"
               value={values.endDate}
+              setValue={handleDateChange("endDate")}
               minDate={dayjs(values.startDate)}
-              setValue={(newDate) => (values.endDate = newDate)}
             />
             <FormHelperText sx={{ color: "#d32f2f" }}>
               {touched.endDate && errors.endDate && errors.endDate}
@@ -157,7 +175,7 @@ export default function AddUpdateEducation(props: PropTypes) {
             size="medium"
             label="Save"
             type="submit"
-            disabled={isSubmitting}
+            disabled={!(isValid && dirty) || isSubmitting}
             Icon={<Check />}
           />
         </Stack>

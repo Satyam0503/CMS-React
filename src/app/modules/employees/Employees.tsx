@@ -1,20 +1,6 @@
-import {
-  Typography,
-  Card,
-  Stack,
-  TextField,
-  InputAdornment,
-  Container,
-  IconButton,
-} from "@mui/material";
+import { Typography, Card, Stack, Container } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  Close,
-  Download,
-  FilterList,
-  SearchOutlined,
-} from "@mui/icons-material";
+import { Add, Close, Download, FilterList } from "@mui/icons-material";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
@@ -24,15 +10,18 @@ import {
   deleteEmployee,
   getAllEmployees,
   updateEmployee,
-} from "./employeeServices";
+} from "./components/employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
-import { EmployeeTabTableColumnList } from "../../../Constant";
+import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
 import { EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
+import { SearchInput } from "../components/SearchInput";
+import { CustomIconButton } from "../components/CustomIconButton";
+import { Pagination } from "../components/Pagination";
 const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 const employeeInitialValue: EmployeesDataTypes = {
@@ -256,64 +245,48 @@ export default function Employees() {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Stack>
-              <TextField
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchOutlined />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        sx={{ border: "none" }}
-                        onClick={() => setSearch("")}
-                      >
-                        <Close />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                variant="outlined"
-                placeholder="Search something ..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </Stack>
+            <SearchInput search={search} setSearch={setSearch} />
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton
-                aria-label="add employee"
-                onClick={() => setModalOpen(true)}
-              >
-                <Add />
-              </IconButton>
-              <IconButton
-                aria-label="import excel"
-                onClick={handleEmployeeExport}
-              >
-                <Download />
-              </IconButton>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Employee"
+                handleClick={() => {}}
+              />
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+                tooltip="Add Employee"
+                ariaLabel="Add employee"
+              />
+              <CustomIconButton
+                icon={<Download />}
+                handleClick={handleEmployeeExport}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
             </Stack>
           </Stack>
           <Stack sx={{ mt: "1rem" }}>
             <CustomisedTable
               tabName="Employee"
-              totalRecords={totalRecords}
               loading={isLoading}
               rows={employeeList}
               columns={EmployeeTabTableColumnList}
               page={page}
-              setPage={setPage}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
               handleEdit={handleEmployeeEdit}
               openConfirmationModal={openConfirmationModal}
               openViewModal={openViewModal}
             />
+            {totalRecords > rowPerPage && (
+              <Pagination
+                page={page}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                setPage={setPage}
+                totalRecords={totalRecords}
+              />
+            )}
           </Stack>
         </Card>
       </Stack>

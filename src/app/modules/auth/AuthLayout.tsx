@@ -17,20 +17,19 @@ const AuthLayout = () => {
   }, []);
 
   return (
-    <Container>
+    <Container maxWidth={"lg"}>
       <Grid
         container
         py={4}
         gap={4}
-        display={"flex"}
-        justifyContent={"space-between"}
+        justifyContent={"space-evenly"}
+        sx={{alignItems:"center"}}
       >
         <Grid
           item
           xs={12}
           md={5}
-          display={"flex"}
-          flexDirection={"column"}
+          direction={"column"}
           justifyContent={"center"}
           order={{ xs: "2", md: "inherit" }}
           width={"100%"}
@@ -62,8 +61,7 @@ const AuthLayout = () => {
           item
           xs={12}
           md={5}
-          display={"flex"}
-          flexDirection={"column"}
+          direction={"column"}
           textAlign={"center"}
           justifyContent={"center"}
           gap={2}
@@ -79,9 +77,9 @@ const AuthLayout = () => {
           <Typography variant="h2">Fast, Efficient and Productive</Typography>
 
           <Typography variant="body1">
-            We can help you achieve a strong web presence and provide you strong
-            SEO & brand development that gives you an advantage over your
-            competition in online marketing.
+            We can help you with an easy way to manage all of your website‘s
+            content without needing to manually edit your site’s code any time
+            you want to make a change.
           </Typography>
         </Grid>
       </Grid>

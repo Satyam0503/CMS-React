@@ -10,17 +10,17 @@ import {
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "../components/OpenPositions";
-import NoticeBoard from "./NoticeBoard";
+import NoticeBoard from "./components/NoticeBoard";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";
-import EmpOfMonth from "./daynamic/EmpOfMonth";
-import UpcomingBirthday from "./daynamic/UpcomingBirthday";
-import Punctual from "./daynamic/Punctual";
-import Help from "./daynamic/Help";
+import EmpOfMonth from "./components/EmpOfMonth";
+import UpcomingBirthday from "./components/UpcomingBirthday";
+import Punctual from "./components/Punctual";
+import Help from "./components/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
 import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
-import AttendanceTable from "./daynamic/AttendanceTable";
+import AttendanceTable from "./components/LeaveTable";
 
 export default function DashboardUser() {
   const intl = useIntl();

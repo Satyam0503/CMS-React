@@ -17,7 +17,7 @@ import { HolidayType } from "../../../utils/common_types";
 import { useFormik } from "formik";
 import holidaySchema from "../../../utils/Schema/holidaySchema";
 import dayjs from "dayjs";
-import { HolidayTypes } from "../../../Constant";
+import { HolidayTypes } from "../../../utils/constant/Constant";
 
 type PropsTypes = {
   open: boolean;
@@ -39,7 +39,10 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
     getFieldProps,
     handleSubmit,
     setFieldValue,
+    setFieldTouched,
     isSubmitting,
+    isValid,
+    dirty,
   } = useFormik({
     initialValues: initialValues,
     validationSchema: holidaySchema,
@@ -48,13 +51,12 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
     },
   });
 
-  const handleStartDateChange = (newDate: dayjs.Dayjs | null) => {
-    setFieldValue("startDate", newDate);
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: dayjs.Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
   };
-  const handleEndDateChange = (newDate: dayjs.Dayjs | null) => {
-    setFieldValue("endDate", newDate);
-  };
-
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -105,7 +107,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               </Typography>
               <CustomisedDatePicker
                 value={values.startDate}
-                setValue={handleStartDateChange}
+                setValue={handleDateChange("startDate")}
                 name="startDate"
                 minDate={dayjs()}
               />
@@ -119,9 +121,9 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               </Typography>
               <CustomisedDatePicker
                 value={values.endDate}
-                setValue={handleEndDateChange}
+                setValue={handleDateChange("endDate")}
                 name="endDate"
-                minDate={dayjs()}
+                minDate={values.startDate || dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
                 {touched.endDate && errors.endDate && errors.endDate}
@@ -155,7 +157,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               />
               <CustomisedButton
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!(isValid && dirty) || isSubmitting}
                 variant="contained"
                 label="Save"
                 Icon={<Check />}

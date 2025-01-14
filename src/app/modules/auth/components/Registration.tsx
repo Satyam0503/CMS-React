@@ -1,20 +1,15 @@
 import { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import clsx from "clsx";
-import { getUserByToken, register } from "../core/_requests";
+import { getUserByToken, register, registerCompany } from "../core/_requests";
 import { Link } from "react-router-dom";
 import { PasswordMeterComponent } from "../../../../_themes/assets/ts/components";
 import { useAuth } from "../core/Auth";
 import {
   Box,
   Checkbox,
-  Container,
-  FormControl,
+  FormHelperText,
   Grid,
-  Input,
   InputAdornment,
-  InputLabel,
   Stack,
   TextField,
   Typography,
@@ -22,451 +17,360 @@ import {
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { colors } from "../../theme/MuiTheme";
-import { AccountCircle, Check } from "@mui/icons-material";
+import { Check, ErrorOutline } from "@mui/icons-material";
+import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 
 const initialValues = {
-  firstname: "",
-  lastname: "",
-  companyname: "",
+  firstName: "",
+  lastName: "",
+  companyName: "",
   email: "",
   password: "",
-  changepassword: "",
+  changePassword: "",
   acceptTerms: false,
 };
-
-const registrationSchema = Yup.object().shape({
-  firstname: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("First name is required"),
-  email: Yup.string()
-    .email("Wrong email format")
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Email is required"),
-  lastname: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Last name is required"),
-  companyname: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Company name is required"),
-  password: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Password is required"),
-  changepassword: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Password confirmation is required")
-    .oneOf([Yup.ref("password")], "Password and Confirm Password didn't match"),
-  acceptTerms: Yup.bool().required("You must accept the terms and conditions"),
-});
 
 export function Registration() {
   const [loading, setLoading] = useState(false);
   const { saveAuth, setCurrentUser } = useAuth();
   const intl = useIntl();
-  const formik = useFormik({
+  const {
+    values,
+    touched,
+    getFieldProps,
+    isValid,
+    dirty,
+    handleSubmit,
+    errors,
+    resetForm,
+    isSubmitting,
+  } = useFormik({
     initialValues,
     validationSchema: registrationSchema,
-    onSubmit: async (values, { setStatus, setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
+      const payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        companyName: values.companyName,
+        email: values.email,
+        password: values.password,
+      };
       try {
-        const { data: auth } = await register(
-          values.email,
-          values.firstname,
-          values.lastname,
-          values.password,
-          values.changepassword
-        );
-        saveAuth(auth);
-        const { data: user } = await getUserByToken(auth.api_token);
-        setCurrentUser(user.methodResult);
+        const { data } = await registerCompany(payload);
+        //  handle logic
       } catch (error) {
-        console.error(error);
-        saveAuth(undefined);
-        setStatus("The registration details is incorrect");
+        console.log(error);
         setSubmitting(false);
-        setLoading(false);
+        setLoading(true);
       }
+      // setLoading(true);
+      // try {
+      //   const { data: auth } = await register(
+      //     values.email,
+      //     values.firstName,
+      //     values.lastName,
+      //     values.password,
+      //     values.changePassword
+      //   );
+      //   saveAuth(auth);
+      //   const { data: user } = await getUserByToken(auth.api_token);
+      //   setCurrentUser(user.methodResult);
+      // } catch (error) {
+      //   console.error(error);
+      //   saveAuth(undefined);
+      //   setStatus("The registration details is incorrect");
+      //   setSubmitting(false);
+      //   setLoading(false);
+      // }
     },
   });
 
   useEffect(() => {
     PasswordMeterComponent.bootstrap();
   }, []);
-
   return (
-    <Container>
-      <form onSubmit={formik.handleSubmit}>
-        <Stack alignItems={"center"} mb={4}>
-          <Typography variant="h3">
-            {intl.formatMessage({ id: "AUTH.REGISTER.TITLE" })}
+    <form onSubmit={handleSubmit}>
+      <Stack alignItems={"center"} mb={4}>
+        <Typography variant="h3">
+          {intl.formatMessage({ id: "AUTH.REGISTER.TITLE" })}
+        </Typography>
+        <Typography variant="body1" color={colors.alpha.primary[500]}>
+          {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
+        </Typography>
+      </Stack>
+      <Stack spacing={1}>
+        <Stack>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "USER.FIRST_NAME" })}
           </Typography>
-          <Typography variant="body1" color={colors.alpha.primary[500]}>
-            {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
-          </Typography>
+          <TextField
+            fullWidth
+            placeholder="First Name"
+            type="text"
+            autoComplete="off"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {touched.firstName && errors.firstName ? (
+                    <ErrorOutline color="warning" />
+                  ) : touched.firstName && !errors.firstName ? (
+                    <Check color="success" />
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+            {...getFieldProps("firstName")}
+            error={touched.firstName && Boolean(errors.firstName)}
+            helperText={
+              touched.firstName && errors.firstName && errors.firstName
+            }
+          />
         </Stack>
-        <Stack spacing={1}>
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "USER.FIRST_NAME" })}
-            </Typography>
-            <TextField
-              sx={{ my: 0.5 }}
-              placeholder="First name"
-              type="text"
-              autoComplete="off"
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Check />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              {...formik.getFieldProps("firstname")}
-              // className={clsx(
-              //   "form-control bg-transparent",
-              //   {
-              //     "is-invalid":
-              //       formik.touched.firstname && formik.errors.firstname,
-              //   },
-              //   {
-              //     "is-valid":
-              //       formik.touched.firstname && !formik.errors.firstname,
-              //   }
-              // )}
-            />
-            {formik.touched.firstname && formik.errors.firstname && (
-              <Box
-                component="span"
-                role="alert"
-                color={colors.alpha.danger[500]}
-              >
-                {formik.errors.firstname}
-              </Box>
-            )}
-          </Stack>
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "USER.LAST_NAME" })}
-            </Typography>
-            <TextField
-              sx={{ my: 0.5 }}
-              placeholder="Last name"
-              type="text"
-              autoComplete="off"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Check />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("lastname")}
-              // className={clsx(
-              //   "form-control bg-transparent",
-              //   {
-              //     "is-invalid":
-              //       formik.touched.lastname && formik.errors.lastname,
-              //   },
-              //   {
-              //     "is-valid":
-              //       formik.touched.lastname && !formik.errors.lastname,
-              //   }
-              // )}
-            />
-            {formik.touched.lastname && formik.errors.lastname && (
-              <Box
-                component="span"
-                role="alert"
-                color={colors.alpha.danger[500]}
-              >
-                {formik.errors.lastname}
-              </Box>
-            )}
-          </Stack>
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "COMPANY.NAME" })}
-            </Typography>
+        <Stack>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "USER.LAST_NAME" })}
+          </Typography>
+          <TextField
+            fullWidth
+            placeholder="Last Name"
+            type="text"
+            autoComplete="off"
+            error={touched.lastName && Boolean(errors.lastName)}
+            helperText={touched.lastName && errors.lastName && errors.lastName}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {touched.lastName && errors.lastName ? (
+                    <ErrorOutline color="warning" />
+                  ) : touched.lastName && !errors.lastName ? (
+                    <Check color="success" />
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+            {...getFieldProps("lastName")}
+          />
+        </Stack>
+        <Stack>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "COMPANY.NAME" })}
+          </Typography>
 
-            <TextField
-              sx={{ my: 1, bgcolor: "transparent" }}
-              placeholder="Company name"
-              type="text"
-              autoComplete="off"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Check />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("companyname")}
-              // className={clsx(
-              //   "form-control ",
-              //   {
-              //     "is-invalid":
-              //       formik.touched.companyname && formik.errors.companyname,
-              //   },
-              //   {
-              //     "is-valid":
-              //       formik.touched.companyname && !formik.errors.companyname,
-              //   }
-              // )}
-            />
-            {formik.touched.companyname && formik.errors.companyname && (
-              <Box
-                component="span"
-                role="alert"
-                color={colors.alpha.danger[500]}
-              >
-                {formik.errors.companyname}
-              </Box>
-            )}
-          </Stack>
-          <Stack>
+          <TextField
+            fullWidth
+            placeholder="Company Name"
+            type="text"
+            autoComplete="off"
+            variant="outlined"
+            {...getFieldProps("companyName")}
+            error={touched.companyName && Boolean(errors.companyName)}
+            helperText={
+              touched.companyName && errors.companyName && errors.companyName
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {touched.companyName && errors.companyName ? (
+                    <ErrorOutline color="warning" />
+                  ) : touched.companyName && !errors.companyName ? (
+                    <Check color="success" />
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Stack>
+        <Stack>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+          </Typography>
+          <TextField
+            fullWidth
+            placeholder="Email Id"
+            type="email"
+            autoComplete="off"
+            variant="outlined"
+            {...getFieldProps("email")}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {touched.email && errors.email ? (
+                    <ErrorOutline color="warning" />
+                  ) : touched.email && !errors.email ? (
+                    <Check color="success" />
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+            error={touched.email && Boolean(errors.email)}
+            helperText={touched.email && errors.email && errors.email}
+          />
+        </Stack>
+
+        <Stack>
+          <Stack data-kt-password-meter="true">
             <Typography variant="body1">
-              {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+              {intl.formatMessage({ id: "AUTH.INPUT.PASSWORD" })}
             </Typography>
-            <TextField
-              sx={{ my: 1 }}
-              placeholder="Email Id"
-              type="email"
-              autoComplete="off"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Check />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              fullWidth
-              {...formik.getFieldProps("email")}
-              // className={clsx(
-              //   "form-control bg-transparent",
-              //   {
-              //     "is-invalid": formik.touched.email && formik.errors.email,
-              //   },
-              //   {
-              //     "is-valid": formik.touched.email && !formik.errors.email,
-              //   }
-              // )}
-            />
-            {formik.touched.email && formik.errors.email && (
-              <Box
-                component="span"
-                role="alert"
-                color={colors.alpha.danger[500]}
-              >
-                {formik.errors.email}
-              </Box>
-            )}
-          </Stack>
-
-          <Stack>
-            <Stack data-kt-password-meter="true">
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "AUTH.INPUT.PASSWORD" })}
-              </Typography>
-              <Stack>
-                <TextField
-                  sx={{ my: 1 }}
-                  fullWidth
-                  type="password"
-                  placeholder="Password"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Check />
-                      </InputAdornment>
-                    ),
-                  }}
-                  variant="outlined"
-                  autoComplete="off"
-                  {...formik.getFieldProps("password")}
-                  // className={clsx(
-                  //   "form-control bg-transparent",
-                  //   {
-                  //     "is-invalid":
-                  //       formik.touched.password && formik.errors.password,
-                  //   },
-                  //   {
-                  //     "is-valid":
-                  //       formik.touched.password && !formik.errors.password,
-                  //   }
-                  // )}
-                />
-                {formik.touched.password && formik.errors.password && (
-                  <Stack>
-                    <Box
-                      component="span"
-                      role="alert"
-                      color={colors.alpha.danger[500]}
-                    >
-                      {formik.errors.password}
-                    </Box>
-                  </Stack>
-                )}
-              </Stack>
-
-              <Grid
-                container
-                alignItems={"center"}
-                my={1}
-                data-kt-password-meter-control="highlight"
-              >
-                <Stack
-                  flexGrow={1}
-                  bgcolor={colors.alpha.secondary[500]}
-                  className="bg-active-success"
-                  sx={{
-                    mr: 1,
-                    height: "5px",
-                    borderRadius: "8px",
-                    "&:active": {
-                      bgcolor: colors.alpha.success[500],
-                    },
-                  }}
-                />
-                <Stack
-                  flexGrow={1}
-                  bgcolor={colors.alpha.secondary[500]}
-                  className="bg-active-success"
-                  sx={{
-                    mr: 1,
-                    height: "5px",
-                    borderRadius: "8px",
-                    "&:active": {
-                      bgcolor: colors.alpha.success[500],
-                    },
-                  }}
-                />
-                <Stack
-                  flexGrow={1}
-                  bgcolor={colors.alpha.secondary[500]}
-                  className="bg-active-success"
-                  sx={{
-                    mr: 1,
-                    height: "5px",
-                    borderRadius: "8px",
-                    "&:active": {
-                      bgcolor: colors.alpha.success[500],
-                    },
-                  }}
-                />
-                <Stack
-                  flexGrow={1}
-                  bgcolor={colors.alpha.secondary[500]}
-                  className="bg-active-success"
-                  sx={{
-                    mr: 1,
-                    height: "5px",
-                    borderRadius: "8px",
-                    "&:active": {
-                      bgcolor: colors.alpha.success[500],
-                    },
-                  }}
-                />
-              </Grid>
-            </Stack>
             <Stack>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PASSWORD.LENGTH" })}
-              </Typography>
-            </Stack>
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
-            </Typography>
-            <TextField
-              sx={{ my: 1 }}
-              fullWidth
-              type="password"
-              placeholder="Password confirmation"
-              autoComplete="off"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Check />
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              {...formik.getFieldProps("changepassword")}
-              // className={clsx(
-              //   "form-control bg-transparent",
-              //   {
-              //     "is-invalid":
-              //       formik.touched.changepassword &&
-              //       formik.errors.changepassword,
-              //   },
-              //   {
-              //     "is-valid":
-              //       formik.touched.changepassword &&
-              //       !formik.errors.changepassword,
-              //   }
-              // )}
-            />
-            {formik.touched.changepassword && formik.errors.changepassword && (
-              <Stack>
-                <Box
-                  component="span"
-                  role="alert"
-                  color={colors.alpha.danger[500]}
-                >
-                  {formik.errors.changepassword}
-                </Box>
-              </Stack>
-            )}
-          </Stack>
-
-          <Stack>
-            <Typography>
-              <Checkbox {...formik.getFieldProps("acceptTerms")} />
-              <Box component="span">
-                I Accept the <a target="_blank">Terms</a>.
-              </Box>
-            </Typography>
-            {formik.touched.acceptTerms && formik.errors.acceptTerms && (
-              <Box component="span" role="alert">
-                {formik.errors.acceptTerms}
-              </Box>
-            )}
-          </Stack>
-
-          <Stack spacing={1}>
-            <Link to="/auth/login">
-              <CustomisedButton
-                variant="contained"
-                label="Submit"
-                style={{ width: "100%" }}
-                size="large"
-                type="submit"
+              <TextField
+                fullWidth
+                type="password"
+                placeholder="Password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {touched.password && errors.password ? (
+                        <ErrorOutline color="warning" />
+                      ) : touched.password && !errors.password ? (
+                        <Check color="success" />
+                      ) : null}
+                    </InputAdornment>
+                  ),
+                }}
+                variant="outlined"
+                autoComplete="off"
+                {...getFieldProps("password")}
+                error={touched.password && Boolean(errors.password)}
+                helperText={
+                  touched.password && errors.password && errors.password
+                }
               />
-            </Link>
-            <CustomisedButton
-              variant="outlined"
-              label="Cancel"
-              style={{ width: "100%" }}
-              size="large"
-              type="button"
-            />
+            </Stack>
+
+            <Grid
+              container
+              alignItems={"center"}
+              my={1}
+              data-kt-password-meter-control="highlight"
+            >
+              <Stack
+                flexGrow={1}
+                bgcolor={colors.alpha.secondary[500]}
+                className="bg-active-success"
+                sx={{
+                  mr: 1,
+                  height: "5px",
+                  borderRadius: "8px",
+                  "&:active": {
+                    bgcolor: colors.alpha.success[500],
+                  },
+                }}
+              />
+              <Stack
+                flexGrow={1}
+                bgcolor={colors.alpha.secondary[500]}
+                className="bg-active-success"
+                sx={{
+                  mr: 1,
+                  height: "5px",
+                  borderRadius: "8px",
+                  "&:active": {
+                    bgcolor: colors.alpha.success[500],
+                  },
+                }}
+              />
+              <Stack
+                flexGrow={1}
+                bgcolor={colors.alpha.secondary[500]}
+                className="bg-active-success"
+                sx={{
+                  mr: 1,
+                  height: "5px",
+                  borderRadius: "8px",
+                  "&:active": {
+                    bgcolor: colors.alpha.success[500],
+                  },
+                }}
+              />
+              <Stack
+                flexGrow={1}
+                bgcolor={colors.alpha.secondary[500]}
+                className="bg-active-success"
+                sx={{
+                  mr: 1,
+                  height: "5px",
+                  borderRadius: "8px",
+                  "&:active": {
+                    bgcolor: colors.alpha.success[500],
+                  },
+                }}
+              />
+            </Grid>
+          </Stack>
+          <Stack>
+            <Typography variant="body2">
+              {intl.formatMessage({ id: "PASSWORD.LENGTH" })}
+            </Typography>
           </Stack>
         </Stack>
-      </form>
-    </Container>
+
+        <Stack>
+          <Typography variant="body1">
+            {intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
+          </Typography>
+          <TextField
+            fullWidth
+            type="password"
+            placeholder="Password confirmation"
+            autoComplete="off"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {touched.changePassword && errors.changePassword ? (
+                    <ErrorOutline color="warning" />
+                  ) : touched.changePassword && !errors.changePassword ? (
+                    <Check color="success" />
+                  ) : null}
+                </InputAdornment>
+              ),
+            }}
+            variant="outlined"
+            {...getFieldProps("changePassword")}
+            error={touched.changePassword && Boolean(errors.changePassword)}
+            helperText={
+              touched.changePassword &&
+              errors.changePassword &&
+              errors.changePassword
+            }
+          />
+        </Stack>
+
+        <Stack>
+          <Typography>
+            <Checkbox
+              checked={values.acceptTerms}
+              {...getFieldProps("acceptTerms")}
+            />
+            <Box component="span">
+              I Accept the <a target="_blank">Terms</a>.
+            </Box>
+          </Typography>
+          <FormHelperText>
+            {touched.acceptTerms && errors.acceptTerms && errors.acceptTerms}
+          </FormHelperText>
+        </Stack>
+
+        <Stack spacing={1}>
+          <CustomisedButton
+            disabled={!(dirty && isValid) || isSubmitting}
+            label="Submit"
+            size="large"
+            type="submit"
+          />
+          <CustomisedButton
+            handleClick={() => resetForm()}
+            variant="outlined"
+            label="Reset"
+            size="large"
+            type="button"
+          />
+        </Stack>
+        <Typography variant="body2" align="center">
+          Already Register ?<Link to={"/auth/login"}> Sign In</Link>
+        </Typography>
+      </Stack>
+    </form>
   );
 }

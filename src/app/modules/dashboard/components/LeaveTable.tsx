@@ -32,7 +32,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedIconButton } from "../../components/CustomisedIconButton";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 function createData(
   sno: number,
@@ -80,7 +80,7 @@ export default function AttendanceTable() {
       <Typography variant="h6" mb={1}>
         {intl.formatMessage({ id: "MENU.LEAVE.DETAILS" })}
       </Typography>
-
+      
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -105,11 +105,8 @@ export default function AttendanceTable() {
                 <TableCell align="right">{row.status}</TableCell>
                 <TableCell align="right">
                   {row.action}
-                  <CustomisedIconButton Icon={<Edit />} />
-                  <CustomisedIconButton
-                    Icon={<DeleteOutline />}
-                    style={{ marginLeft: "5px" }}
-                  />
+                  <CustomIconButton icon={<Edit/>} handleClick={()=>{}} />
+                  <CustomIconButton icon= {<DeleteOutline/> } handleClick={()=>{}} />
                 </TableCell>
               </TableRow>
             ))}

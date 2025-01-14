@@ -3,6 +3,13 @@ export interface AuthModel {
   refreshToken?: string;
 }
 
+export interface CompanyRegisterModel{
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  email: string;
+  password: string;
+}
 export interface UserAddressModel {
   addressLine: string;
   city: string;

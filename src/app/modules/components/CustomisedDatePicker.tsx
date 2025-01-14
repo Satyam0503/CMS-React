@@ -6,10 +6,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 const date = new Date();
-const currentDate = date.getDate();
-const currentYear = date.getFullYear();
-const currentMonth = date.getMonth() + 1;
-
 interface PropsTypes {
   value: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
@@ -34,17 +30,6 @@ const CustomisedDatePicker = (props: PropsTypes) => {
             }}
             maxDate={maxDate}
             minDate={minDate}
-            // className={`text-dark ${className}`}
-            // shouldDisableDate={(date) =>
-            //   label === "From Date"
-            //     ? dayjs(date).isSame(dayjs(dependentValue)) ||
-            //       dayjs(date).isAfter(dayjs(dependentValue))
-            //     : dayjs(date).isSame(dayjs(dependentValue)) ||
-            //       dayjs(date).isBefore(dayjs(dependentValue)) ||
-            //       dayjs(date).isAfter(
-            //         dayjs(`${currentYear}-${currentMonth}-${currentDate}`)
-            //       )
-            // }
             slotProps={{
               textField: {
                 inputProps: {
