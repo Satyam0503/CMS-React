@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
+import { colors } from "../theme/MuiTheme";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -43,7 +44,7 @@ export const CustomisedTable = <
 
   return (
     <Grid container>
-      <TableContainer sx={{ minHeight: 600 }}>
+      <TableContainer>
         <Table stickyHeader aria-label="table">
           <TableHead>
             <TableRow>

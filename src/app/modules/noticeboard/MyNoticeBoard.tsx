@@ -1,35 +1,37 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import {
+  Add,
+  ArrowBack,
+  BackHand,
+  Close,
+  Download,
+  EditOutlined,
+  FileOpenOutlined,
+  FilterList,
+  LinkOutlined,
+  ListAltOutlined,
+  Search,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Card,
   Grid,
   IconButton,
   InputAdornment,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  AttachFile,
-  Close,
-  DeleteOutline,
-  Download,
-  Edit,
-  FilterList,
-  LinkOutlined,
-  Search,
-} from "@mui/icons-material";
-import JobDetail from "./JobDetail";
-import JobDescription from "./JobDescription";
-import Setting from "../../../modules/users/usersetting/Setting";
-
+import { CustomisedModal } from "../components/CustomisedModal";
+import CustomisedButton from "../components/CustomisedButton";
+import AddNotice from "./AddNotice";
 function createData(
   sno: number,
   title: string,
@@ -54,27 +56,23 @@ const rows = [
   ),
 ];
 
-export default function Jobs() {
+export default function MyNoticeBoard() {
   const intl = useIntl();
-  const [openModal, setOpenModal] = React.useState(false);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
+  const [open, setOpen] = useState(false);
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleAddHoliday = () => {
-    handleCloseModal();
-  };
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
-    <>
+    <Grid
+      container
+      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
+      spacing={2}
+    >
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
+          {intl.formatMessage({ id: "MENU.MY_NOTICE_BOARD" })}
         </Typography>
       </Stack>
       <Card sx={{ width: "100%", p: "16px" }}>
@@ -106,14 +104,14 @@ export default function Jobs() {
           </Stack>
           <Stack direction="row" spacing={1}>
             <IconButton aria-label="filter employee">
+              <ArrowBack />
+            </IconButton>
+            <IconButton aria-label="filter employee">
               <FilterList />
             </IconButton>
-            <IconButton onClick={() => setOpenModal(true)}>
-              <Add />
-            </IconButton>
-            {openModal && (
-              <JobDescription open={openModal} handleClose={handleCloseModal} />
-            )}
+            <Stack onClick={() => setOpen(true)}>
+              <AddNotice />
+            </Stack>
             <IconButton aria-label="import excel">
               <Download />
             </IconButton>
@@ -142,32 +140,7 @@ export default function Jobs() {
                     <TableCell align="right">{row.startdate}</TableCell>
                     <TableCell align="right">{row.enddate}</TableCell>
                     <TableCell align="right">{row.description}</TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        display: "flex",
-                        gap: "4px",
-                        mr: "10px",
-                      }}
-                    >
-                      {row.action}
-
-                      <IconButton>
-                        <LinkOutlined />
-                      </IconButton>
-                      <IconButton>
-                        <AttachFile />
-                      </IconButton>
-                      <Stack>
-                        <JobDetail />
-                      </Stack>
-                      <IconButton>
-                        <DeleteOutline />
-                      </IconButton>
-                      <IconButton>
-                        <Edit />
-                      </IconButton>
-                    </TableCell>
+                    <TableCell align="right">{row.action}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -175,6 +148,6 @@ export default function Jobs() {
           </TableContainer>
         </Stack>
       </Card>
-    </>
+    </Grid>
   );
 }

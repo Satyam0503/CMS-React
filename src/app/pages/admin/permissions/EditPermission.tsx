@@ -50,12 +50,15 @@ export const EditPermission = () => {
   return (
     <>
       <Stack position={"sticky"}>
-        <Typography variant="h4" mb={2}>
+        <Typography variant="h4" my={3}>
           {intl.formatMessage({ id: "ROLES.EDIT" })}
-        </Typography>
+        </Typography>{" "}
+      </Stack>
+      <Stack spacing={1}>
         <TextField variant="standard" label="Role Name" fullWidth />
         <TextField variant="standard" label="Description" fullWidth />
       </Stack>
+
       <Typography variant="h5" my={2}>
         {intl.formatMessage({ id: "Permissions" })}
       </Typography>
@@ -73,13 +76,13 @@ export const EditPermission = () => {
         <Stack>
           <Stack>
             <Typography variant="body1">
-              {intl.formatMessage({ id: "USER.DASHBOARD" })}
+              {intl.formatMessage({ id: "MENU.DASHBOARD" })}
             </Typography>
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
         <Stack>
@@ -90,23 +93,24 @@ export const EditPermission = () => {
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
 
-        {/* <Stack>
-            <Stack>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
-              </Typography>
-            </Stack>
-            <Stack direction="row">
-              <FormControlLabel control={<Checkbox disabled />} label="View" />
-              <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-              <FormControlLabel control={<Checkbox disabled />} label="Delete" />
-            </Stack>
-          </Stack> */}
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Assign Leaves" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
+          </Stack>
+        </Stack>
         <Stack>
           <Stack>
             <Typography variant="body1">
@@ -115,8 +119,8 @@ export const EditPermission = () => {
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
         <Stack>
@@ -127,22 +131,45 @@ export const EditPermission = () => {
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
-        {/* <Stack>
-            <Stack>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "MENU.CLIENTS" })}
-              </Typography>
-            </Stack>
-            <Stack direction="row">
-              <FormControlLabel control={<Checkbox />} label="View" />
-              <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-              <FormControlLabel control={<Checkbox disabled />} label="Delete" />
-            </Stack>
-          </Stack> */}
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.CLIENTS" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
+          </Stack>
+        </Stack>
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.RECRUITMENT" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit job requirements"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit job description"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit job applications"
+            />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
+          </Stack>
+        </Stack>
 
         <Stack>
           <Stack>
@@ -152,8 +179,8 @@ export const EditPermission = () => {
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Edit" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
         <Stack>
@@ -164,8 +191,11 @@ export const EditPermission = () => {
           </Stack>
           <Stack direction="row">
             <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox disabled />} label="Edit" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Edit posted notice"
+            />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
 
@@ -205,7 +235,30 @@ export const EditPermission = () => {
               label="Edit notifications settings"
             />
             <FormControlLabel control={<Checkbox />} label="Change Password" />
-            <FormControlLabel control={<Checkbox disabled />} label="Delete" />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
+          </Stack>
+        </Stack>
+        <Stack>
+          <Stack>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "MENU.ADMIN" })}
+            </Typography>
+          </Stack>
+          <Stack direction="row">
+            <FormControlLabel control={<Checkbox />} label="View" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Template theme edit"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Assign permissions to admin"
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Assign permissions to user"
+            />
+            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
       </Stack>

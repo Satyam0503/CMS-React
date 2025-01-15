@@ -10,6 +10,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+  Container,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Check, Colorize, Undo, Edit } from "@mui/icons-material";
@@ -23,9 +24,7 @@ export default function Themes() {
   const intl = useIntl();
   return (
     <>
-      <Grid
-        spacing={2}
-      >
+      <Container>
         <Stack>
           <Typography variant="h4" mb={2}>
             {intl.formatMessage({ id: "THEME.SETTING" })}
@@ -984,7 +983,7 @@ export default function Themes() {
             />
           </Grid>
         </Card>
-      </Grid>
+      </Container>
     </>
   );
 }

@@ -31,7 +31,7 @@ import {
   SearchOutlined,
   Visibility,
 } from "@mui/icons-material";
-import CustomisedButton from "../../../modules/components/CustomisedButton";
+import CustomisedButton from "../../components/CustomisedButton";
 import ApplicationPreview from "./ApplicationPreview";
 
 function createData(
@@ -77,11 +77,11 @@ export default function Applications() {
   return (
     <>
       <Stack>
-        <Typography variant="h4" sx={{ pb: "20px" }}>
+        <Typography variant="h4" my={3}>
           {intl.formatMessage({ id: "USER.APPLICATIONS" })}
         </Typography>
       </Stack>
-      <Card sx={{ width: "100%", p: "16px" }}>
+      <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
           display={"flex"}
