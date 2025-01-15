@@ -979,7 +979,7 @@ export const MuiTheme = createTheme({
             minWidth: "500px", // For medium and up screens
           },
           "@media (min-width:1200px)": {
-            minWidth: "1000px", // For large screens and up
+            minWidth: "600px", // For large screens and up
           },
         },
       },
@@ -995,6 +995,20 @@ export const MuiTheme = createTheme({
           color: alpha(colors.alpha.neutral["100"], 0.95),
         },
       },
+    },
+    MuiContainer:{
+      styleOverrides:{
+        root:{
+          maxWidth:"1280px",
+          padding: "16px",
+          "@media (min-width:600px)": {
+            padding: "24px",
+          },
+          // "@media (min-width:900px)": {
+          //   padding: "32px",
+          // },
+        }
+      }
     },
     MuiSwitch: {
       styleOverrides: {

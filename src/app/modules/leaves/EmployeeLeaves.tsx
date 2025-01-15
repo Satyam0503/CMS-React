@@ -30,18 +30,9 @@ export const EmployeeLeaves: FC = () => {
     <Grid
       container
       sx={{
-        maxWidth: "1200px",
-        mx: "auto",
-        my: 4,
-        display: "flex",
         gap: "10px",
       }}
     >
-      <Stack>
-        <Typography variant="h4">
-          {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
-        </Typography>
-      </Stack>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
           <Card>

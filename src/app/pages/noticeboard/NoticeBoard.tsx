@@ -118,8 +118,8 @@ export default function NoticeBoard() {
   }
 
   return (
-    <Container>
-      <Grid container my={6} spacing={2}>
+    <>
+      <Grid container spacing={2}>
         <Stack>
           <Typography variant="h4" sx={{ pb: "20px" }}>
             {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
@@ -193,6 +193,6 @@ export default function NoticeBoard() {
           handleConfirmation={handleNoticeDeletion}
         />
       )}
-    </Container>
+    </>
   );
 }

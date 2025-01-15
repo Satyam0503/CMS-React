@@ -17,6 +17,7 @@ import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
+import EmployeePageWrapper from "../pages/employees/EmployeeWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -44,13 +45,12 @@ const PrivateRoutes = () => {
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagement />} />
         <Route path="attendance" element={<EmployeeAttendance />} />
-        <Route path="employees" element={<Employees />} />
+        <Route path="employees" element={<EmployeePageWrapper />} />
         <Route path="holidays" element={<Holidays />} />
         <Route path="noticeboard" element={<NoticeBoard />} />
         <Route path="mynoticeboard" element={<MyNoticeBoard />} />
 
         {/* Lazy Modules */}
-
         <Route
           path="recruitment/*"
           element={

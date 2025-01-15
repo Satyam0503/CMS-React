@@ -233,11 +233,8 @@ export default function Employees() {
   }, [page, rowPerPage, isRefresh, search]);
 
   return (
-    <Container sx={{ pt: "16px" }}>
+    <>
       <Stack direction="column" spacing={2}>
-        <Typography variant="h4" className="my-6">
-          {intl.formatMessage({ id: "MENU.EMP" })}
-        </Typography>
         <Card sx={{ width: "100%", p: "16px" }}>
           <Stack
             direction="row"
@@ -313,6 +310,6 @@ export default function Employees() {
         handleClose={closeConfirmationModal}
         handleConfirmation={handleEmployeeDeletion}
       />
-    </Container>
+    </>
   );
 }

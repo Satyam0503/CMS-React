@@ -25,6 +25,7 @@ import { useState } from "react";
 import { updateUserAvatar } from "./userservices";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../components/CustomisedModal";
+import CustomisedButton from "../components/CustomisedButton";
 
 const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 // const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
@@ -36,12 +37,12 @@ type ProfileInfo = {
   designation?: string;
 };
 
-export default function ProfileCard(props:ProfileInfo) {
+export default function ProfileCard(props: ProfileInfo) {
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const {name,age,bloodGroup,designation}=props;
+  const { name, age, bloodGroup, designation } = props;
 
   function handleClose() {
     setOpen(false);
@@ -55,27 +56,27 @@ export default function ProfileCard(props:ProfileInfo) {
       return;
     }
     const selectedFile = files[0];
-    const fileSizeInMB = (selectedFile.size / (1024 * 1024));
-    if(fileSizeInMB>2){
+    const fileSizeInMB = selectedFile.size / (1024 * 1024);
+    if (fileSizeInMB > 2) {
       setFileError("File size should be less 2MB");
       return;
     }
     setSelectedFile(selectedFile);
     setFileError("");
   }
-  function handleUpdateAvatar(){
-    if(seletedFile){
-      const formData= new FormData();
-      formData.append("avatar",seletedFile);
-      updateUserAvatar(formData,token)
-      .then(res=>{
-        toast.success("Avatar updated successfully")
-        handleClose();
-      })
-      .catch(error=>{
-        toast.error("Something went wrong")
-        console.log(error); 
-      })
+  function handleUpdateAvatar() {
+    if (seletedFile) {
+      const formData = new FormData();
+      formData.append("avatar", seletedFile);
+      updateUserAvatar(formData, token)
+        .then((res) => {
+          toast.success("Avatar updated successfully");
+          handleClose();
+        })
+        .catch((error) => {
+          toast.error("Something went wrong");
+          console.log(error);
+        });
     }
   }
   return (
@@ -135,7 +136,7 @@ export default function ProfileCard(props:ProfileInfo) {
           </Stack>
           <Stack>
             <Typography variant="h2" className="text-white">
-             {bloodGroup}
+              {bloodGroup}
             </Typography>
             <Typography variant="body2" className="text-white">
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -152,23 +153,54 @@ export default function ProfileCard(props:ProfileInfo) {
           </Typography>
         </Button>
       </Card>
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Box>
-          <Typography variant="h6">Select a Avatar File</Typography>
-          <Stack direction={"column"} spacing={1} sx={{ marginBlockStart: 2 }}>
-            <Box component="label" sx={{p: 2, border: '1px dashed grey', borderRadius: 1, cursor:"pointer"}} >
-              <CloudUploadOutlined fontSize="large" sx={{margin:"auto"}}/>
-              <input type="file" accept=".jpg,.png,.webp" onChange={handleFileChange} hidden />
-              <Typography>Selected File: {seletedFile?.name}</Typography>
-            </Box>
-            <Typography variant="body2">Note : Please select .jpg/.png/.webp images upto 2 MB</Typography>
-            <Button endIcon={<AttachFile />} onClick={handleUpdateAvatar} disabled={!seletedFile}>Upload File </Button>
-            {
-              fileError && <Typography variant="body2" sx={{color:"#d32f2f"}}> {fileError}</Typography>
-            }
-          </Stack>
-        </Box>
-      </CustomisedModal>
+      {open && (
+        <CustomisedModal open={open} handleClose={handleClose}>
+          <Box>
+            <Typography variant="h5">Select a Avatar File</Typography>
+            <Stack
+              direction={"column"}
+              spacing={1}
+              sx={{ marginBlockStart: 2 }}
+            >
+              <Box
+                component="label"
+                sx={{
+                  p: 2,
+                  border: "1px dashed grey",
+                  borderRadius: 1,
+                  cursor: "pointer",
+                }}
+              >
+                <CloudUploadOutlined fontSize="large" sx={{ margin: "auto" }} />
+                <input
+                  type="file"
+                  accept=".jpg,.png,.webp"
+                  onChange={handleFileChange}
+                  hidden
+                />
+                <Typography>Selected File: {seletedFile?.name}</Typography>
+              </Box>
+              <Typography variant="body1">
+                Note : Please select .jpg/.png/.webp images upto 2 MB
+              </Typography>
+              <CustomisedButton
+                label="Upload File"
+                Icon={<AttachFile/>}
+                iconPosition="end"
+                disabled={!seletedFile}
+                handleClick={handleUpdateAvatar}
+              />
+
+              {fileError && (
+                <Typography variant="body2" sx={{ color: "#d32f2f" }}>
+                  {" "}
+                  {fileError}
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+        </CustomisedModal>
+      )}
     </>
   );
 }

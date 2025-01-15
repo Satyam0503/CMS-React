@@ -10,12 +10,10 @@ import { CompanyRoles } from "../../../../utils/constant/Permission";
 export const Roles = () => {
   const intl = useIntl();
   return (
-    <Stack direction={"column"} spacing={2}>
-      <Stack>
-        <Typography variant="h4" my={2}>
-          {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
-        </Typography>
-      </Stack>
+    <Stack spacing={3}>
+      <Typography variant="h4">
+        {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
+      </Typography>
       <CustomisedTable
         tabName="Roles"
         rows={CompanyRoles}

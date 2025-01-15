@@ -1,19 +1,16 @@
 import { FC } from "react";
-import { PageTitle } from "../../../_themes/layout/core";
 import { useIntl } from "react-intl";
-import { Grid } from "@mui/material";
 import Employees from "../../modules/employees/Employees";
+import { Typography } from "@mui/material";
 
 const EmployeePageWrapper: FC = () => {
-  const intl = useIntl();
+  const intl = useIntl();  
   return (
     <>
-      <Grid container>
-        <PageTitle breadcrumbs={[]}>
-          {intl.formatMessage({ id: "MENU.CONTACTS" })}
-        </PageTitle>
+        <Typography variant="h4" mb={3}>
+          {intl.formatMessage({ id: "MENU.EMP" })}
+        </Typography>
         <Employees />
-      </Grid>
     </>
   );
 };

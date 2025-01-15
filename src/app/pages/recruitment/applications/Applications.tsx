@@ -75,11 +75,7 @@ export default function Applications() {
   };
 
   return (
-    <Grid
-      container
-      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
-      spacing={2}
-    >
+    <>
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
           {intl.formatMessage({ id: "USER.APPLICATIONS" })}
@@ -178,6 +174,6 @@ export default function Applications() {
       <Dialog open={openModal} onClose={handleCloseModal}>
         <DialogContent sx={{ width: "100%" }}></DialogContent>
       </Dialog>
-    </Grid>
+    </>
   );
 }

@@ -8,6 +8,10 @@ interface UserState {
   roleId: string | null;
   permissions: any[];
 }
+interface PermissionModel {
+  permissionId:string;
+  permissionName:string;
+}
 
 const initialState: UserState = {
   token: null,
@@ -27,6 +31,9 @@ export const userSlice = createSlice({
     },
     setRoleName:(state,action:PayloadAction<{roleName:string}>)=>{
         state.roleName = action.payload.roleName;
+    },
+    setPermissions:(state,action:PayloadAction<PermissionModel[]> )=>{
+      state.permissions= action.payload;
     }
   },
 });

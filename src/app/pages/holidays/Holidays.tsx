@@ -103,7 +103,7 @@ export default function Holidays() {
 
   return (
     <>
-      <Grid container sx={{ maxWidth: "1200px" }} mx={auto} my={6} spacing={2}>
+      <Grid container spacing={2}>
         <Stack>
           <Typography variant="h4" sx={{ pb: "20px" }}>
             {intl.formatMessage({ id: "MENU.HOLIDAYS" })}

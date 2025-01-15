@@ -44,8 +44,11 @@ export const EditPermission = () => {
     }
   }, []);
 
+  console.log(state);
+  
+
   return (
-    <Container>
+    <>
       <Stack position={"sticky"}>
         <Typography variant="h4" mb={2}>
           {intl.formatMessage({ id: "ROLES.EDIT" })}
@@ -214,6 +217,6 @@ export const EditPermission = () => {
         />
         <CustomisedButton label="Update" />
       </Grid>
-    </Container>
+    </>
   );
 };

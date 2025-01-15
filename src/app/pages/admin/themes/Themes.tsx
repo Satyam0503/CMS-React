@@ -24,18 +24,14 @@ export default function Themes() {
   return (
     <>
       <Grid
-        container
-        display={"flex"}
-        flexDirection={"column"}
-        sx={{ maxWidth: "1200px", mx: "auto", my: 2 }}
         spacing={2}
       >
         <Stack>
-          <Typography variant="h4" my={2}>
+          <Typography variant="h4" mb={2}>
             {intl.formatMessage({ id: "THEME.SETTING" })}
           </Typography>
         </Stack>
-        <Card sx={{ p: 5 }}>
+        <Card sx={{ p: 2 }}>
           <Grid container display={"flex"} justifyContent={"flex-end"} gap={2}>
             <CustomisedButton
               variant="outlined"

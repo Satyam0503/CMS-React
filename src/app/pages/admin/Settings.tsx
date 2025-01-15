@@ -6,7 +6,6 @@ import { EditPermission } from "./permissions/EditPermission";
 
 const SettingPage = () => {
   return (
-    <Container maxWidth={"lg"}>
       <Routes>
         <Route element={<Outlet />}>
           <Route index element={<Navigate to={"/setting/permissions"} />} />
@@ -15,7 +14,6 @@ const SettingPage = () => {
           <Route path="editpermission" element={<EditPermission/>} />
         </Route>
       </Routes>
-    </Container>
   );
 };
 

@@ -71,11 +71,7 @@ export default function Jobs() {
   };
 
   return (
-    <Grid
-      container
-      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
-      spacing={2}
-    >
+    <>
       <Stack>
         <Typography variant="h4" sx={{ pb: "20px" }}>
           {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
@@ -115,9 +111,9 @@ export default function Jobs() {
             <IconButton onClick={() => setOpenModal(true)}>
               <Add />
             </IconButton>
-            {
-              openModal && <JobDescription open={openModal} handleClose={handleCloseModal} />
-            }
+            {openModal && (
+              <JobDescription open={openModal} handleClose={handleCloseModal} />
+            )}
             <IconButton aria-label="import excel">
               <Download />
             </IconButton>
@@ -179,6 +175,6 @@ export default function Jobs() {
           </TableContainer>
         </Stack>
       </Card>
-    </Grid>
+    </>
   );
 }
