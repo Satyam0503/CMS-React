@@ -72,6 +72,11 @@ export default function Jobs() {
 
   return (
     <>
+      <Stack>
+        <Typography variant="h4" my={3}>
+          {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
+        </Typography>
+      </Stack>
       <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
