@@ -218,7 +218,7 @@ export default function AboutUser() {
   }
 
   console.log(summary);
-  
+
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
@@ -233,11 +233,11 @@ export default function AboutUser() {
               <Typography variant="h5">{currentUser?.jobRole}</Typography>
               {isSummaryEdit ? (
                 <CustomisedButton
-                label="Update"
-                variant="contained"
-                handleClick={handleUpdateSummary}
-                Icon={<Check />}
-                // disabled={summary.current.length===0}
+                  label="Update"
+                  variant="contained"
+                  handleClick={handleUpdateSummary}
+                  Icon={<Check />}
+                  // disabled={summary.current.length===0}
                 />
               ) : (
                 <IconButton onClick={() => setSummaryEdit(true)}>

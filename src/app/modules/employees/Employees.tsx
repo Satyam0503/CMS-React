@@ -234,59 +234,58 @@ export default function Employees() {
 
   return (
     <>
-      <Stack direction="column" spacing={2}>
-        <Card sx={{ width: "100%", p: "16px" }}>
-          <Stack
-            direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <SearchInput search={search} setSearch={setSearch} />
-            <Stack direction="row" spacing={1}>
-              <CustomIconButton
-                icon={<FilterList />}
-                tooltip="Filter Employee"
-                handleClick={() => {}}
-              />
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-                tooltip="Add Employee"
-                ariaLabel="Add employee"
-              />
-              <CustomIconButton
-                icon={<Download />}
-                handleClick={handleEmployeeExport}
-                tooltip="Import Excel"
-                ariaLabel="import excel"
-              />
-            </Stack>
+      <Card sx={{ p: "16px" }}>
+        <Stack
+          direction="row"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <SearchInput search={search} setSearch={setSearch} />
+          <Stack direction="row" spacing={1}>
+            <CustomIconButton
+              icon={<FilterList />}
+              tooltip="Filter Employee"
+              handleClick={() => {}}
+            />
+            <CustomIconButton
+              icon={<Add />}
+              handleClick={() => setModalOpen(true)}
+              tooltip="Add Employee"
+              ariaLabel="Add employee"
+            />
+            <CustomIconButton
+              icon={<Download />}
+              handleClick={handleEmployeeExport}
+              tooltip="Import Excel"
+              ariaLabel="import excel"
+            />
           </Stack>
-          <Stack sx={{ mt: "1rem" }}>
-            <CustomisedTable
-              tabName="Employee"
-              loading={isLoading}
-              rows={employeeList}
-              columns={EmployeeTabTableColumnList}
+        </Stack>
+        <Stack sx={{ mt: "1rem" }}>
+          <CustomisedTable
+            tabName="Employee"
+            loading={isLoading}
+            rows={employeeList}
+            columns={EmployeeTabTableColumnList}
+            page={page}
+            rowsPerPage={rowPerPage}
+            handleEdit={handleEmployeeEdit}
+            openConfirmationModal={openConfirmationModal}
+            openViewModal={openViewModal}
+          />
+          {totalRecords > rowPerPage && (
+            <Pagination
               page={page}
               rowsPerPage={rowPerPage}
-              handleEdit={handleEmployeeEdit}
-              openConfirmationModal={openConfirmationModal}
-              openViewModal={openViewModal}
+              setRowPerPage={setRowPerPage}
+              setPage={setPage}
+              totalRecords={totalRecords}
             />
-            {totalRecords > rowPerPage && (
-              <Pagination
-                page={page}
-                rowsPerPage={rowPerPage}
-                setRowPerPage={setRowPerPage}
-                setPage={setPage}
-                totalRecords={totalRecords}
-              />
-            )}
-          </Stack>
-        </Card>
-      </Stack>
+          )}
+        </Stack>
+      </Card>
+
       {isModalOpen && (
         <AddUpdateEmployee
           open={isModalOpen}

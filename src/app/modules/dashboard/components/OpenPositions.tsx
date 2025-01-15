@@ -1,8 +1,8 @@
 import { Card, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { colors } from "../theme/MuiTheme";
+import { toAbsoluteUrl } from "../../../../_themes/helpers";
+import { colors } from "../../theme/MuiTheme";
 
 export default function OpenPositions() {
   const intl = useIntl();

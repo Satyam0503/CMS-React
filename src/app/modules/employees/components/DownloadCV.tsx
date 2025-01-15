@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 
 export default function DownloadCV() {
   const style = {

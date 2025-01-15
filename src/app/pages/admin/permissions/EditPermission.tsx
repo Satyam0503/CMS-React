@@ -1,11 +1,3 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { colors } from "../../../modules/theme/MuiTheme";
 import {
   Checkbox,
   Container,
@@ -16,9 +8,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../modules/components/CustomisedButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Check } from "@mui/icons-material";
+import { colors } from "../../../modules/theme/MuiTheme";
+import CustomisedButton from "../../../modules/components/CustomisedButton";
 
 function createData(name: string) {
   return { name };
@@ -67,9 +61,9 @@ export const EditPermission = () => {
         sx={{
           border: "1px solid",
           borderColor: colors.alpha.neutral[200],
-          p: 5,
           borderRadius: 1,
           my: 2,
+          p: { xs: 2, sm: 5 },
         }}
         spacing={3}
       >
@@ -79,10 +73,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.DASHBOARD" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -91,10 +106,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.EMP" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
 
@@ -104,11 +140,39 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Assign Leaves" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Assign Leaves" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -117,10 +181,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -129,10 +214,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.PROJ" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -141,10 +247,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.CLIENTS" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -153,21 +280,47 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.RECRUITMENT" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
+          <Stack direction="row" flexWrap={"wrap"}>
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit job requirements"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit job description"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit job requirements" })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit job applications"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit job description" })}
+                </Typography>
+              }
             />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit job application" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
 
@@ -177,10 +330,31 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
-            <FormControlLabel control={<Checkbox />} label="Edit" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+          <Stack direction="row" flexWrap={"wrap"}>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.EDIT" })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
         <Stack>
@@ -189,13 +363,32 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
+          <Stack direction="row" flexWrap={"wrap"}>
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit posted notice"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
             />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit posted notice" })}
+                </Typography>
+              }
+            />
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
 
@@ -206,36 +399,112 @@ export const EditPermission = () => {
           </Typography>
 
           <Stack direction="row" flexWrap={"wrap"}>
-            <FormControlLabel control={<Checkbox />} label="View" />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit introduction"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "PERMISSION.VIEW",
+                  })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit personal informantion"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit introduction",
+                  })}
+                </Typography>
+              }
             />
-            <FormControlLabel control={<Checkbox />} label="Edit skills" />
-            <FormControlLabel control={<Checkbox />} label="Edit education" />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit certification"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit personal informantion",
+                  })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit skills",
+                  })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit education",
+                  })}
+                </Typography>
+              }
+            />
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit certification",
+                  })}
+                </Typography>
+              }
             />
 
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit pending for approval leaves"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({
+                    id: "Edit pending for approval leaves",
+                  })}
+                </Typography>
+              }
+            />
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit work history" })}
+                </Typography>
+              }
+            />
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Edit notifications settings" })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit work history"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Change Password" })}
+                </Typography>
+              }
             />
+
             <FormControlLabel
               control={<Checkbox />}
-              label="Edit notifications settings"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
             />
-            <FormControlLabel control={<Checkbox />} label="Change Password" />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
           </Stack>
         </Stack>
         <Stack>
@@ -244,21 +513,40 @@ export const EditPermission = () => {
               {intl.formatMessage({ id: "MENU.ADMIN" })}
             </Typography>
           </Stack>
-          <Stack direction="row">
-            <FormControlLabel control={<Checkbox />} label="View" />
+          <Stack direction="row" flexWrap={"wrap"}>
             <FormControlLabel
               control={<Checkbox />}
-              label="Template theme edit"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.VIEW" })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Assign permissions to admin"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Template theme edit" })}
+                </Typography>
+              }
             />
             <FormControlLabel
               control={<Checkbox />}
-              label="Assign permissions to user"
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "Assign permissions" })}
+                </Typography>
+              }
             />
-            <FormControlLabel control={<Checkbox />} label="Delete" />
+
+            <FormControlLabel
+              control={<Checkbox />}
+              label={
+                <Typography variant="caption">
+                  {intl.formatMessage({ id: "PERMISSION.DELETE" })}
+                </Typography>
+              }
+            />
           </Stack>
         </Stack>
       </Stack>
@@ -268,7 +556,11 @@ export const EditPermission = () => {
           // handleClick={handleClose}
           label="Cancel"
         />
-        <CustomisedButton label="Update" />
+        <CustomisedButton
+          label="Save Changes"
+          Icon={<Check />}
+          iconPosition="start"
+        />
       </Grid>
     </>
   );

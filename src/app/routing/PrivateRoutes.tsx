@@ -6,15 +6,16 @@ import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
-import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
-import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
-import Holidays from "../pages/holidays/Holidays.tsx";
+
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
-import EmployeePageWrapper from "../pages/employees/EmployeeWrapper";
+import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
+import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
+import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
+import { EmployeePageWrapper } from "../pages/employees/EmployeeWrapper.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -40,12 +41,11 @@ const PrivateRoutes = () => {
         <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />
         <Route path="myprofile" element={<ProfilePageWrapper />} />
-        <Route path="employeeleave" element={<LeaveManagement />} />
-        <Route path="attendance" element={<EmployeeAttendance />} />
+        <Route path="employeeleave" element={<LeaveManagementWrapper />} />
+        <Route path="attendance" element={<AttendanceWrapper />} />
         <Route path="employees" element={<EmployeePageWrapper />} />
-        <Route path="holidays" element={<Holidays />} />
+        <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
-
         {/* Lazy Modules */}
         <Route
           path="recruitment/*"

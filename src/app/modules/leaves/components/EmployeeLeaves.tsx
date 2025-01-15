@@ -9,19 +9,23 @@ import {
 } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
-import IconStat from "../components/IconStat";
-import { colors } from "../theme/MuiTheme";
+// import IconStat from "../components/IconStat";
+// import { colors } from "../theme/MuiTheme";
 import {
   Home,
   HourglassBottom,
   HourglassTop,
   WorkOff,
 } from "@mui/icons-material";
-import BasicTable from "../components/BasicTable";
+// import BasicTable from "../components/BasicTable";
 import AddLeaves from "./AddLeaves";
 import LeaveAssignment from "./LeaveAssignment";
 import LeaveSummary from "./LeaveSummary";
-import { LeaveCalender } from "./components/LeaveCalender";
+import IconStat from "../../components/IconStat";
+import { colors } from "../../theme/MuiTheme";
+import BasicTable from "../../components/BasicTable";
+import { LeaveCalender } from "./LeaveCalender";
+// import { LeaveCalender } from "./components/LeaveCalender";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
@@ -30,6 +34,7 @@ export const EmployeeLeaves: FC = () => {
     <Grid
       container
       sx={{
+        display: "flex",
         gap: "10px",
       }}
     >
@@ -107,7 +112,6 @@ export const EmployeeLeaves: FC = () => {
           </Stack>
         </Stack>
       </Grid>
-      
       <Grid item xs={12} display={"flex"} gap={2} direction={"column"}>
         <LeaveSummary />
         {/* <CustomisedTable columns={EmployeeLeaves} /> */}

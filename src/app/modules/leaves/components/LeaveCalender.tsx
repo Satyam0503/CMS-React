@@ -13,8 +13,7 @@ import {
 } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
-import IconStat from "../components/IconStat";
-import { colors } from "../theme/MuiTheme";
+
 import {
   CalendarToday,
   Home,

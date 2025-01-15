@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 import DashboardUser from "../../modules/dashboard/DashboardUser";
 import Holidays from "../../modules/holidays/Holidays";
 
-export default function UserDashboard() {
+export default function HolidaysWrapper() {
   const intl = useIntl();
   return (
     <>

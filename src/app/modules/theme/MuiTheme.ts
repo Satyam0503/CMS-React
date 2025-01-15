@@ -641,6 +641,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -1164,9 +1165,8 @@ export const MuiTheme = createTheme({
       fontWeight: 600,
     },
     caption: {
-      fontSize: 13,
-      textTransform: "uppercase",
-      color: colors.alpha.neutral[500],
+      fontSize: 12,
+      fontWeight: 500,
     },
     subtitle1: {
       fontSize: 10,
