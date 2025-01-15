@@ -50,7 +50,7 @@ export const EditPermission = () => {
   return (
     <>
       <Stack position={"sticky"}>
-        <Typography variant="h4" my={3}>
+        <Typography variant="h4" mb={3}>
           {intl.formatMessage({ id: "ROLES.EDIT" })}
         </Typography>{" "}
       </Stack>

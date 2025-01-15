@@ -107,6 +107,7 @@ export const EmployeeLeaves: FC = () => {
           </Stack>
         </Stack>
       </Grid>
+      
       <Grid item xs={12} display={"flex"} gap={2} direction={"column"}>
         <LeaveSummary />
         {/* <CustomisedTable columns={EmployeeLeaves} /> */}

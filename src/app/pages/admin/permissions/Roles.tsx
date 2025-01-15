@@ -11,12 +11,11 @@ import { colors } from "../../../modules/theme/MuiTheme";
 export const Roles = () => {
   const intl = useIntl();
   return (
-    <Stack direction={"column"}>
-      <Stack>
-        <Typography variant="h4" my={2}>
-          {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
-        </Typography>
-      </Stack>
+    <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
+      </Typography>
+
       <Card>
         <CustomisedTable
           tabName="Roles"
@@ -26,6 +25,6 @@ export const Roles = () => {
           rowsPerPage={10}
         />
       </Card>
-    </Stack>
+    </>
   );
 };

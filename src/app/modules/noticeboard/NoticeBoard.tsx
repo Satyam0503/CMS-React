@@ -158,11 +158,8 @@ export default function NoticeBoard() {
             tabName="Notice"
             columns={NoticeBoardTableColumnList}
             rows={NoticeList}
-            page={page}
-            setPage={setPage}
-            totalRecords={totalRecords}
+            page={page}          
             rowsPerPage={rowPerPage}
-            setRowPerPage={setRowPerPage}
             loading={isLoading}
             handleEdit={handleNoticeEdit}
             openConfirmationModal={openConfirmationModal}

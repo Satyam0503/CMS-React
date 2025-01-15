@@ -24,12 +24,10 @@ export default function Themes() {
   const intl = useIntl();
   return (
     <>
-      <Container>
-        <Stack>
-          <Typography variant="h4" mb={2}>
+          <Typography variant="h4" mb={3}>
             {intl.formatMessage({ id: "THEME.SETTING" })}
           </Typography>
-        </Stack>
+        
         <Card sx={{ p: 2 }}>
           <Grid container display={"flex"} justifyContent={"flex-end"} gap={2}>
             <CustomisedButton
@@ -983,7 +981,6 @@ export default function Themes() {
             />
           </Grid>
         </Card>
-      </Container>
     </>
   );
 }

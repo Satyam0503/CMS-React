@@ -6,11 +6,11 @@ import DashboardUser from "../../modules/dashboard/DashboardUser";
 export default function UserDashboard() {
   const intl = useIntl();
   return (
-    <Stack spacing={3}>
-      <Typography variant="h4">
+    <>
+      <Typography variant="h4" mb={3}>
         {intl.formatMessage({ id: "MENU.DASHBOARD" })}
       </Typography>
       <DashboardUser />
-    </Stack>
+    </>
   );
 }

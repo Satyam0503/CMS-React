@@ -5,7 +5,6 @@ import { Container } from "@mui/material";
 
 const Recruitment = () => {
   return (
-    <Container>
       <Routes>
         <Route element={<Outlet />}>
           <Route index element={<Navigate to={"/recruitment/jobs"} />} />
@@ -13,7 +12,6 @@ const Recruitment = () => {
           <Route path="applications" element={<Applications />} />
         </Route>
       </Routes>
-    </Container>
   );
 };
 

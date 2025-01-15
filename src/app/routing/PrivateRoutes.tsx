@@ -8,16 +8,13 @@ import { WithChildren } from "../../_themes/helpers";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
 import { LeaveManagement } from "../pages/leavemanagement/LeaveMangement";
 import EmployeeAttendance from "../modules/attendance/EmployeeAttendance";
-import Employees from "../modules/employees/Employees";
 import Holidays from "../pages/holidays/Holidays.tsx";
-
-import NoticeBoard from "../pages/noticeboard/NoticeBoard";
-import MyNoticeBoard from "../modules/noticeboard/MyNoticeBoard.tsx";
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import EmployeePageWrapper from "../pages/employees/EmployeeWrapper";
+import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -47,8 +44,7 @@ const PrivateRoutes = () => {
         <Route path="attendance" element={<EmployeeAttendance />} />
         <Route path="employees" element={<EmployeePageWrapper />} />
         <Route path="holidays" element={<Holidays />} />
-        <Route path="noticeboard" element={<NoticeBoard />} />
-        <Route path="mynoticeboard" element={<MyNoticeBoard />} />
+        <Route path="noticeboard" element={<NoticeBoardWrapper />} />
 
         {/* Lazy Modules */}
         <Route

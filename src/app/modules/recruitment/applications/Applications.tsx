@@ -76,11 +76,9 @@ export default function Applications() {
 
   return (
     <>
-      <Stack>
-        <Typography variant="h4" my={3}>
-          {intl.formatMessage({ id: "USER.APPLICATIONS" })}
-        </Typography>
-      </Stack>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
+      </Typography>
       <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
