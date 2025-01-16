@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { AuthModel } from "./_models";
 
 const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
-const getAuth = (): AuthModel | undefined => {
+
+const getLocalKey = (): string | undefined => {
   if (!localStorage) {
     return;
   }
@@ -11,36 +10,25 @@ const getAuth = (): AuthModel | undefined => {
   if (!lsValue) {
     return;
   }
-
-  try {
-    const auth: AuthModel = JSON.parse(lsValue) as AuthModel;
-    if (auth) {
-      // You can easily check auth_token expiration also
-      return auth;
-    }
-  } catch (error) {
-    console.error("AUTH LOCAL STORAGE PARSE ERROR", error);
-  }
+  return lsValue;
 };
 
-const setAuth = (auth: AuthModel) => {
+const setLocalKey = (key: string) => {
   if (!localStorage) {
     return;
   }
 
   try {
-    const lsValue = JSON.stringify(auth);
-    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, lsValue);
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, key);
   } catch (error) {
     console.error("AUTH LOCAL STORAGE SAVE ERROR", error);
   }
 };
 
-const removeAuth = () => {
+const removeLocalKey = () => {
   if (!localStorage) {
     return;
   }
-
   try {
     localStorage.removeItem(AUTH_LOCAL_STORAGE_KEY);
   } catch (error) {
@@ -48,19 +36,19 @@ const removeAuth = () => {
   }
 };
 
-export function setupAxios(axios: any) {
-  axios.defaults.headers.Accept = "application/json";
-  axios.interceptors.request.use(
-    (config: { headers: { Authorization: string } }) => {
-      const auth = getAuth();
-      if (auth && auth.token) {
-        config.headers.Authorization = `Bearer ${auth.token}`;
-      }
+// export function setupAxios(axios: any) {
+//   axios.defaults.headers.Accept = "application/json";
+//   axios.interceptors.request.use(
+//     (config: { headers: { Authorization: string } }) => {
+//       const auth = getAuth();
+//       if (auth && auth.token) {
+//         config.headers.Authorization = `Bearer ${auth.token}`;
+//       }
 
-      return config;
-    },
-    (err: any) => Promise.reject(err)
-  );
-}
+//       return config;
+//     },
+//     (err: any) => Promise.reject(err)
+//   );
+// }
 
-export { getAuth, setAuth, removeAuth, AUTH_LOCAL_STORAGE_KEY };
+export { getLocalKey, setLocalKey, removeLocalKey, AUTH_LOCAL_STORAGE_KEY };

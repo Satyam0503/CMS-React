@@ -38,9 +38,6 @@ export const EditPermission = () => {
     }
   }, []);
 
-  console.log(state);
-  
-
   return (
     <>
       <Stack position={"sticky"}>

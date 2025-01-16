@@ -1,12 +1,12 @@
 
 import {FC} from 'react'
 import {Link} from 'react-router-dom'
-import {useAuth} from '../../../../app/modules/auth'
 import {Languages} from './Languages'
 import {toAbsoluteUrl} from '../../../helpers'
+import { useAppSelector } from '../../../../app/Redux/hooks'
 
 const HeaderUserMenu: FC = () => {
-  const {currentUser, logout} = useAuth();
+  const currentUser = useAppSelector(state=>state.user.userData);
   return (
     <div
       className='menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg menu-state-primary fw-bold py-4 fs-6 w-275px'
@@ -24,7 +24,7 @@ const HeaderUserMenu: FC = () => {
               <span className='badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2'>Pro</span>
             </div>
             <a href='#' className='fw-bold text-muted text-hover-primary fs-7'>
-              {currentUser?.email}
+              {currentUser?.role || ""}
             </a>
           </div>
         </div>
@@ -124,7 +124,11 @@ const HeaderUserMenu: FC = () => {
       </div>
 
       <div className='menu-item px-5'>
-        <a onClick={logout} className='menu-link px-5'>
+        {/* <a onClick={logout} className='menu-link px-5'>
+          Sign Out
+        </a> */}
+        {/* replace below code */}
+        <a className='menu-link px-5'>
           Sign Out
         </a>
       </div>

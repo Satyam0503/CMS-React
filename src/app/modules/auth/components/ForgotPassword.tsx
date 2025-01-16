@@ -6,15 +6,16 @@ import { useFormik } from "formik";
 import { requestPassword } from "../core/_requests";
 
 const initialValues = {
-  email: "admin@demo.com",
+  email: "",
 };
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
-    .email("Wrong email format")
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
-    .required("Email is required"),
+    .matches(
+      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Email must be a valid email"
+    )
+    .required("Email is required")
 });
 
 export function ForgotPassword() {

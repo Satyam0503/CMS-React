@@ -1,11 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
+import { AUTH_LOCAL_STORAGE_KEY } from "../../modules/auth";
 
 interface AuthenticationState {
   isUserAuthenticated: boolean;
+  token: string | null;
 }
 
 const initialState: AuthenticationState = {
   isUserAuthenticated: false,
+  token: localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)! : null,
 };
 const authSlice = createSlice({
   name: "auth",
@@ -14,7 +18,11 @@ const authSlice = createSlice({
     setAuth: (state) => {
       state.isUserAuthenticated = true;
     },
-    userLogout: (state) => {
+    setToken:(state,action:PayloadAction<{token:string}> )=>{
+      state.token= action.payload.token;
+    },
+    logout: (state) => {
+      state.token= null;
       state.isUserAuthenticated = false;
     },
   },
@@ -22,4 +30,10 @@ const authSlice = createSlice({
 
 // export authReducer and action creator
 export const authReducer = authSlice.reducer;
-export const { setAuth } = authSlice.actions;
+export const { setAuth,setToken,logout } = authSlice.actions;
+
+//  selector functions
+export const getToken = (state: RootState) => state.auth.token;
+export const getAuthentication = (state: RootState) =>
+  state.auth.isUserAuthenticated;
+
