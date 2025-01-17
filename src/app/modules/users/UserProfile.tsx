@@ -10,17 +10,14 @@ import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { useState } from "react";
-import { EmployeesDataTypes } from "../../../utils/common_types";
 import { useUserDetails } from "./UserDataProvider";
 import dayjs from "dayjs";
+import { useAppSelector } from "../../Redux/hooks";
 // import { getEmployeeDetails } from "./userservices";
 
 // get token and id from store
-const id = "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
-const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
-
 export default function UserProfile() {
+  const token = useAppSelector(state=>state.auth.token)!;
   const intl = useIntl();
   const {
     userDetails: currentUser,

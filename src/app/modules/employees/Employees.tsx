@@ -22,7 +22,7 @@ import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
-const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeesDataTypes = {
   id: "",
@@ -48,6 +48,7 @@ const employeeInitialValue: EmployeesDataTypes = {
 };
 export default function Employees() {
   const intl = useIntl();
+  const token= useAppSelector(state=>state.auth.token)!;
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);

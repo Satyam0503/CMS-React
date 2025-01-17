@@ -67,8 +67,8 @@ export function Registration() {
         setLoading(false);
         setStatus("");
         navigate("/auth/login", { replace: true });
-      } catch (error) {
-        setStatus("Resgistration Failed")
+      } catch (error: any) {
+        setStatus(error.message);
         setSubmitting(false);
         setLoading(false);
       }

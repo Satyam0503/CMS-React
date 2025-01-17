@@ -13,7 +13,7 @@ const getLocalKey = (): string | undefined => {
   return lsValue;
 };
 
-const setLocalKey = (key: string) => {
+const setLocalKey = (key:string) => {
   if (!localStorage) {
     return;
   }
