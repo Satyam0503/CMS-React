@@ -305,6 +305,9 @@ export const MuiTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        input:{
+          padding:".5rem 1rem",
+        },
         root: {
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
             paddingRight: 6,
@@ -581,8 +584,8 @@ export const MuiTheme = createTheme({
             borderRadius: 8,
           },
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
-            color: themeColors.white,
-            background: colors.alpha.primary[500],
+            border: " 1px solid " + colors.alpha.neutral[200],
+            background: colors.alpha.neutral[100],
           },
         },
         sizeSmall: {
@@ -641,6 +644,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -929,12 +933,16 @@ export const MuiTheme = createTheme({
         },
         head: {
           textTransform: "none",
-          // padding: "10px",
+
           fontSize: 12,
-          fontWeight: "bold",
+          fontWeight: "bolder",
           color: colors.alpha.neutral[800],
           borderBottom: "1px solid " + colors.alpha.neutral[300],
         },
+        // body: {
+
+        //   fontWeight: "bold",
+        // },
       },
     },
     MuiAlert: {
@@ -996,6 +1004,20 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          maxWidth: "1280px",
+          padding: "16px",
+          "@media (min-width:600px)": {
+            padding: "24px",
+          },
+          // "@media (min-width:900px)": {
+          //   padding: "32px",
+          // },
+        },
+      },
+    },
     MuiSwitch: {
       styleOverrides: {
         root: {
@@ -1054,6 +1076,11 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
+          background: colors.alpha.neutral[100],
+          "&.Mui-disabled": {
+            color: colors.alpha.neutral[200],
+          },
+
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
           },
@@ -1141,9 +1168,8 @@ export const MuiTheme = createTheme({
       fontWeight: 600,
     },
     caption: {
-      fontSize: 13,
-      textTransform: "uppercase",
-      color: colors.alpha.neutral[500],
+      fontSize: 12,
+      fontWeight: 500,
     },
     subtitle1: {
       fontSize: 10,

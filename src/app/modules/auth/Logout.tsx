@@ -1,11 +1,12 @@
 import {useEffect} from 'react'
 import {Navigate, Routes} from 'react-router-dom'
-import {useAuth} from './core/Auth'
+import { logout } from '../../Redux/Reducers/authSlice'
+import { useDispatch } from 'react-redux'
 
 export function Logout() {
-  const {logout} = useAuth()
+  const dispatch = useDispatch();
   useEffect(() => {
-    logout()
+    dispatch(logout());
     document.location.reload()
   }, [logout])
 

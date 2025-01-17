@@ -1,36 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserModel } from "../../../utils/common_types";
 
-interface UserState {
-  token: string | null;
-  userId: string | null;
-  companyId: string | null;
-  roleName: string;
-  roleId: string | null;
-  permissions: any[];
+
+interface UserDetailsModel {
+  userData:UserModel | undefined;
 }
 
-const initialState: UserState = {
-  token: null,
-  userId: null,
-  companyId: null,
-  roleName: "",
-  roleId: "",
-  permissions: [],
+const initialState: UserDetailsModel = {
+  userData:undefined,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setToken: (state, action: PayloadAction<{ token: string }>) => {
-      state.token = action.payload.token;
+    setCurrentUser:(state,action:PayloadAction<UserModel | undefined>)=>{
+      state.userData= action.payload;
     },
-    setRoleName:(state,action:PayloadAction<{roleName:string}>)=>{
-        state.roleName = action.payload.roleName;
-    }
   },
 });
 
 // exporting userReducer and action creator
 export const userReducer = userSlice.reducer;
-export const { setToken , setRoleName } = userSlice.actions;
+export const { setCurrentUser } = userSlice.actions;

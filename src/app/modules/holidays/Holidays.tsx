@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
-import HolidayForm from "./HolidayForm";
+import HolidayForm from "../../modules/holidays/HolidayForm";
 import { auto } from "@popperjs/core";
 import {
   Add,
@@ -103,53 +103,47 @@ export default function Holidays() {
 
   return (
     <>
-      <Grid container sx={{ maxWidth: "1200px" }} mx={auto} my={6} spacing={2}>
-        <Stack>
-          <Typography variant="h4" sx={{ pb: "20px" }}>
-            {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
-          </Typography>
-        </Stack>
-        <Card sx={{ width: "100%", p: "16px" }}>
-          <Stack
-            direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <SearchInput search={searchValue} setSearch={setSearchValue} />
-            <Stack direction="row" spacing={1}>
-              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
-              <CustomIconButton
-                tooltip="Add Holiday"
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-              />
-              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-            </Stack>
-          </Stack>
-          <Stack sx={{ mt: "1rem" }}>
-            <CustomisedTable
-              tabName="Holiday"
-              columns={HolidayTabTableColumnList}
-              rows={holidayList}
-              page={page}
-              rowsPerPage={rowPerPage}
-              loading={isLoading}
-              handleEdit={handleHolidayEdit}
-              openConfirmationModal={openConfirmationModal}
+      <Card sx={{ p: "16px" }}>
+        <Stack
+          direction="row"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <SearchInput search={searchValue} setSearch={setSearchValue} />
+          <Stack direction="row" spacing={1}>
+            <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+            <CustomIconButton
+              tooltip="Add Holiday"
+              icon={<Add />}
+              handleClick={() => setModalOpen(true)}
             />
-            {totalRecords > rowPerPage && (
-              <Pagination
-                page={page}
-                setPage={setPage}
-                rowsPerPage={rowPerPage}
-                setRowPerPage={setRowPerPage}
-                totalRecords={totalRecords}
-              />
-            )}
+            <CustomIconButton tooltip="Import Excel" icon={<Download />} />
           </Stack>
-        </Card>
-      </Grid>
+        </Stack>
+        <Stack sx={{ mt: "1rem" }}>
+          <CustomisedTable
+            tabName="Holiday"
+            columns={HolidayTabTableColumnList}
+            rows={holidayList}
+            page={page}
+            rowsPerPage={rowPerPage}
+            loading={isLoading}
+            handleEdit={handleHolidayEdit}
+            openConfirmationModal={openConfirmationModal}
+          />
+          {totalRecords > rowPerPage && (
+            <Pagination
+              page={page}
+              setPage={setPage}
+              rowsPerPage={rowPerPage}
+              setRowPerPage={setRowPerPage}
+              totalRecords={totalRecords}
+            />
+          )}
+        </Stack>
+      </Card>
+
       {isModalOpen && (
         <HolidayForm
           open={isModalOpen}

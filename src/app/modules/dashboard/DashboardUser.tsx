@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
-import OpenPositions from "../components/OpenPositions";
+import OpenPositions from "./components/OpenPositions";
 import NoticeBoard from "./components/NoticeBoard";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";

@@ -13,22 +13,26 @@ import {
   Stack,
   TextField,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
-  AttachFile,
+  AddOutlined,
   Close,
+  Delete,
   DeleteOutline,
   Download,
   Edit,
   FilterList,
-  LinkOutlined,
   Search,
+  SearchOutlined,
+  Visibility,
 } from "@mui/icons-material";
-import JobDetail from "./JobDetail";
-import JobDescription from "./JobDescription";
-import Setting from "../../../modules/users/usersetting/Setting";
+import CustomisedButton from "../../components/CustomisedButton";
+import ApplicationPreview from "./ApplicationPreview";
 
 function createData(
   sno: number,
@@ -54,7 +58,7 @@ const rows = [
   ),
 ];
 
-export default function Jobs() {
+export default function Applications() {
   const intl = useIntl();
   const [openModal, setOpenModal] = React.useState(false);
 
@@ -71,17 +75,11 @@ export default function Jobs() {
   };
 
   return (
-    <Grid
-      container
-      sx={{ maxWidth: "1200px", mx: "auto", my: "20px" }}
-      spacing={2}
-    >
-      <Stack>
-        <Typography variant="h4" sx={{ pb: "20px" }}>
-          {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
-        </Typography>
-      </Stack>
-      <Card sx={{ width: "100%", p: "16px" }}>
+    <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
+      </Typography>
+      <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
           display={"flex"}
@@ -112,12 +110,9 @@ export default function Jobs() {
             <IconButton aria-label="filter employee">
               <FilterList />
             </IconButton>
-            <IconButton onClick={() => setOpenModal(true)}>
+            <IconButton onClick={handleOpenModal}>
               <Add />
             </IconButton>
-            {
-              openModal && <JobDescription open={openModal} handleClose={handleCloseModal} />
-            }
             <IconButton aria-label="import excel">
               <Download />
             </IconButton>
@@ -134,7 +129,7 @@ export default function Jobs() {
                   <TableCell align="right">Start Date</TableCell>
                   <TableCell align="right">End Date</TableCell>
                   <TableCell align="right">Description</TableCell>
-                  <TableCell align="center">Action</TableCell>
+                  <TableCell align="right">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -148,23 +143,17 @@ export default function Jobs() {
                     <TableCell align="right">{row.description}</TableCell>
                     <TableCell
                       align="right"
-                      sx={{
-                        display: "flex",
-                        gap: "4px",
-                        mr: "10px",
-                      }}
+                      sx={{ display: "flex", gap: "5px" }}
                     >
                       {row.action}
 
                       <IconButton>
-                        <LinkOutlined />
-                      </IconButton>
-                      <IconButton>
-                        <AttachFile />
+                        <Download />
                       </IconButton>
                       <Stack>
-                        <JobDetail />
+                        <ApplicationPreview />
                       </Stack>
+
                       <IconButton>
                         <DeleteOutline />
                       </IconButton>
@@ -179,6 +168,10 @@ export default function Jobs() {
           </TableContainer>
         </Stack>
       </Card>
-    </Grid>
+
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogContent sx={{ width: "100%" }}></DialogContent>
+      </Dialog>
+    </>
   );
 }

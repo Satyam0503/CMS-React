@@ -10,13 +10,18 @@ import { dateFormatter } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export const BaseUrl =
-  import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
+export const BaseUrl = import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ServiceUrl = {
-  REGISTER_COMPANY: `${BaseUrl}/registerCompany`,
+  
+  // account
+  
+  REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
+  USER_LOGIN:`${BaseUrl}/api/account/login`,
+  GET_USER_DETAILS:`${BaseUrl}/api/account/getSignedUserDetails`,
+
   GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
   ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
@@ -70,6 +75,7 @@ export const HolidayTypes = [
   { id: 1, label: "Public Holiday", value: "Public Holiday" },
   { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
 ];
+
 export const NoticeTypes = [
   { id: 1, label: "General", value: "General" },
   { id: 2, label: "Important", value: "Important" },

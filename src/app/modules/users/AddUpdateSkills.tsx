@@ -11,6 +11,7 @@ import {
   styled,
   TextField,
 } from "@mui/material";
+import { CustomisedModal } from "../components/CustomizedModal";
 import { Add } from "@mui/icons-material";
 import { addUserSkills } from "./userservices";
 import { toast } from "react-toastify";
@@ -18,6 +19,7 @@ import { useUserDetails } from "./UserDataProvider";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { useIntl } from "react-intl";
+import { useAppSelector } from "../../Redux/hooks";
 
 type PropsType = {
   open: boolean;
@@ -27,9 +29,9 @@ type PropsType = {
 
 // get id and token from store
 const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
-const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 export const AddUpdateSkills = (props: PropsType) => {
+  const token = useAppSelector(state=>state.auth.token)!;
   const { isRefresh, setRefresh } = useUserDetails();
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(props.skills);
@@ -69,11 +71,8 @@ export const AddUpdateSkills = (props: PropsType) => {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction={"column"} spacing={2}>
-        <Typography variant="h5">
-          {" "}
-          {intl.formatMessage({
-            id: "  PROFILE.SKILLS",
-          })}
+        <Typography variant="h5" className="text-primary">
+          Skills
         </Typography>
         <Stack>
           <TextField
@@ -102,7 +101,11 @@ export const AddUpdateSkills = (props: PropsType) => {
           </Stack>
         </Stack>
 
-        <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
+        <Stack
+          direction={"row"}
+          spacing={1}
+          sx={{ justifyContent: "flex-end" }}
+        >
           <CustomisedButton
             variant="outlined"
             label="Cancel"

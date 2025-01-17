@@ -5,12 +5,8 @@ import { Add, Close, Download, FilterList } from "@mui/icons-material";
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
 import { useEffect, useState } from "react";
-import {
-  addEmployee,
-  deleteEmployee,
-  getAllEmployees,
-  updateEmployee,
-} from "./components/employeeServices";
+<<<<<<<<< Temporary merge branch 1
+import { addEmployee, deleteEmployee, getAllEmployees, updateEmployee } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
@@ -22,7 +18,7 @@ import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
-const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeesDataTypes = {
   id: "",
@@ -48,12 +44,11 @@ const employeeInitialValue: EmployeesDataTypes = {
 };
 export default function Employees() {
   const intl = useIntl();
+  const token= useAppSelector(state=>state.auth.token)!;
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [employeeInitialValues, setEmployeeInitialValues] =
-    useState(employeeInitialValue);
+  const [employeeInitialValues, setEmployeeInitialValues] = useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
-  const [selectedEmployeeData, setSelectedEmployeeData] =
-    useState<EmployeesDataTypes>({} as EmployeesDataTypes);
+  const [selectedEmployeeData, setSelectedEmployeeData] = useState<EmployeesDataTypes>({} as EmployeesDataTypes);
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [employeeList, setEmployeeList] = useState<EmployeesDataTypes[]>([]);
@@ -70,16 +65,19 @@ export default function Employees() {
     setEmployeeInitialValues(employeeInitialValue);
     setEdit(false);
   }
-  function SaveAddEditEmployee(
-    values: EmployeesDataTypes,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) {
+
+  function closeConfirmationModal() {
+    setConfirmModalOpen(false);
+    setSelectedEmployee(null);
+  }
+
+  function SaveAddEditEmployee(values: EmployeesDataTypes, setSubmitting:(isSubmitting: boolean) => void) {
     setLoading(true);
     if (isEdit) {
       const employeeId = values.id;
       const payload = {
         ...values,
-      };
+      }
       updateEmployee(employeeId, payload, token)
         .then((res) => {
           const { success, message } = res.data;
@@ -93,8 +91,9 @@ export default function Employees() {
         .catch((res) => {
           console.log(res);
           toast.error("Network Error.Try Again");
-        });
-    } else {
+        })
+    }
+    else {
       const payload = {
         firstName: values.firstName,
         lastName: values.lastName,
@@ -114,23 +113,23 @@ export default function Employees() {
         dateOfJoining: values.dateOfJoining,
         status: values.status,
         address: values.address,
-      };
+      }
       addEmployee(payload, token)
-        .then((res) => {
-          const { success, message } = res.data;
-          if (success) {
+        .then(res => {
+          const {success,message}= res.data;
+          if(success){
             setLoading(false);
             setRefresh(!isRefresh);
-            toast.success(message);
+            toast.success(message)
             setSubmitting(false);
             handleClose();
           }
         })
-        .catch((error) => {
-          setLoading(false);
-          toast.error(error.message);
+        .catch(error => {
+          setLoading(false)
+          toast.error(error.message)
           console.log(error);
-        });
+        })
     }
   }
 
@@ -233,63 +232,59 @@ export default function Employees() {
   }, [page, rowPerPage, isRefresh, search]);
 
   return (
-    <Container sx={{ pt: "16px" }}>
-      <Stack direction="column" spacing={2}>
-        <Typography variant="h4" className="my-6">
-          {intl.formatMessage({ id: "MENU.EMP" })}
-        </Typography>
-        <Card sx={{ width: "100%", p: "16px" }}>
-          <Stack
-            direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <SearchInput search={search} setSearch={setSearch} />
-            <Stack direction="row" spacing={1}>
-              <CustomIconButton
-                icon={<FilterList />}
-                tooltip="Filter Employee"
-                handleClick={() => {}}
-              />
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-                tooltip="Add Employee"
-                ariaLabel="Add employee"
-              />
-              <CustomIconButton
-                icon={<Download />}
-                handleClick={handleEmployeeExport}
-                tooltip="Import Excel"
-                ariaLabel="import excel"
-              />
-            </Stack>
+    <>
+      <Card sx={{ p: "16px" }}>
+        <Stack
+          direction="row"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <SearchInput search={search} setSearch={setSearch} />
+          <Stack direction="row" spacing={1}>
+            <CustomIconButton
+              icon={<FilterList />}
+              tooltip="Filter Employee"
+              handleClick={() => {}}
+            />
+            <CustomIconButton
+              icon={<Add />}
+              handleClick={() => setModalOpen(true)}
+              tooltip="Add Employee"
+              ariaLabel="Add employee"
+            />
+            <CustomIconButton
+              icon={<Download />}
+              handleClick={handleEmployeeExport}
+              tooltip="Import Excel"
+              ariaLabel="import excel"
+            />
           </Stack>
-          <Stack sx={{ mt: "1rem" }}>
-            <CustomisedTable
-              tabName="Employee"
-              loading={isLoading}
-              rows={employeeList}
-              columns={EmployeeTabTableColumnList}
+        </Stack>
+        <Stack sx={{ mt: "1rem" }}>
+          <CustomisedTable
+            tabName="Employee"
+            loading={isLoading}
+            rows={employeeList}
+            columns={EmployeeTabTableColumnList}
+            page={page}
+            rowsPerPage={rowPerPage}
+            handleEdit={handleEmployeeEdit}
+            openConfirmationModal={openConfirmationModal}
+            openViewModal={openViewModal}
+          />
+          {totalRecords > rowPerPage && (
+            <Pagination
               page={page}
               rowsPerPage={rowPerPage}
-              handleEdit={handleEmployeeEdit}
-              openConfirmationModal={openConfirmationModal}
-              openViewModal={openViewModal}
+              setRowPerPage={setRowPerPage}
+              setPage={setPage}
+              totalRecords={totalRecords}
             />
-            {totalRecords > rowPerPage && (
-              <Pagination
-                page={page}
-                rowsPerPage={rowPerPage}
-                setRowPerPage={setRowPerPage}
-                setPage={setPage}
-                totalRecords={totalRecords}
-              />
-            )}
-          </Stack>
-        </Card>
-      </Stack>
+          )}
+        </Stack>
+      </Card>
+
       {isModalOpen && (
         <AddUpdateEmployee
           open={isModalOpen}
@@ -298,14 +293,11 @@ export default function Employees() {
           initialValues={employeeInitialValues}
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
-      )}
-      {isViewModalOpen && (
-        <ViewEmployeeDetails
-          open={isViewModalOpen}
-          setOpen={setViewModalOpen}
-          employeeData={selectedEmployeeData}
-        />
-      )}
+      }
+      {
+        isViewModalOpen && 
+        <ViewEmployeeDetails open={isViewModalOpen} setOpen={setViewModalOpen} employeeData={selectedEmployeeData} />
+      }
       <ConfirmationModal
         title={"Delete Employee"}
         content="Are you sure you want to delete this employee?"
@@ -313,6 +305,6 @@ export default function Employees() {
         handleClose={closeConfirmationModal}
         handleConfirmation={handleEmployeeDeletion}
       />
-    </Container>
+    </>
   );
 }

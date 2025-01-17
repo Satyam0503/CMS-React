@@ -13,6 +13,7 @@ import {
 } from "../partials";
 import { PageDataProvider } from "./core";
 import { reInitMenu } from "../helpers";
+import { Container } from "@mui/material";
 
 const MasterLayout = () => {
   const location = useLocation();
@@ -38,7 +39,9 @@ const MasterLayout = () => {
               id="kt_app_main"
             >
               <div className="d-flex flex-column flex-column-fluid">
-                <Outlet />
+                <Container>
+                  <Outlet />
+                </Container>
               </div>
               <FooterWrapper />
             </div>

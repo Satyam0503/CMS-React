@@ -39,9 +39,8 @@ import {
 import { toast } from "react-toastify";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import CustomisedButton from "../components/CustomisedButton";
+import { useAppSelector } from "../../Redux/hooks";
 
-const userId = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007"; // get the user id and token from store
-const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 
 const initialEducationValues: UserEducationType = {
   title: "",
@@ -60,6 +59,8 @@ const initialCertificationValues: UserCertificationType = {
 };
 
 export default function AboutUser() {
+  const token= useAppSelector(state=>state.auth.token)!;
+  const userId = useAppSelector(state=>state.user.userData?.userId)!;
   const intl = useIntl();
   const [isSummaryEdit, setSummaryEdit] = useState(false);
   const [isUserModalOpen, setUserUpdateModalOpen] = useState(false);
@@ -218,7 +219,7 @@ export default function AboutUser() {
   }
 
   console.log(summary);
-  
+
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
@@ -233,11 +234,11 @@ export default function AboutUser() {
               <Typography variant="h5">{currentUser?.jobRole}</Typography>
               {isSummaryEdit ? (
                 <CustomisedButton
-                label="Update"
-                variant="contained"
-                handleClick={handleUpdateSummary}
-                Icon={<Check />}
-                // disabled={summary.current.length===0}
+                  label="Update"
+                  variant="contained"
+                  handleClick={handleUpdateSummary}
+                  Icon={<Check />}
+                  // disabled={summary.current.length===0}
                 />
               ) : (
                 <IconButton onClick={() => setSummaryEdit(true)}>

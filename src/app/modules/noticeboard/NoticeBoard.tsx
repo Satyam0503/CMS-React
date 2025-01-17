@@ -21,9 +21,9 @@ import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
 import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
-import HolidayForm from "../holidays/HolidayForm";
+import HolidayForm from "../../modules/holidays/HolidayForm";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { HolidayType } from "../../../utils/common_types";
+import { HolidayType, NoticeType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 
@@ -61,13 +61,12 @@ const rows = [
   },
 ];
 
-const initialValues: HolidayType = {
+const initialValues:NoticeType = {
   id: "",
-  title: "",
   type: "",
-  startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
-  description: "",
+  target:"",
+  group:"",
+  message:''
 };
 
 export default function NoticeBoard() {
@@ -75,7 +74,7 @@ export default function NoticeBoard() {
     React.useState(initialValues);
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [NoticeList, setNoticeList] = React.useState<any[]>(rows);
+  const [NoticeList, setNoticeList] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(0);
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
@@ -118,64 +117,55 @@ export default function NoticeBoard() {
   }
 
   return (
-    <Container>
-      <Grid container my={6} spacing={2}>
-        <Stack>
-          <Typography variant="h4" sx={{ pb: "20px" }}>
-            {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
-          </Typography>
-        </Stack>
-        <Card sx={{ width: "100%", p: "16px" }}>
-          <Stack
-            direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <SearchInput search={searchValue} setSearch={setSearchValue} />
-            <Stack direction={"row"} spacing={1}>
-              <Button
-                startIcon={<ListAltOutlined />}
-                variant="outlined"
-                size="small"
+    <>
+      <Card sx={{ p: "16px" }}>
+        <Stack
+          direction="row"
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <SearchInput search={searchValue} setSearch={setSearchValue} />
+          <Stack direction={"row"} spacing={1}>
+            <Button
+              startIcon={<ListAltOutlined />}
+              variant="outlined"
+              size="small"
+            >
+              <Link
+                href="mynoticeboard"
+                underline="hover"
+                color={colors.alpha.neutral[800]}
               >
-                <Link
-                  href="mynoticeboard"
-                  underline="hover"
-                  color={colors.alpha.neutral[800]}
-                >
-                  {"My Notice Board"}
-                </Link>
-              </Button>
+                {"My Notice Board"}
+              </Link>
+            </Button>
 
-              <Stack direction="row" spacing={1}>
-                <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
-                <CustomIconButton
-                  tooltip="Post notice"
-                  icon={<Add />}
-                  handleClick={() => setModalOpen(true)}
-                />
-                <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-              </Stack>
+            <Stack direction="row" spacing={1}>
+              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+              <CustomIconButton
+                tooltip="Post notice"
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+              />
+              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
             </Stack>
           </Stack>
-          <Stack sx={{ mt: "1rem" }}>
-            <CustomisedTable
-              tabName="Notice"
-              columns={NoticeBoardTableColumnList}
-              rows={NoticeList}
-              page={page}
-              setPage={setPage}
-              totalRecords={totalRecords}
-              rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
-              loading={isLoading}
-              handleEdit={handleNoticeEdit}
-              openConfirmationModal={openConfirmationModal}
-            />
-          </Stack>
-        </Card>
-      </Grid>
+        </Stack>
+        <Stack sx={{ mt: "1rem" }}>
+          <CustomisedTable
+            tabName="Notice Board"
+            columns={NoticeBoardTableColumnList}
+            rows={NoticeList}
+            page={page}          
+            rowsPerPage={rowPerPage}
+            loading={isLoading}
+            handleEdit={handleNoticeEdit}
+            openConfirmationModal={openConfirmationModal}
+          />
+        </Stack>
+      </Card>
+
       {isModalOpen && (
         <HolidayForm
           open={isModalOpen}
@@ -193,6 +183,6 @@ export default function NoticeBoard() {
           handleConfirmation={handleNoticeDeletion}
         />
       )}
-    </Container>
+    </>
   );
 }

@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { userSchema } from "../../../utils/Schema/userSchema";
+import { useAppSelector } from "../../Redux/hooks";
 
 type PropsType = {
   open: boolean;
@@ -29,11 +30,11 @@ type PropsType = {
 };
 
 //  get the token and user id from store
-const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
 const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
 
 export default function UserInfo(props: PropsType) {
   const intl = useIntl();
+  const token = useAppSelector(state=>state.auth.token)!;
   const { userDetails: currentUser, setRefresh, isRefresh } = useUserDetails();
   const { open, setOpen } = props;
 

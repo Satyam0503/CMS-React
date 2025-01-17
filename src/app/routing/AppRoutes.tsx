@@ -9,8 +9,9 @@ import { FC } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes } from "./PrivateRoutes";
 import { ErrorsPage } from "../modulesOld/errors/ErrorsPage";
-import { Logout, AuthPage, useAuth } from "../modules/auth";
+import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
+import { useAppSelector } from "../Redux/hooks";
 
 /**
  * Base URL of the website.
@@ -20,7 +21,8 @@ import { App } from "../App";
 const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
-  const { currentUser } = useAuth();
+  const {isUserAuthenticated } = useAppSelector(state=>state.auth);
+  const user = useAppSelector(state=>state.user.userData);
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
@@ -29,13 +31,13 @@ const AppRoutes: FC = () => {
           <Route path="logout" element={<Logout />} />
 
           {/* remove route later */}
-          <Route path="/*" element={<PrivateRoutes />} />
+          {/* <Route path="/*" element={<PrivateRoutes />} />
           <Route index element={<Navigate to="/dashboard" />} />
           <Route path="auth/*" element={<AuthPage />} />
-          <Route path="*" element={<Navigate to="/auth" />} />
+          <Route path="*" element={<Navigate to="/auth" />} /> */}
 
-          {/* {
-            currentUser ?
+          {
+            isUserAuthenticated ?
             <>
               <Route path="/*" element={<PrivateRoutes />} />
               <Route index element={<Navigate to="/dashboard" />} />
@@ -47,7 +49,7 @@ const AppRoutes: FC = () => {
                 <Route path="*" element={<Navigate to="/auth" />} />
               </>
             )
-          } */}
+          }
         </Route>
       </Routes>
     </BrowserRouter>

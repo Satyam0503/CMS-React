@@ -7,7 +7,8 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 const date = new Date();
 interface PropsTypes {
-  value: Dayjs | null;
+  sx?: { width: string };
+  value?: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
   label?: string;
   maxDate?: Dayjs;
@@ -16,7 +17,7 @@ interface PropsTypes {
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name ,minDate } = props;
+  const { label, value, setValue, maxDate, name } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>

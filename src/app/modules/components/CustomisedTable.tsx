@@ -7,11 +7,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
+import { colors } from "../theme/MuiTheme";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -20,7 +20,6 @@ interface PropsTypes<Row, Columns> {
   columns: Columns[];
   page: number;
   rowsPerPage: number;
-  openConfirmationModal?: (id: string) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (id: string) => void;
 }
@@ -42,9 +41,19 @@ export const CustomisedTable = <
     openViewModal,
   } = props;
 
+  function handlePageChange(
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) {
+    setPage(newPage);
+  }
+  function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
+    setRowPerPage(+event.target.value);
+    setPage(0);
+  }
   return (
     <Grid container>
-      <TableContainer sx={{ minHeight: 600 }}>
+      <TableContainer>
         <Table stickyHeader aria-label="table">
           <TableHead>
             <TableRow>

@@ -9,19 +9,23 @@ import {
 } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
-import IconStat from "../components/IconStat";
-import { colors } from "../theme/MuiTheme";
+// import IconStat from "../components/IconStat";
+// import { colors } from "../theme/MuiTheme";
 import {
   Home,
   HourglassBottom,
   HourglassTop,
   WorkOff,
 } from "@mui/icons-material";
-import BasicTable from "../components/BasicTable";
+// import BasicTable from "../components/BasicTable";
 import AddLeaves from "./AddLeaves";
 import LeaveAssignment from "./LeaveAssignment";
 import LeaveSummary from "./LeaveSummary";
-import { LeaveCalender } from "./components/LeaveCalender";
+import IconStat from "../../components/IconStat";
+import { colors } from "../../theme/MuiTheme";
+import BasicTable from "../../components/BasicTable";
+import { LeaveCalender } from "./LeaveCalender";
+// import { LeaveCalender } from "./components/LeaveCalender";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
@@ -30,18 +34,10 @@ export const EmployeeLeaves: FC = () => {
     <Grid
       container
       sx={{
-        maxWidth: "1200px",
-        mx: "auto",
-        my: 4,
         display: "flex",
         gap: "10px",
       }}
     >
-      <Stack>
-        <Typography variant="h4">
-          {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
-        </Typography>
-      </Stack>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
           <Card>
