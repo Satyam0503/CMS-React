@@ -28,7 +28,6 @@ import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
 
-const token = useAppSelector(state=>state.auth.token)!;
 
 type ProfileInfo = {
   name?: string;
@@ -38,6 +37,7 @@ type ProfileInfo = {
 };
 
 export default function ProfileCard(props: ProfileInfo) {
+  const token = useAppSelector(state=>state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");

@@ -16,10 +16,11 @@ export const BaseUrl = import.meta.env.VITE_BASEURL || "https://stage.codeji.in"
 
 export const ServiceUrl = {
   
+  // account
+  
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN:`${BaseUrl}/api/account/login`,
   GET_USER_DETAILS:`${BaseUrl}/api/account/getSignedUserDetails`,
-
 
   GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
   ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,

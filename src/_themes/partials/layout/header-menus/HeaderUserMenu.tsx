@@ -4,8 +4,10 @@ import {Link} from 'react-router-dom'
 import {Languages} from './Languages'
 import {toAbsoluteUrl} from '../../../helpers'
 import { useAppSelector } from '../../../../app/Redux/hooks'
+import { useLogout } from '../../../../app/modules/auth'
 
 const HeaderUserMenu: FC = () => {
+  const logout = useLogout();
   const currentUser = useAppSelector(state=>state.user.userData);
   return (
     <div
@@ -124,13 +126,9 @@ const HeaderUserMenu: FC = () => {
       </div>
 
       <div className='menu-item px-5'>
-        {/* <a onClick={logout} className='menu-link px-5'>
+        <a onClick={logout} className='menu-link px-5'>
           Sign Out
-        </a> */}
-        {/* replace below code */}
-        <a className='menu-link px-5'>
-          Sign Out
-        </a>
+        </a> 
       </div>
     </div>
   )

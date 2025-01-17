@@ -22,6 +22,7 @@ import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { employeeSchema } from "../../../utils/Schema/employeeSchema";
+import { useAppSelector } from "../../Redux/hooks";
 
 interface PropsTypes {
   initialValues: EmployeesDataTypes;
@@ -34,9 +35,8 @@ interface PropsTypes {
   ) => void;
 }
 
-const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
-
 export default function AddUpdateEmployee(props: PropsTypes) {
+  const token= useAppSelector(state=>state.auth.token)!;
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } =
     props;
   const [loading, setLoading] = useState(false);

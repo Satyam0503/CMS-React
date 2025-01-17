@@ -15,20 +15,10 @@ import { EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
-const { token } = JSON.parse(localStorage.getItem('kt-auth-react-v') || "{}");
-=========
-import {
-  addEmployee,
-  getAllEmployees,
-  updateEmployee,
-} from "./employeeServices";
-import { toast } from "react-toastify";
-import { CustomisedTable } from "../components/CustomisedTable";
-import { EmployeeTabTableColumnList } from "../../../Constant";
-import dayjs, { Dayjs } from "dayjs";
-import { EmployeesDataTypes } from "../../../common_types";
-const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
->>>>>>>>> Temporary merge branch 2
+import { SearchInput } from "../components/SearchInput";
+import { CustomIconButton } from "../components/CustomIconButton";
+import { Pagination } from "../components/Pagination";
+import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeesDataTypes = {
   id: "",
@@ -54,6 +44,7 @@ const employeeInitialValue: EmployeesDataTypes = {
 };
 export default function Employees() {
   const intl = useIntl();
+  const token= useAppSelector(state=>state.auth.token)!;
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] = useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
