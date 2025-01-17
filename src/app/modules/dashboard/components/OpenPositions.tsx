@@ -24,90 +24,104 @@ export default function OpenPositions() {
               <Typography variant="h4">15</Typography>
             </Stack>
 
-            <Grid item display={"flex"} direction={"column"} gap={1}>
-              <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                <Grid className=" symbol symbol-45px">
-                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
+            <Grid item>
+              <Stack spacing={1}>
+                <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                  <Grid className=" symbol symbol-45px">
+                    <img
+                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                      alt=""
+                    />
+                  </Grid>
+
+                  <Grid flexGrow={1}>
+                    <Typography variant="body1">
+                      {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ color: colors.alpha.neutral[400] }}
+                    >
+                      5-25 years
+                    </Typography>
+                  </Grid>
+
+                  <Typography variant="h6">2</Typography>
                 </Grid>
 
-                <Grid flexGrow={1}>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
-                  </Typography>
+                <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                  <Grid className=" symbol symbol-45px">
+                    <img
+                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                      alt=""
+                    />
+                  </Grid>
 
-                  <Typography
-                    variant="body2"
-                    sx={{ color: colors.alpha.neutral[400] }}
-                  >
-                    5-25 years
-                  </Typography>
+                  <Grid flexGrow={1}>
+                    <Typography variant="body1">
+                      {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ color: colors.alpha.neutral[400] }}
+                    >
+                      5-25 years
+                    </Typography>
+                  </Grid>
+
+                  <Typography variant="h6">2</Typography>
                 </Grid>
 
-                <Typography variant="h6">2</Typography>
-              </Grid>
+                <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                  <Grid className=" symbol symbol-45px">
+                    <img
+                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                      alt=""
+                    />
+                  </Grid>
 
-              <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                <Grid className=" symbol symbol-45px">
-                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
+                  <Grid flexGrow={1}>
+                    <Typography variant="body1">
+                      {intl.formatMessage({ id: "POSITION.INTERN" })}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ color: colors.alpha.neutral[400] }}
+                    >
+                      Technical Graduate
+                    </Typography>
+                  </Grid>
+
+                  <Typography variant="h6">10</Typography>
                 </Grid>
 
-                <Grid flexGrow={1}>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
-                  </Typography>
+                <Grid item display={"flex"} alignItems={"center"} gap={1}>
+                  <Grid className="symbol symbol-45px">
+                    <img
+                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                      alt=""
+                    />
+                  </Grid>
 
-                  <Typography
-                    variant="body2"
-                    sx={{ color: colors.alpha.neutral[400] }}
-                  >
-                    5-25 years
-                  </Typography>
+                  <Grid flexGrow={1}>
+                    <Typography variant="body1">
+                      {intl.formatMessage({ id: "POSITION.TA" })}
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      sx={{ color: colors.alpha.neutral[400] }}
+                    >
+                      2-5 years
+                    </Typography>
+                  </Grid>
+
+                  <Typography variant="h6">1</Typography>
                 </Grid>
-
-                <Typography variant="h6">2</Typography>
-              </Grid>
-
-              <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                <Grid className=" symbol symbol-45px">
-                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
-                </Grid>
-
-                <Grid flexGrow={1}>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "POSITION.INTERN" })}
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{ color: colors.alpha.neutral[400] }}
-                  >
-                    Technical Graduate
-                  </Typography>
-                </Grid>
-
-                <Typography variant="h6">10</Typography>
-              </Grid>
-
-              <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                <Grid className="symbol symbol-45px">
-                  <img src={toAbsoluteUrl("media/avatars/300-6.jpg")} alt="" />
-                </Grid>
-
-                <Grid flexGrow={1}>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "POSITION.TA" })}
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{ color: colors.alpha.neutral[400] }}
-                  >
-                    2-5 years
-                  </Typography>
-                </Grid>
-
-                <Typography variant="h6">1</Typography>
-              </Grid>
+              </Stack>
             </Grid>
           </Stack>
         </Card>

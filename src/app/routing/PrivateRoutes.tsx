@@ -15,7 +15,8 @@ import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
-import { EmployeePageWrapper } from "../pages/employees/EmployeeWrapper.tsx";
+import { EmployeePageWrapper } from "../pages/employees/EmployeePageWrapper.tsx";
+
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));

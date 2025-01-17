@@ -1,7 +1,7 @@
 
 import axios, { AxiosRequestConfig } from "axios";
 
-const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+const token = localStorage.getItem("kt-auth-react-v") || "{}";
 
 const configData = {
   headers: {
@@ -24,14 +24,14 @@ export const getRequest = (
   });
 };
 
-export const postRequest = <D,R>(
+export const postRequest = <RequestData,ResponseData>(
   path: string,
-  data?: D,
+  data?: RequestData,
   config?: AxiosRequestConfig,
   isformData: boolean = false,
   tokenData: string = token
 ) => {
-  return axios.post<R>(path, data, {
+  return axios.post<ResponseData>(path, data, {
     ...config,
     headers: {
       "Access-Control-Allow-Origin": "*",

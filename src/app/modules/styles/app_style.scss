@@ -60,3 +60,23 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 input:-webkit-autofill {
   -webkit-background-clip: text;
 }
+
+.spinner-loader {
+  width: 1.5rem;
+  height: 1.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: .25rem solid white;
+  border-bottom-color: rgb(85, 85, 85);
+  animation: spinner 1s linear 0s infinite; 
+  position: relative;
+}
+
+@keyframes spinner {
+  0%{
+    transform: rotateZ(0deg);
+  }
+  100%{
+    transform: rotateZ(360deg);
+  }
+}

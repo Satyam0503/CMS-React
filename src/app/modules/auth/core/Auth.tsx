@@ -3,99 +3,64 @@ import {
   FC,
   useState,
   useEffect,
-  createContext,
-  useContext,
-  Dispatch,
-  SetStateAction,
 } from "react";
 import { LayoutSplashScreen } from "../../../../_themes/layout/core";
-import { AuthModel, UserModel } from "./_models";
 import * as authHelper from "./AuthHelpers";
-import { getUserByToken } from "./_requests";
+import { getSignedUserDetails } from "./_requests";
 import { WithChildren } from "../../../../_themes/helpers";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { setAuth, logout } from "../../../Redux/Reducers/authSlice";
+import { useNavigate } from "react-router-dom";
+import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
+import { useDispatch } from "react-redux";
 
-type AuthContextProps = {
-  auth: AuthModel | undefined;
-  saveAuth: (auth: AuthModel | undefined) => void;
-  currentUser: UserModel | undefined;
-  setCurrentUser: Dispatch<SetStateAction<UserModel | undefined>>;
-  logout: () => void;
-};
-
-const initAuthContextPropsState = {
-  auth: authHelper.getAuth(),
-  saveAuth: () => {},
-  currentUser: undefined,
-  setCurrentUser: () => {},
-  logout: () => {},
-};
-
-const AuthContext = createContext<AuthContextProps>(initAuthContextPropsState);
-
-const useAuth = () => {
-  return useContext(AuthContext);
-};
-
-const AuthProvider: FC<WithChildren> = ({ children }) => {
-  const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth());
-  const [currentUser, setCurrentUser] = useState<UserModel | undefined>();
-  const saveAuth = (auth: AuthModel | undefined) => {
-    setAuth(auth);
-    if (auth) {
-      authHelper.setAuth(auth);
-    } else {
-      authHelper.removeAuth();
-    }
-  };
-
-  const logout = () => {
-    saveAuth(undefined);
-    setCurrentUser(undefined);
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{ auth, saveAuth, currentUser, setCurrentUser, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+export const useLogout = ()=>{
+  const dispatch= useDispatch();
+  return () =>{
+    dispatch(logout());
+    dispatch(setCurrentUser(undefined));
+    authHelper.removeLocalKey();
+  }
+}
 
 const AuthInit: FC<WithChildren> = ({ children }) => {
-  const { auth, currentUser, logout, setCurrentUser } = useAuth();
+  const {token,isUserAuthenticated} = useAppSelector(state=>state.auth);
+  const currentUser = useAppSelector(state=>state.user.userData);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const logout = useLogout();
   const [showSplashScreen, setShowSplashScreen] = useState(true);
-
-  // We should request user by authToken (IN OUR EXAMPLE IT'S API_TOKEN) before rendering the application
+  
+  // requesting signed in user details by authToken 
   useEffect(() => {
-    const requestUser = async (apiToken: string) => {
+    const requestUserDetails = async (token: string) => {
       try {
-        if (!currentUser) {
-          const { data } = await getUserByToken(apiToken);
-          if (data) {
-            setCurrentUser(data);
+        if (!currentUser) {               
+          const { data } = await getSignedUserDetails(token);
+          if (!data.success) {
+            throw new Error("Request Failed");
           }
+          dispatch(setCurrentUser(data.methodResult));
+          dispatch(setAuth());
         }
       } catch (error) {
         console.error(error);
-        if (currentUser) {
-          logout();
+        if (isUserAuthenticated) {
+            logout();
         }
       } finally {
         setShowSplashScreen(false);
       }
-    };
-
-    if (auth && auth.token) {
-      requestUser(auth.token);
+    }; 
+    if (token) { 
+      requestUserDetails(token);
     } else {
       logout();
       setShowSplashScreen(false);
     }
-    // eslint-disable-next-line
-  }, []);
+  }, [token]);
 
   return showSplashScreen ? <LayoutSplashScreen /> : <>{children}</>;
 };
 
-export { AuthProvider, AuthInit, useAuth };
+export { AuthInit };

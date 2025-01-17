@@ -305,6 +305,9 @@ export const MuiTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        input:{
+          padding:".5rem 1rem",
+        },
         root: {
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
             paddingRight: 6,

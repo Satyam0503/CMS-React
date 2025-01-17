@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { Container, Grid, Typography, Link } from "@mui/material";
+import { Container, Grid, Typography, Stack, Box } from "@mui/material";
 
 const AuthLayout = () => {
   useEffect(() => {
@@ -17,70 +17,65 @@ const AuthLayout = () => {
   }, []);
 
   return (
-    <Container maxWidth={"lg"}>
+    <Container sx={{ height: "100vh", alignContent: "center" }}>
       <Grid
         container
         py={4}
         gap={4}
-        justifyContent={"space-evenly"}
-        sx={{alignItems:"center"}}
+        sx={{ alignItems: "center", justifyContent: "space-evenly" }}
       >
         <Grid
           item
           xs={12}
           md={5}
-          direction={"column"}
-          justifyContent={"center"}
           order={{ xs: "2", md: "inherit" }}
-          width={"100%"}
+          sx={{ justifyContent: "center" }}
         >
-          <Grid item xs={12}>
+          <Stack>
             <Outlet />
-          </Grid>
+          </Stack>
 
-          <Grid
-            item
-            xs={12}
-            display={"flex"}
-            justifyContent={"space-around"}
-            mt={2}
+          <Stack
+            direction={"row"}
+            spacing={2}
+            justifyContent={"space-evenly"}
+            sx={{ marginBlock: "2rem" }}
           >
-            <Link href="" underline="none">
-              {"Terms"}
-            </Link>
-            <Link href="" underline="none">
-              {"Plans"}
-            </Link>
-            <Link href="" underline="none">
-              {"Contact Us"}
-            </Link>
-          </Grid>
+            <Typography variant="body1">
+              <Link to={"/"}>{"Terms"} </Link>
+            </Typography>
+            <Typography variant="body1">
+              <Link to={"/"}> {"Plans"} </Link>
+            </Typography>
+            <Typography variant="body1">
+              <Link to={"/"}>{"Contact Us"}</Link>
+            </Typography>
+          </Stack>
         </Grid>
 
         <Grid
           item
           xs={12}
           md={5}
-          direction={"column"}
           textAlign={"center"}
-          justifyContent={"center"}
-          gap={2}
         >
-          <Grid item>
-            <img
-              alt="Logo"
-              src={toAbsoluteUrl("media/logos/favicon.png")}
-              style={{ maxWidth: "250px" }}
-            />
-          </Grid>
+          <Stack spacing={2}> 
+            <Box component={"div"}>
+              <img
+                alt="Logo"
+                src={toAbsoluteUrl("media/logos/favicon.png")}
+                style={{ maxWidth: "250px" }}
+              />
+            </Box>
 
-          <Typography variant="h2">Fast, Efficient and Productive</Typography>
+            <Typography variant="h2">Fast, Efficient and Productive</Typography>
 
-          <Typography variant="body1">
-            We can help you with an easy way to manage all of your website‘s
-            content without needing to manually edit your site’s code any time
-            you want to make a change.
-          </Typography>
+            <Typography variant="body1">
+              We can help you with an easy way to manage all of your website‘s
+              content without needing to manually edit your site’s code any time
+              you want to make a change.
+            </Typography>
+          </Stack>
         </Grid>
       </Grid>
     </Container>

@@ -1,5 +1,21 @@
 import { Dayjs } from "dayjs";
 
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+  statusCode?: number;
+}
+
+export interface UserModel {
+  userId: string;
+  companyId: string;
+  role: string;
+  firstName:string;
+  lastName:string;
+  fullName:string;
+  permissions:any[];
+}
+
 export interface UserEducationType {
   id?: string;
   title: string;
@@ -12,11 +28,14 @@ export type UserCertificationType = Omit<UserEducationType ,"collegeName" > & {o
 
 export type HolidayType = Omit<UserEducationType, "collegeName" > & { description:string };
 
-export interface ApiResponse {
-  success: boolean;
-  message?: string;
-  statusCode?: number;
+export type NoticeType ={
+  id:string;
+  target:string;
+  type:string;
+  group:string;
+  message:string;
 }
+
 
 export interface RolesType {
   id: string;
@@ -85,10 +104,13 @@ export type ColumnListTypes= {
 export interface ResponseData<T> {
   message: string;
   success: boolean;
-  methodResult: T;
-  // methodResults:T[];
+  totalRecords?:number,
   statusCode?: number;
+  methodResult: T;
+  // methodResults?:T[];
 }
+
+export type GetUserDetailsResponseData = ResponseData<UserModel>
 
 export type GetAllEmployeeResponseData = ResponseData<{
   totalEmployees: number;

@@ -26,9 +26,9 @@ import { updateUserAvatar } from "./userservices";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
+import { useAppSelector } from "../../Redux/hooks";
 
-const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
-// const id= "66c5ea2f-6cfd-445d-b215-09dd3667c8c5";
+const token = useAppSelector(state=>state.auth.token)!;
 
 type ProfileInfo = {
   name?: string;

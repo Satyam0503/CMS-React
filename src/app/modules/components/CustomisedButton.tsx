@@ -7,13 +7,13 @@ type Props = {
   Icon?: React.JSX.Element;
   variant?: "outlined" | "contained" | "text";
   label?: string;
-  tooltip?: string;
   className?: string;
   size?: "small" | "medium" | "large";
   disabled?: boolean;
   permission?: boolean;
   style?: React.CSSProperties;
   iconPosition?: "start" | "end";
+  loading?: boolean;
 };
 
 const CustomisedButton = (props: Props) => {
@@ -22,7 +22,6 @@ const CustomisedButton = (props: Props) => {
     variant = "contained",
     Icon,
     label,
-    tooltip,
     className,
     size,
     disabled = false,
@@ -30,41 +29,36 @@ const CustomisedButton = (props: Props) => {
     style = {},
     iconPosition = "end",
     type = "button",
+    loading,
   } = props;
 
-  const handleButtonSizeclasses = (buttonSize?: string) => {
-    switch (buttonSize) {
-      case "Large":
-        return "button-large";
-      case "Medium":
-        return "button-medium";
-      case "Small":
-        return "button-small";
-      case "Cancel":
-        return "button-cancel";
-      default:
-        return "button-default";
-    }
-  };
-
+  {
+    !loading && <span className="indicator-label">Submit</span>;
+  }
+  {
+    loading && (
+      <span className="indicator-progress" style={{ display: "block" }}>
+        Please wait...{" "}
+        <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+      </span>
+    );
+  }
   return (
     <>
       {permission && (
-        <Tooltip title={tooltip} placement="top" arrow>
-          <Button
-            variant={variant}
-            style={style}
-            onClick={handleClick}
-            disabled={disabled}
-            size={size}
-            className={className}
-            type={type}
-          >
-            {iconPosition === "start" && Icon}
-            {label}
-            {iconPosition === "end" && Icon}
-          </Button>
-        </Tooltip>
+        <Button
+          variant={variant}
+          style={style}
+          onClick={handleClick}
+          disabled={disabled}
+          size={size}
+          className={className}
+          type={type}
+        >
+          {iconPosition === "start" && Icon}
+          { loading ? <span className="spinner-loader"></span> : label  }
+          {iconPosition === "end" && Icon}
+        </Button>
       )}
     </>
   );

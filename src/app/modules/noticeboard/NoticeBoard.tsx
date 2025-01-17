@@ -23,7 +23,7 @@ import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import HolidayForm from "../../modules/holidays/HolidayForm";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { HolidayType } from "../../../utils/common_types";
+import { HolidayType, NoticeType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 
@@ -61,13 +61,12 @@ const rows = [
   },
 ];
 
-const initialValues: HolidayType = {
+const initialValues:NoticeType = {
   id: "",
-  title: "",
   type: "",
-  startDate: dayjs(Date.now()),
-  endDate: dayjs(Date.now()),
-  description: "",
+  target:"",
+  group:"",
+  message:''
 };
 
 export default function NoticeBoard() {
@@ -75,7 +74,7 @@ export default function NoticeBoard() {
     React.useState(initialValues);
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [NoticeList, setNoticeList] = React.useState<any[]>(rows);
+  const [NoticeList, setNoticeList] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(0);
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
@@ -155,7 +154,7 @@ export default function NoticeBoard() {
         </Stack>
         <Stack sx={{ mt: "1rem" }}>
           <CustomisedTable
-            tabName="Notice"
+            tabName="Notice Board"
             columns={NoticeBoardTableColumnList}
             rows={NoticeList}
             page={page}          

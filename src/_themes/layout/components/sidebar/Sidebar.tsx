@@ -7,12 +7,12 @@ import { SidebarFooter } from "./SidebarFooter";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
-import { useAuth } from "../../../../app/modules/auth";
+import { useAppSelector } from "../../../../app/Redux/hooks";
 
 const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const { currentUser } = useAuth();
+  const currentUser = useAppSelector(state=>state.user.userData);
   useEffect(() => {
     updateDOM(config);
   }, [config]);
