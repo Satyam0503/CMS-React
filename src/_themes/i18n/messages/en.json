@@ -1,4 +1,7 @@
 {
+  "BUTTON.CLOSE": "Close",
+  "BUTTON.SAVE": "Save",
+  "BUTTON.SUBMIT": "Submit",
   "MENU.DASHBOARD": "Dashboard",
   "MENU.EMP": "Employees",
   "MENU.LEAVE_MGMT": "Leave Management",
@@ -33,6 +36,7 @@
   "FORM.TITLE": "Title",
   "FORM.TYPE": "Type",
 
+  "MENU.EMPLOYEE_DETAILS": "Employee Details",
   "MENU.LEAVE": "Employees on leave",
   "MENU.BIRTHDAY": "Upcoming Birthdays",
   "MENU.NOTICE_BOARD": "Notice Board",

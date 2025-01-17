@@ -11,24 +11,24 @@ import {
   MenuItem,
   FormHelperText,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 import { bloodGroups, Gender } from "../../../Constant";
-import { employeeSchema } from "./employeeFormSchema";
 import { getAllRoles } from "./employeeServices";
-import { EmployeesDataTypes, RolesType } from "../../../common_types";
+import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
-import { Send } from "@mui/icons-material";
+import { employeeSchema } from "../../../utils/validation_schemas";
+import { CustomisedModal } from "../components/CustomizedModal";
+import CustomisedButton from "../components/CustomisedButton";
 
 interface PropsTypes {
   initialValues: EmployeesDataTypes;
   isEdit: boolean;
   open: boolean;
   handleClose: () => void;
-  // setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  SaveAddEditEmployee: (value: EmployeesDataTypes) => void;
+  SaveAddEditEmployee: (values: EmployeesDataTypes, setSubmitting: (isSubmitting: boolean) => void)=>void
 }
 
 const { token } = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
@@ -52,9 +52,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     initialValues: initialValues,
     validationSchema: employeeSchema,
     onSubmit: (values, { setSubmitting }) => {
-      console.log(isSubmitting);
-      SaveAddEditEmployee(values);
-      // setSubmitting(false)
+      SaveAddEditEmployee(values, setSubmitting);
     },
   });
   function handleDateofJoiningChange(newDate: Dayjs | null) {
@@ -76,18 +74,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   }, []);
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullScreen={false}
-      maxWidth={"md"}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      className="overflow-auto"
-    >
-      <DialogContent>
-        <Stack direction="column">
-          <Typography variant="h5" className="text-primary mb-4">
+    <CustomisedModal open={open} handleClose={handleClose}>
+        <Stack direction="column" spacing={2}>
+          <Typography variant="h4" className="text-primary">
             {isEdit
               ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
               : intl.formatMessage({ id: "ADD.EMP.INFO" })}
@@ -445,11 +434,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <Grid
                 item
                 xs={12}
-                sx={{
-                  marginBlockStart: "1rem",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
+                sx={{ marginBlockStart: "1rem", display: "flex", justifyContent: "flex-end" }}
+                gap={1}
               >
                 <Button
                   variant="contained"
@@ -471,6 +457,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 >
                   {isEdit ? "Save" : "Add"}
                 </Button>
+                <CustomisedButton variant="outlined" label="Cancel" handleClick={handleClose}/>
+                <CustomisedButton label={isEdit ? "Update" : "Add" } type="submit" disabled={isSubmitting} />
               </Grid>
             </Grid>
           </form>

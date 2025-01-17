@@ -947,7 +947,39 @@ export const MuiTheme = createTheme({
         },
       },
     },
-
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          padding: "16px",
+          "@media (min-width:600px)": {
+            padding: "24px",
+          },
+          "@media (min-width:900px)": {
+            padding: "32px",
+          },
+          "@media (min-width:1280px)": {
+            padding: "48px",
+          },
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          maxWidth: "720px",
+          minWidth: "300px", // Default min-width for small screens
+          "@media (min-width:600px)": {
+            minWidth: "400px", // For small and up screens
+          },
+          "@media (min-width:900px)": {
+            minWidth: "500px", // For medium and up screens
+          },
+          "@media (min-width:1200px)": {
+            minWidth: "600px", // For large screens and up
+          },
+        },
+      },
+    },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {

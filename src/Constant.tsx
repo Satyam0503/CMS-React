@@ -10,7 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./common_types";
+import { EmployeesDataTypes } from "./utils/common_types";
+import { CustomisedModal } from "./app/modules/components/CustomizedModal";
+import CustomisedButton from "./app/modules/components/CustomisedButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -36,6 +38,24 @@ export const Gender = [
     id: 3,
     label: "Other",
     value: "other",
+  },
+];
+
+export const EducationType = [
+  {
+    id: 1,
+    label: "Graduation",
+    value: "Graduation",
+  },
+  {
+    id: 2,
+    label: "Post Graduation",
+    value: "Post Graduation",
+  },
+  {
+    id: 3,
+    label: "Diploma",
+    value: "Diploma",
   },
 ];
 

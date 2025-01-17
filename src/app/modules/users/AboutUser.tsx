@@ -1,351 +1,516 @@
 import {
   Add,
   CalendarMonth,
-  Delete,
+  Check,
   DeleteOutline,
   Edit,
-  ModeEdit,
   School,
-  SchoolTwoTone,
 } from "@mui/icons-material";
-import { Card, Chip, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Card, Chip, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import BasicModal from "../components/BasicModal";
-import UserInfo from "./UserInfo";
-import Skills from "./Skills";
-import Education from "./Education";
-import Certification from "./Certification";
+import UpdateUserInfo from "./UpdateUserInfo";
+import AddUpdateCertification from "./AddUpdateCertification";
 import Employment from "./Employment";
+import { useUserDetails } from "./UserDataProvider";
+import { useRef, useState } from "react";
+import { dateFormatter } from "../../../utils/common";
+import { AddUpdateSkills } from "./AddUpdateSkills";
+import AddUpdateEducation from "./AddUpdateEducation";
+import dayjs from "dayjs";
+import { CertificationsType, UserCertificationType, UserEducationType } from "../../../utils/common_types";
+import { addUpdateUserCertification, addUpdateUserSummary, addUserEducation, updateUserEducation } from "./userservices";
+import { toast } from "react-toastify";
+import { ConfirmationModal } from "../components/ConfirmationModal";
+import CustomisedButton from "../components/CustomisedButton";
+
+
+const userId = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007"; // get the user id and token from store
+const token = JSON.parse(localStorage.getItem("kt-auth-react-v") || "{}");
+
+const initialEducationValues: UserEducationType = {
+  title: "",
+  startDate: null,
+  endDate: null,
+  collegeName: "",
+  type: ""
+}
+
+const initialCertificationValues: UserCertificationType = {
+  title: "",
+  startDate: null,
+  endDate: null,
+  organizationName: "",
+  type: ""
+}
 
 export default function AboutUser() {
   const intl = useIntl();
-  const handleDelete = () => {
-    console.info("You clicked the delete icon.");
-  };
+  const [isSummaryEdit, setSummaryEdit] = useState(false);
+  const [isUserModalOpen, setUserUpdateModalOpen] = useState(false);
+  const [isSkillsModalOpen, setSkillsModalOpen] = useState(false);
+  const [isEducationModalOpen, setEducationModalOpen] = useState(false);
+  const [isCertificationModalOpen, setCertificationModalOpen] = useState(false);
+  const [initialEducationValue, setInitialEducationValue] = useState<UserEducationType>(initialEducationValues);
+  const [initialCertificationValue, setInitialCertificationValue] = useState(initialCertificationValues);
+  const [openConfirmationModal, setConfirmationModal] = useState(false);
+
+  const [isEdit, setEdit] = useState(false);
+  const { userDetails: currentUser, isRefresh, setRefresh } = useUserDetails();
+  const summary= useRef("");  // can replace with state variable
+  const skills = currentUser?.skills || [];
+  const educations = currentUser?.Education || [];
+  const certifications = currentUser?.Certifications || [];
+
+  function handleEducationUpdate(education: UserEducationType) {
+    setEdit(true);
+    const value = {
+      id: education.id,
+      title: education.title,
+      startDate: dayjs(education.startDate),
+      endDate: dayjs(education.endDate),
+      type: education.type,
+      collegeName: education.collegeName
+    }
+    setInitialEducationValue(value);
+    setEducationModalOpen(true);
+  }
+
+  function handleEducationModalClose() {
+    setEducationModalOpen(false);
+    setEdit(false);
+    setInitialEducationValue(initialEducationValues);
+  }
+
+  function handleAddUpdateEducation(values: UserEducationType, setSubmitting: (isSubmitting: boolean) => void) {
+    if (isEdit) {
+      const payload = {
+        ...values,
+        startDate: dayjs(values.startDate),
+        endDate: dayjs(values.endDate),
+        id: values.id,
+      }
+      updateUserEducation()  //  handle user education update.
+    }
+    else {
+      const payload = {
+        ...values,
+        startDate: dayjs(values.startDate),
+        endDate: dayjs(values.endDate),
+      }
+      addUserEducation(userId, payload, token)
+        .then(res => {
+          const { success, message } = res.data;
+          if (success) {
+            setSubmitting(false);
+            toast.success(message);
+            setRefresh(!isRefresh);
+            handleEducationModalClose();
+          }
+        })
+        .catch(error => {
+          toast.error("Something went Wrong");
+          handleEducationModalClose();
+        })
+    }
+  }
+
+  // for user certification add update
+  function handleCertificationUpdate(certification: CertificationsType) {
+    setEdit(true);
+    const value = {
+      title: certification.title,
+      startDate: dayjs(certification.startDate),
+      endDate: dayjs(certification.endDate),
+      organizationName: certification.certificationName,
+      type: certification.type,
+      id: certification.id
+    }
+    setInitialCertificationValue(value);
+    setCertificationModalOpen(true);
+  }
+
+  function handleAddUpdateCertification(values: UserCertificationType, setSubmitting: (isSubmitting: boolean) => void) {
+    if (isEdit) {
+      const payload = {
+        id: values.id,
+        title: values.title,
+        startDate: dayjs(values.startDate),
+        endDate: dayjs(values.endDate),
+        certificationName: values.organizationName, // remove this line later
+        // organizationName:values.organizationName,
+        type: values.type
+      }
+      // updateUserCertification()   // replace comment with updating certification logic
+
+    }
+    else {
+      const payload = {
+        title: values.title,
+        startDate: dayjs(values.startDate),
+        endDate: dayjs(values.endDate),
+        certificationName: values.organizationName, // remove this line later
+        // organizationName:values.organizationName,
+        type: values.type
+      }
+      addUpdateUserCertification(userId, payload, token)
+        .then(res => {
+          const { success, message } = res.data;
+          if (success) {
+            toast.success(message);
+            setSubmitting(false);
+            handleCertificationModalClose();
+            setRefresh(!isRefresh);
+          }
+        })
+        .catch(error => {
+          toast.error("Failed to add certification");
+          handleCertificationModalClose();
+        })
+    }
+  }
+
+  function handleCertificationModalClose() {
+    setCertificationModalOpen(false);
+    setInitialCertificationValue(initialCertificationValues);
+    setEdit(false);
+  }
+
+  function deleteCertification(certificationId: string) {
+    setConfirmationModal(true);
+  }
+
+  function handleUpdateSummary() {
+    addUpdateUserSummary(userId, { summary:summary.current }, token)
+      .then(res => {
+        const { success, message, methodResult } = res.data;
+        if (success) {
+          toast.success("Summary Updated");
+          setRefresh(!isRefresh);
+          // userData?.setUserDetails(methodResult)
+        }
+      })
+      .catch(error => {
+        toast.error("Failed To Update Summary");
+      })
+      summary.current="";
+  }
+  
+
   return (
-    <Grid container className="d-flex gap-5 mt-2 ">
-      <Card className="p-5">
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
-          <Stack>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-            </Typography>
-          </Stack>
-
-          <Stack>
-            <BasicModal />
-          </Stack>
-        </Stack>
-
-        <Typography variant="body2">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem.
-        </Typography>
-      </Card>
-      <Card className="w-100 p-5">
-        <Stack direction="row" className="d-flex justify-content-between">
-          <Stack>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "PROFILE.PI" })}
-            </Typography>
-          </Stack>
-
-          <Stack>
-            <UserInfo />
-          </Stack>
-        </Stack>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="body2" className="text-muted">
-              Address
-            </Typography>
-            <Typography>NA</Typography>
-          </Grid>
-
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Email
+    <>
+      <Grid container className="d-flex gap-5 mt-2">
+        <Grid item sm={12}>
+          <Card className="p-5">
+            <Stack direction="row" className="d-flex justify-content-between mb-4">
+              <Typography variant="h5">
+                {currentUser?.jobRole}
               </Typography>
-              <Typography variant="body1">NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Phone number
-              </Typography>
-              <Typography variant="body1">NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Date of birth
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Gender
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Languages Known
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Date of joining
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Employee ID
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Department
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Reporting Manager
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Team Lead
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Personal Email
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Emergency Contact
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={6}>
-              <Typography variant="body2" className="text-muted">
-                Blood Group
-              </Typography>
-              <Typography>NA</Typography>
-            </Grid>
-          </Grid>
+              {
+                isSummaryEdit ?
+                  <CustomisedButton label="Update" variant="contained" handleClick={handleUpdateSummary} Icon={<Check />} /> :
+                  <IconButton onClick={() => setSummaryEdit(true)}>
+                    <Edit />
+                  </IconButton>
+              }
+            </Stack>
+            {
+              isSummaryEdit ?
+                <TextField
+                  fullWidth
+                  multiline
+                  id="user_summary"
+                  placeholder="Type..."
+                  variant="outlined"
+                  // value={summary.current}
+                  onChange={(e) => summary.current = e.target.value }
+                /> :
+                <Typography variant="body2">{currentUser?.summary || "Add Your Summary"}</Typography>
+            }
+          </Card>
         </Grid>
-      </Card>
-      <Card className="w-100 p-5">
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
-          <Stack>
-            <Typography variant="h5" className="text-primary">
-              {intl.formatMessage({ id: "PROFILE.SKILLS" })}
-            </Typography>
-          </Stack>
-
-          <Stack>
-            <Skills />
-          </Stack>
-        </Stack>
-
-        <Stack direction="row" spacing={1} className="skills-chips">
-          <Chip
-            label=".Net"
-            variant="filled"
-            color="primary"
-            size="small"
-            onDelete={handleDelete}
-          />
-          <Chip
-            label="SQL Server"
-            variant="filled"
-            color="primary"
-            size="small"
-            onDelete={handleDelete}
-          />
-          <Chip
-            label="Web API"
-            variant="filled"
-            color="primary"
-            size="small"
-            onDelete={handleDelete}
-          />
-          <Chip
-            label="Javascript"
-            variant="filled"
-            color="primary"
-            size="small"
-            onDelete={handleDelete}
-          />
-        </Stack>
-      </Card>
-      <Card className="w-100 p-5">
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
-          <Stack>
-            <Typography variant="h5" className="text-primary">
-              {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
-            </Typography>
-          </Stack>
-
-          <Stack>
-            <Education />
-          </Stack>
-        </Stack>
-
-        <Stack
-          direction="row"
-          className="mb-2 d-flex justify-content-between align-items-center"
-        >
-          <Stack direction="row" alignItems={"center"}>
-            <School className="me-4" />
-            <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
-                Degree in Bachelor of Computer Science
+        <Grid item sm={12}>
+          <Card className="p-5">
+            <Stack direction="row" className="d-flex justify-content-between  mb-4">
+              <Typography variant="h5">
+                {intl.formatMessage({ id: "PROFILE.PI" })}
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Typography variant="body2" className="fw-semibold d-block ">
-                  Graphic Era Hill, Dehradun
+              <IconButton onClick={() => setUserUpdateModalOpen(true)}>
+                <Edit />
+              </IconButton>
+              {
+                isUserModalOpen && <UpdateUserInfo open={isUserModalOpen} setOpen={setUserUpdateModalOpen} />
+              }
+            </Stack>
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography variant="body2" className="text-muted">
+                  Address
                 </Typography>
-                <Typography
-                  variant="body2"
-                  className="text-muted fw-semibold d-block "
-                >
-                  <CalendarMonth sx={{ height: "14px" }} />
-                  Jan 2012- June 2016
-                </Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-          <Stack direction="row">
-            <Stack>
-              <Education />
-            </Stack>
-            <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
-              <DeleteOutline />
-            </Stack>
-          </Stack>
-        </Stack>
+                <Typography>{currentUser?.address || "NA"} </Typography>
+              </Grid>
 
-        <Stack
-          direction="row"
-          className="mb-2 d-flex justify-content-between align-items-center"
-        >
-          <Stack direction="row" alignItems={"center"}>
-            <School className="me-4" />
-            <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
-                Higher Secondary
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Email
+                  </Typography>
+                  <Typography variant="body1">{currentUser?.email || "NA"}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Phone number
+                  </Typography>
+                  <Typography variant="body1">{currentUser?.phoneNumber || "NA"}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Date of birth
+                  </Typography>
+                  <Typography>{dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Gender
+                  </Typography>
+                  <Typography>{currentUser?.gender}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Languages Known
+                  </Typography>
+                  <Typography>{currentUser?.languagesKnown || "NA"}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Date of joining
+                  </Typography>
+                  <Typography>{dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Employee ID
+                  </Typography>
+                  <Typography>{currentUser?.employeeId}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Department
+                  </Typography>
+                  <Typography>{currentUser?.department || "NA"}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Reporting Manager
+                  </Typography>
+                  <Typography>{currentUser?.reportingManager || "NA"}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Team Lead
+                  </Typography>
+                  <Typography>{currentUser?.teamLead || "NA"}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Personal Email
+                  </Typography>
+                  <Typography>{currentUser?.personalEmail || "NA"}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Emergency Contact
+                  </Typography>
+                  <Typography>{currentUser?.emergencyContact || "NA"}</Typography>
+                </Grid>
+              </Grid>
+              <Grid container spacing={4}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" className="text-muted">
+                    Blood Group
+                  </Typography>
+                  <Typography>{currentUser?.bloodGroup || "NA"}</Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+        <Grid item sm={12}>
+          <Card className="p-5">
+            <Stack direction="row" className="d-flex justify-content-between mb-4">
+              <Typography variant="h5" className="text-primary">
+                {intl.formatMessage({ id: "PROFILE.SKILLS" })}
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Typography variant="body2" className="fw-semibold d-block ">
-                  ABC School, Mussoorie
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className="text-muted fw-semibold d-block "
-                >
-                  <CalendarMonth sx={{ height: "14px" }} />
-                  Jan 2010- June 2012
-                </Typography>
-              </Stack>
+              <IconButton onClick={() => setSkillsModalOpen(true)}>
+                <Add />
+              </IconButton>
+              {
+                isSkillsModalOpen && <AddUpdateSkills skills={skills} open={isSkillsModalOpen} setOpen={setSkillsModalOpen} />
+              }
             </Stack>
-          </Stack>
-          <Stack direction="row">
-            <Stack>
-              <Education />
-            </Stack>
-            <Stack className="btn btn-sm bg-white border btn-active-light-danger p-1 ms-3">
-              <DeleteOutline />
-            </Stack>
-          </Stack>
-        </Stack>
-      </Card>
-      <Card className="w-100 p-5">
-        <Stack direction="row" className="d-flex justify-content-between mb-4">
-          <Stack>
-            <Typography variant="h5" className="text-primary">
-              {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
-            </Typography>
-          </Stack>
 
-          <Stack>
-            <Stack>
-              <Certification />
+            <Stack direction="row" gap={1} className="skills-chips" sx={{ flexWrap: "wrap" }}>
+              {
+                skills?.length === 0
+                  ? <Typography variant="body2">Please Add Your Skills</Typography>
+                  : skills?.map((skill, index) => (
+                    <Chip key={index} label={skill} />
+                  ))
+              }
             </Stack>
-          </Stack>
-        </Stack>
-
-        <Stack
-          direction="row"
-          className="mb-2 d-flex justify-content-between align-items-center"
-        >
-          <Stack direction="row" alignItems={"center"}>
-            <School className="me-4" />
-            <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
-                Certification in AI Prompt
+          </Card>
+        </Grid>
+        <Grid item sm={12}>
+          <Card className="p-5">
+            <Stack direction="row" className="d-flex justify-content-between mb-4">
+              <Typography variant="h5" className="text-primary">
+                {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <Typography variant="body2" className="fw-semibold d-block ">
-                  ChatGPT, Online
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className="text-muted fw-semibold d-block "
-                >
-                  <CalendarMonth sx={{ height: "14px" }} />
-                  Mar 2022- Mar 2022
-                </Typography>
-              </Stack>
+              <IconButton onClick={() => setEducationModalOpen(true)}>
+                <Add />
+              </IconButton>
             </Stack>
-          </Stack>
-          <Stack direction="row">
-            <Stack>
-              <Certification />
+            <Stack spacing={2}>
+              {
+                educations.length === 0 ?
+                  <Typography>Please Add Your Education Details</Typography> :
+                  educations.map(education => (
+                    <Stack
+                      key={education.id}
+                      direction="row"
+                      className="justify-content-between align-items-center"
+                    >
+                      <Stack direction="row" sx={{ alignItems: "center" }} >
+                        <School className="me-4" />
+                        <Stack>
+                          <Typography
+                            variant="body1"
+                            className="text-gray-800 text-hover-primary fw-semibold "
+                          >
+                            {education.title}
+                          </Typography>
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="body2" className="fw-semibold d-block ">
+                              {education.collegeName}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              className="text-muted fw-semibold d-block "
+                            >
+                              <CalendarMonth sx={{ height: "14px" }} />
+                              {dateFormatter(education.startDate, "MMM YYYY")} - {dateFormatter(education.endDate, "MMM YYYY")}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                      <Stack direction="row" spacing={1}>
+                        <IconButton onClick={() => handleEducationUpdate(education)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteOutline />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
+                  ))
+              }
             </Stack>
-            <Stack className="btn btn-sm bg-white border btn-active-light-danger ms-3 p-1">
-              <DeleteOutline />
+          </Card>
+        </Grid>
+
+        <Grid item sm={12}>
+          <Card className="w-100 p-5">
+            <Stack direction="row" className="d-flex justify-content-between mb-4">
+              <Typography variant="h5" className="text-primary">
+                {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
+              </Typography>
+              <IconButton onClick={() => setCertificationModalOpen(true)}>
+                <Add />
+              </IconButton>
             </Stack>
-          </Stack>
-        </Stack>
-      </Card>
-    </Grid>
+
+            <Stack spacing={2}>
+              {
+                certifications.length === 0 ?
+                  <Typography>Please Add Your Certification Details</Typography> :
+                  certifications.map(certification => (
+                    <Stack
+                      key={certification.id}
+                      direction="row"
+                      className="mb-2 d-flex justify-content-between align-items-center"
+                    >
+                      <Stack direction="row" alignItems={"center"}>
+                        <School className="me-4" />
+                        <Stack>
+                          <Typography
+                            variant="body1"
+                            className="text-gray-800 text-hover-primary fw-semibold "
+                          >
+                            {certification.title}
+                          </Typography>
+                          <Stack direction="row" spacing={1}>
+                            <Typography variant="body2" className="fw-semibold d-block ">
+                              {certification.certificationName}, {certification.type}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              className="text-muted fw-semibold d-block "
+                            >
+                              <CalendarMonth sx={{ height: "14px" }} />
+                              {dateFormatter(dayjs(certification.startDate), "MMM YYYY")}- {dateFormatter(dayjs(certification.endDate), "MMM YYYY")}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                      <Stack direction="row" spacing={1}>
+                        <IconButton onClick={() => handleCertificationUpdate(certification)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteOutline onClick={() => deleteCertification(certification.id)} />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
+                  ))
+              }
+            </Stack>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {
+        isEducationModalOpen &&
+        <AddUpdateEducation
+          open={isEducationModalOpen}
+          initialValues={initialEducationValue}
+          handleAddUpdateEducation={handleAddUpdateEducation}
+          handleClose={handleEducationModalClose} />
+      }
+      {
+        isCertificationModalOpen &&
+        <AddUpdateCertification
+          open={isCertificationModalOpen}
+          initialValues={initialCertificationValue}
+          handleClose={handleCertificationModalClose}
+          handleAddUpdateCertification={handleAddUpdateCertification}
+        />
+      }
+      <ConfirmationModal
+        open={openConfirmationModal}
+        handleClose={() => setConfirmationModal(false)}
+        title="Delete Item"
+        handleConfirmation={() => console.log("Delelte")}
+        content="Are You SUre"
+      />
+    </>
   );
 }
