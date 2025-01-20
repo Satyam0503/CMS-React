@@ -11,6 +11,11 @@ import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
 
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+};
+
 export default function JobDetail() {
   const intl = useIntl();
 

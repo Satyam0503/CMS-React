@@ -33,6 +33,7 @@ import {
 } from "@mui/icons-material";
 import CustomisedButton from "../../components/CustomisedButton";
 import ApplicationPreview from "./ApplicationPreview";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 function createData(
   sno: number,
@@ -106,12 +107,8 @@ export default function Applications() {
             />
           </Stack>
           <Stack direction="row" spacing={1}>
-            <IconButton aria-label="filter employee">
-              <FilterList />
-            </IconButton>
-            <IconButton aria-label="import excel">
-              <Download />
-            </IconButton>
+            <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+            <CustomIconButton tooltip="Import Excel" icon={<Download />} />
           </Stack>
         </Stack>
         <Stack sx={{ mt: "1rem" }}>
