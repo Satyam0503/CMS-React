@@ -22,7 +22,8 @@ const AuthLayout = () => {
         container
         py={4}
         gap={4}
-        sx={{ alignItems: "center", justifyContent: "space-evenly" }}
+        alignItems={"center"}
+        justifyContent={"space-evenly"}
       >
         <Grid
           item
@@ -53,13 +54,8 @@ const AuthLayout = () => {
           </Stack>
         </Grid>
 
-        <Grid
-          item
-          xs={12}
-          md={5}
-          textAlign={"center"}
-        >
-          <Stack spacing={2}> 
+        <Grid item xs={12} md={5} textAlign={"center"}>
+          <Stack spacing={2}>
             <Box component={"div"}>
               <img
                 alt="Logo"

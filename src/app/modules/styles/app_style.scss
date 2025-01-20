@@ -66,17 +66,17 @@ input:-webkit-autofill {
   height: 1.5rem;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: .25rem solid white;
+  border: 0.25rem solid white;
   border-bottom-color: rgb(85, 85, 85);
-  animation: spinner 1s linear 0s infinite; 
+  animation: spinner 1s linear 0s infinite;
   position: relative;
 }
 
 @keyframes spinner {
-  0%{
+  0% {
     transform: rotateZ(0deg);
   }
-  100%{
+  100% {
     transform: rotateZ(360deg);
   }
 }

@@ -21,7 +21,7 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
-import  TextEditor  from "../../../modules/components/TextEditor";
+import TextEditor from "../../../modules/components/TextEditor";
 
 type Props = {
   open: boolean;
@@ -31,18 +31,18 @@ type Props = {
   // handleChange: (value: any) => void;
 };
 
-const JobDescription = (props:Props) => {
-  const [value,setValue]= useState("");
+const JobDescription = (props: Props) => {
+  const [value, setValue] = useState("");
   const intl = useIntl();
-  const {open, handleClose} = props;
+  const { open, handleClose } = props;
 
   // const [open, setOpen] = useState(false);
 
   // const handleOpen = () => setOpen(true);
   // const handleClose = () => setOpen(false);
- 
+
   console.log(value);
-  
+
   return (
     <Grid container>
       {/* <IconButton onClick={() => setOpen(true)}>
@@ -193,7 +193,7 @@ const JobDescription = (props:Props) => {
         </Grid> */}
         <Stack>
           <Grid item xs={12}>
-            <TextEditor value={value} setValue={setValue}/>
+            <TextEditor value={value} setValue={setValue} />
           </Grid>
         </Stack>
         <Grid

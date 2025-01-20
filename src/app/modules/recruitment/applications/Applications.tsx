@@ -76,15 +76,14 @@ export default function Applications() {
 
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
-      </Typography>
       <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <Stack>
             <TextField
@@ -109,9 +108,6 @@ export default function Applications() {
           <Stack direction="row" spacing={1}>
             <IconButton aria-label="filter employee">
               <FilterList />
-            </IconButton>
-            <IconButton onClick={handleOpenModal}>
-              <Add />
             </IconButton>
             <IconButton aria-label="import excel">
               <Download />
@@ -170,7 +166,9 @@ export default function Applications() {
       </Card>
 
       <Dialog open={openModal} onClose={handleCloseModal}>
-        <DialogContent sx={{ width: "100%" }}></DialogContent>
+        <DialogContent sx={{ width: "100%" }}>
+          <ApplicationPreview />
+        </DialogContent>
       </Dialog>
     </>
   );

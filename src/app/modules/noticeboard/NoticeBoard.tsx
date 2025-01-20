@@ -61,12 +61,12 @@ const rows = [
   },
 ];
 
-const initialValues:NoticeType = {
+const initialValues: NoticeType = {
   id: "",
   type: "",
-  target:"",
-  group:"",
-  message:''
+  target: "",
+  group: "",
+  message: "",
 };
 
 export default function NoticeBoard() {
@@ -124,22 +124,26 @@ export default function NoticeBoard() {
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <SearchInput search={searchValue} setSearch={setSearchValue} />
-          <Stack direction={"row"} spacing={1}>
-            <Button
-              startIcon={<ListAltOutlined />}
-              variant="outlined"
-              size="small"
-            >
-              <Link
-                href="mynoticeboard"
-                underline="hover"
-                color={colors.alpha.neutral[800]}
+          <Stack direction={"row"} flexWrap={"wrap"} gap={2}>
+            <Stack>
+              <Button
+                startIcon={<ListAltOutlined />}
+                variant="outlined"
+                size="small"
               >
-                {"My Notice Board"}
-              </Link>
-            </Button>
+                <Link
+                  href="mynoticeboard"
+                  underline="hover"
+                  color={colors.alpha.neutral[800]}
+                >
+                  {"My Notice Board"}
+                </Link>
+              </Button>
+            </Stack>
 
             <Stack direction="row" spacing={1}>
               <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
@@ -157,7 +161,7 @@ export default function NoticeBoard() {
             tabName="Notice Board"
             columns={NoticeBoardTableColumnList}
             rows={NoticeList}
-            page={page}          
+            page={page}
             rowsPerPage={rowPerPage}
             loading={isLoading}
             handleEdit={handleNoticeEdit}

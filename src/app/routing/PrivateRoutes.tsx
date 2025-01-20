@@ -16,7 +16,7 @@ import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
 import { EmployeePageWrapper } from "../pages/employees/EmployeePageWrapper.tsx";
-
+import { SuperAdmin } from "../pages/superadmin/SuperAdmin.tsx";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
@@ -53,6 +53,14 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <Recruitment />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="superadmin/*"
+          element={
+            <SuspensedView>
+              <SuperAdmin />
             </SuspensedView>
           }
         />

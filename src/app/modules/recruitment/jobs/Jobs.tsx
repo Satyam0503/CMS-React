@@ -72,16 +72,14 @@ export default function Jobs() {
 
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
-      </Typography>
-
       <Card sx={{ p: "16px" }}>
         <Stack
           direction="row"
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <Stack>
             <TextField

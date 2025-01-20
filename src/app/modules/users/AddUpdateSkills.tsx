@@ -11,7 +11,6 @@ import {
   styled,
   TextField,
 } from "@mui/material";
-import { CustomisedModal } from "../components/CustomizedModal";
 import { Add } from "@mui/icons-material";
 import { addUserSkills } from "./userservices";
 import { toast } from "react-toastify";
@@ -31,7 +30,7 @@ type PropsType = {
 const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
 
 export const AddUpdateSkills = (props: PropsType) => {
-  const token = useAppSelector(state=>state.auth.token)!;
+  const token = useAppSelector((state) => state.auth.token)!;
   const { isRefresh, setRefresh } = useUserDetails();
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(props.skills);

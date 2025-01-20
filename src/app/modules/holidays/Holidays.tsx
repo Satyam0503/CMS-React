@@ -109,6 +109,8 @@ export default function Holidays() {
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <SearchInput search={searchValue} setSearch={setSearchValue} />
           <Stack direction="row" spacing={1}>
