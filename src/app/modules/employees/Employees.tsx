@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
-import { EmployeesDataTypes } from "../../../utils/common_types";
+import { EmployeeModel, EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
@@ -24,15 +24,16 @@ import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
 import { useAppSelector } from "../../Redux/hooks";
 
-const employeeInitialValue: EmployeesDataTypes = {
-  id: "",
+const employeeInitialValue: EmployeeModel = {
+  userId: "",
+  employeeId: "",
+  roleId: "",
+  companyId: "",
   firstName: "",
   lastName: "",
   gender: "",
   email: "",
-  role: "",
   dateOfBirth: null,
-  employeeId: "",
   department: "",
   reportingManager: "",
   teamLead: "",
@@ -40,11 +41,11 @@ const employeeInitialValue: EmployeesDataTypes = {
   bloodGroup: "",
   status: "",
   address: "",
-  jobRole: "",
+  // jobRole: "",
   dateOfJoining: null,
   personalEmail: "",
   emergencyContact: "",
-  profilePicture: "",
+  password: "",
 };
 export default function Employees() {
   const intl = useIntl();
@@ -53,11 +54,12 @@ export default function Employees() {
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
-  const [selectedEmployeeData, setSelectedEmployeeData] =
-    useState<EmployeesDataTypes>({} as EmployeesDataTypes);
+  const [selectedEmployeeData, setSelectedEmployeeData] = useState<
+    EmployeeModel | undefined
+  >();
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
-  const [employeeList, setEmployeeList] = useState<EmployeesDataTypes[]>([]);
+  const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -72,16 +74,17 @@ export default function Employees() {
     setEdit(false);
   }
   function SaveAddEditEmployee(
-    values: EmployeesDataTypes,
+    values: EmployeeModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     setLoading(true);
     if (isEdit) {
-      const employeeId = values.id;
+      const employeeId = values.employeeId;
+      const companyId = values.companyId;
       const payload = {
         ...values,
       };
-      updateEmployee(employeeId, payload, token)
+      updateEmployee(payload, token)
         .then((res) => {
           const { success, message } = res.data;
           if (success) {
@@ -91,20 +94,25 @@ export default function Employees() {
             handleClose();
           }
         })
-        .catch((res) => {
-          console.log(res);
-          toast.error("Network Error.Try Again");
+        .catch((error) => {
+          toast.error(error.message);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     } else {
       const payload = {
+        userId: values.userId,
+        companyId: values.companyId,
+        employeeId: values.employeeId,
+        roleId: values.roleId,
         firstName: values.firstName,
         lastName: values.lastName,
         gender: values.gender,
-        employeeId: values.employeeId,
         dateOfBirth: values.dateOfBirth,
         email: values.email,
-        jobRole: values.jobRole,
-        role: values.role,
+        password: values.password,
+        // jobRole: values.jobRole,
         department: values.department,
         reportingManager: values.reportingManager,
         teamLead: values.teamLead,
@@ -130,7 +138,6 @@ export default function Employees() {
         .catch((error) => {
           setLoading(false);
           toast.error(error.message);
-          console.log(error);
         });
     }
   }
@@ -140,26 +147,26 @@ export default function Employees() {
       toast.error("Please try again");
       closeConfirmationModal();
     } else {
-      const employeeId = selectedEmployee;
-      deleteEmployee(employeeId, token)
-        .then((res) => {
-          const { success, message } = res.data;
-          if (success) {
-            toast.success(message);
-            closeConfirmationModal();
-            setRefresh(!isRefresh);
-          }
-        })
-        .catch((error) => {
-          toast.error("Please try again");
-          closeConfirmationModal();
-        });
+      // deleteEmployee(employeeId, token)
+      //   .then((res) => {
+      //     const { success, message } = res.data;
+      //     if (success) {
+      //       toast.success(message);
+      //       closeConfirmationModal();
+      //       setRefresh(!isRefresh);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     toast.error("Please try again");
+      //     closeConfirmationModal();
+      //   });
     }
   }
 
-  const openConfirmationModal = (employeeId: string) => {
+  const openConfirmationModal = (row: EmployeeModel) => {
     setConfirmModalOpen(true);
-    setSelectedEmployee(employeeId);
+    setSelectedEmployeeData(row);
+    setSelectedEmployee(row.employeeId);
   };
 
   function closeConfirmationModal() {
@@ -167,24 +174,24 @@ export default function Employees() {
     setSelectedEmployee(null);
   }
 
-  function openViewModal(id: string) {
+  function openViewModal(row: EmployeeModel) {
     setViewModalOpen(true);
-    setSelectedEmployee(id);
-    const employeeDetails = employeeList.find((employee) => employee.id === id);
-    if (employeeDetails) {
-      setSelectedEmployeeData(employeeDetails);
+    if (row) {
+      setSelectedEmployeeData(row);
     }
   }
-  function handleEmployeeEdit(row: EmployeesDataTypes) {
+
+  function handleEmployeeEdit(row: EmployeeModel) {
     setEmployeeInitialValues({
-      id: row.id,
+      userId: row.userId,
+      companyId: row.companyId,
+      roleId: row.roleId,
+      employeeId: row.employeeId,
       firstName: row.firstName,
       lastName: row.lastName,
       gender: row.gender,
-      employeeId: row.employeeId,
+      password: row.password,
       email: row.email,
-      jobRole: row.jobRole,
-      role: row.role,
       department: row.department,
       reportingManager: row.reportingManager,
       teamLead: row.teamLead,
@@ -211,24 +218,27 @@ export default function Employees() {
 
   useEffect(() => {
     setLoading(true);
-    const payload = {
-      pageNo: page + 1,
-      limit: rowPerPage,
-      name: search,
-    };
-    const timeOutId = setTimeout(() => {
-      getAllEmployees(payload, token)
-        .then((res) => {
-          const { methodResult, success } = res.data;
-          if (success) {
-            setEmployeeList(methodResult.record);
-            setTotalRecords(methodResult.totalEmployees);
-            setLoading(false);
-          }
-        })
-        .catch((res) => {
-          toast.error(res);
-        });
+    // const payload = {
+    //   pageNo: page + 1,
+    //   limit: rowPerPage,
+    //   name: search,
+    // };
+    const timeOutId = setTimeout(async () => {
+      try {
+        const response = await getAllEmployees(token);
+        const { success, statusCode, methodResults } = response.data;
+        if (!(success && statusCode === 200)) {
+          throw new Error("Failed To fetch Data");
+        }
+        if (methodResults) {
+          setEmployeeList(methodResults);
+          setTotalRecords(methodResults.length);
+          setLoading(false);
+        }
+      } catch (error: any) {
+        setLoading(false);
+        toast.error(error.message);
+      }
     }, 1500);
     return () => clearTimeout(timeOutId);
   }, [page, rowPerPage, isRefresh, search]);
@@ -236,56 +246,56 @@ export default function Employees() {
   return (
     <>
       <Card sx={{ p: "16px" }}>
-        <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          flexWrap={"wrap-reverse"}
-          gap={2}
-        >
-          <SearchInput search={search} setSearch={setSearch} />
-          <Stack direction="row" spacing={1}>
-            <CustomIconButton
-              icon={<FilterList />}
-              tooltip="Filter Employee"
-              handleClick={() => {}}
-            />
-            <CustomIconButton
-              icon={<Add />}
-              handleClick={() => setModalOpen(true)}
-              tooltip="Add Employee"
-              ariaLabel="Add employee"
-            />
-            <CustomIconButton
-              icon={<Download />}
-              handleClick={handleEmployeeExport}
-              tooltip="Import Excel"
-              ariaLabel="import excel"
-            />
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <SearchInput search={search} setSearch={setSearch} />
+            <Stack direction="row" spacing={1}>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Employee"
+                handleClick={() => {}}
+              />
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+                tooltip="Add Employee"
+                ariaLabel="Add employee"
+              />
+              <CustomIconButton
+                icon={<Download />}
+                handleClick={handleEmployeeExport}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
+            </Stack>
           </Stack>
-        </Stack>
-        <Stack sx={{ mt: "1rem" }}>
-          <CustomisedTable
-            tabName="Employee"
-            loading={isLoading}
-            rows={employeeList}
-            columns={EmployeeTabTableColumnList}
-            page={page}
-            rowsPerPage={rowPerPage}
-            handleEdit={handleEmployeeEdit}
-            openConfirmationModal={openConfirmationModal}
-            openViewModal={openViewModal}
-          />
-          {totalRecords > rowPerPage && (
-            <Pagination
+         
+            <CustomisedTable
+              tabName="Employee"
+              loading={isLoading}
+              rows={employeeList}
+              columns={EmployeeTabTableColumnList}
               page={page}
               rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
-              setPage={setPage}
-              totalRecords={totalRecords}
+              handleEdit={handleEmployeeEdit}
+              openConfirmationModal={openConfirmationModal}
+              openViewModal={openViewModal}
             />
-          )}
+            {totalRecords > rowPerPage && (
+              <Pagination
+                page={page}
+                rowsPerPage={rowPerPage}
+                setRowPerPage={setRowPerPage}
+                setPage={setPage}
+                totalRecords={totalRecords}
+              />
+            )}
+          
         </Stack>
       </Card>
 
@@ -298,7 +308,7 @@ export default function Employees() {
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
       )}
-      {isViewModalOpen && (
+      {selectedEmployeeData && isViewModalOpen && (
         <ViewEmployeeDetails
           open={isViewModalOpen}
           setOpen={setViewModalOpen}

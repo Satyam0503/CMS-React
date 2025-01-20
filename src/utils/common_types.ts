@@ -10,10 +10,43 @@ export interface UserModel {
   userId: string;
   companyId: string;
   role: string;
-  firstName:string;
-  lastName:string;
-  fullName:string;
-  permissions:any[];
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  permissions: any[];
+}
+
+export interface EmployeeModel {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  companyId: string;
+  roleId: string;
+  employeeId: string;
+  department: string;
+  dateOfBirth: Dayjs | null;
+  reportingManager: string;
+  teamLead: string;
+  phoneNumber: string;
+  bloodGroup: string;
+  status: string;
+  address: string;
+  password: string;
+  dateOfJoining: Dayjs | null;
+  personalEmail: string;
+  emergencyContact: string;
+  isEmailVerified?:boolean;
+}
+
+export interface RoleModel {
+  rolesId: string;
+  titles: string;
+  description: string;
+  isNotEditable: boolean;
+  isDefault: boolean;
+  userRoles: [string];
 }
 
 export interface UserEducationType {
@@ -24,18 +57,21 @@ export interface UserEducationType {
   collegeName: string;
   type: string;
 }
-export type UserCertificationType = Omit<UserEducationType ,"collegeName" > & {organizationName:string};
+export type UserCertificationType = Omit<UserEducationType, "collegeName"> & {
+  organizationName: string;
+};
 
-export type HolidayType = Omit<UserEducationType, "collegeName" > & { description:string };
+export type HolidayType = Omit<UserEducationType, "collegeName"> & {
+  description: string;
+};
 
-export type NoticeType ={
-  id:string;
-  target:string;
-  type:string;
-  group:string;
-  message:string;
-}
-
+export type NoticeType = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export interface RolesType {
   id: string;
@@ -48,15 +84,15 @@ export interface RolesType {
 }
 
 export interface CertificationsType {
-certificationName: string,
-createdAt:string,
-employeeId:string,
-endDate:string,
-id:string,
-startDate:string,
-title:string,
-type:string,
-updatedAt:string,
+  certificationName: string;
+  createdAt: string;
+  employeeId: string;
+  endDate: string;
+  id: string;
+  startDate: string;
+  title: string;
+  type: string;
+  updatedAt: string;
 }
 
 export interface EmployeesDataTypes {
@@ -90,34 +126,32 @@ export interface EmployeesDataTypes {
   profilePicture?: string | File | null;
 }
 
-export type ColumnListTypes= {
+export type ColumnListTypes = {
   id: string;
   label: string;
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
-  build?: (any);
+  build?: any;
   format?: (value: any) => any;
-}
-
+};
 
 // Api respone data types
 export interface ResponseData<T> {
   message: string;
   success: boolean;
-  totalRecords?:number,
-  statusCode?: number;
+  totalRecords: number;
+  statusCode: number;
   methodResult: T;
-  // methodResults?:T[];
+  methodResults: T[];
 }
 
-export type GetUserDetailsResponseData = ResponseData<UserModel>
+export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
-export type GetAllEmployeeResponseData = ResponseData<{
-  totalEmployees: number;
-  record: EmployeesDataTypes[];
-}>;
+export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;
 
-export type GetAllRolesResponseData = ResponseData<RolesType[]>;
+export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
+
+export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
 export type GetEmployeeDetailsResponseData = ResponseData<EmployeesDataTypes>;
 

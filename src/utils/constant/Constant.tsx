@@ -3,28 +3,33 @@ import { Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   ColumnListTypes,
+  EmployeeModel,
   EmployeesDataTypes,
   RolesType,
 } from "../common_types";
-import { dateFormatter } from "../common";
+import { dateFormatter, getStatusClass } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
 
-export const BaseUrl = import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
+export const BaseUrl =
+  import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ServiceUrl = {
-  
   // account
-  
-  REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
-  USER_LOGIN:`${BaseUrl}/api/account/login`,
-  GET_USER_DETAILS:`${BaseUrl}/api/account/getSignedUserDetails`,
 
-  GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
-  GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
+  REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
+  USER_LOGIN: `${BaseUrl}/api/account/login`,
+  GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
+
+  // role
+  GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
+
+  //user
+  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
+  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/api/User/AddEditEmployees`,
+
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
   UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
@@ -139,10 +144,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     label: "Action",
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void,
-      openConfirmationModal: (id: string) => void,
-      openViewModal: (id: string) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void,
+      openConfirmationModal: (row: EmployeeModel) => void,
+      openViewModal: (row: EmployeeModel) => void
     ) => (
       <ActionComponent
         row={row}
@@ -238,6 +243,62 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
 ];
 
+export const ApplicationTabTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id: "jobTitle",
+    label: "Job Title",
+  },
+  {
+    id: "experience",
+    label: "Experience",
+  },
+  {
+    id: "applied",
+    label: "Applied",
+    format: (value) => dateFormatter(value, "DD MMM YYYY"),
+  },
+  {
+    id: "location",
+    label: "Location",
+  },
+  {
+    id: "noticePeriod",
+    label: "Notice Period",
+  },
+  {
+    id: "status",
+    label: "Status",
+    build:(status:string)=> {
+      const statusClass = getStatusClass(status);
+      return (<Typography className={statusClass}>
+        {status}    
+      </Typography>)
+    }
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleApplicationEdit: (row:any) => void,
+      openConfirmationModal: (row: any) => void,
+      openViewModal: (row: any) => void
+    ) => (
+      <ActionComponent 
+        row={row}
+        handleEdit={handleApplicationEdit}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal= {openViewModal}
+      />
+    )
+  },
+];
+
 // export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
 //   {
 //     id: "serialNo",
@@ -302,7 +363,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "Action",
     minWidth: 180,
     build: (row: RolesType) => (
-      <Link to={"/setting/editpermission"} state={{...row}}>
+      <Link to={"/setting/editpermission"} state={{ ...row }}>
         <Button variant="contained">Edit Permission</Button>
       </Link>
     ),
@@ -312,12 +373,10 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
-  openConfirmationModal?: (id: string) => void;
-  openViewModal?: (id: string) => void;
+  openConfirmationModal?: (row: Row) => void;
+  openViewModal?: (row: Row) => void;
 }
-const ActionComponent = <Row extends { id: string }>(
-  props: ActionComponentProps<Row>
-) => {
+const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   const { row, handleEdit, openConfirmationModal, openViewModal } = props;
   return (
     <Stack direction={"row"} spacing={1}>
@@ -331,7 +390,7 @@ const ActionComponent = <Row extends { id: string }>(
       )}
       {openConfirmationModal && (
         <CustomIconButton
-          handleClick={() => openConfirmationModal(row.id)}
+          handleClick={() => openConfirmationModal(row)}
           icon={<Delete />}
           tooltip="Delete"
           ariaLabel="Delete"
@@ -339,7 +398,7 @@ const ActionComponent = <Row extends { id: string }>(
       )}
       {openViewModal && (
         <CustomIconButton
-          handleClick={() => openViewModal(row.id)}
+          handleClick={() => openViewModal(row)}
           icon={<Visibility />}
           tooltip="View"
           ariaLabel="View"

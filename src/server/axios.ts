@@ -1,7 +1,8 @@
 
 import axios, { AxiosRequestConfig } from "axios";
+import { AUTH_LOCAL_STORAGE_KEY } from "../app/modules/auth";
 
-const token = localStorage.getItem("kt-auth-react-v") || "{}";
+const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)! : "";
 
 const configData = {
   headers: {
@@ -9,12 +10,12 @@ const configData = {
   },
 };
 
-export const getRequest = (
+export const getRequest = <ResponseData>(
   path: string,
   config: AxiosRequestConfig = configData,
   tokenData: string = token
-) => {
-  return axios.get(path, {
+) => {    
+  return axios.get<ResponseData>(path, {
     ...config,
     headers: {
       "Access-Control-Allow-Origin": "*",

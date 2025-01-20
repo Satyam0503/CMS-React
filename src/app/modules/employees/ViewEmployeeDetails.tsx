@@ -2,14 +2,14 @@ import { useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { EmployeesDataTypes } from "../../../utils/common_types";
+import { EmployeeModel } from "../../../utils/common_types";
 import { dateFormatter } from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  employeeData: EmployeesDataTypes;
+  employeeData: EmployeeModel;
 };
 
 export const ViewEmployeeDetails = (props: PropsType) => {

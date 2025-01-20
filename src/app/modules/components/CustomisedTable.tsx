@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
-import { colors } from "../theme/MuiTheme";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -20,12 +19,13 @@ interface PropsTypes<Row, Columns> {
   columns: Columns[];
   page: number;
   rowsPerPage: number;
+  openConfirmationModal?: (row:Row) => void;
   handleEdit?: (row: Row) => void;
-  openViewModal?: (id: string) => void;
+  openViewModal?: (row:Row) => void;
 }
 
 export const CustomisedTable = <
-  Row extends { id: string },
+  Row ,
   Column extends ColumnListTypes
 >(
   props: PropsTypes<Row, Column>
@@ -87,7 +87,7 @@ export const CustomisedTable = <
               ) : (
                 <>
                   {rows.map((row: any, index: number) => (
-                    <TableRow hover key={row.id}>
+                    <TableRow hover key={index}>
                       {columns.map((column) => {
                         const value =
                           column.id === "serialNo"
