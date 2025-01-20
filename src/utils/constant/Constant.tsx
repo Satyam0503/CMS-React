@@ -1,4 +1,4 @@
-import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
+import { Delete, Download, Edit, Place, Visibility } from "@mui/icons-material";
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
@@ -300,13 +300,15 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       row: any,
       handleApplicationEdit: (row: any) => void,
       openConfirmationModal: (row: any) => void,
-      openViewApplication: (row: any) => void
+      openViewApplication: (row: any) => void,
+      handleResumeDownload: (row: any) => void,
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
         openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
+        handleDownload={handleResumeDownload}
       />
     ),
   },
@@ -388,9 +390,10 @@ interface ActionComponentProps<Row> {
   handleEdit?: (row: Row) => void;
   openConfirmationModal?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
+  handleDownload?:(row:Row)=>void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
+  const { row, handleEdit, openConfirmationModal, openViewModal,handleDownload } = props;
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
@@ -413,6 +416,14 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
         <CustomIconButton
           handleClick={() => openViewModal(row)}
           icon={<Visibility />}
+          tooltip="View"
+          ariaLabel="View"
+        />
+      )}
+      {handleDownload && (
+        <CustomIconButton
+          handleClick={() => handleDownload(row)}
+          icon={<Download />}
           tooltip="View"
           ariaLabel="View"
         />

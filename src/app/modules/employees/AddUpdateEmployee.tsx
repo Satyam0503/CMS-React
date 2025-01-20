@@ -136,7 +136,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 error={touched.gender && Boolean(errors.gender)}
                 {...getFieldProps("gender")}
               >
-                <MenuItem value={""}>None</MenuItem>
+                {/* <MenuItem value={""}>None</MenuItem> */}
                 {Gender.map((item) => (
                   <MenuItem key={item.id} value={item.value}>
                     {item.label}

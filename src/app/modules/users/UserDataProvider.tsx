@@ -60,13 +60,13 @@ export const UserDetailsProvider = (props: PropTypes) => {
       </Typography>
     );
   }
-  // if (error) {
-  //   return (
-  //     <Typography variant="h4" color="error">
-  //       {error}
-  //     </Typography>
-  //   );
-  // }
+  if (error) {
+    return (
+      <Typography variant="h4" color="error">
+        {error}
+      </Typography>
+    );
+  }
   return (
     <UserDetailsContext.Provider
       value={{ userDetails, setUserDetails, isRefresh, setRefresh, error }}

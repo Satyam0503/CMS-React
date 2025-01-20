@@ -22,6 +22,7 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row:Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row:Row) => void;
+  handleDownload?:()=>void;
 }
 
 export const CustomisedTable = <
@@ -39,6 +40,7 @@ export const CustomisedTable = <
     loading,
     openConfirmationModal,
     openViewModal,
+    handleDownload
   } = props;
   return (
     <Grid container>
@@ -98,7 +100,8 @@ export const CustomisedTable = <
                                   row,
                                   handleEdit,
                                   openConfirmationModal,
-                                  openViewModal
+                                  openViewModal,
+                                  handleDownload,
                                 )
                               ) : (
                                 column.build(value)

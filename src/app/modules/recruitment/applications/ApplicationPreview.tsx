@@ -1,21 +1,19 @@
-import { Close, Download, Visibility } from "@mui/icons-material";
+import { Close, Download } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Typography } from "@mui/material";
-import { useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 
 interface PropsType{
   open:boolean;
-  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  handleClose:()=>void;
   applicantData?:any;
 }
 
 export default function ApplicationPreview(props:PropsType) {
   const intl = useIntl();
-  const {open,setOpen,applicantData} = props;
+  const {open,handleClose,applicantData} = props;
 
-  const handleClose = () => setOpen(false);
-
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Grid
