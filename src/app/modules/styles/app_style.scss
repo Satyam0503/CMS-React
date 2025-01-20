@@ -80,3 +80,16 @@ input:-webkit-autofill {
     transform: rotateZ(360deg);
   }
 }
+
+.success{
+  background-color:#C8F2CC;
+  color:#37843C;
+}
+.warning{
+  background-color:#FFF2B3;
+  color:#B3743B;
+}
+.danger{
+   background-color:#FFC8C7;
+  color:#C62828;
+}

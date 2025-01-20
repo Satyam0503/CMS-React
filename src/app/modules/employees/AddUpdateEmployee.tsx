@@ -1,11 +1,8 @@
 import {
   Grid,
   TextField,
-  Button,
   Stack,
   Typography,
-  Dialog,
-  DialogContent,
   Select,
   InputLabel,
   MenuItem,
@@ -17,20 +14,26 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 import { bloodGroups, Gender } from "../../../utils/constant/Constant";
 import { getAllRoles } from "./components/employeeServices";
-import { EmployeesDataTypes, RolesType } from "../../../utils/common_types";
+import {
+  EmployeeModel,
+  EmployeesDataTypes,
+  RoleModel,
+  RolesType,
+} from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { employeeSchema } from "../../../utils/Schema/employeeSchema";
 import { useAppSelector } from "../../Redux/hooks";
+import { toast } from "react-toastify";
 
 interface PropsTypes {
-  initialValues: EmployeesDataTypes;
+  initialValues: EmployeeModel;
   isEdit: boolean;
   open: boolean;
   handleClose: () => void;
   SaveAddEditEmployee: (
-    values: EmployeesDataTypes,
+    values: EmployeeModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => void;
 }
@@ -39,8 +42,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const token = useAppSelector((state) => state.auth.token)!;
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } =
     props;
-  const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<RolesType[]>([]);
+  const [roles, setRoles] = useState<RoleModel[]>([]);
+  const currentUser = useAppSelector((state) => state.user.userData);
   const intl = useIntl();
 
   const {
@@ -62,15 +65,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     },
   });
 
-  function handleDateofJoiningChange(newDate: Dayjs | null) {
-    touched.dateOfJoining = true;
-    setFieldValue("dateOfJoining", newDate);
-  }
-  function handleDOBChange(newDate: Dayjs | null) {
-    touched.dateOfBirth = true;
-    setFieldValue("dateOfBirth", newDate);
-  }
-
   const handleDateChange = (fieldName: string) => {
     return (newDate: Dayjs | null) => {
       setFieldTouched(fieldName, true);
@@ -81,11 +75,13 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   useEffect(() => {
     getAllRoles(token)
       .then((res) => {
-        const { methodResult } = res.data;
-        setRoles(methodResult);
+        const { success, statusCode, methodResults } = res.data;
+        if (success && statusCode === 200) {
+          setRoles(methodResults);
+        }
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(error.message);
       });
   }, []);
 
@@ -216,16 +212,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 fullWidth
                 id="outlined-basic"
                 variant="outlined"
-                error={touched.role && Boolean(errors.role)}
+                error={touched.roleId && Boolean(errors.roleId)}
                 labelId="employee_role"
-                {...getFieldProps("role")}
+                {...getFieldProps("roleId")}
               >
                 <MenuItem value={""}>None</MenuItem>
-                {roles.map((role) => (
-                  <MenuItem key={role.id} value={role.id}>
-                    {role.roleName}
-                  </MenuItem>
-                ))}
+                {roles.map((role) => {
+                  if (role.titles !== currentUser?.role) {
+                    return (
+                      <MenuItem key={role.rolesId} value={role.rolesId}>
+                        {role.titles}
+                      </MenuItem>
+                    );
+                  }
+                })}
               </Select>
               <FormHelperText>
                 {touched.role && errors.role && errors.role}
@@ -377,35 +377,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.DOJ" })}
-              </Typography>
-              <CustomisedDatePicker
-                value={values.dateOfJoining}
-                setValue={handleDateofJoiningChange}
-                maxDate={dayjs()}
-              />
-              <FormHelperText>
-                {touched.dateOfJoining &&
-                  errors.dateOfJoining &&
-                  errors.dateOfJoining}
-              </FormHelperText>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.ADDRESS" })}
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Address"
-                id="outlined-basic"
-                variant="outlined"
-                error={touched.address && Boolean(errors.address)}
-                helperText={touched.address && errors.address && errors.address}
-                {...getFieldProps("address")}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROFILE.STATUS" })}
               </Typography>
               <TextField
@@ -420,28 +391,33 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.PROFILE_PICTURE" })}
+                {intl.formatMessage({ id: "USER.DOJ" })}
+              </Typography>
+              <CustomisedDatePicker
+                value={values.dateOfJoining}
+                setValue={handleDateChange("dateOfJoining")}
+                maxDate={dayjs()}
+              />
+              <FormHelperText>
+                {touched.dateOfJoining &&
+                  errors.dateOfJoining &&
+                  errors.dateOfJoining}
+              </FormHelperText>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "USER.ADDRESS" })}
               </Typography>
               <TextField
                 fullWidth
-                type="file"
+                placeholder="Address"
                 id="outlined-basic"
-                name="profilePicture"
                 variant="outlined"
-                error={touched.profilePicture && Boolean(errors.profilePicture)}
-                helperText={
-                  touched.profilePicture &&
-                  errors.profilePicture &&
-                  errors.profilePicture
-                }
-                // onChange={handleFileChange}
+                error={touched.address && Boolean(errors.address)}
+                helperText={touched.address && errors.address && errors.address}
+                {...getFieldProps("address")}
               />
             </Grid>
-            <FormHelperText>
-              {touched.profilePicture &&
-                errors.profilePicture &&
-                errors.profilePicture}
-            </FormHelperText>
             <Grid
               item
               xs={12}
@@ -452,26 +428,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               }}
               gap={1}
             >
-              <Button
-                variant="contained"
-                className="me-4 bg-primary"
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={isSubmitting}
-                variant="contained"
-                className="bg-primary"
-                type="submit"
-                endIcon={
-                  isSubmitting && (
-                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                  )
-                }
-              >
-                {isEdit ? "Save" : "Add"}
-              </Button>
               <CustomisedButton
                 variant="outlined"
                 label="Cancel"
@@ -480,7 +436,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <CustomisedButton
                 label={isEdit ? "Update" : "Add"}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !(isValid && dirty)}
               />
             </Grid>
           </Grid>

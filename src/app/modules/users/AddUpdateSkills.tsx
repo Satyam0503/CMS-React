@@ -19,6 +19,7 @@ import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
+import { CustomIconButton } from "../components/CustomIconButton";
 
 type PropsType = {
   open: boolean;
@@ -70,17 +71,16 @@ export const AddUpdateSkills = (props: PropsType) => {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction={"column"} spacing={2}>
-        <Typography variant="h5" className="text-primary">
-          Skills
+        <Typography variant="h5">
+          {intl.formatMessage({ id: "PROFILE.SKILLS" })}
         </Typography>
         <Stack>
           <TextField
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" disablePointerEvents={!newSkill}>
-                  <IconButton onClick={handleAddSkill}>
-                    <Add />
-                  </IconButton>
+                  <CustomIconButton icon={<Add />}  handleClick={handleAddSkill}></CustomIconButton> />
+                
                 </InputAdornment>
               ),
             }}
@@ -92,7 +92,8 @@ export const AddUpdateSkills = (props: PropsType) => {
           <Stack
             direction={"row"}
             gap={1}
-            sx={{ marginBlockStart: "1rem", flexWrap: "wrap" }}
+            flexWrap={"wrap"}
+            sx={{ marginBlockStart: "1rem" }}
           >
             {skills.map((skill) => (
               <Chip label={skill} onDelete={() => handleDelete(skill)} />
@@ -103,7 +104,7 @@ export const AddUpdateSkills = (props: PropsType) => {
         <Stack
           direction={"row"}
           spacing={1}
-          sx={{ justifyContent: "flex-end" }}
+       justifyContent={"flex-end"}
         >
           <CustomisedButton
             variant="outlined"

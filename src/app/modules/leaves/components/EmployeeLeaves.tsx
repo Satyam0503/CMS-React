@@ -112,10 +112,12 @@ export const EmployeeLeaves: FC = () => {
           </Stack>
         </Stack>
       </Grid>
-      <Grid item xs={12} display={"flex"} gap={2} direction={"column"}>
-        <LeaveSummary />
-        {/* <CustomisedTable columns={EmployeeLeaves} /> */}
-        <BasicTable />
+      <Grid item xs={12}>
+        <Stack spacing={2}>
+          <LeaveSummary />
+          {/* <CustomisedTable columns={EmployeeLeaves} /> */}
+          <BasicTable />
+        </Stack>
       </Grid>
     </Grid>
   );

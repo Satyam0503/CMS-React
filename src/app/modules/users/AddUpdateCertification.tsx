@@ -96,7 +96,11 @@ export default function AddUpdateCertification(props: PropTypes) {
             </FormHelperText>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography>End date</Typography>
+            <Typography>
+              {intl.formatMessage({
+                id: "APPLICATION.END",
+              })}
+            </Typography>
             <CustomisedDatePicker
               name="endDate"
               value={values.endDate}

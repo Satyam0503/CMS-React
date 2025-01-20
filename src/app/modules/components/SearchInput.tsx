@@ -34,7 +34,7 @@ export const SearchInput:FC<PropsType> = (props) => {
             value={search}
             onChange={(e)=>setSearch(e.target.value)}
             variant="outlined"
-            placeholder="Search Something ..."
+            placeholder="Search ..."
           />
   );
 };

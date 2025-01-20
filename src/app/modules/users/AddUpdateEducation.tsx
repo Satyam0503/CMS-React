@@ -60,7 +60,7 @@ export default function AddUpdateEducation(props: PropTypes) {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
-        <Typography variant="h5" className="text-primary mb-4">
+        <Typography variant="h5" mb={2}>
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
       </Stack>
@@ -156,7 +156,9 @@ export default function AddUpdateEducation(props: PropTypes) {
         <Stack
           direction={"row"}
           spacing={1}
-          className="justify-content-end mt-4"
+          display={"flex"}
+          justifyContent={"end"}
+          mt={2}
         >
           <CustomisedButton
             variant="outlined"

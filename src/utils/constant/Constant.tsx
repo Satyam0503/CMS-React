@@ -1,30 +1,38 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   ColumnListTypes,
+  EmployeeModel,
   EmployeesDataTypes,
   RolesType,
 } from "../common_types";
-import { dateFormatter } from "../common";
+import { dateFormatter, statusDecoder } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
+import { title } from "process";
+import { colors } from "../../app/modules/theme/MuiTheme";
+import { StyleStatus } from "../../app/modules/components/StyledStatus";
 
-export const BaseUrl = import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
+export const BaseUrl =
+  import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ServiceUrl = {
-  
   // account
-  
-  REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
-  USER_LOGIN:`${BaseUrl}/api/account/login`,
-  GET_USER_DETAILS:`${BaseUrl}/api/account/getSignedUserDetails`,
 
-  GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
-  GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
+  REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
+  USER_LOGIN: `${BaseUrl}/api/account/login`,
+  GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
+
+  // role
+  GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
+
+  //user
+  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
+  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/api/User/AddEditEmployees`,
+
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
   UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
@@ -105,28 +113,28 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "serialNo",
     label: "#",
     minWidth: 30,
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "name",
     label: "Name",
     minWidth: 180,
-    align: cellContentAlignment.LEFT,
+    avatarCell: (row: EmployeeModel) => {
+      const fullName = row.firstName + " " + row.lastName;
+      const jobRole = row.department;
+      return <AvatarCell title={fullName} subTitle={jobRole} />;
+    },
   },
   {
     id: "email",
     label: "Email",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "phoneNumber",
     label: "Phone Number",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "department",
     label: "Department",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "address",
@@ -139,10 +147,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     label: "Action",
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void,
-      openConfirmationModal: (id: string) => void,
-      openViewModal: (id: string) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void,
+      openConfirmationModal: (row: EmployeeModel) => void,
+      openViewModal: (row: EmployeeModel) => void
     ) => (
       <ActionComponent
         row={row}
@@ -198,6 +206,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -233,6 +242,71 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
         row={row}
         handleEdit={handleNoticeEdit}
         openConfirmationModal={openConfirmationModal}
+      />
+    ),
+  },
+];
+
+export const ApplicationTabTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id: "jobTitle",
+    label: "Job Title",
+    minWidth:180,
+    avatarCell:(row:any)=>{
+      const applicantName = row.firstName+ " "+ row.lastName;
+      const vacancyName= row.vacanyName;
+      return (
+        <AvatarCell
+          title={applicantName}
+          subTitle={vacancyName}
+        />
+      );
+    }
+  },
+  {
+    id: "exprience",
+    label: "Experience",
+  },
+  {
+    id: "applyDate",
+    label: "Applied",
+    format: (value) => dateFormatter(value, "DD MMM YYYY"),
+  },
+  {
+    id: "location",
+    label: "Location",
+  },
+  {
+    id: "noticePeriod",
+    label: "Notice Period",
+  },
+  {
+    id: "status",
+    label: "Status",
+    build: (status:number) => {
+      const values = statusDecoder(status);
+      return <StyleStatus status={status} label={values} />
+    },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleApplicationEdit: (row: any) => void,
+      openConfirmationModal: (row: any) => void,
+      openViewApplication: (row: any) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleApplicationEdit}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal={openViewApplication}
       />
     ),
   },
@@ -302,7 +376,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "Action",
     minWidth: 180,
     build: (row: RolesType) => (
-      <Link to={"/setting/editpermission"} state={{...row}}>
+      <Link to={"/setting/editpermission"} state={{ ...row }}>
         <Button variant="contained">Edit Permission</Button>
       </Link>
     ),
@@ -312,12 +386,10 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
-  openConfirmationModal?: (id: string) => void;
-  openViewModal?: (id: string) => void;
+  openConfirmationModal?: (row: Row) => void;
+  openViewModal?: (row: Row) => void;
 }
-const ActionComponent = <Row extends { id: string }>(
-  props: ActionComponentProps<Row>
-) => {
+const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   const { row, handleEdit, openConfirmationModal, openViewModal } = props;
   return (
     <Stack direction={"row"} spacing={1}>
@@ -331,7 +403,7 @@ const ActionComponent = <Row extends { id: string }>(
       )}
       {openConfirmationModal && (
         <CustomIconButton
-          handleClick={() => openConfirmationModal(row.id)}
+          handleClick={() => openConfirmationModal(row)}
           icon={<Delete />}
           tooltip="Delete"
           ariaLabel="Delete"
@@ -339,7 +411,7 @@ const ActionComponent = <Row extends { id: string }>(
       )}
       {openViewModal && (
         <CustomIconButton
-          handleClick={() => openViewModal(row.id)}
+          handleClick={() => openViewModal(row)}
           icon={<Visibility />}
           tooltip="View"
           ariaLabel="View"
@@ -372,5 +444,31 @@ const AddressDetailsIcon = (props: { address: string }) => {
         </Stack>
       </CustomisedModal>
     </>
+  );
+};
+
+interface AvatarCellPropsTypes {
+  title?: string;
+  subTitle?: string;
+  avatarSrc?: any;
+}
+
+export const AvatarCell = ({
+  title,
+  avatarSrc,
+  subTitle,
+}: AvatarCellPropsTypes) => {
+  return (
+    <Stack direction="row" spacing={1}>
+      <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+      <Stack direction="column">
+        <Typography variant="body1" className="fw-semibold d-block">
+          {title || "NA"}
+        </Typography>
+        <Typography variant="body2" className="text-muted">
+          {subTitle || "NA"}
+        </Typography>
+      </Stack>
+    </Stack>
   );
 };
