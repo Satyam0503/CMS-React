@@ -92,7 +92,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction="column" spacing={2}>
-        <Typography variant="h4" className="text-primary">
+        <Typography variant="h4">
           {isEdit
             ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
             : intl.formatMessage({ id: "ADD.EMP.INFO" })}
@@ -152,7 +152,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.gender && errors.gender && errors.gender}
               </FormHelperText>
             </Grid>
@@ -183,7 +183,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 setValue={handleDateChange("dateOfBirth")}
                 maxDate={dayjs()}
               />
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.dateOfBirth &&
                   errors.dateOfBirth &&
                   errors.dateOfBirth}
@@ -227,7 +227,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.role && errors.role && errors.role}
               </FormHelperText>
             </Grid>
@@ -332,7 +332,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.bloodGroup && errors.bloodGroup && errors.bloodGroup}
               </FormHelperText>
             </Grid>
@@ -384,7 +384,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 setValue={handleDateofJoiningChange}
                 maxDate={dayjs()}
               />
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.dateOfJoining &&
                   errors.dateOfJoining &&
                   errors.dateOfJoining}

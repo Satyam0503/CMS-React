@@ -148,12 +148,7 @@ export function Login() {
             </Stack>
 
             <Typography>
-              <Link
-                to="/auth/forgot-password"
-                color={colors.alpha.primary[500]}
-              >
-                Forgot Password ?
-              </Link>
+              <Link to="/auth/forgot-password">Forgot Password ?</Link>
             </Typography>
 
             <Stack spacing={1}>

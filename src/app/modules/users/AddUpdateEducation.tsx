@@ -30,7 +30,7 @@ type PropTypes = {
 
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
-  const { open, initialValues, handleClose, handleAddUpdateEducation, } = props;
+  const { open, initialValues, handleClose, handleAddUpdateEducation } = props;
   const {
     values,
     handleSubmit,
@@ -41,7 +41,7 @@ export default function AddUpdateEducation(props: PropTypes) {
     isValid,
     dirty,
     setFieldValue,
-    setFieldTouched
+    setFieldTouched,
   } = useFormik({
     initialValues: initialValues,
     validationSchema: userEducationSchema,
@@ -50,13 +50,13 @@ export default function AddUpdateEducation(props: PropTypes) {
     },
   });
 
-  const handleDateChange = (fieldName:string)=>{
-      return (newDate:Dayjs | null)=>{
-        setFieldTouched(fieldName,true);
-        setFieldValue(fieldName,newDate)
-      }
-  }
-  
+  const handleDateChange = (fieldName: string) => {
+    return (newDate: Dayjs | null) => {
+      setFieldTouched(fieldName, true);
+      setFieldValue(fieldName, newDate);
+    };
+  };
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -91,7 +91,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               setValue={handleDateChange("startDate")}
               maxDate={dayjs()}
             />
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.startDate && errors.startDate && errors.startDate}
             </FormHelperText>
           </Grid>
@@ -108,7 +108,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               setValue={handleDateChange("endDate")}
               minDate={dayjs(values.startDate)}
             />
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.endDate && errors.endDate && errors.endDate}
             </FormHelperText>
           </Grid>
@@ -148,7 +148,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </MenuItem>
               ))}
             </Select>
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.type && errors.type && errors.type}
             </FormHelperText>
           </Grid>

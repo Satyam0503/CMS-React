@@ -49,7 +49,7 @@ export function CreatePassword() {
             <Typography>
               <Checkbox />
               <Box component="span">
-                I Accept the <Link to={"/"}>{"Terms & conditions"} </Link>
+                I Accept the <Link to={"#"}>{"Terms and Conditions"} </Link>
               </Box>
             </Typography>
           </Stack>
