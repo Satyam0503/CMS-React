@@ -76,7 +76,7 @@ export default function Applications() {
 
   return (
     <>
-      <Card sx={{ p: "16px" }}>
+      <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"
           display={"flex"}
