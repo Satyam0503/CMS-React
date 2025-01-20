@@ -40,21 +40,30 @@ const SidebarMenuMain = () => {
         title={intl.formatMessage({ id: "MENU.PROFILE" })}
         icon={<AccountCircleIcon />}
       />
-      <SidebarMenuItem
-        to="/employees"
+
+      <SidebarMenuItemWithSub
+        to="/employee"
         icon={<ContactsIcon />}
         title={intl.formatMessage({ id: "MENU.EMP" })}
-      />
-      <SidebarMenuItem
-        icon={<PermContactCalendarIcon />}
-        to="/employeeleave"
-        title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
-      />
-      <SidebarMenuItem
-        to="/attendance"
-        icon={<AccessTimeIcon />}
-        title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
-      />
+      >
+        <SidebarMenuItem
+          to="/employee/employees"
+          icon={<ContactsIcon />}
+          title={intl.formatMessage({ id: "MENU.EMP" })}
+        />
+
+        <SidebarMenuItem
+          icon={<PermContactCalendarIcon />}
+          to="/employee/employeeleave"
+          title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+        />
+
+        <SidebarMenuItem
+          to="/employee/attendance"
+          icon={<AccessTimeIcon />}
+          title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+        />
+      </SidebarMenuItemWithSub>
 
       {/* <SidebarMenuItemWithSub
         to="/crafted/pages"

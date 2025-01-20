@@ -15,15 +15,16 @@ import { ApplicationTabTableColumnList } from "../../../../utils/constant/Consta
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
 import dayjs from "dayjs";
+import ApplicationPreview from "./ApplicationPreview";
 
 const application =[
   {
     jobTitle:"Demo",
-    experience:2,
-    applied:dayjs(),
+    exprience:2,
+    applyDate:dayjs(),
     location:"Dehradun",
     noticePeriod:"3 months",
-    status:"active"
+    status:3
   }
 ]
 
@@ -35,6 +36,8 @@ export default function Applications() {
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [applicationsList, setApplicationsList] = React.useState<any[]>(application);
+  const [viewApplicant,setViewApplicant]= React.useState(false)
+  const [selectedApplicant,setSelectedApplicant]= React.useState<any |undefined>()
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -46,6 +49,10 @@ export default function Applications() {
 
   const handleEdit =(row:any)=>{
 
+  }
+
+  const handleViewApplicant  = () =>{
+    setViewApplicant(true);
   }
   return (
     <>
@@ -77,8 +84,7 @@ export default function Applications() {
             page={page}
             rowsPerPage={rowPerPage}
             handleEdit={handleEdit}
-            openViewModal={(row:any)=>{}}
-            openConfirmationModal={(row:any)=>{}}
+            openViewModal={handleViewApplicant}
           />
 
           {totalRecords > rowPerPage && (
@@ -92,6 +98,14 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
+      {
+        viewApplicant && (
+          <ApplicationPreview 
+          open={viewApplicant}
+          setOpen={setViewApplicant}
+        />
+        )
+      }
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
-import { Button, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   ColumnListTypes,
@@ -7,11 +7,14 @@ import {
   EmployeesDataTypes,
   RolesType,
 } from "../common_types";
-import { dateFormatter, getStatusClass } from "../common";
+import { dateFormatter, statusDecoder } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
+import { title } from "process";
+import { colors } from "../../app/modules/theme/MuiTheme";
+import { StyleStatus } from "../../app/modules/components/StyledStatus";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
@@ -110,28 +113,28 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "serialNo",
     label: "#",
     minWidth: 30,
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "name",
     label: "Name",
     minWidth: 180,
-    align: cellContentAlignment.LEFT,
+    avatarCell: (row: EmployeeModel) => {
+      const fullName = row.firstName + " " + row.lastName;
+      const jobRole = row.department;
+      return <AvatarCell title={fullName} subTitle={jobRole} />;
+    },
   },
   {
     id: "email",
     label: "Email",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "phoneNumber",
     label: "Phone Number",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "department",
     label: "Department",
-    align: cellContentAlignment.LEFT,
   },
   {
     id: "address",
@@ -203,6 +206,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -252,13 +256,24 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
+    minWidth:180,
+    avatarCell:(row:any)=>{
+      const applicantName = row.firstName+ " "+ row.lastName;
+      const vacancyName= row.vacanyName;
+      return (
+        <AvatarCell
+          title={applicantName}
+          subTitle={vacancyName}
+        />
+      );
+    }
   },
   {
-    id: "experience",
+    id: "exprience",
     label: "Experience",
   },
   {
-    id: "applied",
+    id: "applyDate",
     label: "Applied",
     format: (value) => dateFormatter(value, "DD MMM YYYY"),
   },
@@ -273,29 +288,27 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "status",
     label: "Status",
-    build:(status:string)=> {
-      const statusClass = getStatusClass(status);
-      return (<Typography className={statusClass}>
-        {status}    
-      </Typography>)
-    }
+    build: (status:number) => {
+      const values = statusDecoder(status);
+      return <StyleStatus status={status} label={values} />
+    },
   },
   {
     id: "action",
     label: "Action",
     build: (
       row: any,
-      handleApplicationEdit: (row:any) => void,
+      handleApplicationEdit: (row: any) => void,
       openConfirmationModal: (row: any) => void,
-      openViewModal: (row: any) => void
+      openViewApplication: (row: any) => void
     ) => (
-      <ActionComponent 
+      <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
         openConfirmationModal={openConfirmationModal}
-        openViewModal= {openViewModal}
+        openViewModal={openViewApplication}
       />
-    )
+    ),
   },
 ];
 
@@ -431,5 +444,31 @@ const AddressDetailsIcon = (props: { address: string }) => {
         </Stack>
       </CustomisedModal>
     </>
+  );
+};
+
+interface AvatarCellPropsTypes {
+  title?: string;
+  subTitle?: string;
+  avatarSrc?: any;
+}
+
+export const AvatarCell = ({
+  title,
+  avatarSrc,
+  subTitle,
+}: AvatarCellPropsTypes) => {
+  return (
+    <Stack direction="row" spacing={1}>
+      <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+      <Stack direction="column">
+        <Typography variant="body1" className="fw-semibold d-block">
+          {title || "NA"}
+        </Typography>
+        <Typography variant="body2" className="text-muted">
+          {subTitle || "NA"}
+        </Typography>
+      </Stack>
+    </Stack>
   );
 };

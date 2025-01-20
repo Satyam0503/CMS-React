@@ -14,7 +14,7 @@ export const employeeSchema = Yup.object().shape({
     ),
   employeeId: Yup.string().required("Employee Id is required"),
   address: Yup.string().required("Address is required"),
-  // jobRole: Yup.string().required("Job role is required"),
+  jobRole: Yup.string().required("Job role is required"),
   gender: Yup.string().required("Gender is required"),
   department: Yup.string().required("Department is required"),
   reportingManager: Yup.string().required("Reporting manager name is required"),

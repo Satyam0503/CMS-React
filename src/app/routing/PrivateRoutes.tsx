@@ -15,14 +15,16 @@ import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
-import { EmployeePageWrapper } from "../pages/employees/EmployeePageWrapper.tsx";
-import { SuperAdmin } from "../pages/superadmin/SuperAdmin.tsx";
 
 const PrivateRoutes = () => {
+  const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
   const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
   const Setting = lazy(() => import("../pages/admin/Settings"));
   const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
+  const EmployeePage = lazy(
+    () => import("../pages/employees/EmployeesRoute.tsx")
+  );
   // const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
   // const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   // const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
@@ -44,10 +46,18 @@ const PrivateRoutes = () => {
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagementWrapper />} />
         <Route path="attendance" element={<AttendanceWrapper />} />
-        <Route path="employees" element={<EmployeePageWrapper />} />
+        {/* <Route path="employees" element={<EmployeePageWrapper />} /> */}
         <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
         {/* Lazy Modules */}
+        <Route
+          path="employee/*"
+          element={
+            <SuspensedView>
+              <EmployeePage />
+            </SuspensedView>
+          }
+        />
         <Route
           path="recruitment/*"
           element={

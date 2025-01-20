@@ -1,7 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import ProjectsWrapper from "./ProjectsWrapper";
 import ClientsWrapper from "./ClientsWrapper";
-export const SuperAdmin = () => {
+const SuperAdmin = () => {
   return (
     <Routes>
       <Route element={<Outlet />}>
@@ -12,3 +12,5 @@ export const SuperAdmin = () => {
     </Routes>
   );
 };
+
+export default SuperAdmin;

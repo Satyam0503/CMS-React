@@ -60,15 +60,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     },
   });
 
-  function handleDateofJoiningChange(newDate: Dayjs | null) {
-    touched.dateOfJoining = true;
-    setFieldValue("dateOfJoining", newDate);
-  }
-  function handleDOBChange(newDate: Dayjs | null) {
-    touched.dateOfBirth = true;
-    setFieldValue("dateOfBirth", newDate);
-  }
- 
   const handleDateChange = (fieldName: string) => {
     return (newDate: Dayjs | null) => {
       setFieldTouched(fieldName, true);
@@ -231,7 +222,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {touched.roleId && errors.roleId && errors.roleId}
               </FormHelperText>
             </Grid>
-            {/* <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.JOBROLE" })}
               </Typography>
@@ -244,7 +235,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 helperText={touched.jobRole && errors.jobRole && errors.jobRole}
                 {...getFieldProps("jobRole")}
               />
-            </Grid> */}
+            </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.DEPARTMENT" })}
@@ -315,7 +306,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {...getFieldProps("phoneNumber")}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -396,7 +386,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               </Typography>
               <CustomisedDatePicker
                 value={values.dateOfJoining}
-                setValue={handleDateofJoiningChange}
+                setValue={handleDateChange("dateOfJoining")}
                 maxDate={dayjs()}
               />
               <FormHelperText sx={{ color: "#d32f2f" }}>
@@ -405,7 +395,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   errors.dateOfJoining}
               </FormHelperText>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.ADDRESS" })}
               </Typography>
@@ -419,7 +409,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {...getFieldProps("address")}
               />
             </Grid>
-
             <Grid
               item
               xs={12}
@@ -430,26 +419,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               }}
               gap={1}
             >
-              <Button
-                variant="contained"
-                className="me-4 bg-primary"
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={isSubmitting}
-                variant="contained"
-                className="bg-primary"
-                type="submit"
-                endIcon={
-                  isSubmitting && (
-                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                  )
-                }
-              >
-                {isEdit ? "Save" : "Add"}
-              </Button>
               <CustomisedButton
                 variant="outlined"
                 label="Cancel"
@@ -458,7 +427,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <CustomisedButton
                 label={isEdit ? "Update" : "Add"}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={ isSubmitting || !(isValid && dirty)}
               />
             </Grid>
           </Grid>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -36,7 +35,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             </Avatar>
             <Stack>
               <Typography variant="h5">{`${employeeData?.firstName} ${employeeData?.lastName}`}</Typography>
-              <Typography variant="body2">{employeeData?.jobRole}</Typography>
+              {/* <Typography variant="body2">{employeeData?.jobRole || "NA "}</Typography> */}
             </Stack>
           </Stack>
 

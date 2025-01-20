@@ -41,7 +41,8 @@ const employeeInitialValue: EmployeeModel = {
   bloodGroup: "",
   status: "",
   address: "",
-  // jobRole: "",
+  jobRole: "",
+  isEmailVerified: false,
   dateOfJoining: null,
   personalEmail: "",
   emergencyContact: "",
@@ -50,13 +51,14 @@ const employeeInitialValue: EmployeeModel = {
 export default function Employees() {
   const intl = useIntl();
   const token = useAppSelector((state) => state.auth.token)!;
+  const currentUser = useAppSelector(state=>state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [selectedEmployeeData, setSelectedEmployeeData] = useState<
     EmployeeModel | undefined
-  >();
+  >(); 
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
@@ -103,7 +105,7 @@ export default function Employees() {
     } else {
       const payload = {
         userId: values.userId,
-        companyId: values.companyId,
+        companyId: currentUser?.companyId!,
         employeeId: values.employeeId,
         roleId: values.roleId,
         firstName: values.firstName,
@@ -112,7 +114,7 @@ export default function Employees() {
         dateOfBirth: values.dateOfBirth,
         email: values.email,
         password: values.password,
-        // jobRole: values.jobRole,
+        jobRole: values.jobRole,
         department: values.department,
         reportingManager: values.reportingManager,
         teamLead: values.teamLead,
@@ -123,7 +125,8 @@ export default function Employees() {
         dateOfJoining: values.dateOfJoining,
         status: values.status,
         address: values.address,
-      };
+        isEmailVerified: values.isEmailVerified
+      };      
       addEmployee(payload, token)
         .then((res) => {
           const { success, message } = res.data;
@@ -196,6 +199,7 @@ export default function Employees() {
       reportingManager: row.reportingManager,
       teamLead: row.teamLead,
       phoneNumber: row.phoneNumber,
+      jobRole:row.jobRole,
       bloodGroup: row.bloodGroup,
       personalEmail: row.personalEmail,
       emergencyContact: row.emergencyContact,
@@ -316,8 +320,8 @@ export default function Employees() {
         />
       )}
       <ConfirmationModal
-        title={"Delete Employee"}
-        content="Are you sure you want to delete this employee?"
+        title={"Delete Applicant"}
+        content="Are you sure you want to delete this applicant?"
         open={isConfirmModalOpen}
         handleClose={closeConfirmationModal}
         handleConfirmation={handleEmployeeDeletion}

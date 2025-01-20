@@ -40,17 +40,6 @@ export const CustomisedTable = <
     openConfirmationModal,
     openViewModal,
   } = props;
-
-  function handlePageChange(
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) {
-    setPage(newPage);
-  }
-  function handleChangeRowsPerPage(event: React.ChangeEvent<HTMLInputElement>) {
-    setRowPerPage(+event.target.value);
-    setPage(0);
-  }
   return (
     <Grid container>
       <TableContainer>
@@ -92,8 +81,6 @@ export const CustomisedTable = <
                         const value =
                           column.id === "serialNo"
                             ? page * rowsPerPage + (index + 1)
-                            : column.id === "name"
-                            ? row.firstName + " " + row.lastName
                             : row[column.id];
                         return (
                           <TableCell
@@ -101,12 +88,8 @@ export const CustomisedTable = <
                             align={column?.align || "left"}
                             sx={{ minWidth: column.minWidth || 140 }}
                           >
-                            {column.id === "name" ||
-                            column.id === "jobTitle" ? (
-                              <AvatarCell
-                                title={value}
-                                subTitle={row.jobRole}
-                              />
+                            { column.avatarCell ? (
+                                column.avatarCell(row)
                             ) : column.format ? (
                               column.format(value)
                             ) : column.build ? (
@@ -135,31 +118,5 @@ export const CustomisedTable = <
         </Table>
       </TableContainer>
     </Grid>
-  );
-};
-
-interface AvatarCellPropsTypes {
-  title?: string;
-  subTitle?: string;
-  avatarSrc?: any;
-}
-
-export const AvatarCell = ({
-  title,
-  avatarSrc,
-  subTitle,
-}: AvatarCellPropsTypes) => {
-  return (
-    <Stack direction="row" spacing={1}>
-      <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
-      <Stack direction="column">
-        <Typography variant="body1" className="fw-semibold d-block">
-          {title || "NA"}
-        </Typography>
-        <Typography variant="body2" className="text-muted">
-          {subTitle || "NA"}
-        </Typography>
-      </Stack>
-    </Stack>
   );
 };

@@ -1,4 +1,5 @@
 import { Dayjs } from "dayjs";
+import { ReactNode } from "react";
 
 export interface ApiResponse {
   success: boolean;
@@ -33,6 +34,7 @@ export interface EmployeeModel {
   bloodGroup: string;
   status: string;
   address: string;
+  jobRole:string;
   password: string;
   dateOfJoining: Dayjs | null;
   personalEmail: string;
@@ -133,6 +135,7 @@ export type ColumnListTypes = {
   minWidth?: number;
   build?: any;
   format?: (value: any) => any;
+  avatarCell?:(row:any)=>ReactNode;
 };
 
 // Api respone data types
