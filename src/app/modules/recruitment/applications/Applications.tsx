@@ -49,7 +49,7 @@ export default function Applications() {
   };
   return (
     <>
-      <Card sx={{ p: "16px" }}>
+      <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
           <Stack
             direction="row"

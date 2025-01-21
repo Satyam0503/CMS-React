@@ -88,7 +88,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction="column" spacing={2}>
-        <Typography variant="h4">
+        <Typography variant="h5">
           {isEdit
             ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
             : intl.formatMessage({ id: "ADD.EMP.INFO" })}

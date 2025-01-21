@@ -1145,7 +1145,7 @@ export const MuiTheme = createTheme({
       lineHeight: 1.4,
     },
     h4: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: 24,
       color: colors.alpha.neutral[800],
     },
