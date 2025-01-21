@@ -218,9 +218,6 @@ export default function AboutUser() {
       });
     summary.current = "";
   }
-
-  console.log(summary);
-
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
@@ -232,7 +229,7 @@ export default function AboutUser() {
               justifyContent={"space-between"}
               mb={1}
             >
-              <Typography variant="h5">{currentUser?.jobRole}</Typography>
+              <Typography variant="h5">Summary</Typography>
               {isSummaryEdit ? (
                 <CustomisedButton
                   label="Update"

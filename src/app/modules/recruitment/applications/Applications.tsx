@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Card, IconButton, Stack, Typography } from "@mui/material";
-import { Card, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Download, FilterList } from "@mui/icons-material";
 import { Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
@@ -12,8 +10,6 @@ import dayjs from "dayjs";
 import ApplicationPreview from "./ApplicationPreview";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 
-
-const application = [
 const application = [
   {
     jobTitle: "Demo",
@@ -24,20 +20,11 @@ const application = [
     status: 3,
   },
 ];
-    jobTitle: "Demo",
-    exprience: 2,
-    applyDate: dayjs(),
-    location: "Dehradun",
-    noticePeriod: "3 months",
-    status: 3,
-  },
-];
-
+   
 export default function Applications() {
   const intl = useIntl();
   const [openModal, setOpenModal] = React.useState(false);
   const [page, setPage] = React.useState<number>(0);
-  const [search, setSearch] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);

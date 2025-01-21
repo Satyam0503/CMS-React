@@ -52,7 +52,6 @@ export default function Employees() {
   const intl = useIntl();
   const token = useAppSelector((state) => state.auth.token)!;
   const currentUser = useAppSelector((state) => state.user.userData);
-  const currentUser = useAppSelector((state) => state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
@@ -121,8 +120,6 @@ export default function Employees() {
         dateOfJoining: values.dateOfJoining,
         status: values.status,
         address: values.address,
-        isEmailVerified: values.isEmailVerified,
-      };
         isEmailVerified: values.isEmailVerified,
       };
       addEmployee(payload, token)

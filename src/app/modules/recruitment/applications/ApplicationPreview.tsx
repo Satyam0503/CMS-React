@@ -2,7 +2,7 @@ import { Close, Download } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
-import { CustomIconButton } from "app/modules/components/CustomIconButton";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 interface PropsType{
   open:boolean;

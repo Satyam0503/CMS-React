@@ -228,7 +228,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 })}
               </Select>
               <FormHelperText>
-                {touched.role && errors.role && errors.role}
+                {touched.roleId && errors.roleId && errors.roleId}
               </FormHelperText>
             </Grid>
             <Grid item xs={12} md={6}>
