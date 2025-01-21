@@ -21,8 +21,8 @@ import { useAppSelector } from "../Redux/hooks";
 const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
-  const {isUserAuthenticated } = useAppSelector(state=>state.auth);
-  const user = useAppSelector(state=>state.user.userData);
+  const { isUserAuthenticated } = useAppSelector((state) => state.auth);
+  const user = useAppSelector((state) => state.user.userData);
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
@@ -36,20 +36,17 @@ const AppRoutes: FC = () => {
           <Route path="auth/*" element={<AuthPage />} />
           <Route path="*" element={<Navigate to="/auth" />} /> */}
 
-          {
-            isUserAuthenticated ?
+          {isUserAuthenticated ? (
             <>
               <Route path="/*" element={<PrivateRoutes />} />
               <Route index element={<Navigate to="/dashboard" />} />
             </>
-            :
-            (
-              <>
-                <Route path="auth/*" element={<AuthPage />} />
-                <Route path="*" element={<Navigate to="/auth" />} />
-              </>
-            )
-          }
+          ) : (
+            <>
+              <Route path="auth/*" element={<AuthPage />} />
+              <Route path="*" element={<Navigate to="/auth" />} />
+            </>
+          )}
         </Route>
       </Routes>
     </BrowserRouter>

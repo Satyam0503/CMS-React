@@ -103,12 +103,14 @@ export default function Holidays() {
 
   return (
     <>
-      <Card sx={{ p: "16px" }}>
+      <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <SearchInput search={searchValue} setSearch={setSearchValue} />
           <Stack direction="row" spacing={1}>

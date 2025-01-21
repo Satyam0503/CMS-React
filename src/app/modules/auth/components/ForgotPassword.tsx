@@ -15,7 +15,7 @@ const forgotPasswordSchema = Yup.object().shape({
       /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       "Email must be a valid email"
     )
-    .required("Email is required")
+    .required("Email is required"),
 });
 
 export function ForgotPassword() {

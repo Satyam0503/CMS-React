@@ -61,7 +61,7 @@ export default function AddUpdateCertification(props: PropTypes) {
   };
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
-      <Typography variant="h5" className="text-primary mb-4">
+      <Typography variant="h5">
         {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -91,19 +91,23 @@ export default function AddUpdateCertification(props: PropTypes) {
               setValue={handleDateChange("startDate")}
               maxDate={dayjs()}
             />
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.startDate && errors.startDate && errors.startDate}
             </FormHelperText>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography>End date</Typography>
+            <Typography>
+              {intl.formatMessage({
+                id: "APPLICATION.END",
+              })}
+            </Typography>
             <CustomisedDatePicker
               name="endDate"
               value={values.endDate}
               setValue={handleDateChange("endDate")}
               minDate={values.startDate || dayjs()}
             />
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.endDate && errors.endDate && errors.endDate}
             </FormHelperText>
           </Grid>
@@ -135,7 +139,7 @@ export default function AddUpdateCertification(props: PropTypes) {
               <MenuItem value="Online">Online</MenuItem>
               <MenuItem value="Offline">Offline</MenuItem>
             </Select>
-            <FormHelperText sx={{ color: "#d32f2f" }}>
+            <FormHelperText>
               {touched.type && errors.type && errors.type}
             </FormHelperText>
           </Grid>

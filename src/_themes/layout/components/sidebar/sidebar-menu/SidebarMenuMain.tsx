@@ -34,31 +34,36 @@ const SidebarMenuMain = () => {
         icon={<DashboardIcon />}
         title={intl.formatMessage({ id: "MENU.DASHBOARD" })}
       />
+
       <SidebarMenuItem
-        to="/employees"
+        to="/myprofile"
+        title={intl.formatMessage({ id: "MENU.PROFILE" })}
+        icon={<AccountCircleIcon />}
+      />
+
+      <SidebarMenuItemWithSub
+        to="/employee"
         icon={<ContactsIcon />}
         title={intl.formatMessage({ id: "MENU.EMP" })}
-      />
-      <SidebarMenuItem
-        icon={<PermContactCalendarIcon />}
-        to="/employeeleave"
-        title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
-      />
-      <SidebarMenuItem
-        to="/attendance"
-        icon={<AccessTimeIcon />}
-        title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
-      />
-      <SidebarMenuItem
-        to="/projects"
-        icon={<Folder />}
-        title={intl.formatMessage({ id: "MENU.PROJECTS" })}
-      />
-      <SidebarMenuItem
-        to="/clients"
-        icon={<SwitchAccount />}
-        title={intl.formatMessage({ id: "MENU.CLIENTS" })}
-      />
+      >
+        <SidebarMenuItem
+          to="/employee/employees"
+          icon={<ContactsIcon />}
+          title={intl.formatMessage({ id: "MENU.EMP" })}
+        />
+
+        <SidebarMenuItem
+          icon={<PermContactCalendarIcon />}
+          to="/employee/employeeleave"
+          title={intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+        />
+
+        <SidebarMenuItem
+          to="/employee/attendance"
+          icon={<AccessTimeIcon />}
+          title={intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+        />
+      </SidebarMenuItemWithSub>
 
       {/* <SidebarMenuItemWithSub
         to="/crafted/pages"
@@ -77,12 +82,6 @@ const SidebarMenuMain = () => {
           icon={<EmailIcon />}
         />
       </SidebarMenuItemWithSub> */}
-
-      <SidebarMenuItem
-        to="/myprofile"
-        title={intl.formatMessage({ id: "MENU.PROFILE" })}
-        icon={<AccountCircleIcon />}
-      />
 
       <SidebarMenuItemWithSub
         to="/recruitment"
@@ -128,6 +127,22 @@ const SidebarMenuMain = () => {
         icon={<AdminPanelSettings />}
         title={intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
       />
+      <SidebarMenuItemWithSub
+        to="/superadmin"
+        title="Super Admin"
+        icon={<AdminPanelSettings />}
+      >
+        <SidebarMenuItem
+          to="superadmin/projects"
+          icon={<Folder />}
+          title={intl.formatMessage({ id: "MENU.PROJECTS" })}
+        />
+        <SidebarMenuItem
+          to="superadmin/clients"
+          icon={<SwitchAccount />}
+          title={intl.formatMessage({ id: "MENU.CLIENTS" })}
+        />
+      </SidebarMenuItemWithSub>
     </>
   );
 };

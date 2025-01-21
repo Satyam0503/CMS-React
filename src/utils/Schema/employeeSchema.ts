@@ -18,7 +18,7 @@ export const employeeSchema = Yup.object().shape({
   gender: Yup.string().required("Gender is required"),
   department: Yup.string().required("Department is required"),
   reportingManager: Yup.string().required("Reporting manager name is required"),
-  role: Yup.string().required("Role is required"),
+  roleId: Yup.string().required("Role is required"),
   teamLead: Yup.string().required("Team lead name is required"),
   phoneNumber: Yup.string()
     .matches(

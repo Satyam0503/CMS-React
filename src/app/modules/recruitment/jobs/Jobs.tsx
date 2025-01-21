@@ -25,10 +25,12 @@ import {
   FilterList,
   LinkOutlined,
   Search,
+  Visibility,
 } from "@mui/icons-material";
 import JobDetail from "./JobDetail";
 import JobDescription from "./JobDescription";
 import Setting from "../../users/usersetting/Setting";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 function createData(
   sno: number,
@@ -72,16 +74,14 @@ export default function Jobs() {
 
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
-      </Typography>
-
-      <Card sx={{ p: "16px" }}>
+      <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
         >
           <Stack>
             <TextField
@@ -104,18 +104,16 @@ export default function Jobs() {
             />
           </Stack>
           <Stack direction="row" spacing={1}>
-            <IconButton aria-label="filter employee">
-              <FilterList />
-            </IconButton>
-            <IconButton onClick={() => setOpenModal(true)}>
-              <Add />
-            </IconButton>
+            <CustomIconButton tooltip="Filter employee" icon={<FilterList />} />
+            <CustomIconButton
+              tooltip="Add job description"
+              icon={<Add />}
+              handleClick={() => setOpenModal(true)}
+            />
             {openModal && (
               <JobDescription open={openModal} handleClose={handleCloseModal} />
             )}
-            <IconButton aria-label="import excel">
-              <Download />
-            </IconButton>
+            <CustomIconButton tooltip="Import Excel" icon={<Download />} />
           </Stack>
         </Stack>
         <Stack sx={{ mt: "1rem" }}>
@@ -146,26 +144,37 @@ export default function Jobs() {
                       sx={{
                         display: "flex",
                         gap: "4px",
-                        mr: "10px",
+                        mr: ".75rem",
                       }}
                     >
                       {row.action}
 
-                      <IconButton>
-                        <LinkOutlined />
-                      </IconButton>
-                      <IconButton>
-                        <AttachFile />
-                      </IconButton>
+                      <CustomIconButton
+                        tooltip="Link"
+                        icon={<LinkOutlined />}
+                      />
+
+                      <CustomIconButton
+                        tooltip="Filter employee"
+                        icon={<AttachFile />}
+                      />
+
+                      {/* <CustomIconButton
+                        tooltip="View job description"
+                        icon={<Visibility />}
+                      /> */}
+
                       <Stack>
                         <JobDetail />
                       </Stack>
-                      <IconButton>
-                        <DeleteOutline />
-                      </IconButton>
-                      <IconButton>
-                        <Edit />
-                      </IconButton>
+                      <CustomIconButton
+                        tooltip="Delete"
+                        icon={<DeleteOutline />}
+                      />
+                      <CustomIconButton
+                        tooltip="Edit requirements"
+                        icon={<Edit />}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}

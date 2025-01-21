@@ -58,7 +58,7 @@ export default function DashboardUser() {
         </Stack>
 
         <Stack direction="row" alignItems={"start"} spacing={1}>
-          <Stack sx={{ width: "40px" }}>
+          <Stack sx={{ width: "2.5rem" }}>
             <img
               src={toAbsoluteUrl("media/Icons/Sun_behind_clouds.png")}
               alt="clouds"

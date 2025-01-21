@@ -216,6 +216,7 @@ export const MuiTheme = createTheme({
           marginLeft: 8,
           marginRight: 8,
           fontWeight: "bold",
+          color: colors.alpha.danger[800],
         },
       },
     },
@@ -305,8 +306,8 @@ export const MuiTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        input:{
-          padding:".5rem 1rem",
+        input: {
+          padding: ".5rem 1rem",
         },
         root: {
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
@@ -669,7 +670,7 @@ export const MuiTheme = createTheme({
     },
     MuiLink: {
       defaultProps: {
-        color: colors.alpha.secondary[500],
+        color: colors.alpha.primary[500],
         fontWeight: 500,
         fontSize: 12,
       },
@@ -995,12 +996,12 @@ export const MuiTheme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: alpha(colors.alpha.neutral["100"], 0.95),
+          backgroundColor: alpha(colors.alpha.primary["400"], 0.95),
           padding: "8px 16px",
           fontSize: 13,
         },
         arrow: {
-          color: alpha(colors.alpha.neutral["100"], 0.95),
+          color: alpha(colors.alpha.primary["400"], 0.95),
         },
       },
     },
@@ -1144,7 +1145,7 @@ export const MuiTheme = createTheme({
       lineHeight: 1.4,
     },
     h4: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: 24,
       color: colors.alpha.neutral[800],
     },

@@ -40,7 +40,8 @@ import { toast } from "react-toastify";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
-
+import { CustomIconButton } from "../components/CustomIconButton";
+import { colors } from "../theme/MuiTheme";
 
 const initialEducationValues: UserEducationType = {
   title: "",
@@ -59,8 +60,8 @@ const initialCertificationValues: UserCertificationType = {
 };
 
 export default function AboutUser() {
-  const token= useAppSelector(state=>state.auth.token)!;
-  const userId = useAppSelector(state=>state.user.userData?.userId)!;
+  const token = useAppSelector((state) => state.auth.token)!;
+  const userId = useAppSelector((state) => state.user.userData?.userId)!;
   const intl = useIntl();
   const [isSummaryEdit, setSummaryEdit] = useState(false);
   const [isUserModalOpen, setUserUpdateModalOpen] = useState(false);
@@ -497,14 +498,16 @@ export default function AboutUser() {
                       </Stack>
                     </Stack>
                     <Stack direction="row" spacing={1}>
-                      <IconButton
-                        onClick={() => handleEducationUpdate(education)}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton>
-                        <DeleteOutline />
-                      </IconButton>
+                      <CustomIconButton
+                        icon={<Edit />}
+                        tooltip="Edit"
+                        handleClick={() => handleEducationUpdate(education)}
+                      />
+
+                      <CustomIconButton
+                        icon={<DeleteOutline />}
+                        tooltip="Delete"
+                      />
                     </Stack>
                   </Stack>
                 ))
@@ -548,15 +551,17 @@ export default function AboutUser() {
                       <Stack>
                         <Typography
                           variant="body1"
-                          className="text-gray-800 text-hover-primary "
+                          className=" text-hover-primary "
                           fontWeight={500}
+                          color={colors.alpha.neutral[800]}
                         >
                           {certification.title}
                         </Typography>
                         <Stack direction="row" spacing={1}>
                           <Typography
                             variant="body2"
-                            className="fw-semibold d-block "
+                            display={"block"}
+                            fontWeight={500}
                           >
                             {certification.certificationName},
                             {certification.type}

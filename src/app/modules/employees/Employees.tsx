@@ -5,13 +5,17 @@ import { Add, Close, Download, FilterList } from "@mui/icons-material";
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
 import { useEffect, useState } from "react";
-<<<<<<<<< Temporary merge branch 1
-import { addEmployee, deleteEmployee, getAllEmployees, updateEmployee } from "./employeeServices";
+import {
+  addEmployee,
+  deleteEmployee,
+  getAllEmployees,
+  updateEmployee,
+} from "./components/employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
-import { EmployeesDataTypes } from "../../../utils/common_types";
+import { EmployeeModel, EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import { employeesListMapperforExport } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
@@ -20,15 +24,16 @@ import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
 import { useAppSelector } from "../../Redux/hooks";
 
-const employeeInitialValue: EmployeesDataTypes = {
-  id: "",
+const employeeInitialValue: EmployeeModel = {
+  userId: "",
+  employeeId: "",
+  roleId: "",
+  companyId: "",
   firstName: "",
   lastName: "",
   gender: "",
   email: "",
-  role: "",
   dateOfBirth: null,
-  employeeId: "",
   department: "",
   reportingManager: "",
   teamLead: "",
@@ -37,21 +42,26 @@ const employeeInitialValue: EmployeesDataTypes = {
   status: "",
   address: "",
   jobRole: "",
+  isEmailVerified: false,
   dateOfJoining: null,
   personalEmail: "",
   emergencyContact: "",
-  profilePicture: "",
+  password: "",
 };
 export default function Employees() {
   const intl = useIntl();
-  const token= useAppSelector(state=>state.auth.token)!;
+  const token = useAppSelector((state) => state.auth.token)!;
+  const currentUser = useAppSelector((state) => state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [employeeInitialValues, setEmployeeInitialValues] = useState(employeeInitialValue);
+  const [employeeInitialValues, setEmployeeInitialValues] =
+    useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
-  const [selectedEmployeeData, setSelectedEmployeeData] = useState<EmployeesDataTypes>({} as EmployeesDataTypes);
+  const [selectedEmployeeData, setSelectedEmployeeData] = useState<
+    EmployeeModel | undefined
+  >();
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
-  const [employeeList, setEmployeeList] = useState<EmployeesDataTypes[]>([]);
+  const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -65,20 +75,18 @@ export default function Employees() {
     setEmployeeInitialValues(employeeInitialValue);
     setEdit(false);
   }
-
-  function closeConfirmationModal() {
-    setConfirmModalOpen(false);
-    setSelectedEmployee(null);
-  }
-
-  function SaveAddEditEmployee(values: EmployeesDataTypes, setSubmitting:(isSubmitting: boolean) => void) {
+  function SaveAddEditEmployee(
+    values: EmployeeModel,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
     setLoading(true);
     if (isEdit) {
-      const employeeId = values.id;
+      const employeeId = values.employeeId;
+      const companyId = values.companyId;
       const payload = {
         ...values,
-      }
-      updateEmployee(employeeId, payload, token)
+      };
+      updateEmployee(payload, token)
         .then((res) => {
           const { success, message } = res.data;
           if (success) {
@@ -88,21 +96,25 @@ export default function Employees() {
             handleClose();
           }
         })
-        .catch((res) => {
-          console.log(res);
-          toast.error("Network Error.Try Again");
+        .catch((error) => {
+          toast.error(error.message);
         })
-    }
-    else {
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
       const payload = {
+        userId: values.userId,
+        companyId: currentUser?.companyId!,
+        employeeId: values.employeeId,
+        roleId: values.roleId,
         firstName: values.firstName,
         lastName: values.lastName,
         gender: values.gender,
-        employeeId: values.employeeId,
         dateOfBirth: values.dateOfBirth,
         email: values.email,
+        password: values.password,
         jobRole: values.jobRole,
-        role: values.role,
         department: values.department,
         reportingManager: values.reportingManager,
         teamLead: values.teamLead,
@@ -113,23 +125,23 @@ export default function Employees() {
         dateOfJoining: values.dateOfJoining,
         status: values.status,
         address: values.address,
-      }
+        isEmailVerified: values.isEmailVerified,
+      };
       addEmployee(payload, token)
-        .then(res => {
-          const {success,message}= res.data;
-          if(success){
+        .then((res) => {
+          const { success, message } = res.data;
+          if (success) {
             setLoading(false);
             setRefresh(!isRefresh);
-            toast.success(message)
+            toast.success(message);
             setSubmitting(false);
             handleClose();
           }
         })
-        .catch(error => {
-          setLoading(false)
-          toast.error(error.message)
-          console.log(error);
-        })
+        .catch((error) => {
+          setLoading(false);
+          toast.error(error.message);
+        });
     }
   }
 
@@ -138,26 +150,26 @@ export default function Employees() {
       toast.error("Please try again");
       closeConfirmationModal();
     } else {
-      const employeeId = selectedEmployee;
-      deleteEmployee(employeeId, token)
-        .then((res) => {
-          const { success, message } = res.data;
-          if (success) {
-            toast.success(message);
-            closeConfirmationModal();
-            setRefresh(!isRefresh);
-          }
-        })
-        .catch((error) => {
-          toast.error("Please try again");
-          closeConfirmationModal();
-        });
+      // deleteEmployee(employeeId, token)
+      //   .then((res) => {
+      //     const { success, message } = res.data;
+      //     if (success) {
+      //       toast.success(message);
+      //       closeConfirmationModal();
+      //       setRefresh(!isRefresh);
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     toast.error("Please try again");
+      //     closeConfirmationModal();
+      //   });
     }
   }
 
-  const openConfirmationModal = (employeeId: string) => {
+  const openConfirmationModal = (row: EmployeeModel) => {
     setConfirmModalOpen(true);
-    setSelectedEmployee(employeeId);
+    setSelectedEmployeeData(row);
+    setSelectedEmployee(row.employeeId);
   };
 
   function closeConfirmationModal() {
@@ -165,28 +177,29 @@ export default function Employees() {
     setSelectedEmployee(null);
   }
 
-  function openViewModal(id: string) {
+  function openViewModal(row: EmployeeModel) {
     setViewModalOpen(true);
-    setSelectedEmployee(id);
-    const employeeDetails = employeeList.find((employee) => employee.id === id);
-    if (employeeDetails) {
-      setSelectedEmployeeData(employeeDetails);
+    if (row) {
+      setSelectedEmployeeData(row);
     }
   }
-  function handleEmployeeEdit(row: EmployeesDataTypes) {
+
+  function handleEmployeeEdit(row: EmployeeModel) {
     setEmployeeInitialValues({
-      id: row.id,
+      userId: row.userId,
+      companyId: row.companyId,
+      roleId: row.roleId,
+      employeeId: row.employeeId,
       firstName: row.firstName,
       lastName: row.lastName,
       gender: row.gender,
-      employeeId: row.employeeId,
+      password: row.password,
       email: row.email,
-      jobRole: row.jobRole,
-      role: row.role,
       department: row.department,
       reportingManager: row.reportingManager,
       teamLead: row.teamLead,
       phoneNumber: row.phoneNumber,
+      jobRole: row.jobRole,
       bloodGroup: row.bloodGroup,
       personalEmail: row.personalEmail,
       emergencyContact: row.emergencyContact,
@@ -209,59 +222,63 @@ export default function Employees() {
 
   useEffect(() => {
     setLoading(true);
-    const payload = {
-      pageNo: page + 1,
-      limit: rowPerPage,
-      name: search,
-    };
-    const timeOutId = setTimeout(() => {
-      getAllEmployees(payload, token)
-        .then((res) => {
-          const { methodResult, success } = res.data;
-          if (success) {
-            setEmployeeList(methodResult.record);
-            setTotalRecords(methodResult.totalEmployees);
-            setLoading(false);
-          }
-        })
-        .catch((res) => {
-          toast.error(res);
-        });
+    // const payload = {
+    //   pageNo: page + 1,
+    //   limit: rowPerPage,
+    //   name: search,
+    // };
+    const timeOutId = setTimeout(async () => {
+      try {
+        const response = await getAllEmployees(token);
+        const { success, statusCode, methodResults } = response.data;
+        if (!(success && statusCode === 200)) {
+          throw new Error("Failed To fetch Data");
+        }
+        if (methodResults) {
+          setEmployeeList(methodResults);
+          setTotalRecords(methodResults.length);
+          setLoading(false);
+        }
+      } catch (error: any) {
+        setLoading(false);
+        toast.error(error.message);
+      }
     }, 1500);
     return () => clearTimeout(timeOutId);
   }, [page, rowPerPage, isRefresh, search]);
 
   return (
     <>
-      <Card sx={{ p: "16px" }}>
-        <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <SearchInput search={search} setSearch={setSearch} />
-          <Stack direction="row" spacing={1}>
-            <CustomIconButton
-              icon={<FilterList />}
-              tooltip="Filter Employee"
-              handleClick={() => {}}
-            />
-            <CustomIconButton
-              icon={<Add />}
-              handleClick={() => setModalOpen(true)}
-              tooltip="Add Employee"
-              ariaLabel="Add employee"
-            />
-            <CustomIconButton
-              icon={<Download />}
-              handleClick={handleEmployeeExport}
-              tooltip="Import Excel"
-              ariaLabel="import excel"
-            />
+      <Card sx={{ p: "2rem" }}>
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <SearchInput search={search} setSearch={setSearch} />
+            <Stack direction="row" spacing={1}>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Employee"
+                handleClick={() => {}}
+              />
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+                tooltip="Add Employee"
+                ariaLabel="Add employee"
+              />
+              <CustomIconButton
+                icon={<Download />}
+                handleClick={handleEmployeeExport}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
+            </Stack>
           </Stack>
-        </Stack>
-        <Stack sx={{ mt: "1rem" }}>
+
           <CustomisedTable
             tabName="Employee"
             loading={isLoading}
@@ -293,14 +310,17 @@ export default function Employees() {
           initialValues={employeeInitialValues}
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
-      }
-      {
-        isViewModalOpen && 
-        <ViewEmployeeDetails open={isViewModalOpen} setOpen={setViewModalOpen} employeeData={selectedEmployeeData} />
-      }
+      )}
+      {selectedEmployeeData && isViewModalOpen && (
+        <ViewEmployeeDetails
+          open={isViewModalOpen}
+          setOpen={setViewModalOpen}
+          employeeData={selectedEmployeeData}
+        />
+      )}
       <ConfirmationModal
-        title={"Delete Employee"}
-        content="Are you sure you want to delete this employee?"
+        title={"Delete Applicant"}
+        content="Are you sure you want to delete this applicant?"
         open={isConfirmModalOpen}
         handleClose={closeConfirmationModal}
         handleConfirmation={handleEmployeeDeletion}

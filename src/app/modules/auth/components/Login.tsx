@@ -3,7 +3,6 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { login } from "../core/_requests";
-import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 import {
   Grid,
@@ -16,7 +15,7 @@ import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
-import {setAuth, setToken, } from "../../../Redux/Reducers/authSlice";
+import { setAuth, setToken } from "../../../Redux/Reducers/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setLocalKey } from "../core/AuthHelpers";
 
@@ -38,7 +37,7 @@ const loginSchema = Yup.object().shape({
 const initialValues = {
   email: "",
   password: "",
-}; 
+};
 
 export function Login() {
   const [loading, setLoading] = useState(false);
@@ -62,25 +61,24 @@ export function Login() {
     initialValues,
     validationSchema: loginSchema,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
-      setLoading(true);  
-      try{ 
-        const {data}= await login({...values});
-        if(!data.success){
+      setLoading(true);
+      try {
+        const { data } = await login({ ...values });
+        if (!data.success) {
           throw new Error("Authentication Failed. Invalid Credentials");
         }
-        dispatch(setToken({token:data.message}));
+        dispatch(setToken({ token: data.message }));
         setLocalKey(data.message);
         setSubmitting(false);
         setLoading(false);
         setStatus("");
-      }
-      catch(error){
+      } catch (error) {
         setStatus("Authentication Failed. Invalid Credentials");
         setSubmitting(false);
         setLoading(false);
       }
-    }
-  });  
+    },
+  });
   return (
     <Stack spacing={4}>
       <Stack sx={{ textAlign: "center" }}>
@@ -150,9 +148,7 @@ export function Login() {
             </Stack>
 
             <Typography>
-              <Link to="/auth/forgot-password" className="link-primary">
-                Forgot Password ?
-              </Link>
+              <Link to="/auth/forgot-password">Forgot Password ?</Link>
             </Typography>
 
             <Stack spacing={1}>
@@ -161,7 +157,7 @@ export function Login() {
                 label="Sign In"
                 size="large"
                 loading={loading}
-                disabled={isSubmitting || !(isValid && dirty) }
+                disabled={isSubmitting || !(isValid && dirty)}
               />
               <Typography variant="body2" align="center">
                 Not a Member yet ? <Link to="/auth/registration">Sign up</Link>
