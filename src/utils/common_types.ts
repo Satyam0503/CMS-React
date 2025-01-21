@@ -32,13 +32,13 @@ export interface EmployeeModel {
   teamLead: string;
   phoneNumber: string;
   bloodGroup: string;
-  status: string;
   address: string;
   jobRole:string;
   password: string;
   dateOfJoining: Dayjs | null;
   personalEmail: string;
   emergencyContact: string;
+  status:string| boolean;
   isEmailVerified?:boolean;
 }
 

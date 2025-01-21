@@ -1,9 +1,8 @@
 import { Typography } from "@mui/material"
 import { FC } from "react"
-import { getStatusColor } from "../../../utils/common"
 
 interface PropsTypes {
-    status:number,
+    className:string,
     label:string,
 }
 
@@ -16,11 +15,9 @@ const style ={
     fontSize:"14px"
 }
 
-
-export const StyleStatus:FC<PropsTypes> =({status,label})=>{
-    const clName= getStatusColor(status);
+export const StyleStatus:FC<PropsTypes> =({className,label})=>{
     return (
-        <Typography sx={style} className={clName} >
+        <Typography sx={style} className={className} >
             {label}
         </Typography>
     )

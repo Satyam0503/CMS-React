@@ -17,7 +17,10 @@ import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
 import { EmployeeModel, EmployeesDataTypes } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
-import { employeesListMapperforExport } from "../../../utils/common";
+import {
+  employeesListMapperforExport,
+  statusDecoder,
+} from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
@@ -39,9 +42,9 @@ const employeeInitialValue: EmployeeModel = {
   teamLead: "",
   phoneNumber: "",
   bloodGroup: "",
-  status: "",
   address: "",
   jobRole: "",
+  status: "",
   isEmailVerified: false,
   dateOfJoining: null,
   personalEmail: "",
@@ -55,7 +58,9 @@ export default function Employees() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeModel | undefined>();
+  const [selectedEmployee, setSelectedEmployee] = useState<
+    EmployeeModel | undefined
+  >();
   const [page, setPage] = useState<number>(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
@@ -66,7 +71,7 @@ export default function Employees() {
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
-
+ 
   function handleClose() {
     setModalOpen(false);
     setEmployeeInitialValues(employeeInitialValue);
@@ -80,27 +85,30 @@ export default function Employees() {
     if (isEdit) {
       const payload = {
         ...values,
+        status: statusDecoder(values.status as string),
       };
-      updateEmployee(payload, token)
+      const userId=values.userId;
+      updateEmployee(payload, token,userId)
         .then((res) => {
-          const { success, message } = res.data;
-          if (success) {
-            toast.success("Employee Details Updated Successfully");
-            setSubmitting(false);
-            setRefresh(!isRefresh);
-            handleClose();
+          const { success, message,statusCode } = res.data;
+          if (!(success)) {
+            throw new Error(message);
           }
+          toast.success(message);
+          setRefresh(!isRefresh);
+          handleClose();
         })
         .catch((error) => {
           toast.error(error.message);
         })
         .finally(() => {
+          setSubmitting(false);
           setLoading(false);
         });
     } else {
       const payload = {
         userId: values.userId,
-        companyId: currentUser?.companyId!,
+        companyId: values.companyId,
         employeeId: values.employeeId,
         roleId: values.roleId,
         firstName: values.firstName,
@@ -108,7 +116,7 @@ export default function Employees() {
         gender: values.gender,
         dateOfBirth: values.dateOfBirth,
         email: values.email,
-        password: values.password,
+        password: "",
         jobRole: values.jobRole,
         department: values.department,
         reportingManager: values.reportingManager,
@@ -118,7 +126,7 @@ export default function Employees() {
         personalEmail: values.personalEmail,
         emergencyContact: values.emergencyContact,
         dateOfJoining: values.dateOfJoining,
-        status: values.status,
+        status: statusDecoder(values.status as string),
         address: values.address,
         isEmailVerified: values.isEmailVerified,
       };
@@ -135,8 +143,11 @@ export default function Employees() {
           handleClose();
         })
         .catch((error) => {
-          setLoading(false);
           toast.error(error.message);
+        })
+        .finally(()=>{
+          setLoading(false);
+          setSubmitting(false);
         });
     }
   }
@@ -198,10 +209,11 @@ export default function Employees() {
       bloodGroup: employee.bloodGroup,
       personalEmail: employee.personalEmail,
       emergencyContact: employee.emergencyContact,
-      status: employee.status,
+      status: employee.status ? "Active" : "Inactive",
       address: employee.address,
       dateOfBirth: dayjs(employee.dateOfBirth),
       dateOfJoining: dayjs(employee.dateOfJoining),
+      isEmailVerified: employee.isEmailVerified,
     });
     setModalOpen(true);
     setEdit(true);
@@ -248,9 +260,10 @@ export default function Employees() {
         <Stack spacing={2}>
           <Stack
             direction="row"
-            display={"flex"}
             justifyContent={"space-between"}
             alignItems={"center"}
+            flexWrap={"wrap-reverse"}
+            gap={2}
           >
             <SearchInput search={search} setSearch={setSearch} />
             <Stack direction="row" spacing={1}>

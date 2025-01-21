@@ -310,6 +310,7 @@ export const MuiTheme = createTheme({
           padding: ".5rem 1rem",
         },
         root: {
+          padding:0,
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
             paddingRight: 6,
           },

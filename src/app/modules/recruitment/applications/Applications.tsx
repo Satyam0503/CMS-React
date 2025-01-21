@@ -23,7 +23,6 @@ const application = [
    
 export default function Applications() {
   const intl = useIntl();
-  const [openModal, setOpenModal] = React.useState(false);
   const [page, setPage] = React.useState<number>(0);
   const [search, setSearch] = React.useState("");
   const [totalRecords, setTotalRecords] = React.useState(0);

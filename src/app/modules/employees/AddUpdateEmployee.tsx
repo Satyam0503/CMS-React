@@ -379,15 +379,18 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <Typography variant="body1">
                 {intl.formatMessage({ id: "PROFILE.STATUS" })}
               </Typography>
-              <TextField
+              <Select
                 fullWidth
-                placeholder="Status"
-                id="outlined-basic"
                 variant="outlined"
                 error={touched.status && Boolean(errors.status)}
-                helperText={touched.status && errors.status && errors.status}
                 {...getFieldProps("status")}
-              />
+              >
+                <MenuItem value={"Active"}>Active</MenuItem>  
+                <MenuItem value={"Inactive"}>Inactive</MenuItem>
+              </Select>
+              <FormHelperText>
+                {touched.status && errors.status && errors.status}
+              </FormHelperText>
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">

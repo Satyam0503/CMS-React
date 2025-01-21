@@ -25,7 +25,7 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-export const statusDecoder = (status: number) => {
+export const applicationStatusDecoder = (status: number) => {
   switch (status) {
     case 1:
       return "Pending";
@@ -38,6 +38,20 @@ export const statusDecoder = (status: number) => {
   }
 };
 
+export const statusDecoder = (status:string)=>{
+  switch (status){
+    case "Active": return true;
+    case "Inactive": return false;
+    default: return false;
+  }
+}
+export const statusEncoder = (status:boolean)=>{
+  switch (status){
+    case true: return "Active";
+    case false: return "Inactive";
+    default: return "";
+  }
+}
 
 export const getStatusColor = (status:number):string =>{
     switch(status){

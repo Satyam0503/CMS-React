@@ -17,7 +17,7 @@ interface GetAllEmployeePayload {
 
 export const addEmployee = (payload: EmployeeModel, token: string) => {
   return postRequest<EmployeeModel, AddEmployeeResponseData>(
-    ServiceUrl.ADD_UPDATE_EMPLOYEE,
+    ServiceUrl.ADD_EMPLOYEE,
     payload,
     {},
     false,
@@ -25,8 +25,8 @@ export const addEmployee = (payload: EmployeeModel, token: string) => {
   );
 };
 
-export const updateEmployee = async (payload: EmployeeModel, token: string) => {
-  return postRequest<EmployeeModel, AddEmployeeResponseData> (ServiceUrl.ADD_UPDATE_EMPLOYEE,payload,{},false,token);
+export const updateEmployee = async (payload: EmployeeModel, token: string,userId:string) => {
+  return postRequest<EmployeeModel, AddEmployeeResponseData> (`${ServiceUrl.UPDATE_EMPLOYEE}?userId=${userId}`,payload,{},false,token);
 };
 
 export const deleteEmployee = async (

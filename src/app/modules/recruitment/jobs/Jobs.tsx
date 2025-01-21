@@ -31,6 +31,12 @@ import JobDetail from "./JobDetail";
 import JobDescription from "./JobDescription";
 import Setting from "../../users/usersetting/Setting";
 import { CustomIconButton } from "../../components/CustomIconButton";
+import { SearchInput } from "../../components/SearchInput";
+import { CustomisedTable } from "../../components/CustomisedTable";
+import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
+import dayjs from "dayjs";
+import { Pagination } from "../../components/Pagination";
+import { ConfirmationModal } from "../../components/ConfirmationModal";
 
 function createData(
   sno: number,
@@ -44,21 +50,27 @@ function createData(
   return { sno, title, type, startdate, enddate, description, action };
 }
 
-const rows = [
-  createData(
-    1,
-    "New Year",
-    "Public Holiday",
-    "1 Jan'25",
-    "3 Jan'25",
-    "Celebrations",
-    ""
-  ),
+const jobs = [
+  {
+    jobTitle: "Demo",
+    department: "Development",
+    noOfPosition: 2,
+    interviewDate: dayjs(),
+    jobType: "Remote",
+    jobTime: "FullTime",
+    status: 2,
+  },
 ];
 
 export default function Jobs() {
   const intl = useIntl();
   const [openModal, setOpenModal] = React.useState(false);
+  const [page, setPage] = React.useState<number>(0);
+  const [search, setSearch] = React.useState("");
+  const [totalRecords, setTotalRecords] = React.useState(0);
+  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
+  const [isConfirmationModalOpen, setConfirmModalOpen] = React.useState(false);
+  const [selectedJob, setSelectedJob] = React.useState<any | undefined>();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -68,119 +80,75 @@ export default function Jobs() {
     setOpenModal(false);
   };
 
-  const handleAddHoliday = () => {
-    handleCloseModal();
+  const handleEditJob = () => {
+    
   };
 
+  const deleteJob =()=>{
+    // write job deletion logic
+      console.log("Job Deleted");
+  }
+  const openConfirmationModal = (job: any) => {
+    setConfirmModalOpen(true);
+    setSelectedJob(job);
+  };
+
+  const closeConfirmationModal= ()=>{
+    setSelectedJob(undefined);
+    setConfirmModalOpen(false);
+  }
   return (
     <>
       <Card sx={{ p: "2rem" }}>
-        <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          flexWrap={"wrap-reverse"}
-          gap={2}
-        >
-          <Stack>
-            <TextField
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton sx={{ border: "none" }}>
-                      <Close />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              variant="outlined"
-              placeholder="Search ..."
-            />
+        <Stack spacing={2}>
+          <Stack
+            direction="row"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            flexWrap={"wrap-reverse"}
+            gap={2}
+          >
+            <SearchInput search={search} setSearch={setSearch} />
+            <Stack direction="row" spacing={1}>
+              <CustomIconButton
+                tooltip="Filter employee"
+                icon={<FilterList />}
+              />
+              <CustomIconButton
+                tooltip="Add job description"
+                icon={<Add />}
+                handleClick={() => setOpenModal(true)}
+              />
+              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
+            </Stack>
           </Stack>
-          <Stack direction="row" spacing={1}>
-            <CustomIconButton tooltip="Filter employee" icon={<FilterList />} />
-            <CustomIconButton
-              tooltip="Add job description"
-              icon={<Add />}
-              handleClick={() => setOpenModal(true)}
+          <CustomisedTable
+            columns={JobRequirementTableColumnList}
+            rows={jobs}
+            page={page}
+            rowsPerPage={rowPerPage}
+            handleEdit={handleEditJob}
+            openConfirmationModal={openConfirmationModal}
+          />
+          {totalRecords > rowPerPage && (
+            <Pagination
+              page={page}
+              setPage={setPage}
+              setRowPerPage={setRowPerPage}
+              
+              rowsPerPage={rowPerPage}
+              totalRecords={totalRecords}
             />
-            {openModal && (
-              <JobDescription open={openModal} handleClose={handleCloseModal} />
-            )}
-            <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-          </Stack>
-        </Stack>
-        <Stack sx={{ mt: "1rem" }}>
-          <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">#</TableCell>
-                  <TableCell align="left">Title</TableCell>
-                  <TableCell align="left">Type</TableCell>
-                  <TableCell align="right">Start Date</TableCell>
-                  <TableCell align="right">End Date</TableCell>
-                  <TableCell align="right">Description</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.sno}>
-                    <TableCell>{row.sno}</TableCell>
-                    <TableCell>{row.title}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell align="right">{row.startdate}</TableCell>
-                    <TableCell align="right">{row.enddate}</TableCell>
-                    <TableCell align="right">{row.description}</TableCell>
-                    <TableCell
-                      align="right"
-                      sx={{
-                        display: "flex",
-                        gap: "4px",
-                        mr: ".75rem",
-                      }}
-                    >
-                      {row.action}
-
-                      <CustomIconButton
-                        tooltip="Link"
-                        icon={<LinkOutlined />}
-                      />
-
-                      <CustomIconButton
-                        tooltip="Filter employee"
-                        icon={<AttachFile />}
-                      />
-
-                      {/* <CustomIconButton
-                        tooltip="View job description"
-                        icon={<Visibility />}
-                      /> */}
-
-                      <Stack>
-                        <JobDetail />
-                      </Stack>
-                      <CustomIconButton
-                        tooltip="Delete"
-                        icon={<DeleteOutline />}
-                      />
-                      <CustomIconButton
-                        tooltip="Edit requirements"
-                        icon={<Edit />}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          )}
+          {isConfirmationModalOpen && selectedJob && (
+            <ConfirmationModal
+              title={"Delete Job"}
+              content="Are you sure you want to delete this Job?"
+              open={isConfirmationModalOpen}
+              handleClose={closeConfirmationModal}
+              handleConfirmation={deleteJob}
+            />
+          )}
         </Stack>
       </Card>
     </>

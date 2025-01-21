@@ -2,9 +2,11 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { EmployeeModel } from "../../../utils/common_types";
-import { dateFormatter } from "../../../utils/common";
+import { dateFormatter, statusEncoder } from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { StyleStatus } from "../components/StyledStatus";
+
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +20,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
   function handleClose() {
     setOpen(false);
   }
+  const status = statusEncoder(employeeData.status as boolean);
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>
@@ -148,21 +151,22 @@ export const ViewEmployeeDetails = (props: PropsType) => {
                 {dateFormatter(employeeData.dateOfJoining, "DD MMMM YYYY")}
               </Typography>
             </Grid>
-            <Grid xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "PROFILE.STATUS" })}
-              </Typography>
-            </Grid>
-            <Grid xs={8} md={6}>
-              <Typography>{employeeData.status}</Typography>
-            </Grid>
+
             <Grid xs={4} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.ROLE" })}
               </Typography>
             </Grid>
             <Grid xs={8} md={6}>
-              <Typography>{employeeData.role}</Typography>
+              <Typography>{employeeData.jobRole}</Typography>
+            </Grid>
+            <Grid xs={4} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "PROFILE.STATUS" })}
+              </Typography>
+            </Grid>
+            <Grid xs={8} md={6}>
+              <StyleStatus label={status} className={employeeData.status ? "success": "danger"}/>
             </Grid>
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>

@@ -7,7 +7,7 @@ import {
   EmployeesDataTypes,
   RolesType,
 } from "../common_types";
-import { dateFormatter, statusDecoder } from "../common";
+import { dateFormatter, applicationStatusDecoder } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
@@ -31,7 +31,8 @@ export const ServiceUrl = {
 
   //user
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/api/User/AddEditEmployees`,
+  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
+  UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
@@ -100,6 +101,24 @@ export const bloodGroups = [
   { id: 7, label: "O+", value: "O+" },
   { id: 8, label: "O-", value: "O-" },
 ];
+
+export const JobTime = [
+  {
+    id:1,
+    label:"Full Time",
+    value:"Full Time"
+  },
+  {
+    id:2,
+    label:"Part Time",
+    value:"Part Time"
+  },
+  {
+    id:3,
+    label:"Internship",
+    value:"Internship"
+  }
+]
 
 enum cellContentAlignment {
   LEFT = "left",
@@ -289,8 +308,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "status",
     label: "Status",
     build: (status:number) => {
-      const values = statusDecoder(status);
-      return <StyleStatus status={status} label={values} />
+      const values = applicationStatusDecoder(status);
+      const className = values==="Pending" ? "warning" 
+      :values === "Shortlisted" ? "success" : "danger";
+      return <StyleStatus label={values} className={className} />
     },
   },
   {
@@ -313,44 +334,6 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
-
-// export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
-//   {
-//     id: "serialNo",
-//     label:"#",
-//   },
-//   {
-//     id:"type",
-//     label:"Type",
-//   },
-//   {
-//     id:"count",
-//     label:"Count"
-//   },
-//   {
-//     id:"reason",
-//     label:"Reaseon"
-//   },
-//   {
-//     id:"status",
-//     label:"Status"
-//   },
-//   {
-//     id:"action",
-//     label:"Action",
-//     build:(
-//       row:any,
-//       handleEdit:()=>void,
-//       openConfirmationModal:(leaveId:string)=>void
-//     )=>{
-//       <ActionComponent
-//         row={row}
-//         handleEdit={handleEdit}
-//         openConfirmationModal={openConfirmationModal}
-//       />
-//     }
-//   }
-// ];
 
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
@@ -383,6 +366,59 @@ export const RoleTableColumnList: ColumnListTypes[] = [
       </Link>
     ),
   },
+];
+
+export const JobRequirementTableColumnList:ColumnListTypes[] =[
+  {
+    id:"serialNo",
+    label:"#",   
+    minWidth:30 
+  },
+  {
+    id:"jobTitle",
+    label:"Job Title",
+    minWidth:180,
+  },
+  {
+    id:"department",
+    label:"Department",
+  },
+  {
+    id:"noOfPosition",
+    label:"No of Position"
+  },
+  {
+    id:"interviewDate",
+    label:"Interview Date",
+    format:(date) => dateFormatter(date,"DD MMM YYYY")
+  },
+  {
+    id:"jobType",
+    label:"Job Type",
+  },
+  {
+    id:"jobTime",
+    label:"Job Time",
+  },
+  {
+    id:"status",
+    label:"Status",
+  },
+  {
+    id:"action",
+    label:"Action",
+    build:(
+      row:any,
+      handleJobEdit:(row:any)=>void,
+      openDeleteModal:(row:any)=>void
+    )=>(
+      <ActionComponent 
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+      />
+    )
+  }
 ];
 
 interface ActionComponentProps<Row> {
@@ -424,8 +460,8 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
         <CustomIconButton
           handleClick={() => handleDownload(row)}
           icon={<Download />}
-          tooltip="View"
-          ariaLabel="View"
+          tooltip="Download"
+          ariaLabel="Download"
         />
       )}
     </Stack>
