@@ -62,32 +62,7 @@ const JobDescription = (props: Props) => {
               <TextField fullWidth />
             </Grid>
           </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.ROLE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Fullstack Developer</MenuItem>
-                <MenuItem>Frontend Developer</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "JOB.LEVEL" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Senior</MenuItem>
-                <MenuItem>Junior</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
+
           <Grid item xs={12} display={"flex"} gap={1}>
             <Grid item xs={4} md={6}>
               <Typography variant="body1">
@@ -98,32 +73,7 @@ const JobDescription = (props: Props) => {
               <TextField fullWidth />
             </Grid>
           </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.DEPARTMENT" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Development</MenuItem>
-                <MenuItem>Design</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "JOB.MODE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Online</MenuItem>
-                <MenuItem>Offline</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
+
           <Grid item xs={12} display={"flex"} gap={1}>
             <Grid item xs={4} md={6}>
               <Typography variant="body1">
@@ -132,32 +82,11 @@ const JobDescription = (props: Props) => {
             </Grid>
             <Grid item xs={8} md={6}>
               <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Full-time</MenuItem>
+                <MenuItem>On-site</MenuItem>
+                <MenuItem>Remote</MenuItem>
+                <MenuItem>Hybrid</MenuItem>
                 <MenuItem>Part-time</MenuItem>
               </Select>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>AK SINGH</MenuItem>
-                <MenuItem>MOHIT RAI</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "JOB.REQ.QUALIFICATION" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <TextField fullWidth />
             </Grid>
           </Grid>
 

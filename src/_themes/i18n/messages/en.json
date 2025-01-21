@@ -55,6 +55,9 @@
   "EMP.FEMALE": "Female",
   "FORM.TITLE": "Title",
   "FORM.TYPE": "Type",
+
+  "FILE.UPLOAD_INSTRUCTION": "Note : Please select .jpg/.png/.webp images upto 2 MB",
+  "FILE.SELECTED": " Selected file",
   "HEADING.LOGO": "Logo",
   "JOB.TITLE": "Title",
   "INFO.DESCRIPTION": "Description",
@@ -211,6 +214,7 @@
   "TRANSLATOR.SELECT": "Select your language",
   "TRANSLATOR.LANGUAGES": "Languages Known",
   "UPDATE.EMP.INFO": "Update Employee Details",
+  "UPLOAD.PROFILE_PICTURE": "Upload profile picture",
   "USER.BLOOD_GROUP": "Blood Group",
   "USER.GROUP": "Group",
   "USER.MESSAGE": "Message",
@@ -237,6 +241,7 @@
   "USER.DEPARTMENT": "Department",
   "USER.APPLICATION.DATE": " Applied on",
   "USER.RESUME": "Resume Preview",
+  "USER.AGE": "Years Old",
 
   "AUTH.GENERAL.OR": "Or",
   "AUTH.GENERAL.SUBMIT_BUTTON": "Submit",
