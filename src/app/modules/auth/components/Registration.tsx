@@ -44,11 +44,11 @@ export function Registration() {
     errors,
     resetForm,
     isSubmitting,
-    status
+    status,
   } = useFormik({
     initialValues,
     validationSchema: registrationSchema,
-    onSubmit: async (values, {setStatus, setSubmitting }) => {
+    onSubmit: async (values, { setStatus, setSubmitting }) => {
       setLoading(true);
       const payload = {
         firstName: values.firstName,
@@ -61,7 +61,7 @@ export function Registration() {
         const { data } = await registerCompany(payload);
         if (!data.success) {
           throw new Error(data.message);
-        } 
+        }
         toast.success("Successfully registered");
         setSubmitting(false);
         setLoading(false);
@@ -341,7 +341,8 @@ export function Registration() {
                 {...getFieldProps("acceptTerms")}
               />
               <Box component="span">
-                I Accept the <a target="_blank">Terms</a>.
+                I Accept the
+                <Link to="#"> Terms and Conditions</Link>
               </Box>
             </Typography>
             <FormHelperText>

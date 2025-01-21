@@ -290,7 +290,7 @@ export const EditPermission = () => {
               control={<Checkbox />}
               label={
                 <Typography variant="caption">
-                  {intl.formatMessage({ id: "Edit job requirements" })}
+                  {intl.formatMessage({ id: "JOB.REQUIREMENTS_EDIT" })}
                 </Typography>
               }
             />
@@ -298,7 +298,7 @@ export const EditPermission = () => {
               control={<Checkbox />}
               label={
                 <Typography variant="caption">
-                  {intl.formatMessage({ id: "Edit job description" })}
+                  {intl.formatMessage({ id: "JOB.DESCRIPTION_EDIT" })}
                 </Typography>
               }
             />
@@ -306,7 +306,7 @@ export const EditPermission = () => {
               control={<Checkbox />}
               label={
                 <Typography variant="caption">
-                  {intl.formatMessage({ id: "Edit job application" })}
+                  {intl.formatMessage({ id: "JOB.APPLICATIONS_EDIT" })}
                 </Typography>
               }
             />
@@ -373,7 +373,7 @@ export const EditPermission = () => {
               control={<Checkbox />}
               label={
                 <Typography variant="caption">
-                  {intl.formatMessage({ id: "Edit posted notice" })}
+                  {intl.formatMessage({ id: "MENU.NOTICE_EDIT" })}
                 </Typography>
               }
             />

@@ -14,7 +14,12 @@ import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import { useFormik } from "formik";
 import { bloodGroups, Gender } from "../../../utils/constant/Constant";
 import { getAllRoles } from "./components/employeeServices";
-import { EmployeeModel, EmployeesDataTypes, RoleModel, RolesType } from "../../../utils/common_types";
+import {
+  EmployeeModel,
+  EmployeesDataTypes,
+  RoleModel,
+  RolesType,
+} from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
@@ -38,7 +43,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } =
     props;
   const [roles, setRoles] = useState<RoleModel[]>([]);
-  const currentUser= useAppSelector(state=>state.user.userData);
+  const currentUser = useAppSelector((state) => state.user.userData);
   const intl = useIntl();
 
   const {
@@ -67,23 +72,23 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     };
   };
 
-  useEffect( () => {
+  useEffect(() => {
     getAllRoles(token)
-    .then(res=>{
-      const {success,statusCode,methodResults}= res.data;
-      if(success && statusCode===200){
-        setRoles(methodResults);
-      } 
-    })
-    .catch(error=>{
-      toast.error(error.message);
-    })
-  },[]);
+      .then((res) => {
+        const { success, statusCode, methodResults } = res.data;
+        if (success && statusCode === 200) {
+          setRoles(methodResults);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  }, []);
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack direction="column" spacing={2}>
-        <Typography variant="h4" className="text-primary">
+        <Typography variant="h5">
           {isEdit
             ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
             : intl.formatMessage({ id: "ADD.EMP.INFO" })}
@@ -143,7 +148,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.gender && errors.gender && errors.gender}
               </FormHelperText>
             </Grid>
@@ -174,7 +179,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 setValue={handleDateChange("dateOfBirth")}
                 maxDate={dayjs()}
               />
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.dateOfBirth &&
                   errors.dateOfBirth &&
                   errors.dateOfBirth}
@@ -212,14 +217,18 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {...getFieldProps("roleId")}
               >
                 <MenuItem value={""}>None</MenuItem>
-                {roles.map((role) =>{
-                  if(role.titles !== currentUser?.role ){
-                    return   <MenuItem key={role.rolesId} value={role.rolesId}>{role.titles}</MenuItem>
+                {roles.map((role) => {
+                  if (role.titles !== currentUser?.role) {
+                    return (
+                      <MenuItem key={role.rolesId} value={role.rolesId}>
+                        {role.titles}
+                      </MenuItem>
+                    );
                   }
                 })}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
-                {touched.roleId && errors.roleId && errors.roleId}
+              <FormHelperText>
+                {touched.role && errors.role && errors.role}
               </FormHelperText>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -323,7 +332,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.bloodGroup && errors.bloodGroup && errors.bloodGroup}
               </FormHelperText>
             </Grid>
@@ -389,7 +398,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 setValue={handleDateChange("dateOfJoining")}
                 maxDate={dayjs()}
               />
-              <FormHelperText sx={{ color: "#d32f2f" }}>
+              <FormHelperText>
                 {touched.dateOfJoining &&
                   errors.dateOfJoining &&
                   errors.dateOfJoining}
@@ -427,7 +436,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               <CustomisedButton
                 label={isEdit ? "Update" : "Add"}
                 type="submit"
-                disabled={ isSubmitting || !(isValid && dirty)}
+                disabled={isSubmitting || !(isValid && dirty)}
               />
             </Grid>
           </Grid>

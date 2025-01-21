@@ -27,7 +27,7 @@ import { toast } from "react-toastify";
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
-
+import { colors } from "../theme/MuiTheme";
 
 type ProfileInfo = {
   name?: string;
@@ -37,7 +37,7 @@ type ProfileInfo = {
 };
 
 export default function ProfileCard(props: ProfileInfo) {
-  const token = useAppSelector(state=>state.auth.token)!;
+  const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
@@ -192,7 +192,7 @@ export default function ProfileCard(props: ProfileInfo) {
               />
 
               {fileError && (
-                <Typography variant="body2" sx={{ color: "#d32f2f" }}>
+                <Typography variant="body2" color={colors.alpha.danger[800]}>
                   {" "}
                   {fileError}
                 </Typography>

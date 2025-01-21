@@ -19,16 +19,13 @@ interface PropsTypes<Row, Columns> {
   columns: Columns[];
   page: number;
   rowsPerPage: number;
-  openConfirmationModal?: (row:Row) => void;
+  openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row:Row) => void;
   handleDownload?:()=>void;
 }
 
-export const CustomisedTable = <
-  Row ,
-  Column extends ColumnListTypes
->(
+export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
   const {

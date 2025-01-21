@@ -76,11 +76,7 @@ export default function AddNotice() {
               <TextField fullWidth />
             </Grid>
           </Grid>
-          <Stack
-            direction={"row"}
-            spacing={1}
-            className="justify-content-end mt-4"
-          >
+          <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={1}>
             <CustomisedButton
               label="Cancel"
               handleClick={handleClose}

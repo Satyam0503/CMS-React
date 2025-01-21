@@ -2,6 +2,7 @@ import { Close, Download } from "@mui/icons-material";
 import { Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
+import { CustomIconButton } from "app/modules/components/CustomIconButton";
 
 interface PropsType{
   open:boolean;
@@ -9,7 +10,7 @@ interface PropsType{
   applicantData?:any;
 }
 
-export default function ApplicationPreview(props:PropsType) {
+export default function ApplicationPreview(props: PropsType) {
   const intl = useIntl();
   const {open,handleClose,applicantData} = props;
 
@@ -25,10 +26,8 @@ export default function ApplicationPreview(props:PropsType) {
         mb={2}
       >
         <Grid item xs={12} display={"flex"} justifyContent={"space-between"}>
-         <Typography variant="h5">Sohan Singh</Typography>
-          <IconButton onClick={handleClose}>
-            <Close />
-          </IconButton>
+          <Typography variant="h5">Sohan Singh</Typography>
+          <CustomIconButton icon={<Close />} handleClick={handleClose} />
         </Grid>
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
