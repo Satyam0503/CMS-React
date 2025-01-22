@@ -131,9 +131,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <InputLabel id="gender">
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.GENDER" })}
-              </InputLabel>
+              </Typography>
               <Select
                 fullWidth
                 labelId="gender"
@@ -205,9 +205,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               {/* <Typography variant="body1">
                   {intl.formatMessage({ id: "USER.ROLE" })}
                 </Typography> */}
-              <InputLabel id="employee_role">
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.ROLE" })}
-              </InputLabel>
+              </Typography>
               <Select
                 fullWidth
                 id="outlined-basic"

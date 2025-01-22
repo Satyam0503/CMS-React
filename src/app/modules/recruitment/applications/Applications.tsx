@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Download, FilterList } from "@mui/icons-material";
+import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
@@ -9,6 +9,8 @@ import { SearchInput } from "../../components/SearchInput";
 import dayjs from "dayjs";
 import ApplicationPreview from "./ApplicationPreview";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { AddApplicant } from "./AddApplicant";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 const application = [
   {
@@ -20,43 +22,43 @@ const application = [
     status: 3,
   },
 ];
-   
+
 export default function Applications() {
   const intl = useIntl();
   const [page, setPage] = React.useState<number>(0);
   const [search, setSearch] = React.useState("");
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
-  const [applicationsList, setApplicationsList] =React.useState<any[]>(application);
+  const [applicationsList, setApplicationsList] =
+    React.useState<any[]>(application);
   const [viewApplicant, setViewApplicant] = React.useState(false);
-  const [selectedApplicant, setSelectedApplicant] = React.useState<any | undefined >();
-  const [isConfirmModalOpen,setConfirmModalOpen] = React.useState(false);
-
-  const handleEdit = (applicant: any) => {
-
-  };  
-  const openConfirmationModal =(applicant:any)=>{
-    setConfirmModalOpen(true)
+  const [selectedApplicant, setSelectedApplicant] = React.useState<
+    any | undefined
+  >();
+  const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
+  const handleEdit = (applicant: any) => {};
+  const openConfirmationModal = (applicant: any) => {
+    setConfirmModalOpen(true);
     setSelectedApplicant(applicant);
-  }
-  
-  const handleOpenPreview = (applicant:any) => {
+  };
+
+  const handleOpenPreview = (applicant: any) => {
     setViewApplicant(true);
     setSelectedApplicant(applicant);
   };
 
-  const closePreview =()=>{
+  const closePreview = () => {
     setViewApplicant(false);
     setSelectedApplicant(undefined);
-  }
+  };
 
-  const handleResumeDownload =()=>{
+  const handleResumeDownload = () => {
     console.log("download resume");
-  }
+  };
 
-  const handleApplicantDeletion =()=>{
+  const handleApplicantDeletion = () => {
     console.log("delete Applicant");
-  } 
+  };
   return (
     <>
       <Card sx={{ p: "2rem" }}>
@@ -70,12 +72,18 @@ export default function Applications() {
             <SearchInput search={search} setSearch={setSearch} />
             <SearchInput search={search} setSearch={setSearch} />
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton aria-label="import excel">
-                <Download />
-              </IconButton>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Application"
+                ariaLabel="Filter Application"
+              />
+              <AddApplicant />
+              
+              <CustomIconButton
+                icon={<Download />}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
             </Stack>
           </Stack>
 
@@ -113,7 +121,7 @@ export default function Applications() {
         title={"Delete Applicant"}
         content="Are you sure you want to delete this applicant?"
         open={isConfirmModalOpen}
-        handleClose={()=>setConfirmModalOpen(false)}
+        handleClose={() => setConfirmModalOpen(false)}
         handleConfirmation={handleApplicantDeletion}
       />
     </>
