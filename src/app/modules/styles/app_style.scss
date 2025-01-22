@@ -30,8 +30,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 
 .coverChange {
   position: absolute !important;
-  left: 55px !important;
-  top: 60px;
+
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -43,19 +42,15 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
   gap: 8px;
   gap: 0.25rem;
 }
-.MuiButtonBase-root-MuiIconButton-root {
-  background-color: red;
-}
-.container:hover .coverChange {
-  opacity: 1;
-  background-color: transparent !important;
-  z-index: 3 !important;
-}
 
-.container:hover img {
-  opacity: 0.2 !important;
-  z-index: 1 !important;
-}
+// .container:hover .coverChange {
+//   z-index: 3 !important;
+// }
+
+// .container:hover img {
+//   opacity: 0.2 !important;
+//   z-index: 1 !important;
+// }
 
 input:-webkit-autofill {
   -webkit-background-clip: text;
@@ -81,15 +76,15 @@ input:-webkit-autofill {
   }
 }
 
-.success{
-  background-color:#C8F2CC;
-  color:#37843C;
+.success {
+  background-color: #c8f2cc;
+  color: #37843c;
 }
-.warning{
-  background-color:#FFF2B3;
-  color:#B3743B;
+.warning {
+  background-color: #fff2b3;
+  color: #b3743b;
 }
-.danger{
-  background-color:#FFC8C7;
-  color:#C62828;
+.danger {
+  background-color: #ffc8c7;
+  color: #c62828;
 }

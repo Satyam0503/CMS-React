@@ -9,6 +9,7 @@ type Props = {
   disabled?: boolean;
   permission?: boolean;
   ariaLabel?: string;
+  sx?: {};
 };
 
 export const CustomIconButton = (props: Props) => {
@@ -17,6 +18,7 @@ export const CustomIconButton = (props: Props) => {
     icon,
     tooltip,
     size,
+    sx,
     disabled = false,
     permission = true,
     ariaLabel = "button",
@@ -32,7 +34,7 @@ export const CustomIconButton = (props: Props) => {
             size={size}
             type="button"
             aria-label={ariaLabel}
-            sx={{ width: "32px", height: "32px" }}
+            sx={{ width: "32px", height: "32px", bgcolor: "transparent" }}
           >
             {icon}
           </IconButton>
