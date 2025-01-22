@@ -1,66 +1,34 @@
 import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import {
-  Card,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  AttachFile,
-  Close,
-  DeleteOutline,
-  Download,
-  Edit,
-  FilterList,
-  LinkOutlined,
-  Search,
-  Visibility,
-} from "@mui/icons-material";
-import JobDetail from "./JobDetail";
+import { Add, Download, FilterList } from "@mui/icons-material";
+
 import JobDescription from "./JobDescription";
-import Setting from "../../users/usersetting/Setting";
+
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { SearchInput } from "../../components/SearchInput";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
-import dayjs from "dayjs";
+
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { JobModal } from "../../../../utils/common_types";
+import { addJobVacancy } from "../services";
+import { useAppSelector } from "../../../Redux/hooks";
 
-function createData(
-  sno: number,
-  title: string,
-  type: string,
-  startdate: string,
-  enddate: string,
-  description: string,
-  action: string
-) {
-  return { sno, title, type, startdate, enddate, description, action };
-}
+import { toast } from "react-toastify";
+import { statusDecoder } from "../../../../utils/common";
+import { useEffect } from "react";
 
-const jobs = [
-  {
-    jobTitle: "Demo",
-    department: "Development",
-    noOfPosition: 2,
-    interviewDate: dayjs(),
-    jobType: "Remote",
-    jobTime: "FullTime",
-    status: 2,
-  },
-];
+const initialValues: JobModal = {
+  jobId: "",
+  title: "",
+  vacancies: 1,
+  description: "",
+  jobType: "",
+  status: "Active",
+};
 
 export default function Jobs() {
   const intl = useIntl();
@@ -71,32 +39,65 @@ export default function Jobs() {
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isConfirmationModalOpen, setConfirmModalOpen] = React.useState(false);
   const [selectedJob, setSelectedJob] = React.useState<any | undefined>();
+  const [jobList, setJobList] = React.useState<any[]>([]);
+  const [isEdit, setEdit] = React.useState(false);
+
+  const token = useAppSelector((state) => state.auth.token)!;
 
   const handleOpenModal = () => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => {
+  const handleClose = () => {
+    setEdit(false);
     setOpenModal(false);
   };
 
-  const handleEditJob = () => {
-    
+  const handleEditJob = () => {};
+
+  const handleAddEditJob = async (
+    values: JobModal,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    if (isEdit) {
+      // handle Edit logic
+    } else {
+      const payload = { ...values, status:statusDecoder(values.status as string) };
+      try {
+        const response = await addJobVacancy(payload, token);
+        const { message, success } = response.data;
+        if (!success) {
+          throw new Error(message);
+        }
+        toast.success(message);
+        setSubmitting(false);
+        handleClose();
+      } catch (error: any) {
+        toast.error(error.message);
+        setSubmitting(false);
+      } finally {
+      }
+    }
   };
 
-  const deleteJob =()=>{
+  const deleteJob = () => {
     // write job deletion logic
-      console.log("Job Deleted");
-  }
+    console.log("Job Deleted");
+  };
   const openConfirmationModal = (job: any) => {
     setConfirmModalOpen(true);
     setSelectedJob(job);
   };
 
-  const closeConfirmationModal= ()=>{
+  const closeConfirmationModal = () => {
     setSelectedJob(undefined);
     setConfirmModalOpen(false);
-  }
+  };
+
+  useEffect(()=>{
+    // fetch all jobs;
+  },[]);
+
   return (
     <>
       <Card sx={{ p: "2rem" }}>
@@ -124,7 +125,7 @@ export default function Jobs() {
           </Stack>
           <CustomisedTable
             columns={JobRequirementTableColumnList}
-            rows={jobs}
+            rows={jobList}
             page={page}
             rowsPerPage={rowPerPage}
             handleEdit={handleEditJob}
@@ -135,7 +136,6 @@ export default function Jobs() {
               page={page}
               setPage={setPage}
               setRowPerPage={setRowPerPage}
-              
               rowsPerPage={rowPerPage}
               totalRecords={totalRecords}
             />
@@ -147,6 +147,15 @@ export default function Jobs() {
               open={isConfirmationModalOpen}
               handleClose={closeConfirmationModal}
               handleConfirmation={deleteJob}
+            />
+          )}
+          {openModal && (
+            <JobDescription
+              initialValues={initialValues}
+              isEdit={isEdit}
+              open={openModal}
+              handleClose={handleClose}
+              handleAddEditJob={handleAddEditJob}
             />
           )}
         </Stack>

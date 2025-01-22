@@ -1,4 +1,4 @@
-import { Delete, Download, Edit, Place, Visibility } from "@mui/icons-material";
+import { Delete, DeleteOutlineOutlined, Download, Edit, Place, Visibility } from "@mui/icons-material";
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
@@ -12,8 +12,6 @@ import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
-import { title } from "process";
-import { colors } from "../../app/modules/theme/MuiTheme";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
 
 export const BaseUrl =
@@ -33,6 +31,11 @@ export const ServiceUrl = {
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
+
+
+  // jobs
+  ADD_JOB_VACANCY:`${BaseUrl}/api/JobVacancy/AddJobVacancy`,
+  GET_ALL_JOBS:`${BaseUrl}/api/JobVacancy/getAllJobs`,
 
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
@@ -119,13 +122,24 @@ export const JobTime = [
     value:"Internship"
   }
 ]
+export const JobType = [
+  {
+    id:1,
+    label:"Onsite",
+    value:"Onsite"
+  },
+  {
+    id:2,
+    label:"Hybrid",
+    value:"Hybrid"
+  },
+  {
+    id:3,
+    label:"Remote",
+    value:"Remote"
+  }
+]
 
-enum cellContentAlignment {
-  LEFT = "left",
-  RIGHT = "right",
-  CENTER = "center",
-  JUSTIFY = "justify",
-}
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
@@ -443,7 +457,7 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       {openConfirmationModal && (
         <CustomIconButton
           handleClick={() => openConfirmationModal(row)}
-          icon={<Delete />}
+          icon={<DeleteOutlineOutlined/>}
           tooltip="Delete"
           ariaLabel="Delete"
         />

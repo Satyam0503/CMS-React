@@ -1,160 +1,197 @@
+import { Check, FileOpenOutlined, LinkOutlined } from "@mui/icons-material";
 import {
-  Add,
-  Check,
-  EditOutlined,
-  FileCopyOutlined,
-  FileOpenOutlined,
-  FileUpload,
-  LinkOutlined,
-  Visibility,
-} from "@mui/icons-material";
-import {
+  FormHelperText,
   Grid,
-  IconButton,
   MenuItem,
   Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
 import TextEditor from "../../../modules/components/TextEditor";
+import { useFormik } from "formik";
+import jobSchema from "../../../../utils/Schema/jobSchema";
+import { JobType } from "../../../../utils/constant/Constant";
+import { JobModal } from "../../../../utils/common_types";
+import { toast } from "react-toastify";
 
-type Props = {
+interface PropsTypes {
+  initialValues: JobModal;
+  isEdit: boolean;
   open: boolean;
   handleClose: () => void;
-  // handleCommentsSubmission: (value: any) => void;
-  // userComment: string;
-  // handleChange: (value: any) => void;
-};
+  handleAddEditJob: (
+    values: JobModal,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => void;
+}
 
-const JobDescription = (props: Props) => {
-  const [value, setValue] = useState("");
+const JobDescription: FC<PropsTypes> = ({
+  initialValues,
+  isEdit,
+  open,
+  handleClose,
+  handleAddEditJob,
+}) => {
+  const [jobDescription, setJobDescription] = useState("");
   const intl = useIntl();
-  const { open, handleClose } = props;
 
-  // const [open, setOpen] = useState(false);
-
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
-
-  console.log(value);
+  const {
+    handleSubmit,
+    errors,
+    touched,
+    getFieldProps,
+    isSubmitting,
+    dirty,
+    isValid,
+  } = useFormik({
+    initialValues,
+    validationSchema: jobSchema,
+    onSubmit: (values, { setSubmitting }) => {
+      if (jobDescription.length === 0) {
+        toast.error("Please provide job description");
+        setSubmitting(false);
+        return;
+      }
+      values.description = jobDescription;
+      handleAddEditJob(values, setSubmitting);
+    },
+  });
 
   return (
-    <Grid container>
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Grid container display={"flex"} direction={"column"} gap={1}>
-          <Grid item xs={12}>
-            <Typography variant="h5" mb={2}>
-              {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "FORM.TITLE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <TextField fullWidth />
-            </Grid>
-          </Grid>
+    <CustomisedModal open={open} handleClose={handleClose}>
+      <Stack spacing={2}>
+        <Typography variant="h5">
+          {isEdit
+            ? intl.formatMessage({ id: "JOB.DESCRIPTION_EDIT" })
+            : intl.formatMessage({ id: "JOB.DESCRIPTION" })}
+        </Typography>
 
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "JOB.VACANCIES" })}
-              </Typography>
+        <form onSubmit={handleSubmit}>
+          <Grid container direction={"column"} gap={1}>
+            <Grid item xs={12} display={"flex"} gap={1}>
+              <Grid item xs={4} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "FORM.TITLE" })}
+                </Typography>
+              </Grid>
+              <Grid item xs={8} md={6}>
+                <TextField
+                  fullWidth
+                  placeholder="Job Title"
+                  variant="outlined"
+                  type="text"
+                  error={touched.title && Boolean(errors.title)}
+                  helperText={touched.title && errors.title && errors.title}
+                  {...getFieldProps("title")}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={8} md={6}>
-              <TextField fullWidth />
+
+            <Grid item xs={12} display={"flex"} gap={1}>
+              <Grid item xs={4} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "JOB.VACANCIES" })}
+                </Typography>
+              </Grid>
+              <Grid item xs={8} md={6}>
+                <TextField
+                  fullWidth
+                  placeholder="Vacancies"
+                  variant="outlined"
+                  type="number"
+                  error={touched.vacancies && Boolean(errors.vacancies)}
+                  helperText={
+                    touched.vacancies && errors.vacancies && errors.vacancies
+                  }
+                  {...getFieldProps("vacancies")}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} display={"flex"} gap={1}>
+              <Grid item xs={4} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "JOB.TYPE" })}
+                </Typography>
+              </Grid>
+              <Grid item xs={8} md={6}>
+                <Select
+                  fullWidth
+                  error={touched.jobType && Boolean(errors.jobType)}
+                  {...getFieldProps("jobType")}
+                >
+                  {JobType.map((job) => (
+                    <MenuItem key={job.id} value={job.value}>
+                      {job.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {touched.jobType && errors.jobType && errors.jobType}
+                </FormHelperText>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} display={"flex"} gap={1}>
+              <Grid item xs={4} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "PROFILE.STATUS" })}
+                </Typography>
+              </Grid>
+              <Grid item xs={8} md={6}>
+                <Select
+                  fullWidth
+                  variant="outlined"
+                  error={touched.status && Boolean(errors.status)}
+                  {...getFieldProps("status")}
+                >
+                  <MenuItem value={"Active"}>Active</MenuItem>
+                  <MenuItem value={"Inactive"}>Inactive</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {touched.status && errors.status && errors.status}
+                </FormHelperText>
+              </Grid>
             </Grid>
           </Grid>
-
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "JOB.TYPE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>On-site</MenuItem>
-                <MenuItem>Remote</MenuItem>
-                <MenuItem>Hybrid</MenuItem>
-                <MenuItem>Part-time</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "PROFILE.STATUS" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Active</MenuItem>
-                <MenuItem>Inactive</MenuItem>
-              </Select>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <hr />
-
-        {/* <Grid container>
-          <TextEditor
-            value={userComment}
-            onChange={handleChange}
-            placeholder="Add Comments"
-            helperText={String("Please fill comment section")}
-            className="rounded-5 "
-            error={Boolean(!userComment)}
-          />
-        </Grid> */}
-        <Stack>
-          <Grid item xs={12}>
-            <TextEditor value={value} setValue={setValue} />
-          </Grid>
-        </Stack>
-        <Grid
-          item
-          xs={12}
-          display={"flex"}
-          justifyContent={"flex-end"}
-          mt={1}
-          gap={1}
-        >
-          <CustomisedButton
-            variant="outlined"
-            size="medium"
-            label="Page URL"
-            Icon={<LinkOutlined />}
-            iconPosition="start"
-          />
-          <CustomisedButton
-            variant="contained"
-            size="medium"
-            label="Submissions"
-            Icon={<FileOpenOutlined />}
-            iconPosition="start"
-          />
-          <CustomisedButton variant="outlined" size="medium" label="Close " />
-          <CustomisedButton
-            variant="contained"
-            size="medium"
-            label="Publish"
-            Icon={<Check />}
-            iconPosition="start"
-          />
-        </Grid>
-      </CustomisedModal>
-    </Grid>
+          <hr />
+          <Stack>
+            <TextEditor value={jobDescription} setValue={setJobDescription} />
+          </Stack>
+          <Stack direction={"row"} justifyContent={"flex-end"} mt={2} gap={1}>
+            <CustomisedButton
+              variant="outlined"
+              label="Page URL"
+              Icon={<LinkOutlined />}
+              iconPosition="start"
+            />
+            <CustomisedButton
+              variant="contained"
+              label="Submissions"
+              Icon={<FileOpenOutlined />}
+              iconPosition="start"
+            />
+            <CustomisedButton
+              variant="outlined"
+              label="Close"
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              label="Publish"
+              Icon={<Check />}
+              type="submit"
+              iconPosition="start"
+              disabled={isSubmitting || !(dirty && isValid)}
+            />
+          </Stack>
+        </form>
+      </Stack>
+    </CustomisedModal>
   );
 };
 

@@ -315,7 +315,7 @@ export const MuiTheme = createTheme({
         root: {
           padding: 0,
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
-            paddingRight: 0,
+            paddingRight: 1,
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",

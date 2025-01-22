@@ -45,6 +45,12 @@ export const AddApplicant = memo(() => {
     }
   };
 
+  const handleAddApplicant = (values:any,setSubmitting:(isSubmitting: boolean) => void)=>{
+    const formData= new FormData();
+    formData.append("resume",values.resume);
+    formData.append("applicantData",JSON.parse(values));
+    // handle add applicant logic
+  }
   return (
     <>
       <CustomIconButton
@@ -58,7 +64,9 @@ export const AddApplicant = memo(() => {
           <Formik
             initialValues={initialValues}
             validationSchema={applicantSchema}
-            onSubmit={(values, { setSubmitting }) => {}}
+            onSubmit={(values, { setSubmitting }) => {
+              handleAddApplicant(values,setSubmitting);
+            }}
           >
             {(formik) => {
               return (
@@ -123,9 +131,11 @@ export const AddApplicant = memo(() => {
                                 accept=".pdf,.doc"
                                 onChange={(e) => {
                                   handleFileChange(e, formik.setFieldValue);
-                                  formik.setFieldTouched("resume", true);
                                 }}
-                                hidden
+                                onBlur={(e)=>{
+                                  formik.setFieldTouched("resume", true);                                
+                                }}
+                                // hidden
                               />
                               <Typography variant="body1" flexWrap={"wrap"}>
                                 {intl.formatMessage({ id: "FILE.SELECTED" })}:

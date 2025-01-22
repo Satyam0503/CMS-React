@@ -1,4 +1,4 @@
-import { TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { useField } from "formik";
 import { FC } from "react";
 interface PropsTypes {
@@ -11,8 +11,8 @@ interface PropsTypes {
 export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
   const [fields, meta] = useField(props);  
   return (
-    <>
-      <Typography variant="body1" mb={.5}>{label}</Typography>
+    <Stack spacing={.5}>
+      <Typography variant="body1">{label}</Typography>
       <TextField
         fullWidth
         variant="outlined"
@@ -21,6 +21,6 @@ export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
         {...fields}
         {...props}
       />
-    </>
+    </Stack>
   );
 };

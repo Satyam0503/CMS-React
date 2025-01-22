@@ -12,7 +12,7 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
   const [field, meta] = useField(props);
   
   return (
-    <>
+    <Stack spacing={.5}>
       <Typography variant="body1" id="select-label">
         {label}
       </Typography>
@@ -29,6 +29,6 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
       <FormHelperText>
         {(meta.touched && meta.error) && meta.error}
       </FormHelperText>
-    </>
+    </Stack>
   );
 };

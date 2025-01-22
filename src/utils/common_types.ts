@@ -33,13 +33,13 @@ export interface EmployeeModel {
   phoneNumber: string;
   bloodGroup: string;
   address: string;
-  jobRole:string;
+  jobRole: string;
   password: string;
   dateOfJoining: Dayjs | null;
   personalEmail: string;
   emergencyContact: string;
-  status:string| boolean;
-  isEmailVerified?:boolean;
+  status: string | boolean;
+  isEmailVerified?: boolean;
 }
 
 export interface RoleModel {
@@ -49,6 +49,15 @@ export interface RoleModel {
   isNotEditable: boolean;
   isDefault: boolean;
   userRoles: [string];
+}
+
+export interface JobModal {
+  jobId?: string;
+  title: string;
+  vacancies: number;
+  jobType: string;
+  status: boolean | string;
+  description: string;
 }
 
 export interface UserEducationType {
@@ -135,7 +144,7 @@ export type ColumnListTypes = {
   minWidth?: number;
   build?: any;
   format?: (value: any) => any;
-  avatarCell?:(row:any)=>ReactNode;
+  avatarCell?: (row: any) => ReactNode;
 };
 
 // Api respone data types
@@ -157,6 +166,9 @@ export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
 export type GetEmployeeDetailsResponseData = ResponseData<EmployeesDataTypes>;
+
+
+export type AddJobResponseData = ResponseData<JobModal>;
 
 export type AddUpdateSummaryResponseData = ResponseData<EmployeesDataTypes>;
 
