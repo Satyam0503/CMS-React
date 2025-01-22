@@ -22,12 +22,6 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 // Generate classes
 @include generate-color-classes($color-list);
 
-.skills-chips {
-  svg :hover {
-    color: $white !important;
-  }
-}
-
 .coverChange {
   position: absolute !important;
 

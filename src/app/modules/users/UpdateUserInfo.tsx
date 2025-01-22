@@ -34,7 +34,7 @@ const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
 
 export default function UserInfo(props: PropsType) {
   const intl = useIntl();
-  const token = useAppSelector(state=>state.auth.token)!;
+  const token = useAppSelector((state) => state.auth.token)!;
   const { userDetails: currentUser, setRefresh, isRefresh } = useUserDetails();
   const { open, setOpen } = props;
 
@@ -121,7 +121,6 @@ export default function UserInfo(props: PropsType) {
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
-                  {" "}
                   {intl.formatMessage({ id: "USER.FIRST_NAME" })}
                 </Typography>
                 <TextField
@@ -137,7 +136,6 @@ export default function UserInfo(props: PropsType) {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
-                  {" "}
                   {intl.formatMessage({ id: "USER.LAST_NAME" })}
                 </Typography>
                 <TextField
@@ -170,7 +168,6 @@ export default function UserInfo(props: PropsType) {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
-                  {" "}
                   {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                 </Typography>
                 <TextField
@@ -184,7 +181,6 @@ export default function UserInfo(props: PropsType) {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
-                  {" "}
                   {intl.formatMessage({ id: "USER.PHONE" })}
                 </Typography>
                 <TextField
@@ -224,7 +220,7 @@ export default function UserInfo(props: PropsType) {
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {" "}
-                  {intl.formatMessage({ id: "USER.PERSONAL.EMAIL" })}
+                  {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
                 </Typography>
                 <TextField
                   fullWidth
@@ -289,7 +285,7 @@ export default function UserInfo(props: PropsType) {
                     label="Save"
                     type="submit"
                     variant="contained"
-                    disabled={ !(isValid && dirty) || isSubmitting}
+                    disabled={!(isValid && dirty) || isSubmitting}
                   />
                 </Stack>
               </Grid>

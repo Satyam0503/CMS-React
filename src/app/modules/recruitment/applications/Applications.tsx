@@ -70,7 +70,7 @@ export default function Applications() {
             alignItems={"center"}
           >
             <SearchInput search={search} setSearch={setSearch} />
-            <SearchInput search={search} setSearch={setSearch} />
+
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
@@ -78,7 +78,7 @@ export default function Applications() {
                 ariaLabel="Filter Application"
               />
               <AddApplicant />
-              
+
               <CustomIconButton
                 icon={<Download />}
                 tooltip="Import Excel"

@@ -27,7 +27,7 @@ const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
 
 // User Details Provider
 export const UserDetailsProvider = (props: PropTypes) => {
-  const token = useAppSelector(state=>state.auth.token)!;
+  const token = useAppSelector((state) => state.auth.token)!;
   const [userDetails, setUserDetails] = useState<EmployeesDataTypes>();
   const [isRefresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,6 @@ export const UserDetailsProvider = (props: PropTypes) => {
   if (loading) {
     return (
       <Typography variant="h4">
-        {" "}
         {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
       </Typography>
     );

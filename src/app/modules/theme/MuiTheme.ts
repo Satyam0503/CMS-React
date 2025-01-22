@@ -310,12 +310,12 @@ export const MuiTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          padding: ".5rem 1rem",
+          paddingBlock: ".5rem",
         },
         root: {
-          padding:0,
+          padding: 0,
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
-            paddingRight: 6,
+            paddingRight: 0,
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",
@@ -331,13 +331,6 @@ export const MuiTheme = createTheme({
         root: {
           color: colors.alpha.neutral[500],
           padding: "5px",
-        },
-      },
-    },
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          height: 40,
         },
       },
     },
@@ -378,17 +371,14 @@ export const MuiTheme = createTheme({
           borderRadius: 4,
           background: colors.alpha.primary[100],
           color: colors.alpha.primary[500],
-          deleteIcon: {
-            color: colors.alpha.primary[900],
-          },
+          fontSize: "12px",
 
-          "&:hover": {
-            background: colors.alpha.primary[500],
-            color: colors.alpha.primary[200],
+          ".MuiChip-deleteIcon": {
+            color: colors.alpha.primary[500],
+            "&:hover": {
+              color: colors.alpha.primary[500],
+            },
           },
-        },
-        deleteIcon: {
-          color: colors.alpha.primary[500],
         },
       },
     },
@@ -445,13 +435,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    // MuiDialogContent: {
-    //   styleOverrides: {
-    //     root: {
-    //       padding: "50px 40px",
-    //     },
-    //   },
-    // },
+    MuiStack: {
+      styleOverrides: {
+        root: {
+          padding: "0px !important",
+        },
+      },
+    },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -556,6 +546,15 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    // MuiTextField: {
+    //   styleOverrides: {
+    //     root: {
+    //       " &.MuiOutlinedInput": {
+    //         Padding: "0px",
+    //       },
+    //     },
+    //   },
+    // },
     MuiToggleButton: {
       defaultProps: {
         disableRipple: true,

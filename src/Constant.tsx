@@ -1,4 +1,10 @@
-import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
+import {
+  Delete,
+  DeleteOutline,
+  Edit,
+  Place,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Button,
   Dialog,
@@ -11,8 +17,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { EmployeesDataTypes } from "./utils/common_types";
-import { CustomisedModal } from "./app/modules/components/CustomizedModal";
-import CustomisedButton from "./app/modules/components/CustomisedButton";
+import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -265,16 +270,10 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
-        <IconButton onClick={() => handleEdit(row)}>
-          <Edit />
-        </IconButton>
+        <CustomIconButton icon={<Edit />} handleClick={() => handleEdit(row)} />
       )}
-      <IconButton>
-        <Delete />
-      </IconButton>
-      <IconButton>
-        <Visibility />
-      </IconButton>
+      <CustomIconButton icon={<DeleteOutline />} />
+      <CustomIconButton icon={<Visibility />} />
     </Stack>
   );
 };
@@ -286,9 +285,8 @@ const AddressDetailsIcon = (props: { address: string }) => {
   }
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <Place />
-      </IconButton>
+      <CustomIconButton icon={<Place />} handleClick={() => setOpen(true)} />
+
       <Dialog
         onClose={handleClose}
         open={open}

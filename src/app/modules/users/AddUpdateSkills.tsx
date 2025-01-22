@@ -79,8 +79,10 @@ export const AddUpdateSkills = (props: PropsType) => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" disablePointerEvents={!newSkill}>
-                  <CustomIconButton icon={<Add />}  handleClick={handleAddSkill}></CustomIconButton> />
-                
+                  <CustomIconButton
+                    icon={<Add />}
+                    handleClick={handleAddSkill}
+                  ></CustomIconButton>
                 </InputAdornment>
               ),
             }}
@@ -101,11 +103,7 @@ export const AddUpdateSkills = (props: PropsType) => {
           </Stack>
         </Stack>
 
-        <Stack
-          direction={"row"}
-          spacing={1}
-       justifyContent={"flex-end"}
-        >
+        <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
           <CustomisedButton
             variant="outlined"
             label="Cancel"

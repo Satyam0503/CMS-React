@@ -4,7 +4,7 @@ import { colors } from "../theme/MuiTheme";
 
 type Props = {
   icon: JSX.Element;
-  number: string;
+  number: number | string;
   title: string;
   iconBg: string;
   iconColor: string;

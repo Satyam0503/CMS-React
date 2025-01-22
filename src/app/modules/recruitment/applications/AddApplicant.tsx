@@ -2,9 +2,9 @@ import { Box, FormHelperText, Grid, Stack, Typography } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { memo, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add,  CloudUploadOutlined } from "@mui/icons-material";
+import { Add, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
-import {  Formik,  } from "formik";
+import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
 import { TextInput } from "../../components/form_component/TextInput";
 import CustomisedButton from "../../components/CustomisedButton";
@@ -18,7 +18,7 @@ interface types {
   resume: null | File;
 }
 
-const initialValues:types = {
+const initialValues: types = {
   firstName: "",
   lastName: "",
   email: "",
@@ -60,7 +60,7 @@ export const AddApplicant = memo(() => {
             validationSchema={applicantSchema}
             onSubmit={(values, { setSubmitting }) => {}}
           >
-            {(formik) => {              
+            {(formik) => {
               return (
                 <form onSubmit={formik.handleSubmit}>
                   <Grid container spacing={{ xs: 1, md: 2 }}>

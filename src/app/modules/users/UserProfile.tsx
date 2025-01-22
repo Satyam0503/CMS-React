@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
@@ -7,6 +7,15 @@ import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { useUserDetails } from "./UserDataProvider";
 import dayjs from "dayjs";
 import { useAppSelector } from "../../Redux/hooks";
+import IconStat from "../components/IconStat";
+import { colors } from "../theme/MuiTheme";
+import {
+  Build,
+  Calculate,
+  CalendarMonth,
+  CorporateFareOutlined,
+  HourglassBottom,
+} from "@mui/icons-material";
 // import { getEmployeeDetails } from "./userservices";
 
 // get token and id from store
@@ -66,56 +75,43 @@ export default function UserProfile() {
       </Grid>
       <Grid item xs={12} md={9}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
           display={"flex"}
-          justifyContent={"space-evenly"}
-          className="w-100 bg-white p-4 rounded "
+          justifyContent={"center"}
+          bgcolor={colors.alpha.white[500]}
+          borderRadius={1}
         >
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/calender.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} md={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.secondary[100]}
+                icon={<CalendarMonth fontSize="large" />}
+                iconColor={colors.alpha.secondary[500]}
+                number={14}
+                title="Years of experience"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">14</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.EXP" })}
-              </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/experience.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} md={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.primary[100]}
+                icon={<CorporateFareOutlined fontSize="large" />}
+                iconColor={colors.alpha.primary[500]}
+                number={6}
+                title="Years in Codeji"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">6</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.EXP_CURRENT" })}
-              </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/skills.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} md={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.danger[100]}
+                icon={<Build fontSize="large" />}
+                iconColor={colors.alpha.danger[400]}
+                number={currentUser?.skills?.length || 0}
+                title="Skills holder"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">
-                {currentUser?.skills?.length || 0}+
-              </Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
-              </Typography>
             </Box>
           </Grid>
         </Stack>

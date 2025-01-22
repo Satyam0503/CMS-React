@@ -221,7 +221,7 @@ export default function AboutUser() {
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
-        <Grid item sm={12}>
+        <Grid item xs={12}>
           <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
@@ -252,7 +252,7 @@ export default function AboutUser() {
                 fullWidth
                 multiline
                 id="user_summary"
-                placeholder="Type..."
+                placeholder="  Type..."
                 variant="outlined"
                 onChange={(e) => (summary.current = e.target.value)}
               />
@@ -263,7 +263,7 @@ export default function AboutUser() {
             )}
           </Card>
         </Grid>
-        <Grid item sm={12}>
+        <Grid item xs={12}>
           <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
@@ -286,122 +286,128 @@ export default function AboutUser() {
                 />
               )}
             </Stack>
-            <Grid container>
+            <Grid container spacing={0.5}>
               <Grid item xs={12}>
                 <Typography variant="body2">
                   {intl.formatMessage({ id: "USER.ADDRESS" })}
                 </Typography>
-                <Typography>{currentUser?.address || "NA"} </Typography>
+                <Typography variant="body1">
+                  {currentUser?.address || "NA"}{" "}
+                </Typography>
               </Grid>
 
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                  </Typography>
-                  <Typography variant="body1">
-                    {currentUser?.email || "NA"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.PHONE" })}
-                  </Typography>
-                  <Typography variant="body1">
-                    {currentUser?.phoneNumber || "NA"}
-                  </Typography>
-                </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.email || "NA"}
+                </Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.DOB" })}
-                  </Typography>
-                  <Typography>
-                    {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.GENDER" })}
-                  </Typography>
-                  <Typography>{currentUser?.gender}</Typography>
-                </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.PHONE" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.phoneNumber || "NA"}
+                </Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "TRANSLATOR.LANGUAGES" })}
-                  </Typography>
-                  <Typography>{currentUser?.languagesKnown || "NA"}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.DOJ" })}
-                  </Typography>
-                  <Typography>
-                    {dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}
-                  </Typography>
-                </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.DOB" })}
+                </Typography>
+                <Typography variant="body1">
+                  {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}
+                </Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.EMP_ID" })}
-                  </Typography>
-                  <Typography>{currentUser?.employeeId}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.DEPARTMENT" })}
-                  </Typography>
-                  <Typography>{currentUser?.department || "NA"}</Typography>
-                </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.GENDER" })}
+                </Typography>
+                <Typography variant="body1">{currentUser?.gender}</Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
-                  </Typography>
-                  <Typography>
-                    {currentUser?.reportingManager || "NA"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.TEAM_LEAD" })}
-                  </Typography>
-                  <Typography>{currentUser?.teamLead || "NA"}</Typography>
-                </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "TRANSLATOR.LANGUAGES" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.languagesKnown || "NA"}
+                </Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
-                  </Typography>
-                  <Typography>{currentUser?.personalEmail || "NA"}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
-                  </Typography>
-                  <Typography>
-                    {currentUser?.emergencyContact || "NA"}
-                  </Typography>
-                </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.DOJ" })}
+                </Typography>
+                <Typography variant="body1">
+                  {dateFormatter(currentUser?.dateOfJoining!, "DD MMMM YYYY")}
+                </Typography>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
-                  </Typography>
-                  <Typography>{currentUser?.bloodGroup || "NA"}</Typography>
-                </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.EMP_ID" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.employeeId}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.DEPARTMENT" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.department || "NA"}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.reportingManager || "NA"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.TEAM_LEAD" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.teamLead || "NA"}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.personalEmail || "NA"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.emergencyContact || "NA"}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body2">
+                  {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+                </Typography>
+                <Typography variant="body1">
+                  {currentUser?.bloodGroup || "NA"}
+                </Typography>
               </Grid>
             </Grid>
           </Card>
         </Grid>
-        <Grid item sm={12}>
+        <Grid item xs={12}>
           <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
@@ -412,9 +418,11 @@ export default function AboutUser() {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.SKILLS" })}
               </Typography>
-              <IconButton onClick={() => setSkillsModalOpen(true)}>
-                <Add />
-              </IconButton>
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setSkillsModalOpen(true)}
+              />
+
               {isSkillsModalOpen && (
                 <AddUpdateSkills
                   skills={skills}
@@ -424,12 +432,7 @@ export default function AboutUser() {
               )}
             </Stack>
 
-            <Stack
-              direction="row"
-              gap={1}
-              className="skills-chips"
-              flexWrap={"wrap"}
-            >
+            <Stack direction="row" gap={1} flexWrap={"wrap"}>
               {skills?.length === 0 ? (
                 <Typography variant="body2">
                   {intl.formatMessage({ id: "ADD.SKILLS" })}
@@ -442,8 +445,8 @@ export default function AboutUser() {
             </Stack>
           </Card>
         </Grid>
-        <Grid item sm={12}>
-          <Card sx={{ p: 4 }}>
+        <Grid item xs={12}>
+          <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
               display={"flex"}
@@ -453,9 +456,10 @@ export default function AboutUser() {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
               </Typography>
-              <IconButton onClick={() => setEducationModalOpen(true)}>
-                <Add />
-              </IconButton>
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setEducationModalOpen(true)}
+              />
             </Stack>
             <Stack spacing={2}>
               {educations.length === 0 ? (
@@ -473,24 +477,19 @@ export default function AboutUser() {
                     <Stack direction="row" alignItems={"center"}>
                       <School sx={{ marginInlineEnd: 1 }} />
                       <Stack>
-                        <Typography
-                          variant="body1"
-                          className="text-gray-800 text-hover-primary fw-semibold "
-                        >
+                        <Typography variant="body1" fontWeight={500}>
                           {education.title}
                         </Typography>
                         <Stack direction="row" spacing={1}>
                           <Typography
                             variant="body2"
-                            className="fw-semibold d-block "
+                            display={"block"}
+                            fontWeight={600}
                           >
                             {education.collegeName}
                           </Typography>
-                          <Typography
-                            variant="body2"
-                            className="text-muted fw-semibold d-block "
-                          >
-                            <CalendarMonth sx={{ height: "14px" }} />
+                          <Typography variant="body2" display={"block"}>
+                            <CalendarMonth sx={{ height: ".75rem" }} />
                             {dateFormatter(
                               education.startDate,
                               "MMM YYYY"
@@ -518,7 +517,7 @@ export default function AboutUser() {
           </Card>
         </Grid>
 
-        <Grid item sm={12}>
+        <Grid item xs={12}>
           <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
@@ -529,9 +528,10 @@ export default function AboutUser() {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
               </Typography>
-              <IconButton onClick={() => setCertificationModalOpen(true)}>
-                <Add />
-              </IconButton>
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setCertificationModalOpen(true)}
+              />
             </Stack>
 
             <Stack spacing={2}>
@@ -553,7 +553,6 @@ export default function AboutUser() {
                       <Stack>
                         <Typography
                           variant="body1"
-                          className=" text-hover-primary "
                           fontWeight={500}
                           color={colors.alpha.neutral[800]}
                         >
@@ -588,16 +587,19 @@ export default function AboutUser() {
                       </Stack>
                     </Stack>
                     <Stack direction="row" spacing={1}>
-                      <IconButton
-                        onClick={() => handleCertificationUpdate(certification)}
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton>
-                        <DeleteOutline
-                          onClick={() => deleteCertification(certification.id)}
-                        />
-                      </IconButton>
+                      <CustomIconButton
+                        icon={<Edit />}
+                        handleClick={() =>
+                          handleCertificationUpdate(certification)
+                        }
+                      />
+
+                      <CustomIconButton
+                        icon={<DeleteOutline />}
+                        handleClick={() =>
+                          deleteCertification(certification.id)
+                        }
+                      />
                     </Stack>
                   </Stack>
                 ))

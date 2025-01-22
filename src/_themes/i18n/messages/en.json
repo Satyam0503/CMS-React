@@ -62,6 +62,7 @@
   "JOB.TITLE": "Title",
   "INFO.DESCRIPTION": "Description",
   "INFO.SUMMARY": "Summary",
+  "INFO.TITLE": "Title",
   "JOB.DESCRIPTION": "Job Description",
   "JOB.DESCRIPTION_EDIT": "Edit job description ",
   "JOB.REQUIREMENTS_EDIT": "Edit job requirements",

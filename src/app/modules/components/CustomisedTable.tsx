@@ -21,8 +21,8 @@ interface PropsTypes<Row, Columns> {
   rowsPerPage: number;
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
-  openViewModal?: (row:Row) => void;
-  handleDownload?:()=>void;
+  openViewModal?: (row: Row) => void;
+  handleDownload?: () => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -37,7 +37,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
-    handleDownload
+    handleDownload,
   } = props;
   return (
     <Grid container>
@@ -87,25 +87,21 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                             align={column?.align || "left"}
                             sx={{ minWidth: column.minWidth || 140 }}
                           >
-                            { column.avatarCell ? (
-                                column.avatarCell(row)
-                            ) : column.format ? (
-                              column.format(value)
-                            ) : column.build ? (
-                              column.id === "action" ? (
-                                column.build(
-                                  row,
-                                  handleEdit,
-                                  openConfirmationModal,
-                                  openViewModal,
-                                  handleDownload,
-                                )
-                              ) : (
-                                column.build(value)
-                              )
-                            ) : (
-                              value
-                            )}
+                            {column.avatarCell
+                              ? column.avatarCell(row)
+                              : column.format
+                              ? column.format(value)
+                              : column.build
+                              ? column.id === "action"
+                                ? column.build(
+                                    row,
+                                    handleEdit,
+                                    openConfirmationModal,
+                                    openViewModal,
+                                    handleDownload
+                                  )
+                                : column.build(value)
+                              : value}
                           </TableCell>
                         );
                       })}
