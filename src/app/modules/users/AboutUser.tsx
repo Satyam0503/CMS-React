@@ -222,14 +222,15 @@ export default function AboutUser() {
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
         <Grid item sm={12}>
-          <Card sx={{ p: 4 }}>
+          <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
               display={"flex"}
               justifyContent={"space-between"}
-              mb={1}
             >
-              <Typography variant="h5">Summary</Typography>
+              <Typography variant="h5">
+                {intl.formatMessage({ id: "INFO.SUMMARY" })}
+              </Typography>
               {isSummaryEdit ? (
                 <CustomisedButton
                   label="Update"
@@ -239,13 +240,15 @@ export default function AboutUser() {
                   // disabled={summary.current.length===0}
                 />
               ) : (
-                <IconButton onClick={() => setSummaryEdit(true)}>
-                  <Edit />
-                </IconButton>
+                <CustomIconButton
+                  icon={<Edit />}
+                  handleClick={() => setSummaryEdit(true)}
+                />
               )}
             </Stack>
             {isSummaryEdit ? (
               <TextField
+                sx={{ mt: 1 }}
                 fullWidth
                 multiline
                 id="user_summary"
@@ -261,7 +264,7 @@ export default function AboutUser() {
           </Card>
         </Grid>
         <Grid item sm={12}>
-          <Card sx={{ p: 4 }}>
+          <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
               display={"flex"}
@@ -271,9 +274,11 @@ export default function AboutUser() {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "PROFILE.PI" })}
               </Typography>
-              <IconButton onClick={() => setUserUpdateModalOpen(true)}>
-                <Edit />
-              </IconButton>
+              <CustomIconButton
+                icon={<Edit />}
+                handleClick={() => setUserUpdateModalOpen(true)}
+              />
+
               {isUserModalOpen && (
                 <UpdateUserInfo
                   open={isUserModalOpen}
@@ -397,7 +402,7 @@ export default function AboutUser() {
           </Card>
         </Grid>
         <Grid item sm={12}>
-          <Card sx={{ p: 4 }}>
+          <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
               display={"flex"}
@@ -514,7 +519,7 @@ export default function AboutUser() {
         </Grid>
 
         <Grid item sm={12}>
-          <Card sx={{ p: 4 }}>
+          <Card sx={{ p: 2 }}>
             <Stack
               direction="row"
               display={"flex"}

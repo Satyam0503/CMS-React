@@ -1141,7 +1141,6 @@ export const MuiTheme = createTheme({
     h2: {
       fontWeight: 500,
       fontSize: 32,
-      color: colors.alpha.white[500],
     },
     h3: {
       fontWeight: 600,

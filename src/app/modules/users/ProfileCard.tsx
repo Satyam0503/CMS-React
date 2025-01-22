@@ -190,13 +190,17 @@ export default function ProfileCard(props: ProfileInfo) {
           width={"100%"}
         >
           <Stack>
-            <Typography variant="h2">{age}</Typography>
+            <Typography variant="h2" color={"white"}>
+              {age}
+            </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.AGE" })}
             </Typography>
           </Stack>
           <Stack>
-            <Typography variant="h2">{bloodGroup}test</Typography>
+            <Typography variant="h2" color={"white"}>
+              {bloodGroup}test
+            </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
             </Typography>
@@ -229,7 +233,12 @@ export default function ProfileCard(props: ProfileInfo) {
                 }}
               >
                 <Container
-                  style={{ display: "flex", justifyContent: "center", gap: 1 }}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
                 >
                   <Grid item xs={6} md={6} textAlign={"center"}>
                     <CloudUploadOutlined
