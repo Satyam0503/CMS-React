@@ -325,7 +325,7 @@ export default function AboutUser() {
                 <Typography variant="body2">
                   {intl.formatMessage({ id: "USER.GENDER" })}
                 </Typography>
-                <Typography variant="body1">{currentUser?.gender}</Typography>
+                <Typography variant="body1">{currentUser?.gender || "NA"}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -350,7 +350,7 @@ export default function AboutUser() {
                   {intl.formatMessage({ id: "USER.EMP_ID" })}
                 </Typography>
                 <Typography variant="body1">
-                  {currentUser?.employeeId}
+                  {currentUser?.employeeId || "NA"}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>

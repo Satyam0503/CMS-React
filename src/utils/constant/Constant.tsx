@@ -12,9 +12,14 @@ import {
   ColumnListTypes,
   EmployeeModel,
   EmployeesDataTypes,
+  JobModal,
   RolesType,
 } from "../common_types";
-import { dateFormatter, applicationStatusDecoder } from "../common";
+import {
+  dateFormatter,
+  applicationStatusDecoder,
+  statusDecoder,
+} from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
@@ -39,10 +44,9 @@ export const ServiceUrl = {
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
-
   // jobs
-  ADD_JOB_VACANCY:`${BaseUrl}/api/JobVacancy/AddJobVacancy`,
-  GET_ALL_JOBS:`${BaseUrl}/api/JobVacancy/getAllJobs`,
+  ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
+  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/getAllJobs`,
 
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
@@ -124,29 +128,28 @@ export const JobTime = [
     value: "Part Time",
   },
   {
-    id:3,
-    label:"Internship",
-    value:"Internship"
-  }
-]
+    id: 3,
+    label: "Internship",
+    value: "Internship",
+  },
+];
 export const JobType = [
   {
-    id:1,
-    label:"Onsite",
-    value:"Onsite"
+    id: 1,
+    label: "Onsite",
+    value: "Onsite",
   },
   {
-    id:2,
-    label:"Hybrid",
-    value:"Hybrid"
+    id: 2,
+    label: "Hybrid",
+    value: "Hybrid",
   },
   {
-    id:3,
-    label:"Remote",
-    value:"Remote"
-  }
-]
-
+    id: 3,
+    label: "Remote",
+    value: "Remote",
+  },
+];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
@@ -398,39 +401,35 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "jobTitle",
     label: "Job Title",
     minWidth: 180,
+    avatarCell: (row: JobModal) => {
+      return <AvatarCell title={row.title} subTitle={row.jobType} />;
+    },
   },
   {
-    id: "department",
-    label: "Department",
-  },
-  {
-    id: "noOfPosition",
+    id: "vacancies",
     label: "No of Position",
-  },
-  {
-    id: "interviewDate",
-    label: "Interview Date",
-    format: (date) => dateFormatter(date, "DD MMM YYYY"),
   },
   {
     id: "jobType",
     label: "Job Type",
   },
   {
-    id: "jobTime",
-    label: "Job Time",
-  },
-  {
     id: "status",
     label: "Status",
+    build: (status: boolean) => {
+      const className = status ? "success" : "danger";
+      return (
+        <StyleStatus label={statusDecoder(status)} className={className} />
+      );
+    },
   },
   {
     id: "action",
     label: "Action",
     build: (
-      row: any,
-      handleJobEdit: (row: any) => void,
-      openDeleteModal: (row: any) => void
+      row:JobModal,
+      handleJobEdit: (row:JobModal) => void,
+      openDeleteModal: (row:JobModal) => void
     ) => (
       <ActionComponent
         row={row}

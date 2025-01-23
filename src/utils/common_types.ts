@@ -168,7 +168,7 @@ export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetEmployeeDetailsResponseData = ResponseData<EmployeesDataTypes>;
 
 
-export type AddJobResponseData = ResponseData<JobModal>;
+export type JobsResponseData = ResponseData<JobModal>;
 
 export type AddUpdateSummaryResponseData = ResponseData<EmployeesDataTypes>;
 

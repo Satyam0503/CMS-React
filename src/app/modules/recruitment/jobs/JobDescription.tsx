@@ -37,7 +37,7 @@ const JobDescription: FC<PropsTypes> = ({
   handleClose,
   handleAddEditJob,
 }) => {
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobDescription, setJobDescription] = useState( initialValues.description ? initialValues.description : "");
   const intl = useIntl();
 
   const {

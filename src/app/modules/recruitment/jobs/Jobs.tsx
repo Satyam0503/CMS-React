@@ -14,12 +14,13 @@ import { JobRequirementTableColumnList } from "../../../../utils/constant/Consta
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
-import { addJobVacancy } from "../services";
+import { addJobVacancy, getAllJobVacancies } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 
 import { toast } from "react-toastify";
-import { statusDecoder } from "../../../../utils/common";
+import { statusDecoder, statusEncoder } from "../../../../utils/common";
 import { useEffect } from "react";
+import { ViewJobDetails } from "./ViewJobDetails";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -32,59 +33,37 @@ const initialValues: JobModal = {
 
 export default function Jobs() {
   const intl = useIntl();
+  const [jobInitialValues, setJobInitialValues] = React.useState(initialValues);
   const [openModal, setOpenModal] = React.useState(false);
   const [page, setPage] = React.useState<number>(0);
   const [search, setSearch] = React.useState("");
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isConfirmationModalOpen, setConfirmModalOpen] = React.useState(false);
-  const [selectedJob, setSelectedJob] = React.useState<any | undefined>();
-  const [jobList, setJobList] = React.useState<any[]>([]);
+  const [selectedJob, setSelectedJob] = React.useState<JobModal | undefined>();
+  const [jobList, setJobList] = React.useState<JobModal[]>([]);
   const [isEdit, setEdit] = React.useState(false);
-
+  const [loading, setLoading] = React.useState(false);
+  const [isRefresh, setRefresh] = React.useState(false);
+  const [isViewModalOpen, setViewModalOpen] = React.useState(false);
   const token = useAppSelector((state) => state.auth.token)!;
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
 
   const handleClose = () => {
     setEdit(false);
     setOpenModal(false);
+    setJobInitialValues(initialValues);
   };
 
-  const handleEditJob = () => {};
-
-  const handleAddEditJob = async (
-    values: JobModal,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => {
-    if (isEdit) {
-      // handle Edit logic
-    } else {
-      const payload = { ...values, status:statusDecoder(values.status as string) };
-      try {
-        const response = await addJobVacancy(payload, token);
-        const { message, success } = response.data;
-        if (!success) {
-          throw new Error(message);
-        }
-        toast.success(message);
-        setSubmitting(false);
-        handleClose();
-      } catch (error: any) {
-        toast.error(error.message);
-        setSubmitting(false);
-      } finally {
-      }
-    }
+  const handleEditJob = (job: JobModal) => {
+    setJobInitialValues({
+      ...job,
+      status: statusDecoder(job.status as boolean),
+    });
+    setOpenModal(true);
+    setEdit(true);
   };
 
-  const deleteJob = () => {
-    // write job deletion logic
-    console.log("Job Deleted");
-  };
-  const openConfirmationModal = (job: any) => {
+  const openConfirmationModal = (job: JobModal) => {
     setConfirmModalOpen(true);
     setSelectedJob(job);
   };
@@ -94,9 +73,68 @@ export default function Jobs() {
     setConfirmModalOpen(false);
   };
 
-  useEffect(()=>{
-    // fetch all jobs;
-  },[]);
+  const handleJobDetailView = (job:JobModal) => {
+    setSelectedJob(job)
+    setViewModalOpen(true);
+  };
+
+  const handledeleteJob = (res: string) => {
+    if (res !== "ok" || selectedJob === undefined) {
+      toast.error("Error try Again");
+      closeConfirmationModal();
+    } else {
+      // write job deletion logic
+      console.log("Job Deleted");
+    }
+  };
+
+  const handleAddEditJob = async (
+    values: JobModal,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    if (isEdit) {
+      // handle Edit logic
+    } else {
+      const payload = {
+        ...values,
+        status: statusEncoder(values.status as string),
+      };
+      try {
+        const response = await addJobVacancy(payload, token);
+        const { message, success } = response.data;
+        if (!success) {
+          throw new Error(message);
+        }
+        toast.success(message);
+        setRefresh(!isRefresh);
+        setSubmitting(false);
+        handleClose();
+      } catch (error: any) {
+        toast.error(error.message);
+        setSubmitting(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await getAllJobVacancies(token);
+        const { statusCode, message, success, methodResults } = response.data;
+        if (!(success && statusCode === 200)) {
+          throw new Error(message);
+        }
+        setJobList(methodResults);
+        setTotalRecords(methodResults.length);
+        setLoading(false);
+      } catch (error: any) {
+        toast.error(error.message);
+        setLoading(false);
+      }
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, [isRefresh, search]);
 
   return (
     <>
@@ -130,6 +168,8 @@ export default function Jobs() {
             rowsPerPage={rowPerPage}
             handleEdit={handleEditJob}
             openConfirmationModal={openConfirmationModal}
+            openViewModal={handleJobDetailView}
+            loading={loading}
           />
           {totalRecords > rowPerPage && (
             <Pagination
@@ -146,16 +186,23 @@ export default function Jobs() {
               content="Are you sure you want to delete this Job?"
               open={isConfirmationModalOpen}
               handleClose={closeConfirmationModal}
-              handleConfirmation={deleteJob}
+              handleConfirmation={handledeleteJob}
             />
           )}
           {openModal && (
             <JobDescription
-              initialValues={initialValues}
+              initialValues={jobInitialValues}
               isEdit={isEdit}
               open={openModal}
               handleClose={handleClose}
               handleAddEditJob={handleAddEditJob}
+            />
+          )}
+          {isViewModalOpen && selectedJob && (
+            <ViewJobDetails
+              open={isViewModalOpen}
+              setOpen={setViewModalOpen}
+              jobData={selectedJob}
             />
           )}
         </Stack>

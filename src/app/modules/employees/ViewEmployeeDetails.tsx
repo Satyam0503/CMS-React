@@ -2,7 +2,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { EmployeeModel } from "../../../utils/common_types";
-import { dateFormatter, statusEncoder } from "../../../utils/common";
+import { dateFormatter, statusDecoder, statusEncoder } from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { StyleStatus } from "../components/StyledStatus";
@@ -20,7 +20,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
   function handleClose() {
     setOpen(false);
   }
-  const status = statusEncoder(employeeData.status as boolean);
+  const status = statusDecoder(employeeData.status as boolean);
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>

@@ -13,7 +13,7 @@ import {
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import CustomisedButton from "../components/CustomisedButton";
-import { useFormik } from "formik";
+import { Formik, useFormik } from "formik";
 import { UserCertificationType } from "../../../utils/common_types";
 import { userCertificationSchema } from "../../../utils/Schema/userSchema";
 import { CustomisedModal } from "../components/CustomisedModal";
@@ -64,103 +64,113 @@ export default function AddUpdateCertification(props: PropTypes) {
       <Typography variant="h5">
         {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "INFO.TITLE" })}
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              error={touched.title && Boolean(errors.title)}
-              helperText={touched.title && errors.title && errors.title}
-              {...getFieldProps("title")}
-            />
-          </Grid>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={userCertificationSchema}
+        onSubmit={(values, { setSubmitting }) => {
+          handleAddUpdateCertification(values, setSubmitting);
+        }}
+      >
+        {(formik) => (
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "INFO.TITLE" })}
+                </Typography>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  error={touched.title && Boolean(errors.title)}
+                  helperText={touched.title && errors.title && errors.title}
+                  {...getFieldProps("title")}
+                />
+              </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "APPLICATION.START",
-              })}
-            </Typography>
-            <CustomisedDatePicker
-              name="startDate"
-              value={values.startDate}
-              setValue={handleDateChange("startDate")}
-              maxDate={dayjs()}
-            />
-            <FormHelperText>
-              {touched.startDate && errors.startDate && errors.startDate}
-            </FormHelperText>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography>
-              {intl.formatMessage({
-                id: "APPLICATION.END",
-              })}
-            </Typography>
-            <CustomisedDatePicker
-              name="endDate"
-              value={values.endDate}
-              setValue={handleDateChange("endDate")}
-              minDate={values.startDate || dayjs()}
-            />
-            <FormHelperText>
-              {touched.endDate && errors.endDate && errors.endDate}
-            </FormHelperText>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography>Organization Name</Typography>
-            <TextField
-              fullWidth
-              error={
-                touched.organizationName && Boolean(errors.organizationName)
-              }
-              helperText={
-                touched.organizationName &&
-                errors.organizationName &&
-                errors.organizationName
-              }
-              {...getFieldProps("organizationName")}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "MENU.MODE" })}
-            </Typography>
-            <Select
-              fullWidth
-              variant="outlined"
-              error={touched.type && Boolean(errors.type)}
-              {...getFieldProps("type")}
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({
+                    id: "APPLICATION.START",
+                  })}
+                </Typography>
+                <CustomisedDatePicker
+                  name="startDate"
+                  value={values.startDate}
+                  setValue={handleDateChange("startDate")}
+                  maxDate={dayjs()}
+                />
+                <FormHelperText>
+                  {touched.startDate && errors.startDate && errors.startDate}
+                </FormHelperText>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography>
+                  {intl.formatMessage({
+                    id: "APPLICATION.END",
+                  })}
+                </Typography>
+                <CustomisedDatePicker
+                  name="endDate"
+                  value={values.endDate}
+                  setValue={handleDateChange("endDate")}
+                  minDate={values.startDate || dayjs()}
+                />
+                <FormHelperText>
+                  {touched.endDate && errors.endDate && errors.endDate}
+                </FormHelperText>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography>Organization Name</Typography>
+                <TextField
+                  fullWidth
+                  error={
+                    touched.organizationName && Boolean(errors.organizationName)
+                  }
+                  helperText={
+                    touched.organizationName &&
+                    errors.organizationName &&
+                    errors.organizationName
+                  }
+                  {...getFieldProps("organizationName")}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  {intl.formatMessage({ id: "MENU.MODE" })}
+                </Typography>
+                <Select
+                  fullWidth
+                  variant="outlined"
+                  error={touched.type && Boolean(errors.type)}
+                  {...getFieldProps("type")}
+                >
+                  <MenuItem value="Online">Online</MenuItem>
+                  <MenuItem value="Offline">Offline</MenuItem>
+                </Select>
+                <FormHelperText>
+                  {touched.type && errors.type && errors.type}
+                </FormHelperText>
+              </Grid>
+            </Grid>
+            <Stack
+              direction={"row"}
+              spacing={1}
+              className="justify-content-end mt-4"
             >
-              <MenuItem value="Online">Online</MenuItem>
-              <MenuItem value="Offline">Offline</MenuItem>
-            </Select>
-            <FormHelperText>
-              {touched.type && errors.type && errors.type}
-            </FormHelperText>
-          </Grid>
-        </Grid>
-        <Stack
-          direction={"row"}
-          spacing={1}
-          className="justify-content-end mt-4"
-        >
-          <CustomisedButton
-            label="Cancel"
-            handleClick={handleClose}
-            variant="outlined"
-          />
-          <CustomisedButton
-            label="Save"
-            type="submit"
-            disabled={!(isValid && dirty) || isSubmitting}
-          />
-        </Stack>
-      </form>
+              <CustomisedButton
+                label="Cancel"
+                handleClick={handleClose}
+                variant="outlined"
+              />
+              <CustomisedButton
+                label="Save"
+                type="submit"
+                disabled={!(isValid && dirty) || isSubmitting}
+              />
+            </Stack>
+          </form>
+        )}
+      </Formik>
     </CustomisedModal>
   );
 }
