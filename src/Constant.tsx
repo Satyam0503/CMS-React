@@ -1,6 +1,7 @@
 import {
   Delete,
   DeleteOutline,
+  DeleteOutlineOutlined,
   Edit,
   Place,
   Visibility,
@@ -272,7 +273,7 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       {handleEdit && (
         <CustomIconButton icon={<Edit />} handleClick={() => handleEdit(row)} />
       )}
-      <CustomIconButton icon={<DeleteOutline />} />
+      <CustomIconButton icon={<DeleteOutlineOutlined />} />
       <CustomIconButton icon={<Visibility />} />
     </Stack>
   );

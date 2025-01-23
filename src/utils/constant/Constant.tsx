@@ -1,4 +1,11 @@
-import { Delete, DeleteOutlineOutlined, Download, Edit, Place, Visibility } from "@mui/icons-material";
+import {
+  Delete,
+  DeleteOutlineOutlined,
+  Download,
+  Edit,
+  Place,
+  Visibility,
+} from "@mui/icons-material";
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
@@ -107,14 +114,14 @@ export const bloodGroups = [
 
 export const JobTime = [
   {
-    id:1,
-    label:"Full Time",
-    value:"Full Time"
+    id: 1,
+    label: "Full Time",
+    value: "Full Time",
   },
   {
-    id:2,
-    label:"Part Time",
-    value:"Part Time"
+    id: 2,
+    label: "Part Time",
+    value: "Part Time",
   },
   {
     id:3,
@@ -289,17 +296,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    minWidth:180,
-    avatarCell:(row:any)=>{
-      const applicantName = row.firstName+ " "+ row.lastName;
-      const vacancyName= row.vacanyName;
-      return (
-        <AvatarCell
-          title={applicantName}
-          subTitle={vacancyName}
-        />
-      );
-    }
+    minWidth: 180,
+    avatarCell: (row: any) => {
+      const applicantName = row.firstName + " " + row.lastName;
+      const vacancyName = row.vacanyName;
+      return <AvatarCell title={applicantName} subTitle={vacancyName} />;
+    },
   },
   {
     id: "exprience",
@@ -321,11 +323,15 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "status",
     label: "Status",
-    build: (status:number) => {
+    build: (status: number) => {
       const values = applicationStatusDecoder(status);
-      const className = values==="Pending" ? "warning" 
-      :values === "Shortlisted" ? "success" : "danger";
-      return <StyleStatus label={values} className={className} />
+      const className =
+        values === "Pending"
+          ? "warning"
+          : values === "Shortlisted"
+          ? "success"
+          : "danger";
+      return <StyleStatus label={values} className={className} />;
     },
   },
   {
@@ -336,7 +342,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       handleApplicationEdit: (row: any) => void,
       openConfirmationModal: (row: any) => void,
       openViewApplication: (row: any) => void,
-      handleResumeDownload: (row: any) => void,
+      handleResumeDownload: (row: any) => void
     ) => (
       <ActionComponent
         row={row}
@@ -382,57 +388,57 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const JobRequirementTableColumnList:ColumnListTypes[] =[
+export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
-    id:"serialNo",
-    label:"#",   
-    minWidth:30 
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
   },
   {
-    id:"jobTitle",
-    label:"Job Title",
-    minWidth:180,
+    id: "jobTitle",
+    label: "Job Title",
+    minWidth: 180,
   },
   {
-    id:"department",
-    label:"Department",
+    id: "department",
+    label: "Department",
   },
   {
-    id:"noOfPosition",
-    label:"No of Position"
+    id: "noOfPosition",
+    label: "No of Position",
   },
   {
-    id:"interviewDate",
-    label:"Interview Date",
-    format:(date) => dateFormatter(date,"DD MMM YYYY")
+    id: "interviewDate",
+    label: "Interview Date",
+    format: (date) => dateFormatter(date, "DD MMM YYYY"),
   },
   {
-    id:"jobType",
-    label:"Job Type",
+    id: "jobType",
+    label: "Job Type",
   },
   {
-    id:"jobTime",
-    label:"Job Time",
+    id: "jobTime",
+    label: "Job Time",
   },
   {
-    id:"status",
-    label:"Status",
+    id: "status",
+    label: "Status",
   },
   {
-    id:"action",
-    label:"Action",
-    build:(
-      row:any,
-      handleJobEdit:(row:any)=>void,
-      openDeleteModal:(row:any)=>void
-    )=>(
-      <ActionComponent 
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleJobEdit: (row: any) => void,
+      openDeleteModal: (row: any) => void
+    ) => (
+      <ActionComponent
         row={row}
         handleEdit={handleJobEdit}
         openConfirmationModal={openDeleteModal}
       />
-    )
-  }
+    ),
+  },
 ];
 
 interface ActionComponentProps<Row> {
@@ -440,10 +446,16 @@ interface ActionComponentProps<Row> {
   handleEdit?: (row: Row) => void;
   openConfirmationModal?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?:(row:Row)=>void;
+  handleDownload?: (row: Row) => void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal,handleDownload } = props;
+  const {
+    row,
+    handleEdit,
+    openConfirmationModal,
+    openViewModal,
+    handleDownload,
+  } = props;
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
@@ -457,7 +469,7 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       {openConfirmationModal && (
         <CustomIconButton
           handleClick={() => openConfirmationModal(row)}
-          icon={<DeleteOutlineOutlined/>}
+          icon={<DeleteOutlineOutlined />}
           tooltip="Delete"
           ariaLabel="Delete"
         />
