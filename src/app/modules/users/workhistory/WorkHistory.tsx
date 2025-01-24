@@ -1,12 +1,17 @@
-import { Card, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { FC } from "react";
+import { Card, Grid, IconButton, Link, Stack, Typography } from "@mui/material";
+import { FC, useState } from "react";
 
 import { useIntl } from "react-intl";
 import { CalendarIcon } from "@mui/x-date-pickers";
-import { Add, CorporateFare, DeleteOutline, Edit } from "@mui/icons-material";
+import {
+  Business,
+  CorporateFare,
+  DeleteOutline,
+  Edit,
+} from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
-import IconStat from "../../components/IconStat";
 import { CustomIconButton } from "../../components/CustomIconButton";
+import { AddUpdateWorkHistory } from "./AddUpdateWorkHistory";
 
 export const WorkHistory: FC = () => {
   const intl = useIntl();
@@ -18,14 +23,14 @@ export const WorkHistory: FC = () => {
             direction={"row"}
             display={"flex"}
             justifyContent={"space-between"}
-            mb={1}
           >
-            <Typography variant="h5">
+            <Typography variant="h5" mb={2}>
               {intl.formatMessage({ id: "MENU.WORK_HISTORY" })}
             </Typography>
-            <CustomIconButton icon={<Add />} />
-          </Stack>
 
+            {/* <CustomIconButton icon={<Add />}  /> */}
+            <AddUpdateWorkHistory />
+          </Stack>
           <Grid container display={"flex"} flexDirection={"column"} gap={1}>
             <Stack
               display={"flex"}
@@ -33,7 +38,6 @@ export const WorkHistory: FC = () => {
               alignItems={"center"}
               direction={"row"}
             >
-              {" "}
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack>
                   <Stack
@@ -47,18 +51,15 @@ export const WorkHistory: FC = () => {
                     }}
                   >
                     <Stack color={colors.alpha.primary[500]}>
-                      <CorporateFare />
+                      <Business />
                     </Stack>
                   </Stack>
                 </Stack>
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    className="text-gray-800 text-hover-primary fw-semibold "
-                  >
+                  <Typography variant="body1">
                     {intl.formatMessage({ id: "COMPANY.PRESENT" })}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" color={colors.alpha.primary[500]}>
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
                   <Stack direction="row" spacing={1} alignItems={"center"}>
@@ -73,16 +74,16 @@ export const WorkHistory: FC = () => {
                 </Stack>
               </Stack>
               <Stack direction={"row"} spacing={1}>
-                <CustomIconButton icon={<Edit />}></CustomIconButton>
-                <CustomIconButton icon={<DeleteOutline />}></CustomIconButton>
+                <CustomIconButton icon={<Edit />} tooltip="Edit" />
+                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
               </Stack>
             </Stack>
 
-            <Grid
-              container
+            <Stack
               display={"flex"}
               justifyContent={"space-between"}
-              gap={1}
+              alignItems={"center"}
+              direction={"row"}
             >
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack>
@@ -97,33 +98,33 @@ export const WorkHistory: FC = () => {
                     }}
                   >
                     <Stack color={colors.alpha.primary[500]}>
-                      <CorporateFare />
+                      <Business />
                     </Stack>
                   </Stack>
                 </Stack>
                 <Stack>
                   <Typography variant="body1">
-                    SoftMicro Technology Org
+                    {intl.formatMessage({ id: "COMPANY.PRESENT" })}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" color={colors.alpha.primary[500]}>
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
                   <Stack direction="row" spacing={1} alignItems={"center"}>
                     <Typography variant="subtitle1" fontWeight={600}>
                       Kuwan wala, Dehradun
                     </Typography>
-                    <Typography variant="subtitle2" className="text-muted">
+                    <Typography variant="subtitle2">
                       <CalendarIcon />
-                      Jun 2022- Jan 2023 (1 Year 5 Months)
+                      Jan 2023- Jun 2024 (1 Year 5 Months)
                     </Typography>
                   </Stack>
                 </Stack>
               </Stack>
               <Stack direction={"row"} spacing={1}>
-                <CustomIconButton icon={<Edit />}></CustomIconButton>
-                <CustomIconButton icon={<DeleteOutline />}></CustomIconButton>
+                <CustomIconButton icon={<Edit />} tooltip="Edit" />
+                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
               </Stack>
-            </Grid>
+            </Stack>
           </Grid>
         </Card>
       </Grid>

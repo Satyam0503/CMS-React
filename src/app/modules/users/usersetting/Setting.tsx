@@ -23,25 +23,25 @@ export default function Setting() {
   const handleClose = () => setOpen(false);
 
   return (
-    <Grid container>
-      <Card sx={{ width: "100%", my: 2, p: 3 }}>
+    <Grid container gap={2}>
+      <Card sx={{ width: "100%", p: 2.25 }}>
         <Typography variant="h5">
           {intl.formatMessage({ id: "SETTING.NOTIFICATION" })}
         </Typography>
         <NotificationSetting />
       </Card>
 
-      <Card sx={{ width: "100%", p: 4 }}>
-        <Typography variant="h5">
+      <Card sx={{ width: "100%", p: 2.25 }}>
+        <Typography variant="h5" mb={2}>
           {intl.formatMessage({ id: "AUTH.INPUT.PASSWORD" })}
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="body1">Old Password</Typography>
             <TextField fullWidth />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="body1">New Password</Typography>
             <TextField fullWidth />
           </Grid>

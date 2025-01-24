@@ -66,14 +66,13 @@ export default function BasicTabs() {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
-          variant={isSmallScreen ? "scrollable" : "standard"}
+          variant={"fullWidth"}
           scrollButtons="auto"
           allowScrollButtonsMobile={true}
         >
           <Tab
             label="About"
             {...a11yProps(0)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
@@ -83,7 +82,6 @@ export default function BasicTabs() {
           <Tab
             label="Leave Tracker"
             {...a11yProps(1)}
-            className="px-16"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
@@ -93,7 +91,6 @@ export default function BasicTabs() {
           <Tab
             label="Performance"
             {...a11yProps(2)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
@@ -103,7 +100,6 @@ export default function BasicTabs() {
           <Tab
             label="Work History"
             {...a11yProps(3)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
@@ -113,7 +109,6 @@ export default function BasicTabs() {
           <Tab
             label="Settings"
             {...a11yProps(4)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],

@@ -144,11 +144,7 @@ export default function AddUpdateCertification(props: PropTypes) {
             </FormHelperText>
           </Grid>
         </Grid>
-        <Stack
-          direction={"row"}
-          spacing={1}
-          className="justify-content-end mt-4"
-        >
+        <Stack direction={"row"} spacing={1} justifyContent={"flex-end"} mt={2}>
           <CustomisedButton
             label="Cancel"
             handleClick={handleClose}
