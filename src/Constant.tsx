@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./utils/common_types";
+import { EmployeeModel } from "./utils/common_types";
 import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
 export const BaseUrl =
@@ -127,8 +127,8 @@ export const EmployeeTabTableColumnList = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];
@@ -187,8 +187,8 @@ export const EmployeeLeaves = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];
@@ -236,8 +236,8 @@ export const EmployeeAbsentSummary = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];

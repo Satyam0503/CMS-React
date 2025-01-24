@@ -11,7 +11,6 @@ import { useState } from "react";
 import {
   ColumnListTypes,
   EmployeeModel,
-  EmployeesDataTypes,
   JobModal,
   RolesType,
 } from "../common_types";
@@ -40,22 +39,37 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
+  GET_EMPLOYEE_DETAILS:`${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
+  GET_EMPLOYEE_CERTIFICATIONS:`${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
+  GET_EMPLOYEE_EDUCATIONS:`${BaseUrl}/api/User/GetEmployeeEducationDetails`,
+  GET_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/GetEmployeeSummary`,
+
+  
+  ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
+  ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
+  
+  UPDATE_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/AddEditEmployeeSummary`,
+  
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
-  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/getAllJobs`,
-
+  EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
+  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+  
+  // not working
+  UPDATE_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
-  UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
-  ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
-  UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
-  ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
-  ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
-  ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
+  GET_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/GetEmployeeSkills`,
+
+  // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
+  // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
+  // UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
+  // ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
+  // ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
+  // ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [
@@ -427,14 +441,16 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     build: (
-      row:JobModal,
-      handleJobEdit: (row:JobModal) => void,
-      openDeleteModal: (row:JobModal) => void
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleJobEdit}
         openConfirmationModal={openDeleteModal}
+        openViewModal={openViewJobDetail}
       />
     ),
   },

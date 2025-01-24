@@ -14,7 +14,7 @@ import { JobRequirementTableColumnList } from "../../../../utils/constant/Consta
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
-import { addJobVacancy, getAllJobVacancies } from "../services";
+import { addJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 
 import { toast } from "react-toastify";
@@ -24,6 +24,7 @@ import { ViewJobDetails } from "./ViewJobDetails";
 
 const initialValues: JobModal = {
   jobId: "",
+  companyId:"",
   title: "",
   vacancies: 1,
   description: "",
@@ -91,9 +92,28 @@ export default function Jobs() {
   const handleAddEditJob = async (
     values: JobModal,
     setSubmitting: (isSubmitting: boolean) => void
-  ) => {
+  ) => {    
     if (isEdit) {
-      // handle Edit logic
+      const payload={
+        ...values,
+        status:statusEncoder(values.status as string)
+      }
+      const jobId= values.jobId;
+      try{
+        const response = await editJobVacancy(payload,jobId,token);
+        const {success,message} = response.data;
+        if(!success){
+          throw new Error(message);
+        }
+        toast.success(message);
+        setRefresh(!isRefresh);
+        setSubmitting(false);
+        handleClose();
+      }
+      catch(error:any){
+        toast.error(error.message);
+        setSubmitting(false);
+      }
     } else {
       const payload = {
         ...values,

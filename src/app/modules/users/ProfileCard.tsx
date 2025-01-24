@@ -28,7 +28,7 @@ import {
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
-import { updateUserAvatar } from "./userservices";
+// import { updateUserAvatar } from "./userservices";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
@@ -71,21 +71,21 @@ export default function ProfileCard(props: ProfileInfo) {
     setSelectedFile(selectedFile);
     setFileError("");
   }
-  function handleUpdateAvatar() {
-    if (seletedFile) {
-      const formData = new FormData();
-      formData.append("avatar", seletedFile);
-      updateUserAvatar(formData, token)
-        .then((res) => {
-          toast.success("Avatar updated successfully");
-          handleClose();
-        })
-        .catch((error) => {
-          toast.error("Something went wrong");
-          console.log(error);
-        });
-    }
-  }
+  // function handleUpdateAvatar() {
+  //   if (seletedFile) {
+  //     const formData = new FormData();
+  //     formData.append("avatar", seletedFile);
+  //     updateUserAvatar(formData, token)
+  //       .then((res) => {
+  //         toast.success("Avatar updated successfully");
+  //         handleClose();
+  //       })
+  //       .catch((error) => {
+  //         toast.error("Something went wrong");
+  //         console.log(error);
+  //       });
+  //   }
+  // }
   return (
     <>
       <Card
@@ -179,7 +179,7 @@ export default function ProfileCard(props: ProfileInfo) {
               ),
             }}
           >
-            {designation} Senior.NET Developer
+            {designation ||"NA"} 
           </Typography>
         </Stack>
         <Stack
@@ -199,7 +199,7 @@ export default function ProfileCard(props: ProfileInfo) {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {bloodGroup}test
+              {bloodGroup}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -269,7 +269,7 @@ export default function ProfileCard(props: ProfileInfo) {
                 Icon={<AttachFile />}
                 iconPosition="end"
                 disabled={!seletedFile}
-                handleClick={handleUpdateAvatar}
+                // handleClick={handleUpdateAvatar}
               />
 
               {fileError && (

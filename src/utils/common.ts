@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { EmployeeModel } from "./common_types";
 
 export const dateFormatter = (date: Date | Dayjs | null, format: string) => {
-  return dayjs().format(format);
+  return dayjs(date).format(format);
 };
 
 export const employeesListMapperforExport = (

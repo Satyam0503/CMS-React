@@ -3,41 +3,44 @@ import {
   FormHelperText,
   Grid,
   MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../components/CustomisedDatePicker";
-import CustomisedButton from "../components/CustomisedButton";
-import { Formik, useFormik } from "formik";
+
+import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { EducationType } from "../../../utils/constant/Constant";
-import { UserEducationType } from "../../../utils/common_types";
-import { CustomisedModal } from "../components/CustomisedModal";
-import { userEducationSchema } from "../../../utils/Schema/userSchema";
-import { TextInput } from "../components/form_component/TextInput";
-import { SelectInput } from "../components/form_component/SelectInput";
+import { UserEducationModel } from "../../../../../utils/common_types";
+import { CustomisedModal } from "../../../components/CustomisedModal";
+import { userEducationSchema } from "../../../../../utils/Schema/userSchema";
+import { TextInput } from "../../../components/form_component/TextInput";
+import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
+import CustomisedButton from "../../../components/CustomisedButton";
+import { EducationType } from "../../../../../Constant";
+import { SelectInput } from "../../../components/form_component/SelectInput";
 
 type PropTypes = {
+  isEdit: boolean;
   open: boolean;
   handleAddUpdateEducation: (
-    value: UserEducationType,
+    value: UserEducationModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => void;
-  initialValues: UserEducationType;
+  initialValues: UserEducationModel;
   handleClose: () => void;
 };
 
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
-  const { open, initialValues, handleClose, handleAddUpdateEducation } = props;
-   return (
+  const { open, initialValues, handleClose, handleAddUpdateEducation, isEdit } =
+    props;
+  return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
         <Typography variant="h5" mb={2}>
-          {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
+          {isEdit
+            ? intl.formatMessage({ id: "PROFILE.UPDATE_EDUCATION" })
+            : intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
       </Stack>
 
@@ -48,15 +51,25 @@ export default function AddUpdateEducation(props: PropTypes) {
           handleAddUpdateEducation(values, setSubmitting);
         }}
       >
-        {(formik) => (
-          <form onSubmit={formik.handleSubmit}>
+        {({
+          touched,
+          errors,
+          values,
+          dirty,
+          isValid,
+          setFieldTouched,
+          setFieldValue,
+          isSubmitting,
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit}>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12}>
                 <TextInput
                   label={intl.formatMessage({ id: "INFO.TITLE" })}
                   placeholder="Title"
                   type="text"
-                  name="title"
+                  name="educationTitle"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -67,15 +80,15 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </Typography>
                 <CustomisedDatePicker
                   name="startDate"
-                  value={formik.values.startDate}
+                  value={values.startDate}
                   setValue={(newDate: Dayjs | null) => {
-                    formik.setFieldTouched("startDate", true);
-                   formik.setFieldValue("startDate", newDate);
+                    setFieldTouched("startDate", true);
+                    setFieldValue("startDate", newDate);
                   }}
                   maxDate={dayjs()}
                 />
                 <FormHelperText>
-                  {formik.touched.startDate && formik.errors.startDate && formik.errors.startDate}
+                  {touched.startDate && errors.startDate && errors.startDate}
                 </FormHelperText>
               </Grid>
 
@@ -87,15 +100,15 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </Typography>
                 <CustomisedDatePicker
                   name="endDate"
-                  value={formik.values.endDate}
-                  setValue={(newDate:Dayjs | null)=>{
-                    formik.setFieldTouched("endDate", true);
-                    formik.setFieldValue("endDate", newDate);
+                  value={values.endDate}
+                  setValue={(newDate: Dayjs | null) => {
+                    setFieldTouched("endDate", true);
+                    setFieldValue("endDate", newDate);
                   }}
-                  minDate={dayjs(formik.values.startDate)}
+                  minDate={dayjs(values.startDate)}
                 />
                 <FormHelperText>
-                  {formik.touched.endDate && formik.errors.endDate &&formik.errors.endDate}
+                  {touched.endDate && errors.endDate && errors.endDate}
                 </FormHelperText>
               </Grid>
 
@@ -122,12 +135,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </SelectInput>
               </Grid>
             </Grid>
-            <Stack
-              direction={"row"}
-              spacing={1}
-              justifyContent={"end"}
-              mt={2}
-            >
+            <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>
               <CustomisedButton
                 variant="outlined"
                 size="medium"
@@ -145,7 +153,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 size="medium"
                 label="Save"
                 type="submit"
-                disabled={!(formik.isValid && formik.dirty) || formik.isSubmitting}
+                disabled={!(isValid && dirty) || isSubmitting}
                 Icon={<Check />}
               />
             </Stack>
@@ -155,4 +163,3 @@ export default function AddUpdateEducation(props: PropTypes) {
     </CustomisedModal>
   );
 }
-

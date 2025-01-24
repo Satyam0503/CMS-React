@@ -109,7 +109,7 @@ export default function UserProfile() {
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={currentUser?.skills?.length || 0}
+                number={0}
                 title="Skills holder"
               />
             </Box>

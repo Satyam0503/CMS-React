@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
-import { EmployeeModel, EmployeesDataTypes } from "../../../utils/common_types";
+import { EmployeeModel } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import {
   employeesListMapperforExport,
