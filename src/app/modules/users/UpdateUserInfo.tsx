@@ -114,11 +114,11 @@ export default function UserInfo(props: PropsType) {
         <form onSubmit={handleSubmit}>
           <Grid container display={"flex"}>
             <Grid item xs={12}>
-              <Typography variant="h5">
+              <Typography variant="h5" mb={2}>
                 {intl.formatMessage({ id: "PROFILE.PI" })}
               </Typography>
             </Grid>
-            <Grid container spacing={2}>
+            <Grid container columnSpacing={2} rowSpacing={1}>
               <Grid item xs={12} md={6}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "USER.FIRST_NAME" })}

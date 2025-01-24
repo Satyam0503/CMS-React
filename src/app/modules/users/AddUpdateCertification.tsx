@@ -61,11 +61,11 @@ export default function AddUpdateCertification(props: PropTypes) {
   };
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
-      <Typography variant="h5">
+      <Typography variant="h5" mb={2}>
         {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
       </Typography>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
+        <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid item xs={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "INFO.TITLE" })}

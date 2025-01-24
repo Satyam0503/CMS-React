@@ -65,7 +65,7 @@ export default function AddUpdateEducation(props: PropTypes) {
         </Typography>
       </Stack>
       <form onSubmit={handleSubmit}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
+        <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid item xs={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "INFO.TITLE" })}

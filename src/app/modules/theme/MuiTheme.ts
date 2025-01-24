@@ -310,12 +310,12 @@ export const MuiTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          paddingBlock: ".5rem",
+          paddingBlock: ".8rem",
         },
         root: {
           padding: 0,
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
-            paddingRight: 1,
+            paddingRight: ".5rem",
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",
