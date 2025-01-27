@@ -3,6 +3,7 @@ import { CustomIconButton } from "../../../components/CustomIconButton";
 import {
   Add,
   CalendarMonth,
+  CalendarToday,
   DeleteOutline,
   Edit,
   School,
@@ -139,19 +140,30 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
                   >
                     {education.educationTitle}
                   </Typography>
-                  <Stack direction={{ sx: "column", sm: "row" }} columnGap={1}>
-                    <Typography
-                      variant="body2"
-                      display={"block"}
-                      fontWeight={600}
-                    >
-                      {education.collegeName}
-                    </Typography>
-                    <Typography variant="body2" display={"block"}>
-                      <CalendarMonth sx={{ height: ".75rem" }} />
-                      {dateFormatter(education.startDate, "MMM YYYY")} -{" "}
-                      {dateFormatter(education.endDate, "MMM YYYY")}
-                    </Typography>
+                  <Stack direction={{ sx: "column", sm: "row" }} spacing={1}>
+                    <Stack>
+                      <Typography
+                        variant="caption"
+                        display={"block"}
+                        fontWeight={600}
+                      >
+                        {education.collegeName}
+                      </Typography>
+                    </Stack>
+                    <Stack>
+                      <Typography variant="body2">
+                        <CalendarToday
+                          sx={{
+                            height: "1rem",
+                            width: "inherit",
+                            mb: 0.5,
+                            mr: 0.5,
+                          }}
+                        />
+                        {dateFormatter(education.startDate, "MMM YYYY")} -{" "}
+                        {dateFormatter(education.endDate, "MMM YYYY")}
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </Stack>
               </Stack>

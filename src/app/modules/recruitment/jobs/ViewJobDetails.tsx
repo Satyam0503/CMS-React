@@ -7,8 +7,8 @@ import { Box, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../components/StyledStatus";
 import { statusDecoder } from "../../../../utils/common";
 import { useIntl } from "react-intl";
-import DOMPurify from "dompurify";
 import { CustomIconButton } from "../../components/CustomIconButton";
+import DOMPurify from "dompurify";
 
 interface PropsTypes {
   jobData: JobModal;
@@ -33,12 +33,9 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
     return (
       <CustomisedModal open={open} handleClose={handleClose}>
         <Stack spacing={2}>
-          <Stack direction={"row"} sx={{justifyContent:"space-between"}}>
+          <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
             <Typography variant="h5">{jobData.title || ""}</Typography>
-            <CustomIconButton 
-              icon={<Close/>}
-              handleClick={handleClose}
-            />
+            <CustomIconButton icon={<Close />} handleClick={handleClose} />
           </Stack>
 
           <Grid container spacing={1}>

@@ -752,12 +752,12 @@ export const MuiTheme = createTheme({
     MuiTabs: {
       styleOverrides: {
         root: {
-          height: 45,
-          minHeight: 45,
+          height: 59,
+          minHeight: 59,
         },
         indicator: {
-          height: 45,
-          minHeight: 45,
+          height: 59,
+          minHeight: 59,
           borderRadius: 0,
           background: themeColors.white,
           color: colors.alpha.neutral[800],
@@ -777,8 +777,8 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           padding: 0,
-          height: 45,
-          minHeight: 45,
+          height: 59,
+          minHeight: 59,
           borderRadius: 0,
           transition: "color .2s",
           textTransform: "capitalize",

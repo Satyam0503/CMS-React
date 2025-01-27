@@ -1,6 +1,7 @@
 import {
   Add,
   CalendarMonth,
+  CalendarToday,
   DeleteOutline,
   Edit,
   LocalActivity,
@@ -142,20 +143,23 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
                   >
                     {certification.certificationTitle}
                   </Typography>
-                  <Stack direction={{ sx: "column", sm: "row" }} columnGap={1}>
+                  <Stack direction={{ sx: "column", sm: "row" }} spacing={1}>
                     <Typography
-                      variant="body2"
+                      variant="caption"
                       display={"block"}
                       fontWeight={500}
                     >
                       {certification.organisationName},{certification.mode}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ display: "block" }}
-                      fontWeight={500}
-                    >
-                      <CalendarMonth sx={{ height: ".75rem" }} />
+                    <Typography variant="body2">
+                      <CalendarToday
+                        sx={{
+                          height: "1rem",
+                          width: "inherit",
+                          mb: 0.4,
+                          mr: 0.5,
+                        }}
+                      />
 
                       {dateFormatter(certification.startDate, "MMM YYYY")}
                       {" - "}
