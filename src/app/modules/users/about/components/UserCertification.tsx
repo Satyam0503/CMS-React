@@ -1,6 +1,7 @@
 import {
   Add,
   CalendarMonth,
+  CalendarToday,
   DeleteOutline,
   Edit,
   LocalActivity,
@@ -111,7 +112,7 @@ export const UserCertification = () => {
         justifyContent={"space-between"}
         mb={2}
       >
-        <Typography variant="h5">
+        <Typography variant="h5" flexWrap={"wrap"}>
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
         <CustomIconButton
@@ -121,9 +122,9 @@ export const UserCertification = () => {
         />
       </Stack>
 
-      <Stack spacing={2}>
+      <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userCertifications.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body2" flexWrap={"wrap"}>
             {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
           </Typography>
         ) : (
@@ -135,6 +136,7 @@ export const UserCertification = () => {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              spacing={1}
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
@@ -160,20 +162,23 @@ export const UserCertification = () => {
                   >
                     {certification.certificationTitle}
                   </Typography>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction={{ sx: "column", sm: "row" }} spacing={1}>
                     <Typography
-                      variant="body2"
+                      variant="caption"
                       display={"block"}
                       fontWeight={500}
                     >
                       {certification.organisationName},{certification.mode}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ display: "block" }}
-                      fontWeight={500}
-                    >
-                      <CalendarMonth sx={{ height: ".75rem" }} />
+                    <Typography variant="body2">
+                      <CalendarToday
+                        sx={{
+                          height: "1rem",
+                          width: "inherit",
+                          mb: 0.4,
+                          mr: 0.5,
+                        }}
+                      />
 
                       {dateFormatter(certification.startDate, "MMM YYYY")}
                       {" - "}
@@ -182,7 +187,11 @@ export const UserCertification = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack direction="row" spacing={1}>
+              <Stack
+                direction={{ sx: "column", sm: "row" }}
+                spacing={1}
+                rowGap={0.5}
+              >
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"
