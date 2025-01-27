@@ -34,7 +34,7 @@ export default function AddUpdateCertification(props: PropTypes) {
     handleClose,
     isEdit,
   } = props;
-  
+
   return (
     <>
       <CustomisedModal open={open} handleClose={handleClose}>
@@ -63,7 +63,7 @@ export default function AddUpdateCertification(props: PropTypes) {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container rowSpacing={1} columnSpacing={2}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
                   <Grid item xs={12}>
                     <TextInput
                       label={intl.formatMessage({ id: "INFO.TITLE" })}
@@ -74,46 +74,50 @@ export default function AddUpdateCertification(props: PropTypes) {
                   </Grid>
 
                   <Grid item xs={12} md={6}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({
-                        id: "APPLICATION.START",
-                      })}
-                    </Typography>
-                    <CustomisedDatePicker
-                      name="startDate"
-                      value={values.startDate}
-                      setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("startDate", true);
-                        setFieldValue("startDate", newDate);
-                      }}
-                      maxDate={dayjs()}
-                    />
-                    <FormHelperText>
-                      {touched.startDate &&
-                        errors.startDate &&
-                        errors.startDate}
-                    </FormHelperText>
+                    <Stack spacing={0.5}>
+                      <Typography variant="body1">
+                        {intl.formatMessage({
+                          id: "APPLICATION.START",
+                        })}
+                      </Typography>
+                      <CustomisedDatePicker
+                        name="startDate"
+                        value={values.startDate}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("startDate", true);
+                          setFieldValue("startDate", newDate);
+                        }}
+                        maxDate={dayjs()}
+                      />
+                      <FormHelperText>
+                        {touched.startDate &&
+                          errors.startDate &&
+                          errors.startDate}
+                      </FormHelperText>
+                    </Stack>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography>
-                      {intl.formatMessage({
-                        id: "APPLICATION.END",
-                      })}
-                    </Typography>
-                    <CustomisedDatePicker
-                      name="endDate"
-                      value={values.endDate}
-                      setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("endDate", true);
-                        setFieldValue("endDate", newDate);
-                      }}
-                      minDate={values.startDate || dayjs()}
-                    />
-                    <FormHelperText>
-                      {touched.endDate && errors.endDate && errors.endDate}
-                    </FormHelperText>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography>
+                        {intl.formatMessage({
+                          id: "APPLICATION.END",
+                        })}
+                      </Typography>
+                      <CustomisedDatePicker
+                        name="endDate"
+                        value={values.endDate}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("endDate", true);
+                          setFieldValue("endDate", newDate);
+                        }}
+                        minDate={values.startDate || dayjs()}
+                      />
+                      <FormHelperText>
+                        {touched.endDate && errors.endDate && errors.endDate}
+                      </FormHelperText>
+                    </Stack>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} md={6}>
                     <TextInput
                       label="Organization Name"
                       type="text"

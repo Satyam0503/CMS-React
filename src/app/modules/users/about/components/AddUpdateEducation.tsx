@@ -33,7 +33,7 @@ type PropTypes = {
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
   const { open, initialValues, handleClose, handleAddUpdateEducation, isEdit } =
-    props;    
+    props;
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>
@@ -72,47 +72,51 @@ export default function AddUpdateEducation(props: PropTypes) {
                   name="educationTitle"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  {intl.formatMessage({
-                    id: "APPLICATION.START",
-                  })}
-                </Typography>
-                <CustomisedDatePicker
-                  name="startDate"
-                  value={values.startDate}
-                  setValue={(newDate: Dayjs | null) => {
-                    setFieldTouched("startDate", true);
-                    setFieldValue("startDate", newDate);
-                  }}
-                  maxDate={dayjs()}
-                />
-                <FormHelperText>
-                  {touched.startDate && errors.startDate && errors.startDate}
-                </FormHelperText>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={0.5}>
+                  <Typography variant="body1">
+                    {intl.formatMessage({
+                      id: "APPLICATION.START",
+                    })}
+                  </Typography>
+                  <CustomisedDatePicker
+                    name="startDate"
+                    value={values.startDate}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("startDate", true);
+                      setFieldValue("startDate", newDate);
+                    }}
+                    maxDate={dayjs()}
+                  />
+                  <FormHelperText>
+                    {touched.startDate && errors.startDate && errors.startDate}
+                  </FormHelperText>
+                </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  {intl.formatMessage({
-                    id: "APPLICATION.END",
-                  })}
-                </Typography>
-                <CustomisedDatePicker
-                  name="endDate"
-                  value={values.endDate}
-                  setValue={(newDate: Dayjs | null) => {
-                    setFieldTouched("endDate", true);
-                    setFieldValue("endDate", newDate);
-                  }}
-                  minDate={dayjs(values.startDate)}
-                />
-                <FormHelperText>
-                  {touched.endDate && errors.endDate && errors.endDate}
-                </FormHelperText>
+              <Grid item xs={12} md={6}>
+                <Stack spacing={0.5}>
+                  <Typography variant="body1">
+                    {intl.formatMessage({
+                      id: "APPLICATION.END",
+                    })}
+                  </Typography>
+                  <CustomisedDatePicker
+                    name="endDate"
+                    value={values.endDate}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("endDate", true);
+                      setFieldValue("endDate", newDate);
+                    }}
+                    minDate={dayjs(values.startDate)}
+                  />
+                  <FormHelperText>
+                    {touched.endDate && errors.endDate && errors.endDate}
+                  </FormHelperText>
+                </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} md={6}>
                 <TextInput
                   label={intl.formatMessage({
                     id: "MENU.COLLEGE.NAME",
@@ -122,7 +126,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                   name="collegeName"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} md={6}>
                 <SelectInput
                   label={intl.formatMessage({ id: "MENU.MODE" })}
                   name="type"
