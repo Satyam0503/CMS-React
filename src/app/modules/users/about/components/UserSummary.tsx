@@ -5,12 +5,11 @@ import { FC, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
-import { updateEmployeeSummary, UserSummaryModel } from "../../userservices";
+import { updateEmployeeSummary } from "../../userservices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 
 export const UserSummary = () => {
-  //   const {userDetails,isRefresh,setRefresh }= useUserDetails()
   const {userDetails:{userSummary},setRefresh,isRefresh}= useUserDetails();
   const [summary, setSummary] = useState(userSummary ? userSummary.summary : "");
   const [isEdit, setEdit] = useState(false);

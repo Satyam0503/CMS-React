@@ -992,6 +992,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         paper: {
           maxWidth: "720px",
+          // width:"720px",
           minWidth: "300px", // Default min-width for small screens
           "@media (min-width:600px)": {
             minWidth: "400px", // For small and up screens

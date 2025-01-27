@@ -23,33 +23,10 @@ import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import HolidayForm from "../../modules/holidays/HolidayForm";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { HolidayType, NoticeType } from "../../../utils/common_types";
+import { HolidayType, NoticeModel } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
-
-// function createData(
-//   sno: number,
-//   title: string,
-//   type: string,
-//   startdate: string,
-//   enddate: string,
-//   description: string,
-//   action: string
-// ) {
-//   return { sno, title, type, startdate, enddate, description, action };
-// }
-
-// const rows = [
-//   createData(
-//     1,
-//     "New Year",
-//     "Public Holiday",
-//     "1 Jan'25",
-//     "3 Jan'25",
-//     "Celebrations",
-//     ""
-//   ),
-// ];
+import { AddNotice } from "./AddNotice";
 
 const rows = [
   {
@@ -61,7 +38,7 @@ const rows = [
   },
 ];
 
-const initialValues: NoticeType = {
+const initialValues: NoticeModel = {
   id: "",
   type: "",
   target: "",
@@ -74,46 +51,46 @@ export default function NoticeBoard() {
     React.useState(initialValues);
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [NoticeList, setNoticeList] = React.useState<any[]>([]);
+  const [NoticeList, setNoticeList] = React.useState<NoticeModel[]>([]);
   const [page, setPage] = React.useState(0);
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
   const [isRefresh, setRefresh] = React.useState(false);
   const [isEdit, setEdit] = React.useState(false);
-  const [selectedNoticeId, setSelectedNoticeId] = React.useState<string | null>(
-    null
-  );
+  const [selectedNotice, setSelectedNotice] =
+    React.useState<NoticeModel | null>(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
 
   const intl = useIntl();
+
   const handleCloseModal = () => {
     setModalOpen(false);
     setEdit(false);
     setInitialNoticeValues(initialValues);
   };
 
-  const handleAddUpdateNotice = (
-    values: HolidayType,
+  const handleAddEditNotice = (
+    values: NoticeModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
     console.log(values);
   };
 
-  const handleNoticeEdit = (row: any) => {
+  const handleNoticeEdit = (notice: NoticeModel) => {
     setEdit(true);
     setModalOpen(true);
   };
 
   const handleNoticeDeletion = () => {};
 
-  const openConfirmationModal = (noticeId: string) => {
+  const openConfirmationModal = (notice: NoticeModel) => {
     setConfirmModalOpen(true);
-    setSelectedNoticeId(noticeId);
+    setSelectedNotice(notice);
   };
   function closeConfirmationModal() {
     setConfirmModalOpen(false);
-    setSelectedNoticeId(null);
+    setSelectedNotice(null);
   }
 
   return (
@@ -171,11 +148,12 @@ export default function NoticeBoard() {
       </Card>
 
       {isModalOpen && (
-        <HolidayForm
+        <AddNotice
+          initialValues={initialNoticeValues}
           open={isModalOpen}
           handleClose={handleCloseModal}
-          initialValues={initialNoticeValues}
-          handleAddUpdateHoliday={handleAddUpdateNotice}
+          handleAddEditNotice={handleAddEditNotice}
+          isEdit={isEdit}
         />
       )}
       {isConfirmModalOpen && (

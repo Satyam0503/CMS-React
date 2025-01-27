@@ -1,6 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { EmployeeModel, UserCertificationModel, UserEducationModel} from "../../../utils/common_types";
-import { getEmployeeCertifications, getEmployeeDetails, getEmployeeEducations, getEmployeeSummary, UserSummaryModel } from "./userservices";
+import {
+  EmployeeModel,
+  UserCertificationModel,
+  UserEducationModel,
+} from "../../../utils/common_types";
+import {
+  getEmployeeCertifications,
+  getEmployeeDetails,
+  getEmployeeEducations,
+  getEmployeeSummary,
+  UserSummaryModel,
+} from "./userservices";
 import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
@@ -8,11 +18,11 @@ import { toast } from "react-toastify";
 
 type UserDataContextType = {
   userDetails: {
-    userPersonalDetails:EmployeeModel,
-    userEducations:UserEducationModel[],
-    userCertifications:UserCertificationModel[],
-    userSkills:string[],
-    userSummary:UserSummaryModel,
+    userPersonalDetails: EmployeeModel;
+    userEducations: UserEducationModel[];
+    userCertifications: UserCertificationModel[];
+    userSkills: string[];
+    userSummary: UserSummaryModel;
   };
   setRefresh: (isRefresh: boolean) => void;
   isRefresh: boolean;
@@ -27,12 +37,11 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
   undefined
 );
 
-
 // User Details Provider
 export const UserDetailsProvider = (props: PropTypes) => {
   const token = useAppSelector((state) => state.auth.token)!;
   const [isRefresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const intl = useIntl();
   const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
@@ -51,9 +60,9 @@ export const UserDetailsProvider = (props: PropTypes) => {
   );
 
   useEffect(() => {
-    const getAllDetails= async()=>{
-      try{
-        const responseArray= await Promise.all([
+    const getAllDetails = async () => {
+      try {
+        const responseArray = await Promise.all([
           getEmployeeDetails(token),
           getEmployeeEducations(token),
           getEmployeeCertifications(token),
@@ -65,15 +74,15 @@ export const UserDetailsProvider = (props: PropTypes) => {
         setUserCertifications(responseArray[2].data.methodResults);
         setUserSummary(responseArray[3].data.methodResult);
         // setUserSkills(responseArray[4].data.methodResults);
-      }
-      catch(error:any){
+      } catch (error: any) {
         toast.error(error.message);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     getAllDetails();
-   
-  }, [isRefresh,token]);
+  }, [isRefresh, token]);
 
   if (loading) {
     return (
@@ -91,13 +100,17 @@ export const UserDetailsProvider = (props: PropTypes) => {
   }
   return (
     <UserDetailsContext.Provider
-      value={{ userDetails:{
-        userPersonalDetails,
-        userEducations,
-        userCertifications,
-        userSkills,
-        userSummary
-      }, isRefresh, setRefresh }}
+      value={{
+        userDetails: {
+          userPersonalDetails,
+          userEducations,
+          userCertifications,
+          userSkills,
+          userSummary,
+        },
+        isRefresh,
+        setRefresh,
+      }}
     >
       {props.children}
     </UserDetailsContext.Provider>

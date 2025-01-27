@@ -34,7 +34,7 @@ export default function AddUpdateCertification(props: PropTypes) {
     handleClose,
     isEdit,
   } = props;
-
+  
   return (
     <>
       <CustomisedModal open={open} handleClose={handleClose}>

@@ -26,7 +26,9 @@ import { SelectInput } from "../../../components/form_component/SelectInput";
 export const UpdateUserInfo = () => {
   const intl = useIntl();
   const token = useAppSelector((state) => state.auth.token)!;
-  const { userDetails: currentUser, setRefresh, isRefresh } = useUserDetails();
+  const {
+    userDetails: { userPersonalDetails: currentUser },
+  } = useUserDetails();
   const [open, setOpen] = useState(false);
 
   const initialValues = {
@@ -35,7 +37,6 @@ export const UpdateUserInfo = () => {
     email: currentUser?.email,
     phoneNumber: currentUser?.phoneNumber,
     dateOfBirth: currentUser?.dateOfBirth,
-    // gender: currentUser?.gender,
     personalEmail: currentUser?.personalEmail,
     emergencyContact: currentUser?.emergencyContact,
     bloodGroup: currentUser?.bloodGroup,
@@ -65,6 +66,9 @@ export const UpdateUserInfo = () => {
         handleClick={() => setOpen(true)}
       />
       <CustomisedModal open={open} handleClose={handleClose}>
+        <Typography variant="h5" mb={2}>
+          {intl.formatMessage({ id: "PROFILE.PI" })}
+        </Typography>
         <Box>
           <Formik
             initialValues={initialValues}
@@ -85,12 +89,7 @@ export const UpdateUserInfo = () => {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Typography variant="h5">
-                      {intl.formatMessage({ id: "PROFILE.PI" })}
-                    </Typography>
-                  </Grid>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
                   <Grid item xs={12} md={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -108,18 +107,20 @@ export const UpdateUserInfo = () => {
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({ id: "USER.DOB" })}
-                    </Typography>
-                    <CustomisedDatePicker
-                      name="dateOfBirth"
-                      value={dayjs(values?.dateOfBirth)}
-                      setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("dateOfBirth", true);
-                        setFieldValue("dateOfBirth", newDate);
-                      }}
-                      maxDate={dayjs()}
-                    />
+                    <Stack spacing={0.5}>
+                      <Typography variant="body1">
+                        {intl.formatMessage({ id: "USER.DOB" })}
+                      </Typography>
+                      <CustomisedDatePicker
+                        name="dateOfBirth"
+                        value={dayjs(values?.dateOfBirth)}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("dateOfBirth", true);
+                          setFieldValue("dateOfBirth", newDate);
+                        }}
+                        maxDate={dayjs()}
+                      />
+                    </Stack>
                     <FormHelperText>
                       {touched.dateOfBirth &&
                         errors.dateOfBirth &&
@@ -186,31 +187,25 @@ export const UpdateUserInfo = () => {
                       placeholder="Address "
                     />
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    display={"flex"}
-                    justifyContent={"flex-end"}
-                  >
-                    <Stack
-                      spacing={1}
-                      direction={"row"}
-                      justifyContent={"flex-end"}
-                    >
-                      <CustomisedButton
-                        label="Cancel"
-                        handleClick={handleClose}
-                        variant="outlined"
-                      />
-                      <CustomisedButton
-                        label="Save"
-                        type="submit"
-                        variant="contained"
-                        disabled={!(isValid && dirty) || isSubmitting}
-                      />
-                    </Stack>
-                  </Grid>
                 </Grid>
+                <Stack
+                  direction={"row"}
+                  spacing={1}
+                  justifyContent={"flex-end"}
+                  mt={2}
+                >
+                  <CustomisedButton
+                    label="Cancel"
+                    handleClick={handleClose}
+                    variant="outlined"
+                  />
+                  <CustomisedButton
+                    label="Save"
+                    type="submit"
+                    variant="contained"
+                    disabled={!(isValid && dirty) || isSubmitting}
+                  />
+                </Stack>
               </form>
             )}
           </Formik>

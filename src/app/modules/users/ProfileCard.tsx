@@ -29,7 +29,7 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 // import { updateUserAvatar } from "./userservices";
-import { toast } from "react-toastify";
+
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
@@ -196,7 +196,7 @@ export default function ProfileCard() {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {userPersonalDetails.bloodGroup}
+              {userPersonalDetails.bloodGroup || "NA"}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}

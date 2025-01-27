@@ -19,6 +19,7 @@ import { addEmployeeCertification } from "../../userservices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useUserDetails } from "../../UserDataProvider";
+import { ConfirmationModal } from "../../../components/ConfirmationModal";
 
 const initialValue: UserCertificationModel = {
   certificationId: "",
@@ -29,14 +30,20 @@ const initialValue: UserCertificationModel = {
   mode: "",
 };
 
-
-export const UserCertification= () => {
+export const UserCertification = () => {
   const intl = useIntl();
-  const {userDetails:{userCertifications},setRefresh,isRefresh}= useUserDetails();
+  const {
+    userDetails: { userCertifications },
+    setRefresh,
+    isRefresh,
+  } = useUserDetails();
   const [initialValues, setInitialValues] = useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
   const token = useAppSelector((state) => state.auth.token!);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [selectedCertification, setSelectedCertification] =
+    useState<UserCertificationModel | null>(null);
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
@@ -52,17 +59,19 @@ export const UserCertification= () => {
         if (!success) {
           throw new Error(message);
         }
-        setSubmitting(false);
         toast.success(message);
         setRefresh(!isRefresh);
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
       }
+      finally{
+        setSubmitting(false);
+      }
     }
   }
 
-  function handleCertificationUpdate(certification: UserCertificationModel) {
+  function handleCertificationEdit(certification: UserCertificationModel) {
     setEdit(true);
     const value = {
       certificationTitle: certification.certificationTitle,
@@ -81,6 +90,18 @@ export const UserCertification= () => {
     setInitialValues(initialValue);
     setEdit(false);
   };
+
+  function closeConfirmationModal() {
+    setConfirmModal(false);
+    setSelectedCertification(null);
+  }
+
+  function deleteCertification(res: string) {
+    if (!selectedCertification) {
+      toast.error("Request Failed");
+    }
+    // handle delete logic
+  }
 
   return (
     <Card sx={{ p: 2 }}>
@@ -165,14 +186,15 @@ export const UserCertification= () => {
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"
-                  handleClick={() => handleCertificationUpdate(certification)}
+                  handleClick={() => handleCertificationEdit(certification)}
                 />
                 <CustomIconButton
                   icon={<DeleteOutline />}
                   tooltip="Delete"
-                  //   handleClick={() =>
-                  //     // deleteCertification(certification.certificationId)
-                  //   }
+                  handleClick={() => {
+                    setConfirmModal(true);
+                    setSelectedCertification(certification);
+                  }}
                 />
               </Stack>
             </Stack>
@@ -186,6 +208,15 @@ export const UserCertification= () => {
           initialValues={initialValues}
           handleAddUpdateCertification={handleAddUpdateCertification}
           handleClose={handleClose}
+        />
+      )}
+      {confirmModal && (
+        <ConfirmationModal
+          title="Delete Certification"
+          content="Are you sure you want to delete this Certification ?"
+          open={confirmModal}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={deleteCertification}
         />
       )}
     </Card>

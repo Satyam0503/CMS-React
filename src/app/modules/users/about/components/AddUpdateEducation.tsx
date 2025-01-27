@@ -33,7 +33,7 @@ type PropTypes = {
 export default function AddUpdateEducation(props: PropTypes) {
   const intl = useIntl();
   const { open, initialValues, handleClose, handleAddUpdateEducation, isEdit } =
-    props;
+    props;    
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack>

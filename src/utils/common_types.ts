@@ -81,11 +81,16 @@ export type UserCertificationModel = {
   mode: string;
 };
 
-export type HolidayType = Omit<UserEducationModel, "collegeName"> & {
+export type HolidayType =  {
+  id:string;
+  title:string;
   description: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  type: string;
 };
 
-export type NoticeType = {
+export type NoticeModel = {
   id: string;
   target: string;
   type: string;

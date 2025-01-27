@@ -16,8 +16,9 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { addEmployeeEducation } from "../../userservices";
 import { toast } from "react-toastify";
 import { useUserDetails } from "../../UserDataProvider";
-
-
+import { colors } from "../../../theme/MuiTheme";
+import dayjs from "dayjs";
+import { ConfirmationModal } from "../../../components/ConfirmationModal";
 
 const initialValue: UserEducationModel = {
   educationId: "",
@@ -29,12 +30,14 @@ const initialValue: UserEducationModel = {
   type: "",
 };
 export const UserEducation= () => {
+  const token = useAppSelector((state) => state.auth.token)!;
   const intl = useIntl();
   const {userDetails:{userEducations},setRefresh,isRefresh}= useUserDetails();
   const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const token = useAppSelector((state) => state.auth.token)!;
+  const [confirmModal,setConfirmModal]= useState(false);
+  const [selectedEducation,setSeletedEducation]= useState<UserEducationModel | null >(null);
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -42,13 +45,18 @@ export const UserEducation= () => {
     setEdit(false);
   };
 
-  function handleEducationUpdate(education: UserEducationModel) {
+  const handleCloseConfirmation = ()=>{
+    setConfirmModal(false);
+    setSeletedEducation(null);
+  }
+
+  function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
     const value = {
       userId: education.userId,
       educationTitle: education.educationTitle,
-      startDate: education.startDate,
-      endDate: education.endDate,
+      startDate:dayjs(education.startDate),
+      endDate:dayjs(education.endDate),
       type: education.type,
       collegeName: education.collegeName,
       educationId: education.educationId,
@@ -73,15 +81,24 @@ export const UserEducation= () => {
         if (!success) {
           throw new Error(message);
         }
-        setSubmitting(false);
         toast.success(message);
         handleClose();
         setRefresh(!isRefresh);
       } catch (error: any) {
         toast.error(error.message);
       }
+      finally{
+        setSubmitting(false);
+      }
     }
   };
+
+  const handleDeleteEducation=(confirmation:String)=>{
+    if(!selectedEducation){
+        toast.error("Request Failed"); 
+    }
+    // logic for deleting education
+  }
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -151,9 +168,12 @@ export const UserEducation= () => {
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"
-                  handleClick={() => handleEducationUpdate(education)}
+                  handleClick={() => handleEducationEdit(education)}
                 />
-                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
+                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={()=>{
+                  setSeletedEducation(education);
+                  setConfirmModal(true);
+                }}/>
               </Stack>
             </Stack>
           ))
@@ -168,6 +188,16 @@ export const UserEducation= () => {
           handleClose={handleClose}
         />
       )}
+      {
+        confirmModal && 
+        <ConfirmationModal
+          title="Delete Education"
+          content="Are you sure you want to delete this Education ?"
+          open={confirmModal}
+          handleClose={handleCloseConfirmation}
+          handleConfirmation={handleDeleteEducation}
+        /> 
+      }
     </Card>
   );
 };

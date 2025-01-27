@@ -42,7 +42,6 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
           dispatch(setAuth());
         }
       } catch (error) {
-        console.error(error);
         if (isUserAuthenticated) {
             logout();
         }

@@ -6,6 +6,7 @@ interface PropsTypes {
   name: string;
   type: string;
   placeholder: string;
+  multiline?:boolean;
 }
 
 export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
