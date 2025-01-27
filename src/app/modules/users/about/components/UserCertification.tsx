@@ -95,7 +95,11 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
-        <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} />
+        <CustomIconButton
+          tooltip="Add"
+          icon={<Add />}
+          handleClick={() => setOpen(true)}
+        />
       </Stack>
 
       <Stack spacing={2}>
@@ -162,10 +166,12 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
               <Stack direction="row" spacing={1}>
                 <CustomIconButton
                   icon={<Edit />}
+                  tooltip="Edit"
                   handleClick={() => handleCertificationUpdate(certification)}
                 />
                 <CustomIconButton
                   icon={<DeleteOutline />}
+                  tooltip="Delete"
                   //   handleClick={() =>
                   //     // deleteCertification(certification.certificationId)
                   //   }

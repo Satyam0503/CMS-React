@@ -28,7 +28,7 @@ export const WorkHistory: FC = () => {
               {intl.formatMessage({ id: "MENU.WORK_HISTORY" })}
             </Typography>
 
-            {/* <CustomIconButton icon={<Add />}  /> */}
+            {/* <CustomIconButton icon={<Add />} tooltip="Add"  /> */}
             <AddUpdateWorkHistory />
           </Stack>
           <Grid container display={"flex"} flexDirection={"column"} gap={1}>

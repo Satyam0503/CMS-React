@@ -94,7 +94,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
             : intl.formatMessage({ id: "ADD.EMP.INFO" })}
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={{ xs: 1, md: 2 }}>
+          <Grid container rowSpacing={1} columnSpacing={2}>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -190,7 +190,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
               </Typography>
               <TextField
-                sx={{ paddingTop: "9px" }}
                 placeholder="Email"
                 fullWidth
                 id="outlined-basic"
@@ -359,7 +358,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
               </Typography>
               <TextField
-                sx={{ paddingTop: "9px" }}
                 fullWidth
                 placeholder="Emergency Contact"
                 id="outlined-basic"
@@ -385,7 +383,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 error={touched.status && Boolean(errors.status)}
                 {...getFieldProps("status")}
               >
-                <MenuItem value={"Active"}>Active</MenuItem>  
+                <MenuItem value={"Active"}>Active</MenuItem>
                 <MenuItem value={"Inactive"}>Inactive</MenuItem>
               </Select>
               <FormHelperText>

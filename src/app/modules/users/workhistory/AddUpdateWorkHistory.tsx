@@ -30,7 +30,7 @@ export function AddUpdateWorkHistory() {
 
   return (
     <>
-      <CustomIconButton icon={<Add />} handleClick={handleOpen} />
+      <CustomIconButton icon={<Add />} tooltip="Add" handleClick={handleOpen} />
       <CustomisedModal open={open} handleClose={handleClose}>
         <Typography variant="h5" mb={2}>
           {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
