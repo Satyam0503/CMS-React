@@ -24,9 +24,10 @@ export const UserSkills= () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.SKILLS" })}
         </Typography>
-        <CustomIconButton 
-            icon={<Add/>}
-            handleClick={()=>setOpen(true)}
+        <CustomIconButton
+          icon={<Add />}
+          tooltip="Add"
+          handleClick={() => setOpen(true)}
         />
       </Stack>
 

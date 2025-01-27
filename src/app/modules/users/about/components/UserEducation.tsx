@@ -93,7 +93,11 @@ export const UserEducation= () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
-        <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} />
+        <CustomIconButton
+          tooltip="Add"
+          icon={<Add />}
+          handleClick={() => setOpen(true)}
+        />
       </Stack>
       <Stack spacing={2}>
         {userEducations.length === 0 ? (
@@ -101,15 +105,28 @@ export const UserEducation= () => {
             {intl.formatMessage({ id: "ADD.EDUCATION" })}
           </Typography>
         ) : (
-            userEducations.map((education, index) => (
+          userEducations.map((education, index) => (
             <Stack
               key={education.educationId || index}
               direction="row"
               justifyContent={"space-between"}
               alignItems={"center"}
             >
-              <Stack direction="row" alignItems={"center"}>
-                <School sx={{ marginInlineEnd: 1 }} />
+              <Stack direction="row" alignItems={"center"} spacing={1}>
+                <Stack
+                  color={colors.alpha.primary[500]}
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    bgcolor: colors.alpha.primary[100],
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 1,
+                  }}
+                >
+                  <School />
+                </Stack>
+
                 <Stack>
                   <Typography variant="body1" fontWeight={500}>
                     {education.educationTitle}

@@ -18,7 +18,7 @@ export const PersonalDetails = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        <UpdateUserInfo/>
+        <UpdateUserInfo />
       </Stack>
       <Grid container spacing={1}>
         <Grid item xs={12}>

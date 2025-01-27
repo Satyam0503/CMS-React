@@ -67,7 +67,11 @@ export const UserSummary = () => {
             />
           </Stack>
         ) : (
-          <CustomIconButton icon={<Edit />} handleClick={() => setEdit(true)} />
+          <CustomIconButton
+            tooltip="Edit"
+            icon={<Edit />}
+            handleClick={() => setEdit(true)}
+          />
         )}
       </Stack>
       {isEdit ? (

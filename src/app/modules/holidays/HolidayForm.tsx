@@ -60,10 +60,12 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <form onSubmit={handleSubmit}>
-        <Typography variant="h5">
-          {intl.formatMessage({ id: "MENU.POST_NOTICE" })}
-        </Typography>
-        <Grid container spacing={2}>
+        <Grid item xs={12} mb={2.5}>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "MENU.POST_NOTICE" })}
+          </Typography>
+        </Grid>
+        <Grid container rowSpacing={1} columnSpacing={2}>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "FORM.TITLE" })}*

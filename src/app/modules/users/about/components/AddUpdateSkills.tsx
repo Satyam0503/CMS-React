@@ -17,7 +17,11 @@ type PropsType = {
   userSkills: string[];
 };
 
-export const AddUpdateSkills: React.FC<PropsType> = ({ userSkills ,open,setOpen}) => {
+export const AddUpdateSkills: React.FC<PropsType> = ({
+  userSkills,
+  open,
+  setOpen,
+}) => {
   const { isRefresh, setRefresh } = useUserDetails();
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(userSkills);
@@ -30,7 +34,6 @@ export const AddUpdateSkills: React.FC<PropsType> = ({ userSkills ,open,setOpen}
 
   function handleAddSkill() {
     if (!skills.includes(newSkill.toUpperCase())) {
-
       setSkills([...skills, newSkill.toUpperCase()]);
       setNewSkill("");
     }
@@ -42,15 +45,14 @@ export const AddUpdateSkills: React.FC<PropsType> = ({ userSkills ,open,setOpen}
   }
 
   async function handleSkillUpdate() {
-    try{
-      const response=await udpateEmployeeSkills({skills:skills},token);
-      const {message,success}= response.data;
-      if(!success){
+    try {
+      const response = await udpateEmployeeSkills({ skills: skills }, token);
+      const { message, success } = response.data;
+      if (!success) {
         throw new Error(message);
       }
       toast.success(message);
-    }
-    catch(error:any){
+    } catch (error: any) {
       toast.error(error.message);
     }
   }
@@ -87,8 +89,12 @@ export const AddUpdateSkills: React.FC<PropsType> = ({ userSkills ,open,setOpen}
               flexWrap={"wrap"}
               sx={{ marginBlockStart: "1rem" }}
             >
-              {skills.map((skill,index) => (
-                <Chip key={index} label={skill} onDelete={() => handleDelete(skill)} />
+              {skills.map((skill, index) => (
+                <Chip
+                  key={index}
+                  label={skill}
+                  onDelete={() => handleDelete(skill)}
+                />
               ))}
             </Stack>
           </Stack>

@@ -63,7 +63,7 @@ export default function AddUpdateCertification(props: PropTypes) {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
+                <Grid container rowSpacing={1} columnSpacing={2}>
                   <Grid item xs={12}>
                     <TextInput
                       label={intl.formatMessage({ id: "INFO.TITLE" })}
