@@ -164,6 +164,7 @@
   "PROFILE.UPDATE_CERTIFICATION": "Update Certification",
   "PROFILE.EXP": "Years of experience",
   "PROFILE.EXP_CURRENT": "Years in Codeji",
+
   "PROFILE.EMPLOYMENT": "Work experience",
   "PROFILE.CURRENT_CTC": "Current CTC",
   "PROFILE.EXPECTED_CTC": "Expected CTC",
@@ -245,6 +246,7 @@
   "USER.APPLICATION.DATE": " Applied on",
   "USER.RESUME": "Resume Preview",
   "USER.AGE": "Years Old",
+  "USER.ORGNISATION": "Orgnisation name",
 
   "AUTH.GENERAL.OR": "Or",
   "AUTH.GENERAL.SUBMIT_BUTTON": "Submit",

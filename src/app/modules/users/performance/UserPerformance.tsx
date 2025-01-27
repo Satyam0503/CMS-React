@@ -10,27 +10,20 @@ export const UserPerformance: FC = () => {
   const intl = useIntl();
   return (
     <>
-      <Grid container className="d-flex gap-4">
-        <Card className="p-5">
-          <Typography variant="h5" className="mb-3">
-            {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
-          </Typography>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
+      <Grid container display={"flex"} gap={2.25}>
+        <Card sx={{ p: 2.25 }}>
+          <Stack mb={1}>
+            <Typography variant="h5">
+              {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
+            </Typography>
+          </Stack>
+
+          <Stack direction={{ xs: "column", sm: "row" }}>
             <Stack>
               <DonutApexChart
                 series={[132, 323]}
                 labels={["Present", "Holidays"]}
               />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">222/300</Typography>
-              </Stack>
             </Stack>
             <Stack>
               <DonutApexChart
@@ -44,15 +37,6 @@ export const UserPerformance: FC = () => {
                 labels={["Rating"]}
                 showLabelOnHover={true}
               />
-              <Stack
-                spacing={4}
-                direction="row"
-                className="my-4 d-flex justify-content-center"
-              >
-                <Typography variant="subtitle2">
-                  {intl.formatMessage({ id: "PERFORMANCE.V_GOOD" })}
-                </Typography>
-              </Stack>
             </Stack>
           </Stack>
         </Card>
