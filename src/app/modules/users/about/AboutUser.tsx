@@ -27,7 +27,7 @@ import { toast } from "react-toastify";
 
 export default function AboutUser() {
   const token = useAppSelector((state) => state.auth.token)!;
-  const [refresh,setRefresh]= useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
     []
   );
@@ -44,9 +44,9 @@ export default function AboutUser() {
   );
 
   useEffect(() => {
-    const getAllDetails= async()=>{
-      try{
-        const responseArray= await Promise.all([
+    const getAllDetails = async () => {
+      try {
+        const responseArray = await Promise.all([
           getEmployeeCertifications(token),
           getEmployeeEducations(token),
           getEmployeeSummary(token),
@@ -57,17 +57,16 @@ export default function AboutUser() {
         setUserEducations(responseArray[1].data.methodResults);
         setUserSummary(responseArray[2].data.methodResult);
         setUserPersonalDetails(responseArray[3].data.methodResult);
-      }
-      catch(error:any){
+      } catch (error: any) {
         toast.error(error.message);
       }
-    }
+    };
 
     getAllDetails();
-  },[refresh]);
+  }, [refresh]);
 
   console.log("render");
-  
+
   return (
     <>
       <Grid container display={"flex"} gap={2} mt={1}>
