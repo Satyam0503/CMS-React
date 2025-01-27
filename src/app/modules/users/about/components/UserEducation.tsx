@@ -91,7 +91,7 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
         direction="row"
         display={"flex"}
         justifyContent={"space-between"}
-        mb={1}
+        mb={2}
       >
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
@@ -102,7 +102,7 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
           handleClick={() => setOpen(true)}
         />
       </Stack>
-      <Stack spacing={2}>
+      <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userEducations.length === 0 ? (
           <Typography variant="body2">
             {intl.formatMessage({ id: "ADD.EDUCATION" })}
@@ -114,6 +114,7 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
               direction="row"
               justifyContent={"space-between"}
               alignItems={"center"}
+              spacing={1}
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
@@ -131,10 +132,14 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
                 </Stack>
 
                 <Stack>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography
+                    variant="body1"
+                    fontWeight={500}
+                    flexWrap={"wrap"}
+                  >
                     {education.educationTitle}
                   </Typography>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction={{ sx: "column", sm: "row" }} columnGap={1}>
                     <Typography
                       variant="body2"
                       display={"block"}
@@ -150,7 +155,11 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack direction="row" spacing={1}>
+              <Stack
+                direction={{ sx: "column", sm: "row" }}
+                spacing={1}
+                rowGap={0.5}
+              >
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"

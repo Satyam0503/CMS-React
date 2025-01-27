@@ -92,7 +92,7 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
         justifyContent={"space-between"}
         mb={2}
       >
-        <Typography variant="h5">
+        <Typography variant="h5" flexWrap={"wrap"}>
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
         <CustomIconButton
@@ -102,9 +102,9 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
         />
       </Stack>
 
-      <Stack spacing={2}>
+      <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userCertifications.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body2" flexWrap={"wrap"}>
             {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
           </Typography>
         ) : (
@@ -116,6 +116,7 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
               display={"flex"}
               justifyContent={"space-between"}
               alignItems={"center"}
+              spacing={1}
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
@@ -141,7 +142,7 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
                   >
                     {certification.certificationTitle}
                   </Typography>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction={{ sx: "column", sm: "row" }} columnGap={1}>
                     <Typography
                       variant="body2"
                       display={"block"}
@@ -163,7 +164,11 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack direction="row" spacing={1}>
+              <Stack
+                direction={{ sx: "column", sm: "row" }}
+                spacing={1}
+                rowGap={0.5}
+              >
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"

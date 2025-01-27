@@ -1,4 +1,4 @@
-import { BorderColor, BorderTop, Padding } from "@mui/icons-material";
+import { BorderColor, BorderTop, Margin, Padding } from "@mui/icons-material";
 import { alpha, createTheme, lighten, darken } from "@mui/material";
 
 const themeColors = {
@@ -1009,7 +1009,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         tooltip: {
           backgroundColor: alpha(colors.alpha.primary["400"], 0.95),
-          padding: "8px 16px",
+          padding: ".5rem 1rem",
           fontSize: 13,
         },
         arrow: {
@@ -1021,9 +1021,10 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           maxWidth: "1280px",
-          padding: "16px",
+          padding: "1rem",
+
           "@media (min-width:600px)": {
-            padding: "24px",
+            padding: "1.5rem",
           },
           // "@media (min-width:900px)": {
           //   padding: "32px",
