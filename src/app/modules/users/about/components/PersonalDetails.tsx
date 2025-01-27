@@ -6,12 +6,13 @@ import { UpdateUserInfo } from "./UpdateUserInfo";
 import { EmployeeModel } from "../../../../../utils/common_types";
 import { FC } from "react";
 
-
 interface PersonalDetailsTypes {
-  userPersonalDetails:EmployeeModel
+  userPersonalDetails: EmployeeModel;
 }
 
-export const PersonalDetails:FC<PersonalDetailsTypes> = ({userPersonalDetails:currentUser}) => {
+export const PersonalDetails: FC<PersonalDetailsTypes> = ({
+  userPersonalDetails: currentUser,
+}) => {
   const intl = useIntl();
 
   return (
@@ -25,9 +26,9 @@ export const PersonalDetails:FC<PersonalDetailsTypes> = ({userPersonalDetails:cu
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        <UpdateUserInfo/>
+        <UpdateUserInfo />
       </Stack>
-      <Grid container spacing={0.5}>
+      <Grid container spacing={1}>
         <Grid item xs={12}>
           <Typography variant="body2">
             {intl.formatMessage({ id: "USER.ADDRESS" })}

@@ -3,6 +3,7 @@ import {
   CalendarMonth,
   DeleteOutline,
   Edit,
+  LocalActivity,
   School,
 } from "@mui/icons-material";
 import { Card, Stack, Typography } from "@mui/material";
@@ -112,8 +113,22 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
               justifyContent={"space-between"}
               alignItems={"center"}
             >
-              <Stack direction="row" alignItems={"center"}>
-                <School sx={{ marginInlineEnd: 4 }} />
+              <Stack direction="row" alignItems={"center"} spacing={1}>
+                <Stack
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    bgcolor: colors.alpha.secondary[100],
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Stack color={colors.alpha.secondary[500]}>
+                    <LocalActivity />
+                  </Stack>
+                </Stack>
+
                 <Stack>
                   <Typography
                     variant="body1"
@@ -135,7 +150,7 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
                       sx={{ display: "block" }}
                       fontWeight={500}
                     >
-                      <CalendarMonth sx={{ height: "14px" }} />
+                      <CalendarMonth sx={{ height: ".75rem" }} />
 
                       {dateFormatter(certification.startDate, "MMM YYYY")}
                       {" - "}

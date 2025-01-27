@@ -15,28 +15,29 @@ interface PropTypes {
 export const UserSummary: FC<PropTypes> = ({ userSummary }) => {
   //   const {userDetails,isRefresh,setRefresh }= useUserDetails()
   const [isEdit, setEdit] = useState(false);
-  const [summary, setSummary] = useState(userSummary ? userSummary.summary : "");
-  const token = useAppSelector(state=>state.auth.token)!;
+  const [summary, setSummary] = useState(
+    userSummary ? userSummary.summary : ""
+  );
+  const token = useAppSelector((state) => state.auth.token)!;
   const intl = useIntl();
 
   const handleUpdateSummary = async () => {
-    const payload={
-        summary:summary,
-        summaryId:""
-    }
-    try{
-        const response = await updateEmployeeSummary(payload,token);
-        const {success,message}=response.data;
-        if(!success){
-            throw new Error(message);
-        }
-        toast.success(message);
-        setSummary("");
-        setEdit(false);
-        // setRefresh(!refresh) 
-    }
-    catch(error:any){
-        toast.error(error.message);
+    const payload = {
+      summary: summary,
+      summaryId: "",
+    };
+    try {
+      const response = await updateEmployeeSummary(payload, token);
+      const { success, message } = response.data;
+      if (!success) {
+        throw new Error(message);
+      }
+      toast.success(message);
+      setSummary("");
+      setEdit(false);
+      // setRefresh(!refresh)
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -69,7 +70,11 @@ export const UserSummary: FC<PropTypes> = ({ userSummary }) => {
             />
           </Stack>
         ) : (
-          <CustomIconButton icon={<Edit />} handleClick={() => setEdit(true)} />
+          <CustomIconButton
+            tooltip="Edit"
+            icon={<Edit />}
+            handleClick={() => setEdit(true)}
+          />
         )}
       </Stack>
       {isEdit ? (

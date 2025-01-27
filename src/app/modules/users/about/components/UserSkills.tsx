@@ -24,9 +24,10 @@ export const UserSkills: FC<PropsTypes> = ({ skills }) => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.SKILLS" })}
         </Typography>
-        <CustomIconButton 
-            icon={<Add/>}
-            handleClick={()=>setOpen(true)}
+        <CustomIconButton
+          icon={<Add />}
+          tooltip="Add"
+          handleClick={() => setOpen(true)}
         />
       </Stack>
 
@@ -40,7 +41,9 @@ export const UserSkills: FC<PropsTypes> = ({ skills }) => {
         )}
       </Stack>
 
-      {open && <AddUpdateSkills open={open} setOpen={setOpen} userSkills={skills} />}
+      {open && (
+        <AddUpdateSkills open={open} setOpen={setOpen} userSkills={skills} />
+      )}
     </Card>
   );
 };

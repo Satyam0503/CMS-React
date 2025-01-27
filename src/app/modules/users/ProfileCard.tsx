@@ -179,7 +179,7 @@ export default function ProfileCard(props: ProfileInfo) {
               ),
             }}
           >
-            {designation ||"NA"} 
+            {designation || "NA"}
           </Typography>
         </Stack>
         <Stack
@@ -199,7 +199,7 @@ export default function ProfileCard(props: ProfileInfo) {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {bloodGroup}
+              {bloodGroup} AB
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}

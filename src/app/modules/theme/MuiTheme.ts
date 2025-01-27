@@ -590,6 +590,7 @@ export const MuiTheme = createTheme({
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             border: " 1px solid " + colors.alpha.neutral[200],
             background: colors.alpha.neutral[100],
+            color: colors.alpha.primary[500],
           },
         },
         sizeSmall: {
