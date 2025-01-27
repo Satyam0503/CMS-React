@@ -17,6 +17,7 @@ import AddUpdateCertification from "./AddUpdateCertification";
 import { addEmployeeCertification } from "../../userservices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
+import { useUserDetails } from "../../UserDataProvider";
 
 const initialValue: UserCertificationModel = {
   certificationId: "",
@@ -27,13 +28,10 @@ const initialValue: UserCertificationModel = {
   mode: "",
 };
 
-interface PropTypes {
-  userCertifications: UserCertificationModel[];
-}
 
-export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
+export const UserCertification= () => {
   const intl = useIntl();
-  //   const [certifications, setCertifications] = useState<UserCertificationModel[]>(() => userCertifications);
+  const {userDetails:{userCertifications},setRefresh,isRefresh}= useUserDetails();
   const [initialValues, setInitialValues] = useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
@@ -55,7 +53,7 @@ export const UserCertification: FC<PropTypes> = ({ userCertifications }) => {
         }
         setSubmitting(false);
         toast.success(message);
-        // setRefresh(!isRefresh);
+        setRefresh(!isRefresh);
         handleClose();
       } catch (error: any) {
         toast.error(error.message);

@@ -1,15 +1,20 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { EmployeeModel} from "../../../utils/common_types";
-import { getEmployeeDetails } from "./userservices";
+import { EmployeeModel, UserCertificationModel, UserEducationModel} from "../../../utils/common_types";
+import { getEmployeeCertifications, getEmployeeDetails, getEmployeeEducations, getEmployeeSummary, UserSummaryModel } from "./userservices";
 import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
+import { toast } from "react-toastify";
 
 type UserDataContextType = {
-  userDetails: EmployeeModel | undefined;
-  setUserDetails: (userData: EmployeeModel) => void;
+  userDetails: {
+    userPersonalDetails:EmployeeModel,
+    userEducations:UserEducationModel[],
+    userCertifications:UserCertificationModel[],
+    userSkills:string[],
+    userSummary:UserSummaryModel,
+  };
   setRefresh: (isRefresh: boolean) => void;
-  error: string | undefined;
   isRefresh: boolean;
 };
 
@@ -17,7 +22,7 @@ type PropTypes = {
   children: React.ReactNode;
 };
 
-//  Create UserDetails Context
+// Create UserDetails Context
 const UserDetailsContext = createContext<UserDataContextType | undefined>(
   undefined
 );
@@ -26,47 +31,73 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 // User Details Provider
 export const UserDetailsProvider = (props: PropTypes) => {
   const token = useAppSelector((state) => state.auth.token)!;
-  const [userDetails, setUserDetails] = useState<EmployeeModel>();
   const [isRefresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
   const intl = useIntl();
+  const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
+    []
+  );
+  const [userCertifications, setUserCertifications] = useState<
+    UserCertificationModel[]
+  >([]);
+  const [userSummary, setUserSummary] = useState<UserSummaryModel>({
+    summaryId: "",
+    summary: "",
+  });
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [userPersonalDetails, setUserPersonalDetails] = useState<EmployeeModel>(
+    {} as EmployeeModel
+  );
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   getEmployeeDetails(token)
-  //     .then((res) => {
-  //       const { message, success, methodResult } = res.data;
-  //       if (!success) {
-  //         throw new Error("Failed to fetch employee details");
-  //       }
-  //       setUserDetails(methodResult);
-  //     })
-  //     .catch((error) => {
-  //       setError(error.message);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }, [isRefresh]);
+  useEffect(() => {
+    const getAllDetails= async()=>{
+      try{
+        const responseArray= await Promise.all([
+          getEmployeeDetails(token),
+          getEmployeeEducations(token),
+          getEmployeeCertifications(token),
+          getEmployeeSummary(token),
+          // getEmployeeSkills(token),
+        ]);
+        setUserPersonalDetails(responseArray[0].data.methodResult);
+        setUserEducations(responseArray[1].data.methodResults);
+        setUserCertifications(responseArray[2].data.methodResults);
+        setUserSummary(responseArray[3].data.methodResult);
+        // setUserSkills(responseArray[4].data.methodResults);
+      }
+      catch(error:any){
+        toast.error(error.message);
+      }
+    }
 
-  // if (loading) {
-  //   return (
-  //     <Typography variant="h4">
-  //       {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
-  //     </Typography>
-  //   );
-  // }
-  // if (error) {
-  //   return (
-  //     <Typography variant="h4" color="error">
-  //       {error}
-  //     </Typography>
-  //   );
-  // }
+    getAllDetails();
+   
+  }, [isRefresh,token]);
+
+  if (loading) {
+    return (
+      <Typography variant="h4">
+        {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
+      </Typography>
+    );
+  }
+  if (error) {
+    return (
+      <Typography variant="h4" color="error">
+        {error}
+      </Typography>
+    );
+  }
   return (
     <UserDetailsContext.Provider
-      value={{ userDetails, setUserDetails, isRefresh, setRefresh, error }}
+      value={{ userDetails:{
+        userPersonalDetails,
+        userEducations,
+        userCertifications,
+        userSkills,
+        userSummary
+      }, isRefresh, setRefresh }}
     >
       {props.children}
     </UserDetailsContext.Provider>

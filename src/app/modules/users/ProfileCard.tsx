@@ -35,21 +35,18 @@ import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
 import { colors } from "../theme/MuiTheme";
 import { CustomIconButton } from "../components/CustomIconButton";
+import { useUserDetails } from "./UserDataProvider";
+import { getAgeInYears } from "../../../utils/common";
 
-type ProfileInfo = {
-  name?: string;
-  age?: number;
-  bloodGroup?: string;
-  designation?: string;
-};
-
-export default function ProfileCard(props: ProfileInfo) {
+export default function ProfileCard() {
   const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const { name, age, bloodGroup, designation } = props;
+  const {
+    userDetails: { userPersonalDetails },
+  } = useUserDetails();
 
   function handleClose() {
     setOpen(false);
@@ -164,7 +161,7 @@ export default function ProfileCard(props: ProfileInfo) {
 
         <Stack textAlign={"center"} alignItems={"center"}>
           <Typography variant="h5" color={"white"} mb={0.5}>
-            {name}
+            {userPersonalDetails.firstName + " " + userPersonalDetails.lastName}
           </Typography>
           <Typography
             variant="body2"
@@ -179,7 +176,7 @@ export default function ProfileCard(props: ProfileInfo) {
               ),
             }}
           >
-            {designation ||"NA"} 
+            {userPersonalDetails.jobRole || "NA"}
           </Typography>
         </Stack>
         <Stack
@@ -191,7 +188,7 @@ export default function ProfileCard(props: ProfileInfo) {
         >
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {age}
+              {getAgeInYears(userPersonalDetails.dateOfBirth!) || "NA"}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.AGE" })}
@@ -199,7 +196,7 @@ export default function ProfileCard(props: ProfileInfo) {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {bloodGroup}
+              {userPersonalDetails.bloodGroup}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}

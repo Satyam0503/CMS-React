@@ -4,14 +4,14 @@ import { useIntl } from "react-intl";
 import { AddUpdateSkills } from "./AddUpdateSkills";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import { Add } from "@mui/icons-material";
+import { useUserDetails } from "../../UserDataProvider";
 
-interface PropsTypes {
-  skills: string[];
-}
 
-export const UserSkills: FC<PropsTypes> = ({ skills }) => {
+
+export const UserSkills= () => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
+  const {userDetails:{userSkills}}= useUserDetails();
 
   return (
     <Card sx={{ p: 2 }}>
@@ -31,16 +31,16 @@ export const UserSkills: FC<PropsTypes> = ({ skills }) => {
       </Stack>
 
       <Stack direction="row" gap={1} flexWrap={"wrap"}>
-        {skills?.length === 0 ? (
+        {userSkills?.length === 0 ? (
           <Typography variant="body2">
             {intl.formatMessage({ id: "ADD.SKILLS" })}
           </Typography>
         ) : (
-          skills?.map((skill, index) => <Chip key={index} label={skill} />)
+          userSkills?.map((skill, index) => <Chip key={index} label={skill} />)
         )}
       </Stack>
 
-      {open && <AddUpdateSkills open={open} setOpen={setOpen} userSkills={skills} />}
+      {open && <AddUpdateSkills open={open} setOpen={setOpen} userSkills={userSkills} />}
     </Card>
   );
 };

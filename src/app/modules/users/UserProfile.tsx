@@ -3,39 +3,20 @@ import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { useUserDetails } from "./UserDataProvider";
-import dayjs from "dayjs";
-import { useAppSelector } from "../../Redux/hooks";
 import IconStat from "../components/IconStat";
 import { colors } from "../theme/MuiTheme";
 import {
   Build,
-  Calculate,
+
   CalendarMonth,
   CorporateFareOutlined,
-  HourglassBottom,
-} from "@mui/icons-material";
-// import { getEmployeeDetails } from "./userservices";
 
-// get token and id from store
+} from "@mui/icons-material";
+
 export default function UserProfile() {
-  const token = useAppSelector((state) => state.auth.token)!;
   const intl = useIntl();
-  const {
-    userDetails: currentUser,
-    setUserDetails,
-    setRefresh,
-  } = useUserDetails();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
-
-  const profileCardPayload = {
-    name: `${currentUser?.firstName} ${currentUser?.lastName}`,
-    designation: currentUser?.jobRole,
-    bloodGroup: currentUser?.bloodGroup,
-    age: dayjs(new Date()).diff(currentUser?.dateOfBirth, "year"),
-  };
 
   return (
     <Grid container spacing={4}>
@@ -48,7 +29,7 @@ export default function UserProfile() {
         gap={4}
       >
         <Stack>
-          <ProfileCard {...profileCardPayload} />
+          <ProfileCard />
         </Stack>
 
         <Stack>

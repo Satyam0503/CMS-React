@@ -12,14 +12,12 @@ import { FC, useState } from "react";
 import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
-import dayjs from "dayjs";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { addEmployeeEducation } from "../../userservices";
 import { toast } from "react-toastify";
+import { useUserDetails } from "../../UserDataProvider";
 
-interface PropsType {
-  userEducations: UserEducationModel[];
-}
+
 
 const initialValue: UserEducationModel = {
   educationId: "",
@@ -30,9 +28,9 @@ const initialValue: UserEducationModel = {
   endDate: null,
   type: "",
 };
-export const UserEducation: FC<PropsType> = ({ userEducations }) => {
+export const UserEducation= () => {
   const intl = useIntl();
-//   const [educations, setEducations] =useState<UserEducationModel[]>(userEducations);
+  const {userDetails:{userEducations},setRefresh,isRefresh}= useUserDetails();
   const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
@@ -78,6 +76,7 @@ export const UserEducation: FC<PropsType> = ({ userEducations }) => {
         setSubmitting(false);
         toast.success(message);
         handleClose();
+        setRefresh(!isRefresh);
       } catch (error: any) {
         toast.error(error.message);
       }

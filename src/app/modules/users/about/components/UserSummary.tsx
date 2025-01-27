@@ -9,13 +9,11 @@ import { updateEmployeeSummary, UserSummaryModel } from "../../userservices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 
-interface PropTypes {
-  userSummary: UserSummaryModel;
-}
-export const UserSummary: FC<PropTypes> = ({ userSummary }) => {
+export const UserSummary = () => {
   //   const {userDetails,isRefresh,setRefresh }= useUserDetails()
-  const [isEdit, setEdit] = useState(false);
+  const {userDetails:{userSummary},setRefresh,isRefresh}= useUserDetails();
   const [summary, setSummary] = useState(userSummary ? userSummary.summary : "");
+  const [isEdit, setEdit] = useState(false);
   const token = useAppSelector(state=>state.auth.token)!;
   const intl = useIntl();
 
@@ -33,7 +31,7 @@ export const UserSummary: FC<PropTypes> = ({ userSummary }) => {
         toast.success(message);
         setSummary("");
         setEdit(false);
-        // setRefresh(!refresh) 
+        setRefresh(!isRefresh); 
     }
     catch(error:any){
         toast.error(error.message);

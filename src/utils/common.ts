@@ -136,3 +136,7 @@ export const experienceCategoryList = [
     value: 15,
   },
 ];
+
+export const getAgeInYears=(dob:Dayjs)=>{
+  return dayjs(new Date()).diff(dob,"years");
+}

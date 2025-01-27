@@ -3,17 +3,10 @@ import { useIntl } from "react-intl";
 import { useUserDetails } from "../../UserDataProvider";
 import { dateFormatter } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
-import { EmployeeModel } from "../../../../../utils/common_types";
-import { FC } from "react";
 
-
-interface PersonalDetailsTypes {
-  userPersonalDetails:EmployeeModel
-}
-
-export const PersonalDetails:FC<PersonalDetailsTypes> = ({userPersonalDetails:currentUser}) => {
+export const PersonalDetails = () => {
   const intl = useIntl();
-
+  const {userDetails:{userPersonalDetails:currentUser} }= useUserDetails();
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -27,7 +20,7 @@ export const PersonalDetails:FC<PersonalDetailsTypes> = ({userPersonalDetails:cu
         </Typography>
         <UpdateUserInfo/>
       </Stack>
-      <Grid container spacing={0.5}>
+      <Grid container spacing={1}>
         <Grid item xs={12}>
           <Typography variant="body2">
             {intl.formatMessage({ id: "USER.ADDRESS" })}
