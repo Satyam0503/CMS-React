@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
+import { UserSummaryModel } from "../app/modules/users/userservices";
 
 export interface ApiResponse {
   success: boolean;
@@ -52,7 +53,8 @@ export interface RoleModel {
 }
 
 export interface JobModal {
-  jobId?: string;
+  jobId: string;
+  companyId?: string;
   title: string;
   vacancies: number;
   jobType: string;
@@ -60,19 +62,26 @@ export interface JobModal {
   description: string;
 }
 
-export interface UserEducationType {
-  id?: string;
-  title: string;
+export interface UserEducationModel {
+  educationId:string;
+  userId: string;
+  educationTitle: string;
+  collegeName: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
-  collegeName: string;
   type: string;
 }
-export type UserCertificationType = Omit<UserEducationType, "collegeName"> & {
-  organizationName: string;
+
+export type UserCertificationModel = {
+  certificationId:string;
+  certificationTitle: string;
+  organisationName: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  mode: string;
 };
 
-export type HolidayType = Omit<UserEducationType, "collegeName"> & {
+export type HolidayType = Omit<UserEducationModel, "collegeName"> & {
   description: string;
 };
 
@@ -92,49 +101,6 @@ export interface RolesType {
   isDeleted?: boolean | null;
   createdAt?: string;
   updatedAt?: string;
-}
-
-export interface CertificationsType {
-  certificationName: string;
-  createdAt: string;
-  employeeId: string;
-  endDate: string;
-  id: string;
-  startDate: string;
-  title: string;
-  type: string;
-  updatedAt: string;
-}
-
-export interface EmployeesDataTypes {
-  id: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  email: string;
-  role: string;
-  employeeId: string;
-  department: string;
-  dateOfBirth: Dayjs | null;
-  reportingManager: string;
-  teamLead: string;
-  phoneNumber: string;
-  bloodGroup: string;
-  status: string;
-  address: string;
-  jobRole: string;
-  dateOfJoining: Dayjs | null;
-  personalEmail: string;
-  emergencyContact: string;
-  skills?: null | string[];
-  summary?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
-  Education?: any[];
-  Certifications?: CertificationsType[];
-  Employements?: any[];
-  languagesKnown?: string;
-  profilePicture?: string | File | null;
 }
 
 export type ColumnListTypes = {
@@ -161,17 +127,18 @@ export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
 export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;
 
+export type EmployeeResponseData = ResponseData<EmployeeModel>;
+
 export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
-export type GetEmployeeDetailsResponseData = ResponseData<EmployeesDataTypes>;
+export type JobsResponseData = ResponseData<JobModal>;
 
+export type SkillsResponseData = ResponseData<JobModal>;
 
-export type AddJobResponseData = ResponseData<JobModal>;
+export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
-export type AddUpdateSummaryResponseData = ResponseData<EmployeesDataTypes>;
+export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
-export type AddUserEducationResponseData = ResponseData<EmployeesDataTypes>;
-
-export type AddCertificationResponseData = ResponseData<EmployeesDataTypes>;
+export type CertificationResponseData = ResponseData<UserCertificationModel>;

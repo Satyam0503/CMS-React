@@ -40,7 +40,7 @@ export const userSchema = Yup.object().shape({
 });
 
 export const userEducationSchema = Yup.object().shape({
-  title: Yup.string().required("Course name is required").min(3, 'Course name should be at least 3 characters long'),
+  educationTitle: Yup.string().required("Course name is required").min(3, 'Course name should be at least 3 characters long'),
   startDate: Yup.date().required("Start Date is Required").max(new Date,"Start date cannot be in the future"),
   endDate: Yup.date().required("End Date is Required").min(Yup.ref('startDate'), 'End date cannot be before start date'),
   collegeName: Yup.string().required("College name is required").min(3, 'College name should be at least 3 characters long'),
@@ -48,9 +48,9 @@ export const userEducationSchema = Yup.object().shape({
 });
 
 export const userCertificationSchema = Yup.object().shape({
-  title: Yup.string().required("Certification title is required").min(3, 'Certification title should be at least 3 characters long'),
+  certificationTitle: Yup.string().required("Certification title is required").min(3, 'Certification title should be at least 3 characters long'),
   startDate: Yup.date().required("Start Date is Required").max(new Date,"Start date cannot be in the future"),
   endDate: Yup.date().required("End Date is Required").min(Yup.ref('startDate'), 'End date cannot be before start date'),
-  organizationName: Yup.string().required("Organization name is required").min(3, 'Organization name should be at least 3 characters long'),
-  type: Yup.string().required("Certification type is required"),
+  organisationName: Yup.string().required("Organization name is required").min(3, 'Organization name should be at least 3 characters long'),
+  mode: Yup.string().required("Certification type is required"),
 });

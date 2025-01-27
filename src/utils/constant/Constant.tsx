@@ -11,10 +11,14 @@ import { useState } from "react";
 import {
   ColumnListTypes,
   EmployeeModel,
-  EmployeesDataTypes,
+  JobModal,
   RolesType,
 } from "../common_types";
-import { dateFormatter, applicationStatusDecoder } from "../common";
+import {
+  dateFormatter,
+  applicationStatusDecoder,
+  statusDecoder,
+} from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
@@ -35,23 +39,37 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
+  GET_EMPLOYEE_DETAILS:`${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
+  GET_EMPLOYEE_CERTIFICATIONS:`${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
+  GET_EMPLOYEE_EDUCATIONS:`${BaseUrl}/api/User/GetEmployeeEducationDetails`,
+  GET_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/GetEmployeeSummary`,
 
+  
+  ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
+  ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
+  
+  UPDATE_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/AddEditEmployeeSummary`,
+  
   // jobs
-  ADD_JOB_VACANCY:`${BaseUrl}/api/JobVacancy/AddJobVacancy`,
-  GET_ALL_JOBS:`${BaseUrl}/api/JobVacancy/getAllJobs`,
-
+  ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
+  EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
+  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+  
+  // not working
+  UPDATE_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
-  UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
-  ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
-  UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
-  ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
-  ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
-  ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
+  GET_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/GetEmployeeSkills`,
+
+  // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
+  // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
+  // UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
+  // ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
+  // ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
+  // ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [
@@ -124,29 +142,28 @@ export const JobTime = [
     value: "Part Time",
   },
   {
-    id:3,
-    label:"Internship",
-    value:"Internship"
-  }
-]
+    id: 3,
+    label: "Internship",
+    value: "Internship",
+  },
+];
 export const JobType = [
   {
-    id:1,
-    label:"Onsite",
-    value:"Onsite"
+    id: 1,
+    label: "Onsite",
+    value: "Onsite",
   },
   {
-    id:2,
-    label:"Hybrid",
-    value:"Hybrid"
+    id: 2,
+    label: "Hybrid",
+    value: "Hybrid",
   },
   {
-    id:3,
-    label:"Remote",
-    value:"Remote"
-  }
-]
-
+    id: 3,
+    label: "Remote",
+    value: "Remote",
+  },
+];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
@@ -398,44 +415,42 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "jobTitle",
     label: "Job Title",
     minWidth: 180,
+    avatarCell: (row: JobModal) => {
+      return <AvatarCell title={row.title} subTitle={row.jobType} />;
+    },
   },
   {
-    id: "department",
-    label: "Department",
-  },
-  {
-    id: "noOfPosition",
+    id: "vacancies",
     label: "No of Position",
-  },
-  {
-    id: "interviewDate",
-    label: "Interview Date",
-    format: (date) => dateFormatter(date, "DD MMM YYYY"),
   },
   {
     id: "jobType",
     label: "Job Type",
   },
   {
-    id: "jobTime",
-    label: "Job Time",
-  },
-  {
     id: "status",
     label: "Status",
+    build: (status: boolean) => {
+      const className = status ? "success" : "danger";
+      return (
+        <StyleStatus label={statusDecoder(status)} className={className} />
+      );
+    },
   },
   {
     id: "action",
     label: "Action",
     build: (
-      row: any,
-      handleJobEdit: (row: any) => void,
-      openDeleteModal: (row: any) => void
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleJobEdit}
         openConfirmationModal={openDeleteModal}
+        openViewModal={openViewJobDetail}
       />
     ),
   },

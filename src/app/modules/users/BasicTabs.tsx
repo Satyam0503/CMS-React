@@ -2,7 +2,7 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import AboutUser from "./AboutUser";
+import AboutUser from "./about/AboutUser";
 import { LeaveTracker } from "./leavetracker/LeaveTracker";
 import { Grid, Theme, useMediaQuery } from "@mui/material";
 import { UserPerformance } from "./performance/UserPerformance";
@@ -66,7 +66,7 @@ export default function BasicTabs() {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
-          variant={"fullWidth"}
+          variant={isSmallScreen ? "scrollable" : "fullWidth"}
           scrollButtons="auto"
           allowScrollButtonsMobile={true}
         >
@@ -74,6 +74,8 @@ export default function BasicTabs() {
             label="About"
             {...a11yProps(0)}
             sx={{
+              width: "150px",
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -83,6 +85,8 @@ export default function BasicTabs() {
             label="Leave Tracker"
             {...a11yProps(1)}
             sx={{
+              width: "150px",
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -92,6 +96,8 @@ export default function BasicTabs() {
             label="Performance"
             {...a11yProps(2)}
             sx={{
+              width: "150px",
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -101,6 +107,7 @@ export default function BasicTabs() {
             label="Work History"
             {...a11yProps(3)}
             sx={{
+              width: "150px",
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -110,6 +117,7 @@ export default function BasicTabs() {
             label="Settings"
             {...a11yProps(4)}
             sx={{
+              width: "150px",
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },

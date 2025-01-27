@@ -15,11 +15,12 @@ import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
-import { EmployeeModel, EmployeesDataTypes } from "../../../utils/common_types";
+import { EmployeeModel } from "../../../utils/common_types";
 import { ConfirmationModal } from "../components/ConfirmationModal";
 import {
   employeesListMapperforExport,
   statusDecoder,
+  statusEncoder,
 } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
@@ -44,7 +45,7 @@ const employeeInitialValue: EmployeeModel = {
   bloodGroup: "",
   address: "",
   jobRole: "",
-  status: "",
+  status: "Active",
   isEmailVerified: false,
   dateOfJoining: null,
   personalEmail: "",
@@ -80,12 +81,12 @@ export default function Employees() {
   function SaveAddEditEmployee(
     values: EmployeeModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) {
+  ) {    
     setLoading(true);
     if (isEdit) {
       const payload = {
         ...values,
-        status: statusDecoder(values.status as string),
+        status: statusEncoder(values.status as string)
       };
       const userId=values.userId;
       updateEmployee(payload, token,userId)
@@ -126,7 +127,7 @@ export default function Employees() {
         personalEmail: values.personalEmail,
         emergencyContact: values.emergencyContact,
         dateOfJoining: values.dateOfJoining,
-        status: statusDecoder(values.status as string),
+        status:statusEncoder(values.status as string),
         address: values.address,
         isEmailVerified: values.isEmailVerified,
       };
@@ -136,7 +137,6 @@ export default function Employees() {
           if (!success) {
             throw new Error(message);
           }
-          setLoading(false);
           setRefresh(!isRefresh);
           toast.success(message);
           setSubmitting(false);
@@ -190,7 +190,7 @@ export default function Employees() {
     }
   }
 
-  function handleEmployeeEdit(employee: EmployeeModel) {
+  function handleEmployeeEdit(employee: EmployeeModel) {    
     setEmployeeInitialValues({
       userId: employee.userId,
       companyId: employee.companyId,
@@ -209,7 +209,7 @@ export default function Employees() {
       bloodGroup: employee.bloodGroup,
       personalEmail: employee.personalEmail,
       emergencyContact: employee.emergencyContact,
-      status: employee.status ? "Active" : "Inactive",
+      status: statusDecoder(employee.status as boolean),
       address: employee.address,
       dateOfBirth: dayjs(employee.dateOfBirth),
       dateOfJoining: dayjs(employee.dateOfJoining),

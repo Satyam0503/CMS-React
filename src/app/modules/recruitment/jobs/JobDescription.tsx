@@ -37,7 +37,7 @@ const JobDescription: FC<PropsTypes> = ({
   handleClose,
   handleAddEditJob,
 }) => {
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobDescription, setJobDescription] = useState( initialValues.description ? initialValues.description : "");
   const intl = useIntl();
 
   const {
@@ -61,7 +61,7 @@ const JobDescription: FC<PropsTypes> = ({
       handleAddEditJob(values, setSubmitting);
     },
   });
-
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -182,7 +182,7 @@ const JobDescription: FC<PropsTypes> = ({
               handleClick={handleClose}
             />
             <CustomisedButton
-              label="Publish"
+              label={isEdit ? "Update" :"Publish"}
               Icon={<Check />}
               type="submit"
               iconPosition="start"

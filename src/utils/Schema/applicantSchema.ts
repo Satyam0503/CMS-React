@@ -1,8 +1,5 @@
 import * as Yup from "yup";
 
-const validFileExtensions = { image: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'webp'] };
-
-
 const MAX_FILE_SIZE= 5 * 1024 * 1024 // 5MB
 export const applicantSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -31,7 +28,7 @@ export const applicantSchema = Yup.object().shape({
     }
     return true;
   })
-  .test('fileSize', 'File size must not be more than 3MB', 
+  .test('fileSize', 'File size must not be more than 5MB', 
   (value:any) => {
     if (value) {
       return value.size <= MAX_FILE_SIZE;
