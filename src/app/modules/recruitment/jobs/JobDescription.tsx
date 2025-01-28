@@ -1,4 +1,9 @@
-import { Check, FileOpenOutlined, LinkOutlined } from "@mui/icons-material";
+import {
+  Check,
+  FileOpenOutlined,
+  LinkOutlined,
+  Padding,
+} from "@mui/icons-material";
 import {
   FormHelperText,
   Grid,
@@ -148,7 +153,7 @@ const JobDescription: FC<PropsTypes> = ({
                   {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}
                 </Typography>
               </Grid>
-              <Checkbox {...label} />
+              <Checkbox {...label} sx={{ p: 0 }} />
 
               {/* <Grid item xs={8} md={6}>
                 <Select
@@ -170,7 +175,13 @@ const JobDescription: FC<PropsTypes> = ({
           <Stack>
             <TextEditor value={jobDescription} setValue={setJobDescription} />
           </Stack>
-          <Stack direction={"row"} justifyContent={"flex-end"} mt={2} gap={1}>
+          <Stack
+            direction={"row"}
+            justifyContent={"flex-end"}
+            mt={2}
+            gap={1}
+            flexWrap={"wrap-reverse"}
+          >
             <CustomisedButton
               variant="outlined"
               label="Page URL"

@@ -85,7 +85,9 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                           <TableCell
                             key={column.id}
                             align={column?.align || "left"}
-                            sx={{ minWidth: column.minWidth || 140 }}
+                            sx={{
+                              minWidth: column.minWidth || 140,
+                            }}
                           >
                             {column.avatarCell
                               ? column.avatarCell(row)

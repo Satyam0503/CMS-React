@@ -416,7 +416,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    minWidth: 50,
+    minWidth: 180,
     avatarCell: (row: JobModal) => {
       return <AvatarCell title={row.title} />;
     },

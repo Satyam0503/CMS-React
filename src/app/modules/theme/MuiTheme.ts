@@ -435,13 +435,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    MuiStack: {
-      styleOverrides: {
-        root: {
-          padding: "0px !important",
-        },
-      },
-    },
+    // MuiStack: {
+    //   styleOverrides: {
+    //     root: {
+    //       padding: "0px !important",
+    //     },
+    //   },
+    // },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -929,6 +929,7 @@ export const MuiTheme = createTheme({
           background: themeColors.white,
           color: colors.alpha.neutral[800],
           fontWeight: "bold",
+          fontSize: "12px",
         },
         root: {
           transition: "background-color .2s",
@@ -1091,6 +1092,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
+          background: "inherit",
           "&.Mui-disabled": {
             color: colors.alpha.neutral[200],
           },

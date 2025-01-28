@@ -1,14 +1,22 @@
-import { Box, FormHelperText, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  FormHelperText,
+  Grid,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { memo, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add, CloudUploadOutlined } from "@mui/icons-material";
+import { Add, Check, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
 import { TextInput } from "../../components/form_component/TextInput";
 import CustomisedButton from "../../components/CustomisedButton";
 import { useIntl } from "react-intl";
+import { colors } from "../../theme/MuiTheme";
 
 interface types {
   firstName: string;
@@ -110,7 +118,11 @@ export const AddApplicant = memo(() => {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Typography variant="body1" mb={0.5}>
+                      <Typography
+                        variant="body1"
+                        mb={1}
+                        color={colors.alpha.primary[500]}
+                      >
                         {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                       <Stack direction={"column"} spacing={1}>
@@ -123,13 +135,17 @@ export const AddApplicant = memo(() => {
                             cursor: "pointer",
                           }}
                         >
-                          <Stack
-                            justifyContent={"center"}
-                            gap={1}
-                            alignItems={"center"}
+                          <Container
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              gap: 1,
+                              alignItems: "center",
+                            }}
                           >
                             <Grid item xs={6} textAlign={"center"}>
                               <CloudUploadOutlined fontSize="large" />
+
                               <input
                                 name="resume"
                                 type="file"
@@ -140,7 +156,7 @@ export const AddApplicant = memo(() => {
                                 onBlur={(e) => {
                                   formik.setFieldTouched("resume", true);
                                 }}
-                                // hidden
+                                hidden
                               />
                               <Typography variant="body1" flexWrap={"wrap"}>
                                 {intl.formatMessage({ id: "FILE.SELECTED" })}:
@@ -149,10 +165,12 @@ export const AddApplicant = memo(() => {
                             </Grid>
                             <Grid item xs={6}>
                               <Typography variant="body2" flexWrap={"wrap"}>
-                                *Please select .pdf file upto 5 MB
+                                {intl.formatMessage({
+                                  id: "FILE.UPLOAD_INSTRUCTION",
+                                })}
                               </Typography>
                             </Grid>
-                          </Stack>
+                          </Container>
                         </Box>
                       </Stack>
                       <FormHelperText>
@@ -164,7 +182,7 @@ export const AddApplicant = memo(() => {
                   </Grid>
                   <Stack
                     direction={"row"}
-                    spacing={2}
+                    spacing={1}
                     justifyContent={"flex-end"}
                     mt={2}
                   >
@@ -180,6 +198,7 @@ export const AddApplicant = memo(() => {
                     />
                     <CustomisedButton
                       label="Add"
+                      Icon={<Check />}
                       type="submit"
                       disabled={
                         formik.isSubmitting || !(formik.dirty && formik.isValid)

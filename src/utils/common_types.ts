@@ -63,7 +63,7 @@ export interface JobModal {
 }
 
 export interface UserEducationModel {
-  educationId:string;
+  educationId: string;
   userId: string;
   educationTitle: string;
   collegeName: string;
@@ -73,7 +73,7 @@ export interface UserEducationModel {
 }
 
 export type UserCertificationModel = {
-  certificationId:string;
+  certificationId: string;
   certificationTitle: string;
   organisationName: string;
   startDate: Dayjs | null;
@@ -81,9 +81,9 @@ export type UserCertificationModel = {
   mode: string;
 };
 
-export type HolidayType =  {
-  id:string;
-  title:string;
+export type HolidayType = {
+  id: string;
+  title: string;
   description: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
@@ -114,6 +114,8 @@ export type ColumnListTypes = {
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
   build?: any;
+  fontSize?: string;
+
   format?: (value: any) => any;
   avatarCell?: (row: any) => ReactNode;
 };
