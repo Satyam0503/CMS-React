@@ -29,7 +29,7 @@ const initialValues: JobModal = {
   vacancies: 1,
   description: "",
   jobType: "",
-  status: "Active",
+  status: true,
 };
 
 export default function Jobs() {
@@ -58,7 +58,6 @@ export default function Jobs() {
   const handleEditJob = (job: JobModal) => {
     setJobInitialValues({
       ...job,
-      status: statusDecoder(job.status as boolean),
     });
     setOpenModal(true);
     setEdit(true);
@@ -96,7 +95,6 @@ export default function Jobs() {
     if (isEdit) {
       const payload = {
         ...values,
-        status: statusEncoder(values.status as string),
       };
       const jobId = values.jobId;
       try {
@@ -107,16 +105,16 @@ export default function Jobs() {
         }
         toast.success(message);
         setRefresh(!isRefresh);
-        setSubmitting(false);
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
+      }
+      finally{
         setSubmitting(false);
       }
     } else {
       const payload = {
         ...values,
-        status: statusEncoder(values.status as string),
       };
       try {
         const response = await addJobVacancy(payload, token);
@@ -126,10 +124,11 @@ export default function Jobs() {
         }
         toast.success(message);
         setRefresh(!isRefresh);
-        setSubmitting(false);
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
+      }
+      finally{
         setSubmitting(false);
       }
     }
@@ -149,6 +148,8 @@ export default function Jobs() {
         setLoading(false);
       } catch (error: any) {
         toast.error(error.message);
+      }
+      finally{
         setLoading(false);
       }
     }, 1500);

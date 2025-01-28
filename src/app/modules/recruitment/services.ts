@@ -1,6 +1,6 @@
 
 import { getRequest, postRequest } from "../../../server/axios"
-import { JobsResponseData, JobModal } from "../../../utils/common_types"
+import { JobsResponseData, JobModal, ApplicantResponseData, ApplicantModel, ApiResponse } from "../../../utils/common_types"
 import { ServiceUrl } from "../../../utils/constant/Constant"
 
 export const addJobVacancy = (payload:JobModal,token:string)=>{
@@ -16,4 +16,14 @@ export const getAllJobVacancies = (token:string)=>{
 
 export const deleteJobVacancy = ()=>{
     
+}
+
+// applicant services
+
+export const getAllApplicantList= (token:string)=>{
+    return getRequest<ApplicantResponseData>(ServiceUrl.GET_ALL_APPLICANTS,{},token);
+}
+
+export const addEditApplicant = (payload:ApplicantModel, token:string)=>{
+    return postRequest<ApplicantModel,ApiResponse>(ServiceUrl.ADD_EDIT_APPLICANT,payload,{},true,token);
 }

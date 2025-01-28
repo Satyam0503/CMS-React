@@ -14,12 +14,14 @@ export const applicantSchema = Yup.object().shape({
       /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       "Email must be a valid email"
     ),
-  phoneNumber:Yup.string()
+  phone:Yup.string()
   .matches(
     /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
     "Phone number is not valid"
   )
   .required("Phone number is required"),
+  experience:Yup.number().min(0).required("Experience is Required"),
+  vacanyId:Yup.string().required("Select Job"),
   resume: Yup.mixed().required('Resume is required')
   .test('fileFormat', 'Only PDF files are allowed', (value:any) => {
     if (value) {

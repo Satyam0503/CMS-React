@@ -30,7 +30,6 @@ export const BaseUrl =
 
 export const ServiceUrl = {
   // account
-
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
@@ -57,6 +56,10 @@ export const ServiceUrl = {
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+
+  // applicant 
+  GET_ALL_APPLICANTS:`${BaseUrl}/api/Applicants/GetApplicantList`,
+  ADD_EDIT_APPLICANT:`${BaseUrl}/api/Applicants/AddEditApplicant`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,

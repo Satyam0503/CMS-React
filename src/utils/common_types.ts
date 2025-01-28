@@ -58,12 +58,12 @@ export interface JobModal {
   title: string;
   vacancies: number;
   jobType: string;
-  status: boolean | string;
+  status: boolean;
   description: string;
 }
 
 export interface UserEducationModel {
-  educationId:string;
+  educationId: string;
   userId: string;
   educationTitle: string;
   collegeName: string;
@@ -73,7 +73,7 @@ export interface UserEducationModel {
 }
 
 export type UserCertificationModel = {
-  certificationId:string;
+  certificationId: string;
   certificationTitle: string;
   organisationName: string;
   startDate: Dayjs | null;
@@ -81,9 +81,9 @@ export type UserCertificationModel = {
   mode: string;
 };
 
-export type HolidayType =  {
-  id:string;
-  title:string;
+export type HolidayType = {
+  id: string;
+  title: string;
   description: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
@@ -118,6 +118,18 @@ export type ColumnListTypes = {
   avatarCell?: (row: any) => ReactNode;
 };
 
+export interface ApplicantModel {
+  applicantId:string;
+  companyId: string;
+  firstName: string;
+  lastName: string;
+  email:string;
+  phone:string;
+  vacanyId:string;
+  experience: number;
+  resume?: null | File;
+}
+
 // Api respone data types
 export interface ResponseData<T> {
   message: string;
@@ -145,5 +157,7 @@ export type SkillsResponseData = ResponseData<JobModal>;
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
+
+export type ApplicantResponseData = ResponseData<ApplicantModel>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
