@@ -1,5 +1,6 @@
 import {
   Box,
+  Container,
   FormHelperText,
   Grid,
   MenuItem,
@@ -21,6 +22,7 @@ import { experienceCategoryList } from "../../../../utils/common";
 import { addEditApplicant, getAllJobVacancies } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
+import { colors } from "../../theme/MuiTheme";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -62,7 +64,7 @@ export const AddApplicant = () => {
     console.log(values);
     const payload = {
       applicantId: values.applicantId,
-      companyId: values.companyId,
+      companyId:companyId,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
@@ -70,18 +72,16 @@ export const AddApplicant = () => {
       vacanyId: values.vacanyId,
       experience: values.experience,
     };
-    try{
-      const {data} = await addEditApplicant(payload,token);
-      if(!data.success){
+    try {
+      const { data } = await addEditApplicant(payload, token);
+      if (!data.success) {
         throw new Error(data.message);
       }
-      toast.success(data.message)
+      toast.success(data.message);
       handleClose();
-    }
-    catch(error:any){
+    } catch (error: any) {
       toast.error(error.message);
-    }
-    finally{
+    } finally {
       setSubmitting(false);
     }
     // const formData = new FormData();
@@ -189,7 +189,11 @@ export const AddApplicant = () => {
                       </Grid>
 
                       <Grid item xs={12}>
-                        <Typography variant="body1" mb={0.5}>
+                        <Typography
+                          variant="body1"
+                          mb={1}
+                          color={colors.alpha.primary[500]}
+                        >
                           {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                         </Typography>
                         <Stack direction={"column"} spacing={1}>
@@ -202,10 +206,13 @@ export const AddApplicant = () => {
                               cursor: "pointer",
                             }}
                           >
-                            <Stack
-                              justifyContent={"center"}
-                              gap={1}
-                              alignItems={"center"}
+                            <Container
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                gap: 1,
+                                alignItems: "center",
+                              }}
                             >
                               <Grid item xs={6} textAlign={"center"}>
                                 <CloudUploadOutlined fontSize="large" />
@@ -219,7 +226,7 @@ export const AddApplicant = () => {
                                   onBlur={(e) => {
                                     formik.setFieldTouched("resume", true);
                                   }}
-                                  // hidden
+                                  hidden
                                 />
                                 <Typography variant="body1" flexWrap={"wrap"}>
                                   {intl.formatMessage({ id: "FILE.SELECTED" })}:
@@ -228,10 +235,12 @@ export const AddApplicant = () => {
                               </Grid>
                               <Grid item xs={6}>
                                 <Typography variant="body2" flexWrap={"wrap"}>
-                                  *Please select .pdf file upto 5 MB
+                                  {intl.formatMessage({
+                                    id: "FILE.UPLOAD_INSTRUCTION",
+                                  })}
                                 </Typography>
                               </Grid>
-                            </Stack>
+                            </Container>
                           </Box>
                         </Stack>
                         <FormHelperText>

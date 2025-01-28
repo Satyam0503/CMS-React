@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Card, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
@@ -6,36 +5,27 @@ import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import dayjs from "dayjs";
 import ApplicationPreview from "./ApplicationPreview";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
-
-const application = [
-  {
-    jobTitle: "Demo",
-    exprience: 2,
-    applyDate: dayjs(),
-    location: "Dehradun",
-    noticePeriod: "3 months",
-    status: 3,
-  },
-];
+import { useEffect, useState } from "react";
+import { getAllApplicantList } from "../services";
+import { useAppSelector } from "../../../Redux/hooks";
 
 export default function Applications() {
   const intl = useIntl();
-  const [page, setPage] = React.useState<number>(0);
-  const [search, setSearch] = React.useState("");
-  const [totalRecords, setTotalRecords] = React.useState(0);
-  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
-  const [applicationsList, setApplicationsList] =
-    React.useState<any[]>(application);
-  const [viewApplicant, setViewApplicant] = React.useState(false);
-  const [selectedApplicant, setSelectedApplicant] = React.useState<
-    any | undefined
-  >();
-  const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
+  const [page, setPage] = useState<number>(0);
+  const [search, setSearch] = useState("");
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [rowPerPage, setRowPerPage] = useState<number>(10);
+  const [applicationsList, setApplicationsList] = useState<any[]>([]);
+  const [viewApplicant, setViewApplicant] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<any | undefined>();
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const token = useAppSelector(state=>state.auth.token)!;
+
   const handleEdit = (applicant: any) => {};
   const openConfirmationModal = (applicant: any) => {
     setConfirmModalOpen(true);
@@ -59,6 +49,27 @@ export default function Applications() {
   const handleApplicantDeletion = () => {
     console.log("delete Applicant");
   };
+
+  useEffect(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(async () => {
+      try{
+        const {data}= await getAllApplicantList(token);
+        if(!data.success){
+          throw new Error(data.message);
+        }
+        setApplicationsList(data.methodResults);
+      }
+      catch(error:any){
+        console.log(error);
+      }
+      finally{
+        setLoading(false);
+      }
+    },1500);
+    return ()=> clearTimeout(timeoutId);
+  },[]);
+
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -97,6 +108,7 @@ export default function Applications() {
             openConfirmationModal={openConfirmationModal}
             openViewModal={handleOpenPreview}
             handleDownload={handleResumeDownload}
+            loading={loading}
           />
 
           {totalRecords > rowPerPage && (

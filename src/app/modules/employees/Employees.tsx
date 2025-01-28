@@ -244,11 +244,12 @@ export default function Employees() {
         if (methodResults) {
           setEmployeeList(methodResults);
           setTotalRecords(methodResults.length);
-          setLoading(false);
         }
       } catch (error: any) {
-        setLoading(false);
         toast.error(error.message);
+      }
+      finally{
+        setLoading(false);
       }
     }, 1500);
     return () => clearTimeout(timeOutId);

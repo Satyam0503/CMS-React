@@ -160,6 +160,6 @@ export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
-export type ApplicantResponseData = ResponseData<ApplicantModel>;
+export type ApplicantsResponseData = ResponseData<ApplicantModel>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
