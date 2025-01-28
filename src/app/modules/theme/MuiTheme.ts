@@ -435,13 +435,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    // MuiStack: {
-    //   styleOverrides: {
-    //     root: {
-    //       padding: "0px !important",
-    //     },
-    //   },
-    // },
+    MuiStack: {
+      styleOverrides: {
+        root: {
+          padding: "0px !important",
+        },
+      },
+    },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -928,14 +928,14 @@ export const MuiTheme = createTheme({
         head: {
           background: themeColors.white,
           color: colors.alpha.neutral[800],
-          fontWeight: "bold",
+          fontWeight: 600,
           fontSize: "12px",
         },
         root: {
           transition: "background-color .2s",
 
           "&.MuiTableRow-hover:hover": {
-            backgroundColor: colors.alpha.primary[100],
+            backgroundColor: alpha(colors.alpha.primary["100"], 0.25),
           },
         },
       },
