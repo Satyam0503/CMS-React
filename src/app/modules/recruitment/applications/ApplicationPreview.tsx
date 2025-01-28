@@ -4,17 +4,16 @@ import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
 
-interface PropsType{
-  open:boolean;
-  handleClose:()=>void;
-  applicantData?:any;
+interface PropsType {
+  open: boolean;
+  handleClose: () => void;
+  applicantData?: any;
 }
 
 export default function ApplicationPreview(props: PropsType) {
   const intl = useIntl();
-  const {open,handleClose,applicantData} = props;
+  const { open, handleClose, applicantData } = props;
 
-  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Grid

@@ -552,7 +552,7 @@ export const AvatarCell = ({
   return (
     <Stack direction="row" spacing={1}>
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
-      <Stack direction="column">
+      <Stack direction="column" sx={{ alignSelf: "center" }}>
         <Typography variant="body1" display={"block"} fontWeight={500}>
           {title || "NA"}
         </Typography>
