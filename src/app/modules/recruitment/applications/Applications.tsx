@@ -65,9 +65,10 @@ export default function Applications() {
         <Stack spacing={2}>
           <Stack
             direction="row"
-            display={"flex"}
             justifyContent={"space-between"}
             alignItems={"center"}
+            flexWrap={"wrap-reverse"}
+            gap={2}
           >
             <SearchInput search={search} setSearch={setSearch} />
 

@@ -928,13 +928,14 @@ export const MuiTheme = createTheme({
         head: {
           background: themeColors.white,
           color: colors.alpha.neutral[800],
-          fontWeight: "bold",
+          fontWeight: 600,
+          fontSize: "12px",
         },
         root: {
           transition: "background-color .2s",
 
           "&.MuiTableRow-hover:hover": {
-            backgroundColor: colors.alpha.primary[100],
+            backgroundColor: alpha(colors.alpha.primary["100"], 0.25),
           },
         },
       },
@@ -1091,6 +1092,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
+          background: "inherit",
           "&.Mui-disabled": {
             color: colors.alpha.neutral[200],
           },

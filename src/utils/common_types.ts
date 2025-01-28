@@ -114,6 +114,8 @@ export type ColumnListTypes = {
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
   build?: any;
+  fontSize?: string;
+
   format?: (value: any) => any;
   avatarCell?: (row: any) => ReactNode;
 };

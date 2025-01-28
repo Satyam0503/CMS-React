@@ -9,7 +9,7 @@ import {
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { useEffect, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add, CloudUploadOutlined } from "@mui/icons-material";
+import { Add, Check, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
