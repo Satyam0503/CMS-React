@@ -1,5 +1,5 @@
 import { Close, Download } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Container, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
@@ -35,7 +35,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -45,7 +47,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -55,7 +59,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -65,7 +71,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -75,7 +83,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -85,7 +95,9 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -95,23 +107,27 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              USER.ROLE
+            </Typography>
           </Grid>
         </Grid>
 
         <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
+          <Grid item xs={6} fontWeight={400}>
             <Typography variant="body1" fontWeight={600}>
               {intl.formatMessage({ id: "PROFILE.STATUS" })}
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">Active</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              Active
+            </Typography>
           </Grid>
         </Grid>
       </Grid>
 
-      <Stack sx={{ border: "1px solid", borderRadius: "1rem" }}>
+      <Container style={{ border: "1px solid", borderRadius: "1rem" }}>
         <Stack
           direction="row"
           sx={{ borderBottom: 1, p: 3 }}
@@ -129,8 +145,8 @@ export default function ApplicationPreview(props: PropsType) {
             </IconButton>
           </Stack>
         </Stack>
-        <Stack sx={{ p: 4 }}>
-          <Stack>
+        <Stack>
+          <Stack mt={2}>
             <Typography variant="h6">Sohan Singh</Typography>
             <Typography variant="body1">.Net Developer</Typography>
           </Stack>
@@ -176,7 +192,7 @@ export default function ApplicationPreview(props: PropsType) {
             </Stack>
           </Stack>
         </Stack>
-      </Stack>
+      </Container>
     </CustomisedModal>
   );
 }

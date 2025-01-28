@@ -33,7 +33,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
     return (
       <CustomisedModal open={open} handleClose={handleClose}>
         <Stack spacing={2}>
-          <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
+          <Stack direction={"row"} justifyContent={"space-between"}>
             <Typography variant="h5">{jobData.title || ""}</Typography>
             <CustomIconButton icon={<Close />} handleClick={handleClose} />
           </Stack>

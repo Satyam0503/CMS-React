@@ -24,6 +24,7 @@ import { CustomIconButton } from "../../app/modules/components/CustomIconButton"
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
+import { colors } from "../../app/modules/theme/MuiTheme";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
@@ -57,9 +58,9 @@ export const ServiceUrl = {
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
 
-  // applicant 
-  GET_ALL_APPLICANTS:`${BaseUrl}/api/Applicants/GetApplicantList`,
-  ADD_EDIT_APPLICANT:`${BaseUrl}/api/Applicants/AddEditApplicant`,
+  // applicant
+  GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
+  ADD_EDIT_APPLICANT: `${BaseUrl}/api/Applicants/AddEditApplicant`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -556,7 +557,12 @@ export const AvatarCell = ({
     <Stack direction="row" spacing={1}>
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
       <Stack direction="column" sx={{ alignSelf: "center" }}>
-        <Typography variant="body1" display={"block"} fontWeight={500}>
+        <Typography
+          variant="body2"
+          display={"block"}
+          fontWeight={500}
+          color={colors.alpha.neutral[800]}
+        >
           {title || "NA"}
         </Typography>
         <Typography variant="body2">{subTitle}</Typography>

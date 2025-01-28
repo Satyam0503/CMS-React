@@ -107,7 +107,7 @@ export const UpdateUserInfo = () => {
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
-                    <Stack spacing={0.5}>
+                    <Stack>
                       <Typography variant="body1">
                         {intl.formatMessage({ id: "USER.DOB" })}
                       </Typography>

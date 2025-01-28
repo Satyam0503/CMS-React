@@ -58,7 +58,6 @@ export const EditPermission = () => {
           border: "1px solid",
           borderColor: colors.alpha.neutral[200],
           borderRadius: 1,
-          my: 2,
           p: { xs: 2, sm: 5 },
         }}
       >

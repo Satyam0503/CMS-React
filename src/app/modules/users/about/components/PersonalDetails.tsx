@@ -6,7 +6,9 @@ import { UpdateUserInfo } from "./UpdateUserInfo";
 
 export const PersonalDetails = () => {
   const intl = useIntl();
-  const {userDetails:{userPersonalDetails:currentUser} }= useUserDetails();
+  const {
+    userDetails: { userPersonalDetails: currentUser },
+  } = useUserDetails();
   return (
     <Card sx={{ p: 2 }}>
       <Stack
