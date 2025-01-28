@@ -45,12 +45,15 @@ export const AddApplicant = memo(() => {
     }
   };
 
-  const handleAddApplicant = (values:any,setSubmitting:(isSubmitting: boolean) => void)=>{
-    const formData= new FormData();
-    formData.append("resume",values.resume);
-    formData.append("applicantData",JSON.parse(values));
+  const handleAddApplicant = (
+    values: any,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    const formData = new FormData();
+    formData.append("resume", values.resume);
+    formData.append("applicantData", JSON.parse(values));
     // handle add applicant logic
-  }
+  };
   return (
     <>
       <CustomIconButton
@@ -60,12 +63,14 @@ export const AddApplicant = memo(() => {
       />
       <CustomisedModal open={isModalOpen} handleClose={handleClose}>
         <Stack spacing={2}>
-          <Typography variant="h5">Add New Applicant</Typography>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "ADD.NEW_APPLICANT" })}
+          </Typography>
           <Formik
             initialValues={initialValues}
             validationSchema={applicantSchema}
             onSubmit={(values, { setSubmitting }) => {
-              handleAddApplicant(values,setSubmitting);
+              handleAddApplicant(values, setSubmitting);
             }}
           >
             {(formik) => {
@@ -106,7 +111,7 @@ export const AddApplicant = memo(() => {
                     </Grid>
                     <Grid item xs={12}>
                       <Typography variant="body1" mb={0.5}>
-                        Upload Your Resume
+                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                       <Stack direction={"column"} spacing={1}>
                         <Box
@@ -132,8 +137,8 @@ export const AddApplicant = memo(() => {
                                 onChange={(e) => {
                                   handleFileChange(e, formik.setFieldValue);
                                 }}
-                                onBlur={(e)=>{
-                                  formik.setFieldTouched("resume", true);                                
+                                onBlur={(e) => {
+                                  formik.setFieldTouched("resume", true);
                                 }}
                                 // hidden
                               />

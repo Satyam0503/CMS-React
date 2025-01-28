@@ -24,7 +24,7 @@ import { ViewJobDetails } from "./ViewJobDetails";
 
 const initialValues: JobModal = {
   jobId: "",
-  companyId:"",
+  companyId: "",
   title: "",
   vacancies: 1,
   description: "",
@@ -74,8 +74,8 @@ export default function Jobs() {
     setConfirmModalOpen(false);
   };
 
-  const handleJobDetailView = (job:JobModal) => {
-    setSelectedJob(job)
+  const handleJobDetailView = (job: JobModal) => {
+    setSelectedJob(job);
     setViewModalOpen(true);
   };
 
@@ -92,25 +92,24 @@ export default function Jobs() {
   const handleAddEditJob = async (
     values: JobModal,
     setSubmitting: (isSubmitting: boolean) => void
-  ) => {    
+  ) => {
     if (isEdit) {
-      const payload={
+      const payload = {
         ...values,
-        status:statusEncoder(values.status as string)
-      }
-      const jobId= values.jobId;
-      try{
-        const response = await editJobVacancy(payload,jobId,token);
-        const {success,message} = response.data;
-        if(!success){
+        status: statusEncoder(values.status as string),
+      };
+      const jobId = values.jobId;
+      try {
+        const response = await editJobVacancy(payload, jobId, token);
+        const { success, message } = response.data;
+        if (!success) {
           throw new Error(message);
         }
         toast.success(message);
         setRefresh(!isRefresh);
         setSubmitting(false);
         handleClose();
-      }
-      catch(error:any){
+      } catch (error: any) {
         toast.error(error.message);
         setSubmitting(false);
       }
@@ -158,7 +157,7 @@ export default function Jobs() {
 
   return (
     <>
-      <Card sx={{ p: "2rem" }}>
+      <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
             direction="row"
