@@ -61,7 +61,7 @@ export default function Applications() {
   };
   return (
     <>
-      <Card sx={{ p: 2 }}>
+      <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
             direction="row"

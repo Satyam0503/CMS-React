@@ -39,30 +39,29 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
-  GET_EMPLOYEE_DETAILS:`${BaseUrl}/api/User/GetEmployeeById`,
+  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
-  GET_EMPLOYEE_CERTIFICATIONS:`${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
-  GET_EMPLOYEE_EDUCATIONS:`${BaseUrl}/api/User/GetEmployeeEducationDetails`,
-  GET_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/GetEmployeeSummary`,
+  GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
+  GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
+  GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
 
-  
   ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
-  
-  UPDATE_EMPLOYEE_SUMMARY:`${BaseUrl}/api/User/AddEditEmployeeSummary`,
-  
+
+  UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
+
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
-  
+
   // not working
-  UPDATE_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/AddEmployeeSkills`,
+  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_SKILLS:`${BaseUrl}/api/User/GetEmployeeSkills`,
+  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
 
   // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
   // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
@@ -313,6 +312,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
+
     minWidth: 180,
     avatarCell: (row: any) => {
       const applicantName = row.firstName + " " + row.lastName;
@@ -323,10 +323,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "exprience",
     label: "Experience",
+    align: "center",
   },
   {
     id: "applyDate",
     label: "Applied",
+
     format: (value) => dateFormatter(value, "DD MMM YYYY"),
   },
   {
@@ -414,14 +416,15 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    minWidth: 180,
+    minWidth: 50,
     avatarCell: (row: JobModal) => {
-      return <AvatarCell title={row.title} subTitle={row.jobType} />;
+      return <AvatarCell title={row.title} />;
     },
   },
   {
     id: "vacancies",
     label: "No of Position",
+    align: "center",
   },
   {
     id: "jobType",
@@ -550,12 +553,10 @@ export const AvatarCell = ({
     <Stack direction="row" spacing={1}>
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
       <Stack direction="column">
-        <Typography variant="body1" className="fw-semibold d-block">
+        <Typography variant="body1" display={"block"} fontWeight={500}>
           {title || "NA"}
         </Typography>
-        <Typography variant="body2" className="text-muted">
-          {subTitle || "NA"}
-        </Typography>
+        <Typography variant="body2">{subTitle}</Typography>
       </Stack>
     </Stack>
   );

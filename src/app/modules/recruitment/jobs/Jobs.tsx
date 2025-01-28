@@ -157,7 +157,7 @@ export default function Jobs() {
 
   return (
     <>
-      <Card sx={{ p: 2 }}>
+      <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
             direction="row"
