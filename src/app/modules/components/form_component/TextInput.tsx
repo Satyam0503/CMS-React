@@ -1,12 +1,14 @@
 import { Stack, TextField, Typography } from "@mui/material";
 import { useField } from "formik";
 import { FC } from "react";
+
 interface PropsTypes {
   label: string;
   name: string;
   type: string;
   placeholder: string;
   multiline?:boolean;
+  InputProps?:any;
 }
 
 export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
