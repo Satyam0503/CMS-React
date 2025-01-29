@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import { EmployeeModel } from "./common_types";
 
-export const dateFormatter = (date: Date | Dayjs | null, format: string) => {
+export const dateFormatter = (date: Date | Dayjs | string |null, format: string) => {
   return dayjs(date).format(format);
 };
 

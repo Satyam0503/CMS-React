@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { Add, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -34,16 +34,21 @@ const initialValues: ApplicantModel = {
   experience: 1,
   resume: null,
   vacanyId: "",
+  vacancyName:"",
 };
-export const AddApplicant = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+interface PropsTypes {
+  open:boolean;
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
   const token = useAppSelector((state) => state.auth.token!);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
 
   const handleClose = () => {
-    setModalOpen(false);
+    setOpen(false);
   };
 
   const handleFileChange = (
@@ -61,7 +66,7 @@ export const AddApplicant = () => {
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    console.log(values);
+    const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacanyId);
     const payload = {
       applicantId: values.applicantId,
       companyId: companyId,
@@ -71,7 +76,9 @@ export const AddApplicant = () => {
       phone: values.phone,
       vacanyId: values.vacanyId,
       experience: values.experience,
+      vacancyName: vacancy ? vacancy.title : "",
     };
+        
     try {
       const { data } = await addEditApplicant(payload, token);
       if (!data.success) {
@@ -79,6 +86,7 @@ export const AddApplicant = () => {
       }
       toast.success(data.message);
       handleClose();
+      window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -106,13 +114,8 @@ export const AddApplicant = () => {
   }, []);
   return (
     <>
-      <CustomIconButton
-        icon={<Add />}
-        handleClick={() => setModalOpen(true)}
-        tooltip="Add Applicant"
-      />
       {vacancyList && vacancyList.length > 0 && (
-        <CustomisedModal open={isModalOpen} handleClose={handleClose}>
+        <CustomisedModal open={open} handleClose={handleClose}>
           <Stack spacing={2}>
             <Typography variant="h5">
               {intl.formatMessage({ id: "ADD.NEW_APPLICANT" })}

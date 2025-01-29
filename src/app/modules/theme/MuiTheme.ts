@@ -438,7 +438,7 @@ export const MuiTheme = createTheme({
     MuiStack: {
       styleOverrides: {
         root: {
-          paddingTop: "5px !important",
+          paddingTop: "0px !important",
         },
       },
     },

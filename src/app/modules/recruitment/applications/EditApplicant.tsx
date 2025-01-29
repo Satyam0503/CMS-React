@@ -14,9 +14,22 @@ import {
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface StateType {
+    applicantId:string;
+}
 
 export const EditApplicant = () => {
   const intl = useIntl();
+  const navigate= useNavigate();
+  const state = useLocation().state as StateType;
+  const applicantId= state.applicantId;
+  if(!applicantId){
+    navigate("/error",{replace:true});
+  }
+  console.log(state);
+  
   return (
     <Container component={Card} sx={{ p: "4rem" }}>
       <Grid container display={"flex"} direction={"column"} gap={1}>

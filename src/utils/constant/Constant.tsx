@@ -9,6 +9,7 @@ import {
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
+  Applicant,
   ColumnListTypes,
   EmployeeModel,
   JobModal,
@@ -341,7 +342,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "applyDate",
     label: "Applied",
-    format: (value) => dateFormatter(value, "DD MMM YYYY"),
+    minWidth: 180,
+    format: (value:string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
     id: "status",
@@ -361,11 +363,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     build: (
-      row: any,
-      handleApplicationEdit: (row: any) => void,
-      openConfirmationModal: (row: any) => void,
-      openViewApplication: (row: any) => void,
-      handleResumeDownload: (row: any) => void
+      row: Applicant,
+      handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
+      openViewApplication: (row: Applicant) => void,
+      handleResumeDownload: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
