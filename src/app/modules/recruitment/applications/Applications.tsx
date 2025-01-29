@@ -27,6 +27,7 @@ export default function Applications() {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isAddModalOpen,setAddModalOpen]= useState(false);
   const [loading, setLoading] = useState(false);
+  const [refresh,setRefresh]= useState(false);
   const token = useAppSelector((state) => state.auth.token)!;
 
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [refresh]);
 
   return (
     <>
@@ -136,6 +137,8 @@ export default function Applications() {
           <AddApplicant
             open={isAddModalOpen}
             setOpen={setAddModalOpen}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
         )
       }

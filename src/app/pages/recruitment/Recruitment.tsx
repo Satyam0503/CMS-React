@@ -1,7 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import ApplicationsWrapper from "./ApplicationsWrapper";
 import JobsWrapper from "./JobsWrapper";
-import { EditApplicant } from "../../modules/recruitment/applications/EditApplicant";
+import { ApplicantDetails } from "../../modules/recruitment/applications/ApplicantDetails";
 
 const Recruitment = () => {
   return (
@@ -10,7 +10,7 @@ const Recruitment = () => {
         <Route index element={<Navigate to={"/recruitment/jobs"} />} />
         <Route path="jobs" element={<JobsWrapper />} />
         <Route path="applications" element={<ApplicationsWrapper />} />
-        <Route path="editapplicant" element={<EditApplicant/>}/>
+        <Route path="editapplicant" element={<ApplicantDetails/>}/>
       </Route>
     </Routes>
   );

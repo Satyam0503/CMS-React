@@ -19,7 +19,7 @@ import CustomisedButton from "../../components/CustomisedButton";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../components/form_component/SelectInput";
 import { experienceCategoryList } from "../../../../utils/common";
-import { addEditApplicant, getAllJobVacancies } from "../services";
+import { addApplicant, getAllJobVacancies } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
@@ -33,19 +33,23 @@ const initialValues: ApplicantModel = {
   phone: "",
   experience: 1,
   resume: null,
-  vacanyId: "",
+  vacancyId: "",
   vacancyName:"",
 };
 interface PropsTypes {
   open:boolean;
+  refresh:boolean;
   setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
+export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) => {
   const token = useAppSelector((state) => state.auth.token!);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
+
+  const activeVacancies = vacancyList.filter(vacancy=> vacancy.status === true);
 
   const handleClose = () => {
     setOpen(false);
@@ -62,11 +66,12 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
     }
   };
 
+
   const handleAddApplicant = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacanyId);
+    const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacancyId);
     const payload = {
       applicantId: values.applicantId,
       companyId: companyId,
@@ -74,19 +79,19 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
       lastName: values.lastName,
       email: values.email,
       phone: values.phone,
-      vacanyId: values.vacanyId,
+      vacancyId: values.vacancyId,
       experience: values.experience,
       vacancyName: vacancy ? vacancy.title : "",
-    };
-        
+    };    
     try {
-      const { data } = await addEditApplicant(payload, token);
+      const { data } = await addApplicant(payload, token);
       if (!data.success) {
         throw new Error(data.message);
       }
       toast.success(data.message);
+      setRefresh(!refresh);
       handleClose();
-      window.location.reload();
+      
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -114,7 +119,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
   }, []);
   return (
     <>
-      {vacancyList && vacancyList.length > 0 && (
+      { activeVacancies && activeVacancies.length > 0 && (
         <CustomisedModal open={open} handleClose={handleClose}>
           <Stack spacing={2}>
             <Typography variant="h5">
@@ -180,10 +185,10 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen}) => {
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <SelectInput
-                          name="vacanyId"
+                          name="vacancyId"
                           label={intl.formatMessage({ id: "USER.DESIGNATION" })}
                         >
-                          {vacancyList.map((vacancy) => (
+                          {activeVacancies.map((vacancy) => (
                             <MenuItem key={vacancy.jobId} value={vacancy.jobId}>
                               {vacancy.title}
                             </MenuItem>

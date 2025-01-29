@@ -127,7 +127,7 @@ export interface ApplicantModel {
   lastName: string;
   email: string;
   phone: string;
-  vacanyId: string;
+  vacancyId: string;
   vacancyName:string;
   experience: number;
   resume?: null | File;
