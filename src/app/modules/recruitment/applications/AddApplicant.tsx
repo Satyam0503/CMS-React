@@ -10,7 +10,7 @@ import {
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { useEffect, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add, Check, CloudUploadOutlined } from "@mui/icons-material";
+import { Add, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
@@ -64,7 +64,7 @@ export const AddApplicant = () => {
     console.log(values);
     const payload = {
       applicantId: values.applicantId,
-      companyId:companyId,
+      companyId: companyId,
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,

@@ -1,6 +1,6 @@
-import { Card,  Stack } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import {  Download, FilterList } from "@mui/icons-material";
+import { Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
+import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();
@@ -25,11 +26,11 @@ export default function Applications() {
   const [selectedApplicant, setSelectedApplicant] = useState<any | undefined>();
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const token = useAppSelector(state=>state.auth.token)!;
-  const navigate= useNavigate();
+  const token = useAppSelector((state) => state.auth.token)!;
+  const navigate = useNavigate();
 
   const handleEdit = (applicant: any) => {
-     navigate("/edit",{state:{applicantId:applicant.applicantId}})  
+    navigate("/edit", { state: { applicantId: applicant.applicantId } });
   };
   const openConfirmationModal = (applicant: any) => {
     setConfirmModalOpen(true);
@@ -57,22 +58,20 @@ export default function Applications() {
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
-      try{
-        const {data}= await getAllApplicantList(token);
-        if(!data.success){
+      try {
+        const { data } = await getAllApplicantList(token);
+        if (!data.success) {
           throw new Error(data.message);
         }
         setApplicationsList(data.methodResults);
-      }
-      catch(error:any){
+      } catch (error: any) {
         console.log(error);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
-    },1500);
-    return ()=> clearTimeout(timeoutId);
-  },[]);
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   return (
     <>

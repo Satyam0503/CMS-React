@@ -3,6 +3,7 @@ import { Container, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
+import { EditApplicant } from "./EditApplicant";
 
 interface PropsType {
   open: boolean;

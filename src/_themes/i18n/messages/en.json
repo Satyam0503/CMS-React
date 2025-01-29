@@ -72,6 +72,7 @@
   "JOB.VACANCIES": "Vacancies",
   "JOB.MODE": "Job Mode",
   "JOB.TYPE": "Job Type",
+  "JOB.POSITION": "Job Position",
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
   "LINK.NOTIFICATION": "check the submissions",
@@ -251,7 +252,7 @@
   "USER.RESUME": "Resume Preview",
   "USER.AGE": "Years Old",
   "USER.ORGNISATION": "Orgnisation name",
-  "USER.DESIGNATION":"Designation",
+  "USER.DESIGNATION": "Designation",
 
   "AUTH.GENERAL.OR": "Or",
   "AUTH.GENERAL.SUBMIT_BUTTON": "Submit",
