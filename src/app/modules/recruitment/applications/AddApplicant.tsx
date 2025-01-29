@@ -127,7 +127,11 @@ export const AddApplicant = () => {
               {(formik) => {
                 return (
                   <form onSubmit={formik.handleSubmit}>
-                    <Grid container spacing={{ xs: 1, md: 2 }}>
+                    <Grid
+                      container
+                      rowSpacing={1}
+                      columnSpacing={{ xs: 1, sm: 2 }}
+                    >
                       <Grid item xs={12} md={6}>
                         <TextInput
                           label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
