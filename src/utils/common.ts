@@ -27,11 +27,11 @@ export const employeesListMapperforExport = (
 
 export const applicationStatusDecoder = (status: number) => {
   switch (status) {
-    case 1:
+    case 0:
       return "Pending";
-    case 2:
+    case 1:
       return "Rejected";
-    case 3:
+    case 2:
       return "Shortlisted";
     default:
       return "";

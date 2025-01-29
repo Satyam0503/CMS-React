@@ -1,6 +1,6 @@
-import { Card, IconButton, Stack, Typography } from "@mui/material";
+import { Card,  Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, FilterList } from "@mui/icons-material";
+import {  Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
@@ -12,6 +12,7 @@ import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
+import { useNavigate } from "react-router-dom";
 
 export default function Applications() {
   const intl = useIntl();
@@ -25,8 +26,11 @@ export default function Applications() {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const token = useAppSelector(state=>state.auth.token)!;
+  const navigate= useNavigate();
 
-  const handleEdit = (applicant: any) => {};
+  const handleEdit = (applicant: any) => {
+     navigate("/edit",{state:{applicantId:applicant.applicantId}})  
+  };
   const openConfirmationModal = (applicant: any) => {
     setConfirmModalOpen(true);
     setSelectedApplicant(applicant);
