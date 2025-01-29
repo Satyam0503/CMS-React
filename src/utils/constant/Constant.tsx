@@ -325,23 +325,23 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "exprience",
+    id: "experience",
     label: "Experience",
+    align: "center",
+  },
+  {
+    id:"email",
+    label:"Email",
+  },
+  {
+    id: "phone",
+    label: "Phone Number",
     align: "center",
   },
   {
     id: "applyDate",
     label: "Applied",
-
     format: (value) => dateFormatter(value, "DD MMM YYYY"),
-  },
-  {
-    id: "location",
-    label: "Location",
-  },
-  {
-    id: "noticePeriod",
-    label: "Notice Period",
   },
   {
     id: "status",
