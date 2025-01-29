@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
-import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();

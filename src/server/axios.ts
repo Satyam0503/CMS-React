@@ -1,8 +1,9 @@
-
 import axios, { AxiosRequestConfig } from "axios";
 import { AUTH_LOCAL_STORAGE_KEY } from "../app/modules/auth";
 
-const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY) ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)! : "";
+const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
+  ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
+  : "";
 
 const configData = {
   headers: {
@@ -14,7 +15,7 @@ export const getRequest = <ResponseData>(
   path: string,
   config: AxiosRequestConfig = configData,
   tokenData: string = token
-) => {    
+) => {
   return axios.get<ResponseData>(path, {
     ...config,
     headers: {
@@ -25,7 +26,7 @@ export const getRequest = <ResponseData>(
   });
 };
 
-export const postRequest = <RequestData,ResponseData>(
+export const postRequest = <RequestData, ResponseData>(
   path: string,
   data?: RequestData,
   config?: AxiosRequestConfig,
@@ -43,7 +44,7 @@ export const postRequest = <RequestData,ResponseData>(
   });
 };
 
-export const patchRequest = <D,>(
+export const patchRequest = <D>(
   path: string,
   data?: D,
   config: AxiosRequestConfig = configData
@@ -54,7 +55,6 @@ export const patchRequest = <D,>(
 export const deleteRequest = (path: string, config = configData) => {
   return axios.delete(path, config);
 };
-export const putRequest =  <D,>(path: string, data?: D, config = configData) => {
+export const putRequest = <D>(path: string, data?: D, config = configData) => {
   return axios.put(path, data, config);
 };
-
