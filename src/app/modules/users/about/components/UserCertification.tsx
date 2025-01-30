@@ -17,7 +17,6 @@ import { dateFormatter } from "../../../../../utils/common";
 import dayjs from "dayjs";
 import AddUpdateCertification from "./AddUpdateCertification";
 import { addEmployeeCertification } from "../../userservices";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useUserDetails } from "../../UserDataProvider";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
@@ -41,7 +40,6 @@ export const UserCertification = () => {
   const [initialValues, setInitialValues] = useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const token = useAppSelector((state) => state.auth.token!);
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedCertification, setSelectedCertification] =
     useState<UserCertificationModel | null>(null);
@@ -55,7 +53,7 @@ export const UserCertification = () => {
       // updateUserCertification()   // replace comment with updating certification logic
     } else {
       try {
-        const response = await addEmployeeCertification(values, token);
+        const response = await addEmployeeCertification(values);
         const { success, message } = response.data;
         if (!success) {
           throw new Error(message);

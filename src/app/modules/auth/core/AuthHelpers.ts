@@ -5,7 +5,6 @@ const getLocalKey = (): string | undefined => {
   if (!localStorage) {
     return;
   }
-
   const lsValue: string | null = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
   if (!lsValue) {
     return;

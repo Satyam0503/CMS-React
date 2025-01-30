@@ -17,7 +17,6 @@ import { bloodGroups } from "../../../../../utils/constant/Constant";
 import CustomisedButton from "../../../components/CustomisedButton";
 import { CustomisedModal } from "../../../components/CustomisedModal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import { Edit } from "@mui/icons-material";
 import { TextInput } from "../../../components/form_component/TextInput";
@@ -25,7 +24,6 @@ import { SelectInput } from "../../../components/form_component/SelectInput";
 
 export const UpdateUserInfo = () => {
   const intl = useIntl();
-  const token = useAppSelector((state) => state.auth.token)!;
   const {
     userDetails: { userPersonalDetails: currentUser },
   } = useUserDetails();

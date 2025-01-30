@@ -31,7 +31,6 @@ const initialValue: UserEducationModel = {
   type: "",
 };
 export const UserEducation= () => {
-  const token = useAppSelector((state) => state.auth.token)!;
   const intl = useIntl();
   const {userDetails:{userEducations},setRefresh,isRefresh}= useUserDetails();
   const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
@@ -77,7 +76,7 @@ export const UserEducation= () => {
         const payload = {
           ...values,
         };
-        const response = await addEmployeeEducation(payload, token);
+        const response = await addEmployeeEducation(payload);
         const { success, message } = response.data;
         if (!success) {
           throw new Error(message);

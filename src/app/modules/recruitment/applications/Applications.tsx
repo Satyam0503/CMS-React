@@ -10,7 +10,6 @@ import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
-import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { Applicant, ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
@@ -28,7 +27,6 @@ export default function Applications() {
   const [isAddModalOpen,setAddModalOpen]= useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh,setRefresh]= useState(false);
-  const token = useAppSelector((state) => state.auth.token)!;
 
   const navigate = useNavigate();
 
@@ -63,7 +61,7 @@ export default function Applications() {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
       try {
-        const { data } = await getAllApplicantList(token);
+        const { data } = await getAllApplicantList();
         if (!data.success) {
           throw new Error(data.message);
         }

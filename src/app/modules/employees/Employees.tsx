@@ -54,7 +54,6 @@ const employeeInitialValue: EmployeeModel = {
 };
 export default function Employees() {
   const intl = useIntl();
-  const token = useAppSelector((state) => state.auth.token)!;
   const currentUser = useAppSelector((state) => state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
@@ -89,7 +88,7 @@ export default function Employees() {
         status: statusEncoder(values.status as string)
       };
       const userId=values.userId;
-      updateEmployee(payload, token,userId)
+      updateEmployee(payload,userId)
         .then((res) => {
           const { success, message,statusCode } = res.data;
           if (!(success)) {
@@ -131,7 +130,7 @@ export default function Employees() {
         address: values.address,
         isEmailVerified: values.isEmailVerified,
       };
-      addEmployee(payload, token)
+      addEmployee(payload)
         .then((res) => {
           const { success, message } = res.data;
           if (!success) {
@@ -236,7 +235,7 @@ export default function Employees() {
     // };
     const timeOutId = setTimeout(async () => {
       try {
-        const response = await getAllEmployees(token);
+        const response = await getAllEmployees();
         const { success, statusCode, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           throw new Error("Failed To fetch Data");
