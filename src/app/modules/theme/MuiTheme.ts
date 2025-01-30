@@ -1099,6 +1099,7 @@ export const MuiTheme = createTheme({
 
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
+            background: "none",
           },
           "& .MuiSvgIcon-root": { fontSize: 30 },
         },
