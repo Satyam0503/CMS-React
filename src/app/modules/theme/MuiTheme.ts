@@ -116,6 +116,7 @@ export const colors = {
       100: "#FFECEB",
     },
     white: {
+      200: "#f4f4f4",
       500: "#ffffff",
     },
   },

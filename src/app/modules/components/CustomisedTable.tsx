@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
+import TableSkeleton from "./TableSkeleton";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -59,9 +60,19 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
           {loading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={12} align="center">
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column?.align || "left"}
+                    style={{ width: "100%" }}
+                  >
+                    <TableSkeleton />
+                  </TableCell>
+                ))}
+                {/* <TableCell colSpan={12} align="center">
+                  <TableSkeleton />
                   <Typography variant="h6"> Loading... </Typography>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableBody>
           ) : (
