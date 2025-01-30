@@ -6,23 +6,22 @@ import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
 import { updateEmployeeSummary } from "../../userservices";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 
 export const UserSummary = () => {
   const {userDetails:{userSummary},setRefresh,isRefresh}= useUserDetails();
   const [summary, setSummary] = useState(userSummary ? userSummary.summary : "");
   const [isEdit, setEdit] = useState(false);
-  const token = useAppSelector(state=>state.auth.token)!;
   const intl = useIntl();
 
   const handleUpdateSummary = async () => {
     const payload={
         summary:summary,
-        summaryId:""
+        summaryId:userSummary.summaryId,
+        userId:userSummary.userId,
     }
     try{
-        const response = await updateEmployeeSummary(payload,token);
+        const response = await updateEmployeeSummary(payload);
         const {success,message}=response.data;
         if(!success){
             throw new Error(message);

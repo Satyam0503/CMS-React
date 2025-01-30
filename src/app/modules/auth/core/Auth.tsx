@@ -34,7 +34,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     const requestUserDetails = async (token: string) => {
       try {
         if (!currentUser) {               
-          const { data } = await getSignedUserDetails(token);
+          const { data } = await getSignedUserDetails();
           if (!data.success) {
             throw new Error("Request Failed");
           }

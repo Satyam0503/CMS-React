@@ -44,7 +44,6 @@ interface PropsTypes {
 }
 
 export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) => {
-  const token = useAppSelector((state) => state.auth.token!);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
@@ -84,7 +83,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
       vacancyName: vacancy ? vacancy.title : "",
     };    
     try {
-      const { data } = await addApplicant(payload, token);
+      const { data } = await addApplicant(payload);
       if (!data.success) {
         throw new Error(data.message);
       }
@@ -106,7 +105,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const { data } = await getAllJobVacancies(token);
+        const { data } = await getAllJobVacancies();
         if (!data.success) {
           throw new Error(data.message);
         }

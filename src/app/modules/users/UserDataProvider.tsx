@@ -13,8 +13,8 @@ import {
 } from "./userservices";
 import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useAppSelector } from "../../Redux/hooks";
 import { toast } from "react-toastify";
+import { useAppSelector } from "../../Redux/hooks";
 
 type UserDataContextType = {
   userDetails: {
@@ -39,7 +39,6 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 
 // User Details Provider
 export const UserDetailsProvider = (props: PropTypes) => {
-  const token = useAppSelector((state) => state.auth.token)!;
   const [isRefresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
@@ -47,10 +46,12 @@ export const UserDetailsProvider = (props: PropTypes) => {
   const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
     []
   );
+  const currentUser= useAppSelector(state=>state.user.userData);
   const [userCertifications, setUserCertifications] = useState<
     UserCertificationModel[]
   >([]);
   const [userSummary, setUserSummary] = useState<UserSummaryModel>({
+    userId:currentUser?.userId!,
     summaryId: "",
     summary: "",
   });
@@ -63,10 +64,10 @@ export const UserDetailsProvider = (props: PropTypes) => {
     const getAllDetails = async () => {
       try {
         const responseArray = await Promise.all([
-          getEmployeeDetails(token),
-          getEmployeeEducations(token),
-          getEmployeeCertifications(token),
-          getEmployeeSummary(token),
+          getEmployeeDetails(),
+          getEmployeeEducations(),
+          getEmployeeCertifications(),
+          getEmployeeSummary(),
           // getEmployeeSkills(token),
         ]);
         setUserPersonalDetails(responseArray[0].data.methodResult);
@@ -75,14 +76,17 @@ export const UserDetailsProvider = (props: PropTypes) => {
         setUserSummary(responseArray[3].data.methodResult);
         // setUserSkills(responseArray[4].data.methodResults);
       } catch (error: any) {
-        toast.error(error.message);
+        // setError(error.message)
+        // toast.error(error.message);
+        // console.log(error.message);
+        
       } finally {
         setLoading(false);
       }
     };
 
     getAllDetails();
-  }, [isRefresh, token]);
+  }, [isRefresh]);
 
   if (loading) {
     return (

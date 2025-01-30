@@ -26,7 +26,6 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(userSkills);
   const intl = useIntl();
-  const token = useAppSelector((state) => state.auth.token)!;
 
   function handleDelete(skill: string) {
     setSkills(skills.filter((item) => item !== skill));
@@ -46,7 +45,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
 
   async function handleSkillUpdate() {
     try {
-      const response = await udpateEmployeeSkills({ skills: skills }, token);
+      const response = await udpateEmployeeSkills({ skills: skills });
       const { message, success } = response.data;
       if (!success) {
         throw new Error(message);
