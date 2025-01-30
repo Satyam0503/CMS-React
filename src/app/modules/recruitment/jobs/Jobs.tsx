@@ -18,7 +18,6 @@ import { addJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 
 import { toast } from "react-toastify";
-import { statusDecoder, statusEncoder } from "../../../../utils/common";
 import { useEffect } from "react";
 import { ViewJobDetails } from "./ViewJobDetails";
 
@@ -83,7 +82,7 @@ export default function Jobs() {
       toast.error("Error try Again");
       closeConfirmationModal();
     } else {
-      // write job deletion logic
+      //  job deletion logic
       console.log("Job Deleted");
     }
   };

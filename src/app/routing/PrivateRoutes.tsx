@@ -46,7 +46,6 @@ const PrivateRoutes = () => {
         <Route path="myprofile" element={<ProfilePageWrapper />} />
         <Route path="employeeleave" element={<LeaveManagementWrapper />} />
         <Route path="attendance" element={<AttendanceWrapper />} />
-        {/* <Route path="employees" element={<EmployeePageWrapper />} /> */}
         <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
         {/* Lazy Modules */}

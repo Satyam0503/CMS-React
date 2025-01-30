@@ -1,9 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import Jobs from "../../modules/recruitment/jobs/Jobs";
-import Applications from "../../modules/recruitment/applications/Applications";
-import { Container } from "@mui/material";
 import ApplicationsWrapper from "./ApplicationsWrapper";
 import JobsWrapper from "./JobsWrapper";
+import { ApplicantDetails } from "../../modules/recruitment/applications/ApplicantDetails";
 
 const Recruitment = () => {
   return (
@@ -12,6 +10,7 @@ const Recruitment = () => {
         <Route index element={<Navigate to={"/recruitment/jobs"} />} />
         <Route path="jobs" element={<JobsWrapper />} />
         <Route path="applications" element={<ApplicationsWrapper />} />
+        <Route path="editapplicant" element={<ApplicantDetails/>}/>
       </Route>
     </Routes>
   );

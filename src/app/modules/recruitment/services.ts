@@ -21,9 +21,13 @@ export const deleteJobVacancy = ()=>{
 // applicant services
 
 export const getAllApplicantList= (token:string)=>{
-    return getRequest<ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS,{},token);
+    return getRequest<ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS);
 }
 
-export const addEditApplicant = (payload:ApplicantModel, token:string)=>{
-    return postRequest<ApplicantModel,ApiResponse>(ServiceUrl.ADD_EDIT_APPLICANT,payload,{},false,token);
+export const addApplicant = (payload:ApplicantModel, token:string)=>{
+    return postRequest<ApplicantModel,ApiResponse>(ServiceUrl.ADD_APPLICANT,payload,{},false,token);
+}
+
+export const getApplicantById = () =>{
+    return getRequest(ServiceUrl.ADD_APPLICANT,{});
 }

@@ -21,7 +21,7 @@ export const applicantSchema = Yup.object().shape({
   )
   .required("Phone number is required"),
   experience:Yup.number().min(0).required("Experience is Required"),
-  vacanyId:Yup.string().required("Select Job"),
+  vacancyId:Yup.string().required("Select Job"),
   resume: Yup.mixed().required('Resume is required')
   .test('fileFormat', 'Only PDF files are allowed', (value:any) => {
     if (value) {

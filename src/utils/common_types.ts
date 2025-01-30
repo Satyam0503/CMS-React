@@ -121,16 +121,27 @@ export type ColumnListTypes = {
 };
 
 export interface ApplicantModel {
-  applicantId:string;
+  applicantId: string;
   companyId: string;
   firstName: string;
   lastName: string;
-  email:string;
-  phone:string;
-  vacanyId:string;
+  email: string;
+  phone: string;
+  vacancyId: string;
+  vacancyName:string;
   experience: number;
   resume?: null | File;
 }
+
+export type Applicant = Omit<ApplicantModel, "resume"> & {
+  statusName: string;
+  status: number;
+  activityTypeName: string;
+  activityType: number;
+  applyDate: string
+  updateDate: string
+  resumeUrl: string;
+};
 
 // Api respone data types
 export interface ResponseData<T> {
@@ -160,6 +171,6 @@ export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
-export type ApplicantsResponseData = ResponseData<ApplicantModel>;
+export type ApplicantsResponseData = ResponseData<Applicant>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;

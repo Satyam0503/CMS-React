@@ -9,6 +9,7 @@ import {
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
+  Applicant,
   ColumnListTypes,
   EmployeeModel,
   JobModal,
@@ -60,7 +61,8 @@ export const ServiceUrl = {
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
-  ADD_EDIT_APPLICANT: `${BaseUrl}/api/Applicants/AddEditApplicant`,
+  ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
+  GET_APPLICANT_BY_ID:`${BaseUrl}/api/Applicants/ApplicantById`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -316,11 +318,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-
-    minWidth: 180,
-    avatarCell: (row: any) => {
+    minWidth: 200,
+    avatarCell: (row:Applicant) => {
       const applicantName = row.firstName + " " + row.lastName;
-      const vacancyName = row.vacanyName;
+      const vacancyName = row.vacancyName;
       return <AvatarCell title={applicantName} subTitle={vacancyName} />;
     },
   },
@@ -341,7 +342,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "applyDate",
     label: "Applied",
-    format: (value) => dateFormatter(value, "DD MMM YYYY"),
+    minWidth: 180,
+    format: (value:string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
     id: "status",
@@ -361,11 +363,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     build: (
-      row: any,
-      handleApplicationEdit: (row: any) => void,
-      openConfirmationModal: (row: any) => void,
-      openViewApplication: (row: any) => void,
-      handleResumeDownload: (row: any) => void
+      row: Applicant,
+      handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
+      openViewApplication: (row: Applicant) => void,
+      handleResumeDownload: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}

@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { Add, CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -19,7 +19,7 @@ import CustomisedButton from "../../components/CustomisedButton";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../components/form_component/SelectInput";
 import { experienceCategoryList } from "../../../../utils/common";
-import { addEditApplicant, getAllJobVacancies } from "../services";
+import { addApplicant, getAllJobVacancies } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
@@ -33,17 +33,26 @@ const initialValues: ApplicantModel = {
   phone: "",
   experience: 1,
   resume: null,
-  vacanyId: "",
+  vacancyId: "",
+  vacancyName:"",
 };
-export const AddApplicant = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+interface PropsTypes {
+  open:boolean;
+  refresh:boolean;
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) => {
   const token = useAppSelector((state) => state.auth.token!);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
 
+  const activeVacancies = vacancyList.filter(vacancy=> vacancy.status === true);
+
   const handleClose = () => {
-    setModalOpen(false);
+    setOpen(false);
   };
 
   const handleFileChange = (
@@ -57,11 +66,12 @@ export const AddApplicant = () => {
     }
   };
 
+
   const handleAddApplicant = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    console.log(values);
+    const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacancyId);
     const payload = {
       applicantId: values.applicantId,
       companyId: companyId,
@@ -69,16 +79,19 @@ export const AddApplicant = () => {
       lastName: values.lastName,
       email: values.email,
       phone: values.phone,
-      vacanyId: values.vacanyId,
+      vacancyId: values.vacancyId,
       experience: values.experience,
-    };
+      vacancyName: vacancy ? vacancy.title : "",
+    };    
     try {
-      const { data } = await addEditApplicant(payload, token);
+      const { data } = await addApplicant(payload, token);
       if (!data.success) {
         throw new Error(data.message);
       }
       toast.success(data.message);
+      setRefresh(!refresh);
       handleClose();
+      
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -106,13 +119,8 @@ export const AddApplicant = () => {
   }, []);
   return (
     <>
-      <CustomIconButton
-        icon={<Add />}
-        handleClick={() => setModalOpen(true)}
-        tooltip="Add Applicant"
-      />
-      {vacancyList && vacancyList.length > 0 && (
-        <CustomisedModal open={isModalOpen} handleClose={handleClose}>
+      { activeVacancies && activeVacancies.length > 0 && (
+        <CustomisedModal open={open} handleClose={handleClose}>
           <Stack spacing={2}>
             <Typography variant="h5">
               {intl.formatMessage({ id: "ADD.NEW_APPLICANT" })}
@@ -181,10 +189,10 @@ export const AddApplicant = () => {
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <SelectInput
-                          name="vacanyId"
+                          name="vacancyId"
                           label={intl.formatMessage({ id: "USER.DESIGNATION" })}
                         >
-                          {vacancyList.map((vacancy) => (
+                          {activeVacancies.map((vacancy) => (
                             <MenuItem key={vacancy.jobId} value={vacancy.jobId}>
                               {vacancy.title}
                             </MenuItem>

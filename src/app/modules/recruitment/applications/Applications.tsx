@@ -1,11 +1,10 @@
 import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Download, FilterList } from "@mui/icons-material";
+import {  Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import ApplicationPreview from "./ApplicationPreview";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
@@ -13,6 +12,8 @@ import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
+import { Applicant, ApplicantModel, JobModal } from "../../../../utils/common_types";
+import { ApplicationPreview } from "./ApplicationPreview";
 
 export default function Applications() {
   const intl = useIntl();
@@ -20,23 +21,27 @@ export default function Applications() {
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [rowPerPage, setRowPerPage] = useState<number>(10);
-  const [applicationsList, setApplicationsList] = useState<any[]>([]);
+  const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<any | undefined>();
+  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | undefined>();
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isAddModalOpen,setAddModalOpen]= useState(false);
   const [loading, setLoading] = useState(false);
+  const [refresh,setRefresh]= useState(false);
   const token = useAppSelector((state) => state.auth.token)!;
+
   const navigate = useNavigate();
 
-  const handleEdit = (applicant: any) => {
-    navigate("/edit", { state: { applicantId: applicant.applicantId } });
+  const handleApplicantEdit = (applicant: Applicant) => {
+     navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
   };
-  const openConfirmationModal = (applicant: any) => {
+  
+  const openConfirmationModal = (applicant:Applicant) => {
     setConfirmModalOpen(true);
     setSelectedApplicant(applicant);
   };
 
-  const handleOpenPreview = (applicant: any) => {
+  const handleOpenPreview = (applicant:Applicant) => {
     setViewApplicant(true);
     setSelectedApplicant(applicant);
   };
@@ -47,11 +52,11 @@ export default function Applications() {
   };
 
   const handleResumeDownload = () => {
-    console.log("download resume");
+    // console.log("download resume");
   };
 
   const handleApplicantDeletion = () => {
-    console.log("delete Applicant");
+    // console.log("delete Applicant");
   };
 
   useEffect(() => {
@@ -64,13 +69,13 @@ export default function Applications() {
         }
         setApplicationsList(data.methodResults);
       } catch (error: any) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, []);
+  }, [refresh]);
 
   return (
     <>
@@ -91,7 +96,10 @@ export default function Applications() {
                 tooltip="Filter Application"
                 ariaLabel="Filter Application"
               />
-              <AddApplicant />
+              <CustomIconButton
+                icon={<Add/>}
+                handleClick={()=>setAddModalOpen(true)}
+              />
 
               <CustomIconButton
                 icon={<Download />}
@@ -106,7 +114,7 @@ export default function Applications() {
             columns={ApplicationTabTableColumnList}
             page={page}
             rowsPerPage={rowPerPage}
-            handleEdit={handleEdit}
+            handleEdit={handleApplicantEdit}
             openConfirmationModal={openConfirmationModal}
             openViewModal={handleOpenPreview}
             handleDownload={handleResumeDownload}
@@ -124,9 +132,19 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
+      {
+        isAddModalOpen && (
+          <AddApplicant
+            open={isAddModalOpen}
+            setOpen={setAddModalOpen}
+            refresh={refresh}
+            setRefresh={setRefresh}
+          />
+        )
+      }
 
       {viewApplicant && selectedApplicant && (
-        <ApplicationPreview
+        <ApplicationPreview 
           open={viewApplicant}
           handleClose={closePreview}
           applicantData={selectedApplicant}

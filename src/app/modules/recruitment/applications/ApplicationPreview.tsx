@@ -3,18 +3,34 @@ import { Container, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { EditApplicant } from "./EditApplicant";
+import { Applicant } from "../../../../utils/common_types";
+import { FC } from "react";
+import {
+  applicationStatusDecoder,
+  dateFormatter,
+} from "../../../../utils/common";
+import { StyleStatus } from "../../components/StyledStatus";
 
 interface PropsType {
   open: boolean;
   handleClose: () => void;
-  applicantData?: any;
+  applicantData: Applicant;
 }
 
-export default function ApplicationPreview(props: PropsType) {
+export const ApplicationPreview: FC<PropsType> = ({
+  open,
+  handleClose,
+  applicantData,
+}) => {
   const intl = useIntl();
-  const { open, handleClose, applicantData } = props;
-
+  const status = applicationStatusDecoder(applicantData.status);
+  const className =
+    status === "Pending"
+      ? "warning"
+      : status === "Shortlisted"
+      ? "success"
+      : "danger";
+  const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Grid
@@ -26,18 +42,20 @@ export default function ApplicationPreview(props: PropsType) {
         mb={2}
       >
         <Grid item xs={12} display={"flex"} justifyContent={"space-between"}>
-          <Typography variant="h5">Sohan Singh</Typography>
+          <Typography variant="h5">
+            {applicantData.firstName + " " + applicantData.lastName}
+          </Typography>
           <CustomIconButton icon={<Close />} handleClick={handleClose} />
         </Grid>
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "USER.ROLE" })}
+              {intl.formatMessage({ id: "JOB.TITLE" })}
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
+              {applicantData.vacancyName || "NA"}
             </Typography>
           </Grid>
         </Grid>
@@ -49,58 +67,11 @@ export default function ApplicationPreview(props: PropsType) {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
+              {applicantData.experience + " " + experienceSuffix}
             </Typography>
           </Grid>
         </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "MENU.NOTICE_PERIOD" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.CURRENT_CTC" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.EXPECTED_CTC" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "JOB.MODE" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
-            </Typography>
-          </Grid>
-        </Grid>
+
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={600}>
@@ -109,7 +80,7 @@ export default function ApplicationPreview(props: PropsType) {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={400}>
-              USER.ROLE
+              {dateFormatter(applicantData.applyDate, "DD MMM YYYY hh:mm A")}
             </Typography>
           </Grid>
         </Grid>
@@ -122,7 +93,7 @@ export default function ApplicationPreview(props: PropsType) {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={400}>
-              Active
+              <StyleStatus label={status} className={className} />
             </Typography>
           </Grid>
         </Grid>
@@ -196,4 +167,4 @@ export default function ApplicationPreview(props: PropsType) {
       </Container>
     </CustomisedModal>
   );
-}
+};
