@@ -1,7 +1,10 @@
 import dayjs, { Dayjs } from "dayjs";
 import { EmployeeModel } from "./common_types";
 
-export const dateFormatter = (date: Date | Dayjs | string |null, format: string) => {
+export const dateFormatter = (
+  date: Date | Dayjs | string | null,
+  format: string
+) => {
   return dayjs(date).format(format);
 };
 
@@ -28,13 +31,30 @@ export const employeesListMapperforExport = (
 export const applicationStatusDecoder = (status: number) => {
   switch (status) {
     case 0:
-      return "Pending";
+      return "In Progress";
     case 1:
       return "Rejected";
     case 2:
       return "Shortlisted";
+    case 3:
+      return "On Hold";
+    case 4:
+      return "Selected";
     default:
       return "";
+  }
+};
+
+export const getApplicationStatusClass = (status: string) => {
+  switch (status){
+    case "In Progress":
+    case "On Hold" :
+    case "Shortlisted" :{
+      return "warning";
+    }
+    case "Selected": return "success";
+    case "Rejected" : return "danger";
+    default : return "";
   }
 };
 
@@ -54,19 +74,6 @@ export const statusDecoder = (status: boolean) => {
       return "Active";
     case false:
       return "Inactive";
-    default:
-      return "";
-  }
-};
-
-export const getStatusColor = (status: number): string => {
-  switch (status) {
-    case 1:
-      return "warning";
-    case 2:
-      return "danger";
-    case 3:
-      return "success";
     default:
       return "";
   }

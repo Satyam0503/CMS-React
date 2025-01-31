@@ -39,7 +39,7 @@ const TextEditor = (props:PropsType) => {
       onChange={setValue}
       formats={formats}
       modules={modules}
-      placeholder='Write Job Description ...'
+      placeholder='Type Here...'
     />
   )
 }

@@ -19,6 +19,7 @@ import {
   dateFormatter,
   applicationStatusDecoder,
   statusDecoder,
+  getApplicationStatusClass,
 } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
@@ -62,7 +63,7 @@ export const ServiceUrl = {
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
-  GET_APPLICANT_BY_ID:`${BaseUrl}/api/Applicants/ApplicantById`,
+  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -168,6 +169,14 @@ export const JobType = [
     label: "Remote",
     value: "Remote",
   },
+];
+
+export const ApplicationEvaluationStatus = [
+  { id: 1, label: "In Progress", value: 0 },
+  { id: 2, label: "Rejected", value: 1 },
+  { id: 3, label: "Shortlisted", value: 2 },
+  { id: 4, label: "On Hold", value: 3 },
+  { id: 5, label: "Selected", value: 4 },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -318,8 +327,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    minWidth: 200,
-    avatarCell: (row:Applicant) => {
+    // minWidth: 200,
+    avatarCell: (row: Applicant) => {
       const applicantName = row.firstName + " " + row.lastName;
       const vacancyName = row.vacancyName;
       return <AvatarCell title={applicantName} subTitle={vacancyName} />;
@@ -331,8 +340,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     align: "center",
   },
   {
-    id:"email",
-    label:"Email",
+    id: "email",
+    label: "Email",
   },
   {
     id: "phone",
@@ -343,19 +352,14 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
-    format: (value:string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
+    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
     id: "status",
     label: "Status",
     build: (status: number) => {
       const values = applicationStatusDecoder(status);
-      const className =
-        values === "Pending"
-          ? "warning"
-          : values === "Shortlisted"
-          ? "success"
-          : "danger";
+      const className = getApplicationStatusClass(values);
       return <StyleStatus label={values} className={className} />;
     },
   },
@@ -463,6 +467,30 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
       />
     ),
   },
+];
+
+export const CommentTableColumnList: ColumnListTypes[]=[
+  {
+    id:"serialNo",
+    label:"#",
+    minWidth:30
+  },
+  {
+    id:"userName",
+    label:"User Name"
+  },
+  {
+    id:"date",
+    label:"Date"
+  },
+  {
+    id:"actionCategory",
+    label:"Action Category",
+  },
+  {
+    id:"comment",
+    label:"Comment",
+  }
 ];
 
 interface ActionComponentProps<Row> {

@@ -15,6 +15,7 @@ import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../Redux/hooks";
+import { CircularLoader } from "../components/CircularLoader";
 
 type UserDataContextType = {
   userDetails: {
@@ -76,7 +77,7 @@ export const UserDetailsProvider = (props: PropTypes) => {
         setUserSummary(responseArray[3].data.methodResult);
         // setUserSkills(responseArray[4].data.methodResults);
       } catch (error: any) {
-        // setError(error.message)
+        setError(error.message)
         // toast.error(error.message);
         // console.log(error.message);
         
@@ -90,9 +91,7 @@ export const UserDetailsProvider = (props: PropTypes) => {
 
   if (loading) {
     return (
-      <Typography variant="h4">
-        {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
-      </Typography>
+      <CircularLoader/>
     );
   }
   if (error) {
@@ -122,7 +121,6 @@ export const UserDetailsProvider = (props: PropTypes) => {
 };
 
 // hook for consuming userDetails Context
-
 export const useUserDetails = () => {
   const context = useContext(UserDetailsContext);
   if (context === undefined) {
