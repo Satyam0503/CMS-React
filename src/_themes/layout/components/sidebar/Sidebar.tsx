@@ -5,26 +5,44 @@ import { ILayout, useLayout } from "../../core";
 import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
 import { SidebarFooter } from "./SidebarFooter";
 import { SidebarLogo } from "./SidebarLogo";
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 import { useAppSelector } from "../../../../app/Redux/hooks";
+import { Height } from "@mui/icons-material";
+import { Row } from "react-bootstrap";
+import { wrap } from "module";
 
 const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const currentUser = useAppSelector(state=>state.user.userData);
+  const toggleRef = useRef<HTMLDivElement>(null);
+
+  const appSidebarDefaultMinimizeDesktopEnabled =
+    config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
+  const appSidebarDefaultCollapseDesktopEnabled =
+    config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
+  const toggleType = appSidebarDefaultCollapseDesktopEnabled
+    ? "collapse"
+    : appSidebarDefaultMinimizeDesktopEnabled
+    ? "minimize"
+    : "";
+  const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
+  const appSidebarDefaultMinimizeDefault =
+    config.app?.sidebar?.default?.minimize?.desktop?.default;
+  const currentUser = useAppSelector((state) => state.user.userData);
   useEffect(() => {
     updateDOM(config);
   }, [config]);
 
   if (!config.app?.sidebar?.display) {
     return null;
-  }  
+  }
   return (
     <>
       {(config.layoutType === "dark-sidebar" ||
         config.layoutType === "light-sidebar") && (
-        <div
+        <Grid
+          item
           ref={sidebarRef}
           id="kt_app_sidebar"
           className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
@@ -32,20 +50,54 @@ const Sidebar = () => {
           <Stack padding={3} gap={4} alignItems="center" width="100%">
             <SidebarLogo sidebarRef={sidebarRef} />
             <Stack gap={1}>
-              <Avatar
-                alt=""
-                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                // use media query for avatar
-                sx={{ width: 128, height: 128 }}
-              />
-              <Typography variant="h6" color="inherit" textAlign="center">
-               {currentUser?.firstName} {currentUser?.lastName && currentUser?.lastName}
-              </Typography>
+              <Stack maxWidth={"128px"} minWidth={"50px"}>
+                <Avatar
+                  alt=""
+                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                  // use media query for avatar
+                  sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                {/* {appSidebarDefaultCollapseDesktopEnabled ? (
+                  <Typography
+                    variant="h6"
+                    color="inherit"
+                    textAlign="center"
+                    // display={{ xs: "none" }}
+                  >
+                    {currentUser?.firstName}
+                    {currentUser?.lastName && currentUser?.lastName}
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="h6"
+                    color="inherit"
+                    textAlign="center"
+                    display={{ xs: "none" }}
+                  >
+                    {currentUser?.firstName}
+                    {currentUser?.lastName && currentUser?.lastName}
+                  </Typography>
+                )} */}
+              </Stack>
+              <Stack
+                direction="row"
+                display={"flex"}
+                flexWrap={"wrap"}
+                gap={0.5}
+                justifyContent={"center"}
+              >
+                <Typography variant="h6" color="inherit">
+                  {currentUser?.firstName}
+                </Typography>
+                <Typography variant="h6" color="inherit">
+                  {currentUser?.lastName && currentUser?.lastName}
+                </Typography>
+              </Stack>
             </Stack>
           </Stack>
           <SidebarMenu />
           <SidebarFooter />
-        </div>
+        </Grid>
       )}
     </>
   );

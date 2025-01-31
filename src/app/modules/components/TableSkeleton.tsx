@@ -2,7 +2,7 @@ import * as React from "react";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { colors } from "../theme/MuiTheme";
-import { Card, Grid, Stack, TableRow } from "@mui/material";
+import { Grid } from "@mui/material";
 
 export default function TableSkeleton() {
   return (
