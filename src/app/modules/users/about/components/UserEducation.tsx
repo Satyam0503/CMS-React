@@ -7,6 +7,7 @@ import {
   DeleteOutline,
   Edit,
   School,
+  Visibility,
 } from "@mui/icons-material";
 import { UserEducationModel } from "../../../../../utils/common_types";
 import { FC, useState } from "react";
@@ -30,14 +31,21 @@ const initialValue: UserEducationModel = {
   endDate: null,
   type: "",
 };
-export const UserEducation= () => {
+export const UserEducation = () => {
+  const [isHovered, setIsHovered] = useState(false);
   const intl = useIntl();
-  const {userDetails:{userEducations},setRefresh,isRefresh}= useUserDetails();
-  const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
+  const {
+    userDetails: { userEducations },
+    setRefresh,
+    isRefresh,
+  } = useUserDetails();
+  const [educationInitialValues, setEducationInitialValues] =
+    useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const [confirmModal,setConfirmModal]= useState(false);
-  const [selectedEducation,setSeletedEducation]= useState<UserEducationModel | null >(null);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [selectedEducation, setSeletedEducation] =
+    useState<UserEducationModel | null>(null);
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -45,18 +53,18 @@ export const UserEducation= () => {
     setEdit(false);
   };
 
-  const handleCloseConfirmation = ()=>{
+  const handleCloseConfirmation = () => {
     setConfirmModal(false);
     setSeletedEducation(null);
-  }
+  };
 
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
     const value = {
       userId: education.userId,
       educationTitle: education.educationTitle,
-      startDate:dayjs(education.startDate),
-      endDate:dayjs(education.endDate),
+      startDate: dayjs(education.startDate),
+      endDate: dayjs(education.endDate),
       type: education.type,
       collegeName: education.collegeName,
       educationId: education.educationId,
@@ -86,19 +94,18 @@ export const UserEducation= () => {
         setRefresh(!isRefresh);
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setSubmitting(false);
       }
     }
   };
 
-  const handleDeleteEducation=(confirmation:String)=>{
-    if(!selectedEducation){
-        toast.error("Request Failed"); 
+  const handleDeleteEducation = (confirmation: String) => {
+    if (!selectedEducation) {
+      toast.error("Request Failed");
     }
     // logic for deleting education
-  }
+  };
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -186,14 +193,24 @@ export const UserEducation= () => {
                 rowGap={0.5}
               >
                 <CustomIconButton
+                  style={{
+                    visibility: isHovered ? "visible" : "hidden",
+                    transition: "visibility 0.3s ease",
+                  }}
                   icon={<Edit />}
                   tooltip="Edit"
                   handleClick={() => handleEducationEdit(education)}
+                  onMouseClick={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
                 />
-                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={()=>{
-                  setSeletedEducation(education);
-                  setConfirmModal(true);
-                }}/>
+                <CustomIconButton
+                  icon={<DeleteOutline />}
+                  tooltip="Delete"
+                  handleClick={() => {
+                    setSeletedEducation(education);
+                    setConfirmModal(true);
+                  }}
+                />
               </Stack>
             </Stack>
           ))
@@ -208,16 +225,15 @@ export const UserEducation= () => {
           handleClose={handleClose}
         />
       )}
-      {
-        confirmModal && 
+      {confirmModal && (
         <ConfirmationModal
           title="Delete Education"
           content="Are you sure you want to delete this Education ?"
           open={confirmModal}
           handleClose={handleCloseConfirmation}
           handleConfirmation={handleDeleteEducation}
-        /> 
-      }
+        />
+      )}
     </Card>
   );
 };

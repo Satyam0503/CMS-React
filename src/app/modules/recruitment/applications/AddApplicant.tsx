@@ -34,21 +34,28 @@ const initialValues: ApplicantModel = {
   experience: 1,
   resume: null,
   vacancyId: "",
-  vacancyName:"",
+  vacancyName: "",
 };
 interface PropsTypes {
-  open:boolean;
-  refresh:boolean;
-  setOpen:React.Dispatch<React.SetStateAction<boolean>>
-  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
+  open: boolean;
+  refresh: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) => {
+export const AddApplicant: FC<PropsTypes> = ({
+  open,
+  setOpen,
+  setRefresh,
+  refresh,
+}) => {
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
 
-  const activeVacancies = vacancyList.filter(vacancy=> vacancy.status === true);
+  const activeVacancies = vacancyList.filter(
+    (vacancy) => vacancy.status === true
+  );
 
   const handleClose = () => {
     setOpen(false);
@@ -65,12 +72,13 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
     }
   };
 
-
   const handleAddApplicant = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacancyId);
+    const vacancy = vacancyList.find(
+      (vacancy) => vacancy.jobId === values.vacancyId
+    );
     const payload = {
       applicantId: values.applicantId,
       companyId: companyId,
@@ -81,7 +89,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
       vacancyId: values.vacancyId,
       experience: values.experience,
       vacancyName: vacancy ? vacancy.title : "",
-    };    
+    };
     try {
       const { data } = await addApplicant(payload);
       if (!data.success) {
@@ -90,7 +98,6 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
       toast.success(data.message);
       setRefresh(!refresh);
       handleClose();
-      
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -118,7 +125,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
   }, []);
   return (
     <>
-      { activeVacancies && activeVacancies.length > 0 && (
+      {activeVacancies && activeVacancies.length > 0 && (
         <CustomisedModal open={open} handleClose={handleClose}>
           <Stack spacing={2}>
             <Typography variant="h5">
@@ -263,7 +270,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
                     </Grid>
                     <Stack
                       direction={"row"}
-                      spacing={2}
+                      spacing={1}
                       justifyContent={"flex-end"}
                       mt={2}
                     >
