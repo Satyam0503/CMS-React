@@ -42,3 +42,7 @@ export const addApplicant = async (payload: ApplicantModel) => {
 export const getApplicantById = async (applicantId: string) => {
   return getRequest<ApplicantsResponseData>(`${ServiceUrl.GET_APPLICANT_BY_ID}?id=${applicantId}`);
 };
+
+export const uploadResume = async (email:string,payload:FormData)=>{
+  return postRequest<FormData,ApiResponse>(`${ServiceUrl.UPLOAD_RESUME}?email=${email}`,payload,{},true);
+}

@@ -1,41 +1,58 @@
 import { Card, Stack, TextField, Typography } from "@mui/material";
 import CustomisedButton from "../../../components/CustomisedButton";
 import { CustomIconButton } from "../../../components/CustomIconButton";
-import { FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";
-import { useUserDetails } from "../../UserDataProvider";
-import { updateEmployeeSummary } from "../../userservices";
+import {
+  getEmployeeSummary,
+  updateEmployeeSummary,
+  UserSummaryModel,
+} from "../../userservices";
 import { toast } from "react-toastify";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 export const UserSummary = () => {
-  const {userDetails:{userSummary},setRefresh,isRefresh}= useUserDetails();
-  const [summary, setSummary] = useState(userSummary ? userSummary.summary : "");
+  const currentUser = useAppSelector((state) => state.user.userData)!;
+  const [userSummary, setUserSummary] = useState<UserSummaryModel>();
+  const [updatedSummary, setUpdatedSummary] = useState("");
+  const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const intl = useIntl();
 
   const handleUpdateSummary = async () => {
-    const payload={
-        summary:summary,
-        summaryId:userSummary.summaryId,
-        userId:userSummary.userId,
-    }
-    try{
-        const response = await updateEmployeeSummary(payload);
-        const {success,message}=response.data;
-        if(!success){
-            throw new Error(message);
-        }
-        toast.success(message);
-        setSummary("");
-        setEdit(false);
-        setRefresh(!isRefresh); 
-    }
-    catch(error:any){
-        toast.error(error.message);
+    const payload = {
+      summary: updatedSummary,
+      summaryId: userSummary?.summaryId!,
+      userId: currentUser.userId,
+    };
+    try {
+      const response = await updateEmployeeSummary(payload);
+      const { success, message } = response.data;
+      if (!success) {
+        throw new Error(message);
+      }
+      toast.success(message);
+      setEdit(false);
+      setRefresh(!refresh);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
+  useEffect(() => {
+    getEmployeeSummary()
+      .then((response) => {
+        const { success, message, methodResult } = response.data;
+        if (!success) {
+          throw new Error(message);
+        }
+        setUserSummary(methodResult);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  }, [refresh]);
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -54,14 +71,14 @@ export const UserSummary = () => {
               variant="outlined"
               handleClick={() => {
                 setEdit(false);
-                setSummary("");
+                setUpdatedSummary("");
               }}
             />
             <CustomisedButton
               label="Update"
               variant="contained"
               handleClick={handleUpdateSummary}
-              disabled={summary.length === 0}
+              disabled={updatedSummary.length === 0}
             />
           </Stack>
         ) : (
@@ -80,12 +97,12 @@ export const UserSummary = () => {
           id="user_summary"
           placeholder="Type..."
           variant="outlined"
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
+          value={updatedSummary}
+          onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
         <Typography variant="body1">
-          {userSummary.summary || "Add Your Summary"}
+          {userSummary ? userSummary.summary : "Add Your Summary"}
         </Typography>
       )}
     </Card>

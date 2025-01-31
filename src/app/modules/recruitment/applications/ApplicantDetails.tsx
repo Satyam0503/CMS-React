@@ -48,6 +48,7 @@ export const ApplicantDetails = () => {
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
   const [isModalOpen, setModalOpen] = useState(false);
   const [applicantStatus, setApplicantStatus] = useState<number>();
+  const [comment ,setComment]= useState("");
   const applicantId = state.applicantId;
 
   useEffect(() => {
@@ -76,7 +77,9 @@ export const ApplicantDetails = () => {
   }
   const experienceSuffix = applicant.experience > 1 ? "Years" : "Year";
 
-  const handleAddComment = () => {};
+  const handleAddComment = () => {
+    // logic for adding 
+  };
   const handleClose = () => {
     setModalOpen(false);
   };
@@ -225,6 +228,8 @@ export const ApplicantDetails = () => {
 
             <AddComment
               open={isModalOpen}
+              comment={comment}
+              setComment={setComment}
               handleClose={handleClose}
               handleAddComment={handleAddComment}
             />

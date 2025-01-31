@@ -6,29 +6,27 @@ import {
   FormHelperText,
   MenuItem,
 } from "@mui/material";
-import { useState } from "react";
+import { FC } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
 import { Formik } from "formik";
-
-import { useUserDetails } from "../../UserDataProvider";
 import dayjs, { Dayjs } from "dayjs";
 import { bloodGroups } from "../../../../../utils/constant/Constant";
 import CustomisedButton from "../../../components/CustomisedButton";
 import { CustomisedModal } from "../../../components/CustomisedModal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
-import { CustomIconButton } from "../../../components/CustomIconButton";
-import { Edit } from "@mui/icons-material";
 import { TextInput } from "../../../components/form_component/TextInput";
 import { SelectInput } from "../../../components/form_component/SelectInput";
+import { EmployeeModel } from "../../../../../utils/common_types";
 
-export const UpdateUserInfo = () => {
+interface Props{
+  open:boolean,
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  currentUser:EmployeeModel,
+}
+
+export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
   const intl = useIntl();
-  const {
-    userDetails: { userPersonalDetails: currentUser },
-  } = useUserDetails();
-  const [open, setOpen] = useState(false);
-
   const initialValues = {
     firstName: currentUser?.firstName,
     lastName: currentUser?.lastName,
@@ -56,13 +54,9 @@ export const UpdateUserInfo = () => {
       // logic for updating user details
     }, 2000);
   }
+
   return (
     <>
-      <CustomIconButton
-        tooltip="Edit"
-        icon={<Edit />}
-        handleClick={() => setOpen(true)}
-      />
       <CustomisedModal open={open} handleClose={handleClose}>
         <Typography variant="h5" mb={2}>
           {intl.formatMessage({ id: "PROFILE.PI" })}

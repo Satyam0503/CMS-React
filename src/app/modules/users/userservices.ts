@@ -17,7 +17,7 @@ export type UserSummaryModel = {
   summary: string;
 };
 
-export const getEmployeeDetails = async () => {
+export const getEmployeeById = async () => {
   return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS);
 };
 

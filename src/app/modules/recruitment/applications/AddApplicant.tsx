@@ -19,7 +19,7 @@ import CustomisedButton from "../../components/CustomisedButton";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../components/form_component/SelectInput";
 import { experienceCategoryList } from "../../../../utils/common";
-import { addApplicant, getAllJobVacancies } from "../services";
+import { addApplicant, getAllJobVacancies, uploadResume } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
@@ -70,6 +70,8 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
+    const formData = new FormData();
+    formData.append("File", values.resume as File);
     const vacancy= vacancyList.find(vacancy => vacancy.jobId === values.vacancyId);
     const payload = {
       applicantId: values.applicantId,
@@ -87,6 +89,11 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
       if (!data.success) {
         throw new Error(data.message);
       }
+      const uploadResumeResponse= await uploadResume(values.email,formData);
+      const responseData= uploadResumeResponse.data;
+      if(!responseData.success){
+        throw new Error(responseData.message);
+      }
       toast.success(data.message);
       setRefresh(!refresh);
       handleClose();
@@ -96,8 +103,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
     } finally {
       setSubmitting(false);
     }
-    // const formData = new FormData();
-    // formData.append("resume", values.resume);
+    
     // formData.append("applicantData", JSON.parse(values));
     // handle add applicant logic
   };

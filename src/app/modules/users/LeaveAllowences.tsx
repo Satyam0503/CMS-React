@@ -2,12 +2,8 @@ import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 
-import { useUserDetails } from "./UserDataProvider";
-
 export default function LeaveAllowences() {
-  const {
-    userDetails: { userSkills },
-  } = useUserDetails();
+
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];

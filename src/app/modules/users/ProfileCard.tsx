@@ -37,16 +37,16 @@ import { colors } from "../theme/MuiTheme";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { useUserDetails } from "./UserDataProvider";
 import { getAgeInYears } from "../../../utils/common";
+import { EmployeeModel } from "../../../utils/common_types";
 
 export default function ProfileCard() {
+  const user= useAppSelector(state=>state.user.userData)
   const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const {
-    userDetails: { userPersonalDetails },
-  } = useUserDetails();
+  const [userPersonalDetails,setUserPersonalDetails]= useState({} as EmployeeModel)
 
   function handleClose() {
     setOpen(false);
@@ -161,7 +161,7 @@ export default function ProfileCard() {
         </Grid>
         <Stack textAlign={"center"} alignItems={"center"}>
           <Typography variant="h5" color={"white"} mb={0.5}>
-            {userPersonalDetails.firstName + " " + userPersonalDetails.lastName}
+            {user?.firstName + " " + user?.lastName}
           </Typography>
           <Typography
             variant="body2"

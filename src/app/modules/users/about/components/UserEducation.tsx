@@ -9,14 +9,12 @@ import {
   School,
 } from "@mui/icons-material";
 import { UserEducationModel } from "../../../../../utils/common_types";
-import { FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
-import { useAppSelector } from "../../../../Redux/hooks";
-import { addEmployeeEducation } from "../../userservices";
+import { addEmployeeEducation, getEmployeeEducations } from "../../userservices";
 import { toast } from "react-toastify";
-import { useUserDetails } from "../../UserDataProvider";
 import { colors } from "../../../theme/MuiTheme";
 import dayjs from "dayjs";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
@@ -32,12 +30,13 @@ const initialValue: UserEducationModel = {
 };
 export const UserEducation= () => {
   const intl = useIntl();
-  const {userDetails:{userEducations},setRefresh,isRefresh}= useUserDetails();
+  const [userEducations,setUserEducations]= useState<UserEducationModel[]>([]);
   const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmModal,setConfirmModal]= useState(false);
   const [selectedEducation,setSeletedEducation]= useState<UserEducationModel | null >(null);
+  const [refresh,setRefresh]= useState(false);
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -82,8 +81,8 @@ export const UserEducation= () => {
           throw new Error(message);
         }
         toast.success(message);
+        setRefresh(!refresh);
         handleClose();
-        setRefresh(!isRefresh);
       } catch (error: any) {
         toast.error(error.message);
       }
@@ -99,6 +98,21 @@ export const UserEducation= () => {
     }
     // logic for deleting education
   }
+
+  useEffect(()=>{
+      getEmployeeEducations()
+      .then(response=>{
+        const {success,message,methodResults}= response.data;
+        if(!success){
+          throw new Error(message);
+        }
+        setUserEducations(methodResults);
+      })
+      .catch(error=>{
+        toast.error(error.message);
+      })
+  },[refresh]);
+
   return (
     <Card sx={{ p: 2 }}>
       <Stack

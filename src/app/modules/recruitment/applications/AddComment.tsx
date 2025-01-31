@@ -1,20 +1,25 @@
 import { Stack, Typography } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import { FC, useState } from "react";
+import { FC } from "react";
 import CustomisedButton from "../../components/CustomisedButton";
 import TextEditor from "../../components/TextEditor";
 
 interface PropTypes {
   open: boolean;
+  comment:string;
+  setComment:React.Dispatch<React.SetStateAction<string>>
   handleClose: () => void;
   handleAddComment: () => void;
 }
 export const AddComment: FC<PropTypes> = ({
+  comment,
+  setComment,
   open,
   handleClose,
   handleAddComment,
+
 }) => {
-  const [comment, setComment] = useState("");
+//   const [comment, setComment] = useState("");
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>

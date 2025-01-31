@@ -64,7 +64,8 @@ export const ServiceUrl = {
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
   GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
-
+  UPLOAD_RESUME:`${BaseUrl}/api/Applicants/UploadResume`,
+  
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
