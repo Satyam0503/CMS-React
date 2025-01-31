@@ -2,7 +2,11 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { EmployeeModel } from "../../../utils/common_types";
-import { dateFormatter, statusDecoder, statusEncoder } from "../../../utils/common";
+import {
+  dateFormatter,
+  statusDecoder,
+  statusEncoder,
+} from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { StyleStatus } from "../components/StyledStatus";
@@ -32,7 +36,11 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             <Avatar
               alt="User Profile"
               src=""
-              sx={{ width: "128px", height: "128px", fontSize: "3rem" }}
+              sx={{
+                width: "128px",
+                height: "128px",
+                fontSize: "3rem",
+              }}
             >
               {employeeData.firstName.charAt(0)}
             </Avatar>
@@ -166,7 +174,10 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               </Typography>
             </Grid>
             <Grid xs={8} md={6}>
-              <StyleStatus label={status} className={employeeData.status ? "success": "danger"}/>
+              <StyleStatus
+                label={status}
+                className={employeeData.status ? "success" : "danger"}
+              />
             </Grid>
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>

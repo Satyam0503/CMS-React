@@ -4,7 +4,7 @@ import { KTIcon, toAbsoluteUrl } from "../../../helpers";
 import { useLayout } from "../../core";
 import { MutableRefObject, useEffect, useRef } from "react";
 import { ToggleComponent } from "../../../assets/ts/components";
-import { Stack } from "@mui/material";
+import { Avatar, Grid, Stack } from "@mui/material";
 
 type PropsType = {
   sidebarRef: MutableRefObject<HTMLDivElement | null>;
@@ -53,38 +53,29 @@ const SidebarLogo = (props: PropsType) => {
 
   return (
     <Stack id="kt_app_sidebar_logo" alignItems="center">
-      <Link to="/dashboard">
+      <Link to="/dashboard" style={{ marginTop: "1rem" }}>
         {config.layoutType === "dark-sidebar" ? (
           <img
             alt="Logo"
             src={toAbsoluteUrl("media/logos/logo.png")}
-            className="app-sidebar-logo-default mt-5"
+            style={{ minWidth: "50px" }}
+            // className="app-sidebar-logo-default mt-5"
           />
         ) : (
           <>
-            <img
+            <Avatar
               alt="Logo"
               src={toAbsoluteUrl("media/logos/default.svg")}
-              className="app-sidebar-logo-default theme-light-show"
-            />
-            <img
-              alt="Logo"
-              src={toAbsoluteUrl("media/logos/favicon.png")}
-              className="app-sidebar-logo-default theme-dark-show"
+              // className="app-sidebar-logo-default theme-light-show"
             />
           </>
         )}
-
-        <img
-          alt="Logo"
-          src={toAbsoluteUrl("media/logos/favicon.png")}
-          className="app-sidebar-logo-minimize"
-        />
       </Link>
 
       {(appSidebarDefaultMinimizeDesktopEnabled ||
         appSidebarDefaultCollapseDesktopEnabled) && (
-        <div
+        <Grid
+          item
           ref={toggleRef}
           id="kt_app_sidebar_toggle"
           className={clsx(
@@ -97,7 +88,7 @@ const SidebarLogo = (props: PropsType) => {
           data-kt-toggle-name={`app-sidebar-${toggleType}`}
         >
           <KTIcon iconName="black-left-line" className="fs-3 rotate-180 ms-1" />
-        </div>
+        </Grid>
       )}
     </Stack>
   );

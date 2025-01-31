@@ -49,7 +49,7 @@ const JobDescription: FC<PropsTypes> = ({
   const intl = useIntl();
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  
+
   const {
     handleSubmit,
     errors,
@@ -58,7 +58,7 @@ const JobDescription: FC<PropsTypes> = ({
     isSubmitting,
     dirty,
     isValid,
-    values
+    values,
   } = useFormik({
     initialValues,
     validationSchema: jobSchema,
@@ -72,7 +72,7 @@ const JobDescription: FC<PropsTypes> = ({
       handleAddEditJob(values, setSubmitting);
     },
   });
-  
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -154,7 +154,11 @@ const JobDescription: FC<PropsTypes> = ({
                   {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}
                 </Typography>
               </Grid>
-              <Checkbox {...getFieldProps("status")} checked={values.status} />
+              <Checkbox
+                {...getFieldProps("status")}
+                checked={values.status}
+                sx={{ p: 0 }}
+              />
 
               {/* <Grid item xs={8} md={6}>
                 <Select

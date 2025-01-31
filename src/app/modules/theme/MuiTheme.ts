@@ -116,6 +116,7 @@ export const colors = {
       100: "#FFECEB",
     },
     white: {
+      200: "#f4f4f4",
       500: "#ffffff",
     },
   },
@@ -1099,6 +1100,7 @@ export const MuiTheme = createTheme({
 
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
+            background: "none",
           },
           "& .MuiSvgIcon-root": { fontSize: 30 },
         },
