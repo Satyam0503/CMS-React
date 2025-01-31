@@ -7,15 +7,16 @@ import IconStat from "../components/IconStat";
 import { colors } from "../theme/MuiTheme";
 import {
   Build,
-
   CalendarMonth,
   CorporateFareOutlined,
-
 } from "@mui/icons-material";
 import { useUserDetails } from "./UserDataProvider";
+import LeaveAllowences from "./LeaveAllowences";
 
 export default function UserProfile() {
-  const {userDetails:{userSkills}} = useUserDetails();
+  const {
+    userDetails: { userSkills },
+  } = useUserDetails();
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
@@ -25,38 +26,20 @@ export default function UserProfile() {
       <Grid
         item
         xs={12}
-        md={3}
+        lg={3}
         display={"flex"}
-        flexDirection={"column"}
+        flexDirection={{ xs: "column", sm: "row", lg: "column" }}
         gap={4}
+        justifyContent={{ lg: "flex-start" }}
       >
-        <Stack>
+        <Stack width={"100%"}>
           <ProfileCard />
         </Stack>
-
-        <Stack>
-          <Card sx={{ p: 2 }}>
-            <Stack
-              mb={5}
-              display={"flex"}
-              justifyContent={"space-between"}
-              flexDirection={"row"}
-              alignItems={"center"}
-            >
-              <Typography variant="h6">
-                {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
-              </Typography>
-              <Typography variant="h4">4</Typography>
-            </Stack>
-            <DonutApexChart
-              series={leaveAllowanceValue}
-              labels={leaveAllowanceLables}
-              showDataLabels={true}
-            />
-          </Card>
+        <Stack width={"100%"}>
+          <LeaveAllowences />
         </Stack>
       </Grid>
-      <Grid item xs={12} md={9}>
+      <Grid item xs={12} md={12} lg={9}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           display={"flex"}
@@ -64,7 +47,7 @@ export default function UserProfile() {
           bgcolor={colors.alpha.white[500]}
           borderRadius={1}
         >
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={4}>
             <Box component={CardContent}>
               <IconStat
                 iconBg={colors.alpha.secondary[100]}
@@ -75,7 +58,7 @@ export default function UserProfile() {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={4}>
             <Box component={CardContent}>
               <IconStat
                 iconBg={colors.alpha.primary[100]}
@@ -86,13 +69,13 @@ export default function UserProfile() {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={4}>
             <Box component={CardContent}>
               <IconStat
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={userSkills.length +"+"}
+                number={userSkills.length + "+"}
                 title="Skills holder"
               />
             </Box>

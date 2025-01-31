@@ -87,6 +87,7 @@ export default function ProfileCard() {
     <>
       <Card
         sx={{
+          width: "100%",
           bgcolor: colors.alpha.primary[500],
           alignItems: "center",
           display: "flex",
@@ -158,7 +159,6 @@ export default function ProfileCard() {
             />
           </Stack>
         </Grid>
-
         <Stack textAlign={"center"} alignItems={"center"}>
           <Typography variant="h5" color={"white"} mb={0.5}>
             {userPersonalDetails.firstName + " " + userPersonalDetails.lastName}
