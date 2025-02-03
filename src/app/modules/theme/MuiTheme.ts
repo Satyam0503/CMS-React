@@ -1,4 +1,3 @@
-import { BorderColor, BorderTop, Margin, Padding } from "@mui/icons-material";
 import { alpha, createTheme, lighten, darken } from "@mui/material";
 
 const themeColors = {
@@ -547,15 +546,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    // MuiTextField: {
-    //   styleOverrides: {
-    //     root: {
-    //       " &.MuiOutlinedInput": {
-    //         Padding: "0px",
-    //       },
-    //     },
-    //   },
-    // },
+    MuiInputBase: {},
     MuiToggleButton: {
       defaultProps: {
         disableRipple: true,
