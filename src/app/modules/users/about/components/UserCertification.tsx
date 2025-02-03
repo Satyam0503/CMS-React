@@ -14,7 +14,10 @@ import { colors } from "../../../theme/MuiTheme";
 import { dateFormatter } from "../../../../../utils/common";
 import dayjs from "dayjs";
 import AddUpdateCertification from "./AddUpdateCertification";
-import { addEmployeeCertification, getEmployeeCertifications } from "../../userservices";
+import {
+  addEmployeeCertification,
+  getEmployeeCertifications,
+} from "../../userservices";
 import { toast } from "react-toastify";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
 
@@ -29,11 +32,13 @@ const initialValue: UserCertificationModel = {
 
 export const UserCertification = () => {
   const intl = useIntl();
-  const [userCertifications,setUserCertifications]= useState<UserCertificationModel[]>([]);
+  const [userCertifications, setUserCertifications] = useState<
+    UserCertificationModel[]
+  >([]);
   const [initialValues, setInitialValues] = useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const [refresh,setRefresh]= useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedCertification, setSelectedCertification] =
     useState<UserCertificationModel | null>(null);
@@ -57,8 +62,7 @@ export const UserCertification = () => {
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setSubmitting(false);
       }
     }
@@ -96,19 +100,19 @@ export const UserCertification = () => {
     // handle delete logic
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getEmployeeCertifications()
-    .then(response=>{
-      const {success,methodResults,message} = response.data;
-      if(!success){
-        throw new Error(message);
-      }
-      setUserCertifications(methodResults);
-    })
-    .catch(error=>{
-      toast.error(error.message)
-    })
-  },[refresh])
+      .then((response) => {
+        const { success, methodResults, message } = response.data;
+        if (!success) {
+          throw new Error(message);
+        }
+        setUserCertifications(methodResults);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  }, [refresh]);
 
   return (
     <Card sx={{ p: 2 }}>
@@ -143,6 +147,11 @@ export const UserCertification = () => {
               justifyContent={"space-between"}
               alignItems={"center"}
               spacing={1}
+              sx={{
+                "&:hover .MuiStack-root": {
+                  visibility: "visible",
+                },
+              }}
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
@@ -197,6 +206,10 @@ export const UserCertification = () => {
                 direction={{ sx: "column", sm: "row" }}
                 spacing={1}
                 rowGap={0.5}
+                sx={{
+                  visibility: "hidden",
+                  transition: "visibility 0.3s ease-in-out",
+                }}
               >
                 <CustomIconButton
                   icon={<Edit />}
