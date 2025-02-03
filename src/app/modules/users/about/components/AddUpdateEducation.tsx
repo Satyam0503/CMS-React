@@ -128,7 +128,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
               <Grid item xs={12} md={6}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "MENU.MODE" })}
+                  label={intl.formatMessage({ id: "FORM.TYPE" })}
                   name="type"
                 >
                   {EducationType.map((item) => (

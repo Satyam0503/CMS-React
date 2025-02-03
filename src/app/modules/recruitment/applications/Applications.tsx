@@ -51,7 +51,7 @@ export default function Applications() {
 
   const handleResumeDownload = (applicant:Applicant) => {
    const link= window.document.createElement("a");
-   link.href= applicant.resumeUrl;
+   link.href= applicant.fullApplicantResumePath;
    link.download= `${applicant.firstName} ${applicant.lastName} Resume.pdf`;
    link.click();
    link.remove();

@@ -28,6 +28,7 @@ export const ApplicationPreview: FC<PropsType> = ({
   const status = applicationStatusDecoder(applicantData.status);
   const className = getApplicationStatusClass(status);
   const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Grid
@@ -95,7 +96,8 @@ export const ApplicationPreview: FC<PropsType> = ({
           </Grid>
         </Grid>
       </Grid>
-      <PdfPreview pdfUrl={applicantData.resumeUrl} />
+
+      <PdfPreview pdfUrl={applicantData.fullApplicantResumePath} />
     </CustomisedModal>
   );
 };
