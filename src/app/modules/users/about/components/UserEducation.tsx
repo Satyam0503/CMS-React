@@ -216,15 +216,9 @@ export const UserEducation = () => {
                 }}
               >
                 <CustomIconButton
-                  style={{
-                    visibility: isHovered ? "visible" : "hidden",
-                    transition: "visibility 0.3s ease",
-                  }}
                   icon={<Edit />}
                   tooltip="Edit"
                   handleClick={() => handleEducationEdit(education)}
-                  onMouseClick={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
                 />
                 <CustomIconButton
                   icon={<DeleteOutline />}
