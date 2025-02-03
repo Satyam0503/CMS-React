@@ -8,6 +8,7 @@ import { FC } from "react";
 import {
   applicationStatusDecoder,
   dateFormatter,
+  getApplicationStatusClass,
 } from "../../../../utils/common";
 import { StyleStatus } from "../../components/StyledStatus";
 
@@ -24,12 +25,7 @@ export const ApplicationPreview: FC<PropsType> = ({
 }) => {
   const intl = useIntl();
   const status = applicationStatusDecoder(applicantData.status);
-  const className =
-    status === "Pending"
-      ? "warning"
-      : status === "Shortlisted"
-      ? "success"
-      : "danger";
+  const className = getApplicationStatusClass(status);
   const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
   return (
     <CustomisedModal open={open} handleClose={handleClose}>

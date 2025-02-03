@@ -6,7 +6,7 @@ import {
 } from "../../../utils/common_types";
 import {
   getEmployeeCertifications,
-  getEmployeeDetails,
+
   getEmployeeEducations,
   getEmployeeSummary,
   UserSummaryModel,
@@ -15,6 +15,7 @@ import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../Redux/hooks";
+import { CircularLoader } from "../components/CircularLoader";
 
 type UserDataContextType = {
   userDetails: {
@@ -60,39 +61,9 @@ export const UserDetailsProvider = (props: PropTypes) => {
     {} as EmployeeModel
   );
 
-  useEffect(() => {
-    const getAllDetails = async () => {
-      try {
-        const responseArray = await Promise.all([
-          getEmployeeDetails(),
-          getEmployeeEducations(),
-          getEmployeeCertifications(),
-          getEmployeeSummary(),
-          // getEmployeeSkills(token),
-        ]);
-        setUserPersonalDetails(responseArray[0].data.methodResult);
-        setUserEducations(responseArray[1].data.methodResults);
-        setUserCertifications(responseArray[2].data.methodResults);
-        setUserSummary(responseArray[3].data.methodResult);
-        // setUserSkills(responseArray[4].data.methodResults);
-      } catch (error: any) {
-        // setError(error.message)
-        // toast.error(error.message);
-        // console.log(error.message);
-        
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getAllDetails();
-  }, [isRefresh]);
-
   if (loading) {
     return (
-      <Typography variant="h4">
-        {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
-      </Typography>
+      <CircularLoader/>
     );
   }
   if (error) {
@@ -122,7 +93,6 @@ export const UserDetailsProvider = (props: PropTypes) => {
 };
 
 // hook for consuming userDetails Context
-
 export const useUserDetails = () => {
   const context = useContext(UserDetailsContext);
   if (context === undefined) {

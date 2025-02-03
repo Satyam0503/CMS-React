@@ -10,14 +10,15 @@ import {
   Visibility,
 } from "@mui/icons-material";
 import { UserEducationModel } from "../../../../../utils/common_types";
-import { FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
-import { useAppSelector } from "../../../../Redux/hooks";
-import { addEmployeeEducation } from "../../userservices";
+import {
+  addEmployeeEducation,
+  getEmployeeEducations,
+} from "../../userservices";
 import { toast } from "react-toastify";
-import { useUserDetails } from "../../UserDataProvider";
 import { colors } from "../../../theme/MuiTheme";
 import dayjs from "dayjs";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
@@ -90,8 +91,8 @@ export const UserEducation = () => {
           throw new Error(message);
         }
         toast.success(message);
+        setRefresh(!refresh);
         handleClose();
-        setRefresh(!isRefresh);
       } catch (error: any) {
         toast.error(error.message);
       } finally {

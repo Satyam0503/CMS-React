@@ -97,7 +97,7 @@ export default function Jobs() {
       };
       const jobId = values.jobId;
       try {
-        const response = await editJobVacancy(payload, jobId, token);
+        const response = await editJobVacancy(payload, jobId);
         const { success, message } = response.data;
         if (!success) {
           throw new Error(message);
@@ -116,7 +116,7 @@ export default function Jobs() {
         ...values,
       };
       try {
-        const response = await addJobVacancy(payload, token);
+        const response = await addJobVacancy(payload);
         const { message, success } = response.data;
         if (!success) {
           throw new Error(message);
@@ -137,7 +137,7 @@ export default function Jobs() {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await getAllJobVacancies(token);
+        const response = await getAllJobVacancies();
         const { statusCode, message, success, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           throw new Error(message);

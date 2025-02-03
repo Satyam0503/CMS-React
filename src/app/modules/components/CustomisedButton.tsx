@@ -26,7 +26,7 @@ const CustomisedButton = (props: Props) => {
     size,
     disabled = false,
     permission = true,
-    style = {},
+    style = {gap:".5rem"},
     iconPosition = "end",
     type = "button",
     loading,

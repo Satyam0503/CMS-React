@@ -51,8 +51,13 @@ export function Login() {
     setStatus: (status?: any) => void
   ) {
     setLoading(true);
+    
     try {
-      const { data } = await login({ ...values });
+      const response = await login({ ...values });
+      if(!response){
+        throw new Error("");
+      }
+      const data = response.data;
       if (!data.success) {
         throw new Error(data.message);
       }

@@ -1,24 +1,21 @@
 import {
   Add,
-  CalendarMonth,
   CalendarToday,
   DeleteOutline,
   Edit,
   LocalActivity,
-  School,
 } from "@mui/icons-material";
 import { Card, Stack, Typography } from "@mui/material";
 import { CustomIconButton } from "../../../components/CustomIconButton";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
 import { colors } from "../../../theme/MuiTheme";
 import { dateFormatter } from "../../../../../utils/common";
 import dayjs from "dayjs";
 import AddUpdateCertification from "./AddUpdateCertification";
-import { addEmployeeCertification } from "../../userservices";
+import { addEmployeeCertification, getEmployeeCertifications } from "../../userservices";
 import { toast } from "react-toastify";
-import { useUserDetails } from "../../UserDataProvider";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
 
 const initialValue: UserCertificationModel = {
@@ -32,14 +29,11 @@ const initialValue: UserCertificationModel = {
 
 export const UserCertification = () => {
   const intl = useIntl();
-  const {
-    userDetails: { userCertifications },
-    setRefresh,
-    isRefresh,
-  } = useUserDetails();
+  const [userCertifications,setUserCertifications]= useState<UserCertificationModel[]>([]);
   const [initialValues, setInitialValues] = useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
+  const [refresh,setRefresh]= useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedCertification, setSelectedCertification] =
     useState<UserCertificationModel | null>(null);
@@ -59,7 +53,7 @@ export const UserCertification = () => {
           throw new Error(message);
         }
         toast.success(message);
-        setRefresh(!isRefresh);
+        setRefresh(!refresh);
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
@@ -101,6 +95,20 @@ export const UserCertification = () => {
     }
     // handle delete logic
   }
+
+  useEffect(()=>{
+    getEmployeeCertifications()
+    .then(response=>{
+      const {success,methodResults,message} = response.data;
+      if(!success){
+        throw new Error(message);
+      }
+      setUserCertifications(methodResults);
+    })
+    .catch(error=>{
+      toast.error(error.message)
+    })
+  },[refresh])
 
   return (
     <Card sx={{ p: 2 }}>

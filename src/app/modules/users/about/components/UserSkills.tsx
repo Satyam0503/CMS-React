@@ -1,17 +1,44 @@
 import { Card, Chip, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { AddUpdateSkills } from "./AddUpdateSkills";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import { Add } from "@mui/icons-material";
-import { useUserDetails } from "../../UserDataProvider";
+import { getEmployeeSkills, udpateEmployeeSkills } from "../../userservices";
+import { toast } from "react-toastify";
 
-
-
-export const UserSkills= () => {
+export const UserSkills = () => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
-  const {userDetails:{userSkills}}= useUserDetails();
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [refresh, setRefresh] = useState(false);
+
+  // useEffect(()=>{
+  //   getEmployeeSkills()
+  //   .then(response=>{
+  //     const {success,methodResult}= response.data;
+  //     if(success){
+  //       setUserSkills(methodResult.skills)
+  //     }
+  //   })
+  //   .catch(error=>{
+  //     toast.error(error.message);
+  //   })
+  // },[refresh])
+
+  async function handleSkillUpdate(skills:string[]) {
+    try {
+      const response = await udpateEmployeeSkills({ skills: skills });
+      const { message, success } = response.data;
+      if (!success) {
+        throw new Error(message);
+      }
+      toast.success(message);
+      setRefresh(!refresh);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  }
 
   return (
     <Card sx={{ p: 2 }}>
@@ -41,7 +68,14 @@ export const UserSkills= () => {
         )}
       </Stack>
 
-      {open && <AddUpdateSkills open={open} setOpen={setOpen} userSkills={userSkills} />}
+      {open && (
+        <AddUpdateSkills
+          open={open}
+          setOpen={setOpen}
+          userSkills={userSkills}
+          handleSkillUpdate={handleSkillUpdate}
+        />
+      )}
     </Card>
   );
 };

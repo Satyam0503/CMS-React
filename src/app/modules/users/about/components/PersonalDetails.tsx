@@ -1,14 +1,31 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useUserDetails } from "../../UserDataProvider";
 import { dateFormatter } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
+import { useEffect, useState } from "react";
+import { EmployeeModel } from "../../../../../utils/common_types";
+import { getEmployeeById } from "../../userservices";
+import { CustomIconButton } from "../../../components/CustomIconButton";
+import { Edit } from "@mui/icons-material";
 
 export const PersonalDetails = () => {
   const intl = useIntl();
-  const {
-    userDetails: { userPersonalDetails: currentUser },
-  } = useUserDetails();
+  const [currentUser,setCurrentUser]= useState<EmployeeModel>({} as EmployeeModel);
+  const [isModalOpen,setModalOpen]=useState(false);
+
+  useEffect(()=>{
+    getEmployeeById()
+    .then(response=>{
+      const {success,message,methodResult}= response.data;
+      if(!success){
+        throw new Error(message);
+      }
+      setCurrentUser(methodResult);
+    })
+    .catch(error=>{
+      console.error(error);
+    })
+  },[])
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -20,7 +37,15 @@ export const PersonalDetails = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        <UpdateUserInfo />
+        <CustomIconButton 
+          icon={<Edit/>}
+          handleClick={()=>setModalOpen(true)}
+        />
+        {
+          isModalOpen && currentUser && (
+            <UpdateUserInfo open={isModalOpen} setOpen={setModalOpen} currentUser={currentUser} />
+          )
+        }
       </Stack>
       <Grid container spacing={1}>
         <Grid item xs={12}>
@@ -52,7 +77,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.DOB" })}
           </Typography>
           <Typography variant="body1">
-            {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY")}
+            {dateFormatter(currentUser?.dateOfBirth!, "DD MMMM YYYY") || "NA"}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>

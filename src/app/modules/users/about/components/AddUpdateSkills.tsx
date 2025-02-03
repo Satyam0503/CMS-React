@@ -2,27 +2,24 @@ import * as React from "react";
 import Typography from "@mui/material/Typography";
 import { Chip, InputAdornment, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useAppSelector } from "../../../../Redux/hooks";
-import { useUserDetails } from "../../UserDataProvider";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../components/CustomisedModal";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import CustomisedButton from "../../../components/CustomisedButton";
-import { udpateEmployeeSkills } from "../../userservices";
-import { toast } from "react-toastify";
 
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userSkills: string[];
+  handleSkillUpdate:(skills: string[])=> Promise<void>
 };
 
 export const AddUpdateSkills: React.FC<PropsType> = ({
   userSkills,
   open,
   setOpen,
+  handleSkillUpdate
 }) => {
-  const { isRefresh, setRefresh } = useUserDetails();
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(userSkills);
   const intl = useIntl();
@@ -43,18 +40,6 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
     setOpen(false);
   }
 
-  async function handleSkillUpdate() {
-    try {
-      const response = await udpateEmployeeSkills({ skills: skills });
-      const { message, success } = response.data;
-      if (!success) {
-        throw new Error(message);
-      }
-      toast.success(message);
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  }
   return (
     <>
       <CustomisedModal open={open} handleClose={handleClose}>
@@ -107,7 +92,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
             <CustomisedButton
               variant="contained"
               label="Update"
-              handleClick={handleSkillUpdate}
+              handleClick={()=>handleSkillUpdate(skills)}
               disabled={skills.length === 0}
             />
           </Stack>
