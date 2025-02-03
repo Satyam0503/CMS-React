@@ -2,7 +2,7 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import AboutUser from "./AboutUser";
+import AboutUser from "./about/AboutUser";
 import { LeaveTracker } from "./leavetracker/LeaveTracker";
 import { Grid, Theme, useMediaQuery } from "@mui/material";
 import { UserPerformance } from "./performance/UserPerformance";
@@ -52,29 +52,31 @@ export default function BasicTabs() {
   );
 
   return (
-    <Box sx={{ borderRadius: "8px" }}>
+    <Box>
       <Box
         sx={{
           borderBottom: 1,
           borderColor: "divider",
-          marginTop: "15px",
+          marginTop: "1.5rem",
           background: "white",
-          marginBottom: "6px",
+          marginBottom: ".8rem",
+          borderRadius: ".5rem ",
         }}
       >
         <Tabs
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
-          variant={isSmallScreen ? "scrollable" : "standard"}
+          variant={isSmallScreen ? "scrollable" : "fullWidth"}
           scrollButtons="auto"
           allowScrollButtonsMobile={true}
+          sx={{ borderRadius: ".5rem" }}
         >
           <Tab
             label="About"
             {...a11yProps(0)}
-            className="px-17"
             sx={{
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -83,8 +85,8 @@ export default function BasicTabs() {
           <Tab
             label="Leave Tracker"
             {...a11yProps(1)}
-            className="px-16"
             sx={{
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -93,8 +95,8 @@ export default function BasicTabs() {
           <Tab
             label="Performance"
             {...a11yProps(2)}
-            className="px-17"
             sx={{
+              flexShrink: 0,
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
               },
@@ -103,7 +105,6 @@ export default function BasicTabs() {
           <Tab
             label="Work History"
             {...a11yProps(3)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],
@@ -113,7 +114,6 @@ export default function BasicTabs() {
           <Tab
             label="Settings"
             {...a11yProps(4)}
-            className="px-17"
             sx={{
               "&:focus, &.Mui-selected, &.Mui-selected:hover": {
                 borderBottom: " 2px solid " + colors.alpha.primary[500],

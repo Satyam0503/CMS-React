@@ -1,70 +1,109 @@
-import * as React from "react";
-import { Card, IconButton, Stack, Typography } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Download, FilterList } from "@mui/icons-material";
+import {  Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import dayjs from "dayjs";
-import ApplicationPreview from "./ApplicationPreview";
-
-const application = [
-  {
-    jobTitle: "Demo",
-    exprience: 2,
-    applyDate: dayjs(),
-    location: "Dehradun",
-    noticePeriod: "3 months",
-    status: 3,
-  },
-];
+import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { AddApplicant } from "./AddApplicant";
+import { CustomIconButton } from "../../components/CustomIconButton";
+import { useEffect, useState } from "react";
+import { getAllApplicantList } from "../services";
+import { useNavigate } from "react-router-dom";
+import { Applicant, ApplicantModel, JobModal } from "../../../../utils/common_types";
+import { ApplicationPreview } from "./ApplicationPreview";
 
 export default function Applications() {
   const intl = useIntl();
-  const [openModal, setOpenModal] = React.useState(false);
-  const [page, setPage] = React.useState<number>(0);
-  const [search, setSearch] = React.useState("");
-  const [totalRecords, setTotalRecords] = React.useState(0);
-  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
-  const [applicationsList, setApplicationsList] =
-    React.useState<any[]>(application);
-  const [viewApplicant, setViewApplicant] = React.useState(false);
-  const [selectedApplicant, setSelectedApplicant] = React.useState<
-    any | undefined
-  >();
+  const [page, setPage] = useState<number>(0);
+  const [search, setSearch] = useState("");
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [rowPerPage, setRowPerPage] = useState<number>(10);
+  const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
+  const [viewApplicant, setViewApplicant] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | undefined>();
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isAddModalOpen,setAddModalOpen]= useState(false);
+  const [loading, setLoading] = useState(false);
+  const [refresh,setRefresh]= useState(false);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
+  const navigate = useNavigate();
+
+  const handleApplicantEdit = (applicant: Applicant) => {
+     navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
+  };
+  
+  const openConfirmationModal = (applicant:Applicant) => {
+    setConfirmModalOpen(true);
+    setSelectedApplicant(applicant);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleEdit = (row: any) => {};
-
-  const handleViewApplicant = () => {
+  const handleOpenPreview = (applicant:Applicant) => {
     setViewApplicant(true);
+    setSelectedApplicant(applicant);
   };
+
+  const closePreview = () => {
+    setViewApplicant(false);
+    setSelectedApplicant(undefined);
+  };
+
+  const handleResumeDownload = () => {
+    // console.log("download resume");
+  };
+
+  const handleApplicantDeletion = () => {
+    // console.log("delete Applicant");
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        const { data } = await getAllApplicantList();
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+        setApplicationsList(data.methodResults);
+      } catch (error: any) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, [refresh]);
+
   return (
     <>
-      <Card sx={{ p: "2rem" }}>
+      <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
             direction="row"
-            display={"flex"}
             justifyContent={"space-between"}
             alignItems={"center"}
+            flexWrap={"wrap-reverse"}
+            gap={2}
           >
             <SearchInput search={search} setSearch={setSearch} />
+
             <Stack direction="row" spacing={1}>
-              <IconButton aria-label="filter employee">
-                <FilterList />
-              </IconButton>
-              <IconButton aria-label="import excel">
-                <Download />
-              </IconButton>
+              <CustomIconButton
+                icon={<FilterList />}
+                tooltip="Filter Application"
+                ariaLabel="Filter Application"
+              />
+              <CustomIconButton
+                icon={<Add/>}
+                handleClick={()=>setAddModalOpen(true)}
+              />
+
+              <CustomIconButton
+                icon={<Download />}
+                tooltip="Import Excel"
+                ariaLabel="import excel"
+              />
             </Stack>
           </Stack>
 
@@ -73,8 +112,11 @@ export default function Applications() {
             columns={ApplicationTabTableColumnList}
             page={page}
             rowsPerPage={rowPerPage}
-            handleEdit={handleEdit}
-            openViewModal={handleViewApplicant}
+            handleEdit={handleApplicantEdit}
+            openConfirmationModal={openConfirmationModal}
+            openViewModal={handleOpenPreview}
+            handleDownload={handleResumeDownload}
+            loading={loading}
           />
 
           {totalRecords > rowPerPage && (
@@ -88,9 +130,31 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
-      {viewApplicant && (
-        <ApplicationPreview open={viewApplicant} setOpen={setViewApplicant} />
+      {
+        isAddModalOpen && (
+          <AddApplicant
+            open={isAddModalOpen}
+            setOpen={setAddModalOpen}
+            refresh={refresh}
+            setRefresh={setRefresh}
+          />
+        )
+      }
+
+      {viewApplicant && selectedApplicant && (
+        <ApplicationPreview 
+          open={viewApplicant}
+          handleClose={closePreview}
+          applicantData={selectedApplicant}
+        />
       )}
+      <ConfirmationModal
+        title={"Delete Applicant"}
+        content="Are you sure you want to delete this applicant?"
+        open={isConfirmModalOpen}
+        handleClose={() => setConfirmModalOpen(false)}
+        handleConfirmation={handleApplicantDeletion}
+      />
     </>
   );
 }

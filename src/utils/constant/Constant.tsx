@@ -1,27 +1,38 @@
-import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
+import {
+  Delete,
+  DeleteOutlineOutlined,
+  Download,
+  Edit,
+  Place,
+  Visibility,
+} from "@mui/icons-material";
 import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
+  Applicant,
   ColumnListTypes,
   EmployeeModel,
-  EmployeesDataTypes,
+  JobModal,
   RolesType,
 } from "../common_types";
-import { dateFormatter, statusDecoder } from "../common";
+import {
+  dateFormatter,
+  applicationStatusDecoder,
+  statusDecoder,
+  getApplicationStatusClass,
+} from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
 import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
-import { title } from "process";
-import { colors } from "../../app/modules/theme/MuiTheme";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
+import { colors } from "../../app/modules/theme/MuiTheme";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ServiceUrl = {
   // account
-
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
@@ -30,17 +41,42 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
+  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/api/User/AddEditEmployees`,
+  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
+  UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
+  GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
+  GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
+  GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
+
+  ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
+  ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
+
+  UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
+
+  // jobs
+  ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
+  EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
+  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+
+  // applicant
+  GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
+  ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
+  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
+  UPLOAD_RESUME:`${BaseUrl}/api/Applicants/UploadResume`,
+  
+  // not working
+  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_DETAILS: `${BaseUrl}/employees/getEmployee`,
-  UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
-  ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
-  UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
-  ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
-  ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
-  ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
+  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
+
+  // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
+  // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
+  // UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
+  // ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
+  // ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
+  // ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [
@@ -101,12 +137,48 @@ export const bloodGroups = [
   { id: 8, label: "O-", value: "O-" },
 ];
 
-enum cellContentAlignment {
-  LEFT = "left",
-  RIGHT = "right",
-  CENTER = "center",
-  JUSTIFY = "justify",
-}
+export const JobTime = [
+  {
+    id: 1,
+    label: "Full Time",
+    value: "Full Time",
+  },
+  {
+    id: 2,
+    label: "Part Time",
+    value: "Part Time",
+  },
+  {
+    id: 3,
+    label: "Internship",
+    value: "Internship",
+  },
+];
+export const JobType = [
+  {
+    id: 1,
+    label: "Onsite",
+    value: "Onsite",
+  },
+  {
+    id: 2,
+    label: "Hybrid",
+    value: "Hybrid",
+  },
+  {
+    id: 3,
+    label: "Remote",
+    value: "Remote",
+  },
+];
+
+export const ApplicationEvaluationStatus = [
+  { id: 1, label: "In Progress", value: 0 },
+  { id: 2, label: "Rejected", value: 1 },
+  { id: 3, label: "Shortlisted", value: 2 },
+  { id: 4, label: "On Hold", value: 3 },
+  { id: 5, label: "Selected", value: 4 },
+];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
@@ -256,99 +328,62 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    minWidth:180,
-    avatarCell:(row:any)=>{
-      const applicantName = row.firstName+ " "+ row.lastName;
-      const vacancyName= row.vacanyName;
-      return (
-        <AvatarCell
-          title={applicantName}
-          subTitle={vacancyName}
-        />
-      );
-    }
+    // minWidth: 200,
+    avatarCell: (row: Applicant) => {
+      const applicantName = row.firstName + " " + row.lastName;
+      const vacancyName = row.vacancyName;
+      return <AvatarCell title={applicantName} subTitle={vacancyName} />;
+    },
   },
   {
-    id: "exprience",
+    id: "experience",
     label: "Experience",
+    align: "center",
+  },
+  {
+    id: "email",
+    label: "Email",
+  },
+  {
+    id: "phone",
+    label: "Phone Number",
+    align: "center",
   },
   {
     id: "applyDate",
     label: "Applied",
-    format: (value) => dateFormatter(value, "DD MMM YYYY"),
-  },
-  {
-    id: "location",
-    label: "Location",
-  },
-  {
-    id: "noticePeriod",
-    label: "Notice Period",
+    minWidth: 180,
+    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
     id: "status",
     label: "Status",
-    build: (status:number) => {
-      const values = statusDecoder(status);
-      return <StyleStatus status={status} label={values} />
+    build: (status: number) => {
+      const values = applicationStatusDecoder(status);
+      const className = getApplicationStatusClass(values);
+      return <StyleStatus label={values} className={className} />;
     },
   },
   {
     id: "action",
     label: "Action",
     build: (
-      row: any,
-      handleApplicationEdit: (row: any) => void,
-      openConfirmationModal: (row: any) => void,
-      openViewApplication: (row: any) => void
+      row: Applicant,
+      handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
+      openViewApplication: (row: Applicant) => void,
+      handleResumeDownload: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
         openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
+        handleDownload={handleResumeDownload}
       />
     ),
   },
 ];
-
-// export const DashBoardLeaveTableColumnList:ColumnListTypes[] = [
-//   {
-//     id: "serialNo",
-//     label:"#",
-//   },
-//   {
-//     id:"type",
-//     label:"Type",
-//   },
-//   {
-//     id:"count",
-//     label:"Count"
-//   },
-//   {
-//     id:"reason",
-//     label:"Reaseon"
-//   },
-//   {
-//     id:"status",
-//     label:"Status"
-//   },
-//   {
-//     id:"action",
-//     label:"Action",
-//     build:(
-//       row:any,
-//       handleEdit:()=>void,
-//       openConfirmationModal:(leaveId:string)=>void
-//     )=>{
-//       <ActionComponent
-//         row={row}
-//         handleEdit={handleEdit}
-//         openConfirmationModal={openConfirmationModal}
-//       />
-//     }
-//   }
-// ];
 
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
@@ -383,14 +418,97 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
 ];
 
+export const JobRequirementTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
+  },
+  {
+    id: "jobTitle",
+    label: "Job Title",
+    minWidth: 180,
+    avatarCell: (row: JobModal) => {
+      return <AvatarCell title={row.title} />;
+    },
+  },
+  {
+    id: "vacancies",
+    label: "No of Position",
+    align: "center",
+  },
+  {
+    id: "jobType",
+    label: "Job Type",
+  },
+  {
+    id: "status",
+    label: "Status",
+    build: (status: boolean) => {
+      const className = status ? "success" : "danger";
+      return (
+        <StyleStatus label={statusDecoder(status)} className={className} />
+      );
+    },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+        openViewModal={openViewJobDetail}
+      />
+    ),
+  },
+];
+
+export const CommentTableColumnList: ColumnListTypes[]=[
+  {
+    id:"serialNo",
+    label:"#",
+    minWidth:30
+  },
+  {
+    id:"userName",
+    label:"User Name"
+  },
+  {
+    id:"date",
+    label:"Date"
+  },
+  {
+    id:"actionCategory",
+    label:"Action Category",
+  },
+  {
+    id:"comment",
+    label:"Comment",
+  }
+];
+
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
   openConfirmationModal?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
+  handleDownload?: (row: Row) => void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
+  const {
+    row,
+    handleEdit,
+    openConfirmationModal,
+    openViewModal,
+    handleDownload,
+  } = props;
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
@@ -404,7 +522,7 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       {openConfirmationModal && (
         <CustomIconButton
           handleClick={() => openConfirmationModal(row)}
-          icon={<Delete />}
+          icon={<DeleteOutlineOutlined />}
           tooltip="Delete"
           ariaLabel="Delete"
         />
@@ -415,6 +533,14 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
           icon={<Visibility />}
           tooltip="View"
           ariaLabel="View"
+        />
+      )}
+      {handleDownload && (
+        <CustomIconButton
+          handleClick={() => handleDownload(row)}
+          icon={<Download />}
+          tooltip="Download"
+          ariaLabel="Download"
         />
       )}
     </Stack>
@@ -461,13 +587,16 @@ export const AvatarCell = ({
   return (
     <Stack direction="row" spacing={1}>
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
-      <Stack direction="column">
-        <Typography variant="body1" className="fw-semibold d-block">
+      <Stack direction="column" sx={{ alignSelf: "center" }}>
+        <Typography
+          variant="body2"
+          display={"block"}
+          fontWeight={500}
+          color={colors.alpha.neutral[800]}
+        >
           {title || "NA"}
         </Typography>
-        <Typography variant="body2" className="text-muted">
-          {subTitle || "NA"}
-        </Typography>
+        <Typography variant="body2">{subTitle}</Typography>
       </Stack>
     </Stack>
   );

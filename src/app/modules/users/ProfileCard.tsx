@@ -1,49 +1,56 @@
 import {
+  alpha,
+  Avatar,
   Box,
   Button,
   Card,
+  Container,
+  darken,
   Grid,
   IconButton,
   InputLabel,
+  lighten,
   ListItem,
   ListItemText,
   Stack,
   TextField,
   Typography,
+  Zoom,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
 import {
   AttachFile,
   CloudUploadOutlined,
   Download,
   Edit,
   Image,
+  Opacity,
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
-import { updateUserAvatar } from "./userservices";
-import { toast } from "react-toastify";
+
+// import { updateUserAvatar } from "./userservices";
+
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { useAppSelector } from "../../Redux/hooks";
 import { colors } from "../theme/MuiTheme";
+import { CustomIconButton } from "../components/CustomIconButton";
+import { useUserDetails } from "./UserDataProvider";
+import { getAgeInYears } from "../../../utils/common";
+import { EmployeeModel } from "../../../utils/common_types";
 
-type ProfileInfo = {
-  name?: string;
-  age?: number;
-  bloodGroup?: string;
-  designation?: string;
-};
-
-export default function ProfileCard(props: ProfileInfo) {
+export default function ProfileCard() {
+  const user = useAppSelector((state) => state.user.userData);
   const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const { name, age, bloodGroup, designation } = props;
-
+  const [userPersonalDetails, setUserPersonalDetails] = useState(
+    {} as EmployeeModel
+  );
+  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   function handleClose() {
     setOpen(false);
     setSelectedFile(null);
@@ -64,99 +71,150 @@ export default function ProfileCard(props: ProfileInfo) {
     setSelectedFile(selectedFile);
     setFileError("");
   }
-  function handleUpdateAvatar() {
-    if (seletedFile) {
-      const formData = new FormData();
-      formData.append("avatar", seletedFile);
-      updateUserAvatar(formData, token)
-        .then((res) => {
-          toast.success("Avatar updated successfully");
-          handleClose();
-        })
-        .catch((error) => {
-          toast.error("Something went wrong");
-          console.log(error);
-        });
-    }
-  }
+
+  // function handleUpdateAvatar() {
+  //   if (seletedFile) {
+  //     const formData = new FormData();
+  //     formData.append("avatar", seletedFile);
+  //     updateUserAvatar(formData, token)
+  //       .then((res) => {
+  //         toast.success("Avatar updated successfully");
+  //         handleClose();
+  //       })
+  //       .catch((error) => {
+  //         toast.error("Something went wrong");
+  //         console.log(error);
+  //       });
+  //   }
+  // }
   return (
     <>
-      <Card className="bg-primary text-white d-flex flex-column align-items-center p-6 w-100 gap-6">
-        <Stack
-          className="container position-relative border rounded-circle "
-          style={{ height: "150px", width: "150px" }}
+      <Card
+        sx={{
+          width: "100%",
+          bgcolor: colors.alpha.primary[500],
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          p: 2,
+        }}
+      >
+        <Grid
+          container
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          p={1}
+          sx={{
+            height: "150px",
+            width: "150px",
+            border: "1px solid white",
+            borderRadius: "50%",
+            position: "relative",
+            transition: "transform 0.3s ease-in-out",
+            "&:hover img": {
+              opacity: 0.2,
+              zIndex: 1,
+            },
+          }}
         >
-          <img
-            src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-            alt=""
-            className="rounded-circle position-absolute   "
-            style={{ height: "128px", width: "128px", top: "10px" }}
+          <Avatar
+            alt="profile picture"
+            src="media/avatars/300-6.jpg"
+            sx={{
+              width: "100%",
+              height: "100%",
+              transform: isAvatarZoomedOut ? "scale(1.4)" : "scale(1)",
+            }}
           />
 
-          <Stack className="coverChange" direction={"row"}>
-            <IconButton className="profile" onClick={() => setOpen(true)}>
-              <Image
-                sx={{
-                  border: "1px solid white",
-                  borderRadius: "4px",
-                  marginRight: "5px",
-                }}
-              />
-            </IconButton>
-            <IconButton>
-              <Visibility
-                sx={{
-                  border: "1px solid white",
-                  borderRadius: "4px",
-                }}
-              />
-            </IconButton>
+          <Stack className="coverChange" direction={"row"} gap={1} zIndex={3}>
+            <CustomIconButton
+              handleClick={() => setOpen(true)}
+              icon={
+                <Image
+                  sx={{
+                    color: "white",
+                    "&:hover": {
+                      color: colors.alpha.primary[500],
+                    },
+                  }}
+                />
+              }
+            />
+            <CustomIconButton
+              handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
+              icon={
+                <Visibility
+                  sx={{
+                    color: "white",
+                    "&:hover": {
+                      color: colors.alpha.primary[500],
+                    },
+                  }}
+                />
+              }
+            />
           </Stack>
-        </Stack>
-
-        <Stack>
-          <Typography variant="h5" sx={{ color: "white" }}>
-            {name}
+        </Grid>
+        <Stack textAlign={"center"} alignItems={"center"}>
+          <Typography variant="h5" color={"white"} mb={0.5}>
+            {user?.firstName + " " + user?.lastName}
           </Typography>
           <Typography
             variant="body2"
-            className="rounded-pill p-1 bg-opacity-25 bg-white mt-1 text-center text-white"
+            color={"white"}
+            borderRadius={2}
+            py={0.5}
+            px={1}
+            sx={{
+              backgroundColor: alpha(
+                lighten(colors.alpha.white[500], 0.2),
+                0.2
+              ),
+            }}
           >
-            {designation}
+            {userPersonalDetails.jobRole || "NA"}
           </Typography>
         </Stack>
-        <Stack className="d-flex flex-row justify-content-around text-center w-100">
+        <Stack
+          display={"flex"}
+          direction={"row"}
+          justifyContent={"space-around"}
+          textAlign={"center"}
+          width={"100%"}
+        >
           <Stack>
-            <Typography variant="h2" className="text-white">
-              {age}
+            <Typography variant="h2" color={"white"}>
+              {getAgeInYears(userPersonalDetails.dateOfBirth!) || "NA"}
             </Typography>
-            <Typography variant="body2" className="text-white">
-              Years Old
+            <Typography variant="body2" color={"white"}>
+              {intl.formatMessage({ id: "USER.AGE" })}
             </Typography>
           </Stack>
           <Stack>
-            <Typography variant="h2" className="text-white">
-              {bloodGroup}
+            <Typography variant="h2" color={"white"}>
+              {userPersonalDetails.bloodGroup || "NA"}
             </Typography>
-            <Typography variant="body2" className="text-white">
+            <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
             </Typography>
           </Stack>
         </Stack>
-        <Button
-          variant="outlined"
-          size="medium"
-          className="border px-3 bg-primary text-white"
-        >
-          <Typography variant="body2" className="text-white">
-            <Download /> {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-          </Typography>
-        </Button>
+        <CustomisedButton
+          variant="contained"
+          Icon={<Download />}
+          iconPosition="start"
+          label="Salary slip"
+        />
       </Card>
       {open && (
         <CustomisedModal open={open} handleClose={handleClose}>
           <Box>
-            <Typography variant="h5">Select a Avatar File</Typography>
+            <Typography variant="h5">
+              {intl.formatMessage({ id: "UPLOAD.PROFILE_PICTURE" })}
+            </Typography>
             <Stack
               direction={"column"}
               spacing={1}
@@ -165,35 +223,53 @@ export default function ProfileCard(props: ProfileInfo) {
               <Box
                 component="label"
                 sx={{
-                  p: 2,
                   border: "1px dashed grey",
                   borderRadius: 1,
                   cursor: "pointer",
                 }}
               >
-                <CloudUploadOutlined fontSize="large" sx={{ margin: "auto" }} />
-                <input
-                  type="file"
-                  accept=".jpg,.png,.webp"
-                  onChange={handleFileChange}
-                  hidden
-                />
-                <Typography>Selected File: {seletedFile?.name}</Typography>
+                <Container
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 1,
+                    alignItems: "center",
+                  }}
+                >
+                  <Grid item xs={6} md={6} textAlign={"center"}>
+                    <CloudUploadOutlined
+                      fontSize="large"
+                      sx={{ margin: "auto" }}
+                    />
+                    <input
+                      type="file"
+                      accept=".jpg,.png,.webp"
+                      onChange={handleFileChange}
+                      hidden
+                    />
+                    <Typography variant="body1" flexWrap={"wrap"}>
+                      {intl.formatMessage({ id: "FILE.SELECTED" })}:
+                      {seletedFile?.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6} md={6}>
+                    <Typography variant="body2" flexWrap={"wrap"}>
+                      {intl.formatMessage({ id: "FILE.UPLOAD_INSTRUCTION" })}
+                    </Typography>
+                  </Grid>
+                </Container>
               </Box>
-              <Typography variant="body1">
-                Note : Please select .jpg/.png/.webp images upto 2 MB
-              </Typography>
+
               <CustomisedButton
                 label="Upload File"
                 Icon={<AttachFile />}
                 iconPosition="end"
                 disabled={!seletedFile}
-                handleClick={handleUpdateAvatar}
+                // handleClick={handleUpdateAvatar}
               />
 
               {fileError && (
                 <Typography variant="body2" color={colors.alpha.danger[800]}>
-                  {" "}
                   {fileError}
                 </Typography>
               )}

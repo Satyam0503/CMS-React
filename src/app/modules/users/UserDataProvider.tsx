@@ -1,15 +1,31 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { EmployeesDataTypes } from "../../../utils/common_types";
-import { getUserDetails } from "./userservices";
+import {
+  EmployeeModel,
+  UserCertificationModel,
+  UserEducationModel,
+} from "../../../utils/common_types";
+import {
+  getEmployeeCertifications,
+
+  getEmployeeEducations,
+  getEmployeeSummary,
+  UserSummaryModel,
+} from "./userservices";
 import { Typography } from "@mui/material";
 import { useIntl } from "react-intl";
+import { toast } from "react-toastify";
 import { useAppSelector } from "../../Redux/hooks";
+import { CircularLoader } from "../components/CircularLoader";
 
 type UserDataContextType = {
-  userDetails: EmployeesDataTypes | undefined;
-  setUserDetails: (userData: EmployeesDataTypes) => void;
+  userDetails: {
+    userPersonalDetails: EmployeeModel;
+    userEducations: UserEducationModel[];
+    userCertifications: UserCertificationModel[];
+    userSkills: string[];
+    userSummary: UserSummaryModel;
+  };
   setRefresh: (isRefresh: boolean) => void;
-  error: string | undefined;
   isRefresh: boolean;
 };
 
@@ -17,59 +33,59 @@ type PropTypes = {
   children: React.ReactNode;
 };
 
-//  Create UserDetails Context
+// Create UserDetails Context
 const UserDetailsContext = createContext<UserDataContextType | undefined>(
   undefined
 );
 
-//  get the token and user id from store
-const id = "92fb9794-31c8-4b55-a4b4-dfa74c6cb007";
-
 // User Details Provider
 export const UserDetailsProvider = (props: PropTypes) => {
-  const token = useAppSelector(state=>state.auth.token)!;
-  const [userDetails, setUserDetails] = useState<EmployeesDataTypes>();
   const [isRefresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const intl = useIntl();
-
-  useEffect(() => {
-    setLoading(true);
-    getUserDetails(id, token)
-      .then((res) => {
-        const { message, success, methodResult } = res.data;
-        if (!success) {
-          throw new Error("Failed to fetch employee details");
-        }
-        setUserDetails(methodResult);
-      })
-      .catch((error) => {
-        setError("Failed to fetch employee details");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [isRefresh]);
+  const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
+    []
+  );
+  const currentUser= useAppSelector(state=>state.user.userData);
+  const [userCertifications, setUserCertifications] = useState<
+    UserCertificationModel[]
+  >([]);
+  const [userSummary, setUserSummary] = useState<UserSummaryModel>({
+    userId:currentUser?.userId!,
+    summaryId: "",
+    summary: "",
+  });
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [userPersonalDetails, setUserPersonalDetails] = useState<EmployeeModel>(
+    {} as EmployeeModel
+  );
 
   if (loading) {
     return (
-      <Typography variant="h4">
-        {" "}
-        {intl.formatMessage({ id: "USER.DETAILS_LOADING" })}{" "}
+      <CircularLoader/>
+    );
+  }
+  if (error) {
+    return (
+      <Typography variant="h4" color="error">
+        {error}
       </Typography>
     );
   }
-  // if (error) {
-  //   return (
-  //     <Typography variant="h4" color="error">
-  //       {error}
-  //     </Typography>
-  //   );
-  // }
   return (
     <UserDetailsContext.Provider
-      value={{ userDetails, setUserDetails, isRefresh, setRefresh, error }}
+      value={{
+        userDetails: {
+          userPersonalDetails,
+          userEducations,
+          userCertifications,
+          userSkills,
+          userSummary,
+        },
+        isRefresh,
+        setRefresh,
+      }}
     >
       {props.children}
     </UserDetailsContext.Provider>
@@ -77,7 +93,6 @@ export const UserDetailsProvider = (props: PropTypes) => {
 };
 
 // hook for consuming userDetails Context
-
 export const useUserDetails = () => {
   const context = useContext(UserDetailsContext);
   if (context === undefined) {

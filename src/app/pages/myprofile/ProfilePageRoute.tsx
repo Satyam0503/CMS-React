@@ -1,5 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import AboutUser from "../../modules/users/AboutUser";
+import AboutUser from "../../modules/users/about/AboutUser";
 import { LeaveTracker } from "../../modules/users/leavetracker/LeaveTracker";
 
 export const SuperAdmin = () => {

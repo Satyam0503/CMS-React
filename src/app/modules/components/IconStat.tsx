@@ -4,10 +4,10 @@ import { colors } from "../theme/MuiTheme";
 
 type Props = {
   icon: JSX.Element;
-  number: string;
-  title: string;
+  number?: number | string;
+  title?: string;
   iconBg: string;
-  iconColor: string;
+  iconColor?: string;
 };
 const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
   const theme = useTheme();

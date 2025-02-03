@@ -1,12 +1,10 @@
 import React from "react";
 import {
-  TextField,
-  Stack,
   Typography,
   Grid,
   FormHelperText,
-  Select,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
@@ -14,10 +12,12 @@ import CustomisedButton from "../components/CustomisedButton";
 import { Check } from "@mui/icons-material";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { HolidayType } from "../../../utils/common_types";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import holidaySchema from "../../../utils/Schema/holidaySchema";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { HolidayTypes } from "../../../utils/constant/Constant";
+import { TextInput } from "../components/form_component/TextInput";
+import { SelectInput } from "../components/form_component/SelectInput";
 
 type PropsTypes = {
   open: boolean;
@@ -32,131 +32,126 @@ type PropsTypes = {
 const HolidayForm: React.FC<PropsTypes> = (props) => {
   const intl = useIntl();
   const { open, handleClose, handleAddUpdateHoliday, initialValues } = props;
-  const {
-    values,
-    errors,
-    touched,
-    getFieldProps,
-    handleSubmit,
-    setFieldValue,
-    setFieldTouched,
-    isSubmitting,
-    isValid,
-    dirty,
-  } = useFormik({
-    initialValues: initialValues,
-    validationSchema: holidaySchema,
-    onSubmit: (values, { setSubmitting }) => {
-      handleAddUpdateHoliday(values, setSubmitting);
-    },
-  });
 
-  const handleDateChange = (fieldName: string) => {
-    return (newDate: dayjs.Dayjs | null) => {
-      setFieldTouched(fieldName, true);
-      setFieldValue(fieldName, newDate);
-    };
-  };
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "FORM.TITLE" })}*
+      <Formik
+        initialValues={initialValues}
+        validationSchema={holidaySchema}
+        onSubmit={(values, { setSubmitting }) => {
+          handleAddUpdateHoliday(values, setSubmitting);
+        }}
+      >
+        {({
+          values,
+          handleSubmit,
+          touched,
+          errors,
+          setFieldTouched,
+          setFieldValue,
+          isValid,
+          dirty,
+          isSubmitting,
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <Typography variant="h5" mb={2}>
+              {intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}
             </Typography>
-            <TextField
-              fullWidth
-              placeholder="Holiday Title"
-              error={touched.title && Boolean(errors.title)}
-              helperText={touched.title && errors.title && errors.title}
-              {...getFieldProps("title")}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "FORM.TYPE" })}*
-            </Typography>
-            <Select
-              placeholder="Holiday Type"
-              fullWidth
-              error={touched.type && Boolean(errors.type)}
-              {...getFieldProps("type")}
+
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
+              <Grid item xs={12} sm={6}>
+                <TextInput
+                  label={intl.formatMessage({ id: "FORM.TITLE" })}
+                  type="text"
+                  name="title"
+                  placeholder="Holiday Title"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <SelectInput
+                  label={intl.formatMessage({ id: "FORM.TYPE" })}
+                  name="type"
+                >
+                  {HolidayTypes.map((holiday) => (
+                    <MenuItem key={holiday.id} value={holiday.value}>
+                      {holiday.label}
+                    </MenuItem>
+                  ))}
+                </SelectInput>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Stack spacing={0.5}>
+                  <Typography variant="body1">
+                    {intl.formatMessage({ id: "APPLICATION.START" })}*
+                  </Typography>
+                  <CustomisedDatePicker
+                    value={values.startDate}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("startDate", true);
+                      setFieldValue("startDate", newDate);
+                    }}
+                    name="startDate"
+                    minDate={dayjs()}
+                  />
+                  <FormHelperText>
+                    {touched.startDate && errors.startDate && errors.startDate}
+                  </FormHelperText>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Stack spacing={.5}>
+                  <Typography variant="body1" mb={0.5}>
+                    {intl.formatMessage({ id: "APPLICATION.END" })}*
+                  </Typography>
+                  <CustomisedDatePicker
+                    value={values.endDate}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("endDate", true);
+                      setFieldValue("endDate", newDate);
+                    }}
+                    name="endDate"
+                    minDate={values.startDate || dayjs()}
+                  />
+                  <FormHelperText>
+                    {touched.endDate && errors.endDate && errors.endDate}
+                  </FormHelperText>
+                </Stack>
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  label={intl.formatMessage({
+                    id: "INFO.DESCRIPTION",
+                  })}
+                  placeholder="Holiday Description"
+                  name="description"
+                  type="text"
+                />
+              </Grid>
+            </Grid>
+            <Stack
+              direction={"row"}
+              spacing={1}
+              justifyContent={"flex-end"}
+              mt={2}
             >
-              <MenuItem value={""}>None</MenuItem>
-              {HolidayTypes.map((holiday) => (
-                <MenuItem key={holiday.id} value={holiday.value}>
-                  {holiday.label}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {touched.type && errors.type && errors.type}
-            </FormHelperText>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "APPLICATION.START" })}*
-            </Typography>
-            <CustomisedDatePicker
-              value={values.startDate}
-              setValue={handleDateChange("startDate")}
-              name="startDate"
-              minDate={dayjs()}
-            />
-            <FormHelperText>
-              {touched.startDate && errors.startDate && errors.startDate}
-            </FormHelperText>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "APPLICATION.END" })}*
-            </Typography>
-            <CustomisedDatePicker
-              value={values.endDate}
-              setValue={handleDateChange("endDate")}
-              name="endDate"
-              minDate={values.startDate || dayjs()}
-            />
-            <FormHelperText>
-              {touched.endDate && errors.endDate && errors.endDate}
-            </FormHelperText>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "INFO.DESCRIPTION",
-              })}
-              *
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Holiday Description"
-              error={touched.description && Boolean(errors.description)}
-              helperText={
-                touched.description && errors.description && errors.description
-              }
-              {...getFieldProps("description")}
-            />
-          </Grid>
-          <Grid item xs={12} display={"flex"} justifyContent={"end"} gap={2}>
-            <CustomisedButton
-              variant="outlined"
-              label="Cancel"
-              handleClick={handleClose}
-            />
-            <CustomisedButton
-              type="submit"
-              disabled={!(isValid && dirty) || isSubmitting}
-              variant="contained"
-              label="Save"
-              Icon={<Check />}
-            />
-          </Grid>
-        </Grid>
-      </form>
+              <CustomisedButton
+                variant="outlined"
+                label="Cancel"
+                handleClick={handleClose}
+              />
+              <CustomisedButton
+                type="submit"
+                disabled={!(isValid && dirty) || isSubmitting}
+                variant="contained"
+                label="Save"
+                Icon={<Check />}
+              />
+            </Stack>
+          </form>
+        )}
+      </Formik>
     </CustomisedModal>
   );
 };

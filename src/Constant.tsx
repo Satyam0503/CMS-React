@@ -1,4 +1,11 @@
-import { Delete, Edit, Place, Visibility } from "@mui/icons-material";
+import {
+  Delete,
+  DeleteOutline,
+  DeleteOutlineOutlined,
+  Edit,
+  Place,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Button,
   Dialog,
@@ -10,9 +17,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { EmployeesDataTypes } from "./utils/common_types";
-import { CustomisedModal } from "./app/modules/components/CustomizedModal";
-import CustomisedButton from "./app/modules/components/CustomisedButton";
+import { EmployeeModel } from "./utils/common_types";
+import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
@@ -121,8 +127,8 @@ export const EmployeeTabTableColumnList = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];
@@ -181,8 +187,8 @@ export const EmployeeLeaves = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];
@@ -230,8 +236,8 @@ export const EmployeeAbsentSummary = [
     minWidth: 140,
     align: "left",
     build: (
-      row: EmployeesDataTypes,
-      handleEmployeeEdit: (row: EmployeesDataTypes) => void
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void
     ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
   },
 ];
@@ -265,16 +271,10 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
-        <IconButton onClick={() => handleEdit(row)}>
-          <Edit />
-        </IconButton>
+        <CustomIconButton icon={<Edit />} handleClick={() => handleEdit(row)} />
       )}
-      <IconButton>
-        <Delete />
-      </IconButton>
-      <IconButton>
-        <Visibility />
-      </IconButton>
+      <CustomIconButton icon={<DeleteOutlineOutlined />} />
+      <CustomIconButton icon={<Visibility />} />
     </Stack>
   );
 };
@@ -286,9 +286,8 @@ const AddressDetailsIcon = (props: { address: string }) => {
   }
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <Place />
-      </IconButton>
+      <CustomIconButton icon={<Place />} handleClick={() => setOpen(true)} />
+
       <Dialog
         onClose={handleClose}
         open={open}

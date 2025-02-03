@@ -2,12 +2,14 @@ import { Typography, Card, Grid, Stack, IconButton } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Announcement,
-  FeedbackOutlined,
-  FeedbackTwoTone,
+  Business,
+  DeleteOutline,
+  Edit,
 } from "@mui/icons-material";
 import HalfRating from "../../components/HalfRating";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { colors } from "../../theme/MuiTheme";
+import { CustomIconButton } from "../../components/CustomIconButton";
 
 type Props = {
   className: string;
@@ -18,36 +20,39 @@ export default function Feedback() {
   return (
     <>
       <Grid container>
-        <Card sx={{ p: "15px", width: "100%" }}>
-          <Typography variant="h5" sx={{ mb: "5px" }}>
-            {intl.formatMessage({ id: "PERFORMANCE.FEEDBACK" })}
-          </Typography>
+        <Card sx={{ p: 2, width: "100%" }}>
           <Stack
-            direction="row"
-            spacing={2}
-            className="mb-2 align-items-center"
+            direction={"row"}
+            display={"flex"}
+            justifyContent={"space-between"}
           >
+            <Typography variant="h5" mb={2}>
+              {intl.formatMessage({ id: "PERFORMANCE.FEEDBACK" })}
+            </Typography>
+          </Stack>
+
+          <Stack direction="row" spacing={2} mb={2} alignItems={"center"}>
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: 1,
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Announcement sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Announcement />
+              </Stack>
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
-                Exemplary Contribution
-              </Typography>
+              <Typography variant="body1">Exemplary Contribution</Typography>
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Typography variant="body2">
                   By Kanika Pandey (Hr Manager)
                 </Typography>
-                <Typography variant="body2" className="text-muted">
+                <Typography variant="body2">
                   <CalendarIcon />2 June 2024
                 </Typography>
                 <HalfRating />
@@ -55,32 +60,28 @@ export default function Feedback() {
             </Stack>
           </Stack>
 
-          <Stack
-            direction="row"
-            spacing={2}
-            className="mb-2 align-items-center"
-          >
+          <Stack direction="row" spacing={2}>
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: 1,
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Announcement sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Announcement />
+              </Stack>
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
-                Outstanding Performance
-              </Typography>
+              <Typography variant="body1">Outstanding Performance</Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Typography variant="body2">
                   By Nitish Kumar (Team Lead)
                 </Typography>
-                <Typography variant="body2" className="text-muted">
+                <Typography variant="body2">
                   <CalendarIcon />2 June 2024
                 </Typography>
                 <HalfRating />

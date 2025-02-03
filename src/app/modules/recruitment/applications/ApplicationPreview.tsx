@@ -1,22 +1,32 @@
-import { Close, Download, Visibility } from "@mui/icons-material";
-import { Grid, IconButton, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { Close, Download } from "@mui/icons-material";
+import { Container, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
-import { CustomIconButton } from "app/modules/components/CustomIconButton";
+import { CustomIconButton } from "../../components/CustomIconButton";
+import { Applicant } from "../../../../utils/common_types";
+import { FC } from "react";
+import {
+  applicationStatusDecoder,
+  dateFormatter,
+  getApplicationStatusClass,
+} from "../../../../utils/common";
+import { StyleStatus } from "../../components/StyledStatus";
 
 interface PropsType {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  applicantData?: any;
+  handleClose: () => void;
+  applicantData: Applicant;
 }
 
-export default function ApplicationPreview(props: PropsType) {
+export const ApplicationPreview: FC<PropsType> = ({
+  open,
+  handleClose,
+  applicantData,
+}) => {
   const intl = useIntl();
-  const { open, setOpen, applicantData } = props;
-
-  const handleClose = () => setOpen(false);
-
+  const status = applicationStatusDecoder(applicantData.status);
+  const className = getApplicationStatusClass(status);
+  const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Grid
@@ -28,17 +38,21 @@ export default function ApplicationPreview(props: PropsType) {
         mb={2}
       >
         <Grid item xs={12} display={"flex"} justifyContent={"space-between"}>
-          <Typography variant="h5">Sohan Singh</Typography>
+          <Typography variant="h5">
+            {applicantData.firstName + " " + applicantData.lastName}
+          </Typography>
           <CustomIconButton icon={<Close />} handleClick={handleClose} />
         </Grid>
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "USER.ROLE" })}
+              {intl.formatMessage({ id: "JOB.TITLE" })}
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              {applicantData.vacancyName || "NA"}
+            </Typography>
           </Grid>
         </Grid>
         <Grid item xs={12} display={"flex"}>
@@ -48,49 +62,12 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "MENU.NOTICE_PERIOD" })}
+            <Typography variant="body1" fontWeight={400}>
+              {applicantData.experience + " " + experienceSuffix}
             </Typography>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
-          </Grid>
         </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.CURRENT_CTC" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.EXPECTED_CTC" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
-          </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "JOB.MODE" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
-          </Grid>
-        </Grid>
+
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={600}>
@@ -98,23 +75,27 @@ export default function ApplicationPreview(props: PropsType) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">USER.ROLE</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              {dateFormatter(applicantData.applyDate, "DD MMM YYYY hh:mm A")}
+            </Typography>
           </Grid>
         </Grid>
 
         <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
+          <Grid item xs={6} fontWeight={400}>
             <Typography variant="body1" fontWeight={600}>
               {intl.formatMessage({ id: "PROFILE.STATUS" })}
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body1">Active</Typography>
+            <Typography variant="body1" fontWeight={400}>
+              <StyleStatus label={status} className={className} />
+            </Typography>
           </Grid>
         </Grid>
       </Grid>
 
-      <Stack sx={{ border: "1px solid", borderRadius: "1rem" }}>
+      <Container style={{ border: "1px solid", borderRadius: "1rem" }}>
         <Stack
           direction="row"
           sx={{ borderBottom: 1, p: 3 }}
@@ -132,8 +113,8 @@ export default function ApplicationPreview(props: PropsType) {
             </IconButton>
           </Stack>
         </Stack>
-        <Stack sx={{ p: 4 }}>
-          <Stack>
+        <Stack>
+          <Stack mt={2}>
             <Typography variant="h6">Sohan Singh</Typography>
             <Typography variant="body1">.Net Developer</Typography>
           </Stack>
@@ -179,7 +160,7 @@ export default function ApplicationPreview(props: PropsType) {
             </Stack>
           </Stack>
         </Stack>
-      </Stack>
+      </Container>
     </CustomisedModal>
   );
-}
+};

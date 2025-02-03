@@ -23,24 +23,40 @@ export default function Achievements() {
   return (
     <>
       <Grid container>
-        <Card sx={{ p: "15px", width: "100%" }}>
-          <Typography variant="h5" sx={{ mb: "5px" }}>
-            {intl.formatMessage({ id: "PERFORMANCE.ACHIEVEMENTS" })}
-          </Typography>
+        <Card
+          sx={{
+            p: 2,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <Stack>
+            <Typography variant="h5" mb={1}>
+              {intl.formatMessage({ id: "PERFORMANCE.ACHIEVEMENTS" })}
+            </Typography>
+          </Stack>
+
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5", mb: "10px" }}
+            sx={{ opacity: ".5" }}
             alignItems={"center"}
           >
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Whatshot sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Whatshot />
+              </Stack>
             </Stack>
             <Stack>
               <Typography variant="body1">
@@ -60,17 +76,22 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5", mb: "10px" }}
+            sx={{ opacity: ".5" }}
             alignItems={"center"}
           >
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Celebration sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Celebration />
+              </Stack>
             </Stack>
             <Stack>
               <Typography variant="body1">
@@ -89,17 +110,22 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5", mb: "10px" }}
+            sx={{ opacity: ".5" }}
             alignItems={"center"}
           >
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <LocalFlorist sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <LocalFlorist />
+              </Stack>
             </Stack>
             <Stack>
               <Typography variant="body1">
@@ -118,17 +144,22 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5", mb: "10px" }}
+            sx={{ opacity: ".5" }}
             alignItems={"center"}
           >
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Stars sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Stars />
+              </Stack>
             </Stack>
             <Stack>
               <Typography variant="body1">
@@ -144,26 +175,23 @@ export default function Achievements() {
               </Stack>
             </Stack>
           </Stack>
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ mb: "10px" }}
-            alignItems={"center"}
-          >
+          <Stack direction="row" spacing={2} alignItems={"center"}>
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <LocalCafe sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <LocalCafe />
+              </Stack>
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.SR_DEVELOPER" })}
               </Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>
@@ -176,26 +204,23 @@ export default function Achievements() {
               </Stack>
             </Stack>
           </Stack>
-          <Stack
-            direction="row"
-            spacing={2}
-            sx={{ mb: "10px" }}
-            alignItems={"center"}
-          >
+          <Stack direction="row" spacing={2} alignItems={"center"}>
             <Stack
               sx={{
-                background: colors.alpha.primary[100],
-                borderRadius: "4px",
-                p: "12px",
+                width: 48,
+                height: 48,
+                bgcolor: colors.alpha.primary[100],
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 1,
               }}
             >
-              <Work sx={{ color: colors.alpha.primary[500] }} />
+              <Stack color={colors.alpha.primary[500]}>
+                <Work />
+              </Stack>
             </Stack>
             <Stack>
-              <Typography
-                variant="body1"
-                className="text-gray-800 text-hover-primary fw-semibold "
-              >
+              <Typography variant="body1">
                 {intl.formatMessage({ id: "PROMOTION.JOINED" })}
               </Typography>
               <Stack direction="row" alignItems={"center"} spacing={1}>

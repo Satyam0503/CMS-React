@@ -31,10 +31,10 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   
   // requesting signed in user details by authToken 
   useEffect(() => {
-    const requestUserDetails = async (token: string) => {
+    const requestUserDetails = async () => {
       try {
         if (!currentUser) {               
-          const { data } = await getSignedUserDetails(token);
+          const { data } = await getSignedUserDetails();
           if (!data.success) {
             throw new Error("Request Failed");
           }
@@ -42,7 +42,6 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
           dispatch(setAuth());
         }
       } catch (error) {
-        console.error(error);
         if (isUserAuthenticated) {
             logout();
         }
@@ -51,7 +50,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
       }
     }; 
     if (token) { 
-      requestUserDetails(token);
+      requestUserDetails();
     } else {
       logout();
       setShowSplashScreen(false);

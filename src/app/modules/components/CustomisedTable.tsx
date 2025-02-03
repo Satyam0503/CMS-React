@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
+import TableSkeleton from "./TableSkeleton";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -22,6 +23,7 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
+  handleDownload?: () => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -36,6 +38,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
+    handleDownload,
   } = props;
   return (
     <Grid container>
@@ -47,7 +50,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                 <TableCell
                   key={column.id}
                   align={column?.align || "left"}
-                  style={{ minWidth: column.minWidth || 150 }}
+                  style={{ minWidth: column.minWidth || 120 }}
                 >
                   {column.label}
                 </TableCell>
@@ -57,9 +60,19 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
           {loading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={12} align="center">
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column?.align || "left"}
+                    style={{ width: "100%" }}
+                  >
+                    <TableSkeleton />
+                  </TableCell>
+                ))}
+                {/* <TableCell colSpan={12} align="center">
+                  <TableSkeleton />
                   <Typography variant="h6"> Loading... </Typography>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             </TableBody>
           ) : (
@@ -83,7 +96,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                           <TableCell
                             key={column.id}
                             align={column?.align || "left"}
-                            sx={{ minWidth: column.minWidth || 140 }}
                           >
                             {column.avatarCell
                               ? column.avatarCell(row)
@@ -95,7 +107,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                     row,
                                     handleEdit,
                                     openConfirmationModal,
-                                    openViewModal
+                                    openViewModal,
+                                    handleDownload
                                   )
                                 : column.build(value)
                               : value}

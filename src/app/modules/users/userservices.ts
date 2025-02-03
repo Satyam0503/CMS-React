@@ -2,104 +2,82 @@ import { AxiosResponse } from "axios";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { getRequest, postRequest } from "../../../server/axios";
 import {
-  AddCertificationResponseData,
-  AddUpdateSummaryResponseData,
-  AddUserEducationResponseData,
-  ApiResponse,
-  EmployeesDataTypes,
-  GetEmployeeDetailsResponseData,
-  UserCertificationType,
-  UserEducationType,
+  CertificationResponseData,
+  EmployeeResponseData,
+  SkillsResponseData,
+  UserCertificationModel,
+  UserEducationModel,
+  UserEducationResponseData,
+  UserSummaryResponseData,
 } from "../../../utils/common_types";
 
-type AddUpdatePayload = {
+export type UserSummaryModel = {
+  userId:string,
+  summaryId: string;
   summary: string;
 };
 
-export const getUserDetails = async (
-  id: string,
-  token: string
-): Promise<AxiosResponse<GetEmployeeDetailsResponseData>> => {
-  return getRequest(`${ServiceUrl.GET_EMPLOYEE_DETAILS}:${id}`, {}, token);
+export const getEmployeeById = async () => {
+  return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS);
 };
 
-export const updateUserAvatar = async (payload: FormData, token: string) => {
-  return postRequest(ServiceUrl.UPDATE_USER_AVATAR, payload, {}, true, token);
+export const getEmployeeCertifications = async () => {
+  return postRequest<{}, CertificationResponseData>(
+    ServiceUrl.GET_EMPLOYEE_CERTIFICATIONS
+  );
 };
-
-export const addUpdateUserSummary = async (
-  id: string,
-  payload: AddUpdatePayload,
-  token: string
-): Promise<AxiosResponse<AddUpdateSummaryResponseData, any>> => {
-  return postRequest(
-    `${ServiceUrl.ADD_UPDATE_USER_SUMMARY}:${id}`,
-    payload,
-    {},
-    false,
-    token
+export const getEmployeeEducations = async () => {
+  return postRequest<{}, UserEducationResponseData>(
+    ServiceUrl.GET_EMPLOYEE_EDUCATIONS
   );
 };
 
-export const updateUserDetails = async (
-  id: string,
-  payload: any,
-  token: string
-): Promise<AxiosResponse<ApiResponse>> => {
-  return postRequest(
-    `${ServiceUrl.UPDATE_USER_DETAILS}:${id}`,
-    payload,
-    {},
-    false,
-    token
+export const getEmployeeSummary = async () => {
+  return postRequest<{}, UserSummaryResponseData>(
+    ServiceUrl.GET_EMPLOYEE_SUMMARY
   );
 };
 
-type AddUserSkillsPayload = {
-  skills: string[];
-};
-
-export const addUserSkills = async (
-  id: string,
-  payload: AddUserSkillsPayload,
-  token: string
-): Promise<AxiosResponse<any>> => {
-  return postRequest(
-    `${ServiceUrl.ADD_USER_SKILLS}:${id}`,
-    payload,
-    {},
-    false,
-    token
+export const getEmployeeSkills = async () => {
+  return postRequest<{}, UserSummaryResponseData>(
+    ServiceUrl.GET_EMPLOYEE_SKILLS
   );
 };
 
-export const addUserEducation = async (
-  id: string,
-  payload: UserEducationType,
-  token: string
-): Promise<AxiosResponse<AddUserEducationResponseData>> => {
-  return postRequest(
-    `${ServiceUrl.ADD_USER_EDUCATION}:${id}`,
-    payload,
-    {},
-    false,
-    token
+export const updateEmployeeDetails = async (payload: any) => {
+  return postRequest(ServiceUrl.UPDATE_EMPLOYEE, payload);
+};
+
+export const udpateEmployeeSkills = async (payload: { skills: string[] }) => {
+  return postRequest<{ skills: string[] }, SkillsResponseData>(
+    ServiceUrl.UPDATE_EMPLOYEE_SKILLS,
+    payload
   );
 };
+
+export const addEmployeeEducation = async (payload: UserEducationModel) => {
+  return postRequest<UserEducationModel, UserEducationResponseData>(
+    ServiceUrl.ADD_EMPLOYEE_EDUCATION,
+    payload
+  );
+};
+
+export const updateEmployeeSummary = async (payload: UserSummaryModel) => {
+  return postRequest<UserSummaryModel, any>(
+    ServiceUrl.UPDATE_EMPLOYEE_SUMMARY,
+    payload
+  );
+};
+
+export const addEmployeeCertification = async (
+  payload: UserCertificationModel
+) => {
+  return postRequest<UserCertificationModel, CertificationResponseData>(
+    ServiceUrl.ADD_EMPLOYEE_CERTIFICATION,
+    payload
+  );
+};
+
 export const updateUserEducation = async () => {
   //  for updating the user education details
-};
-
-export const addUpdateUserCertification = async (
-  id: string,
-  payload: any,
-  token: string
-): Promise<AxiosResponse<AddCertificationResponseData>> => {
-  return postRequest(
-    `${ServiceUrl.ADD_USER_CERTIFICATION}:${id}`,
-    payload,
-    {},
-    false,
-    token
-  );
 };

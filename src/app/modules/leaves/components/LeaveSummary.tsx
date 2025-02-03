@@ -76,7 +76,7 @@ export default function LeaveSummary() {
                 <CustomisedModal open={open} handleClose={handleClose}>
                   <Grid container className="d-flex mt-2">
                     <Stack>
-                      <Typography variant="h5" className="text-primary mb-2">
+                      <Typography variant="h5" mb={1}>
                         {intl.formatMessage({ id: "INFO.SUMMARY" })}
                       </Typography>
                     </Stack>

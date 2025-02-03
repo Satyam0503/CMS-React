@@ -2,9 +2,16 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { EmployeeModel } from "../../../utils/common_types";
-import { dateFormatter } from "../../../utils/common";
+import {
+  dateFormatter,
+  statusDecoder,
+  statusEncoder,
+} from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
+import { StyleStatus } from "../components/StyledStatus";
+import { Close, Edit } from "@mui/icons-material";
+
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,6 +25,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
   function handleClose() {
     setOpen(false);
   }
+  const status = statusDecoder(employeeData.status as boolean);
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Box>
@@ -29,7 +37,11 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             <Avatar
               alt="User Profile"
               src=""
-              sx={{ width: "128px", height: "128px", fontSize: "3rem" }}
+              sx={{
+                width: "128px",
+                height: "128px",
+                fontSize: "3rem",
+              }}
             >
               {employeeData.firstName.charAt(0)}
             </Avatar>
@@ -148,26 +160,39 @@ export const ViewEmployeeDetails = (props: PropsType) => {
                 {dateFormatter(employeeData.dateOfJoining, "DD MMMM YYYY")}
               </Typography>
             </Grid>
-            <Grid xs={4} md={6}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "PROFILE.STATUS" })}
-              </Typography>
-            </Grid>
-            <Grid xs={8} md={6}>
-              <Typography>{employeeData.status}</Typography>
-            </Grid>
+
             <Grid xs={4} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "USER.ROLE" })}
               </Typography>
             </Grid>
             <Grid xs={8} md={6}>
-              <Typography>{employeeData.role}</Typography>
+              <Typography>{employeeData.jobRole}</Typography>
+            </Grid>
+            <Grid xs={4} md={6}>
+              <Typography variant="body1">
+                {intl.formatMessage({ id: "PROFILE.STATUS" })}
+              </Typography>
+            </Grid>
+            <Grid xs={8} md={6}>
+              <StyleStatus
+                label={status}
+                className={employeeData.status ? "success" : "danger"}
+              />
             </Grid>
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
-            <CustomisedButton label="Edit" handleClick={handleClose} />
-            <CustomisedButton label="Close" handleClick={handleClose} />
+            <CustomisedButton
+              variant="outlined"
+              label="Edit"
+              Icon={<Edit />}
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              variant="outlined"
+              label="Close"
+              handleClick={handleClose}
+            />
           </Stack>
         </Stack>
       </Box>

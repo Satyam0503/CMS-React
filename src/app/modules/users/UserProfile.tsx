@@ -1,121 +1,80 @@
-import { Box, Card, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { useUserDetails } from "./UserDataProvider";
-import dayjs from "dayjs";
-import { useAppSelector } from "../../Redux/hooks";
-// import { getEmployeeDetails } from "./userservices";
+import IconStat from "../components/IconStat";
+import { colors } from "../theme/MuiTheme";
+import {
+  Build,
+  CalendarMonth,
+  CorporateFareOutlined,
+} from "@mui/icons-material";
+import LeaveAllowences from "./LeaveAllowences";
 
-// get token and id from store
 export default function UserProfile() {
-  const token = useAppSelector((state) => state.auth.token)!;
+
   const intl = useIntl();
-  const {
-    userDetails: currentUser,
-    setUserDetails,
-    setRefresh,
-  } = useUserDetails();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
-
-  const profileCardPayload = {
-    name: `${currentUser?.firstName} ${currentUser?.lastName}`,
-    designation: currentUser?.jobRole,
-    bloodGroup: currentUser?.bloodGroup,
-    age: dayjs(new Date()).diff(currentUser?.dateOfBirth, "year"),
-  };
 
   return (
     <Grid container spacing={4}>
       <Grid
         item
         xs={12}
-        md={3}
+        lg={3}
         display={"flex"}
-        flexDirection={"column"}
+        flexDirection={{ xs: "column", sm: "row", lg: "column" }}
         gap={4}
+        justifyContent={{ lg: "flex-start" }}
       >
-        <Stack>
-          <ProfileCard {...profileCardPayload} />
+        <Stack width={"100%"}>
+          <ProfileCard />
         </Stack>
-
-        <Stack>
-          <Card sx={{ p: 2 }}>
-            <Stack
-              mb={5}
-              display={"flex"}
-              justifyContent={"space-between"}
-              flexDirection={"row"}
-              alignItems={"center"}
-            >
-              <Typography variant="h6">
-                {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
-              </Typography>
-              <Typography variant="h4">4</Typography>
-            </Stack>
-            <DonutApexChart
-              series={leaveAllowanceValue}
-              labels={leaveAllowanceLables}
-              showDataLabels={true}
-            />
-          </Card>
+        <Stack width={"100%"}>
+          <LeaveAllowences />
         </Stack>
       </Grid>
-      <Grid item xs={12} md={9}>
+      <Grid item xs={12} md={12} lg={9}>
         <Stack
-          direction="row"
+          direction={{ xs: "column", sm: "row" }}
           display={"flex"}
-          justifyContent={"space-evenly"}
-          className="w-100 bg-white p-4 rounded "
+          justifyContent={"center"}
+          bgcolor={colors.alpha.white[500]}
+          borderRadius={1}
         >
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/calender.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} sm={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.secondary[100]}
+                icon={<CalendarMonth fontSize="large" />}
+                iconColor={colors.alpha.secondary[500]}
+                number={14}
+                title="Years of experience"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">14</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.EXP" })}
-              </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/experience.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} sm={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.primary[100]}
+                icon={<CorporateFareOutlined fontSize="large" />}
+                iconColor={colors.alpha.primary[500]}
+                number={6}
+                title="Years in Codeji"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">6</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.EXP_CURRENT" })}
-              </Typography>
             </Box>
           </Grid>
-          <Grid item xs={4} display={"flex"} alignItems={"center"}>
-            <Stack className="me-4 symbol symbol-45px">
-              <img
-                src={toAbsoluteUrl("media/Icons/skills.svg")}
-                alt=""
-                className="rounded-circle"
+          <Grid item xs={12} sm={4}>
+            <Box component={CardContent}>
+              <IconStat
+                iconBg={colors.alpha.danger[100]}
+                icon={<Build fontSize="large" />}
+                iconColor={colors.alpha.danger[400]}
+                number={0 + "+"}
+                title="Skills holder"
               />
-            </Stack>
-            <Box>
-              <Typography variant="h2">
-                {currentUser?.skills?.length || 0}+
-              </Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
-              </Typography>
             </Box>
           </Grid>
         </Stack>
