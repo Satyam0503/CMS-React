@@ -31,7 +31,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   
   // requesting signed in user details by authToken 
   useEffect(() => {
-    const requestUserDetails = async (token: string) => {
+    const requestUserDetails = async () => {
       try {
         if (!currentUser) {               
           const { data } = await getSignedUserDetails();
@@ -50,7 +50,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
       }
     }; 
     if (token) { 
-      requestUserDetails(token);
+      requestUserDetails();
     } else {
       logout();
       setShowSplashScreen(false);

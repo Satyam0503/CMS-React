@@ -103,9 +103,6 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
     } finally {
       setSubmitting(false);
     }
-    
-    // formData.append("applicantData", JSON.parse(values));
-    // handle add applicant logic
   };
 
   useEffect(() => {
