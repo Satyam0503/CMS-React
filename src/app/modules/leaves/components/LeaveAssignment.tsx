@@ -36,12 +36,12 @@ export default function LeaveAssignment() {
         handleClick={() => setOpen(true)}
       />
       <CustomisedModal open={open} handleClose={handleClose}>
-        <Grid container spacing={3} alignItems={"end"}>
-          <Grid item xs={12}>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "LEAVE.ASSIGNMENT" })}
-            </Typography>
-          </Grid>
+        <Grid item xs={12} mb={3}>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "LEAVE.ASSIGNMENT" })}
+          </Typography>
+        </Grid>
+        <Grid container rowSpacing={1} columnSpacing={2} alignItems={"end"}>
           <Grid item xs={12} md={6}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "SELECT.EMP" })}
@@ -59,11 +59,7 @@ export default function LeaveAssignment() {
             <Typography variant="body1">
               {intl.formatMessage({ id: "LEAVE.CL" })}
             </Typography>
-            <TextField
-              sx={{ width: "100%" }}
-              id="outlined-basic"
-              variant="outlined"
-            />
+            <TextField fullWidth id="outlined-basic" variant="outlined" />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="body1">

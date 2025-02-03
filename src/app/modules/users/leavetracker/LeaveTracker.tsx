@@ -1,4 +1,13 @@
-import { Button, Card, Grid, Stack, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { FC } from "react";
 
 import { useIntl } from "react-intl";
@@ -8,7 +17,7 @@ import { AttendanceChart } from "../../components/AttendanceChart";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { LeaveApplication } from "./LeaveApplication";
 import { Block } from "@mui/icons-material";
-import { LeaveCalender } from "../../leaves/components/LeaveCalender";
+import { colors } from "../../theme/MuiTheme";
 
 export const LeaveTracker: FC = () => {
   const intl = useIntl();
@@ -19,19 +28,53 @@ export const LeaveTracker: FC = () => {
   const unpaidLeaves = [0, 12];
   return (
     <>
-      <Grid container className="d-flex flex-column gap-4">
-        <Grid container className="d-flex justify-content-between">
-          <Grid item xs={4} className="d-flex gap-2">
-            <LeaveCalender />
-          </Grid>
+      <Grid container display={"flex"} gap={2}>
+        <Grid container display={"flex"} justifyContent={"space-between"}>
+          <Stack>
+            <FormControl sx={{ minWidth: 150, border: "none" }}>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue={19}
+                renderValue={(value) => {
+                  if (value === 19) return "Today";
+                  if (value === 20) return "This Week";
+                  if (value === 21) return "This Month";
+                  if (value === 22) return "This Year";
+
+                  return "";
+                }}
+                sx={{ background: "white" }}
+              >
+                <MenuItem value={19}>Today</MenuItem>
+                <MenuItem value={20}>This Week</MenuItem>
+                <MenuItem value={21}>This Month</MenuItem>
+                <MenuItem value={22}>This Year</MenuItem>
+              </Select>
+
+              {/* <InputBase
+          // startAdornment={
+          //   <InputAdornment position="start">
+          //     <CalendarToday />
+          //   </InputAdornment>
+          // }
+          sx={{ width: "100%", mt: 2 }}
+        /> */}
+            </FormControl>
+          </Stack>
           <Stack>
             <LeaveApplication />
           </Stack>
         </Grid>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Card className="p-5 w-100">
-              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+            <Card sx={{ p: 2, height: "100%" }}>
+              <Stack
+                direction={"row"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
                 <Typography variant="h6">
                   {intl.formatMessage({ id: "LEAVE.CL" })}
                 </Typography>
@@ -41,8 +84,13 @@ export const LeaveTracker: FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card className="p-5 w-100">
-              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+            <Card sx={{ p: 2, height: "100%" }}>
+              <Stack
+                direction={"row"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
                 <Typography variant="h6">
                   {intl.formatMessage({ id: "LEAVE.ML" })}
                 </Typography>
@@ -52,28 +100,35 @@ export const LeaveTracker: FC = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card className="p-5 w-100">
-              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+            <Card sx={{ p: 2, height: "100%" }}>
+              <Stack
+                direction={"row"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
                 <Typography variant="h6">
                   {intl.formatMessage({ id: "LEAVE.EL" })}
                 </Typography>
                 <Typography variant="h4">5</Typography>
               </Stack>
-
               <DonutApexChart series={earnedLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card className="p-5 w-100">
-              <Stack className="mb-8 d-flex flex-row justify-content-between align-items-center ">
+            <Card sx={{ p: 2, height: "100%" }}>
+              <Stack
+                direction={"row"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+              >
                 <Typography variant="h6">
                   {intl.formatMessage({ id: "LEAVE.UNPAID" })}
                 </Typography>
-                <Typography variant="h4">
-                  <Block />
-                </Typography>
+                <Block />
               </Stack>
-              <DonutApexChart series={unpaidLeaves} labels={leavesLabels} />
+              <DonutApexChart series={earnedLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
         </Grid>
@@ -84,8 +139,8 @@ export const LeaveTracker: FC = () => {
             chartHeight="179px"
           />
         </Grid>
-        <Stack className="w-100">{/* <CustomisedTable /> */}</Stack>
-        <Stack className="w-100 ">{/* <CustomisedTable /> */}</Stack>
+        <Stack>{/* <CustomisedTable /> */}</Stack>
+        <Stack>{/* <CustomisedTable /> */}</Stack>
       </Grid>
     </>
   );

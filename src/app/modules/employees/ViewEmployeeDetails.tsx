@@ -10,6 +10,7 @@ import {
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { StyleStatus } from "../components/StyledStatus";
+import { Close, Edit } from "@mui/icons-material";
 
 type PropsType = {
   open: boolean;
@@ -181,8 +182,17 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             </Grid>
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
-            <CustomisedButton label="Edit" handleClick={handleClose} />
-            <CustomisedButton label="Close" handleClick={handleClose} />
+            <CustomisedButton
+              variant="outlined"
+              label="Edit"
+              Icon={<Edit />}
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              variant="outlined"
+              label="Close"
+              handleClick={handleClose}
+            />
           </Stack>
         </Stack>
       </Box>

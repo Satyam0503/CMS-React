@@ -19,18 +19,6 @@ import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import CustomisedButton from "../../components/CustomisedButton";
 import { CustomisedModal } from "../../components/CustomisedModal";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 800,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  borderRadius: 2,
-  p: 4,
-};
-
 export const LeaveApplication: FC = () => {
   const intl = useIntl();
   const [open, setOpen] = React.useState(false);
@@ -44,7 +32,7 @@ export const LeaveApplication: FC = () => {
   return (
     <>
       <CustomisedButton
-        variant="outlined"
+        variant="text"
         label="Leave Application"
         handleClick={handleOpen}
       />
