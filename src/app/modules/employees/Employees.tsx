@@ -71,7 +71,7 @@ export default function Employees() {
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
- 
+
   function handleClose() {
     setModalOpen(false);
     setEmployeeInitialValues(employeeInitialValue);
@@ -80,18 +80,18 @@ export default function Employees() {
   function SaveAddEditEmployee(
     values: EmployeeModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) {    
+  ) {
     setLoading(true);
     if (isEdit) {
       const payload = {
         ...values,
-        status: statusEncoder(values.status as string)
+        status: statusEncoder(values.status as string),
       };
-      const userId=values.userId;
-      updateEmployee(payload,userId)
+      const userId = values.userId;
+      updateEmployee(payload, userId)
         .then((res) => {
-          const { success, message,statusCode } = res.data;
-          if (!(success)) {
+          const { success, message, statusCode } = res.data;
+          if (!success) {
             throw new Error(message);
           }
           toast.success(message);
@@ -126,7 +126,7 @@ export default function Employees() {
         personalEmail: values.personalEmail,
         emergencyContact: values.emergencyContact,
         dateOfJoining: values.dateOfJoining,
-        status:statusEncoder(values.status as string),
+        status: statusEncoder(values.status as string),
         address: values.address,
         isEmailVerified: values.isEmailVerified,
       };
@@ -144,7 +144,7 @@ export default function Employees() {
         .catch((error) => {
           toast.error(error.message);
         })
-        .finally(()=>{
+        .finally(() => {
           setLoading(false);
           setSubmitting(false);
         });
@@ -189,7 +189,7 @@ export default function Employees() {
     }
   }
 
-  function handleEmployeeEdit(employee: EmployeeModel) {    
+  function handleEmployeeEdit(employee: EmployeeModel) {
     setEmployeeInitialValues({
       userId: employee.userId,
       companyId: employee.companyId,
@@ -246,8 +246,7 @@ export default function Employees() {
         }
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     }, 1500);
