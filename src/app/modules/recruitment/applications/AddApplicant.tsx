@@ -9,8 +9,7 @@ import {
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
-import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add, CloudUploadOutlined } from "@mui/icons-material";
+import {  CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
@@ -97,7 +96,6 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
       toast.success(data.message);
       setRefresh(!refresh);
       handleClose();
-      
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -109,7 +107,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
     const getAllVacancy = async () => {
       try {
         const { data } = await getAllJobVacancies();
-        if (!data.success) {
+        if (!(data.success && data.statusCode === 200)) {
           throw new Error(data.message);
         }
         setVacancyList(data.methodResults);
@@ -184,7 +182,7 @@ export const AddApplicant:FC<PropsTypes> = ({open,setOpen,setRefresh,refresh}) =
                               key={experience.id}
                               value={experience.value}
                             >
-                              {experience.label}{" "}
+                              {experience.label}
                             </MenuItem>
                           ))}
                         </SelectInput>

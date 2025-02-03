@@ -11,7 +11,7 @@ import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
-import { Applicant, ApplicantModel, JobModal } from "../../../../utils/common_types";
+import { Applicant} from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
 
 export default function Applications() {
@@ -49,8 +49,12 @@ export default function Applications() {
     setSelectedApplicant(undefined);
   };
 
-  const handleResumeDownload = () => {
-    // console.log("download resume");
+  const handleResumeDownload = (applicant:Applicant) => {
+   const link= window.document.createElement("a");
+   link.href= applicant.resumeUrl;
+   link.download= `${applicant.firstName} ${applicant.lastName} Resume.pdf`;
+   link.click();
+   link.remove();
   };
 
   const handleApplicantDeletion = () => {
@@ -73,8 +77,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);
-
+  }, [refresh]);  
   return (
     <>
       <Card sx={{ p: 2.6 }}>

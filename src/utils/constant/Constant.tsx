@@ -328,7 +328,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "jobTitle",
     label: "Job Title",
-    // minWidth: 200,
+    minWidth: 200,
     avatarCell: (row: Applicant) => {
       const applicantName = row.firstName + " " + row.lastName;
       const vacancyName = row.vacancyName;
@@ -339,6 +339,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
+    format:(value:number)=> {
+      const suffix= value >1 ? "Years":"Year";
+      return value +" "+suffix;
+    }
   },
   {
     id: "email",
