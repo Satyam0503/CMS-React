@@ -2,18 +2,21 @@ import { Card, Stack, Typography } from "@mui/material";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import {
   Add,
-  CalendarMonth,
   CalendarToday,
   DeleteOutline,
   Edit,
   School,
+  Visibility,
 } from "@mui/icons-material";
 import { UserEducationModel } from "../../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
-import { addEmployeeEducation, getEmployeeEducations } from "../../userservices";
+import {
+  addEmployeeEducation,
+  getEmployeeEducations,
+} from "../../userservices";
 import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
 import dayjs from "dayjs";
@@ -28,15 +31,19 @@ const initialValue: UserEducationModel = {
   endDate: null,
   type: "",
 };
-export const UserEducation= () => {
+export const UserEducation = () => {
   const intl = useIntl();
-  const [userEducations,setUserEducations]= useState<UserEducationModel[]>([]);
-  const [educationInitialValues, setEducationInitialValues] =useState(initialValue);
+  const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
+    []
+  );
+  const [educationInitialValues, setEducationInitialValues] =
+    useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const [confirmModal,setConfirmModal]= useState(false);
-  const [selectedEducation,setSeletedEducation]= useState<UserEducationModel | null >(null);
-  const [refresh,setRefresh]= useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [selectedEducation, setSeletedEducation] =
+    useState<UserEducationModel | null>(null);
+  const [refresh, setRefresh] = useState(false);
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -44,18 +51,18 @@ export const UserEducation= () => {
     setEdit(false);
   };
 
-  const handleCloseConfirmation = ()=>{
+  const handleCloseConfirmation = () => {
     setConfirmModal(false);
     setSeletedEducation(null);
-  }
+  };
 
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
     const value = {
       userId: education.userId,
       educationTitle: education.educationTitle,
-      startDate:dayjs(education.startDate),
-      endDate:dayjs(education.endDate),
+      startDate: dayjs(education.startDate),
+      endDate: dayjs(education.endDate),
       type: education.type,
       collegeName: education.collegeName,
       educationId: education.educationId,
@@ -85,33 +92,32 @@ export const UserEducation= () => {
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setSubmitting(false);
       }
     }
   };
 
-  const handleDeleteEducation=(confirmation:String)=>{
-    if(!selectedEducation){
-        toast.error("Request Failed"); 
+  const handleDeleteEducation = (confirmation: String) => {
+    if (!selectedEducation) {
+      toast.error("Request Failed");
     }
     // logic for deleting education
-  }
+  };
 
-  useEffect(()=>{
-      getEmployeeEducations()
-      .then(response=>{
-        const {success,message,methodResults}= response.data;
-        if(!success){
+  useEffect(() => {
+    getEmployeeEducations()
+      .then((response) => {
+        const { success, message, methodResults } = response.data;
+        if (!success) {
           throw new Error(message);
         }
         setUserEducations(methodResults);
       })
-      .catch(error=>{
+      .catch((error) => {
         toast.error(error.message);
-      })
-  },[refresh]);
+      });
+  }, [refresh]);
 
   return (
     <Card sx={{ p: 2 }}>
@@ -143,6 +149,11 @@ export const UserEducation= () => {
               justifyContent={"space-between"}
               alignItems={"center"}
               spacing={1}
+              sx={{
+                "&:hover .MuiStack-root": {
+                  visibility: "visible",
+                },
+              }}
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
@@ -158,7 +169,6 @@ export const UserEducation= () => {
                 >
                   <School />
                 </Stack>
-
                 <Stack>
                   <Typography
                     variant="body1"
@@ -198,16 +208,26 @@ export const UserEducation= () => {
                 direction={{ sx: "column", sm: "row" }}
                 spacing={1}
                 rowGap={0.5}
+                visibility={"hidden"}
+                // className="action-buttons"
+                sx={{
+                  visibility: "hidden",
+                  transition: "visibility 0.3s ease-in-out",
+                }}
               >
                 <CustomIconButton
                   icon={<Edit />}
                   tooltip="Edit"
                   handleClick={() => handleEducationEdit(education)}
                 />
-                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={()=>{
-                  setSeletedEducation(education);
-                  setConfirmModal(true);
-                }}/>
+                <CustomIconButton
+                  icon={<DeleteOutline />}
+                  tooltip="Delete"
+                  handleClick={() => {
+                    setSeletedEducation(education);
+                    setConfirmModal(true);
+                  }}
+                />
               </Stack>
             </Stack>
           ))
@@ -222,16 +242,15 @@ export const UserEducation= () => {
           handleClose={handleClose}
         />
       )}
-      {
-        confirmModal && 
+      {confirmModal && (
         <ConfirmationModal
           title="Delete Education"
           content="Are you sure you want to delete this Education ?"
           open={confirmModal}
           handleClose={handleCloseConfirmation}
           handleConfirmation={handleDeleteEducation}
-        /> 
-      }
+        />
+      )}
     </Card>
   );
 };

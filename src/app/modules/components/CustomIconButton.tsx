@@ -1,24 +1,28 @@
 import { IconButton, Tooltip } from "@mui/material";
-import React from "react";
+import React, { CSSProperties } from "react";
 
 type Props = {
   handleClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  onMouseClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  onMouseLeave?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   icon?: React.JSX.Element;
   tooltip?: string;
   size?: "small" | "medium" | "large";
   disabled?: boolean;
   permission?: boolean;
   ariaLabel?: string;
-  sx?: {};
+  style?: CSSProperties;
 };
 
 export const CustomIconButton = (props: Props) => {
   const {
     handleClick,
+    onMouseClick,
+    onMouseLeave,
     icon,
     tooltip,
     size,
-    sx,
+    style,
     disabled = false,
     permission = true,
     ariaLabel = "button",
@@ -35,6 +39,9 @@ export const CustomIconButton = (props: Props) => {
             type="button"
             aria-label={ariaLabel}
             sx={{ width: "32px", height: "32px", bgcolor: "transparent" }}
+            style={style}
+            onMouseEnter={onMouseClick}
+            onMouseLeave={onMouseLeave}
           >
             {icon}
           </IconButton>

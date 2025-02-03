@@ -15,9 +15,9 @@ import {
   Stack,
   TextField,
   Typography,
+  Zoom,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
 import {
   AttachFile,
   CloudUploadOutlined,
@@ -28,6 +28,7 @@ import {
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
+
 // import { updateUserAvatar } from "./userservices";
 
 import { CustomisedModal } from "../components/CustomisedModal";
@@ -40,14 +41,16 @@ import { getAgeInYears } from "../../../utils/common";
 import { EmployeeModel } from "../../../utils/common_types";
 
 export default function ProfileCard() {
-  const user= useAppSelector(state=>state.user.userData)
+  const user = useAppSelector((state) => state.user.userData);
   const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const [userPersonalDetails,setUserPersonalDetails]= useState({} as EmployeeModel)
-
+  const [userPersonalDetails, setUserPersonalDetails] = useState(
+    {} as EmployeeModel
+  );
+  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   function handleClose() {
     setOpen(false);
     setSelectedFile(null);
@@ -68,6 +71,7 @@ export default function ProfileCard() {
     setSelectedFile(selectedFile);
     setFileError("");
   }
+
   // function handleUpdateAvatar() {
   //   if (seletedFile) {
   //     const formData = new FormData();
@@ -108,7 +112,7 @@ export default function ProfileCard() {
             border: "1px solid white",
             borderRadius: "50%",
             position: "relative",
-
+            transition: "transform 0.3s ease-in-out",
             "&:hover img": {
               opacity: 0.2,
               zIndex: 1,
@@ -121,8 +125,10 @@ export default function ProfileCard() {
             sx={{
               width: "100%",
               height: "100%",
+              transform: isAvatarZoomedOut ? "scale(1.4)" : "scale(1)",
             }}
           />
+
           <Stack className="coverChange" direction={"row"} gap={1} zIndex={3}>
             <CustomIconButton
               handleClick={() => setOpen(true)}
@@ -136,12 +142,9 @@ export default function ProfileCard() {
                   }}
                 />
               }
-              sx={{
-                bgcolor: "transparent",
-                border: "1px solid",
-              }}
             />
             <CustomIconButton
+              handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
               icon={
                 <Visibility
                   sx={{
@@ -152,10 +155,6 @@ export default function ProfileCard() {
                   }}
                 />
               }
-              sx={{
-                bgcolor: "transparent",
-                border: "1px solid",
-              }}
             />
           </Stack>
         </Grid>
