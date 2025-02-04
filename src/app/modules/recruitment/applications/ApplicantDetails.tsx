@@ -41,22 +41,22 @@ interface StateType {
 }
 export const ApplicantDetails = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const state = useLocation().state as StateType;
-  const navigate = useNavigate();
   const [commentList, setCommentList] = useState<any[]>([]);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
   const [isModalOpen, setModalOpen] = useState(false);
   const [applicantStatus, setApplicantStatus] = useState<number>();
-  const [comment ,setComment]= useState("");
+  const [comment, setComment] = useState("");
   const applicantId = state.applicantId;
-
+ 
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       getApplicantById(applicantId)
         .then(({ data }) => {
-          if (!data.success) {
+          if (!(data.success && data.statusCode === 200)) {
             throw new Error(data.message);
           }
           setApplicant(data.methodResult);
@@ -78,9 +78,10 @@ export const ApplicantDetails = () => {
   const experienceSuffix = applicant.experience > 1 ? "Years" : "Year";
 
   const handleAddComment = () => {
-    // logic for adding 
+    // logic for adding
   };
   const handleClose = () => {
+    setApplicantStatus(applicant.status);
     setModalOpen(false);
   };
 
@@ -88,8 +89,6 @@ export const ApplicantDetails = () => {
     setModalOpen(true);
     setApplicantStatus(event.target.value as number);
   };
-
-  console.log("render");
 
   return (
     <>

@@ -141,6 +141,7 @@ export type Applicant = Omit<ApplicantModel, "resume"> & {
   applyDate: string
   updateDate: string
   resumeUrl: string;
+  fullApplicantResumePath:string
 };
 
 // Api respone data types

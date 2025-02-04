@@ -20,6 +20,8 @@ export const AddComment: FC<PropTypes> = ({
 
 }) => {
 //   const [comment, setComment] = useState("");
+  console.log("comment called");
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>

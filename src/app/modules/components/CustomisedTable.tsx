@@ -23,7 +23,7 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?: () => void;
+  handleDownload?: (row:Row) => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
