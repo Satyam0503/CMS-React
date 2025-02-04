@@ -74,7 +74,7 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="setting/*"
+          path="admin/*"
           element={
             <SuspensedView>
               <Setting />

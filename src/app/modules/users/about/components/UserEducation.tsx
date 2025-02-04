@@ -208,7 +208,6 @@ export const UserEducation = () => {
                 direction={{ sx: "column", sm: "row" }}
                 spacing={1}
                 rowGap={0.5}
-                visibility={"hidden"}
                 // className="action-buttons"
                 sx={{
                   visibility: "hidden",

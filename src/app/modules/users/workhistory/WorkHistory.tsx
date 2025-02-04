@@ -37,6 +37,11 @@ export const WorkHistory: FC = () => {
               justifyContent={"space-between"}
               alignItems={"center"}
               direction={"row"}
+              sx={{
+                "&:hover .MuiStack-root": {
+                  visibility: "visible",
+                },
+              }}
             >
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack
@@ -72,7 +77,14 @@ export const WorkHistory: FC = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack direction={"row"} spacing={1}>
+              <Stack
+                direction={"row"}
+                spacing={1}
+                sx={{
+                  visibility: "hidden",
+                  transition: "visibility 0.3s ease-in-out",
+                }}
+              >
                 <CustomIconButton icon={<Edit />} tooltip="Edit" />
                 <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
               </Stack>
@@ -83,6 +95,11 @@ export const WorkHistory: FC = () => {
               justifyContent={"space-between"}
               alignItems={"center"}
               direction={"row"}
+              sx={{
+                "&:hover .MuiStack-root": {
+                  visibility: "visible",
+                },
+              }}
             >
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack
@@ -118,7 +135,14 @@ export const WorkHistory: FC = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack direction={"row"} spacing={1}>
+              <Stack
+                direction={"row"}
+                spacing={1}
+                sx={{
+                  visibility: "hidden",
+                  transition: "visibility 0.3s ease-in-out",
+                }}
+              >
                 <CustomIconButton icon={<Edit />} tooltip="Edit" />
                 <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
               </Stack>
