@@ -23,7 +23,7 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?: (row:Row) => void;
+  handleDownload?: (row: Row) => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -60,7 +60,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
           {loading ? (
             <TableBody>
               <TableRow>
-                {columns.map((column) => (
+                {/* {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     align={column?.align || "left"}
@@ -68,11 +68,11 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   >
                     <TableSkeleton />
                   </TableCell>
-                ))}
-                {/* <TableCell colSpan={12} align="center">
+                ))} */}
+                <TableCell colSpan={12} align="center">
                   <TableSkeleton />
-                  <Typography variant="h6"> Loading... </Typography>
-                </TableCell> */}
+                  {/* <Typography variant="h6"> Loading... </Typography> */}
+                </TableCell>
               </TableRow>
             </TableBody>
           ) : (

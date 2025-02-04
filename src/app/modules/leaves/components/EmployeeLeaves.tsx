@@ -95,12 +95,7 @@ export const EmployeeLeaves: FC = () => {
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        display={"flex"}
-        justifyContent={"space-between"}
-        gap={"2"}
-      >
+      <Grid container display={"flex"} justifyContent={"space-between"} gap={2}>
         <Stack>
           <FormControl sx={{ minWidth: 150, border: "none" }}>
             <Select

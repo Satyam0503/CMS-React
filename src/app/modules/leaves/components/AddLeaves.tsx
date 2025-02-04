@@ -85,7 +85,13 @@ export default function AddLeaves() {
             <TextField fullWidth id="outlined-basic" variant="outlined" />
           </Grid>
 
-          <Grid item xs={12} display={"flex"} gap={2}>
+          <Grid
+            item
+            xs={12}
+            display={"flex"}
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={2}
+          >
             <Grid item xs={12} md={3.4}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "APPLICATION.DURATION" })}
