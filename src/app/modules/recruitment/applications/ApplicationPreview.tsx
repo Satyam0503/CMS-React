@@ -31,20 +31,21 @@ export const ApplicationPreview: FC<PropsType> = ({
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
+      <Stack spacing={2}>
+      
+      <Stack justifyContent={"space-between"} direction={"row"}>
+        <Typography variant="h5">
+          {applicantData.firstName + " " + applicantData.lastName}
+        </Typography>
+        <CustomIconButton icon={<Close />} handleClick={handleClose} />
+      </Stack>
       <Grid
         container
         display={"flex"}
         direction={"column"}
         gap={1}
         flexWrap={"inherit"}
-        mb={2}
       >
-        <Grid item xs={12} display={"flex"} justifyContent={"space-between"}>
-          <Typography variant="h5">
-            {applicantData.firstName + " " + applicantData.lastName}
-          </Typography>
-          <CustomIconButton icon={<Close />} handleClick={handleClose} />
-        </Grid>
         <Grid item xs={12} display={"flex"}>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={600}>
@@ -96,8 +97,10 @@ export const ApplicationPreview: FC<PropsType> = ({
           </Grid>
         </Grid>
       </Grid>
-
-      <PdfPreview pdfUrl={applicantData.fullApplicantResumePath} />
+      <PdfPreview
+        pdfUrl={applicantData.fullApplicantResumePath}
+      />
+      </Stack>
     </CustomisedModal>
   );
 };

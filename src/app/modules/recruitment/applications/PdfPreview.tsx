@@ -1,14 +1,15 @@
-import { CircularProgress, Grid, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
+import { FC, useEffect, useRef, useState } from "react";
 import { pdfjs } from "react-pdf";
 import { Document, Page } from "react-pdf";
-// import samplePdf from "../../../../../public/media/auth/example-multipage.pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { Download, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
+import { ResumeError } from "./ResumeError";
+import { ResumeLoader } from "./ResumeLoader";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -31,28 +32,9 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
     setTotalPages(pdfjs.numPages);
   }
 
-  function handleLoadError() {
-    // error handle logic
-  }
-  const handleDownloadResume = async () => {
-    // try {
-    //   const response = await fetch(pdfUrl);
-    //   const data = await response.blob();
-    //   const urlObj = window.URL.createObjectURL(data);
-    //   const link = document.createElement("a");
-    //   link.href = urlObj;
-    //   link.click();
-    //   link.remove();
-    // } catch (error) {
-    //   toast.error("Failed to download Applicant Resume");
-    // }
-  };
-  const handlePageChange =(page:number)=>{
+  const handlePageChange = (page: number) => {
     setCurrentPage(currentPage + page);
-  }
-
-  console.log(pdfUrl);
-  
+  };
 
   return (
     <Stack
@@ -71,11 +53,6 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
         }}
       >
         <Typography variant="h6">Resume Preview</Typography>
-        <CustomIconButton
-          icon={<Download />}
-          tooltip="Download Resume"
-          handleClick={handleDownloadResume}
-        />
       </Stack>
       <Stack
         sx={{
@@ -85,11 +62,10 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
         <Document
           file={pdfUrl}
           onLoadSuccess={handleDocumentLoadSuccess}
-          loading={<CircularProgress />}
-          error={""}
-          onLoadError={handleLoadError}
+          loading={<ResumeLoader />}
+          error={<ResumeError/>}
         >
-          <Page pageNumber={currentPage}/>
+          <Page pageNumber={currentPage} className="pdf_viewer" />
         </Document>
         {showButton && (
           <Stack
@@ -97,26 +73,27 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
             spacing={2}
             sx={{
               width: "100%",
+              backgroundColor: colors.alpha.white[500],
               position: "absolute",
               zIndex: 10,
               left: "0",
               bottom: "0",
               display: "flex",
               justifyContent: "center",
-              marginBottom: "1rem",
+              padding: "1rem",
             }}
           >
             <CustomIconButton
               icon={<NavigateBefore />}
               tooltip="Previous"
               disabled={currentPage === 1}
-              handleClick={() =>handlePageChange(-1)}
+              handleClick={() => handlePageChange(-1)}
             />
             <CustomIconButton
               icon={<NavigateNext />}
               tooltip="Next"
               disabled={currentPage === totalPages}
-              handleClick={()=>handlePageChange(1)}
+              handleClick={() => handlePageChange(1)}
             />
           </Stack>
         )}
@@ -124,3 +101,4 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
     </Stack>
   );
 };
+

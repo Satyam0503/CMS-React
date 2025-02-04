@@ -326,14 +326,13 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     minWidth: 30,
   },
   {
-    id: "jobTitle",
+    id: "firstName",
+    label: "Name",
+    minWidth: 30,
+  },
+  {
+    id: "vacancyName",
     label: "Job Title",
-    minWidth: 200,
-    avatarCell: (row: Applicant) => {
-      const applicantName = row.firstName + " " + row.lastName;
-      const vacancyName = row.vacancyName;
-      return <AvatarCell title={applicantName} subTitle={vacancyName} />;
-    },
   },
   {
     id: "experience",
@@ -348,11 +347,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "email",
     label: "Email",
   },
-  {
-    id: "phone",
-    label: "Phone Number",
-    align: "center",
-  },
+
   {
     id: "applyDate",
     label: "Applied",
@@ -376,14 +371,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       handleApplicationEdit: (row: Applicant) => void,
       openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void,
-      handleResumeDownload: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
         openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
-        handleDownload={handleResumeDownload}
       />
     ),
   },
@@ -429,12 +422,8 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     minWidth: 30,
   },
   {
-    id: "jobTitle",
+    id: "title",
     label: "Job Title",
-    minWidth: 180,
-    avatarCell: (row: JobModal) => {
-      return <AvatarCell title={row.title} />;
-    },
   },
   {
     id: "vacancies",

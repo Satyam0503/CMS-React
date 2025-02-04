@@ -20,7 +20,7 @@ export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
   }, [debouncedValue, handleDebouncedSearch]);
 
   const handleClearSearch = () => {
-    setSearch("");
+    setDebouncedValue("");
   };
 
   return (

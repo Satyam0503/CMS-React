@@ -83,7 +83,22 @@ input:-webkit-autofill {
 }
 
 
-.pdf-viewer {
-  max-width:"200px" !important;
-  background-color: rebeccapurple;
+.pdf_viewer {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+canvas{
+  width: 100% !important;
+  height: auto !important;
+}
+
+.textLayer {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.annotationLayer{
+  width: 100% !important;
+  height: 100% !important;
 }

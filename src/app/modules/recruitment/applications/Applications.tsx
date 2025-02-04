@@ -48,19 +48,11 @@ export default function Applications() {
     setViewApplicant(false);
     setSelectedApplicant(undefined);
   };
-
-  const handleResumeDownload = (applicant:Applicant) => {
-   const link= window.document.createElement("a");
-   link.href= applicant.fullApplicantResumePath;
-   link.download= `${applicant.firstName} ${applicant.lastName} Resume.pdf`;
-   link.click();
-   link.remove();
-  };
-
   const handleApplicantDeletion = () => {
     // console.log("delete Applicant");
   };
 
+  
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
@@ -118,7 +110,6 @@ export default function Applications() {
             handleEdit={handleApplicantEdit}
             openConfirmationModal={openConfirmationModal}
             openViewModal={handleOpenPreview}
-            handleDownload={handleResumeDownload}
             loading={loading}
           />
 
