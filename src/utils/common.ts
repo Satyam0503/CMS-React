@@ -1,10 +1,14 @@
 import dayjs, { Dayjs } from "dayjs";
 import { EmployeeModel } from "./common_types";
+import { ApplicantStatus, ApplicationStatus, CommentAction } from "./enums";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
 ) => {
+  if (!date) {
+    return "NA";
+  }
   return dayjs(date).format(format);
 };
 
@@ -28,35 +32,99 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-export const applicationStatusDecoder = (status: number) => {
-  switch (status) {
-    case 0:
+export const applicationStatusDecoder = (applicationStatus: number) => {
+  switch (applicationStatus) {
+    case ApplicationStatus.InProgress:
       return "In Progress";
-    case 1:
-      return "Rejected";
-    case 2:
-      return "Shortlisted";
-    case 3:
+    case ApplicationStatus.OnHold:
       return "On Hold";
-    case 4:
+    case ApplicationStatus.Shortlisted:
+      return "Shortlisted";
+    case ApplicationStatus.Selected:
       return "Selected";
+    case ApplicationStatus.Rejected:
+      return "Rejected";
     default:
       return "";
   }
 };
 
-export const getApplicationStatusClass = (status: string) => {
-  switch (status){
-    case "In Progress":
-    case "On Hold" :
-    case "Shortlisted" :{
+export const getApplicationStatusClass = (applicationStatus: number) => {
+  switch (applicationStatus) {
+    case ApplicationStatus.InProgress:
+      return "info";
+    case ApplicationStatus.OnHold:
+    case ApplicationStatus.Shortlisted: {
       return "warning";
     }
-    case "Selected": return "success";
-    case "Rejected" : return "danger";
-    default : return "";
+    case ApplicationStatus.Selected:
+      return "success";
+    case ApplicationStatus.Rejected:
+      return "danger";
+    default:
+      return "";
   }
 };
+
+export const applicantStatusDecoder = (applicantStatus: number) => {
+  switch (applicantStatus) {
+    case ApplicantStatus.New:
+      return "New";
+    case ApplicantStatus.Active:
+      return "Active";
+    case ApplicantStatus.InActive:
+      return "Inactive";
+    case ApplicantStatus.Closed:
+      return "Closed";
+    default:
+      return "";
+  }
+};
+
+export const getApplicantStatusClass = (applicantStatus: number) => {
+  switch (applicantStatus) {
+    case ApplicantStatus.New:
+      return "info";
+    case ApplicantStatus.Active:
+      return "success";
+    case ApplicantStatus.InActive:
+      return "warning";
+    case ApplicantStatus.Closed:
+      return "danger";
+    default:
+      return "";
+  }
+};
+
+export const commentActionEncoderForApplicationStatus = (
+  activityStatus: number
+) => {
+  switch (activityStatus) {
+    case ApplicationStatus.InProgress:
+      return CommentAction.InProgress;
+    case ApplicationStatus.OnHold:
+      return CommentAction.OnHold;
+    case ApplicationStatus.Shortlisted:
+      return CommentAction.Shortlisted;
+    case ApplicationStatus.Selected:
+      return CommentAction.Selection;
+    case ApplicationStatus.Rejected:
+      return CommentAction.Rejection;
+    default:
+      CommentAction.InProgress;
+  }
+};
+
+export const commentActionDecoder = (commentAction:number)=>{
+  switch(commentAction){
+    case CommentAction.InProgress: return "In Process";
+    case CommentAction.OnHold : return "On Hold";
+    case CommentAction.Shortlisted: return "Shortlisted";
+    case CommentAction.Selection: return "Selection";
+    case CommentAction.Rejection: return "Rejection";
+    default :"In Process";
+  }
+}
 
 export const statusEncoder = (status: string) => {
   switch (status) {

@@ -1,12 +1,10 @@
 import {
-  Delete,
   DeleteOutlineOutlined,
-  Download,
   Edit,
   Place,
   Visibility,
 } from "@mui/icons-material";
-import { Avatar, Button, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import {
   Applicant,
@@ -20,6 +18,7 @@ import {
   applicationStatusDecoder,
   statusDecoder,
   getApplicationStatusClass,
+  commentActionDecoder,
 } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
@@ -27,6 +26,9 @@ import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
 import { colors } from "../../app/modules/theme/MuiTheme";
+import { ApplicationStatus } from "../enums";
+import DOMPurify from "dompurify";
+
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
@@ -63,9 +65,13 @@ export const ServiceUrl = {
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
+  EDIT_APPLICANT: `${BaseUrl}/api/Applicants/EditApplicant`,
   GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
-  UPLOAD_RESUME:`${BaseUrl}/api/Applicants/UploadResume`,
-  
+  UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
+
+  ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
+  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
+
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
@@ -173,11 +179,11 @@ export const JobType = [
 ];
 
 export const ApplicationEvaluationStatus = [
-  { id: 1, label: "In Progress", value: 0 },
-  { id: 2, label: "Rejected", value: 1 },
-  { id: 3, label: "Shortlisted", value: 2 },
-  { id: 4, label: "On Hold", value: 3 },
-  { id: 5, label: "Selected", value: 4 },
+  { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
+  { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
+  { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
+  { id: 5, label: "Selected", value: ApplicationStatus.Selected },
+  { id: 4, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -338,10 +344,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
-    format:(value:number)=> {
-      const suffix= value >1 ? "Years":"Year";
-      return value +" "+suffix;
-    }
+    format: (value: number) => {
+      const suffix = value > 1 ? "Years" : "Year";
+      return value + " " + suffix;
+    },
   },
   {
     id: "email",
@@ -355,11 +361,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
-    id: "status",
+    id: "activityType",
     label: "Status",
     build: (status: number) => {
       const values = applicationStatusDecoder(status);
-      const className = getApplicationStatusClass(values);
+      const className = getApplicationStatusClass(status);
       return <StyleStatus label={values} className={className} />;
     },
   },
@@ -370,7 +376,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
       openConfirmationModal: (row: Applicant) => void,
-      openViewApplication: (row: Applicant) => void,
+      openViewApplication: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
@@ -463,28 +469,40 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const CommentTableColumnList: ColumnListTypes[]=[
+export const CommentTableColumnList: ColumnListTypes[] = [
   {
-    id:"serialNo",
-    label:"#",
-    minWidth:30
+    id: "serialNo",
+    label: "#",
+    minWidth: 30,
   },
   {
-    id:"userName",
-    label:"User Name"
+    id: "userName",
+    label: "User Name",
+    minWidth:150,
   },
   {
-    id:"date",
-    label:"Date"
+    id: "createdDate",
+    label: "Date",
+    minWidth:200,
+    format: (value: string) => dateFormatter(value, "MMMM DD YYYY  hh:mm A"),
   },
   {
-    id:"actionCategory",
-    label:"Action Category",
+    id: "activityCategory",
+    label: "Action Category",
+    align:"center",
+    minWidth:150,
+    format:(value:number)=> commentActionDecoder(value)
   },
   {
-    id:"comment",
-    label:"Comment",
-  }
+    id: "description",
+    label: "Comment",
+    build:(description:string) =>{
+        const trustedHtml = DOMPurify.sanitize(description);       
+        return <Box component={"div"} dangerouslySetInnerHTML={{
+          __html:trustedHtml
+        }} ></Box>
+    }
+  },
 ];
 
 interface ActionComponentProps<Row> {
@@ -492,7 +510,6 @@ interface ActionComponentProps<Row> {
   handleEdit?: (row: Row) => void;
   openConfirmationModal?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?: (row: Row) => void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   const {
@@ -500,7 +517,6 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
     handleEdit,
     openConfirmationModal,
     openViewModal,
-    handleDownload,
   } = props;
   return (
     <Stack direction={"row"} spacing={1}>
@@ -526,14 +542,6 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
           icon={<Visibility />}
           tooltip="View"
           ariaLabel="View"
-        />
-      )}
-      {handleDownload && (
-        <CustomIconButton
-          handleClick={() => handleDownload(row)}
-          icon={<Download />}
-          tooltip="Download"
-          ariaLabel="Download"
         />
       )}
     </Stack>

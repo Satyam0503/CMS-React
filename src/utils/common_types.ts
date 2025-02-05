@@ -133,6 +133,17 @@ export interface ApplicantModel {
   resume?: null | File;
 }
 
+export interface CommentModel {
+  applicantId:string;
+  userId:string;
+  description:string;
+  userName:string;
+  activityCategory:number;
+  createdDate?:string;
+  commentId?:string;
+  companyId?:string;
+}
+
 export type Applicant = Omit<ApplicantModel, "resume"> & {
   statusName: string;
   status: number;
@@ -175,3 +186,6 @@ export type UserEducationResponseData = ResponseData<UserEducationModel>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
+
+
+export type CommentResponseData = ResponseData<CommentModel>;

@@ -1,7 +1,5 @@
 import {
-  Box,
   Card,
-  CircularProgress,
   Grid,
   MenuItem,
   Select,
@@ -10,24 +8,22 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../components/CustomisedButton";
-import {
-  AttachFile,
-  Close,
-  CloudUploadOutlined,
-  Comment,
-  Download,
-  Edit,
-} from "@mui/icons-material";
+import { Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import BasicTable from "../../components/BasicTable";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useState } from "react";
-import { getApplicantById } from "../services";
-import { Applicant } from "../../../../utils/common_types";
+import { useEffect, useState } from "react";
 import {
-  applicationStatusDecoder,
+  addComment,
+  editApplicant,
+  getApplicantById,
+  getApplicantComments,
+} from "../services";
+import { Applicant, CommentModel } from "../../../../utils/common_types";
+import {
+  applicantStatusDecoder,
+  commentActionEncoderForApplicationStatus,
   dateFormatter,
+  getApplicantStatusClass,
 } from "../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -36,21 +32,39 @@ import {
 import { CircularLoader } from "../../components/CircularLoader";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { AddComment } from "./AddComment";
+import { StyleStatus } from "../../components/StyledStatus";
+import { useAppSelector } from "../../../Redux/hooks";
+import { toast } from "react-toastify";
+import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
+
 interface StateType {
   applicantId: string;
 }
+
+const ApplicantStatusMapper: {
+  [index: number]: ApplicantStatus;
+} = {
+  [ApplicationStatus.InProgress]: ApplicantStatus.New,
+  [ApplicationStatus.OnHold]: ApplicantStatus.InActive,
+  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
+  [ApplicationStatus.Selected]: ApplicantStatus.Active,
+  [ApplicationStatus.Rejected]: ApplicantStatus.Closed,
+};
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const state = useLocation().state as StateType;
-  const [commentList, setCommentList] = useState<any[]>([]);
+  const userData = useAppSelector((state) => state.user.userData)!;
+  const [loading, setLoading] = useState(true);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
+  const [commentList, setCommentList] = useState<CommentModel[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [applicantStatus, setApplicantStatus] = useState<number>();
+  const [activityType, setActivityType] = useState<number>(0);
+  const [refresh, setRefresh] = useState(false);
   const [comment, setComment] = useState("");
+
   const applicantId = state.applicantId;
- 
+
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -60,41 +74,120 @@ export const ApplicantDetails = () => {
             throw new Error(data.message);
           }
           setApplicant(data.methodResult);
-          setApplicantStatus(data.methodResult.status);
+          setActivityType(data.methodResult.activityType);
         })
         .catch((error) => {
           console.error(error);
           navigate("/error");
         })
         .finally(() => setLoading(false));
-    }, 2000);
-  }, []);
+    }, 1500);
+  }, [refresh, applicantId]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await getApplicantComments(applicantId);
+        const { methodResults, success, statusCode, message } = response.data;
+        if (!(success && statusCode === 200)) {
+          throw new Error(message);
+        }
+        setCommentList(methodResults);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, [refresh]);
+
   if (!applicantId) {
     navigate("/error", { replace: true });
   }
+
   if (loading) {
     return <CircularLoader />;
   }
+
   const experienceSuffix = applicant.experience > 1 ? "Years" : "Year";
 
-  const handleAddComment = () => {
-    // logic for adding
+  const handleAddComment = async () => {
+    const payload = {
+      applicantId: applicant.applicantId,
+      companyId: userData.companyId,
+      firstName: applicant.firstName,
+      lastName: applicant.lastName,
+      email: applicant.email,
+      phone: applicant.phone,
+      vacancyId: applicant.vacancyId,
+      experience: applicant.experience,
+      vacancyName: applicant.vacancyName,
+      activityType: activityType,
+      status: ApplicantStatusMapper[activityType],
+    };
+    try {
+      const response = await editApplicant(payload);
+      const { success, message } = response.data;
+      if (!success) {
+        throw new Error(message);
+      }
+      const commentPayload = {
+        applicantId: applicant.applicantId,
+        userId: userData.userId,
+        description: comment,
+        activityCategory:
+          commentActionEncoderForApplicationStatus(activityType)!,
+        userName: userData.firstName + " " + userData.lastName,
+      };
+      const commentResponse = await addComment(commentPayload);
+      if (!commentResponse.data.success) {
+        throw new Error(commentResponse.data.message);
+      }
+      toast.success(commentResponse.data.message);
+      handleClose();
+      setRefresh(!refresh);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
+
   const handleClose = () => {
-    setApplicantStatus(applicant.status);
+    setActivityType(applicant.activityType);
     setModalOpen(false);
+    setComment("");
   };
 
   const handleStatusChange = (event: SelectChangeEvent<number>) => {
-    setModalOpen(true);
-    setApplicantStatus(event.target.value as number);
+    if (typeof event.target.value === "number") {
+      setActivityType(event.target.value);
+      setModalOpen(true);
+    }
+  };
+
+  const handleDownloadResume = async () => {
+    try {
+      const response = await fetch(applicant.fullApplicantResumePath, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+      const fileObj = await response.blob();
+      const urlObj = window.URL.createObjectURL(fileObj);
+      const link = document.createElement("a");
+      link.href = urlObj;
+      // link.setAttribute("download",`${applicant.firstName}_Resume.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
-      <Grid container display={"flex"} flexDirection={"column"} gap={4}>
+      <Stack spacing={2}>
         <Card sx={{ p: 2 }}>
-          {/* <Stack spacing={1}> */}
           <Stack
             direction={"row"}
             justifyContent={"space-between"}
@@ -107,11 +200,15 @@ export const ApplicantDetails = () => {
             </Typography>
 
             <Stack direction={"row"} spacing={1}>
-              <CustomIconButton icon={<Download />} tooltip="Download CV" />
+              <CustomIconButton
+                icon={<Download />}
+                tooltip="Download CV"
+                handleClick={() => handleDownloadResume()}
+              />
               <CustomIconButton icon={<Edit />} tooltip="Edit details" />
-              <CustomIconButton icon={<Close />} tooltip="Close" />
             </Stack>
           </Stack>
+
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
@@ -170,7 +267,7 @@ export const ApplicantDetails = () => {
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
                   {intl.formatMessage({ id: "APPLICATION.DATE" })} :
-                </Typography>{" "}
+                </Typography>
                 <Typography variant="body1">
                   {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
                 </Typography>
@@ -185,7 +282,7 @@ export const ApplicantDetails = () => {
 
                 <Select
                   name="applicantStatus"
-                  value={applicantStatus}
+                  value={activityType}
                   sx={{ width: "200px" }}
                   onChange={handleStatusChange}
                 >
@@ -197,8 +294,18 @@ export const ApplicantDetails = () => {
                 </Select>
               </Stack>
             </Grid>
+            <Grid item xs={12} sm={6} lg={4}>
+              <Stack direction={"row"} spacing={2}>
+                <Typography variant="body1" fontWeight={600}>
+                  {intl.formatMessage({ id: "APPLICANT.STATUS" })} :
+                </Typography>
+                <StyleStatus
+                  label={applicantStatusDecoder(applicant.status)}
+                  className={getApplicantStatusClass(applicant.status)}
+                />
+              </Stack>
+            </Grid>
           </Grid>
-          {/* </Stack> */}
         </Card>
         <Card sx={{ p: 2 }}>
           <Stack spacing={2}>
@@ -211,11 +318,6 @@ export const ApplicantDetails = () => {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "APPLICANT.COMMENT" })}
               </Typography>
-              <CustomisedButton
-                Icon={<Comment />}
-                label="Add Comment"
-                handleClick={() => setModalOpen(true)}
-              />
             </Stack>
 
             <CustomisedTable
@@ -224,17 +326,18 @@ export const ApplicantDetails = () => {
               page={0}
               rowsPerPage={0}
             />
-
-            <AddComment
-              open={isModalOpen}
-              comment={comment}
-              setComment={setComment}
-              handleClose={handleClose}
-              handleAddComment={handleAddComment}
-            />
+            {isModalOpen && (
+              <AddComment
+                open={isModalOpen}
+                comment={comment}
+                setComment={setComment}
+                handleClose={handleClose}
+                handleAddComment={handleAddComment}
+              />
+            )}
           </Stack>
         </Card>
-      </Grid>
+      </Stack>
     </>
   );
 };

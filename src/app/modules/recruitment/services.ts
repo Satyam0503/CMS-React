@@ -5,6 +5,8 @@ import {
   ApplicantsResponseData,
   ApplicantModel,
   ApiResponse,
+  CommentResponseData,
+  CommentModel,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 
@@ -39,10 +41,22 @@ export const addApplicant = async (payload: ApplicantModel) => {
   );
 };
 
+export const editApplicant = async (payload:ApplicantModel)=>{
+  return postRequest<ApplicantModel,ApiResponse>(ServiceUrl.EDIT_APPLICANT,payload);
+} 
+
 export const getApplicantById = async (applicantId: string) => {
   return getRequest<ApplicantsResponseData>(`${ServiceUrl.GET_APPLICANT_BY_ID}?id=${applicantId}`);
 };
 
 export const uploadResume = async (email:string,payload:FormData)=>{
   return postRequest<FormData,ApiResponse>(`${ServiceUrl.UPLOAD_RESUME}?email=${email}`,payload,{},true);
+}
+
+export const addComment = async (payload:CommentModel) =>{
+  return postRequest<CommentModel,ApiResponse>(ServiceUrl.ADD_COMMENT,payload);
+}
+ 
+export const getApplicantComments = async (applicantId:string)=>{
+  return getRequest<CommentResponseData>(`${ServiceUrl.GET_APPLICANT_COMMENTS}?applicantId=${applicantId}`);
 }

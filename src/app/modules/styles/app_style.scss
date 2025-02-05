@@ -69,6 +69,10 @@ input:-webkit-autofill {
   }
 }
 
+.info{
+  background-color:#CFD8FF;
+  color: #2B46A5;
+}
 .success {
   background-color: #c8f2cc;
   color: #37843c;
@@ -81,7 +85,6 @@ input:-webkit-autofill {
   background-color: #ffc8c7;
   color: #c62828;
 }
-
 
 .pdf_viewer {
   max-width: 100% !important;
@@ -101,4 +104,8 @@ canvas{
 .annotationLayer{
   width: 100% !important;
   height: 100% !important;
+}
+
+.flex_equal>*{
+  flex-grow: 1 ;
 }

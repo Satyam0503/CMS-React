@@ -31,7 +31,9 @@ export default function Applications() {
   const navigate = useNavigate();
 
   const handleApplicantEdit = (applicant: Applicant) => {
-     navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
+    if(applicant){
+      navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
+    }
   };
   
   const openConfirmationModal = (applicant:Applicant) => {

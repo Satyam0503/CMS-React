@@ -1,14 +1,11 @@
 import {
-  Avatar,
   Grid,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
@@ -23,7 +20,6 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?: (row: Row) => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -38,7 +34,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
-    handleDownload,
   } = props;
   return (
     <Grid container>
@@ -108,7 +103,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                     handleEdit,
                                     openConfirmationModal,
                                     openViewModal,
-                                    handleDownload
                                   )
                                 : column.build(value)
                               : value}

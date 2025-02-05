@@ -22,7 +22,7 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
-  const user = useAppSelector((state) => state.user.userData);
+  
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>

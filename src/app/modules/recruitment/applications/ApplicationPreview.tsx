@@ -25,8 +25,8 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const intl = useIntl();
-  const status = applicationStatusDecoder(applicantData.status);
-  const className = getApplicationStatusClass(status);
+  const status = applicationStatusDecoder(applicantData.activityType);
+  const className = getApplicationStatusClass(applicantData.activityType);
   const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
 
   return (

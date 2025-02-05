@@ -22,6 +22,7 @@ import { addApplicant, getAllJobVacancies, uploadResume } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
+import {  ApplicantStatus, ApplicationStatus,  } from "../../../../utils/enums";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -90,6 +91,8 @@ export const AddApplicant: FC<PropsTypes> = ({
       vacancyId: values.vacancyId,
       experience: values.experience,
       vacancyName: vacancy ? vacancy.title : "",
+      status:ApplicantStatus.New,
+      activityType: ApplicationStatus.InProgress,
     };
     try {
       const { data } = await addApplicant(payload);
@@ -109,9 +112,6 @@ export const AddApplicant: FC<PropsTypes> = ({
     } finally {
       setSubmitting(false);
     }
-
-    // formData.append("applicantData", JSON.parse(values));
-    // handle add applicant logic
   };
 
   useEffect(() => {
