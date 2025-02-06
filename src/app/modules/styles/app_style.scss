@@ -126,6 +126,10 @@ canvas {
   color: white;
 }
 
+.flex_equal > * {
+  flex-grow: 1;
+}
+
 // footer
 
 .footer {
