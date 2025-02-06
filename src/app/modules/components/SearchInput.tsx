@@ -10,10 +10,10 @@ type PropsType = {
 export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
   const [debouncedValue, setDebouncedValue] = useState(search);
 
-  const handleDebouncedSearch = useCallback(() => {  
+  const handleDebouncedSearch = useCallback(() => {
     setSearch(debouncedValue);
   }, [debouncedValue, setSearch]);
-  
+
   useEffect(() => {
     const timeoutId = setTimeout(handleDebouncedSearch, 1000);
     return () => clearTimeout(timeoutId);

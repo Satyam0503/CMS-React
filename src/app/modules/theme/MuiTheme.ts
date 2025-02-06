@@ -314,14 +314,20 @@ export const MuiTheme = createTheme({
         },
         root: {
           padding: "0px ",
-          "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
+          "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined,": {
             paddingRight: ".5rem",
+            borderColor: colors.alpha.primary[500],
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",
           },
-          "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline, ": {
-            borderColor: colors.alpha.primary[500],
+          // "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline, ": {
+          //   borderColor: colors.alpha.primary[500],
+          // },
+          "&.Mui-focused": {
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: colors.alpha.primary[500],
+            },
           },
         },
       },
