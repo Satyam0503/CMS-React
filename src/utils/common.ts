@@ -34,6 +34,8 @@ export const employeesListMapperforExport = (
 
 export const applicationStatusDecoder = (applicationStatus: number) => {
   switch (applicationStatus) {
+    case ApplicationStatus.New:
+      return "New";
     case ApplicationStatus.InProgress:
       return "In Progress";
     case ApplicationStatus.OnHold:
@@ -51,8 +53,9 @@ export const applicationStatusDecoder = (applicationStatus: number) => {
 
 export const getApplicationStatusClass = (applicationStatus: number) => {
   switch (applicationStatus) {
-    case ApplicationStatus.InProgress:
+    case ApplicationStatus.New:
       return "info";
+    case ApplicationStatus.InProgress:
     case ApplicationStatus.OnHold:
     case ApplicationStatus.Shortlisted: {
       return "warning";
@@ -74,8 +77,6 @@ export const applicantStatusDecoder = (applicantStatus: number) => {
       return "Active";
     case ApplicantStatus.InActive:
       return "Inactive";
-    case ApplicantStatus.Closed:
-      return "Closed";
     default:
       return "";
   }
@@ -88,8 +89,6 @@ export const getApplicantStatusClass = (applicantStatus: number) => {
     case ApplicantStatus.Active:
       return "success";
     case ApplicantStatus.InActive:
-      return "warning";
-    case ApplicantStatus.Closed:
       return "danger";
     default:
       return "";
@@ -115,16 +114,22 @@ export const commentActionEncoderForApplicationStatus = (
   }
 };
 
-export const commentActionDecoder = (commentAction:number)=>{
-  switch(commentAction){
-    case CommentAction.InProgress: return "In Process";
-    case CommentAction.OnHold : return "On Hold";
-    case CommentAction.Shortlisted: return "Shortlisted";
-    case CommentAction.Selection: return "Selection";
-    case CommentAction.Rejection: return "Rejection";
-    default :"In Process";
+export const commentActionDecoder = (commentAction: number) => {
+  switch (commentAction) {
+    case CommentAction.InProgress:
+      return "In Process";
+    case CommentAction.OnHold:
+      return "On Hold";
+    case CommentAction.Shortlisted:
+      return "Shortlisted";
+    case CommentAction.Selection:
+      return "Selection";
+    case CommentAction.Rejection:
+      return "Rejection";
+    default:
+      "In Process";
   }
-}
+};
 
 export const statusEncoder = (status: string) => {
   switch (status) {

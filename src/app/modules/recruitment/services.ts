@@ -23,8 +23,8 @@ export const editJobVacancy = async (payload: JobModal, jobId: string) => {
   );
 };
 
-export const getAllJobVacancies = async () => {
-  return getRequest<JobsResponseData>(ServiceUrl.GET_ALL_JOBS);
+export const getAllJobVacancies = async (payload:{companyId:string}={companyId:""}) => {
+  return postRequest<{companyId:string},JobsResponseData>(ServiceUrl.GET_ALL_VACANCIES,payload);
 };
 
 export const deleteJobVacancy = () => {};

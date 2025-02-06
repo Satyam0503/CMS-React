@@ -44,12 +44,14 @@ interface StateType {
 const ApplicantStatusMapper: {
   [index: number]: ApplicantStatus;
 } = {
-  [ApplicationStatus.InProgress]: ApplicantStatus.New,
-  [ApplicationStatus.OnHold]: ApplicantStatus.InActive,
+  [ApplicationStatus.New]: ApplicantStatus.New,
+  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
+  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
   [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
   [ApplicationStatus.Selected]: ApplicantStatus.Active,
-  [ApplicationStatus.Rejected]: ApplicantStatus.Closed,
+  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
 };
+
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
