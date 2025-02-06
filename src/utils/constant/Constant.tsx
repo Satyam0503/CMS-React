@@ -29,7 +29,6 @@ import { colors } from "../../app/modules/theme/MuiTheme";
 import { ApplicationStatus } from "../enums";
 import DOMPurify from "dompurify";
 
-
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -478,30 +477,35 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "userName",
     label: "User Name",
-    minWidth:150,
+    minWidth: 150,
   },
   {
     id: "createdDate",
     label: "Date",
-    minWidth:200,
+    minWidth: 200,
     format: (value: string) => dateFormatter(value, "MMMM DD YYYY  hh:mm A"),
   },
   {
     id: "activityCategory",
     label: "Action Category",
-    align:"center",
-    minWidth:150,
-    format:(value:number)=> commentActionDecoder(value)
+    align: "center",
+    minWidth: 150,
+    format: (value: number) => commentActionDecoder(value),
   },
   {
     id: "description",
     label: "Comment",
-    build:(description:string) =>{
-        const trustedHtml = DOMPurify.sanitize(description);       
-        return <Box component={"div"} dangerouslySetInnerHTML={{
-          __html:trustedHtml
-        }} ></Box>
-    }
+    build: (description: string) => {
+      const trustedHtml = DOMPurify.sanitize(description);
+      return (
+        <Box
+          component={"div"}
+          dangerouslySetInnerHTML={{
+            __html: trustedHtml,
+          }}
+        ></Box>
+      );
+    },
   },
 ];
 
@@ -512,12 +516,7 @@ interface ActionComponentProps<Row> {
   openViewModal?: (row: Row) => void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const {
-    row,
-    handleEdit,
-    openConfirmationModal,
-    openViewModal,
-  } = props;
+  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (

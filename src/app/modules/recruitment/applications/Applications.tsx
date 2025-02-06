@@ -1,6 +1,6 @@
 import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import {  Add, Download, FilterList } from "@mui/icons-material";
+import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
@@ -11,7 +11,7 @@ import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
-import { Applicant} from "../../../../utils/common_types";
+import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
 
 export default function Applications() {
@@ -22,26 +22,30 @@ export default function Applications() {
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | undefined>();
+  const [selectedApplicant, setSelectedApplicant] = useState<
+    Applicant | undefined
+  >();
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [isAddModalOpen,setAddModalOpen]= useState(false);
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [refresh,setRefresh]= useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
 
   const handleApplicantEdit = (applicant: Applicant) => {
-    if(applicant){
-      navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
+    if (applicant) {
+      navigate("/recruitment/editapplicant", {
+        state: { applicantId: applicant.applicantId },
+      });
     }
   };
-  
-  const openConfirmationModal = (applicant:Applicant) => {
+
+  const openConfirmationModal = (applicant: Applicant) => {
     setConfirmModalOpen(true);
     setSelectedApplicant(applicant);
   };
 
-  const handleOpenPreview = (applicant:Applicant) => {
+  const handleOpenPreview = (applicant: Applicant) => {
     setViewApplicant(true);
     setSelectedApplicant(applicant);
   };
@@ -54,7 +58,6 @@ export default function Applications() {
     // console.log("delete Applicant");
   };
 
-  
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
@@ -71,7 +74,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);  
+  }, [refresh]);
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -92,8 +95,8 @@ export default function Applications() {
                 ariaLabel="Filter Application"
               />
               <CustomIconButton
-                icon={<Add/>}
-                handleClick={()=>setAddModalOpen(true)}
+                icon={<Add />}
+                handleClick={() => setAddModalOpen(true)}
               />
 
               <CustomIconButton
@@ -126,19 +129,17 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
-      {
-        isAddModalOpen && (
-          <AddApplicant
-            open={isAddModalOpen}
-            setOpen={setAddModalOpen}
-            refresh={refresh}
-            setRefresh={setRefresh}
-          />
-        )
-      }
+      {isAddModalOpen && (
+        <AddApplicant
+          open={isAddModalOpen}
+          setOpen={setAddModalOpen}
+          refresh={refresh}
+          setRefresh={setRefresh}
+        />
+      )}
 
       {viewApplicant && selectedApplicant && (
-        <ApplicationPreview 
+        <ApplicationPreview
           open={viewApplicant}
           handleClose={closePreview}
           applicantData={selectedApplicant}
