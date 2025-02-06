@@ -329,6 +329,12 @@ export const MuiTheme = createTheme({
               borderColor: colors.alpha.primary[500],
             },
           },
+
+          "&:hover:not(.Mui-focused)": {
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: colors.alpha.primary[500],
+            },
+          },
         },
       },
     },
