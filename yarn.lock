@@ -10032,7 +10032,7 @@
     "react-is" "^16.3.2"
     "warning" "^4.0.0"
 
-"prop-types@^15.5.10", "prop-types@^15.6.0", "prop-types@^15.6.2", "prop-types@^15.8.1":
+"prop-types@*", "prop-types@^15.5.0", "prop-types@^15.5.10", "prop-types@^15.6.0", "prop-types@^15.6.2", "prop-types@^15.8.1":
   "integrity" "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="
   "resolved" "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   "version" "15.8.1"
@@ -10196,6 +10196,14 @@
     "regenerator-runtime" "^0.13.9"
     "whatwg-fetch" "^3.6.2"
 
+"react-async-script@^1.2.0":
+  "integrity" "sha512-bCpkbm9JiAuMGhkqoAiC0lLkb40DJ0HOEJIku+9JDjxX3Rcs+ztEOG13wbrOskt3n2DTrjshhaQ/iay+SnGg5Q=="
+  "resolved" "https://registry.npmjs.org/react-async-script/-/react-async-script-1.2.0.tgz"
+  "version" "1.2.0"
+  dependencies:
+    "hoist-non-react-statics" "^3.3.0"
+    "prop-types" "^15.5.0"
+
 "react-bootstrap@2.5.0-beta.1":
   "integrity" "sha512-brHUvpjJrNmShg2xjT3qNfZ7mKLEUyGvh+wp+IgxcFKrh7BPKzpbAtJYa2S1QJx5MuPBT/D0ywMFbz1LBY0Qvg=="
   "resolved" "https://registry.npmjs.org/react-bootstrap/-/react-bootstrap-2.5.0-beta.1.tgz"
@@ -10282,6 +10290,14 @@
   "integrity" "sha512-qvWWTL/4xw4k/Dywd41RBpLQUSq97csuv15qrxN+izNeLYlD9wn5W8LspbfYe5CWbaSdkZ72BsaYBPQf2x4VbQ=="
   "resolved" "https://registry.npmjs.org/react-from-dom/-/react-from-dom-0.6.2.tgz"
   "version" "0.6.2"
+
+"react-google-recaptcha@^3.1.0":
+  "integrity" "sha512-cYW2/DWas8nEKZGD7SCu9BSuVz8iOcOLHChHyi7upUuVhkpkhYG/6N3KDiTQ3XAiZ2UAZkfvYKMfAHOzBOcGEg=="
+  "resolved" "https://registry.npmjs.org/react-google-recaptcha/-/react-google-recaptcha-3.1.0.tgz"
+  "version" "3.1.0"
+  dependencies:
+    "prop-types" "^15.5.0"
+    "react-async-script" "^1.2.0"
 
 "react-inlinesvg@3.0.0":
   "integrity" "sha512-zUt0DW3cKBk+vYZJJCzJqA9STRb+ZFmKLQFWurTvM4UR6vyHT8kHZSzyZZseX9BUNbTFJAfirtwpt97BWDJoSg=="
@@ -10508,7 +10524,12 @@
     "loose-envify" "^1.4.0"
     "prop-types" "^15.6.2"
 
-"react@^18.2.0":
+"react-wavify@^1.11.1":
+  "integrity" "sha512-9MWGSwdVBri2XsegpysGyxWAeqIKdikwj+6Dg2Ssi3xFoY5HUVDiPbEZ62ZP30DefKE5IzWKNdFjyIEJfVikhw=="
+  "resolved" "https://registry.npmjs.org/react-wavify/-/react-wavify-1.11.1.tgz"
+  "version" "1.11.1"
+
+"react@*", "react@^0.13.0 || ^0.14.0 || >=15", "react@^15.3.0 || 16 || 17 || 18", "react@^16 || ^17 || ^18", "react@^16.6.0 || 17 || 18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0-rc.1 || ^18.0.0", "react@^16.8.3 || ^17.0.0-0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18 || ^19", "react@^17.0.0 || ^18.0.0", "react@^17.0.0 || ^18.0.0 || ^19.0.0", "react@^18 || ^19", "react@^18.0 || ^19", "react@^18.2.0", "react@>= 16", "react@>=0.13", "react@>=0.14.0", "react@>=15.0.0", "react@>=16, <=18", "react@>=16.0.0", "react@>=16.14.0", "react@>=16.4.1", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"

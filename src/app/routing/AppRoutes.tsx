@@ -12,6 +12,7 @@ import { ErrorsPage } from "../modulesOld/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";
+import ApplyNow from "../modules/career/ApplyNow";
 
 /**
  * Base URL of the website.
@@ -28,6 +29,7 @@ const AppRoutes: FC = () => {
       <Routes>
         <Route element={<App />}>
           <Route path="error/*" element={<ErrorsPage />} />
+          <Route path="career/*" element={<ApplyNow />} />
           <Route path="logout" element={<Logout />} />
 
           {isUserAuthenticated ? (

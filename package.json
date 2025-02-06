@@ -44,6 +44,7 @@
     "react-copy-to-clipboard": "5.1.0",
     "react-dom": "^18.2.0",
     "react-flatpickr": "^3.10.13",
+    "react-google-recaptcha": "^3.1.0",
     "react-inlinesvg": "3.0.0",
     "react-intl": "^6.4.4",
     "react-pdf": "^9.2.1",
@@ -57,6 +58,7 @@
     "react-table": "^7.7.0",
     "react-toastify": "^11.0.0",
     "react-topbar-progress-indicator": "4.1.1",
+    "react-wavify": "^1.11.1",
     "socicon": "3.0.5",
     "xlsx": "^0.18.5",
     "yup": "^1.0.0"

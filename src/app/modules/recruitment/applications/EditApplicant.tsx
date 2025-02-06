@@ -30,7 +30,27 @@ export const EditApplicant = () => {
   }
   console.log(state);
 
-  
+  const handleDownloadResume = async () => {
+    try {
+      const response = await fetch("", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+      const fileObj = await response.blob();
+      const urlObj = window.URL.createObjectURL(fileObj);
+      const link = document.createElement("a");
+      link.href = urlObj;
+      // link.setAttribute("download",`${fullName}_Resume.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Container component={Card} sx={{ p: "4rem" }}>
       <Grid container display={"flex"} direction={"column"} gap={1}>
