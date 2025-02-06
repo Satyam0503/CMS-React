@@ -380,7 +380,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
-        openConfirmationModal={openConfirmationModal}
+        // openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
