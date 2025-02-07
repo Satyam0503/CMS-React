@@ -31,7 +31,6 @@ import { colors } from "../../app/modules/theme/MuiTheme";
 import { ApplicationStatus } from "../enums";
 import DOMPurify from "dompurify";
 
-
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -376,7 +375,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "status",
     label: "Status",
-    build: (status: number) => {      
+    build: (status: number) => {
       const values = applicantStatusDecoder(status);
       const className = getApplicantStatusClass(status);
       return <StyleStatus label={values} className={className} />;
@@ -388,7 +387,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
-      openConfirmationModal :(row:Applicant)=>void,
+      openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void
     ) => (
       <ActionComponent
@@ -427,7 +426,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "Action",
     minWidth: 180,
     build: (row: RolesType) => (
-      <Link to={"/setting/editpermission"} state={{ ...row }}>
+      <Link to={"/admin/editpermission"} state={{ ...row }}>
         <Button variant="contained">Edit Permission</Button>
       </Link>
     ),
@@ -496,29 +495,35 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "createdDate",
     label: "Date",
-    minWidth:200,
+    minWidth: 200,
     format: (value: string) => dateFormatter(value, "MMMM DD YYYY  hh:mm A"),
   },
   {
     id: "activityCategory",
     label: "Action Category",
-    align:"center",
-    minWidth:150,
-    format:(value:number)=> commentActionDecoder(value)
+    align: "center",
+    minWidth: 150,
+    format: (value: number) => commentActionDecoder(value),
   },
   {
     id: "description",
     label: "Comment",
-    build:(description:string) =>{
-        const trustedHtml = DOMPurify.sanitize(description);       
-        return <Box component={"div"} dangerouslySetInnerHTML={{
-          __html:trustedHtml
-        }} sx={{
-          maxWidth:"200px",
-          textOverflow:"ellipsis",
-          textWrap:"nowrap"
-        }}></Box>
-    }
+    build: (description: string) => {
+      const trustedHtml = DOMPurify.sanitize(description);
+      return (
+        <Box
+          component={"div"}
+          dangerouslySetInnerHTML={{
+            __html: trustedHtml,
+          }}
+          sx={{
+            maxWidth: "200px",
+            textOverflow: "ellipsis",
+            textWrap: "nowrap",
+          }}
+        ></Box>
+      );
+    },
   },
 ];
 
@@ -529,13 +534,8 @@ interface ActionComponentProps<Row> {
   openViewModal?: (row: Row) => void;
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const {
-    row,
-    handleEdit,
-    openConfirmationModal,
-    openViewModal,
-  } = props;
-  
+  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
+
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (

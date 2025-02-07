@@ -69,9 +69,17 @@ input:-webkit-autofill {
   }
 }
 
-.info {
-  background-color: #cfd8ff !important;
-  color: #2b46a5;
+.vacancy_deselect {
+  background-color: #e6d9f5 !important;
+  color: #9a56d3 !important;
+  padding: 0.8rem !important;
+  font-size: 12px !important;
+}
+.vacancyselect {
+  background-color: #9a56d3 !important;
+  color: White !important;
+  padding: 0.8rem !important;
+  font-size: 14px !important;
 }
 .success {
   background-color: #c8f2cc;
@@ -109,6 +117,7 @@ canvas {
 //banner
 
 .banner-wave {
+  margin-top: -1px;
   .single_banner {
     padding: 30px 0px 5px;
     background-repeat: no-repeat;
@@ -121,11 +130,6 @@ canvas {
   }
 }
 
-.footer-container {
-  background-color: #35126c;
-  color: white;
-}
-
 .flex_equal > * {
   flex-grow: 1;
 }
@@ -134,96 +138,16 @@ canvas {
 
 .footer {
   position: relative;
-  // position: absolute;
   bottom: 0;
-  // width: 100%;
-  .footer_top {
-    background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
-    padding: 70px 20px;
+  background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
+}
 
-    &:after {
-      top: 0;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      position: absolute;
-      content: "";
-      background-size: cover;
-      // background-image: url(D:\codeji-website\public\media\images\home\footer_botm.png);
-      z-index: -1;
-    }
-    .footer-widget {
-      * {
-        color: #fff;
-      }
-      // h5 {
-      //   color: #ffff;
-      //   font-weight: 700;
-      //   font-size: 30px;
-      //   margin-bottom: 40px;
-      // }
-
-      .footer-list {
-        list-style-type: none;
-        padding-left: 0px;
-        li {
-          line-height: 30px;
-          a {
-            text-decoration: none;
-            color: #fff !important;
-          }
-        }
-        &.list-align {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 15px;
-          color: #fff;
-          svg {
-            fill: #fff;
-            font-size: 30px;
-            &:hover {
-              fill: #ccc;
-              transition: 600ms;
-            }
-          }
-        }
-        &.arrow-icon li {
-          :before {
-            content: ">";
-          }
-        }
-      }
-      .contact-list {
-        li {
-          padding: 0px;
-          margin: 0px;
-          div {
-            min-width: 35px;
-          }
-        }
-      }
-      .divider {
-        position: relative;
-        ::after {
-          position: absolute;
-          content: "";
-          width: 44px;
-          height: 4px;
-          bottom: -5px;
-          left: 0;
-          background-color: #ff914d;
-          border-radius: 50px;
-        }
-      }
-    }
-  }
-
-  .footer_bottom {
-    text-align: center;
-    padding: 15px 20px;
-    background-color: #35126c;
-    p {
-      color: #fff;
-    }
-  }
+.linear-text-gradient {
+  background: linear-gradient(180deg, #35126c, #ba9eda);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  padding-bottom: 20px;
+  font-weight: 500 !important;
 }

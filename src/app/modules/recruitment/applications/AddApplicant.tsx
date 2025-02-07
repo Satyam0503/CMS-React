@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
-import {  CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
@@ -22,7 +22,7 @@ import { addApplicant, getAllJobVacancies, uploadResume } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
-import {  ApplicantStatus, ApplicationStatus,  } from "../../../../utils/enums";
+import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -35,8 +35,8 @@ const initialValues: ApplicantModel = {
   resume: null,
   vacancyId: "",
   vacancyName: "",
-  status:ApplicantStatus.New,
-  activityType:ApplicationStatus.Rejected,
+  status: ApplicantStatus.New,
+  activityType: ApplicationStatus.Rejected,
 };
 interface PropsTypes {
   open: boolean;
@@ -77,7 +77,7 @@ export const AddApplicant: FC<PropsTypes> = ({
   const handleAddApplicant = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) => {   
+  ) => {
     const formData = new FormData();
     formData.append("File", values.resume as File);
     const vacancy = vacancyList.find(
@@ -87,6 +87,8 @@ export const AddApplicant: FC<PropsTypes> = ({
       ...values,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
+      status: ApplicantStatus.New,
+      activityType: ApplicationStatus.InProgress,
     };
     try {
       const { data } = await addApplicant(payload);

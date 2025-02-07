@@ -63,7 +63,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
           file={pdfUrl}
           onLoadSuccess={handleDocumentLoadSuccess}
           loading={<ResumeLoader />}
-          error={<ResumeError/>}
+          error={<ResumeError />}
         >
           <Page pageNumber={currentPage} className="pdf_viewer" />
         </Document>
@@ -101,4 +101,3 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
     </Stack>
   );
 };
-

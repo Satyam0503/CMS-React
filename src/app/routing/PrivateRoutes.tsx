@@ -21,6 +21,7 @@ const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
   const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
   const Setting = lazy(() => import("../pages/admin/Settings"));
+
   const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
   const EmployeePage = lazy(
     () => import("../pages/employees/EmployeesRoute.tsx")
@@ -81,6 +82,14 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+        {/* <Route
+          path="career/*"
+          element={
+            <SuspensedView>
+              <Career />
+            </SuspensedView>
+          }
+        /> */}
         <Route
           path="crafted/pages/profile/*"
           element={
