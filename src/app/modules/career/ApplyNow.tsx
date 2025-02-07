@@ -28,6 +28,7 @@ import { CircularLoader } from "../components/CircularLoader";
 import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
 import { applyNow } from "./services";
 import { toast } from "react-toastify";
+import NoVacancy from "./NoVacancy";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -141,7 +142,6 @@ export default function ApplyNow() {
     return <CircularLoader />;
   }
 
-
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
@@ -149,7 +149,6 @@ export default function ApplyNow() {
           <SingleBanner title="Apply " titleorange={"Now"} />
           <Typography variant="h5">We are hiring</Typography>
         </Grid>
-
         <Container>
           {error || activeJobPositionsList.length === 0 ? (
             <Grid
@@ -465,7 +464,6 @@ export default function ApplyNow() {
             </Grid>
           )}
         </Container>
-
         <Grid item xs={12} width={"100%"}>
           <Footer />
         </Grid>
@@ -473,3 +471,24 @@ export default function ApplyNow() {
     </>
   );
 }
+
+//   if (activeJobPositionsList.length === 0) {
+//   }
+
+//   return (
+//     <>
+//       <Grid container display={"flex"} justifyContent={"space-between"}>
+//         <Grid item xs={12} textAlign={"center"}>
+//           <SingleBanner title="Apply " titleorange={"Now"} />
+//           <Typography variant="h5">We are hiring</Typography>
+//         </Grid>
+
+//         <Container></Container>
+
+//         <Grid item xs={12} width={"100%"}>
+//           <Footer />
+//         </Grid>
+//       </Grid>
+//     </>
+//   );
+// }

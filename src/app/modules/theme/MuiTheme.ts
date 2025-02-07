@@ -558,7 +558,18 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiInputBase: {},
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          transition: "all .2s",
+          borderColor: colors.alpha.neutral[500],
+
+          "&:hover, &.Mui-selected, &.Mui-selected:hover": {
+            color: colors.alpha.neutral[500],
+          },
+        },
+      },
+    },
     MuiToggleButton: {
       defaultProps: {
         disableRipple: true,
@@ -713,6 +724,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiList: {
       styleOverrides: {
         root: {
@@ -808,6 +820,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         paper: {
           padding: 0,
+          maxHeight: "200px",
         },
         list: {
           padding: 12,

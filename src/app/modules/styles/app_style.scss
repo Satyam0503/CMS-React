@@ -134,90 +134,30 @@ canvas {
 
 .footer {
   position: relative;
-  // position: absolute;
   bottom: 0;
-  // width: 100%;
-  .footer_top {
-    background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
-    padding: 70px 20px;
+  background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
 
-    &:after {
-      top: 0;
-      width: 100%;
-      height: 100%;
-      left: 0;
+  .divider {
+    position: relative;
+    ::after {
       position: absolute;
       content: "";
-      background-size: cover;
-      // background-image: url(D:\codeji-website\public\media\images\home\footer_botm.png);
-      z-index: -1;
-    }
-    .footer-widget {
-      * {
-        color: #fff;
-      }
-
-      .footer-list {
-        list-style-type: none;
-        padding-left: 0px;
-        li {
-          line-height: 30px;
-          a {
-            text-decoration: none;
-            color: #fff !important;
-          }
-        }
-        &.list-align {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 15px;
-          color: #fff;
-          svg {
-            fill: #fff;
-            font-size: 30px;
-            &:hover {
-              fill: #ccc;
-              transition: 600ms;
-            }
-          }
-        }
-        &.arrow-icon li {
-          :before {
-            content: ">";
-          }
-        }
-      }
-      .contact-list {
-        li {
-          padding: 0px;
-          margin: 0px;
-          div {
-            min-width: 35px;
-          }
-        }
-      }
-      .divider {
-        position: relative;
-        ::after {
-          position: absolute;
-          content: "";
-          width: 44px;
-          height: 4px;
-          bottom: -5px;
-          left: 0;
-          background-color: #ff914d;
-          border-radius: 50px;
-        }
-      }
+      width: 44px;
+      height: 4px;
+      bottom: -5px;
+      left: 0;
+      background-color: #ff914d;
+      border-radius: 50px;
     }
   }
+}
 
-  .footer_bottom {
-    text-align: center;
-    padding: 15px 20px;
-    background-color: #35126c;
-    p {
-      color: #fff;
-    }
-  }
+.linear-text-gradient {
+  background: linear-gradient(180deg, #35126c, #ba9eda);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  padding-bottom: 20px;
+  font-weight: 500 !important;
 }

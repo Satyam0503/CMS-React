@@ -46,7 +46,19 @@ export const EditPermission = () => {
         </Typography>{" "}
       </Stack>
       <Stack spacing={1}>
-        <TextField variant="standard" label="Role Name" fullWidth />
+        <TextField
+          variant="standard"
+          label="Role Name"
+          fullWidth
+          sx={{
+            "& .MuiInput-underline:before": {
+              borderBottomColor: "gray", // default border color
+            },
+            "& .MuiInput-underline:focus": {
+              borderBottomColor: colors.alpha.primary, // change border color on focus
+            },
+          }}
+        />
         <TextField variant="standard" label="Description" fullWidth />
       </Stack>
 

@@ -422,7 +422,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "Action",
     minWidth: 180,
     build: (row: RolesType) => (
-      <Link to={"/setting/editpermission"} state={{ ...row }}>
+      <Link to={"/admin/editpermission"} state={{ ...row }}>
         <Button variant="contained">Edit Permission</Button>
       </Link>
     ),

@@ -3,8 +3,8 @@ import Wave from "react-wavify";
 import { colors } from "../theme/MuiTheme";
 
 type Props = {
-  title: string;
-  titleorange: string;
+  title?: string;
+  titleorange?: string;
   path?: string;
 };
 
@@ -12,14 +12,27 @@ export function SingleBanner({ title, titleorange, path }: Props) {
   return (
     <>
       <Stack className="banner-wave">
-        <Stack className="single_banner">
+        <Stack
+          className="single_banner"
+          direction={"row"}
+          justifyContent={"center"}
+          gap={1}
+        >
           <Typography
             variant="h2"
             color={colors.alpha.white[500]}
             mb={2}
             mt={6}
           >
-            Apply Now
+            Apply
+          </Typography>
+          <Typography
+            variant="h2"
+            color={colors.alpha.secondary[500]}
+            mb={2}
+            mt={6}
+          >
+            Now
           </Typography>
         </Stack>
         <Wave
