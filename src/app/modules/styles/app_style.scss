@@ -136,20 +136,6 @@ canvas {
   position: relative;
   bottom: 0;
   background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
-
-  .divider {
-    position: relative;
-    ::after {
-      position: absolute;
-      content: "";
-      width: 44px;
-      height: 4px;
-      bottom: -5px;
-      left: 0;
-      background-color: #ff914d;
-      border-radius: 50px;
-    }
-  }
 }
 
 .linear-text-gradient {
