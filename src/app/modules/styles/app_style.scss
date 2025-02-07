@@ -69,9 +69,18 @@ input:-webkit-autofill {
   }
 }
 
-.info {
-  background-color: #cfd8ff !important;
-  color: #2b46a5;
+.vacancy_deselect {
+  background-color: #e6d9f5 !important;
+  color: #9a56d3 !important;
+  border: 0 0 4px 4px solid red !important;
+  padding: 1rem !important;
+  border-radius: 0 !important;
+}
+.vacancyselect {
+  background-color: #9a56d3 !important;
+  color: White !important;
+  padding: 1rem !important;
+  border-radius: 0 !important;
 }
 .success {
   background-color: #c8f2cc;
@@ -109,6 +118,7 @@ canvas {
 //banner
 
 .banner-wave {
+  margin-top: -1px;
   .single_banner {
     padding: 30px 0px 5px;
     background-repeat: no-repeat;
@@ -119,11 +129,6 @@ canvas {
     transform: rotate(180deg);
     margin-top: -8px;
   }
-}
-
-.footer-container {
-  background-color: #35126c;
-  color: white;
 }
 
 .flex_equal > * {

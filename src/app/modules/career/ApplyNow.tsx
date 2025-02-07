@@ -8,6 +8,7 @@ import {
   FormHelperText,
   Select,
   FormLabel,
+  Card,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
@@ -29,6 +30,8 @@ import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
 import { applyNow } from "./services";
 import { toast } from "react-toastify";
 import NoVacancy from "./NoVacancy";
+import ApplyNowHeader from "./ApplyNowHeader";
+// import ApplyNowHeader from "./ApplyNowHeader";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -146,6 +149,7 @@ export default function ApplyNow() {
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
         <Grid item xs={12} textAlign={"center"}>
+          <ApplyNowHeader />
           <SingleBanner title="Apply " titleorange={"Now"} />
           <Typography variant="h3" className="linear-text-gradient">
             We are hiring
@@ -164,7 +168,7 @@ export default function ApplyNow() {
             margin={"auto"}
             sx={{
               boxShadow: "4px 5px 28px -6px #b4a7c9",
-              marginBottom: "20px",
+              marginBottom: "1.25rem",
             }}
           >
             {error || activeJobPositionsList.length === 0 ? (
@@ -180,7 +184,11 @@ export default function ApplyNow() {
                     >
                       {intl.formatMessage({ id: "VACANCY.TEXT4" })}
                     </Typography>
-                    <Typography variant="h5">
+                    <Typography
+                      variant="h4"
+                      fontWeight={600}
+                      color={colors.alpha.primary[500]}
+                    >
                       {intl.formatMessage({ id: "VACANCY.TEXT5" })}
                     </Typography>
                   </Stack>
@@ -190,22 +198,21 @@ export default function ApplyNow() {
                       direction={"row"}
                       display={"flex"}
                       flexWrap={"wrap"}
-                      gap={2}
+                      gap={0}
                     >
                       {activeJobPositionsList.length > 0 ? (
                         activeJobPositionsList.map((jobPosition) => (
                           <CustomisedButton
                             key={jobPosition.jobId}
-                            variant="outlined"
+                            variant="contained"
                             label={jobPosition.title}
                             handleClick={() =>
                               setSelectedJobPosition(jobPosition)
                             }
-                            // style={}
                             className={
                               selectedJobPosition?.jobId === jobPosition.jobId
-                                ? "info"
-                                : ""
+                                ? "vacancyselect"
+                                : "vacancy_deselect"
                             }
                           />
                         ))
@@ -450,24 +457,3 @@ export default function ApplyNow() {
     </>
   );
 }
-
-//   if (activeJobPositionsList.length === 0) {
-//   }
-
-//   return (
-//     <>
-//       <Grid container display={"flex"} justifyContent={"space-between"}>
-//         <Grid item xs={12} textAlign={"center"}>
-//           <SingleBanner title="Apply " titleorange={"Now"} />
-//           <Typography variant="h5">We are hiring</Typography>
-//         </Grid>
-
-//         <Container></Container>
-
-//         <Grid item xs={12} width={"100%"}>
-//           <Footer />
-//         </Grid>
-//       </Grid>
-//     </>
-//   );
-// }

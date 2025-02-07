@@ -475,6 +475,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiButton: {
       defaultProps: {
         disableRipple: true,
@@ -484,16 +485,18 @@ export const MuiTheme = createTheme({
           fontWeight: "bold",
           textTransform: "none",
           paddingInline: 16,
-          background: themeColors.white,
+          background: colors.alpha.white[500],
           color: colors.alpha.neutral[800],
           border: " 1px solid " + colors.alpha.neutral[200],
           "&:hover, &.MuiSelected": {
-            backgroundColor: colors.alpha.primary[700],
-            color: themeColors.white,
+            backgroundColor: colors.alpha.neutral[100],
+            color: colors.alpha.neutral[800],
+            border: "1px solid " + colors.alpha.neutral[200],
           },
+
           "&.Mui-disabled": {
             backgroundColor: colors.alpha.primary[400],
-            color: themeColors.white,
+            color: colors.alpha.white[500],
           },
           ".MuiSvgIcon-root": {
             transition: "all .2s",
@@ -505,10 +508,15 @@ export const MuiTheme = createTheme({
 
         contained: {
           backgroundColor: colors.alpha.primary[500],
-          color: themeColors.white,
+          color: colors.alpha.white[500],
+          "&:hover, &.MuiSelected": {
+            backgroundColor: colors.alpha.neutral[100],
+            color: colors.alpha.neutral[800],
+            border: "1px solid " + colors.alpha.neutral[200],
+          },
         },
         outlined: {
-          backgroundColor: themeColors.white,
+          backgroundColor: colors.alpha.white[500],
           border: " 1px solid " + colors.alpha.neutral[200],
 
           "&:hover, &.MuiSelected": {
@@ -518,12 +526,12 @@ export const MuiTheme = createTheme({
           },
         },
         text: {
-          backgroundColor: themeColors.white,
+          backgroundColor: colors.alpha.white[500],
           border: "none",
         },
         sizeSmall: {
           padding: "6px 16px",
-          background: themeColors.white,
+          background: colors.alpha.white[500],
           lineHeight: 1.5,
         },
         sizeMedium: {
@@ -618,6 +626,7 @@ export const MuiTheme = createTheme({
         root: {
           minWidth: "20px ",
           padding: "0px",
+          color: colors.alpha.secondary[500],
         },
       },
     },
