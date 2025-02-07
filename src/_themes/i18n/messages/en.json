@@ -65,6 +65,7 @@
   "FORM.TYPE": "Type",
 
   "FILE.UPLOAD_INSTRUCTION": "Note : Please select .jpg/.png/.webp images upto 2 MB",
+  "RESUME.UPLOAD_INSTRUCTION": "Note : Please select .pdf file upto 5 MB",
   "FILE.SELECTED": " Selected file",
   "HEADING.LOGO": "Logo",
   "JOB.TITLE": "Title",

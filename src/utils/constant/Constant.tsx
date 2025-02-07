@@ -19,6 +19,8 @@ import {
   statusDecoder,
   getApplicationStatusClass,
   commentActionDecoder,
+  applicantStatusDecoder,
+  getApplicantStatusClass,
 } from "../common";
 import CustomisedButton from "../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
@@ -59,7 +61,7 @@ export const ServiceUrl = {
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
-  GET_ALL_JOBS: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+  GET_ALL_VACANCIES: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
@@ -70,6 +72,8 @@ export const ServiceUrl = {
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
   GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
+
+  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -332,7 +336,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "firstName",
-    label: "Name",
+    label: "First Name",
+    minWidth: 30,
+  },
+  {
+    id: "lastName",
+    label: "Last Name",
     minWidth: 30,
   },
   {
@@ -360,11 +369,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
-    id: "activityType",
+    id: "status",
     label: "Status",
     build: (status: number) => {
-      const values = applicationStatusDecoder(status);
-      const className = getApplicationStatusClass(status);
+      const values = applicantStatusDecoder(status);
+      const className = getApplicantStatusClass(status);
       return <StyleStatus label={values} className={className} />;
     },
   },
@@ -374,13 +383,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
-      openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
-        // openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
@@ -502,6 +509,11 @@ export const CommentTableColumnList: ColumnListTypes[] = [
           component={"div"}
           dangerouslySetInnerHTML={{
             __html: trustedHtml,
+          }}
+          sx={{
+            maxWidth: "200px",
+            textOverflow: "ellipsis",
+            textWrap: "nowrap",
           }}
         ></Box>
       );

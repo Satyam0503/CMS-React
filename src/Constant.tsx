@@ -20,61 +20,9 @@ import { useState } from "react";
 import { EmployeeModel } from "./utils/common_types";
 import { CustomIconButton } from "./app/modules/components/CustomIconButton";
 
-export const BaseUrl =
-  import.meta.env.VITE_BASEURL || "http://localhost:3000/api";
 
-export const ServiceUrl = {
-  ADD_UPDATE_EMPLOYEE: `${BaseUrl}/employees/addEmployeeDetails`,
-  GET_ALL_ROLES: `${BaseUrl}/users/getAllRole`,
-  GET_ALL_EMPLOYEE: `${BaseUrl}/employees/getAllEmployees`,
-};
 
-export const Gender = [
-  {
-    id: 1,
-    label: "Male",
-    value: "male",
-  },
-  {
-    id: 2,
-    label: "Female",
-    value: "female",
-  },
-  {
-    id: 3,
-    label: "Other",
-    value: "other",
-  },
-];
 
-export const EducationType = [
-  {
-    id: 1,
-    label: "Graduation",
-    value: "Graduation",
-  },
-  {
-    id: 2,
-    label: "Post Graduation",
-    value: "Post Graduation",
-  },
-  {
-    id: 3,
-    label: "Diploma",
-    value: "Diploma",
-  },
-];
-
-export const bloodGroups = [
-  { id: 1, label: "A+", value: "A+" },
-  { id: 2, label: "A-", value: "A-" },
-  { id: 3, label: "B+", value: "B+" },
-  { id: 4, label: "B-", value: "B-" },
-  { id: 5, label: "AB+", value: "AB+" },
-  { id: 6, label: "AB-", value: "AB-" },
-  { id: 7, label: "O+", value: "O+" },
-  { id: 8, label: "O-", value: "O-" },
-];
 
 enum cellContentAlignment {
   LEFT = "left",
@@ -83,55 +31,7 @@ enum cellContentAlignment {
   JUSTIFY = "justify",
 }
 
-export const EmployeeTabTableColumnList = [
-  {
-    id: "serialNo",
-    label: "#",
-    minWidth: 30,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "name",
-    label: "Name",
-    minWidth: 180,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "email",
-    label: "Email",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "phoneNumber",
-    label: "Phone Number",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "department",
-    label: "Department",
-    minWidth: 140,
-    align: cellContentAlignment.LEFT,
-  },
-  {
-    id: "address",
-    label: "Address",
-    minWidth: 140,
-    align: "left",
-    build: (address: string) => <AddressDetailsIcon address={address} />,
-  },
-  {
-    id: "action",
-    label: "Address",
-    minWidth: 140,
-    align: "left",
-    build: (
-      row: EmployeeModel,
-      handleEmployeeEdit: (row: EmployeeModel) => void
-    ) => <ActionComponent row={row} handleEdit={handleEmployeeEdit} />,
-  },
-];
+
 export const EmployeeLeaves = [
   {
     id: "serialNo",
@@ -276,33 +176,5 @@ const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       <CustomIconButton icon={<DeleteOutlineOutlined />} />
       <CustomIconButton icon={<Visibility />} />
     </Stack>
-  );
-};
-
-const AddressDetailsIcon = (props: { address: string }) => {
-  const [open, setOpen] = useState(false);
-  function handleClose() {
-    setOpen(false);
-  }
-  return (
-    <>
-      <CustomIconButton icon={<Place />} handleClick={() => setOpen(true)} />
-
-      <Dialog
-        onClose={handleClose}
-        open={open}
-        aria-modal
-        maxWidth={"sm"}
-        sx={{ "& .MuiDialog-paper": { minWidth: 250 } }}
-      >
-        <DialogTitle>Address</DialogTitle>
-        <DialogContent>
-          <Typography>{props.address}</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </>
   );
 };

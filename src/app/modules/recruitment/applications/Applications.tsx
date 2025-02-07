@@ -40,10 +40,10 @@ export default function Applications() {
     }
   };
 
-  const openConfirmationModal = (applicant: Applicant) => {
-    setConfirmModalOpen(true);
-    setSelectedApplicant(applicant);
-  };
+  // const openConfirmationModal = (applicant:Applicant) => {
+  //   setConfirmModalOpen(true);
+  //   setSelectedApplicant(applicant);
+  // };
 
   const handleOpenPreview = (applicant: Applicant) => {
     setViewApplicant(true);
@@ -113,7 +113,7 @@ export default function Applications() {
             page={page}
             rowsPerPage={rowPerPage}
             handleEdit={handleApplicantEdit}
-            openConfirmationModal={openConfirmationModal}
+            // openConfirmationModal={openConfirmationModal}
             openViewModal={handleOpenPreview}
             loading={loading}
           />

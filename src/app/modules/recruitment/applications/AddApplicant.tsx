@@ -35,6 +35,8 @@ const initialValues: ApplicantModel = {
   resume: null,
   vacancyId: "",
   vacancyName: "",
+  status:ApplicantStatus.New,
+  activityType:ApplicationStatus.Rejected,
 };
 interface PropsTypes {
   open: boolean;
@@ -75,24 +77,16 @@ export const AddApplicant: FC<PropsTypes> = ({
   const handleAddApplicant = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) => {
+  ) => {   
     const formData = new FormData();
     formData.append("File", values.resume as File);
     const vacancy = vacancyList.find(
       (vacancy) => vacancy.jobId === values.vacancyId
     );
     const payload = {
-      applicantId: values.applicantId,
+      ...values,
       companyId: companyId,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phone: values.phone,
-      vacancyId: values.vacancyId,
-      experience: values.experience,
       vacancyName: vacancy ? vacancy.title : "",
-      status:ApplicantStatus.New,
-      activityType: ApplicationStatus.InProgress,
     };
     try {
       const { data } = await addApplicant(payload);
@@ -242,7 +236,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                                 <input
                                   name="resume"
                                   type="file"
-                                  accept=".pdf,.doc"
+                                  accept=".pdf"
                                   onChange={(e) => {
                                     handleFileChange(e, formik.setFieldValue);
                                   }}
@@ -259,7 +253,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                               <Grid item xs={6}>
                                 <Typography variant="body2" flexWrap={"wrap"}>
                                   {intl.formatMessage({
-                                    id: "FILE.UPLOAD_INSTRUCTION",
+                                    id: "RESUME.UPLOAD_INSTRUCTION",
                                   })}
                                 </Typography>
                               </Grid>

@@ -24,7 +24,7 @@ axios.interceptors.response.use(
   (error) => {
     if (error.status === 401) {
       console.error("Token expired. Redirecting to login page");
-      toast.error("Invalid Token");
+      // toast.error("Invalid Token");
       // window.location.href = "/auth";
     }
   }
