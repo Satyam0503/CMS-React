@@ -8,7 +8,7 @@ export default function NoVacancy() {
   return (
     <>
       <Grid container display={"flex"} justifyContent={"center"} gap={1}>
-        <Typography>
+        <Typography variant="h6">
           {intl.formatMessage({
             id: "VACANCY.TEXT1",
           })}
@@ -18,12 +18,12 @@ export default function NoVacancy() {
           src={toAbsoluteUrl("media/auth/workInProcess.jpg")}
           width={"100%"}
         />
-        <Typography variant="body1">
+        <Typography variant="h6">
           {intl.formatMessage({
             id: "VACANCY.TEXT2",
           })}
         </Typography>
-        <Typography variant="body1">
+        <Typography variant="h6">
           {intl.formatMessage({
             id: "VACANCY.TEXT3",
           })}
