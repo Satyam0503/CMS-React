@@ -47,7 +47,6 @@ const initialValues: ApplicantModel = {
 export default function ApplyNow() {
   const intl = useIntl();
   const companyId = "fb19ab09-0399-49a4-9e59-5239edd6be3b";
-  const [jobPositionsList, setJobPositionsList] = useState<JobModal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -118,6 +117,7 @@ export default function ApplyNow() {
         }
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
+          setError(true);
           throw new Error(message);
         }
         setActiveJobPositionsList(
@@ -141,11 +141,6 @@ export default function ApplyNow() {
     return <CircularLoader />;
   }
 
-  if (activeJobPositionsList.length === 0) {
-    return <Typography>Currently We are not hiring for any role.</Typography>;
-  }
-
-  console.log(selectedJobPosition);
 
   return (
     <>
@@ -156,7 +151,7 @@ export default function ApplyNow() {
         </Grid>
 
         <Container>
-          {error ? (
+          {error || activeJobPositionsList.length === 0 ? (
             <Grid
               item
               xs={12}
@@ -243,7 +238,11 @@ export default function ApplyNow() {
                             setSelectedJobPosition(jobPosition)
                           }
                           // style={}
-                          className={selectedJobPosition?.jobId=== jobPosition.jobId ?"info":""}
+                          className={
+                            selectedJobPosition?.jobId === jobPosition.jobId
+                              ? "info"
+                              : ""
+                          }
                         />
                       ))
                     ) : (
@@ -342,17 +341,23 @@ export default function ApplyNow() {
                       </Grid>
 
                       <Grid item xs={12} md={6}>
-                        <FormLabel sx={{mb:.5}}>{intl.formatMessage({ id: "JOB.POSITION" })}</FormLabel>
+                        <FormLabel sx={{ mb: 0.5 }}>
+                          {intl.formatMessage({ id: "JOB.POSITION" })}
+                        </FormLabel>
                         <Select
                           fullWidth
                           {...formik.getFieldProps("vacancyId")}
                           value={selectedJobPosition?.jobId}
-                          onChange={(event)=>{
-                            setFieldValue("vacancyId",event.target.value);
-                            setSelectedJobPosition(activeJobPositionsList.find(job=>job.jobId === event.target.value))
+                          onChange={(event) => {
+                            setFieldValue("vacancyId", event.target.value);
+                            setSelectedJobPosition(
+                              activeJobPositionsList.find(
+                                (job) => job.jobId === event.target.value
+                              )
+                            );
                           }}
-                          onBlur={(event)=>{
-                            setFieldTouched("vacancyId",true);
+                          onBlur={(event) => {
+                            setFieldTouched("vacancyId", true);
                           }}
                         >
                           {activeJobPositionsList.map((jobPosition) => (
