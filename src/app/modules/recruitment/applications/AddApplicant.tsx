@@ -238,11 +238,12 @@ export const AddApplicant: FC<PropsTypes> = ({
                                   type="file"
                                   accept=".pdf"
                                   onChange={(e) => {
+                                    formik.setFieldTouched("resume", true);
                                     handleFileChange(e, formik.setFieldValue);
                                   }}
-                                  onBlur={(e) => {
-                                    formik.setFieldTouched("resume", true);
-                                  }}
+                                  // onBlur={(e) => {
+                                  //   formik.setFieldTouched("resume", true);
+                                  // }}
                                   hidden
                                 />
                                 <Typography variant="body1" flexWrap={"wrap"}>

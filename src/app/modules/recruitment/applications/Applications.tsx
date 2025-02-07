@@ -23,7 +23,6 @@ export default function Applications() {
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | undefined>();
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isAddModalOpen,setAddModalOpen]= useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh,setRefresh]= useState(false);
@@ -32,7 +31,7 @@ export default function Applications() {
 
   const handleApplicantEdit = (applicant: Applicant) => {
     if(applicant){
-      navigate("/recruitment/editapplicant",{state: {applicantId:applicant.applicantId}});  
+      navigate(`/recruitment/editapplicant/${applicant.applicantId}`);  
     }
   };
   

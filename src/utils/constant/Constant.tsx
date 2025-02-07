@@ -35,6 +35,8 @@ import DOMPurify from "dompurify";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
+export  const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+
 export const ServiceUrl = {
   // account
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
@@ -75,6 +77,8 @@ export const ServiceUrl = {
   GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
 
   APPLY_JOB : `${BaseUrl}/api/applicant/applyJob`,
+
+  VERIFY_CAPTCHA :`${BaseUrl}/api/User/verifyCaptch`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -486,7 +490,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "userName",
-    label: "User Name",
+    label: "Action By",
     minWidth:150,
   },
   {

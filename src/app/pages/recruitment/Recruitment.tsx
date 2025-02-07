@@ -10,7 +10,8 @@ const Recruitment = () => {
         <Route index element={<Navigate to={"/recruitment/jobs"} />} />
         <Route path="jobs" element={<JobsWrapper />} />
         <Route path="applications" element={<ApplicationsWrapper />} />
-        <Route path="editapplicant" element={<ApplicantDetails/>}/>
+        <Route path="editapplicant/:applicantid" element={<ApplicantDetails/>}/>
+        <Route path="*" element={<Navigate to={"/error"}/>}/>
       </Route>
     </Routes>
   );

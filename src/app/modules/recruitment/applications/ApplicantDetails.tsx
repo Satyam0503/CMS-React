@@ -10,7 +10,7 @@ import {
 import { useIntl } from "react-intl";
 import { Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   addComment,
@@ -55,7 +55,6 @@ const ApplicantStatusMapper: {
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const state = useLocation().state as StateType;
   const userData = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
@@ -64,8 +63,7 @@ export const ApplicantDetails = () => {
   const [activityType, setActivityType] = useState<number>(0);
   const [refresh, setRefresh] = useState(false);
   const [comment, setComment] = useState("");
-
-  const applicantId = state.applicantId;
+  const param = useParams();
 
   useEffect(() => {
     setLoading(true);
@@ -80,11 +78,11 @@ export const ApplicantDetails = () => {
         })
         .catch((error) => {
           console.error(error);
-          navigate("/error");
+          navigate("/error", { replace: true });
         })
         .finally(() => setLoading(false));
     }, 1500);
-  }, [refresh, applicantId]);
+  }, [refresh]);
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
@@ -102,9 +100,11 @@ export const ApplicantDetails = () => {
     return () => clearTimeout(timeoutId);
   }, [refresh]);
 
-  if (!applicantId) {
+  if (Object.keys(param).length === 0 || !param.applicantid) {
     navigate("/error", { replace: true });
   }
+
+  const applicantId = param.applicantid!;
 
   if (loading) {
     return <CircularLoader />;
@@ -177,7 +177,7 @@ export const ApplicantDetails = () => {
       const urlObj = window.URL.createObjectURL(fileObj);
       const link = document.createElement("a");
       link.href = urlObj;
-      // link.setAttribute("download",`${applicant.firstName}_Resume.pdf`);
+      link.setAttribute("download",`${applicant.firstName}_Resume.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -185,7 +185,7 @@ export const ApplicantDetails = () => {
       console.error(error);
     }
   };
-
+  
   return (
     <>
       <Stack spacing={2}>
