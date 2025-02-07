@@ -61,6 +61,7 @@ export default function Footer() {
               </Typography>
             </Stack>
           </Grid>
+
           <Grid
             item
             xs={12}
@@ -80,15 +81,6 @@ export default function Footer() {
               width={"25%"}
             />
 
-            {/* <ul className="footer-list">
-                  {menuData.map((menuList, index) => {
-                    return (
-                      <li key={index}>
-                        <a href={menuList.url}>{menuList.title}</a>
-                      </li>
-                    );
-                  })}
-                </ul> */}
             <Stack gap={1}>
               <Link href="https://codeji.in/" color={colors.alpha.white[500]}>
                 <Typography>Home</Typography>
@@ -124,7 +116,7 @@ export default function Footer() {
           <Grid
             item
             xs={12}
-            md={3.5}
+            md={2.5}
             display={"flex"}
             direction={"column"}
             gap={1}
@@ -139,7 +131,7 @@ export default function Footer() {
               height={"5px"}
               width={"25%"}
             />
-            <Stack>
+            <Stack textAlign={"justify"}>
               <List sx={{ p: 0 }}>
                 <ListItem sx={{ p: 0, gap: 1 }}>
                   <ListItemIcon>

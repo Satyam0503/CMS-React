@@ -198,7 +198,7 @@ export default function ApplyNow() {
                       direction={"row"}
                       display={"flex"}
                       flexWrap={"wrap"}
-                      gap={0}
+                      gap={0.5}
                     >
                       {activeJobPositionsList.length > 0 ? (
                         activeJobPositionsList.map((jobPosition) => (

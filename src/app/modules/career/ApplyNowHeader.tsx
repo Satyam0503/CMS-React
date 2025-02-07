@@ -25,6 +25,7 @@ export default function ApplyNowHeader() {
       flexDirection={{ xs: "column", sm: "row" }}
       justifyContent={"space-between"}
       px={5}
+      pt={{ xs: 2, md: 1 }}
     >
       <Stack>
         <Link href="https://codeji.in/" style={{ marginTop: "1rem" }}>
@@ -35,11 +36,11 @@ export default function ApplyNowHeader() {
           />
         </Link>
       </Stack>
-      <Stack>
+      <Stack display={{ xs: "none", sm: "block" }}>
         <List
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
+            flexDirection: "row",
             gap: 2,
           }}
         >
