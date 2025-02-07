@@ -9,8 +9,7 @@ import {
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
-import { CustomIconButton } from "../../components/CustomIconButton";
-import { Add, CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
@@ -23,6 +22,7 @@ import { addApplicant, getAllJobVacancies, uploadResume } from "../services";
 import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
+import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -35,6 +35,8 @@ const initialValues: ApplicantModel = {
   resume: null,
   vacancyId: "",
   vacancyName: "",
+  status: ApplicantStatus.New,
+  activityType: ApplicationStatus.Rejected,
 };
 interface PropsTypes {
   open: boolean;
@@ -82,15 +84,11 @@ export const AddApplicant: FC<PropsTypes> = ({
       (vacancy) => vacancy.jobId === values.vacancyId
     );
     const payload = {
-      applicantId: values.applicantId,
+      ...values,
       companyId: companyId,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phone: values.phone,
-      vacancyId: values.vacancyId,
-      experience: values.experience,
       vacancyName: vacancy ? vacancy.title : "",
+      status: ApplicantStatus.New,
+      activityType: ApplicationStatus.InProgress,
     };
     try {
       const { data } = await addApplicant(payload);
@@ -110,16 +108,13 @@ export const AddApplicant: FC<PropsTypes> = ({
     } finally {
       setSubmitting(false);
     }
-
-    // formData.append("applicantData", JSON.parse(values));
-    // handle add applicant logic
   };
 
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
         const { data } = await getAllJobVacancies();
-        if (!data.success) {
+        if (!(data.success && data.statusCode === 200)) {
           throw new Error(data.message);
         }
         setVacancyList(data.methodResults);
@@ -194,7 +189,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                               key={experience.id}
                               value={experience.value}
                             >
-                              {experience.label}{" "}
+                              {experience.label}
                             </MenuItem>
                           ))}
                         </SelectInput>
@@ -243,7 +238,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                                 <input
                                   name="resume"
                                   type="file"
-                                  accept=".pdf,.doc"
+                                  accept=".pdf"
                                   onChange={(e) => {
                                     handleFileChange(e, formik.setFieldValue);
                                   }}
@@ -260,7 +255,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                               <Grid item xs={6}>
                                 <Typography variant="body2" flexWrap={"wrap"}>
                                   {intl.formatMessage({
-                                    id: "FILE.UPLOAD_INSTRUCTION",
+                                    id: "RESUME.UPLOAD_INSTRUCTION",
                                   })}
                                 </Typography>
                               </Grid>

@@ -314,14 +314,26 @@ export const MuiTheme = createTheme({
         },
         root: {
           padding: "0px ",
-          "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined": {
+          "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined,": {
             paddingRight: ".5rem",
+            borderColor: colors.alpha.primary[500],
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",
           },
-          "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline, ": {
-            borderColor: colors.alpha.primary[500],
+          // "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline, ": {
+          //   borderColor: colors.alpha.primary[500],
+          // },
+          "&.Mui-focused": {
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: colors.alpha.primary[500],
+            },
+          },
+
+          "&:hover:not(.Mui-focused)": {
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: colors.alpha.primary[500],
+            },
           },
         },
       },
@@ -546,7 +558,18 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiInputBase: {},
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          transition: "all .2s",
+          borderColor: colors.alpha.neutral[500],
+
+          "&:hover, &.Mui-selected, &.Mui-selected:hover": {
+            color: colors.alpha.neutral[500],
+          },
+        },
+      },
+    },
     MuiToggleButton: {
       defaultProps: {
         disableRipple: true,
@@ -701,6 +724,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiList: {
       styleOverrides: {
         root: {
@@ -795,7 +819,8 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          padding: 12,
+          padding: 0,
+          maxHeight: "200px",
         },
         list: {
           padding: 12,
@@ -803,17 +828,21 @@ export const MuiTheme = createTheme({
           "& .MuiMenuItem-root.MuiButtonBase-root": {
             fontSize: 14,
             marginTop: 1,
-            marginBottom: 1,
+            marginBottom: 2,
             transition: "all .2s",
-            color: colors.alpha.neutral[700],
+            color: colors.alpha.neutral[500],
 
             "& .MuiTouchRipple-root": {
               opacity: 0.2,
             },
 
-            "&:hover, &:active, &.active, &.Mui-selected": {
-              color: colors.alpha.neutral[100],
-              background: colors.alpha.primary[500],
+            ", &.Mui-selected": {
+              color: colors.alpha.neutral[500],
+              background: colors.alpha.neutral[100],
+            },
+            "&:hover, &:active, &.active": {
+              color: colors.alpha.primary[500],
+              background: colors.alpha.primary[100],
             },
           },
         },

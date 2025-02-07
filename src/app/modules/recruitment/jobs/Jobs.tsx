@@ -47,7 +47,7 @@ export default function Jobs() {
   const [isRefresh, setRefresh] = React.useState(false);
   const [isViewModalOpen, setViewModalOpen] = React.useState(false);
   const token = useAppSelector((state) => state.auth.token)!;
-
+ 
   const handleClose = () => {
     setEdit(false);
     setOpenModal(false);

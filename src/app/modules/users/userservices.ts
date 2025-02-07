@@ -22,24 +22,24 @@ export const getEmployeeById = async () => {
 };
 
 export const getEmployeeCertifications = async () => {
-  return postRequest<{}, CertificationResponseData>(
+  return getRequest<CertificationResponseData>(
     ServiceUrl.GET_EMPLOYEE_CERTIFICATIONS
   );
 };
 export const getEmployeeEducations = async () => {
-  return postRequest<{}, UserEducationResponseData>(
+  return getRequest<UserEducationResponseData>(
     ServiceUrl.GET_EMPLOYEE_EDUCATIONS
   );
 };
 
 export const getEmployeeSummary = async () => {
-  return postRequest<{}, UserSummaryResponseData>(
+  return getRequest<UserSummaryResponseData>(
     ServiceUrl.GET_EMPLOYEE_SUMMARY
   );
 };
 
 export const getEmployeeSkills = async () => {
-  return postRequest<{}, UserSummaryResponseData>(
+  return getRequest<UserSummaryResponseData>(
     ServiceUrl.GET_EMPLOYEE_SKILLS
   );
 };

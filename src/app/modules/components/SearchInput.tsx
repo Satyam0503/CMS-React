@@ -8,20 +8,19 @@ type PropsType = {
 };
 
 export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
-  const [internalSearch, setInternalSearch] = useState(search);
+  const [debouncedValue, setDebouncedValue] = useState(search);
 
-  const handleDebouncedSearch = useCallback(() => {  
-    setSearch(internalSearch);
-  }, [internalSearch, setSearch]);
+  const handleDebouncedSearch = useCallback(() => {
+    setSearch(debouncedValue);
+  }, [debouncedValue, setSearch]);
 
-  
   useEffect(() => {
     const timeoutId = setTimeout(handleDebouncedSearch, 1000);
     return () => clearTimeout(timeoutId);
-  }, [internalSearch, handleDebouncedSearch]);
+  }, [debouncedValue, handleDebouncedSearch]);
 
   const handleClearSearch = () => {
-    setInternalSearch("");
+    setDebouncedValue("");
   };
 
   return (
@@ -35,8 +34,8 @@ export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
           </InputAdornment>
         ),
       }}
-      value={internalSearch}
-      onChange={(e) => setInternalSearch(e.target.value)}
+      value={debouncedValue}
+      onChange={(e) => setDebouncedValue(e.target.value)}
       variant="outlined"
       placeholder="Search ..."
     />

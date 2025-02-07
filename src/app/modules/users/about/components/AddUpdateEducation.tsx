@@ -16,8 +16,9 @@ import { userEducationSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../components/form_component/TextInput";
 import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
 import CustomisedButton from "../../../components/CustomisedButton";
-import { EducationType } from "../../../../../Constant";
+
 import { SelectInput } from "../../../components/form_component/SelectInput";
+import { EducationType } from "../../../../../utils/constant/Constant";
 
 type PropTypes = {
   isEdit: boolean;
@@ -128,7 +129,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
               <Grid item xs={12} md={6}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "MENU.MODE" })}
+                  label={intl.formatMessage({ id: "FORM.TYPE" })}
                   name="type"
                 >
                   {EducationType.map((item) => (

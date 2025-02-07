@@ -1,14 +1,27 @@
-import { useState } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { PropTypes } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
-type PropsType={
-  value:string;
-  setValue:React.Dispatch<React.SetStateAction<string>>
-}
+type PropsType = {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+};
 
-const TextEditor = (props:PropsType) => {
-  const { value, setValue} = props;
+const TextEditor: FC<PropsType> = ({ value, setValue }) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  const handleChange = () => {
+    setValue(debouncedValue);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      handleChange();
+    }, 1500); 
+    return ()=>clearTimeout(timeoutId);
+  }, [debouncedValue]);
+
   const modules = {
     toolbar: {
       container: [
@@ -28,20 +41,33 @@ const TextEditor = (props:PropsType) => {
     clipboard: {
       matchVisual: true,
     },
-  }
-  const formats = ["header", "bold", "italic", "underline", "strike", "blockquote",
-    "list", "bullet", "indent", "link", "image", "color", "clean",];
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "color",
+    "clean",
+  ];
 
   return (
     <ReactQuill
-      theme='snow'
-      value={value}
-      onChange={setValue}
+      theme="snow"
+      value={debouncedValue}
+      onChange={setDebouncedValue}
       formats={formats}
       modules={modules}
-      placeholder='Type Here...'
+      placeholder="Type Here..."
     />
-  )
-}
+  );
+};
 
 export default TextEditor;

@@ -48,8 +48,6 @@ const JobDescription: FC<PropsTypes> = ({
   );
   const intl = useIntl();
 
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
   const {
     handleSubmit,
     errors,
@@ -71,8 +69,7 @@ const JobDescription: FC<PropsTypes> = ({
       values.description = jobDescription;
       handleAddEditJob(values, setSubmitting);
     },
-  });
-
+  });  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>

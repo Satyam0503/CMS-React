@@ -1,14 +1,11 @@
 import {
-  Avatar,
   Grid,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
@@ -23,7 +20,6 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  handleDownload?: () => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -38,7 +34,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
-    handleDownload,
   } = props;
   return (
     <Grid container>
@@ -60,7 +55,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
           {loading ? (
             <TableBody>
               <TableRow>
-                {columns.map((column) => (
+                {/* {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     align={column?.align || "left"}
@@ -68,11 +63,11 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   >
                     <TableSkeleton />
                   </TableCell>
-                ))}
-                {/* <TableCell colSpan={12} align="center">
+                ))} */}
+                <TableCell colSpan={12} align="center">
                   <TableSkeleton />
-                  <Typography variant="h6"> Loading... </Typography>
-                </TableCell> */}
+                  {/* <Typography variant="h6"> Loading... </Typography> */}
+                </TableCell>
               </TableRow>
             </TableBody>
           ) : (
@@ -108,7 +103,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                     handleEdit,
                                     openConfirmationModal,
                                     openViewModal,
-                                    handleDownload
                                   )
                                 : column.build(value)
                               : value}

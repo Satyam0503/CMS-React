@@ -17,9 +17,8 @@ export const AddComment: FC<PropTypes> = ({
   open,
   handleClose,
   handleAddComment,
-
 }) => {
-//   const [comment, setComment] = useState("");
+  
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -29,7 +28,7 @@ export const AddComment: FC<PropTypes> = ({
           <CustomisedButton variant="outlined" label="Cancel" handleClick={handleClose} />
           <CustomisedButton
             label="Add"
-            disabled={false}
+            disabled={comment.length===0}
             handleClick={handleAddComment}
           />
         </Stack>

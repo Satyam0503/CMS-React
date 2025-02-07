@@ -100,18 +100,14 @@ const SidebarMenuMain = () => {
         />
       </SidebarMenuItemWithSub>
 
-      <SidebarMenuItemWithSub
-        to="/setting"
-        title="Admin"
-        icon={<SettingsIcon />}
-      >
+      <SidebarMenuItemWithSub to="/admin" title="Admin" icon={<SettingsIcon />}>
         <SidebarMenuItem
-          to="/setting/permissions"
+          to="/admin/permissions"
           icon={<ToggleOn />}
           title={intl.formatMessage({ id: "MENU.PERMISSIONS" })}
         />
         <SidebarMenuItem
-          to="/setting/theme"
+          to="/admin/theme"
           icon={<ColorLens />}
           title={intl.formatMessage({ id: "MENU.THEME" })}
         />

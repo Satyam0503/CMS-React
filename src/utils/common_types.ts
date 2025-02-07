@@ -114,8 +114,7 @@ export type ColumnListTypes = {
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
   build?: any;
-  // fontSize?: string;
-
+  sorting?:boolean;
   format?: (value: any) => any;
   avatarCell?: (row: any) => ReactNode;
 };
@@ -128,20 +127,35 @@ export interface ApplicantModel {
   email: string;
   phone: string;
   vacancyId: string;
-  vacancyName:string;
+  vacancyName: string;
   experience: number;
+  status: number;
+  activityType: number;
   resume?: null | File;
 }
+
+
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
   statusName: string;
   status: number;
   activityTypeName: string;
-  activityType: number;
-  applyDate: string
-  updateDate: string
+  applyDate: string;
+  updateDate: string;
   resumeUrl: string;
+  fullApplicantResumePath: string;
 };
+
+export interface CommentModel {
+  applicantId: string;
+  userId: string;
+  description: string;
+  userName: string;
+  activityCategory: number;
+  createdDate?: string;
+  commentId?: string;
+  companyId?: string;
+}
 
 // Api respone data types
 export interface ResponseData<T> {
@@ -174,3 +188,5 @@ export type UserEducationResponseData = ResponseData<UserEducationModel>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
+
+export type CommentResponseData = ResponseData<CommentModel>;

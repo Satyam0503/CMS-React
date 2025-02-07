@@ -16,7 +16,8 @@ export const applicantSchema = Yup.object().shape({
     ),
   phone:Yup.string()
   .matches(
-    /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
+    /^[6-9]\d{9}$/,
+    // /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
     "Phone number is not valid"
   )
   .required("Phone number is required"),

@@ -12,6 +12,8 @@ import { ErrorsPage } from "../modulesOld/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";
+import ApplyNow from "../modules/career/ApplyNow";
+import ApplyNowNew from "../modules/applynow/ApplyNowNew";
 
 /**
  * Base URL of the website.
@@ -22,13 +24,15 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
-  const user = useAppSelector((state) => state.user.userData);
+
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
         <Route element={<App />}>
           <Route path="error/*" element={<ErrorsPage />} />
+          <Route path="career/*" element={<ApplyNow />} />
           <Route path="logout" element={<Logout />} />
+          <Route path="applynow/*" element={<ApplyNowNew />} />
 
           {isUserAuthenticated ? (
             <>
