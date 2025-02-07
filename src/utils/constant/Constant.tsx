@@ -383,11 +383,13 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleApplicationEdit}
+        openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
@@ -529,6 +531,7 @@ interface ActionComponentProps<Row> {
 }
 const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
   const { row, handleEdit, openConfirmationModal, openViewModal } = props;
+
   return (
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (

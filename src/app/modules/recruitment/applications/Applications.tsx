@@ -40,11 +40,6 @@ export default function Applications() {
     }
   };
 
-  // const openConfirmationModal = (applicant:Applicant) => {
-  //   setConfirmModalOpen(true);
-  //   setSelectedApplicant(applicant);
-  // };
-
   const handleOpenPreview = (applicant: Applicant) => {
     setViewApplicant(true);
     setSelectedApplicant(applicant);
@@ -53,9 +48,6 @@ export default function Applications() {
   const closePreview = () => {
     setViewApplicant(false);
     setSelectedApplicant(undefined);
-  };
-  const handleApplicantDeletion = () => {
-    // console.log("delete Applicant");
   };
 
   useEffect(() => {
@@ -113,7 +105,6 @@ export default function Applications() {
             page={page}
             rowsPerPage={rowPerPage}
             handleEdit={handleApplicantEdit}
-            // openConfirmationModal={openConfirmationModal}
             openViewModal={handleOpenPreview}
             loading={loading}
           />
@@ -145,13 +136,6 @@ export default function Applications() {
           applicantData={selectedApplicant}
         />
       )}
-      <ConfirmationModal
-        title={"Delete Applicant"}
-        content="Are you sure you want to delete this applicant?"
-        open={isConfirmModalOpen}
-        handleClose={() => setConfirmModalOpen(false)}
-        handleConfirmation={handleApplicantDeletion}
-      />
     </>
   );
 }
