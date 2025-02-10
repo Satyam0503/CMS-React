@@ -177,7 +177,7 @@ export const ApplicantDetails = () => {
       const urlObj = window.URL.createObjectURL(fileObj);
       const link = document.createElement("a");
       link.href = urlObj;
-      link.setAttribute("download",`${applicant.firstName}_Resume.pdf`);
+      link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -185,7 +185,7 @@ export const ApplicantDetails = () => {
       console.error(error);
     }
   };
-  
+
   return (
     <>
       <Stack spacing={2}>
@@ -285,8 +285,9 @@ export const ApplicantDetails = () => {
                 <Select
                   name="applicantStatus"
                   value={activityType}
-                  sx={{ width: "200px" }}
+                  sx={{ width: "200px", height: "30px" }}
                   onChange={handleStatusChange}
+                  className="select"
                 >
                   {ApplicationEvaluationStatus.map((status) => (
                     <MenuItem key={status.id} value={status.value}>
