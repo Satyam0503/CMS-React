@@ -1063,50 +1063,41 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiSwitch: {
-      styleOverrides: {
-        root: {
-          height: 33,
-          overflow: "visible",
+    // MuiSwitch: {
+    //   styleOverrides: {
+    //     root: {
+    //       overflow: "visible",
 
-          "& .MuiButtonBase-root": {
-            position: "absolute",
-            padding: 6,
-            transition:
-              "left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-          },
-          "& .MuiIconButton-root": {
-            borderRadius: 100,
-          },
-          "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-            opacity: 0.3,
-          },
-        },
-        thumb: {
-          border: "1px solid " + colors.alpha.neutral[300],
-          boxShadow:
-            "0px 9px 14px " +
-            colors.alpha.neutral[100] +
-            ", 0px 2px 2px " +
-            colors.alpha.neutral[100],
-        },
-        track: {
-          // backgroundColor: colors.alpha.neutral[500],
-          border: "1px solid " + colors.alpha.neutral[200],
-          boxShadow: "inset 0px 1px 1px " + colors.alpha.neutral[100],
-          opacity: 1,
-        },
-        colorPrimary: {
-          "& .MuiSwitch-thumb": {
-            backgroundColor: themeColors.white,
-          },
+    //       // "& .MuiButtonBase-root": {
+    //       //   position: "absolute",
+    //       //   padding: 6,
+    //       //   transition:
+    //       //     "left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    //       // },
+    //       // "& .MuiIconButton-root": {
+    //       //   borderRadius: 100,
+    //       // },
+    //     },
+    //     // thumb: {
+    //     //   border: "1px solid " + colors.alpha.neutral[300],
+    //     // },
+    //     // track: {
+    //     //   backgroundColor: colors.alpha.neutral[500],
+    //     //   border: "1px solid " + colors.alpha.neutral[200],
+    //     //   boxShadow: "inset 0px 1px 1px " + colors.alpha.neutral[100],
+    //     //   opacity: 1,
+    //     // },
+    //     // colorPrimary: {
+    //     //   "& .MuiSwitch-thumb": {
+    //     //     backgroundColor: colors.alpha.white[500],
+    //     //   },
 
-          "&.Mui-checked .MuiSwitch-thumb": {
-            color: colors.alpha.primary[500],
-          },
-        },
-      },
-    },
+    //     //   "&.Mui-checked .MuiSwitch-thumb": {
+    //     //     color: colors.alpha.primary[500],
+    //     //   },
+    //     // },
+    //   },
+    // },
     MuiStepper: {
       styleOverrides: {
         root: {

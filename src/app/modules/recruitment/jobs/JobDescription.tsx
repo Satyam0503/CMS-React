@@ -24,6 +24,8 @@ import { JobType } from "../../../../utils/constant/Constant";
 import { JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import Checkbox from "@mui/material/Checkbox";
+import CustomSwitchButtons from "../../components/CustomSwitchButton";
+import CustomSwitchButton from "../../components/CustomSwitchButton";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -69,7 +71,7 @@ const JobDescription: FC<PropsTypes> = ({
       values.description = jobDescription;
       handleAddEditJob(values, setSubmitting);
     },
-  });  
+  });
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -151,11 +153,7 @@ const JobDescription: FC<PropsTypes> = ({
                   {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}
                 </Typography>
               </Grid>
-              <Checkbox
-                {...getFieldProps("status")}
-                checked={values.status}
-                sx={{ p: 0 }}
-              />
+              <CustomSwitchButton />
 
               {/* <Grid item xs={8} md={6}>
                 <Select
