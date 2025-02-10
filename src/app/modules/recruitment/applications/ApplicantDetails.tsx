@@ -37,7 +37,6 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 
-
 const ApplicantStatusMapper: {
   [index: number]: ApplicantStatus;
 } = {
@@ -185,7 +184,7 @@ export const ApplicantDetails = () => {
 
   return (
     <>
-      <Stack spacing={2}>
+      <Stack spacing={2} mt={2}>
         <Card sx={{ p: 2 }}>
           <Stack
             direction={"row"}
@@ -204,10 +203,12 @@ export const ApplicantDetails = () => {
                 tooltip="Download CV"
                 handleClick={() => handleDownloadResume()}
               />
-              <CustomIconButton icon={<Edit />} tooltip="Edit Applicant" 
-                handleClick={()=>{
-                  navigate("/recruitment/editapplicant",{state:applicant});
-                }} 
+              <CustomIconButton
+                icon={<Edit />}
+                tooltip="Edit Applicant"
+                handleClick={() => {
+                  navigate("/recruitment/editapplicant", { state: applicant });
+                }}
               />
             </Stack>
           </Stack>

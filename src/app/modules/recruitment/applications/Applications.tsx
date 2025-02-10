@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
 import { EditApplicant } from "./EditApplicant";
-import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();
@@ -23,10 +22,7 @@ export default function Applications() {
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<
-    Applicant | undefined
-  >();
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
+
   const [selectedApplicant, setSelectedApplicant] = useState<
     Applicant | undefined
   >();

@@ -3,6 +3,8 @@ import {
   Card,
   Container,
   Grid,
+  IconButton,
+  Menu,
   MenuItem,
   Select,
   Stack,
@@ -13,85 +15,71 @@ import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Applicant, JobModal } from "../../../../utils/common_types";
-import { useEffect, useState } from "react";
-import { CircularLoader } from "../../components/CircularLoader";
-import { Formik } from "formik";
-import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
-import { TextInput } from "../../components/form_component/TextInput";
-import { SelectInput } from "../../components/form_component/SelectInput";
-import { experienceCategoryList } from "../../../../utils/common";
 
-interface StateType {
-  applicant: Applicant;
-}
+// interface StateType {
+//   applicantId: string;
+// }
 
 export const EditApplicant = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
-  const state = useLocation().state as Applicant;
+  // const state = useLocation().state as StateType;
+  // const applicantId = state.applicantId;
+  // if (!applicantId) {
+  //   navigate("/error", { replace: true });
+  // }
+  // console.log(state);
 
-  useEffect(() => {
-    if (!state || Object.keys(state).length === 0) {
-      navigate("/error", { replace: true });
-    }
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return <CircularLoader />;
-  }
-  console.log(state);
-
-  const initialValues = {
-    ...state,
-  };
+  // const handleDownloadResume = async () => {
+  //   try {
+  //     const response = await fetch("", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/pdf",
+  //       },
+  //     });
+  //     const fileObj = await response.blob();
+  //     const urlObj = window.URL.createObjectURL(fileObj);
+  //     const link = document.createElement("a");
+  //     link.href = urlObj;
+  //     // link.setAttribute("download",`${fullName}_Resume.pdf`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
-    <Card sx={{ p: 2.6 }}>
-      <Stack spacing={2}>
-        <Typography variant="h5">
-          {intl.formatMessage({ id: "UPDATE.EMP.INFO" })}
-        </Typography>
-        <Grid container display={"flex"} direction={"column"} gap={1}>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={applicantValidationSchema}
-            onSubmit={(value) => {
-              console.log(value);
-            }}
-          >
-            {(formik) => (
-              <form onSubmit={formik.handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={4}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                      type="text"
-                      name="firstName"
-                      placeholder="FirstName"
-                    />
-                  </Grid>
+    <Container component={Card} sx={{ p: 2.6, mt: 2 }}>
+      <Grid container display={"flex"} direction={"column"} gap={1}>
+        <Grid item xs={12} mb={2}>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "UPDATE.EMP.INFO" })}
+          </Typography>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "USER.FIRST_NAME" })}
+            </Typography>
+            <TextField fullWidth />
+          </Grid>
 
-                  <Grid item xs={12} sm={4}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                      type="text"
-                      name="lastName"
-                      placeholder="Last Name"
-                    />
-                  </Grid>
+          <Grid item xs={12} sm={4}>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "USER.LAST_NAME" })}
+            </Typography>
+            <TextField fullWidth />
+          </Grid>
 
-                  <Grid item xs={12} sm={4}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.PHONE" })}
-                      type="text"
-                      name="phone"
-                      placeholder="Phone Number"
-                    />
-                  </Grid>
+          <Grid item xs={12} sm={4}>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "USER.PHONE" })}
+            </Typography>
+            <TextField fullWidth />
+          </Grid>
 
           <Grid item xs={12} sm={4}>
             <Typography variant="body1">
@@ -105,13 +93,22 @@ export const EditApplicant = () => {
             </Typography>
             <TextField fullWidth />
           </Grid>
-          <Grid item xs={8} sm={2}>
+        </Grid>
+
+        <Stack mt={2}>
+          <Typography variant="h6" fontWeight={600}>
+            {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
+          </Typography>
+        </Stack>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={4} md={4}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "Years" })}
             </Typography>
             <TextField fullWidth type="number" />
           </Grid>
-          <Grid item xs={4} sm={1} md={1}>
+          <Grid item xs={12} sm={3} md={2}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "Month" })}
             </Typography>
@@ -131,6 +128,18 @@ export const EditApplicant = () => {
               <MenuItem>12</MenuItem>
             </Select>
           </Grid>
+          <Grid item xs={12} sm={3} md={2}>
+            <Typography variant="body1">
+              {intl.formatMessage({ id: "PROFILE.STATUS" })}
+            </Typography>
+            <Select fullWidth type="number">
+              <MenuItem>In Progess</MenuItem>
+              <MenuItem>On Hold</MenuItem>
+              <MenuItem>Shortlisted</MenuItem>
+              <MenuItem>Selected</MenuItem>
+              <MenuItem>Rejected</MenuItem>
+            </Select>
+          </Grid>
         </Grid>
       </Grid>
       <Box my={4}>
@@ -139,7 +148,7 @@ export const EditApplicant = () => {
             component="label"
             sx={{
               border: "1px dashed grey",
-              borderRadius: 1,
+
               cursor: "pointer",
             }}
           >
@@ -173,34 +182,27 @@ export const EditApplicant = () => {
         </Stack>
       </Box>
 
-                <Grid
-                  item
-                  xs={12}
-                  display={"flex"}
-                  direction={{ xs: "column", sm: "row" }}
-                  justifyContent={"flex-end"}
-                  mt={1}
-                  gap={1}
-                >
-                  {/* {fileError && <Typography variant="body2">{fileError}</Typography>} */}
-                  <CustomisedButton
-                    variant="outlined"
-                    size="medium"
-                    label="Cancel"
-                  />
-                  <CustomisedButton
-                    variant="contained"
-                    size="medium"
-                    label="Update"
-                    type="submit"
-                    disabled={formik.isSubmitting || !formik.isValid}
-                  />
-                </Grid>
-              </form>
-            )}
-          </Formik>
-        </Grid>
-      </Stack>
-    </Card>
+      <Grid
+        item
+        xs={12}
+        display={"flex"}
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent={"flex-end"}
+        mt={1}
+        gap={1}
+      >
+        <CustomisedButton
+          label="Upload File"
+          Icon={<AttachFile />}
+          iconPosition="end"
+          // disabled={!seletedFile}
+          // handleClick={handleUpdateAvatar}
+        />
+
+        {/* {fileError && <Typography variant="body2">{fileError}</Typography>} */}
+        <CustomisedButton variant="outlined" size="medium" label="Cancel" />
+        <CustomisedButton variant="contained" size="medium" label="Update " />
+      </Grid>
+    </Container>
   );
 };
