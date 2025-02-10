@@ -24,6 +24,7 @@ import {
   commentActionEncoderForApplicationStatus,
   dateFormatter,
   getApplicantStatusClass,
+  monthsToYear,
 } from "../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -105,8 +106,6 @@ export const ApplicantDetails = () => {
   if (loading) {
     return <CircularLoader />;
   }
-
-  const experienceSuffix = applicant.experience > 1 ? "Years" : "Year";
 
   const handleAddComment = async () => {
     const payload = {
@@ -263,7 +262,7 @@ export const ApplicantDetails = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  {applicant?.experience + " " + experienceSuffix}
+                  {monthsToYear(applicant.experience)}
                 </Typography>
               </Stack>
             </Grid>

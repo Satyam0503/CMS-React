@@ -87,6 +87,7 @@ export default function ApplyNow() {
       ...values,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
+      experience: values.experience * 12,
     };
     try {
       const { data } = await applyNow(payload);

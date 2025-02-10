@@ -22,7 +22,6 @@ export default function Applications() {
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
-
   const [selectedApplicant, setSelectedApplicant] = useState<
     Applicant | undefined
   >();
