@@ -15,12 +15,10 @@ import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./SingleBanner";
 import CustomisedButton from "../components/CustomisedButton";
 import { useEffect, useRef, useState } from "react";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
 import Footer from "./Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { ApplicantModel, JobModal } from "../../../utils/common_types";
-import { applicantSchema } from "../../../utils/Schema/applicantSchema";
 import { TextInput } from "../components/form_component/TextInput";
 import { SelectInput } from "../components/form_component/SelectInput";
 import { experienceCategoryList } from "../../../utils/common";
@@ -31,6 +29,7 @@ import { applyNow } from "./services";
 import { toast } from "react-toastify";
 import NoVacancy from "./NoVacancy";
 import ApplyNowHeader from "./ApplyNowHeader";
+import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
 // import ApplyNowHeader from "./ApplyNowHeader";
 
 const initialValues: ApplicantModel = {
@@ -239,7 +238,7 @@ export default function ApplyNow() {
                 </Grid>
                 <Formik
                   initialValues={initialValues}
-                  validationSchema={applicantSchema}
+                  validationSchema={applicantValidationSchema}
                   onSubmit={(
                     value,
                     { setSubmitting, setStatus, resetForm }

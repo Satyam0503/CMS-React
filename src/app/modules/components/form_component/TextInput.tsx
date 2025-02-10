@@ -7,6 +7,7 @@ interface PropsTypes {
   name: string;
   type: string;
   placeholder: string;
+  disabled?:boolean;
   multiline?:boolean;
   InputProps?:any;
 }

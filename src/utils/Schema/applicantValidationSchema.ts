@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 const MAX_FILE_SIZE= 5 * 1024 * 1024 // 5MB
-export const applicantSchema = Yup.object().shape({
+export const applicantValidationSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
     .matches(/^[A-Za-z]+$/, "Invalid Name"),
