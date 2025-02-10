@@ -110,12 +110,11 @@ export default function ApplyNow() {
   };
 
   useEffect(() => {
-    const payload = {
-      companyId: companyId,
-    };
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies(payload);
+        const response = await getAllJobVacancies({
+          companyId
+        });
         if (!response) {
           setError(true);
           throw new Error("Request Failed");
@@ -399,6 +398,7 @@ export default function ApplyNow() {
                                   type="file"
                                   accept=".pdf,"
                                   onChange={(e) => {
+                                    setFieldTouched("resume",true);
                                     handleFileChange(e, setFieldValue);
                                   }}
                                   onBlur={() => setFieldTouched("resume", true)}

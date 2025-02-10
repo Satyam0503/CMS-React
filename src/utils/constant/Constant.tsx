@@ -1,11 +1,4 @@
-import {
-  DeleteOutlineOutlined,
-  Edit,
-  Place,
-  Visibility,
-} from "@mui/icons-material";
-import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { Button, Tooltip, Typography } from "@mui/material";
 import {
   Applicant,
   ColumnListTypes,
@@ -15,26 +8,22 @@ import {
 } from "../common_types";
 import {
   dateFormatter,
-  applicationStatusDecoder,
   statusDecoder,
-  getApplicationStatusClass,
   commentActionDecoder,
   applicantStatusDecoder,
   getApplicantStatusClass,
 } from "../common";
-import CustomisedButton from "../../app/modules/components/CustomisedButton";
-import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
-import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
-import { colors } from "../../app/modules/theme/MuiTheme";
 import { ApplicationStatus } from "../enums";
-import DOMPurify from "dompurify";
+import { ActionComponent } from "../../app/modules/components/ActionComponent";
+import { AvatarCell } from "../../app/modules/components/AvatarCell";
+import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
 
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
-export  const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
 export const ServiceUrl = {
   // account
@@ -75,9 +64,9 @@ export const ServiceUrl = {
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
   GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
 
-  APPLY_JOB : `${BaseUrl}/api/applicant/applyJob`,
+  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 
-  VERIFY_CAPTCHA :`${BaseUrl}/api/User/verifyCaptch`,
+  VERIFY_CAPTCHA: `${BaseUrl}/api/User/verifyCaptch`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -490,7 +479,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "userName",
     label: "Action By",
-    minWidth:150,
+    minWidth: 150,
   },
   {
     id: "createdDate",
@@ -508,115 +497,21 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "description",
     label: "Comment",
-    build: (description: string) => {
-      const trustedHtml = DOMPurify.sanitize(description);
-      return (
-        <Box
-          component={"div"}
-          dangerouslySetInnerHTML={{
-            __html: trustedHtml,
-          }}
-          sx={{
-            maxWidth: "200px",
+    minWidth: 200,
+    build: (value: string) => (
+      <Tooltip title={value} arrow placement="top">
+        <p
+          style={{
+            width: "200px",
             textOverflow: "ellipsis",
             textWrap: "nowrap",
+            overflow: "hidden",
+            margin: "0",
           }}
-        ></Box>
-      );
-    },
+        >
+          {value}
+        </p>
+      </Tooltip>
+    ),
   },
 ];
-
-interface ActionComponentProps<Row> {
-  row: Row;
-  handleEdit?: (row: Row) => void;
-  openConfirmationModal?: (row: Row) => void;
-  openViewModal?: (row: Row) => void;
-}
-const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
-
-  return (
-    <Stack direction={"row"} spacing={1}>
-      {handleEdit && (
-        <CustomIconButton
-          handleClick={() => handleEdit(row)}
-          icon={<Edit />}
-          tooltip="Edit"
-          ariaLabel="Edit"
-        />
-      )}
-      {openConfirmationModal && (
-        <CustomIconButton
-          handleClick={() => openConfirmationModal(row)}
-          icon={<DeleteOutlineOutlined />}
-          tooltip="Delete"
-          ariaLabel="Delete"
-        />
-      )}
-      {openViewModal && (
-        <CustomIconButton
-          handleClick={() => openViewModal(row)}
-          icon={<Visibility />}
-          tooltip="View"
-          ariaLabel="View"
-        />
-      )}
-    </Stack>
-  );
-};
-
-const AddressDetailsIcon = (props: { address: string }) => {
-  const [open, setOpen] = useState(false);
-  function handleClose() {
-    setOpen(false);
-  }
-  return (
-    <>
-      <CustomIconButton
-        handleClick={() => setOpen(true)}
-        icon={<Place />}
-        tooltip="Address"
-        ariaLabel="Address"
-      />
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Stack spacing={2}>
-          <Typography variant="h5">Address</Typography>
-          <Typography>{props.address}</Typography>
-          <Stack sx={{ alignSelf: "flex-end" }}>
-            <CustomisedButton label="Close" handleClick={handleClose} />
-          </Stack>
-        </Stack>
-      </CustomisedModal>
-    </>
-  );
-};
-
-interface AvatarCellPropsTypes {
-  title?: string;
-  subTitle?: string;
-  avatarSrc?: any;
-}
-
-export const AvatarCell = ({
-  title,
-  avatarSrc,
-  subTitle,
-}: AvatarCellPropsTypes) => {
-  return (
-    <Stack direction="row" spacing={1}>
-      <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
-      <Stack direction="column" sx={{ alignSelf: "center" }}>
-        <Typography
-          variant="body2"
-          display={"block"}
-          fontWeight={500}
-          color={colors.alpha.neutral[800]}
-        >
-          {title || "NA"}
-        </Typography>
-        <Typography variant="body2">{subTitle}</Typography>
-      </Stack>
-    </Stack>
-  );
-};

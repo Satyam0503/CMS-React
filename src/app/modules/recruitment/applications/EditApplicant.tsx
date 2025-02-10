@@ -3,8 +3,6 @@ import {
   Card,
   Container,
   Grid,
-  IconButton,
-  Menu,
   MenuItem,
   Select,
   Stack,
@@ -15,41 +13,16 @@ import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Applicant } from "../../../../utils/common_types";
 
 interface StateType {
-  applicantId: string;
+  applicant: Applicant;
 }
 
 export const EditApplicant = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const state = useLocation().state as StateType;
-  const applicantId = state.applicantId;
-  if (!applicantId) {
-    navigate("/error", { replace: true });
-  }
-  console.log(state);
-
-  // const handleDownloadResume = async () => {
-  //   try {
-  //     const response = await fetch("", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/pdf",
-  //       },
-  //     });
-  //     const fileObj = await response.blob();
-  //     const urlObj = window.URL.createObjectURL(fileObj);
-  //     const link = document.createElement("a");
-  //     link.href = urlObj;
-  //     // link.setAttribute("download",`${fullName}_Resume.pdf`);
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   return (
     <Container component={Card} sx={{ p: "4rem" }}>

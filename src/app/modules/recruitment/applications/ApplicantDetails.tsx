@@ -37,9 +37,6 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 
-interface StateType {
-  applicantId: string;
-}
 
 const ApplicantStatusMapper: {
   [index: number]: ApplicantStatus;
@@ -207,7 +204,11 @@ export const ApplicantDetails = () => {
                 tooltip="Download CV"
                 handleClick={() => handleDownloadResume()}
               />
-              <CustomIconButton icon={<Edit />} tooltip="Edit details" />
+              <CustomIconButton icon={<Edit />} tooltip="Edit Applicant" 
+                handleClick={()=>{
+                  navigate("/recruitment/editapplicant",{state:applicant});
+                }} 
+              />
             </Stack>
           </Stack>
 

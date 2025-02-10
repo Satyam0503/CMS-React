@@ -5,7 +5,6 @@ import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
@@ -31,7 +30,7 @@ export default function Applications() {
 
   const handleApplicantEdit = (applicant: Applicant) => {
     if(applicant){
-      navigate(`/recruitment/editapplicant/${applicant.applicantId}`);  
+      navigate(`/recruitment/applicant/${applicant.applicantId}`);  
     }
   };
 
