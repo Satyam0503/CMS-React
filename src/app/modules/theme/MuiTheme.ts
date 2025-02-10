@@ -527,6 +527,11 @@ export const MuiTheme = createTheme({
         text: {
           backgroundColor: colors.alpha.white[500],
           border: "none",
+          "&:hover, &.MuiSelected": {
+            backgroundColor: colors.alpha.primary[500],
+            color: colors.alpha.white[500],
+            border: "1px solid " + colors.alpha.neutral[200],
+          },
         },
         sizeSmall: {
           padding: "6px 16px",
