@@ -44,7 +44,7 @@ export const AddComment: FC<PropTypes> = ({
           placeholder="Write Comment"
           type="text"
           required
-          onChange={(event)=>setDebouncedValue(event.target.value)}
+          onChange={(event) => setDebouncedValue(event.target.value)}
         />
 
         <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>

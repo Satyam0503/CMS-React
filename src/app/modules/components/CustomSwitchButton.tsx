@@ -73,7 +73,7 @@ export default function CustomSwitchButton() {
   return (
     <FormGroup>
       <FormControlLabel
-        control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+        control={<IOSSwitch sx={{ marginLeft: 1.5 }} />}
         label=""
       />
     </FormGroup>

@@ -12,6 +12,8 @@ import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
+import { EditApplicant } from "./EditApplicant";
+import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();
@@ -21,16 +23,22 @@ export default function Applications() {
   const [rowPerPage, setRowPerPage] = useState<number>(10);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<Applicant | undefined>();
-  const [isAddModalOpen,setAddModalOpen]= useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<
+    Applicant | undefined
+  >();
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<
+    Applicant | undefined
+  >();
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
 
   const handleApplicantEdit = (applicant: Applicant) => {
-    if(applicant){
-      navigate(`/recruitment/applicant/${applicant.applicantId}`);  
+    if (applicant) {
+      navigate(`/recruitment/applicant/${applicant.applicantId}`);
     }
   };
 
@@ -114,6 +122,7 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
+
       {isAddModalOpen && (
         <AddApplicant
           open={isAddModalOpen}

@@ -15,6 +15,7 @@ import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
+import { EditApplicant } from "../modules/recruitment/applications/EditApplicant.tsx";
 
 const PrivateRoutes = () => {
   const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
@@ -49,6 +50,7 @@ const PrivateRoutes = () => {
         <Route path="attendance" element={<AttendanceWrapper />} />
         <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
+        <Route path="editapplicantdetails" element={<EditApplicant />} />
         {/* Lazy Modules */}
         <Route
           path="employee/*"
