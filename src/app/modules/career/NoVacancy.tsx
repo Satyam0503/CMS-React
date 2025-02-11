@@ -9,7 +9,7 @@ export default function NoVacancy() {
 
   return (
     <>
-      <Grid container display={"flex"} gap={1}>
+      <Grid container display={"flex"} gap={1.5}>
         <Stack spacing={1}>
           <Typography variant="h4" color={colors.alpha.primary[500]}>
             {intl.formatMessage({
@@ -24,10 +24,11 @@ export default function NoVacancy() {
           </Typography>
         </Stack>
 
-        <Stack mt={2}>
+        <Stack>
           <img
             src={toAbsoluteUrl("media/auth/work_in_progress.svg")}
             width={"100%"}
+            height={"100%"}
           />
         </Stack>
 
