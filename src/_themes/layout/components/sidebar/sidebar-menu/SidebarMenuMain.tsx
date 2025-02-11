@@ -32,7 +32,7 @@ const SidebarMenuMain = () => {
       <SidebarMenuItem
         to="/userdashboard"
         icon={<DashboardIcon />}
-        title={intl.formatMessage({ id: "User Dashboard" })} // Keep it as user dashboard,at present to avoid cofusion, need to be change
+        title={intl.formatMessage({ id: "USER.DASHBOARD" })} // Keep it as user dashboard,at present to avoid cofusion, need to be change
       />
 
       <SidebarMenuItem

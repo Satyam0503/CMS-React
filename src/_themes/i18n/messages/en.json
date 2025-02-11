@@ -240,6 +240,7 @@
   "USER.MESSAGE": "Message",
   "USER.TARGET": "Target",
   "USER.EXPERIENCE": "Experience",
+  "USER.DASHBOARD": "User Dashboard",
   "USER.EXPERIENCE.YEARS": "Years",
   "USER.EXPERIENCE.MONTHS": "Months",
   "USER.DETAILS_LOADING": "Loding Employee Details ...",

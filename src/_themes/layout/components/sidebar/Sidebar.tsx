@@ -8,9 +8,6 @@ import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 import { useAppSelector } from "../../../../app/Redux/hooks";
-import { Height } from "@mui/icons-material";
-import { Row } from "react-bootstrap";
-import { wrap } from "module";
 
 const Sidebar = () => {
   const { config } = useLayout();
