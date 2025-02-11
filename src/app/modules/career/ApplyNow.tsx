@@ -148,6 +148,7 @@ export default function ApplyNow() {
   // const handleCaptchaChange = (token: string | null) => {
   //   console.log(token);
   // };
+
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
@@ -281,12 +282,6 @@ export default function ApplyNow() {
                     ...formik
                   }) => (
                     <form onSubmit={handleSubmit}>
-                      {/* {
-                    status && 
-                    (
-                      <Typography>{status}</Typography>
-                    )
-                  } */}
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <Typography variant="h5">
@@ -345,7 +340,7 @@ export default function ApplyNow() {
                           <Select
                             fullWidth
                             {...formik.getFieldProps("vacancyId")}
-                            value={selectedJobPosition?.jobId}
+                            // value={selectedJobPosition?.jobId}
                             onChange={(event) => {
                               setFieldValue("vacancyId", event.target.value);
                               setSelectedJobPosition(
@@ -367,6 +362,11 @@ export default function ApplyNow() {
                               </MenuItem>
                             ))}
                           </Select>
+                          <FormHelperText>
+                            {touched.vacancyId &&
+                              errors.vacancyId &&
+                              errors.vacancyId}
+                          </FormHelperText>
                         </Grid>
                         <Grid item xs={12} md={6}>
                           <SelectInput
@@ -458,7 +458,7 @@ export default function ApplyNow() {
                             variant="contained"
                             label="Submit"
                             size="medium"
-                            disabled={isSubmitting || !(isValid && dirty)}
+                            disabled={isSubmitting || !dirty}
                           />
                         </Grid>
                       </Grid>

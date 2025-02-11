@@ -2,30 +2,26 @@ import { Stack, TextField, Typography } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
 import CustomisedButton from "../../components/CustomisedButton";
-import TextEditor from "../../components/TextEditor";
 
 interface PropTypes {
   open: boolean;
   comment: string;
-  setComment: React.Dispatch<React.SetStateAction<string>>;
+  handleCommentChange:(value:string)=>void;
   handleClose: () => void;
   handleAddComment: () => void;
 }
 export const AddComment: FC<PropTypes> = ({
   comment,
-  setComment,
+  handleCommentChange,
   open,
   handleClose,
   handleAddComment,
 }) => {
   const [debouncedValue, setDebouncedValue] = useState(comment);
-  const handleChange = () => {
-    setComment(debouncedValue);
-  };
-
+ 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      handleChange();
+      handleCommentChange(debouncedValue);
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [debouncedValue]);

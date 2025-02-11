@@ -12,7 +12,8 @@ import {
   commentActionDecoder,
   applicantStatusDecoder,
   getApplicantStatusClass,
-  monthsToYear,
+  convertMonthsToYear,
+  
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
@@ -329,13 +330,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     minWidth: 30,
   },
   {
-    id: "firstName",
-    label: "First Name",
-    minWidth: 30,
-  },
-  {
-    id: "lastName",
-    label: "Last Name",
+    id: "fullName",
+    label: "Full Name",
     minWidth: 30,
   },
   {
@@ -347,7 +343,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "Experience",
     align: "center",
     format: (value: number) => {
-      return monthsToYear(value);
+      return convertMonthsToYear(value);
     },
   },
   {

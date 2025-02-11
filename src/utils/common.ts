@@ -152,6 +152,18 @@ export const statusDecoder = (status: boolean) => {
   }
 };
 
+export const ApplicantStatusMapper: {
+  [index: number]: ApplicantStatus;
+} = {
+  [ApplicationStatus.New]: ApplicantStatus.New,
+  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
+  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
+  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
+  [ApplicationStatus.Selected]: ApplicantStatus.Active,
+  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
+};
+
+
 export const experienceCategoryList = [
   { id: 1, label: "0 - 1", value: 1 },
   {
@@ -293,7 +305,7 @@ export const getAgeInYears = (dob: Dayjs) => {
   return dayjs(new Date()).diff(dob, "years");
 };
 
-export const monthsToYear = (months: number) => {
+export const convertMonthsToYear = (months: number) => {
   let years = Math.round(months / 12);
   let suffix = years > 1 ? "Years" : "Year";
   return years + " " + suffix;
