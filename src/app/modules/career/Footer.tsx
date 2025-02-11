@@ -54,7 +54,7 @@ export default function Footer() {
               width={"25%"}
             />
             <Stack>
-              <Typography variant="body1" flexWrap={"wrap"}>
+              <Typography variant="body1" flexWrap={"wrap"} maxWidth={"450px"}>
                 Codeji InfoTech PVT LTD is best software development company,
                 It's developing high quality and reliable software for corporate
                 needs.

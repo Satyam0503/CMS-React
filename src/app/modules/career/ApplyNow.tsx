@@ -49,7 +49,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  const companyId = import.meta.env.VITE_COMPANY_KEY;
+  // const companyId = import.meta.env.VITE_COMPANY_KEY;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -113,7 +113,7 @@ export default function ApplyNow() {
     const getActiveVacancy = async () => {
       try {
         const response = await getAllJobVacancies({
-          companyId
+          companyId,
         });
         if (!response) {
           setError(true);
@@ -154,11 +154,11 @@ export default function ApplyNow() {
         <Grid item xs={12} textAlign={"center"}>
           <ApplyNowHeader />
           <SingleBanner title="Apply " titleorange={"Now"} />
+        </Grid>
+        <Container>
           <Typography variant="h3" className="linear-text-gradient">
             We are hiring
           </Typography>
-        </Grid>
-        <Container>
           <Grid
             item
             xs={12}
@@ -178,7 +178,6 @@ export default function ApplyNow() {
               <NoVacancy />
             ) : (
               <>
-                {" "}
                 <Grid item xs={12}>
                   <Stack mb={2} spacing={1}>
                     <Typography
@@ -225,15 +224,22 @@ export default function ApplyNow() {
                     </Stack>
                     <Stack spacing={2}>
                       <Typography variant="h5">Job description</Typography>
-                      {selectedJobPosition ? (
-                        <p
-                          dangerouslySetInnerHTML={{
-                            __html: selectedJobPosition.description,
-                          }}
-                        ></p>
-                      ) : (
-                        ""
-                      )}
+                      <Stack
+                        minHeight={"200px"}
+                        maxHeight={"400px"}
+                        overflow={"auto"}
+                      >
+                        {selectedJobPosition ? (
+                          <Typography
+                            variant="caption"
+                            dangerouslySetInnerHTML={{
+                              __html: selectedJobPosition.description,
+                            }}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </Stack>
                     </Stack>
                   </Stack>
                 </Grid>
@@ -324,9 +330,9 @@ export default function ApplyNow() {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <FormLabel sx={{ mb: 0.5 }}>
+                          <Typography variant="body1" sx={{ mb: 0.5 }}>
                             {intl.formatMessage({ id: "JOB.POSITION" })}
-                          </FormLabel>
+                          </Typography>
                           <Select
                             fullWidth
                             {...formik.getFieldProps("vacancyId")}
@@ -398,7 +404,7 @@ export default function ApplyNow() {
                                   type="file"
                                   accept=".pdf,"
                                   onChange={(e) => {
-                                    setFieldTouched("resume",true);
+                                    setFieldTouched("resume", true);
                                     handleFileChange(e, setFieldValue);
                                   }}
                                   onBlur={() => setFieldTouched("resume", true)}
