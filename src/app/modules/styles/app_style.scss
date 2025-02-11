@@ -22,6 +22,12 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 // Generate classes
 @include generate-color-classes($color-list);
 
+$app-primary-500: #9a56d3;
+$app-primary-wave: #35126c;
+$app-primary-footer: #9f6dda;
+$app-primary-100: #e6d9f5;
+$app-white: #ffffff;
+
 .coverChange {
   position: absolute !important;
   top: 50%;
@@ -54,7 +60,7 @@ input:-webkit-autofill {
   height: 1.5rem;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 0.25rem solid white;
+  border: 0.25rem solid $app-white;
   border-bottom-color: rgb(85, 85, 85);
   animation: spinner 1s linear 0s infinite;
   position: relative;
@@ -70,14 +76,14 @@ input:-webkit-autofill {
 }
 
 .vacancy_deselect {
-  background-color: #e6d9f5 !important;
-  color: #9a56d3 !important;
+  background-color: $app-primary-100 !important;
+  color: $app-primary-500 !important;
   padding: 0.8rem !important;
   font-size: 12px !important;
 }
 .vacancyselect {
-  background-color: #9a56d3 !important;
-  color: White !important;
+  background-color: $app-primary-500 !important;
+  color: $app-white !important;
   padding: 0.8rem !important;
   font-size: 14px !important;
 }
@@ -126,7 +132,7 @@ canvas {
     padding: 30px 0px 5px;
     background-repeat: no-repeat;
     background-size: cover;
-    background-color: #35126c;
+    background-color: $app-primary-wave;
   }
   .wave_banner {
     transform: rotate(180deg);
@@ -143,15 +149,19 @@ canvas {
 .footer {
   position: relative;
   bottom: 0;
-  background-image: linear-gradient(180deg, #35126c 0%, #9f6dda 100%);
+  background-image: linear-gradient(
+    180deg,
+    $app-primary-wave 0%,
+    $app-primary-footer 100%
+  );
 }
 
 .linear-text-gradient {
-  background: linear-gradient(180deg, #35126c, #ba9eda);
+  background: linear-gradient(180deg, $app-primary-wave, $app-primary-footer);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-align: center;
   padding-bottom: 20px;
-  font-weight: 500 !important;
+  font-weight: 900 !important;
 }

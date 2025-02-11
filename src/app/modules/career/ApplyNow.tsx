@@ -49,7 +49,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  const companyId = import.meta.env.VITE_COMPANY_KEY;
+  // const companyId = import.meta.env.VITE_COMPANY_KEY;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -172,7 +172,8 @@ export default function ApplyNow() {
           <Grid
             item
             xs={12}
-            sm={8}
+            md={9}
+            xl={8}
             p={{ xs: 2, md: 5 }}
             borderRadius={2}
             display={"flex"}
@@ -294,7 +295,7 @@ export default function ApplyNow() {
                           </Typography>
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "USER.FIRST_NAME",
@@ -304,7 +305,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "USER.LAST_NAME",
@@ -314,7 +315,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({ id: "USER.PHONE" })}
                             name="phone"
@@ -322,7 +323,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "AUTH.INPUT.EMAIL",
@@ -333,7 +334,7 @@ export default function ApplyNow() {
                           />
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <Typography variant="body1" sx={{ mb: 0.5 }}>
                             {intl.formatMessage({ id: "JOB.POSITION" })}
                           </Typography>
@@ -368,7 +369,7 @@ export default function ApplyNow() {
                               errors.vacancyId}
                           </FormHelperText>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <SelectInput
                             name={"experience"}
                             label={intl.formatMessage({
