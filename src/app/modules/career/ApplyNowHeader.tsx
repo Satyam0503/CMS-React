@@ -25,10 +25,11 @@ export default function ApplyNowHeader() {
       flexDirection={{ xs: "column", sm: "row" }}
       justifyContent={"space-between"}
       px={5}
-      pt={{ xs: 2, md: 1 }}
+      py={{ xs: 2, md: 1 }}
+      alignItems={"center"}
     >
       <Stack>
-        <Link href="https://codeji.in/" style={{ marginTop: "1rem" }}>
+        <Link href="https://codeji.in/" style={{ alignItems: "center" }}>
           <img
             alt="Logo"
             src={toAbsoluteUrl("media/logos/logo.png")}

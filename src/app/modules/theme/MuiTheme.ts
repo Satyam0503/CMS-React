@@ -1,4 +1,5 @@
 import { alpha, createTheme, lighten, darken } from "@mui/material";
+import { inherits } from "util";
 
 const themeColors = {
   primary: "#9A56D3",
@@ -303,7 +304,7 @@ export const MuiTheme = createTheme({
     MuiSelect: {
       styleOverrides: {
         iconOutlined: {
-          color: colors.alpha.primary[500],
+          color: colors.alpha.white[500],
         },
       },
     },
@@ -566,7 +567,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          background: themeColors.white,
+          background: colors.alpha.white[500],
         },
       },
     },
@@ -732,7 +733,7 @@ export const MuiTheme = createTheme({
           "& .MuiSlider-valueLabel": {
             borderRadius: 6,
             background: colors.alpha.neutral[100],
-            color: themeColors.white,
+            color: colors.alpha.white[500],
           },
         },
       },
@@ -749,23 +750,23 @@ export const MuiTheme = createTheme({
               minWidth: 34,
             },
 
-            "& .MuiTouchRipple-root": {
-              opacity: 0.2,
-            },
+            // "& .MuiTouchRipple-root": {
+            //   opacity: 0.2,
+            // },
           },
           "&.MuiListItem-root.MuiButtonBase-root.Mui-selected": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[200],
+            color: colors.alpha.white[500],
+            background: colors.alpha.primary[400],
           },
           "&.MuiMenuItem-root.MuiButtonBase-root:active": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[200],
+            color: colors.alpha.white[500],
+            background: colors.alpha.primary[400],
           },
           "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
             opacity: 0.5,
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[100],
-          },
+            color: colors.alpha.primary[800],
+            background: colors.alpha.primary[400],
+          }, //MenuItem
         },
 
         padding: {
@@ -829,6 +830,8 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    //dropdown only menuitem
     MuiMenu: {
       styleOverrides: {
         paper: {
@@ -837,42 +840,46 @@ export const MuiTheme = createTheme({
         },
         list: {
           padding: 12,
-
           "& .MuiMenuItem-root.MuiButtonBase-root": {
             fontSize: 14,
             marginTop: 1,
             marginBottom: 2,
             transition: "all .2s",
-            color: colors.alpha.neutral[500],
 
             "& .MuiTouchRipple-root": {
               opacity: 0.2,
             },
 
-            ", &.Mui-selected": {
-              color: colors.alpha.neutral[500],
-              background: colors.alpha.neutral[100],
+            "&.Mui-selected": {
+              color: colors.alpha.white[500], // When selected
+              background: colors.alpha.primary[500],
+              "&:hover": {
+                color: colors.alpha.white[500],
+                background: colors.alpha.primary[500],
+              },
             },
-            "&:hover, &:active, &.active": {
-              color: colors.alpha.primary[500],
-              background: colors.alpha.primary[100],
+
+            "&:active": {
+              //on hover
+              color: colors.alpha.primary[900],
+              background: colors.alpha.primary[300],
             },
           },
         },
       },
     },
+    //close
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          background: "transparent",
           transition: "all .2s",
-
-          "&:hover, &:active, &.active": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[100],
+          "&:active": {
+            color: colors.alpha.success[500],
+            background: colors.alpha.secondary[500],
           },
           "&.Mui-selected:hover": {
-            background: colors.alpha.primary[500],
+            background: colors.alpha.secondary[500],
+            color: colors.alpha.success[500],
           },
         },
       },
@@ -881,12 +888,12 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           "&.MuiButtonBase-root": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[500],
+            color: colors.alpha.success[500],
+            background: colors.alpha.secondary[500],
 
             "&:hover, &:active, &.active, &.Mui-selected": {
-              color: colors.alpha.neutral[100],
-              background: colors.alpha.primary[500],
+              color: colors.alpha.success[500],
+              background: colors.alpha.secondary[500],
             },
           },
         },

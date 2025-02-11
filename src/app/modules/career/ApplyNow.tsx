@@ -49,7 +49,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  // const companyId = import.meta.env.VITE_COMPANY_KEY;
+  const companyId = import.meta.env.VITE_COMPANY_KEY;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -151,8 +151,17 @@ export default function ApplyNow() {
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
-        <Grid item xs={12} textAlign={"center"}>
+        <Grid
+          item
+          xs={12}
+          textAlign={"center"}
+          position={"sticky"}
+          top={0}
+          zIndex={1}
+        >
           <ApplyNowHeader />
+        </Grid>
+        <Grid item xs={12}>
           <SingleBanner title="Apply " titleorange={"Now"} />
         </Grid>
         <Container>
@@ -381,7 +390,7 @@ export default function ApplyNow() {
                             component="label"
                             sx={{
                               border: "1px dashed grey",
-                              borderRadius: 1,
+
                               cursor: "pointer",
                               width: "100%",
                             }}
