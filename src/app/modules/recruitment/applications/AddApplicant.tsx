@@ -89,6 +89,7 @@ export const AddApplicant: FC<PropsTypes> = ({
       vacancyName: vacancy ? vacancy.title : "",
       status: ApplicantStatus.New,
       activityType: ApplicationStatus.InProgress,
+      experience:values.experience * 12,  // convert to months
     };
     try {
       const { data } = await addApplicant(payload);

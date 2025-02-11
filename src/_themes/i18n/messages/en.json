@@ -240,6 +240,8 @@
   "USER.MESSAGE": "Message",
   "USER.TARGET": "Target",
   "USER.EXPERIENCE": "Experience",
+  "USER.EXPERIENCE.YEARS": "Years",
+  "USER.EXPERIENCE.MONTHS": "Months",
   "USER.DETAILS_LOADING": "Loding Employee Details ...",
   "USER.APPLICATIONS": "Applications",
   "USER.FIRST_NAME": "First name",

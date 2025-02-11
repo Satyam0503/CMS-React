@@ -12,6 +12,7 @@ import {
   commentActionDecoder,
   applicantStatusDecoder,
   getApplicantStatusClass,
+  monthsToYear,
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
@@ -178,8 +179,8 @@ export const ApplicationEvaluationStatus = [
   { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
   { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
   { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
-  { id: 5, label: "Selected", value: ApplicationStatus.Selected },
-  { id: 4, label: "Rejected", value: ApplicationStatus.Rejected },
+  { id: 4, label: "Selected", value: ApplicationStatus.Selected },
+  { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -346,8 +347,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "Experience",
     align: "center",
     format: (value: number) => {
-      const suffix = value > 1 ? "Years" : "Year";
-      return value + " " + suffix;
+      return monthsToYear(value);
     },
   },
   {

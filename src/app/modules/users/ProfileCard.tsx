@@ -121,7 +121,7 @@ export default function ProfileCard() {
         >
           <Avatar
             alt="profile picture"
-            src="media/avatars/300-6.jpg"
+            src="media/avatars/300-1.jpg"
             sx={{
               width: "100%",
               height: "100%",
