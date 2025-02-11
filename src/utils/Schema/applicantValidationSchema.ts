@@ -1,5 +1,8 @@
 import * as Yup from "yup";
-import { ApplicationStatus } from "../enums";
+//  name validation
+// [a-zA-Z]+\\.?
+// "^[\\p{L} .'-]+$"
+// /\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+/
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -65,9 +68,9 @@ export const editApplicantValidationSchema = Yup.object().shape({
     .required("Phone number is required"),
   experienceInMonths: Yup.number()
     .required("Experience is Required")
-    .min(0)
+    .min(0,"Experience must be non-negative value")
     .max(12),
-  experienceInYears: Yup.number().min(0).required("Experience is Required"),
+  experienceInYears: Yup.number().min(0,"Experience must be non-negative value").required("Experience is Required"),
   vacancyId: Yup.string().required("Select Job"),
   activityType:Yup.number().oneOf([0,1,2,3,4,5]).required("Select Application Status"),
   resume: Yup.mixed()

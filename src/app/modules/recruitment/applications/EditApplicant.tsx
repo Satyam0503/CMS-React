@@ -3,13 +3,11 @@ import {
   Card,
   Container,
   FormHelperText,
+  FormLabel,
   Grid,
-  IconButton,
-  Menu,
   MenuItem,
   Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -18,26 +16,38 @@ import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Applicant,
-  ApplicantModel,
   EditApplicantModel,
   JobModal,
 } from "../../../../utils/common_types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CircularLoader } from "../../components/CircularLoader";
 import { Formik } from "formik";
 import { editApplicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
 import { TextInput } from "../../components/form_component/TextInput";
 import { SelectInput } from "../../components/form_component/SelectInput";
-import { editApplicant, getAllJobVacancies, uploadResume } from "../services";
+import {
+  addComment,
+  editApplicant,
+  getAllJobVacancies,
+  uploadResume,
+} from "../services";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { ApplicationEvaluationStatus } from "../../../../utils/constant/Constant";
-import { monthsExperienceList } from "../../../../utils/common";
+import {
+  ApplicantStatusMapper,
+  commentActionEncoderForApplicationStatus,
+  monthsExperienceList,
+} from "../../../../utils/common";
+import { AddComment } from "./AddComment";
 
 export const EditApplicant = () => {
   const intl = useIntl();
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
+  const [comment, setComment] = useState("");
+  const [isCommentModalOpen, setCommnetModalOpen] = useState(false);
   const [activeVacancyList, setActiveVacancyList] = useState<JobModal[]>([]);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const state = useLocation().state as Applicant;
@@ -66,6 +76,10 @@ export const EditApplicant = () => {
     getAllVacancy();
   }, []);
 
+  const handleCommentChange = useCallback((comment: string) => {
+    setComment(comment);
+  }, []);
+
   if (loading) {
     return <CircularLoader />;
   }
@@ -84,6 +98,24 @@ export const EditApplicant = () => {
     activityType: state.activityType,
     experienceInYears: Math.floor(state.experience / 12),
     experienceInMonths: state.experience % 12,
+  };
+
+  const handleAddComment = async (activityType: number) => {
+    const payload = {
+      applicantId: state.applicantId,
+      userId: user.userId,
+      description: comment,
+      activityCategory: commentActionEncoderForApplicationStatus(activityType)!,
+      userName: user.firstName + " " + user.lastName,
+    };
+    const response = await addComment(payload);
+    const { success, statusCode } = response.data;
+    if (!success) {
+      throw new Error("Failed To Update Applicant");
+    }
+    toast.success("Applicant Updated Successfully");
+    handleModalClose();
+    window.history.back();
   };
 
   const handleFileChange = (
@@ -117,8 +149,8 @@ export const EditApplicant = () => {
       phone: values.phone,
       vacancyId: values.vacancyId,
       resumeUrl: "",
-      status: 0,
-      activityType: 0,
+      status: ApplicantStatusMapper[values.activityType],
+      activityType: values.activityType,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
       experience: totalExperienceInMonths,
@@ -126,19 +158,26 @@ export const EditApplicant = () => {
 
     try {
       const response = await editApplicant(payload);
-      const { statusCode, success } = response.data;
-      if (success) {
-        const resumeUploadResponse = await uploadResume(values.email, formData);
-        const responseData = resumeUploadResponse.data;
-        if (responseData.success) {
-          toast.success("Applicant Updated Successfully");
-        }
+      const { message, success } = response.data;
+      if (!success) {
+        throw new Error("Failed To Update Applicant");
       }
-    } catch (error) {
+      const resumeUploadResponse = await uploadResume(values.email, formData);
+      if (!resumeUploadResponse.data.success) {
+        throw new Error("Failed To Update Applicant");
+      }
+      handleAddComment(values.activityType);
+    } catch (error: any) {
+      toast.error(error.message);
       console.error(error);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleModalClose = () => {
+    setCommnetModalOpen(false);
+    setComment("");
   };
 
   return (
@@ -157,88 +196,58 @@ export const EditApplicant = () => {
           >
             {({ values, errors, touched, ...formik }) => {
               return (
-                <form onSubmit={formik.handleSubmit}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                        type="text"
-                        name="firstName"
-                        placeholder="FirstName"
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={4}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                        type="text"
-                        name="lastName"
-                        placeholder="Last Name"
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={4}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "USER.PHONE" })}
-                        type="text"
-                        name="phone"
-                        placeholder="Phone Number"
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={4}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        disabled={true}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <SelectInput
-                        label={intl.formatMessage({ id: "JOB.POSITION" })}
-                        name="vacancyId"
-                      >
-                        {activeVacancyList.map((vacancy) => (
-                          <MenuItem value={vacancy.jobId} key={vacancy.jobId}>
-                            {vacancy.title}
-                          </MenuItem>
-                        ))}
-                      </SelectInput>
-                    </Grid>
-                  </Grid>
-
-                  <Stack mt={2} spacing={1}>
-                    <Typography variant="h6" fontWeight={600}>
-                      {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
-                    </Typography>
-                    <Grid container gap={2}>
-                      <Grid item xs={12} sm={4} md={4}>
+                <>
+                  <form onSubmit={formik.handleSubmit}>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={intl.formatMessage({
-                            id: "USER.EXPERIENCE.YEARS",
-                          })}
-                          type="number"
-                          name="experienceInYears"
-                          placeholder="Experience in Years"
+                          label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
+                          type="text"
+                          name="firstName"
+                          placeholder="FirstName"
                         />
                       </Grid>
-                      <Grid item xs={12} sm={3} md={2}>
+
+                      <Grid item xs={12} sm={4}>
+                        <TextInput
+                          label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                          type="text"
+                          name="lastName"
+                          placeholder="Last Name"
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={4}>
+                        <TextInput
+                          label={intl.formatMessage({ id: "USER.PHONE" })}
+                          type="text"
+                          name="phone"
+                          placeholder="Phone Number"
+                        />
+                      </Grid>
+
+                      <Grid item xs={12} sm={4}>
+                        <TextInput
+                          label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                          type="email"
+                          name="email"
+                          placeholder="Email"
+                          disabled={true}
+                        />
+                      </Grid>
+                      <Grid item xs={12} sm={4}>
                         <SelectInput
-                          label={intl.formatMessage({
-                            id: "USER.EXPERIENCE.MONTHS",
-                          })}
-                          name="experienceInMonths"
+                          label={intl.formatMessage({ id: "JOB.POSITION" })}
+                          name="vacancyId"
                         >
-                          {monthsExperienceList.map((month) => (
-                            <MenuItem key={month.id} value={month.value}>
-                              {month.label}
+                          {activeVacancyList.map((vacancy) => (
+                            <MenuItem value={vacancy.jobId} key={vacancy.jobId}>
+                              {vacancy.title}
                             </MenuItem>
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid item xs={12} sm={3} md={2}>
+                      <Grid item xs={12} sm={4}>
                         <SelectInput
                           label={intl.formatMessage({ id: "PROFILE.STATUS" })}
                           name="activityType"
@@ -251,84 +260,135 @@ export const EditApplicant = () => {
                         </SelectInput>
                       </Grid>
                     </Grid>
-                  </Stack>
 
-                  <Box my={3}>
-                    <Stack direction={"column"} spacing={1}>
-                      <Box
-                        component="label"
-                        sx={{
-                          border: "1px dashed grey",
+                    <Stack mt={2} spacing={1}>
+                      <Typography variant="h6" fontWeight={600}>
+                        {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
+                      </Typography>
+                      <Grid container gap={2}>
+                        <Grid item xs={12} sm={4} md={4}>
+                          <TextInput
+                            label={intl.formatMessage({
+                              id: "USER.EXPERIENCE.YEARS",
+                            })}
+                            type="number"
+                            name="experienceInYears"
+                            placeholder="Experience in Years"
+                            inputProps={{
+                              min: 0,
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={3} md={2}>
+                          <SelectInput
+                            label={intl.formatMessage({
+                              id: "USER.EXPERIENCE.MONTHS",
+                            })}
+                            name="experienceInMonths"
+                          >
+                            {monthsExperienceList.map((month) => (
+                              <MenuItem key={month.id} value={month.value}>
+                                {month.label}
+                              </MenuItem>
+                            ))}
+                          </SelectInput>
+                        </Grid>
+                      </Grid>
+                    </Stack>
 
-                          cursor: "pointer",
-                        }}
-                      >
-                        <Container
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: 1,
-                            alignItems: "center",
+                    <Box my={3}>
+                      <Stack direction={"column"} spacing={1}>
+                        <Box
+                          component="label"
+                          sx={{
+                            border: "1px dashed grey",
+                            borderRadius: 1,
+                            cursor: "pointer",
                           }}
                         >
-                          <Grid item xs={6} md={6} textAlign={"center"}>
-                            <CloudUploadOutlined
-                              fontSize="large"
-                              sx={{ margin: "auto" }}
-                            />
-                            <input
-                              name="resume"
-                              type="file"
-                              accept=".pdf"
-                              onChange={(event) => {
-                                formik.setFieldTouched("resume", true);
-                                handleFileChange(event, formik.setFieldValue);
-                              }}
-                              hidden
-                            />
-                            <Typography variant="body1" flexWrap={"wrap"}>
-                              {intl.formatMessage({ id: "FILE.SELECTED" })}:
-                              {values.resume ? values.resume.name : ""}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6} md={6}>
-                            <Typography variant="body2" flexWrap={"wrap"}>
-                              {intl.formatMessage({
-                                id: "FILE.UPLOAD_INSTRUCTION",
-                              })}
-                            </Typography>
-                          </Grid>
-                        </Container>
-                      </Box>
-                    </Stack>
-                    <FormHelperText>
-                      {touched.resume && errors.resume && errors.resume}
-                    </FormHelperText>
-                  </Box>
+                          <Container
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              gap: 1,
+                              alignItems: "center",
+                            }}
+                          >
+                            <Grid item xs={6} md={6} textAlign={"center"}>
+                              <CloudUploadOutlined
+                                fontSize="large"
+                                sx={{ margin: "auto" }}
+                              />
+                              <input
+                                name="resume"
+                                type="file"
+                                accept=".pdf"
+                                onChange={(event) => {
+                                  formik.setFieldTouched("resume", true);
+                                  handleFileChange(event, formik.setFieldValue);
+                                }}
+                                hidden
+                              />
+                              <Typography variant="body1" flexWrap={"wrap"}>
+                                {intl.formatMessage({ id: "FILE.SELECTED" })}:
+                                {values.resume ? values.resume.name : ""}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={6} md={6}>
+                              <Typography variant="body2" flexWrap={"wrap"}>
+                                {intl.formatMessage({
+                                  id: "FILE.UPLOAD_INSTRUCTION",
+                                })}
+                              </Typography>
+                            </Grid>
+                          </Container>
+                        </Box>
+                      </Stack>
+                      <FormHelperText>
+                        {touched.resume && errors.resume && errors.resume}
+                      </FormHelperText>
+                    </Box>
 
-                  <Grid
-                    item
-                    xs={12}
-                    display={"flex"}
-                    justifyContent={"flex-end"}
-                    mt={1}
-                    gap={1}
-                  >
-                    {" "}
-                    <CustomisedButton
-                      variant="outlined"
-                      size="medium"
-                      label="Cancel"
+                    <Grid
+                      item
+                      xs={12}
+                      display={"flex"}
+                      justifyContent={"flex-end"}
+                      mt={1}
+                      gap={1}
+                    >
+                      <CustomisedButton
+                        variant="outlined"
+                        size="medium"
+                        label="Reset"
+                        handleClick={() => {
+                          formik.handleReset();
+                        }}
+                      />
+                      <CustomisedButton
+                        variant="contained"
+                        size="medium"
+                        label="Update"
+                        type="button"
+                        disabled={
+                          formik.isSubmitting ||
+                          !(formik.isValid && formik.dirty)
+                        }
+                        handleClick={() => setCommnetModalOpen(true)}
+                      />
+                    </Grid>
+                  </form>
+
+                  {isCommentModalOpen && (
+                    <AddComment
+                      open={isCommentModalOpen}
+                      comment={comment}
+                      handleCommentChange={handleCommentChange}
+                      handleAddComment={() => formik.submitForm()}
+                      handleClose={handleModalClose}
                     />
-                    <CustomisedButton
-                      variant="contained"
-                      size="medium"
-                      label="Update"
-                      type="submit"
-                      disabled={formik.isSubmitting || !formik.isValid}
-                    />
-                  </Grid>
-                </form>
+                  )}
+                </>
               );
             }}
           </Formik>

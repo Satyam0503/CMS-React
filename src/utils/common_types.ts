@@ -132,7 +132,6 @@ export interface ApplicantModel {
   status: number;
   activityType: number;
   resume?: null | File;
-  experienceInMonths?:number;
 }
 
 export type EditApplicantModel = Omit<ApplicantModel,"experience"> & {

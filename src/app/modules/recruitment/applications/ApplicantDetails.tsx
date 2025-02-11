@@ -11,7 +11,7 @@ import { useIntl } from "react-intl";
 import { Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   addComment,
   editApplicant,
@@ -21,10 +21,11 @@ import {
 import { Applicant, CommentModel } from "../../../../utils/common_types";
 import {
   applicantStatusDecoder,
+  ApplicantStatusMapper,
   commentActionEncoderForApplicationStatus,
+  convertMonthsToYear,
   dateFormatter,
   getApplicantStatusClass,
-  monthsToYear,
 } from "../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -36,18 +37,6 @@ import { AddComment } from "./AddComment";
 import { StyleStatus } from "../../components/StyledStatus";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
-
-const ApplicantStatusMapper: {
-  [index: number]: ApplicantStatus;
-} = {
-  [ApplicationStatus.New]: ApplicantStatus.New,
-  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
-  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
-  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
-  [ApplicationStatus.Selected]: ApplicantStatus.Active,
-  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
-};
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
@@ -96,6 +85,10 @@ export const ApplicantDetails = () => {
     }, 1500);
     return () => clearTimeout(timeoutId);
   }, [refresh]);
+
+  const handleCommentChange = useCallback((comment: string) => {
+    setComment(comment);
+  }, []);
 
   if (Object.keys(param).length === 0 || !param.applicantid) {
     navigate("/error", { replace: true });
@@ -262,7 +255,7 @@ export const ApplicantDetails = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  {monthsToYear(applicant.experience)}
+                  {convertMonthsToYear(applicant.experience)}
                 </Typography>
               </Stack>
             </Grid>
@@ -334,7 +327,7 @@ export const ApplicantDetails = () => {
               <AddComment
                 open={isModalOpen}
                 comment={comment}
-                setComment={setComment}
+                handleCommentChange={handleCommentChange}
                 handleClose={handleClose}
                 handleAddComment={handleAddComment}
               />
