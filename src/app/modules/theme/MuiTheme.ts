@@ -1109,6 +1109,53 @@ export const MuiTheme = createTheme({
     //     // },
     //   },
     // },
+    MuiSwitch: {
+      styleOverrides: {
+        root: {
+          width: 36,
+          height: 20,
+          padding: 0,
+          "& .MuiSwitch-switchBase": {
+            padding: 0,
+            margin: 0,
+            transitionDuration: "300ms",
+            "&.Mui-checked": {
+              transform: "translateX(16px)",
+              color: colors.alpha.white[500],
+              "& + .MuiSwitch-track": {
+                backgroundColor: colors.alpha.primary[500],
+                opacity: 1,
+                border: 0,
+              },
+              "&.Mui-disabled + .MuiSwitch-track": {
+                opacity: 0.5,
+              },
+            },
+            "&.Mui-focusVisible .MuiSwitch-thumb": {
+              color: colors.alpha.white[500],
+              border: "6px solid" + colors.alpha.white[500],
+            },
+            "&.Mui-disabled .MuiSwitch-thumb": {
+              color: colors.alpha.neutral[500],
+            },
+            "&.Mui-disabled + .MuiSwitch-track": {
+              opacity: 0.7,
+            },
+          },
+          "& .MuiSwitch-thumb": {
+            boxSizing: "border-box",
+            width: 19,
+            height: 20,
+            border: "1px solid " + colors.alpha.neutral[300],
+          },
+          "& .MuiSwitch-track": {
+            borderRadius: 26 / 2,
+            backgroundColor: colors.alpha.neutral[300],
+            opacity: 1,
+          },
+        },
+      },
+    },
     MuiStepper: {
       styleOverrides: {
         root: {

@@ -165,3 +165,27 @@ canvas {
   padding-bottom: 20px;
   font-weight: 500 !important;
 }
+
+//CSS for Text editor-quill
+button:hover .ql-stroke,
+.ql-picker-label:hover .ql-stroke {
+  fill: none;
+  stroke: $app-primary-500 !important;
+}
+
+.ql-active .ql-stroke {
+  fill: none;
+  stroke: $app-primary-500 !important;
+}
+
+button:hover .ql-fill,
+.ql-picker-label:hover .ql-fill {
+  fill: $app-primary-500 !important;
+  stroke: none;
+}
+
+.ql-active .ql-fill {
+  fill: $app-primary-500 !important;
+  stroke: none;
+}
+//close
