@@ -93,7 +93,6 @@ const Sidebar = () => {
             </Stack>
           </Stack>
           <SidebarMenu />
-          <SidebarFooter />
         </Grid>
       )}
     </>

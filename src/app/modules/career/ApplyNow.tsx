@@ -49,7 +49,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  // const companyId = import.meta.env.VITE_COMPANY_KEY;
+  const companyId = import.meta.env.VITE_COMPANY_KEY;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -167,7 +167,7 @@ export default function ApplyNow() {
         </Grid>
         <Container>
           <Typography variant="h3" className="linear-text-gradient">
-            We are hiring
+            {intl.formatMessage({ id: "ALERT.HIRING" })}
           </Typography>
           <Grid
             item
@@ -230,11 +230,17 @@ export default function ApplyNow() {
                           />
                         ))
                       ) : (
-                        <Typography variant="h5">No Jobs</Typography>
+                        <Typography variant="h5">
+                          {" "}
+                          {intl.formatMessage({ id: "NO.VACANCY" })}
+                        </Typography>
                       )}
                     </Stack>
                     <Stack spacing={2}>
-                      <Typography variant="h5">Job description</Typography>
+                      <Typography variant="h5">
+                        {" "}
+                        {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
+                      </Typography>
                       <Stack
                         minHeight={"200px"}
                         maxHeight={"400px"}

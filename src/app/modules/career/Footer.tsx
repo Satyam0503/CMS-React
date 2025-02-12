@@ -44,7 +44,12 @@ export default function Footer() {
             textAlign={"justify"}
           >
             <Stack>
-              <Typography variant="h3">About Us</Typography>
+              <Typography variant="h3">
+                {" "}
+                {intl.formatMessage({
+                  id: "MENU.ABOUT_US",
+                })}
+              </Typography>
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
@@ -55,9 +60,9 @@ export default function Footer() {
             />
             <Stack>
               <Typography variant="body1" flexWrap={"wrap"} maxWidth={"450px"}>
-                Codeji InfoTech PVT LTD is best software development company,
-                It's developing high quality and reliable software for corporate
-                needs.
+                {intl.formatMessage({
+                  id: "COMPANY.DESCRIPTION",
+                })}
               </Typography>
             </Stack>
           </Grid>
@@ -71,7 +76,11 @@ export default function Footer() {
             gap={1}
           >
             <Stack>
-              <Typography variant="h3">Links</Typography>
+              <Typography variant="h3">
+                {intl.formatMessage({
+                  id: "COLOR.LINKS",
+                })}
+              </Typography>
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}

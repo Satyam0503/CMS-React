@@ -558,7 +558,7 @@ export const EditPermission = () => {
           </Stack>
         </Stack>
       </Container>
-      <Grid container display={"flex"} justifyContent={"end"} gap={2}>
+      <Grid container display={"flex"} justifyContent={"end"} gap={2} mt={2}>
         <CustomisedButton
           variant="outlined"
           // handleClick={handleClose}

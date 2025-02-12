@@ -15,11 +15,12 @@ const SidebarFooter = () => {
         data-bs-dismiss-="click"
         title="Codeji Docs & Components"
       >
-        <span className="btn-label">Docs & Components</span>
+        {/* <span className="btn-label">Docs & Components</span> */}
         <KTIcon iconName="document" className="btn-icon fs-2 m-0" />
       </a>
     </div>
   );
 };
+//Need to remove componnet
 
 export { SidebarFooter };
