@@ -1,6 +1,11 @@
 import dayjs, { Dayjs } from "dayjs";
-import { EmployeeModel } from "./common_types";
-import { ApplicantStatus, ApplicationStatus, CommentAction } from "./enums";
+import { EmployeeModel, ModulePermissoinModel } from "./common_types";
+import {
+  ApplicantStatus,
+  ApplicationStatus,
+  CommentAction,
+  ModulesName,
+} from "./enums";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -163,7 +168,6 @@ export const ApplicantStatusMapper: {
   [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
 };
 
-
 export const experienceCategoryList = [
   { id: 1, label: "0 - 1", value: 1 },
   {
@@ -309,4 +313,14 @@ export const convertMonthsToYear = (months: number) => {
   let years = Math.round(months / 12);
   let suffix = years > 1 ? "Years" : "Year";
   return years + " " + suffix;
+};
+
+export const checkUserModuleAccess = (
+  module: ModulesName,
+  userPermissions: ModulePermissoinModel[]
+) => {
+  const index = userPermissions.findIndex(
+    (permission) => permission.moduleConstant === module
+  );
+  return index !== -1 ? true : false;
 };

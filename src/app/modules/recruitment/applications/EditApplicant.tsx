@@ -40,6 +40,7 @@ import {
   monthsExperienceList,
 } from "../../../../utils/common";
 import { AddComment } from "./AddComment";
+import { ErrorLabel } from "../../components/form_component/ErrorLabel";
 
 export const EditApplicant = () => {
   const intl = useIntl();
@@ -344,9 +345,9 @@ export const EditApplicant = () => {
                           </Container>
                         </Box>
                       </Stack>
-                      <FormHelperText>
+                      <ErrorLabel>
                         {touched.resume && errors.resume && errors.resume}
-                      </FormHelperText>
+                      </ErrorLabel>
                     </Box>
 
                     <Grid
