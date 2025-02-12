@@ -290,9 +290,8 @@ export function Registration() {
                 <Typography variant="body1"></Typography>
               </Stack>
 
-              <Stack direction={"row"} alignItems={"center"}>
+              <Stack direction={"row"} alignItems={"center"} className="ms-n2">
                 <Checkbox
-                  style={{ paddingLeft: 0 }}
                   checked={values.acceptTerms}
                   {...getFieldProps("acceptTerms")}
                 />
