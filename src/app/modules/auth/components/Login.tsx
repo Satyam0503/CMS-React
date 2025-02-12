@@ -51,10 +51,10 @@ export function Login() {
     setStatus: (status?: any) => void
   ) {
     setLoading(true);
-    
+
     try {
       const response = await login({ ...values });
-      if(!response){
+      if (!response) {
         throw new Error("");
       }
       const data = response.data;
@@ -157,7 +157,7 @@ export function Login() {
                   />
                   <Typography variant="body2" align="center">
                     Not a Member yet ?{" "}
-                    <Link to="/auth/registration">Sign up</Link>
+                    <Link to="/auth/registration">Register</Link>
                   </Typography>
                 </Stack>
               </Stack>

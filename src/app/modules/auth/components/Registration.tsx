@@ -290,17 +290,19 @@ export function Registration() {
                 <Typography variant="body1"></Typography>
               </Stack>
 
-              <Stack>
-                <Typography>
-                  <Checkbox
-                    checked={values.acceptTerms}
-                    {...getFieldProps("acceptTerms")}
-                  />
+              <Stack direction={"row"} alignItems={"center"}>
+                <Checkbox
+                  style={{ paddingLeft: 0 }}
+                  checked={values.acceptTerms}
+                  {...getFieldProps("acceptTerms")}
+                />
+                <Typography variant="body1">
                   <Box component="span">
                     I Accept the
                     <Link to="#"> Terms and Conditions</Link>
                   </Box>
                 </Typography>
+
                 <FormHelperText>
                   {touched.acceptTerms &&
                     errors.acceptTerms &&

@@ -28,8 +28,8 @@ const AuthLayout = () => {
         <Grid
           item
           xs={12}
-          md={5}
-          order={{ xs: "2", md: "inherit" }}
+          sm={5}
+          order={{ xs: "2", sm: "inherit" }}
           sx={{ justifyContent: "center" }}
         >
           <Stack>
@@ -54,7 +54,7 @@ const AuthLayout = () => {
           </Stack>
         </Grid>
 
-        <Grid item xs={12} md={5} textAlign={"center"}>
+        <Grid item xs={12} sm={5} textAlign={"center"}>
           <Stack spacing={2}>
             <Box component={"div"}>
               <img
@@ -64,12 +64,13 @@ const AuthLayout = () => {
               />
             </Box>
 
-            <Typography variant="h2">Fast, Efficient and Productive</Typography>
+            <Typography variant="h4">Fast, Efficient and Productive</Typography>
 
             <Typography variant="body1">
-              We can help you with an easy way to manage all of your website‘s
-              content without needing to manually edit your site’s code any time
-              you want to make a change.
+              Code Ji’s CMS portal simplifies employee and applicant management
+              by allowing businesses to track profiles, recruitment stages, and
+              performance efficiently. It streamlines HR processes, enabling
+              easy updates without technical expertise.
             </Typography>
           </Stack>
         </Grid>

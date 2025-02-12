@@ -1,5 +1,4 @@
 import { alpha, createTheme, lighten, darken } from "@mui/material";
-import { inherits } from "util";
 
 const themeColors = {
   primary: "#9A56D3",
