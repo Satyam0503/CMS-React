@@ -208,10 +208,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
     label: "Name",
-    minWidth: 180,
+    minWidth: 200,
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
-      const jobRole = row.department;
+      const jobRole = row.jobRole;
       return <AvatarCell title={fullName} subTitle={jobRole} />;
     },
   },

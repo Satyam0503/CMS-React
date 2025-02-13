@@ -26,7 +26,6 @@ import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
-import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -54,7 +53,6 @@ const employeeInitialValue: EmployeeModel = {
 };
 export default function Employees() {
   const intl = useIntl();
-  const currentUser = useAppSelector((state) => state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
@@ -111,28 +109,8 @@ export default function Employees() {
         });
     } else {
       const payload = {
-        userId: values.userId,
-        companyId: values.companyId,
-        employeeId: values.employeeId,
-        roleId: values.roleId,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        gender: values.gender,
-        dateOfBirth: values.dateOfBirth,
-        email: values.email,
-        password: "",
-        jobRole: values.jobRole,
-        department: values.department,
-        reportingManager: values.reportingManager,
-        teamLead: values.teamLead,
-        phoneNumber: values.phoneNumber,
-        bloodGroup: values.bloodGroup,
-        personalEmail: values.personalEmail,
-        emergencyContact: values.emergencyContact,
-        dateOfJoining: values.dateOfJoining,
+        ...values, 
         status: statusEncoder(values.status as string),
-        address: values.address,
-        isEmailVerified: values.isEmailVerified,
       };
       addEmployee(payload)
         .then((res) => {

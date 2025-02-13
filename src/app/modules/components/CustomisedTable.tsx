@@ -55,18 +55,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
           {loading ? (
             <TableBody>
               <TableRow>
-                {/* {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column?.align || "left"}
-                    style={{ width: "100%" }}
-                  >
-                    <TableSkeleton />
-                  </TableCell>
-                ))} */}
                 <TableCell colSpan={12} align="center">
                   <TableSkeleton />
-                  {/* <Typography variant="h6"> Loading... </Typography> */}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -80,7 +70,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                 </TableRow>
               ) : (
                 <>
-                  {rows.map((row: any, index: number) => (
+                  {rows.reverse().map((row: any, index: number) => (
                     <TableRow hover key={index}>
                       {columns.map((column) => {
                         const value =

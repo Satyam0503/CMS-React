@@ -11,9 +11,10 @@ import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
-import { EditApplicant } from "../modules/recruitment/applications/EditApplicant.tsx";
 import { findUserDefaultTab } from "../../utils/common.ts";
 import { useAppSelector } from "../Redux/hooks.ts";
+import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
+import { Modules, ModulesName } from "../../utils/enums.ts";
 
 const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
 const Setting = lazy(() => import("../pages/admin/Settings"));
@@ -39,14 +40,15 @@ const PrivateRoutes = () => {
         <Route path="attendance" element={<AttendanceWrapper />} />
         <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
-        <Route path="editapplicantdetails" element={<EditApplicant />} />
-        
+
         {/* Lazy Modules */}
         <Route
           path="employee/*"
           element={
             <SuspensedView>
-              <EmployeePage />
+              <ProtectedRoute module={ModulesName.Employees}>
+                <EmployeePage />
+              </ProtectedRoute>
             </SuspensedView>
           }
         />

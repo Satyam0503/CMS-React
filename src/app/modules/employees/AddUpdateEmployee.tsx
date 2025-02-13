@@ -20,6 +20,8 @@ import { useAppSelector } from "../../Redux/hooks";
 import { toast } from "react-toastify";
 import { TextInput } from "../components/form_component/TextInput";
 import { SelectInput } from "../components/form_component/SelectInput";
+import { ErrorLabel } from "../components/form_component/ErrorLabel";
+import { Roles } from "../../../utils/enums";
 
 interface PropsTypes {
   initialValues: EmployeeModel;
@@ -36,7 +38,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } =
     props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
-  const currentUser = useAppSelector((state) => state.user.userData);
   const intl = useIntl();
 
   useEffect(() => {
@@ -52,9 +53,11 @@ export default function AddUpdateEmployee(props: PropsTypes) {
       });
   }, []);
 
+  const filteredRoles = roles?.filter((role) => role.titles !== Roles.Administrator);
+ 
   return (
     <>
-      {roles && roles?.length > 0 && (
+      {filteredRoles && filteredRoles?.length > 0 && (
         <CustomisedModal open={open} handleClose={handleClose}>
           <Stack direction="column" spacing={2}>
             <Typography variant="h5">
@@ -133,11 +136,11 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                           }}
                           maxDate={dayjs()}
                         />
-                        <FormHelperText>
+                        <ErrorLabel>
                           {touched.dateOfBirth &&
                             errors.dateOfBirth &&
                             errors.dateOfBirth}
-                        </FormHelperText>
+                        </ErrorLabel>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -155,14 +158,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.ROLE" })}
                       >
                         <MenuItem value={""}>None</MenuItem>
-                        {roles.map((role) => {
-                          if (role.titles !== currentUser?.role) {
-                            return (
-                              <MenuItem key={role.rolesId} value={role.rolesId}>
-                                {role.titles}
-                              </MenuItem>
-                            );
-                          }
+                        {filteredRoles.map((role) => {
+                          return (
+                            <MenuItem key={role.rolesId} value={role.rolesId}>
+                              {role.titles}
+                            </MenuItem>
+                          );
                         })}
                       </SelectInput>
                     </Grid>
@@ -262,11 +263,11 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                           }}
                           maxDate={dayjs()}
                         />
-                        <FormHelperText>
+                        <ErrorLabel>
                           {touched.dateOfJoining &&
                             errors.dateOfJoining &&
                             errors.dateOfJoining}
-                        </FormHelperText>
+                        </ErrorLabel>
                       </Stack>
                     </Grid>
                     <Grid item xs={12} md={6}>

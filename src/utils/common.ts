@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   CommentAction,
   ModulesName,
+  Permission,
 } from "./enums";
 import { SideBarTabList } from "./constant/Constant";
 
@@ -336,4 +337,21 @@ export const findUserDefaultTab = (
     return "/error/";
   }
   return defaultTab.route;
+};
+
+export const checkUserPermissionForRouteAccess = (
+  moduleName: ModulesName,
+  userPermissions: ModulePermissoinModel[]
+) => {
+  const module = userPermissions.find(
+    (permission) => permission.moduleConstant === moduleName
+  );
+  if (!module) {
+    return false;
+  }
+  const index = module.permissions.findIndex(
+    (permission) => permission.permissionConstant === Permission.View
+  );
+
+  return index !== -1 ? true : false;
 };
