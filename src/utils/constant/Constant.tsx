@@ -5,6 +5,7 @@ import {
   EmployeeModel,
   JobModal,
   RolesType,
+  SideBarTabListProps,
 } from "../common_types";
 import {
   dateFormatter,
@@ -13,15 +14,29 @@ import {
   applicantStatusDecoder,
   getApplicantStatusClass,
   convertMonthsToYear,
-  
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
-import { ApplicationStatus } from "../enums";
+import { ApplicationStatus, Modules, ModulesName } from "../enums";
 import { ActionComponent } from "../../app/modules/components/ActionComponent";
 import { AvatarCell } from "../../app/modules/components/AvatarCell";
 import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
-
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import {
+  AccessTime,
+  AccountCircle,
+  AdminPanelSettings,
+  CalendarMonth,
+  ColorLens,
+  Contacts,
+  Mail,
+  PermContactCalendar,
+  Person,
+  PersonSearch,
+  Settings,
+  ToggleOn,
+  Work,
+} from "@mui/icons-material";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -332,11 +347,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "fullName",
     label: "Full Name",
-    minWidth: 30,
+    minWidth: 150,
   },
   {
     id: "vacancyName",
     label: "Job Title",
+    minWidth: 150,
   },
   {
     id: "experience",
@@ -509,5 +525,107 @@ export const CommentTableColumnList: ColumnListTypes[] = [
         </p>
       </Tooltip>
     ),
+  },
+];
+
+export const SideBarTabList: SideBarTabListProps[] = [
+  {
+    id: Modules.Dashboard,
+    title: ModulesName.Dashboard,
+    route: "/admindashboard",
+    icon: <DashboardIcon />,
+  },
+  {
+    id: Modules.UserDashboard,
+    title: ModulesName.UserDashboard,
+    route: "/userdashboard",
+    icon: <DashboardIcon />,
+  },
+  {
+    id: Modules.MyProfile,
+    title: ModulesName.MyProfile,
+    route: "/myprofile",
+    icon: <AccountCircle />,
+  },
+  {
+    id: Modules.Employees,
+    title: ModulesName.Employees,
+    route: "/employee/employees",
+    icon: <Contacts />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Employees,
+        title: ModulesName.Employees,
+        route: "/employee/employees",
+        icon: <Person />,
+      },
+      {
+        id: Modules.LeaveManagement,
+        title: ModulesName.LeaveManagement,
+        route: "/employee/employeeleave",
+        icon: <PermContactCalendar />,
+      },
+      {
+        id: Modules.Attendance,
+        title: ModulesName.Attendance,
+        route: "/employee/attendance",
+        icon: <AccessTime />,
+      },
+    ],
+  },
+  {
+    id: Modules.Recruitment,
+    title: ModulesName.Recruitment,
+    route: "/recruitment/jobs",
+    icon: <PersonSearch />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Jobs,
+        title: ModulesName.Jobs,
+        route: "/recruitment/jobs",
+        icon: <Work />,
+      },
+      {
+        id: Modules.Applications,
+        title: ModulesName.Applications,
+        route: "/recruitment/applications",
+        icon: <Mail />,
+      },
+    ],
+  },
+  {
+    id: Modules.Admin,
+    title: ModulesName.Admin,
+    route: "/admin/permissions",
+    icon: <Settings />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Permissions,
+        title: ModulesName.Permissions,
+        route: "/admin/permissions",
+        icon: <ToggleOn />,
+      },
+      {
+        id: Modules.Theme,
+        title: ModulesName.Theme,
+        route: "/admin/theme",
+        icon: <ColorLens />,
+      },
+    ],
+  },
+  {
+    id: Modules.Holidays,
+    title: ModulesName.Holidays,
+    route: "/holidays",
+    icon: <CalendarMonth />,
+  },
+  {
+    id: Modules.NoticeBoard,
+    title: ModulesName.NoticeBoard,
+    route: "/noticeboard",
+    icon: <AdminPanelSettings />,
   },
 ];

@@ -30,6 +30,7 @@ import { toast } from "react-toastify";
 import NoVacancy from "./NoVacancy";
 import ApplyNowHeader from "./ApplyNowHeader";
 import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
+import { ErrorLabel } from "../components/form_component/ErrorLabel";
 // import ApplyNowHeader from "./ApplyNowHeader";
 
 const initialValues: ApplicantModel = {
@@ -144,11 +145,6 @@ export default function ApplyNow() {
   if (loading) {
     return <CircularLoader />;
   }
-
-  // const handleCaptchaChange = (token: string | null) => {
-  //   console.log(token);
-  // };
-
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
@@ -369,11 +365,11 @@ export default function ApplyNow() {
                               </MenuItem>
                             ))}
                           </Select>
-                          <FormHelperText>
+                          <ErrorLabel>
                             {touched.vacancyId &&
                               errors.vacancyId &&
                               errors.vacancyId}
-                          </FormHelperText>
+                          </ErrorLabel>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                           <SelectInput
@@ -423,8 +419,7 @@ export default function ApplyNow() {
                                     setFieldTouched("resume", true);
                                     handleFileChange(e, setFieldValue);
                                   }}
-                                  onBlur={() => setFieldTouched("resume", true)}
-                                  // style={{visibility:"hidden"}}
+                                  // onBlur={() => setFieldTouched("resume", true)}
                                   hidden
                                 />
                                 <Typography variant="body1" flexWrap={"wrap"}>
@@ -443,21 +438,12 @@ export default function ApplyNow() {
                               </Grid>
                             </Container>
                           </Box>
-                          <FormHelperText>
+                          <ErrorLabel>
                             {touched.resume && errors.resume && errors.resume}
-                          </FormHelperText>
+                          </ErrorLabel>
                         </Grid>
 
                         <Grid item xs={12}>
-                          {/* <ReCAPTCHA
-                            sitekey={String(CAPTCHA_SITE_KEY)}
-                            onChange={handleRecaptchaChange}
-                          />
-                          {formErrors.captcha && (
-                            <Typography className="error-validation">
-                              {formErrors.captcha}
-                            </Typography>
-                          )} */}
                         </Grid>
                         <Grid item xs={12} textAlign={"center"}>
                           <CustomisedButton

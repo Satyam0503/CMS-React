@@ -50,7 +50,7 @@ export const UserSummary = () => {
         setUserSummary(methodResult);
       })
       .catch((error) => {
-        toast.error(error.message);
+        console.error(error);
       });
   }, [refresh]);
   return (
