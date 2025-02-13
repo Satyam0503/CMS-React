@@ -244,7 +244,9 @@ export default function ApplyNow() {
                       >
                         {selectedJobPosition ? (
                           <Typography
-                            variant="caption"
+                            variant="body1"
+                            fontWeight={400}
+                            color={colors.alpha.neutral[600]}
                             dangerouslySetInnerHTML={{
                               __html: selectedJobPosition.description,
                             }}
@@ -443,8 +445,7 @@ export default function ApplyNow() {
                           </ErrorLabel>
                         </Grid>
 
-                        <Grid item xs={12}>
-                        </Grid>
+                        <Grid item xs={12}></Grid>
                         <Grid item xs={12} textAlign={"center"}>
                           <CustomisedButton
                             type="submit"

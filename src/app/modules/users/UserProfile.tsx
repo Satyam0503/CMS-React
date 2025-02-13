@@ -13,7 +13,6 @@ import {
 import LeaveAllowences from "./LeaveAllowences";
 
 export default function UserProfile() {
-
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
@@ -23,7 +22,8 @@ export default function UserProfile() {
       <Grid
         item
         xs={12}
-        lg={3}
+        lg={3.8}
+        xl={3}
         display={"flex"}
         flexDirection={{ xs: "column", sm: "row", lg: "column" }}
         gap={4}
@@ -36,7 +36,7 @@ export default function UserProfile() {
           <LeaveAllowences />
         </Stack>
       </Grid>
-      <Grid item xs={12} md={12} lg={9}>
+      <Grid item xs={12} md={12} lg={8.2} xl={9}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           display={"flex"}

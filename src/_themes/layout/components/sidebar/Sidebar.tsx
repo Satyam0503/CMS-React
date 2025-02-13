@@ -47,7 +47,7 @@ const Sidebar = () => {
           <Stack padding={3} gap={4} alignItems="center" width="100%">
             <SidebarLogo sidebarRef={sidebarRef} />
             <Stack gap={1}>
-              <Stack maxWidth={"128px"} minWidth={"50px"}>
+              <Stack maxWidth={"128px"} minWidth={"50px"} p={0.5}>
                 <Avatar
                   alt=""
                   src={toAbsoluteUrl("media/avatars/300-6.jpg")}
