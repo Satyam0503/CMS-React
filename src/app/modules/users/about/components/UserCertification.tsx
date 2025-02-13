@@ -177,7 +177,11 @@ export const UserCertification = () => {
                   >
                     {certification.certificationTitle}
                   </Typography>
-                  <Stack direction={{ sx: "column", sm: "row" }} spacing={1}>
+                  <Stack
+                    direction={{ sx: "column", sm: "row" }}
+                    spacing={1}
+                    alignItems={{ sm: "flex-end" }}
+                  >
                     <Typography
                       variant="caption"
                       display={"block"}

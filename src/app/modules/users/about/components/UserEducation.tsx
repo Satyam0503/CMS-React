@@ -177,7 +177,11 @@ export const UserEducation = () => {
                   >
                     {education.educationTitle}
                   </Typography>
-                  <Stack direction={{ sx: "column", sm: "row" }} spacing={1}>
+                  <Stack
+                    direction={{ sx: "column", sm: "row" }}
+                    spacing={1}
+                    alignItems={{ sm: "flex-end" }}
+                  >
                     <Stack>
                       <Typography
                         variant="caption"

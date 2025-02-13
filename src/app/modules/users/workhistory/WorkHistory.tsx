@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import {
   Business,
+  CalendarToday,
   CorporateFare,
   DeleteOutline,
   Edit,
@@ -46,7 +47,7 @@ export const WorkHistory: FC = () => {
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack
                   sx={{
-                    width: 48,
+                    minWidth: 48,
                     height: 48,
                     bgcolor: colors.alpha.primary[100],
                     alignItems: "center",
@@ -66,14 +67,20 @@ export const WorkHistory: FC = () => {
                   <Typography variant="body2" color={colors.alpha.primary[500]}>
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
-                  <Stack direction="row" spacing={1} alignItems={"center"}>
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={{ xs: 0.5, sm: 2 }}
+                  >
                     <Typography variant="subtitle1" fontWeight={600}>
                       Kuwan wala, Dehradun
                     </Typography>
-                    <Typography variant="subtitle2">
-                      <CalendarIcon />
-                      Jan 2023- Jun 2024 (1 Year 5 Months)
-                    </Typography>
+                    <Stack direction={"row"} className="text-muted">
+                      <CalendarToday sx={{ fontSize: "14px", mr: 0.5 }} />
+                      <Typography variant="subtitle2">
+                        Jan 2023- Jun 2024 (1 Year 5 Months)
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </Stack>
               </Stack>
@@ -104,7 +111,7 @@ export const WorkHistory: FC = () => {
               <Stack direction="row" spacing={1} alignItems={"center"}>
                 <Stack
                   sx={{
-                    width: 48,
+                    minWidth: 48,
                     height: 48,
                     bgcolor: colors.alpha.primary[100],
                     alignItems: "center",
@@ -124,14 +131,20 @@ export const WorkHistory: FC = () => {
                   <Typography variant="body2" color={colors.alpha.primary[500]}>
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
-                  <Stack direction="row" spacing={1} alignItems={"center"}>
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={{ xs: 0.5, sm: 2 }}
+                  >
                     <Typography variant="subtitle1" fontWeight={600}>
                       Kuwan wala, Dehradun
                     </Typography>
-                    <Typography variant="subtitle2">
-                      <CalendarIcon />
-                      Jan 2023- Jun 2024 (1 Year 5 Months)
-                    </Typography>
+                    <Stack direction={"row"} className="text-muted">
+                      <CalendarToday sx={{ fontSize: "14px", mr: 0.5 }} />
+                      <Typography variant="subtitle2">
+                        Jan 2023- Jun 2024 (1 Year 5 Months)
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </Stack>
               </Stack>
