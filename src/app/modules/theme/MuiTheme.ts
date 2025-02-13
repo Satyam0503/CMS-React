@@ -1171,6 +1171,9 @@ export const MuiTheme = createTheme({
         root: {
           color: colors.alpha.neutral[200],
           background: "inherit",
+          "&:hover": {
+            background: "none",
+          },
           "&.Mui-disabled": {
             color: colors.alpha.neutral[200],
           },
