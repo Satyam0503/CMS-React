@@ -1,22 +1,16 @@
 import * as React from "react";
-
 import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
-
 import JobDescription from "./JobDescription";
-
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { SearchInput } from "../../components/SearchInput";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
-
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
 import { addJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
-import { useAppSelector } from "../../../Redux/hooks";
-
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { ViewJobDetails } from "./ViewJobDetails";
@@ -28,7 +22,7 @@ const initialValues: JobModal = {
   vacancies: 1,
   description: "",
   jobType: "",
-  status: true,
+  status: false,
 };
 
 export default function Jobs() {
@@ -46,8 +40,11 @@ export default function Jobs() {
   const [loading, setLoading] = React.useState(false);
   const [isRefresh, setRefresh] = React.useState(false);
   const [isViewModalOpen, setViewModalOpen] = React.useState(false);
-  const token = useAppSelector((state) => state.auth.token)!;
- 
+
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+
   const handleClose = () => {
     setEdit(false);
     setOpenModal(false);
@@ -107,8 +104,7 @@ export default function Jobs() {
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setSubmitting(false);
       }
     } else {
@@ -126,8 +122,7 @@ export default function Jobs() {
         handleClose();
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setSubmitting(false);
       }
     }
@@ -147,8 +142,7 @@ export default function Jobs() {
         setLoading(false);
       } catch (error: any) {
         toast.error(error.message);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     }, 1500);
@@ -166,7 +160,7 @@ export default function Jobs() {
             flexWrap={"wrap-reverse"}
             gap={2}
           >
-            <SearchInput search={search} setSearch={setSearch} />
+            <SearchInput search={search} setSearch={handleSearchChange} />
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 tooltip="Filter employee"

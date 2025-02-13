@@ -4,7 +4,7 @@ import { Add, Close, Download, FilterList } from "@mui/icons-material";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   addEmployee,
   deleteEmployee,
@@ -71,6 +71,10 @@ export default function Employees() {
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
+
+  const handleSearchChange = useCallback((value:string)=>{
+    setSearch(value);
+  },[])
 
   function handleClose() {
     setModalOpen(false);
@@ -264,7 +268,8 @@ export default function Employees() {
             flexWrap={"wrap-reverse"}
             gap={2}
           >
-            <SearchInput search={search} setSearch={setSearch} />
+            <SearchInput search={search} setSearch={handleSearchChange} />
+            
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}

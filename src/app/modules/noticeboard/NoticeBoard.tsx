@@ -64,6 +64,10 @@ export default function NoticeBoard() {
 
   const intl = useIntl();
 
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearchValue(value);
+  }, []);
+
   const handleCloseModal = () => {
     setModalOpen(false);
     setEdit(false);
@@ -104,7 +108,7 @@ export default function NoticeBoard() {
           flexWrap={"wrap-reverse"}
           gap={2}
         >
-          <SearchInput search={searchValue} setSearch={setSearchValue} />
+          <SearchInput search={searchValue} setSearch={handleSearchChange} />
           <Stack direction={"row"} flexWrap={"wrap"} gap={2}>
             <Stack>
               <Button

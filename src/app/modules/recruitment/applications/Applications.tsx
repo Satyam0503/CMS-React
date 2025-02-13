@@ -7,12 +7,11 @@ import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
 import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
-import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();
@@ -30,6 +29,10 @@ export default function Applications() {
   const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+  }, []);
 
   const handleApplicantEdit = (applicant: Applicant) => {
     if (applicant) {
@@ -63,7 +66,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);
+  }, [refresh,search]);
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -75,7 +78,7 @@ export default function Applications() {
             flexWrap={"wrap-reverse"}
             gap={2}
           >
-            <SearchInput search={search} setSearch={setSearch} />
+            <SearchInput search={search} setSearch={handleSearchChange} />
 
             <Stack direction="row" spacing={1}>
               <CustomIconButton

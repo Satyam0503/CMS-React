@@ -1,26 +1,23 @@
 import { IconButton, InputAdornment, TextField } from "@mui/material";
-import { Close, SearchOutlined } from "@mui/icons-material";
-import { FC, useCallback, useEffect, useState } from "react";
+import { Close } from "@mui/icons-material";
+import { FC, memo, useEffect, useState } from "react";
+import { useDebounce } from "../../hooks/useDebounce";
 
 type PropsType = {
   search: string;
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  setSearch: (value: string) => void;
 };
 
-export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
-  const [debouncedValue, setDebouncedValue] = useState(search);
-
-  const handleDebouncedSearch = useCallback(() => {
-    setSearch(debouncedValue);
-  }, [debouncedValue, setSearch]);
+export const SearchInput: FC<PropsType> = memo(({ search, setSearch }) => {
+  const [value, setValue] = useState(search);
+  const debouncedValue = useDebounce(value);
 
   useEffect(() => {
-    const timeoutId = setTimeout(handleDebouncedSearch, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [debouncedValue, handleDebouncedSearch]);
+    setSearch(debouncedValue);
+  }, [debouncedValue]);
 
   const handleClearSearch = () => {
-    setDebouncedValue("");
+    setValue("");
   };
 
   return (
@@ -34,10 +31,10 @@ export const SearchInput: FC<PropsType> = ({ search, setSearch }) => {
           </InputAdornment>
         ),
       }}
-      value={debouncedValue}
-      onChange={(e) => setDebouncedValue(e.target.value)}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
       variant="outlined"
       placeholder="Search ..."
     />
   );
-};
+});
