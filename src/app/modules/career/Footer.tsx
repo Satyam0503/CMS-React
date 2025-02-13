@@ -30,20 +30,26 @@ export default function Footer() {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-evenly",
-            gap: 2,
+            gap: 4,
             color: colors.alpha.white[500],
           }}
         >
           <Grid
             item
             xs={12}
-            md={4}
+            md={3}
             display={"flex"}
             direction={"column"}
             gap={1}
+            textAlign={"justify"}
           >
             <Stack>
-              <Typography variant="h3">About Us</Typography>
+              <Typography variant="h3">
+                {" "}
+                {intl.formatMessage({
+                  id: "MENU.ABOUT_US",
+                })}
+              </Typography>
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
@@ -53,13 +59,14 @@ export default function Footer() {
               width={"25%"}
             />
             <Stack>
-              <Typography variant="h6" flexWrap={"wrap"}>
-                Codeji InfoTech PVT LTD is best software development company,
-                It's developing high quality and reliable software for corporate
-                needs.
+              <Typography variant="body1" flexWrap={"wrap"} maxWidth={"450px"}>
+                {intl.formatMessage({
+                  id: "COMPANY.DESCRIPTION",
+                })}
               </Typography>
             </Stack>
           </Grid>
+
           <Grid
             item
             xs={12}
@@ -69,7 +76,11 @@ export default function Footer() {
             gap={1}
           >
             <Stack>
-              <Typography variant="h3">Links</Typography>
+              <Typography variant="h3">
+                {intl.formatMessage({
+                  id: "COLOR.LINKS",
+                })}
+              </Typography>
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
@@ -78,22 +89,43 @@ export default function Footer() {
               height={"5px"}
               width={"25%"}
             />
-            <Stack>
-              {/* <ul className="footer-list">
-                  {menuData.map((menuList, index) => {
-                    return (
-                      <li key={index}>
-                        <a href={menuList.url}>{menuList.title}</a>
-                      </li>
-                    );
-                  })}
-                </ul> */}
+
+            <Stack gap={1}>
+              <Link href="https://codeji.in/" color={colors.alpha.white[500]}>
+                <Typography>Home</Typography>
+              </Link>
+              <Link
+                href="https://codeji.in/about-us/"
+                color={colors.alpha.white[500]}
+              >
+                <Typography>About Us</Typography>
+              </Link>
+              <Link
+                href="          https://codeji.in/services/"
+                color={colors.alpha.white[500]}
+              >
+                <Typography>Services</Typography>
+              </Link>
+
+              <Link
+                href="https://admin.codeji.in/careers/apply-now"
+                color={colors.alpha.white[500]}
+              >
+                <Typography>Career</Typography>
+              </Link>
+              <Link
+                href="https://codeji.in/contact-us/"
+                color={colors.alpha.white[500]}
+              >
+                <Typography>Contact Us</Typography>
+              </Link>
             </Stack>
           </Grid>
+
           <Grid
             item
             xs={12}
-            md={3.5}
+            md={2.5}
             display={"flex"}
             direction={"column"}
             gap={1}
@@ -108,7 +140,7 @@ export default function Footer() {
               height={"5px"}
               width={"25%"}
             />
-            <Stack>
+            <Stack textAlign={"justify"}>
               <List sx={{ p: 0 }}>
                 <ListItem sx={{ p: 0, gap: 1 }}>
                   <ListItemIcon>

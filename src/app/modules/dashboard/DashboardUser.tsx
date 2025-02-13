@@ -154,7 +154,7 @@ export default function DashboardUser() {
               <Stack direction="row">
                 <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
-                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    src={toAbsoluteUrl("media/avatars/300-1.jpg")}
                     alt=""
                     style={{ borderRadius: "50%" }}
                   />

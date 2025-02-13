@@ -12,7 +12,6 @@ import { FC, useEffect, useState } from "react";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
-import { applicantSchema } from "../../../../utils/Schema/applicantSchema";
 import { TextInput } from "../../components/form_component/TextInput";
 import CustomisedButton from "../../components/CustomisedButton";
 import { useIntl } from "react-intl";
@@ -23,6 +22,7 @@ import { ApplicantModel, JobModal } from "../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
+import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -89,6 +89,7 @@ export const AddApplicant: FC<PropsTypes> = ({
       vacancyName: vacancy ? vacancy.title : "",
       status: ApplicantStatus.New,
       activityType: ApplicationStatus.InProgress,
+      experience:values.experience * 12,  // convert to months
     };
     try {
       const { data } = await addApplicant(payload);
@@ -134,7 +135,7 @@ export const AddApplicant: FC<PropsTypes> = ({
             </Typography>
             <Formik
               initialValues={initialValues}
-              validationSchema={applicantSchema}
+              validationSchema={applicantValidationSchema}
               onSubmit={(values, { setSubmitting }) => {
                 handleAddApplicant(values, setSubmitting);
               }}
@@ -240,11 +241,12 @@ export const AddApplicant: FC<PropsTypes> = ({
                                   type="file"
                                   accept=".pdf"
                                   onChange={(e) => {
+                                    formik.setFieldTouched("resume", true);
                                     handleFileChange(e, formik.setFieldValue);
                                   }}
-                                  onBlur={(e) => {
-                                    formik.setFieldTouched("resume", true);
-                                  }}
+                                  // onBlur={(e) => {
+                                  //   formik.setFieldTouched("resume", true);
+                                  // }}
                                   hidden
                                 />
                                 <Typography variant="body1" flexWrap={"wrap"}>

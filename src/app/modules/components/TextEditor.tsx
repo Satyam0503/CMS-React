@@ -18,8 +18,8 @@ const TextEditor: FC<PropsType> = ({ value, setValue }) => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       handleChange();
-    }, 1500); 
-    return ()=>clearTimeout(timeoutId);
+    }, 1500);
+    return () => clearTimeout(timeoutId);
   }, [debouncedValue]);
 
   const modules = {

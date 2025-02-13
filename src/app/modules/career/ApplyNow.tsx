@@ -8,18 +8,17 @@ import {
   FormHelperText,
   Select,
   FormLabel,
+  Card,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./SingleBanner";
 import CustomisedButton from "../components/CustomisedButton";
-import { useEffect, useState } from "react";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
+import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { ApplicantModel, JobModal } from "../../../utils/common_types";
-import { applicantSchema } from "../../../utils/Schema/applicantSchema";
 import { TextInput } from "../components/form_component/TextInput";
 import { SelectInput } from "../components/form_component/SelectInput";
 import { experienceCategoryList } from "../../../utils/common";
@@ -29,6 +28,10 @@ import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
 import { applyNow } from "./services";
 import { toast } from "react-toastify";
 import NoVacancy from "./NoVacancy";
+import ApplyNowHeader from "./ApplyNowHeader";
+import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
+import { ErrorLabel } from "../components/form_component/ErrorLabel";
+// import ApplyNowHeader from "./ApplyNowHeader";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -47,7 +50,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  const companyId = "fb19ab09-0399-49a4-9e59-5239edd6be3b";
+  const companyId = import.meta.env.VITE_COMPANY_KEY;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -55,6 +58,7 @@ export default function ApplyNow() {
   >([]);
   const [selectedJobPosition, setSelectedJobPosition] =
     useState<JobModal | null>();
+  // const captchaRef = useRef<ReCAPTCHA | null>(null);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -84,6 +88,7 @@ export default function ApplyNow() {
       ...values,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
+      experience: values.experience * 12,
     };
     try {
       const { data } = await applyNow(payload);
@@ -106,12 +111,11 @@ export default function ApplyNow() {
   };
 
   useEffect(() => {
-    const payload = {
-      companyId: companyId,
-    };
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies(payload);
+        const response = await getAllJobVacancies({
+          companyId,
+        });
         if (!response) {
           setError(true);
           throw new Error("Request Failed");
@@ -141,21 +145,31 @@ export default function ApplyNow() {
   if (loading) {
     return <CircularLoader />;
   }
-
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
-        <Grid item xs={12} textAlign={"center"}>
+        <Grid
+          item
+          xs={12}
+          textAlign={"center"}
+          position={"sticky"}
+          top={0}
+          zIndex={1}
+        >
+          <ApplyNowHeader />
+        </Grid>
+        <Grid item xs={12}>
           <SingleBanner title="Apply " titleorange={"Now"} />
-          <Typography variant="h3" className="linear-text-gradient">
-            We are hiring
-          </Typography>
         </Grid>
         <Container>
+          <Typography variant="h3" className="linear-text-gradient">
+            {intl.formatMessage({ id: "ALERT.HIRING" })}
+          </Typography>
           <Grid
             item
             xs={12}
-            sm={8}
+            md={9}
+            xl={8}
             p={{ xs: 2, md: 5 }}
             borderRadius={2}
             display={"flex"}
@@ -164,14 +178,13 @@ export default function ApplyNow() {
             margin={"auto"}
             sx={{
               boxShadow: "4px 5px 28px -6px #b4a7c9",
-              marginBottom: "20px",
+              marginBottom: "1.25rem",
             }}
           >
             {error || activeJobPositionsList.length === 0 ? (
               <NoVacancy />
             ) : (
               <>
-                {" "}
                 <Grid item xs={12}>
                   <Stack mb={2} spacing={1}>
                     <Typography
@@ -180,7 +193,11 @@ export default function ApplyNow() {
                     >
                       {intl.formatMessage({ id: "VACANCY.TEXT4" })}
                     </Typography>
-                    <Typography variant="h5">
+                    <Typography
+                      variant="h4"
+                      fontWeight={600}
+                      color={colors.alpha.primary[500]}
+                    >
                       {intl.formatMessage({ id: "VACANCY.TEXT5" })}
                     </Typography>
                   </Stack>
@@ -190,46 +207,60 @@ export default function ApplyNow() {
                       direction={"row"}
                       display={"flex"}
                       flexWrap={"wrap"}
-                      gap={2}
+                      gap={0.5}
                     >
                       {activeJobPositionsList.length > 0 ? (
                         activeJobPositionsList.map((jobPosition) => (
                           <CustomisedButton
                             key={jobPosition.jobId}
-                            variant="outlined"
+                            variant="contained"
                             label={jobPosition.title}
                             handleClick={() =>
                               setSelectedJobPosition(jobPosition)
                             }
-                            // style={}
                             className={
                               selectedJobPosition?.jobId === jobPosition.jobId
-                                ? "info"
-                                : ""
+                                ? "vacancyselect"
+                                : "vacancy_deselect"
                             }
                           />
                         ))
                       ) : (
-                        <Typography variant="h5">No Jobs</Typography>
+                        <Typography variant="h5">
+                          {" "}
+                          {intl.formatMessage({ id: "NO.VACANCY" })}
+                        </Typography>
                       )}
                     </Stack>
                     <Stack spacing={2}>
-                      <Typography variant="h5">Job description</Typography>
-                      {selectedJobPosition ? (
-                        <p
-                          dangerouslySetInnerHTML={{
-                            __html: selectedJobPosition.description,
-                          }}
-                        ></p>
-                      ) : (
-                        ""
-                      )}
+                      <Typography variant="h5">
+                        {" "}
+                        {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
+                      </Typography>
+                      <Stack
+                        minHeight={"200px"}
+                        maxHeight={"400px"}
+                        overflow={"auto"}
+                      >
+                        {selectedJobPosition ? (
+                          <Typography
+                            variant="body1"
+                            fontWeight={400}
+                            color={colors.alpha.neutral[600]}
+                            dangerouslySetInnerHTML={{
+                              __html: selectedJobPosition.description,
+                            }}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </Stack>
                     </Stack>
                   </Stack>
                 </Grid>
                 <Formik
                   initialValues={initialValues}
-                  validationSchema={applicantSchema}
+                  validationSchema={applicantValidationSchema}
                   onSubmit={(
                     value,
                     { setSubmitting, setStatus, resetForm }
@@ -256,12 +287,6 @@ export default function ApplyNow() {
                     ...formik
                   }) => (
                     <form onSubmit={handleSubmit}>
-                      {/* {
-                    status && 
-                    (
-                      <Typography>{status}</Typography>
-                    )
-                  } */}
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <Typography variant="h5">
@@ -274,7 +299,7 @@ export default function ApplyNow() {
                           </Typography>
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "USER.FIRST_NAME",
@@ -284,7 +309,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "USER.LAST_NAME",
@@ -294,7 +319,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({ id: "USER.PHONE" })}
                             name="phone"
@@ -302,7 +327,7 @@ export default function ApplyNow() {
                             type="text"
                           />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <TextInput
                             label={intl.formatMessage({
                               id: "AUTH.INPUT.EMAIL",
@@ -313,14 +338,14 @@ export default function ApplyNow() {
                           />
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
-                          <FormLabel sx={{ mb: 0.5 }}>
+                        <Grid item xs={12} sm={6}>
+                          <Typography variant="body1" sx={{ mb: 0.5 }}>
                             {intl.formatMessage({ id: "JOB.POSITION" })}
-                          </FormLabel>
+                          </Typography>
                           <Select
                             fullWidth
                             {...formik.getFieldProps("vacancyId")}
-                            value={selectedJobPosition?.jobId}
+                            // value={selectedJobPosition?.jobId}
                             onChange={(event) => {
                               setFieldValue("vacancyId", event.target.value);
                               setSelectedJobPosition(
@@ -342,8 +367,13 @@ export default function ApplyNow() {
                               </MenuItem>
                             ))}
                           </Select>
+                          <ErrorLabel>
+                            {touched.vacancyId &&
+                              errors.vacancyId &&
+                              errors.vacancyId}
+                          </ErrorLabel>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                           <SelectInput
                             name={"experience"}
                             label={intl.formatMessage({
@@ -365,7 +395,7 @@ export default function ApplyNow() {
                             component="label"
                             sx={{
                               border: "1px dashed grey",
-                              borderRadius: 1,
+
                               cursor: "pointer",
                               width: "100%",
                             }}
@@ -388,10 +418,10 @@ export default function ApplyNow() {
                                   type="file"
                                   accept=".pdf,"
                                   onChange={(e) => {
+                                    setFieldTouched("resume", true);
                                     handleFileChange(e, setFieldValue);
                                   }}
-                                  onBlur={() => setFieldTouched("resume", true)}
-                                  // style={{visibility:"hidden"}}
+                                  // onBlur={() => setFieldTouched("resume", true)}
                                   hidden
                                 />
                                 <Typography variant="body1" flexWrap={"wrap"}>
@@ -410,29 +440,19 @@ export default function ApplyNow() {
                               </Grid>
                             </Container>
                           </Box>
-                          <FormHelperText>
+                          <ErrorLabel>
                             {touched.resume && errors.resume && errors.resume}
-                          </FormHelperText>
+                          </ErrorLabel>
                         </Grid>
 
-                        <Grid item xs={12}>
-                          {/* <ReCAPTCHA
-                            sitekey={String(CAPTCHA_SITE_KEY)}
-                            onChange={handleRecaptchaChange}
-                          />
-                          {formErrors.captcha && (
-                            <Typography className="error-validation">
-                              {formErrors.captcha}
-                            </Typography>
-                          )} */}
-                        </Grid>
+                        <Grid item xs={12}></Grid>
                         <Grid item xs={12} textAlign={"center"}>
                           <CustomisedButton
                             type="submit"
                             variant="contained"
                             label="Submit"
                             size="medium"
-                            disabled={isSubmitting || !(isValid && dirty)}
+                            disabled={isSubmitting || !dirty}
                           />
                         </Grid>
                       </Grid>
@@ -450,24 +470,3 @@ export default function ApplyNow() {
     </>
   );
 }
-
-//   if (activeJobPositionsList.length === 0) {
-//   }
-
-//   return (
-//     <>
-//       <Grid container display={"flex"} justifyContent={"space-between"}>
-//         <Grid item xs={12} textAlign={"center"}>
-//           <SingleBanner title="Apply " titleorange={"Now"} />
-//           <Typography variant="h5">We are hiring</Typography>
-//         </Grid>
-
-//         <Container></Container>
-
-//         <Grid item xs={12} width={"100%"}>
-//           <Footer />
-//         </Grid>
-//       </Grid>
-//     </>
-//   );
-// }

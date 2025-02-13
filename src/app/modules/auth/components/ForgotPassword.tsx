@@ -4,6 +4,9 @@ import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { requestPassword } from "../core/_requests";
+import CustomisedButton from "../../components/CustomisedButton";
+import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
+import { colors } from "../../theme/MuiTheme";
 
 const initialValues = {
   email: "",
@@ -45,45 +48,34 @@ export function ForgotPassword() {
 
   return (
     <form
-      className="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
+      // className="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
       noValidate
       id="kt_login_password_reset_form"
       onSubmit={formik.handleSubmit}
     >
-      <div className="text-center mb-10">
-        {/* begin::Title */}
-        <h1 className="text-gray-900 fw-bolder mb-3">Forgot Password ?</h1>
-        {/* end::Title */}
-
-        {/* begin::Link */}
-        <div className="text-gray-500 fw-semibold fs-6">
+      <Stack className="text-center mb-10">
+        <Typography variant="h3">Forgot Password ?</Typography>
+        <Typography variant="body1" color={colors.alpha.primary[500]}>
           Enter your email to reset your password.
-        </div>
-        {/* end::Link */}
-      </div>
+        </Typography>
+      </Stack>
 
-      {/* begin::Title */}
       {hasErrors === true && (
-        <div className="mb-lg-15 alert alert-danger">
-          <div className="alert-text font-weight-bold">
-            Sorry, looks like there are some errors detected, please try again.
-          </div>
-        </div>
+        <Stack color={colors.alpha.danger[500]}>
+          Sorry, looks like there are some errors detected, please try again.
+        </Stack>
       )}
 
       {hasErrors === false && (
-        <div className="mb-10 bg-light-info p-8 rounded">
-          <div className="text-info">
-            Sent password reset. Please check your email
-          </div>
-        </div>
+        <Stack color={colors.alpha.success[500]}>
+          Sent password reset. Please check your email
+        </Stack>
       )}
-      {/* end::Title */}
 
-      {/* begin::Form group */}
-      <div className="fv-row mb-8">
-        <label className="form-label fw-bolder text-gray-900 fs-6">Email</label>
-        <input
+      <Grid item mb={2}>
+        <Typography variant="body1">Email</Typography>
+
+        <TextField
           type="email"
           placeholder=""
           autoComplete="off"
@@ -97,42 +89,36 @@ export function ForgotPassword() {
           )}
         />
         {formik.touched.email && formik.errors.email && (
-          <div className="fv-plugins-message-container">
-            <div className="fv-help-block">
-              <span role="alert">{formik.errors.email}</span>
-            </div>
-          </div>
+          <Box component={"span"} role="alert">
+            {formik.errors.email}
+          </Box>
         )}
-      </div>
-      {/* end::Form group */}
+      </Grid>
 
-      {/* begin::Form group */}
-      <div className="d-flex flex-wrap justify-content-center pb-lg-0">
-        <button
-          type="submit"
-          id="kt_password_reset_submit"
-          className="btn btn-primary me-4"
-        >
-          <span className="indicator-label">Submit</span>
-          {loading && (
-            <span className="indicator-progress">
-              Please wait...
-              <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-            </span>
-          )}
-        </button>
+      <Grid item display={"flex"} justifyContent={"center"} gap={1}>
         <Link to="/auth/login">
-          <button
+          <CustomisedButton
+            variant="contained"
             type="button"
-            id="kt_login_password_reset_form_cancel_button"
-            className="btn btn-light"
+            label="Submit"
             disabled={formik.isSubmitting || !formik.isValid}
-          >
-            Cancel
-          </button>
-        </Link>{" "}
-      </div>
-      {/* end::Form group */}
+          />
+          {loading && (
+            <Box component={"span"} role="alert">
+              Please wait...
+            </Box>
+          )}
+        </Link>
+
+        <Link to="/auth/login">
+          <CustomisedButton
+            variant="outlined"
+            type="button"
+            label="Cancel"
+            disabled={formik.isSubmitting || !formik.isValid}
+          />
+        </Link>
+      </Grid>
     </form>
   );
 }

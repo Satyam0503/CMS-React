@@ -1,6 +1,7 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { UserSummaryModel } from "../app/modules/users/userservices";
+import { Modules, ModulesName } from "./enums";
 
 export interface ApiResponse {
   success: boolean;
@@ -12,10 +13,29 @@ export interface UserModel {
   userId: string;
   companyId: string;
   role: string;
+  roleId: string;
   firstName: string;
   lastName: string;
   fullName: string;
-  permissions: any[];
+  permissions: PermissionModel[];
+  modulePermission: ModulePermissoinModel[];
+}
+
+export type UserDataModel = Omit<UserModel, "modulePermission" | "permissions">;
+
+export interface ModulePermissoinModel {
+  moduleName: string;
+  moduleConstant: string;
+  permissions: PermissionModel[];
+}
+
+export interface PermissionModel {
+  permissionName: string;
+  rolePermissionId: string;
+  modulePermissionId: number;
+  rolesId: string;
+  hasAccess: boolean;
+  permissionConstant: string;
 }
 
 export interface EmployeeModel {
@@ -114,9 +134,10 @@ export type ColumnListTypes = {
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
   build?: any;
-  sorting?:boolean;
+  sorting?: boolean;
   format?: (value: any) => any;
   avatarCell?: (row: any) => ReactNode;
+  permission?: boolean;
 };
 
 export interface ApplicantModel {
@@ -134,7 +155,10 @@ export interface ApplicantModel {
   resume?: null | File;
 }
 
-
+export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
+  experienceInYears: number;
+  experienceInMonths: number;
+};
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
   statusName: string;
@@ -165,6 +189,15 @@ export interface ResponseData<T> {
   statusCode: number;
   methodResult: T;
   methodResults: T[];
+}
+
+export interface SideBarTabListProps {
+  id: Modules;
+  title: ModulesName;
+  route: string;
+  icon: JSX.Element;
+  hasSubTabs?: boolean;
+  subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;

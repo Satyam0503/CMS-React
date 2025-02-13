@@ -1,38 +1,46 @@
-import {
-  DeleteOutlineOutlined,
-  Edit,
-  Place,
-  Visibility,
-} from "@mui/icons-material";
-import { Avatar, Box, Button, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { Button, Tooltip, Typography } from "@mui/material";
 import {
   Applicant,
   ColumnListTypes,
   EmployeeModel,
   JobModal,
   RolesType,
+  SideBarTabListProps,
 } from "../common_types";
 import {
   dateFormatter,
-  applicationStatusDecoder,
   statusDecoder,
-  getApplicationStatusClass,
   commentActionDecoder,
   applicantStatusDecoder,
   getApplicantStatusClass,
+  convertMonthsToYear,
 } from "../common";
-import CustomisedButton from "../../app/modules/components/CustomisedButton";
-import { CustomIconButton } from "../../app/modules/components/CustomIconButton";
-import { CustomisedModal } from "../../app/modules/components/CustomisedModal";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
-import { colors } from "../../app/modules/theme/MuiTheme";
-import { ApplicationStatus } from "../enums";
-import DOMPurify from "dompurify";
-
+import { ApplicationStatus, Modules, ModulesName } from "../enums";
+import { ActionComponent } from "../../app/modules/components/ActionComponent";
+import { AvatarCell } from "../../app/modules/components/AvatarCell";
+import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import {
+  AccessTime,
+  AccountCircle,
+  AdminPanelSettings,
+  CalendarMonth,
+  ColorLens,
+  Contacts,
+  Mail,
+  PermContactCalendar,
+  Person,
+  PersonSearch,
+  Settings,
+  ToggleOn,
+  Work,
+} from "@mui/icons-material";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
+
+export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
 export const ServiceUrl = {
   // account
@@ -74,6 +82,8 @@ export const ServiceUrl = {
   GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
 
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
+
+  VERIFY_CAPTCHA: `${BaseUrl}/api/User/verifyCaptch`,
 
   // not working
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
@@ -185,8 +195,8 @@ export const ApplicationEvaluationStatus = [
   { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
   { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
   { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
-  { id: 5, label: "Selected", value: ApplicationStatus.Selected },
-  { id: 4, label: "Rejected", value: ApplicationStatus.Rejected },
+  { id: 4, label: "Selected", value: ApplicationStatus.Selected },
+  { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -335,26 +345,21 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     minWidth: 30,
   },
   {
-    id: "firstName",
-    label: "First Name",
-    minWidth: 30,
-  },
-  {
-    id: "lastName",
-    label: "Last Name",
-    minWidth: 30,
+    id: "fullName",
+    label: "Full Name",
+    minWidth: 150,
   },
   {
     id: "vacancyName",
     label: "Job Title",
+    minWidth: 150,
   },
   {
     id: "experience",
     label: "Experience",
     align: "center",
     format: (value: number) => {
-      const suffix = value > 1 ? "Years" : "Year";
-      return value + " " + suffix;
+      return convertMonthsToYear(value);
     },
   },
   {
@@ -485,7 +490,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "userName",
-    label: "User Name",
+    label: "Action By",
     minWidth: 150,
   },
   {
@@ -504,115 +509,123 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "description",
     label: "Comment",
-    build: (description: string) => {
-      const trustedHtml = DOMPurify.sanitize(description);
-      return (
-        <Box
-          component={"div"}
-          dangerouslySetInnerHTML={{
-            __html: trustedHtml,
-          }}
-          sx={{
-            maxWidth: "200px",
+    minWidth: 200,
+    build: (value: string) => (
+      <Tooltip title={value} arrow placement="top">
+        <p
+          style={{
+            width: "200px",
             textOverflow: "ellipsis",
             textWrap: "nowrap",
+            overflow: "hidden",
+            margin: "0",
           }}
-        ></Box>
-      );
-    },
+        >
+          {value}
+        </p>
+      </Tooltip>
+    ),
   },
 ];
 
-interface ActionComponentProps<Row> {
-  row: Row;
-  handleEdit?: (row: Row) => void;
-  openConfirmationModal?: (row: Row) => void;
-  openViewModal?: (row: Row) => void;
-}
-const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
-
-  return (
-    <Stack direction={"row"} spacing={1}>
-      {handleEdit && (
-        <CustomIconButton
-          handleClick={() => handleEdit(row)}
-          icon={<Edit />}
-          tooltip="Edit"
-          ariaLabel="Edit"
-        />
-      )}
-      {openConfirmationModal && (
-        <CustomIconButton
-          handleClick={() => openConfirmationModal(row)}
-          icon={<DeleteOutlineOutlined />}
-          tooltip="Delete"
-          ariaLabel="Delete"
-        />
-      )}
-      {openViewModal && (
-        <CustomIconButton
-          handleClick={() => openViewModal(row)}
-          icon={<Visibility />}
-          tooltip="View"
-          ariaLabel="View"
-        />
-      )}
-    </Stack>
-  );
-};
-
-const AddressDetailsIcon = (props: { address: string }) => {
-  const [open, setOpen] = useState(false);
-  function handleClose() {
-    setOpen(false);
-  }
-  return (
-    <>
-      <CustomIconButton
-        handleClick={() => setOpen(true)}
-        icon={<Place />}
-        tooltip="Address"
-        ariaLabel="Address"
-      />
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Stack spacing={2}>
-          <Typography variant="h5">Address</Typography>
-          <Typography>{props.address}</Typography>
-          <Stack sx={{ alignSelf: "flex-end" }}>
-            <CustomisedButton label="Close" handleClick={handleClose} />
-          </Stack>
-        </Stack>
-      </CustomisedModal>
-    </>
-  );
-};
-
-interface AvatarCellPropsTypes {
-  title?: string;
-  subTitle?: string;
-  avatarSrc?: any;
-}
-
-export const AvatarCell = ({
-  title,
-  avatarSrc,
-  subTitle,
-}: AvatarCellPropsTypes) => {
-  return (
-    <Stack direction="row" spacing={1}>
-      <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
-      <Stack direction="column" sx={{ alignSelf: "center" }}>
-        <Typography
-          variant="body2"
-          display={"block"}
-          fontWeight={500}
-          color={colors.alpha.neutral[800]}
-        >
-          {title || "NA"}
-        </Typography>
-        <Typography variant="body2">{subTitle}</Typography>
-      </Stack>
-    </Stack>
-  );
-};
+export const SideBarTabList: SideBarTabListProps[] = [
+  {
+    id: Modules.Dashboard,
+    title: ModulesName.Dashboard,
+    route: "/admindashboard",
+    icon: <DashboardIcon />,
+  },
+  {
+    id: Modules.UserDashboard,
+    title: ModulesName.UserDashboard,
+    route: "/userdashboard",
+    icon: <DashboardIcon />,
+  },
+  {
+    id: Modules.MyProfile,
+    title: ModulesName.MyProfile,
+    route: "/myprofile",
+    icon: <AccountCircle />,
+  },
+  {
+    id: Modules.Employees,
+    title: ModulesName.Employees,
+    route: "/employee/employees",
+    icon: <Contacts />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Employees,
+        title: ModulesName.Employees,
+        route: "/employee/employees",
+        icon: <Person />,
+      },
+      {
+        id: Modules.LeaveManagement,
+        title: ModulesName.LeaveManagement,
+        route: "/employee/employeeleave",
+        icon: <PermContactCalendar />,
+      },
+      {
+        id: Modules.Attendance,
+        title: ModulesName.Attendance,
+        route: "/employee/attendance",
+        icon: <AccessTime />,
+      },
+    ],
+  },
+  {
+    id: Modules.Recruitment,
+    title: ModulesName.Recruitment,
+    route: "/recruitment/jobs",
+    icon: <PersonSearch />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Jobs,
+        title: ModulesName.Jobs,
+        route: "/recruitment/jobs",
+        icon: <Work />,
+      },
+      {
+        id: Modules.Applications,
+        title: ModulesName.Applications,
+        route: "/recruitment/applications",
+        icon: <Mail />,
+      },
+    ],
+  },
+  {
+    id: Modules.Admin,
+    title: ModulesName.Admin,
+    route: "/admin/permissions",
+    icon: <Settings />,
+    hasSubTabs: true,
+    subTabs: [
+      {
+        id: Modules.Permissions,
+        title: ModulesName.Permissions,
+        route: "/admin/permissions",
+        icon: <ToggleOn />,
+      },
+      {
+        id: Modules.Theme,
+        title: ModulesName.Theme,
+        route: "/admin/theme",
+        icon: <ColorLens />,
+      },
+    ],
+  },
+  {
+    id: Modules.Holidays,
+    title: ModulesName.Holidays,
+    route: "/holidays",
+    icon: <CalendarMonth />,
+  },
+  {
+    id: Modules.NoticeBoard,
+    title: ModulesName.NoticeBoard,
+    route: "/noticeboard",
+    icon: <AdminPanelSettings />,
+  },
+];

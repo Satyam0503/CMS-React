@@ -86,6 +86,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                         const value =
                           column.id === "serialNo"
                             ? page * rowsPerPage + (index + 1)
+                            : column.id === "fullName"
+                            ? row.firstName + " " + row.lastName
                             : row[column.id];
                         return (
                           <TableCell

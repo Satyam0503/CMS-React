@@ -5,7 +5,6 @@ import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { AddApplicant } from "./AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
+import { EditApplicant } from "./EditApplicant";
 
 export default function Applications() {
   const intl = useIntl();
@@ -25,7 +25,6 @@ export default function Applications() {
   const [selectedApplicant, setSelectedApplicant] = useState<
     Applicant | undefined
   >();
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -34,9 +33,7 @@ export default function Applications() {
 
   const handleApplicantEdit = (applicant: Applicant) => {
     if (applicant) {
-      navigate("/recruitment/editapplicant", {
-        state: { applicantId: applicant.applicantId },
-      });
+      navigate(`/recruitment/applicant/${applicant.applicantId}`);
     }
   };
 
@@ -120,6 +117,7 @@ export default function Applications() {
           )}
         </Stack>
       </Card>
+
       {isAddModalOpen && (
         <AddApplicant
           open={isAddModalOpen}

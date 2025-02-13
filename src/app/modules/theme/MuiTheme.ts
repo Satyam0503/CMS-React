@@ -303,7 +303,7 @@ export const MuiTheme = createTheme({
     MuiSelect: {
       styleOverrides: {
         iconOutlined: {
-          color: colors.alpha.primary[500],
+          color: colors.alpha.white[500],
         },
       },
     },
@@ -475,6 +475,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiButton: {
       defaultProps: {
         disableRipple: true,
@@ -484,16 +485,18 @@ export const MuiTheme = createTheme({
           fontWeight: "bold",
           textTransform: "none",
           paddingInline: 16,
-          background: themeColors.white,
+          background: colors.alpha.white[500],
           color: colors.alpha.neutral[800],
           border: " 1px solid " + colors.alpha.neutral[200],
           "&:hover, &.MuiSelected": {
-            backgroundColor: colors.alpha.primary[700],
-            color: themeColors.white,
+            backgroundColor: colors.alpha.neutral[100],
+            color: colors.alpha.neutral[800],
+            border: "1px solid " + colors.alpha.neutral[200],
           },
+
           "&.Mui-disabled": {
             backgroundColor: colors.alpha.primary[400],
-            color: themeColors.white,
+            color: colors.alpha.white[500],
           },
           ".MuiSvgIcon-root": {
             transition: "all .2s",
@@ -505,10 +508,14 @@ export const MuiTheme = createTheme({
 
         contained: {
           backgroundColor: colors.alpha.primary[500],
-          color: themeColors.white,
+          color: colors.alpha.white[500],
+          "&:hover, &.MuiSelected": {
+            backgroundColor: colors.alpha.primary[800],
+            color: colors.alpha.white[500],
+          },
         },
         outlined: {
-          backgroundColor: themeColors.white,
+          backgroundColor: colors.alpha.white[500],
           border: " 1px solid " + colors.alpha.neutral[200],
 
           "&:hover, &.MuiSelected": {
@@ -518,12 +525,17 @@ export const MuiTheme = createTheme({
           },
         },
         text: {
-          backgroundColor: themeColors.white,
+          backgroundColor: colors.alpha.white[500],
           border: "none",
+          "&:hover, &.MuiSelected": {
+            backgroundColor: colors.alpha.primary[500],
+            color: colors.alpha.white[500],
+            border: "1px solid " + colors.alpha.neutral[200],
+          },
         },
         sizeSmall: {
           padding: "6px 16px",
-          background: themeColors.white,
+          background: colors.alpha.white[500],
           lineHeight: 1.5,
         },
         sizeMedium: {
@@ -554,7 +566,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          background: themeColors.white,
+          background: colors.alpha.white[500],
         },
       },
     },
@@ -618,6 +630,7 @@ export const MuiTheme = createTheme({
         root: {
           minWidth: "20px ",
           padding: "0px",
+          color: colors.alpha.secondary[500],
         },
       },
     },
@@ -719,7 +732,7 @@ export const MuiTheme = createTheme({
           "& .MuiSlider-valueLabel": {
             borderRadius: 6,
             background: colors.alpha.neutral[100],
-            color: themeColors.white,
+            color: colors.alpha.white[500],
           },
         },
       },
@@ -736,23 +749,23 @@ export const MuiTheme = createTheme({
               minWidth: 34,
             },
 
-            "& .MuiTouchRipple-root": {
-              opacity: 0.2,
-            },
+            // "& .MuiTouchRipple-root": {
+            //   opacity: 0.2,
+            // },
           },
           "&.MuiListItem-root.MuiButtonBase-root.Mui-selected": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[200],
+            color: colors.alpha.white[500],
+            background: colors.alpha.primary[400],
           },
           "&.MuiMenuItem-root.MuiButtonBase-root:active": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[200],
+            color: colors.alpha.white[500],
+            background: colors.alpha.primary[400],
           },
           "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
             opacity: 0.5,
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[100],
-          },
+            color: colors.alpha.primary[800],
+            background: colors.alpha.primary[400],
+          }, //MenuItem
         },
 
         padding: {
@@ -816,6 +829,8 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    //dropdown only menuitem
     MuiMenu: {
       styleOverrides: {
         paper: {
@@ -824,42 +839,46 @@ export const MuiTheme = createTheme({
         },
         list: {
           padding: 12,
-
           "& .MuiMenuItem-root.MuiButtonBase-root": {
             fontSize: 14,
             marginTop: 1,
             marginBottom: 2,
             transition: "all .2s",
-            color: colors.alpha.neutral[500],
 
             "& .MuiTouchRipple-root": {
               opacity: 0.2,
             },
 
-            ", &.Mui-selected": {
-              color: colors.alpha.neutral[500],
-              background: colors.alpha.neutral[100],
+            "&.Mui-selected": {
+              color: colors.alpha.white[500], // When selected
+              background: colors.alpha.primary[500],
+              "&:hover": {
+                color: colors.alpha.white[500],
+                background: colors.alpha.primary[500],
+              },
             },
-            "&:hover, &:active, &.active": {
-              color: colors.alpha.primary[500],
-              background: colors.alpha.primary[100],
+
+            "&:active": {
+              //on hover
+              color: colors.alpha.primary[900],
+              background: colors.alpha.primary[300],
             },
           },
         },
       },
     },
+    //close
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          background: "transparent",
           transition: "all .2s",
-
-          "&:hover, &:active, &.active": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[100],
+          "&:active": {
+            color: colors.alpha.success[500],
+            background: colors.alpha.secondary[500],
           },
           "&.Mui-selected:hover": {
-            background: colors.alpha.primary[500],
+            background: colors.alpha.secondary[500],
+            color: colors.alpha.success[500],
           },
         },
       },
@@ -868,12 +887,12 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           "&.MuiButtonBase-root": {
-            color: colors.alpha.primary[500],
-            background: colors.alpha.primary[500],
+            color: colors.alpha.success[500],
+            background: colors.alpha.secondary[500],
 
             "&:hover, &:active, &.active, &.Mui-selected": {
-              color: colors.alpha.neutral[100],
-              background: colors.alpha.primary[500],
+              color: colors.alpha.success[500],
+              background: colors.alpha.secondary[500],
             },
           },
         },
@@ -1055,46 +1074,84 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    // MuiSwitch: {
+    //   styleOverrides: {
+    //     root: {
+    //       overflow: "visible",
+
+    //       // "& .MuiButtonBase-root": {
+    //       //   position: "absolute",
+    //       //   padding: 6,
+    //       //   transition:
+    //       //     "left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    //       // },
+    //       // "& .MuiIconButton-root": {
+    //       //   borderRadius: 100,
+    //       // },
+    //     },
+    //     // thumb: {
+    //     //   border: "1px solid " + colors.alpha.neutral[300],
+    //     // },
+    //     // track: {
+    //     //   backgroundColor: colors.alpha.neutral[500],
+    //     //   border: "1px solid " + colors.alpha.neutral[200],
+    //     //   boxShadow: "inset 0px 1px 1px " + colors.alpha.neutral[100],
+    //     //   opacity: 1,
+    //     // },
+    //     // colorPrimary: {
+    //     //   "& .MuiSwitch-thumb": {
+    //     //     backgroundColor: colors.alpha.white[500],
+    //     //   },
+
+    //     //   "&.Mui-checked .MuiSwitch-thumb": {
+    //     //     color: colors.alpha.primary[500],
+    //     //   },
+    //     // },
+    //   },
+    // },
     MuiSwitch: {
       styleOverrides: {
         root: {
-          height: 33,
-          overflow: "visible",
-
-          "& .MuiButtonBase-root": {
-            position: "absolute",
-            padding: 6,
-            transition:
-              "left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+          width: 36,
+          height: 20,
+          padding: 0,
+          "& .MuiSwitch-switchBase": {
+            padding: 0,
+            margin: 0,
+            transitionDuration: "300ms",
+            "&.Mui-checked": {
+              transform: "translateX(16px)",
+              color: colors.alpha.white[500],
+              "& + .MuiSwitch-track": {
+                backgroundColor: colors.alpha.primary[500],
+                opacity: 1,
+                border: 0,
+              },
+              "&.Mui-disabled + .MuiSwitch-track": {
+                opacity: 0.5,
+              },
+            },
+            "&.Mui-focusVisible .MuiSwitch-thumb": {
+              color: colors.alpha.white[500],
+              border: "6px solid" + colors.alpha.white[500],
+            },
+            "&.Mui-disabled .MuiSwitch-thumb": {
+              color: colors.alpha.neutral[500],
+            },
+            "&.Mui-disabled + .MuiSwitch-track": {
+              opacity: 0.7,
+            },
           },
-          "& .MuiIconButton-root": {
-            borderRadius: 100,
-          },
-          "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-            opacity: 0.3,
-          },
-        },
-        thumb: {
-          border: "1px solid " + colors.alpha.neutral[300],
-          boxShadow:
-            "0px 9px 14px " +
-            colors.alpha.neutral[100] +
-            ", 0px 2px 2px " +
-            colors.alpha.neutral[100],
-        },
-        track: {
-          // backgroundColor: colors.alpha.neutral[500],
-          border: "1px solid " + colors.alpha.neutral[200],
-          boxShadow: "inset 0px 1px 1px " + colors.alpha.neutral[100],
-          opacity: 1,
-        },
-        colorPrimary: {
           "& .MuiSwitch-thumb": {
-            backgroundColor: themeColors.white,
+            boxSizing: "border-box",
+            width: 19,
+            height: 20,
+            border: "1px solid " + colors.alpha.neutral[300],
           },
-
-          "&.Mui-checked .MuiSwitch-thumb": {
-            color: colors.alpha.primary[500],
+          "& .MuiSwitch-track": {
+            borderRadius: 26 / 2,
+            backgroundColor: colors.alpha.neutral[300],
+            opacity: 1,
           },
         },
       },

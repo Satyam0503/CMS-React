@@ -19,6 +19,7 @@ export function HeaderWrapper() {
   return (
     <div id="kt_app_header" className="app-header">
       <div
+        style={{ textWrap: "nowrap" }}
         id="kt_app_header_container"
         className={clsx(
           "app-container",

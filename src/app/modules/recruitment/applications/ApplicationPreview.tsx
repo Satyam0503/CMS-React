@@ -1,5 +1,5 @@
-import { Close, Download } from "@mui/icons-material";
-import { Container, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Close,  } from "@mui/icons-material";
+import {  Grid,  Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
@@ -7,6 +7,7 @@ import { Applicant } from "../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusDecoder,
+  convertMonthsToYear,
   dateFormatter,
   getApplicationStatusClass,
 } from "../../../../utils/common";
@@ -27,7 +28,6 @@ export const ApplicationPreview: FC<PropsType> = ({
   const intl = useIntl();
   const status = applicationStatusDecoder(applicantData.activityType);
   const className = getApplicationStatusClass(applicantData.activityType);
-  const experienceSuffix = applicantData.experience > 1 ? "Years" : "Year";
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
@@ -66,7 +66,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" fontWeight={400}>
-              {applicantData.experience + " " + experienceSuffix}
+              {convertMonthsToYear(applicantData.experience)}
             </Typography>
           </Grid>
         </Grid>

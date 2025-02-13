@@ -1,30 +1,7 @@
-import {
-  Typography,
-  Grid,
-  Stack,
-  TextField,
-  FormControl,
-  Select,
-  MenuItem,
-  Container,
-  Box,
-  Card,
-  CardHeader,
-  CardContent,
-} from "@mui/material";
+import { Typography, Grid, Stack, Card, CardContent } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  CloudUploadOutlined,
-  DeveloperBoard,
-  Home,
-  HourglassTop,
-} from "@mui/icons-material";
-import CustomisedButton from "../components/CustomisedButton";
-import { useState } from "react";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
+import { HourglassTop } from "@mui/icons-material";
 import { colors } from "../theme/MuiTheme";
-import { SingleBannerNew } from "./SingleBannerNew";
-import FooterNew from "./FooterNew";
 import IconStat from "../components/IconStat";
 
 type Props = {
@@ -41,20 +18,18 @@ export default function JobDescription() {
           <Card>
             <CardContent>
               <Stack sx={{ alignItems: "center" }}>
-                {" "}
                 <IconStat
                   iconBg={colors.alpha.primary[100]}
                   icon={<HourglassTop fontSize="large" />}
                   iconColor={colors.alpha.primary[500]}
                 />
                 <Typography variant="body1" textAlign={"center"}>
-                  {" "}
                   Full Stack developer
                 </Typography>
                 <Typography variant="body2" textAlign={"center"}>
                   2 Positions
                 </Typography>
-              </Stack>{" "}
+              </Stack>
             </CardContent>
           </Card>
         </Grid>

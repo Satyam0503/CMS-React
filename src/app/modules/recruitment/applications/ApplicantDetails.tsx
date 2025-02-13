@@ -10,8 +10,8 @@ import {
 import { useIntl } from "react-intl";
 import { Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import {
   addComment,
   editApplicant,
@@ -21,7 +21,9 @@ import {
 import { Applicant, CommentModel } from "../../../../utils/common_types";
 import {
   applicantStatusDecoder,
+  ApplicantStatusMapper,
   commentActionEncoderForApplicationStatus,
+  convertMonthsToYear,
   dateFormatter,
   getApplicantStatusClass,
 } from "../../../../utils/common";
@@ -35,27 +37,10 @@ import { AddComment } from "./AddComment";
 import { StyleStatus } from "../../components/StyledStatus";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
-
-interface StateType {
-  applicantId: string;
-}
-
-const ApplicantStatusMapper: {
-  [index: number]: ApplicantStatus;
-} = {
-  [ApplicationStatus.New]: ApplicantStatus.New,
-  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
-  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
-  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
-  [ApplicationStatus.Selected]: ApplicantStatus.Active,
-  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
-};
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const state = useLocation().state as StateType;
   const userData = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
@@ -64,8 +49,7 @@ export const ApplicantDetails = () => {
   const [activityType, setActivityType] = useState<number>(0);
   const [refresh, setRefresh] = useState(false);
   const [comment, setComment] = useState("");
-
-  const applicantId = state.applicantId;
+  const param = useParams();
 
   useEffect(() => {
     setLoading(true);
@@ -80,11 +64,11 @@ export const ApplicantDetails = () => {
         })
         .catch((error) => {
           console.error(error);
-          navigate("/error");
+          navigate("/error", { replace: true });
         })
         .finally(() => setLoading(false));
     }, 1500);
-  }, [refresh, applicantId]);
+  }, [refresh]);
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
@@ -102,15 +86,19 @@ export const ApplicantDetails = () => {
     return () => clearTimeout(timeoutId);
   }, [refresh]);
 
-  if (!applicantId) {
+  const handleCommentChange = useCallback((comment: string) => {
+    setComment(comment);
+  }, []);
+
+  if (Object.keys(param).length === 0 || !param.applicantid) {
     navigate("/error", { replace: true });
   }
+
+  const applicantId = param.applicantid!;
 
   if (loading) {
     return <CircularLoader />;
   }
-
-  const experienceSuffix = applicant.experience > 1 ? "Years" : "Year";
 
   const handleAddComment = async () => {
     const payload = {
@@ -177,7 +165,7 @@ export const ApplicantDetails = () => {
       const urlObj = window.URL.createObjectURL(fileObj);
       const link = document.createElement("a");
       link.href = urlObj;
-      // link.setAttribute("download",`${applicant.firstName}_Resume.pdf`);
+      // link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -188,7 +176,7 @@ export const ApplicantDetails = () => {
 
   return (
     <>
-      <Stack spacing={2}>
+      <Stack spacing={2} mt={2}>
         <Card sx={{ p: 2 }}>
           <Stack
             direction={"row"}
@@ -207,7 +195,13 @@ export const ApplicantDetails = () => {
                 tooltip="Download CV"
                 handleClick={() => handleDownloadResume()}
               />
-              <CustomIconButton icon={<Edit />} tooltip="Edit details" />
+              <CustomIconButton
+                icon={<Edit />}
+                tooltip="Edit Applicant"
+                handleClick={() => {
+                  navigate("/recruitment/editapplicant", { state: applicant });
+                }}
+              />
             </Stack>
           </Stack>
 
@@ -261,7 +255,7 @@ export const ApplicantDetails = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  {applicant?.experience + " " + experienceSuffix}
+                  {convertMonthsToYear(applicant.experience)}
                 </Typography>
               </Stack>
             </Grid>
@@ -285,8 +279,9 @@ export const ApplicantDetails = () => {
                 <Select
                   name="applicantStatus"
                   value={activityType}
-                  sx={{ width: "200px" }}
+                  sx={{ width: "200px", height: "30px" }}
                   onChange={handleStatusChange}
+                  className="select"
                 >
                   {ApplicationEvaluationStatus.map((status) => (
                     <MenuItem key={status.id} value={status.value}>
@@ -332,7 +327,7 @@ export const ApplicantDetails = () => {
               <AddComment
                 open={isModalOpen}
                 comment={comment}
-                setComment={setComment}
+                handleCommentChange={handleCommentChange}
                 handleClose={handleClose}
                 handleAddComment={handleAddComment}
               />
