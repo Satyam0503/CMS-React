@@ -140,19 +140,22 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </SelectInput>
               </Grid>
             </Grid>
-            <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>
-              <CustomisedButton
-                variant="outlined"
-                size="medium"
-                label="Cancel"
-                handleClick={handleClose}
-              />
-              <CustomisedButton
-                variant="outlined"
-                size="medium"
-                label="Add New"
-                Icon={<Add />}
-              />
+            <Stack direction="row" spacing={1} justifyContent={"end"} mt={2}>
+              <Stack direction={"row"} spacing={1}>
+                <CustomisedButton
+                  variant="outlined"
+                  size="medium"
+                  label="Cancel"
+                  handleClick={handleClose}
+                />
+                <CustomisedButton
+                  variant="outlined"
+                  size="medium"
+                  label="Add New"
+                  Icon={<Add />}
+                />
+              </Stack>
+
               <CustomisedButton
                 variant="contained"
                 size="medium"

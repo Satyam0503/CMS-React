@@ -176,11 +176,10 @@ const JobDescription: FC<PropsTypes> = ({
             <TextEditor value={jobDescription} setValue={setJobDescription} />
           </Stack>
           <Stack
-            direction={"row"}
+            direction={{ xs: "column", sm: "row" }}
             justifyContent={"flex-end"}
             mt={2}
             gap={1}
-            flexWrap={"wrap-reverse"}
           >
             <CustomisedButton
               variant="outlined"
@@ -194,6 +193,7 @@ const JobDescription: FC<PropsTypes> = ({
               Icon={<FileOpenOutlined />}
               iconPosition="start"
             />
+
             <CustomisedButton
               variant="outlined"
               label="Close"

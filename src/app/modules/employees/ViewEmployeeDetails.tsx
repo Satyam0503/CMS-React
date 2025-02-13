@@ -183,7 +183,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
             <CustomisedButton
-              variant="outlined"
+              variant="contained"
               label="Edit"
               Icon={<Edit />}
               handleClick={handleClose}

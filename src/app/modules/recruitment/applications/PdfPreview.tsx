@@ -44,15 +44,20 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
       }}
     >
       <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
+        direction={"column"}
         sx={{
           padding: "1rem !important",
-          alignItems: "center",
           borderBottom: `1px solid ${colors.alpha.neutral[200]}`,
         }}
       >
         <Typography variant="h6">Resume Preview</Typography>
+        <Typography
+          variant="body1"
+          display={{ md: "none" }}
+          color={colors.alpha.danger[500]}
+        >
+          For better visibility of CV open in larger screen.
+        </Typography>
       </Stack>
       <Stack
         sx={{
