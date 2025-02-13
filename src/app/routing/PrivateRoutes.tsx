@@ -2,47 +2,36 @@ import { lazy, FC, Suspense } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
 import ProfilePageWrapper from "../pages/myprofile/ProfilePageWrapper";
-
 import AdminDashboard from "../pages/dashboards/AdminDashboard";
 import UserDashboard from "../pages/dashboards/UserDashboard";
-import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
-import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
 import HolidaysWrapper from "../pages/holidays/HolidaysWrapper.tsx";
 import NoticeBoardWrapper from "../pages/noticeboard/NoticeBoardWrapper.tsx";
 import { LeaveManagementWrapper } from "../pages/leavemanagement/LeaveMangementWrapper.tsx";
 import { AttendanceWrapper } from "../pages/attendance/AttendanceWrapper.tsx";
 import { EditApplicant } from "../modules/recruitment/applications/EditApplicant.tsx";
+import { findUserDefaultTab } from "../../utils/common.ts";
+import { useAppSelector } from "../Redux/hooks.ts";
+
+const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
+const Setting = lazy(() => import("../pages/admin/Settings"));
+const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
+const EmployeePage = lazy(
+  () => import("../pages/employees/EmployeesRoute.tsx")
+);
 
 const PrivateRoutes = () => {
-  const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
-  const ProfilePage = lazy(() => import("../modulesOld/profile/ProfilePage"));
-  const AccountPage = lazy(() => import("../modulesOld/accounts/AccountPage"));
-  const Setting = lazy(() => import("../pages/admin/Settings"));
-
-  const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
-  const EmployeePage = lazy(
-    () => import("../pages/employees/EmployeesRoute.tsx")
-  );
-  // const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
-  // const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
-  // const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
-  const UsersPage = lazy(
-    () => import("../modulesOld/apps/user-management/UsersPage")
-  );
-
+  const userPermissions = useAppSelector((state) => state.user.userPermissions);
   return (
     <Routes>
       <Route element={<MasterLayout />}>
         {/* Redirect to Dashboard after success login/registartion */}
-        <Route path="auth/*" element={<Navigate to="/dashboard" />} />
-        {/* Pages */}
-        <Route path="dashboard" element={<DashboardWrapper />} />
-        <Route path="builder" element={<BuilderPageWrapper />} />
-        <Route path="menu-test" element={<MenuTestPage />} />
+        <Route
+          path="auth/*"
+          element={<Navigate to={findUserDefaultTab(userPermissions)} />}
+        />
         <Route path="admindashboard" element={<AdminDashboard />} />
         <Route path="userdashboard" element={<UserDashboard />} />
         <Route path="myprofile" element={<ProfilePageWrapper />} />
@@ -51,6 +40,7 @@ const PrivateRoutes = () => {
         <Route path="holidays" element={<HolidaysWrapper />} />
         <Route path="noticeboard" element={<NoticeBoardWrapper />} />
         <Route path="editapplicantdetails" element={<EditApplicant />} />
+        
         {/* Lazy Modules */}
         <Route
           path="employee/*"
@@ -69,14 +59,6 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="superadmin/*"
-          element={
-            <SuspensedView>
-              <SuperAdmin />
-            </SuspensedView>
-          }
-        />
-        <Route
           path="admin/*"
           element={
             <SuspensedView>
@@ -84,62 +66,16 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
-        {/* <Route
-          path="career/*"
-          element={
-            <SuspensedView>
-              <Career />
-            </SuspensedView>
-          }
-        /> */}
+
         <Route
-          path="crafted/pages/profile/*"
+          path="superadmin/*"
           element={
             <SuspensedView>
-              <ProfilePage />
+              <SuperAdmin />
             </SuspensedView>
           }
         />
-        {/* <Route
-          path='crafted/pages/wizards/*'
-          element={
-            <SuspensedView>
-              <WizardsPage />
-            </SuspensedView>
-          }
-        />
-        <Route
-          path='crafted/widgets/*'
-          element={
-            <SuspensedView>
-              <WidgetsPage />
-            </SuspensedView>
-          }
-        /> */}
-        <Route
-          path="crafted/account/*"
-          element={
-            <SuspensedView>
-              <AccountPage />
-            </SuspensedView>
-          }
-        />
-        {/* <Route
-          path="apps/chat/*"
-          element={
-            <SuspensedView>
-              <ChatPage />
-            </SuspensedView>
-          }
-        /> */}
-        <Route
-          path="apps/user-management/*"
-          element={
-            <SuspensedView>
-              <UsersPage />
-            </SuspensedView>
-          }
-        />
+
         {/* Page Not Found */}
         <Route path="*" element={<Navigate to="/error/404" />} />
       </Route>
@@ -153,8 +89,8 @@ const SuspensedView: FC<WithChildren> = ({ children }) => {
     barColors: {
       "0": baseColor,
     },
-    barThickness: 1,
-    shadowBlur: 5,
+    barThickness: 5,
+    shadowBlur: 3,
   });
   return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>;
 };

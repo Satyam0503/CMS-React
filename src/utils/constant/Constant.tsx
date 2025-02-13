@@ -550,7 +550,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Employees,
     title: ModulesName.Employees,
-    route: "/employee/employees",
+    route: "/employee/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
@@ -577,7 +577,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Recruitment,
     title: ModulesName.Recruitment,
-    route: "/recruitment/jobs",
+    route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
     subTabs: [
@@ -598,7 +598,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Admin,
     title: ModulesName.Admin,
-    route: "/admin/permissions",
+    route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
     subTabs: [
