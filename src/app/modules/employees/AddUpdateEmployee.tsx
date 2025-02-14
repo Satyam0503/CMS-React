@@ -53,8 +53,10 @@ export default function AddUpdateEmployee(props: PropsTypes) {
       });
   }, []);
 
-  const filteredRoles = roles?.filter((role) => role.titles !== Roles.Administrator);
- 
+  const filteredRoles = roles?.filter(
+    (role) => role.titles !== Roles.Administrator
+  );
+
   return (
     <>
       {filteredRoles && filteredRoles?.length > 0 && (
@@ -85,7 +87,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               }) => (
                 <form onSubmit={handleSubmit}>
                   <Grid container rowSpacing={1} columnSpacing={2}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                         type="text"
@@ -93,7 +95,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="First Name"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                         type="text"
@@ -102,7 +104,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="gender"
                         label={intl.formatMessage({ id: "USER.GENDER" })}
@@ -114,7 +116,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         ))}
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.EMP_ID" })}
                         type="text"
@@ -122,7 +124,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Employee Id"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <Stack spacing={0.5}>
                         <Typography variant="body1">
                           {intl.formatMessage({ id: "USER.DOB" })}
@@ -143,7 +145,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         </ErrorLabel>
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                         type="email"
@@ -152,7 +154,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       />
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="roleId"
                         label={intl.formatMessage({ id: "USER.ROLE" })}
@@ -167,7 +169,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         })}
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.JOBROLE" })}
                         type="text"
@@ -175,7 +177,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Job Role"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
                         type="text"
@@ -183,7 +185,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Department"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({
                           id: "USER.REPORTING_MANAGER",
@@ -193,7 +195,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Reporting Manager"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.TEAM_LEAD" })}
                         type="text"
@@ -201,7 +203,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Team lead"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.PHONE" })}
                         type="text"
@@ -209,7 +211,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Phone Number"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="bloodGroup"
                         label={intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -221,7 +223,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         ))}
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({
                           id: "USER.PERSONAL_EMAIL",
@@ -231,7 +233,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Personal Email"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({
                           id: "USER.EMERGENCY_CONTACT",
@@ -241,7 +243,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Emergency Contact"
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="status"
                         label={intl.formatMessage({ id: "PROFILE.STATUS" })}
@@ -250,7 +252,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         <MenuItem value={"Inactive"}>Inactive</MenuItem>
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <Stack spacing={0.5}>
                         <Typography variant="body1">
                           {intl.formatMessage({ id: "USER.DOJ" })}
@@ -270,7 +272,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         </ErrorLabel>
                       </Stack>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.ADDRESS" })}
                         type="text"

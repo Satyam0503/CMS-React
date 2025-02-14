@@ -1,4 +1,4 @@
-import {  Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { pdfjs } from "react-pdf";
 import { Document, Page } from "react-pdf";
@@ -6,7 +6,7 @@ import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import {  NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 import { ResumeError } from "./ResumeError";
 import { ResumeLoader } from "./ResumeLoader";
@@ -69,7 +69,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
           onLoadSuccess={handleDocumentLoadSuccess}
           loading={<ResumeLoader />}
           error={<ResumeError />}
-          noData={<ResumeError/>}
+          noData={<ResumeError />}
         >
           <Page pageNumber={currentPage} className="pdf_viewer" />
         </Document>
