@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
@@ -66,8 +66,12 @@ export default function Holidays() {
     null
   );
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-
   const intl = useIntl();
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchValue(value);
+  }, []);
+
   const handleCloseModal = () => {
     setModalOpen(false);
     setEdit(false);
@@ -112,7 +116,7 @@ export default function Holidays() {
           flexWrap={"wrap-reverse"}
           gap={2}
         >
-          <SearchInput search={searchValue} setSearch={setSearchValue} />
+          <SearchInput search={searchValue} setSearch={handleSearchChange} />
           <Stack direction="row" spacing={1}>
             <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
             <CustomIconButton

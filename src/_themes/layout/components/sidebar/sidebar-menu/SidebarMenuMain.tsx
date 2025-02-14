@@ -1,4 +1,3 @@
-import { useIntl } from "react-intl";
 import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import { SideBarTabList } from "../../../../../utils/constant/Constant";
@@ -6,26 +5,28 @@ import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { checkUserModuleAccess } from "../../../../../utils/common";
 
 const SidebarMenuMain = () => {
-  const intl = useIntl();
   const userPermission = useAppSelector((state) => state.user.userPermissions);
 
-  const FilteredTabList = SideBarTabList.filter((tab) => {
+  const filteredTabList = SideBarTabList.filter((tab) => {
     if (tab.hasSubTabs) {
       const filteredSubTabs = tab.subTabs?.filter(
         (subTab) => checkUserModuleAccess(subTab.title, userPermission) === true
       )!;
+
       if (filteredSubTabs?.length > 0) {
         return {
           ...tab,
           subTabs: filteredSubTabs,
         };
       }
+      return false;
     }
     return checkUserModuleAccess(tab.title, userPermission) === true;
   });
+
   return (
     <>
-      {FilteredTabList.map((tab) => {
+      {filteredTabList.map((tab) => {
         if (tab.hasSubTabs) {
           return (
             <SidebarMenuItemWithSub

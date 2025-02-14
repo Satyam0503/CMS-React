@@ -5,7 +5,9 @@ import {
   ApplicationStatus,
   CommentAction,
   ModulesName,
+  Permission,
 } from "./enums";
+import { SideBarTabList } from "./constant/Constant";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -322,5 +324,34 @@ export const checkUserModuleAccess = (
   const index = userPermissions.findIndex(
     (permission) => permission.moduleConstant === module
   );
+  return index !== -1 ? true : false;
+};
+
+export const findUserDefaultTab = (
+  userPermissions: ModulePermissoinModel[]
+) => {
+  const defaultTab = SideBarTabList.find(
+    (tab) => checkUserModuleAccess(tab.title, userPermissions) === true
+  );
+  if (!defaultTab) {
+    return "/error/";
+  }
+  return defaultTab.route;
+};
+
+export const checkUserPermissionForRouteAccess = (
+  moduleName: ModulesName,
+  userPermissions: ModulePermissoinModel[]
+) => {
+  const module = userPermissions.find(
+    (permission) => permission.moduleConstant === moduleName
+  );
+  if (!module) {
+    return false;
+  }
+  const index = module.permissions.findIndex(
+    (permission) => permission.permissionConstant === Permission.View
+  );
+
   return index !== -1 ? true : false;
 };

@@ -1,12 +1,13 @@
 import { Stack, TextField, Typography } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import { FC, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import CustomisedButton from "../../components/CustomisedButton";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 interface PropTypes {
   open: boolean;
   comment: string;
-  handleCommentChange:(value:string)=>void;
+  handleCommentChange: (value: string) => void;
   handleClose: () => void;
   handleAddComment: () => void;
 }
@@ -17,13 +18,11 @@ export const AddComment: FC<PropTypes> = ({
   handleClose,
   handleAddComment,
 }) => {
-  const [debouncedValue, setDebouncedValue] = useState(comment);
- 
+  const [value, setValue] = useState(comment);
+  const debouncedValue = useDebounce(value);
+
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      handleCommentChange(debouncedValue);
-    }, 1000);
-    return () => clearTimeout(timeoutId);
+    handleCommentChange(debouncedValue);
   }, [debouncedValue]);
 
   return (
@@ -31,7 +30,7 @@ export const AddComment: FC<PropTypes> = ({
       <Stack spacing={2}>
         <Typography variant="h5">Add Comment</Typography>
         <TextField
-          value={debouncedValue}
+          value={value}
           name="comment"
           fullWidth
           multiline
@@ -40,7 +39,7 @@ export const AddComment: FC<PropTypes> = ({
           placeholder="Write Comment"
           type="text"
           required
-          onChange={(event) => setDebouncedValue(event.target.value)}
+          onChange={(event) => setValue(event.target.value)}
         />
 
         <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>

@@ -208,10 +208,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
     label: "Name",
-    minWidth: 180,
+    minWidth: 200,
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
-      const jobRole = row.department;
+      const jobRole = row.jobRole;
       return <AvatarCell title={fullName} subTitle={jobRole} />;
     },
   },
@@ -550,7 +550,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Employees,
     title: ModulesName.Employees,
-    route: "/employee/employees",
+    route: "/employee/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
@@ -577,7 +577,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Recruitment,
     title: ModulesName.Recruitment,
-    route: "/recruitment/jobs",
+    route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
     subTabs: [
@@ -598,7 +598,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Admin,
     title: ModulesName.Admin,
-    route: "/admin/permissions",
+    route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
     subTabs: [
