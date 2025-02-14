@@ -67,7 +67,7 @@ export const LeaveTracker: FC = () => {
           </Stack>
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -83,7 +83,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={casualLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -99,7 +99,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={medicalLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -115,7 +115,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={earnedLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}

@@ -89,7 +89,7 @@ export const AddApplicant: FC<PropsTypes> = ({
       vacancyName: vacancy ? vacancy.title : "",
       status: ApplicantStatus.New,
       activityType: ApplicationStatus.InProgress,
-      experience:values.experience * 12,  // convert to months
+      experience: values.experience * 12, // convert to months
     };
     try {
       const { data } = await addApplicant(payload);
@@ -148,7 +148,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                       rowSpacing={1}
                       columnSpacing={{ xs: 1, sm: 2 }}
                     >
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <TextInput
                           label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                           type="text"
@@ -156,7 +156,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           name="firstName"
                         />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <TextInput
                           label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                           type="text"
@@ -164,7 +164,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           name="lastName"
                         />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <TextInput
                           label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                           type="email"
@@ -172,7 +172,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           name="email"
                         />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <TextInput
                           label={intl.formatMessage({ id: "USER.PHONE" })}
                           type="text"
@@ -180,7 +180,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           name="phone"
                         />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <SelectInput
                           name="experience"
                           label={intl.formatMessage({ id: "USER.EXPERIENCE" })}
@@ -195,7 +195,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} sm={6}>
                         <SelectInput
                           name="vacancyId"
                           label={intl.formatMessage({ id: "USER.DESIGNATION" })}
