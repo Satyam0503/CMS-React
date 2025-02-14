@@ -10,6 +10,7 @@ import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 import { ResumeError } from "./ResumeError";
 import { ResumeLoader } from "./ResumeLoader";
+import { useIntl } from "react-intl";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -24,6 +25,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const intl = useIntl();
 
   function handleDocumentLoadSuccess(pdfjs: DocumentCallback) {
     if (pdfjs.numPages > 1) {
@@ -52,11 +54,11 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
       >
         <Typography variant="h6">Resume Preview</Typography>
         <Typography
-          variant="body1"
-          display={{ md: "none" }}
-          color={colors.alpha.danger[500]}
+          variant="body2"
+          display={{ sm: "none" }}
+          color={colors.alpha.secondary[500]}
         >
-          For better visibility of CV open in larger screen.
+          {intl.formatMessage({ id: "PDF.VIEWER" })}
         </Typography>
       </Stack>
       <Stack

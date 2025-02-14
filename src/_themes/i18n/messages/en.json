@@ -178,6 +178,7 @@
   "PASSWORD.CREATE": "Create,",
   "PASSWORD.CREATE_NEW": "New Password",
   "PASSWORD.CREATE_LOGIN": "Login password",
+  "PDF.VIEWER": "For improved readability, please view the CV on a larger screen.",
 
   "PROFILE.PI": "Personal Information",
   "PROFILE.SKILLS": "Skills",
