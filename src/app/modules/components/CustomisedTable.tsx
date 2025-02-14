@@ -70,7 +70,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                 </TableRow>
               ) : (
                 <>
-                  {rows.reverse().map((row: any, index: number) => (
+                  {rows.map((row: any, index: number) => (
                     <TableRow hover key={index}>
                       {columns.map((column) => {
                         const value =

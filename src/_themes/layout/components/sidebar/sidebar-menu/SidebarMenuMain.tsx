@@ -2,15 +2,15 @@ import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import { SideBarTabList } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { checkUserModuleAccess } from "../../../../../utils/common";
+import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
 
 const SidebarMenuMain = () => {
-  const userPermission = useAppSelector((state) => state.user.userPermissions);
+  const userModulePermission = useAppSelector((state) => state.user.userPermissions);
 
   const filteredTabList = SideBarTabList.filter((tab) => {
     if (tab.hasSubTabs) {
       const filteredSubTabs = tab.subTabs?.filter(
-        (subTab) => checkUserModuleAccess(subTab.title, userPermission) === true
+        (subTab) => checkPermissionForModuleAndRoute(subTab.title, userModulePermission) === true
       )!;
 
       if (filteredSubTabs?.length > 0) {
@@ -21,7 +21,7 @@ const SidebarMenuMain = () => {
       }
       return false;
     }
-    return checkUserModuleAccess(tab.title, userPermission) === true;
+    return checkPermissionForModuleAndRoute(tab.title, userModulePermission) === true;
   });
 
   return (

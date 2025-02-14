@@ -317,21 +317,30 @@ export const convertMonthsToYear = (months: number) => {
   return years + " " + suffix;
 };
 
-export const checkUserModuleAccess = (
-  module: ModulesName,
-  userPermissions: ModulePermissoinModel[]
+export const checkPermissionForModuleAndRoute = (
+  moduleName: ModulesName,
+  userModulePermissions: ModulePermissoinModel[]
 ) => {
-  const index = userPermissions.findIndex(
-    (permission) => permission.moduleConstant === module
+  const module = userModulePermissions.find(
+    (module) => module.moduleConstant === moduleName
   );
-  return index !== -1 ? true : false;
+  if (!module) {
+    return false;
+  }
+  const hasPermission = module.permissions.find(
+    (permission) => permission.permissionConstant === Permission.View
+  );
+  if(!hasPermission){
+    return false;
+  }
+  return hasPermission.hasAccess;
 };
 
 export const findUserDefaultTab = (
-  userPermissions: ModulePermissoinModel[]
+  userModulePermissions: ModulePermissoinModel[]
 ) => {
   const defaultTab = SideBarTabList.find(
-    (tab) => checkUserModuleAccess(tab.title, userPermissions) === true
+    (tab) => checkPermissionForModuleAndRoute(tab.title, userModulePermissions) === true
   );
   if (!defaultTab) {
     return "/error/";
@@ -339,19 +348,19 @@ export const findUserDefaultTab = (
   return defaultTab.route;
 };
 
-export const checkUserPermissionForRouteAccess = (
-  moduleName: ModulesName,
-  userPermissions: ModulePermissoinModel[]
-) => {
-  const module = userPermissions.find(
-    (permission) => permission.moduleConstant === moduleName
-  );
-  if (!module) {
-    return false;
-  }
-  const index = module.permissions.findIndex(
-    (permission) => permission.permissionConstant === Permission.View
-  );
+// export const checkUserPermissionForRouteAccess = (
+//   moduleName: ModulesName,
+//   userPermissions: ModulePermissoinModel[]
+// ) => {
+//   const module = userPermissions.find(
+//     (permission) => permission.moduleConstant === moduleName
+//   );
+//   if (!module) {
+//     return false;
+//   }
+//   const index = module.permissions.findIndex(
+//     (permission) => permission.permissionConstant === Permission.View
+//   );
 
-  return index !== -1 ? true : false;
-};
+//   return index !== -1 ? true : false;
+// };

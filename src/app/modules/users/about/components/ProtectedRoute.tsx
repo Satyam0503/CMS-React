@@ -2,7 +2,7 @@ import { FC } from "react";
 import { ModulesName } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { Typography } from "@mui/material";
-import { checkUserPermissionForRouteAccess } from "../../../../../utils/common";
+import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
 
 interface PropsTypes {
   module: ModulesName;
@@ -10,9 +10,10 @@ interface PropsTypes {
 }
 
 export const ProtectedRoute: FC<PropsTypes> = ({ children, module }) => {
-  const userPermissions = useAppSelector((state) => state.user.userPermissions);
-  const hasAccess = checkUserPermissionForRouteAccess(module, userPermissions);
-  if (!userPermissions.length) {
+  const userModulePermissions = useAppSelector((state) => state.user.userPermissions);
+  const hasAccess = checkPermissionForModuleAndRoute(module, userModulePermissions);
+
+  if (!userModulePermissions.length) {
     return <Typography>You Don't Have Access To This Page</Typography>;
   }
   if (hasAccess) {

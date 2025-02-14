@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import { useIntl } from "react-intl";
 
-import { Container, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { EmployeeLeaves } from "../../modules/leaves/components/EmployeeLeaves";
 
 export const LeaveManagementWrapper: FC = () => {
