@@ -22,7 +22,7 @@ const initialValues: JobModal = {
   vacancies: 1,
   description: "",
   jobType: "",
-  status: false,
+  status: true,
 };
 
 export default function Jobs() {

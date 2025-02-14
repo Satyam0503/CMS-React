@@ -223,7 +223,7 @@ export default function Employees() {
           throw new Error("Failed To fetch Data");
         }
         if (methodResults) {
-          setEmployeeList(methodResults);
+          setEmployeeList(methodResults.reverse());
           setTotalRecords(methodResults.length);
         }
       } catch (error: any) {

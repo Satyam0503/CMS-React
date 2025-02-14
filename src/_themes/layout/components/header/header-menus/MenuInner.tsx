@@ -3,16 +3,17 @@ import { MenuItem } from "./MenuItem";
 import { MenuInnerWithSub } from "./MenuInnerWithSub";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { SideBarTabList } from "../../../../../utils/constant/Constant";
-import { checkUserModuleAccess } from "../../../../../utils/common";
+import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
+
 
 export function MenuInner() {
   const intl = useIntl();
-  const userPermissions = useAppSelector((state) => state.user.userPermissions);
+  const userModulePermissions = useAppSelector((state) => state.user.userPermissions);
   const filteredTabList = SideBarTabList.filter((tab) => {
     if (tab.hasSubTabs) {
       const filteredSubTabs = tab.subTabs?.filter(
         (subTab) =>
-          checkUserModuleAccess(subTab.title, userPermissions) === true
+          checkPermissionForModuleAndRoute(subTab.title, userModulePermissions) === true
       )!;
 
       if (filteredSubTabs?.length > 0) {
@@ -23,7 +24,7 @@ export function MenuInner() {
       }
       return false;
     }
-    return checkUserModuleAccess(tab.title, userPermissions) === true;
+    return checkPermissionForModuleAndRoute(tab.title, userModulePermissions) === true;
   });
   return (
     <>

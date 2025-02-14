@@ -1128,7 +1128,7 @@ export const MuiTheme = createTheme({
                 border: 0,
               },
               "&.Mui-disabled + .MuiSwitch-track": {
-                opacity: 0.5,
+                opacity: 0.8,
               },
             },
             "&.Mui-focusVisible .MuiSwitch-thumb": {
