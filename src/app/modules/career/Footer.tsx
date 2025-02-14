@@ -34,180 +34,163 @@ export default function Footer() {
             color: colors.alpha.white[500],
           }}
         >
-          <Grid
-            item
-            xs={12}
-            md={3}
-            display={"flex"}
-            direction={"column"}
-            gap={1}
-            textAlign={"justify"}
-          >
-            <Stack>
-              <Typography variant="h3">
-                {" "}
-                {intl.formatMessage({
-                  id: "MENU.ABOUT_US",
-                })}
-              </Typography>
-            </Stack>
-            <Stack
-              divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
-              borderRadius={2}
-              height={"5px"}
-              width={"25%"}
-            />
-            <Stack>
-              <Typography variant="body1" flexWrap={"wrap"} maxWidth={"450px"}>
-                {intl.formatMessage({
-                  id: "COMPANY.DESCRIPTION",
-                })}
-              </Typography>
+          <Grid item xs={12} md={3}>
+            <Stack spacing={1}>
+              <Stack>
+                <Typography variant="h3">
+                  {" "}
+                  {intl.formatMessage({
+                    id: "MENU.ABOUT_US",
+                  })}
+                </Typography>
+              </Stack>
+              <Stack
+                divider={<Divider orientation="horizontal" />}
+                bgcolor={colors.alpha.secondary[500]}
+                borderRadius={2}
+                height={"5px"}
+                width={"25%"}
+              />
+              <Stack>
+                <Typography
+                  variant="body1"
+                  flexWrap={"wrap"}
+                  maxWidth={"450px"}
+                >
+                  {intl.formatMessage({
+                    id: "COMPANY.DESCRIPTION",
+                  })}
+                </Typography>
+              </Stack>
             </Stack>
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            md={1.5}
-            display={"flex"}
-            direction={"column"}
-            gap={1}
-          >
-            <Stack>
-              <Typography variant="h3">
-                {intl.formatMessage({
-                  id: "COLOR.LINKS",
-                })}
-              </Typography>
-            </Stack>
-            <Stack
-              divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
-              borderRadius={2}
-              height={"5px"}
-              width={"25%"}
-            />
+          <Grid item xs={12} md={1.5}>
+            <Stack spacing={1}>
+              <Stack>
+                <Typography variant="h3">
+                  {intl.formatMessage({
+                    id: "COLOR.LINKS",
+                  })}
+                </Typography>
+              </Stack>
+              <Stack
+                divider={<Divider orientation="horizontal" />}
+                bgcolor={colors.alpha.secondary[500]}
+                borderRadius={2}
+                height={"5px"}
+                width={"25%"}
+              />
 
-            <Stack gap={1}>
-              <Link href="https://codeji.in/" color={colors.alpha.white[500]}>
-                <Typography>Home</Typography>
-              </Link>
-              <Link
-                href="https://codeji.in/about-us/"
-                color={colors.alpha.white[500]}
-              >
-                <Typography>About Us</Typography>
-              </Link>
-              <Link
-                href="          https://codeji.in/services/"
-                color={colors.alpha.white[500]}
-              >
-                <Typography>Services</Typography>
-              </Link>
+              <Stack gap={1}>
+                <Link href="https://codeji.in/" color={colors.alpha.white[500]}>
+                  <Typography>Home</Typography>
+                </Link>
+                <Link
+                  href="https://codeji.in/about-us/"
+                  color={colors.alpha.white[500]}
+                >
+                  <Typography>About Us</Typography>
+                </Link>
+                <Link
+                  href="          https://codeji.in/services/"
+                  color={colors.alpha.white[500]}
+                >
+                  <Typography>Services</Typography>
+                </Link>
 
-              <Link
-                href="https://admin.codeji.in/careers/apply-now"
-                color={colors.alpha.white[500]}
-              >
-                <Typography>Career</Typography>
-              </Link>
-              <Link
-                href="https://codeji.in/contact-us/"
-                color={colors.alpha.white[500]}
-              >
-                <Typography>Contact Us</Typography>
-              </Link>
+                <Link
+                  href="https://admin.codeji.in/careers/apply-now"
+                  color={colors.alpha.white[500]}
+                >
+                  <Typography>Career</Typography>
+                </Link>
+                <Link
+                  href="https://codeji.in/contact-us/"
+                  color={colors.alpha.white[500]}
+                >
+                  <Typography>Contact Us</Typography>
+                </Link>
+              </Stack>
             </Stack>
           </Grid>
 
-          <Grid
-            item
-            xs={12}
-            md={2.5}
-            display={"flex"}
-            direction={"column"}
-            gap={1}
-          >
-            <Stack>
-              <Typography variant="h3">Address</Typography>
-            </Stack>
-            <Stack
-              divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
-              borderRadius={2}
-              height={"5px"}
-              width={"25%"}
-            />
-            <Stack textAlign={"justify"}>
-              <List sx={{ p: 0 }}>
-                <ListItem sx={{ p: 0, gap: 1 }}>
-                  <ListItemIcon>
-                    <LocationOnIcon />
-                  </ListItemIcon>
-                  <ListItemText>
-                    2nd Floor Shri RSR Tower, Kuanwala, Dehradun, Uttarakhand
-                    248008
-                  </ListItemText>
-                </ListItem>
-                <ListItem sx={{ px: 0, gap: 1 }}>
-                  <ListItemIcon>
-                    <PhoneAndroidOutlined />
-                  </ListItemIcon>
-                  <ListItemText>+91-7985378534</ListItemText>
-                </ListItem>
+          <Grid item xs={12} md={2.5}>
+            <Stack spacing={1}>
+              <Stack>
+                <Typography variant="h3">Address</Typography>
+              </Stack>
+              <Stack
+                divider={<Divider orientation="horizontal" />}
+                bgcolor={colors.alpha.secondary[500]}
+                borderRadius={2}
+                height={"5px"}
+                width={"25%"}
+              />
+              <Stack textAlign={"justify"}>
+                <List sx={{ p: 0 }}>
+                  <ListItem sx={{ p: 0, gap: 1 }}>
+                    <ListItemIcon>
+                      <LocationOnIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      2nd Floor Shri RSR Tower, Kuanwala, Dehradun, Uttarakhand
+                      248008
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem sx={{ px: 0, gap: 1 }}>
+                    <ListItemIcon>
+                      <PhoneAndroidOutlined />
+                    </ListItemIcon>
+                    <ListItemText>+91-7985378534</ListItemText>
+                  </ListItem>
 
-                <ListItem sx={{ px: 0, gap: 1 }}>
-                  <ListItemIcon>
-                    <EmailRounded />
-                  </ListItemIcon>
-                  <ListItemText>hello@codeji.in</ListItemText>
-                </ListItem>
-              </List>
+                  <ListItem sx={{ px: 0, gap: 1 }}>
+                    <ListItemIcon>
+                      <EmailRounded />
+                    </ListItemIcon>
+                    <ListItemText>hello@codeji.in</ListItemText>
+                  </ListItem>
+                </List>
+              </Stack>
             </Stack>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            md={2}
-            display={"flex"}
-            direction={"column"}
-            gap={1}
-          >
-            <Stack>
-              <Typography variant="h3">Follow Us</Typography>
-            </Stack>
-            <Stack
-              divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
-              borderRadius={2}
-              height={"5px"}
-              width={"25%"}
-            />
-            <Stack direction={"row"} gap={1}>
-              <Link
-                href="https://www.facebook.com/codejiinfotech"
-                color={colors.alpha.white[500]}
-              >
-                <FacebookIcon fontSize="large" />
-              </Link>
-              <Link
-                href="https://www.instagram.com/codejiinfotech/"
-                color={colors.alpha.white[500]}
-              >
-                <InstagramIcon fontSize="large" />
-              </Link>
+          <Grid item xs={12} md={2}>
+            <Stack spacing={1}>
+              <Stack>
+                <Typography variant="h3">Follow Us</Typography>
+              </Stack>
+              <Stack
+                divider={<Divider orientation="horizontal" />}
+                bgcolor={colors.alpha.secondary[500]}
+                borderRadius={2}
+                height={"5px"}
+                width={"25%"}
+              />
+              <Stack direction={"row"} gap={1}>
+                <Link
+                  href="https://www.facebook.com/codejiinfotech"
+                  color={colors.alpha.white[500]}
+                >
+                  <FacebookIcon fontSize="large" />
+                </Link>
+                <Link
+                  href="https://www.instagram.com/codejiinfotech/"
+                  color={colors.alpha.white[500]}
+                >
+                  <InstagramIcon fontSize="large" />
+                </Link>
 
-              <Link
-                href="https://www.linkedin.com/company/codeji-infotech"
-                color={colors.alpha.white[500]}
-              >
-                <LinkedInIcon fontSize="large" />
-              </Link>
-              <Link href="#" color={colors.alpha.white[500]}>
-                <WhatsAppIcon fontSize="large" />
-              </Link>
+                <Link
+                  href="https://www.linkedin.com/company/codeji-infotech"
+                  color={colors.alpha.white[500]}
+                >
+                  <LinkedInIcon fontSize="large" />
+                </Link>
+                <Link href="#" color={colors.alpha.white[500]}>
+                  <WhatsAppIcon fontSize="large" />
+                </Link>
+              </Stack>
             </Stack>
           </Grid>
         </Container>

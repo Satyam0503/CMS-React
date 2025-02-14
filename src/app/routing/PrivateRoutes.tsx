@@ -8,6 +8,7 @@ import { findUserDefaultTab } from "../../utils/common.ts";
 import { useAppSelector } from "../Redux/hooks.ts";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
+import { UnAuthorizedAccess } from "../modules/components/UnAuthorizedAccess.tsx";
 
 const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
 const Setting = lazy(() => import("../pages/admin/Settings"));
@@ -128,7 +129,7 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
-
+        <Route path="/unauthorize" element={ <UnAuthorizedAccess type="unauthorise" /> }/>
         <Route path="*" element={<Navigate to="/error/404" />} />
       </Route>
     </Routes>

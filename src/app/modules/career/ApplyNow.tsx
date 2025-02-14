@@ -31,7 +31,6 @@ import NoVacancy from "./NoVacancy";
 import ApplyNowHeader from "./ApplyNowHeader";
 import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
 import { ErrorLabel } from "../components/form_component/ErrorLabel";
-// import ApplyNowHeader from "./ApplyNowHeader";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -56,9 +55,10 @@ export default function ApplyNow() {
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
     JobModal[]
   >([]);
-  const [selectedJobPosition, setSelectedJobPosition] =
-    useState<JobModal | null>();
-  // const captchaRef = useRef<ReCAPTCHA | null>(null);
+  const [selectedJobPosition, setSelectedJobPosition] = useState<
+    JobModal | undefined
+  >();
+  const [formValues, setFromValues] = useState(initialValues);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -74,7 +74,6 @@ export default function ApplyNow() {
   const handleApplicationSubmission = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void,
-    setStatus: (status?: any) => void,
     resetForm: (
       nextState?: Partial<FormikState<ApplicantModel>> | undefined
     ) => void
@@ -102,7 +101,6 @@ export default function ApplyNow() {
       }
       toast.success(data.message);
       resetForm();
-      setStatus("Your Application Successfully Submitted");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -116,10 +114,7 @@ export default function ApplyNow() {
         const response = await getAllJobVacancies({
           companyId,
         });
-        if (!response) {
-          setError(true);
-          throw new Error("Request Failed");
-        }
+
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);
@@ -128,10 +123,14 @@ export default function ApplyNow() {
         setActiveJobPositionsList(
           methodResults.filter((job) => job.status === true)
         );
-        if (methodResults.length > 0) {
-          setSelectedJobPosition(
-            methodResults.find((job) => job.status === true)
-          );
+
+        const selectedJob = methodResults.find((job) => job.status === true);
+        if (selectedJob) {
+          setSelectedJobPosition(selectedJob);
+          setFromValues({
+            ...formValues,
+            vacancyId: selectedJob.jobId,
+          });
         }
       } catch (error) {
         console.error(error);
@@ -145,6 +144,7 @@ export default function ApplyNow() {
   if (loading) {
     return <CircularLoader />;
   }
+  
   return (
     <>
       <Grid container display={"flex"} justifyContent={"space-between"}>
@@ -215,9 +215,13 @@ export default function ApplyNow() {
                             key={jobPosition.jobId}
                             variant="contained"
                             label={jobPosition.title}
-                            handleClick={() =>
-                              setSelectedJobPosition(jobPosition)
-                            }
+                            handleClick={() => {
+                              setSelectedJobPosition(jobPosition);
+                              setFromValues({
+                                ...formValues,
+                                vacancyId:jobPosition.jobId,
+                              });
+                            }}
                             className={
                               selectedJobPosition?.jobId === jobPosition.jobId
                                 ? "vacancyselect"
@@ -257,16 +261,13 @@ export default function ApplyNow() {
                   </Stack>
                 </Grid>
                 <Formik
-                  initialValues={initialValues}
+                  enableReinitialize
+                  initialValues={formValues}
                   validationSchema={applicantValidationSchema}
-                  onSubmit={(
-                    value,
-                    { setSubmitting, setStatus, resetForm }
-                  ) => {
+                  onSubmit={(value, { setSubmitting, resetForm }) => {
                     handleApplicationSubmission(
                       value,
                       setSubmitting,
-                      setStatus,
                       resetForm
                     );
                   }}
@@ -283,180 +284,181 @@ export default function ApplyNow() {
                     setFieldTouched,
                     handleSubmit,
                     ...formik
-                  }) => (
-                    <form onSubmit={handleSubmit}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                          <Typography variant="h5">
-                            {intl.formatMessage({ id: "JOB.APPLICATION" })}
-                          </Typography>
-                          <Typography variant="body2">
-                            {intl.formatMessage({
-                              id: "JOB.APPLICATION_CAPTION",
-                            })}
-                          </Typography>
-                        </Grid>
+                  }) => {
+                    return (
+                      <form onSubmit={handleSubmit}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12}>
+                            <Typography variant="h5">
+                              {intl.formatMessage({ id: "JOB.APPLICATION" })}
+                            </Typography>
+                            <Typography variant="body2">
+                              {intl.formatMessage({
+                                id: "JOB.APPLICATION_CAPTION",
+                              })}
+                            </Typography>
+                          </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                          <TextInput
-                            label={intl.formatMessage({
-                              id: "USER.FIRST_NAME",
-                            })}
-                            name="firstName"
-                            placeholder="First Name"
-                            type="text"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextInput
-                            label={intl.formatMessage({
-                              id: "USER.LAST_NAME",
-                            })}
-                            name="lastName"
-                            placeholder="Last Name"
-                            type="text"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextInput
-                            label={intl.formatMessage({ id: "USER.PHONE" })}
-                            name="phone"
-                            placeholder="Phone Number"
-                            type="text"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextInput
-                            label={intl.formatMessage({
-                              id: "AUTH.INPUT.EMAIL",
-                            })}
-                            name="email"
-                            placeholder="Email"
-                            type="email"
-                          />
-                        </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextInput
+                              label={intl.formatMessage({
+                                id: "USER.FIRST_NAME",
+                              })}
+                              name="firstName"
+                              placeholder="First Name"
+                              type="text"
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextInput
+                              label={intl.formatMessage({
+                                id: "USER.LAST_NAME",
+                              })}
+                              name="lastName"
+                              placeholder="Last Name"
+                              type="text"
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextInput
+                              label={intl.formatMessage({ id: "USER.PHONE" })}
+                              name="phone"
+                              placeholder="Phone Number"
+                              type="text"
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextInput
+                              label={intl.formatMessage({
+                                id: "AUTH.INPUT.EMAIL",
+                              })}
+                              name="email"
+                              placeholder="Email"
+                              type="email"
+                            />
+                          </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                          <Typography variant="body1" sx={{ mb: 0.5 }}>
-                            {intl.formatMessage({ id: "JOB.POSITION" })}
-                          </Typography>
-                          <Select
-                            fullWidth
-                            {...formik.getFieldProps("vacancyId")}
-                            // value={selectedJobPosition?.jobId}
-                            onChange={(event) => {
-                              setFieldValue("vacancyId", event.target.value);
-                              setSelectedJobPosition(
-                                activeJobPositionsList.find(
-                                  (job) => job.jobId === event.target.value
-                                )
-                              );
-                            }}
-                            onBlur={(event) => {
-                              setFieldTouched("vacancyId", true);
-                            }}
-                          >
-                            {activeJobPositionsList.map((jobPosition) => (
-                              <MenuItem
-                                key={jobPosition.jobId}
-                                value={jobPosition.jobId}
-                              >
-                                {jobPosition.title}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                          <ErrorLabel>
-                            {touched.vacancyId &&
-                              errors.vacancyId &&
-                              errors.vacancyId}
-                          </ErrorLabel>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <SelectInput
-                            name={"experience"}
-                            label={intl.formatMessage({
-                              id: "USER.EXPERIENCE",
-                            })}
-                          >
-                            {experienceCategoryList.map((experience) => (
-                              <MenuItem
-                                key={experience.id}
-                                value={experience.value}
-                              >
-                                {experience.label}
-                              </MenuItem>
-                            ))}
-                          </SelectInput>
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Box
-                            component="label"
-                            sx={{
-                              border: "1px dashed grey",
-
-                              cursor: "pointer",
-                              width: "100%",
-                            }}
-                          >
-                            <Container
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                gap: 1,
-                                alignItems: "center",
+                          <Grid item xs={12} sm={6}>
+                            <Typography variant="body1" sx={{ mb: 0.5 }}>
+                              {intl.formatMessage({ id: "JOB.POSITION" })}
+                            </Typography>
+                            <Select
+                              fullWidth
+                              {...formik.getFieldProps("vacancyId")}
+                              value={selectedJobPosition?.jobId}
+                              onChange={(event) => {
+                                setFieldValue("vacancyId", event.target.value);
+                                setSelectedJobPosition(
+                                  activeJobPositionsList.find(
+                                    (job) => job.jobId === event.target.value
+                                  )
+                                );
+                              }}
+                              onBlur={(event) => {
+                                setFieldTouched("vacancyId", true);
                               }}
                             >
-                              <Grid item xs={6} md={6} textAlign={"center"}>
-                                <CloudUploadOutlined
-                                  fontSize="large"
-                                  sx={{ margin: "auto" }}
-                                />
-                                <input
-                                  name="resume"
-                                  type="file"
-                                  accept=".pdf,"
-                                  onChange={(e) => {
-                                    setFieldTouched("resume", true);
-                                    handleFileChange(e, setFieldValue);
-                                  }}
-                                  // onBlur={() => setFieldTouched("resume", true)}
-                                  hidden
-                                />
-                                <Typography variant="body1" flexWrap={"wrap"}>
-                                  {intl.formatMessage({
-                                    id: "FILE.SELECTED",
-                                  })}
-                                  :{values.resume ? values.resume.name : ""}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6} md={6}>
-                                <Typography variant="body2" flexWrap={"wrap"}>
-                                  {intl.formatMessage({
-                                    id: "RESUME.UPLOAD_INSTRUCTION",
-                                  })}
-                                </Typography>
-                              </Grid>
-                            </Container>
-                          </Box>
-                          <ErrorLabel>
-                            {touched.resume && errors.resume && errors.resume}
-                          </ErrorLabel>
-                        </Grid>
+                              {activeJobPositionsList.map((jobPosition) => (
+                                <MenuItem
+                                  key={jobPosition.jobId}
+                                  value={jobPosition.jobId}
+                                >
+                                  {jobPosition.title}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            <ErrorLabel>
+                              {touched.vacancyId &&
+                                errors.vacancyId &&
+                                errors.vacancyId}
+                            </ErrorLabel>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <SelectInput
+                              name={"experience"}
+                              label={intl.formatMessage({
+                                id: "USER.EXPERIENCE",
+                              })}
+                            >
+                              {experienceCategoryList.map((experience) => (
+                                <MenuItem
+                                  key={experience.id}
+                                  value={experience.value}
+                                >
+                                  {experience.label}
+                                </MenuItem>
+                              ))}
+                            </SelectInput>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Box
+                              component="label"
+                              sx={{
+                                border: "1px dashed grey",
 
-                        <Grid item xs={12}>
+                                cursor: "pointer",
+                                width: "100%",
+                              }}
+                            >
+                              <Container
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  gap: 1,
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Grid item xs={6} md={6} textAlign={"center"}>
+                                  <CloudUploadOutlined
+                                    fontSize="large"
+                                    sx={{ margin: "auto" }}
+                                  />
+                                  <input
+                                    name="resume"
+                                    type="file"
+                                    accept=".pdf,"
+                                    onChange={(e) => {
+                                      setFieldTouched("resume", true);
+                                      handleFileChange(e, setFieldValue);
+                                    }}
+                                    // onBlur={() => setFieldTouched("resume", true)}
+                                    hidden
+                                  />
+                                  <Typography variant="body1" flexWrap={"wrap"}>
+                                    {intl.formatMessage({
+                                      id: "FILE.SELECTED",
+                                    })}
+                                    :{values.resume ? values.resume.name : ""}
+                                  </Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                  <Typography variant="body2" flexWrap={"wrap"}>
+                                    {intl.formatMessage({
+                                      id: "RESUME.UPLOAD_INSTRUCTION",
+                                    })}
+                                  </Typography>
+                                </Grid>
+                              </Container>
+                            </Box>
+                            <ErrorLabel>
+                              {touched.resume && errors.resume && errors.resume}
+                            </ErrorLabel>
+                          </Grid>
+
+                          <Grid item xs={12}></Grid>
+                          <Grid item xs={12} textAlign={"center"}>
+                            <CustomisedButton
+                              type="submit"
+                              variant="contained"
+                              label="Submit"
+                              size="medium"
+                              disabled={isSubmitting || !dirty}
+                            />
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12} textAlign={"center"}>
-                          <CustomisedButton
-                            type="submit"
-                            variant="contained"
-                            label="Submit"
-                            size="medium"
-                            disabled={isSubmitting || !dirty}
-                          />
-                        </Grid>
-                      </Grid>
-                    </form>
-                  )}
+                      </form>
+                    );
+                  }}
                 </Formik>
               </>
             )}

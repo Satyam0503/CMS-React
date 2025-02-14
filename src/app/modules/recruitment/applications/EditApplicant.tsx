@@ -170,7 +170,6 @@ export const EditApplicant = () => {
       handleAddComment(values.activityType);
     } catch (error: any) {
       toast.error(error.message);
-      console.error(error);
     } finally {
       setSubmitting(false);
     }

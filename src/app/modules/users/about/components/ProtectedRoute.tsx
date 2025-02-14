@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { ModulesName } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
-import { Typography } from "@mui/material";
 import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
+import { Navigate } from "react-router-dom";
 
 interface PropsTypes {
   module: ModulesName;
@@ -14,10 +14,10 @@ export const ProtectedRoute: FC<PropsTypes> = ({ children, module }) => {
   const hasAccess = checkPermissionForModuleAndRoute(module, userModulePermissions);
 
   if (!userModulePermissions.length) {
-    return <Typography>You Don't Have Access To This Page</Typography>;
+    return <Navigate to={"/unauthorize"}/>;
   }
   if (hasAccess) {
     return children;
   }
-  return <Typography>You Don't Have Access To This Page</Typography>;
+  return <Navigate to={"/unauthorize"}/>;
 };

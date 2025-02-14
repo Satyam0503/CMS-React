@@ -124,8 +124,15 @@ canvas {
   height: 100% !important;
 }
 
-//banner
+.align-child-center {
+  width: 100%;
+  height:calc( 100vh  - 100px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+//banner
 .banner-wave {
   margin-top: -1px;
   .single_banner {
