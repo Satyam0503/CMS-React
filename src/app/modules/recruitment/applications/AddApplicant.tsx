@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
+import { ErrorLabel } from "../../components/form_component/ErrorLabel";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -291,11 +292,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                       </Stack>
                     </Grid>
 
-                    <FormHelperText>
+                    <ErrorLabel>
                       {formik.touched.resume &&
                         formik.errors.resume &&
                         formik.errors.resume}
-                    </FormHelperText>
+                    </ErrorLabel>
 
                     <Stack
                       direction={"row"}

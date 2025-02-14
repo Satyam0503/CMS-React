@@ -219,7 +219,7 @@ export const MuiTheme = createTheme({
           marginLeft: 8,
           marginRight: 8,
           fontWeight: "bold",
-          color: colors.alpha.danger[800],
+          color: "#d32f2f",
         },
       },
     },

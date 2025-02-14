@@ -3,12 +3,13 @@ import {
   Card,
   FormControl,
   Grid,
+  Menu,
   MenuItem,
   Select,
   Stack,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
+import React, { FC } from "react";
 
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../components/DonutApexChart";
@@ -16,7 +17,7 @@ import { AttendanceChart } from "../../components/AttendanceChart";
 // import CustomisedTable from "../../components/CustomisedTable";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { LeaveApplication } from "./LeaveApplication";
-import { Block } from "@mui/icons-material";
+import { Block, CalendarToday } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 
 export const LeaveTracker: FC = () => {
@@ -26,41 +27,43 @@ export const LeaveTracker: FC = () => {
   const medicalLeaves = [3, 1];
   const earnedLeaves = [5, 10];
   const unpaidLeaves = [0, 12];
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <>
       <Grid container display={"flex"} gap={2}>
         <Grid container display={"flex"} justifyContent={"space-between"}>
           <Stack>
-            <FormControl sx={{ minWidth: 150, border: "none" }}>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                defaultValue={19}
-                renderValue={(value) => {
-                  if (value === 19) return "Today";
-                  if (value === 20) return "This Week";
-                  if (value === 21) return "This Month";
-                  if (value === 22) return "This Year";
-
-                  return "";
-                }}
-                sx={{ background: "white" }}
-              >
-                <MenuItem value={19}>Today</MenuItem>
-                <MenuItem value={20}>This Week</MenuItem>
-                <MenuItem value={21}>This Month</MenuItem>
-                <MenuItem value={22}>This Year</MenuItem>
-              </Select>
-
-              {/* <InputBase
-          // startAdornment={
-          //   <InputAdornment position="start">
-          //     <CalendarToday />
-          //   </InputAdornment>
-          // }
-          sx={{ width: "100%", mt: 2 }}
-        /> */}
-            </FormControl>
+            <Button
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              variant="text"
+              sx={{ width: "120px" }}
+            >
+              <CalendarToday /> Today
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
           </Stack>
           <Stack>
             <LeaveApplication />
