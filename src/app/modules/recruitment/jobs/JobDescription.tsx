@@ -1,7 +1,4 @@
-import {
-  Check,
-  FileOpenOutlined,
-} from "@mui/icons-material";
+import { Check, FileOpenOutlined } from "@mui/icons-material";
 import {
   Grid,
   MenuItem,
@@ -59,14 +56,14 @@ const JobDescription: FC<PropsTypes> = ({
   } = useFormik({
     initialValues,
     validationSchema: jobSchema,
-    onSubmit: (values, { setSubmitting }) => {    
+    onSubmit: (values, { setSubmitting }) => {
       handleAddEditJob(values, setSubmitting);
     },
   });
 
   const handleJobDescriptionChange = useCallback((description: string) => {
     setJobDescription(description);
-    formik.setFieldValue("description", description.replace("<p><br></p>",""));
+    formik.setFieldValue("description", description.replace("<p><br></p>", ""));
   }, []);
 
   return (
@@ -112,7 +109,7 @@ const JobDescription: FC<PropsTypes> = ({
                   variant="outlined"
                   type="number"
                   inputProps={{
-                    min:1
+                    min: 1,
                   }}
                   error={touched.vacancies && Boolean(errors.vacancies)}
                   helperText={

@@ -19,13 +19,13 @@ import { TextInput } from "../../../components/form_component/TextInput";
 import { SelectInput } from "../../../components/form_component/SelectInput";
 import { EmployeeModel } from "../../../../../utils/common_types";
 
-interface Props{
-  open:boolean,
-  setOpen:React.Dispatch<React.SetStateAction<boolean>>
-  currentUser:EmployeeModel,
+interface Props {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  currentUser: EmployeeModel;
 }
 
-export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
+export const UpdateUserInfo: FC<Props> = ({ currentUser, open, setOpen }) => {
   const intl = useIntl();
   const initialValues = {
     firstName: currentUser?.firstName,
@@ -82,7 +82,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
             }) => (
               <form onSubmit={handleSubmit}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                       type="text"
@@ -90,7 +90,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="First Name"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                       type="text"
@@ -98,7 +98,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="Last Name"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <Stack>
                       <Typography variant="body1">
                         {intl.formatMessage({ id: "USER.DOB" })}
@@ -119,7 +119,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                         errors.dateOfBirth}
                     </FormHelperText>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                       type="email"
@@ -127,7 +127,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="Email"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.PHONE" })}
                       type="text"
@@ -136,7 +136,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <SelectInput
                       name="bloodGroup"
                       label={intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -149,7 +149,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     </SelectInput>
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({
                         id: "USER.PERSONAL_EMAIL",
@@ -160,7 +160,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({
                         id: "USER.EMERGENCY_CONTACT",
