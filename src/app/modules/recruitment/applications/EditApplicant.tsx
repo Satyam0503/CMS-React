@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -41,6 +42,7 @@ import {
 } from "../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../components/form_component/ErrorLabel";
+import { colors } from "../../theme/MuiTheme";
 
 export const EditApplicant = () => {
   const intl = useIntl();
@@ -185,7 +187,7 @@ export const EditApplicant = () => {
     <Card sx={{ p: 2.6 }}>
       <Stack spacing={2}>
         <Typography variant="h5">
-          {intl.formatMessage({ id: "UPDATE.EMP.INFO" })}
+          {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
         </Typography>
         <Grid container display={"flex"} direction={"column"} gap={1}>
           <Formik
@@ -296,59 +298,88 @@ export const EditApplicant = () => {
                         </Grid>
                       </Grid>
                     </Stack>
-
-                    <Box my={3}>
-                      <Stack direction={"column"} spacing={1}>
-                        <Box
-                          component="label"
-                          sx={{
-                            border: "1px dashed grey",
-                            borderRadius: 1,
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Container
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              gap: 1,
-                              alignItems: "center",
-                            }}
-                          >
-                            <Grid item xs={6} md={6} textAlign={"center"}>
+                    <Stack mt={2}>
+                      {" "}
+                      <Typography
+                        variant="body1"
+                        mb={1}
+                        color={colors.alpha.primary[500]}
+                      >
+                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                      </Typography>
+                    </Stack>
+                    <Grid
+                      container
+                      direction={"column"}
+                      p={3}
+                      sx={{
+                        border: "1px dashed grey",
+                        cursor: "pointer",
+                        borderRadius: 0.5,
+                      }}
+                    >
+                      <Stack
+                        spacing={2}
+                        direction={"row"}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
+                        <Stack alignItems={"center"}>
+                          <Tooltip title="Upload file here" placement="top">
+                            <Box
+                              component="label"
+                              bgcolor={colors.alpha.primary[100]}
+                              px={2}
+                              py={0.5}
+                              borderRadius={1}
+                            >
                               <CloudUploadOutlined
                                 fontSize="large"
-                                sx={{ margin: "auto" }}
+                                className="text-primary"
                               />
+
                               <input
                                 name="resume"
                                 type="file"
                                 accept=".pdf"
-                                onChange={(event) => {
+                                onChange={(e) => {
                                   formik.setFieldTouched("resume", true);
-                                  handleFileChange(event, formik.setFieldValue);
+                                  handleFileChange(e, formik.setFieldValue);
                                 }}
+                                // onBlur={(e) => {
+                                //   formik.setFieldTouched("resume", true);
+                                // }}
                                 hidden
                               />
-                              <Typography variant="body1" flexWrap={"wrap"}>
-                                {intl.formatMessage({ id: "FILE.SELECTED" })}:
-                                {values.resume ? values.resume.name : ""}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                              <Typography variant="body2" flexWrap={"wrap"}>
-                                {intl.formatMessage({
-                                  id: "FILE.UPLOAD_INSTRUCTION",
-                                })}
-                              </Typography>
-                            </Grid>
-                          </Container>
-                        </Box>
+                            </Box>
+                          </Tooltip>
+                          <Stack>
+                            <Typography
+                              variant="caption"
+                              flexWrap={"wrap"}
+                              textAlign={"center"}
+                            >
+                              {/* {intl.formatMessage({
+                                id: "FILE.SELECTED",
+                              })}
+                              : */}
+                            </Typography>
+                            <Typography variant="caption">
+                              {values.resume ? values.resume.name : ""}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+
+                        <Stack>
+                          <Typography variant="body2">
+                            {intl.formatMessage({
+                              id: "RESUME.UPLOAD_INSTRUCTION",
+                            })}
+                          </Typography>
+                        </Stack>
                       </Stack>
-                      <ErrorLabel>
-                        {touched.resume && errors.resume && errors.resume}
-                      </ErrorLabel>
-                    </Box>
+                    </Grid>
 
                     <Grid
                       item

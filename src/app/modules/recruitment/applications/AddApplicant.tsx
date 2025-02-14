@@ -23,7 +23,6 @@ import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
-import { grey, red } from "@mui/material/colors";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -222,7 +221,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                     <Grid
                       container
                       direction={"column"}
-                      p={5}
+                      p={3}
                       sx={{
                         border: "1px dashed grey",
                         cursor: "pointer",
@@ -266,7 +265,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                             </Box>
                           </Tooltip>
                           <Stack>
-                            <Typography variant="caption" textAlign={"center"}>
+                            <Typography
+                              variant="caption"
+                              flexWrap={"wrap"}
+                              textAlign={"center"}
+                            >
                               {/* {intl.formatMessage({
                                 id: "FILE.SELECTED",
                               })}

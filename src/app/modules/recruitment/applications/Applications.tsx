@@ -66,7 +66,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh,search]);
+  }, [refresh, search]);
   return (
     <>
       <Card sx={{ p: 2.6 }}>
