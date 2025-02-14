@@ -14,7 +14,6 @@ type Props = {
   style?: React.CSSProperties;
   iconPosition?: "start" | "end";
   loading?: boolean;
-  tooltip?: string;
 };
 
 const CustomisedButton = (props: Props) => {
@@ -55,7 +54,6 @@ const CustomisedButton = (props: Props) => {
           size={size}
           className={className}
           type={type}
-          tooltip={Tooltip}
         >
           {iconPosition === "start" && Icon}
           {loading ? <span className="spinner-loader"></span> : label}
