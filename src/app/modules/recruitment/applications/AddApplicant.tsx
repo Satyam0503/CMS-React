@@ -1,15 +1,15 @@
 import {
   Box,
-  Container,
   FormHelperText,
   Grid,
   MenuItem,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { CustomisedModal } from "../../components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
-import { CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined, Style } from "@mui/icons-material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Formik } from "formik";
 import { TextInput } from "../../components/form_component/TextInput";
@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
+import { grey, red } from "@mui/material/colors";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -207,70 +208,92 @@ export const AddApplicant: FC<PropsTypes> = ({
                           ))}
                         </SelectInput>
                       </Grid>
-
-                      <Grid item xs={12}>
-                        <Typography
-                          variant="body1"
-                          mb={1}
-                          color={colors.alpha.primary[500]}
-                        >
-                          {intl.formatMessage({ id: "UPLOAD.RESUME" })}
-                        </Typography>
-                        <Stack direction={"column"} spacing={1}>
-                          <Box
-                            component="label"
-                            sx={{
-                              p: 2,
-                              border: "1px dashed grey",
-                              borderRadius: 1,
-                              cursor: "pointer",
-                            }}
-                          >
-                            <Container
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                gap: 1,
-                                alignItems: "center",
-                              }}
-                            >
-                              <Grid item xs={6} textAlign={"center"}>
-                                <CloudUploadOutlined fontSize="large" />
-                                <input
-                                  name="resume"
-                                  type="file"
-                                  accept=".pdf"
-                                  onChange={(e) => {
-                                    formik.setFieldTouched("resume", true);
-                                    handleFileChange(e, formik.setFieldValue);
-                                  }}
-                                  // onBlur={(e) => {
-                                  //   formik.setFieldTouched("resume", true);
-                                  // }}
-                                  hidden
-                                />
-                                <Typography variant="body1" flexWrap={"wrap"}>
-                                  {intl.formatMessage({ id: "FILE.SELECTED" })}:
-                                  {formik.values.resume?.name}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body2" flexWrap={"wrap"}>
-                                  {intl.formatMessage({
-                                    id: "RESUME.UPLOAD_INSTRUCTION",
-                                  })}
-                                </Typography>
-                              </Grid>
-                            </Container>
-                          </Box>
-                        </Stack>
-                        <FormHelperText>
-                          {formik.touched.resume &&
-                            formik.errors.resume &&
-                            formik.errors.resume}
-                        </FormHelperText>
-                      </Grid>
                     </Grid>
+                    <Stack mt={2}>
+                      {" "}
+                      <Typography
+                        variant="body1"
+                        mb={1}
+                        color={colors.alpha.primary[500]}
+                      >
+                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                      </Typography>
+                    </Stack>
+                    <Grid
+                      container
+                      direction={"column"}
+                      p={5}
+                      sx={{
+                        border: "1px dashed grey",
+                        cursor: "pointer",
+                        borderRadius: 0.5,
+                      }}
+                    >
+                      <Stack
+                        spacing={2}
+                        direction={"row"}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
+                        <Stack alignItems={"center"}>
+                          <Tooltip title="Upload file here" placement="top">
+                            <Box
+                              component="label"
+                              bgcolor={colors.alpha.primary[100]}
+                              px={2}
+                              py={0.5}
+                              borderRadius={1}
+                            >
+                              <CloudUploadOutlined
+                                fontSize="large"
+                                className="text-primary"
+                              />
+
+                              <input
+                                name="resume"
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) => {
+                                  formik.setFieldTouched("resume", true);
+                                  handleFileChange(e, formik.setFieldValue);
+                                }}
+                                // onBlur={(e) => {
+                                //   formik.setFieldTouched("resume", true);
+                                // }}
+                                hidden
+                              />
+                            </Box>
+                          </Tooltip>
+                          <Stack>
+                            <Typography variant="caption" textAlign={"center"}>
+                              {/* {intl.formatMessage({
+                                id: "FILE.SELECTED",
+                              })}
+                              : */}
+                            </Typography>
+                            <Typography variant="caption">
+                              {formik.values.resume?.name}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+
+                        <Stack>
+                          <Typography variant="body2">
+                            {intl.formatMessage({
+                              id: "RESUME.UPLOAD_INSTRUCTION",
+                            })}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Grid>
+
+                    <FormHelperText>
+                      {formik.touched.resume &&
+                        formik.errors.resume &&
+                        formik.errors.resume}
+                    </FormHelperText>
+
                     <Stack
                       direction={"row"}
                       spacing={1}
