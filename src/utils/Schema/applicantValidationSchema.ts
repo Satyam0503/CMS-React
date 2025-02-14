@@ -37,12 +37,16 @@ export const applicantValidationSchema = Yup.object().shape({
       }
       return true;
     })
-    .test("fileSize", "File size must not be more than 5MB", (value: any) => {
-      if (value) {
-        return value.size <= MAX_FILE_SIZE;
+    .test(
+      "fileSize",
+      "File size is too big, File size exceeds 5MB",
+      (value: any) => {
+        if (value) {
+          return value.size <= MAX_FILE_SIZE;
+        }
+        return true;
       }
-      return true;
-    }),
+    ),
 });
 
 export const editApplicantValidationSchema = Yup.object().shape({
@@ -68,11 +72,15 @@ export const editApplicantValidationSchema = Yup.object().shape({
     .required("Phone number is required"),
   experienceInMonths: Yup.number()
     .required("Experience is Required")
-    .min(0,"Experience must be non-negative value")
+    .min(0, "Experience must be non-negative value")
     .max(12),
-  experienceInYears: Yup.number().min(0,"Experience must be non-negative value").required("Experience is Required"),
+  experienceInYears: Yup.number()
+    .min(0, "Experience must be non-negative value")
+    .required("Experience is Required"),
   vacancyId: Yup.string().required("Select Job"),
-  activityType:Yup.number().oneOf([0,1,2,3,4,5]).required("Select Application Status"),
+  activityType: Yup.number()
+    .oneOf([0, 1, 2, 3, 4, 5])
+    .required("Select Application Status"),
   resume: Yup.mixed()
     .required("Resume is required")
     .test("fileFormat", "Only PDF files are allowed", (value: any) => {

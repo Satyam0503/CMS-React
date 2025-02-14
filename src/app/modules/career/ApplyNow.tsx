@@ -9,6 +9,7 @@ import {
   Select,
   FormLabel,
   Card,
+  Tooltip,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
@@ -390,28 +391,45 @@ export default function ApplyNow() {
                             ))}
                           </SelectInput>
                         </Grid>
-                        <Grid item xs={12}>
-                          <Box
-                            component="label"
-                            sx={{
-                              border: "1px dashed grey",
-
-                              cursor: "pointer",
-                              width: "100%",
-                            }}
-                          >
-                            <Container
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                gap: 1,
-                                alignItems: "center",
-                              }}
-                            >
-                              <Grid item xs={6} md={6} textAlign={"center"}>
+                      </Grid>
+                      <Stack mt={2}>
+                        <Typography
+                          variant="body1"
+                          mb={1}
+                          color={colors.alpha.primary[500]}
+                        >
+                          {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                        </Typography>
+                      </Stack>
+                      <Grid
+                        container
+                        direction={"column"}
+                        p={3}
+                        sx={{
+                          border: "1px dashed grey",
+                          cursor: "pointer",
+                          borderRadius: 0.5,
+                        }}
+                      >
+                        <Stack
+                          spacing={2}
+                          direction={"row"}
+                          display={"flex"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                        >
+                          <Stack alignItems={"center"}>
+                            <Tooltip title="Upload file here" placement="top">
+                              <Box
+                                component="label"
+                                bgcolor={colors.alpha.primary[100]}
+                                px={2}
+                                py={0.5}
+                                borderRadius={1}
+                              >
                                 <CloudUploadOutlined
                                   fontSize="large"
-                                  sx={{ margin: "auto" }}
+                                  className="text-primary"
                                 />
                                 <input
                                   name="resume"
@@ -424,37 +442,41 @@ export default function ApplyNow() {
                                   // onBlur={() => setFieldTouched("resume", true)}
                                   hidden
                                 />
-                                <Typography variant="body1" flexWrap={"wrap"}>
-                                  {intl.formatMessage({
-                                    id: "FILE.SELECTED",
-                                  })}
-                                  :{values.resume ? values.resume.name : ""}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6} md={6}>
-                                <Typography variant="body2" flexWrap={"wrap"}>
-                                  {intl.formatMessage({
-                                    id: "RESUME.UPLOAD_INSTRUCTION",
-                                  })}
-                                </Typography>
-                              </Grid>
-                            </Container>
-                          </Box>
-                          <ErrorLabel>
-                            {touched.resume && errors.resume && errors.resume}
-                          </ErrorLabel>
-                        </Grid>
+                              </Box>
+                            </Tooltip>
+                            <Stack>
+                              <Typography
+                                variant="caption"
+                                flexWrap={"wrap"}
+                                textAlign={"center"}
+                              >
+                                {values.resume ? values.resume.name : ""}
+                              </Typography>
+                            </Stack>
+                          </Stack>
 
-                        <Grid item xs={12}></Grid>
-                        <Grid item xs={12} textAlign={"center"}>
-                          <CustomisedButton
-                            type="submit"
-                            variant="contained"
-                            label="Submit"
-                            size="medium"
-                            disabled={isSubmitting || !dirty}
-                          />
-                        </Grid>
+                          <Stack>
+                            <Typography variant="body2">
+                              {intl.formatMessage({
+                                id: "RESUME.UPLOAD_INSTRUCTION",
+                              })}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      </Grid>
+                      <ErrorLabel>
+                        {touched.resume && errors.resume && errors.resume}
+                      </ErrorLabel>
+
+                      <Grid item xs={12} textAlign={"center"} mt={2}>
+                        <CustomisedButton
+                          type="submit"
+                          variant="contained"
+                          label="Submit"
+                          size="medium"
+                          disabled={isSubmitting || !dirty}
+                          style={{ fontSize: "14px" }}
+                        />
                       </Grid>
                     </form>
                   )}
