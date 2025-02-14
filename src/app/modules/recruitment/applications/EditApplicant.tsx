@@ -298,8 +298,8 @@ export const EditApplicant = () => {
                         </Grid>
                       </Grid>
                     </Stack>
+
                     <Stack mt={2}>
-                      {" "}
                       <Typography
                         variant="body1"
                         mb={1}
@@ -308,6 +308,7 @@ export const EditApplicant = () => {
                         {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                     </Stack>
+
                     <Grid
                       container
                       direction={"column"}
@@ -380,6 +381,9 @@ export const EditApplicant = () => {
                         </Stack>
                       </Stack>
                     </Grid>
+                    <ErrorLabel>
+                      {touched.resume && errors.resume && errors.resume}
+                    </ErrorLabel>
 
                     <Grid
                       item
