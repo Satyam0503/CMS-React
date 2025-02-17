@@ -1136,7 +1136,7 @@ export const MuiTheme = createTheme({
               border: "6px solid" + colors.alpha.white[500],
             },
             "&.Mui-disabled .MuiSwitch-thumb": {
-              color: colors.alpha.neutral[500],
+              color: colors.alpha.white[500],
             },
             "&.Mui-disabled + .MuiSwitch-track": {
               opacity: 0.7,
