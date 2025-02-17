@@ -115,9 +115,9 @@ export default function ProfileCard() {
             transition: "transform 0.3s ease-in-out",
             "&:hover img": {
               opacity: 0.2,
-              zIndex: 1,
             },
           }}
+          className="gridContainer"
         >
           <Avatar
             alt="profile picture"
@@ -129,9 +129,10 @@ export default function ProfileCard() {
             }}
           />
 
-          <Stack className="coverChange" direction={"row"} gap={1} zIndex={3}>
+          <Stack className="coverChange" direction={"row"} gap={1}>
             <CustomIconButton
               handleClick={() => setOpen(true)}
+              tooltip="Upload profile picture"
               icon={
                 <Image
                   sx={{
@@ -145,6 +146,7 @@ export default function ProfileCard() {
             />
             <CustomIconButton
               handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
+              tooltip="Zoom-out profile picture"
               icon={
                 <Visibility
                   sx={{

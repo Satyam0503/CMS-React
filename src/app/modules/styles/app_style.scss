@@ -42,6 +42,39 @@ $app-white: #ffffff;
   gap: 0.25rem;
 }
 
+// rough
+
+.coverChange {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.35s ease;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+//profile card icon
+.coverChange {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.gridContainer:hover .coverChange {
+  opacity: 1;
+}
+
 // .container:hover .coverChange {
 //   z-index: 3 !important;
 // }
@@ -126,7 +159,7 @@ canvas {
 
 .align-child-center {
   width: 100%;
-  height:calc( 100vh  - 100px);
+  height: calc(100vh - 100px);
   display: flex;
   align-items: center;
   justify-content: center;
