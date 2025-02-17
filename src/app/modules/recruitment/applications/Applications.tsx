@@ -58,15 +58,15 @@ export default function Applications() {
         if (!data.success) {
           throw new Error(data.message);
         }
-        setApplicationsList(data.methodResults);
+        setApplicationsList(data.methodResults.reverse());
       } catch (error: any) {
-        console.error(error);
+        console.error(error.message);
       } finally {
         setLoading(false);
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh,search]);
+  }, [refresh]);
   return (
     <>
       <Card sx={{ p: 2.6 }}>

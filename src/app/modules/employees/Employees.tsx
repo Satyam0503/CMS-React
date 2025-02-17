@@ -233,7 +233,7 @@ export default function Employees() {
       }
     }, 1500);
     return () => clearTimeout(timeOutId);
-  }, [page, rowPerPage, isRefresh, search]);
+  }, [page, rowPerPage, isRefresh]);
 
   return (
     <>

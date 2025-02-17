@@ -137,7 +137,7 @@ export default function Jobs() {
         if (!(success && statusCode === 200)) {
           throw new Error(message);
         }
-        setJobList(methodResults);
+        setJobList(methodResults.reverse());
         setTotalRecords(methodResults.length);
         setLoading(false);
       } catch (error: any) {
@@ -147,7 +147,7 @@ export default function Jobs() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [isRefresh, search]);
+  }, [isRefresh]);
 
   return (
     <>

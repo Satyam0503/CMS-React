@@ -9,10 +9,10 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const applicantValidationSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
   lastName: Yup.string()
     .required("Last name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
   email: Yup.string()
     .required("Email is required")
     .matches(
@@ -48,10 +48,10 @@ export const applicantValidationSchema = Yup.object().shape({
 export const editApplicantValidationSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
   lastName: Yup.string()
     .required("Last name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
 
   email: Yup.string()
     .required("Email is required")

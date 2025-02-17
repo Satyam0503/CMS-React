@@ -1,32 +1,14 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import {
-  EmployeeModel,
-  UserCertificationModel,
-  UserEducationModel,
-} from "../../../utils/common_types";
-import {
-  getEmployeeCertifications,
-
-  getEmployeeEducations,
-  getEmployeeSummary,
-  UserSummaryModel,
-} from "./userservices";
-import { Typography } from "@mui/material";
-import { useIntl } from "react-intl";
-import { toast } from "react-toastify";
-import { useAppSelector } from "../../Redux/hooks";
-import { CircularLoader } from "../components/CircularLoader";
+import { createContext, FC, useContext, useEffect, useMemo, useState } from "react";
+import { EmployeeModel } from "../../../utils/common_types";
+import { getEmployeeById } from "./userservices";
 
 type UserDataContextType = {
-  userDetails: {
-    userPersonalDetails: EmployeeModel;
-    userEducations: UserEducationModel[];
-    userCertifications: UserCertificationModel[];
-    userSkills: string[];
-    userSummary: UserSummaryModel;
-  };
-  setRefresh: (isRefresh: boolean) => void;
-  isRefresh: boolean;
+  userDetails: EmployeeModel;
+  userSkills: string[];
+  updateUserDetails: (userData?: EmployeeModel ) => void;
+  setUserSkills: (skills: string[]) => void;
+  refresh:boolean,
+  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
 };
 
 type PropTypes = {
@@ -39,55 +21,48 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 );
 
 // User Details Provider
-export const UserDetailsProvider = (props: PropTypes) => {
-  const [isRefresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>();
-  const intl = useIntl();
-  const [userEducations, setUserEducations] = useState<UserEducationModel[]>(
-    []
-  );
-  const currentUser= useAppSelector(state=>state.user.userData);
-  const [userCertifications, setUserCertifications] = useState<
-    UserCertificationModel[]
-  >([]);
-  const [userSummary, setUserSummary] = useState<UserSummaryModel>({
-    userId:currentUser?.userId!,
-    summaryId: "",
-    summary: "",
-  });
-  const [userSkills, setUserSkills] = useState<string[]>([]);
-  const [userPersonalDetails, setUserPersonalDetails] = useState<EmployeeModel>(
+export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
+  const [userDetails, setUserDetails] = useState<EmployeeModel>(
     {} as EmployeeModel
   );
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [refresh,setRefresh]= useState(false);
 
-  if (loading) {
-    return (
-      <CircularLoader/>
-    );
+  function updateUserDetails(userData?: EmployeeModel) {
+    if (!userData) {
+      setUserDetails(prev =>prev);
+    }
+    else{
+      setUserDetails(userData);
+    }
   }
-  if (error) {
-    return (
-      <Typography variant="h4" color="error">
-        {error}
-      </Typography>
-    );
-  }
+
+  useEffect(()=>{
+    getEmployeeById()
+    .then(response=>{
+      const {success,message,methodResult}= response.data;
+      if(!success){
+        throw new Error(message);
+      }  
+      updateUserDetails(methodResult);
+    })
+    .catch(error=>{
+      console.error(error);
+    })
+  },[refresh])
+
   return (
     <UserDetailsContext.Provider
       value={{
-        userDetails: {
-          userPersonalDetails,
-          userEducations,
-          userCertifications,
-          userSkills,
-          userSummary,
-        },
-        isRefresh,
-        setRefresh,
+        userDetails,
+        userSkills,
+        updateUserDetails,
+        setUserSkills,
+        refresh,
+        setRefresh
       }}
     >
-      {props.children}
+      {children}
     </UserDetailsContext.Provider>
   );
 };

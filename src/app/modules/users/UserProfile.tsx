@@ -11,9 +11,10 @@ import {
   CorporateFareOutlined,
 } from "@mui/icons-material";
 import LeaveAllowences from "./LeaveAllowences";
+import { useUserDetails } from "./UserDataProvider";
 
 export default function UserProfile() {
-
+  const userSkills = useUserDetails().userSkills;
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
@@ -72,7 +73,7 @@ export default function UserProfile() {
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={0 + "+"}
+                number={userSkills.length +"+"}
                 title="Skills holder"
               />
             </Box>

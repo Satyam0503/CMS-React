@@ -8,15 +8,14 @@ import {
   Grid,
   InputAdornment,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
-import { setAuth, setToken } from "../../../Redux/Reducers/authSlice";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { setToken } from "../../../Redux/Reducers/authSlice";
+import { useAppDispatch } from "../../../Redux/hooks";
 import { setLocalKey } from "../core/AuthHelpers";
 import { TextInput } from "../../components/form_component/TextInput";
 
@@ -54,9 +53,6 @@ export function Login() {
 
     try {
       const response = await login({ ...values });
-      if (!response) {
-        throw new Error("");
-      }
       const data = response.data;
       if (!data.success) {
         throw new Error(data.message);
@@ -64,7 +60,8 @@ export function Login() {
       dispatch(setToken({ token: data.message }));
       setLocalKey(data.message);
       setStatus("");
-    } catch (error: any) {
+    } catch (error:any) {
+      console.error("Error :"+ error.message)
       setStatus(error.message);
     } finally {
       setSubmitting(false);

@@ -21,14 +21,15 @@ import { AttendanceChart } from "../components/AttendanceChart";
 import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
 import AttendanceTable from "./components/LeaveTable";
+import { useAppSelector } from "../../Redux/hooks";
 
 export default function DashboardUser() {
   const intl = useIntl();
   const series = [21, 12, 0];
   const labels = ["Male", "Female", "Other"];
-
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
+  const user = useAppSelector(state =>state.user.userData);
   return (
     <>
       <Grid
@@ -40,7 +41,7 @@ export default function DashboardUser() {
       >
         <Stack>
           <Typography variant="h2">
-            {intl.formatMessage({ id: "MENU.WELCOME" })} Prachi !
+            {intl.formatMessage({ id: "MENU.WELCOME" })} {user?.fullName }
           </Typography>
           <Typography
             variant="body1"

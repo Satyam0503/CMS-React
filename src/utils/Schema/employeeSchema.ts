@@ -2,10 +2,10 @@ import * as Yup from "yup";
 export const employeeSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
   lastName: Yup.string()
     .required("last name is required")
-    .matches(/^[A-Za-z]+$/, "Invalid Name"),
+    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
   email: Yup.string()
     .required("Email is required")
     .matches(
@@ -22,7 +22,7 @@ export const employeeSchema = Yup.object().shape({
   teamLead: Yup.string().required("Team lead name is required"),
   phoneNumber: Yup.string()
     .matches(
-      /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
+      /^[6-9]\d{9}$/,
       "Phone number is not valid"
     )
     .required("Phone number is required"),
@@ -44,7 +44,7 @@ export const employeeSchema = Yup.object().shape({
     ),
   emergencyContact: Yup.string()
     .matches(
-      /^(\+?\d{1,2}\s?)?(\(?\d{3}\)?[\s\-]?)?[\d\-]{7,10}$/,
+      /^[6-9]\d{9}$/,
       "Emergency Contact is not valid"
     )
     .required("Emergency Contact is required"),
