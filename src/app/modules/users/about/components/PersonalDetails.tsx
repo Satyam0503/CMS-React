@@ -2,16 +2,13 @@ import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
-import { useEffect, useMemo, useState } from "react";
-import { EmployeeModel } from "../../../../../utils/common_types";
-import { getEmployeeById } from "../../userservices";
+import { useState } from "react";
 import { CustomIconButton } from "../../../components/CustomIconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
 
 export const PersonalDetails = () => {
   const intl = useIntl();
-  const [currentUser,setCurrentUser]= useState<EmployeeModel>({} as EmployeeModel);
   const [isModalOpen,setModalOpen]=useState(false);
   const { userDetails,updateUserDetails} = useUserDetails();
 
@@ -46,7 +43,7 @@ export const PersonalDetails = () => {
           handleClick={()=>setModalOpen(true)}
         />
         {
-          isModalOpen && currentUser && (
+          isModalOpen && userDetails && (
             <UpdateUserInfo open={isModalOpen} setOpen={setModalOpen} userData={userDetails} />
           )
         }

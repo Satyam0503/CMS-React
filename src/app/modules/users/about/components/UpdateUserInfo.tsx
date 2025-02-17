@@ -22,6 +22,8 @@ import { updateEmployee } from "../../../employees/components/employeeServices";
 import { AxiosError } from "axios";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
+import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 
 interface Props {
   open: boolean;
@@ -32,6 +34,8 @@ interface Props {
 export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const intl = useIntl();
   const { updateUserDetails } = useUserDetails();
+  const user = useAppSelector(state => state.user.userData)!;
+  const dispatch = useAppDispatch();
   
   const initialValues = {
     firstName: userData?.firstName,
@@ -62,6 +66,12 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
       const { success, statusCode, methodResult, message } = response.data;
       if (success && statusCode === 200) {
         updateUserDetails(methodResult);
+        dispatch(setCurrentUser({
+          ...user,
+          firstName:methodResult.firstName,
+          lastName:methodResult.lastName,
+          fullName:methodResult.firstName +" "+methodResult.lastName
+        }));
         toast.success(message);
         handleClose();
       }
