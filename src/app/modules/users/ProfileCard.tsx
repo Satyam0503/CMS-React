@@ -137,9 +137,6 @@ export default function ProfileCard() {
                 <Image
                   sx={{
                     color: "white",
-                    "&:hover": {
-                      color: colors.alpha.primary[500],
-                    },
                   }}
                 />
               }
@@ -151,9 +148,6 @@ export default function ProfileCard() {
                 <Visibility
                   sx={{
                     color: "white",
-                    "&:hover": {
-                      color: colors.alpha.primary[500],
-                    },
                   }}
                 />
               }

@@ -527,10 +527,10 @@ export const MuiTheme = createTheme({
         text: {
           backgroundColor: colors.alpha.white[500],
           border: "none",
-          "&:hover, &.MuiSelected": {
+          "&:hover,  &.MuiSelected ": {
             backgroundColor: colors.alpha.primary[500],
             color: colors.alpha.white[500],
-            border: "1px solid " + colors.alpha.neutral[200],
+            border: "none",
           },
         },
         sizeSmall: {
@@ -616,7 +616,7 @@ export const MuiTheme = createTheme({
           },
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             border: " 1px solid " + colors.alpha.neutral[200],
-            background: colors.alpha.neutral[100],
+            background: "transparent",
             color: colors.alpha.primary[500],
           },
         },

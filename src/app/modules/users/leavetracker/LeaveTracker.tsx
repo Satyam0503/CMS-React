@@ -40,31 +40,29 @@ export const LeaveTracker: FC = () => {
       <Grid container display={"flex"} gap={2}>
         <Grid container display={"flex"} justifyContent={"space-between"}>
           <Stack>
-            <Button
-              id="basic-button"
-              aria-controls={open ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              onClick={handleClick}
-              variant="text"
-              sx={{ width: "120px" }}
-            >
-              <CalendarToday /> Today
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
-            </Menu>
+            <FormControl sx={{ minWidth: 150, border: "none" }}>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue={19}
+                renderValue={(value) => {
+                  if (value === 19) return "Today";
+                  if (value === 20) return "This Week";
+                  if (value === 21) return "This Month";
+                  if (value === 22) return "This Year";
+
+                  return "";
+                }}
+                sx={{ background: "white" }}
+              >
+                <MenuItem value={19}>Today</MenuItem>
+                <MenuItem value={20}>This Week</MenuItem>
+                <MenuItem value={21}>This Month</MenuItem>
+                <MenuItem value={22}>This Year</MenuItem>
+              </Select>
+            </FormControl>
           </Stack>
+
           <Stack>
             <LeaveApplication />
           </Stack>
