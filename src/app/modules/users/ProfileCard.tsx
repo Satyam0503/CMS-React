@@ -106,6 +106,7 @@ export default function ProfileCard() {
           justifyContent={"center"}
           alignItems={"center"}
           p={1}
+          mt={1}
           sx={{
             height: "150px",
             width: "150px",
