@@ -10,23 +10,8 @@ import { useUserDetails } from "../../UserDataProvider";
 export const PersonalDetails = () => {
   const intl = useIntl();
   const [isModalOpen,setModalOpen]=useState(false);
-  const { userDetails,updateUserDetails} = useUserDetails();
+  const { userDetails} = useUserDetails();
 
-  // useEffect(()=>{
-  //   getEmployeeById()
-  //   .then(response=>{
-  //     const {success,message,methodResult}= response.data;
-  //     if(!success){
-  //       throw new Error(message);
-  //     }     
-  //     setCurrentUser(methodResult);
-  //     updateUserDetails(methodResult);
-  //   })
-  //   .catch(error=>{
-  //     console.error(error);
-  //   })
-  // },[])
- 
   return (
     <Card sx={{ p: 2 }}>
       <Stack

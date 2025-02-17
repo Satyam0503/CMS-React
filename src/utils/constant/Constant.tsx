@@ -359,6 +359,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
+    sorting:true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
@@ -372,6 +373,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
+    sorting:true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {

@@ -51,7 +51,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
       dispatch(setProfileImageUrl(methodResult.fullProfileUrl!));
     })
     .catch(error=>{
-      console.error(error);
+      console.error(error.message);
     })
   },[refresh])
   

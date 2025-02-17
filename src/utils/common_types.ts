@@ -17,11 +17,15 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   fullName: string;
+  profileImage: string;
   permissions: PermissionModel[];
   modulePermission: ModulePermissoinModel[];
 }
 
-export type UserDataModel = Omit<UserModel, "modulePermission" | "permissions">;
+export type UserDataModel = Omit<
+  UserModel,
+  "modulePermission" | "permissions" | "profileImage"
+>;
 
 export interface ModulePermissoinModel {
   moduleName: string;

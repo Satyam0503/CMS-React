@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
+import { ArrowUpward, Straight } from "@mui/icons-material";
+import { useState } from "react";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -48,6 +50,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   style={{ minWidth: column.minWidth || 120 }}
                 >
                   {column.label}
+                  {column.sorting && <Straight/> }
                 </TableCell>
               ))}
             </TableRow>

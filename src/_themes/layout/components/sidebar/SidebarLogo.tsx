@@ -53,7 +53,7 @@ const SidebarLogo = (props: PropsType) => {
 
   return (
     <Stack id="kt_app_sidebar_logo" alignItems="center">
-      <Link to="/dashboard" style={{ marginTop: "1rem" }}>
+      <Link to="/" style={{ marginTop: "1rem" }}>
         {config.layoutType === "dark-sidebar" ? (
           <img
             alt="Logo"

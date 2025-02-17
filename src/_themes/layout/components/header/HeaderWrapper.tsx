@@ -60,7 +60,7 @@ export function HeaderWrapper() {
           config.layoutType === "light-sidebar"
         ) && (
           <div className="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
-            <Link to="/dashboard">
+            <Link to="/">
               {config.layoutType === "dark-header" ? (
                 <img
                   alt="Logo"
