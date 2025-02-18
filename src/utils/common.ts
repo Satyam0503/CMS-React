@@ -8,6 +8,7 @@ import {
   Permission,
 } from "./enums";
 import { SideBarTabList } from "./constant/Constant";
+import { List } from "@mui/material";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -364,3 +365,27 @@ export const findUserDefaultTab = (
 
 //   return index !== -1 ? true : false;
 // };
+
+export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
+  if (key === "experience") {
+    arr?.sort((a, b) => (a[key] as number)  - (b[key] as number));
+    return arr;
+  } else {
+    arr?.sort((a, b) =>
+      (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase())
+    );
+    return arr;
+  }
+};
+
+export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
+  if (key === "experience") {
+    arr?.sort((a, b) => (b[key] as number ) - (a[key] as number ));
+    return arr;
+  } else {
+    arr?.sort((a, b) =>
+      (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase())
+    );
+    return arr?.reverse();
+  }
+};

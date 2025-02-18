@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
-import { ArrowUpward, Straight } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { TableSorting } from "./TableSorting";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -37,6 +37,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     openConfirmationModal,
     openViewModal,
   } = props;
+  const [tableRows,setTableRows]= useState(rows);
+    
   return (
     <Grid container>
       <TableContainer>
@@ -49,8 +51,9 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   align={column?.align || "left"}
                   style={{ minWidth: column.minWidth || 120 }}
                 >
-                  {column.label}
-                  {column.sorting && <Straight/> }
+                  {
+                    column.sorting ? <TableSorting columnKey={column.id} label={column.label}  rows={tableRows} setRows={setTableRows} /> :  column.label
+                  }
                 </TableCell>
               ))}
             </TableRow>
