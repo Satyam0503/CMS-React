@@ -23,6 +23,7 @@ import {
   CloudUploadOutlined,
   Download,
   Image,
+  Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
 import { CustomisedModal } from "../components/CustomisedModal";
@@ -37,6 +38,7 @@ import { useUserDetails } from "./UserDataProvider";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
+  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
@@ -129,6 +131,7 @@ export default function ProfileCard() {
             sx={{
               width: "100%",
               height: "100%",
+              transform: isAvatarZoomedOut ? "scale(1.4)" : "scale(1)",
             }}
           />
 
