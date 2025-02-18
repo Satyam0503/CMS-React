@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { AUTH_LOCAL_STORAGE_KEY } from "../app/modules/auth";
 import { toast } from "react-toastify";
 
@@ -21,12 +21,23 @@ axios.interceptors.request.use(
 // response interceptor to handle response error
 axios.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.status === 401) {
-      console.error("Token expired. Redirecting to login page");
-      // toast.error("Invalid Token");
-      // window.location.href = "/auth";
+  (error:AxiosError) => {
+    if(!error.response){
+      toast.error("Something Went Wrong");
     }
+    else if (error.response?.status === 404) {
+      toast.error("Request Failed");
+    }
+    else if (error.response?.status === 401) {
+      toast.error("Token expired.");
+    }
+    else if(error.response?.status === 500) {
+      toast.error("Opps! Server is down. Try Again later")
+    }
+    else {
+      toast.error("Something Went wrong");
+    }
+    return Promise.reject();
   }
 );
 

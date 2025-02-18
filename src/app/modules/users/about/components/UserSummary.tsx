@@ -18,8 +18,7 @@ export const UserSummary = () => {
   const [updatedSummary, setUpdatedSummary] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
-  const intl = useIntl();
-
+  const intl = useIntl();  
   const handleUpdateSummary = async () => {
     const payload = {
       summary: updatedSummary,

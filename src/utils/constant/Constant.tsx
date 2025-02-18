@@ -52,6 +52,7 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
+  UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,

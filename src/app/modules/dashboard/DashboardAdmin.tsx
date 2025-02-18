@@ -21,8 +21,10 @@ import EmpOfMonth from "./components/EmpOfMonth";
 import Help from "./components/Help";
 import { AttendanceChart } from "../components/AttendanceChart";
 import EmployeePerformance from "./components/EmployeePerformance";
+import { useAppSelector } from "../../Redux/hooks";
 
 export default function DashboardAdmin() {
+  const user = useAppSelector(state =>state.user.userData);
   const intl = useIntl();
   const series = [21, 12, 0];
   const labels = ["Male", "Female", "Other"];
@@ -39,7 +41,7 @@ export default function DashboardAdmin() {
       >
         <Stack>
           <Typography variant="h2">
-            {intl.formatMessage({ id: "MENU.WELCOME" })} Aishwarya !
+            {intl.formatMessage({ id: "MENU.WELCOME" })} {user?.fullName || ""}
           </Typography>
           <Typography
             variant="body1"

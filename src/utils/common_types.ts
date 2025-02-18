@@ -61,6 +61,8 @@ export interface EmployeeModel {
   emergencyContact: string;
   status: string | boolean;
   isEmailVerified?: boolean;
+  profileUrl?: string;
+  fullProfileUrl?: string;
 }
 
 export interface RoleModel {
