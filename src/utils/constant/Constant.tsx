@@ -52,6 +52,7 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
+  UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
@@ -358,6 +359,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
+    sorting:true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
@@ -371,6 +373,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
+    sorting:true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {

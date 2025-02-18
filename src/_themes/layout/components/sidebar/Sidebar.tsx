@@ -27,6 +27,8 @@ const Sidebar = () => {
   const appSidebarDefaultMinimizeDefault =
     config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
+  const profileUrl = useAppSelector((state) => state.user.profileImageUrl);
+
   useEffect(() => {
     updateDOM(config);
   }, [config]);
@@ -46,50 +48,24 @@ const Sidebar = () => {
         >
           <Stack padding={3} gap={4} alignItems="center" width="100%">
             <SidebarLogo sidebarRef={sidebarRef} />
-            <Stack gap={1}>
-              <Stack maxWidth={"128px"} minWidth={"50px"} p={0.5}>
+            <Stack spacing={2} alignItems={"center"}>
+              <Stack maxWidth={"128px"} minWidth={"50px"}>
                 <Avatar
                   alt=""
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                  src={profileUrl}
+                  sizes="100"
                   // use media query for avatar
-                  sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    aspectRatio: 1,
+                  }}
                 />
-                {/* {appSidebarDefaultCollapseDesktopEnabled ? (
-                  <Typography
-                    variant="h6"
-                    color="inherit"
-                    textAlign="center"
-                    // display={{ xs: "none" }}
-                  >
-                    {currentUser?.firstName}
-                    {currentUser?.lastName && currentUser?.lastName}
-                  </Typography>
-                ) : (
-                  <Typography
-                    variant="h6"
-                    color="inherit"
-                    textAlign="center"
-                    display={{ xs: "none" }}
-                  >
-                    {currentUser?.firstName}
-                    {currentUser?.lastName && currentUser?.lastName}
-                  </Typography>
-                )} */}
               </Stack>
-              <Stack
-                direction="row"
-                display={"flex"}
-                flexWrap={"wrap"}
-                gap={0.5}
-                justifyContent={"center"}
-              >
-                <Typography variant="h6" color="inherit">
-                  {currentUser?.firstName}
-                </Typography>
-                <Typography variant="h6" color="inherit">
-                  {currentUser?.lastName && currentUser?.lastName}
-                </Typography>
-              </Stack>
+              <Typography variant="h6" color="inherit">
+                {`${currentUser?.firstName}  ${currentUser?.lastName}`}
+              </Typography>
             </Stack>
           </Stack>
           <SidebarMenu />

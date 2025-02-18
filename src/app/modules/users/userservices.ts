@@ -1,7 +1,7 @@
-import { AxiosResponse } from "axios";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { getRequest, postRequest } from "../../../server/axios";
 import {
+  ApiResponse,
   CertificationResponseData,
   EmployeeResponseData,
   SkillsResponseData,
@@ -81,3 +81,8 @@ export const addEmployeeCertification = async (
 export const updateUserEducation = async () => {
   //  for updating the user education details
 };
+
+
+export const updateProfilePicture = async (payload:FormData)=>{
+  return postRequest<FormData,ApiResponse>(ServiceUrl.UPDATE_PROFILE_PICTURE,payload,{},true);
+}

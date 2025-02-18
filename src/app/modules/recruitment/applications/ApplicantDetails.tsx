@@ -78,7 +78,7 @@ export const ApplicantDetails = () => {
         if (!(success && statusCode === 200)) {
           throw new Error(message);
         }
-        setCommentList(methodResults);
+        setCommentList(methodResults.reverse());
       } catch (error: any) {
         console.error(error.message);
       }

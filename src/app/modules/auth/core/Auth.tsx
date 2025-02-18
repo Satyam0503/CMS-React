@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setAuth, logout } from "../../../Redux/Reducers/authSlice";
 import {
   setCurrentUser,
+  setProfileImageUrl,
   setUserPermissions,
 } from "../../../Redux/Reducers/userSlice";
 import { useDispatch } from "react-redux";
@@ -51,6 +52,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
             })
           );
           dispatch(setUserPermissions(methodResult.modulePermission));
+          dispatch(setProfileImageUrl(methodResult.profileImage))
           dispatch(setAuth());
         }
       } catch (error) {

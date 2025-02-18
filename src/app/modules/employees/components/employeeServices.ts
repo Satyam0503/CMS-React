@@ -9,11 +9,6 @@ import {
 } from "../../../../utils/common_types";
 import { ServiceUrl } from "../../../../utils/constant/Constant";
 
-interface GetAllEmployeePayload {
-  pageNo: number;
-  limit: number;
-  name: string;
-}
 
 export const addEmployee = async (payload: EmployeeModel) => {
   return postRequest<EmployeeModel, AddEmployeeResponseData>(
