@@ -18,8 +18,6 @@ interface DonutApexChartProps {
   showLabelOnHover?: boolean;
 }
 
-const chartSeries = [4, 3, 16];
-
 function DonutApexChart(props: DonutApexChartProps) {
   const intl = useIntl();
   const {
@@ -96,13 +94,9 @@ function DonutApexChart(props: DonutApexChartProps) {
       formatter: function (value: number, opts) {
         const labels = opts.w.config.labels;
         const series = opts.w.config.series;
-        return [
-          series[opts.seriesIndex],
-          labels[opts.seriesIndex],
-        ] as unknown as string;
+        return [ `${series[opts.seriesIndex]} ${labels[opts.seriesIndex]}`] as unknown as string;
       },
       style: {
-        fontSize: "14px",
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
         colors: ["#000000"],
@@ -125,6 +119,7 @@ function DonutApexChart(props: DonutApexChartProps) {
     legend: {
       show: legendOption?.show || true,
       position: legendOption?.position || "bottom",
+      offsetY:15,
       itemMargin: {
         horizontal: 10,
         vertical: 5,

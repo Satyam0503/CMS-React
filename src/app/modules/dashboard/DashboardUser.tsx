@@ -3,9 +3,6 @@ import {
   Typography,
   Grid,
   Card,
-  Avatar,
-  Container,
-  Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
@@ -22,6 +19,8 @@ import CustomisedButton from "../components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
 import AttendanceTable from "./components/LeaveTable";
 import { useAppSelector } from "../../Redux/hooks";
+import { DashboardHeader } from "./components/DashboardHeader";
+import { EmployeeChart } from "./components/EmployeeChart";
 
 export default function DashboardUser() {
   const intl = useIntl();
@@ -29,48 +28,10 @@ export default function DashboardUser() {
   const labels = ["Male", "Female", "Other"];
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
-  const user = useAppSelector(state =>state.user.userData);
+  const user = useAppSelector(state =>state.user.userData)!;
   return (
     <>
-      <Grid
-        container
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={2}
-        gap={4}
-      >
-        <Stack>
-          <Typography variant="h2">
-            {intl.formatMessage({ id: "MENU.WELCOME" })} {user?.fullName }
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ color: colors.alpha.neutral[600], mt: 1 }}
-          >
-            4{intl.formatMessage({ id: "NOTIFICATIONS.APPLICATIONS" })}
-            <Link
-              href="#"
-              underline="always"
-              sx={{ color: colors.alpha.secondary[500] }}
-            >
-              {"Check the submissions"}
-            </Link>
-          </Typography>
-        </Stack>
-
-        <Stack direction="row" alignItems={"start"} spacing={1}>
-          <Stack sx={{ width: "2.5rem" }}>
-            <img
-              src={toAbsoluteUrl("media/Icons/Sun_behind_clouds.png")}
-              alt="clouds"
-            />
-          </Stack>
-          <Stack alignItems={"end"}>
-            <Typography variant="h3">Monday</Typography>
-            <Typography variant="body1">25 Nov 2024</Typography>
-          </Stack>
-        </Stack>
-      </Grid>
+      <DashboardHeader fullName={user.fullName} />
       <Grid
         container
         spacing={3}
@@ -80,25 +41,7 @@ export default function DashboardUser() {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <Card sx={{ px: 3, height: "100%", py: 2 }}>
-                <Stack
-                  display={"flex"}
-                  flexDirection={"row"}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                  mb={1}
-                >
-                  <Typography variant="h6">
-                    {intl.formatMessage({ id: "MENU.TOTAL_EMP" })}
-                  </Typography>
-                  <Typography variant="h4">50</Typography>
-                </Stack>
-                <DonutApexChart
-                  series={series}
-                  labels={labels}
-                  showDataLabels={true}
-                />
-              </Card>
+              <EmployeeChart />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Card sx={{ px: 3, height: "100%", py: 2 }}>

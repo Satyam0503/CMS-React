@@ -1,6 +1,5 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
-import { UserSummaryModel } from "../app/modules/users/userservices";
 import { Modules, ModulesName } from "./enums";
 
 export interface ApiResponse {
@@ -21,6 +20,12 @@ export interface UserModel {
   permissions: PermissionModel[];
   modulePermission: ModulePermissoinModel[];
 }
+
+export type UserSummaryModel = {
+  userId:string,
+  summaryId: string;
+  summary: string;
+};
 
 export type UserDataModel = Omit<
   UserModel,
