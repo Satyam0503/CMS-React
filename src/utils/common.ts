@@ -366,26 +366,28 @@ export const findUserDefaultTab = (
 //   return index !== -1 ? true : false;
 // };
 
-export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
-  if (key === "experience") {
-    arr?.sort((a, b) => (a[key] as number)  - (b[key] as number));
-    return arr;
-  } else {
-    arr?.sort((a, b) =>
-      (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase())
-    );
+export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows)=> {
+  const columnValueType = typeof arr[0][key];
+  if( columnValueType === "number" ){
+    arr.sort((a,b)=>(a[key] as number) - (b[key] as number));
     return arr;
   }
+  if(columnValueType === "string"){
+    arr.sort((a,b)=> (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase()));
+    return arr;
+  }
+  return arr;
 };
 
 export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
-  if (key === "experience") {
-    arr?.sort((a, b) => (b[key] as number ) - (a[key] as number ));
+  const columnValueType = typeof arr[0][key];
+  if( columnValueType === "number" ){
+    arr.sort((a,b)=>(b[key] as number) - (a[key] as number));
     return arr;
-  } else {
-    arr?.sort((a, b) =>
-      (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase())
-    );
-    return arr?.reverse();
   }
+  if(columnValueType === "string"){
+    arr.sort((a,b)=> (b[key] as string).toLowerCase().localeCompare((a[key] as string).toLowerCase()));
+    return arr;
+  }
+  return arr;
 };

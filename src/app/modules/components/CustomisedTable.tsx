@@ -1,11 +1,14 @@
 import {
   Grid,
+  Icon,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
@@ -27,6 +30,8 @@ interface PropsTypes<Row, Columns> {
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
+
+  const [tableRows, setTableRows] = useState(props.rows);
   const {
     rows,
     columns,
@@ -37,8 +42,11 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     openConfirmationModal,
     openViewModal,
   } = props;
-  const [tableRows,setTableRows]= useState(rows);
-    
+
+  useEffect(() => {
+    setTableRows(rows);
+  }, [rows]);
+
   return (
     <Grid container>
       <TableContainer>
@@ -51,9 +59,11 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   align={column?.align || "left"}
                   style={{ minWidth: column.minWidth || 120 }}
                 >
-                  {
-                    column.sorting ? <TableSorting columnKey={column.id} label={column.label}  rows={tableRows} setRows={setTableRows} /> :  column.label
-                  }
+                  {column.sorting ? (
+                    <TableSorting label={column.label} rows={tableRows} setRows={setTableRows} columnKey={column.id}/>
+                  ) : (
+                    column.label
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -68,7 +78,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
             </TableBody>
           ) : (
             <TableBody>
-              {rows?.length === 0 ? (
+              {tableRows?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={12} align="center">
                     No Data Available
@@ -76,7 +86,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                 </TableRow>
               ) : (
                 <>
-                  {rows.map((row: any, index: number) => (
+                  {tableRows.map((row: any, index: number) => (
                     <TableRow hover key={index}>
                       {columns.map((column) => {
                         const value =
@@ -100,7 +110,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                     row,
                                     handleEdit,
                                     openConfirmationModal,
-                                    openViewModal,
+                                    openViewModal
                                   )
                                 : column.build(value)
                               : value}
