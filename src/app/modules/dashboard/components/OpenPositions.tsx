@@ -1,131 +1,61 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Avatar, Card, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../components/CustomCard";
+import { useEffect, useState } from "react";
+import { JobModal } from "../../../../utils/common_types";
+import { getAllJobVacancies } from "../../recruitment/services";
+import { AxiosError } from "axios";
 
 export default function OpenPositions() {
+  const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
   const intl = useIntl();
+  useEffect(() => {
+    async function getActiveJobs() {
+      try {
+        const response = await getAllJobVacancies();
+        const { success, methodResults } = response.data;
+        if (success) {
+          setActiveJobs(methodResults.filter((job) => job.status === true));
+        }
+      } catch (error) {
+        console.error((error as AxiosError).message);
+      }
+    }
+    getActiveJobs();
+  }, []);
+
   return (
-    <>
-      <Grid container>
-        <Card sx={{ px: 3, width: "100%", py: 2, minHeight: "280px" }}>
-          <Stack>
-            <Stack
-              display={"flex"}
-              justifyContent={"space-between"}
-              flexDirection={"row"}
-              alignItems={"center"}
-              mb={1}
-            >
-              <Typography variant="h6">
-                {intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
+    <CustomCard
+      label={intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
+      value={activeJobs.length}
+    >
+      <Stack spacing={1}>
+        {activeJobs.slice(-4).map((job) => (
+          <Stack direction={"row"} alignItems={"center"} spacing={1}>
+            <Avatar variant="rounded">
+              {job.title.charAt(0)}
+            </Avatar>
+
+            <Stack flexGrow={1}>
+              <Typography variant="body1">
+                {job.title}
               </Typography>
-              <Typography variant="h4">15</Typography>
+
+              <Typography
+                variant="body2"
+                sx={{ color: colors.alpha.neutral[400] }}
+              >
+                {job.jobType}
+              </Typography>
             </Stack>
 
-            <Grid item>
-              <Stack spacing={1}>
-                <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                  <Grid className=" symbol symbol-45px">
-                    <img
-                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                      alt=""
-                    />
-                  </Grid>
-
-                  <Grid flexGrow={1}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
-                    >
-                      5-25 years
-                    </Typography>
-                  </Grid>
-
-                  <Typography variant="h6">2</Typography>
-                </Grid>
-
-                <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                  <Grid className=" symbol symbol-45px">
-                    <img
-                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                      alt=""
-                    />
-                  </Grid>
-
-                  <Grid flexGrow={1}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({ id: "POSITION.FULL_STACK" })}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
-                    >
-                      5-25 years
-                    </Typography>
-                  </Grid>
-
-                  <Typography variant="h6">2</Typography>
-                </Grid>
-
-                <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                  <Grid className=" symbol symbol-45px">
-                    <img
-                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                      alt=""
-                    />
-                  </Grid>
-
-                  <Grid flexGrow={1}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({ id: "POSITION.INTERN" })}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
-                    >
-                      Technical Graduate
-                    </Typography>
-                  </Grid>
-
-                  <Typography variant="h6">10</Typography>
-                </Grid>
-
-                <Grid item display={"flex"} alignItems={"center"} gap={1}>
-                  <Grid className="symbol symbol-45px">
-                    <img
-                      src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                      alt=""
-                    />
-                  </Grid>
-
-                  <Grid flexGrow={1}>
-                    <Typography variant="body1">
-                      {intl.formatMessage({ id: "POSITION.TA" })}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
-                    >
-                      2-5 years
-                    </Typography>
-                  </Grid>
-
-                  <Typography variant="h6">1</Typography>
-                </Grid>
-              </Stack>
-            </Grid>
+            <Typography variant="h6">{job.vacancies}</Typography>
           </Stack>
-        </Card>
-      </Grid>
-    </>
+        ))}
+      </Stack>
+    </CustomCard>
   );
 }

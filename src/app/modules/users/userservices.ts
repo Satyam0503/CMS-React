@@ -8,14 +8,10 @@ import {
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
+  UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
 
-export type UserSummaryModel = {
-  userId:string,
-  summaryId: string;
-  summary: string;
-};
 
 export const getEmployeeById = async () => {
   return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS);
@@ -63,7 +59,7 @@ export const addEmployeeEducation = async (payload: UserEducationModel) => {
 };
 
 export const updateEmployeeSummary = async (payload: UserSummaryModel) => {
-  return postRequest<UserSummaryModel, any>(
+  return postRequest<UserSummaryModel, UserSummaryResponseData>(
     ServiceUrl.UPDATE_EMPLOYEE_SUMMARY,
     payload
   );

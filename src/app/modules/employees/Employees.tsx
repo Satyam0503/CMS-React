@@ -70,9 +70,9 @@ export default function Employees() {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
 
-  const handleSearchChange = useCallback((value:string)=>{
+  const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
-  },[])
+  }, []);
 
   function handleClose() {
     setModalOpen(false);
@@ -84,11 +84,11 @@ export default function Employees() {
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     setLoading(true);
+    const payload = {
+      ...values,
+      status: statusEncoder(values.status as string),
+    };
     if (isEdit) {
-      const payload = {
-        ...values,
-        status: statusEncoder(values.status as string),
-      };
       const userId = values.userId;
       updateEmployee(payload, userId)
         .then((res) => {
@@ -108,10 +108,6 @@ export default function Employees() {
           setLoading(false);
         });
     } else {
-      const payload = {
-        ...values, 
-        status: statusEncoder(values.status as string),
-      };
       addEmployee(payload)
         .then((res) => {
           const { success, message } = res.data;
@@ -173,28 +169,10 @@ export default function Employees() {
 
   function handleEmployeeEdit(employee: EmployeeModel) {
     setEmployeeInitialValues({
-      userId: employee.userId,
-      companyId: employee.companyId,
-      roleId: employee.roleId,
-      employeeId: employee.employeeId,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      gender: employee.gender,
-      password: employee.password,
-      email: employee.email,
-      department: employee.department,
-      reportingManager: employee.reportingManager,
-      teamLead: employee.teamLead,
-      phoneNumber: employee.phoneNumber,
-      jobRole: employee.jobRole,
-      bloodGroup: employee.bloodGroup,
-      personalEmail: employee.personalEmail,
-      emergencyContact: employee.emergencyContact,
+      ...employee,
       status: statusDecoder(employee.status as boolean),
-      address: employee.address,
       dateOfBirth: dayjs(employee.dateOfBirth),
       dateOfJoining: dayjs(employee.dateOfJoining),
-      isEmailVerified: employee.isEmailVerified,
     });
     setModalOpen(true);
     setEdit(true);
@@ -247,7 +225,7 @@ export default function Employees() {
             gap={2}
           >
             <SearchInput search={search} setSearch={handleSearchChange} />
-            
+
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
@@ -308,13 +286,15 @@ export default function Employees() {
           employeeData={selectedEmployee}
         />
       )}
-      <ConfirmationModal
-        title={"Delete Employee"}
-        content="Are you sure you want to delete this Employee?"
-        open={isConfirmModalOpen}
-        handleClose={closeConfirmationModal}
-        handleConfirmation={handleEmployeeDeletion}
-      />
+      {isConfirmModalOpen && (
+        <ConfirmationModal
+          title={"Delete Employee"}
+          content="Are you sure you want to delete this Employee?"
+          open={isConfirmModalOpen}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={handleEmployeeDeletion}
+        />
+      )}
     </>
   );
 }

@@ -451,6 +451,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "vacancies",
     label: "No of Position",
     align: "center",
+    sorting:true,
   },
   {
     id: "jobType",
