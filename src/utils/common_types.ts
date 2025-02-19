@@ -22,7 +22,7 @@ export interface UserModel {
 }
 
 export type UserSummaryModel = {
-  userId:string,
+  userId: string;
   summaryId: string;
   summary: string;
 };
@@ -110,6 +110,13 @@ export type UserCertificationModel = {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   mode: string;
+};
+
+export type UserSkillsModel = {
+  id: string,
+  companyId: string;
+  userId: string;
+  skills: string;
 };
 
 export type HolidayType = {
@@ -223,9 +230,9 @@ export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
 export type JobsResponseData = ResponseData<JobModal>;
 
-export type SkillsResponseData = ResponseData<JobModal>;
-
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
+
+export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 

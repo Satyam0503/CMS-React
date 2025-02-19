@@ -3,6 +3,7 @@ import { Card, Typography, Grid, Stack } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { useIntl } from "react-intl";
+import { colors } from "../theme/MuiTheme";
 
 interface DonutApexChartProps {
   series: Array<number>;
@@ -24,7 +25,6 @@ function DonutApexChart(props: DonutApexChartProps) {
     series = [],
     labels = [],
     height,
-    colors,
     legendOption,
     size = "60%",
     showDataLabels,
@@ -32,7 +32,15 @@ function DonutApexChart(props: DonutApexChartProps) {
   } = props;
 
   const chartOptions: ApexOptions = {
-    chart: {
+    chart: { 
+      animations: {
+        enabled: true,
+        speed: 800,
+        dynamicAnimation: {
+          enabled: true,
+          speed: 800,
+        },  
+      },
       background: "transparent",
       stacked: false,
       toolbar: {
@@ -99,7 +107,7 @@ function DonutApexChart(props: DonutApexChartProps) {
       style: {
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
-        colors: ["#000000"],
+        colors: [colors.alpha.primary[600]],
       },
       background: {
         enabled: false,
@@ -120,6 +128,7 @@ function DonutApexChart(props: DonutApexChartProps) {
       show: legendOption?.show || true,
       position: legendOption?.position || "bottom",
       offsetY:15,
+      fontWeight:600,
       itemMargin: {
         horizontal: 10,
         vertical: 5,

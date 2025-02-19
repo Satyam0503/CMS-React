@@ -59,6 +59,17 @@ export const applicationStatusDecoder = (applicationStatus: number) => {
   }
 };
 
+export const applicationStatusMapper : {
+  [index:number]:string
+} = {
+  [ApplicationStatus.New]:"New",
+  [ApplicationStatus.InProgress]:"In Progress",
+  [ApplicationStatus.OnHold]:"On Hold",
+  [ApplicationStatus.Shortlisted]:"Shortlisted",
+  [ApplicationStatus.Selected]:"Selected",
+  [ApplicationStatus.Rejected]:"Rejected",
+}
+
 export const getApplicationStatusClass = (applicationStatus: number) => {
   switch (applicationStatus) {
     case ApplicationStatus.New:

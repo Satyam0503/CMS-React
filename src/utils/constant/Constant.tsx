@@ -53,19 +53,21 @@ export const ServiceUrl = {
 
   //user
   UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
-  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
-  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
-  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
-
+  
+  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
+  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
   GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
-
+  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
+  
+  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
+  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
@@ -74,29 +76,21 @@ export const ServiceUrl = {
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
+  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
+  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `${BaseUrl}/api/Applicants/EditApplicant`,
-  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
 
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 
   VERIFY_CAPTCHA: `${BaseUrl}/api/User/verifyCaptch`,
 
   // not working
-  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
 
-  // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
-  // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
-  // UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
-  // ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
-  // ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
-  // ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [

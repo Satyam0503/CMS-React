@@ -202,8 +202,14 @@ button:hover .ql-fill,
 
 .apexcharts-pie-label{
   font-size: 12px;
-  font-weight:500;
+  font-weight:600;
 }
 .apexcharts-text{
 
+}
+.chart_tooltip{
+  position: relative;
+  color: #ffffff !important;
+  padding: .5rem 1rem ;
+  border-radius:.5rem;
 }
