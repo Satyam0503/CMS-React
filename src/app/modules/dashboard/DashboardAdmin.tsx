@@ -27,13 +27,13 @@ import { EmployeeChart } from "./components/EmployeeChart";
 import { ApplicationsChart } from "./components/ApplicationsChart";
 
 export default function DashboardAdmin() {
-  const user = useAppSelector(state =>state.user.userData)!;
+  const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
   return (
     <>
-      <DashboardHeader fullName={user.fullName}/>
+      <DashboardHeader fullName={user.fullName} />
       <Grid
         container
         spacing={3}

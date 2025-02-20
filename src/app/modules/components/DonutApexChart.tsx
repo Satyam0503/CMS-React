@@ -32,14 +32,14 @@ function DonutApexChart(props: DonutApexChartProps) {
   } = props;
 
   const chartOptions: ApexOptions = {
-    chart: { 
+    chart: {
       animations: {
         enabled: true,
         speed: 800,
         dynamicAnimation: {
           enabled: true,
           speed: 800,
-        },  
+        },
       },
       background: "transparent",
       stacked: false,
@@ -98,11 +98,14 @@ function DonutApexChart(props: DonutApexChartProps) {
     },
     colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444"],
     dataLabels: {
-      enabled: showDataLabels || false,
+      // enabled: showDataLabels || false,
+      enabled: false,
       formatter: function (value: number, opts) {
         const labels = opts.w.config.labels;
         const series = opts.w.config.series;
-        return [ `${series[opts.seriesIndex]} ${labels[opts.seriesIndex]}`] as unknown as string;
+        return [
+          `${series[opts.seriesIndex]} ${labels[opts.seriesIndex]}`,
+        ] as unknown as string;
       },
       style: {
         fontFamily: "Arial, sans-serif",
@@ -127,8 +130,8 @@ function DonutApexChart(props: DonutApexChartProps) {
     legend: {
       show: legendOption?.show || true,
       position: legendOption?.position || "bottom",
-      offsetY:15,
-      fontWeight:600,
+      offsetY: 15,
+      fontWeight: 600,
       itemMargin: {
         horizontal: 10,
         vertical: 5,

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { HeaderWrapper } from "./components/header";
+import { HeaderWrapper } from "./components/portalheader/HeaderWrapper";
 import { RightToolbar } from "../partials/layout/RightToolbar";
 import { ScrollTop } from "./components/scroll-top";
 import { FooterWrapper } from "./components/footer";
@@ -29,6 +29,7 @@ const MasterLayout = () => {
           id="kt_app_page"
         >
           <HeaderWrapper />
+          {/* <HeaderWrapper /> */}
           <div
             className="app-wrapper flex-column flex-row-fluid"
             id="kt_app_wrapper"

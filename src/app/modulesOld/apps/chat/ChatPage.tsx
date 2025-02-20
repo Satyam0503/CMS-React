@@ -1,30 +1,30 @@
-import {Navigate, Route, Routes, Outlet} from 'react-router-dom'
-import {PageLink, PageTitle} from '../../../../_themes/layout/core'
-import {Private} from './components/Private'
-import {Group} from './components/Group'
-import {Drawer} from './components/Drawer'
+import { Navigate, Route, Routes, Outlet } from "react-router-dom";
+import { PageLink, PageTitle } from "../../../../_themes/layout/core";
+import { Private } from "./components/Private";
+import { Group } from "./components/Group";
+import { Drawer } from "./components/Drawer";
 
 const chatBreadCrumbs: Array<PageLink> = [
   {
-    title: 'Chat',
-    path: '/apps/chat/private-chat',
+    title: "Chat",
+    path: "/apps/chat/private-chat",
     isSeparator: false,
     isActive: false,
   },
   {
-    title: '',
-    path: '',
+    title: "",
+    path: "",
     isSeparator: true,
     isActive: false,
   },
-]
+];
 
 const ChatPage = () => {
   return (
     <Routes>
       <Route element={<Outlet />}>
         <Route
-          path='private-chat'
+          path="private-chat"
           element={
             <>
               <PageTitle breadcrumbs={chatBreadCrumbs}>Private chat</PageTitle>
@@ -33,7 +33,7 @@ const ChatPage = () => {
           }
         />
         <Route
-          path='group-chat'
+          path="group-chat"
           element={
             <>
               <PageTitle breadcrumbs={chatBreadCrumbs}>Group chat</PageTitle>
@@ -42,7 +42,7 @@ const ChatPage = () => {
           }
         />
         <Route
-          path='drawer-chat'
+          path="drawer-chat"
           element={
             <>
               <PageTitle breadcrumbs={chatBreadCrumbs}>Drawer chat</PageTitle>
@@ -50,10 +50,10 @@ const ChatPage = () => {
             </>
           }
         />
-        <Route index element={<Navigate to='/apps/chat/private-chat' />} />
+        <Route index element={<Navigate to="/apps/chat/private-chat" />} />
       </Route>
     </Routes>
-  )
-}
+  );
+};
 
-export default ChatPage
+export default ChatPage;

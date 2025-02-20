@@ -1,9 +1,4 @@
-import {
-  Stack,
-  Typography,
-  Grid,
-  Card,
-} from "@mui/material";
+import { Stack, Typography, Grid, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "./components/OpenPositions";
@@ -28,7 +23,7 @@ export default function DashboardUser() {
   const labels = ["Male", "Female", "Other"];
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
-  const user = useAppSelector(state =>state.user.userData)!;
+  const user = useAppSelector((state) => state.user.userData)!;
   return (
     <>
       <DashboardHeader fullName={user.fullName} />

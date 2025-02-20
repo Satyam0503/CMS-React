@@ -2,9 +2,28 @@ import { FC, useState } from "react";
 
 import CustomisedButton from "../../../app/modules/components/CustomisedButton";
 import { CustomIconButton } from "../../../app/modules/components/CustomIconButton";
-import { AttachFile, DisplaySettings, Upload } from "@mui/icons-material";
-import { Avatar, Stack, TextField } from "@mui/material";
+import {
+  AccountCircle,
+  AttachFile,
+  DisplaySettings,
+  Send,
+  Upload,
+  Visibility,
+} from "@mui/icons-material";
+import {
+  Avatar,
+  FilledInput,
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { colors } from "../theme/MuiTheme";
+import { relative } from "path";
 
 type Props = {
   isDrawer?: boolean;
@@ -21,7 +40,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
         justifyContent={"space-between"}
         spacing={2}
       >
-        <Stack spacing={2}>
+        <Stack spacing={2} overflow={"visible"} minHeight={"83vh"}>
           <Stack spacing={2}>
             <Stack direction={"row"} spacing={2}>
               <Stack width={"120px"}>
@@ -34,21 +53,42 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                   }}
                 />
               </Stack>
-              <Stack bgcolor={colors.alpha.primary[300]} flexWrap={"wrap"}>
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
+              <Stack
+                bgcolor={colors.alpha.primary[300]}
+                flexWrap={"wrap"}
+                borderRadius={0.5}
+                p={2}
+              >
+                <Typography variant="body1">
+                  Hey Prachi, I just finished the code for the new feature. Do
+                  you have a moment to review it?
+                </Typography>
               </Stack>
             </Stack>
-            <Stack bgcolor={colors.alpha.primary[100]} flexWrap={"wrap"}>
-              Hey Prachi, I just finished the code for the new feature. Do you
-              have a moment to review it?
+            <Stack
+              bgcolor={colors.alpha.primary[100]}
+              flexWrap={"wrap"}
+              borderRadius={0.5}
+              p={2}
+            >
+              <Typography variant="body1">
+                Hey Prachi, I just finished the code for the new feature. Do you
+                have a moment to review it?
+              </Typography>
             </Stack>
           </Stack>
           <Stack spacing={2}>
             <Stack direction={"row"} spacing={2}>
-              <Stack bgcolor={colors.alpha.primary[300]} flexWrap={"wrap"}>
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
+              <Stack
+                bgcolor={colors.alpha.primary[300]}
+                flexWrap={"wrap"}
+                borderRadius={0.5}
+                p={2}
+              >
+                <Typography variant="body1">
+                  Hey Prachi, I just finished the code for the new feature. Do
+                  you have a moment to review it?
+                </Typography>
               </Stack>
               <Stack width={"120px"}>
                 <Avatar
@@ -61,21 +101,53 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                 />
               </Stack>
             </Stack>
-            <Stack bgcolor={colors.alpha.primary[100]} flexWrap={"wrap"}>
-              Hey Prachi, I just finished the code for the new feature. Do you
-              have a moment to review it?
+            <Stack
+              bgcolor={colors.alpha.primary[100]}
+              flexWrap={"wrap"}
+              borderRadius={0.5}
+              p={2}
+            >
+              <Typography variant="body1">
+                Hey Prachi, I just finished the code for the new feature. Do you
+                have a moment to review it?
+              </Typography>
+            </Stack>
+            <Stack
+              bgcolor={colors.alpha.primary[100]}
+              flexWrap={"wrap"}
+              borderRadius={0.5}
+              p={2}
+            >
+              <Typography variant="body1">
+                Hey Prachi, I just finished the code for the new feature. Do you
+                have a moment to review it?
+              </Typography>
             </Stack>
           </Stack>
         </Stack>
 
         <Stack width={"100%"}>
-          <TextField fullWidth placeholder="Type a message" />
-
+          {/* <TextField fullWidth placeholder="Type a message" /> */}
+          <FormControl variant="filled">
+            <InputLabel htmlFor="input-with-icon-adornment">
+              Type your message here
+            </InputLabel>
+            <FilledInput
+              id="filled-adornment-password"
+              type="text"
+              endAdornment={
+                <InputAdornment position="end">
+                  <Send />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          {/* 
           <Stack direction={"row"} justifyContent={"flex-end"}>
             <CustomIconButton icon={<AttachFile />} tooltip="Attach file" />
             <CustomIconButton icon={<Upload />} tooltip="Upload" />
             <CustomisedButton variant="contained" type="button" label="Send" />
-          </Stack>
+          </Stack> */}
         </Stack>
       </Stack>
     </>

@@ -22,7 +22,7 @@ const DrawerMessenger: FC = () => (
     data-kt-drawer-width="{default:'300px', 'md': '500px'}"
     // data-kt-drawer-direction="end"
     // data-kt-drawer-close="#kt_drawer_chat_close"
-    sx={{ p: 5 }}
+    sx={{ p: 2 }}
   >
     <Stack>
       <Stack
