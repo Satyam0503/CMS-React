@@ -20,11 +20,11 @@ export const BarChart: FC<BarChartProps> = (props) => {
     chart: {
       animations: {
         enabled: true,
-        speed: 800,
-        dynamicAnimation: {
-          enabled: true,
-          speed: 800,
-        },  
+        speed: 800,  
+        dynamicAnimation:{
+          enabled:true,
+          speed:800,
+        }
       },
       height: height || 200,
       type: "bar",
@@ -38,7 +38,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       bar: {
         borderRadius: 4,
         borderRadiusApplication:"end",
-        columnWidth: "45%",
+        columnWidth: "40%",
         distributed: true,
         barHeight:10,
       },
@@ -57,7 +57,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       },
     },
     xaxis: {
-      categories: [],
+      categories: labels,
       labels: {
         show: showXAxisLabel || false,
         trim: true,
@@ -89,7 +89,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
         options={chartOption}
         series={[
           {
-            data: [...series],
+            data: series,
           },
         ]}
         type="bar"

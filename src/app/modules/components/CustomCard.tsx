@@ -10,14 +10,20 @@ interface Props {
 export const CustomCard: FC<Props> = (props) => {
   return (
     <Card sx={{ p: 2, height: "100%" }}>
-      <Stack
-        direction="row"
-        sx={{ justifyContent: "space-between", marginBlockEnd: 1 }}
-      >
-        <Typography variant="h6">{props.label}</Typography>
-        {props.value ? <Typography variant="h4">{props.value}</Typography> :""}
+      <Stack spacing={1} sx={{height:"100%"}}>
+        <Stack
+          direction="row"
+          sx={{ justifyContent: "space-between"}}
+        >
+          <Typography variant="h6">{props.label}</Typography>
+          {props.value ? (
+            <Typography variant="h4">{props.value}</Typography>
+          ) : (
+            ""
+          )}
+        </Stack>
+        {props.children}
       </Stack>
-      {props.children}
     </Card>
   );
 };

@@ -11,9 +11,6 @@ import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "./components/OpenPositions";
 import NoticeBoard from "./components/NoticeBoard";
-import StackedBarChart from "../components/StackedBarChart";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { colors } from "../theme/MuiTheme";
 import EmpOnLeave from "./components/EmpOnLeave";
 import Punctual from "./components/Punctual";
 import UpcomingBirthday from "./components/UpcomingBirthday";
@@ -25,15 +22,35 @@ import { useAppSelector } from "../../Redux/hooks";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { EmployeeChart } from "./components/EmployeeChart";
 import { ApplicationsChart } from "./components/ApplicationsChart";
+import { useEffect, useState } from "react";
+import { getAllEmployees } from "../employees/components/employeeServices";
+import { EmployeeModel } from "../../../utils/common_types";
+import { AxiosError } from "axios";
+import { DepartmentChart } from "./components/DepartmentChart";
 
 export default function DashboardAdmin() {
-  const user = useAppSelector(state =>state.user.userData)!;
   const intl = useIntl();
-  const teams = ["Development", "Design", "Testing", "Business"];
-  const teamSize = [8, 2, 4, 3];
+  const user = useAppSelector((state) => state.user.userData)!;
+  const [employees, setEmployees] = useState<EmployeeModel[]>([]);
+
+  useEffect(() => {
+    async function getEmployees() {
+      try {
+        const response = await getAllEmployees();
+        const { success, methodResults } = response.data;
+        if (success) {
+          setEmployees(methodResults);
+        }
+      } catch (error) {
+        console.error((error as AxiosError).message);
+      }
+    }
+    getEmployees();
+  }, []);
+
   return (
     <>
-      <DashboardHeader fullName={user.fullName}/>
+      <DashboardHeader fullName={user.fullName} />
       <Grid
         container
         spacing={3}
@@ -43,39 +60,21 @@ export default function DashboardAdmin() {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <EmployeeChart />
+              <EmployeeChart employees={employees}/>
             </Grid>
             <Grid item xs={12} sm={6}>
               <OpenPositions />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <ApplicationsChart/>
+              <ApplicationsChart />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Card sx={{ px: 3, height: "100%", py: 2 }}>
-                <Stack
-                  display={"flex"}
-                  flexDirection={"row"}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                >
-                  <Typography variant="h6">
-                    {intl.formatMessage({ id: "MENU.DEPT" })}
-                  </Typography>
-                  <Typography variant="h4">4</Typography>
-                </Stack>
-                <DonutApexChart
-                  series={teamSize}
-                  labels={teams}
-                  showDataLabels={false}
-                />
-              </Card>
+              <DepartmentChart employees={employees}/>
             </Grid>
 
             <Grid item xs={12}>
               <Stack spacing={3}>
                 <NoticeBoard />
-
                 <EmployeePerformance />
               </Stack>
             </Grid>

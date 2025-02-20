@@ -87,7 +87,7 @@ export default function Employees() {
     const payload = {
       ...values,
       status: statusEncoder(values.status as string),
-    };
+    };    
     if (isEdit) {
       const userId = values.userId;
       updateEmployee(payload, userId)
@@ -108,6 +108,11 @@ export default function Employees() {
           setLoading(false);
         });
     } else {
+      const payload = {
+        ...values,
+        status: statusEncoder(values.status as string),
+        password:null,
+      };
       addEmployee(payload)
         .then((res) => {
           const { success, message } = res.data;

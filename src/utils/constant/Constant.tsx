@@ -52,16 +52,16 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
-  UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
+  UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
-  
+
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
   GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
   GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
-  
+
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
@@ -90,7 +90,6 @@ export const ServiceUrl = {
 
   // not working
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-
 };
 
 export const Gender = [
@@ -192,6 +191,13 @@ export const ApplicationEvaluationStatus = [
   { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
   { id: 4, label: "Selected", value: ApplicationStatus.Selected },
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
+];
+
+export const DepartmentList = [
+  { id: 1, label: "Human Resource", value:"Human Resource" },
+  { id: 2, label: "Sales", value:"Sales" },
+  { id: 3, label: "Marketing", value:"Marketing" },
+  { id: 4, label: "IT", value:"IT" },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -353,7 +359,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
-    sorting:true,
+    sorting: true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
@@ -367,7 +373,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
-    sorting:true,
+    sorting: true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
@@ -445,7 +451,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "vacancies",
     label: "No of Position",
     align: "center",
-    sorting:true,
+    sorting: true,
   },
   {
     id: "jobType",

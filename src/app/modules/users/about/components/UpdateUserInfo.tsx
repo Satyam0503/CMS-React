@@ -60,7 +60,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     const payload = {
       ...userData,
       ...values,
-    };
+    };    
     try {
       const response = await updateEmployee(payload, userData.userId);
       const { success, statusCode, methodResult, message } = response.data;

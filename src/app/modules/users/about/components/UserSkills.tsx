@@ -13,14 +13,19 @@ export const UserSkills = () => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const {userSkills:skills,setUserSkills} = useUserDetails();
-
+  const {userSkills:skills,updateUserSkills } = useUserDetails();
+ 
   useEffect(()=>{
     getEmployeeSkills()
     .then(response=>{
       const {success,methodResult}= response.data;
       if(success){
-        setUserSkills(methodResult.skills.split(","))
+        if(!methodResult.skills.length){
+          updateUserSkills([]);
+        }
+        else{
+          updateUserSkills(methodResult.skills.split(","));
+        }
       }
     })
     .catch(error=>{

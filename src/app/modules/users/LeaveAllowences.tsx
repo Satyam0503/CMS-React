@@ -25,7 +25,6 @@ export default function LeaveAllowences() {
       <DonutApexChart
         series={leaveAllowanceValue}
         labels={leaveAllowanceLables}
-        showDataLabels={true}
       />
     </Card>
   );

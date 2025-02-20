@@ -6,10 +6,34 @@ import { Applicant } from "../../../../utils/common_types";
 import { getAllApplicantList } from "../../recruitment/services";
 import { AxiosError } from "axios";
 import { applicationStatusMapper } from "../../../../utils/common";
+import { Box, Typography } from "@mui/material";
 
 export const ApplicationsChart = () => {
   const intl = useIntl();
   const [applicationList, setApplicationList] = useState<Applicant[]>([]);
+  const [chartData, setChartData] = useState<{
+    labels: string[];
+    series: number[];
+  }>({
+    labels: [],
+    series: [],
+  });
+
+  const getCountOfApplicationStatus = useCallback(() => {
+    const applicationStatusCount = applicationList.reduce(
+      (status: Record<string, number>, application) => {
+        status[applicationStatusMapper[application.activityType]] =
+          (status[applicationStatusMapper[application.activityType]] || 0) + 1;
+        return status;
+      },
+      {}
+    );
+    return {
+      labels: Object.keys(applicationStatusCount),
+      series: Object.values(applicationStatusCount),
+    };
+  }, [applicationList]);
+
   useEffect(() => {
     async function getAllApplications() {
       try {
@@ -24,27 +48,33 @@ export const ApplicationsChart = () => {
     }
     getAllApplications();
   }, []);
- 
-  const getCountOfApplicationStatus = useCallback(() => {
-    const status: Record<string, number> = {};
-    applicationList.forEach((application) => {
-      if (applicationStatusMapper[application.activityType] in status) {
-        status[applicationStatusMapper[application.activityType]] += 1;
-      } else {
-        status[applicationStatusMapper[application.activityType]] = 1;
-      }
-    });
-    return status;
-  }, [applicationList]);
 
-  const labels = Object.keys(getCountOfApplicationStatus());
-  const series = Object.values(getCountOfApplicationStatus());
+  useEffect(() => {
+    if (applicationList.length) {
+      const { labels, series } = getCountOfApplicationStatus();
+      setChartData({ labels, series });
+    }
+  }, [applicationList, getCountOfApplicationStatus]);
+
   return (
     <CustomCard
       label={intl.formatMessage({ id: "MENU.TOTAL_APP" })}
       value={applicationList.length}
     >
-      <BarChart labels={labels} series={series} legendOption={{show:true}} />
+      {!applicationList.length ? (
+        <Box
+          component={"div"}
+          sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
+        >
+          <Typography variant="h5">No Applications</Typography>
+        </Box>
+      ) : (
+        <BarChart
+          labels={chartData.labels}
+          series={chartData.series}
+          legendOption={{ show: true }}
+        />
+      )}
     </CustomCard>
   );
 };

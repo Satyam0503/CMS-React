@@ -8,7 +8,7 @@ type UserDataContextType = {
   userDetails: EmployeeModel;
   userSkills: string[];
   updateUserDetails: (userData?: EmployeeModel ) => void;
-  setUserSkills: (skills: string[]) => void;
+  updateUserSkills:(skills:string[])=>void;
   refresh:boolean,
   setRefresh:React.Dispatch<React.SetStateAction<boolean>>
 };
@@ -25,9 +25,7 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 // User Details Provider
 export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   const dispatch = useAppDispatch();
-  const [userDetails, setUserDetails] = useState<EmployeeModel>(
-    {} as EmployeeModel
-  );
+  const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
   const [userSkills, setUserSkills] = useState<string[]>([]);
   const [refresh,setRefresh]= useState(false);
 
@@ -40,6 +38,10 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
     }
   }
 
+  function updateUserSkills(skills:string[]){
+    setUserSkills(skills);
+  }
+ 
   useEffect(()=>{
     getEmployeeById()
     .then(response=>{
@@ -53,7 +55,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
     .catch(error=>{
       console.error(error.message);
     })
-  },[refresh])
+  },[refresh])  
   
   return (
     <UserDetailsContext.Provider
@@ -61,7 +63,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         userDetails,
         userSkills,
         updateUserDetails,
-        setUserSkills,
+        updateUserSkills,
         refresh,
         setRefresh
       }}

@@ -64,7 +64,7 @@ export interface EmployeeModel {
   bloodGroup: string;
   address: string;
   jobRole: string;
-  password: string;
+  password: string | null;
   dateOfJoining: Dayjs | null;
   personalEmail: string;
   emergencyContact: string;
