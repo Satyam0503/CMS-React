@@ -625,6 +625,8 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    //MuiNavbar Menu
     MuiListItemIcon: {
       styleOverrides: {
         root: {
@@ -638,6 +640,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         root: {
           margin: 0,
+          color: colors.alpha.success[500],
         },
       },
     },
@@ -650,7 +653,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
-
+    //Close
     MuiDivider: {
       styleOverrides: {
         root: {
@@ -883,10 +886,11 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
     MuiListItem: {
       styleOverrides: {
         root: {
-          "&.MuiButtonBase-root": {
+          "&.MuiList-root": {
             color: colors.alpha.success[500],
             background: colors.alpha.secondary[500],
 
@@ -894,10 +898,14 @@ export const MuiTheme = createTheme({
               color: colors.alpha.success[500],
               background: colors.alpha.secondary[500],
             },
+            "&.MuiListItemText": {
+              colors: colors.alpha.success[500],
+            },
           },
         },
       },
     },
+
     MuiAutocomplete: {
       styleOverrides: {
         tag: {
