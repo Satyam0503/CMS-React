@@ -1,13 +1,12 @@
-import { Avatar, Card, Stack, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Avatar, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../components/CustomCard";
 import { useEffect, useState } from "react";
 import { JobModal } from "../../../../utils/common_types";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { AxiosError } from "axios";
+import { Link } from "react-router-dom";
 
 export default function OpenPositions() {
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
@@ -32,17 +31,13 @@ export default function OpenPositions() {
       label={intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
       value={activeJobs.length}
     >
-      <Stack spacing={1}>
+      <Stack spacing={1} sx={{marginBlock:1}}>
         {activeJobs.slice(-4).map((job) => (
-          <Stack direction={"row"} alignItems={"center"} spacing={1}>
-            <Avatar variant="rounded">
-              {job.title.charAt(0)}
-            </Avatar>
+          <Stack key={job.jobId} direction={"row"} alignItems={"center"} spacing={1}>
+            <Avatar variant="rounded">{job.title.charAt(0)}</Avatar>
 
             <Stack flexGrow={1}>
-              <Typography variant="body1">
-                {job.title}
-              </Typography>
+              <Typography variant="body1">{job.title}</Typography>
 
               <Typography
                 variant="body2"
@@ -56,6 +51,9 @@ export default function OpenPositions() {
           </Stack>
         ))}
       </Stack>
+      <Link to="/recruitment/jobs">
+        <Typography sx={{fontSize:"12px", textDecoration:"underline"}}> {"See more"}</Typography>
+      </Link>
     </CustomCard>
   );
 }

@@ -4,10 +4,10 @@ import {
   ApiResponse,
   CertificationResponseData,
   EmployeeResponseData,
-  SkillsResponseData,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
+  UserSkillsResponseData,
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
@@ -35,7 +35,7 @@ export const getEmployeeSummary = async () => {
 };
 
 export const getEmployeeSkills = async () => {
-  return getRequest<UserSummaryResponseData>(
+  return getRequest<UserSkillsResponseData>(
     ServiceUrl.GET_EMPLOYEE_SKILLS
   );
 };
@@ -44,8 +44,8 @@ export const updateEmployeeDetails = async (payload: any) => {
   return postRequest(ServiceUrl.UPDATE_EMPLOYEE, payload);
 };
 
-export const udpateEmployeeSkills = async (payload: { skills: string[] }) => {
-  return postRequest<{ skills: string[] }, SkillsResponseData>(
+export const udpateEmployeeSkills = async (payload: { totalSkills: string}) => {
+  return postRequest<{ totalSkills: string }, ApiResponse>(
     ServiceUrl.UPDATE_EMPLOYEE_SKILLS,
     payload
   );

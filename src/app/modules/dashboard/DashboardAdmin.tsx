@@ -24,6 +24,7 @@ import EmployeePerformance from "./components/EmployeePerformance";
 import { useAppSelector } from "../../Redux/hooks";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { EmployeeChart } from "./components/EmployeeChart";
+import { ApplicationsChart } from "./components/ApplicationsChart";
 
 export default function DashboardAdmin() {
   const user = useAppSelector(state =>state.user.userData)!;
@@ -47,9 +48,8 @@ export default function DashboardAdmin() {
             <Grid item xs={12} sm={6}>
               <OpenPositions />
             </Grid>
-
             <Grid item xs={12} sm={6}>
-              <StackedBarChart />
+              <ApplicationsChart/>
             </Grid>
             <Grid item xs={12} sm={6}>
               <Card sx={{ px: 3, height: "100%", py: 2 }}>
