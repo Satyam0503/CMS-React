@@ -55,7 +55,12 @@ const Sidebar = () => {
                   src={profileUrl}
                   sizes="100"
                   // use media query for avatar
-                  sx={{ width: "100%", height: "100%", objectFit: "cover", aspectRatio:1 }}
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    aspectRatio: 1,
+                  }}
                 />
               </Stack>
               <Typography variant="h6" color="inherit">

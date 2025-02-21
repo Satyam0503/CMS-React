@@ -23,6 +23,7 @@ import {
   CloudUploadOutlined,
   Download,
   Image,
+  Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
 import { CustomisedModal } from "../components/CustomisedModal";
@@ -37,10 +38,11 @@ import { useUserDetails } from "./UserDataProvider";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
+  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const {userDetails,refresh,setRefresh} = useUserDetails();
+  const { userDetails, refresh, setRefresh } = useUserDetails();
 
   function handleClose() {
     setOpen(false);
@@ -49,7 +51,7 @@ export default function ProfileCard() {
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const supportedImageFormat = ["jpg", "jpeg", "png","webp"];
+    const supportedImageFormat = ["jpg", "jpeg", "png", "webp"];
     const files = event.target.files;
     if (!files || files.length === 0) {
       setFileError("Please select a image");
@@ -72,21 +74,20 @@ export default function ProfileCard() {
     setFileError("");
   }
 
-   async function handleUpdateAvatar () {
+  async function handleUpdateAvatar() {
     if (seletedFile) {
       const formData = new FormData();
       formData.append("profilePicture", seletedFile);
-      try{
+      try {
         const response = await updateProfilePicture(formData);
-        const {success}= response.data;
-        if(success){
+        const { success } = response.data;
+        if (success) {
           toast.success("Profile Updated Successfully");
           setRefresh(!refresh);
           handleClose();
         }
-      }
-      catch(error){
-        toast.error("Request Failed")
+      } catch (error) {
+        toast.error("Request Failed");
       }
     }
   }
@@ -110,6 +111,7 @@ export default function ProfileCard() {
           justifyContent={"center"}
           alignItems={"center"}
           p={1}
+          mt={1}
           sx={{
             height: "150px",
             width: "150px",
@@ -119,9 +121,9 @@ export default function ProfileCard() {
             transition: "transform 0.3s ease-in-out",
             "&:hover img": {
               opacity: 0.2,
-              zIndex: 1,
             },
           }}
+          className="gridContainer"
         >
           <Avatar
             alt="profile picture"
@@ -129,19 +131,29 @@ export default function ProfileCard() {
             sx={{
               width: "100%",
               height: "100%",
+              transform: isAvatarZoomedOut ? "scale(1.4)" : "scale(1)",
             }}
           />
 
-          <Stack className="coverChange" direction={"row"} gap={1} zIndex={3}>
+          <Stack className="coverChange" direction={"row"} gap={1}>
             <CustomIconButton
               handleClick={() => setOpen(true)}
+              tooltip="Upload profile picture"
               icon={
                 <Image
                   sx={{
                     color: "white",
-                    "&:hover": {
-                      color: colors.alpha.primary[500],
-                    },
+                  }}
+                />
+              }
+            />
+            <CustomIconButton
+              handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
+              tooltip="Zoom-out profile picture"
+              icon={
+                <Visibility
+                  sx={{
+                    color: "white",
                   }}
                 />
               }

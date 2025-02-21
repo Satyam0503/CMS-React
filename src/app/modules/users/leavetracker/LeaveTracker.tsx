@@ -3,12 +3,13 @@ import {
   Card,
   FormControl,
   Grid,
+  Menu,
   MenuItem,
   Select,
   Stack,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
+import React, { FC } from "react";
 
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../components/DonutApexChart";
@@ -16,7 +17,7 @@ import { AttendanceChart } from "../../components/AttendanceChart";
 // import CustomisedTable from "../../components/CustomisedTable";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { LeaveApplication } from "./LeaveApplication";
-import { Block } from "@mui/icons-material";
+import { Block, CalendarToday } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 
 export const LeaveTracker: FC = () => {
@@ -26,6 +27,14 @@ export const LeaveTracker: FC = () => {
   const medicalLeaves = [3, 1];
   const earnedLeaves = [5, 10];
   const unpaidLeaves = [0, 12];
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <>
       <Grid container display={"flex"} gap={2}>
@@ -51,23 +60,15 @@ export const LeaveTracker: FC = () => {
                 <MenuItem value={21}>This Month</MenuItem>
                 <MenuItem value={22}>This Year</MenuItem>
               </Select>
-
-              {/* <InputBase
-          // startAdornment={
-          //   <InputAdornment position="start">
-          //     <CalendarToday />
-          //   </InputAdornment>
-          // }
-          sx={{ width: "100%", mt: 2 }}
-        /> */}
             </FormControl>
           </Stack>
+
           <Stack>
             <LeaveApplication />
           </Stack>
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -83,7 +84,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={casualLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -99,7 +100,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={medicalLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}
@@ -115,7 +116,7 @@ export const LeaveTracker: FC = () => {
               <DonutApexChart series={earnedLeaves} labels={leavesLabels} />
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} sm={6}>
             <Card sx={{ p: 2, height: "100%" }}>
               <Stack
                 direction={"row"}

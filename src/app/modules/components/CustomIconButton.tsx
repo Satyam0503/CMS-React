@@ -12,6 +12,7 @@ type Props = {
   permission?: boolean;
   ariaLabel?: string;
   style?: CSSProperties;
+  className?: string;
 };
 
 export const CustomIconButton = (props: Props) => {
@@ -21,6 +22,7 @@ export const CustomIconButton = (props: Props) => {
     onMouseLeave,
     icon,
     tooltip,
+    className,
     size,
     style,
     disabled = false,
@@ -42,6 +44,7 @@ export const CustomIconButton = (props: Props) => {
             style={style}
             onMouseEnter={onMouseClick}
             onMouseLeave={onMouseLeave}
+            className="className"
           >
             {icon}
           </IconButton>

@@ -42,6 +42,39 @@ $app-white: #ffffff;
   gap: 0.25rem;
 }
 
+// rough
+
+.coverChange {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.35s ease;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+//profile card icon
+.coverChange {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.gridContainer:hover .coverChange {
+  opacity: 1;
+}
+
 // .container:hover .coverChange {
 //   z-index: 3 !important;
 // }
@@ -104,10 +137,10 @@ input:-webkit-autofill {
   color: #2b46a5;
 }
 
-.pdf_viewer {
-  max-width: 100% !important;
-  width: 100% !important;
-}
+// .pdf_viewer {
+//   max-width: 100% !important;
+//   width: 100% !important;
+// }
 
 canvas {
   width: 100% !important;
@@ -126,7 +159,7 @@ canvas {
 
 .align-child-center {
   width: 100%;
-  height:calc( 100vh  - 20vh);
+  height: calc(100vh - 20vh);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -197,19 +230,18 @@ button:hover .ql-fill,
 }
 //close
 
+// chart styles
 
-// chart styles 
-
-.apexcharts-pie-label{
+.apexcharts-pie-label {
   font-size: 12px;
-  font-weight:600;
+  font-weight: 600;
 }
-.apexcharts-text{
+// .apexcharts-text{
 
-}
-.chart_tooltip{
+// }
+.chart_tooltip {
   position: relative;
   color: #ffffff !important;
-  padding: .5rem 1rem ;
-  border-radius:.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
 }

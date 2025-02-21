@@ -29,6 +29,7 @@ import { AxiosError } from "axios";
 import { DepartmentChart } from "./components/DepartmentChart";
 
 export default function DashboardAdmin() {
+  const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const user = useAppSelector((state) => state.user.userData)!;
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);

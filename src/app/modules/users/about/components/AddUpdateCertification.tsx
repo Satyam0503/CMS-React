@@ -73,7 +73,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <Stack spacing={0.5}>
                       <Typography variant="body1">
                         {intl.formatMessage({
@@ -96,7 +96,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                       </FormHelperText>
                     </Stack>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <Stack spacing={0.5}>
                       <Typography>
                         {intl.formatMessage({
@@ -117,7 +117,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                       </FormHelperText>
                     </Stack>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label="Organization Name"
                       type="text"
@@ -125,7 +125,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                       name="organisationName"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <SelectInput
                       name="mode"
                       label={intl.formatMessage({ id: "MENU.MODE" })}

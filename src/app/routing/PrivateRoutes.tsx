@@ -9,6 +9,7 @@ import { useAppSelector } from "../Redux/hooks.ts";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../modules/components/UnAuthorizedAccess.tsx";
+import UserNoticeBoard from "../modules/noticeboard/UserNoticeBoard.tsx";
 
 const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
 const Setting = lazy(() => import("../pages/admin/Settings"));
@@ -129,8 +130,11 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
-        <Route path="/unauthorize" element={ <UnAuthorizedAccess type="unauthorise" /> }/>
-        <Route path="*" element={<Navigate to="/error/404" />} />
+        <Route
+          path="/unauthorize"
+          element={<UnAuthorizedAccess type="unauthorise" />}
+        />
+        <Route path="/usernoticeboard" element={<UserNoticeBoard />} />
       </Route>
     </Routes>
   );

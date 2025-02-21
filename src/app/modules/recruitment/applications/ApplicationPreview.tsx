@@ -1,5 +1,5 @@
-import { Close,  } from "@mui/icons-material";
-import {  Grid,  Stack, Typography } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import { CustomIconButton } from "../../components/CustomIconButton";
@@ -32,74 +32,71 @@ export const ApplicationPreview: FC<PropsType> = ({
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
-      
-      <Stack justifyContent={"space-between"} direction={"row"}>
-        <Typography variant="h5">
-          {applicantData.firstName + " " + applicantData.lastName}
-        </Typography>
-        <CustomIconButton icon={<Close />} handleClick={handleClose} />
-      </Stack>
-      <Grid
-        container
-        display={"flex"}
-        direction={"column"}
-        gap={1}
-        flexWrap={"inherit"}
-      >
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "JOB.TITLE" })}
-            </Typography>
+        <Stack justifyContent={"space-between"} direction={"row"}>
+          <Typography variant="h5">
+            {applicantData.firstName + " " + applicantData.lastName}
+          </Typography>
+          <CustomIconButton icon={<Close />} handleClick={handleClose} />
+        </Stack>
+        <Grid
+          container
+          display={"flex"}
+          direction={"column"}
+          gap={1}
+          flexWrap={"inherit"}
+        >
+          <Grid item xs={12} display={"flex"}>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={600}>
+                {intl.formatMessage({ id: "JOB.TITLE" })}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={400}>
+                {applicantData.vacancyName || "NA"}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              {applicantData.vacancyName || "NA"}
-            </Typography>
+          <Grid item xs={12} display={"flex"}>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={600}>
+                {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={400}>
+                {convertMonthsToYear(applicantData.experience)}
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              {convertMonthsToYear(applicantData.experience)}
-            </Typography>
-          </Grid>
-        </Grid>
 
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "USER.APPLICATION.DATE" })}
-            </Typography>
+          <Grid item xs={12} display={"flex"}>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={600}>
+                {intl.formatMessage({ id: "USER.APPLICATION.DATE" })}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={400}>
+                {dateFormatter(applicantData.applyDate, "DD MMM YYYY hh:mm A")}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              {dateFormatter(applicantData.applyDate, "DD MMM YYYY hh:mm A")}
-            </Typography>
-          </Grid>
-        </Grid>
 
-        <Grid item xs={12} display={"flex"}>
-          <Grid item xs={6} fontWeight={400}>
-            <Typography variant="body1" fontWeight={600}>
-              {intl.formatMessage({ id: "PROFILE.STATUS" })}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight={400}>
-              <StyleStatus label={status} className={className} />
-            </Typography>
+          <Grid item xs={12} display={"flex"}>
+            <Grid item xs={6} fontWeight={400}>
+              <Typography variant="body1" fontWeight={600}>
+                {intl.formatMessage({ id: "PROFILE.STATUS" })}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="body1" fontWeight={400}>
+                <StyleStatus label={status} className={className} />
+              </Typography>
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
-      <PdfPreview
-        pdfUrl={applicantData.fullApplicantResumePath}
-      />
+        <PdfPreview pdfUrl={applicantData.fullApplicantResumePath} />
       </Stack>
     </CustomisedModal>
   );

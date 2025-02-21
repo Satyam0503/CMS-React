@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 import DonutApexChart from "../components/DonutApexChart";
 
 export default function LeaveAllowences() {
-
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];

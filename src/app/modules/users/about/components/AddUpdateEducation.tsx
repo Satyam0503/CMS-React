@@ -73,7 +73,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                   name="educationTitle"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <Stack spacing={0.5}>
                   <Typography variant="body1">
                     {intl.formatMessage({
@@ -95,7 +95,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <Stack spacing={0.5}>
                   <Typography variant="body1">
                     {intl.formatMessage({
@@ -117,7 +117,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextInput
                   label={intl.formatMessage({
                     id: "MENU.COLLEGE.NAME",
@@ -127,7 +127,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                   name="collegeName"
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <SelectInput
                   label={intl.formatMessage({ id: "FORM.TYPE" })}
                   name="type"
@@ -140,19 +140,22 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </SelectInput>
               </Grid>
             </Grid>
-            <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>
-              <CustomisedButton
-                variant="outlined"
-                size="medium"
-                label="Cancel"
-                handleClick={handleClose}
-              />
-              <CustomisedButton
-                variant="outlined"
-                size="medium"
-                label="Add New"
-                Icon={<Add />}
-              />
+            <Stack direction="row" spacing={1} justifyContent={"end"} mt={2}>
+              <Stack direction={"row"} spacing={1}>
+                <CustomisedButton
+                  variant="outlined"
+                  size="medium"
+                  label="Cancel"
+                  handleClick={handleClose}
+                />
+                <CustomisedButton
+                  variant="outlined"
+                  size="medium"
+                  label="Add New"
+                  Icon={<Add />}
+                />
+              </Stack>
+
               <CustomisedButton
                 variant="contained"
                 size="medium"

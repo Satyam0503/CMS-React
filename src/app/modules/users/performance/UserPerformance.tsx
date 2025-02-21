@@ -11,7 +11,7 @@ export const UserPerformance: FC = () => {
   return (
     <>
       <Grid container display={"flex"} gap={2.25}>
-        <Card sx={{ p: 2.25 }}>
+        <Card sx={{ p: 2.25, width: "100%" }}>
           <Stack mb={1}>
             <Typography variant="h5">
               {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
@@ -19,25 +19,24 @@ export const UserPerformance: FC = () => {
           </Stack>
 
           <Stack direction={{ xs: "column", sm: "row" }}>
-            <Stack>
-              <DonutApexChart
-                series={[132, 323]}
-                labels={["Present", "Holidays"]}
-              />
-            </Stack>
-            <Stack>
-              <DonutApexChart
-                series={[132, 323]}
-                labels={["Present", "Holidays"]}
-              />
-            </Stack>
-            <Stack>
-              <DonutApexChart
-                series={[4]}
-                labels={["Rating"]}
-                showLabelOnHover={true}
-              />
-            </Stack>
+            <DonutApexChart
+              height={150}
+              series={[132, 323]}
+              labels={["Present", "Holidays"]}
+            />
+
+            <DonutApexChart
+              height={150}
+              series={[132, 323]}
+              labels={["Present", "Holidays"]}
+            />
+
+            <DonutApexChart
+              height={150}
+              series={[4]}
+              labels={["Rating"]}
+              showLabelOnHover={true}
+            />
           </Stack>
         </Card>
         <Feedback />

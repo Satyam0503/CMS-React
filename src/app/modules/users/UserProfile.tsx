@@ -1,6 +1,5 @@
 import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
 import IconStat from "../components/IconStat";
@@ -24,10 +23,11 @@ export default function UserProfile() {
       <Grid
         item
         xs={12}
-        lg={3}
+        lg={3.8}
+        xl={3}
         display={"flex"}
         flexDirection={{ xs: "column", sm: "row", lg: "column" }}
-        gap={4}
+        gap={{ xs: 4, sm: 2, md: 4 }}
         justifyContent={{ lg: "flex-start" }}
       >
         <Stack width={"100%"}>
@@ -37,7 +37,7 @@ export default function UserProfile() {
           <LeaveAllowences />
         </Stack>
       </Grid>
-      <Grid item xs={12} md={12} lg={9}>
+      <Grid item xs={12} md={12} lg={8.2} xl={9}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           display={"flex"}
@@ -73,7 +73,7 @@ export default function UserProfile() {
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={userSkills.length +"+"}
+                number={userSkills.length + "+"}
                 title="Skills holder"
               />
             </Box>
