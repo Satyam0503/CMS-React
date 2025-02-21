@@ -130,7 +130,7 @@ function DonutApexChart(props: DonutApexChartProps) {
         horizontal: 10,
         vertical: 5,
       },
-      formatter: function (seriesName, opts) {
+      formatter: function (seriesName) {
         return `<span style="text-transform:Capitalize">${seriesName}</span>`;
       },
     },
@@ -138,11 +138,10 @@ function DonutApexChart(props: DonutApexChartProps) {
       width: 0,
     },
   };
-
+  
   return (
     <Grid item xs={12}>
       <Chart
-       key={JSON.stringify(series)}
         height={height || 200}
         options={chartOptions}
         series={series}

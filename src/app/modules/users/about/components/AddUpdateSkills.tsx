@@ -104,7 +104,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
               variant="contained"
               label="Update"
               handleClick={()=>handleSkillUpdate(skills)}
-              disabled={skills.length === 0}
+              // disabled={skills.length === 0}
             />
           </Stack>
         </Stack>

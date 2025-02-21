@@ -81,8 +81,7 @@ export const editApplicantValidationSchema = Yup.object().shape({
   activityType: Yup.number()
     .oneOf([0, 1, 2, 3, 4, 5])
     .required("Select Application Status"),
-  resume: Yup.mixed()
-    .required("Resume is required")
+  resume: Yup.mixed().nullable()
     .test("fileFormat", "Only PDF files are allowed", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];

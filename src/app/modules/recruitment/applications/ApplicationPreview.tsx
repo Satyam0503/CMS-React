@@ -6,7 +6,7 @@ import { CustomIconButton } from "../../components/CustomIconButton";
 import { Applicant } from "../../../../utils/common_types";
 import { FC } from "react";
 import {
-  applicationStatusDecoder,
+  applicationStatusMapper,
   convertMonthsToYear,
   dateFormatter,
   getApplicationStatusClass,
@@ -26,7 +26,6 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const intl = useIntl();
-  const status = applicationStatusDecoder(applicantData.activityType);
   const className = getApplicationStatusClass(applicantData.activityType);
 
   return (
@@ -91,7 +90,7 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={400}>
-                <StyleStatus label={status} className={className} />
+                <StyleStatus label={applicationStatusMapper[applicantData.activityType]} className={className} />
               </Typography>
             </Grid>
           </Grid>

@@ -36,7 +36,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
           <Stack direction={"row"} spacing={2} alignItems={"center"}>
             <Avatar
               alt="User Profile"
-              src=""
+              src={employeeData.fullProfileUrl}
               sx={{
                 width: "128px",
                 height: "128px",

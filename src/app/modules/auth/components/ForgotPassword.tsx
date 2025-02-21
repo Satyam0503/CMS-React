@@ -30,19 +30,7 @@ export function ForgotPassword() {
     onSubmit: (values, { setStatus, setSubmitting }) => {
       setLoading(true);
       setHasErrors(undefined);
-      setTimeout(() => {
-        requestPassword(values.email)
-          .then(() => {
-            setHasErrors(false);
-            setLoading(false);
-          })
-          .catch(() => {
-            setHasErrors(true);
-            setLoading(false);
-            setSubmitting(false);
-            setStatus("The login detail is incorrect");
-          });
-      }, 1000);
+      
     },
   });
 

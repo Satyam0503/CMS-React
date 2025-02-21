@@ -20,7 +20,7 @@ export const UserSkills = () => {
     .then(response=>{
       const {success,methodResult}= response.data;
       if(success){
-        if(!methodResult.skills.length){
+        if(!methodResult.skills.trim().length){
           updateUserSkills([]);
         }
         else{

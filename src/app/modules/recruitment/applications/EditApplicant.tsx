@@ -143,7 +143,7 @@ export const EditApplicant = () => {
     );
     const totalExperienceInMonths =
       values.experienceInYears * 12 + values.experienceInMonths;
-
+      
     const payload = {
       applicantId: values.applicantId,
       firstName: values.firstName,
@@ -158,16 +158,17 @@ export const EditApplicant = () => {
       vacancyName: vacancy ? vacancy.title : "",
       experience: totalExperienceInMonths,
     };
-
     try {
       const response = await editApplicant(payload);
       const { message, success } = response.data;
       if (!success) {
         throw new Error("Failed To Update Applicant");
       }
-      const resumeUploadResponse = await uploadResume(values.email, formData);
-      if (!resumeUploadResponse.data.success) {
-        throw new Error("Failed To Update Applicant");
+      if(values.resume){
+        const resumeUploadResponse = await uploadResume(values.email, formData);
+        if (!resumeUploadResponse.data.success) {
+          throw new Error("Failed To Update Applicant");
+        }
       }
       handleAddComment(values.activityType);
     } catch (error: any) {
@@ -407,7 +408,7 @@ export const EditApplicant = () => {
                         type="button"
                         disabled={
                           formik.isSubmitting ||
-                          !(formik.isValid && formik.dirty)
+                          !(formik.isValid)
                         }
                         handleClick={() => setCommnetModalOpen(true)}
                       />

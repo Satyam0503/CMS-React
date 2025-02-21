@@ -11,6 +11,7 @@ export interface ApiResponse {
 export interface UserModel {
   userId: string;
   companyId: string;
+  companyName:string;
   role: string;
   roleId: string;
   firstName: string;
@@ -64,12 +65,12 @@ export interface EmployeeModel {
   bloodGroup: string;
   address: string;
   jobRole: string;
-  password: string | null;
   dateOfJoining: Dayjs | null;
   personalEmail: string;
   emergencyContact: string;
   status: string | boolean;
   isEmailVerified?: boolean;
+  password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
 }

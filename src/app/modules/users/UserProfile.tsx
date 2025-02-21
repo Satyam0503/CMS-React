@@ -1,5 +1,4 @@
-import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
-import { useIntl } from "react-intl";
+import { Box, CardContent, Grid, Stack } from "@mui/material";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
 import IconStat from "../components/IconStat";
@@ -11,13 +10,12 @@ import {
 } from "@mui/icons-material";
 import LeaveAllowences from "./LeaveAllowences";
 import { useUserDetails } from "./UserDataProvider";
+import { useAppSelector } from "../../Redux/hooks";
+import { getDateDiffInYears } from "../../../utils/common";
 
 export default function UserProfile() {
-  const userSkills = useUserDetails().userSkills;
-  const intl = useIntl();
-  const leaveAllowanceLables = ["Pending", "Taken"];
-  const leaveAllowanceValue = [13, 10];
-
+  const companyName= useAppSelector(state=>state.user.userData?.companyName);
+  const {userDetails,userSkills} = useUserDetails();
   return (
     <Grid container spacing={4}>
       <Grid
@@ -62,8 +60,8 @@ export default function UserProfile() {
                 iconBg={colors.alpha.primary[100]}
                 icon={<CorporateFareOutlined fontSize="large" />}
                 iconColor={colors.alpha.primary[500]}
-                number={6}
-                title="Years in Codeji"
+                number={getDateDiffInYears(userDetails.dateOfJoining!) }
+                title={`Years in ${companyName}`}
               />
             </Box>
           </Grid>
@@ -73,7 +71,7 @@ export default function UserProfile() {
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={userSkills.length + "+"}
+                number={userSkills.length}
                 title="Skills holder"
               />
             </Box>

@@ -40,24 +40,24 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-export const applicationStatusDecoder = (applicationStatus: number) => {
-  switch (applicationStatus) {
-    case ApplicationStatus.New:
-      return "New";
-    case ApplicationStatus.InProgress:
-      return "In Progress";
-    case ApplicationStatus.OnHold:
-      return "On Hold";
-    case ApplicationStatus.Shortlisted:
-      return "Shortlisted";
-    case ApplicationStatus.Selected:
-      return "Selected";
-    case ApplicationStatus.Rejected:
-      return "Rejected";
-    default:
-      return "";
-  }
-};
+// export const applicationStatusDecoder = (applicationStatus: number) => {
+//   switch (applicationStatus) {
+//     case ApplicationStatus.New:
+//       return "New";
+//     case ApplicationStatus.InProgress:
+//       return "In Progress";
+//     case ApplicationStatus.OnHold:
+//       return "On Hold";
+//     case ApplicationStatus.Shortlisted:
+//       return "Shortlisted";
+//     case ApplicationStatus.Selected:
+//       return "Selected";
+//     case ApplicationStatus.Rejected:
+//       return "Rejected";
+//     default:
+//       return "";
+//   }
+// };
 
 export const applicationStatusMapper : {
   [index:number]:string
@@ -319,8 +319,8 @@ export const monthsExperienceList = [
   },
 ];
 
-export const getAgeInYears = (dob: Dayjs) => {
-  return dayjs(new Date()).diff(dob, "years");
+export const getDateDiffInYears = (from:Dayjs, to: Dayjs= dayjs()) => {
+  return dayjs(to).diff(from, "years");
 };
 
 export const convertMonthsToYear = (months: number) => {

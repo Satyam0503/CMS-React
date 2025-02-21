@@ -47,6 +47,7 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
               lastName: methodResult.lastName,
               fullName: methodResult.fullName,
               companyId: methodResult.companyId,
+              companyName:methodResult.companyName,
               role: methodResult.role,
               roleId:methodResult.roleId
             })

@@ -213,7 +213,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
       const jobRole = row.jobRole;
-      return <AvatarCell title={fullName} subTitle={jobRole} />;
+      return <AvatarCell avatarSrc={row.fullProfileUrl} title={fullName} subTitle={jobRole} />;
     },
   },
   {

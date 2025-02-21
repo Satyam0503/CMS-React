@@ -7,15 +7,9 @@ import {
   Container,
   darken,
   Grid,
-  IconButton,
-  InputLabel,
   lighten,
-  ListItem,
-  ListItemText,
   Stack,
-  TextField,
   Typography,
-  Zoom,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -30,11 +24,12 @@ import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
 import { colors } from "../theme/MuiTheme";
 import { CustomIconButton } from "../components/CustomIconButton";
-import { getAgeInYears } from "../../../utils/common";
 import { ErrorLabel } from "../components/form_component/ErrorLabel";
 import { updateProfilePicture } from "./userservices";
 import { toast } from "react-toastify";
 import { useUserDetails } from "./UserDataProvider";
+import { useAppSelector } from "../../Redux/hooks";
+import { getDateDiffInYears } from "../../../utils/common";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -43,6 +38,7 @@ export default function ProfileCard() {
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
   const { userDetails, refresh, setRefresh } = useUserDetails();
+  const profileImageUrl = useAppSelector(state=>state.user.profileImageUrl);
 
   function handleClose() {
     setOpen(false);
@@ -127,7 +123,7 @@ export default function ProfileCard() {
         >
           <Avatar
             alt="profile picture"
-            src={userDetails.fullProfileUrl}
+            src={profileImageUrl}
             sx={{
               width: "100%",
               height: "100%",
@@ -189,7 +185,7 @@ export default function ProfileCard() {
         >
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {getAgeInYears(userDetails.dateOfBirth!) || "NA"}
+              {getDateDiffInYears(userDetails.dateOfBirth!) || "NA"}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.AGE" })}

@@ -69,6 +69,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               initialValues={initialValues}
               validationSchema={employeeSchema}
               onSubmit={(values, { setSubmitting }) => {
+                delete values.fullProfileUrl ;
+                delete values.profileUrl;                
                 SaveAddEditEmployee(values, setSubmitting);
               }}
             >
@@ -149,6 +151,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         type="email"
                         name="email"
                         placeholder="Email"
+                        disabled={isEdit}
                       />
                     </Grid>
 

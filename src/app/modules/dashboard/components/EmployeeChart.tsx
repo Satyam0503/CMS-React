@@ -9,7 +9,7 @@ interface PropsType {
   employees: EmployeeModel[];
 }
 
-export const EmployeeChart: FC<PropsType> = memo(({ employees }) => {
+export const EmployeeChart: FC<PropsType> = ({ employees }) => {
   const intl = useIntl();
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -36,7 +36,7 @@ export const EmployeeChart: FC<PropsType> = memo(({ employees }) => {
   useEffect(()=>{
     if(employees.length){ 
       const {labels,series} = getEmployeesGenderCount();
-      setChartData({labels,series});
+      setChartData({labels:labels,series:series});
     }
   },[employees,getEmployeesGenderCount])  
   
@@ -57,4 +57,4 @@ export const EmployeeChart: FC<PropsType> = memo(({ employees }) => {
       )}
     </CustomCard>
   );
-});
+};

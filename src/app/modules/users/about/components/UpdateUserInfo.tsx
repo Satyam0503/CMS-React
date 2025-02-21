@@ -6,7 +6,7 @@ import {
   FormHelperText,
   MenuItem,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
 import { Formik } from "formik";
@@ -37,17 +37,20 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const user = useAppSelector((state) => state.user.userData)!;
   const dispatch = useAppDispatch();
 
-  const initialValues = {
-    firstName: userData?.firstName,
-    lastName: userData?.lastName,
-    email: userData?.email,
-    phoneNumber: userData?.phoneNumber,
-    dateOfBirth: userData?.dateOfBirth,
-    personalEmail: userData?.personalEmail,
-    emergencyContact: userData?.emergencyContact,
-    bloodGroup: userData?.bloodGroup,
-    address: userData?.address,
-  };
+  const initialValues = useMemo(
+    () => ({
+      firstName: userData?.firstName,
+      lastName: userData?.lastName,
+      email: userData?.email,
+      phoneNumber: userData?.phoneNumber,
+      dateOfBirth: userData?.dateOfBirth,
+      personalEmail: userData?.personalEmail,
+      emergencyContact: userData?.emergencyContact,
+      bloodGroup: userData?.bloodGroup,
+      address: userData?.address,
+    }),
+    [userData]
+  );
 
   function handleClose() {
     setOpen(false);
@@ -60,7 +63,10 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     const payload = {
       ...userData,
       ...values,
-    };    
+    };
+    delete payload.fullProfileUrl;
+    delete payload.profileUrl;
+
     try {
       const response = await updateEmployee(payload, userData.userId);
       const { success, statusCode, methodResult, message } = response.data;
@@ -154,6 +160,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       type="email"
                       name="email"
                       placeholder="Email"
+                      disabled={true}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
