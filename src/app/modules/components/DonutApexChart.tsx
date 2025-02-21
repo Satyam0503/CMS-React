@@ -31,7 +31,6 @@ function DonutApexChart(props: DonutApexChartProps) {
 
   const chartOptions: ApexOptions = {
     chart: {
-    chart: {
       animations: {
         enabled: true,
         speed: 800,
@@ -94,8 +93,7 @@ function DonutApexChart(props: DonutApexChartProps) {
     },
     colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444"],
     dataLabels: {
-      // enabled: showDataLabels || false,
-      enabled: false,
+      enabled: showDataLabels || false,
       formatter: function (value: number, opts) {
         const labels = opts.w.config.labels;
         const series = opts.w.config.series;

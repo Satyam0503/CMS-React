@@ -39,6 +39,7 @@ export const EmployeeChart: FC<PropsType> = memo(({ employees }) => {
       setChartData({labels,series});
     }
   },[employees,getEmployeesGenderCount])  
+  
   return (
     <CustomCard
       label={intl.formatMessage({ id: "MENU.TOTAL_EMP" })}
