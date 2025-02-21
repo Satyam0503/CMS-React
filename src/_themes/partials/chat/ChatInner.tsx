@@ -170,15 +170,6 @@ const ChatInner: FC<Props> = ({ isDrawer = false }) => {
               : "kt_chat_messenger_footer"
           }
         >
-          {/* <textarea
-          className="form-control form-control-flush mb-3"
-          rows={1}
-          data-kt-element="input"
-          placeholder="Type a message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={onEnterPress}
-        ></textarea> */}
           <TextField fullWidth placeholder="Type a message"></TextField>
 
           <Stack direction={"row"} justifyContent={"space-between"}>

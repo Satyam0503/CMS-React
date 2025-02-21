@@ -9,8 +9,8 @@ import { useUserDetails } from "../../UserDataProvider";
 
 export const PersonalDetails = () => {
   const intl = useIntl();
-  const [isModalOpen,setModalOpen]=useState(false);
-  const { userDetails} = useUserDetails();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { userDetails } = useUserDetails();
 
   return (
     <Card sx={{ p: 2 }}>
@@ -23,15 +23,17 @@ export const PersonalDetails = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        <CustomIconButton 
-          icon={<Edit/>}
-          handleClick={()=>setModalOpen(true)}
+        <CustomIconButton
+          icon={<Edit />}
+          handleClick={() => setModalOpen(true)}
         />
-        {
-          isModalOpen && userDetails && (
-            <UpdateUserInfo open={isModalOpen} setOpen={setModalOpen} userData={userDetails} />
-          )
-        }
+        {isModalOpen && userDetails && (
+          <UpdateUserInfo
+            open={isModalOpen}
+            setOpen={setModalOpen}
+            userData={userDetails}
+          />
+        )}
       </Stack>
       <Grid container spacing={1}>
         <Grid item xs={12}>
