@@ -3,12 +3,8 @@ import {
   Typography,
   Grid,
   Card,
-  Avatar,
-  Container,
-  Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import DonutApexChart from "../components/DonutApexChart";
 import OpenPositions from "./components/OpenPositions";
 import NoticeBoard from "./components/NoticeBoard";
 import EmpOnLeave from "./components/EmpOnLeave";

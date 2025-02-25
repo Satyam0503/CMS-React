@@ -12,11 +12,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPassword } from "../core/_requests";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { Regex } from "../../../../utils/constant/Constant";
 
 const validationSchema = Yup.object().shape({
   newPassword: Yup.string()
     .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+      Regex.Password,
       "Use 8 or more characters with a mix of letters, numbers & symbols"
     )
     .required("Password is required"),

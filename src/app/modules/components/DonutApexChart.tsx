@@ -1,5 +1,4 @@
 import { Grid } from "@mui/material";
-
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { colors } from "../theme/MuiTheme";
@@ -20,8 +19,8 @@ interface DonutApexChartProps {
 
 function DonutApexChart(props: DonutApexChartProps) {
   const {
-    series = [],
-    labels = [],
+    series,
+    labels,
     height,
     legendOption,
     size = "60%",
