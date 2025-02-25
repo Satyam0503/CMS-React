@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Box, Checkbox, Stack, TextField, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
 import * as Yup from "yup";
@@ -9,14 +9,11 @@ import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";
 import { TextInput } from "../../components/form_component/TextInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { createPassword } from "../core/_requests";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .matches(
-      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Email must be a valid email"
-    )
-    .required("Email is required"),
   newPassword: Yup.string()
     .matches(
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
@@ -32,7 +29,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const initialValues = {
-  email: "",
   newPassword: "",
   confirmPassword: "",
 };
@@ -42,14 +38,41 @@ export function CreatePassword() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [queryParam] = useSearchParams();
-  
-  function handlePasswordChange(
+
+  const statusNumber = queryParam.get("statusNumber") || "";
+
+  async function handlePasswordChange(
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void,
-    etStatus: (status?: any) => void
+    setStatus: (status?: any) => void
   ) {
-    setLoading(true);
+    const payload = {
+      newPassword: values.newPassword,
+      statusNumber,
+    };
+    try {
+      const response = await createPassword(payload);
+      const { success, message } = response.data;
+      if (!success) {
+        throw new AxiosError("Failed To Create New Password");
+      }
+      toast.success(message);
+      setStatus("");
+      navigate("/auth/login");
+    } catch (error) {
+      setStatus((error as AxiosError).message);
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
   }
+
+  useEffect(() => {
+    if (!(queryParam.size && queryParam.has("statusNumber"))) {
+      navigate("/error/404", { replace: true });
+    }
+  },[]);
+
   return (
     <Stack spacing={{ xs: 4 }}>
       <Stack
@@ -81,14 +104,14 @@ export function CreatePassword() {
       >
         {(formik) => (
           <form onSubmit={formik.handleSubmit}>
+            {formik.status && (
+              <Grid className="mb-lg-15 alert alert-danger">
+                <Grid className="alert-text font-weight-bold">
+                  {formik.status}
+                </Grid>
+              </Grid>
+            )}
             <Stack spacing={2}>
-              <TextInput
-                label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                name="email"
-                placeholder="Email"
-                type="email"
-                disabled={true}
-              />
               <TextInput
                 type="password"
                 name="newPassword"
@@ -101,12 +124,16 @@ export function CreatePassword() {
                 label={intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
                 placeholder="Confirm Password"
               />
-
+            </Stack>
+            <Stack sx={{ marginBlockStart: "3rem" }}>
               <CustomisedButton
                 type="submit"
                 label="Create Password"
                 size="large"
                 loading={loading}
+                disabled={
+                  formik.isSubmitting || !(formik.isValid && formik.dirty)
+                }
               />
             </Stack>
           </form>

@@ -7,6 +7,10 @@ export interface ApiResponse {
   message: string;
   statusCode?: number;
 }
+export interface CreatePasswordModel {
+  newPassword:string,
+  statusNumber:string,
+}
 
 export interface UserModel {
   userId: string;

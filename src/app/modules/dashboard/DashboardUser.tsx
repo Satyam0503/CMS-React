@@ -15,12 +15,9 @@ import { Celebration } from "@mui/icons-material";
 import AttendanceTable from "./components/LeaveTable";
 import { useAppSelector } from "../../Redux/hooks";
 import { DashboardHeader } from "./components/DashboardHeader";
-import { EmployeeChart } from "./components/EmployeeChart";
 
 export default function DashboardUser() {
   const intl = useIntl();
-  const series = [21, 12, 0];
-  const labels = ["Male", "Female", "Other"];
   const teams = ["Development", "Design", "Testing", "Business"];
   const teamSize = [8, 2, 4, 3];
   const user = useAppSelector((state) => state.user.userData)!;
@@ -36,7 +33,7 @@ export default function DashboardUser() {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <EmployeeChart />
+              {/* <EmployeeChart /> */}
             </Grid>
             <Grid item xs={12} sm={6}>
               <Card sx={{ px: 3, height: "100%", py: 2 }}>
