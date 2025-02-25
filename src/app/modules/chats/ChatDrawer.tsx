@@ -38,8 +38,12 @@ export default function ChatDrawer() {
     <>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="User profile">
-          <Avatar
-            sx={{ bgcolor: "inherit", border: "none" }}
+          <IconButton
+            sx={{
+              bgcolor: "inherit",
+              border: "none",
+              "&:hover": { bgcolor: "inherit", border: "none" },
+            }}
             onClick={toggleDrawer(true)}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
@@ -53,7 +57,7 @@ export default function ChatDrawer() {
               sx={{ width: "15px", color: colors.alpha.success[500] }}
               className=" position-absolute translate-middle  animation-blink"
             />
-          </Avatar>
+          </IconButton>
         </Tooltip>
       </Box>
 

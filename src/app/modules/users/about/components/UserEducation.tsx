@@ -70,7 +70,7 @@ export const UserEducation = () => {
     setEducationInitialValues(value);
     setOpen(true);
   }
-  
+
   const handleAddUpdateEducation = async (
     values: UserEducationModel,
     setSubmitting: (isSubmitting: boolean) => void

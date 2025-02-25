@@ -9,8 +9,6 @@ import {
 import { useLayout } from "../../core";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { Box } from "@mui/material";
-import ChatMessenger from "../../../../app/modules/chats/ChatMessanger";
-import ChatDrawer from "../../../../app/modules/chats/ChatDrawer";
 
 const itemClass = "ms-1 ms-md-4";
 const btnClass =

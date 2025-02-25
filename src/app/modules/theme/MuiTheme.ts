@@ -171,8 +171,8 @@ export const MuiTheme = createTheme({
       primary: colors.alpha.neutral[800],
     },
     background: {
-      paper: themeColors.white,
-      default: themeColors.white,
+      paper: colors.alpha.white[500],
+      default: colors.alpha.white[500],
     },
     action: {
       active: colors.alpha.neutral[100],
@@ -636,14 +636,7 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiListItemText: {
-      styleOverrides: {
-        root: {
-          margin: 0,
-          color: colors.alpha.success[500],
-        },
-      },
-    },
+
     MuiListItemButton: {
       styleOverrides: {
         root: {
@@ -657,7 +650,7 @@ export const MuiTheme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          background: colors.alpha.neutral[100],
+          background: colors.alpha.neutral[200],
           border: 0,
           height: 1,
         },
@@ -741,46 +734,6 @@ export const MuiTheme = createTheme({
       },
     },
 
-    MuiList: {
-      styleOverrides: {
-        root: {
-          padding: 0,
-          "& .MuiListItem-button": {
-            transition: "all .2s",
-
-            "& > .MuiSvgIcon-root": {
-              minWidth: 34,
-            },
-
-            // "& .MuiTouchRipple-root": {
-            //   opacity: 0.2,
-            // },
-          },
-          "&.MuiListItem-root.MuiButtonBase-root.Mui-selected": {
-            color: colors.alpha.white[500],
-            background: colors.alpha.primary[400],
-          },
-          "&.MuiMenuItem-root.MuiButtonBase-root:active": {
-            color: colors.alpha.white[500],
-            background: colors.alpha.primary[400],
-          },
-          "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
-            opacity: 0.5,
-            color: colors.alpha.primary[800],
-            background: colors.alpha.primary[400],
-          }, //MenuItem
-        },
-
-        padding: {
-          padding: "12px",
-
-          "& .MuiListItem-button": {
-            borderRadius: 6,
-            margin: "1px 0",
-          },
-        },
-      },
-    },
     MuiTabs: {
       styleOverrides: {
         root: {
@@ -837,11 +790,10 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          padding: 0,
-          maxHeight: "200px",
+          maxHeight: "260px",
         },
+
         list: {
-          padding: 12,
           "& .MuiMenuItem-root.MuiButtonBase-root": {
             fontSize: 14,
             marginTop: 1,
@@ -860,47 +812,51 @@ export const MuiTheme = createTheme({
                 background: colors.alpha.primary[500],
               },
             },
-
-            "&:active": {
-              //on hover
-              color: colors.alpha.primary[900],
-              background: colors.alpha.primary[300],
-            },
           },
         },
       },
     },
     //close
-    MuiMenuItem: {
+
+    MuiList: {
       styleOverrides: {
         root: {
-          transition: "all .2s",
-          "&:active": {
-            color: colors.alpha.success[500],
-            background: colors.alpha.secondary[500],
+          "& .MuiListItem-button": {
+            "& > .MuiSvgIcon-root": {
+              minWidth: 34,
+            },
           },
-          "&.Mui-selected:hover": {
-            background: colors.alpha.secondary[500],
-            color: colors.alpha.success[500],
+
+          //Background of list
+          "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
+            opacity: 0.5,
+            color: colors.alpha.primary[800],
+            background: colors.alpha.primary[400],
+          },
+        },
+
+        padding: {
+          padding: "12px",
+          "& .MuiListItem-button": {
+            borderRadius: 6,
+            margin: "1px 0",
           },
         },
       },
     },
 
-    MuiListItem: {
+    // MuiDivider: {
+    //   styleOverrides: {
+    //     root: {
+    //       bgcolor: colors.alpha.neutral[400],
+    //     },
+    //   },
+    // },
+    MuiListItemText: {
       styleOverrides: {
         root: {
-          "&.MuiList-root": {
-            color: colors.alpha.success[500],
-            background: colors.alpha.secondary[500],
-
-            "&:hover, &:active, &.active, &.Mui-selected": {
-              color: colors.alpha.success[500],
-              background: colors.alpha.secondary[500],
-            },
-            "&.MuiListItemText": {
-              colors: colors.alpha.success[500],
-            },
+          "&:hover": {
+            color: colors.alpha.primary[500],
           },
         },
       },

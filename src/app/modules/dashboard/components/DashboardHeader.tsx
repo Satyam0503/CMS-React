@@ -1,4 +1,4 @@
-import {  Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
@@ -7,10 +7,15 @@ import { memo } from "react";
 import dayjs from "dayjs";
 import { dateFormatter } from "../../../../utils/common";
 
-export const DashboardHeader = memo((props:{fullName:string}) => {
+export const DashboardHeader = memo((props: { fullName: string }) => {
   const intl = useIntl();
   return (
-    <Stack direction={"row"} mb={2} spacing={2} sx={{ justifyContent:"space-between",flexWrap:"wrap", gap:2}}>
+    <Stack
+      direction={"row"}
+      mb={2}
+      spacing={2}
+      sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2 }}
+    >
       <Stack>
         <Typography variant="h2">
           {intl.formatMessage({ id: "MENU.WELCOME" })} {props.fullName || ""}
@@ -36,8 +41,10 @@ export const DashboardHeader = memo((props:{fullName:string}) => {
           />
         </Stack>
         <Stack alignItems={"end"}>
-          <Typography variant="h3">{ dateFormatter(dayjs(),"dddd")}</Typography>
-          <Typography variant="body1">{dateFormatter(dayjs(),"DD MMM YYYY")}</Typography>
+          <Typography variant="h3">{dateFormatter(dayjs(), "dddd")}</Typography>
+          <Typography variant="body1">
+            {dateFormatter(dayjs(), "DD MMM YYYY")}
+          </Typography>
         </Stack>
       </Stack>
     </Stack>
