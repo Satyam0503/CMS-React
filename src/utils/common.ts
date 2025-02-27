@@ -8,7 +8,6 @@ import {
   Permission,
 } from "./enums";
 import { SideBarTabList } from "./constant/Constant";
-import { List } from "@mui/material";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,

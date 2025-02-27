@@ -69,7 +69,13 @@ export const ServiceUrl = {
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
+  UPDATE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/EditEmployeeCertification`,
+  UPDATE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/EditEmployeeEducation`,
 
+  DELETE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/DeleteEducationDetails`,
+  DELETE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/DeleteCertificationDetails`,
+  
+  
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,

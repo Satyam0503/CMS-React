@@ -43,6 +43,10 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     openViewModal,
   } = props;
 
+  const UpdateTableRows = ()=>{
+    
+  }
+
   useEffect(() => {
     setTableRows(rows);
   }, [rows]);

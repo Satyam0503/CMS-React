@@ -5,12 +5,10 @@ import { EmployeeModel } from "../../../utils/common_types";
 import {
   dateFormatter,
   statusDecoder,
-  statusEncoder,
 } from "../../../utils/common";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { StyleStatus } from "../components/StyledStatus";
-import { Close, Edit } from "@mui/icons-material";
 
 type PropsType = {
   open: boolean;
@@ -47,13 +45,13 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             </Avatar>
             <Stack>
               <Typography variant="h5">{`${employeeData?.firstName} ${employeeData?.lastName}`}</Typography>
-              {/* <Typography variant="body2">{employeeData?.jobRole || "NA "}</Typography> */}
+              <Typography variant="body1">{employeeData?.jobRole || "NA "}</Typography>
             </Stack>
           </Stack>
 
           <Grid container rowSpacing={1} columnSpacing={1} columns={12}>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.EMP_ID" })}
               </Typography>
             </Grid>
@@ -61,7 +59,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.employeeId}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
               </Typography>
             </Grid>
@@ -69,7 +67,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.email}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.PHONE" })}
               </Typography>
             </Grid>
@@ -77,7 +75,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.phoneNumber}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.DEPARTMENT" })}
               </Typography>
             </Grid>
@@ -85,7 +83,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.department}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
               </Typography>
             </Grid>
@@ -93,7 +91,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.reportingManager}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.TEAM_LEAD" })}
               </Typography>
             </Grid>
@@ -101,7 +99,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.teamLead}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.GENDER" })}
               </Typography>
             </Grid>
@@ -109,7 +107,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.gender}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.DOB" })}
               </Typography>
             </Grid>
@@ -119,7 +117,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               </Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.ADDRESS" })}
               </Typography>
             </Grid>
@@ -127,7 +125,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData.address}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
               </Typography>
             </Grid>
@@ -135,7 +133,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData?.bloodGroup}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
               </Typography>
             </Grid>
@@ -143,7 +141,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData.personalEmail}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
               </Typography>
             </Grid>
@@ -151,7 +149,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData.emergencyContact}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.DOJ" })}
               </Typography>
             </Grid>
@@ -162,7 +160,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             </Grid>
 
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "USER.ROLE" })}
               </Typography>
             </Grid>
@@ -170,7 +168,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
               <Typography>{employeeData.jobRole}</Typography>
             </Grid>
             <Grid xs={5} md={6}>
-              <Typography variant="body1">
+              <Typography variant="body1" fontWeight={600}>
                 {intl.formatMessage({ id: "PROFILE.STATUS" })}
               </Typography>
             </Grid>

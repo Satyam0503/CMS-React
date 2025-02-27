@@ -82,7 +82,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                       </Typography>
                       <CustomisedDatePicker
                         name="startDate"
-                        value={values.startDate}
+                        value={values.startDate && dayjs(values.startDate)}
                         setValue={(newDate: Dayjs | null) => {
                           setFieldTouched("startDate", true);
                           setFieldValue("startDate", newDate);
@@ -105,12 +105,12 @@ export default function AddUpdateCertification(props: PropTypes) {
                       </Typography>
                       <CustomisedDatePicker
                         name="endDate"
-                        value={values.endDate}
+                        value={values.endDate && dayjs(values.endDate)}
                         setValue={(newDate: Dayjs | null) => {
                           setFieldTouched("endDate", true);
                           setFieldValue("endDate", newDate);
                         }}
-                        minDate={values.startDate || dayjs()}
+                        minDate={dayjs(values.startDate) || dayjs()}
                       />
                       <FormHelperText>
                         {touched.endDate && errors.endDate && errors.endDate}

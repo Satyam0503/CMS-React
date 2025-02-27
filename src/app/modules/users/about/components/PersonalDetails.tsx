@@ -10,8 +10,7 @@ import { useUserDetails } from "../../UserDataProvider";
 export const PersonalDetails = () => {
   const intl = useIntl();
   const [isModalOpen, setModalOpen] = useState(false);
-  const { userDetails } = useUserDetails();
-
+  const { userDetails } = useUserDetails();  
   return (
     <Card sx={{ p: 2 }}>
       <Stack

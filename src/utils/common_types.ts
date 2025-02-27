@@ -8,14 +8,14 @@ export interface ApiResponse {
   statusCode?: number;
 }
 export interface CreatePasswordModel {
-  newPassword:string,
-  statusNumber:string,
+  newPassword: string;
+  statusNumber: string;
 }
 
 export interface UserModel {
   userId: string;
   companyId: string;
-  companyName:string;
+  companyName: string;
   role: string;
   roleId: string;
   firstName: string;
@@ -99,7 +99,8 @@ export interface JobModal {
 }
 
 export interface UserEducationModel {
-  educationId: string;
+  educationId?: string;
+  companyId?: string;
   userId: string;
   educationTitle: string;
   collegeName: string;
@@ -109,16 +110,18 @@ export interface UserEducationModel {
 }
 
 export type UserCertificationModel = {
-  certificationId: string;
   certificationTitle: string;
   organisationName: string;
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   mode: string;
+  userId?: string;
+  certificationId?: string;
+  companyId?: string;
 };
 
 export type UserSkillsModel = {
-  id: string,
+  id: string;
   companyId: string;
   userId: string;
   skills: string;
