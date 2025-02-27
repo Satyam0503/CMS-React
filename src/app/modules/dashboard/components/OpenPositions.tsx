@@ -1,4 +1,4 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../components/CustomCard";
@@ -31,29 +31,55 @@ export default function OpenPositions() {
       label={intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
       value={activeJobs.length}
     >
-      <Stack spacing={1} sx={{marginBlock:1}}>
-        {activeJobs.slice(-4).map((job) => (
-          <Stack key={job.jobId} direction={"row"} alignItems={"center"} spacing={1}>
-            <Avatar variant="rounded">{job.title.charAt(0)}</Avatar>
+      <Stack
+        sx={{
+          flexGrow: 1,
+          justifyContent: "space-between",
+        }}
+      >
+        {!activeJobs.length ? (
+          <Box component={"div"} sx={{height:"100%", alignContent:"center",textAlign:"center" }}>
+            <Typography variant="h5">No Active Vacancies</Typography>
+          </Box>
+        ) : (
+          <>
+            <Stack spacing={1} sx={{ marginBlock: 1 }}>
+              {activeJobs.slice(-4).map((job) => (
+                <Stack
+                  key={job.jobId}
+                  direction={"row"}
+                  alignItems={"center"}
+                  spacing={1}
+                >
+                  <Avatar variant="rounded">{job.title.charAt(0)}</Avatar>
 
-            <Stack flexGrow={1}>
-              <Typography variant="body1">{job.title}</Typography>
+                  <Stack flexGrow={1}>
+                    <Typography variant="body1">{job.title}</Typography>
 
-              <Typography
-                variant="body2"
-                sx={{ color: colors.alpha.neutral[400] }}
-              >
-                {job.jobType}
-              </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: colors.alpha.neutral[400] }}
+                    >
+                      {job.jobType}
+                    </Typography>
+                  </Stack>
+
+                  <Typography variant="h6">{job.vacancies}</Typography>
+                </Stack>
+              ))}
             </Stack>
-
-            <Typography variant="h6">{job.vacancies}</Typography>
-          </Stack>
-        ))}
+            {activeJobs.length > 0 && (
+              <Link to="/recruitment/jobs">
+                <Typography
+                  sx={{ fontSize: "12px", textDecoration: "underline" }}
+                >
+                  {"See more"}
+                </Typography>
+              </Link>
+            )}
+          </>
+        )}
       </Stack>
-      <Link to="/recruitment/jobs">
-        <Typography sx={{fontSize:"12px", textDecoration:"underline"}}> {"See more"}</Typography>
-      </Link>
     </CustomCard>
   );
 }

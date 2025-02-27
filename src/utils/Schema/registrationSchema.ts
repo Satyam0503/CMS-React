@@ -1,18 +1,24 @@
 import * as Yup from "yup";
+import { Regex } from "../constant/Constant";
+
 export const registrationSchema = Yup.object().shape({
   firstName: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
+    .matches(
+      Regex.Name,
+      "Invalid Name"
+    )
     .required("First name is required"),
   email: Yup.string()
     .matches(
-      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      Regex.Email,
       "Email must be a valid email"
     )
     .required("Email is required"),
   lastName: Yup.string()
-    .min(3, "Minimum 3 symbols")
-    .max(50, "Maximum 50 symbols")
+    .matches(
+      Regex.Name,
+      "Invalid Name"
+    )
     .required("Last name is required"),
   companyName: Yup.string()
     .min(3, "Minimum 3 symbols")
@@ -21,7 +27,7 @@ export const registrationSchema = Yup.object().shape({
   password: Yup.string()
     .max(50, "Maximum 50 symbols")
     .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+      Regex.Password,
       "Use 8 or more characters with a mix of letters, numbers & symbols"
     )
     .required("Password is required"),

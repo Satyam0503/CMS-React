@@ -47,21 +47,22 @@ export const ServiceUrl = {
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
+  CREATE_NEW_PASSWORD: `${BaseUrl}/api/User/CreateNewPassword`,
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
-  UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
+  UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
-  
+
   GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
   GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
   GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
   GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
-  
+
   ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
@@ -90,7 +91,13 @@ export const ServiceUrl = {
 
   // not working
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
+};
 
+export const Regex = {
+  Name: /^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/,
+  Email: /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  Phone: /^[6-9]\d{9}$/,
+  Password: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
 };
 
 export const Gender = [
@@ -194,11 +201,18 @@ export const ApplicationEvaluationStatus = [
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
 
+export const DepartmentList = [
+  { id: 1, label: "Human Resource", value: "Human Resource" },
+  { id: 2, label: "Sales", value: "Sales" },
+  { id: 3, label: "Marketing", value: "Marketing" },
+  { id: 4, label: "IT", value: "IT" },
+];
+
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 30,
+    label: "S.No.",
+    minWidth: 60,
   },
   {
     id: "name",
@@ -207,7 +221,13 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
       const jobRole = row.jobRole;
-      return <AvatarCell title={fullName} subTitle={jobRole} />;
+      return (
+        <AvatarCell
+          avatarSrc={row.fullProfileUrl}
+          title={fullName}
+          subTitle={jobRole}
+        />
+      );
     },
   },
   {
@@ -251,7 +271,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
+    label: "S.No.",
     minWidth: 30,
   },
   {
@@ -296,8 +316,8 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 30,
+    label:  "S.No.",
+    minWidth: 60,
   },
   {
     id: "name",
@@ -336,8 +356,8 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 30,
+    label:  "S.No.",
+    minWidth: 60,
   },
   {
     id: "fullName",
@@ -353,7 +373,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
-    sorting:true,
+    sorting: true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
@@ -367,7 +387,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
-    sorting:true,
+    sorting: true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
@@ -401,8 +421,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 40,
+    label:  "S.No.",
+    minWidth: 60,
   },
   {
     id: "roleName",
@@ -434,8 +454,8 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 30,
+    label:  "S.No.",
+    minWidth: 60,
   },
   {
     id: "title",
@@ -445,7 +465,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "vacancies",
     label: "No of Position",
     align: "center",
-    sorting:true,
+    sorting: true,
   },
   {
     id: "jobType",
@@ -483,8 +503,8 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "#",
-    minWidth: 30,
+    label:  "S.No.",
+    minWidth: 60,
   },
   {
     id: "userName",

@@ -1,17 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Box, Checkbox, Stack, TextField, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../components/CustomisedButton";
-
-import { useAppDispatch } from "../../../Redux/hooks";
+import * as Yup from "yup";
 import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
+import { Formik } from "formik";
+import { TextInput } from "../../components/form_component/TextInput";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { createPassword } from "../core/_requests";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { Regex } from "../../../../utils/constant/Constant";
+
+const validationSchema = Yup.object().shape({
+  newPassword: Yup.string()
+    .matches(
+      Regex.Password,
+      "Use 8 or more characters with a mix of letters, numbers & symbols"
+    )
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .required("Password confirmation is required")
+    .oneOf(
+      [Yup.ref("newPassword")],
+      "Password and Confirm Password didn't match"
+    ),
+});
+
+const initialValues = {
+  newPassword: "",
+  confirmPassword: "",
+};
 
 export function CreatePassword() {
-  const [loading, setLoading] = useState(false);
   const intl = useIntl();
-  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [queryParam] = useSearchParams();
+
+  const statusNumber = queryParam.get("statusNumber") || "";
+
+  async function handlePasswordChange(
+    values: typeof initialValues,
+    setSubmitting: (isSubmitting: boolean) => void,
+    setStatus: (status?: any) => void
+  ) {
+    const payload = {
+      newPassword: values.newPassword,
+      statusNumber,
+    };
+    try {
+      const response = await createPassword(payload);
+      const { success, message } = response.data;
+      if (!success) {
+        throw new AxiosError("Failed To Create New Password");
+      }
+      toast.success(message);
+      setStatus("");
+      navigate("/auth/login");
+    } catch (error) {
+      setStatus((error as AxiosError).message);
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!(queryParam.size && queryParam.has("statusNumber"))) {
+      navigate("/error/404", { replace: true });
+    }
+  },[]);
 
   return (
     <Stack spacing={{ xs: 4 }}>
@@ -35,55 +96,50 @@ export function CreatePassword() {
           />
         </Stack>
       </Stack>
-      <form>
-        <Stack spacing={2}>
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-            </Typography>
-            <TextField fullWidth placeholder="email" type="email" />
-          </Stack>
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "PASSWORD.CREATE_NEW" })}
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="min 8 characters containing uppercase, numeric & special charater"
-              type="password"
-            />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
-            </Typography>
-            <TextField fullWidth placeholder="Password" type="password" />
-          </Stack>
-
-          <Stack direction={"row"} alignItems={"center"} className="ms-lg-n2">
-            <Checkbox />
-            <Box component="span">
-              <Typography
-                variant="body1"
-                color={colors.alpha.primary[500]}
-                fontWeight={600}
-              >
-                {intl.formatMessage({ id: "AUTH.TERMS.CONFIRMATION" })}
-              </Typography>
-            </Box>
-          </Stack>
-
-          <Stack spacing={0.5}>
-            <CustomisedButton
-              type="submit"
-              label="Create Password"
-              size="large"
-              loading={loading}
-            />
-          </Stack>
-        </Stack>
-      </form>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={(values, { setSubmitting, setStatus }) => {
+          handlePasswordChange(values, setSubmitting, setStatus);
+        }}
+      >
+        {(formik) => (
+          <form onSubmit={formik.handleSubmit}>
+            {formik.status && (
+              <Grid className="mb-lg-15 alert alert-danger">
+                <Grid className="alert-text font-weight-bold">
+                  {formik.status}
+                </Grid>
+              </Grid>
+            )}
+            <Stack spacing={2}>
+              <TextInput
+                type="password"
+                name="newPassword"
+                label={intl.formatMessage({ id: "PASSWORD.CREATE_NEW" })}
+                placeholder="New Password"
+              />
+              <TextInput
+                type="password"
+                name="confirmPassword"
+                label={intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
+                placeholder="Confirm Password"
+              />
+            </Stack>
+            <Stack sx={{ marginBlockStart: "3rem" }}>
+              <CustomisedButton
+                type="submit"
+                label="Create Password"
+                size="large"
+                loading={loading}
+                disabled={
+                  formik.isSubmitting || !(formik.isValid && formik.dirty)
+                }
+              />
+            </Stack>
+          </form>
+        )}
+      </Formik>
     </Stack>
   );
 }

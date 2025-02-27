@@ -1,8 +1,6 @@
-import { Card, Typography, Grid, Stack } from "@mui/material";
-
+import { Grid } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { useIntl } from "react-intl";
 import { colors } from "../theme/MuiTheme";
 
 interface DonutApexChartProps {
@@ -20,10 +18,9 @@ interface DonutApexChartProps {
 }
 
 function DonutApexChart(props: DonutApexChartProps) {
-  const intl = useIntl();
   const {
-    series = [],
-    labels = [],
+    series,
+    labels,
     height,
     legendOption,
     size = "60%",
@@ -38,14 +35,11 @@ function DonutApexChart(props: DonutApexChartProps) {
         speed: 800,
         dynamicAnimation: {
           enabled: true,
-          speed: 800,
+          speed: 800,          
         },
       },
-      background: "transparent",
       stacked: false,
-      toolbar: {
-        show: false,
-      },
+      type: "donut",
     },
     plotOptions: {
       pie: {
@@ -98,8 +92,7 @@ function DonutApexChart(props: DonutApexChartProps) {
     },
     colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444"],
     dataLabels: {
-      // enabled: showDataLabels || false,
-      enabled: false,
+      enabled: showDataLabels || false,
       formatter: function (value: number, opts) {
         const labels = opts.w.config.labels;
         const series = opts.w.config.series;
@@ -136,12 +129,15 @@ function DonutApexChart(props: DonutApexChartProps) {
         horizontal: 10,
         vertical: 5,
       },
+      formatter: function (seriesName) {
+        return `<span style="text-transform:Capitalize">${seriesName}</span>`;
+      },
     },
     stroke: {
       width: 0,
     },
   };
-
+  
   return (
     <Grid item xs={12}>
       <Chart

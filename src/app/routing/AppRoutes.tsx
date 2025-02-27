@@ -23,7 +23,7 @@ const AppRoutes: FC = () => {
           <Route path="career/*" element={<ApplyNow />} />
           <Route path="logout" element={<Logout />} />
           <Route path="applynow/*" element={<ApplyNowNew />} />
-
+ 
           {isUserAuthenticated ? (
             <>
               <Route path="/*" element={<PrivateRoutes />} />

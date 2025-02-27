@@ -49,7 +49,7 @@ const employeeInitialValue: EmployeeModel = {
   dateOfJoining: null,
   personalEmail: "",
   emergencyContact: "",
-  password: "",
+  password: null,
 };
 export default function Employees() {
   const intl = useIntl();
@@ -87,7 +87,7 @@ export default function Employees() {
     const payload = {
       ...values,
       status: statusEncoder(values.status as string),
-    };
+    };    
     if (isEdit) {
       const userId = values.userId;
       updateEmployee(payload, userId)

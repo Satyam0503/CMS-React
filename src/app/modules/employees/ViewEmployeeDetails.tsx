@@ -36,7 +36,7 @@ export const ViewEmployeeDetails = (props: PropsType) => {
           <Stack direction={"row"} spacing={2} alignItems={"center"}>
             <Avatar
               alt="User Profile"
-              src=""
+              src={employeeData.fullProfileUrl}
               sx={{
                 width: "128px",
                 height: "128px",
@@ -182,12 +182,6 @@ export const ViewEmployeeDetails = (props: PropsType) => {
             </Grid>
           </Grid>
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
-            <CustomisedButton
-              variant="contained"
-              label="Edit"
-              Icon={<Edit />}
-              handleClick={handleClose}
-            />
             <CustomisedButton
               variant="outlined"
               label="Close"

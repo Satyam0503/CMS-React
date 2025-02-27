@@ -615,7 +615,6 @@ export const MuiTheme = createTheme({
             borderRadius: 8,
           },
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
-            border: " 1px solid " + colors.alpha.neutral[200],
             background: "transparent",
             color: colors.alpha.primary[500],
           },

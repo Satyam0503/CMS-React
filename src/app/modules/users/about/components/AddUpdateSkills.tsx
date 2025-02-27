@@ -29,8 +29,11 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
   }
 
   function handleAddSkill() {
-    if (!skills.includes(newSkill.toUpperCase())) {
-      setSkills([...skills, newSkill.toUpperCase()]);
+    if(newSkill.trim().length===0){
+      return;
+    }
+    if (!skills.includes(newSkill.trim().toUpperCase())) {
+      setSkills([...skills, newSkill.trim().toUpperCase()]);
       setNewSkill("");
     }
   }
@@ -62,7 +65,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
                     disablePointerEvents={!newSkill}
                   >
                     <CustomIconButton
-                      icon={<Add />}
+                      icon={<Add />}                 
                       handleClick={handleAddSkill}
                     ></CustomIconButton>
                   </InputAdornment>
@@ -101,7 +104,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
               variant="contained"
               label="Update"
               handleClick={()=>handleSkillUpdate(skills)}
-              disabled={skills.length === 0}
+              // disabled={skills.length === 0}
             />
           </Stack>
         </Stack>

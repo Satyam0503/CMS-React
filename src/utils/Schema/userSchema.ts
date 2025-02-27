@@ -1,24 +1,23 @@
 import * as Yup from "yup";
-
-// ^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$
+import { Regex } from "../constant/Constant";
 
 export const userSchema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is required")
-    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
+    .matches(Regex.Name, "Invalid Name"),
   lastName: Yup.string()
     .required("last name is required")
-    .matches(/^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/, "Invalid Name"),
+    .matches(Regex.Name, "Invalid Name"),
   email: Yup.string()
     .required("Email is required")
     .matches(
-      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      Regex.Email,
       "Email must be a valid email"
     ),
   address: Yup.string().required("Address is required"),
   phoneNumber: Yup.string()
     .matches(
-      /^[6-9]\d{9}$/,
+      Regex.Phone,
       "Phone number is not valid"
     )
     .required("Phone number is required"),
@@ -30,12 +29,12 @@ export const userSchema = Yup.object().shape({
   personalEmail: Yup.string()
     .required("Personal email is required")
     .matches(
-      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      Regex.Email,
       "Email is not valid"
     ),
   emergencyContact: Yup.string()
     .matches(
-      /^[6-9]\d{9}$/,
+      Regex.Phone,
       "Emergency Contact is not valid"
     )
     .required("Emergency Contact is required"),

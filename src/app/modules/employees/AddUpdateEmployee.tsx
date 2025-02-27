@@ -3,20 +3,18 @@ import {
   Stack,
   Typography,
   MenuItem,
-  FormHelperText,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
-import { Formik, useFormik } from "formik";
-import { bloodGroups, Gender } from "../../../utils/constant/Constant";
+import { Formik,  } from "formik";
+import { bloodGroups, DepartmentList, Gender } from "../../../utils/constant/Constant";
 import { getAllRoles } from "./components/employeeServices";
 import { EmployeeModel, RoleModel } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../components/CustomisedButton";
 import { CustomisedModal } from "../components/CustomisedModal";
 import { employeeSchema } from "../../../utils/Schema/employeeSchema";
-import { useAppSelector } from "../../Redux/hooks";
 import { toast } from "react-toastify";
 import { TextInput } from "../components/form_component/TextInput";
 import { SelectInput } from "../components/form_component/SelectInput";
@@ -71,6 +69,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               initialValues={initialValues}
               validationSchema={employeeSchema}
               onSubmit={(values, { setSubmitting }) => {
+                delete values.fullProfileUrl ;
+                delete values.profileUrl;                
                 SaveAddEditEmployee(values, setSubmitting);
               }}
             >
@@ -151,6 +151,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         type="email"
                         name="email"
                         placeholder="Email"
+                        disabled={isEdit}
                       />
                     </Grid>
 
@@ -177,13 +178,19 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Job Role"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
-                        type="text"
-                        name="department"
-                        placeholder="Department"
-                      />
+                    <Grid item xs={12} md={6}>
+                        <SelectInput
+                         name="department"
+                         label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
+                        >
+                          {
+                            DepartmentList.map(dep=>(
+                              <MenuItem key={dep.id} value={dep.value}>
+                                {dep.label}
+                              </MenuItem>
+                            ))
+                          }
+                        </SelectInput>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput

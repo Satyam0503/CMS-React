@@ -18,17 +18,18 @@ import { setToken } from "../../../Redux/Reducers/authSlice";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { setLocalKey } from "../core/AuthHelpers";
 import { TextInput } from "../../components/form_component/TextInput";
+import { Regex } from "../../../../utils/constant/Constant";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .matches(
-      /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      Regex.Email,
       "Email must be a valid email"
     )
     .required("Email is required"),
   password: Yup.string()
     .matches(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+      Regex.Password,
       "Use 8 or more characters with a mix of letters, numbers & symbols"
     )
     .required("Password is required"),

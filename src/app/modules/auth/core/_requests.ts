@@ -1,8 +1,7 @@
-import axios from "axios";
 import { CompanyRegisterModel, UserLoginModel} from "./_models";
 import { postRequest } from "../../../../server/axios";
 import { ServiceUrl } from "../../../../utils/constant/Constant";
-import { ApiResponse, GetUserDetailsResponseData } from "../../../../utils/common_types";
+import { ApiResponse, CreatePasswordModel, GetUserDetailsResponseData } from "../../../../utils/common_types";
 
 
 export const registerCompany = async (payload:CompanyRegisterModel)=>{
@@ -17,9 +16,12 @@ export const getSignedUserDetails= async () => {
   return postRequest<{},GetUserDetailsResponseData>(ServiceUrl.GET_USER_DETAILS);
 }
 
-export function requestPassword(email: string) {
+export const requestPassword= async (email: string)=> {
   // return axios.post<{ result: boolean }>(REQUEST_PASSWORD_URL, {
   //   email,
   // });
 }
 
+export const createPassword= async (payload:CreatePasswordModel)=>{
+  return postRequest<CreatePasswordModel,ApiResponse>(ServiceUrl.CREATE_NEW_PASSWORD,payload);
+}
