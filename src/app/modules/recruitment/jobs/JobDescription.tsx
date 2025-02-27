@@ -1,19 +1,14 @@
+import { Check, FileOpenOutlined } from "@mui/icons-material";
 import {
-  Check,
-  FileOpenOutlined,
-  LinkOutlined,
-  Padding,
-} from "@mui/icons-material";
-import {
-  FormHelperText,
   Grid,
   MenuItem,
   Select,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../modules/components/CustomisedModal";
 import CustomisedButton from "../../../modules/components/CustomisedButton";
@@ -22,10 +17,7 @@ import { useFormik } from "formik";
 import jobSchema from "../../../../utils/Schema/jobSchema";
 import { JobType } from "../../../../utils/constant/Constant";
 import { JobModal } from "../../../../utils/common_types";
-import { toast } from "react-toastify";
-import Checkbox from "@mui/material/Checkbox";
-import CustomSwitchButtons from "../../components/CustomSwitchButton";
-import CustomSwitchButton from "../../components/CustomSwitchButton";
+import { ErrorLabel } from "../../components/form_component/ErrorLabel";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -45,10 +37,11 @@ const JobDescription: FC<PropsTypes> = ({
   handleClose,
   handleAddEditJob,
 }) => {
+  const intl = useIntl();
+
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
   );
-  const intl = useIntl();
 
   const {
     handleSubmit,
@@ -59,19 +52,20 @@ const JobDescription: FC<PropsTypes> = ({
     dirty,
     isValid,
     values,
+    ...formik
   } = useFormik({
     initialValues,
     validationSchema: jobSchema,
     onSubmit: (values, { setSubmitting }) => {
-      if (jobDescription.length === 0) {
-        toast.error("Please provide job description");
-        setSubmitting(false);
-        return;
-      }
-      values.description = jobDescription;
       handleAddEditJob(values, setSubmitting);
     },
   });
+
+  const handleJobDescriptionChange = useCallback((description: string) => {
+    setJobDescription(description);
+    formik.setFieldValue("description", description.replace("<p><br></p>", ""));
+  }, []);
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -114,6 +108,9 @@ const JobDescription: FC<PropsTypes> = ({
                   placeholder="Vacancies"
                   variant="outlined"
                   type="number"
+                  inputProps={{
+                    min: 1,
+                  }}
                   error={touched.vacancies && Boolean(errors.vacancies)}
                   helperText={
                     touched.vacancies && errors.vacancies && errors.vacancies
@@ -141,9 +138,9 @@ const JobDescription: FC<PropsTypes> = ({
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>
+                <ErrorLabel>
                   {touched.jobType && errors.jobType && errors.jobType}
-                </FormHelperText>
+                </ErrorLabel>
               </Grid>
             </Grid>
 
@@ -153,47 +150,40 @@ const JobDescription: FC<PropsTypes> = ({
                   {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}
                 </Typography>
               </Grid>
-              <CustomSwitchButton />
 
-              {/* <Grid item xs={8} md={6}>
-                <Select
-                  fullWidth
-                  variant="outlined"
-                  error={touched.status && Boolean(errors.status)}
-                  {...getFieldProps("status")}
-                >
-                  <MenuItem value={"Active"}>Active</MenuItem>
-                  <MenuItem value={"Inactive"}>Inactive</MenuItem>
-                </Select>
-                <FormHelperText>
-                  {touched.status && errors.status && errors.status}
-                </FormHelperText>
-              </Grid> */}
+              <Grid item xs={8} md={6}>
+                <Switch
+                  disabled={!isEdit}
+                  checked={values.status}
+                  onChange={(event) => {
+                    formik.setFieldValue("status", event.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </Grid>
             </Grid>
           </Grid>
           <hr />
           <Stack>
-            <TextEditor value={jobDescription} setValue={setJobDescription} />
+            <TextEditor
+              value={jobDescription}
+              setValue={handleJobDescriptionChange}
+            />
+            <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
           <Stack
-            direction={"row"}
+            direction={{ xs: "column", sm: "row" }}
             justifyContent={"flex-end"}
             mt={2}
             gap={1}
-            flexWrap={"wrap-reverse"}
           >
-            <CustomisedButton
-              variant="outlined"
-              label="Page URL"
-              Icon={<LinkOutlined />}
-              iconPosition="start"
-            />
             <CustomisedButton
               variant="contained"
               label="Submissions"
               Icon={<FileOpenOutlined />}
               iconPosition="start"
             />
+
             <CustomisedButton
               variant="outlined"
               label="Close"

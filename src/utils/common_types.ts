@@ -1,6 +1,5 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
-import { UserSummaryModel } from "../app/modules/users/userservices";
 import { Modules, ModulesName } from "./enums";
 
 export interface ApiResponse {
@@ -17,11 +16,21 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   fullName: string;
+  profileImage: string;
   permissions: PermissionModel[];
   modulePermission: ModulePermissoinModel[];
 }
 
-export type UserDataModel = Omit<UserModel, "modulePermission" | "permissions">;
+export type UserSummaryModel = {
+  userId: string;
+  summaryId: string;
+  summary: string;
+};
+
+export type UserDataModel = Omit<
+  UserModel,
+  "modulePermission" | "permissions" | "profileImage"
+>;
 
 export interface ModulePermissoinModel {
   moduleName: string;
@@ -61,6 +70,8 @@ export interface EmployeeModel {
   emergencyContact: string;
   status: string | boolean;
   isEmailVerified?: boolean;
+  profileUrl?: string;
+  fullProfileUrl?: string;
 }
 
 export interface RoleModel {
@@ -99,6 +110,13 @@ export type UserCertificationModel = {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   mode: string;
+};
+
+export type UserSkillsModel = {
+  id: string,
+  companyId: string;
+  userId: string;
+  skills: string;
 };
 
 export type HolidayType = {
@@ -212,9 +230,9 @@ export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
 export type JobsResponseData = ResponseData<JobModal>;
 
-export type SkillsResponseData = ResponseData<JobModal>;
-
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
+
+export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 

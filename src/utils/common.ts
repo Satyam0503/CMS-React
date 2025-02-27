@@ -5,7 +5,10 @@ import {
   ApplicationStatus,
   CommentAction,
   ModulesName,
+  Permission,
 } from "./enums";
+import { SideBarTabList } from "./constant/Constant";
+import { List } from "@mui/material";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -55,6 +58,17 @@ export const applicationStatusDecoder = (applicationStatus: number) => {
       return "";
   }
 };
+
+export const applicationStatusMapper : {
+  [index:number]:string
+} = {
+  [ApplicationStatus.New]:"New",
+  [ApplicationStatus.InProgress]:"In Progress",
+  [ApplicationStatus.OnHold]:"On Hold",
+  [ApplicationStatus.Shortlisted]:"Shortlisted",
+  [ApplicationStatus.Selected]:"Selected",
+  [ApplicationStatus.Rejected]:"Rejected",
+}
 
 export const getApplicationStatusClass = (applicationStatus: number) => {
   switch (applicationStatus) {
@@ -315,12 +329,76 @@ export const convertMonthsToYear = (months: number) => {
   return years + " " + suffix;
 };
 
-export const checkUserModuleAccess = (
-  module: ModulesName,
-  userPermissions: ModulePermissoinModel[]
+export const checkPermissionForModuleAndRoute = (
+  moduleName: ModulesName,
+  userModulePermissions: ModulePermissoinModel[]
 ) => {
-  const index = userPermissions.findIndex(
-    (permission) => permission.moduleConstant === module
+  const module = userModulePermissions.find(
+    (module) => module.moduleConstant === moduleName
   );
-  return index !== -1 ? true : false;
+  if (!module) {
+    return false;
+  }
+  const hasPermission = module.permissions.find(
+    (permission) => permission.permissionConstant === Permission.View
+  );
+  if(!hasPermission){
+    return false;
+  }
+  return hasPermission.hasAccess;
+};
+
+export const findUserDefaultTab = (
+  userModulePermissions: ModulePermissoinModel[]
+) => {
+  const defaultTab = SideBarTabList.find(
+    (tab) => checkPermissionForModuleAndRoute(tab.title, userModulePermissions) === true
+  );
+  if (!defaultTab) {
+    return "/error/";
+  }
+  return defaultTab.route;
+};
+
+// export const checkUserPermissionForRouteAccess = (
+//   moduleName: ModulesName,
+//   userPermissions: ModulePermissoinModel[]
+// ) => {
+//   const module = userPermissions.find(
+//     (permission) => permission.moduleConstant === moduleName
+//   );
+//   if (!module) {
+//     return false;
+//   }
+//   const index = module.permissions.findIndex(
+//     (permission) => permission.permissionConstant === Permission.View
+//   );
+
+//   return index !== -1 ? true : false;
+// };
+
+export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows)=> {
+  const columnValueType = typeof arr[0][key];
+  if( columnValueType === "number" ){
+    arr.sort((a,b)=>(a[key] as number) - (b[key] as number));
+    return arr;
+  }
+  if(columnValueType === "string"){
+    arr.sort((a,b)=> (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase()));
+    return arr;
+  }
+  return arr;
+};
+
+export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
+  const columnValueType = typeof arr[0][key];
+  if( columnValueType === "number" ){
+    arr.sort((a,b)=>(b[key] as number) - (a[key] as number));
+    return arr;
+  }
+  if(columnValueType === "string"){
+    arr.sort((a,b)=> (b[key] as string).toLowerCase().localeCompare((a[key] as string).toLowerCase()));
+    return arr;
+  }
+  return arr;
 };

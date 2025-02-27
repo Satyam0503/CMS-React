@@ -22,41 +22,36 @@ import {
   AttachFile,
   CloudUploadOutlined,
   Download,
-  Edit,
   Image,
-  Opacity,
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
-
-// import { updateUserAvatar } from "./userservices";
-
 import { CustomisedModal } from "../components/CustomisedModal";
 import CustomisedButton from "../components/CustomisedButton";
-import { useAppSelector } from "../../Redux/hooks";
 import { colors } from "../theme/MuiTheme";
 import { CustomIconButton } from "../components/CustomIconButton";
-import { useUserDetails } from "./UserDataProvider";
 import { getAgeInYears } from "../../../utils/common";
-import { EmployeeModel } from "../../../utils/common_types";
+import { ErrorLabel } from "../components/form_component/ErrorLabel";
+import { updateProfilePicture } from "./userservices";
+import { toast } from "react-toastify";
+import { useUserDetails } from "./UserDataProvider";
 
 export default function ProfileCard() {
-  const user = useAppSelector((state) => state.user.userData);
-  const token = useAppSelector((state) => state.auth.token)!;
   const [open, setOpen] = useState(false);
+  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const [userPersonalDetails, setUserPersonalDetails] = useState(
-    {} as EmployeeModel
-  );
-  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
+  const { userDetails, refresh, setRefresh } = useUserDetails();
+
   function handleClose() {
     setOpen(false);
     setSelectedFile(null);
     setFileError("");
   }
+
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const supportedImageFormat = ["jpg", "jpeg", "png", "webp"];
     const files = event.target.files;
     if (!files || files.length === 0) {
       setFileError("Please select a image");
@@ -64,29 +59,39 @@ export default function ProfileCard() {
     }
     const selectedFile = files[0];
     const fileSizeInMB = selectedFile.size / (1024 * 1024);
+    const fileFormat = selectedFile.name.split(".").pop()!;
+
     if (fileSizeInMB > 2) {
       setFileError("File size should be less 2MB");
+      return;
+    }
+
+    if (!supportedImageFormat.includes(fileFormat.toLowerCase())) {
+      setFileError("Only .jpg, .jpeg, .png or .webp images are allowed");
       return;
     }
     setSelectedFile(selectedFile);
     setFileError("");
   }
 
-  // function handleUpdateAvatar() {
-  //   if (seletedFile) {
-  //     const formData = new FormData();
-  //     formData.append("avatar", seletedFile);
-  //     updateUserAvatar(formData, token)
-  //       .then((res) => {
-  //         toast.success("Avatar updated successfully");
-  //         handleClose();
-  //       })
-  //       .catch((error) => {
-  //         toast.error("Something went wrong");
-  //         console.log(error);
-  //       });
-  //   }
-  // }
+  async function handleUpdateAvatar() {
+    if (seletedFile) {
+      const formData = new FormData();
+      formData.append("profilePicture", seletedFile);
+      try {
+        const response = await updateProfilePicture(formData);
+        const { success } = response.data;
+        if (success) {
+          toast.success("Profile Updated Successfully");
+          setRefresh(!refresh);
+          handleClose();
+        }
+      } catch (error) {
+        toast.error("Request Failed");
+      }
+    }
+  }
+
   return (
     <>
       <Card
@@ -106,6 +111,7 @@ export default function ProfileCard() {
           justifyContent={"center"}
           alignItems={"center"}
           p={1}
+          mt={1}
           sx={{
             height: "150px",
             width: "150px",
@@ -115,13 +121,13 @@ export default function ProfileCard() {
             transition: "transform 0.3s ease-in-out",
             "&:hover img": {
               opacity: 0.2,
-              zIndex: 1,
             },
           }}
+          className="gridContainer"
         >
           <Avatar
             alt="profile picture"
-            src="media/avatars/300-1.jpg"
+            src={userDetails.fullProfileUrl}
             sx={{
               width: "100%",
               height: "100%",
@@ -129,29 +135,25 @@ export default function ProfileCard() {
             }}
           />
 
-          <Stack className="coverChange" direction={"row"} gap={1} zIndex={3}>
+          <Stack className="coverChange" direction={"row"} gap={1}>
             <CustomIconButton
               handleClick={() => setOpen(true)}
+              tooltip="Upload profile picture"
               icon={
                 <Image
                   sx={{
                     color: "white",
-                    "&:hover": {
-                      color: colors.alpha.primary[500],
-                    },
                   }}
                 />
               }
             />
             <CustomIconButton
               handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
+              tooltip="Zoom-out profile picture"
               icon={
                 <Visibility
                   sx={{
                     color: "white",
-                    "&:hover": {
-                      color: colors.alpha.primary[500],
-                    },
                   }}
                 />
               }
@@ -160,7 +162,7 @@ export default function ProfileCard() {
         </Grid>
         <Stack textAlign={"center"} alignItems={"center"}>
           <Typography variant="h5" color={"white"} mb={0.5}>
-            {user?.firstName + " " + user?.lastName}
+            {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
           <Typography
             variant="body2"
@@ -175,7 +177,7 @@ export default function ProfileCard() {
               ),
             }}
           >
-            {userPersonalDetails.jobRole || "NA"}
+            {userDetails.jobRole || "NA"}
           </Typography>
         </Stack>
         <Stack
@@ -187,7 +189,7 @@ export default function ProfileCard() {
         >
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {getAgeInYears(userPersonalDetails.dateOfBirth!) || "NA"}
+              {getAgeInYears(userDetails.dateOfBirth!) || "NA"}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.AGE" })}
@@ -195,7 +197,7 @@ export default function ProfileCard() {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {userPersonalDetails.bloodGroup || "NA"}
+              {userDetails.bloodGroup || "NA"}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -217,7 +219,7 @@ export default function ProfileCard() {
             </Typography>
             <Stack
               direction={"column"}
-              spacing={1}
+              spacing={2}
               sx={{ marginBlockStart: 2 }}
             >
               <Box
@@ -265,14 +267,10 @@ export default function ProfileCard() {
                 Icon={<AttachFile />}
                 iconPosition="end"
                 disabled={!seletedFile}
-                // handleClick={handleUpdateAvatar}
+                handleClick={handleUpdateAvatar}
               />
 
-              {fileError && (
-                <Typography variant="body2" color={colors.alpha.danger[800]}>
-                  {fileError}
-                </Typography>
-              )}
+              {fileError && <ErrorLabel>{fileError}</ErrorLabel>}
             </Stack>
           </Box>
         </CustomisedModal>

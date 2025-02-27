@@ -65,3 +65,9 @@ export enum ModulesName {
   Permissions = "Permissions",
   Theme = "Theme",
 }
+
+export enum Roles {
+  Administrator = "Company Administrator",
+  HRManager = "HR Manager",
+  Employee = "Employee",
+}

@@ -3,6 +3,7 @@ import { Card, Typography, Grid, Stack } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { useIntl } from "react-intl";
+import { colors } from "../theme/MuiTheme";
 
 interface DonutApexChartProps {
   series: Array<number>;
@@ -18,15 +19,12 @@ interface DonutApexChartProps {
   showLabelOnHover?: boolean;
 }
 
-const chartSeries = [4, 3, 16];
-
 function DonutApexChart(props: DonutApexChartProps) {
   const intl = useIntl();
   const {
     series = [],
     labels = [],
     height,
-    colors,
     legendOption,
     size = "60%",
     showDataLabels,
@@ -35,6 +33,14 @@ function DonutApexChart(props: DonutApexChartProps) {
 
   const chartOptions: ApexOptions = {
     chart: {
+      animations: {
+        enabled: true,
+        speed: 800,
+        dynamicAnimation: {
+          enabled: true,
+          speed: 800,
+        },
+      },
       background: "transparent",
       stacked: false,
       toolbar: {
@@ -92,20 +98,19 @@ function DonutApexChart(props: DonutApexChartProps) {
     },
     colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444"],
     dataLabels: {
-      enabled: showDataLabels || false,
+      // enabled: showDataLabels || false,
+      enabled: false,
       formatter: function (value: number, opts) {
         const labels = opts.w.config.labels;
         const series = opts.w.config.series;
         return [
-          series[opts.seriesIndex],
-          labels[opts.seriesIndex],
+          `${series[opts.seriesIndex]} ${labels[opts.seriesIndex]}`,
         ] as unknown as string;
       },
       style: {
-        fontSize: "14px",
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
-        colors: ["#000000"],
+        colors: [colors.alpha.primary[600]],
       },
       background: {
         enabled: false,
@@ -125,6 +130,8 @@ function DonutApexChart(props: DonutApexChartProps) {
     legend: {
       show: legendOption?.show || true,
       position: legendOption?.position || "bottom",
+      offsetY: 15,
+      fontWeight: 600,
       itemMargin: {
         horizontal: 10,
         vertical: 5,

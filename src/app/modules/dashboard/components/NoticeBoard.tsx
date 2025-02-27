@@ -104,15 +104,11 @@ export default function NoticeBoard() {
             <IconButton>
               <Check />
             </IconButton>
-
             <IconButton>
               <Visibility />
             </IconButton>
           </Stack>
         </Stack>
-        <Link href="noticeboard" underline="always">
-          {"See more"}
-        </Link>
       </Card>
     </>
   );

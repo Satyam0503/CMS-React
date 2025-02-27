@@ -18,41 +18,70 @@ import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../components/form_component/TextInput";
 import { SelectInput } from "../../../components/form_component/SelectInput";
 import { EmployeeModel } from "../../../../../utils/common_types";
+import { updateEmployee } from "../../../employees/components/employeeServices";
+import { AxiosError } from "axios";
+import { useUserDetails } from "../../UserDataProvider";
+import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
+import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 
-interface Props{
-  open:boolean,
-  setOpen:React.Dispatch<React.SetStateAction<boolean>>
-  currentUser:EmployeeModel,
+interface Props {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  userData: EmployeeModel;
 }
 
-export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
+export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const intl = useIntl();
+  const { updateUserDetails } = useUserDetails();
+  const user = useAppSelector((state) => state.user.userData)!;
+  const dispatch = useAppDispatch();
+
   const initialValues = {
-    firstName: currentUser?.firstName,
-    lastName: currentUser?.lastName,
-    email: currentUser?.email,
-    phoneNumber: currentUser?.phoneNumber,
-    dateOfBirth: currentUser?.dateOfBirth,
-    personalEmail: currentUser?.personalEmail,
-    emergencyContact: currentUser?.emergencyContact,
-    bloodGroup: currentUser?.bloodGroup,
-    address: currentUser?.address,
+    firstName: userData?.firstName,
+    lastName: userData?.lastName,
+    email: userData?.email,
+    phoneNumber: userData?.phoneNumber,
+    dateOfBirth: userData?.dateOfBirth,
+    personalEmail: userData?.personalEmail,
+    emergencyContact: userData?.emergencyContact,
+    bloodGroup: userData?.bloodGroup,
+    address: userData?.address,
   };
 
   function handleClose() {
     setOpen(false);
   }
 
-  function handleUserDetailUpdate(
+  async function handleUpdateUserDetail(
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     const payload = {
+      ...userData,
       ...values,
     };
-    setTimeout(() => {
-      // logic for updating user details
-    }, 2000);
+    try {
+      const response = await updateEmployee(payload, userData.userId);
+      const { success, statusCode, methodResult, message } = response.data;
+      if (success && statusCode === 200) {
+        updateUserDetails(methodResult);
+        dispatch(
+          setCurrentUser({
+            ...user,
+            firstName: methodResult.firstName,
+            lastName: methodResult.lastName,
+            fullName: methodResult.firstName + " " + methodResult.lastName,
+          })
+        );
+        toast.success(message);
+        handleClose();
+      }
+    } catch (error: unknown) {
+      console.error((error as AxiosError).message);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -66,7 +95,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
             initialValues={initialValues}
             validationSchema={userSchema}
             onSubmit={(values, { setSubmitting }) => {
-              handleUserDetailUpdate(values, setSubmitting);
+              handleUpdateUserDetail(values, setSubmitting);
             }}
           >
             {({
@@ -82,7 +111,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
             }) => (
               <form onSubmit={handleSubmit}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                       type="text"
@@ -90,7 +119,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="First Name"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                       type="text"
@@ -98,7 +127,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="Last Name"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <Stack>
                       <Typography variant="body1">
                         {intl.formatMessage({ id: "USER.DOB" })}
@@ -119,7 +148,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                         errors.dateOfBirth}
                     </FormHelperText>
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                       type="email"
@@ -127,7 +156,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                       placeholder="Email"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.PHONE" })}
                       type="text"
@@ -136,7 +165,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <SelectInput
                       name="bloodGroup"
                       label={intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
@@ -149,7 +178,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     </SelectInput>
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({
                         id: "USER.PERSONAL_EMAIL",
@@ -160,7 +189,7 @@ export const UpdateUserInfo:FC<Props> = ({currentUser,open,setOpen}) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({
                         id: "USER.EMERGENCY_CONTACT",

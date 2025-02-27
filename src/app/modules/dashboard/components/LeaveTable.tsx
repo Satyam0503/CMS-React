@@ -7,27 +7,15 @@ import {
   DeleteOutline,
   Download,
   Edit,
-  EditOutlined,
-  FileOpenOutlined,
-  FilterList,
-  LinkOutlined,
-  ListAltOutlined,
-  Search,
-  Visibility,
 } from "@mui/icons-material";
 import {
-  Card,
   Grid,
-  IconButton,
-  InputAdornment,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
@@ -80,7 +68,7 @@ export default function AttendanceTable() {
       <Typography variant="h6" mb={1}>
         {intl.formatMessage({ id: "MENU.LEAVE.DETAILS" })}
       </Typography>
-      
+
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -105,8 +93,11 @@ export default function AttendanceTable() {
                 <TableCell align="right">{row.status}</TableCell>
                 <TableCell align="right">
                   {row.action}
-                  <CustomIconButton icon={<Edit/>} handleClick={()=>{}} />
-                  <CustomIconButton icon= {<DeleteOutline/> } handleClick={()=>{}} />
+                  <CustomIconButton icon={<Edit />} handleClick={() => {}} />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    handleClick={() => {}}
+                  />
                 </TableCell>
               </TableRow>
             ))}

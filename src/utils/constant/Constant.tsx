@@ -52,19 +52,22 @@ export const ServiceUrl = {
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
 
   //user
-  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
-  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
-  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
+  UPDATE_PROFILE_PICTURE :`${BaseUrl}/api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
-
+  
+  GET_ALL_EMPLOYEE: `${BaseUrl}/api/User/GetAllEmployees`,
+  GET_EMPLOYEE_DETAILS: `${BaseUrl}/api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `${BaseUrl}/api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `${BaseUrl}/api/User/GetEmployeeEducationDetails`,
   GET_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/GetEmployeeSummary`,
-
+  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
+  
+  ADD_EMPLOYEE: `${BaseUrl}/api/User/AddEmployees`,
   ADD_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
+  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
@@ -73,29 +76,21 @@ export const ServiceUrl = {
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
+  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
+  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `${BaseUrl}/api/Applicants/EditApplicant`,
-  GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
 
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 
   VERIFY_CAPTCHA: `${BaseUrl}/api/User/verifyCaptch`,
 
   // not working
-  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEmployeeSkills`,
   DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
-  GET_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/GetEmployeeSkills`,
 
-  // UPDATE_USER_AVATAR: `${BaseUrl}/users/updateAvatarImage`,
-  // ADD_UPDATE_USER_SUMMARY: `${BaseUrl}/employees/addEmployeeSummary`,
-  // UPDATE_USER_DETAILS: `${BaseUrl}/employees/addEmployeeDetails`,
-  // ADD_USER_SKILLS: `${BaseUrl}/employees/addEmployeeSkills`,
-  // ADD_USER_EDUCATION: `${BaseUrl}/employees/addEmployeeEducation`,
-  // ADD_USER_CERTIFICATION: `${BaseUrl}/employees/addEmployeeCertificates`,
 };
 
 export const Gender = [
@@ -208,10 +203,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
     label: "Name",
-    minWidth: 180,
+    minWidth: 200,
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
-      const jobRole = row.department;
+      const jobRole = row.jobRole;
       return <AvatarCell title={fullName} subTitle={jobRole} />;
     },
   },
@@ -358,6 +353,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "experience",
     label: "Experience",
     align: "center",
+    sorting:true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
@@ -371,6 +367,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
+    sorting:true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
@@ -448,6 +445,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "vacancies",
     label: "No of Position",
     align: "center",
+    sorting:true,
   },
   {
     id: "jobType",
@@ -550,7 +548,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Employees,
     title: ModulesName.Employees,
-    route: "/employee/employees",
+    route: "/employee/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
@@ -577,7 +575,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Recruitment,
     title: ModulesName.Recruitment,
-    route: "/recruitment/jobs",
+    route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
     subTabs: [
@@ -598,7 +596,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Admin,
     title: ModulesName.Admin,
-    route: "/admin/permissions",
+    route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
     subTabs: [

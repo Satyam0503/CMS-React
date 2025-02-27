@@ -1,6 +1,5 @@
 import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import DonutApexChart from "../components/DonutApexChart";
 import ProfileCard from "./ProfileCard";
 import BasicTabs from "./BasicTabs";
 import IconStat from "../components/IconStat";
@@ -11,8 +10,10 @@ import {
   CorporateFareOutlined,
 } from "@mui/icons-material";
 import LeaveAllowences from "./LeaveAllowences";
+import { useUserDetails } from "./UserDataProvider";
 
 export default function UserProfile() {
+  const userSkills = useUserDetails().userSkills;
   const intl = useIntl();
   const leaveAllowanceLables = ["Pending", "Taken"];
   const leaveAllowanceValue = [13, 10];
@@ -26,7 +27,7 @@ export default function UserProfile() {
         xl={3}
         display={"flex"}
         flexDirection={{ xs: "column", sm: "row", lg: "column" }}
-        gap={4}
+        gap={{ xs: 4, sm: 2, md: 4 }}
         justifyContent={{ lg: "flex-start" }}
       >
         <Stack width={"100%"}>
@@ -72,7 +73,7 @@ export default function UserProfile() {
                 iconBg={colors.alpha.danger[100]}
                 icon={<Build fontSize="large" />}
                 iconColor={colors.alpha.danger[400]}
-                number={0 + "+"}
+                number={userSkills.length + "+"}
                 title="Skills holder"
               />
             </Box>

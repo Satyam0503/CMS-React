@@ -1,25 +1,18 @@
-import { PropTypes } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useDebounce } from "../../hooks/useDebounce";
 
 type PropsType = {
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: (value: string) => void;
 };
 
-const TextEditor: FC<PropsType> = ({ value, setValue }) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  const handleChange = () => {
-    setValue(debouncedValue);
-  };
-
+const TextEditor: FC<PropsType> = memo(({ value, setValue }) => {
+  const [textValue, setTextValue] = useState(value);
+  const debouncedValue = useDebounce(textValue);
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      handleChange();
-    }, 1500);
-    return () => clearTimeout(timeoutId);
+    setValue(debouncedValue);
   }, [debouncedValue]);
 
   const modules = {
@@ -61,13 +54,13 @@ const TextEditor: FC<PropsType> = ({ value, setValue }) => {
   return (
     <ReactQuill
       theme="snow"
-      value={debouncedValue}
-      onChange={setDebouncedValue}
+      value={textValue}
+      onChange={setTextValue}
       formats={formats}
       modules={modules}
-      placeholder="Type Here..."
+      placeholder="Type Here ..."
     />
   );
-};
+});
 
 export default TextEditor;

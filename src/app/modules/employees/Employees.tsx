@@ -4,7 +4,7 @@ import { Add, Close, Download, FilterList } from "@mui/icons-material";
 
 import AddUpdateEmployee from "./AddUpdateEmployee";
 import * as XLSX from "xlsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   addEmployee,
   deleteEmployee,
@@ -26,7 +26,6 @@ import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
-import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -54,7 +53,6 @@ const employeeInitialValue: EmployeeModel = {
 };
 export default function Employees() {
   const intl = useIntl();
-  const currentUser = useAppSelector((state) => state.user.userData);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
@@ -72,6 +70,10 @@ export default function Employees() {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
 
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+  }, []);
+
   function handleClose() {
     setModalOpen(false);
     setEmployeeInitialValues(employeeInitialValue);
@@ -82,11 +84,11 @@ export default function Employees() {
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     setLoading(true);
+    const payload = {
+      ...values,
+      status: statusEncoder(values.status as string),
+    };
     if (isEdit) {
-      const payload = {
-        ...values,
-        status: statusEncoder(values.status as string),
-      };
       const userId = values.userId;
       updateEmployee(payload, userId)
         .then((res) => {
@@ -106,30 +108,6 @@ export default function Employees() {
           setLoading(false);
         });
     } else {
-      const payload = {
-        userId: values.userId,
-        companyId: values.companyId,
-        employeeId: values.employeeId,
-        roleId: values.roleId,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        gender: values.gender,
-        dateOfBirth: values.dateOfBirth,
-        email: values.email,
-        password: "",
-        jobRole: values.jobRole,
-        department: values.department,
-        reportingManager: values.reportingManager,
-        teamLead: values.teamLead,
-        phoneNumber: values.phoneNumber,
-        bloodGroup: values.bloodGroup,
-        personalEmail: values.personalEmail,
-        emergencyContact: values.emergencyContact,
-        dateOfJoining: values.dateOfJoining,
-        status: statusEncoder(values.status as string),
-        address: values.address,
-        isEmailVerified: values.isEmailVerified,
-      };
       addEmployee(payload)
         .then((res) => {
           const { success, message } = res.data;
@@ -191,28 +169,10 @@ export default function Employees() {
 
   function handleEmployeeEdit(employee: EmployeeModel) {
     setEmployeeInitialValues({
-      userId: employee.userId,
-      companyId: employee.companyId,
-      roleId: employee.roleId,
-      employeeId: employee.employeeId,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      gender: employee.gender,
-      password: employee.password,
-      email: employee.email,
-      department: employee.department,
-      reportingManager: employee.reportingManager,
-      teamLead: employee.teamLead,
-      phoneNumber: employee.phoneNumber,
-      jobRole: employee.jobRole,
-      bloodGroup: employee.bloodGroup,
-      personalEmail: employee.personalEmail,
-      emergencyContact: employee.emergencyContact,
+      ...employee,
       status: statusDecoder(employee.status as boolean),
-      address: employee.address,
       dateOfBirth: dayjs(employee.dateOfBirth),
       dateOfJoining: dayjs(employee.dateOfJoining),
-      isEmailVerified: employee.isEmailVerified,
     });
     setModalOpen(true);
     setEdit(true);
@@ -241,7 +201,7 @@ export default function Employees() {
           throw new Error("Failed To fetch Data");
         }
         if (methodResults) {
-          setEmployeeList(methodResults);
+          setEmployeeList(methodResults.reverse());
           setTotalRecords(methodResults.length);
         }
       } catch (error: any) {
@@ -251,7 +211,7 @@ export default function Employees() {
       }
     }, 1500);
     return () => clearTimeout(timeOutId);
-  }, [page, rowPerPage, isRefresh, search]);
+  }, [page, rowPerPage, isRefresh]);
 
   return (
     <>
@@ -264,7 +224,8 @@ export default function Employees() {
             flexWrap={"wrap-reverse"}
             gap={2}
           >
-            <SearchInput search={search} setSearch={setSearch} />
+            <SearchInput search={search} setSearch={handleSearchChange} />
+
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
@@ -325,13 +286,15 @@ export default function Employees() {
           employeeData={selectedEmployee}
         />
       )}
-      <ConfirmationModal
-        title={"Delete Employee"}
-        content="Are you sure you want to delete this Employee?"
-        open={isConfirmModalOpen}
-        handleClose={closeConfirmationModal}
-        handleConfirmation={handleEmployeeDeletion}
-      />
+      {isConfirmModalOpen && (
+        <ConfirmationModal
+          title={"Delete Employee"}
+          content="Are you sure you want to delete this Employee?"
+          open={isConfirmModalOpen}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={handleEmployeeDeletion}
+        />
+      )}
     </>
   );
 }

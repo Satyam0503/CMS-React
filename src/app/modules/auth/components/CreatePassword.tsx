@@ -61,8 +61,8 @@ export function CreatePassword() {
             <TextField fullWidth placeholder="Password" type="password" />
           </Stack>
 
-          <Stack direction={"row"} alignItems={"center"}>
-            <Checkbox sx={{ pl: 0 }} />
+          <Stack direction={"row"} alignItems={"center"} className="ms-lg-n2">
+            <Checkbox />
             <Box component="span">
               <Typography
                 variant="body1"

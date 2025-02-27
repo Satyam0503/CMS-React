@@ -21,10 +21,8 @@ import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
 import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../modules/components/CustomisedTable";
-import HolidayForm from "../../modules/holidays/HolidayForm";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { HolidayType, NoticeModel } from "../../../utils/common_types";
-import dayjs from "dayjs";
+import { NoticeModel } from "../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { AddNotice } from "./AddNotice";
 
@@ -63,6 +61,10 @@ export default function NoticeBoard() {
   const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
 
   const intl = useIntl();
+
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearchValue(value);
+  }, []);
 
   const handleCloseModal = () => {
     setModalOpen(false);
@@ -104,7 +106,7 @@ export default function NoticeBoard() {
           flexWrap={"wrap-reverse"}
           gap={2}
         >
-          <SearchInput search={searchValue} setSearch={setSearchValue} />
+          <SearchInput search={searchValue} setSearch={handleSearchChange} />
           <Stack direction={"row"} flexWrap={"wrap"} gap={2}>
             <Stack>
               <Button
@@ -113,7 +115,7 @@ export default function NoticeBoard() {
                 size="small"
               >
                 <Link
-                  href="mynoticeboard"
+                  href="/usernoticeboard"
                   underline="hover"
                   color={colors.alpha.neutral[800]}
                 >

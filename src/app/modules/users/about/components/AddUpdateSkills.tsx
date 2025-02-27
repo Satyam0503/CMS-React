@@ -39,6 +39,12 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
     setNewSkill("");
     setOpen(false);
   }
+  
+  function handleKeyDownEvent(event:React.KeyboardEvent<HTMLDivElement>){
+    if(event.code==="Enter"){
+      handleAddSkill();
+    }
+  }
 
   return (
     <>
@@ -63,9 +69,11 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
                 ),
               }}
               variant="outlined"
-              placeholder="Type ..."
+              placeholder={ skills.length === 20 ? "Limit Reached" : "Add Upto 20 Skills"}
               value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
+              onChange={(event) => setNewSkill(event.target.value)}
+              onKeyDown={(event)=>handleKeyDownEvent(event)}
+              disabled={skills.length === 20 }
             />
             <Stack
               direction={"row"}

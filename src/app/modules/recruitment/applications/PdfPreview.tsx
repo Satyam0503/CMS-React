@@ -1,15 +1,16 @@
-import { Box, CircularProgress, Grid, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useRef, useState } from "react";
+import { Stack, Typography } from "@mui/material";
+import { FC, useState } from "react";
 import { pdfjs } from "react-pdf";
 import { Document, Page } from "react-pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { Download, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 import { ResumeError } from "./ResumeError";
 import { ResumeLoader } from "./ResumeLoader";
+import { useIntl } from "react-intl";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -24,6 +25,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const intl = useIntl();
 
   function handleDocumentLoadSuccess(pdfjs: DocumentCallback) {
     if (pdfjs.numPages > 1) {
@@ -44,15 +46,20 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
       }}
     >
       <Stack
-        direction={"row"}
-        justifyContent={"space-between"}
+        direction={"column"}
         sx={{
           padding: "1rem !important",
-          alignItems: "center",
           borderBottom: `1px solid ${colors.alpha.neutral[200]}`,
         }}
       >
         <Typography variant="h6">Resume Preview</Typography>
+        <Typography
+          variant="body2"
+          display={{ sm: "none" }}
+          color={colors.alpha.secondary[500]}
+        >
+          {intl.formatMessage({ id: "PDF.VIEWER" })}
+        </Typography>
       </Stack>
       <Stack
         sx={{
@@ -64,6 +71,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
           onLoadSuccess={handleDocumentLoadSuccess}
           loading={<ResumeLoader />}
           error={<ResumeError />}
+          noData={<ResumeError />}
         >
           <Page pageNumber={currentPage} className="pdf_viewer" />
         </Document>

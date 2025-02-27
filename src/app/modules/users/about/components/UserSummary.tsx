@@ -4,13 +4,11 @@ import { CustomIconButton } from "../../../components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";
-import {
-  getEmployeeSummary,
-  updateEmployeeSummary,
-  UserSummaryModel,
-} from "../../userservices";
+import { getEmployeeSummary, updateEmployeeSummary } from "../../userservices";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
+import { UserSummaryModel } from "../../../../../utils/common_types";
+import { AxiosError } from "axios";
 
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
@@ -20,6 +18,10 @@ export const UserSummary = () => {
   const [isEdit, setEdit] = useState(false);
   const intl = useIntl();
 
+  const handleClose = () => {
+    setEdit(false);
+    setUpdatedSummary("");
+  };
   const handleUpdateSummary = async () => {
     const payload = {
       summary: updatedSummary,
@@ -30,29 +32,30 @@ export const UserSummary = () => {
       const response = await updateEmployeeSummary(payload);
       const { success, message } = response.data;
       if (!success) {
-        throw new Error(message);
+        throw new Error("Failed To Update Summary");
       }
       toast.success(message);
-      setEdit(false);
       setRefresh(!refresh);
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error((error as AxiosError).message);
+    } finally {
+      handleClose();
     }
   };
 
   useEffect(() => {
     getEmployeeSummary()
       .then((response) => {
-        const { success, message, methodResult } = response.data;
-        if (!success) {
-          throw new Error(message);
+        const { success, methodResult, statusCode } = response.data;
+        if (success && statusCode === 200) {
+          setUserSummary(methodResult);
         }
-        setUserSummary(methodResult);
       })
       .catch((error) => {
-        console.error(error);
+        console.error(error.message);
       });
   }, [refresh]);
+
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -69,10 +72,7 @@ export const UserSummary = () => {
             <CustomisedButton
               label="Cancel"
               variant="outlined"
-              handleClick={() => {
-                setEdit(false);
-                setUpdatedSummary("");
-              }}
+              handleClick={() => handleClose()}
             />
             <CustomisedButton
               label="Update"

@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 import { useLocation } from "react-router";
-import { checkIsActive, KTIcon, WithChildren } from "../../../../helpers";
+import { checkIsActive,  WithChildren } from "../../../../helpers";
 import { useLayout } from "../../../core";
 
 type Props = {
@@ -17,14 +17,12 @@ const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
   to,
   title,
   icon,
-  fontIcon,
-  hasBullet,
 }) => {
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
   const { config } = useLayout();
   const { app } = config;
-
+    
   return (
     <div
       className={clsx("menu-item", { "here show": isActive }, "menu-accordion")}

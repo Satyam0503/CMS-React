@@ -1,21 +1,17 @@
-import { AxiosResponse } from "axios";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { getRequest, postRequest } from "../../../server/axios";
 import {
+  ApiResponse,
   CertificationResponseData,
   EmployeeResponseData,
-  SkillsResponseData,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
+  UserSkillsResponseData,
+  UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
 
-export type UserSummaryModel = {
-  userId:string,
-  summaryId: string;
-  summary: string;
-};
 
 export const getEmployeeById = async () => {
   return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS);
@@ -39,7 +35,7 @@ export const getEmployeeSummary = async () => {
 };
 
 export const getEmployeeSkills = async () => {
-  return getRequest<UserSummaryResponseData>(
+  return getRequest<UserSkillsResponseData>(
     ServiceUrl.GET_EMPLOYEE_SKILLS
   );
 };
@@ -48,8 +44,8 @@ export const updateEmployeeDetails = async (payload: any) => {
   return postRequest(ServiceUrl.UPDATE_EMPLOYEE, payload);
 };
 
-export const udpateEmployeeSkills = async (payload: { skills: string[] }) => {
-  return postRequest<{ skills: string[] }, SkillsResponseData>(
+export const udpateEmployeeSkills = async (payload: { totalSkills: string}) => {
+  return postRequest<{ totalSkills: string }, ApiResponse>(
     ServiceUrl.UPDATE_EMPLOYEE_SKILLS,
     payload
   );
@@ -63,7 +59,7 @@ export const addEmployeeEducation = async (payload: UserEducationModel) => {
 };
 
 export const updateEmployeeSummary = async (payload: UserSummaryModel) => {
-  return postRequest<UserSummaryModel, any>(
+  return postRequest<UserSummaryModel, UserSummaryResponseData>(
     ServiceUrl.UPDATE_EMPLOYEE_SUMMARY,
     payload
   );
@@ -81,3 +77,8 @@ export const addEmployeeCertification = async (
 export const updateUserEducation = async () => {
   //  for updating the user education details
 };
+
+
+export const updateProfilePicture = async (payload:FormData)=>{
+  return postRequest<FormData,ApiResponse>(ServiceUrl.UPDATE_PROFILE_PICTURE,payload,{},true);
+}
