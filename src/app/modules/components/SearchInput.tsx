@@ -26,7 +26,7 @@ export const SearchInput: FC<PropsType> = memo(({ search, setSearch }) => {
         endAdornment: (
           <InputAdornment position="end">
               <IconButton sx={{ border: "none" }} onClick={handleClearSearch}>
-                { search.length ? <Close />:"" }
+                 <Close />
               </IconButton>
           </InputAdornment>
         ),
