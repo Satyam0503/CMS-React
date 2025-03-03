@@ -680,14 +680,14 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiPopover:{
-      styleOverrides:{
-        paper:{
-          minWidth:"300px",
-          maxWidth:"500px",
-          boxShadow:`0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
-        }
-      }
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          minWidth: "300px",
+          maxWidth: "500px",
+          boxShadow: `0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
+        },
+      },
     },
     MuiPaper: {
       styleOverrides: {
@@ -794,33 +794,33 @@ export const MuiTheme = createTheme({
     },
 
     //dropdown only menuitem
-      MuiMenu: {
-        styleOverrides: {
-          paper: {
-            maxHeight: "260px",
-          },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          maxHeight: "260px",
+        },
 
-          list: {
-            "& .MuiMenuItem-root.MuiButtonBase-root": {
-              fontSize: 14,
-              marginBottom:2,
-              borderRadius:4,
-              transition: "all .2s",
-              "& .MuiTouchRipple-root": {
-                opacity: 0.2,
-              },
-              "&.Mui-selected": {
-                color:"#000000", 
-                background: colors.alpha.primary[200],
-                // "&:hover": {
-                //   color: colors.alpha.white[500],
-                //   background: colors.alpha.primary[500],
-                // },
-              },
+        list: {
+          "& .MuiMenuItem-root.MuiButtonBase-root": {
+            fontSize: 14,
+            marginBottom: 2,
+            borderRadius: 4,
+            transition: "all .2s",
+            "& .MuiTouchRipple-root": {
+              opacity: 0.2,
+            },
+            "&.Mui-selected": {
+              color: "#000000",
+              background: colors.alpha.primary[200],
+              // "&:hover": {
+              //   color: colors.alpha.white[500],
+              //   background: colors.alpha.primary[500],
+              // },
             },
           },
         },
       },
+    },
     //close
 
     MuiList: {
@@ -1134,16 +1134,25 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&:hover, &.MuiSelected, &.Mui-focused": {
+            color: colors.alpha.primary[500],
+          },
+        },
+      },
+    },
 
     MuiCheckbox: {
-      defaultProps:{
-        disableRipple:true,
+      defaultProps: {
+        disableRipple: true,
       },
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
           background: "inherit",
-          padding:0,
+          padding: 0,
           "&:hover": {
             background: "none",
           },
@@ -1153,7 +1162,7 @@ export const MuiTheme = createTheme({
 
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
-            background:"none"
+            background: "none",
           },
           "& .MuiSvgIcon-root": { fontSize: 20 },
         },

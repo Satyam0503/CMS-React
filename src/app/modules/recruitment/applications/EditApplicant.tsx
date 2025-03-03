@@ -404,7 +404,7 @@ export const EditApplicant = () => {
                         <CustomisedButton
                           variant="outlined"
                           size="medium"
-                          label="Reset"
+                          label="Cancel"
                           handleClick={() => {
                             formik.handleReset();
                           }}

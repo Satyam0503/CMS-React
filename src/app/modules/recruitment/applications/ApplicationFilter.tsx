@@ -1,6 +1,6 @@
 import { ArrowDownward, Close } from "@mui/icons-material";
 import {
-    Autocomplete,
+  Autocomplete,
   Box,
   Checkbox,
   Chip,
@@ -52,7 +52,8 @@ export const ApplicationFilter: FC<PropsType> = ({
   anchorEl,
 }) => {
   const intl = useIntl();
-  const [filters, setFilters] = useState<ApplicationsFilterType>(initialFilterValues);
+  const [filters, setFilters] =
+    useState<ApplicationsFilterType>(initialFilterValues);
   const [jobList, setJobList] = useState<JobModal[]>([]);
 
   useEffect(() => {
@@ -93,11 +94,11 @@ export const ApplicationFilter: FC<PropsType> = ({
     });
   };
 
-  const handleResetFilter = ()=>{
+  const handleResetFilter = () => {
     setFilters({
-        ...initialFilterValues
-    })
-  }
+      ...initialFilterValues,
+    });
+  };
 
   console.log(filters);
   return (
@@ -111,7 +112,7 @@ export const ApplicationFilter: FC<PropsType> = ({
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <Box component={"div"} sx={{ padding: "1.5rem" }}>
-        <Stack spacing={2} >
+        <Stack spacing={2}>
           <Stack
             direction={"row"}
             sx={{ justifyContent: "space-between", alignItems: "center" }}
@@ -123,7 +124,7 @@ export const ApplicationFilter: FC<PropsType> = ({
               <Close />{" "}
             </IconButton>
           </Stack>
-          <Stack spacing={1} divider={<Divider  />}>
+          <Stack spacing={1} divider={<Divider />}>
             <Stack spacing={1}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
@@ -187,7 +188,10 @@ export const ApplicationFilter: FC<PropsType> = ({
               >
                 {jobList.map((job) => (
                   <MenuItem key={job.jobId} value={job.jobId}>
-                    <Checkbox checked={filters.jobTitles.includes(job.jobId)} sx={{marginInlineEnd:1}} />
+                    <Checkbox
+                      checked={filters.jobTitles.includes(job.jobId)}
+                      sx={{ marginInlineEnd: 1 }}
+                    />
                     <ListItemText primary={job.title} />
                   </MenuItem>
                 ))}
@@ -200,16 +204,15 @@ export const ApplicationFilter: FC<PropsType> = ({
               <Autocomplete
                 multiple
                 disableClearable
-                size="small"               
+                size="small"
                 id="status-dropdown"
                 options={ApplicantApplicationStatus}
                 disableCloseOnSelect
-                getOptionLabel={(option)=>option.label}
-                renderInput={(params)=>(
-                    <TextField {...params} placeholder="Status" />
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder="Status" />
                 )}
               />
-
 
               {/* <Select
                 displayEmpty
@@ -301,7 +304,6 @@ export const ApplicationFilter: FC<PropsType> = ({
     </Popover>
   );
 };
-
 
 // const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 // const checkedIcon = <CheckBoxIcon fontSize="small" />;
