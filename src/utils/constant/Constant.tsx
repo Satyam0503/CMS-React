@@ -90,13 +90,7 @@ export const ServiceUrl = {
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-
-  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
-
-  VERIFY_CAPTCHA: `${BaseUrl}/api/User/verifyCaptch`,
-
-  // not working
-  DELETE_EMPLOYEE: `${BaseUrl}/employees/deleteEmployee`,
+  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,  
 };
 
 export const Regex = {
@@ -206,6 +200,16 @@ export const ApplicationEvaluationStatus = [
   { id: 4, label: "Selected", value: ApplicationStatus.Selected },
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
+
+export const ApplicantApplicationStatus = [
+  { id: 0, label: "New", value: ApplicationStatus.New },
+  { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
+  { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
+  { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
+  { id: 4, label: "Selected", value: ApplicationStatus.Selected },
+  { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
+];
+
 
 export const DepartmentList = [
   { id: 1, label: "Human Resource", value: "Human Resource" },

@@ -4,8 +4,6 @@ import { Dayjs } from "dayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-
-const date = new Date();
 interface PropsTypes {
   sx?: { width: string };
   value?: Dayjs | null;

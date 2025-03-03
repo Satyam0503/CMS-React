@@ -225,6 +225,15 @@ export interface SideBarTabListProps {
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
+export interface ApplicationsFilterType {
+  fromDate: null | Dayjs;
+  toDate: null | Dayjs;
+  jobTitles: Array<string>;
+  status: Array<number>;
+  minExperience: number;
+  maxExperience: number;
+}
+
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 

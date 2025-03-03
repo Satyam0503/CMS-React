@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Stack } from "@mui/material";
+import { Card, Popover, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import JobDescription from "./JobDescription";
