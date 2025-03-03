@@ -680,7 +680,15 @@ export const MuiTheme = createTheme({
         },
       },
     },
-
+    MuiPopover:{
+      styleOverrides:{
+        paper:{
+          minWidth:"300px",
+          maxWidth:"500px",
+          boxShadow:`0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
+        }
+      }
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -786,35 +794,33 @@ export const MuiTheme = createTheme({
     },
 
     //dropdown only menuitem
-    MuiMenu: {
-      styleOverrides: {
-        paper: {
-          maxHeight: "260px",
-        },
+      MuiMenu: {
+        styleOverrides: {
+          paper: {
+            maxHeight: "260px",
+          },
 
-        list: {
-          "& .MuiMenuItem-root.MuiButtonBase-root": {
-            fontSize: 14,
-            marginTop: 1,
-            marginBottom: 2,
-            transition: "all .2s",
-
-            "& .MuiTouchRipple-root": {
-              opacity: 0.2,
-            },
-
-            "&.Mui-selected": {
-              color: colors.alpha.white[500], // When selected
-              background: colors.alpha.primary[500],
-              "&:hover": {
-                color: colors.alpha.white[500],
-                background: colors.alpha.primary[500],
+          list: {
+            "& .MuiMenuItem-root.MuiButtonBase-root": {
+              fontSize: 14,
+              marginBottom:2,
+              borderRadius:4,
+              transition: "all .2s",
+              "& .MuiTouchRipple-root": {
+                opacity: 0.2,
+              },
+              "&.Mui-selected": {
+                color:"#000000", 
+                background: colors.alpha.primary[200],
+                // "&:hover": {
+                //   color: colors.alpha.white[500],
+                //   background: colors.alpha.primary[500],
+                // },
               },
             },
           },
         },
       },
-    },
     //close
 
     MuiList: {
@@ -830,7 +836,7 @@ export const MuiTheme = createTheme({
           "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
             opacity: 0.5,
             color: colors.alpha.primary[800],
-            background: colors.alpha.primary[400],
+            // background: colors.alpha.primary[400],
           },
         },
 
@@ -851,15 +857,15 @@ export const MuiTheme = createTheme({
     //     },
     //   },
     // },
-    MuiListItemText: {
-      styleOverrides: {
-        root: {
-          "&:hover": {
-            color: colors.alpha.primary[500],
-          },
-        },
-      },
-    },
+    // MuiListItemText: {
+    //   styleOverrides: {
+    //     root: {
+    //       "&:hover": {
+    //         color: colors.alpha.primary[500],
+    //       },
+    //     },
+    //   },
+    // },
 
     MuiAutocomplete: {
       styleOverrides: {
@@ -1130,10 +1136,14 @@ export const MuiTheme = createTheme({
     },
 
     MuiCheckbox: {
+      defaultProps:{
+        disableRipple:true,
+      },
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
           background: "inherit",
+          padding:0,
           "&:hover": {
             background: "none",
           },
@@ -1143,9 +1153,9 @@ export const MuiTheme = createTheme({
 
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
-            background: "none",
+            background:"none"
           },
-          "& .MuiSvgIcon-root": { fontSize: 30 },
+          "& .MuiSvgIcon-root": { fontSize: 20 },
         },
       },
     },

@@ -82,7 +82,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                   </Typography>
                   <CustomisedDatePicker
                     name="startDate"
-                    value={values.startDate}
+                    value={values.startDate && dayjs(values.startDate)}
                     setValue={(newDate: Dayjs | null) => {
                       setFieldTouched("startDate", true);
                       setFieldValue("startDate", newDate);
@@ -104,7 +104,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                   </Typography>
                   <CustomisedDatePicker
                     name="endDate"
-                    value={values.endDate}
+                    value={values.endDate && dayjs(values.endDate)}
                     setValue={(newDate: Dayjs | null) => {
                       setFieldTouched("endDate", true);
                       setFieldValue("endDate", newDate);
@@ -141,20 +141,12 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
             </Grid>
             <Stack direction="row" spacing={1} justifyContent={"end"} mt={2}>
-              <Stack direction={"row"} spacing={1}>
-                <CustomisedButton
-                  variant="outlined"
-                  size="medium"
-                  label="Cancel"
-                  handleClick={handleClose}
-                />
-                <CustomisedButton
-                  variant="outlined"
-                  size="medium"
-                  label="Add New"
-                  Icon={<Add />}
-                />
-              </Stack>
+              <CustomisedButton
+                variant="outlined"
+                size="medium"
+                label="Cancel"
+                handleClick={handleClose}
+              />
 
               <CustomisedButton
                 variant="contained"

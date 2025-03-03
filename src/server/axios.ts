@@ -26,10 +26,10 @@ axios.interceptors.response.use(
       toast.error("Something Went Wrong");
     }
     else if (error.response?.status === 404) {
-      toast.error("Request Failed");
+      toast.error("Requested Resource Not Found");
     }
     else if (error.response?.status === 401) {
-      toast.error("Token expired.");
+      toast.error("Token expired");
     }
     else if(error.response?.status === 500) {
       toast.error("Opps! Server is down. Try Again later")
@@ -49,7 +49,7 @@ export const getRequest = <ResponseData>(
     ...config,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Cache-Control": " max-age=3600",
+      "Cache-Control": "max-age=3600",
     },
   });
 };
@@ -78,8 +78,8 @@ export const patchRequest = <D>(
   return axios.patch(path, data, config);
 };
 
-export const deleteRequest = (path: string, config?:AxiosRequestConfig) => {
-  return axios.delete(path, config);
+export const deleteRequest = <ResponseData>(path: string, config?:AxiosRequestConfig) => {
+  return axios.delete<ResponseData>(path, config);
 };
 export const putRequest = <D>(path: string, data?: D, config?:AxiosRequestConfig) => {
   return axios.put(path, data, config);

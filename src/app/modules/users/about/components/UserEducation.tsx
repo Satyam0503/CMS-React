@@ -6,7 +6,6 @@ import {
   DeleteOutline,
   Edit,
   School,
-  Visibility,
 } from "@mui/icons-material";
 import { UserEducationModel } from "../../../../../utils/common_types";
 import { useEffect, useState } from "react";
@@ -15,15 +14,16 @@ import { dateFormatter } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
 import {
   addEmployeeEducation,
+  deleteEmployeeEducation,
   getEmployeeEducations,
+  updateEmployeeEducation,
 } from "../../userservices";
 import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
-import dayjs from "dayjs";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
+import { AxiosError } from "axios";
 
 const initialValue: UserEducationModel = {
-  educationId: "",
   userId: "",
   educationTitle: "",
   collegeName: "",
@@ -40,9 +40,10 @@ export const UserEducation = () => {
     useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-  const [selectedEducation, setSeletedEducation] =
-    useState<UserEducationModel | null>(null);
+  const [isConfirmModal, setConfirmModalOpen] = useState(false);
+  const [selectedEducationId, setSeletedEducationId] = useState<
+    string | undefined
+  >();
   const [refresh, setRefresh] = useState(false);
 
   const handleClose = () => {
@@ -52,22 +53,13 @@ export const UserEducation = () => {
   };
 
   const handleCloseConfirmation = () => {
-    setConfirmModal(false);
-    setSeletedEducation(null);
+    setSeletedEducationId(undefined);
+    setConfirmModalOpen(false);
   };
 
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
-    const value = {
-      userId: education.userId,
-      educationTitle: education.educationTitle,
-      startDate: dayjs(education.startDate),
-      endDate: dayjs(education.endDate),
-      type: education.type,
-      collegeName: education.collegeName,
-      educationId: education.educationId,
-    };
-    setEducationInitialValues(value);
+    setEducationInitialValues({ ...education });
     setOpen(true);
   }
 
@@ -75,34 +67,45 @@ export const UserEducation = () => {
     values: UserEducationModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    if (isEdit) {
-      //   updateUserEducation(); //  handle user education update.
-    } else {
-      try {
-        const payload = {
-          ...values,
-        };
-        const response = await addEmployeeEducation(payload);
+    try {
+      if (isEdit) {
+        const response = await updateEmployeeEducation(values);
+        const {success ,message} =response.data;
+        if(success){
+          toast.success(message);
+          setRefresh(!refresh);
+        }  
+      } else {
+        const response = await addEmployeeEducation(values);
         const { success, message } = response.data;
         if (!success) {
           throw new Error(message);
         }
         toast.success(message);
         setRefresh(!refresh);
-        handleClose();
-      } catch (error: any) {
-        toast.error(error.message);
-      } finally {
-        setSubmitting(false);
       }
+    } catch (error) {
+      toast.error((error as AxiosError).message);
+    } finally {
+      setSubmitting(false);
+      handleClose();
     }
   };
 
-  const handleDeleteEducation = (confirmation: String) => {
-    if (!selectedEducation) {
-      toast.error("Request Failed");
+  const handleDeleteEducation = async () => {
+    if (selectedEducationId) {
+      try {
+        const response = await deleteEmployeeEducation(selectedEducationId);
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(message);
+          handleCloseConfirmation();
+          setRefresh(!refresh);
+        }
+      } catch (error) {
+        console.error((error as AxiosError).message);
+      }
     }
-    // logic for deleting education
   };
 
   useEffect(() => {
@@ -142,9 +145,9 @@ export const UserEducation = () => {
             {intl.formatMessage({ id: "ADD.EDUCATION" })}
           </Typography>
         ) : (
-          userEducations.map((education, index) => (
+          userEducations.map((education) => (
             <Stack
-              key={education.educationId || index}
+              key={education.educationId}
               direction="row"
               justifyContent={"space-between"}
               alignItems={"center"}
@@ -212,7 +215,6 @@ export const UserEducation = () => {
                 direction={{ sx: "column", sm: "row" }}
                 spacing={1}
                 rowGap={0.5}
-                // className="action-buttons"
                 sx={{
                   visibility: "hidden",
                   transition: "visibility 0.3s ease-in-out",
@@ -227,8 +229,8 @@ export const UserEducation = () => {
                   icon={<DeleteOutline />}
                   tooltip="Delete"
                   handleClick={() => {
-                    setSeletedEducation(education);
-                    setConfirmModal(true);
+                    setSeletedEducationId(education.educationId);
+                    setConfirmModalOpen(true);
                   }}
                 />
               </Stack>
@@ -245,11 +247,11 @@ export const UserEducation = () => {
           handleClose={handleClose}
         />
       )}
-      {confirmModal && (
+      {isConfirmModal && (
         <ConfirmationModal
           title="Delete Education"
           content="Are you sure you want to delete this Education ?"
-          open={confirmModal}
+          open={isConfirmModal}
           handleClose={handleCloseConfirmation}
           handleConfirmation={handleDeleteEducation}
         />

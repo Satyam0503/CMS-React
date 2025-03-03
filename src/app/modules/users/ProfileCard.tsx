@@ -37,7 +37,7 @@ export default function ProfileCard() {
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const { userDetails, refresh, setRefresh } = useUserDetails();
+  const { userDetails,setRefresh } = useUserDetails();
   const profileImageUrl = useAppSelector(state=>state.user.profileImageUrl);
 
   function handleClose() {
@@ -47,7 +47,7 @@ export default function ProfileCard() {
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const supportedImageFormat = ["jpg", "jpeg", "png", "webp"];
+    const supportedImageFormat = ["jpg", "jpeg", "png"];
     const files = event.target.files;
     if (!files || files.length === 0) {
       setFileError("Please select a image");
@@ -58,12 +58,12 @@ export default function ProfileCard() {
     const fileFormat = selectedFile.name.split(".").pop()!;
 
     if (fileSizeInMB > 2) {
-      setFileError("File size should be less 2MB");
+      setFileError("File size should be less then 2MB");
       return;
     }
 
     if (!supportedImageFormat.includes(fileFormat.toLowerCase())) {
-      setFileError("Only .jpg, .jpeg, .png or .webp images are allowed");
+      setFileError("Only .jpg, .jpeg or .png images are allowed");
       return;
     }
     setSelectedFile(selectedFile);
@@ -79,7 +79,7 @@ export default function ProfileCard() {
         const { success } = response.data;
         if (success) {
           toast.success("Profile Updated Successfully");
-          setRefresh(!refresh);
+          setRefresh();
           handleClose();
         }
       } catch (error) {
@@ -241,7 +241,7 @@ export default function ProfileCard() {
                     />
                     <input
                       type="file"
-                      accept=".jpg,.png,.webp"
+                      accept=".jpg,.png"
                       onChange={handleFileChange}
                       hidden
                     />

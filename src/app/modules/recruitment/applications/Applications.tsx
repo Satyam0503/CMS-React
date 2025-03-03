@@ -1,4 +1,4 @@
-import { Card, Stack } from "@mui/material";
+import { Card, Popover, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
@@ -12,9 +12,11 @@ import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
+import { ApplicationFilter } from "./ApplicationFilter";
 
 export default function Applications() {
   const intl = useIntl();
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(0);
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -27,8 +29,15 @@ export default function Applications() {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  
+  const open = Boolean(anchorEl);
+  const id = open ? "application-filter" : undefined;
 
-  const navigate = useNavigate();
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -67,7 +76,7 @@ export default function Applications() {
     }, 1500);
     return () => clearTimeout(timeoutId);
   }, [refresh]);
-  
+
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -86,6 +95,7 @@ export default function Applications() {
                 icon={<FilterList />}
                 tooltip="Filter Application"
                 ariaLabel="Filter Application"
+                handleClick={handleFilterClick}
               />
               <CustomIconButton
                 icon={<Add />}
@@ -98,6 +108,7 @@ export default function Applications() {
                 ariaLabel="import excel"
               />
             </Stack>
+            <ApplicationFilter open={open} id={id} anchorEl={anchorEl} handleClose={()=> setAnchorEl(null)}/>
           </Stack>
 
           <CustomisedTable

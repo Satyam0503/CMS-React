@@ -153,7 +153,6 @@ const JobDescription: FC<PropsTypes> = ({
 
               <Grid item xs={8} md={6}>
                 <Switch
-                  disabled={!isEdit}
                   checked={values.status}
                   onChange={(event) => {
                     formik.setFieldValue("status", event.target.checked);
