@@ -1,5 +1,5 @@
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { getRequest, postRequest } from "../../../server/axios";
+import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import {
   ApiResponse,
   CertificationResponseData,
@@ -74,11 +74,21 @@ export const addEmployeeCertification = async (
   );
 };
 
-export const updateUserEducation = async () => {
-  //  for updating the user education details
-};
-
+export const updateEmployeeCertification = async(payload:UserCertificationModel)=>{
+  return postRequest<UserCertificationModel,ApiResponse>(ServiceUrl.UPDATE_EMPLOYEE_CERTIFICATION,payload);
+}
+export const updateEmployeeEducation = async (payload:UserEducationModel)=>{
+  return postRequest<UserEducationModel, ApiResponse>(ServiceUrl.UPDATE_EMPLOYEE_EDUCATION,payload);
+}
 
 export const updateProfilePicture = async (payload:FormData)=>{
   return postRequest<FormData,ApiResponse>(ServiceUrl.UPDATE_PROFILE_PICTURE,payload,{},true);
+}
+
+export const deleteEmployeeEducation = async (educationId:string) =>{
+  return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_EMPLOYEE_EDUCATION}?educationId=${educationId}`);
+}
+
+export const deleteEmployeeCertification = async (certificationId:string)=>{
+  return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_EMPLOYEE_CERTIFICATION}?certificationId=${certificationId}`);
 }

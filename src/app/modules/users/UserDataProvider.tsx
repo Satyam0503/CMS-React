@@ -9,8 +9,7 @@ type UserDataContextType = {
   userSkills: string[];
   updateUserDetails: (userData?: EmployeeModel ) => void;
   updateUserSkills:(skills:string[])=>void;
-  refresh:boolean,
-  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
+  setRefresh:()=> void;
 };
 
 type PropTypes = {
@@ -41,6 +40,10 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   function updateUserSkills(skills:string[]){
     setUserSkills(skills);
   }
+
+  function handleRefresh(){
+    setRefresh(!refresh);
+  }
  
   useEffect(()=>{
     getEmployeeById()
@@ -64,8 +67,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         userSkills,
         updateUserDetails,
         updateUserSkills,
-        refresh,
-        setRefresh
+        setRefresh:handleRefresh,
       }}
     >
       {children}

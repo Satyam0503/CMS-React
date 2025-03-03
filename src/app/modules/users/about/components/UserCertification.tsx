@@ -12,17 +12,18 @@ import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
 import { colors } from "../../../theme/MuiTheme";
 import { dateFormatter } from "../../../../../utils/common";
-import dayjs from "dayjs";
 import AddUpdateCertification from "./AddUpdateCertification";
 import {
   addEmployeeCertification,
+  deleteEmployeeCertification,
   getEmployeeCertifications,
+  updateEmployeeCertification,
 } from "../../userservices";
 import { toast } from "react-toastify";
 import { ConfirmationModal } from "../../../components/ConfirmationModal";
+import { AxiosError } from "axios";
 
 const initialValue: UserCertificationModel = {
-  certificationId: "",
   certificationTitle: "",
   organisationName: "",
   startDate: null,
@@ -39,19 +40,24 @@ export const UserCertification = () => {
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-  const [selectedCertification, setSelectedCertification] =
-    useState<UserCertificationModel | null>(null);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [selectedCertificationId, setSelectedCertificationId] = useState<
+    string | undefined
+  >();
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) {
-    if (isEdit) {
-      const payload = {};
-      // updateUserCertification()   // replace comment with updating certification logic
-    } else {
-      try {
+  ) {   
+    try {
+      if (isEdit) {
+        const response = await updateEmployeeCertification(values);
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(message);
+          setRefresh(!refresh);
+        }
+      } else {
         const response = await addEmployeeCertification(values);
         const { success, message } = response.data;
         if (!success) {
@@ -59,26 +65,18 @@ export const UserCertification = () => {
         }
         toast.success(message);
         setRefresh(!refresh);
-        handleClose();
-      } catch (error: any) {
-        toast.error(error.message);
-      } finally {
-        setSubmitting(false);
       }
+    } catch (error) {
+      toast.error((error as AxiosError).message);
+    } finally {
+      setSubmitting(false);
+      handleClose();
     }
   }
 
   function handleCertificationEdit(certification: UserCertificationModel) {
     setEdit(true);
-    const value = {
-      certificationTitle: certification.certificationTitle,
-      startDate: dayjs(certification.startDate),
-      endDate: dayjs(certification.endDate),
-      organisationName: certification.organisationName,
-      mode: certification.mode,
-      certificationId: certification.certificationId,
-    };
-    setInitialValues(value);
+    setInitialValues({ ...certification });
     setOpen(true);
   }
 
@@ -89,15 +87,26 @@ export const UserCertification = () => {
   };
 
   function closeConfirmationModal() {
-    setConfirmModal(false);
-    setSelectedCertification(null);
+    setSelectedCertificationId(undefined);
+    setConfirmModalOpen(false);
   }
 
-  function deleteCertification(res: string) {
-    if (!selectedCertification) {
-      toast.error("Request Failed");
+  async function deleteCertification() {
+    if (selectedCertificationId) {
+      try {
+        const response = await deleteEmployeeCertification(
+          selectedCertificationId
+        );
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(message);
+          closeConfirmationModal();
+          setRefresh(!refresh);
+        }
+      } catch (error) {
+        console.log((error as AxiosError).message);
+      }
     }
-    // handle delete logic
   }
 
   useEffect(() => {
@@ -138,10 +147,9 @@ export const UserCertification = () => {
             {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
           </Typography>
         ) : (
-          userCertifications.map((certification, index) => (
+          userCertifications.map((certification) => (
             <Stack
-              // key={certification.certificationId}
-              key={index}
+              key={certification.certificationId}
               direction="row"
               display={"flex"}
               justifyContent={"space-between"}
@@ -224,8 +232,8 @@ export const UserCertification = () => {
                   icon={<DeleteOutline />}
                   tooltip="Delete"
                   handleClick={() => {
-                    setConfirmModal(true);
-                    setSelectedCertification(certification);
+                    setConfirmModalOpen(true);
+                    setSelectedCertificationId(certification.certificationId);
                   }}
                 />
               </Stack>
@@ -242,11 +250,11 @@ export const UserCertification = () => {
           handleClose={handleClose}
         />
       )}
-      {confirmModal && (
+      {isConfirmModalOpen && (
         <ConfirmationModal
           title="Delete Certification"
           content="Are you sure you want to delete this Certification ?"
-          open={confirmModal}
+          open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={deleteCertification}
         />

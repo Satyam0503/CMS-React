@@ -121,7 +121,7 @@ export default function DashboardAdmin() {
 
             <EmpOnLeave />
             <Punctual />
-            <UpcomingBirthday />
+            <UpcomingBirthday employees={employees} />
             <EmpOfMonth />
             <Help />
           </Stack>
