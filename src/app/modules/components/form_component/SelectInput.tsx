@@ -23,6 +23,12 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         error={meta.touched && Boolean(meta.error)}
         {...field}
         {...props}
+        // renderValue={value=>{
+        //   if(!value){
+        //     return <Typography variant="body2" sx={{color:colors.alpha.neutral[400], fontSize:"14px"}}>{label}</Typography>
+        //   }
+        //   return ;
+        // }}
       >
         {children}
       </Select>

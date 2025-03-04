@@ -1,6 +1,7 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { Modules, ModulesName } from "./enums";
+import { ApplicantApplicationStatus } from "./constant/Constant";
 
 export interface ApiResponse {
   success: boolean;
@@ -225,15 +226,19 @@ export interface SideBarTabListProps {
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
-export interface ApplicationsFilterType {
+
+export interface ApplicationFilterModel {
   fromDate: null | Dayjs;
   toDate: null | Dayjs;
-  jobTitles: Array<string>;
-  status: Array<number>;
+  jobTitles: string[]
+  status: number[]
   minExperience: number;
   maxExperience: number;
 }
-
+export interface JobsFilterModel {
+  jobType:string
+  status:number,
+}
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
