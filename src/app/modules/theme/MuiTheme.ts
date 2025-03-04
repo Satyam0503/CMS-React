@@ -1122,6 +1122,15 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&:hover, &.MuiSelected, &.Mui-focused": {
+            color: colors.alpha.primary[500],
+          },
+        },
+      },
+    },
 
     MuiCheckbox: {
       defaultProps: {

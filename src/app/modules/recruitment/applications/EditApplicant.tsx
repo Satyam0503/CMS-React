@@ -143,7 +143,7 @@ export const EditApplicant = () => {
     );
     const totalExperienceInMonths =
       values.experienceInYears * 12 + values.experienceInMonths;
-      
+
     const payload = {
       applicantId: values.applicantId,
       firstName: values.firstName,
@@ -164,7 +164,7 @@ export const EditApplicant = () => {
       if (!success) {
         throw new Error("Failed To Update Applicant");
       }
-      if(values.resume){
+      if (values.resume) {
         const resumeUploadResponse = await uploadResume(values.email, formData);
         if (!resumeUploadResponse.data.success) {
           throw new Error("Failed To Update Applicant");
@@ -184,252 +184,258 @@ export const EditApplicant = () => {
   };
 
   return (
-    <Card sx={{ p: 2.6 }}>
-      <Stack spacing={2}>
-        <Typography variant="h5">
-          {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
-        </Typography>
-        <Grid container display={"flex"} direction={"column"} gap={1}>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={editApplicantValidationSchema}
-            onSubmit={(value, { setSubmitting }) => {
-              handleEditApplicant(value, setSubmitting);
-            }}
-          >
-            {({ values, errors, touched, ...formik }) => {
-              return (
-                <>
-                  <form onSubmit={formik.handleSubmit}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
-                        <TextInput
-                          label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                          type="text"
-                          name="firstName"
-                          placeholder="FirstName"
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} sm={4}>
-                        <TextInput
-                          label={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                          type="text"
-                          name="lastName"
-                          placeholder="Last Name"
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} sm={4}>
-                        <TextInput
-                          label={intl.formatMessage({ id: "USER.PHONE" })}
-                          type="text"
-                          name="phone"
-                          placeholder="Phone Number"
-                        />
-                      </Grid>
-
-                      <Grid item xs={12} sm={4}>
-                        <TextInput
-                          label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                          type="email"
-                          name="email"
-                          placeholder="Email"
-                          disabled={true}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <SelectInput
-                          label={intl.formatMessage({ id: "JOB.POSITION" })}
-                          name="vacancyId"
-                        >
-                          {activeVacancyList.map((vacancy) => (
-                            <MenuItem value={vacancy.jobId} key={vacancy.jobId}>
-                              {vacancy.title}
-                            </MenuItem>
-                          ))}
-                        </SelectInput>
-                      </Grid>
-                      <Grid item xs={12} sm={4}>
-                        <SelectInput
-                          label={intl.formatMessage({ id: "PROFILE.STATUS" })}
-                          name="activityType"
-                        >
-                          {ApplicationEvaluationStatus.map((status) => (
-                            <MenuItem key={status.id} value={status.value}>
-                              {status.label}
-                            </MenuItem>
-                          ))}
-                        </SelectInput>
-                      </Grid>
-                    </Grid>
-
-                    <Stack mt={2} spacing={1}>
-                      <Typography variant="h6" fontWeight={600}>
-                        {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
-                      </Typography>
-                      <Grid container gap={2}>
-                        <Grid item xs={12} sm={4} md={4}>
+    <Container>
+      <Card sx={{ p: 2.6 }}>
+        <Stack spacing={2}>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
+          </Typography>
+          <Grid container display={"flex"} direction={"column"} gap={1}>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={editApplicantValidationSchema}
+              onSubmit={(value, { setSubmitting }) => {
+                handleEditApplicant(value, setSubmitting);
+              }}
+            >
+              {({ values, errors, touched, ...formik }) => {
+                return (
+                  <>
+                    <form onSubmit={formik.handleSubmit}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={4}>
                           <TextInput
                             label={intl.formatMessage({
-                              id: "USER.EXPERIENCE.YEARS",
+                              id: "USER.FIRST_NAME",
                             })}
-                            type="number"
-                            name="experienceInYears"
-                            placeholder="Experience in Years"
-                            inputProps={{
-                              min: 0,
-                            }}
+                            type="text"
+                            name="firstName"
+                            placeholder="FirstName"
                           />
                         </Grid>
-                        <Grid item xs={12} sm={3} md={2}>
-                          <SelectInput
+
+                        <Grid item xs={12} sm={4}>
+                          <TextInput
+                            label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                            type="text"
+                            name="lastName"
+                            placeholder="Last Name"
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} sm={4}>
+                          <TextInput
+                            label={intl.formatMessage({ id: "USER.PHONE" })}
+                            type="text"
+                            name="phone"
+                            placeholder="Phone Number"
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} sm={4}>
+                          <TextInput
                             label={intl.formatMessage({
-                              id: "USER.EXPERIENCE.MONTHS",
+                              id: "AUTH.INPUT.EMAIL",
                             })}
-                            name="experienceInMonths"
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            disabled={true}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                          <SelectInput
+                            label={intl.formatMessage({ id: "JOB.POSITION" })}
+                            name="vacancyId"
                           >
-                            {monthsExperienceList.map((month) => (
-                              <MenuItem key={month.id} value={month.value}>
-                                {month.label}
+                            {activeVacancyList.map((vacancy) => (
+                              <MenuItem
+                                value={vacancy.jobId}
+                                key={vacancy.jobId}
+                              >
+                                {vacancy.title}
+                              </MenuItem>
+                            ))}
+                          </SelectInput>
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                          <SelectInput
+                            label={intl.formatMessage({ id: "PROFILE.STATUS" })}
+                            name="activityType"
+                          >
+                            {ApplicationEvaluationStatus.map((status) => (
+                              <MenuItem key={status.id} value={status.value}>
+                                {status.label}
                               </MenuItem>
                             ))}
                           </SelectInput>
                         </Grid>
                       </Grid>
-                    </Stack>
 
-                    <Stack mt={2}>
-                      <Typography
-                        variant="body1"
-                        mb={1}
-                        color={colors.alpha.primary[500]}
-                      >
-                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
-                      </Typography>
-                    </Stack>
-
-                    <Grid
-                      container
-                      direction={"column"}
-                      p={3}
-                      sx={{
-                        border: "1px dashed grey",
-                        cursor: "pointer",
-                        borderRadius: 0.5,
-                      }}
-                    >
-                      <Stack
-                        spacing={2}
-                        direction={"row"}
-                        display={"flex"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <Stack alignItems={"center"}>
-                          <Tooltip title="Upload file here" placement="top">
-                            <Box
-                              component="label"
-                              bgcolor={colors.alpha.primary[100]}
-                              px={2}
-                              py={0.5}
-                              borderRadius={1}
+                      <Stack mt={2} spacing={1}>
+                        <Typography variant="h6" fontWeight={600}>
+                          {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
+                        </Typography>
+                        <Grid container gap={2}>
+                          <Grid item xs={12} sm={4} md={4}>
+                            <TextInput
+                              label={intl.formatMessage({
+                                id: "USER.EXPERIENCE.YEARS",
+                              })}
+                              type="number"
+                              name="experienceInYears"
+                              placeholder="Experience in Years"
+                              inputProps={{
+                                min: 0,
+                              }}
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={3} md={2}>
+                            <SelectInput
+                              label={intl.formatMessage({
+                                id: "USER.EXPERIENCE.MONTHS",
+                              })}
+                              name="experienceInMonths"
                             >
-                              <CloudUploadOutlined
-                                fontSize="large"
-                                className="text-primary"
-                              />
+                              {monthsExperienceList.map((month) => (
+                                <MenuItem key={month.id} value={month.value}>
+                                  {month.label}
+                                </MenuItem>
+                              ))}
+                            </SelectInput>
+                          </Grid>
+                        </Grid>
+                      </Stack>
 
-                              <input
-                                name="resume"
-                                type="file"
-                                accept=".pdf"
-                                onChange={(e) => {
-                                  formik.setFieldTouched("resume", true);
-                                  handleFileChange(e, formik.setFieldValue);
-                                }}
-                                // onBlur={(e) => {
-                                //   formik.setFieldTouched("resume", true);
-                                // }}
-                                hidden
-                              />
-                            </Box>
-                          </Tooltip>
-                          <Stack>
-                            <Typography
-                              variant="caption"
-                              flexWrap={"wrap"}
-                              textAlign={"center"}
-                            >
-                              {/* {intl.formatMessage({
+                      <Stack mt={2}>
+                        <Typography
+                          variant="body1"
+                          mb={1}
+                          color={colors.alpha.primary[500]}
+                        >
+                          {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                        </Typography>
+                      </Stack>
+
+                      <Grid
+                        container
+                        direction={"column"}
+                        p={3}
+                        sx={{
+                          border: "1px dashed grey",
+                          cursor: "pointer",
+                          borderRadius: 0.5,
+                        }}
+                      >
+                        <Stack
+                          spacing={2}
+                          direction={"row"}
+                          display={"flex"}
+                          justifyContent={"center"}
+                          alignItems={"center"}
+                        >
+                          <Stack alignItems={"center"}>
+                            <Tooltip title="Upload file here" placement="top">
+                              <Box
+                                component="label"
+                                bgcolor={colors.alpha.primary[100]}
+                                px={2}
+                                py={0.5}
+                                borderRadius={1}
+                              >
+                                <CloudUploadOutlined
+                                  fontSize="large"
+                                  className="text-primary"
+                                />
+
+                                <input
+                                  name="resume"
+                                  type="file"
+                                  accept=".pdf"
+                                  onChange={(e) => {
+                                    formik.setFieldTouched("resume", true);
+                                    handleFileChange(e, formik.setFieldValue);
+                                  }}
+                                  // onBlur={(e) => {
+                                  //   formik.setFieldTouched("resume", true);
+                                  // }}
+                                  hidden
+                                />
+                              </Box>
+                            </Tooltip>
+                            <Stack>
+                              <Typography
+                                variant="caption"
+                                flexWrap={"wrap"}
+                                textAlign={"center"}
+                              >
+                                {/* {intl.formatMessage({
                                 id: "FILE.SELECTED",
                               })}
                               : */}
-                            </Typography>
-                            <Typography variant="caption">
-                              {values.resume ? values.resume.name : ""}
+                              </Typography>
+                              <Typography variant="caption">
+                                {values.resume ? values.resume.name : ""}
+                              </Typography>
+                            </Stack>
+                          </Stack>
+
+                          <Stack>
+                            <Typography variant="body2">
+                              {intl.formatMessage({
+                                id: "RESUME.UPLOAD_INSTRUCTION",
+                              })}
                             </Typography>
                           </Stack>
                         </Stack>
+                      </Grid>
+                      <ErrorLabel>
+                        {touched.resume && errors.resume && errors.resume}
+                      </ErrorLabel>
 
-                        <Stack>
-                          <Typography variant="body2">
-                            {intl.formatMessage({
-                              id: "RESUME.UPLOAD_INSTRUCTION",
-                            })}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Grid>
-                    <ErrorLabel>
-                      {touched.resume && errors.resume && errors.resume}
-                    </ErrorLabel>
+                      <Grid
+                        item
+                        xs={12}
+                        display={"flex"}
+                        justifyContent={"flex-end"}
+                        mt={1}
+                        gap={1}
+                      >
+                        <CustomisedButton
+                          variant="outlined"
+                          size="medium"
+                          label="Cancel"
+                          handleClick={() => {
+                            formik.handleReset();
+                          }}
+                        />
+                        <CustomisedButton
+                          variant="contained"
+                          size="medium"
+                          label="Update"
+                          type="button"
+                          disabled={formik.isSubmitting || !formik.isValid}
+                          handleClick={() => setCommnetModalOpen(true)}
+                        />
+                      </Grid>
+                    </form>
 
-                    <Grid
-                      item
-                      xs={12}
-                      display={"flex"}
-                      justifyContent={"flex-end"}
-                      mt={1}
-                      gap={1}
-                    >
-                      <CustomisedButton
-                        variant="outlined"
-                        size="medium"
-                        label="Reset"
-                        handleClick={() => {
-                          formik.handleReset();
-                        }}
+                    {isCommentModalOpen && (
+                      <AddComment
+                        open={isCommentModalOpen}
+                        comment={comment}
+                        handleCommentChange={handleCommentChange}
+                        handleAddComment={() => formik.submitForm()}
+                        handleClose={handleModalClose}
                       />
-                      <CustomisedButton
-                        variant="contained"
-                        size="medium"
-                        label="Update"
-                        type="button"
-                        disabled={
-                          formik.isSubmitting ||
-                          !(formik.isValid)
-                        }
-                        handleClick={() => setCommnetModalOpen(true)}
-                      />
-                    </Grid>
-                  </form>
-
-                  {isCommentModalOpen && (
-                    <AddComment
-                      open={isCommentModalOpen}
-                      comment={comment}
-                      handleCommentChange={handleCommentChange}
-                      handleAddComment={() => formik.submitForm()}
-                      handleClose={handleModalClose}
-                    />
-                  )}
-                </>
-              );
-            }}
-          </Formik>
-        </Grid>
-      </Stack>
-    </Card>
+                    )}
+                  </>
+                );
+              }}
+            </Formik>
+          </Grid>
+        </Stack>
+      </Card>
+    </Container>
   );
 };

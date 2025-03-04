@@ -49,7 +49,7 @@ const Sidebar = () => {
           <Stack padding={3} gap={4} alignItems="center" width="100%">
             <SidebarLogo sidebarRef={sidebarRef} />
             <Stack spacing={2} alignItems={"center"}>
-              <Stack maxWidth={"128px"} minWidth={"50px"}>
+              <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
                 <Avatar
                   alt=""
                   src={profileUrl}

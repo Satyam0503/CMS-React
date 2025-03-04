@@ -129,7 +129,7 @@
   "MENU.TOTAL_EMP": "Total employees",
   "MENU.TOTAL_APP": "Total Application",
   "MENU.OPEN_POSITIONS": "Open Positions",
-  "MENU.DEPT":"Departments",
+  "MENU.DEPT": "Departments",
   "No.VACANCY": "No Jobs",
   "POSITION.DOT_NET": ".NET Developer",
   "POSITION.FULL_STACK": "Full Stack Developer",
@@ -339,13 +339,13 @@
   "ECOMMERCE.CUSTOMERS.EDIT.UPDATE_MESSAGE": "Customer has been updated",
   "ECOMMERCE.CUSTOMERS.EDIT.ADD_MESSAGE": "Customer has been created",
 
-  "FILTER":"Filter",
-  "FILTER.APPLIED_DATE":"Applied Date",
-  "FILTER.FROM":"From",
-  "FILTER.TO":"To",
-  "FILTER.JOB_TITLE":"Job Title",
-  "FILTER.STATUS":"Status",
-  "FILTER.EXPERIENCE":"Experience",
-  "FILTER.MIN_EXPERIENCE":"Min. Experience",
-  "FILTER.MAX_EXPERIENCE":"Max. Experience"
+  "FILTER": "Filter",
+  "FILTER.APPLIED_DATE": "Applied Date",
+  "FILTER.FROM": "From",
+  "FILTER.TO": "To",
+  "FILTER.JOB_TITLE": "Job Title",
+  "FILTER.STATUS": "Status",
+  "FILTER.EXPERIENCE": "Experience",
+  "FILTER.MIN_EXPERIENCE": "Min. Experience",
+  "FILTER.MAX_EXPERIENCE": "Max. Experience"
 }

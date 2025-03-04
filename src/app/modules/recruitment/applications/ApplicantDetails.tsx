@@ -1,6 +1,8 @@
 import {
   Card,
+  FormControl,
   Grid,
+  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -37,6 +39,7 @@ import { AddComment } from "./AddComment";
 import { StyleStatus } from "../../components/StyledStatus";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
+import CustomSwitchButton from "../../components/CustomSwitchButton";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
@@ -272,34 +275,37 @@ export const ApplicantDetails = () => {
 
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
-                <Typography variant="body1" fontWeight={600} flexWrap={"wrap"}>
-                  {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
-                </Typography>
-
-                <Select
-                  name="applicantStatus"
-                  value={activityType}
-                  sx={{ width: "200px", height: "30px" }}
-                  onChange={handleStatusChange}
-                  className="select"
-                >
-                  {ApplicationEvaluationStatus.map((status) => (
-                    <MenuItem key={status.id} value={status.value}>
-                      {status.label}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">
+                    {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
+                  </InputLabel>
+                  <Select
+                    name="applicantStatus"
+                    value={activityType}
+                    sx={{ width: "200px", height: "35px" }}
+                    onChange={handleStatusChange}
+                    className="select"
+                    label="Application Status"
+                  >
+                    {ApplicationEvaluationStatus.map((status) => (
+                      <MenuItem key={status.id} value={status.value}>
+                        {status.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Stack>
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
-              <Stack direction={"row"} spacing={2}>
+              <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "APPLICANT.STATUS" })} :
+                  {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}:
                 </Typography>
-                <StyleStatus
+                <CustomSwitchButton />
+                {/* <StyleStatus
                   label={applicantStatusDecoder(applicant.status)}
                   className={getApplicantStatusClass(applicant.status)}
-                />
+                /> */}
               </Stack>
             </Grid>
           </Grid>

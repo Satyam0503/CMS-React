@@ -40,7 +40,6 @@ export default function Applications() {
     setAnchorEl(event.currentTarget);
   };
 
-
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
   }, []);
@@ -110,7 +109,12 @@ export default function Applications() {
                 ariaLabel="import excel"
               />
             </Stack>
-            <ApplicationFilter open={open} id={id} anchorEl={anchorEl} handleClose={()=> setAnchorEl(null)}/>
+            <ApplicationFilter
+              open={open}
+              id={id}
+              anchorEl={anchorEl}
+              handleClose={() => setAnchorEl(null)}
+            />
           </Stack>
 
           <CustomisedTable

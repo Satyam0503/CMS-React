@@ -1,6 +1,7 @@
 import { ArrowDownward, Close } from "@mui/icons-material";
 import {
   Autocomplete,
+  Autocomplete,
   Box,
   Checkbox,
   Chip,
@@ -127,6 +128,7 @@ export const ApplicationFilter: FC<PropsType> = ({
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <Box component={"div"} sx={{ padding: "1.5rem" }}>
+        <Stack spacing={2}>
         <Stack spacing={2}>
           <Stack
             direction={"row"}
