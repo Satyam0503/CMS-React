@@ -230,6 +230,7 @@ export interface SideBarTabListProps {
 export interface ApplicationFilterModel {
   fromDate: null | Dayjs;
   toDate: null | Dayjs;
+  applicationStatus:number[]
   jobTitles: string[]
   status: number[]
   minExperience: number;
