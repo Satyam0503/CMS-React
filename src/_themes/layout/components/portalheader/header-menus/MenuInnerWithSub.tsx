@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import clsx from "clsx";
 import { checkIsActive, KTIcon, WithChildren } from "../../../../helpers";
 import { Box, Grid, Typography } from "@mui/material";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 type Props = {
   to: string;
@@ -49,27 +50,18 @@ const MenuInnerWithSub: FC<Props & WithChildren> = ({
           active: checkIsActive(pathname, to),
         })}
       >
-        <Typography variant="body1">{title}</Typography>
-        <Box component={"span"}></Box>
-        {/* {hasBullet && (
-          <span className="menu-bullet">
-            <span className="bullet bullet-dot"></span>
-          </span>
-        )} */}
-
-        {/* {icon && (
-          <span className='menu-icon'>
-            <KTIcon iconName={icon} className='fs-2' />
-          </span>
-        )} */}
-
-        {/* {fontIcon && (
-          <span className="menu-icon">
-            <i className={clsx("bi fs-3", fontIcon)}></i>
-          </span>
-        )} */}
-
-        {/* {hasArrow && <span className="menu-arrow"></span>} */}
+        <Typography
+          variant="body1"
+          color={colors.alpha.neutral[500]}
+          sx={{
+            pointer: "cursor",
+            "&:hover": {
+              color: colors.alpha.primary[500],
+            },
+          }}
+        >
+          {title}
+        </Typography>
       </Box>
       <Grid
         item

@@ -6,9 +6,9 @@ export default function AdminDashboard() {
   const intl = useIntl();
   return (
     <>
-      <Typography variant="h4" mb={3} >
+      {/* <Typography variant="h4" mb={3}>
         {intl.formatMessage({ id: "MENU.DASHBOARD" })}
-      </Typography>
+      </Typography> */}
       <DashboardAdmin />
     </>
   );

@@ -12,7 +12,7 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
   // const navigate = useNavigate();
   return (
     <Box component={"div"} className="align-child-center">
-      <Stack spacing={3} sx={{alignItems:"center"}}>
+      <Stack spacing={3} sx={{ alignItems: "center" }}>
         {type === "unauthorise" ? (
           <>
             <Box
@@ -38,7 +38,6 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
                 src={toAbsoluteUrl("media/auth/cancel.svg")}
                 width={"100%"}
                 height={"100%"}
-                
               />
             </Box>
             <Typography variant="h3">Something Went Wrong</Typography>
@@ -47,9 +46,10 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
         )}
         <CustomisedButton
           label="Return to Dashboard"
+          variant="contained"
           Icon={<Home />}
           iconPosition="end"
-          handleClick={() => window.location.href ="/"}
+          handleClick={() => (window.location.href = "/")}
         />
       </Stack>
     </Box>

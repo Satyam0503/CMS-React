@@ -74,7 +74,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Stack spacing={0.5}>
+                <Stack>
                   <Typography variant="body1">
                     {intl.formatMessage({
                       id: "APPLICATION.START",
@@ -96,7 +96,7 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Stack spacing={0.5}>
+                <Stack>
                   <Typography variant="body1">
                     {intl.formatMessage({
                       id: "APPLICATION.END",

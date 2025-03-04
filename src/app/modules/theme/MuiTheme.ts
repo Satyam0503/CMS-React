@@ -416,7 +416,7 @@ export const MuiTheme = createTheme({
           fontWeight: "bold",
         },
         colorDefault: {
-          background: colors.alpha.neutral[300],
+          background: colors.alpha.secondary[500],
           color: themeColors.white,
         },
       },

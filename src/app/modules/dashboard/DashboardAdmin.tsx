@@ -1,9 +1,4 @@
-import {
-  Stack,
-  Typography,
-  Grid,
-  Card,
-} from "@mui/material";
+import { Stack, Typography, Grid, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import OpenPositions from "./components/OpenPositions";
 import NoticeBoard from "./components/NoticeBoard";
@@ -56,7 +51,7 @@ export default function DashboardAdmin() {
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-              <EmployeeChart employees={employees}/>
+              <EmployeeChart employees={employees} />
             </Grid>
             <Grid item xs={12} sm={6}>
               <OpenPositions />
@@ -65,7 +60,7 @@ export default function DashboardAdmin() {
               <ApplicationsChart />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <DepartmentChart employees={employees}/>
+              <DepartmentChart employees={employees} />
             </Grid>
 
             <Grid item xs={12}>

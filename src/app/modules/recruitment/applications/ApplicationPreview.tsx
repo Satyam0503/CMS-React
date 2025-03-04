@@ -90,7 +90,10 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={400}>
-                <StyleStatus label={applicationStatusMapper[applicantData.activityType]} className={className} />
+                <StyleStatus
+                  label={applicationStatusMapper[applicantData.activityType]}
+                  className={className}
+                />
               </Typography>
             </Grid>
           </Grid>
