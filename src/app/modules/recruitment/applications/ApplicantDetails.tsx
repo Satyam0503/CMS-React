@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   FormControl,
   Grid,
@@ -7,10 +8,11 @@ import {
   Select,
   SelectChangeEvent,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Download, Edit } from "@mui/icons-material";
+import { Add, Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -24,6 +26,7 @@ import { Applicant, CommentModel } from "../../../../utils/common_types";
 import {
   applicantStatusDecoder,
   ApplicantStatusMapper,
+  applicationStatusMapper,
   commentActionEncoderForApplicationStatus,
   convertMonthsToYear,
   dateFormatter,
@@ -39,20 +42,28 @@ import { AddComment } from "./AddComment";
 import { StyleStatus } from "../../components/StyledStatus";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
-import CustomSwitchButton from "../../components/CustomSwitchButton";
+import CustomisedButton from "../../components/CustomisedButton";
+import { ApplicantStatus } from "../../../../utils/enums";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const userData = useAppSelector((state) => state.user.userData)!;
+  const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
   const [commentList, setCommentList] = useState<CommentModel[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [activityType, setActivityType] = useState<number>(0);
   const [refresh, setRefresh] = useState(false);
+  const [refreshComment, setRefreshComment] = useState(false);
   const [comment, setComment] = useState("");
   const param = useParams();
+  
+  const [activityType, setActivityType] = useState<number>(0);
+
+  const [status,setStatus] = useState({
+    applicationStatus:0,
+    applicantStatus:0
+  })
 
   useEffect(() => {
     setLoading(true);
@@ -63,7 +74,8 @@ export const ApplicantDetails = () => {
             throw new Error(data.message);
           }
           setApplicant(data.methodResult);
-          setActivityType(data.methodResult.activityType);
+          setStatus({...status,applicantStatus:data.methodResult.status,applicationStatus:data.methodResult.activityType})
+          // setActivityType(data.methodResult.activityType);
         })
         .catch((error) => {
           console.error(error);
@@ -87,7 +99,7 @@ export const ApplicantDetails = () => {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);
+  }, [refreshComment]);
 
   const handleCommentChange = useCallback((comment: string) => {
     setComment(comment);
@@ -104,32 +116,34 @@ export const ApplicantDetails = () => {
   }
 
   const handleAddComment = async () => {
-    const payload = {
-      applicantId: applicant.applicantId,
-      companyId: userData.companyId,
-      firstName: applicant.firstName,
-      lastName: applicant.lastName,
-      email: applicant.email,
-      phone: applicant.phone,
-      vacancyId: applicant.vacancyId,
-      experience: applicant.experience,
-      vacancyName: applicant.vacancyName,
-      activityType: activityType,
-      status: ApplicantStatusMapper[activityType],
-    };
     try {
-      const response = await editApplicant(payload);
-      const { success, message } = response.data;
-      if (!success) {
-        throw new Error(message);
+      if (status.applicationStatus !== applicant.activityType) {
+        const payload = {
+          applicantId: applicant.applicantId,
+          companyId: currentUser.companyId,
+          firstName: applicant.firstName,
+          lastName: applicant.lastName,
+          email: applicant.email,
+          phone: applicant.phone,
+          vacancyId: applicant.vacancyId,
+          experience: applicant.experience,
+          vacancyName: applicant.vacancyName,
+          activityType: activityType,
+          status: ApplicantStatusMapper[activityType],
+        };
+        const response = await editApplicant(payload);
+        const { success, message } = response.data;
+        if (!success) {
+          throw new Error(message);
+        }
       }
       const commentPayload = {
         applicantId: applicant.applicantId,
-        userId: userData.userId,
+        userId: currentUser.userId,
         description: comment,
         activityCategory:
           commentActionEncoderForApplicationStatus(activityType)!,
-        userName: userData.firstName + " " + userData.lastName,
+        userName: currentUser.firstName + " " + currentUser.lastName,
       };
       const commentResponse = await addComment(commentPayload);
       if (!commentResponse.data.success) {
@@ -137,21 +151,24 @@ export const ApplicantDetails = () => {
       }
       toast.success(commentResponse.data.message);
       handleClose();
-      setRefresh(!refresh);
+      if (status.applicationStatus !== applicant.activityType) {
+        setRefresh(!refresh);
+      }
+      setRefreshComment(!refreshComment);
     } catch (error: any) {
       toast.error(error.message);
     }
   };
 
   const handleClose = () => {
-    setActivityType(applicant.activityType);
+    setStatus({...status,applicationStatus:applicant.activityType});
     setModalOpen(false);
     setComment("");
   };
 
   const handleStatusChange = (event: SelectChangeEvent<number>) => {
     if (typeof event.target.value === "number") {
-      setActivityType(event.target.value);
+      setStatus({...status,applicationStatus:event.target.value})
       setModalOpen(true);
     }
   };
@@ -176,6 +193,8 @@ export const ApplicantDetails = () => {
       console.error(error);
     }
   };
+
+  console.log(status.applicantStatus);
 
   return (
     <>
@@ -274,7 +293,35 @@ export const ApplicantDetails = () => {
             </Grid>
 
             <Grid item xs={12} sm={6} lg={4}>
-              <Stack direction={"row"} spacing={2}>
+              <Stack
+                direction={"row"}
+                spacing={2}
+                sx={{ alignItems: "center" }}
+              >
+                <Typography variant="body1" fontWeight={600}>
+                  {intl.formatMessage({ id: "APPLICATION.STATUS" })}
+                </Typography>
+                <FormControl>
+                  <InputLabel id="demo-simple-select-label">
+                    {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
+                  </InputLabel>
+                  <Select
+                    name="applicantStatus"
+                    value={status.applicationStatus}
+                    sx={{ width: "200px" }}
+                    onChange={handleStatusChange}
+                    className="select"
+                    label="Application Status"
+                  >
+                    {ApplicationEvaluationStatus.map((status) => (
+                      <MenuItem key={status.id} value={status.value}>
+                        {status.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Stack>
+              {/* <Stack direction={"row"} spacing={2}>
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
                     {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
@@ -294,18 +341,27 @@ export const ApplicantDetails = () => {
                     ))}
                   </Select>
                 </FormControl>
-              </Stack>
+              </Stack> */}
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Typography variant="body1" fontWeight={600}>
                   {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}:
                 </Typography>
-                <CustomSwitchButton />
-                {/* <StyleStatus
-                  label={applicantStatusDecoder(applicant.status)}
-                  className={getApplicantStatusClass(applicant.status)}
-                /> */}
+                <Switch
+                  checked={[ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus)}
+                  onChange={(event) => {
+                    setStatus({
+                      ...status,
+                      applicantStatus: [ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus) ? ApplicantStatus.InActive : ApplicantStatus.Active,
+                    })
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+                <StyleStatus
+                  label={applicantStatusDecoder(status.applicantStatus)}
+                  className={getApplicantStatusClass(status.applicantStatus)}
+                />
               </Stack>
             </Grid>
           </Grid>
@@ -321,6 +377,13 @@ export const ApplicantDetails = () => {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "APPLICANT.COMMENT" })}
               </Typography>
+              <CustomisedButton
+                label="Add Comment"
+                Icon={<Add />}
+                handleClick={() => {
+                  setModalOpen(true);
+                }}
+              />
             </Stack>
 
             <CustomisedTable

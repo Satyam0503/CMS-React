@@ -1,6 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
 const style = {
-  height: "calc(100vh - 80px)",
+  height: "calc(100vh - 0px)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
