@@ -1,10 +1,10 @@
 import * as Yup from "yup";
 
 export const applicationFilterSchema = Yup.object().shape({
-  fromDate: Yup.date().notRequired(),
-  toDate: Yup.date().notRequired(),
-  applicationStatus: Yup.array().notRequired(),
-  jobTitles: Yup.array().notRequired(),
+  filterFrom: Yup.date().notRequired(),
+  filterTo: Yup.date().notRequired(),
+  activityTypes: Yup.array().notRequired(),
+  vacancyIds: Yup.array().notRequired(),
   status: Yup.array().notRequired(),
   minExperience: Yup.number()
     .min(0, "Experience value must be positive")

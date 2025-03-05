@@ -5,7 +5,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 interface PropsTypes {
-  sx?: { width: string };
   value?: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
   label?: string;
@@ -43,7 +42,6 @@ const CustomisedDatePicker = (props: PropsTypes) => {
               minWidth: {
                 xl: "100% !important",
                 sm: "100% !important",
-                overflow: "hidden",
               },
               "& .MuiIconButton-root":{
                 border:0 ,

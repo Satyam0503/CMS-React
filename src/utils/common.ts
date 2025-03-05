@@ -39,25 +39,6 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-// export const applicationStatusDecoder = (applicationStatus: number) => {
-//   switch (applicationStatus) {
-//     case ApplicationStatus.New:
-//       return "New";
-//     case ApplicationStatus.InProgress:
-//       return "In Progress";
-//     case ApplicationStatus.OnHold:
-//       return "On Hold";
-//     case ApplicationStatus.Shortlisted:
-//       return "Shortlisted";
-//     case ApplicationStatus.Selected:
-//       return "Selected";
-//     case ApplicationStatus.Rejected:
-//       return "Rejected";
-//     default:
-//       return "";
-//   }
-// };
-
 export const applicationStatusMapper : {
   [index:number]:string
 } = {
