@@ -869,30 +869,18 @@ export const MuiTheme = createTheme({
 
     MuiAutocomplete: {
       styleOverrides: {
-        tag: {
-          margin: 1,
-        },
-        root: {
-          ".MuiAutocomplete-inputRoot.MuiOutlinedInput-root .MuiAutocomplete-endAdornment":
-            {
-              right: 14,
-            },
-        },
         clearIndicator: {
-          background: colors.alpha.primary[500],
           color: colors.alpha.primary[500],
+          border:0,
           marginRight: 8,
-
           "&:hover": {
-            background: colors.alpha.primary[500],
             color: colors.alpha.primary[500],
           },
         },
         popupIndicator: {
           color: colors.alpha.neutral[500],
-
+          border:0,
           "&:hover": {
-            background: colors.alpha.primary[500],
             color: colors.alpha.primary[500],
           },
         },

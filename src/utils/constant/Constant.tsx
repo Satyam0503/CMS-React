@@ -17,7 +17,7 @@ import {
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
-import { ApplicationStatus, Modules, ModulesName } from "../enums";
+import { ApplicantStatus, ApplicationStatus, Modules, ModulesName } from "../enums";
 import { ActionComponent } from "../../app/modules/components/ActionComponent";
 import { AvatarCell } from "../../app/modules/components/AvatarCell";
 import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
@@ -208,6 +208,11 @@ export const ApplicantApplicationStatus = [
   { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
   { id: 4, label: "Selected", value: ApplicationStatus.Selected },
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
+];
+export const ApplicantStatusConstant = [
+  { id: 0, label: "New", value:ApplicantStatus.New  },
+  { id: 1, label: "Active", value: ApplicantStatus.Active },
+  { id: 2, label: "InActive", value: ApplicantStatus.InActive },
 ];
 
 

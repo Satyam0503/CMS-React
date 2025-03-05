@@ -10,7 +10,7 @@ interface Props {
 export const CustomCard: FC<Props> = (props) => {
   return (
     <Card sx={{ p: 2, height: "100%" }}>
-      <Stack spacing={1} sx={{height:"100%"}}>
+      <Stack spacing={1.5} sx={{height:"100%"}}>
         <Stack
           direction="row"
           sx={{ justifyContent: "space-between"}}

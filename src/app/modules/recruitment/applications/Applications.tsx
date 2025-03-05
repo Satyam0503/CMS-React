@@ -1,4 +1,4 @@
-import { Card, Popover, Stack, Typography } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
 import { ApplicationFilter } from "./ApplicationFilter";
+import { useAppSelector } from "../../../Redux/hooks";
 
 export default function Applications() {
   const intl = useIntl();
@@ -30,6 +31,7 @@ export default function Applications() {
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const filters = useAppSelector(state => state.filters.application);
 
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
@@ -62,7 +64,7 @@ export default function Applications() {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
       try {
-        const { data } = await getAllApplicantList();
+        const { data } = await getAllApplicantList(filters);
         if (!data.success) {
           throw new Error(data.message);
         }
@@ -74,7 +76,7 @@ export default function Applications() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);
+  }, [refresh,filters]);
 
   return (
     <>

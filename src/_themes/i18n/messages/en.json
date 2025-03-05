@@ -347,5 +347,6 @@
   "FILTER.STATUS": "Status",
   "FILTER.EXPERIENCE": "Experience",
   "FILTER.MIN_EXPERIENCE": "Min. Experience",
-  "FILTER.MAX_EXPERIENCE": "Max. Experience"
+  "FILTER.MAX_EXPERIENCE": "Max. Experience",
+  "FILTER.APPLICATION_STATUS": "Application Status"
 }

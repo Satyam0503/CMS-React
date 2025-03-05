@@ -44,7 +44,7 @@ axios.interceptors.response.use(
 export const getRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig ,
-) => {
+) => {  
   return axios.get<ResponseData>(path, {
     ...config,
     headers: {

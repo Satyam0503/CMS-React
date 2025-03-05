@@ -134,7 +134,7 @@ export default function DashboardUser() {
               </Stack>
             </Card>
             <EmpOfMonth />
-            <UpcomingBirthday />
+            {/* <UpcomingBirthday /> */}
             <Punctual />
             <Help />
           </Stack>

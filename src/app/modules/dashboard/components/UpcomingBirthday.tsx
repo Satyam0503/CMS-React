@@ -1,62 +1,103 @@
-import {
-  Stack,
-  Typography,
-  Grid,
-  Card,
-  Avatar,
-  Button,
-  Link,
-} from "@mui/material";
+import { Stack, Typography, Avatar } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { CustomCard } from "../../components/CustomCard";
-
+import dayjs, { Dayjs } from "dayjs";
+import { useCallback, useEffect, useState } from "react";
+import { dateFormatter } from "../../../../utils/common";
 interface PropsType {
   employees: EmployeeModel[];
 }
 export default function UpcomingBirthday({ employees }: PropsType) {
   const intl = useIntl();
-  
+  const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
+
+  const getUpcomingBirthDays = useCallback(() => {
+    const sortedEmployee = employees
+      .map((emp) => {
+        let birthDayThisYear = dayjs(emp.dateOfBirth).set(
+          "year",
+          dayjs().get("year")
+        );
+        if (birthDayThisYear.isBefore(dayjs(), "day")) {
+          birthDayThisYear = birthDayThisYear.add(1, "year");
+        }
+        return {
+          ...emp,
+          birthDayThisYear,
+        };
+      })
+      .sort((emp1, emp2) => {
+        return emp1?.birthDayThisYear.diff(emp2?.birthDayThisYear);
+      });
+    return sortedEmployee;
+  }, [employees]);
+
+  useEffect(() => {
+    if (employees.length) {
+      setEmployeeList(getUpcomingBirthDays());
+    }
+  }, [employees]);
+
+  const isSameDate = (date: Dayjs) => {
+    const currentDateofMonth = dayjs().date();
+    const currentMonth = dayjs().month();
+    if (currentDateofMonth === date.date() && currentMonth === date.month()) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.BIRTHDAY" })}>
-        <Card sx={{ p: 2 }}>
-          <Typography variant="h6" mb={1}></Typography>
-          <Stack
-            direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            mb={1}
-          >
-            <Stack direction="row">
-              <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
-                <img
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                  alt=""
-                  style={{ borderRadius: "50%" }}
-                />
-              </Stack>
-              <Stack>
-                <Typography variant="body1">Deepak Chaurasiya</Typography>
-                <Typography variant="body2">
-                  {intl.formatMessage({ id: "POSITION.QA" })}
+        <Stack spacing={1}>
+          {employeeList.slice(0, 5).map((emp) => {
+            return (
+              <Stack
+                key={emp.userId}
+                direction="row"
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Stack
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                  spacing={1}
+                >
+                  <Avatar
+                    alt="User Profile"
+                    src={emp.fullProfileUrl}
+                    sx={{
+                      width: 45,
+                      height: 45,
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {emp.firstName.charAt(0)}
+                  </Avatar>
+                  <Stack>
+                    <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
+                    <Typography variant="body2">{emp.jobRole}</Typography>
+                  </Stack>
+                </Stack>
+
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  {!isSameDate(dayjs(emp.dateOfBirth))
+                    ? dateFormatter(emp.dateOfBirth, "DD MMM")
+                    : "Today"}
                 </Typography>
               </Stack>
-            </Stack>
-            <Stack>
-              <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
-                Today
-              </Typography>
-            </Stack>
-          </Stack>
-          
-          <Link href="birthday" underline="always">
-            {"See more"}
-          </Link>
-        </Card>
+            );
+          })}
+        </Stack>
       </CustomCard>
     </>
   );
