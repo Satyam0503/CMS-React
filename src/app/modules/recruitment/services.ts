@@ -8,6 +8,7 @@ import {
   CommentResponseData,
   CommentModel,
   ApplicationFilterModel,
+  GetApplicationPayloadModel,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 
@@ -31,8 +32,8 @@ export const getAllJobVacancies = async (payload:{companyId:string}={companyId:"
 export const deleteJobVacancy = () => {};
 
 // applicant services
-export const getAllApplicantList = async (filters:ApplicationFilterModel | null) => {
-  return getRequest<ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS,{params:{...filters}});
+export const getAllApplicantList = async (filters:GetApplicationPayloadModel ) => {
+  return postRequest<GetApplicationPayloadModel, ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS,filters);
 };
 
 export const addApplicant = async (payload: ApplicantModel) => {

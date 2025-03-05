@@ -228,17 +228,27 @@ export interface SideBarTabListProps {
 }
 
 export interface ApplicationFilterModel {
-  fromDate: null | Dayjs;
-  toDate: null | Dayjs;
-  applicationStatus:number[]
-  jobTitles: string[]
-  status: number[]
-  minExperience: number;
-  maxExperience: number;
+  filterFrom: null | Dayjs;
+  filterTo: null | Dayjs;
+  activityTypes: number[];
+  vacancyIds: string[];
+  status: number[];
+  minExperience: number | string;
+  maxExperience: number | string;
+}
+export interface GetApplicationPayloadModel {
+  name:string,
+  filterFrom?: null | Dayjs;
+  filterTo?: null | Dayjs;
+  activityTypes?: number[];
+  vacancyIds?: string[];
+  status?: number[];
+  minExperience?: number | string | null;
+  maxExperience?: number | string | null;
 }
 export interface JobsFilterModel {
-  jobType:string
-  status:number,
+  jobType: string;
+  status: number;
 }
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;

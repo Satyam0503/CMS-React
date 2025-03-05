@@ -12,8 +12,15 @@ import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./ApplicationPreview";
-import { ApplicationFilter } from "./ApplicationFilter";
+import { ApplicationFilter, initialFilterValues } from "./ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
+
+const initailFilter = {
+  ...initialFilterValues,
+  minExperience: null,
+  maxExperience: null,
+  name: "",
+};
 
 export default function Applications() {
   const intl = useIntl();
@@ -31,11 +38,14 @@ export default function Applications() {
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const filters = useAppSelector(state => state.filters.application);
+  const applicationFilters = useAppSelector(
+    (state) => state.filters.application
+  );
 
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
 
+  const isFilterAvailable = applicationFilters !== null;
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -62,21 +72,36 @@ export default function Applications() {
 
   useEffect(() => {
     setLoading(true);
+    const payload = {
+      ...applicationFilters,
+      name: search,
+      minExperience:
+        typeof applicationFilters?.minExperience === "string"
+          ? null
+          : applicationFilters?.minExperience! * 12,
+      maxExperience:
+        typeof applicationFilters?.maxExperience === "string"
+          ? null
+          : applicationFilters?.maxExperience! * 12,
+    };
+
     const timeoutId = setTimeout(async () => {
       try {
-        const { data } = await getAllApplicantList(filters);
-        if (!data.success) {
-          throw new Error(data.message);
-        }
+        const { data } = await getAllApplicantList(
+          isFilterAvailable ? payload : initailFilter
+        );
         setApplicationsList(data.methodResults.reverse());
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error) {
+        console.error(
+          "Error fetching data:",
+          error instanceof Error ? error.message : error
+        );
       } finally {
         setLoading(false);
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [refresh,filters]);
+  }, [refresh, applicationFilters, search]);
 
   return (
     <>
@@ -109,12 +134,14 @@ export default function Applications() {
                 ariaLabel="import excel"
               />
             </Stack>
-            <ApplicationFilter
-              open={open}
-              id={id}
-              anchorEl={anchorEl}
-              handleClose={() => setAnchorEl(null)}
-            />
+            {open && (
+              <ApplicationFilter
+                open={open}
+                id={id}
+                anchorEl={anchorEl}
+                handleClose={() => setAnchorEl(null)}
+              />
+            )}
           </Stack>
 
           <CustomisedTable

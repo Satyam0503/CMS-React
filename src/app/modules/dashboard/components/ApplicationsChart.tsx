@@ -7,6 +7,7 @@ import { getAllApplicantList } from "../../recruitment/services";
 import { AxiosError } from "axios";
 import { applicationStatusMapper } from "../../../../utils/common";
 import { Box, Typography } from "@mui/material";
+import { initialFilterValues } from "../../recruitment/applications/ApplicationFilter";
 
 export const ApplicationsChart = () => {
   const intl = useIntl();
@@ -37,7 +38,7 @@ export const ApplicationsChart = () => {
   useEffect(() => {
     async function getAllApplications() {
       try {
-        const response = await getAllApplicantList();
+        const response = await getAllApplicantList({...initialFilterValues,maxExperience:null, minExperience:null, name:""});
         const { success, methodResults } = response.data;
         if (success) {
           setApplicationList(methodResults);

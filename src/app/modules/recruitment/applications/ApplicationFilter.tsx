@@ -1,17 +1,11 @@
-import { ArrowDownward, Close } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
   Checkbox,
-  Chip,
-  Divider,
   IconButton,
   ListItemText,
-  MenuItem,
-  OutlinedInput,
   Popover,
-  Select,
-  SelectChangeEvent,
   Stack,
   TextField,
   Typography,
@@ -26,10 +20,12 @@ import {
   JobModal,
 } from "../../../../utils/common_types";
 import { getAllJobVacancies } from "../services";
-import { ApplicantApplicationStatus, ApplicantStatusConstant } from "../../../../utils/constant/Constant";
+import {
+  ApplicantApplicationStatus,
+  ApplicantStatusConstant,
+} from "../../../../utils/constant/Constant";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import {
-  resetFilter,
   setApplicationFilter,
 } from "../../../Redux/Reducers/filterSlice";
 import { useFormik } from "formik";
@@ -42,14 +38,14 @@ interface PropsType {
   anchorEl: null | Element;
 }
 
-const initialFilterValues = {
-  fromDate: null,
-  toDate: null,
-  jobTitles: [],
-  applicationStatus:[],
+export const initialFilterValues :ApplicationFilterModel = {
+  filterFrom: null,
+  filterTo: null,
+  vacancyIds: [],
+  activityTypes: [],
   status: [],
-  minExperience: 0,
-  maxExperience: 0,
+  minExperience: "",
+  maxExperience: "",
 };
 
 export const ApplicationFilter: FC<PropsType> = ({
@@ -63,23 +59,20 @@ export const ApplicationFilter: FC<PropsType> = ({
   const applicationFilters = useAppSelector(
     (state) => state.filters.application
   );
-  const [filters, setFilters] = useState<ApplicationFilterModel>(
-    applicationFilters || initialFilterValues
-  );
+
   const [jobList, setJobList] = useState<JobModal[]>([]);
 
-  const { values, errors, handleSubmit, getFieldProps, setFieldValue } = useFormik({
-    initialValues: filters,
-    enableReinitialize:true,
-    validationSchema: applicationFilterSchema,
-    onSubmit: (values) => {
-      console.log(values);
-
-      // dispatch(setApplicationFilter(filters));
-      // handleClose();
-    },
-  });
-
+  const { values, errors, handleSubmit, getFieldProps, setFieldValue } =
+    useFormik({
+      initialValues: applicationFilters || initialFilterValues,
+      enableReinitialize: true,
+      validationSchema: applicationFilterSchema,
+      onSubmit: (values) => {
+        dispatch(setApplicationFilter(values));
+        handleClose();
+      },
+    });
+    
   useEffect(() => {
     const getActiveJobs = async () => {
       try {
@@ -95,22 +88,6 @@ export const ApplicationFilter: FC<PropsType> = ({
     getActiveJobs();
   }, []);
 
-  useEffect(() => {
-    setFilters(applicationFilters || initialFilterValues);
-  }, [applicationFilters]);
-
-
-  // const handleFilterStatusChange = (
-  //   values: typeof ApplicantApplicationStatus,
-  //   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => Promise<void>
-  // ) => {
-  //   setFieldValue("")
-  //   setFilters({
-  //     ...filters,
-  //     status: values.map((item) => item.value),
-  //   });
-  // };
-  
   return (
     <Popover
       id={id}
@@ -140,31 +117,24 @@ export const ApplicationFilter: FC<PropsType> = ({
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
                 </Typography>
-                <Stack spacing={1} direction={"row"} useFlexGap>
-                  <Stack spacing={0.5}>
-                    <Typography variant="body2">
-                      {intl.formatMessage({ id: "FILTER.FROM" })}
-                    </Typography>
-                    <CustomisedDatePicker
-                      value={values.fromDate && dayjs(values.fromDate)}
-                      maxDate={dayjs()}
-                      setValue={(date: Dayjs | null) => {
-                        setFieldValue("fromDate",date);
-                      }}
-                    />
-                  </Stack>
-                  <Stack spacing={0.5}>
-                    <Typography variant="body2">
-                      {intl.formatMessage({ id: "FILTER.TO" })}
-                    </Typography>
-                    <CustomisedDatePicker
-                      value={filters.toDate && dayjs(filters.toDate)}
-                      minDate={dayjs(values.fromDate)}
-                      setValue={(date: Dayjs | null) => {
-                        setFieldValue("toDate",date);
-                      }}
-                    />
-                  </Stack>
+                <Stack spacing={2} direction={"row"}>
+                  <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "FILTER.FROM" })}
+                    value={values.filterFrom && dayjs(values.filterFrom)}
+                    maxDate={dayjs()}
+                    setValue={(date: Dayjs | null) => {
+                      setFieldValue("filterFrom", date);
+                    }}
+                  />
+
+                  <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "FILTER.TO" })}
+                    value={values.filterTo && dayjs(values.filterTo)}
+                    minDate={dayjs(values.filterFrom)}
+                    setValue={(date: Dayjs | null) => {
+                      setFieldValue("filterTo", date);
+                    }}
+                  />
                 </Stack>
               </Stack>
               <Stack spacing={1}>
@@ -178,10 +148,13 @@ export const ApplicationFilter: FC<PropsType> = ({
                   options={jobList}
                   disableCloseOnSelect
                   value={jobList.filter((job) =>
-                    values.jobTitles.includes(job.jobId)
+                    values.vacancyIds.includes(job.jobId)
                   )}
                   onChange={(event, selectedJobs) => {
-                    setFieldValue("jobTitles", selectedJobs.map(job=>job.jobId))
+                    setFieldValue(
+                      "vacancyIds",
+                      selectedJobs.map((job) => job.jobId)
+                    );
                   }}
                   getOptionLabel={(option) => option.title}
                   renderInput={(params) => (
@@ -212,10 +185,13 @@ export const ApplicationFilter: FC<PropsType> = ({
                   options={ApplicantApplicationStatus}
                   disableCloseOnSelect
                   value={ApplicantApplicationStatus.filter((status) =>
-                    values.applicationStatus.includes(status.value)
+                    values.activityTypes.includes(status.value)
                   )}
-                  onChange={(event, value) => { 
-                    setFieldValue("applicationStatus", value.map(item=>item.value))
+                  onChange={(event, value) => {
+                    setFieldValue(
+                      "activityTypes",
+                      value.map((item) => item.value)
+                    );
                   }}
                   getOptionLabel={(option) => option.label}
                   renderInput={(params) => (
@@ -248,8 +224,11 @@ export const ApplicationFilter: FC<PropsType> = ({
                   value={ApplicantStatusConstant.filter((status) =>
                     values.status.includes(status.value)
                   )}
-                  onChange={(event, value) => { 
-                    setFieldValue("status", value.map(item=>item.value))
+                  onChange={(event, value) => {
+                    setFieldValue(
+                      "status",
+                      value.map((item) => item.value)
+                    );
                   }}
                   getOptionLabel={(option) => option.label}
                   renderInput={(params) => (
@@ -295,10 +274,11 @@ export const ApplicationFilter: FC<PropsType> = ({
                     label={intl.formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
                     fullWidth
                     type="number"
+                    required={ Boolean(values.minExperience) }
                     error={Boolean(errors.maxExperience)}
                     {...getFieldProps("maxExperience")}
                     inputProps={{
-                      min: filters.minExperience,
+                      min: values.minExperience || 0,
                     }}
                     onKeyDown={(e) => {
                       const restrictedKeys = ["-", "+", "e"];
@@ -309,21 +289,21 @@ export const ApplicationFilter: FC<PropsType> = ({
                   />
                 </Stack>
               </Stack>
-              
             </Stack>
             <Stack
               direction={"row"}
               spacing={2}
-              sx={{ justifyContent: "flex-end",marginBlockStart:2 }}
+              sx={{ justifyContent: "flex-end", marginBlockStart: 2 }}
             >
               <CustomisedButton
                 label="Reset"
                 variant="outlined"
                 handleClick={() => {
-                  dispatch(resetFilter({ page: "application" }));
+                  dispatch(setApplicationFilter(initialFilterValues));
+                  handleClose();
                 }}
               />
-              <CustomisedButton type="submit" label="Apply"/>
+              <CustomisedButton type="submit" label="Apply" />
             </Stack>
           </form>
         </Stack>
