@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { HeaderWrapper } from "./components/portalheader/HeaderWrapper";
 import { RightToolbar } from "../partials/layout/RightToolbar";
 import { ScrollTop } from "./components/scroll-top";
 import { FooterWrapper } from "./components/footer";
@@ -8,6 +7,7 @@ import { Sidebar } from "./components/sidebar";
 import { ActivityDrawer, DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
+import { HeaderWrapper } from "../../app/modules/components/header/HeaderWrapper";
 
 const MasterLayout = () => {
   const location = useLocation();
