@@ -242,11 +242,7 @@ export default function ApplyNow() {
                         {" "}
                         {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
                       </Typography>
-                      <Stack
-                        minHeight={"200px"}
-                        maxHeight={"400px"}
-                        overflow={"auto"}
-                      >
+                      <Stack maxHeight={"400px"} overflow={"auto"}>
                         {selectedJobPosition ? (
                           <Typography
                             variant="body1"
