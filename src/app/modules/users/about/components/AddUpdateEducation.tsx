@@ -64,7 +64,7 @@ export default function AddUpdateEducation(props: PropTypes) {
           handleSubmit,
         }) => (
           <form onSubmit={handleSubmit}>
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12}>
                 <TextInput
                   label={intl.formatMessage({ id: "INFO.TITLE" })}
@@ -75,12 +75,15 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Stack>
-                  <Typography variant="body1">
+                  {/* <Typography variant="body1">
                     {intl.formatMessage({
                       id: "APPLICATION.START",
                     })}
-                  </Typography>
+                  </Typography> */}
                   <CustomisedDatePicker
+                    label={intl.formatMessage({
+                      id: "APPLICATION.START",
+                    })}
                     name="startDate"
                     value={values.startDate && dayjs(values.startDate)}
                     setValue={(newDate: Dayjs | null) => {
@@ -97,12 +100,15 @@ export default function AddUpdateEducation(props: PropTypes) {
 
               <Grid item xs={12} sm={6}>
                 <Stack>
-                  <Typography variant="body1">
+                  {/* <Typography variant="body1">
                     {intl.formatMessage({
                       id: "APPLICATION.END",
                     })}
-                  </Typography>
+                  </Typography> */}
                   <CustomisedDatePicker
+                    label={intl.formatMessage({
+                      id: "APPLICATION.END",
+                    })}
                     name="endDate"
                     value={values.endDate && dayjs(values.endDate)}
                     setValue={(newDate: Dayjs | null) => {

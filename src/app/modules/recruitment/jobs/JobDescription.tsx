@@ -176,12 +176,12 @@ const JobDescription: FC<PropsTypes> = ({
             mt={2}
             gap={1}
           >
-            <CustomisedButton
+            {/* <CustomisedButton
               variant="contained"
               label="Submissions"
               Icon={<FileOpenOutlined />}
               iconPosition="start"
-            />
+            /> */}
 
             <CustomisedButton
               variant="outlined"

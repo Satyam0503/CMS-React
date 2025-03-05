@@ -10,6 +10,9 @@ import {
   FormLabel,
   Card,
   Tooltip,
+  FormControl,
+  InputLabel,
+  TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
@@ -299,7 +302,8 @@ export default function ApplyNow() {
                           </Grid>
 
                           <Grid item xs={12} sm={6}>
-                            <TextInput
+                            <TextField
+                              fullWidth
                               label={intl.formatMessage({
                                 id: "USER.FIRST_NAME",
                               })}
@@ -309,7 +313,8 @@ export default function ApplyNow() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextInput
+                            <TextField
+                              fullWidth
                               label={intl.formatMessage({
                                 id: "USER.LAST_NAME",
                               })}
@@ -319,7 +324,8 @@ export default function ApplyNow() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextInput
+                            <TextField
+                              fullWidth
                               label={intl.formatMessage({ id: "USER.PHONE" })}
                               name="phone"
                               placeholder="Phone Number"
@@ -327,7 +333,8 @@ export default function ApplyNow() {
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextInput
+                            <TextField
+                              fullWidth
                               label={intl.formatMessage({
                                 id: "AUTH.INPUT.EMAIL",
                               })}
@@ -338,34 +345,43 @@ export default function ApplyNow() {
                           </Grid>
 
                           <Grid item xs={12} sm={6}>
-                            <Typography variant="body1" sx={{ mb: 0.5 }}>
-                              {intl.formatMessage({ id: "JOB.POSITION" })}
-                            </Typography>
-                            <Select
-                              fullWidth
-                              {...formik.getFieldProps("vacancyId")}
-                              // value={selectedJobPosition?.jobId}
-                              onChange={(event) => {
-                                setFieldValue("vacancyId", event.target.value);
-                                setSelectedJobPosition(
-                                  activeJobPositionsList.find(
-                                    (job) => job.jobId === event.target.value
-                                  )
-                                );
-                              }}
-                              onBlur={(event) => {
-                                setFieldTouched("vacancyId", true);
-                              }}
-                            >
-                              {activeJobPositionsList.map((jobPosition) => (
-                                <MenuItem
-                                  key={jobPosition.jobId}
-                                  value={jobPosition.jobId}
-                                >
-                                  {jobPosition.title}
-                                </MenuItem>
-                              ))}
-                            </Select>
+                            <FormControl fullWidth>
+                              <InputLabel id="demo-simple-select-label">
+                                {intl.formatMessage({ id: "JOB.POSITION" })}
+                              </InputLabel>
+
+                              <Select
+                                label={intl.formatMessage({
+                                  id: "JOB.POSITION",
+                                })}
+                                fullWidth
+                                {...formik.getFieldProps("vacancyId")}
+                                // value={selectedJobPosition?.jobId}
+                                onChange={(event) => {
+                                  setFieldValue(
+                                    "vacancyId",
+                                    event.target.value
+                                  );
+                                  setSelectedJobPosition(
+                                    activeJobPositionsList.find(
+                                      (job) => job.jobId === event.target.value
+                                    )
+                                  );
+                                }}
+                                onBlur={(event) => {
+                                  setFieldTouched("vacancyId", true);
+                                }}
+                              >
+                                {activeJobPositionsList.map((jobPosition) => (
+                                  <MenuItem
+                                    key={jobPosition.jobId}
+                                    value={jobPosition.jobId}
+                                  >
+                                    {jobPosition.title}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
                             <ErrorLabel>
                               {touched.vacancyId &&
                                 errors.vacancyId &&

@@ -43,9 +43,10 @@ const CustomisedDatePicker = (props: PropsTypes) => {
                 xl: "100% !important",
                 sm: "100% !important",
               },
-              "& .MuiIconButton-root":{
-                border:0 ,
-              }
+              "& .MuiIconButton-root": {
+                border: 0,
+                padding: 0,
+              },
             }}
           />
         </DemoContainer>

@@ -73,7 +73,7 @@ export const EditPermission = () => {
           p: { xs: 2, sm: 5 },
         }}
       >
-        <Stack spacing={3}>
+        <Stack spacing={4}>
           <Stack>
             <Stack>
               <Typography variant="body1">

@@ -1,14 +1,13 @@
-import {
-  Grid,
-  Stack,
-  Typography,
-  MenuItem,
-} from "@mui/material";
+import { Grid, Stack, Typography, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
-import { Formik,  } from "formik";
-import { bloodGroups, DepartmentList, Gender } from "../../../utils/constant/Constant";
+import { Formik } from "formik";
+import {
+  bloodGroups,
+  DepartmentList,
+  Gender,
+} from "../../../utils/constant/Constant";
 import { getAllRoles } from "./components/employeeServices";
 import { EmployeeModel, RoleModel } from "../../../utils/common_types";
 import dayjs, { Dayjs } from "dayjs";
@@ -69,8 +68,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
               initialValues={initialValues}
               validationSchema={employeeSchema}
               onSubmit={(values, { setSubmitting }) => {
-                delete values.fullProfileUrl ;
-                delete values.profileUrl;                
+                delete values.fullProfileUrl;
+                delete values.profileUrl;
                 SaveAddEditEmployee(values, setSubmitting);
               }}
             >
@@ -86,7 +85,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 handleSubmit,
               }) => (
                 <form onSubmit={handleSubmit}>
-                  <Grid container rowSpacing={1} columnSpacing={2}>
+                  <Grid
+                    container
+                    rowSpacing={1.5}
+                    columnSpacing={{ xs: 1, sm: 2 }}
+                    alignItems={"baseline"}
+                  >
                     <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -125,25 +129,21 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Stack spacing={0.5}>
-                        <Typography variant="body1">
-                          {intl.formatMessage({ id: "USER.DOB" })}
-                        </Typography>
-                        <CustomisedDatePicker
-                          name={"dateOfBirth"}
-                          value={values.dateOfBirth}
-                          setValue={(newDate: Dayjs | null) => {
-                            setFieldTouched("dateOfBirth", true);
-                            setFieldValue("dateOfBirth", newDate);
-                          }}
-                          maxDate={dayjs()}
-                        />
-                        <ErrorLabel>
-                          {touched.dateOfBirth &&
-                            errors.dateOfBirth &&
-                            errors.dateOfBirth}
-                        </ErrorLabel>
-                      </Stack>
+                      <CustomisedDatePicker
+                        label={intl.formatMessage({ id: "USER.DOB" })}
+                        name={"dateOfBirth"}
+                        value={values.dateOfBirth}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("dateOfBirth", true);
+                          setFieldValue("dateOfBirth", newDate);
+                        }}
+                        maxDate={dayjs()}
+                      />
+                      <ErrorLabel>
+                        {touched.dateOfBirth &&
+                          errors.dateOfBirth &&
+                          errors.dateOfBirth}
+                      </ErrorLabel>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
@@ -179,18 +179,16 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <SelectInput
-                         name="department"
-                         label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
-                        >
-                          {
-                            DepartmentList.map(dep=>(
-                              <MenuItem key={dep.id} value={dep.value}>
-                                {dep.label}
-                              </MenuItem>
-                            ))
-                          }
-                        </SelectInput>
+                      <SelectInput
+                        name="department"
+                        label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
+                      >
+                        {DepartmentList.map((dep) => (
+                          <MenuItem key={dep.id} value={dep.value}>
+                            {dep.label}
+                          </MenuItem>
+                        ))}
+                      </SelectInput>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
@@ -260,24 +258,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       </SelectInput>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <Stack spacing={0.5}>
-                        <Typography variant="body1">
-                          {intl.formatMessage({ id: "USER.DOJ" })}
-                        </Typography>
-                        <CustomisedDatePicker
-                          value={values.dateOfJoining}
-                          setValue={(newDate: Dayjs | null) => {
-                            setFieldTouched("dateOfJoining", true);
-                            setFieldValue("dateOfJoining", newDate);
-                          }}
-                          maxDate={dayjs()}
-                        />
-                        <ErrorLabel>
-                          {touched.dateOfJoining &&
-                            errors.dateOfJoining &&
-                            errors.dateOfJoining}
-                        </ErrorLabel>
-                      </Stack>
+                      <CustomisedDatePicker
+                        label={intl.formatMessage({ id: "USER.DOJ" })}
+                        value={values.dateOfJoining}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("dateOfJoining", true);
+                          setFieldValue("dateOfJoining", newDate);
+                        }}
+                        maxDate={dayjs()}
+                      />
+                      <ErrorLabel>
+                        {touched.dateOfJoining &&
+                          errors.dateOfJoining &&
+                          errors.dateOfJoining}
+                      </ErrorLabel>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput

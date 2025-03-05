@@ -310,7 +310,7 @@ export const MuiTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
-          padding: ".8rem",
+          padding: ".6rem",
         },
         root: {
           padding: "0px ",
@@ -447,13 +447,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    MuiStack: {
-      styleOverrides: {
-        root: {
-          paddingTop: "0px !important",
-        },
-      },
-    },
+    // MuiStack: {
+    //   styleOverrides: {
+    //     root: {
+    //       paddingTop: "0px !important",
+    //     },
+    //   },
+    // },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -871,7 +871,7 @@ export const MuiTheme = createTheme({
       styleOverrides: {
         clearIndicator: {
           color: colors.alpha.primary[500],
-          border:0,
+          border: 0,
           marginRight: 8,
           "&:hover": {
             color: colors.alpha.primary[500],
@@ -879,7 +879,7 @@ export const MuiTheme = createTheme({
         },
         popupIndicator: {
           color: colors.alpha.neutral[500],
-          border:0,
+          border: 0,
           "&:hover": {
             color: colors.alpha.primary[500],
           },
@@ -1140,7 +1140,7 @@ export const MuiTheme = createTheme({
         root: {
           color: colors.alpha.neutral[200],
           background: "inherit",
-          padding: 0,
+          padding: 5,
           "&:hover": {
             background: "none",
           },
@@ -1152,7 +1152,7 @@ export const MuiTheme = createTheme({
             color: colors.alpha.primary[500],
             background: "none",
           },
-          "& .MuiSvgIcon-root": { fontSize: 20 },
+          "& .MuiSvgIcon-root": { fontSize: 25 },
         },
       },
     },
@@ -1192,7 +1192,7 @@ export const MuiTheme = createTheme({
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 4,
   },
   typography: {
     fontFamily:

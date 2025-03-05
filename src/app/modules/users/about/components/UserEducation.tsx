@@ -70,11 +70,11 @@ export const UserEducation = () => {
     try {
       if (isEdit) {
         const response = await updateEmployeeEducation(values);
-        const {success ,message} =response.data;
-        if(success){
+        const { success, message } = response.data;
+        if (success) {
           toast.success(message);
           setRefresh(!refresh);
-        }  
+        }
       } else {
         const response = await addEmployeeEducation(values);
         const { success, message } = response.data;

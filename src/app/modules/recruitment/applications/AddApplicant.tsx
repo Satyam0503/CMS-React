@@ -146,7 +146,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                   <form onSubmit={formik.handleSubmit}>
                     <Grid
                       container
-                      rowSpacing={1}
+                      rowSpacing={2}
                       columnSpacing={{ xs: 1, sm: 2 }}
                     >
                       <Grid item xs={12} sm={6}>

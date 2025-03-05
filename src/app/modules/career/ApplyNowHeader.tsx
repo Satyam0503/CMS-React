@@ -2,7 +2,7 @@
 
 import { PhoneAndroidOutlined } from "@mui/icons-material";
 import { EmailRounded } from "@mui/icons-material";
-import { Grid, Link, ListItemButton, Stack } from "@mui/material";
+import { Grid, Link, Stack } from "@mui/material";
 
 import {
   List,
