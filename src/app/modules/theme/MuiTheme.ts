@@ -309,8 +309,10 @@ export const MuiTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        // to change height of outlined input
         input: {
-          padding: ".6rem",
+          paddingBlock: ".6rem",
+          paddingInline: "1rem",
         },
         root: {
           padding: "0px ",

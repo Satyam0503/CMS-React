@@ -82,10 +82,8 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
 
               <Grid item xs={12} sm={6}>
                 <Stack spacing={0.5}>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "APPLICATION.START" })}*
-                  </Typography>
                   <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "APPLICATION.START" })}
                     value={values.startDate}
                     setValue={(newDate: Dayjs | null) => {
                       setFieldTouched("startDate", true);
@@ -100,11 +98,9 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                 </Stack>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Stack spacing={.5}>
-                  <Typography variant="body1" mb={0.5}>
-                    {intl.formatMessage({ id: "APPLICATION.END" })}*
-                  </Typography>
+                <Stack spacing={0.5}>
                   <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "APPLICATION.END" })}
                     value={values.endDate}
                     setValue={(newDate: Dayjs | null) => {
                       setFieldTouched("endDate", true);

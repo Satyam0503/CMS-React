@@ -23,10 +23,11 @@ export function HeaderWrapper() {
   return (
     <Grid
       item
-      className="app-header p-3"
       position={"sticky"}
       top={0}
       zIndex={3}
+      bgcolor={"#fcfcfc"}
+      py={1}
     >
       <Grid item display={"flex"} alignItems={"center"} px={1}>
         <Grid
