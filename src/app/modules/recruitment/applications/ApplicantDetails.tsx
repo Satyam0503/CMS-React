@@ -58,8 +58,6 @@ export const ApplicantDetails = () => {
   const [comment, setComment] = useState("");
   const param = useParams();
   
-  const [activityType, setActivityType] = useState<number>(0);
-
   const [status,setStatus] = useState({
     applicationStatus:0,
     applicantStatus:0
@@ -75,7 +73,6 @@ export const ApplicantDetails = () => {
           }
           setApplicant(data.methodResult);
           setStatus({...status,applicantStatus:data.methodResult.status,applicationStatus:data.methodResult.activityType})
-          // setActivityType(data.methodResult.activityType);
         })
         .catch((error) => {
           console.error(error);
@@ -114,7 +111,26 @@ export const ApplicantDetails = () => {
   if (loading) {
     return <CircularLoader />;
   }
-
+  const handleEditApplicant = async (applicantStatus:ApplicantStatus)=>{
+    const payload = {
+      applicantId: applicant.applicantId,
+      companyId: currentUser.companyId,
+      firstName: applicant.firstName,
+      lastName: applicant.lastName,
+      email: applicant.email,
+      phone: applicant.phone,
+      vacancyId: applicant.vacancyId,
+      experience: applicant.experience,
+      vacancyName: applicant.vacancyName,
+      activityType: status.applicationStatus,
+      status: applicantStatus
+    };
+    const response = await editApplicant(payload);
+    const { success} = response.data;
+    if (success) {
+      setRefresh(!refresh)
+    }
+  }
   const handleAddComment = async () => {
     try {
       if (status.applicationStatus !== applicant.activityType) {
@@ -128,8 +144,8 @@ export const ApplicantDetails = () => {
           vacancyId: applicant.vacancyId,
           experience: applicant.experience,
           vacancyName: applicant.vacancyName,
-          activityType: activityType,
-          status: ApplicantStatusMapper[activityType],
+          activityType: status.applicationStatus,
+          status: ApplicantStatusMapper[status.applicationStatus],
         };
         const response = await editApplicant(payload);
         const { success, message } = response.data;
@@ -142,7 +158,7 @@ export const ApplicantDetails = () => {
         userId: currentUser.userId,
         description: comment,
         activityCategory:
-          commentActionEncoderForApplicationStatus(activityType)!,
+          commentActionEncoderForApplicationStatus(status.applicationStatus),
         userName: currentUser.firstName + " " + currentUser.lastName,
       };
       const commentResponse = await addComment(commentPayload);
@@ -168,6 +184,8 @@ export const ApplicantDetails = () => {
 
   const handleStatusChange = (event: SelectChangeEvent<number>) => {
     if (typeof event.target.value === "number") {
+      console.log(event.target.value);
+      
       setStatus({...status,applicationStatus:event.target.value})
       setModalOpen(true);
     }
@@ -193,8 +211,6 @@ export const ApplicantDetails = () => {
       console.error(error);
     }
   };
-
-  console.log(status.applicantStatus);
 
   return (
     <>
@@ -346,15 +362,17 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}:
+                  {intl.formatMessage({ id: "APPLICANT.STATUS" })}:
                 </Typography>
                 <Switch
                   checked={[ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus)}
                   onChange={(event) => {
-                    setStatus({
-                      ...status,
-                      applicantStatus: [ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus) ? ApplicantStatus.InActive : ApplicantStatus.Active,
-                    })
+                    // setStatus({
+                    //   ...status,
+                    //   applicantStatus: [ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus) ? ApplicantStatus.InActive : ApplicantStatus.Active,
+                    // })
+
+                    handleEditApplicant(event.target.checked ? ApplicantStatus.Active : ApplicantStatus.InActive)
                   }}
                   inputProps={{ "aria-label": "controlled" }}
                 />

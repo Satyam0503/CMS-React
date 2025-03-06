@@ -87,6 +87,7 @@ export const ApplicationFilter: FC<PropsType> = ({
     };
     getActiveJobs();
   }, []);
+console.log(errors);
 
   return (
     <Popover
@@ -112,8 +113,8 @@ export const ApplicationFilter: FC<PropsType> = ({
             </IconButton>
           </Stack>
           <form onSubmit={handleSubmit}>
-            <Stack spacing={1.5}>
-              <Stack spacing={1}>
+            <Stack spacing={2}>
+              <Stack >
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
                 </Typography>
@@ -249,7 +250,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                 />
               </Stack>
 
-              <Stack spacing={2}>
+              <Stack spacing={1}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "FILTER.EXPERIENCE" })}
                 </Typography>

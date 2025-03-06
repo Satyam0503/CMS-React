@@ -19,7 +19,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
-          <DatePicker
+          <DatePicker 
             name={name}
             label={label}
             value={value}
