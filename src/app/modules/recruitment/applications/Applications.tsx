@@ -99,7 +99,7 @@ export default function Applications() {
       } finally {
         setLoading(false);
       }
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search]);
 

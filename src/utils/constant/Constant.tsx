@@ -397,7 +397,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "email",
     label: "Email",
   },
-
+  {
+    id:"phone",
+    label:"Phone Number"
+  },
   {
     id: "applyDate",
     label: "Applied",

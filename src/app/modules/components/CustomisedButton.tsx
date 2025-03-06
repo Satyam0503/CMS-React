@@ -32,17 +32,6 @@ const CustomisedButton = (props: Props) => {
     loading,
   } = props;
 
-  {
-    !loading && <span className="indicator-label">Submit</span>;
-  }
-  {
-    loading && (
-      <span className="indicator-progress" style={{ display: "block" }}>
-        Please wait...{" "}
-        <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-      </span>
-    );
-  }
   return (
     <>
       {permission && (
