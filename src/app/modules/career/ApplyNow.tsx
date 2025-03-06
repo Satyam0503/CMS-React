@@ -5,10 +5,7 @@ import {
   MenuItem,
   Container,
   Box,
-  FormHelperText,
   Select,
-  FormLabel,
-  Card,
   Tooltip,
   FormControl,
   InputLabel,
@@ -18,7 +15,7 @@ import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./SingleBanner";
 import CustomisedButton from "../components/CustomisedButton";
-import { useEffect, useRef, useState } from "react";
+import { useEffect,  useState } from "react";
 import Footer from "./Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
@@ -115,10 +112,7 @@ export default function ApplyNow() {
   useEffect(() => {
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies({
-          companyId,
-        });
-
+        const response = await getAllJobVacancies({companyId});
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);

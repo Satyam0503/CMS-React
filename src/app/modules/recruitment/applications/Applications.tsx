@@ -15,7 +15,7 @@ import { ApplicationPreview } from "./ApplicationPreview";
 import { ApplicationFilter, initialFilterValues } from "./ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 
-const initailFilter = {
+const initialFilter = {
   ...initialFilterValues,
   minExperience: null,
   maxExperience: null,
@@ -25,10 +25,14 @@ const initailFilter = {
 export default function Applications() {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [page, setPage] = useState<number>(0);
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
+  
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
-  const [rowPerPage, setRowPerPage] = useState<number>(10);
+ 
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<
@@ -69,6 +73,21 @@ export default function Applications() {
     setSelectedApplicant(undefined);
   };
 
+  const handlePageChange =  (page:number)=>{
+    setPaginationValues({
+      ...paginationValues,
+      pageNo:page,
+    })
+  }
+
+  const handleRowPerPageChange = (rowPerPage:number)=>{
+    setPaginationValues({
+      ...paginationValues,
+      records:rowPerPage,
+      pageNo:0,
+    })
+  }
+
   useEffect(() => {
     setLoading(true);
     const payload = {
@@ -87,9 +106,10 @@ export default function Applications() {
     const timeoutId = setTimeout(async () => {
       try {
         const { data } = await getAllApplicantList(
-          isFilterAvailable ? payload : initailFilter
+          isFilterAvailable ? payload : initialFilter , paginationValues.pageNo+1,paginationValues.records
         );
         setApplicationsList(data.methodResults.reverse());
+        setTotalRecords(data.totalRecords);
       } catch (error) {
         console.error(
           "Error fetching data:",
@@ -100,7 +120,7 @@ export default function Applications() {
       }
     }, 1000);
     return () => clearTimeout(timeoutId);
-  }, [refresh, applicationFilters, search]);
+  }, [refresh, applicationFilters,search,paginationValues]);
 
   return (
     <>
@@ -146,19 +166,19 @@ export default function Applications() {
           <CustomisedTable
             rows={applicationsList}
             columns={ApplicationTabTableColumnList}
-            page={page}
-            rowsPerPage={rowPerPage}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
             handleEdit={handleApplicantEdit}
             openViewModal={handleOpenPreview}
             loading={loading}
           />
 
-          {totalRecords > rowPerPage && (
+          {totalRecords > 0 && (
             <Pagination
-              page={page}
-              setPage={setPage}
-              rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
+              page={paginationValues.pageNo}
+              setPage={handlePageChange}
+              rowsPerPage={paginationValues.records}
+              setRowPerPage={handleRowPerPageChange}
               totalRecords={totalRecords}
             />
           )}

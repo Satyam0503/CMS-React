@@ -116,6 +116,11 @@ const JobDescription: FC<PropsTypes> = ({
                     touched.vacancies && errors.vacancies && errors.vacancies
                   }
                   {...getFieldProps("vacancies")}
+                  onKeyDown={(e)=>{
+                    if(['-','e','+'].includes(e.key)){
+                      e.preventDefault();
+                    } 
+                  }}
                 />
               </Grid>
             </Grid>

@@ -27,14 +27,14 @@ export const updateEmployee = async (
   );
 };
 
-export const deleteEmployee = async (
-  employeeId: string
-): Promise<AxiosResponse<ApiResponse>> => {
-  return postRequest(ServiceUrl.DELETE_EMPLOYEE);
-};
+// export const deleteEmployee = async (
+//   employeeId: string
+// ): Promise<AxiosResponse<ApiResponse>> => {
+//   return postRequest(ServiceUrl.DELETE_EMPLOYEE);
+// };
 
-export const getAllEmployees = async () => {
-  return getRequest<GetAllEmployeeResponseData>(ServiceUrl.GET_ALL_EMPLOYEE);
+export const getAllEmployees = async (pageNo:number=0,records:number=0) => {
+  return getRequest<GetAllEmployeeResponseData>(`${ServiceUrl.GET_ALL_EMPLOYEE}?pageNo=${pageNo}&records=${records}`);
 };
 
 export const getAllRoles = async () => {

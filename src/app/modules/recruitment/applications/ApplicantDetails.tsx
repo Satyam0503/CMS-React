@@ -183,9 +183,7 @@ export const ApplicantDetails = () => {
   };
 
   const handleStatusChange = (event: SelectChangeEvent<number>) => {
-    if (typeof event.target.value === "number") {
-      console.log(event.target.value);
-      
+    if (typeof event.target.value === "number") {     
       setStatus({...status,applicationStatus:event.target.value})
       setModalOpen(true);
     }

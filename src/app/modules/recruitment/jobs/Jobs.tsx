@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Popover, Stack, Typography } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import JobDescription from "./JobDescription";
@@ -12,7 +12,7 @@ import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
 import { addJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ViewJobDetails } from "./ViewJobDetails";
 
 const initialValues: JobModal = {
@@ -27,19 +27,21 @@ const initialValues: JobModal = {
 
 export default function Jobs() {
   const intl = useIntl();
-  const [jobInitialValues, setJobInitialValues] = React.useState(initialValues);
-  const [openModal, setOpenModal] = React.useState(false);
-  const [page, setPage] = React.useState<number>(0);
-  const [search, setSearch] = React.useState("");
-  const [totalRecords, setTotalRecords] = React.useState(0);
-  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
-  const [isConfirmationModalOpen, setConfirmModalOpen] = React.useState(false);
-  const [selectedJob, setSelectedJob] = React.useState<JobModal | undefined>();
-  const [jobList, setJobList] = React.useState<JobModal[]>([]);
-  const [isEdit, setEdit] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [isRefresh, setRefresh] = React.useState(false);
-  const [isViewModalOpen, setViewModalOpen] = React.useState(false);
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
+  const [jobInitialValues, setJobInitialValues] = useState(initialValues);
+  const [openModal, setOpenModal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [isConfirmationModalOpen, setConfirmModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobModal | undefined>();
+  const [jobList, setJobList] = useState<JobModal[]>([]);
+  const [isEdit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isRefresh, setRefresh] = useState(false);
+  const [isViewModalOpen, setViewModalOpen] = useState(false);
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
@@ -128,17 +130,31 @@ export default function Jobs() {
     }
   };
 
+  const handlePageChange =  (page:number)=>{
+    setPaginationValues({
+      ...paginationValues,
+      pageNo:page,
+    })
+  }
+
+  const handleRowPerPageChange = (rowPerPage:number)=>{
+    setPaginationValues({
+      ...paginationValues,
+      records:rowPerPage,
+      pageNo:0,
+    })
+  }
+
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await getAllJobVacancies();
-        const { statusCode, message, success, methodResults } = response.data;
-        if (!(success && statusCode === 200)) {
-          throw new Error(message);
+        const response = await getAllJobVacancies({companyId:""},paginationValues.pageNo+1,paginationValues.records);
+        const { success, methodResults,totalRecords } = response.data;
+        if (success ) {
+          setJobList(methodResults.reverse());
+          setTotalRecords(totalRecords);
         }
-        setJobList(methodResults.reverse());
-        setTotalRecords(methodResults.length);
         setLoading(false);
       } catch (error: any) {
         toast.error(error.message);
@@ -147,7 +163,7 @@ export default function Jobs() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [isRefresh]);
+  }, [isRefresh,paginationValues]);
 
   return (
     <>
@@ -177,19 +193,19 @@ export default function Jobs() {
           <CustomisedTable
             columns={JobRequirementTableColumnList}
             rows={jobList}
-            page={page}
-            rowsPerPage={rowPerPage}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
             handleEdit={handleEditJob}
             openConfirmationModal={openConfirmationModal}
             openViewModal={handleJobDetailView}
             loading={loading}
           />
-          {totalRecords > rowPerPage && (
+          {totalRecords > 0 && (
             <Pagination
-              page={page}
-              setPage={setPage}
-              setRowPerPage={setRowPerPage}
-              rowsPerPage={rowPerPage}
+              page={paginationValues.pageNo}
+              setPage={handlePageChange}
+              setRowPerPage={handleRowPerPageChange}
+              rowsPerPage={paginationValues.records}
               totalRecords={totalRecords}
             />
           )}
