@@ -17,8 +17,9 @@ const Navbar = () => {
       alignItems={"center"}
       gap={1}
     >
-      <HeaderNotificationMenu />
       <ChatDrawer />
+      <HeaderNotificationMenu />
+
       <HeaderUserMenu />
     </Grid>
   );

@@ -601,6 +601,26 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiInput-root": {
+            "&:before": {
+              borderColor: colors.alpha.neutral[400],
+            },
+            "&:after": {
+              borderColor: colors.alpha.primary[400],
+            },
+            ":hover:not(.Mui-focused)": {
+              "&:before": {
+                borderColor: colors.alpha.primary[400],
+              },
+            },
+          },
+        },
+      },
+    },
     MuiIconButton: {
       defaultProps: {
         disableRipple: true,

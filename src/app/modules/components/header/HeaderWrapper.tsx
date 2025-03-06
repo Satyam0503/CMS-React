@@ -8,6 +8,7 @@ import {
 import { useCallback, useState } from "react";
 import { Navbar } from "./navbarmenus/Navbar";
 import { SearchInput } from "../SearchInput";
+import { colors } from "../../theme/MuiTheme";
 
 export function HeaderWrapper() {
   const [open, setOpen] = useState(false);
@@ -47,7 +48,12 @@ export function HeaderWrapper() {
           gap={2}
         >
           <Stack>
-            <SearchInput search={search} setSearch={handleSearchChange} />
+            <SearchInput
+              variant="standard"
+              label="Search"
+              search={search}
+              setSearch={handleSearchChange}
+            />
           </Stack>
           <Stack>
             <Navbar />
