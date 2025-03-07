@@ -6,7 +6,14 @@ import Menu from "@mui/material/Menu";
 
 import Typography from "@mui/material/Typography";
 
-import { Divider, IconButton, Link, MenuList, Stack } from "@mui/material";
+import {
+  Divider,
+  IconButton,
+  Link,
+  MenuList,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import {
   Message,
   MessageOutlined,
@@ -34,24 +41,26 @@ export default function HeaderNotificationMenu() {
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <IconButton
-          sx={{
-            bgcolor: "inherit",
-            border: "none",
-            "&:hover": {
+        <Tooltip title="Notifications" placement="bottom">
+          <IconButton
+            sx={{
               bgcolor: "inherit",
               border: "none",
-            },
-          }}
-          onClick={handleClick}
-          aria-controls={open ? "account-menu" : undefined}
-          aria-haspopup="true"
-        >
-          <NotificationsOutlined
-            sx={{ color: colors.alpha.neutral[400] }}
-            fontSize="large"
-          />
-        </IconButton>
+              "&:hover": {
+                bgcolor: "inherit",
+                border: "none",
+              },
+            }}
+            onClick={handleClick}
+            aria-controls={open ? "account-menu" : undefined}
+            aria-haspopup="true"
+          >
+            <NotificationsOutlined
+              sx={{ color: colors.alpha.neutral[400] }}
+              fontSize="large"
+            />
+          </IconButton>
+        </Tooltip>
       </Box>
       <Menu
         anchorEl={anchorEl}

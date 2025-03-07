@@ -86,12 +86,12 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
             }}
           />
           <Stack direction={"row"} justifyContent={"flex-end"} mt={2} gap={1}>
-            <CustomisedButton
+            {/* <CustomisedButton
               variant="contained"
               label="Submissions"
               Icon={<FileOpenOutlined />}
               iconPosition="start"
-            />
+            /> */}
             <CustomisedButton
               variant="outlined"
               label="Close"

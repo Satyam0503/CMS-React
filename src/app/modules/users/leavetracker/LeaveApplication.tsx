@@ -66,13 +66,13 @@ export const LeaveApplication: FC = () => {
             <Typography variant="body1">
               {intl.formatMessage({ id: "APPLICATION.START" })}
             </Typography>
-            <CustomisedDatePicker />
+            {/* <CustomisedDatePicker /> */}
           </Grid>
           <Grid item xs={12} sm={4}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "APPLICATION.END" })}
             </Typography>
-            <CustomisedDatePicker />
+            {/* <CustomisedDatePicker /> */}
           </Grid>
           <Grid item xs={12} sm={12}>
             <CustomisedButton variant="outlined" label="Add" Icon={<Add />} />

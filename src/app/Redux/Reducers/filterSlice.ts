@@ -21,10 +21,8 @@ const filterSlice = createSlice({
         setLocalFilter(state);
     },
     resetAllFilters:(state)=>{
-      state={
-        application:null,
-        jobs:null
-      }
+      state.application=null;
+      state.jobs=null;
       clearAllLocalFilter();
     }
   },

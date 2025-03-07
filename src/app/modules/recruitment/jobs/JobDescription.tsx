@@ -117,10 +117,10 @@ const JobDescription: FC<PropsTypes> = ({
                     touched.vacancies && errors.vacancies && errors.vacancies
                   }
                   {...getFieldProps("vacancies")}
-                  onKeyDown={(e)=>{
+                  onKeyDown={(e) => {
                     blockInvalidCharOnNumberField(e);
                   }}
-                  onWheel={(e)=>{
+                  onWheel={(e) => {
                     (e.target as HTMLInputElement).blur();
                   }}
                 />
@@ -158,7 +158,7 @@ const JobDescription: FC<PropsTypes> = ({
                 </Typography>
               </Grid>
 
-              <Grid item xs={8} md={6}>
+              <Grid item xs={8} md={6} pl={0.8}>
                 <Switch
                   checked={values.status}
                   onChange={(event) => {

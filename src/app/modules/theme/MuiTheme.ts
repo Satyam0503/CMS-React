@@ -300,10 +300,12 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    //icon of select outlined
     MuiSelect: {
       styleOverrides: {
         iconOutlined: {
-          color: colors.alpha.white[500],
+          color: colors.alpha.neutral[400],
         },
       },
     },
@@ -931,10 +933,10 @@ export const MuiTheme = createTheme({
             backgroundColor: "transparent",
           },
         },
-        actions:{
-          display:"flex",
-          gap:".5rem",
-        }
+        actions: {
+          display: "flex",
+          gap: ".5rem",
+        },
       },
     },
     MuiToolbar: {

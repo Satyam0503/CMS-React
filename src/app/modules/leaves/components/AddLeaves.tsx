@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
+
 import CustomisedButton from "../../components/CustomisedButton";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import { CustomIconButton } from "../../components/CustomIconButton";
+
 
 export default function AddLeaves() {
   const intl = useIntl();
@@ -107,7 +107,7 @@ export default function AddLeaves() {
                   id: "APPLICATION.START",
                 })}
               </Typography>
-              <CustomisedDatePicker />
+              {/* <CustomisedDatePicker /> */}
             </Grid>
             <Grid item xs={12} md={3.4}>
               <Typography variant="body1">
@@ -115,7 +115,7 @@ export default function AddLeaves() {
                   id: "APPLICATION.END",
                 })}
               </Typography>
-              <CustomisedDatePicker />
+              {/* <CustomisedDatePicker /> */}
             </Grid>
             <Grid item xs={0.8} alignContent={"end"}>
               <IconButton size="large" sx={{ width: "40px", height: "40px" }}>

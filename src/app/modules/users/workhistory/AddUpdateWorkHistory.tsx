@@ -50,7 +50,7 @@ export function AddUpdateWorkHistory() {
                   id: "APPLICATION.START",
                 })}
               </Typography>
-              <CustomisedDatePicker name="startDate" />
+              {/* <CustomisedDatePicker name="startDate" /> */}
               <FormHelperText></FormHelperText>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -59,7 +59,7 @@ export function AddUpdateWorkHistory() {
                   id: "APPLICATION.END",
                 })}
               </Typography>
-              <CustomisedDatePicker name="endDate" />
+              {/* <CustomisedDatePicker name="endDate" /> */}
               <FormHelperText></FormHelperText>
             </Grid>
             <Grid item xs={12} sm={6}>
