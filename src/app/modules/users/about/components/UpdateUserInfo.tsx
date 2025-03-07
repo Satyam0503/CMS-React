@@ -116,7 +116,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2} alignItems={"baseline"}>
+                <Grid container spacing={2} alignItems={"center"}>
                   <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}

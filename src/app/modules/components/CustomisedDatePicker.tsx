@@ -11,15 +11,17 @@ interface PropsTypes {
   maxDate?: Dayjs;
   minDate?: Dayjs;
   name?: string;
+  className?: string;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name, minDate } = props;
+  const { label, value, setValue, maxDate, name, minDate, className } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
-          <DatePicker 
+          <DatePicker
+            className="datepicker"
             name={name}
             label={label}
             value={value}
