@@ -309,8 +309,10 @@ export const MuiTheme = createTheme({
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        // to change height of outlined input
         input: {
-          padding: ".6rem",
+          paddingBlock: ".6rem",
+          paddingInline: "1rem",
         },
         root: {
           padding: "0px ",
@@ -595,6 +597,26 @@ export const MuiTheme = createTheme({
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
             color: themeColors.white,
             background: colors.alpha.primary[500],
+          },
+        },
+      },
+    },
+
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiInput-root": {
+            "&:before": {
+              borderColor: colors.alpha.neutral[400],
+            },
+            "&:after": {
+              borderColor: colors.alpha.primary[400],
+            },
+            ":hover:not(.Mui-focused)": {
+              "&:before": {
+                borderColor: colors.alpha.primary[400],
+              },
+            },
           },
         },
       },
