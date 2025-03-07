@@ -30,6 +30,7 @@ import {
 } from "../../../Redux/Reducers/filterSlice";
 import { useFormik } from "formik";
 import { applicationFilterSchema } from "../../../../utils/Schema/filterValidationSchema";
+import { blockInvalidCharOnNumberField } from "../../../../utils/common";
 
 interface PropsType {
   id?: string;
@@ -264,10 +265,10 @@ export const ApplicationFilter: FC<PropsType> = ({
                       min: 0,
                     }}
                     onKeyDown={(e) => {
-                      const restrictedKeys = ["-", "+", "e"];
-                      if (restrictedKeys.includes(e.key)) {
-                        e.preventDefault();
-                      }
+                      blockInvalidCharOnNumberField(e);
+                    }}
+                    onWheel={(e)=>{
+                      (e.target as HTMLInputElement).blur();
                     }}
                   />
                   <TextField
@@ -281,10 +282,10 @@ export const ApplicationFilter: FC<PropsType> = ({
                       min: values.minExperience || 0,
                     }}
                     onKeyDown={(e) => {
-                      const restrictedKeys = ["-", "+", "e"];
-                      if (restrictedKeys.includes(e.key)) {
-                        e.preventDefault();
-                      }
+                      blockInvalidCharOnNumberField(e);
+                    }}
+                    onWheel={(e)=>{
+                      (e.target as HTMLInputElement).blur();
                     }}
                   />
                 </Stack>

@@ -250,6 +250,10 @@ export interface JobsFilterModel {
   jobType: string;
   status: number;
 }
+export interface FiltersType {
+  application: ApplicationFilterModel | null;
+  jobs: JobsFilterModel | null;
+}
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 

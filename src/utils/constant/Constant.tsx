@@ -41,6 +41,7 @@ export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+export const APP_FILTER_KEY = "app-filters";
 
 export const ServiceUrl = {
   // account
@@ -74,12 +75,14 @@ export const ServiceUrl = {
 
   DELETE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/DeleteEducationDetails`,
   DELETE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/DeleteCertificationDetails`,
+  DELETE_EMPLOYEE:`${BaseUrl}/api/User/DeleteEmployee`,
   
   
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_VACANCIES: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+  DELETE_VACANCY:`${BaseUrl}/api/JobVacancy/DeleteJobVacancy`,
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,

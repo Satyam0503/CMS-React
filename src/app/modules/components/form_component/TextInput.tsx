@@ -30,7 +30,9 @@ export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
         {...fields}
         {...props}
         onKeyDown={(e)=>{
-          blockInvalidCharOnNumberField(e)
+          if(props.type==="number"){
+            blockInvalidCharOnNumberField(e)
+          }
         }}
         onWheel={(e)=>{
           if(props.type === "number"){

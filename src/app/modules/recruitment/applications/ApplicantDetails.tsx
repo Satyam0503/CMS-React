@@ -191,17 +191,17 @@ export const ApplicantDetails = () => {
 
   const handleDownloadResume = async () => {
     try {
-      const response = await fetch(applicant.fullApplicantResumePath, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/pdf",
-        },
-      });
-      const fileObj = await response.blob();
-      const urlObj = window.URL.createObjectURL(fileObj);
+      // const response = await fetch(applicant.fullApplicantResumePath, {
+      //   method: "GET",
+      //   headers: {
+      //     "Content-Type": "application/pdf",
+      //   },
+      // });
+      // const fileObj = await response.blob();
+      // const urlObj = window.URL.createObjectURL(fileObj);
       const link = document.createElement("a");
-      link.href = urlObj;
-      // link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
+      link.href = applicant.fullApplicantResumePath;
+      link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

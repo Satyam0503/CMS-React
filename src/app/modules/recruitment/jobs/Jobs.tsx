@@ -10,7 +10,7 @@ import { JobRequirementTableColumnList } from "../../../../utils/constant/Consta
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
-import { addJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
+import { addJobVacancy, deleteJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { ViewJobDetails } from "./ViewJobDetails";
@@ -76,13 +76,23 @@ export default function Jobs() {
     setViewModalOpen(true);
   };
 
-  const handledeleteJob = (res: string) => {
+  const handledeleteJob = async (res: string) => {
     if (res !== "ok" || selectedJob === undefined) {
-      toast.error("Error try Again");
       closeConfirmationModal();
     } else {
-      //  job deletion logic
-      console.log("Job Deleted");
+      try{
+        const response = await deleteJobVacancy(selectedJob.jobId);
+        const {success,message}= response.data;
+        if(success){
+          setRefresh(!isRefresh);
+          toast.success(message);
+          closeConfirmationModal();
+        }
+      }
+      catch(error){
+        console.error("Error :",error instanceof Error ? error.message :error);
+        toast.error("Request Failed.");
+      }
     }
   };
 
@@ -144,7 +154,7 @@ export default function Jobs() {
       pageNo:0,
     })
   }
-
+  
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {

@@ -25,7 +25,7 @@ export const UserSummary = () => {
   const handleUpdateSummary = async () => {
     const payload = {
       summary: updatedSummary,
-      summaryId: userSummary?.summaryId!,
+      summaryId: userSummary?.summaryId ?? "",
       userId: currentUser.userId,
     };
     try {

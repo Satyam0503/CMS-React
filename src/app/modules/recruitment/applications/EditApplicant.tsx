@@ -272,7 +272,7 @@ export const EditApplicant = () => {
                         </Grid>
                       </Grid>
 
-                      <Stack mt={2} spacing={1}>
+                      <Stack mt={2} spacing={2}>
                         <Typography variant="h6" fontWeight={600}>
                           {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
                         </Typography>

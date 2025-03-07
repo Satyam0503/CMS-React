@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { EmployeeModel, ModulePermissoinModel } from "./common_types";
+import { EmployeeModel, FiltersType, ModulePermissoinModel } from "./common_types";
 import {
   ApplicantStatus,
   ApplicationStatus,
@@ -7,7 +7,7 @@ import {
   ModulesName,
   Permission,
 } from "./enums";
-import { SideBarTabList } from "./constant/Constant";
+import { APP_FILTER_KEY, SideBarTabList } from "./constant/Constant";
 
 
 export const dateFormatter = (
@@ -394,3 +394,33 @@ export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
 // }
 
 export const blockInvalidCharOnNumberField = (event:React.KeyboardEvent<HTMLElement>) => ['e', 'E', '+', '-'].includes(event.key) && event.preventDefault();
+
+// filter helper 
+
+export const getAppliedFilters = () => {
+  const savedFilters = localStorage.getItem(APP_FILTER_KEY);
+  const appliedfilters: FiltersType = savedFilters
+    ? JSON.parse(savedFilters)
+    : {
+        application: null,
+        jobs: null,
+      };
+  return appliedfilters;
+};
+
+
+export const setLocalFilter = (filters:FiltersType) => {
+  if(localStorage){
+      localStorage.setItem(APP_FILTER_KEY,JSON.stringify(filters));
+  }
+  else{
+      console.log("Unable to access localstorage");
+  }
+}
+
+export const clearAllLocalFilter = ()=>{
+  if(!localStorage){
+    return;
+  }
+  localStorage.removeItem(APP_FILTER_KEY);
+}

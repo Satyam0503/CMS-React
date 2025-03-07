@@ -7,6 +7,7 @@ import * as XLSX from "xlsx";
 import { useCallback, useEffect, useState } from "react";
 import {
   addEmployee,
+  deleteEmployee,
   getAllEmployees,
   updateEmployee,
 } from "./components/employeeServices";
@@ -130,26 +131,29 @@ export default function Employees() {
     }
   }
 
-  function handleEmployeeDeletion(res: string) {
+  const handleEmployeeDeletion = async (res: string) => {
     if (res !== "ok" || selectedEmployee === undefined) {
-      toast.error("Please try again");
       closeConfirmationModal();
     } else {
-      // deleteEmployee(employeeId, token)
-      //   .then((res) => {
-      //     const { success, message } = res.data;
-      //     if (success) {
-      //       toast.success(message);
-      //       closeConfirmationModal();
-      //       setRefresh(!isRefresh);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     toast.error("Please try again");
-      //     closeConfirmationModal();
-      //   });
+      try {
+        const response = await deleteEmployee(selectedEmployee.userId);
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(message);
+          closeConfirmationModal();
+          setRefresh(!isRefresh);
+        }
+      } catch (error) {
+        toast.error("Something Went Wrong");
+        console.error(
+          "Error :",
+          error instanceof Error ? error.message : error
+        );
+      } finally {
+        closeConfirmationModal();
+      }
     }
-  }
+  };
 
   const openConfirmationModal = (employee: EmployeeModel) => {
     setConfirmModalOpen(true);
@@ -179,31 +183,30 @@ export default function Employees() {
     setEdit(true);
   }
 
-
-
-  const handlePageChange =  (page:number)=>{
+  const handlePageChange = (page: number) => {
     setPaginationValues({
       ...paginationValues,
-      pageNo:page,
-    })
-  }
+      pageNo: page,
+    });
+  };
 
-  const handleRowPerPageChange = (rowPerPage:number)=>{
+  const handleRowPerPageChange = (rowPerPage: number) => {
     setPaginationValues({
       ...paginationValues,
-      records:rowPerPage,
-      pageNo:0,
-    })
-  }
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
   useEffect(() => {
     setLoading(true);
     const getAllEmployeesList = async () => {
       try {
         const response = await getAllEmployees(
-          paginationValues.pageNo+1,
+          paginationValues.pageNo + 1,
           paginationValues.records
         );
-        const { success, statusCode, methodResults,totalRecords } = response.data;
+        const { success, statusCode, methodResults, totalRecords } =
+          response.data;
         if (!(success && statusCode === 200)) {
           throw new Error("Failed To fetch Data");
         }
@@ -212,7 +215,10 @@ export default function Employees() {
           setTotalRecords(totalRecords);
         }
       } catch (error) {
-        console.error("error :", error instanceof Error ? error.message :error);
+        console.error(
+          "error :",
+          error instanceof Error ? error.message : error
+        );
       } finally {
         setLoading(false);
       }
@@ -265,11 +271,11 @@ export default function Employees() {
             openConfirmationModal={openConfirmationModal}
             openViewModal={openViewModal}
           />
-          {totalRecords > 0  && (
+          {totalRecords > 0 && (
             <Pagination
               page={paginationValues.pageNo}
               rowsPerPage={paginationValues.records}
-              setPage = {handlePageChange}
+              setPage={handlePageChange}
               setRowPerPage={handleRowPerPageChange}
               totalRecords={totalRecords}
             />

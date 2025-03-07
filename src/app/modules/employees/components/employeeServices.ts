@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { getRequest, postRequest } from "../../../../server/axios";
+import { deleteRequest, getRequest, postRequest } from "../../../../server/axios";
 import {
   AddEmployeeResponseData,
   ApiResponse,
@@ -27,11 +27,9 @@ export const updateEmployee = async (
   );
 };
 
-// export const deleteEmployee = async (
-//   employeeId: string
-// ): Promise<AxiosResponse<ApiResponse>> => {
-//   return postRequest(ServiceUrl.DELETE_EMPLOYEE);
-// };
+export const deleteEmployee = async (employeeId: string)=> {
+  return deleteRequest<ApiResponse>(ServiceUrl.DELETE_EMPLOYEE,{params:{employeeId}})
+};
 
 export const getAllEmployees = async (pageNo:number=0,records:number=0) => {
   return getRequest<GetAllEmployeeResponseData>(`${ServiceUrl.GET_ALL_EMPLOYEE}?pageNo=${pageNo}&records=${records}`);

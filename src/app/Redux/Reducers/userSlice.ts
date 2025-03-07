@@ -26,10 +26,15 @@ export const userSlice = createSlice({
     },
     setProfileImageUrl :(state, action:PayloadAction<string>) =>{
       state.profileImageUrl= action.payload;
+    },
+    resetUserSlice:(state)=>{
+      state.userData= undefined;
+      state.userPermissions=[];
+      state.profileImageUrl="";
     }
   },
 });
 
 // exporting userReducer and action creator
 export const userReducer = userSlice.reducer;
-export const { setCurrentUser, setUserPermissions, setProfileImageUrl } = userSlice.actions;
+export const { setCurrentUser, setUserPermissions, setProfileImageUrl,resetUserSlice } = userSlice.actions;
