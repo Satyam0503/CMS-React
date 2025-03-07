@@ -117,10 +117,10 @@ const JobDescription: FC<PropsTypes> = ({
                     touched.vacancies && errors.vacancies && errors.vacancies
                   }
                   {...getFieldProps("vacancies")}
-                  onKeyDown={(e)=>{
+                  onKeyDown={(e) => {
                     blockInvalidCharOnNumberField(e);
                   }}
-                  onWheel={(e)=>{
+                  onWheel={(e) => {
                     (e.target as HTMLInputElement).blur();
                   }}
                 />
