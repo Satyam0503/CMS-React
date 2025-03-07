@@ -1,4 +1,4 @@
-import { Stack, Typography, Avatar } from "@mui/material";
+import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
 import { colors } from "../../theme/MuiTheme";
 import { EmployeeModel } from "../../../../utils/common_types";
@@ -53,51 +53,60 @@ export default function UpcomingBirthday({ employees }: PropsType) {
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.BIRTHDAY" })}>
-        <Stack spacing={1}>
-          {employeeList.slice(0, 5).map((emp) => {
-            return (
-              <Stack
-                key={emp.userId}
-                direction="row"
-                sx={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
+        {!employees.length ? (
+          <Box
+            component={"div"}
+            sx={{ flexGrow:1 , alignContent: "center", textAlign: "center" }}
+          >
+            <Typography variant="h5">No Employees</Typography>
+          </Box>
+        ) : (
+          <Stack spacing={1}>
+            {employeeList.slice(0, 5).map((emp) => {
+              return (
                 <Stack
+                  key={emp.userId}
                   direction="row"
-                  sx={{ alignItems: "center" }}
-                  spacing={1}
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
                 >
-                  <Avatar
-                    alt="User Profile"
-                    src={emp.fullProfileUrl}
-                    sx={{
-                      width: 45,
-                      height: 45,
-                      fontSize: "1rem",
-                    }}
+                  <Stack
+                    direction="row"
+                    sx={{ alignItems: "center" }}
+                    spacing={1}
                   >
-                    {emp.firstName.charAt(0)}
-                  </Avatar>
-                  <Stack>
-                    <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
-                    <Typography variant="body2">{emp.jobRole}</Typography>
+                    <Avatar
+                      alt="User Profile"
+                      src={emp.fullProfileUrl}
+                      sx={{
+                        width: 45,
+                        height: 45,
+                        fontSize: "1rem",
+                      }}
+                    >
+                      {emp.firstName.charAt(0)}
+                    </Avatar>
+                    <Stack>
+                      <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
+                      <Typography variant="body2">{emp.jobRole}</Typography>
+                    </Stack>
                   </Stack>
-                </Stack>
 
-                <Typography
-                  variant="subtitle2"
-                  color={colors.alpha.primary[500]}
-                >
-                  {!isSameDate(dayjs(emp.dateOfBirth))
-                    ? dateFormatter(emp.dateOfBirth, "DD MMM")
-                    : "Today"}
-                </Typography>
-              </Stack>
-            );
-          })}
-        </Stack>
+                  <Typography
+                    variant="subtitle2"
+                    color={colors.alpha.primary[500]}
+                  >
+                    {!isSameDate(dayjs(emp.dateOfBirth))
+                      ? dateFormatter(emp.dateOfBirth, "DD MMM")
+                      : "Today"}
+                  </Typography>
+                </Stack>
+              );
+            })}
+          </Stack>
+        )}
       </CustomCard>
     </>
   );

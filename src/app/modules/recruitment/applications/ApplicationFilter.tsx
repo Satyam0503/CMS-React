@@ -87,7 +87,6 @@ export const ApplicationFilter: FC<PropsType> = ({
     };
     getActiveJobs();
   }, []);
-console.log(errors);
 
   return (
     <Popover

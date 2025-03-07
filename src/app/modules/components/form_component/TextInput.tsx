@@ -1,11 +1,7 @@
 import {
-  FormControl,
   InputBaseProps,
-  InputLabel,
   OutlinedInputProps,
-  Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useField } from "formik";
 import { FC } from "react";
@@ -24,9 +20,6 @@ interface PropsTypes {
 export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
   const [fields, meta] = useField(props);
   return (
-    <Stack spacing={0.5}>
-      {/* <Typography variant="body1">{label}</Typography> */}
-      {/* <InputLabel>{label}</InputLabel> */}
       <TextField
         fullWidth
         label={label}
@@ -36,6 +29,5 @@ export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
         {...fields}
         {...props}
       />
-    </Stack>
   );
 };

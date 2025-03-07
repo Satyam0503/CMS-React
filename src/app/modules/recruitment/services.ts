@@ -25,15 +25,15 @@ export const editJobVacancy = async (payload: JobModal, jobId: string) => {
   );
 };
 
-export const getAllJobVacancies = async (payload:{companyId:string}={companyId:""}) => {
-  return postRequest<{companyId:string},JobsResponseData>(ServiceUrl.GET_ALL_VACANCIES,payload);
+export const getAllJobVacancies = async (payload:{companyId:string}={companyId:""},pageNo:number=0,records:number=0,) => {
+  return postRequest<{companyId:string},JobsResponseData>(`${ServiceUrl.GET_ALL_VACANCIES}?pageNo=${pageNo}&records=${records}`,payload);
 };
 
 export const deleteJobVacancy = () => {};
 
 // applicant services
-export const getAllApplicantList = async (filters:GetApplicationPayloadModel ) => {
-  return postRequest<GetApplicationPayloadModel, ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS,filters);
+export const getAllApplicantList = async (filters:GetApplicationPayloadModel, pageNo:number=0, records:number=0) => {
+  return postRequest<GetApplicationPayloadModel, ApplicantsResponseData>(`${ServiceUrl.GET_ALL_APPLICANTS}?pageNo=${pageNo}&records=${records}`,filters);
 };
 
 export const addApplicant = async (payload: ApplicantModel) => {

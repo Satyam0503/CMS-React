@@ -923,7 +923,7 @@ export const MuiTheme = createTheme({
         },
         toolbar: {
           "& .MuiIconButton-root": {
-            padding: 8,
+            padding: 5,
           },
         },
         select: {
@@ -931,6 +931,10 @@ export const MuiTheme = createTheme({
             backgroundColor: "transparent",
           },
         },
+        actions:{
+          display:"flex",
+          gap:".5rem",
+        }
       },
     },
     MuiToolbar: {

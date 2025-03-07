@@ -43,7 +43,7 @@ export default function OpenPositions() {
           </Box>
         ) : (
           <>
-            <Stack spacing={1} sx={{ marginBlock: 1 }}>
+            <Stack spacing={1} >
               {activeJobs.slice(-4).map((job) => (
                 <Stack
                   key={job.jobId}
