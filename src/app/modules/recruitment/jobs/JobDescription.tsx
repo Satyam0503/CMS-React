@@ -158,7 +158,7 @@ const JobDescription: FC<PropsTypes> = ({
                 </Typography>
               </Grid>
 
-              <Grid item xs={8} md={6}>
+              <Grid item xs={8} md={6} pl={0.8}>
                 <Switch
                   checked={values.status}
                   onChange={(event) => {
