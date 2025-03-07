@@ -382,3 +382,12 @@ export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
   }
   return arr;
 };
+
+
+// function handleEmployeeExport() {
+//   const mappedEmployeeData = employeesListMapperforExport(employeeList);
+//   const worksheet = XLSX.utils.json_to_sheet(mappedEmployeeData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+//   XLSX.writeFile(workbook, "Employees.xlsx");
+// }

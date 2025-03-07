@@ -10,7 +10,7 @@ interface PropsTypes {
   label: string;
   name: string;
   type: string;
-  placeholder: string;
+  placeholder?: string;
   disabled?: boolean;
   multiline?: boolean;
   inputProps?: InputBaseProps["inputProps"];
