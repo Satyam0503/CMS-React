@@ -25,6 +25,7 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { colors } from "../../../theme/MuiTheme";
 import { Languages } from "../Languages";
 import { useLogout } from "../../../auth";
+import { wrap } from "module";
 
 export default function HeaderUserMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -71,13 +72,13 @@ export default function HeaderUserMenu() {
             gap={0.5}
             sx={{
               bgcolor: "inherit",
+              maxWidth: "280px",
             }}
           >
             <MenuList
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
-                gap: 1,
+                gap: 2,
                 bgcolor: colors.alpha.neutral[100],
                 color: colors.alpha.primary[500],
               }}
@@ -86,7 +87,7 @@ export default function HeaderUserMenu() {
                 <img alt="profile picture" width={"40px"} height={"40px"} />
               </Avatar>
               <Box>
-                <Typography variant="body1" fontWeight="bold">
+                <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
                   {currentUser?.firstName} {currentUser?.lastName}
                 </Typography>
                 <Typography variant="body2">
