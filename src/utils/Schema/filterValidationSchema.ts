@@ -2,7 +2,7 @@ import * as Yup from "yup";
 
 export const applicationFilterSchema = Yup.object().shape({
   filterFrom: Yup.date().notRequired(),
-  filterTo: Yup.date().notRequired(),
+  filterTo: Yup.date().min(Yup.ref("filterFrom")).notRequired(),
   activityTypes: Yup.array().notRequired(),
   vacancyIds: Yup.array().notRequired(),
   status: Yup.array().notRequired(),

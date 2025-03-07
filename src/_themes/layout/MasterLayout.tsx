@@ -42,7 +42,7 @@ const MasterLayout = () => {
             className="bg-body"
             zIndex={0}
           >
-            <Container>
+            <Container  sx={{flexGrow:1}}>
               <Outlet />
             </Container>
           </Stack>

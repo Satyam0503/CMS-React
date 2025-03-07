@@ -109,7 +109,7 @@ export const commentActionEncoderForApplicationStatus = (
     case ApplicationStatus.Rejected:
       return CommentAction.Rejection;
     default:
-      CommentAction.InProgress;
+     return CommentAction.InProgress;
   }
 };
 

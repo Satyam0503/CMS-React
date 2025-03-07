@@ -40,12 +40,11 @@ export default function Applications() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const applicationFilters = useAppSelector(
     (state) => state.filters.application
-  );
-
+  )
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
-
   const isFilterAvailable = applicationFilters !== null;
+  
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };

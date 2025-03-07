@@ -1,6 +1,7 @@
 {
   "AUTH.REGISTER.TITLE": "Registration",
   "AUTH.INPUT.EMAIL": "Email",
+  "APPLICANT.STATUS":"Applicant Status",
   "APPLICATION.LEAVE": "Leave Application",
   "APPLICATION.START": "Start Date",
   "APPLICATION.END": "End date",
@@ -14,7 +15,6 @@
   "APPLICATION.STATUS": "Application Status",
   "APPLICANT.COMMENT": "Comment History",
   "APPLICANT.DETAILS": "Applicant Details",
-  "APPLICANT.STATUS": "Applicant Status",
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.INPUT.FULLNAME": "Full Name",
   "AUTH.INPUT.PASSWORD": "Password",
