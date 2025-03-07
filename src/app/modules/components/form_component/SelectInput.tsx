@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
-} from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, Select } from "@mui/material";
 import { useField } from "formik";
 import { FC, ReactNode } from "react";
 
@@ -17,25 +12,20 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
   const [field, meta] = useField(props);
 
   return (
-      <FormControl fullWidth>
-        <InputLabel id="select-label">{label}</InputLabel>
-        <Select
-          fullWidth
-          variant="outlined"
-          labelId="select-label"
-          label={label}
-          error={meta.touched && Boolean(meta.error)}
-          {...field}
-          {...props}
-          // renderValue={value=>{
-          //   if(!value){
-          //     return <Typography variant="body2" sx={{color:colors.alpha.neutral[400], fontSize:"14px"}}>{label}</Typography>
-          //   }
-          //   return ;
-          // }}
-        >
-          {children}
-        </Select>
+    <FormControl fullWidth>
+      <InputLabel id="select-label">{label}</InputLabel>
+      <Select
+        fullWidth
+        variant="outlined"
+        labelId="select-label"
+        label={label}
+        error={meta.touched && Boolean(meta.error)}
+        {...field}
+        {...props}
+      >
+        {children}
+      </Select>
+      {meta.touched && meta.error && (
         <FormHelperText
           sx={{
             fontSize: "12px",
@@ -44,8 +34,9 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
             marginTop: "3px !important",
           }}
         >
-          {meta.touched && meta.error && meta.error}
+          {meta.error}
         </FormHelperText>
-      </FormControl>
+      )}
+    </FormControl>
   );
 };

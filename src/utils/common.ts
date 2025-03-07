@@ -9,6 +9,7 @@ import {
 } from "./enums";
 import { SideBarTabList } from "./constant/Constant";
 
+
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
@@ -391,3 +392,5 @@ export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
 //   XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
 //   XLSX.writeFile(workbook, "Employees.xlsx");
 // }
+
+export const blockInvalidCharOnNumberField = (event:React.KeyboardEvent<HTMLElement>) => ['e', 'E', '+', '-'].includes(event.key) && event.preventDefault();
