@@ -15,7 +15,7 @@ import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./SingleBanner";
 import CustomisedButton from "../components/CustomisedButton";
-import { useEffect,  useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Footer from "./Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
@@ -32,6 +32,7 @@ import NoVacancy from "./NoVacancy";
 import ApplyNowHeader from "./ApplyNowHeader";
 import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
 import { ErrorLabel } from "../components/form_component/ErrorLabel";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -60,6 +61,8 @@ export default function ApplyNow() {
     JobModal | undefined
   >();
   const [formValues, setFromValues] = useState(initialValues);
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const captachaKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -112,7 +115,7 @@ export default function ApplyNow() {
   useEffect(() => {
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies({companyId});
+        const response = await getAllJobVacancies({ companyId });
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);
@@ -138,6 +141,10 @@ export default function ApplyNow() {
     };
     getActiveVacancy();
   }, []);
+
+  const handleCaptchaValueChange = (token: string | null) => {
+    console.log(token);
+  };
 
   if (loading) {
     return <CircularLoader />;
@@ -279,8 +286,10 @@ export default function ApplyNow() {
                     setFieldValue,
                     setFieldTouched,
                     handleSubmit,
+                    getFieldProps,
                     ...formik
                   }) => {
+
                     return (
                       <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -301,9 +310,9 @@ export default function ApplyNow() {
                               label={intl.formatMessage({
                                 id: "USER.FIRST_NAME",
                               })}
-                              name="firstName"
-                              placeholder="First Name"
                               type="text"
+                              error={touched.firstName && Boolean(errors.firstName) }
+                              {...getFieldProps('firstName')}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
@@ -312,29 +321,27 @@ export default function ApplyNow() {
                               label={intl.formatMessage({
                                 id: "USER.LAST_NAME",
                               })}
-                              name="lastName"
-                              placeholder="Last Name"
+                              error={touched.lastName && Boolean(errors.lastName) }
                               type="text"
+                              {...getFieldProps('lastName')}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <TextField
                               fullWidth
                               label={intl.formatMessage({ id: "USER.PHONE" })}
-                              name="phone"
-                              placeholder="Phone Number"
+                              error={touched.phone && Boolean(errors.phone) }
                               type="text"
+                              {...getFieldProps('phone')}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <TextField
                               fullWidth
-                              label={intl.formatMessage({
-                                id: "AUTH.INPUT.EMAIL",
-                              })}
-                              name="email"
-                              placeholder="Email"
+                              label={intl.formatMessage({id: "AUTH.INPUT.EMAIL" })}
+                              error={touched.email && Boolean(errors.email) }
                               type="email"
+                              {...getFieldProps('email')}
                             />
                           </Grid>
 
@@ -349,8 +356,9 @@ export default function ApplyNow() {
                                   id: "JOB.POSITION",
                                 })}
                                 fullWidth
-                                {...formik.getFieldProps("vacancyId")}
+                                {...getFieldProps("vacancyId")}
                                 // value={selectedJobPosition?.jobId}
+                                error={touched.vacancyId && Boolean(errors.vacancyId) }
                                 onChange={(event) => {
                                   setFieldValue(
                                     "vacancyId",
@@ -475,6 +483,17 @@ export default function ApplyNow() {
                         <ErrorLabel>
                           {touched.resume && errors.resume && errors.resume}
                         </ErrorLabel>
+
+                        {/* adding captacha */}
+                        <Stack sx={{marginBlock:2}}>
+
+                            <ReCAPTCHA
+                              sitekey={captachaKey}
+                              ref={captchaRef}
+                              onChange={handleCaptchaValueChange}
+                            />
+          
+                        </Stack>
 
                         <Grid item xs={12} textAlign={"center"} mt={2}>
                           <CustomisedButton

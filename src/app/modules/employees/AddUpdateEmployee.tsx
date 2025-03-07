@@ -128,7 +128,11 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder="Employee Id"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                    >
                       <CustomisedDatePicker
                         label={intl.formatMessage({ id: "USER.DOB" })}
                         name={"dateOfBirth"}
@@ -143,6 +147,26 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         {touched.dateOfBirth &&
                           errors.dateOfBirth &&
                           errors.dateOfBirth}
+                      </ErrorLabel>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sm={6}
+                    >
+                      <CustomisedDatePicker
+                        label={intl.formatMessage({ id: "USER.DOJ" })}
+                        value={values.dateOfJoining}
+                        setValue={(newDate: Dayjs | null) => {
+                          setFieldTouched("dateOfJoining", true);
+                          setFieldValue("dateOfJoining", newDate);
+                        }}
+                        maxDate={dayjs()}
+                      />
+                      <ErrorLabel>
+                        {touched.dateOfJoining &&
+                          errors.dateOfJoining &&
+                          errors.dateOfJoining}
                       </ErrorLabel>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -257,22 +281,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         <MenuItem value={"Inactive"}>Inactive</MenuItem>
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "USER.DOJ" })}
-                        value={values.dateOfJoining}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("dateOfJoining", true);
-                          setFieldValue("dateOfJoining", newDate);
-                        }}
-                        maxDate={dayjs()}
-                      />
-                      <ErrorLabel>
-                        {touched.dateOfJoining &&
-                          errors.dateOfJoining &&
-                          errors.dateOfJoining}
-                      </ErrorLabel>
-                    </Grid>
+
                     <Grid item xs={12} sm={6}>
                       <TextInput
                         label={intl.formatMessage({ id: "USER.ADDRESS" })}

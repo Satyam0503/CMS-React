@@ -6,7 +6,6 @@ import { colors } from "../theme/MuiTheme";
 
 type PropsType = {
   search: string;
-  label: string;
   style?: React.CSSProperties;
   setSearch: (value: string) => void;
   variant?: "outlined" | "filled" | "standard";

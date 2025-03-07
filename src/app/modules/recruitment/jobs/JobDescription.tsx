@@ -18,6 +18,7 @@ import jobSchema from "../../../../utils/Schema/jobSchema";
 import { JobType } from "../../../../utils/constant/Constant";
 import { JobModal } from "../../../../utils/common_types";
 import { ErrorLabel } from "../../components/form_component/ErrorLabel";
+import { blockInvalidCharOnNumberField } from "../../../../utils/common";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -117,9 +118,10 @@ const JobDescription: FC<PropsTypes> = ({
                   }
                   {...getFieldProps("vacancies")}
                   onKeyDown={(e)=>{
-                    if(['-','e','+'].includes(e.key)){
-                      e.preventDefault();
-                    } 
+                    blockInvalidCharOnNumberField(e);
+                  }}
+                  onWheel={(e)=>{
+                    (e.target as HTMLInputElement).blur();
                   }}
                 />
               </Grid>

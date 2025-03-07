@@ -47,7 +47,7 @@ export const ServiceUrl = {
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
-  CREATE_NEW_PASSWORD: `${BaseUrl}/api/User/CreateNewPassword`,
+  CREATE_NEW_PASSWORD: `${BaseUrl}/api/CreateNewPassword`,
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,

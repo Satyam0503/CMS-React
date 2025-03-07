@@ -179,13 +179,7 @@ export default function Employees() {
     setEdit(true);
   }
 
-  function handleEmployeeExport() {
-    const mappedEmployeeData = employeesListMapperforExport(employeeList);
-    const worksheet = XLSX.utils.json_to_sheet(mappedEmployeeData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
-    XLSX.writeFile(workbook, "Employees.xlsx");
-  }
+
 
   const handlePageChange =  (page:number)=>{
     setPaginationValues({
@@ -253,7 +247,7 @@ export default function Employees() {
               />
               <CustomIconButton
                 icon={<Download />}
-                handleClick={handleEmployeeExport}
+                // handleClick={handleEmployeeExport}
                 tooltip="Import Excel"
                 ariaLabel="import excel"
               />
