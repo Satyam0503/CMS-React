@@ -19,8 +19,6 @@ import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import CustomisedButton from "../components/CustomisedButton";
 
-
-
 export default function Employment() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -45,7 +43,7 @@ export default function Employment() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box >
+        <Box>
           <Stack>
             <Typography variant="h5">
               {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}

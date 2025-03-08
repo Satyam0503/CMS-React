@@ -18,7 +18,7 @@ import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../components/form_component/TextInput";
 import { SelectInput } from "../../../components/form_component/SelectInput";
 import { EmployeeModel } from "../../../../../utils/common_types";
-import { updateEmployee } from "../../../employees/components/employeeServices";
+import { updateEmployee } from "../../../employees/employeeServices";
 import { AxiosError } from "axios";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";

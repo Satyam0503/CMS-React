@@ -3,8 +3,8 @@ import { FC } from "react";
 
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../components/DonutApexChart";
-import Feedback from "./Feedback";
-import Achievements from "./Achievements";
+import Feedback from "./components/Feedback";
+import Achievements from "./components/Achievements";
 
 export const UserPerformance: FC = () => {
   const intl = useIntl();

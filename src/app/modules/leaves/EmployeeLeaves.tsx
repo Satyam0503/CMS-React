@@ -1,0 +1,150 @@
+import {
+  Card,
+  CardContent,
+  Grid,
+  Button,
+  IconButton,
+  Stack,
+  Typography,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { FC } from "react";
+import { useIntl } from "react-intl";
+// import IconStat from "../components/IconStat";
+// import { colors } from "../theme/MuiTheme";
+import {
+  Home,
+  HourglassBottom,
+  HourglassTop,
+  WorkOff,
+} from "@mui/icons-material";
+// import BasicTable from "../components/BasicTable";
+import AddLeaves from "./components/AddLeaves";
+import LeaveAssignment from "./components/LeaveAssignment";
+import LeaveSummary from "./components/LeaveSummary";
+import IconStat from "../components/IconStat";
+import { colors } from "../theme/MuiTheme";
+import BasicTable from "../components/BasicTable";
+
+export const EmployeeLeaves: FC = () => {
+  const intl = useIntl();
+
+  return (
+    <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+      </Typography>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          gap: 2,
+        }}
+      >
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <IconStat
+                  iconBg={colors.alpha.secondary[100]}
+                  icon={<HourglassBottom fontSize="large" />}
+                  iconColor={colors.alpha.secondary[500]}
+                  number={"3"}
+                  title="First Half"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <IconStat
+                  iconBg={colors.alpha.primary[100]}
+                  icon={<HourglassTop fontSize="large" />}
+                  iconColor={colors.alpha.primary[500]}
+                  number={"1"}
+                  title="Second Half"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <IconStat
+                  iconBg={colors.alpha.info[100]}
+                  icon={<Home fontSize="large" />}
+                  iconColor={colors.alpha.info[600]}
+                  number={"1"}
+                  title="Work from Home"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <IconStat
+                  iconBg={colors.alpha.danger[100]}
+                  icon={<WorkOff fontSize="large" />}
+                  iconColor={colors.alpha.danger[400]}
+                  number={"7"}
+                  title="Absent"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          display={"flex"}
+          justifyContent={"space-between"}
+          gap={2}
+        >
+          <Stack>
+            <FormControl sx={{ minWidth: 150, border: "none" }}>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue={19}
+                renderValue={(value) => {
+                  if (value === 19) return "Today";
+                  if (value === 20) return "This Week";
+                  if (value === 21) return "This Month";
+                  if (value === 22) return "This Year";
+
+                  return "";
+                }}
+                sx={{ background: "white" }}
+              >
+                <MenuItem value={19}>Today</MenuItem>
+                <MenuItem value={20}>This Week</MenuItem>
+                <MenuItem value={21}>This Month</MenuItem>
+                <MenuItem value={22}>This Year</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            <Stack>
+              <LeaveAssignment />
+            </Stack>
+            <Stack>
+              <AddLeaves />
+            </Stack>
+          </Stack>
+        </Grid>
+        <Grid item xs={12}>
+          <Stack spacing={2}>
+            <LeaveSummary />
+            {/* <CustomisedTable columns={EmployeeLeaves} /> */}
+            <BasicTable />
+          </Stack>
+        </Grid>
+      </Grid>
+    </>
+  );
+};

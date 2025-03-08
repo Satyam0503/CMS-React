@@ -11,7 +11,7 @@ import { Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../components/CustomisedModal";
-import Summary from "../Summary";
+import Summary from "./Summary";
 
 function createData(
   date: string,

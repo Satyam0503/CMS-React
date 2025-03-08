@@ -24,7 +24,7 @@ import { CustomisedTable } from "../../modules/components/CustomisedTable";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { NoticeModel } from "../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
-import { AddNotice } from "./AddNotice";
+import { AddNotice } from "./components/AddNotice";
 
 const rows = [
   {
@@ -97,6 +97,9 @@ export default function NoticeBoard() {
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
+      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"

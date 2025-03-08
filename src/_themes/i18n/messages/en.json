@@ -1,7 +1,7 @@
 {
   "AUTH.REGISTER.TITLE": "Registration",
   "AUTH.INPUT.EMAIL": "Email",
-  "APPLICANT.STATUS":"Applicant Status",
+  "APPLICANT.STATUS": "Applicant Status",
   "APPLICATION.LEAVE": "Leave Application",
   "APPLICATION.START": "Start Date",
   "APPLICATION.END": "End date",

@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Card, Stack } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
-import JobDescription from "./JobDescription";
+import JobDescription from "./components/JobDescription";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { SearchInput } from "../../components/SearchInput";
 import { CustomisedTable } from "../../components/CustomisedTable";
@@ -10,10 +10,15 @@ import { JobRequirementTableColumnList } from "../../../../utils/constant/Consta
 import { Pagination } from "../../components/Pagination";
 import { ConfirmationModal } from "../../components/ConfirmationModal";
 import { JobModal } from "../../../../utils/common_types";
-import { addJobVacancy, deleteJobVacancy, editJobVacancy, getAllJobVacancies } from "../services";
+import {
+  addJobVacancy,
+  deleteJobVacancy,
+  editJobVacancy,
+  getAllJobVacancies,
+} from "../services";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { ViewJobDetails } from "./ViewJobDetails";
+import { ViewJobDetails } from "./components/ViewJobDetails";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -80,17 +85,19 @@ export default function Jobs() {
     if (res !== "ok" || selectedJob === undefined) {
       closeConfirmationModal();
     } else {
-      try{
+      try {
         const response = await deleteJobVacancy(selectedJob.jobId);
-        const {success,message}= response.data;
-        if(success){
+        const { success, message } = response.data;
+        if (success) {
           setRefresh(!isRefresh);
           toast.success(message);
           closeConfirmationModal();
         }
-      }
-      catch(error){
-        console.error("Error :",error instanceof Error ? error.message :error);
+      } catch (error) {
+        console.error(
+          "Error :",
+          error instanceof Error ? error.message : error
+        );
         toast.error("Request Failed.");
       }
     }
@@ -140,28 +147,32 @@ export default function Jobs() {
     }
   };
 
-  const handlePageChange =  (page:number)=>{
+  const handlePageChange = (page: number) => {
     setPaginationValues({
       ...paginationValues,
-      pageNo:page,
-    })
-  }
+      pageNo: page,
+    });
+  };
 
-  const handleRowPerPageChange = (rowPerPage:number)=>{
+  const handleRowPerPageChange = (rowPerPage: number) => {
     setPaginationValues({
       ...paginationValues,
-      records:rowPerPage,
-      pageNo:0,
-    })
-  }
-  
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
+
   useEffect(() => {
     setLoading(true);
     const timeoutId = setTimeout(async () => {
       try {
-        const response = await getAllJobVacancies({companyId:""},paginationValues.pageNo+1,paginationValues.records);
-        const { success, methodResults,totalRecords } = response.data;
-        if (success ) {
+        const response = await getAllJobVacancies(
+          { companyId: "" },
+          paginationValues.pageNo + 1,
+          paginationValues.records
+        );
+        const { success, methodResults, totalRecords } = response.data;
+        if (success) {
           setJobList(methodResults.reverse());
           setTotalRecords(totalRecords);
         }
@@ -173,10 +184,13 @@ export default function Jobs() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [isRefresh,paginationValues]);
+  }, [isRefresh, paginationValues]);
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
+      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack

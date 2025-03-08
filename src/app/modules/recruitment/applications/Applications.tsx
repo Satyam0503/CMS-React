@@ -1,18 +1,21 @@
-import { Card, Stack } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import { AddApplicant } from "./AddApplicant";
+import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useCallback, useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
-import { ApplicationPreview } from "./ApplicationPreview";
-import { ApplicationFilter, initialFilterValues } from "./ApplicationFilter";
+import { ApplicationPreview } from "./components/ApplicationPreview";
+import {
+  ApplicationFilter,
+  initialFilterValues,
+} from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 
 const initialFilter = {
@@ -29,10 +32,10 @@ export default function Applications() {
     pageNo: 0,
     records: 10,
   });
-  
+
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
- 
+
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<
@@ -44,11 +47,11 @@ export default function Applications() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const applicationFilters = useAppSelector(
     (state) => state.filters.application
-  )
+  );
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
   const isFilterAvailable = applicationFilters !== null;
-  
+
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -73,20 +76,20 @@ export default function Applications() {
     setSelectedApplicant(undefined);
   };
 
-  const handlePageChange =  (page:number)=>{
+  const handlePageChange = (page: number) => {
     setPaginationValues({
       ...paginationValues,
-      pageNo:page,
-    })
-  }
+      pageNo: page,
+    });
+  };
 
-  const handleRowPerPageChange = (rowPerPage:number)=>{
+  const handleRowPerPageChange = (rowPerPage: number) => {
     setPaginationValues({
       ...paginationValues,
-      records:rowPerPage,
-      pageNo:0,
-    })
-  }
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -106,7 +109,9 @@ export default function Applications() {
     const timeoutId = setTimeout(async () => {
       try {
         const { data } = await getAllApplicantList(
-          isFilterAvailable ? payload : initialFilter , paginationValues.pageNo+1,paginationValues.records
+          isFilterAvailable ? payload : initialFilter,
+          paginationValues.pageNo + 1,
+          paginationValues.records
         );
         setApplicationsList(data.methodResults.reverse());
         setTotalRecords(data.totalRecords);
@@ -120,10 +125,13 @@ export default function Applications() {
       }
     }, 1000);
     return () => clearTimeout(timeoutId);
-  }, [refresh, applicationFilters,search,paginationValues]);
+  }, [refresh, applicationFilters, search, paginationValues]);
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
+      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack

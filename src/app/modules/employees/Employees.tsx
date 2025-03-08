@@ -1,16 +1,14 @@
-import { Card, Stack } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 
-import AddUpdateEmployee from "./AddUpdateEmployee";
-import * as XLSX from "xlsx";
 import { useCallback, useEffect, useState } from "react";
 import {
   addEmployee,
   deleteEmployee,
   getAllEmployees,
   updateEmployee,
-} from "./components/employeeServices";
+} from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
@@ -22,10 +20,11 @@ import {
   statusDecoder,
   statusEncoder,
 } from "../../../utils/common";
-import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
+import { ViewEmployeeDetails } from "./components/ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
+import AddUpdateEmployee from "./components/AddUpdateEmployee";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -228,6 +227,9 @@ export default function Employees() {
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.EMP" })}
+      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
           <Stack
