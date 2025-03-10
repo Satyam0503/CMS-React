@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Box, colors, Link, Stack, Typography } from "@mui/material";
-import { CustomIconButton } from "../../../../app/modules/components/CustomIconButton";
+import { CustomIconButton } from "../../../../app/shared/components/CustomIconButton";
 import {
   Circle,
   Close,

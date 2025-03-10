@@ -1,6 +1,6 @@
 import { Card, Stack, TextField, Typography } from "@mui/material";
-import CustomisedButton from "../../../components/CustomisedButton";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";

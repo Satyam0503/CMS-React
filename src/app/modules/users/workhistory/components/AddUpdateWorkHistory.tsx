@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
-import CustomisedButton from "../../components/CustomisedButton";
-import { CustomisedModal } from "../../components/CustomisedModal";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
 import { Add } from "@mui/icons-material";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+
 
 export function AddUpdateWorkHistory() {
   const intl = useIntl();

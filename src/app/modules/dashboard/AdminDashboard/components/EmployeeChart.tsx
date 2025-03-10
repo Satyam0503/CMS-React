@@ -1,7 +1,7 @@
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../components/CustomCard";
+import { CustomCard } from "../../../../shared/components/CustomCard";
 import { FC, useCallback, useEffect, useState } from "react";
-import DonutApexChart from "../../../components/DonutApexChart";
+import DonutApexChart from "../../../../shared/components/DonutApexChart";
 import { EmployeeModel } from "../../../../../utils/common_types";
 import { Box, Typography } from "@mui/material";
 

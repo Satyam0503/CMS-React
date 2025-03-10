@@ -2,7 +2,7 @@ import { Card, Chip, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { AddUpdateSkills } from "./AddUpdateSkills";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { Add } from "@mui/icons-material";
 import { getEmployeeSkills, udpateEmployeeSkills } from "../../userservices";
 import { toast } from "react-toastify";

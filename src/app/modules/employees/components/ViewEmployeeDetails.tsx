@@ -3,9 +3,9 @@ import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { dateFormatter, statusDecoder } from "../../../../utils/common";
-import CustomisedButton from "../../components/CustomisedButton";
-import { CustomisedModal } from "../../components/CustomisedModal";
-import { StyleStatus } from "../../components/StyledStatus";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { StyleStatus } from "../../../shared/components/StyledStatus";
 
 type PropsType = {
   open: boolean;

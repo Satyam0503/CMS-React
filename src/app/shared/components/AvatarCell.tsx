@@ -1,5 +1,5 @@
 import { Avatar, Stack, Typography } from "@mui/material";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
 
 interface AvatarCellPropsTypes {
   title?: string;

@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -21,11 +21,11 @@ import {
   JobModal,
 } from "../../../../../utils/common_types";
 import { useCallback, useEffect, useState } from "react";
-import { CircularLoader } from "../../../components/CircularLoader";
+
 import { Formik } from "formik";
 import { editApplicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
-import { TextInput } from "../../../components/form_component/TextInput";
-import { SelectInput } from "../../../components/form_component/SelectInput";
+import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import {
   addComment,
   editApplicant,
@@ -41,8 +41,9 @@ import {
   monthsExperienceList,
 } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
-import { ErrorLabel } from "../../../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { colors } from "../../../theme/MuiTheme";
+import { CircularLoader } from "../../../../shared/components/CircularLoader";
 
 export const EditApplicant = () => {
   const intl = useIntl();

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Close, CloudUploadOutlined } from "@mui/icons-material";
-import CustomisedButton from "../components/CustomisedButton";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 import { useState } from "react";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { colors } from "../theme/MuiTheme";

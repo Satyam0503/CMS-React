@@ -1,5 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
+
 const style = {
   height:"100%",
   display: "flex",

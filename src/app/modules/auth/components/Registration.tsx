@@ -14,12 +14,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { colors } from "../../theme/MuiTheme";
 import { Check, ErrorOutline } from "@mui/icons-material";
 import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 import { toast } from "react-toastify";
-import { TextInput } from "../../components/form_component/TextInput";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 
 const initialValues = {
   firstName: "",

@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import { Add, Check } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../components/CustomisedDatePicker";
-import CustomisedButton from "../components/CustomisedButton";
+import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 
 export default function Employment() {
   const [open, setOpen] = React.useState(false);

@@ -14,25 +14,26 @@ import {
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./Component/SingleBanner";
-import CustomisedButton from "../components/CustomisedButton";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Component/Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { ApplicantModel, JobModal } from "../../../utils/common_types";
-import { TextInput } from "../components/form_component/TextInput";
-import { SelectInput } from "../components/form_component/SelectInput";
+import { TextInput } from "../../shared/components/form-component/TextInput";
+import { SelectInput } from "../../shared/components/form-component/SelectInput";
 import { experienceCategoryList } from "../../../utils/common";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
-import { CircularLoader } from "../components/CircularLoader";
+
 import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
 import { applyNow } from "./services";
 import { toast } from "react-toastify";
 import NoVacancy from "./Component/NoVacancy";
 import ApplyNowHeader from "./Component/ApplyNowHeader";
 import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
-import { ErrorLabel } from "../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
+import { CircularLoader } from "../../shared/components/CircularLoader";
 
 const initialValues: ApplicantModel = {
   applicantId: "",

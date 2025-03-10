@@ -1,5 +1,5 @@
 import { Card, Stack, Typography } from "@mui/material";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import {
   Add,
   CalendarToday,
@@ -20,8 +20,8 @@ import {
 } from "../../userservices";
 import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
-import { ConfirmationModal } from "../../../components/ConfirmationModal";
 import { AxiosError } from "axios";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 
 const initialValue: UserEducationModel = {
   userId: "",

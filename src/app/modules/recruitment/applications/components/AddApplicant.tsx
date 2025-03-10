@@ -7,15 +7,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
 import { CloudUploadOutlined, Style } from "@mui/icons-material";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { Formik } from "formik";
-import { TextInput } from "../../../components/form_component/TextInput";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
-import { SelectInput } from "../../../components/form_component/SelectInput";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { experienceCategoryList } from "../../../../../utils/common";
 import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
 import { ApplicantModel, JobModal } from "../../../../../utils/common_types";
@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
-import { ErrorLabel } from "../../../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 
 const initialValues: ApplicantModel = {
   applicantId: "",

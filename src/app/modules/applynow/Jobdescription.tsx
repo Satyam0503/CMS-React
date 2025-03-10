@@ -2,7 +2,7 @@ import { Typography, Grid, Stack, Card, CardContent } from "@mui/material";
 import { useIntl } from "react-intl";
 import { HourglassTop } from "@mui/icons-material";
 import { colors } from "../theme/MuiTheme";
-import IconStat from "../components/IconStat";
+import IconStat from "../../shared/components/IconStat";
 
 type Props = {
   className: string;

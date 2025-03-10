@@ -3,12 +3,11 @@ import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import JobDescription from "./components/JobDescription";
-import { CustomIconButton } from "../../components/CustomIconButton";
-import { SearchInput } from "../../components/SearchInput";
-import { CustomisedTable } from "../../components/CustomisedTable";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { SearchInput } from "../../../shared/components/SearchInput";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../components/Pagination";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { Pagination } from "../../../shared/components/Pagination";
 import { JobModal } from "../../../../utils/common_types";
 import {
   addJobVacancy,
@@ -19,6 +18,7 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 
 const initialValues: JobModal = {
   jobId: "",

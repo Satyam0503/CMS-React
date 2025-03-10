@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, Edit } from "@mui/icons-material";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -36,14 +36,15 @@ import {
   ApplicationEvaluationStatus,
   CommentTableColumnList,
 } from "../../../../../utils/constant/Constant";
-import { CircularLoader } from "../../../components/CircularLoader";
-import { CustomisedTable } from "../../../components/CustomisedTable";
+
+import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
 import { AddComment } from "./AddComment";
-import { StyleStatus } from "../../../components/StyledStatus";
+import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
+import { CircularLoader } from "../../../../shared/components/CircularLoader";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();

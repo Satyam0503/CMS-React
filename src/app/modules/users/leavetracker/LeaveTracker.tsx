@@ -12,10 +12,10 @@ import {
 import React, { FC } from "react";
 
 import { useIntl } from "react-intl";
-import DonutApexChart from "../../components/DonutApexChart";
-import { AttendanceChart } from "../../components/AttendanceChart";
+import DonutApexChart from "../../../shared/components/DonutApexChart";
+import { AttendanceChart } from "../../../shared/components/AttendanceChart";
 // import CustomisedTable from "../../components/CustomisedTable";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import { LeaveApplication } from "./components/LeaveApplication";
 import { Block, CalendarToday } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";

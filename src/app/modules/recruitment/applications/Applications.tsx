@@ -1,12 +1,12 @@
 import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
-import { CustomisedTable } from "../../components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../components/Pagination";
-import { SearchInput } from "../../components/SearchInput";
+import { Pagination } from "../../../shared/components/Pagination";
+import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { useCallback, useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";

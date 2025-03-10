@@ -1,7 +1,7 @@
 import { Stack, TextField, Typography } from "@mui/material";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { FC, memo, useEffect, useState } from "react";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useDebounce } from "../../../../hooks/useDebounce";
 
 interface PropTypes {

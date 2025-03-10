@@ -1,6 +1,6 @@
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../components/CustomCard";
-import { BarChart } from "../../../components/BarChart";
+import { CustomCard } from "../../../../shared/components/CustomCard";
+import { BarChart } from "../../../../shared/components/BarChart";
 import { useCallback, useEffect, useState } from "react";
 import { Applicant } from "../../../../../utils/common_types";
 import { getAllApplicantList } from "../../../recruitment/services";
