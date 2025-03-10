@@ -8,9 +8,8 @@ export enum ApplicationStatus {
 }
 
 export enum ApplicantStatus {
-  New = 0,
+  InActive = 0,
   Active = 1,
-  InActive = 2,
 }
 export enum CommentAction {
   InProgress = 1,
@@ -18,11 +17,6 @@ export enum CommentAction {
   Shortlisted = 3,
   Selection = 4,
   Rejection = 5,
-}
-
-export enum StatusEnum {
-  InActive = 0,
-  Active = 1,
 }
 
 export enum Permission {

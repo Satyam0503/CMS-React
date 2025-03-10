@@ -1,9 +1,7 @@
 import { Button, Tooltip, Typography } from "@mui/material";
 import {
-  Applicant,
   ColumnListTypes,
   EmployeeModel,
-  JobModal,
   RolesType,
   SideBarTabListProps,
 } from "../common_types";
@@ -37,6 +35,7 @@ import {
   ToggleOn,
   Work,
 } from "@mui/icons-material";
+import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -213,9 +212,8 @@ export const ApplicantApplicationStatus = [
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
 export const ApplicantStatusConstant = [
-  { id: 0, label: "New", value:ApplicantStatus.New  },
-  { id: 1, label: "Active", value: ApplicantStatus.Active },
-  { id: 2, label: "InActive", value: ApplicantStatus.InActive },
+  { id: 1, label: "InActive", value: ApplicantStatus.InActive },
+  { id: 2, label: "Active", value: ApplicantStatus.Active },
 ];
 
 
@@ -401,10 +399,6 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "Email",
   },
   {
-    id:"phone",
-    label:"Phone Number"
-  },
-  {
     id: "applyDate",
     label: "Applied",
     minWidth: 180,
@@ -415,7 +409,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "status",
     label: "Status",
     build: (status: number) => {
-      const values = applicantStatusDecoder(status);
+      const values = applicantStatusDecoder[status]
       const className = getApplicantStatusClass(status);
       return <StyleStatus label={values} className={className} />;
     },
@@ -667,4 +661,35 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/noticeboard",
     icon: <AdminPanelSettings />,
   },
+];
+
+export const indianStates = [
+  { id: 1, label: "Andhra Pradesh", value: "Andhra Pradesh" },
+  { id: 2, label: "Arunachal Pradesh", value: "Arunachal Pradesh" },
+  { id: 3, label: "Assam", value: "Assam" },
+  { id: 4, label: "Bihar", value: "Bihar" },
+  { id: 5, label: "Chhattisgarh", value: "Chhattisgarh" },
+  { id: 6, label: "Goa", value: "Goa" },
+  { id: 7, label: "Gujarat", value: "Gujarat" },
+  { id: 8, label: "Haryana", value: "Haryana" },
+  { id: 9, label: "Himachal Pradesh", value: "Himachal Pradesh" },
+  { id: 10, label: "Jharkhand", value: "Jharkhand" },
+  { id: 11, label: "Karnataka", value: "Karnataka" },
+  { id: 12, label: "Kerala", value: "Kerala" },
+  { id: 13, label: "Madhya Pradesh", value: "Madhya Pradesh" },
+  { id: 14, label: "Maharashtra", value: "Maharashtra" },
+  { id: 15, label: "Manipur", value: "Manipur" },
+  { id: 16, label: "Meghalaya", value: "Meghalaya" },
+  { id: 17, label: "Mizoram", value: "Mizoram" },
+  { id: 18, label: "Nagaland", value: "Nagaland" },
+  { id: 19, label: "Odisha", value: "Odisha" },
+  { id: 20, label: "Punjab", value: "Punjab" },
+  { id: 21, label: "Rajasthan", value: "Rajasthan" },
+  { id: 22, label: "Sikkim", value: "Sikkim" },
+  { id: 23, label: "Tamil Nadu", value: "Tamil Nadu" },
+  { id: 24, label: "Telangana", value: "Telangana" },
+  { id: 25, label: "Tripura", value: "Tripura" },
+  { id: 26, label: "Uttar Pradesh", value: "Uttar Pradesh" },
+  { id: 27, label: "Uttarakhand", value: "Uttarakhand" },
+  { id: 28, label: "West Bengal", value: "West Bengal" }
 ];

@@ -1,5 +1,4 @@
 import { FC, memo, useMemo } from "react";
-import { JobModal } from "../../../../../utils/common_types";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Close, FileOpenOutlined } from "@mui/icons-material";
@@ -9,6 +8,7 @@ import { statusDecoder } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import DOMPurify from "dompurify";
+import { JobModal } from "../../models";
 
 interface PropsTypes {
   jobData: JobModal;

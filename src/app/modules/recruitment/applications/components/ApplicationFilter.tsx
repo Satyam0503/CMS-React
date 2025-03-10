@@ -15,10 +15,6 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  ApplicationFilterModel,
-  JobModal,
-} from "../../../../../utils/common_types";
 import { getAllJobVacancies } from "../../services";
 import {
   ApplicantApplicationStatus,
@@ -29,6 +25,7 @@ import { setApplicationFilter } from "../../../../Redux/Reducers/filterSlice";
 import { useFormik } from "formik";
 import { applicationFilterSchema } from "../../../../../utils/Schema/filterValidationSchema";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
+import { ApplicationFilterModel, JobModal } from "../../models";
 
 interface PropsType {
   id?: string;

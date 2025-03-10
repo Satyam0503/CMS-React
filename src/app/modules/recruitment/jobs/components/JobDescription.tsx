@@ -16,9 +16,9 @@ import TextEditor from "../../../../shared/components/TextEditor";
 import { useFormik } from "formik";
 import jobSchema from "../../../../../utils/Schema/jobSchema";
 import { JobType } from "../../../../../utils/constant/Constant";
-import { JobModal } from "../../../../../utils/common_types";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
+import { JobModal } from "../../models";
 
 interface PropsTypes {
   initialValues: JobModal;

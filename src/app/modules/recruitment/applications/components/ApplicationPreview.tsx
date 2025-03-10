@@ -3,7 +3,7 @@ import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
-import { Applicant } from "../../../../../utils/common_types";
+import {  } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusMapper,
@@ -13,6 +13,7 @@ import {
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { PdfPreview } from "./PdfPreview";
+import { Applicant } from "../../models";
 
 interface PropsType {
   open: boolean;

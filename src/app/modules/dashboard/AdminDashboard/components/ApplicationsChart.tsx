@@ -2,12 +2,12 @@ import { useIntl } from "react-intl";
 import { CustomCard } from "../../../../shared/components/CustomCard";
 import { BarChart } from "../../../../shared/components/BarChart";
 import { useCallback, useEffect, useState } from "react";
-import { Applicant } from "../../../../../utils/common_types";
 import { getAllApplicantList } from "../../../recruitment/services";
 import { AxiosError } from "axios";
 import { applicationStatusMapper } from "../../../../../utils/common";
 import { Box, Typography } from "@mui/material";
 import { initialFilterValues } from "../../../recruitment/applications/components/ApplicationFilter";
+import { Applicant } from "../../../recruitment/models";
 
 export const ApplicationsChart = () => {
   const intl = useIntl();

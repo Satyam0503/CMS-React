@@ -8,8 +8,6 @@ import {
   Permission,
 } from "./enums";
 import { APP_FILTER_KEY, SideBarTabList } from "./constant/Constant";
-
-
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
@@ -69,30 +67,22 @@ export const getApplicationStatusClass = (applicationStatus: number) => {
   }
 };
 
-export const applicantStatusDecoder = (applicantStatus: number) => {
-  switch (applicantStatus) {
-    case ApplicantStatus.New:
-      return "New";
-    case ApplicantStatus.Active:
-      return "Active";
-    case ApplicantStatus.InActive:
-      return "Inactive";
-    default:
-      return "";
-  }
-};
+export const applicantStatusDecoder:{
+  [index:number]:string
+} ={
+  [ApplicantStatus.InActive]:"Inactive",
+  [ApplicantStatus.Active]:"Active",
+}
+
+const applicantStatusClassMapper:{
+  [index:number]:string
+} ={
+  [ApplicantStatus.InActive]:"danger",
+  [ApplicantStatus.Active]:"success",
+}
 
 export const getApplicantStatusClass = (applicantStatus: number) => {
-  switch (applicantStatus) {
-    case ApplicantStatus.New:
-      return "info";
-    case ApplicantStatus.Active:
-      return "success";
-    case ApplicantStatus.InActive:
-      return "danger";
-    default:
-      return "";
-  }
+  return applicantStatusClassMapper[applicantStatus] || "";
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -150,17 +140,6 @@ export const statusDecoder = (status: boolean) => {
     default:
       return "";
   }
-};
-
-export const ApplicantStatusMapper: {
-  [index: number]: ApplicantStatus;
-} = {
-  [ApplicationStatus.New]: ApplicantStatus.New,
-  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
-  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
-  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
-  [ApplicationStatus.Selected]: ApplicantStatus.Active,
-  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
 };
 
 export const experienceCategoryList = [

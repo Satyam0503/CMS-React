@@ -1,25 +1,19 @@
 import {
+  Autocomplete,
   Box,
   Card,
   Container,
-  FormHelperText,
-  FormLabel,
   Grid,
   MenuItem,
-  Select,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { AttachFile, CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Applicant,
-  EditApplicantModel,
-  JobModal,
-} from "../../../../../utils/common_types";
 import { useCallback, useEffect, useState } from "react";
 
 import { Formik } from "formik";
@@ -34,9 +28,8 @@ import {
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicationEvaluationStatus } from "../../../../../utils/constant/Constant";
+import { ApplicationEvaluationStatus, indianStates } from "../../../../../utils/constant/Constant";
 import {
-  ApplicantStatusMapper,
   commentActionEncoderForApplicationStatus,
   monthsExperienceList,
 } from "../../../../../utils/common";
@@ -44,6 +37,7 @@ import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { colors } from "../../../theme/MuiTheme";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
+import { Applicant, EditApplicantModel, JobModal } from "../../models";
 
 export const EditApplicant = () => {
   const intl = useIntl();
@@ -97,13 +91,14 @@ export const EditApplicant = () => {
     phone: state.phone,
     vacancyId: state.vacancyId,
     vacancyName: state.vacancyName,
+    state: state.state,
     resume: null,
     status: state.status,
     activityType: state.activityType,
     experienceInYears: Math.floor(state.experience / 12),
     experienceInMonths: state.experience % 12,
   };
-
+  
   const handleAddComment = async (activityType: number) => {
     const payload = {
       applicantId: state.applicantId,
@@ -152,8 +147,9 @@ export const EditApplicant = () => {
       email: values.email,
       phone: values.phone,
       vacancyId: values.vacancyId,
+      state: values.state,
       resumeUrl: "",
-      status: ApplicantStatusMapper[values.activityType],
+      status: values.status,
       activityType: values.activityType,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
@@ -271,6 +267,23 @@ export const EditApplicant = () => {
                             ))}
                           </SelectInput>
                         </Grid>
+                        <Grid item xs={12} sm={4}>
+                          <Autocomplete
+                            id="state-dropdown"
+                            size="small"
+                            value={indianStates.find(
+                              (state) => state.value === values.state
+                            )}
+                            options={indianStates}
+                            onChange={(event, value) => {
+                              formik.setFieldValue("state", value?.value);
+                            }}
+                            renderInput={(param) => (
+                              <TextField {...param} label={"Select State"} />
+                            )}
+                            getOptionLabel={(option) => option.label}
+                          />
+                        </Grid>
                       </Grid>
 
                       <Stack mt={2} spacing={2}>
@@ -357,9 +370,6 @@ export const EditApplicant = () => {
                                     formik.setFieldTouched("resume", true);
                                     handleFileChange(e, formik.setFieldValue);
                                   }}
-                                  // onBlur={(e) => {
-                                  //   formik.setFieldTouched("resume", true);
-                                  // }}
                                   hidden
                                 />
                               </Box>
@@ -370,10 +380,6 @@ export const EditApplicant = () => {
                                 flexWrap={"wrap"}
                                 textAlign={"center"}
                               >
-                                {/* {intl.formatMessage({
-                                id: "FILE.SELECTED",
-                              })}
-                              : */}
                               </Typography>
                               <Typography variant="caption">
                                 {values.resume ? values.resume.name : ""}

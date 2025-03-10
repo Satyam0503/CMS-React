@@ -1,0 +1,82 @@
+import { Dayjs } from "dayjs";
+import { ResponseData } from "../../../utils/common_types";
+
+export interface ApplicantModel {
+    applicantId: string;
+    companyId: string;
+    firstName: string;
+    lastName: string;
+    state:string;
+    email: string;
+    phone: string;
+    vacancyId: string;
+    vacancyName: string;
+    experience: number;
+    status: number;
+    activityType: number;
+    resume?: null | File;
+  }
+
+  export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
+    experienceInYears: number;
+    experienceInMonths: number;
+  };
+  
+  export type Applicant = Omit<ApplicantModel, "resume"> & {
+    statusName: string;
+    status: number;
+    activityTypeName: string;
+    applyDate: string;
+    updateDate: string;
+    resumeUrl: string;
+    fullApplicantResumePath: string;
+  };
+  export interface GetApplicationPayloadModel {
+    name:string,
+    filterFrom?: null | Dayjs;
+    filterTo?: null | Dayjs;
+    activityTypes?: number[];
+    vacancyIds?: string[];
+    status?: number[];
+    minExperience?: number | string | null;
+    maxExperience?: number | string | null;
+  }
+
+  export interface ApplicationFilterModel {
+    filterFrom: null | Dayjs;
+    filterTo: null | Dayjs;
+    activityTypes: number[];
+    vacancyIds: string[];
+    status: number[];
+    minExperience: number | string;
+    maxExperience: number | string;
+  }
+
+  export interface JobModal {
+    jobId: string;
+    companyId?: string;
+    title: string;
+    vacancies: number;
+    jobType: string;
+    status: boolean;
+    description: string;
+  }
+  export interface JobsFilterModel {
+    jobType: string;
+    status: number;
+  }
+
+  export interface CommentModel {
+    applicantId: string;
+    userId: string;
+    description: string;
+    userName: string;
+    activityCategory: number;
+    createdDate?: string;
+    commentId?: string;
+    companyId?: string;
+  }
+
+export type JobsResponseData = ResponseData<JobModal>;
+  export type ApplicantsResponseData = ResponseData<Applicant>;
+  export type CommentResponseData = ResponseData<CommentModel>;

@@ -14,7 +14,7 @@ import {
 import { useIntl } from "react-intl";
 import { Add, Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
   addComment,
@@ -22,11 +22,9 @@ import {
   getApplicantById,
   getApplicantComments,
 } from "../../services";
-import { Applicant, CommentModel } from "../../../../../utils/common_types";
+
 import {
   applicantStatusDecoder,
-  ApplicantStatusMapper,
-  applicationStatusMapper,
   commentActionEncoderForApplicationStatus,
   convertMonthsToYear,
   dateFormatter,
@@ -45,6 +43,7 @@ import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
+import { Applicant, CommentModel } from "../../models";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
@@ -129,7 +128,8 @@ export const ApplicantDetails = () => {
       vacancyName: applicant.vacancyName,
       activityType: status.applicationStatus,
       status: applicantStatus,
-    };
+      state:applicant.state,
+    };   
     const response = await editApplicant(payload);
     const { success } = response.data;
     if (success) {
@@ -150,7 +150,8 @@ export const ApplicantDetails = () => {
           experience: applicant.experience,
           vacancyName: applicant.vacancyName,
           activityType: status.applicationStatus,
-          status: ApplicantStatusMapper[status.applicationStatus],
+          status:applicant.status,
+          state:applicant.state
         };
         const response = await editApplicant(payload);
         const { success, message } = response.data;
@@ -197,17 +198,17 @@ export const ApplicantDetails = () => {
 
   const handleDownloadResume = async () => {
     try {
-      // const response = await fetch(applicant.fullApplicantResumePath, {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/pdf",
-      //   },
-      // });
-      // const fileObj = await response.blob();
-      // const urlObj = window.URL.createObjectURL(fileObj);
+      const response = await fetch(applicant.fullApplicantResumePath, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      });
+      const fileObj = await response.blob();
+      const urlObj = window.URL.createObjectURL(fileObj);
       const link = document.createElement("a");
-      link.href = applicant.fullApplicantResumePath;
-      link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
+      link.href = urlObj;
+      // link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -341,27 +342,6 @@ export const ApplicantDetails = () => {
                   </Select>
                 </FormControl>
               </Stack>
-              {/* <Stack direction={"row"} spacing={2}>
-                <FormControl>
-                  <InputLabel id="demo-simple-select-label">
-                    {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
-                  </InputLabel>
-                  <Select
-                    name="applicantStatus"
-                    value={activityType}
-                    sx={{ width: "200px", height: "35px" }}
-                    onChange={handleStatusChange}
-                    className="select"
-                    label="Application Status"
-                  >
-                    {ApplicationEvaluationStatus.map((status) => (
-                      <MenuItem key={status.id} value={status.value}>
-                        {status.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Stack> */}
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
@@ -369,16 +349,8 @@ export const ApplicantDetails = () => {
                   {intl.formatMessage({ id: "APPLICANT.STATUS" })}:
                 </Typography>
                 <Switch
-                  checked={[
-                    ApplicantStatus.New,
-                    ApplicantStatus.Active,
-                  ].includes(status.applicantStatus)}
+                  checked={status.applicantStatus === ApplicantStatus.Active}
                   onChange={(event) => {
-                    // setStatus({
-                    //   ...status,
-                    //   applicantStatus: [ApplicantStatus.New,ApplicantStatus.Active].includes(status.applicantStatus) ? ApplicantStatus.InActive : ApplicantStatus.Active,
-                    // })
-
                     handleEditApplicant(
                       event.target.checked
                         ? ApplicantStatus.Active
@@ -388,7 +360,7 @@ export const ApplicantDetails = () => {
                   inputProps={{ "aria-label": "controlled" }}
                 />
                 <StyleStatus
-                  label={applicantStatusDecoder(status.applicantStatus)}
+                  label={applicantStatusDecoder[status.applicantStatus]}
                   className={getApplicantStatusClass(status.applicantStatus)}
                 />
               </Stack>

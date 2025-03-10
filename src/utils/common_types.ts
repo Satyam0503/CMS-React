@@ -2,6 +2,7 @@ import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { Modules, ModulesName } from "./enums";
 import { ApplicantApplicationStatus } from "./constant/Constant";
+import { ApplicationFilterModel, JobsFilterModel } from "../app/modules/recruitment/models";
 
 export interface ApiResponse {
   success: boolean;
@@ -89,16 +90,6 @@ export interface RoleModel {
   userRoles: [string];
 }
 
-export interface JobModal {
-  jobId: string;
-  companyId?: string;
-  title: string;
-  vacancies: number;
-  jobType: string;
-  status: boolean;
-  description: string;
-}
-
 export interface UserEducationModel {
   educationId?: string;
   companyId?: string;
@@ -167,47 +158,6 @@ export type ColumnListTypes = {
   permission?: boolean;
 };
 
-export interface ApplicantModel {
-  applicantId: string;
-  companyId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  vacancyId: string;
-  vacancyName: string;
-  experience: number;
-  status: number;
-  activityType: number;
-  resume?: null | File;
-}
-
-export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
-  experienceInYears: number;
-  experienceInMonths: number;
-};
-
-export type Applicant = Omit<ApplicantModel, "resume"> & {
-  statusName: string;
-  status: number;
-  activityTypeName: string;
-  applyDate: string;
-  updateDate: string;
-  resumeUrl: string;
-  fullApplicantResumePath: string;
-};
-
-export interface CommentModel {
-  applicantId: string;
-  userId: string;
-  description: string;
-  userName: string;
-  activityCategory: number;
-  createdDate?: string;
-  commentId?: string;
-  companyId?: string;
-}
-
 // Api respone data types
 export interface ResponseData<T> {
   message: string;
@@ -226,30 +176,6 @@ export interface SideBarTabListProps {
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
-
-export interface ApplicationFilterModel {
-  filterFrom: null | Dayjs;
-  filterTo: null | Dayjs;
-  activityTypes: number[];
-  vacancyIds: string[];
-  status: number[];
-  minExperience: number | string;
-  maxExperience: number | string;
-}
-export interface GetApplicationPayloadModel {
-  name:string,
-  filterFrom?: null | Dayjs;
-  filterTo?: null | Dayjs;
-  activityTypes?: number[];
-  vacancyIds?: string[];
-  status?: number[];
-  minExperience?: number | string | null;
-  maxExperience?: number | string | null;
-}
-export interface JobsFilterModel {
-  jobType: string;
-  status: number;
-}
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
@@ -265,16 +191,10 @@ export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
-export type JobsResponseData = ResponseData<JobModal>;
-
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
 export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
-export type ApplicantsResponseData = ResponseData<Applicant>;
-
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
-
-export type CommentResponseData = ResponseData<CommentModel>;

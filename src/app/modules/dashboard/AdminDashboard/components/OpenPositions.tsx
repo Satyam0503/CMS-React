@@ -3,10 +3,10 @@ import { useIntl } from "react-intl";
 import { colors } from "../../../theme/MuiTheme";
 import { CustomCard } from "../../../../shared/components/CustomCard";
 import { useEffect, useState } from "react";
-import { JobModal } from "../../../../../utils/common_types";
 import { getAllJobVacancies } from "../../../recruitment/services";
 import { AxiosError } from "axios";
 import { Link } from "react-router-dom";
+import { JobModal } from "../../../recruitment/models";
 
 export default function OpenPositions() {
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
