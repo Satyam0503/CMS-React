@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
-import HolidayForm from "../../modules/holidays/HolidayForm";
 import { auto } from "@popperjs/core";
 import {
   Add,
@@ -27,7 +26,7 @@ import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
 import { SearchInput } from "../../modules/components/SearchInput";
 import { CustomIconButton } from "../../modules/components/CustomIconButton";
-import { Pagination } from "../../modules/components/Pagination";
+import HolidayForm from "./components/HolidayForm";
 
 // remove this array later
 const rows = [
@@ -107,6 +106,9 @@ export default function Holidays() {
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"
@@ -138,15 +140,6 @@ export default function Holidays() {
             handleEdit={handleHolidayEdit}
             openConfirmationModal={openConfirmationModal}
           />
-          {totalRecords > rowPerPage && (
-            <Pagination
-              page={page}
-              setPage={setPage}
-              rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
-              totalRecords={totalRecords}
-            />
-          )}
         </Stack>
       </Card>
 

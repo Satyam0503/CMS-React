@@ -2,8 +2,9 @@ import { FC } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
-import { checkIsActive, KTIcon } from "../../../../helpers";
+import { checkIsActive } from "../../../../helpers";
 import { Grid, Typography } from "@mui/material";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 type Props = {
   to: string;
@@ -14,41 +15,29 @@ type Props = {
   hasBullet?: boolean;
 };
 
-const MenuItem: FC<Props> = ({
-  to,
-  title,
-}) => {
+const MenuItem: FC<Props> = ({ to, title }) => {
   const { pathname } = useLocation();
 
   return (
     <Grid item className="menu-item me-lg-1">
       <Link
-        className={clsx("menu-link py-3", {
+        className={clsx("menu-link ", {
           "active menu-here": checkIsActive(pathname, to),
         })}
         to={to}
       >
-        <Typography variant="body1">{title}</Typography>
-        {/* <span className="menu-title">{title}</span> */}
-        {/* {hasBullet && (
-          <span className='menu-bullet'>
-            <span className='bullet bullet-dot'></span>
-          </span>
-        )} */}
-
-        {/* {icon && (
-          <span className="menu-icon">
-            <KTIcon iconName={icon} className="fs-2" />
-          </span>
-        )} */}
-
-        {/* {fontIcon && (
-          <span className="menu-icon">
-            <i className={clsx("bi fs-3", fontIcon)}></i>
-          </span>
-        )} */}
-
-        {/* {hasArrow && <span className="menu-arrow"></span>} */}
+        <Typography
+          variant="body1"
+          color={colors.alpha.neutral[500]}
+          sx={{
+            pointer: "cursor",
+            "&:hover": {
+              color: colors.alpha.primary[500],
+            },
+          }}
+        >
+          {title}
+        </Typography>
       </Link>
     </Grid>
   );

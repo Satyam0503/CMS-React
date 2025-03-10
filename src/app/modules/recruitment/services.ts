@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from "../../../server/axios";
+import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import {
   JobsResponseData,
   JobModal,
@@ -7,6 +7,8 @@ import {
   ApiResponse,
   CommentResponseData,
   CommentModel,
+  ApplicationFilterModel,
+  GetApplicationPayloadModel,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 
@@ -23,15 +25,17 @@ export const editJobVacancy = async (payload: JobModal, jobId: string) => {
   );
 };
 
-export const getAllJobVacancies = async (payload:{companyId:string}={companyId:""}) => {
-  return postRequest<{companyId:string},JobsResponseData>(ServiceUrl.GET_ALL_VACANCIES,payload);
+export const getAllJobVacancies = async (payload:{companyId:string}={companyId:""},pageNo:number=0,records:number=0,) => {
+  return postRequest<{companyId:string},JobsResponseData>(`${ServiceUrl.GET_ALL_VACANCIES}?pageNo=${pageNo}&records=${records}`,payload);
 };
 
-export const deleteJobVacancy = () => {};
+export const deleteJobVacancy = (vacancyId:string) => {
+  return deleteRequest<ApiResponse>(ServiceUrl.DELETE_VACANCY,{params:{vacancyId:vacancyId}})
+};
 
 // applicant services
-export const getAllApplicantList = async () => {
-  return getRequest<ApplicantsResponseData>(ServiceUrl.GET_ALL_APPLICANTS);
+export const getAllApplicantList = async (filters:GetApplicationPayloadModel, pageNo:number=0, records:number=0) => {
+  return postRequest<GetApplicationPayloadModel, ApplicantsResponseData>(`${ServiceUrl.GET_ALL_APPLICANTS}?pageNo=${pageNo}&records=${records}`,filters);
 };
 
 export const addApplicant = async (payload: ApplicantModel) => {

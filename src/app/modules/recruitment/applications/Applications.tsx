@@ -1,26 +1,41 @@
-import { Card, Popover, Stack, Typography } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../components/Pagination";
 import { SearchInput } from "../../components/SearchInput";
-import { AddApplicant } from "./AddApplicant";
+import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../components/CustomIconButton";
 import { useCallback, useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { Applicant } from "../../../../utils/common_types";
-import { ApplicationPreview } from "./ApplicationPreview";
-import { ApplicationFilter } from "./ApplicationFilter";
+import { ApplicationPreview } from "./components/ApplicationPreview";
+import {
+  ApplicationFilter,
+  initialFilterValues,
+} from "./components/ApplicationFilter";
+import { useAppSelector } from "../../../Redux/hooks";
+
+const initialFilter = {
+  ...initialFilterValues,
+  minExperience: null,
+  maxExperience: null,
+  name: "",
+};
 
 export default function Applications() {
   const intl = useIntl();
   const navigate = useNavigate();
-  const [page, setPage] = useState<number>(0);
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
+
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
-  const [rowPerPage, setRowPerPage] = useState<number>(10);
+
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<
@@ -30,14 +45,16 @@ export default function Applications() {
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  
+  const applicationFilters = useAppSelector(
+    (state) => state.filters.application
+  );
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
+  const isFilterAvailable = applicationFilters !== null;
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -59,26 +76,62 @@ export default function Applications() {
     setSelectedApplicant(undefined);
   };
 
+  const handlePageChange = (page: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      pageNo: page,
+    });
+  };
+
+  const handleRowPerPageChange = (rowPerPage: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
+
   useEffect(() => {
     setLoading(true);
+    const payload = {
+      ...applicationFilters,
+      name: search,
+      minExperience:
+        typeof applicationFilters?.minExperience === "string"
+          ? null
+          : applicationFilters?.minExperience! * 12,
+      maxExperience:
+        typeof applicationFilters?.maxExperience === "string"
+          ? null
+          : applicationFilters?.maxExperience! * 12,
+    };
+
     const timeoutId = setTimeout(async () => {
       try {
-        const { data } = await getAllApplicantList();
-        if (!data.success) {
-          throw new Error(data.message);
-        }
+        const { data } = await getAllApplicantList(
+          isFilterAvailable ? payload : initialFilter,
+          paginationValues.pageNo + 1,
+          paginationValues.records
+        );
         setApplicationsList(data.methodResults.reverse());
-      } catch (error: any) {
-        console.error(error.message);
+        setTotalRecords(data.totalRecords);
+      } catch (error) {
+        console.error(
+          "Error fetching data:",
+          error instanceof Error ? error.message : error
+        );
       } finally {
         setLoading(false);
       }
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(timeoutId);
-  }, [refresh]);
+  }, [refresh, applicationFilters, search, paginationValues]);
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
+      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
@@ -108,25 +161,32 @@ export default function Applications() {
                 ariaLabel="import excel"
               />
             </Stack>
-            <ApplicationFilter open={open} id={id} anchorEl={anchorEl} handleClose={()=> setAnchorEl(null)}/>
+            {open && (
+              <ApplicationFilter
+                open={open}
+                id={id}
+                anchorEl={anchorEl}
+                handleClose={() => setAnchorEl(null)}
+              />
+            )}
           </Stack>
 
           <CustomisedTable
             rows={applicationsList}
             columns={ApplicationTabTableColumnList}
-            page={page}
-            rowsPerPage={rowPerPage}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
             handleEdit={handleApplicantEdit}
             openViewModal={handleOpenPreview}
             loading={loading}
           />
 
-          {totalRecords > rowPerPage && (
+          {totalRecords > 0 && (
             <Pagination
-              page={page}
-              setPage={setPage}
-              rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
+              page={paginationValues.pageNo}
+              setPage={handlePageChange}
+              rowsPerPage={paginationValues.records}
+              setRowPerPage={handleRowPerPageChange}
               totalRecords={totalRecords}
             />
           )}

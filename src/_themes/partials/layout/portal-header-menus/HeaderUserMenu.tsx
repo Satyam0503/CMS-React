@@ -102,14 +102,19 @@ export default function HeaderUserMenu() {
                 bgcolor: colors.alpha.neutral[100],
                 "&:hover": {
                   bgcolor: colors.alpha.neutral[200],
-                  color: colors.alpha.primary[500],
                 },
               }}
             >
               <Link
                 href="myprofile"
                 color={colors.alpha.neutral[800]}
-                sx={{ textDecoration: "none" }}
+                sx={{
+                  textDecoration: "none",
+                  "&:hover": {
+                    bgcolor: colors.alpha.neutral[200],
+                    color: colors.alpha.primary[500],
+                  },
+                }}
               >
                 <ListItemText primary="Account Settings" />
               </Link>

@@ -19,18 +19,6 @@ import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../components/CustomisedDatePicker";
 import CustomisedButton from "../components/CustomisedButton";
 
-// const style = {
-//   position: "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   width: 800,
-//   bgcolor: "background.paper",
-//   boxShadow: 24,
-//   borderRadius: 2,
-//   p: 4,
-// };
-
 export default function Employment() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -55,7 +43,7 @@ export default function Employment() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box>
           <Stack>
             <Typography variant="h5">
               {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
@@ -72,13 +60,13 @@ export default function Employment() {
               <Typography variant="body1">
                 {intl.formatMessage({ id: "APPLICATION.START" })}
               </Typography>
-              <CustomisedDatePicker />
+              {/* <CustomisedDatePicker /> */}
             </Grid>
             <Grid item xs={12} md={6}>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "APPLICATION.END" })}
               </Typography>
-              <CustomisedDatePicker />
+              {/* <CustomisedDatePicker /> */}
             </Grid>
           </Grid>
           <Grid container spacing={2}>

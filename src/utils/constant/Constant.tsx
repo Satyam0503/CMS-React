@@ -17,7 +17,12 @@ import {
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/modules/components/StyledStatus";
-import { ApplicationStatus, Modules, ModulesName } from "../enums";
+import {
+  ApplicantStatus,
+  ApplicationStatus,
+  Modules,
+  ModulesName,
+} from "../enums";
 import { ActionComponent } from "../../app/modules/components/ActionComponent";
 import { AvatarCell } from "../../app/modules/components/AvatarCell";
 import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
@@ -41,13 +46,14 @@ export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+export const APP_FILTER_KEY = "app-filters";
 
 export const ServiceUrl = {
   // account
   REGISTER_COMPANY: `${BaseUrl}/api/account/register`,
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
-  CREATE_NEW_PASSWORD: `${BaseUrl}/api/User/CreateNewPassword`,
+  CREATE_NEW_PASSWORD: `${BaseUrl}/api/CreateNewPassword`,
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
@@ -69,17 +75,18 @@ export const ServiceUrl = {
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
-  UPDATE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/EditEmployeeCertification`,
-  UPDATE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/EditEmployeeEducation`,
+  UPDATE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/EditEmployeeCertification`,
+  UPDATE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/EditEmployeeEducation`,
 
-  DELETE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/DeleteEducationDetails`,
-  DELETE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/DeleteCertificationDetails`,
-  
-  
+  DELETE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/DeleteEducationDetails`,
+  DELETE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/DeleteCertificationDetails`,
+  DELETE_EMPLOYEE: `${BaseUrl}/api/User/DeleteEmployee`,
+
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_VACANCIES: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
+  DELETE_VACANCY: `${BaseUrl}/api/JobVacancy/DeleteJobVacancy`,
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
@@ -90,7 +97,7 @@ export const ServiceUrl = {
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,  
+  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 };
 
 export const Regex = {
@@ -209,7 +216,11 @@ export const ApplicantApplicationStatus = [
   { id: 4, label: "Selected", value: ApplicationStatus.Selected },
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
-
+export const ApplicantStatusConstant = [
+  { id: 0, label: "New", value: ApplicantStatus.New },
+  { id: 1, label: "Active", value: ApplicantStatus.Active },
+  { id: 2, label: "InActive", value: ApplicantStatus.InActive },
+];
 
 export const DepartmentList = [
   { id: 1, label: "Human Resource", value: "Human Resource" },
@@ -223,6 +234,24 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "serialNo",
     label: "S.No.",
     minWidth: 60,
+  },
+  {
+    id: "action",
+    label: "Action",
+    align: "left",
+    build: (
+      row: EmployeeModel,
+      handleEmployeeEdit: (row: EmployeeModel) => void,
+      openConfirmationModal: (row: EmployeeModel) => void,
+      openViewModal: (row: EmployeeModel) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleEmployeeEdit}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal={openViewModal}
+      />
+    ),
   },
   {
     id: "name",
@@ -244,38 +273,20 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "email",
     label: "Email",
   },
-  {
-    id: "phoneNumber",
-    label: "Phone Number",
-  },
+  // {
+  //   id: "phoneNumber",
+  //   label: "Phone Number",
+  // },
   {
     id: "department",
     label: "Department",
   },
-  {
-    id: "address",
-    label: "Address",
-    align: "left",
-    build: (address: string) => <AddressDetailsIcon address={address} />,
-  },
-  {
-    id: "action",
-    label: "Action",
-    align: "left",
-    build: (
-      row: EmployeeModel,
-      handleEmployeeEdit: (row: EmployeeModel) => void,
-      openConfirmationModal: (row: EmployeeModel) => void,
-      openViewModal: (row: EmployeeModel) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleEmployeeEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewModal}
-      />
-    ),
-  },
+  // {
+  //   id: "address",
+  //   label: "Address",
+  //   align: "left",
+  //   build: (address: string) => <AddressDetailsIcon address={address} />,
+  // },
 ];
 
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
@@ -326,7 +337,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {
@@ -366,8 +377,25 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: Applicant,
+      handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
+      openViewApplication: (row: Applicant) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleApplicationEdit}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal={openViewApplication}
+      />
+    ),
   },
   {
     id: "fullName",
@@ -388,11 +416,14 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       return convertMonthsToYear(value);
     },
   },
-  {
-    id: "email",
-    label: "Email",
-  },
-
+  // {
+  //   id: "email",
+  //   label: "Email",
+  // },
+  // {
+  //   id: "phone",
+  //   label: "Phone Number",
+  // },
   {
     id: "applyDate",
     label: "Applied",
@@ -409,29 +440,12 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       return <StyleStatus label={values} className={className} />;
     },
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: Applicant,
-      handleApplicationEdit: (row: Applicant) => void,
-      openConfirmationModal: (row: Applicant) => void,
-      openViewApplication: (row: Applicant) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleApplicationEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewApplication}
-      />
-    ),
-  },
 ];
 
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {
@@ -464,8 +478,25 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+        openViewModal={openViewJobDetail}
+      />
+    ),
   },
   {
     id: "title",
@@ -491,29 +522,12 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
       );
     },
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: JobModal,
-      handleJobEdit: (row: JobModal) => void,
-      openDeleteModal: (row: JobModal) => void,
-      openViewJobDetail: (row: JobModal) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        openViewModal={openViewJobDetail}
-      />
-    ),
-  },
 ];
 
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {

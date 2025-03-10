@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 import { CustomIconButton } from "../../components/CustomIconButton";
-import { AddUpdateWorkHistory } from "./AddUpdateWorkHistory";
+import { AddUpdateWorkHistory } from "./components/AddUpdateWorkHistory";
 
 export const WorkHistory: FC = () => {
   const intl = useIntl();

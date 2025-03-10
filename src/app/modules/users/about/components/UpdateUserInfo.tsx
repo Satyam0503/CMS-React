@@ -18,7 +18,7 @@ import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../components/form_component/TextInput";
 import { SelectInput } from "../../../components/form_component/SelectInput";
 import { EmployeeModel } from "../../../../../utils/common_types";
-import { updateEmployee } from "../../../employees/components/employeeServices";
+import { updateEmployee } from "../../../employees/employeeServices";
 import { AxiosError } from "axios";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";
@@ -116,7 +116,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
+                <Grid container spacing={2} alignItems={"center"}>
                   <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -135,10 +135,11 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Stack>
-                      <Typography variant="body1">
+                      {/* <Typography variant="body1">
                         {intl.formatMessage({ id: "USER.DOB" })}
-                      </Typography>
+                      </Typography> */}
                       <CustomisedDatePicker
+                        label="Date of birth"
                         name="dateOfBirth"
                         value={dayjs(values?.dateOfBirth)}
                         setValue={(newDate: Dayjs | null) => {

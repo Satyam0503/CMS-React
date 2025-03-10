@@ -300,17 +300,21 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    //icon of select outlined
     MuiSelect: {
       styleOverrides: {
         iconOutlined: {
-          color: colors.alpha.white[500],
+          color: colors.alpha.neutral[400],
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
+        // to change height of outlined input
         input: {
-          padding: ".8rem",
+          paddingBlock: ".6rem",
+          paddingInline: "1rem",
         },
         root: {
           padding: "0px ",
@@ -416,7 +420,7 @@ export const MuiTheme = createTheme({
           fontWeight: "bold",
         },
         colorDefault: {
-          background: colors.alpha.neutral[300],
+          background: colors.alpha.secondary[500],
           color: themeColors.white,
         },
       },
@@ -447,13 +451,13 @@ export const MuiTheme = createTheme({
       },
     },
 
-    MuiStack: {
-      styleOverrides: {
-        root: {
-          paddingTop: "0px !important",
-        },
-      },
-    },
+    // MuiStack: {
+    //   styleOverrides: {
+    //     root: {
+    //       paddingTop: "0px !important",
+    //     },
+    //   },
+    // },
 
     MuiPaginationItem: {
       styleOverrides: {
@@ -599,6 +603,26 @@ export const MuiTheme = createTheme({
         },
       },
     },
+
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiInput-root": {
+            "&:before": {
+              borderColor: colors.alpha.neutral[400],
+            },
+            "&:after": {
+              borderColor: colors.alpha.primary[400],
+            },
+            ":hover:not(.Mui-focused)": {
+              "&:before": {
+                borderColor: colors.alpha.primary[400],
+              },
+            },
+          },
+        },
+      },
+    },
     MuiIconButton: {
       defaultProps: {
         disableRipple: true,
@@ -680,14 +704,14 @@ export const MuiTheme = createTheme({
         },
       },
     },
-    MuiPopover:{
-      styleOverrides:{
-        paper:{
-          minWidth:"300px",
-          maxWidth:"500px",
-          boxShadow:`0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
-        }
-      }
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          minWidth: "300px",
+          maxWidth: "500px",
+          boxShadow: `0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
+        },
+      },
     },
     MuiPaper: {
       styleOverrides: {
@@ -794,33 +818,33 @@ export const MuiTheme = createTheme({
     },
 
     //dropdown only menuitem
-      MuiMenu: {
-        styleOverrides: {
-          paper: {
-            maxHeight: "260px",
-          },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          maxHeight: "260px",
+        },
 
-          list: {
-            "& .MuiMenuItem-root.MuiButtonBase-root": {
-              fontSize: 14,
-              marginBottom:2,
-              borderRadius:4,
-              transition: "all .2s",
-              "& .MuiTouchRipple-root": {
-                opacity: 0.2,
-              },
-              "&.Mui-selected": {
-                color:"#000000", 
-                background: colors.alpha.primary[200],
-                // "&:hover": {
-                //   color: colors.alpha.white[500],
-                //   background: colors.alpha.primary[500],
-                // },
-              },
+        list: {
+          "& .MuiMenuItem-root.MuiButtonBase-root": {
+            fontSize: 14,
+            marginBottom: 2,
+            borderRadius: 4,
+            transition: "all .2s",
+            "& .MuiTouchRipple-root": {
+              opacity: 0.2,
+            },
+            "&.Mui-selected": {
+              color: "#000000",
+              background: colors.alpha.primary[200],
+              // "&:hover": {
+              //   color: colors.alpha.white[500],
+              //   background: colors.alpha.primary[500],
+              // },
             },
           },
         },
       },
+    },
     //close
 
     MuiList: {
@@ -869,30 +893,18 @@ export const MuiTheme = createTheme({
 
     MuiAutocomplete: {
       styleOverrides: {
-        tag: {
-          margin: 1,
-        },
-        root: {
-          ".MuiAutocomplete-inputRoot.MuiOutlinedInput-root .MuiAutocomplete-endAdornment":
-            {
-              right: 14,
-            },
-        },
         clearIndicator: {
-          background: colors.alpha.primary[500],
           color: colors.alpha.primary[500],
+          border: 0,
           marginRight: 8,
-
           "&:hover": {
-            background: colors.alpha.primary[500],
             color: colors.alpha.primary[500],
           },
         },
         popupIndicator: {
           color: colors.alpha.neutral[500],
-
+          border: 0,
           "&:hover": {
-            background: colors.alpha.primary[500],
             color: colors.alpha.primary[500],
           },
         },
@@ -913,13 +925,17 @@ export const MuiTheme = createTheme({
         },
         toolbar: {
           "& .MuiIconButton-root": {
-            padding: 8,
+            padding: 5,
           },
         },
         select: {
           "&:focus": {
             backgroundColor: "transparent",
           },
+        },
+        actions: {
+          display: "flex",
+          gap: ".5rem",
         },
       },
     },
@@ -1134,16 +1150,25 @@ export const MuiTheme = createTheme({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&:hover, &.MuiSelected, &.Mui-focused": {
+            color: colors.alpha.primary[500],
+          },
+        },
+      },
+    },
 
     MuiCheckbox: {
-      defaultProps:{
-        disableRipple:true,
+      defaultProps: {
+        disableRipple: true,
       },
       styleOverrides: {
         root: {
           color: colors.alpha.neutral[200],
           background: "inherit",
-          padding:0,
+          padding: 5,
           "&:hover": {
             background: "none",
           },
@@ -1153,9 +1178,9 @@ export const MuiTheme = createTheme({
 
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
-            background:"none"
+            background: "none",
           },
-          "& .MuiSvgIcon-root": { fontSize: 20 },
+          "& .MuiSvgIcon-root": { fontSize: 25 },
         },
       },
     },
@@ -1195,7 +1220,7 @@ export const MuiTheme = createTheme({
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 4,
   },
   typography: {
     fontFamily:

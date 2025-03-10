@@ -1,14 +1,15 @@
 import { Box, CircularProgress } from "@mui/material";
+import { colors } from "../theme/MuiTheme";
 const style = {
-  height: "calc(100vh - 80px)",
+  height:"100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 };
 export const CircularLoader = () => {
   return (
-    <Box component={"div"} sx={style}>
-      <CircularProgress size={50} thickness={5} />
+    <Box component={"div"} sx={style} className="loader-demo">
+      <CircularProgress size={50} thickness={5} sx={{color:colors.alpha.primary[500]}} />
     </Box>
   );
 };

@@ -10,24 +10,26 @@ import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../modules/components/UnAuthorizedAccess.tsx";
 
-const SuperAdmin = lazy(() => import("../pages/superadmin/SuperAdmin.tsx"));
-const Setting = lazy(() => import("../pages/admin/Settings"));
-const Recruitment = lazy(() => import("../pages/recruitment/Recruitment"));
+const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
+const Setting = lazy(() => import("../modules/admin/Settings.tsx"));
+const Recruitment = lazy(
+  () => import("../modules/recruitment/RecruitmentRoutes.tsx")
+);
 const EmployeePage = lazy(
-  () => import("../pages/employees/EmployeesRoute.tsx")
+  () => import("../modules/employees/EmployeesRoute.tsx")
 );
 const AdminDashboard = lazy(
-  () => import("../pages/dashboards/AdminDashboard.tsx")
+  () => import("../modules/dashboard/AdminDashboard/DashboardAdmin.tsx")
 );
-const UserDashboard = lazy(() => import("../pages/dashboards/UserDashboard"));
-const ProfilePageWrapper = lazy(
-  () => import("../pages/myprofile/ProfilePageWrapper")
+const UserDashboard = lazy(
+  () => import("../modules/dashboard/UserDashboard/DashboardUser.tsx")
 );
-const HolidaysWrapper = lazy(
-  () => import("../pages/holidays/HolidaysWrapper.tsx")
+const ProfilePage = lazy(
+  () => import("../modules/users/ProfilePageWrapper.tsx")
 );
-const NoticeBoardWrapper = lazy(
-  () => import("../pages/noticeboard/NoticeBoardWrapper.tsx")
+const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
+const NoticeBoard = lazy(
+  () => import("../modules/noticeboard/NoticeBoard.tsx")
 );
 
 const PrivateRoutes = () => {
@@ -67,7 +69,7 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.MyProfile}>
-                <ProfilePageWrapper />
+                <ProfilePage />
               </ProtectedRoute>
             </SuspensedView>
           }
@@ -78,7 +80,7 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.NoticeBoard}>
-                <NoticeBoardWrapper />
+                <NoticeBoard />
               </ProtectedRoute>
             </SuspensedView>
           }
@@ -89,7 +91,7 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.Holidays}>
-                <HolidaysWrapper />
+                <Holidays />
               </ProtectedRoute>
             </SuspensedView>
           }

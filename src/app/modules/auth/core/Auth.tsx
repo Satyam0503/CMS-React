@@ -7,18 +7,21 @@ import { WithChildren } from "../../../../_themes/helpers";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setAuth, logout } from "../../../Redux/Reducers/authSlice";
 import {
+  resetUserSlice,
   setCurrentUser,
   setProfileImageUrl,
   setUserPermissions,
 } from "../../../Redux/Reducers/userSlice";
 import { useDispatch } from "react-redux";
+import { resetAllFilters } from "../../../Redux/Reducers/filterSlice";
 
 export const useLogout = () => {
   const dispatch = useDispatch();
   return () => {
     dispatch(logout());
     dispatch(setCurrentUser(undefined));
-    dispatch(setUserPermissions([]));
+    dispatch(resetUserSlice());
+    dispatch(resetAllFilters());
     authHelper.removeLocalKey();
   };
 };

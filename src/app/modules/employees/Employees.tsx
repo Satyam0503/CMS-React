@@ -1,16 +1,14 @@
-import { Typography, Card, Stack, Container } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Close, Download, FilterList } from "@mui/icons-material";
+import { Add, Download, FilterList } from "@mui/icons-material";
 
-import AddUpdateEmployee from "./AddUpdateEmployee";
-import * as XLSX from "xlsx";
 import { useCallback, useEffect, useState } from "react";
 import {
   addEmployee,
   deleteEmployee,
   getAllEmployees,
   updateEmployee,
-} from "./components/employeeServices";
+} from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
@@ -22,10 +20,11 @@ import {
   statusDecoder,
   statusEncoder,
 } from "../../../utils/common";
-import { ViewEmployeeDetails } from "./ViewEmployeeDetails";
+import { ViewEmployeeDetails } from "./components/ViewEmployeeDetails";
 import { SearchInput } from "../components/SearchInput";
 import { CustomIconButton } from "../components/CustomIconButton";
 import { Pagination } from "../components/Pagination";
+import AddUpdateEmployee from "./components/AddUpdateEmployee";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -59,8 +58,10 @@ export default function Employees() {
   const [selectedEmployee, setSelectedEmployee] = useState<
     EmployeeModel | undefined
   >();
-  const [page, setPage] = useState<number>(0);
-  const [rowPerPage, setRowPerPage] = useState<number>(10);
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
   const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
@@ -87,7 +88,7 @@ export default function Employees() {
     const payload = {
       ...values,
       status: statusEncoder(values.status as string),
-    };    
+    };
     if (isEdit) {
       const userId = values.userId;
       updateEmployee(payload, userId)
@@ -129,26 +130,29 @@ export default function Employees() {
     }
   }
 
-  function handleEmployeeDeletion(res: string) {
+  const handleEmployeeDeletion = async (res: string) => {
     if (res !== "ok" || selectedEmployee === undefined) {
-      toast.error("Please try again");
       closeConfirmationModal();
     } else {
-      // deleteEmployee(employeeId, token)
-      //   .then((res) => {
-      //     const { success, message } = res.data;
-      //     if (success) {
-      //       toast.success(message);
-      //       closeConfirmationModal();
-      //       setRefresh(!isRefresh);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     toast.error("Please try again");
-      //     closeConfirmationModal();
-      //   });
+      try {
+        const response = await deleteEmployee(selectedEmployee.userId);
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(message);
+          closeConfirmationModal();
+          setRefresh(!isRefresh);
+        }
+      } catch (error) {
+        toast.error("Something Went Wrong");
+        console.error(
+          "Error :",
+          error instanceof Error ? error.message : error
+        );
+      } finally {
+        closeConfirmationModal();
+      }
     }
-  }
+  };
 
   const openConfirmationModal = (employee: EmployeeModel) => {
     setConfirmModalOpen(true);
@@ -178,43 +182,54 @@ export default function Employees() {
     setEdit(true);
   }
 
-  function handleEmployeeExport() {
-    const mappedEmployeeData = employeesListMapperforExport(employeeList);
-    const worksheet = XLSX.utils.json_to_sheet(mappedEmployeeData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
-    XLSX.writeFile(workbook, "Employees.xlsx");
-  }
+  const handlePageChange = (page: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      pageNo: page,
+    });
+  };
 
+  const handleRowPerPageChange = (rowPerPage: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
   useEffect(() => {
     setLoading(true);
-    // const payload = {
-    //   pageNo: page + 1,
-    //   limit: rowPerPage,
-    //   name: search,
-    // };
-    const timeOutId = setTimeout(async () => {
+    const getAllEmployeesList = async () => {
       try {
-        const response = await getAllEmployees();
-        const { success, statusCode, methodResults } = response.data;
+        const response = await getAllEmployees(
+          paginationValues.pageNo + 1,
+          paginationValues.records
+        );
+        const { success, statusCode, methodResults, totalRecords } =
+          response.data;
         if (!(success && statusCode === 200)) {
           throw new Error("Failed To fetch Data");
         }
         if (methodResults) {
           setEmployeeList(methodResults.reverse());
-          setTotalRecords(methodResults.length);
+          setTotalRecords(totalRecords);
         }
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error) {
+        console.error(
+          "error :",
+          error instanceof Error ? error.message : error
+        );
       } finally {
         setLoading(false);
       }
-    }, 1500);
-    return () => clearTimeout(timeOutId);
-  }, [page, rowPerPage, isRefresh]);
+    };
+    getAllEmployeesList();
+  }, [paginationValues, isRefresh]);
 
   return (
     <>
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.EMP" })}
+      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
           <Stack
@@ -240,7 +255,7 @@ export default function Employees() {
               />
               <CustomIconButton
                 icon={<Download />}
-                handleClick={handleEmployeeExport}
+                // handleClick={handleEmployeeExport}
                 tooltip="Import Excel"
                 ariaLabel="import excel"
               />
@@ -252,18 +267,18 @@ export default function Employees() {
             loading={isLoading}
             rows={employeeList}
             columns={EmployeeTabTableColumnList}
-            page={page}
-            rowsPerPage={rowPerPage}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
             handleEdit={handleEmployeeEdit}
             openConfirmationModal={openConfirmationModal}
             openViewModal={openViewModal}
           />
-          {totalRecords > rowPerPage && (
+          {totalRecords > 0 && (
             <Pagination
-              page={page}
-              rowsPerPage={rowPerPage}
-              setRowPerPage={setRowPerPage}
-              setPage={setPage}
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.records}
+              setPage={handlePageChange}
+              setRowPerPage={handleRowPerPageChange}
               totalRecords={totalRecords}
             />
           )}

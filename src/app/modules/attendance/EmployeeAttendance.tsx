@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import { useIntl } from "react-intl";
 import IconStat from "../components/IconStat";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { HourglassBottom } from "@mui/icons-material";
 import { colors } from "../theme/MuiTheme";
 
@@ -19,7 +19,9 @@ export const EmployeeAttendance: FC = () => {
           title="First Half"
         />
       </StyledCard> */}
-
+      <Typography variant="h4" mb={3}>
+        {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+      </Typography>
       <IconStat
         iconBg={colors.alpha.secondary[100]}
         icon={<HourglassBottom fontSize="large" />}

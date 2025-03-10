@@ -16,7 +16,7 @@ import DonutApexChart from "../../components/DonutApexChart";
 import { AttendanceChart } from "../../components/AttendanceChart";
 // import CustomisedTable from "../../components/CustomisedTable";
 import CustomisedDatePicker from "../../components/CustomisedDatePicker";
-import { LeaveApplication } from "./LeaveApplication";
+import { LeaveApplication } from "./components/LeaveApplication";
 import { Block, CalendarToday } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
 
