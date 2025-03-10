@@ -15,7 +15,7 @@ import {
 } from "../common";
 import { Link } from "react-router-dom";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
-import { ApplicantStatus, ApplicationStatus, Modules, ModulesName } from "../enums";
+import { ApplicantStatus, ApplicationStatus, Modules, ModulesName, TIME_PERIOD_MAP } from "../enums";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { AddressDetailsIcon } from "../../app/shared/components/AddressDetailsIcon";
@@ -692,4 +692,13 @@ export const indianStates = [
   { id: 26, label: "Uttar Pradesh", value: "Uttar Pradesh" },
   { id: 27, label: "Uttarakhand", value: "Uttarakhand" },
   { id: 28, label: "West Bengal", value: "West Bengal" }
+];
+
+export const TimePeriodOptions = [
+  { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: 'FILTER.LAST_WEEK' },
+  { id: TIME_PERIOD_MAP.LAST_TWO_WEEK, value: 14, name: 'FILTER.LAST_TWO_WEEK' },
+  { id: TIME_PERIOD_MAP.LAST_MONTH, value: 30, name: 'FILTER.LAST_MONTH' },
+  { id: TIME_PERIOD_MAP.LAST_THREE_MONTHS, value: 90, name: 'FILTER.LAST_THREE_MONTHS' },
+  { id: TIME_PERIOD_MAP.LAST_SIX_MONTHS, value: 180, name: 'FILTER.LAST_SIX_MONTHS' },
+  { id: TIME_PERIOD_MAP.LAST_12_MONTHS, value: 365, name: 'FILTER.LAST_12_MONTHS' }
 ];

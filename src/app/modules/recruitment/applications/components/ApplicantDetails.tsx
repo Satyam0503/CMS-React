@@ -14,7 +14,7 @@ import {
 import { useIntl } from "react-intl";
 import { Add, Download, Edit } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
   addComment,
@@ -25,10 +25,12 @@ import {
 
 import {
   applicantStatusDecoder,
+  applicationStatusMapper,
   commentActionEncoderForApplicationStatus,
   convertMonthsToYear,
   dateFormatter,
   getApplicantStatusClass,
+  getApplicationStatusClass,
 } from "../../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -64,30 +66,26 @@ export const ApplicantDetails = () => {
   });
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      getApplicantById(applicantId)
-        .then(({ data }) => {
-          if (!(data.success && data.statusCode === 200)) {
-            throw new Error(data.message);
-          }
+    // setLoading(true);
+    getApplicantById(applicantId)
+      .then(({ data }) => {
+        if (data.success && data.statusCode === 200) {
           setApplicant(data.methodResult);
           setStatus({
             ...status,
             applicantStatus: data.methodResult.status,
             applicationStatus: data.methodResult.activityType,
           });
-        })
-        .catch((error) => {
-          console.error(error);
-          navigate("/error", { replace: true });
-        })
-        .finally(() => setLoading(false));
-    }, 1500);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        navigate("/error", { replace: true });
+      });
   }, [refresh]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(async () => {
+    const getAllComments = async () => {
       try {
         const response = await getApplicantComments(applicantId);
         const { methodResults, success, statusCode, message } = response.data;
@@ -98,8 +96,8 @@ export const ApplicantDetails = () => {
       } catch (error: any) {
         console.error(error.message);
       }
-    }, 1500);
-    return () => clearTimeout(timeoutId);
+    };
+    getAllComments();
   }, [refreshComment]);
 
   const handleCommentChange = useCallback((comment: string) => {
@@ -112,9 +110,6 @@ export const ApplicantDetails = () => {
 
   const applicantId = param.applicantid!;
 
-  if (loading) {
-    return <CircularLoader />;
-  }
   const handleEditApplicant = async (applicantStatus: ApplicantStatus) => {
     const payload = {
       applicantId: applicant.applicantId,
@@ -128,14 +123,16 @@ export const ApplicantDetails = () => {
       vacancyName: applicant.vacancyName,
       activityType: status.applicationStatus,
       status: applicantStatus,
-      state:applicant.state,
-    };   
+      state: applicant.state,
+    };
     const response = await editApplicant(payload);
     const { success } = response.data;
     if (success) {
+      toast.success("Applicant status updated.");
       setRefresh(!refresh);
     }
   };
+  
   const handleAddComment = async () => {
     try {
       if (status.applicationStatus !== applicant.activityType) {
@@ -150,8 +147,8 @@ export const ApplicantDetails = () => {
           experience: applicant.experience,
           vacancyName: applicant.vacancyName,
           activityType: status.applicationStatus,
-          status:applicant.status,
-          state:applicant.state
+          status: applicant.status,
+          state: applicant.state,
         };
         const response = await editApplicant(payload);
         const { success, message } = response.data;
@@ -320,8 +317,12 @@ export const ApplicantDetails = () => {
                 sx={{ alignItems: "center" }}
               >
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "APPLICATION.STATUS" })}
+                  {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
                 </Typography>
+                {/* <StyleStatus
+                  label={applicationStatusMapper[applicant.activityType]}
+                  className={getApplicationStatusClass(applicant.activityType)}
+                /> */}
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
                     {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
@@ -329,7 +330,7 @@ export const ApplicantDetails = () => {
                   <Select
                     name="applicantStatus"
                     value={status.applicationStatus}
-                    sx={{ width: "200px" }}
+                    sx={{ width: "150px" }}
                     onChange={handleStatusChange}
                     className="select"
                     label="Application Status"
@@ -358,10 +359,6 @@ export const ApplicantDetails = () => {
                     );
                   }}
                   inputProps={{ "aria-label": "controlled" }}
-                />
-                <StyleStatus
-                  label={applicantStatusDecoder[status.applicantStatus]}
-                  className={getApplicantStatusClass(status.applicantStatus)}
                 />
               </Stack>
             </Grid>

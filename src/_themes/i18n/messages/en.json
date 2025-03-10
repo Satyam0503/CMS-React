@@ -349,6 +349,12 @@
   "FILTER.MIN_EXPERIENCE": "Min. Experience",
   "FILTER.MAX_EXPERIENCE": "Max. Experience",
   "FILTER.APPLICATION_STATUS": "Application Status",
+  "FILTER.LAST_WEEK" :"Last Week",
+  "FILTER.LAST_TWO_WEEK":"Last Two Week",
+  "FILTER.LAST_MONTH":"Last Month",
+  "FILTER.LAST_THREE_MONTHS":"Last Three Months",
+  "FILTER.LAST_SIX_MONTHS":"Last Six Months",
+  "FILTER.LAST_12_MONTHS":"Last 12 Months",
 
   "APPLICATION.STATUS.NEW":"New",
   "APPLICATION.STATUS.INPROGRESS":"In Progress",

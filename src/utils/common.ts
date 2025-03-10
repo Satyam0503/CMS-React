@@ -49,22 +49,19 @@ export const applicationStatusMapper : {
   [ApplicationStatus.Rejected]:"Rejected",
 }
 
+export const applicationStatusClassMapper :{
+  [index:number]:string
+} ={
+  [ApplicationStatus.New]:"info",
+  [ApplicationStatus.InProgress]:"warning",
+  [ApplicationStatus.OnHold]:"warning",
+  [ApplicationStatus.Shortlisted]:"warning",
+  [ApplicationStatus.Selected]:"success",
+  [ApplicationStatus.Rejected]:"danger",
+}
+
 export const getApplicationStatusClass = (applicationStatus: number) => {
-  switch (applicationStatus) {
-    case ApplicationStatus.New:
-      return "info";
-    case ApplicationStatus.InProgress:
-    case ApplicationStatus.OnHold:
-    case ApplicationStatus.Shortlisted: {
-      return "warning";
-    }
-    case ApplicationStatus.Selected:
-      return "success";
-    case ApplicationStatus.Rejected:
-      return "danger";
-    default:
-      return "";
-  }
+  return applicationStatusClassMapper[applicationStatus];
 };
 
 export const applicantStatusDecoder:{

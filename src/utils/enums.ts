@@ -65,3 +65,12 @@ export enum Roles {
   HRManager = "HR Manager",
   Employee = "Employee",
 }
+
+export enum TIME_PERIOD_MAP {
+  LAST_WEEK = 1,
+  LAST_MONTH = 2,
+  LAST_THREE_MONTHS = 3,
+  LAST_SIX_MONTHS = 4,
+  LAST_12_MONTHS = 5,
+  LAST_TWO_WEEK = 7,
+ }
