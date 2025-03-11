@@ -231,28 +231,28 @@ export const DepartmentList = [
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
-    id: "serialNo",
-    label: "S.No.",
+    id: "employeeId",
+    label: "Emp Id",
     minWidth: 60,
   },
-  {
-    id: "action",
-    label: "Action",
-    align: "left",
-    build: (
-      row: EmployeeModel,
-      handleEmployeeEdit: (row: EmployeeModel) => void,
-      openConfirmationModal: (row: EmployeeModel) => void,
-      openViewModal: (row: EmployeeModel) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleEmployeeEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewModal}
-      />
-    ),
-  },
+  // {
+  //   id: "action",
+  //   label: "Action",
+  //   align: "left",
+  //   build: (
+  //     row: EmployeeModel,
+  //     handleEmployeeEdit: (row: EmployeeModel) => void,
+  //     openConfirmationModal: (row: EmployeeModel) => void,
+  //     openViewModal: (row: EmployeeModel) => void
+  //   ) => (
+  //     <ActionComponent
+  //       row={row}
+  //       handleEdit={handleEmployeeEdit}
+  //       openConfirmationModal={openConfirmationModal}
+  //       openViewModal={openViewModal}
+  //     />
+  //   ),
+  // },
   {
     id: "name",
     label: "Name",
@@ -273,10 +273,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "email",
     label: "Email",
   },
-  // {
-  //   id: "phoneNumber",
-  //   label: "Phone Number",
-  // },
+  {
+    id: "phoneNumber",
+    label: "Phone Number",
+  },
   {
     id: "department",
     label: "Department",
