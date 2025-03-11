@@ -296,6 +296,21 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     minWidth: 30,
   },
   {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleHolidayEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
+  },
+  {
     id: "title",
     label: "Title",
   },
@@ -316,21 +331,6 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "description",
     label: "Description",
-  },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: any,
-      handleHolidayEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleHolidayEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
   },
 ];
 

@@ -62,7 +62,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
       <TableContainer>
         <Table stickyHeader aria-label="table">
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ textWrap: "nowrap" }}>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
