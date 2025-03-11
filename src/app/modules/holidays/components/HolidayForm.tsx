@@ -11,13 +11,13 @@ import { Check } from "@mui/icons-material";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 import { HolidayType } from "../../../../utils/common_types";
-import { CustomisedModal } from "../../components/CustomisedModal";
 import holidaySchema from "../../../../utils/Schema/holidaySchema";
-import { TextInput } from "../../components/form_component/TextInput";
 import { HolidayTypes } from "../../../../utils/constant/Constant";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
-import CustomisedButton from "../../components/CustomisedButton";
 import SelectInput from "@mui/material/Select/SelectInput";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
+import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 
 type PropsTypes = {
   open: boolean;
