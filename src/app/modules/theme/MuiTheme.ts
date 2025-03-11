@@ -821,7 +821,7 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          maxHeight: "260px",
+          maxHeight: "200px",
         },
 
         list: {
@@ -890,7 +890,14 @@ export const MuiTheme = createTheme({
     //     },
     //   },
     // },
-
+    
+    MuiBadge:{
+      styleOverrides:{
+        badge:{
+          backgroundColor:colors.alpha.primary[500]
+        }
+      }
+    },
     MuiAutocomplete: {
       styleOverrides: {
         clearIndicator: {

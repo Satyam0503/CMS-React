@@ -1,9 +1,4 @@
-import {
-  ArrowDownward,
-  ArrowDropDown,
-  ArrowDropUp,
-  Close,
-} from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp, Close } from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -32,7 +27,7 @@ import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setApplicationFilter } from "../../../../Redux/Reducers/filterSlice";
 import { useFormik } from "formik";
 import { applicationFilterSchema } from "../../../../../utils/Schema/filterValidationSchema";
-import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
+import { addCurrentTimeToDate, blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { ApplicationFilterModel, JobModal } from "../../models";
 
 interface PropsType {
@@ -60,13 +55,13 @@ export const ApplicationFilter: FC<PropsType> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
-  const [optionAnchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const applicationFilters = useAppSelector(
     (state) => state.filters.application
   );
-
   const [jobList, setJobList] = useState<JobModal[]>([]);
-
   const isTimeOptionOpen = Boolean(optionAnchorEl);
 
   const { values, errors, handleSubmit, getFieldProps, setFieldValue } =
@@ -96,12 +91,29 @@ export const ApplicationFilter: FC<PropsType> = ({
   }, []);
 
   const handleTimeOptionMenuClose = () => {
-    setAnchorEl(null);
+    setOptionAnchorEl(null);
   };
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(event.currentTarget);
-    
-    setAnchorEl(event.currentTarget);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setOptionAnchorEl(event.currentTarget);
+  };
+
+  const handleTimePeriodChange = (
+    index: number,
+    filters: ApplicationFilterModel,
+    setFieldValue: (field: string, value: any) => void
+  ) => {
+    const currentFilters = Object.assign({}, filters);
+    const selectedTimePeriod = TimePeriodOptions[index];
+    const updatedFromDate = dayjs()
+      .startOf("day")
+      .subtract(selectedTimePeriod.value, "day")
+      .toISOString();
+    const updatedToDate = dayjs(Date.now()).toISOString();
+    currentFilters.filterFrom = updatedFromDate;
+    currentFilters.filterTo = updatedToDate;
+    dispatch(setApplicationFilter(currentFilters));
+    handleTimeOptionMenuClose();
+    handleClose();
   };
 
   return (
@@ -137,39 +149,17 @@ export const ApplicationFilter: FC<PropsType> = ({
                   <Typography variant="body1">
                     {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
                   </Typography>
-                  <Stack direction={"row"} sx={{ alignItems: "center" }}>
-                    <Typography variant="body2">from Date - to date</Typography>
-                    {isTimeOptionOpen ? (
-                      <ArrowDropUp />
-                    ) : (
-                      <IconButton onClick={handleClick}>
-                        <ArrowDropDown />
-                      </IconButton>
-                    )}
+                  <Stack
+                    direction={"row"}
+                    sx={{ alignItems: "center" }}
+                    onClick={handleClick}
+                  >
+                    <Typography variant="body2" sx={{ cursor: "pointer" }}>
+                      from Date - to date
+                    </Typography>
+                    {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
                   </Stack>
-                </Stack>
-
-                <Stack spacing={2} direction={"row"}>
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "FILTER.FROM" })}
-                    value={values.filterFrom && dayjs(values.filterFrom)}
-                    maxDate={dayjs()}
-                    setValue={(date: Dayjs | null) => {
-                      setFieldValue("filterFrom", date);
-                    }}
-                  />
-
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "FILTER.TO" })}
-                    value={values.filterTo && dayjs(values.filterTo)}
-                    minDate={dayjs(values.filterFrom)}
-                    setValue={(date: Dayjs | null) => {
-                      setFieldValue("filterTo", date);
-                    }}
-                  />
-                </Stack>
-              </Stack>
-              <Menu
+                  <Menu
                     id="time-period-option"
                     anchorEl={optionAnchorEl}
                     open={isTimeOptionOpen}
@@ -177,13 +167,58 @@ export const ApplicationFilter: FC<PropsType> = ({
                     MenuListProps={{
                       "aria-labelledby": "basic-button",
                     }}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
                   >
-                    {TimePeriodOptions.map((option) => (
-                      <MenuItem onClick={handleTimeOptionMenuClose}>
+                    {TimePeriodOptions.map((option, index) => (
+                      <MenuItem
+                        key={option.id}
+                        onClick={() => {
+                          handleTimePeriodChange(index, values, setFieldValue);
+                        }}
+                      >
                         {intl.formatMessage({ id: option.name })}
                       </MenuItem>
                     ))}
                   </Menu>
+                </Stack>
+
+                <Stack spacing={2} direction={"row"}>
+                  <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "FILTER.FROM" })}
+                    value={
+                      Boolean(values.filterFrom)
+                        ? dayjs(values.filterFrom)
+                        : null
+                    }
+                    maxDate={dayjs()}
+                    setValue={(date: Dayjs | null) => {
+                      setFieldValue(
+                        "filterFrom",
+                        date?.startOf("day").toISOString()
+                      );
+                    }}
+                  />
+                  <CustomisedDatePicker
+                    label={intl.formatMessage({ id: "FILTER.TO" })}
+                    value={
+                      Boolean(values.filterTo) ? dayjs(values.filterTo) : null
+                    }
+                    minDate={dayjs(values.filterFrom)}
+                    maxDate={dayjs()}
+                    setValue={(date: Dayjs | null) => {
+                      setFieldValue("filterTo", addCurrentTimeToDate(date));
+                    }}
+                  />
+                </Stack>
+              </Stack>
+
               <Stack spacing={1}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "FILTER.JOB_TITLE" })}
@@ -279,7 +314,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                   }}
                   getOptionLabel={(option) => option.label}
                   renderInput={(params) => (
-                    <TextField {...params} placeholder="Status" />
+                    <TextField {...params} placeholder="Applicant Status" />
                   )}
                   renderOption={(props, option, state) => {
                     return (

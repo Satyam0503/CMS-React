@@ -33,8 +33,8 @@ export interface ApplicantModel {
   };
   export interface GetApplicationPayloadModel {
     name:string,
-    filterFrom?: null | Dayjs;
-    filterTo?: null | Dayjs;
+    filterFrom?: null | Dayjs |string;
+    filterTo?: null | Dayjs | string;
     activityTypes?: number[];
     vacancyIds?: string[];
     status?: number[];
@@ -43,8 +43,8 @@ export interface ApplicantModel {
   }
 
   export interface ApplicationFilterModel {
-    filterFrom: null | Dayjs;
-    filterTo: null | Dayjs;
+    filterFrom: null | Dayjs | string;
+    filterTo: null | Dayjs | string;
     activityTypes: number[];
     vacancyIds: string[];
     status: number[];

@@ -40,7 +40,7 @@ const initialValues: ApplicantModel = {
   resume: null,
   vacancyId: "",
   vacancyName: "",
-  status: ApplicantStatus.InActive,
+  status: ApplicantStatus.Active,
   activityType: ApplicationStatus.New,
 };
 interface PropsTypes {
@@ -144,9 +144,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                 handleAddApplicant(values, setSubmitting);
               }}
             >
-              {(formik) => {
-                console.log(formik.values);
-                
+              {(formik) => {               
                 return (
                   <form onSubmit={formik.handleSubmit}>
                     <Grid

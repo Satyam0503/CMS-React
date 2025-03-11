@@ -1,5 +1,9 @@
 import dayjs, { Dayjs } from "dayjs";
-import { EmployeeModel, FiltersType, ModulePermissoinModel } from "./common_types";
+import {
+  EmployeeModel,
+  FiltersType,
+  ModulePermissoinModel,
+} from "./common_types";
 import {
   ApplicantStatus,
   ApplicationStatus,
@@ -38,45 +42,45 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-export const applicationStatusMapper : {
-  [index:number]:string
+export const applicationStatusMapper: {
+  [index: number]: string;
 } = {
-  [ApplicationStatus.New]:"New",
-  [ApplicationStatus.InProgress]:"In Progress",
-  [ApplicationStatus.OnHold]:"On Hold",
-  [ApplicationStatus.Shortlisted]:"Shortlisted",
-  [ApplicationStatus.Selected]:"Selected",
-  [ApplicationStatus.Rejected]:"Rejected",
-}
+  [ApplicationStatus.New]: "New",
+  [ApplicationStatus.InProgress]: "In Progress",
+  [ApplicationStatus.OnHold]: "On Hold",
+  [ApplicationStatus.Shortlisted]: "Shortlisted",
+  [ApplicationStatus.Selected]: "Selected",
+  [ApplicationStatus.Rejected]: "Rejected",
+};
 
-export const applicationStatusClassMapper :{
-  [index:number]:string
-} ={
-  [ApplicationStatus.New]:"info",
-  [ApplicationStatus.InProgress]:"warning",
-  [ApplicationStatus.OnHold]:"warning",
-  [ApplicationStatus.Shortlisted]:"warning",
-  [ApplicationStatus.Selected]:"success",
-  [ApplicationStatus.Rejected]:"danger",
-}
+export const applicationStatusClassMapper: {
+  [index: number]: string;
+} = {
+  [ApplicationStatus.New]: "info",
+  [ApplicationStatus.InProgress]: "warning",
+  [ApplicationStatus.OnHold]: "warning",
+  [ApplicationStatus.Shortlisted]: "warning",
+  [ApplicationStatus.Selected]: "success",
+  [ApplicationStatus.Rejected]: "danger",
+};
 
 export const getApplicationStatusClass = (applicationStatus: number) => {
   return applicationStatusClassMapper[applicationStatus];
 };
 
-export const applicantStatusDecoder:{
-  [index:number]:string
-} ={
-  [ApplicantStatus.InActive]:"Inactive",
-  [ApplicantStatus.Active]:"Active",
-}
+export const applicantStatusDecoder: {
+  [index: number]: string;
+} = {
+  [ApplicantStatus.InActive]: "Inactive",
+  [ApplicantStatus.Active]: "Active",
+};
 
-const applicantStatusClassMapper:{
-  [index:number]:string
-} ={
-  [ApplicantStatus.InActive]:"danger",
-  [ApplicantStatus.Active]:"success",
-}
+const applicantStatusClassMapper: {
+  [index: number]: string;
+} = {
+  [ApplicantStatus.InActive]: "danger",
+  [ApplicantStatus.Active]: "success",
+};
 
 export const getApplicantStatusClass = (applicantStatus: number) => {
   return applicantStatusClassMapper[applicantStatus] || "";
@@ -97,7 +101,7 @@ export const commentActionEncoderForApplicationStatus = (
     case ApplicationStatus.Rejected:
       return CommentAction.Rejection;
     default:
-     return CommentAction.InProgress;
+      return CommentAction.InProgress;
   }
 };
 
@@ -276,7 +280,7 @@ export const monthsExperienceList = [
   },
 ];
 
-export const getDateDiffInYears = (from:Dayjs, to: Dayjs= dayjs()) => {
+export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
   return dayjs(to).diff(from, "years");
 };
 
@@ -299,7 +303,7 @@ export const checkPermissionForModuleAndRoute = (
   const hasPermission = module.permissions.find(
     (permission) => permission.permissionConstant === Permission.View
   );
-  if(!hasPermission){
+  if (!hasPermission) {
     return false;
   }
   return hasPermission.hasAccess;
@@ -309,7 +313,9 @@ export const findUserDefaultTab = (
   userModulePermissions: ModulePermissoinModel[]
 ) => {
   const defaultTab = SideBarTabList.find(
-    (tab) => checkPermissionForModuleAndRoute(tab.title, userModulePermissions) === true
+    (tab) =>
+      checkPermissionForModuleAndRoute(tab.title, userModulePermissions) ===
+      true
   );
   if (!defaultTab) {
     return "/error/";
@@ -334,32 +340,39 @@ export const findUserDefaultTab = (
 //   return index !== -1 ? true : false;
 // };
 
-export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows)=> {
+export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
-  if( columnValueType === "number" ){
-    arr.sort((a,b)=>(a[key] as number) - (b[key] as number));
+  if (columnValueType === "number") {
+    arr.sort((a, b) => (a[key] as number) - (b[key] as number));
     return arr;
   }
-  if(columnValueType === "string"){
-    arr.sort((a,b)=> (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase()));
+  if (columnValueType === "string") {
+    arr.sort((a, b) =>
+      (a[key] as string)
+        .toLowerCase()
+        .localeCompare((b[key] as string).toLowerCase())
+    );
     return arr;
   }
   return arr;
 };
 
-export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
+export const sortingDescendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
-  if( columnValueType === "number" ){
-    arr.sort((a,b)=>(b[key] as number) - (a[key] as number));
+  if (columnValueType === "number") {
+    arr.sort((a, b) => (b[key] as number) - (a[key] as number));
     return arr;
   }
-  if(columnValueType === "string"){
-    arr.sort((a,b)=> (b[key] as string).toLowerCase().localeCompare((a[key] as string).toLowerCase()));
+  if (columnValueType === "string") {
+    arr.sort((a, b) =>
+      (b[key] as string)
+        .toLowerCase()
+        .localeCompare((a[key] as string).toLowerCase())
+    );
     return arr;
   }
   return arr;
 };
-
 
 // function handleEmployeeExport() {
 //   const mappedEmployeeData = employeesListMapperforExport(employeeList);
@@ -369,9 +382,11 @@ export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
 //   XLSX.writeFile(workbook, "Employees.xlsx");
 // }
 
-export const blockInvalidCharOnNumberField = (event:React.KeyboardEvent<HTMLElement>) => ['e', 'E', '+', '-'].includes(event.key) && event.preventDefault();
+export const blockInvalidCharOnNumberField = (
+  event: React.KeyboardEvent<HTMLElement>
+) => ["e", "E", "+", "-"].includes(event.key) && event.preventDefault();
 
-// filter helper 
+// filter helper
 
 export const getAppliedFilters = () => {
   const savedFilters = localStorage.getItem(APP_FILTER_KEY);
@@ -384,19 +399,24 @@ export const getAppliedFilters = () => {
   return appliedfilters;
 };
 
-
-export const setLocalFilter = (filters:FiltersType) => {
-  if(localStorage){
-      localStorage.setItem(APP_FILTER_KEY,JSON.stringify(filters));
+export const setLocalFilter = (filters: FiltersType) => {
+  if (localStorage) {
+    localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
+  } else {
+    console.log("Unable to access localstorage");
   }
-  else{
-      console.log("Unable to access localstorage");
-  }
-}
+};
 
-export const clearAllLocalFilter = ()=>{
-  if(!localStorage){
+export const clearAllLocalFilter = () => {
+  if (!localStorage) {
     return;
   }
   localStorage.removeItem(APP_FILTER_KEY);
-}
+};
+
+export const addCurrentTimeToDate = (date: Dayjs | null) => {
+  const currentDateInMs = dayjs().valueOf();
+  const currentDateWithoutTime = dayjs().startOf("day").valueOf();
+  const diffInMs = currentDateInMs - currentDateWithoutTime;
+  return dayjs(date).startOf("day").add(diffInMs, "milliseconds").toISOString();
+};

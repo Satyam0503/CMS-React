@@ -5,7 +5,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 interface PropsTypes {
-  value?: Dayjs | null;
+  value: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
   label?: string;
   maxDate?: Dayjs;
