@@ -21,12 +21,12 @@ import {
 import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
 import { useCallback, useState } from "react";
-import { CustomisedTable } from "../../modules/components/CustomisedTable";
+import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
-import { ConfirmationModal } from "../../modules/components/ConfirmationModal";
-import { SearchInput } from "../../modules/components/SearchInput";
-import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { SearchInput } from "../../shared/components/SearchInput";
+import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import HolidayForm from "./components/HolidayForm";
+import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 
 // remove this array later
 const rows = [

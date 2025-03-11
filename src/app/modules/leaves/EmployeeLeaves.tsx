@@ -24,9 +24,9 @@ import {
 import AddLeaves from "./components/AddLeaves";
 import LeaveAssignment from "./components/LeaveAssignment";
 import LeaveSummary from "./components/LeaveSummary";
-import IconStat from "../components/IconStat";
+import IconStat from "../../shared/components/IconStat";
 import { colors } from "../theme/MuiTheme";
-import BasicTable from "../components/BasicTable";
+import BasicTable from "../../shared/components/BasicTable";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();

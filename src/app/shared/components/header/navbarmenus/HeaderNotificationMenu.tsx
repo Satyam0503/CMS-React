@@ -22,8 +22,8 @@ import {
 
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../../../Redux/hooks";
-import { useLogout } from "../../../auth";
-import { colors } from "../../../theme/MuiTheme";
+import { useLogout } from "../../../../modules/auth";
+import { colors } from "../../../../modules/theme/MuiTheme";
 
 export default function HeaderNotificationMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

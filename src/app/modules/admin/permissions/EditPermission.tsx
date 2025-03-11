@@ -12,7 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Check } from "@mui/icons-material";
 import { colors } from "../../../modules/theme/MuiTheme";
-import CustomisedButton from "../../../modules/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 
 function createData(name: string) {
   return { name };

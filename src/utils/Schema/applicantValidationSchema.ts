@@ -12,15 +12,10 @@ export const applicantValidationSchema = Yup.object().shape({
     .matches(Regex.Name, "Invalid Name"),
   email: Yup.string()
     .required("Email is required")
-    .matches(
-      Regex.Email,
-      "Email must be a valid email"
-    ),
+    .matches(Regex.Email, "Email must be a valid email"),
+  state: Yup.string().required("Select your state"),
   phone: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Phone number is not valid"
-    )
+    .matches(Regex.Phone, "Phone number is not valid")
     .required("Phone number is required"),
   experience: Yup.number().min(0).required("Experience is Required"),
   vacancyId: Yup.string().required("Select Job"),
@@ -55,16 +50,11 @@ export const editApplicantValidationSchema = Yup.object().shape({
 
   email: Yup.string()
     .required("Email is required")
-    .matches(
-      Regex.Email,
-      "Email must be a valid email"
-    ),
+    .matches(Regex.Email, "Email must be a valid email"),
   phone: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Phone number is not valid"
-    )
+    .matches(Regex.Phone, "Phone number is not valid")
     .required("Phone number is required"),
+  state: Yup.string().required("Select your state"),
   experienceInMonths: Yup.number()
     .required("Experience is Required")
     .min(0, "Experience must be non-negative value")
@@ -76,7 +66,8 @@ export const editApplicantValidationSchema = Yup.object().shape({
   activityType: Yup.number()
     .oneOf([0, 1, 2, 3, 4, 5])
     .required("Select Application Status"),
-  resume: Yup.mixed().nullable()
+  resume: Yup.mixed()
+    .nullable()
     .test("fileFormat", "Only PDF files are allowed", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];

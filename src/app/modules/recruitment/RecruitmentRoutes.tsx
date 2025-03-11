@@ -3,8 +3,8 @@ import { ApplicantDetails } from "./applications/components/ApplicantDetails";
 import { EditApplicant } from "./applications/components/EditApplicant";
 import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
 import { ModulesName } from "../../../utils/enums";
-import Applications from "./applications/Applications";
 import Jobs from "./jobs/Jobs";
+import { Applications } from "./applications/Applications";
 
 const Recruitment = () => {
   return (

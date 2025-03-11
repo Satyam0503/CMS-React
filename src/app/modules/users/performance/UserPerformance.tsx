@@ -2,7 +2,7 @@ import { Card, Grid, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 
 import { useIntl } from "react-intl";
-import DonutApexChart from "../../components/DonutApexChart";
+import DonutApexChart from "../../../shared/components/DonutApexChart";
 import Feedback from "./components/Feedback";
 import Achievements from "./components/Achievements";
 

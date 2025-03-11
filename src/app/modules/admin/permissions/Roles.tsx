@@ -1,6 +1,6 @@
 import { Typography, Grid, Stack, Container, Card } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomisedTable } from "../../../modules/components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { CompanyRoles } from "../../../../utils/constant/Permission";
 import { RoleTableColumnList } from "../../../../utils/constant/Constant";
 

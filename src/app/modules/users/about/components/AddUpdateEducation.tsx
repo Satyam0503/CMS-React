@@ -11,13 +11,13 @@ import { useIntl } from "react-intl";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 import { UserEducationModel } from "../../../../../utils/common_types";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { userEducationSchema } from "../../../../../utils/Schema/userSchema";
-import { TextInput } from "../../../components/form_component/TextInput";
-import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
-import { SelectInput } from "../../../components/form_component/SelectInput";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { EducationType } from "../../../../../utils/constant/Constant";
 
 type PropTypes = {

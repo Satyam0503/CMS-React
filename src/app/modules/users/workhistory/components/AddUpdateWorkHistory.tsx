@@ -11,10 +11,11 @@ import {
   TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../components/CustomIconButton";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+
 import { Add } from "@mui/icons-material";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
 export function AddUpdateWorkHistory() {
   const intl = useIntl();

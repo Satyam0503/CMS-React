@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 
 function createData(
   sno: number,

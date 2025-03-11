@@ -10,15 +10,15 @@ import {
 } from "@mui/material";
 import { FC, useCallback, useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../components/CustomisedModal";
-import CustomisedButton from "../../../components/CustomisedButton";
-import TextEditor from "../../../components/TextEditor";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import TextEditor from "../../../../shared/components/TextEditor";
 import { useFormik } from "formik";
 import jobSchema from "../../../../../utils/Schema/jobSchema";
 import { JobType } from "../../../../../utils/constant/Constant";
-import { JobModal } from "../../../../../utils/common_types";
-import { ErrorLabel } from "../../../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
+import { JobModal } from "../../models";
 
 interface PropsTypes {
   initialValues: JobModal;
