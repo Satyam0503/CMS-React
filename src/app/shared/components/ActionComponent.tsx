@@ -31,7 +31,10 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       )}
       {openViewModal && (
         <CustomIconButton
-          handleClick={() => openViewModal(row)}
+          handleClick={(e) => {
+            e.stopPropagation();
+            openViewModal(row);
+          }}
           icon={<Visibility />}
           tooltip="View"
           ariaLabel="View"

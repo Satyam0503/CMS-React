@@ -17,6 +17,7 @@ import {
 } from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
+import { ModulesName } from "../../../../utils/enums";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -197,6 +198,7 @@ export const Applications = () => {
           </Stack>
           <Stack>
             <CustomisedTable
+              tabName={ModulesName.Applications}
               rows={applicationsList}
               columns={ApplicationTabTableColumnList}
               page={paginationValues.pageNo}

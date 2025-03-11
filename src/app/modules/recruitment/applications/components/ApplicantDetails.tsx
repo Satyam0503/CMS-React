@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, Edit } from "@mui/icons-material";
+import { Add, Download, Edit, Visibility } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";

@@ -896,14 +896,6 @@ export const MuiTheme = createTheme({
     //     },
     //   },
     // },
-    
-    MuiBadge:{
-      styleOverrides:{
-        badge:{
-          backgroundColor:colors.alpha.primary[500]
-        }
-      }
-    },
     MuiAutocomplete: {
       styleOverrides: {
         clearIndicator: {

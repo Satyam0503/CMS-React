@@ -3,6 +3,7 @@ import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { FC, memo, useEffect, useState } from "react";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useDebounce } from "../../../../hooks/useDebounce";
+import TextEditor from "../../../../shared/components/TextEditor";
 
 interface PropTypes {
   open: boolean;
@@ -29,7 +30,8 @@ export const AddComment: FC<PropTypes> = ({
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
         <Typography variant="h5">Add Comment</Typography>
-        <TextField
+        <TextEditor value={value} setValue={(value)=>setValue(value)} />
+        {/* <TextField
           value={value}
           name="comment"
           fullWidth
@@ -40,7 +42,7 @@ export const AddComment: FC<PropTypes> = ({
           type="text"
           required
           onChange={(event) => setValue(event.target.value)}
-        />
+        /> */}
 
         <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
           <CustomisedButton

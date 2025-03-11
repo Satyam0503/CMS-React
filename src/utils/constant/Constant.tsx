@@ -541,7 +541,6 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "activityCategory",
     label: "Action Category",
-    align: "center",
     minWidth: 150,
     format: (value: number) => commentActionDecoder(value),
   },
@@ -550,7 +549,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     label: "Comment",
     minWidth: 200,
     build: (value: string) => (
-      <Tooltip title={value} arrow placement="top">
+      <Tooltip title={value} arrow placement="top" >
         <Typography
           variant="body1"
           style={{
@@ -560,9 +559,9 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             overflow: "hidden",
             margin: "0",
           }}
-        >
-          {value}
-        </Typography>
+          dangerouslySetInnerHTML={{__html:value}}
+        />
+
       </Tooltip>
     ),
   },
