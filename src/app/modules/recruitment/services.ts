@@ -1,16 +1,9 @@
 import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import {
-  JobsResponseData,
-  JobModal,
-  ApplicantsResponseData,
-  ApplicantModel,
-  ApiResponse,
-  CommentResponseData,
-  CommentModel,
-  ApplicationFilterModel,
-  GetApplicationPayloadModel,
+  ApiResponse,  
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
+import { ApplicantModel, ApplicantsResponseData, CommentModel, CommentResponseData, GetApplicationPayloadModel, JobModal, JobsResponseData } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
   return postRequest<JobModal, JobsResponseData>(

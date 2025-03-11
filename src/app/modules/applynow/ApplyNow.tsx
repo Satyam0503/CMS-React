@@ -10,29 +10,32 @@ import {
   FormControl,
   InputLabel,
   TextField,
+  Autocomplete,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { SingleBanner } from "./Component/SingleBanner";
-import CustomisedButton from "../components/CustomisedButton";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Component/Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
-import { ApplicantModel, JobModal } from "../../../utils/common_types";
-import { TextInput } from "../components/form_component/TextInput";
-import { SelectInput } from "../components/form_component/SelectInput";
+import { TextInput } from "../../shared/components/form-component/TextInput";
+import { SelectInput } from "../../shared/components/form-component/SelectInput";
 import { experienceCategoryList } from "../../../utils/common";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
-import { CircularLoader } from "../components/CircularLoader";
+
 import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
 import { applyNow } from "./services";
 import { toast } from "react-toastify";
 import NoVacancy from "./Component/NoVacancy";
 import ApplyNowHeader from "./Component/ApplyNowHeader";
 import { applicantValidationSchema } from "../../../utils/Schema/applicantValidationSchema";
-import { ErrorLabel } from "../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
+import { CircularLoader } from "../../shared/components/CircularLoader";
+import { ApplicantModel, JobModal } from "../recruitment/models";
+import { indianStates } from "../../../utils/constant/Constant";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -41,11 +44,12 @@ const initialValues: ApplicantModel = {
   lastName: "",
   email: "",
   phone: "",
+  state: "",
   experience: 1,
   resume: null,
   vacancyId: "",
   vacancyName: "",
-  status: ApplicantStatus.New,
+  status: ApplicantStatus.InActive,
   activityType: ApplicationStatus.New,
 };
 
@@ -82,6 +86,8 @@ export default function ApplyNow() {
       nextState?: Partial<FormikState<ApplicantModel>> | undefined
     ) => void
   ) => {
+    console.log(values);
+
     const formData = new FormData();
     formData.append("File", values.resume as File);
     const vacancy = activeJobPositionsList.find(
@@ -414,6 +420,27 @@ export default function ApplyNow() {
                               ))}
                             </SelectInput>
                           </Grid>
+                          <Grid item xs={12}>
+                            <Autocomplete
+                              id="state-dropdown"
+                              size="small"
+                              value={indianStates.find(
+                                (state) => state.value === values.state
+                              )}
+                              options={indianStates}
+                              onChange={(event, value) => {
+                                setFieldTouched("state",true)
+                                setFieldValue("state", value?.value);
+                              }}
+                              renderInput={(param) => (
+                                <TextField {...param} label={"Select State"} />
+                              )}
+                              getOptionLabel={(option) => option.label}
+                            />
+                            <ErrorLabel>
+                              {touched.state && errors.state && errors.state}
+                            </ErrorLabel>
+                          </Grid>
                         </Grid>
                         <Stack mt={2}>
                           <Typography
@@ -424,6 +451,7 @@ export default function ApplyNow() {
                             {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                           </Typography>
                         </Stack>
+
                         <Grid
                           container
                           direction={"column"}

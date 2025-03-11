@@ -7,10 +7,10 @@ import {
   DeleteOutline,
   Edit,
 } from "@mui/icons-material";
-import HalfRating from "../../../components/HalfRating";
+import HalfRating from "../../../../shared/components/HalfRating";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { colors } from "../../../theme/MuiTheme";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 
 type Props = {
   className: string;

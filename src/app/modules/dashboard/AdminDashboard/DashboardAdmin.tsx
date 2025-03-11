@@ -11,7 +11,7 @@ import { ApplicationsChart } from "./components/ApplicationsChart";
 import { DepartmentChart } from "./components/DepartmentChart";
 import NoticeBoard from "./components/NoticeBoard";
 import EmployeePerformance from "./components/EmployeePerformance";
-import { AttendanceChart } from "../../components/AttendanceChart";
+import { AttendanceChart } from "../../../shared/components/AttendanceChart";
 import EmpOnLeave from "./components/EmpOnLeave";
 import UpcomingBirthday from "./components/UpcomingBirthday";
 import Punctual from "./components/Punctual";

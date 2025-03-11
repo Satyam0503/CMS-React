@@ -15,7 +15,7 @@ import {
 import { useIntl } from "react-intl";
 import Setting from "../../Setting";
 import { Check } from "@mui/icons-material";
-import CustomisedButton from "../../../../components/CustomisedButton";
+import CustomisedButton from "../../../../../shared/components/CustomisedButton";
 
 export default function NotificationSetting() {
   const intl = useIntl();

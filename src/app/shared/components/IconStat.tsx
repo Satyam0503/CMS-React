@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { Stack, useTheme } from "@mui/material";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
 
 type Props = {
   icon: JSX.Element;

@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
 import { setToken } from "../../../Redux/Reducers/authSlice";
 import { useAppDispatch } from "../../../Redux/hooks";
 import { setLocalKey } from "../core/AuthHelpers";
-import { TextInput } from "../../components/form_component/TextInput";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
 
 const loginSchema = Yup.object().shape({

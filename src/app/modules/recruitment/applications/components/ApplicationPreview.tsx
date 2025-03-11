@@ -1,9 +1,9 @@
 import { Close } from "@mui/icons-material";
 import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../components/CustomisedModal";
-import { CustomIconButton } from "../../../components/CustomIconButton";
-import { Applicant } from "../../../../../utils/common_types";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import {  } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusMapper,
@@ -11,8 +11,9 @@ import {
   dateFormatter,
   getApplicationStatusClass,
 } from "../../../../../utils/common";
-import { StyleStatus } from "../../../components/StyledStatus";
+import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { PdfPreview } from "./PdfPreview";
+import { Applicant } from "../../models";
 
 interface PropsType {
   open: boolean;

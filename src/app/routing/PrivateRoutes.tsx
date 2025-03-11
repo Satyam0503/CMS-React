@@ -8,7 +8,7 @@ import { findUserDefaultTab } from "../../utils/common.ts";
 import { useAppSelector } from "../Redux/hooks.ts";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
-import { UnAuthorizedAccess } from "../modules/components/UnAuthorizedAccess.tsx";
+import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 
 const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
 const Setting = lazy(() => import("../modules/admin/Settings.tsx"));
