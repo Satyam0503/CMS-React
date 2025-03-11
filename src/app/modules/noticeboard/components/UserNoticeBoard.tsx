@@ -17,14 +17,14 @@ import {
   ListAltOutlined,
 } from "@mui/icons-material";
 
-import { SearchInput } from "../../components/SearchInput";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { SearchInput } from "../../../shared/components/SearchInput";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { colors } from "../../theme/MuiTheme";
-import { CustomisedTable } from "../../components/CustomisedTable";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { NoticeModel } from "../../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../../utils/constant/Constant";
 import { AddNotice } from "./AddNotice";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 
 const rows = [
   {

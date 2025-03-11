@@ -1,29 +1,32 @@
 import {
+  Autocomplete,
   Box,
   FormHelperText,
   Grid,
   MenuItem,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
 import { CloudUploadOutlined, Style } from "@mui/icons-material";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { Formik } from "formik";
-import { TextInput } from "../../../components/form_component/TextInput";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
-import { SelectInput } from "../../../components/form_component/SelectInput";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { experienceCategoryList } from "../../../../../utils/common";
 import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
-import { ApplicantModel, JobModal } from "../../../../../utils/common_types";
 import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
-import { ErrorLabel } from "../../../components/form_component/ErrorLabel";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
+import { ApplicantModel, JobModal } from "../../models";
+import { indianStates } from "../../../../../utils/constant/Constant";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -33,11 +36,12 @@ const initialValues: ApplicantModel = {
   email: "",
   phone: "",
   experience: 1,
+  state:"",
   resume: null,
   vacancyId: "",
   vacancyName: "",
-  status: ApplicantStatus.New,
-  activityType: ApplicationStatus.Rejected,
+  status: ApplicantStatus.InActive,
+  activityType: ApplicationStatus.New,
 };
 interface PropsTypes {
   open: boolean;
@@ -88,7 +92,6 @@ export const AddApplicant: FC<PropsTypes> = ({
       ...values,
       companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
-      status: ApplicantStatus.New,
       activityType: ApplicationStatus.New,
       experience: values.experience * 12,
     };
@@ -142,6 +145,8 @@ export const AddApplicant: FC<PropsTypes> = ({
               }}
             >
               {(formik) => {
+                console.log(formik.values);
+                
                 return (
                   <form onSubmit={formik.handleSubmit}>
                     <Grid
@@ -208,9 +213,23 @@ export const AddApplicant: FC<PropsTypes> = ({
                           ))}
                         </SelectInput>
                       </Grid>
+                      <Grid item xs={12}>
+                          <Autocomplete 
+                            id="state-dropdown"
+                            size="small"
+                            value={indianStates.find(state=>state.value === formik.values.state)}
+                            options={indianStates}
+                            onChange={(event,value)=>{
+                              formik.setFieldValue("state",value?.value);
+                            }}
+                            renderInput={(param)=>(
+                              <TextField  {...param}  label={"Select State"}/>
+                            )}
+                            getOptionLabel={option=> option.label}
+                          />
+                      </Grid>
                     </Grid>
                     <Stack mt={2}>
-                      {" "}
                       <Typography
                         variant="body1"
                         mb={1}
@@ -258,9 +277,6 @@ export const AddApplicant: FC<PropsTypes> = ({
                                   formik.setFieldTouched("resume", true);
                                   handleFileChange(e, formik.setFieldValue);
                                 }}
-                                // onBlur={(e) => {
-                                //   formik.setFieldTouched("resume", true);
-                                // }}
                                 hidden
                               />
                             </Box>
@@ -271,10 +287,6 @@ export const AddApplicant: FC<PropsTypes> = ({
                               flexWrap={"wrap"}
                               textAlign={"center"}
                             >
-                              {/* {intl.formatMessage({
-                                id: "FILE.SELECTED",
-                              })}
-                              : */}
                             </Typography>
                             <Typography variant="caption">
                               {formik.values.resume?.name}

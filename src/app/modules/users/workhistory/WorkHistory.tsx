@@ -11,7 +11,7 @@ import {
   Edit,
 } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { AddUpdateWorkHistory } from "./components/AddUpdateWorkHistory";
 
 export const WorkHistory: FC = () => {

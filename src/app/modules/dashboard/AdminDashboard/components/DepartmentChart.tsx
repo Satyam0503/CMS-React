@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { EmployeeModel } from "../../../../../utils/common_types";
-import { CustomCard } from "../../../components/CustomCard";
+import { CustomCard } from "../../../../shared/components/CustomCard";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
-import { BarChart } from "../../../components/BarChart";
+import { BarChart } from "../../../../shared/components/BarChart";
 
 interface PropsTypes {
   employees: EmployeeModel[];

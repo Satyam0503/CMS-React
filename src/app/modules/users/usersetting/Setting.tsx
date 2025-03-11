@@ -12,7 +12,7 @@ import {
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
 import NotificationSetting from "./NotificationSetting";
-import CustomisedButton from "../../components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 
 export default function Setting() {
   const intl = useIntl();

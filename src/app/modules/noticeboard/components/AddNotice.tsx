@@ -2,13 +2,13 @@ import { Send } from "@mui/icons-material";
 import { Grid, MenuItem, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../components/CustomisedModal";
-import CustomisedButton from "../../components/CustomisedButton";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { NoticeModel } from "../../../../utils/common_types";
 import { Formik } from "formik";
-import { SelectInput } from "../../components/form_component/SelectInput";
+import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { NoticeTypes } from "../../../../utils/constant/Constant";
-import { TextInput } from "../../components/form_component/TextInput";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 import noticeSchema from "../../../../utils/Schema/noticeSchema";
 
 interface PropsTypes {

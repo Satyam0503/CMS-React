@@ -1,34 +1,39 @@
-import { Close } from "@mui/icons-material";
+import {
+  ArrowDownward,
+  ArrowDropDown,
+  ArrowDropUp,
+  Close,
+} from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
   Checkbox,
   IconButton,
   ListItemText,
+  Menu,
+  MenuItem,
   Popover,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  ApplicationFilterModel,
-  JobModal,
-} from "../../../../../utils/common_types";
 import { getAllJobVacancies } from "../../services";
 import {
   ApplicantApplicationStatus,
   ApplicantStatusConstant,
+  TimePeriodOptions,
 } from "../../../../../utils/constant/Constant";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setApplicationFilter } from "../../../../Redux/Reducers/filterSlice";
 import { useFormik } from "formik";
 import { applicationFilterSchema } from "../../../../../utils/Schema/filterValidationSchema";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
+import { ApplicationFilterModel, JobModal } from "../../models";
 
 interface PropsType {
   id?: string;
@@ -55,11 +60,14 @@ export const ApplicationFilter: FC<PropsType> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useAppDispatch();
+  const [optionAnchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const applicationFilters = useAppSelector(
     (state) => state.filters.application
   );
 
   const [jobList, setJobList] = useState<JobModal[]>([]);
+
+  const isTimeOptionOpen = Boolean(optionAnchorEl);
 
   const { values, errors, handleSubmit, getFieldProps, setFieldValue } =
     useFormik({
@@ -87,6 +95,15 @@ export const ApplicationFilter: FC<PropsType> = ({
     getActiveJobs();
   }, []);
 
+  const handleTimeOptionMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(event.currentTarget);
+    
+    setAnchorEl(event.currentTarget);
+  };
+
   return (
     <Popover
       id={id}
@@ -113,9 +130,25 @@ export const ApplicationFilter: FC<PropsType> = ({
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               <Stack>
-                <Typography variant="body1">
-                  {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
-                </Typography>
+                <Stack
+                  direction={"row"}
+                  sx={{ justifyContent: "space-between" }}
+                >
+                  <Typography variant="body1">
+                    {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
+                  </Typography>
+                  <Stack direction={"row"} sx={{ alignItems: "center" }}>
+                    <Typography variant="body2">from Date - to date</Typography>
+                    {isTimeOptionOpen ? (
+                      <ArrowDropUp />
+                    ) : (
+                      <IconButton onClick={handleClick}>
+                        <ArrowDropDown />
+                      </IconButton>
+                    )}
+                  </Stack>
+                </Stack>
+
                 <Stack spacing={2} direction={"row"}>
                   <CustomisedDatePicker
                     label={intl.formatMessage({ id: "FILTER.FROM" })}
@@ -136,6 +169,21 @@ export const ApplicationFilter: FC<PropsType> = ({
                   />
                 </Stack>
               </Stack>
+              <Menu
+                    id="time-period-option"
+                    anchorEl={optionAnchorEl}
+                    open={isTimeOptionOpen}
+                    onClose={handleTimeOptionMenuClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
+                    {TimePeriodOptions.map((option) => (
+                      <MenuItem onClick={handleTimeOptionMenuClose}>
+                        {intl.formatMessage({ id: option.name })}
+                      </MenuItem>
+                    ))}
+                  </Menu>
               <Stack spacing={1}>
                 <Typography variant="body1">
                   {intl.formatMessage({ id: "FILTER.JOB_TITLE" })}

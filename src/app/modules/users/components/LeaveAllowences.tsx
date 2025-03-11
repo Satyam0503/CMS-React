@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import DonutApexChart from "../../components/DonutApexChart";
+import DonutApexChart from "../../../shared/components/DonutApexChart";
 
 export default function LeaveAllowences() {
   const intl = useIntl();

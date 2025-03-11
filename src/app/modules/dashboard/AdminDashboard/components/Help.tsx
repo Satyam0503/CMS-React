@@ -2,7 +2,7 @@ import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { colors } from "../../../theme/MuiTheme";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Message } from "@mui/icons-material";
 
 export default function Help() {

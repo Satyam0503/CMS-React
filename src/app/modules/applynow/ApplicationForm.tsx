@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Close, CloudUploadOutlined } from "@mui/icons-material";
-import CustomisedButton from "../components/CustomisedButton";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 
 type Props = {
   className: string;

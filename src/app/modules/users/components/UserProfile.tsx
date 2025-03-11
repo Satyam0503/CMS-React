@@ -1,6 +1,6 @@
 import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
 import BasicTabs from "./BasicTabs";
-import IconStat from "../../components/IconStat";
+import IconStat from "../../../shared/components/IconStat";
 import { colors } from "../../theme/MuiTheme";
 import {
   Build,
@@ -25,7 +25,6 @@ export default function UserProfile() {
       <Typography variant="h4" mb={3}>
         {intl.formatMessage({ id: "MENU.PROFILE" })}
       </Typography>
-
       <Grid container spacing={4}>
         <Grid
           item

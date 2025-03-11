@@ -3,9 +3,9 @@ import Typography from "@mui/material/Typography";
 import { Chip, InputAdornment, Stack, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../components/CustomisedModal";
-import { CustomIconButton } from "../../../components/CustomIconButton";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
 type PropsType = {
   open: boolean;
