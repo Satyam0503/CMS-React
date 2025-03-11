@@ -14,7 +14,6 @@ import {
   convertMonthsToYear,
 } from "../common";
 import { Link } from "react-router-dom";
-import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import {
   ApplicantStatus,
   ApplicationStatus,
@@ -22,8 +21,7 @@ import {
   ModulesName,
   TIME_PERIOD_MAP,
 } from "../enums";
-import { ActionComponent } from "../../app/shared/components/ActionComponent";
-import { AvatarCell } from "../../app/shared/components/AvatarCell";
+
 import { AddressDetailsIcon } from "../../app/shared/components/AddressDetailsIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
@@ -397,7 +395,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "status",
     label: "Status",
     build: (status: number) => {
-      const values = applicantStatusDecoder(status);
+      const values = applicantStatusDecoder[status];
       const className = getApplicantStatusClass(status);
       return <StyleStatus label={values} className={className} />;
     },
@@ -411,10 +409,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       return convertMonthsToYear(value);
     },
   },
-  {
-    id: "email",
-    label: "Email",
-  },
+  // {
+  //   id: "email",
+  //   label: "Email",
+  // },
   {
     id: "applyDate",
     label: "Applied",
@@ -422,15 +420,14 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     sorting: true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
-
   {
-    id: "status",
-    label: "Status",
-    build: (status: number) => {
-      const values = applicantStatusDecoder[status];
-      const className = getApplicantStatusClass(status);
-      return <StyleStatus label={values} className={className} />;
-    },
+    id: "action",
+    label: "Action",
+    build: (
+      row: Applicant,
+
+      openViewApplication: (row: Applicant) => void
+    ) => <ActionComponent row={row} openViewModal={openViewApplication} />,
   },
 ];
 
