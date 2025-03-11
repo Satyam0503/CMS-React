@@ -14,16 +14,13 @@ import {
   convertMonthsToYear,
 } from "../common";
 import { Link } from "react-router-dom";
-import { StyleStatus } from "../../app/modules/components/StyledStatus";
 import {
   ApplicantStatus,
   ApplicationStatus,
   Modules,
   ModulesName,
+  TIME_PERIOD_MAP,
 } from "../enums";
-import { ActionComponent } from "../../app/modules/components/ActionComponent";
-import { AvatarCell } from "../../app/modules/components/AvatarCell";
-import { AddressDetailsIcon } from "../../app/modules/components/AddressDetailsIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   AccessTime,
@@ -41,6 +38,9 @@ import {
   Work,
 } from "@mui/icons-material";
 import { Applicant, JobModal } from "../../app/modules/recruitment/models";
+import { ActionComponent } from "../../app/shared/components/ActionComponent";
+import { StyleStatus } from "../../app/shared/components/StyledStatus";
+import { AvatarCell } from "../../app/shared/components/AvatarCell";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
