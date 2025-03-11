@@ -195,16 +195,17 @@ export const Applications = () => {
               />
             )}
           </Stack>
-
-          <CustomisedTable
-            rows={applicationsList}
-            columns={ApplicationTabTableColumnList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            handleEdit={handleApplicantEdit}
-            openViewModal={handleOpenPreview}
-            loading={loading}
-          />
+          <Stack>
+            <CustomisedTable
+              rows={applicationsList}
+              columns={ApplicationTabTableColumnList}
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.records}
+              handleEdit={handleApplicantEdit}
+              openViewModal={handleOpenPreview}
+              loading={loading}
+            />
+          </Stack>
 
           {totalRecords > 0 && (
             <Pagination
