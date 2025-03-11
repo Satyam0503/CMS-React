@@ -422,7 +422,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Action",
+    label: "Applicant's CV",
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
@@ -551,7 +551,8 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     minWidth: 200,
     build: (value: string) => (
       <Tooltip title={value} arrow placement="top">
-        <p
+        <Typography
+          variant="body1"
           style={{
             width: "200px",
             textOverflow: "ellipsis",
@@ -561,7 +562,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
           }}
         >
           {value}
-        </p>
+        </Typography>
       </Tooltip>
     ),
   },

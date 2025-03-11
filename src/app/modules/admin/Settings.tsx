@@ -4,6 +4,7 @@ import { Roles } from "./permissions/Roles";
 import { EditPermission } from "./permissions/EditPermission";
 import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
 import { ModulesName } from "../../../utils/enums";
+import { AddPermission } from "./permissions/AddPermission";
 
 const SettingPage = () => {
   return (
@@ -31,6 +32,14 @@ const SettingPage = () => {
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <EditPermission />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="addpermission"
+          element={
+            <ProtectedRoute module={ModulesName.Permissions}>
+              <AddPermission />
             </ProtectedRoute>
           }
         />
