@@ -11,9 +11,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../components/CustomisedButton";
-import { CustomisedModal } from "../../components/CustomisedModal";
-import CustomisedDatePicker from "../../components/CustomisedDatePicker";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 // import { CustomisedModal } from "../components/CustomisedModal";
 // import CustomisedButton from "../components/CustomisedButton";
 // import CustomisedDatePicker from "../components/CustomisedDatePicker";

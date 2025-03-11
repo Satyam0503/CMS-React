@@ -6,7 +6,7 @@ import {
   LocalActivity,
 } from "@mui/icons-material";
 import { Card, Stack, Typography } from "@mui/material";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
@@ -20,8 +20,9 @@ import {
   updateEmployeeCertification,
 } from "../../userservices";
 import { toast } from "react-toastify";
-import { ConfirmationModal } from "../../../components/ConfirmationModal";
+
 import { AxiosError } from "axios";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 
 const initialValue: UserCertificationModel = {
   certificationTitle: "",

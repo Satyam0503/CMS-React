@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
-import CustomisedButton from "../../../app/modules/components/CustomisedButton";
-import { CustomIconButton } from "../../../app/modules/components/CustomIconButton";
+import CustomisedButton from "../../shared/components/CustomisedButton";
+import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import {
   AccountCircle,
   AttachFile,

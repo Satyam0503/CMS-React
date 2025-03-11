@@ -3,7 +3,7 @@ import { useIntl } from "react-intl";
 import { dateFormatter } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
 import { useState } from "react";
-import { CustomIconButton } from "../../../components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
 

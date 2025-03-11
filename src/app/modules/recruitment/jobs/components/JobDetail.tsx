@@ -8,8 +8,8 @@ import {
 import { Grid, IconButton, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../components/CustomisedModal";
-import CustomisedButton from "../../../components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
 type Props = {
   open: boolean;

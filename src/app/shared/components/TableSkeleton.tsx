@@ -1,6 +1,6 @@
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
 import { Stack } from "@mui/material";
 
 export default function TableSkeleton() {

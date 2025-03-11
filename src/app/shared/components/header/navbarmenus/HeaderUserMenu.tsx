@@ -22,9 +22,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useAppSelector } from "../../../../Redux/hooks";
-import { colors } from "../../../theme/MuiTheme";
+import { colors } from "../../../../modules/theme/MuiTheme";
 import { Languages } from "../Languages";
-import { useLogout } from "../../../auth";
+import { useLogout } from "../../../../modules/auth";
 import { wrap } from "module";
 
 export default function HeaderUserMenu() {

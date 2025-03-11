@@ -15,9 +15,9 @@ import {
 import React, { FC } from "react";
 
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
-import CustomisedButton from "../../../components/CustomisedButton";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 
 export const LeaveApplication: FC = () => {
   const intl = useIntl();

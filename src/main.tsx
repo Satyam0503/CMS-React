@@ -12,7 +12,7 @@ import { AppRoutes } from "./app/routing/AppRoutes";
 import { I18nProvider } from "./_themes/i18n/Metronici18n";
 import { Provider } from "react-redux";
 import { store } from "./app/Redux/store";
-import { ErrorBoundary } from "./app/modules/components/ErrorBoundary";
+import { ErrorBoundary } from "./app/shared/components/ErrorBoundary";
 
 // setupAxios(axios)
 

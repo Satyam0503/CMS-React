@@ -2,7 +2,7 @@ import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Close, Search } from "@mui/icons-material";
 import { FC, memo, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
 
 type PropsType = {
   search: string;

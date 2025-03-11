@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { colors } from "../theme/MuiTheme";
+import { colors } from "../../modules/theme/MuiTheme";
 
 interface DonutApexChartProps {
   series: Array<number>;

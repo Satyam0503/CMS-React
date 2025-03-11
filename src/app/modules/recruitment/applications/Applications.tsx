@@ -1,22 +1,22 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Badge, Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
-import { CustomisedTable } from "../../components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../components/Pagination";
-import { SearchInput } from "../../components/SearchInput";
+import { Pagination } from "../../../shared/components/Pagination";
+import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { useCallback, useEffect, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
-import { Applicant } from "../../../../utils/common_types";
 import { ApplicationPreview } from "./components/ApplicationPreview";
 import {
   ApplicationFilter,
   initialFilterValues,
 } from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
+import { Applicant } from "../models";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -25,17 +25,15 @@ const initialFilter = {
   name: "",
 };
 
-export default function Applications() {
+export const Applications = () => {
   const intl = useIntl();
   const navigate = useNavigate();
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
   });
-
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
-
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
   const [viewApplicant, setViewApplicant] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<
@@ -51,6 +49,27 @@ export default function Applications() {
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
   const isFilterAvailable = applicationFilters !== null;
+  const countAppliedFilter = (filter: Record<string, any> | null) => {
+    if (!filter || Object.keys(filter).length === 0) {
+      return 0;
+    } else {
+      let count = 0;
+      
+      Object.keys(filter).forEach((element) => {
+        if (filter[element] !== null) {
+          if (Array.isArray(filter[element])) {
+            count += Boolean(filter[element].length) ? 1 : 0;
+          } else if (typeof filter[element] === "string") {
+            count += Boolean(filter[element]) ? 1 : 0;
+          } else if (typeof filter[element] === "number") {
+            count += filter[element]>= 0 ? 1 : 0;
+          }
+        }
+      });
+      return count;
+    }
+  };
+  const totalAppliedFilter= countAppliedFilter(applicationFilters);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -109,7 +128,7 @@ export default function Applications() {
     const timeoutId = setTimeout(async () => {
       try {
         const { data } = await getAllApplicantList(
-          isFilterAvailable ? payload : initialFilter,
+          isFilterAvailable ? payload : { ...initialFilter, name: search },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
@@ -126,7 +145,7 @@ export default function Applications() {
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
-
+  
   return (
     <>
       <Typography variant="h4" mb={3}>
@@ -144,12 +163,18 @@ export default function Applications() {
             <SearchInput search={search} setSearch={handleSearchChange} />
 
             <Stack direction="row" spacing={1}>
-              <CustomIconButton
-                icon={<FilterList />}
-                tooltip="Filter Application"
-                ariaLabel="Filter Application"
-                handleClick={handleFilterClick}
-              />
+              <Badge
+                badgeContent={totalAppliedFilter}
+                anchorOrigin={{ horizontal: "left", vertical: "top" }}
+                color="info"
+              >
+                <CustomIconButton
+                  icon={<FilterList />}
+                  tooltip="Filter Application"
+                  ariaLabel="Filter Application"
+                  handleClick={handleFilterClick}
+                />
+              </Badge>
               <CustomIconButton
                 icon={<Add />}
                 handleClick={() => setAddModalOpen(true)}
@@ -211,4 +236,4 @@ export default function Applications() {
       )}
     </>
   );
-}
+};

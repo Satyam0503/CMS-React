@@ -12,7 +12,7 @@ import {
 
 import { Add, Circle, Close, MoreHoriz } from "@mui/icons-material";
 
-import { CustomIconButton } from "../../modules/components/CustomIconButton";
+import { CustomIconButton } from "../../shared/components/CustomIconButton";
 
 export default function ChatMessenger() {
   return (

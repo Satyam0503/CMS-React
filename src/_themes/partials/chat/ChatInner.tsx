@@ -7,8 +7,8 @@ import {
   UserInfoModel,
   messageFromClient,
 } from "../../helpers";
-import CustomisedButton from "../../../app/modules/components/CustomisedButton";
-import { CustomIconButton } from "../../../app/modules/components/CustomIconButton";
+import CustomisedButton from "../../../app/shared/components/CustomisedButton";
+import { CustomIconButton } from "../../../app/shared/components/CustomIconButton";
 import { AttachFile, Upload } from "@mui/icons-material";
 import { Avatar, Box, Link, Stack, TextField, Typography } from "@mui/material";
 

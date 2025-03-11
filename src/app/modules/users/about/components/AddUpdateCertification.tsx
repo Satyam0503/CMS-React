@@ -3,14 +3,14 @@ import * as React from "react";
 import Typography from "@mui/material/Typography";
 import { FormHelperText, Grid, MenuItem, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../components/CustomisedDatePicker";
-import CustomisedButton from "../../../components/CustomisedButton";
+import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Formik } from "formik";
 import { userCertificationSchema } from "../../../../../utils/Schema/userSchema";
-import { CustomisedModal } from "../../../components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import dayjs, { Dayjs } from "dayjs";
-import { TextInput } from "../../../components/form_component/TextInput";
-import { SelectInput } from "../../../components/form_component/SelectInput";
+import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 
 type PropTypes = {
