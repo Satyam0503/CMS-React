@@ -132,7 +132,7 @@ export const ApplicantDetails = () => {
       setRefresh(!refresh);
     }
   };
-  
+
   const handleAddComment = async () => {
     try {
       if (status.applicationStatus !== applicant.activityType) {
@@ -230,9 +230,14 @@ export const ApplicantDetails = () => {
             </Typography>
 
             <Stack direction={"row"} spacing={1}>
-              <CustomIconButton
+              {/* <CustomIconButton
                 icon={<Download />}
                 tooltip="Download CV"
+                handleClick={() => handleDownloadResume()}
+              /> */}
+              <CustomIconButton
+                icon={<Visibility />}
+                tooltip="View CV"
                 handleClick={() => handleDownloadResume()}
               />
               <CustomIconButton

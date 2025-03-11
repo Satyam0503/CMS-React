@@ -228,29 +228,30 @@ export const DepartmentList = [
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
-  {
-    id: "serialNo",
-    label: "S.No.",
-    minWidth: 60,
-  },
-  {
-    id: "action",
-    label: "Action",
-    align: "left",
-    build: (
-      row: EmployeeModel,
-      handleEmployeeEdit: (row: EmployeeModel) => void,
-      openConfirmationModal: (row: EmployeeModel) => void,
-      openViewModal: (row: EmployeeModel) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleEmployeeEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewModal}
-      />
-    ),
-  },
+  // {
+  //   id: "serialNo",
+  //   label: "S.No.",
+  //   minWidth: 60,
+  // },
+  // {
+  //   id: "action",
+  //   label: "Action",
+  //   align: "left",
+  //   build: (
+  //     row: EmployeeModel,
+  //     handleEmployeeEdit: (row: EmployeeModel) => void,
+  //     openConfirmationModal: (row: EmployeeModel) => void,
+  //     openViewModal: (row: EmployeeModel) => void
+  //   ) => (
+  //     <ActionComponent
+  //       row={row}
+  //       handleEdit={handleEmployeeEdit}
+  //       openConfirmationModal={openConfirmationModal}
+  //       openViewModal={openViewModal}
+  //     />
+  //   ),
+  // },
+  { id: "employeeId", label: "Emp Id", minWidth: 60 },
   {
     id: "name",
     label: "Name",
@@ -271,10 +272,10 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "email",
     label: "Email",
   },
-  // {
-  //   id: "phoneNumber",
-  //   label: "Phone Number",
-  // },
+  {
+    id: "phoneNumber",
+    label: "Phone Number",
+  },
   {
     id: "department",
     label: "Department",
@@ -378,23 +379,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "S.No.",
     minWidth: 60,
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: Applicant,
-      handleApplicationEdit: (row: Applicant) => void,
-      openConfirmationModal: (row: Applicant) => void,
-      openViewApplication: (row: Applicant) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleApplicationEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewApplication}
-      />
-    ),
-  },
+
   {
     id: "fullName",
     label: "Full Name",
@@ -404,6 +389,15 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     id: "vacancyName",
     label: "Job Title",
     minWidth: 150,
+  },
+  {
+    id: "status",
+    label: "Status",
+    build: (status: number) => {
+      const values = applicantStatusDecoder(status);
+      const className = getApplicantStatusClass(status);
+      return <StyleStatus label={values} className={className} />;
+    },
   },
   {
     id: "experience",
@@ -425,6 +419,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     sorting: true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
+
   {
     id: "status",
     label: "Status",

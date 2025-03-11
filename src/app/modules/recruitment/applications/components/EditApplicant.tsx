@@ -411,7 +411,7 @@ export const EditApplicant = () => {
                         <CustomisedButton
                           variant="outlined"
                           size="medium"
-                          label="Close"
+                          label="Cancel"
                           handleClick={() => navigate(-1)}
                         />
                         <CustomisedButton
