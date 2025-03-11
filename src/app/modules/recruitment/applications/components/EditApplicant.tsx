@@ -412,9 +412,7 @@ export const EditApplicant = () => {
                           variant="outlined"
                           size="medium"
                           label="Cancel"
-                          handleClick={() => {
-                            formik.handleReset();
-                          }}
+                          handleClick={() => navigate(-1)}
                         />
                         <CustomisedButton
                           variant="contained"

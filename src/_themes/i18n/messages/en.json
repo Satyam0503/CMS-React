@@ -231,6 +231,7 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
   "ROLES.EDIT": " Edit Role",
+  "ROLES.ADD": " Add Role",
   "RECRUITMENT.JOBS": "Jobs ",
   "REQUIREMENT.JOBS": "Job Requirements ",
   "SETTING.NOTIFICATION": "Notification",
@@ -349,18 +350,17 @@
   "FILTER.MIN_EXPERIENCE": "Min. Experience",
   "FILTER.MAX_EXPERIENCE": "Max. Experience",
   "FILTER.APPLICATION_STATUS": "Application Status",
-  "FILTER.LAST_WEEK" :"Last Week",
-  "FILTER.LAST_TWO_WEEK":"Last Two Week",
-  "FILTER.LAST_MONTH":"Last Month",
-  "FILTER.LAST_THREE_MONTHS":"Last Three Months",
-  "FILTER.LAST_SIX_MONTHS":"Last Six Months",
-  "FILTER.LAST_12_MONTHS":"Last 12 Months",
+  "FILTER.LAST_WEEK": "Last Week",
+  "FILTER.LAST_TWO_WEEK": "Last Two Week",
+  "FILTER.LAST_MONTH": "Last Month",
+  "FILTER.LAST_THREE_MONTHS": "Last Three Months",
+  "FILTER.LAST_SIX_MONTHS": "Last Six Months",
+  "FILTER.LAST_12_MONTHS": "Last 12 Months",
 
-  "APPLICATION.STATUS.NEW":"New",
-  "APPLICATION.STATUS.INPROGRESS":"In Progress",
-  "APPLICATION.STATUS.ONHOLD":"On Hold",
-  "APPLICATION.STATUS.SHORTLISTED":"Shortlisted",
-  "APPLICATION.STATUS.SELECTED":"Selected",
-  "APPLICATION.STATUS.REJECTED":"Rejected"
-
+  "APPLICATION.STATUS.NEW": "New",
+  "APPLICATION.STATUS.INPROGRESS": "In Progress",
+  "APPLICATION.STATUS.ONHOLD": "On Hold",
+  "APPLICATION.STATUS.SHORTLISTED": "Shortlisted",
+  "APPLICATION.STATUS.SELECTED": "Selected",
+  "APPLICATION.STATUS.REJECTED": "Rejected"
 }

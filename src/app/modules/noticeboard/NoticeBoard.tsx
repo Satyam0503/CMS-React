@@ -25,6 +25,8 @@ import { NoticeModel } from "../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { AddNotice } from "./components/AddNotice";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
+import { useNavigate } from "react-router-dom";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 
 const rows = [
   {
@@ -85,6 +87,7 @@ export default function NoticeBoard() {
   };
 
   const handleNoticeDeletion = () => {};
+  const navigate = useNavigate();
 
   const openConfirmationModal = (notice: NoticeModel) => {
     setConfirmModalOpen(true);
@@ -110,21 +113,18 @@ export default function NoticeBoard() {
           gap={2}
         >
           <SearchInput search={searchValue} setSearch={handleSearchChange} />
-          <Stack direction={"row"} flexWrap={"wrap"} gap={2}>
+          <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             <Stack>
-              <Button
-                startIcon={<ListAltOutlined />}
+              <CustomisedButton
                 variant="outlined"
-                size="small"
-              >
-                <Link
-                  href="/usernoticeboard"
-                  underline="hover"
-                  color={colors.alpha.neutral[800]}
-                >
-                  {"My Notice Board"}
-                </Link>
-              </Button>
+                Icon={<ListAltOutlined />}
+                iconPosition="end"
+                label="My Notice Board"
+                handleClick={() => {
+                  navigate("/noticeboard/usernoticeboard");
+                }}
+                style={{ paddingBlock: 5 }}
+              />
             </Stack>
 
             <Stack direction="row" spacing={1}>

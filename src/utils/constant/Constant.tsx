@@ -14,10 +14,14 @@ import {
   convertMonthsToYear,
 } from "../common";
 import { Link } from "react-router-dom";
-import { StyleStatus } from "../../app/shared/components/StyledStatus";
-import { ApplicantStatus, ApplicationStatus, Modules, ModulesName, TIME_PERIOD_MAP } from "../enums";
-import { ActionComponent } from "../../app/shared/components/ActionComponent";
-import { AvatarCell } from "../../app/shared/components/AvatarCell";
+import {
+  ApplicantStatus,
+  ApplicationStatus,
+  Modules,
+  ModulesName,
+  TIME_PERIOD_MAP,
+} from "../enums";
+
 import { AddressDetailsIcon } from "../../app/shared/components/AddressDetailsIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
@@ -36,6 +40,9 @@ import {
   Work,
 } from "@mui/icons-material";
 import { Applicant, JobModal } from "../../app/modules/recruitment/models";
+import { ActionComponent } from "../../app/shared/components/ActionComponent";
+import { StyleStatus } from "../../app/shared/components/StyledStatus";
+import { AvatarCell } from "../../app/shared/components/AvatarCell";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -69,19 +76,18 @@ export const ServiceUrl = {
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
   UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
-  UPDATE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/EditEmployeeCertification`,
-  UPDATE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/EditEmployeeEducation`,
+  UPDATE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/EditEmployeeCertification`,
+  UPDATE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/EditEmployeeEducation`,
 
-  DELETE_EMPLOYEE_EDUCATION:`${BaseUrl}/api/User/DeleteEducationDetails`,
-  DELETE_EMPLOYEE_CERTIFICATION:`${BaseUrl}/api/User/DeleteCertificationDetails`,
-  DELETE_EMPLOYEE:`${BaseUrl}/api/User/DeleteEmployee`,
-  
-  
+  DELETE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/DeleteEducationDetails`,
+  DELETE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/DeleteCertificationDetails`,
+  DELETE_EMPLOYEE: `${BaseUrl}/api/User/DeleteEmployee`,
+
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
   GET_ALL_VACANCIES: `${BaseUrl}/api/JobVacancy/GetAllVacancy`,
-  DELETE_VACANCY:`${BaseUrl}/api/JobVacancy/DeleteJobVacancy`,
+  DELETE_VACANCY: `${BaseUrl}/api/JobVacancy/DeleteJobVacancy`,
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
@@ -92,7 +98,7 @@ export const ServiceUrl = {
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,  
+  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 };
 
 export const Regex = {
@@ -216,7 +222,6 @@ export const ApplicantStatusConstant = [
   { id: 2, label: "Active", value: ApplicantStatus.Active },
 ];
 
-
 export const DepartmentList = [
   { id: 1, label: "Human Resource", value: "Human Resource" },
   { id: 2, label: "Sales", value: "Sales" },
@@ -226,10 +231,28 @@ export const DepartmentList = [
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
-    id: "serialNo",
-    label: "S.No.",
+    id: "employeeId",
+    label: "Emp Id",
     minWidth: 60,
   },
+  // {
+  //   id: "action",
+  //   label: "Action",
+  //   align: "left",
+  //   build: (
+  //     row: EmployeeModel,
+  //     handleEmployeeEdit: (row: EmployeeModel) => void,
+  //     openConfirmationModal: (row: EmployeeModel) => void,
+  //     openViewModal: (row: EmployeeModel) => void
+  //   ) => (
+  //     <ActionComponent
+  //       row={row}
+  //       handleEdit={handleEmployeeEdit}
+  //       openConfirmationModal={openConfirmationModal}
+  //       openViewModal={openViewModal}
+  //     />
+  //   ),
+  // },
   {
     id: "name",
     label: "Name",
@@ -258,30 +281,12 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "department",
     label: "Department",
   },
-  {
-    id: "address",
-    label: "Address",
-    align: "left",
-    build: (address: string) => <AddressDetailsIcon address={address} />,
-  },
-  {
-    id: "action",
-    label: "Action",
-    align: "left",
-    build: (
-      row: EmployeeModel,
-      handleEmployeeEdit: (row: EmployeeModel) => void,
-      openConfirmationModal: (row: EmployeeModel) => void,
-      openViewModal: (row: EmployeeModel) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleEmployeeEdit}
-        openConfirmationModal={openConfirmationModal}
-        openViewModal={openViewModal}
-      />
-    ),
-  },
+  // {
+  //   id: "address",
+  //   label: "Address",
+  //   align: "left",
+  //   build: (address: string) => <AddressDetailsIcon address={address} />,
+  // },
 ];
 
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
@@ -289,6 +294,21 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     id: "serialNo",
     label: "S.No.",
     minWidth: 30,
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleHolidayEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
   },
   {
     id: "title",
@@ -312,27 +332,12 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     id: "description",
     label: "Description",
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: any,
-      handleHolidayEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleHolidayEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
-  },
 ];
 
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {
@@ -372,9 +377,10 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
+
   {
     id: "fullName",
     label: "Full Name",
@@ -386,6 +392,15 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     minWidth: 150,
   },
   {
+    id: "status",
+    label: "Status",
+    build: (status: number) => {
+      const values = applicantStatusDecoder[status];
+      const className = getApplicantStatusClass(status);
+      return <StyleStatus label={values} className={className} />;
+    },
+  },
+  {
     id: "experience",
     label: "Experience",
     align: "center",
@@ -394,10 +409,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       return convertMonthsToYear(value);
     },
   },
-  {
-    id: "email",
-    label: "Email",
-  },
+  // {
+  //   id: "email",
+  //   label: "Email",
+  // },
   {
     id: "applyDate",
     label: "Applied",
@@ -406,17 +421,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
-    id: "status",
-    label: "Status",
-    build: (status: number) => {
-      const values = applicantStatusDecoder[status]
-      const className = getApplicantStatusClass(status);
-      return <StyleStatus label={values} className={className} />;
-    },
-  },
-  {
     id: "action",
-    label: "Action",
+    label: "Applicant's CV",
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
@@ -425,8 +431,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        handleEdit={handleApplicationEdit}
-        openConfirmationModal={openConfirmationModal}
+        // handleEdit={handleApplicationEdit}
+        // openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
@@ -436,7 +442,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {
@@ -469,8 +475,25 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+        openViewModal={openViewJobDetail}
+      />
+    ),
   },
   {
     id: "title",
@@ -496,29 +519,12 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
       );
     },
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: JobModal,
-      handleJobEdit: (row: JobModal) => void,
-      openDeleteModal: (row: JobModal) => void,
-      openViewJobDetail: (row: JobModal) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        openViewModal={openViewJobDetail}
-      />
-    ),
-  },
 ];
 
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label:  "S.No.",
+    label: "S.No.",
     minWidth: 60,
   },
   {
@@ -545,7 +551,8 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     minWidth: 200,
     build: (value: string) => (
       <Tooltip title={value} arrow placement="top">
-        <p
+        <Typography
+          variant="body1"
           style={{
             width: "200px",
             textOverflow: "ellipsis",
@@ -555,7 +562,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
           }}
         >
           {value}
-        </p>
+        </Typography>
       </Tooltip>
     ),
   },
@@ -691,14 +698,30 @@ export const indianStates = [
   { id: 25, label: "Tripura", value: "Tripura" },
   { id: 26, label: "Uttar Pradesh", value: "Uttar Pradesh" },
   { id: 27, label: "Uttarakhand", value: "Uttarakhand" },
-  { id: 28, label: "West Bengal", value: "West Bengal" }
+  { id: 28, label: "West Bengal", value: "West Bengal" },
 ];
 
 export const TimePeriodOptions = [
-  { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: 'FILTER.LAST_WEEK' },
-  { id: TIME_PERIOD_MAP.LAST_TWO_WEEK, value: 14, name: 'FILTER.LAST_TWO_WEEK' },
-  { id: TIME_PERIOD_MAP.LAST_MONTH, value: 30, name: 'FILTER.LAST_MONTH' },
-  { id: TIME_PERIOD_MAP.LAST_THREE_MONTHS, value: 90, name: 'FILTER.LAST_THREE_MONTHS' },
-  { id: TIME_PERIOD_MAP.LAST_SIX_MONTHS, value: 180, name: 'FILTER.LAST_SIX_MONTHS' },
-  { id: TIME_PERIOD_MAP.LAST_12_MONTHS, value: 365, name: 'FILTER.LAST_12_MONTHS' }
+  { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: "FILTER.LAST_WEEK" },
+  {
+    id: TIME_PERIOD_MAP.LAST_TWO_WEEK,
+    value: 14,
+    name: "FILTER.LAST_TWO_WEEK",
+  },
+  { id: TIME_PERIOD_MAP.LAST_MONTH, value: 30, name: "FILTER.LAST_MONTH" },
+  {
+    id: TIME_PERIOD_MAP.LAST_THREE_MONTHS,
+    value: 90,
+    name: "FILTER.LAST_THREE_MONTHS",
+  },
+  {
+    id: TIME_PERIOD_MAP.LAST_SIX_MONTHS,
+    value: 180,
+    name: "FILTER.LAST_SIX_MONTHS",
+  },
+  {
+    id: TIME_PERIOD_MAP.LAST_12_MONTHS,
+    value: 365,
+    name: "FILTER.LAST_12_MONTHS",
+  },
 ];

@@ -15,6 +15,10 @@ import { useIntl } from "react-intl";
 import {
   AttachFile,
   CloudUploadOutlined,
+  Delete,
+  DeleteForeverOutlined,
+  DeleteOutline,
+  DeleteOutlineOutlined,
   Download,
   Image,
   Visibility,
@@ -47,11 +51,10 @@ export default function ProfileCard() {
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const { userDetails,setRefresh } = useUserDetails();
-  const profileImageUrl = useAppSelector(state=>state.user.profileImageUrl);
+  const { userDetails, setRefresh } = useUserDetails();
+  const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
 
   console.log(profileImageUrl);
-  
 
   function handleClose() {
     setOpen(false);
@@ -270,14 +273,23 @@ export default function ProfileCard() {
                   </Grid>
                 </Container>
               </Box>
-
-              <CustomisedButton
-                label="Upload File"
-                Icon={<AttachFile />}
-                iconPosition="end"
-                disabled={!seletedFile}
-                handleClick={handleUpdateAvatar}
-              />
+              <Stack spacing={0.5}>
+                <CustomisedButton
+                  label="Upload File"
+                  Icon={<AttachFile />}
+                  iconPosition="end"
+                  disabled={!seletedFile}
+                  handleClick={handleUpdateAvatar}
+                />
+                <CustomisedButton
+                  variant="outlined"
+                  label="Delete File"
+                  Icon={<DeleteOutlineOutlined />}
+                  iconPosition="end"
+                  handleClick={handleUpdateAvatar}
+                  style={{ visibility: !seletedFile ? "hidden" : "visible" }}
+                />
+              </Stack>
 
               {fileError && <ErrorLabel>{fileError}</ErrorLabel>}
             </Stack>

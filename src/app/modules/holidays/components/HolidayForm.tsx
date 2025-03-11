@@ -7,25 +7,17 @@ import {
   Stack,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { HolidayType } from "../../../../utils/common_types";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import holidaySchema from "../../../../utils/Schema/holidaySchema";
-// import CustomisedDatePicker from "../components/CustomisedDatePicker";
-// import CustomisedButton from "../components/CustomisedButton";
 import { Check } from "@mui/icons-material";
-// import { CustomisedModal } from "../components/CustomisedModal";
-// import { HolidayType } from "../../../utils/common_types";
 import { Formik } from "formik";
-// import holidaySchema from "../../../utils/Schema/holidaySchema";
 import dayjs, { Dayjs } from "dayjs";
-import { TextInput } from "../../../shared/components/form-component/TextInput";
-import { SelectInput } from "../../../shared/components/form-component/SelectInput";
+import { HolidayType } from "../../../../utils/common_types";
+import holidaySchema from "../../../../utils/Schema/holidaySchema";
 import { HolidayTypes } from "../../../../utils/constant/Constant";
+import SelectInput from "@mui/material/Select/SelectInput";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-// import { HolidayTypes } from "../../../utils/constant/Constant";
-// import { TextInput } from "../components/form_component/TextInput";
-// import { SelectInput } from "../components/form_component/SelectInput";
 
 type PropsTypes = {
   open: boolean;
@@ -66,8 +58,8 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               {intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}
             </Typography>
 
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
-              <Grid item xs={12} sm={6}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <TextInput
                   label={intl.formatMessage({ id: "FORM.TITLE" })}
                   type="text"
@@ -75,7 +67,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                   placeholder="Holiday Title"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <SelectInput
                   label={intl.formatMessage({ id: "FORM.TYPE" })}
                   name="type"
@@ -86,41 +78,37 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
                     </MenuItem>
                   ))}
                 </SelectInput>
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} sm={6}>
-                <Stack spacing={0.5}>
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "APPLICATION.START" })}
-                    value={values.startDate}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("startDate", true);
-                      setFieldValue("startDate", newDate);
-                    }}
-                    name="startDate"
-                    minDate={dayjs()}
-                  />
-                  <FormHelperText>
-                    {touched.startDate && errors.startDate && errors.startDate}
-                  </FormHelperText>
-                </Stack>
+                <CustomisedDatePicker
+                  label={intl.formatMessage({ id: "APPLICATION.START" })}
+                  value={values.startDate}
+                  setValue={(newDate: Dayjs | null) => {
+                    setFieldTouched("startDate", true);
+                    setFieldValue("startDate", newDate);
+                  }}
+                  name="startDate"
+                  minDate={dayjs()}
+                />
+                <FormHelperText>
+                  {touched.startDate && errors.startDate && errors.startDate}
+                </FormHelperText>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Stack spacing={0.5}>
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "APPLICATION.END" })}
-                    value={values.endDate}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("endDate", true);
-                      setFieldValue("endDate", newDate);
-                    }}
-                    name="endDate"
-                    minDate={values.startDate || dayjs()}
-                  />
-                  <FormHelperText>
-                    {touched.endDate && errors.endDate && errors.endDate}
-                  </FormHelperText>
-                </Stack>
+                <CustomisedDatePicker
+                  label={intl.formatMessage({ id: "APPLICATION.END" })}
+                  value={values.endDate}
+                  setValue={(newDate: Dayjs | null) => {
+                    setFieldTouched("endDate", true);
+                    setFieldValue("endDate", newDate);
+                  }}
+                  name="endDate"
+                  minDate={values.startDate || dayjs()}
+                />
+                <FormHelperText>
+                  {touched.endDate && errors.endDate && errors.endDate}
+                </FormHelperText>
               </Grid>
 
               <Grid item xs={12}>

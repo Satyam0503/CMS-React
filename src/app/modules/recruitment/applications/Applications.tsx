@@ -54,7 +54,7 @@ export const Applications = () => {
       return 0;
     } else {
       let count = 0;
-      
+
       Object.keys(filter).forEach((element) => {
         if (filter[element] !== null) {
           if (Array.isArray(filter[element])) {
@@ -62,14 +62,14 @@ export const Applications = () => {
           } else if (typeof filter[element] === "string") {
             count += Boolean(filter[element]) ? 1 : 0;
           } else if (typeof filter[element] === "number") {
-            count += filter[element]>= 0 ? 1 : 0;
+            count += filter[element] >= 0 ? 1 : 0;
           }
         }
       });
       return count;
     }
   };
-  const totalAppliedFilter= countAppliedFilter(applicationFilters);
+  const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -145,7 +145,7 @@ export const Applications = () => {
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
-  
+
   return (
     <>
       <Typography variant="h4" mb={3}>
@@ -195,16 +195,17 @@ export const Applications = () => {
               />
             )}
           </Stack>
-
-          <CustomisedTable
-            rows={applicationsList}
-            columns={ApplicationTabTableColumnList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            handleEdit={handleApplicantEdit}
-            openViewModal={handleOpenPreview}
-            loading={loading}
-          />
+          <Stack>
+            <CustomisedTable
+              rows={applicationsList}
+              columns={ApplicationTabTableColumnList}
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.records}
+              handleEdit={handleApplicantEdit}
+              openViewModal={handleOpenPreview}
+              loading={loading}
+            />
+          </Stack>
 
           {totalRecords > 0 && (
             <Pagination

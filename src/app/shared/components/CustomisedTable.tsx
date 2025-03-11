@@ -1,6 +1,7 @@
 import {
   Grid,
   Icon,
+  Link,
   Stack,
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
 import { useEffect, useState } from "react";
 import { TableSorting } from "./TableSorting";
+import { useNavigate } from "react-router-dom";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -43,17 +45,24 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   } = props;
 
   const UpdateTableRows = () => {};
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTableRows(rows);
   }, [rows]);
+  function handleClick() {
+    navigate(`/recruitment/applicant/${rows}`, {
+      replace: true,
+      state: { key: "value" },
+    });
+  }
 
   return (
     <Grid container>
       <TableContainer>
         <Table stickyHeader aria-label="table">
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ textWrap: "nowrap" }}>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
@@ -103,7 +112,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                             : row[column.id];
                         return (
                           <TableCell
-                            className="text"
+                            // onClick={handleClick}
+                            className="text pointer-cursor"
                             key={column.id}
                             align={column?.align || "left"}
                             style={

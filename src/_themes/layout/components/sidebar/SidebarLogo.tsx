@@ -79,7 +79,7 @@ const SidebarLogo = (props: PropsType) => {
           ref={toggleRef}
           id="kt_app_sidebar_toggle"
           className={clsx(
-            "app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-50 start-100 translate-middle rotate",
+            "app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-collapse start-100 translate-middle rotate",
             { active: appSidebarDefaultMinimizeDefault }
           )}
           data-kt-toggle="true"

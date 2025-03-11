@@ -17,7 +17,6 @@ import { CustomIconButton } from "../../../../shared/components/CustomIconButton
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
-
 export function AddUpdateWorkHistory() {
   const intl = useIntl();
   const [open, setOpen] = React.useState(false);

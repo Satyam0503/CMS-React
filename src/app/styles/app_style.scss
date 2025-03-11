@@ -323,5 +323,9 @@ button:hover .ql-fill,
   transform: translate(15px, 8px) scale(1);
 }
 
-
-// badge style
+.pointer-cursor {
+  cursor: pointer !important;
+}
+.top-collapse {
+  top: 6.2rem !important;
+}
