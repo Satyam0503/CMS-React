@@ -425,9 +425,17 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "Action",
     build: (
       row: Applicant,
-
+      handleApplicationEdit: (row: Applicant) => void,
+      openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void
-    ) => <ActionComponent row={row} openViewModal={openViewApplication} />,
+    ) => (
+      <ActionComponent
+        row={row}
+        // handleEdit={handleApplicationEdit}
+        // openConfirmationModal={openConfirmationModal}
+        openViewModal={openViewApplication}
+      />
+    ),
   },
 ];
 
