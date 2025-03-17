@@ -7,7 +7,7 @@ import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
-import { Sidebar } from "./components/sidebarnew";
+import { Sidebar } from "./components/sidebar";
 
 const MasterLayout = () => {
   const location = useLocation();

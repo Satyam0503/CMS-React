@@ -2,11 +2,11 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { ILayout, useLayout } from "../../core";
+import { SidebarMenu } from "../sidebar/sidebar-menu/SidebarMenu";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 import { useAppSelector } from "../../../../app/Redux/hooks";
-import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
 
 const Sidebar = () => {
   const { config } = useLayout();
