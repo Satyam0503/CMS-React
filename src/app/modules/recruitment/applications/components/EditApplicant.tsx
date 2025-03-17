@@ -28,10 +28,9 @@ import {
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicationEvaluationStatus, indianStates } from "../../../../../utils/constant/Constant";
+import { ApplicationEvaluationStatus, indianStates, monthsExperienceList } from "../../../../../utils/constant/Constant";
 import {
   commentActionEncoderForApplicationStatus,
-  monthsExperienceList,
 } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";

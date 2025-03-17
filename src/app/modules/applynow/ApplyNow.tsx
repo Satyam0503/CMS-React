@@ -22,7 +22,6 @@ import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { TextInput } from "../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../shared/components/form-component/SelectInput";
-import { experienceCategoryList } from "../../../utils/common";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
 
 import { ApplicantStatus, ApplicationStatus } from "../../../utils/enums";
@@ -35,7 +34,7 @@ import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CircularLoader } from "../../shared/components/CircularLoader";
 import { ApplicantModel, JobModal } from "../recruitment/models";
-import { indianStates } from "../../../utils/constant/Constant";
+import { experienceCategoryList, indianStates } from "../../../utils/constant/Constant";
 
 const initialValues: ApplicantModel = {
   applicantId: "",

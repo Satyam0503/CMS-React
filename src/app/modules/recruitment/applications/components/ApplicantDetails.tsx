@@ -24,13 +24,9 @@ import {
 } from "../../services";
 
 import {
-  applicantStatusDecoder,
-  applicationStatusMapper,
   commentActionEncoderForApplicationStatus,
   convertMonthsToYear,
   dateFormatter,
-  getApplicantStatusClass,
-  getApplicationStatusClass,
 } from "../../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -39,12 +35,10 @@ import {
 
 import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
 import { AddComment } from "./AddComment";
-import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
-import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, CommentModel } from "../../models";
 
 export const ApplicantDetails = () => {
@@ -59,6 +53,7 @@ export const ApplicantDetails = () => {
   const [refreshComment, setRefreshComment] = useState(false);
   const [comment, setComment] = useState("");
   const param = useParams();
+  const [isResumeViewMode,setResumeViewMode] = useState(false);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -230,11 +225,6 @@ export const ApplicantDetails = () => {
             </Typography>
 
             <Stack direction={"row"} spacing={1}>
-              {/* <CustomIconButton
-                icon={<Download />}
-                tooltip="Download CV"
-                handleClick={() => handleDownloadResume()}
-              /> */}
               <CustomIconButton
                 icon={<Visibility />}
                 tooltip="View CV"
@@ -390,6 +380,7 @@ export const ApplicantDetails = () => {
             </Stack>
 
             <CustomisedTable
+              keyName="commentId"
               rows={commentList}
               columns={CommentTableColumnList}
               page={0}

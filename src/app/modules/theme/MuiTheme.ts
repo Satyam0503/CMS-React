@@ -826,10 +826,6 @@ export const MuiTheme = createTheme({
     //dropdown only menuitem
     MuiMenu: {
       styleOverrides: {
-        paper: {
-          maxHeight: "200px",
-        },
-
         list: {
           "& .MuiMenuItem-root.MuiButtonBase-root": {
             fontSize: 14,

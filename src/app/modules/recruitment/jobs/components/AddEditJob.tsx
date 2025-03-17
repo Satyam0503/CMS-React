@@ -1,4 +1,4 @@
-import { Check, FileOpenOutlined } from "@mui/icons-material";
+import { Check } from "@mui/icons-material";
 import {
   Grid,
   MenuItem,
@@ -31,7 +31,7 @@ interface PropsTypes {
   ) => void;
 }
 
-const JobDescription: FC<PropsTypes> = ({
+export const AddEditJob: FC<PropsTypes> = ({
   initialValues,
   isEdit,
   open,
@@ -39,7 +39,6 @@ const JobDescription: FC<PropsTypes> = ({
   handleAddEditJob,
 }) => {
   const intl = useIntl();
-
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
   );
@@ -209,4 +208,3 @@ const JobDescription: FC<PropsTypes> = ({
   );
 };
 
-export default JobDescription;

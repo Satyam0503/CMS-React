@@ -2,6 +2,7 @@ import { FC, memo, useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDebounce } from "../../hooks/useDebounce";
+import { removeUnwantedString, sanitizeHtmlContent } from "../../../utils/common";
 
 type PropsType = {
   value: string;
@@ -11,8 +12,10 @@ type PropsType = {
 const TextEditor: FC<PropsType> = memo(({ value, setValue }) => {
   const [textValue, setTextValue] = useState(value);
   const debouncedValue = useDebounce(textValue);
+
   useEffect(() => {
-    setValue(debouncedValue);
+    const sanitizedString = sanitizeHtmlContent(removeUnwantedString(debouncedValue));
+    setValue(sanitizedString);
   }, [debouncedValue]);
 
   const modules = {

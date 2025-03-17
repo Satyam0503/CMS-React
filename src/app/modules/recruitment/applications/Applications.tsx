@@ -199,6 +199,7 @@ export const Applications = () => {
           <Stack>
             <CustomisedTable
               tabName={ModulesName.Applications}
+              keyName="applicantId"
               rows={applicationsList}
               columns={ApplicationTabTableColumnList}
               page={paginationValues.pageNo}

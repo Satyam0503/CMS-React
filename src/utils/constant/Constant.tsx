@@ -12,6 +12,7 @@ import {
   applicantStatusDecoder,
   getApplicantStatusClass,
   convertMonthsToYear,
+  sanitizeHtmlContent,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -43,6 +44,7 @@ import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
+import { colors } from "../../app/modules/theme/MuiTheme";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -549,19 +551,37 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     label: "Comment",
     minWidth: 200,
     build: (value: string) => (
-      <Tooltip title={value} arrow placement="top" >
+      <Tooltip
+        title={
+          <Typography
+            dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
+            sx={{
+              fontSize: "12px",
+              "& p": {
+                margin: 0,
+              },
+            }}
+          />
+        }
+        arrow
+        placement="top"
+      >
         <Typography
           variant="body1"
           style={{
             width: "200px",
-            textOverflow: "ellipsis",
-            textWrap: "nowrap",
             overflow: "hidden",
-            margin: "0",
+            textWrap: "nowrap",
+            textOverflow: "ellipsis",
+            fontSize: "12px",
           }}
-          dangerouslySetInnerHTML={{__html:value}}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
+          sx={{
+            "& p": {
+              margin: 0,
+            },
+          }}
         />
-
       </Tooltip>
     ),
   },
@@ -700,6 +720,142 @@ export const indianStates = [
   { id: 28, label: "West Bengal", value: "West Bengal" },
 ];
 
+export const experienceCategoryList = [
+  { id: 1, label: "0 - 1", value: 1 },
+  {
+    id: 2,
+    label: "1 - 2",
+    value: 2,
+  },
+  {
+    id: 3,
+    label: "2 - 3",
+    value: 3,
+  },
+  {
+    id: 4,
+    label: "3 - 4",
+    value: 4,
+  },
+  {
+    id: 5,
+    label: "4 - 5",
+    value: 5,
+  },
+  {
+    id: 6,
+    label: "5 - 6",
+    value: 6,
+  },
+  {
+    id: 7,
+    label: "6 - 7",
+    value: 7,
+  },
+  {
+    id: 8,
+    label: "7 - 8",
+    value: 8,
+  },
+  {
+    id: 9,
+    label: "8 - 9",
+    value: 9,
+  },
+  {
+    id: 10,
+    label: "9 - 10",
+    value: 10,
+  },
+  {
+    id: 11,
+    label: "10 - 11",
+    value: 11,
+  },
+  {
+    id: 12,
+    label: "11 - 12",
+    value: 12,
+  },
+  {
+    id: 13,
+    label: "12 - 13",
+    value: 13,
+  },
+  {
+    id: 14,
+    label: "13 - 14",
+    value: 14,
+  },
+  {
+    id: 15,
+    label: "14 - 15",
+    value: 15,
+  },
+];
+export const monthsExperienceList = [
+  { id: 1, label: "0", value: 0 },
+  {
+    id: 2,
+    label: "1",
+    value: 1,
+  },
+  {
+    id: 3,
+    label: "2",
+    value: 2,
+  },
+  {
+    id: 4,
+    label: "3",
+    value: 3,
+  },
+  {
+    id: 5,
+    label: "4",
+    value: 4,
+  },
+  {
+    id: 6,
+    label: "5",
+    value: 5,
+  },
+  {
+    id: 7,
+    label: "6",
+    value: 6,
+  },
+  {
+    id: 8,
+    label: "7",
+    value: 7,
+  },
+  {
+    id: 9,
+    label: "8",
+    value: 8,
+  },
+  {
+    id: 10,
+    label: "9",
+    value: 9,
+  },
+  {
+    id: 11,
+    label: "10",
+    value: 10,
+  },
+  {
+    id: 12,
+    label: "11",
+    value: 11,
+  },
+  {
+    id: 13,
+    label: "12",
+    value: 12,
+  },
+];
 export const TimePeriodOptions = [
   { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: "FILTER.LAST_WEEK" },
   {
