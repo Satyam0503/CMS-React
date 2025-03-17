@@ -2,7 +2,6 @@ import { Button, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
   EmployeeModel,
-  RolesType,
   SideBarTabListProps,
 } from "../common_types";
 import {
@@ -44,7 +43,7 @@ import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
-import { colors } from "../../app/modules/theme/MuiTheme";
+import { RoleModel } from "../../app/modules/admin/models";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -60,6 +59,7 @@ export const ServiceUrl = {
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
+  GET_ALL_MODULE_PERMISSION:`${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -448,9 +448,9 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "roleName",
+    id: "titles",
     label: "Role Name",
-    minWidth: 150,
+    minWidth: 200,
   },
   {
     id: "description",
@@ -466,7 +466,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     minWidth: 180,
-    build: (row: RolesType) => (
+    build: (row:RoleModel) => (
       <Link to={"/admin/editpermission"} state={{ ...row }}>
         <Button variant="contained">Edit Permission</Button>
       </Link>

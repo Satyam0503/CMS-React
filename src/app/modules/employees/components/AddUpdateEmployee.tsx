@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
-import { EmployeeModel, RoleModel } from "../../../../utils/common_types";
+import { EmployeeModel } from "../../../../utils/common_types";
 import {
   Gender,
   DepartmentList,
@@ -17,26 +17,9 @@ import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicke
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
-import { getAllRoles } from "../employeeServices";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
-// import CustomisedDatePicker from "../components/CustomisedDatePicker";
-// import { Formik } from "formik";
-// import {
-//   bloodGroups,
-//   DepartmentList,
-//   Gender,
-// } from "../../../utils/constant/Constant";
-// import { getAllRoles } from "./employeeServices";
-// import { EmployeeModel, RoleModel } from "../../../utils/common_types";
-// import dayjs, { Dayjs } from "dayjs";
-// import CustomisedButton from "../components/CustomisedButton";
-// import { CustomisedModal } from "../components/CustomisedModal";
-// import { employeeSchema } from "../../../utils/Schema/employeeSchema";
-// import { toast } from "react-toastify";
-// import { TextInput } from "../components/form_component/TextInput";
-
-// import { ErrorLabel } from "../components/form_component/ErrorLabel";
-// import { Roles } from "../../../utils/enums";
+import { RoleModel } from "../../admin/models";
+import { getAllRoles } from "../../admin/adminservices";
 
 interface PropsTypes {
   initialValues: EmployeeModel;

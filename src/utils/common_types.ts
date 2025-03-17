@@ -82,16 +82,6 @@ export interface EmployeeModel {
   profileUrl?: string;
   fullProfileUrl?: string;
 }
-
-export interface RoleModel {
-  rolesId: string;
-  titles: string;
-  description: string;
-  isNotEditable: boolean;
-  isDefault: boolean;
-  userRoles: [string];
-}
-
 export interface UserEducationModel {
   educationId?: string;
   companyId?: string;
@@ -138,15 +128,6 @@ export type NoticeModel = {
   message: string;
 };
 
-export interface RolesType {
-  id: string;
-  roleName: string;
-  description: string;
-  accessToApp?: string;
-  isDeleted?: boolean | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
 
 export type ColumnListTypes = {
   id: string;
@@ -193,7 +174,7 @@ export type EmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
-export type GetAllRolesResponseData = ResponseData<RoleModel>;
+
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 

@@ -5,6 +5,7 @@ import {
   EmployeeModel,
   FiltersType,
   ModulePermissoinModel,
+  PermissionModel,
 } from "./common_types";
 import {
   ApplicantStatus,
@@ -174,6 +175,26 @@ export const checkPermissionForModuleAndRoute = (
   return hasPermission.hasAccess;
 };
 
+export const checkPermissionForModulesFeatureAccess = (
+  moduleName: ModulesName,
+  requiredPermission: Permission,
+  userModulePermissions: ModulePermissoinModel[]
+) => {
+  const module = userModulePermissions.find(
+    (module) => module.moduleConstant === moduleName
+  );
+  if (!module) {
+    return false;
+  }
+  const hasPermission = module.permissions.find(
+    (permission) => permission.permissionConstant === requiredPermission
+  );
+  if (!hasPermission) {
+    return false;
+  }
+  return hasPermission.hasAccess;
+};
+
 export const findUserDefaultTab = (
   userModulePermissions: ModulePermissoinModel[]
 ) => {
@@ -187,7 +208,6 @@ export const findUserDefaultTab = (
   }
   return defaultTab.route;
 };
-
 
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
@@ -278,7 +298,18 @@ export const removeUnwantedString = (htmlstring: string) => {
   return htmlstring.replace(/<p><br><\/p>/g, "");
 };
 
-
-export const getKeyForTableRow= <Row,>(row:Row,keyName:keyof Row) =>{   
+export const getKeyForTableRow = <Row>(row: Row, keyName: keyof Row) => {
   return row[keyName] as string;
-}
+};
+
+export const flatUserModulePermissions = (
+  userModulePermission: ModulePermissoinModel[]
+) => {
+  const UpdatedModulePermission: PermissionModel[] = [];
+  userModulePermission.forEach((module) => {
+    module.permissions.forEach((permission) => {
+      UpdatedModulePermission.push(permission);
+    });
+  });
+  return UpdatedModulePermission;
+};
