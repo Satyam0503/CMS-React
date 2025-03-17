@@ -7,7 +7,7 @@ import { Sidebar } from "./components/sidebar";
 import { ActivityDrawer, DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
-import { HeaderWrapper } from "../../app/shared/components/header/navbarmenus/HeaderWrapper";
+import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 
 const MasterLayout = () => {
   const location = useLocation();
@@ -42,7 +42,7 @@ const MasterLayout = () => {
             className="bg-body"
             zIndex={0}
           >
-            <Container  sx={{flexGrow:1}}>
+            <Container sx={{ flexGrow: 1 }}>
               <Outlet />
             </Container>
           </Stack>

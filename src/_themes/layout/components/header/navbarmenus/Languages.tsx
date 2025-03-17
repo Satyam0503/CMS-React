@@ -2,8 +2,8 @@ import clsx from "clsx";
 import { FC } from "react";
 
 import { Stack, Typography } from "@mui/material";
-import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { setLanguage, useLang } from "../../../../_themes/i18n/Metronici18n";
+import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
+import { toAbsoluteUrl } from "../../../../helpers";
 
 const languages = [
   {

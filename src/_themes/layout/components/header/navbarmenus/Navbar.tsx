@@ -3,8 +3,9 @@ import HeaderNotificationMenu from "./HeaderNotificationMenu";
 import HeaderUserMenu from "./HeaderUserMenu";
 import { Search } from "@mui/icons-material";
 import { useLayout } from "../../../../../_themes/layout/core";
-import { useAppSelector } from "../../../../Redux/hooks";
+
 import ChatDrawer from "./ChatDrawer";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
 
 const Navbar = () => {
   const { config } = useLayout();

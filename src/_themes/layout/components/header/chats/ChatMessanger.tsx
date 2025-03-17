@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import { Add, Circle, Close, MoreHoriz } from "@mui/icons-material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../../app/shared/components/CustomIconButton";
 
 export default function ChatMessenger() {
   return (

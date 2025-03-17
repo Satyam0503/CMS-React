@@ -6,9 +6,9 @@ import {
   Search,
 } from "@mui/icons-material";
 import { useCallback, useState } from "react";
-import { SearchInput } from "../../SearchInput";
-import { colors } from "../../../../modules/theme/MuiTheme";
+
 import { Navbar } from "./Navbar";
+import { SearchInput } from "../../../../../app/shared/components/SearchInput";
 
 export function HeaderWrapper() {
   const [open, setOpen] = useState(false);

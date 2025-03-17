@@ -23,9 +23,9 @@ import {
 } from "@mui/icons-material";
 
 import { useIntl } from "react-intl";
-import { useAppSelector } from "../../../../Redux/hooks";
-import { useLogout } from "../../../../modules/auth";
-import { colors } from "../../../../modules/theme/MuiTheme";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { useLogout } from "../../../../../app/modules/auth";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 export default function HeaderNotificationMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
