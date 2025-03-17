@@ -1,1 +1,1 @@
-export * from './PageTitleWrapper'
+export * from "./PageTitleWrapper";

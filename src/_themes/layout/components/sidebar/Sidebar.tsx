@@ -2,29 +2,29 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { ILayout, useLayout } from "../../core";
-import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 import { useAppSelector } from "../../../../app/Redux/hooks";
+import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
 
 const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
 
-  const appSidebarDefaultMinimizeDesktopEnabled =
-    config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
-  const appSidebarDefaultCollapseDesktopEnabled =
-    config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
-  const toggleType = appSidebarDefaultCollapseDesktopEnabled
-    ? "collapse"
-    : appSidebarDefaultMinimizeDesktopEnabled
-    ? "minimize"
-    : "";
-  const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
-  const appSidebarDefaultMinimizeDefault =
-    config.app?.sidebar?.default?.minimize?.desktop?.default;
+  // const appSidebarDefaultMinimizeDesktopEnabled =
+  //   config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
+  // const appSidebarDefaultCollapseDesktopEnabled =
+  //   config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
+  // const toggleType = appSidebarDefaultCollapseDesktopEnabled
+  //   ? "collapse"
+  //   : appSidebarDefaultMinimizeDesktopEnabled
+  //   ? "minimize"
+  //   : "";
+  // const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
+  // const appSidebarDefaultMinimizeDefault =
+  //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
   const profileUrl = useAppSelector((state) => state.user.profileImageUrl);
 

@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { RightToolbar } from "../partials/layout/RightToolbar";
 import { ScrollTop } from "./components/scroll-top";
-import { Sidebar } from "./components/sidebar";
 import { ActivityDrawer, DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
+import { Sidebar } from "./components/sidebarnew";
 
 const MasterLayout = () => {
   const location = useLocation();

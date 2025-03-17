@@ -1,9 +1,10 @@
+import { Stack } from "@mui/material";
 import { SidebarMenuMain } from "./SidebarMenuMain";
 
 const SidebarMenu = () => {
   return (
-    <div className="app-sidebar-menu overflow-hidden flex-column-fluid">
-      <div
+    <Stack className="app-sidebar-menu overflow-hidden flex-column-fluid">
+      <Stack
         id="kt_app_sidebar_menu_wrapper"
         className="app-sidebar-wrapper hover-scroll-overlay-y my-5"
         data-kt-scroll="true"
@@ -14,16 +15,16 @@ const SidebarMenu = () => {
         data-kt-scroll-offset="5px"
         data-kt-scroll-save-state="true"
       >
-        <div
+        <Stack
           className="menu menu-column menu-rounded menu-sub-indention px-3"
           id="#kt_app_sidebar_menu"
           data-kt-menu="true"
           data-kt-menu-expand="false"
         >
           <SidebarMenuMain />
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Stack>
+    </Stack>
   );
 };
 
