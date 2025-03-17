@@ -7,6 +7,7 @@ import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
 
 import {
+  Badge,
   Divider,
   IconButton,
   Link,
@@ -15,6 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import {
+  Close,
   Message,
   MessageOutlined,
   NotificationsOutlined,
@@ -70,27 +72,30 @@ export default function HeaderNotificationMenu() {
         onClick={handleClose}
       >
         <Stack>
-          <Stack>
-            <Stack
-              direction={"row"}
-              alignItems={"baseline"}
-              gap={1}
-              sx={{
-                display: "flex",
-                borderRadius: ".5rem",
-                bgcolor: colors.alpha.neutral[100],
-              }}
-            >
-              <Typography variant="h5" p={2}>
-                <MessageOutlined /> Notifications
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Stack direction={"row"} alignItems={"center"}>
+              <Typography variant="h6" px={1}>
+                Notifications
               </Typography>
-              <Box component={"span"} sx={{ paddingRight: 1 }}>
-                24 reports
-              </Box>
+              <Badge
+                color="secondary"
+                overlap="circular"
+                badgeContent="1"
+                sx={{ pl: 2 }}
+              />
+            </Stack>
+            <Stack>
+              <Close />
             </Stack>
           </Stack>
 
-          <Divider />
+          <Divider
+            sx={{ boxShadow: "1px 1px 1px " + colors.alpha.neutral[300] }}
+          />
           <MenuList>
             <Stack>
               <Link href="/userdashboard">

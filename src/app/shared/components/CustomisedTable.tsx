@@ -92,13 +92,17 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
               ) : (
                 <>
                   {tableRows.map((row: any, index: number) => (
-                    <TableRow hover key={index} onClick={()=>{
-                      if(props.tabName=== ModulesName.Applications){
-                        console.log(row.applicantId);
-                        
-                        navigate(`/recruitment/applicant/${row.applicantId}`);
-                      }
-                    }}>
+                    <TableRow
+                      hover
+                      key={index}
+                      onClick={() => {
+                        if (props.tabName === ModulesName.Applications) {
+                          console.log(row.applicantId);
+
+                          navigate(`/recruitment/applicant/${row.applicantId}`);
+                        }
+                      }}
+                    >
                       {columns.map((column) => {
                         const value =
                           column.id === "serialNo"
