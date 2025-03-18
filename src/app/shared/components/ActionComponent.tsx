@@ -1,6 +1,12 @@
 import { Stack } from "@mui/material";
 import { CustomIconButton } from "./CustomIconButton";
-import { DeleteOutlineOutlined, Edit, Visibility } from "@mui/icons-material";
+import {
+  Assignment,
+  AssignmentOutlined,
+  DeleteOutlineOutlined,
+  Edit,
+  Visibility,
+} from "@mui/icons-material";
 
 interface ActionComponentProps<Row> {
   row: Row;
@@ -31,11 +37,12 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       )}
       {openViewModal && (
         <CustomIconButton
+          style={{ border: "none" }}
           handleClick={(e) => {
             e.stopPropagation();
             openViewModal(row);
           }}
-          icon={<Visibility />}
+          icon={<AssignmentOutlined />}
           tooltip="View"
           ariaLabel="View"
         />

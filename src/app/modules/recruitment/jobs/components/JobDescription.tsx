@@ -1,5 +1,14 @@
-import { Check, FileOpenOutlined } from "@mui/icons-material";
 import {
+  Check,
+  Delete,
+  DeleteOutline,
+  FileOpenOutlined,
+  HourglassTop,
+} from "@mui/icons-material";
+import {
+  Button,
+  Card,
+  CardContent,
   Grid,
   MenuItem,
   Select,
@@ -19,6 +28,8 @@ import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
+import IconStat from "../../../../shared/components/IconStat";
+import { colors } from "../../../theme/MuiTheme";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -178,30 +189,38 @@ const JobDescription: FC<PropsTypes> = ({
             <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
           <Stack
-            direction={{ xs: "column", sm: "row" }}
-            justifyContent={"flex-end"}
-            mt={2}
-            gap={1}
+            direction={"row"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
           >
-            {/* <CustomisedButton
-              variant="contained"
-              label="Submissions"
-              Icon={<FileOpenOutlined />}
-              iconPosition="start"
-            /> */}
+            <Stack>
+              <IconStat
+                iconBg={colors.alpha.danger[100]}
+                icon={<DeleteOutline fontSize="large" />}
+                iconColor={colors.alpha.danger[500]}
+              />
+            </Stack>
 
-            <CustomisedButton
-              variant="outlined"
-              label="Close"
-              handleClick={handleClose}
-            />
-            <CustomisedButton
-              label={isEdit ? "Update" : "Publish"}
-              Icon={<Check />}
-              type="submit"
-              iconPosition="start"
-              disabled={isSubmitting || !(dirty && isValid)}
-            />
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              justifyContent={"flex-end"}
+              mt={2}
+              gap={1}
+            >
+              <CustomisedButton
+                variant="outlined"
+                label="Close"
+                handleClick={handleClose}
+              />
+              <CustomisedButton
+                label={isEdit ? "Update" : "Publish"}
+                Icon={<Check />}
+                type="submit"
+                iconPosition="start"
+                disabled={isSubmitting || !(dirty && isValid)}
+              />
+            </Stack>
           </Stack>
         </form>
       </Stack>

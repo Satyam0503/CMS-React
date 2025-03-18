@@ -2,10 +2,10 @@ import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { Modules, ModulesName } from "./enums";
 import { ApplicantApplicationStatus } from "./constant/Constant";
-import {
-  ApplicationFilterModel,
-  JobsFilterModel,
-} from "../app/modules/recruitment/models";
+// import {
+//   ApplicationFilterModel,
+//   JobsFilterModel,
+// } from "../app/modules/recruitment/models";
 
 export interface ApiResponse {
   success: boolean;
@@ -154,6 +154,7 @@ export type ColumnListTypes = {
   label: string;
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
+  width?: number;
   build?: any;
   sorting?: boolean;
   format?: (value: any) => any;

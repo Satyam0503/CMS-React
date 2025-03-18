@@ -295,21 +295,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     label: "S.No.",
     minWidth: 30,
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: any,
-      handleHolidayEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleHolidayEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
-  },
+
   {
     id: "title",
     label: "Title",
@@ -331,6 +317,21 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "description",
     label: "Description",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleHolidayEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
   },
 ];
 
@@ -422,7 +423,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Applicant's CV",
+    label: "CV",
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
@@ -476,25 +477,9 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "S.No.",
-    minWidth: 60,
+    minWidth: 30,
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: JobModal,
-      handleJobEdit: (row: JobModal) => void,
-      openDeleteModal: (row: JobModal) => void,
-      openViewJobDetail: (row: JobModal) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        openViewModal={openViewJobDetail}
-      />
-    ),
-  },
+
   {
     id: "title",
     label: "Job Title",
@@ -518,6 +503,23 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
         <StyleStatus label={statusDecoder(status)} className={className} />
       );
     },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+        // openViewModal={openViewJobDetail}
+      />
+    ),
   },
 ];
 
@@ -549,7 +551,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     label: "Comment",
     minWidth: 200,
     build: (value: string) => (
-      <Tooltip title={value} arrow placement="top" >
+      <Tooltip title={value} arrow placement="top">
         <Typography
           variant="body1"
           style={{
@@ -559,9 +561,8 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             overflow: "hidden",
             margin: "0",
           }}
-          dangerouslySetInnerHTML={{__html:value}}
+          dangerouslySetInnerHTML={{ __html: value }}
         />
-
       </Tooltip>
     ),
   },
