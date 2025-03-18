@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { useThemeMode } from "../../../_themes/partials";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { Stack } from "@mui/material";
-import { colors } from "../../modules/theme/MuiTheme";
+import { colors } from "../theme/MuiTheme";
 
 const BODY_CLASSES = ["bgi-size-cover", "bgi-position-center", "bgi-no-repeat"];
 const ErrorsLayout = () => {
