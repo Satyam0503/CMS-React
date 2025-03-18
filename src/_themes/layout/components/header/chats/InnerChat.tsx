@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 
 import { relative } from "path";
-import { colors } from "../../../theme/MuiTheme";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 type Props = {
   isDrawer?: boolean;

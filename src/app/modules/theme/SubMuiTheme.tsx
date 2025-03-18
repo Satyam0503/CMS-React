@@ -121,17 +121,6 @@ export const colors = {
     },
   },
 };
-
-const colorThemeText = {
-  heading: colors.alpha.neutral[800],
-  secondaryHeading: colors.alpha.primary[500],
-  bodyText: colors.alpha.neutral[600],
-  linkText: colors.alpha.primary[500],
-  sidebarBG: darktheme.territory,
-  sidebarText: darktheme.white,
-  sidebarLink: colors.alpha.secondary[500],
-  bodyBG: colors.alpha.neutral[100],
-};
 export const MuiTheme = createTheme({
   colors: {
     shadows: {

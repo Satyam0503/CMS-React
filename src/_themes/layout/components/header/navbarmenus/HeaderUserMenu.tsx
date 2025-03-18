@@ -21,11 +21,12 @@ import {
   ListItemText,
   MenuItem,
 } from "@mui/material";
-import { useAppSelector } from "../../../../Redux/hooks";
-import { colors } from "../../../../modules/theme/MuiTheme";
-import { Languages } from "../Languages";
-import { useLogout } from "../../../../modules/auth";
+
 import { wrap } from "module";
+import { useLogout } from "../../../../../app/modules/auth";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
+import { Languages } from "./Languages";
 
 export default function HeaderUserMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

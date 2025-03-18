@@ -59,7 +59,6 @@ const SidebarLogo = (props: PropsType) => {
             alt="Logo"
             src={toAbsoluteUrl("media/logos/logo.png")}
             style={{ minWidth: "50px" }}
-            // className="app-sidebar-logo-default mt-5"
           />
         ) : (
           <>

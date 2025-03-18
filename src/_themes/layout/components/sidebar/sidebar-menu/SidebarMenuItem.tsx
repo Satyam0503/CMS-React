@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router";
 import { checkIsActive, WithChildren } from "../../../../helpers";
 import { useLayout } from "../../../core";
+import { Box, Stack } from "@mui/material";
 
 type Props = {
   to: string;
@@ -26,16 +27,16 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({
   const { app } = config;
 
   return (
-    <div className="menu-item">
+    <Stack className="menu-item">
       <Link
         className={clsx("menu-link without-sub", { active: isActive })}
         to={to}
       >
-        <span className="menu-icon">{icon}</span>
-        <span className="menu-title">{title}</span>
+        <Box className="menu-icon">{icon}</Box>
+        <Box className="menu-title">{title}</Box>
       </Link>
       {children}
-    </div>
+    </Stack>
   );
 };
 

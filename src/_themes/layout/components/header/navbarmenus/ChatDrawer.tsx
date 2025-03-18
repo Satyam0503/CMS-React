@@ -13,10 +13,9 @@ import {
 } from "@mui/icons-material";
 
 import { Avatar, IconButton, Tooltip } from "@mui/material";
-import { colors } from "../../../../modules/theme/MuiTheme";
-import ChatMessenger from "../../../../modules/chats/ChatMessanger";
-import { InnerChat } from "../../../../modules/chats/InnerChat";
-
+import ChatMessenger from "../chats/ChatMessanger";
+import { InnerChat } from "../chats/InnerChat";
+import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 export default function ChatDrawer() {
   const [open, setOpen] = React.useState(false);

@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
 import clsx from "clsx";
 import { useLocation } from "react-router";
-import { checkIsActive,  WithChildren } from "../../../../helpers";
+import { checkIsActive, WithChildren } from "../../../../helpers";
 import { useLayout } from "../../../core";
+import { Box, Grid } from "@mui/material";
 
 type Props = {
   to: string;
@@ -22,25 +23,26 @@ const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
   const isActive = checkIsActive(pathname, to);
   const { config } = useLayout();
   const { app } = config;
-    
+
   return (
-    <div
+    <Grid
+      item
       className={clsx("menu-item", { "here show": isActive }, "menu-accordion")}
       data-kt-menu-trigger="click"
     >
-      <span className="menu-link">
-        <span className="menu-icon">{icon}</span>
-        <span className="menu-title">{title}</span>
-        <span className="menu-arrow"></span>
-      </span>
-      <div
+      <Box className="menu-link">
+        <Box className="menu-icon">{icon}</Box>
+        <Box className="menu-title">{title}</Box>
+        <Box className="menu-arrow" />
+      </Box>
+      <Box
         className={clsx("menu-sub menu-sub-accordion", {
           "menu-active-bg": isActive,
         })}
       >
         {children}
-      </div>
-    </div>
+      </Box>
+    </Grid>
   );
 };
 
