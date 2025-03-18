@@ -5,7 +5,6 @@ import {
   ApiResponse,
   EmployeeModel,
   GetAllEmployeeResponseData,
-  GetAllRolesResponseData,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 
@@ -41,6 +40,4 @@ export const getAllEmployees = async (
   );
 };
 
-export const getAllRoles = async () => {
-  return getRequest<GetAllRolesResponseData>(ServiceUrl.GET_ALL_ROLES);
-};
+

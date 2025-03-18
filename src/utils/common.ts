@@ -1,8 +1,11 @@
 import dayjs, { Dayjs } from "dayjs";
+import DOMPurify from "dompurify";
+
 import {
   EmployeeModel,
   FiltersType,
   ModulePermissoinModel,
+  PermissionModel,
 } from "./common_types";
 import {
   ApplicantStatus,
@@ -143,143 +146,6 @@ export const statusDecoder = (status: boolean) => {
   }
 };
 
-export const experienceCategoryList = [
-  { id: 1, label: "0 - 1", value: 1 },
-  {
-    id: 2,
-    label: "1 - 2",
-    value: 2,
-  },
-  {
-    id: 3,
-    label: "2 - 3",
-    value: 3,
-  },
-  {
-    id: 4,
-    label: "3 - 4",
-    value: 4,
-  },
-  {
-    id: 5,
-    label: "4 - 5",
-    value: 5,
-  },
-  {
-    id: 6,
-    label: "5 - 6",
-    value: 6,
-  },
-  {
-    id: 7,
-    label: "6 - 7",
-    value: 7,
-  },
-  {
-    id: 8,
-    label: "7 - 8",
-    value: 8,
-  },
-  {
-    id: 9,
-    label: "8 - 9",
-    value: 9,
-  },
-  {
-    id: 10,
-    label: "9 - 10",
-    value: 10,
-  },
-  {
-    id: 11,
-    label: "10 - 11",
-    value: 11,
-  },
-  {
-    id: 12,
-    label: "11 - 12",
-    value: 12,
-  },
-  {
-    id: 13,
-    label: "12 - 13",
-    value: 13,
-  },
-  {
-    id: 14,
-    label: "13 - 14",
-    value: 14,
-  },
-  {
-    id: 15,
-    label: "14 - 15",
-    value: 15,
-  },
-];
-export const monthsExperienceList = [
-  { id: 1, label: "0", value: 0 },
-  {
-    id: 2,
-    label: "1",
-    value: 1,
-  },
-  {
-    id: 3,
-    label: "2",
-    value: 2,
-  },
-  {
-    id: 4,
-    label: "3",
-    value: 3,
-  },
-  {
-    id: 5,
-    label: "4",
-    value: 4,
-  },
-  {
-    id: 6,
-    label: "5",
-    value: 5,
-  },
-  {
-    id: 7,
-    label: "6",
-    value: 6,
-  },
-  {
-    id: 8,
-    label: "7",
-    value: 7,
-  },
-  {
-    id: 9,
-    label: "8",
-    value: 8,
-  },
-  {
-    id: 10,
-    label: "9",
-    value: 9,
-  },
-  {
-    id: 11,
-    label: "10",
-    value: 10,
-  },
-  {
-    id: 12,
-    label: "11",
-    value: 11,
-  },
-  {
-    id: 13,
-    label: "12",
-    value: 12,
-  },
-];
-
 export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
   return dayjs(to).diff(from, "years");
 };
@@ -309,6 +175,26 @@ export const checkPermissionForModuleAndRoute = (
   return hasPermission.hasAccess;
 };
 
+export const checkPermissionForModulesFeatureAccess = (
+  moduleName: ModulesName,
+  requiredPermission: Permission,
+  userModulePermissions: ModulePermissoinModel[]
+) => {
+  const module = userModulePermissions.find(
+    (module) => module.moduleConstant === moduleName
+  );
+  if (!module) {
+    return false;
+  }
+  const hasPermission = module.permissions.find(
+    (permission) => permission.permissionConstant === requiredPermission
+  );
+  if (!hasPermission) {
+    return false;
+  }
+  return hasPermission.hasAccess;
+};
+
 export const findUserDefaultTab = (
   userModulePermissions: ModulePermissoinModel[]
 ) => {
@@ -322,23 +208,6 @@ export const findUserDefaultTab = (
   }
   return defaultTab.route;
 };
-
-// export const checkUserPermissionForRouteAccess = (
-//   moduleName: ModulesName,
-//   userPermissions: ModulePermissoinModel[]
-// ) => {
-//   const module = userPermissions.find(
-//     (permission) => permission.moduleConstant === moduleName
-//   );
-//   if (!module) {
-//     return false;
-//   }
-//   const index = module.permissions.findIndex(
-//     (permission) => permission.permissionConstant === Permission.View
-//   );
-
-//   return index !== -1 ? true : false;
-// };
 
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
@@ -419,4 +288,28 @@ export const addCurrentTimeToDate = (date: Dayjs | null) => {
   const currentDateWithoutTime = dayjs().startOf("day").valueOf();
   const diffInMs = currentDateInMs - currentDateWithoutTime;
   return dayjs(date).startOf("day").add(diffInMs, "milliseconds").toISOString();
+};
+
+export const sanitizeHtmlContent = (htmlString: string) => {
+  return DOMPurify.sanitize(htmlString);
+};
+
+export const removeUnwantedString = (htmlstring: string) => {
+  return htmlstring.replace(/<p><br><\/p>/g, "");
+};
+
+export const getKeyForTableRow = <Row>(row: Row, keyName: keyof Row) => {
+  return row[keyName] as string;
+};
+
+export const flatUserModulePermissions = (
+  userModulePermission: ModulePermissoinModel[]
+) => {
+  const UpdatedModulePermission: PermissionModel[] = [];
+  userModulePermission.forEach((module) => {
+    module.permissions.forEach((permission) => {
+      UpdatedModulePermission.push(permission);
+    });
+  });
+  return UpdatedModulePermission;
 };

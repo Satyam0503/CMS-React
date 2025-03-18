@@ -15,6 +15,7 @@
   "APPLICATION.STATUS": "Application Status",
   "APPLICANT.COMMENT": "Comment History",
   "APPLICANT.DETAILS": "Applicant Details",
+  "APPLICANT.RESUME_PREVIEW": "Resume Preview",
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.INPUT.FULLNAME": "Full Name",
   "AUTH.INPUT.PASSWORD": "Password",
@@ -230,7 +231,7 @@
   "PERMISSION.VIEW": "View",
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
-  "ROLES.EDIT": " Edit Role",
+  "ROLES.EDIT_AND_PERMISSION": "Edit Role And Permission",
   "ROLES.ADD": " Add Role",
   "RECRUITMENT.JOBS": "Jobs ",
   "REQUIREMENT.JOBS": "Job Requirements ",
@@ -362,5 +363,8 @@
   "APPLICATION.STATUS.ONHOLD": "On Hold",
   "APPLICATION.STATUS.SHORTLISTED": "Shortlisted",
   "APPLICATION.STATUS.SELECTED": "Selected",
-  "APPLICATION.STATUS.REJECTED": "Rejected"
+  "APPLICATION.STATUS.REJECTED": "Rejected",
+
+  "ADMIN.ADD_ROLE":"Add New Role",
+  "ADMIN.PERMISSION":"Permissions"
 }

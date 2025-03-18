@@ -18,7 +18,6 @@ import { TextInput } from "../../../../shared/components/form-component/TextInpu
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { experienceCategoryList } from "../../../../../utils/common";
 import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
 import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
@@ -26,7 +25,7 @@ import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { ApplicantModel, JobModal } from "../../models";
-import { indianStates } from "../../../../../utils/constant/Constant";
+import { experienceCategoryList, indianStates } from "../../../../../utils/constant/Constant";
 
 const initialValues: ApplicantModel = {
   applicantId: "",

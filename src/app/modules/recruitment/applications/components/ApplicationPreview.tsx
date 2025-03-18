@@ -12,8 +12,8 @@ import {
   getApplicationStatusClass,
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
-import { PdfPreview } from "./PdfPreview";
 import { Applicant } from "../../models";
+import { CvPreview } from "./CvPreview";
 
 interface PropsType {
   open: boolean;
@@ -99,7 +99,7 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
           </Grid>
         </Grid>
-        <PdfPreview pdfUrl={applicantData.fullApplicantResumePath} />
+        <CvPreview  pdfUrl={applicantData.fullApplicantResumePath} />
       </Stack>
     </CustomisedModal>
   );

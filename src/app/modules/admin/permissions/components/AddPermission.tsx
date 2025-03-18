@@ -11,38 +11,20 @@ import { useIntl } from "react-intl";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Check } from "@mui/icons-material";
-import { colors } from "../../../modules/theme/MuiTheme";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { colors } from "../../../theme/MuiTheme";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
-function createData(name: string) {
-  return { name };
-}
-
-const rows = [
-  createData("Contacts"),
-  createData("Attendance"),
-  createData("Project"),
-  createData("Leaves"),
-  createData("Post Notice"),
-];
-
-export const EditPermission = () => {
+export const AddPermission = () => {
   const intl = useIntl();
   const { state } = useLocation();
   const navigate = useNavigate();
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-  useEffect(() => {
-    if (!state) {
-      navigate("/error/404", { replace: true });
-    }
-  }, []);
-
   return (
     <>
       <Stack position={"sticky"}>
         <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "ROLES.EDIT" })}
+          {intl.formatMessage({ id: "ROLES.ADD" })}
         </Typography>{" "}
       </Stack>
       <Stack spacing={1}>

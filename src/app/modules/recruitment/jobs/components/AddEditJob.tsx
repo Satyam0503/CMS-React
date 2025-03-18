@@ -1,14 +1,5 @@
+import { Check } from "@mui/icons-material";
 import {
-  Check,
-  Delete,
-  DeleteOutline,
-  FileOpenOutlined,
-  HourglassTop,
-} from "@mui/icons-material";
-import {
-  Button,
-  Card,
-  CardContent,
   Grid,
   MenuItem,
   Select,
@@ -28,8 +19,6 @@ import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
-import IconStat from "../../../../shared/components/IconStat";
-import { colors } from "../../../theme/MuiTheme";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -42,7 +31,7 @@ interface PropsTypes {
   ) => void;
 }
 
-const JobDescription: FC<PropsTypes> = ({
+export const AddEditJob: FC<PropsTypes> = ({
   initialValues,
   isEdit,
   open,
@@ -50,7 +39,6 @@ const JobDescription: FC<PropsTypes> = ({
   handleAddEditJob,
 }) => {
   const intl = useIntl();
-
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
   );
@@ -189,43 +177,33 @@ const JobDescription: FC<PropsTypes> = ({
             <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
           <Stack
-            direction={"row"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent={"flex-end"}
+            mt={2}
+            gap={1}
           >
-            <Stack>
-              <IconStat
-                iconBg={colors.alpha.danger[100]}
-                icon={<DeleteOutline fontSize="large" />}
-                iconColor={colors.alpha.danger[500]}
-              />
-            </Stack>
+            {/* <CustomisedButton
+              variant="contained"
+              label="Submissions"
+              Icon={<FileOpenOutlined />}
+              iconPosition="start"
+            /> */}
 
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent={"flex-end"}
-              mt={2}
-              gap={1}
-            >
-              <CustomisedButton
-                variant="outlined"
-                label="Close"
-                handleClick={handleClose}
-              />
-              <CustomisedButton
-                label={isEdit ? "Update" : "Publish"}
-                Icon={<Check />}
-                type="submit"
-                iconPosition="start"
-                disabled={isSubmitting || !(dirty && isValid)}
-              />
-            </Stack>
+            <CustomisedButton
+              variant="outlined"
+              label="Close"
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              label={isEdit ? "Update" : "Publish"}
+              Icon={<Check />}
+              type="submit"
+              iconPosition="start"
+              disabled={isSubmitting || !(dirty && isValid)}
+            />
           </Stack>
         </form>
       </Stack>
     </CustomisedModal>
   );
 };
-
-export default JobDescription;

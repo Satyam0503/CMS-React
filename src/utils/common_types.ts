@@ -1,11 +1,10 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 import { Modules, ModulesName } from "./enums";
-import { ApplicantApplicationStatus } from "./constant/Constant";
-// import {
-//   ApplicationFilterModel,
-//   JobsFilterModel,
-// } from "../app/modules/recruitment/models";
+import {
+  ApplicationFilterModel,
+  JobsFilterModel,
+} from "../app/modules/recruitment/models";
 
 export interface ApiResponse {
   success: boolean;
@@ -83,16 +82,6 @@ export interface EmployeeModel {
   profileUrl?: string;
   fullProfileUrl?: string;
 }
-
-export interface RoleModel {
-  rolesId: string;
-  titles: string;
-  description: string;
-  isNotEditable: boolean;
-  isDefault: boolean;
-  userRoles: [string];
-}
-
 export interface UserEducationModel {
   educationId?: string;
   companyId?: string;
@@ -139,16 +128,6 @@ export type NoticeModel = {
   message: string;
 };
 
-export interface RolesType {
-  id: string;
-  roleName: string;
-  description: string;
-  accessToApp?: string;
-  isDeleted?: boolean | null;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export type ColumnListTypes = {
   id: string;
   label: string;
@@ -181,29 +160,6 @@ export interface SideBarTabListProps {
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
 
-export interface ApplicationFilterModel {
-  filterFrom: null | Dayjs;
-  filterTo: null | Dayjs;
-  activityTypes: number[];
-  vacancyIds: string[];
-  status: number[];
-  minExperience: number | string;
-  maxExperience: number | string;
-}
-export interface GetApplicationPayloadModel {
-  name: string;
-  filterFrom?: null | Dayjs;
-  filterTo?: null | Dayjs;
-  activityTypes?: number[];
-  vacancyIds?: string[];
-  status?: number[];
-  minExperience?: number | string | null;
-  maxExperience?: number | string | null;
-}
-export interface JobsFilterModel {
-  jobType: string;
-  status: number;
-}
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
@@ -216,8 +172,6 @@ export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;
 export type EmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
-
-export type GetAllRolesResponseData = ResponseData<RoleModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 

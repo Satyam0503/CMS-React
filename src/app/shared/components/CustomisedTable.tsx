@@ -13,9 +13,12 @@ import { useEffect, useState } from "react";
 import { TableSorting } from "./TableSorting";
 import { useNavigate } from "react-router-dom";
 import { ModulesName } from "../../../utils/enums";
+import { getKeyForTableRow } from "../../../utils/common";
+import { useAppSelector } from "../../Redux/hooks";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
+  keyName?: keyof Row;
   loading?: boolean;
   rows: Row[];
   columns: Columns[];
@@ -30,8 +33,12 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
   const [tableRows, setTableRows] = useState(props.rows);
+  const userModulePermission = useAppSelector(
+    (state) => state.user.userPermissions
+  );
   const {
     rows,
+    keyName,
     columns,
     page,
     rowsPerPage,
@@ -94,12 +101,13 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                   {tableRows.map((row: any, index: number) => (
                     <TableRow
                       hover
-                      key={index}
+                      key={keyName ? getKeyForTableRow(row, keyName) : index}
                       onClick={() => {
                         if (props.tabName === ModulesName.Applications) {
-                          console.log(row.applicantId);
-
                           navigate(`/recruitment/applicant/${row.applicantId}`);
+                        }
+                        if (props.tabName === ModulesName.Employees) {
+                          navigate("/myprofile");
                         }
                       }}
                     >
@@ -112,7 +120,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                             : row[column.id];
                         return (
                           <TableCell
-                            // onClick={handleClick}
                             className="text pointer-cursor"
                             key={column.id}
                             align={column?.align || "left"}

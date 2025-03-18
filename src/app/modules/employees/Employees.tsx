@@ -26,6 +26,7 @@ import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { Pagination } from "../../shared/components/Pagination";
 import AddUpdateEmployee from "./components/AddUpdateEmployee";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
+import { ModulesName } from "../../../utils/enums";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -264,7 +265,8 @@ export default function Employees() {
           </Stack>
 
           <CustomisedTable
-            tabName="Employee"
+            tabName={ModulesName.Employees}
+            keyName="userId"
             loading={isLoading}
             rows={employeeList}
             columns={EmployeeTabTableColumnList}

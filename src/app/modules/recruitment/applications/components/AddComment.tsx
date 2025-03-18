@@ -1,8 +1,7 @@
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import { FC, memo, useEffect, useState } from "react";
+import { FC} from "react";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { useDebounce } from "../../../../hooks/useDebounce";
 import TextEditor from "../../../../shared/components/TextEditor";
 
 interface PropTypes {
@@ -19,31 +18,12 @@ export const AddComment: FC<PropTypes> = ({
   handleClose,
   handleAddComment,
 }) => {
-  const [value, setValue] = useState(comment);
-  const debouncedValue = useDebounce(value);
-
-  useEffect(() => {
-    handleCommentChange(debouncedValue);
-  }, [debouncedValue]);
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
         <Typography variant="h5">Add Comment</Typography>
-        <TextEditor value={value} setValue={(value)=>setValue(value)} />
-        {/* <TextField
-          value={value}
-          name="comment"
-          fullWidth
-          multiline
-          autoFocus={true}
-          minRows={3}
-          placeholder="Write Comment"
-          type="text"
-          required
-          onChange={(event) => setValue(event.target.value)}
-        /> */}
-
+        <TextEditor value={comment} setValue={(value)=>handleCommentChange(value)} />
         <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
           <CustomisedButton
             variant="outlined"

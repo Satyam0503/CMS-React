@@ -21,7 +21,7 @@ interface Props {
   pdfUrl: string;
 }
 
-export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
+export const CvPreview: FC<Props> = ({ pdfUrl }) => {
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -52,7 +52,7 @@ export const PdfPreview: FC<Props> = ({ pdfUrl }) => {
           borderBottom: `1px solid ${colors.alpha.neutral[200]}`,
         }}
       >
-        <Typography variant="h6">Resume Preview</Typography>
+        <Typography variant="h6">{intl.formatMessage({ id: "APPLICANT.RESUME_PREVIEW" })}</Typography>
         <Typography
           variant="body2"
           display={{ sm: "none" }}
