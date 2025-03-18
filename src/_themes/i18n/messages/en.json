@@ -232,6 +232,7 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
   "ROLES.EDIT_AND_PERMISSION": "Edit Role And Permission",
+  "ROLE.NAME":"Role Name",
   "ROLES.ADD": " Add Role",
   "RECRUITMENT.JOBS": "Jobs ",
   "REQUIREMENT.JOBS": "Job Requirements ",

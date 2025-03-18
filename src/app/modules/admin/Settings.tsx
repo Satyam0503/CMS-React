@@ -36,7 +36,7 @@ const SettingPage = () => {
           }
         />
         <Route
-          path="addpermission"
+          path="addrole"
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <AddPermission />

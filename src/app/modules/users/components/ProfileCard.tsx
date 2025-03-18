@@ -34,16 +34,6 @@ import { getDateDiffInYears } from "../../../../utils/common";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
-// import { CustomisedModal } from "../components/CustomisedModal";
-// import CustomisedButton from "../components/CustomisedButton";
-// import { colors } from "../theme/MuiTheme";
-// import { CustomIconButton } from "../components/CustomIconButton";
-// import { ErrorLabel } from "../components/form_component/ErrorLabel";
-// import { updateProfilePicture } from "./userservices";
-// import { toast } from "react-toastify";
-// import { useUserDetails } from "./UserDataProvider";
-// import { useAppSelector } from "../../Redux/hooks";
-// import { getDateDiffInYears } from "../../../utils/common";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -53,8 +43,6 @@ export default function ProfileCard() {
   const intl = useIntl();
   const { userDetails, setRefresh } = useUserDetails();
   const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
-
-  console.log(profileImageUrl);
 
   function handleClose() {
     setOpen(false);
@@ -103,7 +91,7 @@ export default function ProfileCard() {
       }
     }
   }
-
+  
   return (
     <>
       <Card
@@ -138,7 +126,7 @@ export default function ProfileCard() {
           className="gridContainer"
         >
           <Avatar
-            alt="profile picture"
+            alt=""
             src={profileImageUrl}
             sx={{
               width: "100%",

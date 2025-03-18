@@ -63,7 +63,7 @@ export const Roles = () => {
           <CustomisedButton
             label={intl.formatMessage({ id: "ADMIN.ADD_ROLE" })}
             handleClick={() => {
-              navigate("/admin/editpermission", {state:{}});
+              navigate("/admin/addrole");
             }}
             Icon={<Add />}
           />

@@ -60,6 +60,8 @@ export const ServiceUrl = {
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
   GET_ALL_MODULE_PERMISSION:`${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
+  GET_ROLE_ALL_PERMISSIONS:`${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
+  ADD_EDIT_ROLE:`${BaseUrl}/api/Roles/AddEditRole`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -559,6 +561,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
               fontSize: "12px",
               "& p": {
                 margin: 0,
+                color:"#FFFFFF",
               },
             }}
           />
