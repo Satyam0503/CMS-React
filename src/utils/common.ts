@@ -167,7 +167,7 @@ export const checkPermissionForModuleAndRoute = (
     return false;
   }
   const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === Permission.View
+    (permission) => permission.permissionConstant === Permission.View && permission.hasAccess
   );
   if (!hasPermission) {
     return false;

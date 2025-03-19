@@ -28,6 +28,7 @@ import {
   AccessTime,
   AccountCircle,
   AdminPanelSettings,
+  Book,
   CalendarMonth,
   ColorLens,
   Contacts,
@@ -44,6 +45,7 @@ import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
+import { FormattedMessage } from "react-intl";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
 
@@ -59,9 +61,9 @@ export const ServiceUrl = {
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
-  GET_ALL_MODULE_PERMISSION:`${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
-  GET_ROLE_ALL_PERMISSIONS:`${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
-  ADD_EDIT_ROLE:`${BaseUrl}/api/Roles/AddEditRole`,
+  GET_ALL_MODULE_PERMISSION: `${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
+  GET_ROLE_ALL_PERMISSIONS: `${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
+  ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -468,9 +470,11 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "Action",
     minWidth: 180,
-    build: (row:RoleModel) => (
+    build: (row: RoleModel) => (
       <Link to={"/admin/editpermission"} state={{ ...row }}>
-        <Button variant="contained">Edit Permission</Button>
+        <Button variant="contained">
+          <FormattedMessage id={row.isNotEditable ? "ADMIN.VIEW_PERMISSION" :"ADMIN.EDIT_PERMISSION"}  />
+        </Button>
       </Link>
     ),
   },
@@ -561,7 +565,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
               fontSize: "12px",
               "& p": {
                 margin: 0,
-                color:"#FFFFFF",
+                color: "#FFFFFF",
               },
             }}
           />
@@ -690,6 +694,12 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/noticeboard",
     icon: <AdminPanelSettings />,
   },
+  {
+    id:Modules.ProcessLog,
+    title:ModulesName.ProcessLog,
+    route:"/processlog",
+    icon:<Book/>
+  }
 ];
 
 export const indianStates = [

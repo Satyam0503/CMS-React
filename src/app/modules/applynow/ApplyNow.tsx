@@ -20,7 +20,6 @@ import { useEffect, useRef, useState } from "react";
 import Footer from "./Component/Footer";
 import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
-import { TextInput } from "../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../shared/components/form-component/SelectInput";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
 
@@ -85,9 +84,7 @@ export default function ApplyNow() {
       nextState?: Partial<FormikState<ApplicantModel>> | undefined
     ) => void
   ) => {
-    console.log(values);
-
-    const formData = new FormData();
+      const formData = new FormData();
     formData.append("File", values.resume as File);
     const vacancy = activeJobPositionsList.find(
       (job) => job.jobId === values.vacancyId

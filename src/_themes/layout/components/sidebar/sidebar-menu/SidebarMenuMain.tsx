@@ -14,16 +14,14 @@ const SidebarMenuMain = () => {
       )!;
 
       if (filteredSubTabs?.length > 0) {
-        return {
-          ...tab,
-          subTabs: filteredSubTabs,
-        };
+        tab.subTabs=filteredSubTabs
+        return true;
       }
       return false;
     }
     return checkPermissionForModuleAndRoute(tab.title, userModulePermission) === true;
   });
-
+  
   return (
     <>
       {filteredTabList.map((tab) => {

@@ -2,11 +2,9 @@ import {
   Box,
   Card,
   Checkbox,
-  Container,
   Divider,
   FormControlLabel,
   FormGroup,
-  Grid,
   Stack,
   TextField,
   Typography,
@@ -25,9 +23,20 @@ import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { AddEditRoleModel } from "../../models";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+const initialValues = {
+  description: "",
+  roleTitle: "",
+};
+const validationSchema = Yup.object().shape({
+  description: Yup.string().required(),
+  roleTitle: Yup.string().required(),
+});
 
 export const AddPermission = () => {
-  const intl = useIntl();
+  const intl = useIntl();  
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
   >([]);
@@ -35,10 +44,6 @@ export const AddPermission = () => {
     PermissionModel[]
   >([]);
   const [isLoading, setLoading] = useState(true);
-  const [roleDetails, setCurrentRoleDetails] = useState({
-    description: "",
-    roleTitle: "",
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,6 +63,14 @@ export const AddPermission = () => {
     getAllPermissions();
   }, []);
 
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleAddRolePermission(values);
+    },
+  });
+
   const checkUserModulePermission = (modulePermissionId: number) => {
     const hasModulePermission = selectedPermission.findIndex(
       (permission) =>
@@ -67,43 +80,58 @@ export const AddPermission = () => {
     return hasModulePermission !== -1 ? true : false;
   };
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentRoleDetails({
-      ...roleDetails,
-      [e.target.name]: e.target.value,
-    });
+  const handlePermissionChange = (
+    newPermission: PermissionModel,
+    isChecked: boolean
+  ) => {
+    const hasPermission = selectedPermission.find(
+      (permission) =>
+        permission.modulePermissionId === newPermission.modulePermissionId
+    );
+    if (hasPermission) {
+      setSelectedPermission(
+        selectedPermission.filter(
+          (permission) =>
+            permission.modulePermissionId !== newPermission.modulePermissionId
+        )
+      );
+    } else {
+      setSelectedPermission([
+        ...selectedPermission,
+        {
+          ...newPermission,
+          hasAccess: isChecked,
+          rolePermissionId: "",
+          rolesId: "",
+        },
+      ]);
+    }
   };
 
-  const handlePermissionChange = (newPermission:PermissionModel,isChecked:boolean)=>{
-    const hasPermission = selectedPermission.find(permission=>permission.modulePermissionId === newPermission.modulePermissionId);
-    if(hasPermission){
-      setSelectedPermission(selectedPermission.filter(permission=> permission.modulePermissionId !==newPermission.modulePermissionId ))
-    }
-    else{
-      setSelectedPermission([...selectedPermission,{...newPermission,hasAccess:isChecked}])
-    }
-  }
-
-  const handleAddRolePermission = async ()=>{
+  const handleAddRolePermission = async (roleValues: typeof initialValues) => {
     const payload: AddEditRoleModel = {
-      roleId:null,
-      roleTitle:roleDetails.roleTitle,
-      description:roleDetails.description,
-      rolePermissions:selectedPermission,
-      hasAppAccess:selectedPermission.length !==0,
-      userRoles:[]
-    }
+      roleId: "",
+      roleTitle: roleValues.roleTitle,
+      description: roleValues.description,
+      rolePermissions: selectedPermission,
+      hasAppAccess: selectedPermission.length !== 0,
+      userRoles: [],
+    };
     try {
-      const response=  await addEditRole(payload);
-      const {success}= response.data;
-      if(success){
-        toast.success("Successfully added");
-        navigate('/admin/permissions');
+      const response = await addEditRole(payload);
+      const { success, message } = response.data;
+      if (success) {
+        toast.success(message);
+        navigate("/admin/permissions");
       }
     } catch (error) {
       toast.error("Request Failed");
     }
-  }
+  };
+  const handleReset = () => {
+    formik.resetForm();
+    setSelectedPermission([]);
+  };
 
   return (
     <>
@@ -111,24 +139,30 @@ export const AddPermission = () => {
         {intl.formatMessage({ id: "ROLES.ADD" })}
       </Typography>
       <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
-        <Stack spacing={2} className="flex-grow-1 d-flex flex-column">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="flex-grow-1 d-flex flex-column gap-4"
+        >
           <Stack spacing={2}>
             <TextField
               fullWidth
-              name="roleTitle"
-              value={roleDetails.roleTitle}
+              required
               label={intl.formatMessage({ id: "ROLE.NAME" })}
-              onChange={handleOnChange}
+              error={
+                formik.touched.roleTitle && Boolean(formik.errors.roleTitle)
+              }
+              {...formik.getFieldProps("roleTitle")}
             />
             <TextField
               fullWidth
-              name="description"
-              value={roleDetails.description}
+              required
+              error={
+                formik.touched.description && Boolean(formik.errors.description)
+              }
               label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
-              onChange={handleOnChange}
+              {...formik.getFieldProps("description")}
             />
           </Stack>
-
           {isLoading ? (
             <CircularLoader />
           ) : (
@@ -198,18 +232,22 @@ export const AddPermission = () => {
                 spacing={2}
                 className="justify-content-end"
               >
-                <CustomisedButton variant="outlined" label="Cancel" />
                 <CustomisedButton
+                  variant="outlined"
+                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
+                  handleClick={handleReset}
+                />
+                <CustomisedButton
+                  type="submit"
                   disabled={selectedPermission.length === 0}
-                  label="Save Changes"
+                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                   Icon={<Check />}
                   iconPosition="start"
-                  handleClick={handleAddRolePermission}
                 />
               </Stack>
             </>
           )}
-        </Stack>
+        </form>
       </Card>
     </>
   );

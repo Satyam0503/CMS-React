@@ -33,11 +33,12 @@
   "ADD.SKILLS": "Please Add Your Skills",
   "ADD.EDUCATION": "Please Add Your Education Details",
   "ADD.CERTIFICATION": "Please Add Your Certification Details",
-  "ALERT.HIRING": "   We are hiring",
+  "ALERT.HIRING": "We are hiring",
   "BIRTHDAY.TODAY": "Has birthday today",
   "BUTTON.CLOSE": "Close",
   "BUTTON.SAVE": "Save",
   "BUTTON.SUBMIT": "Submit",
+  "BUTTON.RESET": "Reset",
   "BUTTON.CONTACT": "Contact",
   "COLOR.PRIMARY": "Primary color",
   "COLOR.SECONDARY": "Secondary color",
@@ -367,5 +368,7 @@
   "APPLICATION.STATUS.REJECTED": "Rejected",
 
   "ADMIN.ADD_ROLE":"Add New Role",
-  "ADMIN.PERMISSION":"Permissions"
+  "ADMIN.PERMISSION":"Permissions",
+  "ADMIN.EDIT_PERMISSION":"Edit Permissions",
+  "ADMIN.VIEW_PERMISSION":"View Permissions"
 }
