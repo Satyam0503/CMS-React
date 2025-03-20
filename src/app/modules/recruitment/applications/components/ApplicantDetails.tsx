@@ -42,7 +42,7 @@ import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentModel } from "../../models";
 
 export const ApplicantDetails = () => {
-  const intl = useIntl();
+  const intl = useIntl();   
   const navigate = useNavigate();
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,6 @@ export const ApplicantDetails = () => {
   const [refreshComment, setRefreshComment] = useState(false);
   const [comment, setComment] = useState("");
   const param = useParams();
-  const [isResumeViewMode,setResumeViewMode] = useState(false);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -159,6 +158,7 @@ export const ApplicantDetails = () => {
           status.applicationStatus
         ),
         userName: currentUser.firstName + " " + currentUser.lastName,
+        jobTitle:applicant.vacancyName
       };
       const commentResponse = await addComment(commentPayload);
       if (!commentResponse.data.success) {

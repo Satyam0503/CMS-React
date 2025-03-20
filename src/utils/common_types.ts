@@ -127,12 +127,15 @@ export type NoticeModel = {
   group: string;
   message: string;
 };
-export type ProgressLogModel = {
-  id: string;
-  target: string;
-  type: string;
-  group: string;
-  message: string;
+export type ProcessLogModel = {
+  processId: string;
+  applicantName: string;
+  companyId:string;
+  userId: string;
+  jobRole:string;
+  commentedOn: string;
+  comments:string;
+  commentedBy:string;
 };
 
 export type ColumnListTypes = {
@@ -187,3 +190,5 @@ export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
+
+export type  GetProcessLogResponseModel = ResponseData<ProcessLogModel>

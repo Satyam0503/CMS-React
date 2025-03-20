@@ -104,6 +104,9 @@ export const ServiceUrl = {
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
+
+  // process log
+  GET_PROCESS_LOG: `${BaseUrl}/api/User/GetProcessLogData`,
 };
 
 export const Regex = {
@@ -381,26 +384,70 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
-    id: "applicant",
-    label: "Applicant",
+    id:'serialNo',
+    label:"S.No.",
+    minWidth:60
   },
   {
-    id: "jobrole",
+    id: "applicantName",
+    label: "Applicant Name",
+    minWidth:150
+  },
+  {
+    id: "jobRole",
     label: "Job Role",
+    minWidth:150
   },
-
   {
-    id: "commentedon",
+    id: "commentedOn",
     label: "Commented On",
-  },
-
-  {
-    id: "comment",
-    label: "Comment",
+    format:(value:string)=> dateFormatter(value, "DD MMM YYYY hh:mm A"),
+    minWidth:150
   },
   {
-    id: "commentedby",
+    id: "commentedBy",
     label: "Commented By",
+    minWidth:150
+  },
+  {
+    id: "comments",
+    label: "Comment",
+    minWidth: 200,
+    build: (value: string) => (
+      <Tooltip
+        title={
+          <Typography
+            dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
+            sx={{
+              fontSize: "12px",
+              "& p": {
+                margin: 0,
+                color: "#FFFFFF",
+              },
+            }}
+          />
+        }
+        arrow
+        placement="top"
+      >
+        <Typography
+          variant="body1"
+          style={{
+            width: "200px",
+            overflow: "hidden",
+            textWrap: "nowrap",
+            textOverflow: "ellipsis",
+            fontSize: "12px",
+          }}
+          dangerouslySetInnerHTML={{ __html: value }}
+          sx={{
+            "& p": {
+              margin: 0,
+            },
+          }}
+        />
+      </Tooltip>
+    ),
   },
 ];
 
@@ -614,6 +661,11 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             fontSize: "12px",
           }}
           dangerouslySetInnerHTML={{ __html: value }}
+          sx={{
+            "& p": {
+              margin: 0,
+            },
+          }}
         />
       </Tooltip>
     ),

@@ -62,7 +62,7 @@ export default function HeaderUserMenu() {
         onClose={handleClose}
         onClick={handleClose}
       >
-        <MenuItem onClick={handleClose} sx={{ gap: 1 }} className="pe-none">
+        <MenuItem onClick={handleClose} sx={{ gap: 1 }} className="pe-none px-2">
           <Avatar
             variant="rounded"
             src={profileImageUrl}
@@ -75,10 +75,11 @@ export default function HeaderUserMenu() {
             <Typography variant="body2">{currentUser?.role || ""}</Typography>
           </Box>
         </MenuItem>
+        <Divider/>
         <MenuItem onClick={()=>{
           navigate("/myprofile")
           handleClose();
-        }}>
+        }} className="px-2">
           <ListItemIcon>
             <AccountCircle />
           </ListItemIcon>
@@ -86,21 +87,21 @@ export default function HeaderUserMenu() {
             {intl.formatMessage({ id: "USER.ACCOUNT_SETTING" })}
           </ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClose} className="px-2">
           <ListItemIcon>
             <Translate />
           </ListItemIcon>
           <ListItemText>
-            {intl.formatMessage({ id: "USER.LANGUAGE" })}{" "}
+            {intl.formatMessage({ id: "USER.LANGUAGE" })}
           </ListItemText>
           <Languages />
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleClose} className="px-2">
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
           <ListItemText onClick={logout}>
-            {intl.formatMessage({ id: "AUTH.SIGNOUT" })}{" "}
+            {intl.formatMessage({ id: "AUTH.SIGNOUT" })}
           </ListItemText>
         </MenuItem>
       </Menu>
