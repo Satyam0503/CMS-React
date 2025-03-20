@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Card,
   CardContent,
@@ -15,6 +16,9 @@ import { useIntl } from "react-intl";
 // import IconStat from "../components/IconStat";
 // import { colors } from "../theme/MuiTheme";
 import {
+  Add,
+  Download,
+  FilterList,
   Home,
   HourglassBottom,
   HourglassTop,
@@ -27,9 +31,26 @@ import LeaveSummary from "./components/LeaveSummary";
 import IconStat from "../../shared/components/IconStat";
 import { colors } from "../theme/MuiTheme";
 import BasicTable from "../../shared/components/BasicTable";
+import { CustomisedTable } from "../../shared/components/CustomisedTable";
+import {
+  LeaveMangementTableColumnList,
+  LeaveSummaryTableColumnList,
+} from "../../../utils/constant/Constant";
+import { LeavesModel } from "../../../utils/common_types";
+import { CustomIconButton } from "../../shared/components/CustomIconButton";
+import { SearchInput } from "../../shared/components/SearchInput";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
+  const [searchValue, setSearchValue] = React.useState("");
+  const [LeaveList, setLeaveList] = React.useState<LeavesModel[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowPerPage, setRowPerPage] = React.useState<number>(10);
+  const [isLoading, setLoading] = React.useState(false);
+
+  const handleSearchChange = React.useCallback((value: string) => {
+    setSearchValue(value);
+  }, []);
 
   return (
     <>
@@ -139,9 +160,54 @@ export const EmployeeLeaves: FC = () => {
         </Grid>
         <Grid item xs={12}>
           <Stack spacing={2}>
-            <LeaveSummary />
-            {/* <CustomisedTable columns={EmployeeLeaves} /> */}
-            <BasicTable />
+            <Card sx={{ p: "2rem" }}>
+              <CustomisedTable
+                tabName="Leave Requests"
+                columns={LeaveSummaryTableColumnList}
+                rows={LeaveList}
+                page={page}
+                rowsPerPage={rowPerPage}
+                loading={isLoading}
+              />
+            </Card>
+            <Card sx={{ p: "2rem" }}>
+              <Typography variant="h6" mb={3}>
+                {intl.formatMessage({ id: "MENU.LEAVE_REQUEST" })}
+              </Typography>
+              <Stack
+                direction="row"
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                flexWrap={"wrap-reverse"}
+                gap={2}
+              >
+                <SearchInput
+                  search={searchValue}
+                  setSearch={handleSearchChange}
+                />
+
+                <Stack direction="row" spacing={1}>
+                  <CustomIconButton
+                    tooltip="Filter List"
+                    icon={<FilterList />}
+                  />
+                  <CustomIconButton tooltip="Add leaves" icon={<Add />} />
+                  <CustomIconButton
+                    tooltip="Import Excel"
+                    icon={<Download />}
+                  />
+                </Stack>
+              </Stack>
+              <CustomisedTable
+                tabName="Leave Requests"
+                columns={LeaveMangementTableColumnList}
+                rows={LeaveList}
+                page={page}
+                rowsPerPage={rowPerPage}
+                loading={isLoading}
+              />
+            </Card>
           </Stack>
         </Grid>
       </Grid>

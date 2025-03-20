@@ -134,6 +134,13 @@ export type ProgressLogModel = {
   group: string;
   message: string;
 };
+export type LeavesModel = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export type ColumnListTypes = {
   id: string;

@@ -404,6 +404,81 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     label: "Commented By",
   },
 ];
+export const LeaveSummaryTableColumnList: ColumnListTypes[] = [
+  {
+    id: "date",
+    label: "Date",
+  },
+  {
+    id: "absent",
+    label: "Absent",
+  },
+
+  {
+    id: "firsthalf",
+    label: "First Half",
+  },
+
+  {
+    id: "secondhalf",
+    label: "Second Half",
+  },
+  {
+    id: "workfromhome",
+    label: "Working from home",
+  },
+  {
+    id: "total",
+    label: "Total",
+  },
+
+  {
+    id: "action",
+    label: "Action",
+    build: (row: Applicant) => <ActionComponent row={row} />,
+  },
+];
+export const LeaveMangementTableColumnList: ColumnListTypes[] = [
+  {
+    id: "name",
+    label: "Name",
+  },
+  {
+    id: "type",
+    label: "Leave type",
+  },
+
+  {
+    id: "from",
+    label: "From",
+  },
+
+  {
+    id: "to",
+    label: "To",
+  },
+  {
+    id: "days",
+    label: "Days",
+  },
+  {
+    id: "remaining",
+    label: "Remaining",
+  },
+  {
+    id: "reason",
+    label: "Reason",
+  },
+  {
+    id: "status",
+    label: "Status",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (row: Applicant) => <ActionComponent row={row} />,
+  },
+];
 
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
