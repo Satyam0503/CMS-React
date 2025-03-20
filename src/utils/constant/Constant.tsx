@@ -380,6 +380,30 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+export const ProcessLogTableColumnList: ColumnListTypes[] = [
+  {
+    id: "applicant",
+    label: "Applicant",
+  },
+  {
+    id: "jobrole",
+    label: "Job Role",
+  },
+
+  {
+    id: "commentedon",
+    label: "Commented On",
+  },
+
+  {
+    id: "comment",
+    label: "Comment",
+  },
+  {
+    id: "commentedby",
+    label: "Commented By",
+  },
+];
 
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {

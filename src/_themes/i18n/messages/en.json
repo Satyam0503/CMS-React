@@ -117,6 +117,7 @@
   "MENU.NOTICE_BOARD": "Notice Board",
   "MENU.USER.NOTICE_BOARD": "My notice board",
   "MENU.NOTICE_EDIT": "Edit Notice",
+  "MENU.PROCESS_LOG": "Process Log",
   "MENU.PROFILE": "My Profile",
   "MENU.SETTINGS": "Settings",
   "MENU.ADMIN": "Admin",
@@ -233,7 +234,7 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
   "ROLES.EDIT_AND_PERMISSION": "Edit Role And Permission",
-  "ROLE.NAME":"Role Name",
+  "ROLE.NAME": "Role Name",
   "ROLES.ADD": " Add Role",
   "RECRUITMENT.JOBS": "Jobs ",
   "REQUIREMENT.JOBS": "Job Requirements ",
@@ -367,8 +368,8 @@
   "APPLICATION.STATUS.SELECTED": "Selected",
   "APPLICATION.STATUS.REJECTED": "Rejected",
 
-  "ADMIN.ADD_ROLE":"Add New Role",
-  "ADMIN.PERMISSION":"Permissions",
-  "ADMIN.EDIT_PERMISSION":"Edit Permissions",
-  "ADMIN.VIEW_PERMISSION":"View Permissions"
+  "ADMIN.ADD_ROLE": "Add New Role",
+  "ADMIN.PERMISSION": "Permissions",
+  "ADMIN.EDIT_PERMISSION": "Edit Permissions",
+  "ADMIN.VIEW_PERMISSION": "View Permissions"
 }

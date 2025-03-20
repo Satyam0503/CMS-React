@@ -127,6 +127,13 @@ export type NoticeModel = {
   group: string;
   message: string;
 };
+export type ProgressLogModel = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export type ColumnListTypes = {
   id: string;
