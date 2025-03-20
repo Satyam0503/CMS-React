@@ -171,6 +171,28 @@ export const bloodGroups = [
   { id: 7, label: "O+", value: "O+" },
   { id: 8, label: "O-", value: "O-" },
 ];
+export const Days = [
+  {
+    id: 1,
+    label: "Today",
+    value: "today",
+  },
+  {
+    id: 2,
+    label: "This week",
+    value: "thisWeek",
+  },
+  {
+    id: 3,
+    label: "This month",
+    value: "thisMonth",
+  },
+  {
+    id: 4,
+    label: "This year",
+    value: "thisYear",
+  },
+];
 
 export const JobTime = [
   {

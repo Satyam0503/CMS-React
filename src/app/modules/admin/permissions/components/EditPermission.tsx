@@ -124,7 +124,12 @@ export const EditPermission = () => {
     } else {
       setRolePermissionList([
         ...rolePermissionList,
-        { ...newPermission, hasAccess: isChecked,rolePermissionId:"",rolesId:""},
+        {
+          ...newPermission,
+          hasAccess: isChecked,
+          rolePermissionId: "",
+          rolesId: "",
+        },
       ]);
     }
   };
@@ -142,7 +147,7 @@ export const EditPermission = () => {
     };
     try {
       const response = await addEditRole(payload);
-      const { success ,message} = response.data;
+      const { success, message } = response.data;
       if (success) {
         toast.success(message);
         navigate("/admin/permissions");
@@ -160,110 +165,114 @@ export const EditPermission = () => {
         </Typography>
       </Stack>
       <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
-        <form onSubmit={formik.handleSubmit}  className="flex-grow-1 d-flex flex-column gap-4">
-            <Stack spacing={2}>
-              <TextField
-                fullWidth
-                required
-                error={formik.touched.titles && Boolean(formik.errors.titles)}
-                disabled={state?.isNotEditable}
-                label={intl.formatMessage({ id: "ROLE.NAME" })}
-                {...formik.getFieldProps("titles")}
-              />
-              <TextField
-                fullWidth
-                required
-                disabled={state?.isNotEditable}
-                error={
-                  formik.touched.description &&
-                  Boolean(formik.errors.description)
-                }
-                label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
-                {...formik.getFieldProps("description")}
-              />
-            </Stack>
-            {isLoading ? (
-              <CircularLoader />
-            ) : (
-              <>
-                <Stack spacing={1}>
-                  <Typography variant="h5">
-                    {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
-                  </Typography>
-                  <Box
-                    component={"div"}
-                    sx={{
-                      border: "1px solid",
-                      borderColor: colors.alpha.neutral[200],
-                      borderRadius: 1,
-                      p: 2,
-                    }}
-                  >
-                    {modulePermissionList.length !== 0 && (
-                      <Stack spacing={2} divider={<Divider />}>
-                        {modulePermissionList.map((module, index) => {
-                          return (
-                            <Stack spacing={0.5} key={index}>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontWeight: 600 }}
-                              >
-                                {module.moduleName}
-                              </Typography>
-                              <FormGroup
-                                row
-                                sx={{ paddingInlineStart: 2, fontSize: "12px" }}
-                                className="d-flex flex-row gap-2"
-                              >
-                                {module.permissions.map((permission) => {
-                                  return (
-                                    <FormControlLabel
-                                      labelPlacement="end"
-                                      label={permission.permissionName}
-                                      key={permission.modulePermissionId}
-                                      disabled={state?.isNotEditable}
-                                      value={permission.modulePermissionId}
-                                      control={
-                                        <Checkbox
-                                          onChange={(e) => {
-                                            handlePermissionChange(
-                                              permission,
-                                              e.target.checked
-                                            );
-                                          }}
-                                        />
-                                      }
-                                      checked={checkUserModulePermission(
-                                        permission.modulePermissionId
-                                      )}
-                                    />
-                                  );
-                                })}
-                              </FormGroup>
-                            </Stack>
-                          );
-                        })}
-                      </Stack>
-                    )}
-                  </Box>
-                </Stack>
-                <Stack
-                  direction={"row"}
-                  spacing={2}
-                  className="justify-content-end"
+        <form
+          onSubmit={formik.handleSubmit}
+          className="flex-grow-1 d-flex flex-column gap-4"
+        >
+          <Stack spacing={2}>
+            <TextField
+              fullWidth
+              required
+              error={formik.touched.titles && Boolean(formik.errors.titles)}
+              disabled={state?.isNotEditable}
+              label={intl.formatMessage({ id: "ROLE.NAME" })}
+              {...formik.getFieldProps("titles")}
+            />
+            <TextField
+              fullWidth
+              required
+              disabled={state?.isNotEditable}
+              error={
+                formik.touched.description && Boolean(formik.errors.description)
+              }
+              label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
+              {...formik.getFieldProps("description")}
+            />
+          </Stack>
+          {isLoading ? (
+            <CircularLoader />
+          ) : (
+            <>
+              <Stack spacing={1}>
+                <Typography variant="h5">
+                  {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
+                </Typography>
+                <Box
+                  component={"div"}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: colors.alpha.neutral[200],
+                    borderRadius: 1,
+                    p: 2,
+                  }}
                 >
-                  <CustomisedButton variant="outlined"  label={intl.formatMessage({ id: "BUTTON.RESET" })} />
-                  <CustomisedButton
-                    disabled={state?.isNotEditable}
-                    label={intl.formatMessage({ id: "BUTTON.SAVE" })}
-                    Icon={<Check />}
-                    iconPosition="start"
-                    type="submit"
-                  />
-                </Stack>
-              </>
-            )}
-       
+                  {modulePermissionList.length !== 0 && (
+                    <Stack spacing={2} divider={<Divider />}>
+                      {modulePermissionList.map((module, index) => {
+                        return (
+                          <Stack spacing={0.5} key={index}>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontWeight: 600 }}
+                            >
+                              {module.moduleName}
+                            </Typography>
+                            <FormGroup
+                              row
+                              sx={{ paddingInlineStart: 2, fontSize: "12px" }}
+                              className="d-flex flex-row gap-2"
+                            >
+                              {module.permissions.map((permission) => {
+                                return (
+                                  <FormControlLabel
+                                    labelPlacement="end"
+                                    label={permission.permissionName}
+                                    key={permission.modulePermissionId}
+                                    disabled={state?.isNotEditable}
+                                    value={permission.modulePermissionId}
+                                    control={
+                                      <Checkbox
+                                        onChange={(e) => {
+                                          handlePermissionChange(
+                                            permission,
+                                            e.target.checked
+                                          );
+                                        }}
+                                      />
+                                    }
+                                    checked={checkUserModulePermission(
+                                      permission.modulePermissionId
+                                    )}
+                                  />
+                                );
+                              })}
+                            </FormGroup>
+                          </Stack>
+                        );
+                      })}
+                    </Stack>
+                  )}
+                </Box>
+              </Stack>
+              <Stack
+                direction={"row"}
+                spacing={2}
+                className="justify-content-end"
+              >
+                <CustomisedButton
+                  variant="outlined"
+                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
+                />
+                <CustomisedButton
+                  disabled={state?.isNotEditable}
+                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
+                  Icon={<Check />}
+                  iconPosition="start"
+                  type="submit"
+                />
+              </Stack>
+            </>
+          )}
         </form>
       </Card>
     </>

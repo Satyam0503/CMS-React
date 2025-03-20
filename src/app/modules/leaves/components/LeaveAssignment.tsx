@@ -93,7 +93,7 @@ export default function LeaveAssignment() {
                 id: "USER.DOJ",
               })}
             </Typography>
-            {/* <CustomisedDatePicker /> */}
+            <CustomisedDatePicker />
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="body1">

@@ -33,12 +33,14 @@ import { colors } from "../theme/MuiTheme";
 import BasicTable from "../../shared/components/BasicTable";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import {
+  Days,
   LeaveMangementTableColumnList,
   LeaveSummaryTableColumnList,
 } from "../../../utils/constant/Constant";
 import { LeavesModel } from "../../../utils/common_types";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
+import { SelectInput } from "../../shared/components/form-component/SelectInput";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
@@ -47,10 +49,14 @@ export const EmployeeLeaves: FC = () => {
   const [page, setPage] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
+  const [selectedDay, setSelectedDay] = React.useState("today");
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
   }, []);
+  const handleChange = (event: any) => {
+    setSelectedDay(event.target.value);
+  };
 
   return (
     <>
@@ -127,27 +133,21 @@ export const EmployeeLeaves: FC = () => {
           gap={2}
         >
           <Stack>
-            <FormControl sx={{ minWidth: 150, border: "none" }}>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                defaultValue={19}
-                renderValue={(value) => {
-                  if (value === 19) return "Today";
-                  if (value === 20) return "This Week";
-                  if (value === 21) return "This Month";
-                  if (value === 22) return "This Year";
-
-                  return "";
-                }}
-                sx={{ background: "white" }}
-              >
-                <MenuItem value={19}>Today</MenuItem>
-                <MenuItem value={20}>This Week</MenuItem>
-                <MenuItem value={21}>This Month</MenuItem>
-                <MenuItem value={22}>This Year</MenuItem>
-              </Select>
-            </FormControl>
+            <Select
+              name="days"
+              onChange={handleChange}
+              value={selectedDay}
+              sx={{
+                minWidth: "130px",
+                bgcolor: colors.alpha.white[500],
+              }}
+            >
+              {Days.map((item) => (
+                <MenuItem key={item.id} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
           </Stack>
           <Stack direction="row" spacing={1}>
             <Stack>
