@@ -209,6 +209,19 @@ export const findUserDefaultTab = (
   return defaultTab.route;
 };
 
+export const getModulePermissions = (moduleName:ModulesName,modulesPermissions:ModulePermissoinModel[])=>{  
+    const allowedPermission : string[] = [];
+    const hasModuleAccess = modulesPermissions.find(module =>module.moduleConstant === moduleName );
+    if(hasModuleAccess){
+      hasModuleAccess.permissions.forEach((permission)=>{
+        if(permission.hasAccess){
+          allowedPermission.push(permission.permissionConstant) 
+        }
+      })
+    }
+    return allowedPermission;
+}
+
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
   if (columnValueType === "number") {
