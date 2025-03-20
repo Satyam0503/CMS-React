@@ -41,6 +41,7 @@ export enum Modules {
   Applications = 12,
   Permissions = 13,
   Theme = 14,
+  ProcessLog=15
 }
 
 export enum ModulesName {
@@ -58,6 +59,7 @@ export enum ModulesName {
   Applications = "Applications",
   Permissions = "Permissions",
   Theme = "Theme",
+  ProcessLog= "Process Log"
 }
 
 export enum Roles {

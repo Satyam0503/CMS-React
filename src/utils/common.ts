@@ -167,7 +167,7 @@ export const checkPermissionForModuleAndRoute = (
     return false;
   }
   const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === Permission.View
+    (permission) => permission.permissionConstant === Permission.View && permission.hasAccess
   );
   if (!hasPermission) {
     return false;
@@ -302,14 +302,14 @@ export const getKeyForTableRow = <Row>(row: Row, keyName: keyof Row) => {
   return row[keyName] as string;
 };
 
-export const flatUserModulePermissions = (
-  userModulePermission: ModulePermissoinModel[]
+export const flatRolePermissionList = (
+  rolePermissionList: ModulePermissoinModel[]
 ) => {
-  const UpdatedModulePermission: PermissionModel[] = [];
-  userModulePermission.forEach((module) => {
+  const updatedRolePermission: PermissionModel[] = [];
+  rolePermissionList.forEach((module) => {
     module.permissions.forEach((permission) => {
-      UpdatedModulePermission.push(permission);
+      updatedRolePermission.push(permission);
     });
   });
-  return UpdatedModulePermission;
+  return updatedRolePermission;
 };

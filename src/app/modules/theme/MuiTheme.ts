@@ -827,7 +827,7 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          maxHeight: "225px",
+          maxHeight: "200px",
         },
 
         list: {
@@ -1180,15 +1180,17 @@ export const MuiTheme = createTheme({
           "&:hover": {
             background: "none",
           },
-          "&.Mui-disabled": {
-            color: colors.alpha.neutral[200],
-          },
-
+          
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
             background: "none",
           },
-          "& .MuiSvgIcon-root": { fontSize: 25 },
+
+          "&.Mui-disabled": {
+            color: colors.alpha.neutral[400],
+          },
+
+          "& .MuiSvgIcon-root": { fontSize: 20 },
         },
       },
     },
