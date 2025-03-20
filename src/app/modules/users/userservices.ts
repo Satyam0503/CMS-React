@@ -11,6 +11,7 @@ import {
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
+import { UploadProfileResponseModel } from "./models";
 
 
 export const getEmployeeById = async () => {
@@ -82,7 +83,7 @@ export const updateEmployeeEducation = async (payload:UserEducationModel)=>{
 }
 
 export const updateProfilePicture = async (payload:FormData)=>{
-  return postRequest<FormData,ApiResponse>(ServiceUrl.UPDATE_PROFILE_PICTURE,payload,{},true);
+  return postRequest<FormData,UploadProfileResponseModel>(ServiceUrl.UPDATE_PROFILE_PICTURE,payload,{},true);
 }
 
 export const deleteEmployeeEducation = async (educationId:string) =>{

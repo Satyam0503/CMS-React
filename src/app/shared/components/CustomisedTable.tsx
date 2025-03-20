@@ -14,7 +14,6 @@ import { TableSorting } from "./TableSorting";
 import { useNavigate } from "react-router-dom";
 import { ModulesName } from "../../../utils/enums";
 import { getKeyForTableRow } from "../../../utils/common";
-import { useAppSelector } from "../../Redux/hooks";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -33,7 +32,6 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
   const [tableRows, setTableRows] = useState(props.rows);
-  const userModulePermission = useAppSelector(state=>state.user.userPermissions);
   const {
     rows,
     keyName,

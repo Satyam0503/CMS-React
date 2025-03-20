@@ -17,8 +17,6 @@ import {
 } from "@mui/material";
 import {
   Close,
-  Message,
-  MessageOutlined,
   NotificationsOutlined,
 } from "@mui/icons-material";
 
@@ -29,13 +27,12 @@ import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 export default function HeaderNotificationMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const logout = useLogout();
-  const currentUser = useAppSelector((state) => state.user.userData);
+
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
+
   const handleClose = () => {
     setAnchorEl(null);
   };

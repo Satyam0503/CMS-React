@@ -34,7 +34,8 @@ const NoticeBoard = lazy(
 const ProcessLog = lazy(()=>import("../modules/processlog/ProcessLog.tsx"));
 
 const PrivateRoutes = () => {
-  const userPermissions = useAppSelector((state) => state.user.userPermissions);
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
+  const userPermissions = modulePermissions ?? [];
   return (
     <Routes>
       <Route element={<MasterLayout />}>

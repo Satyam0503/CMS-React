@@ -16,7 +16,6 @@ const MasterLayout = () => {
   }, [location.key]);
 
   return (
-    // <PageDataProvider>
     <>
       <Grid
         item
@@ -57,7 +56,6 @@ const MasterLayout = () => {
       <ScrollTop />
     </>
 
-    // </PageDataProvider>
   );
 };
 

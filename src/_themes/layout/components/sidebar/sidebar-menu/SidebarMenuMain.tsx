@@ -5,8 +5,9 @@ import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
 
 const SidebarMenuMain = () => {
-  const userModulePermission = useAppSelector((state) => state.user.userPermissions);
-
+  const modulePermission = useAppSelector((state) => state.user.userData?.modulePermission);
+  const userModulePermission = modulePermission  ?? [];
+  
   const filteredTabList = SideBarTabList.filter((tab) => {
     if (tab.hasSubTabs) {
       const filteredSubTabs = tab.subTabs?.filter(

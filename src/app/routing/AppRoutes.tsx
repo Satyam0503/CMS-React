@@ -12,8 +12,8 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
-  const userPermissions = useAppSelector((state) => state.user.userPermissions);
-
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
+  const userModulePermission= modulePermissions ?? [];
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
@@ -27,7 +27,7 @@ const AppRoutes: FC = () => {
               <Route path="/*" element={<PrivateRoutes />} />
               <Route
                 index
-                element={<Navigate to={findUserDefaultTab(userPermissions)} />}
+                element={<Navigate to={findUserDefaultTab(userModulePermission)} />}
               />
             </>
           ) : (

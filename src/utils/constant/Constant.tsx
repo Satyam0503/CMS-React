@@ -22,7 +22,6 @@ import {
   TIME_PERIOD_MAP,
 } from "../enums";
 
-import { AddressDetailsIcon } from "../../app/shared/components/AddressDetailsIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   AccessTime,

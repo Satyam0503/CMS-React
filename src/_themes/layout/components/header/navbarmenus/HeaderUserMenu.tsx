@@ -4,31 +4,31 @@ import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuList from "@mui/material/MenuList";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
-
 import {
   Grid,
   Link,
-  ListItem,
-  ListItemButton,
+  ListItemIcon,
   ListItemText,
   MenuItem,
 } from "@mui/material";
 
-import { wrap } from "module";
 import { useLogout } from "../../../../../app/modules/auth";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { colors } from "../../../../../app/modules/theme/MuiTheme";
 import { Languages } from "./Languages";
+import {
+  AccountCircle,
+  GTranslate,
+  Logout,
+  Translate,
+} from "@mui/icons-material";
+import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 export default function HeaderUserMenu() {
+  const intl = useIntl();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const logout = useLogout();
 
@@ -37,24 +37,24 @@ export default function HeaderUserMenu() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
+  const profileImageUrl = useAppSelector(
+    (state) => state.user.userData?.profileImage
+  );
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const navigate = useNavigate();
   return (
     <>
-      <Tooltip title="User settings">
-        <Avatar
-          onClick={handleClick}
-          aria-controls={open ? "account-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          src={profileImageUrl}
-          variant="rounded"
-          sx={{ width: 40, height: 40 }}
-        />
-      </Tooltip>
-
+      <Avatar
+        onClick={handleClick}
+        aria-controls={open ? "account-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        src={profileImageUrl}
+        variant="rounded"
+        sx={{ width: 40, height: 40 }}
+      />
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -62,92 +62,47 @@ export default function HeaderUserMenu() {
         onClose={handleClose}
         onClick={handleClose}
       >
-        <Grid
-          container
-          flexDirection={"column"}
-          gap={0.5}
-          sx={{
-            bgcolor: "inherit",
-            maxWidth: "280px",
-          }}
-        >
-          <MenuList
-            sx={{
-              display: "flex",
-              gap: 2,
-              bgcolor: colors.alpha.neutral[100],
-              color: colors.alpha.primary[500],
-            }}
-          >
-            <Avatar sx={{ borderRadius: ".25rem" }} src={profileImageUrl}>
-              <img alt="profile picture" width={"40px"} height={"40px"} />
-            </Avatar>
-            <Box>
-              <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
-                {currentUser?.firstName} {currentUser?.lastName}
-              </Typography>
-              <Typography variant="body2">{currentUser?.role || ""}</Typography>
-            </Box>
-          </MenuList>
-          <Divider sx={{ bgcolor: colors.alpha.neutral[400] }} />
-          <MenuList
-            onClick={handleClose}
-            sx={{
-              py: 0.5,
-              borderRadius: ".5rem",
-              bgcolor: colors.alpha.neutral[100],
-              "&:hover": {
-                bgcolor: colors.alpha.neutral[200],
-              },
-            }}
-          >
-            <Link
-              href="/myprofile"
-              color={colors.alpha.neutral[800]}
-              sx={{
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: colors.alpha.neutral[200],
-                  color: colors.alpha.primary[500],
-                },
-              }}
-            >
-              <ListItemText primary="Account Settings" />
-            </Link>
-          </MenuList>
-          <MenuList
-            onClick={handleClose}
-            sx={{
-              display: "flex",
-              py: 0,
-              alignItems: "center",
-              borderRadius: ".5rem",
-              bgcolor: colors.alpha.neutral[100],
-              "&:hover": {
-                bgcolor: colors.alpha.neutral[200],
-                color: colors.alpha.primary[500],
-              },
-            }}
-          >
-            <ListItemText primary="Language" />
-            <Languages />
-          </MenuList>
-          <MenuList
-            onClick={handleClose}
-            sx={{
-              display: "flex",
-              py: 0.5,
-              borderRadius: ".5rem",
-              bgcolor: colors.alpha.neutral[100],
-              "&:hover": {
-                bgcolor: colors.alpha.neutral[200],
-                color: colors.alpha.primary[500],
-              },
-            }}
-          >
-            <ListItemText onClick={logout} primary="Sign Out" />
-          </MenuList>
-        </Grid>
+        <MenuItem onClick={handleClose} sx={{ gap: 1 }} className="pe-none">
+          <Avatar
+            variant="rounded"
+            src={profileImageUrl}
+            sx={{ width: 40, height: 40 }}
+          />
+          <Box>
+            <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
+              {currentUser?.firstName} {currentUser?.lastName}
+            </Typography>
+            <Typography variant="body2">{currentUser?.role || ""}</Typography>
+          </Box>
+        </MenuItem>
+        <MenuItem onClick={()=>{
+          navigate("/myprofile")
+          handleClose();
+        }}>
+          <ListItemIcon>
+            <AccountCircle />
+          </ListItemIcon>
+          <ListItemText>
+            {intl.formatMessage({ id: "USER.ACCOUNT_SETTING" })}
+          </ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Translate />
+          </ListItemIcon>
+          <ListItemText>
+            {intl.formatMessage({ id: "USER.LANGUAGE" })}{" "}
+          </ListItemText>
+          <Languages />
+        </MenuItem>
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <Logout />
+          </ListItemIcon>
+          <ListItemText onClick={logout}>
+            {intl.formatMessage({ id: "AUTH.SIGNOUT" })}{" "}
+          </ListItemText>
+        </MenuItem>
       </Menu>
     </>
   );
