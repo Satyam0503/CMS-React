@@ -271,6 +271,19 @@ export default function ProfileCard() {
               {fileError && <ErrorLabel>{fileError}</ErrorLabel>}
             </Stack>
           </Box>
+          <Stack mt={1}>
+            <CustomisedButton
+              variant="outlined"
+              label="Delete File"
+              Icon={<DeleteOutlineOutlined />}
+              iconPosition="end"
+              handleClick={handleUpdateAvatar}
+              style={{
+                visibility: !seletedFile ? "hidden" : "visible",
+                color: colors.alpha.danger[500],
+              }}
+            />
+          </Stack>
         </CustomisedModal>
       )}
     </>
