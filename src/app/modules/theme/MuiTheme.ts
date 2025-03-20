@@ -827,7 +827,7 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          maxHeight: "200px",
+          maxHeight: "230px", // it must be 230px , which is suitable for all
         },
 
         list: {
@@ -1180,7 +1180,7 @@ export const MuiTheme = createTheme({
           "&:hover": {
             background: "none",
           },
-          
+
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
             background: "none",
