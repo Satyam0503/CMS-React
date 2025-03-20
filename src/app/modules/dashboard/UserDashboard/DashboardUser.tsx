@@ -1,6 +1,6 @@
 import { Stack, Typography, Grid, Card } from "@mui/material";
 import { useIntl } from "react-intl";
-import DonutApexChart from "../../components/DonutApexChart";
+import DonutApexChart from "../../../shared/components/DonutApexChart";
 import OpenPositions from "../AdminDashboard/components/OpenPositions";
 import NoticeBoard from "../AdminDashboard/components/NoticeBoard";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
@@ -9,8 +9,8 @@ import EmpOfMonth from "../AdminDashboard/components/EmpOfMonth";
 import UpcomingBirthday from "../AdminDashboard/components/UpcomingBirthday";
 import Punctual from "../AdminDashboard/components/Punctual";
 import Help from "../AdminDashboard/components/Help";
-import { AttendanceChart } from "../../components/AttendanceChart";
-import CustomisedButton from "../../components/CustomisedButton";
+import { AttendanceChart } from "../../../shared/components/AttendanceChart";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Celebration } from "@mui/icons-material";
 import AttendanceTable from "../AdminDashboard/components/LeaveTable";
 import { useAppSelector } from "../../../Redux/hooks";

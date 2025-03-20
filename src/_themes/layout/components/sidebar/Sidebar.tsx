@@ -2,8 +2,7 @@
 import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { ILayout, useLayout } from "../../core";
-import { SidebarMenu } from "./sidebar-menu/SidebarMenu";
-import { SidebarFooter } from "./SidebarFooter";
+import { SidebarMenu } from "../sidebar/sidebar-menu/SidebarMenu";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
@@ -14,18 +13,18 @@ const Sidebar = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
 
-  const appSidebarDefaultMinimizeDesktopEnabled =
-    config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
-  const appSidebarDefaultCollapseDesktopEnabled =
-    config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
-  const toggleType = appSidebarDefaultCollapseDesktopEnabled
-    ? "collapse"
-    : appSidebarDefaultMinimizeDesktopEnabled
-    ? "minimize"
-    : "";
-  const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
-  const appSidebarDefaultMinimizeDefault =
-    config.app?.sidebar?.default?.minimize?.desktop?.default;
+  // const appSidebarDefaultMinimizeDesktopEnabled =
+  //   config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
+  // const appSidebarDefaultCollapseDesktopEnabled =
+  //   config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
+  // const toggleType = appSidebarDefaultCollapseDesktopEnabled
+  //   ? "collapse"
+  //   : appSidebarDefaultMinimizeDesktopEnabled
+  //   ? "minimize"
+  //   : "";
+  // const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
+  // const appSidebarDefaultMinimizeDefault =
+  //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
   const profileUrl = useAppSelector((state) => state.user.profileImageUrl);
 
@@ -38,39 +37,36 @@ const Sidebar = () => {
   }
   return (
     <>
-      {(config.layoutType === "dark-sidebar" ||
-        config.layoutType === "light-sidebar") && (
-        <Grid
-          item
-          ref={sidebarRef}
-          id="kt_app_sidebar"
-          className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
-        >
-          <Stack padding={3} gap={4} alignItems="center" width="100%">
-            <SidebarLogo sidebarRef={sidebarRef} />
-            <Stack spacing={2} alignItems={"center"}>
-              <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
-                <Avatar
-                  alt=""
-                  src={profileUrl}
-                  sizes="100"
-                  // use media query for avatar
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    aspectRatio: 1,
-                  }}
-                />
-              </Stack>
-              <Typography variant="h6" color="inherit">
-                {`${currentUser?.firstName}  ${currentUser?.lastName}`}
-              </Typography>
+      <Grid
+        item
+        ref={sidebarRef}
+        id="kt_app_sidebar"
+        className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
+      >
+        <Stack padding={3} gap={4} alignItems="center" width="100%">
+          <SidebarLogo sidebarRef={sidebarRef} />
+          <Stack spacing={2} alignItems={"center"}>
+            <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
+              <Avatar
+                alt=""
+                src={profileUrl}
+                sizes="100"
+                // use media query for avatar
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  aspectRatio: 1,
+                }}
+              />
             </Stack>
+            <Typography variant="h6" color="inherit">
+              {`${currentUser?.firstName}  ${currentUser?.lastName}`}
+            </Typography>
           </Stack>
-          <SidebarMenu />
-        </Grid>
-      )}
+        </Stack>
+        <SidebarMenu />
+      </Grid>
     </>
   );
 };

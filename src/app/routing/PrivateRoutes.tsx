@@ -8,7 +8,7 @@ import { findUserDefaultTab } from "../../utils/common.ts";
 import { useAppSelector } from "../Redux/hooks.ts";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
-import { UnAuthorizedAccess } from "../modules/components/UnAuthorizedAccess.tsx";
+import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 
 const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
 const Setting = lazy(() => import("../modules/admin/Settings.tsx"));
@@ -31,6 +31,7 @@ const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(
   () => import("../modules/noticeboard/NoticeBoard.tsx")
 );
+const ProcessLog = lazy(() => import("../modules/processlog/ProcessLog.tsx"));
 
 const PrivateRoutes = () => {
   const userPermissions = useAppSelector((state) => state.user.userPermissions);
@@ -131,7 +132,16 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
-        {/* <Route path="/usernoticeboard" element={<UserNoticeBoard />} /> */}
+        <Route
+          path="/processlog"
+          element={
+            <SuspensedView>
+              <ProtectedRoute module={ModulesName.ProcessLog}>
+                <ProcessLog />
+              </ProtectedRoute>
+            </SuspensedView>
+          }
+        />
         <Route
           path="/unauthorize"
           element={<UnAuthorizedAccess type="unauthorise" />}

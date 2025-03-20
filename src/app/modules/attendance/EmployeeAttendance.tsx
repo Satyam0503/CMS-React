@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import { useIntl } from "react-intl";
-import IconStat from "../components/IconStat";
+import IconStat from "../../shared/components/IconStat";
 import { Grid, Typography } from "@mui/material";
 import { HourglassBottom } from "@mui/icons-material";
 import { colors } from "../theme/MuiTheme";

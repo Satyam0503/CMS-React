@@ -300,7 +300,13 @@ export const MuiTheme = createTheme({
         },
       },
     },
-
+    MuiBadge: {
+      styleOverrides: {
+        badge: {
+          backgroundColor: colors.alpha.primary[500],
+        },
+      },
+    },
     //icon of select outlined
     MuiSelect: {
       styleOverrides: {
@@ -821,7 +827,7 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          maxHeight: "260px",
+          maxHeight: "200px",
         },
 
         list: {
@@ -890,9 +896,11 @@ export const MuiTheme = createTheme({
     //     },
     //   },
     // },
-
     MuiAutocomplete: {
       styleOverrides: {
+        paper: {
+          maxHeight: "240px",
+        },
         clearIndicator: {
           color: colors.alpha.primary[500],
           border: 0,
@@ -1172,15 +1180,17 @@ export const MuiTheme = createTheme({
           "&:hover": {
             background: "none",
           },
-          "&.Mui-disabled": {
-            color: colors.alpha.neutral[200],
-          },
-
+          
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
             background: "none",
           },
-          "& .MuiSvgIcon-root": { fontSize: 25 },
+
+          "&.Mui-disabled": {
+            color: colors.alpha.neutral[400],
+          },
+
+          "& .MuiSvgIcon-root": { fontSize: 20 },
         },
       },
     },

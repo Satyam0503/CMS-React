@@ -2,14 +2,11 @@ import * as React from "react";
 import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
-import JobDescription from "./components/JobDescription";
-import { CustomIconButton } from "../../components/CustomIconButton";
-import { SearchInput } from "../../components/SearchInput";
-import { CustomisedTable } from "../../components/CustomisedTable";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { SearchInput } from "../../../shared/components/SearchInput";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../components/Pagination";
-import { ConfirmationModal } from "../../components/ConfirmationModal";
-import { JobModal } from "../../../../utils/common_types";
+import { Pagination } from "../../../shared/components/Pagination";
 import {
   addJobVacancy,
   deleteJobVacancy,
@@ -19,6 +16,10 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { JobModal } from "../models";
+import { AddEditJob } from "./components/AddEditJob";
+import { removeUnwantedString } from "../../../../utils/common";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -107,10 +108,11 @@ export default function Jobs() {
     values: JobModal,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
+    const payload = {
+      ...values,
+      description: removeUnwantedString(values.description)
+    };
     if (isEdit) {
-      const payload = {
-        ...values,
-      };
       const jobId = values.jobId;
       try {
         const response = await editJobVacancy(payload, jobId);
@@ -127,9 +129,6 @@ export default function Jobs() {
         setSubmitting(false);
       }
     } else {
-      const payload = {
-        ...values,
-      };
       try {
         const response = await addJobVacancy(payload);
         const { message, success } = response.data;
@@ -215,6 +214,7 @@ export default function Jobs() {
             </Stack>
           </Stack>
           <CustomisedTable
+            keyName="jobId"
             columns={JobRequirementTableColumnList}
             rows={jobList}
             page={paginationValues.pageNo}
@@ -243,7 +243,7 @@ export default function Jobs() {
             />
           )}
           {openModal && (
-            <JobDescription
+            <AddEditJob
               initialValues={jobInitialValues}
               isEdit={isEdit}
               open={openModal}

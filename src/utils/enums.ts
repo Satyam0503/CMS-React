@@ -8,9 +8,8 @@ export enum ApplicationStatus {
 }
 
 export enum ApplicantStatus {
-  New = 0,
+  InActive = 0,
   Active = 1,
-  InActive = 2,
 }
 export enum CommentAction {
   InProgress = 1,
@@ -18,11 +17,6 @@ export enum CommentAction {
   Shortlisted = 3,
   Selection = 4,
   Rejection = 5,
-}
-
-export enum StatusEnum {
-  InActive = 0,
-  Active = 1,
 }
 
 export enum Permission {
@@ -47,6 +41,7 @@ export enum Modules {
   Applications = 12,
   Permissions = 13,
   Theme = 14,
+  ProcessLog=15
 }
 
 export enum ModulesName {
@@ -64,6 +59,7 @@ export enum ModulesName {
   Applications = "Applications",
   Permissions = "Permissions",
   Theme = "Theme",
+  ProcessLog= "Process Log"
 }
 
 export enum Roles {
@@ -71,3 +67,12 @@ export enum Roles {
   HRManager = "HR Manager",
   Employee = "Employee",
 }
+
+export enum TIME_PERIOD_MAP {
+  LAST_WEEK = 1,
+  LAST_MONTH = 2,
+  LAST_THREE_MONTHS = 3,
+  LAST_SIX_MONTHS = 4,
+  LAST_12_MONTHS = 5,
+  LAST_TWO_WEEK = 7,
+ }

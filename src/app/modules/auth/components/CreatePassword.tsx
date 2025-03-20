@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 import * as Yup from "yup";
 import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";
-import { TextInput } from "../../components/form_component/TextInput";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPassword } from "../core/_requests";
 import { AxiosError } from "axios";

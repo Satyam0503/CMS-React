@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
-  ApplicationFilterModel,
   FiltersType,
 } from "../../../utils/common_types";
 import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
+import { ApplicationFilterModel } from "../../modules/recruitment/models";
 
 const filterSlice = createSlice({
   name: "filters",

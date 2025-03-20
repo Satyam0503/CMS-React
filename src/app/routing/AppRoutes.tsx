@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes } from "./PrivateRoutes";
-import { ErrorsPage } from "../modulesOld/errors/ErrorsPage";
+import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";

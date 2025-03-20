@@ -1,5 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
-import { EmployeeModel, FiltersType, ModulePermissoinModel } from "./common_types";
+import DOMPurify from "dompurify";
+
+import {
+  EmployeeModel,
+  FiltersType,
+  ModulePermissoinModel,
+  PermissionModel,
+} from "./common_types";
 import {
   ApplicantStatus,
   ApplicationStatus,
@@ -8,8 +15,6 @@ import {
   Permission,
 } from "./enums";
 import { APP_FILTER_KEY, SideBarTabList } from "./constant/Constant";
-
-
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
@@ -40,59 +45,48 @@ export const employeesListMapperforExport = (
   return mappedData;
 };
 
-export const applicationStatusMapper : {
-  [index:number]:string
+export const applicationStatusMapper: {
+  [index: number]: string;
 } = {
-  [ApplicationStatus.New]:"New",
-  [ApplicationStatus.InProgress]:"In Progress",
-  [ApplicationStatus.OnHold]:"On Hold",
-  [ApplicationStatus.Shortlisted]:"Shortlisted",
-  [ApplicationStatus.Selected]:"Selected",
-  [ApplicationStatus.Rejected]:"Rejected",
-}
-
-export const getApplicationStatusClass = (applicationStatus: number) => {
-  switch (applicationStatus) {
-    case ApplicationStatus.New:
-      return "info";
-    case ApplicationStatus.InProgress:
-    case ApplicationStatus.OnHold:
-    case ApplicationStatus.Shortlisted: {
-      return "warning";
-    }
-    case ApplicationStatus.Selected:
-      return "success";
-    case ApplicationStatus.Rejected:
-      return "danger";
-    default:
-      return "";
-  }
+  [ApplicationStatus.New]: "New",
+  [ApplicationStatus.InProgress]: "In Progress",
+  [ApplicationStatus.OnHold]: "On Hold",
+  [ApplicationStatus.Shortlisted]: "Shortlisted",
+  [ApplicationStatus.Selected]: "Selected",
+  [ApplicationStatus.Rejected]: "Rejected",
 };
 
-export const applicantStatusDecoder = (applicantStatus: number) => {
-  switch (applicantStatus) {
-    case ApplicantStatus.New:
-      return "New";
-    case ApplicantStatus.Active:
-      return "Active";
-    case ApplicantStatus.InActive:
-      return "Inactive";
-    default:
-      return "";
-  }
+export const applicationStatusClassMapper: {
+  [index: number]: string;
+} = {
+  [ApplicationStatus.New]: "info",
+  [ApplicationStatus.InProgress]: "warning",
+  [ApplicationStatus.OnHold]: "warning",
+  [ApplicationStatus.Shortlisted]: "warning",
+  [ApplicationStatus.Selected]: "success",
+  [ApplicationStatus.Rejected]: "danger",
+};
+
+export const getApplicationStatusClass = (applicationStatus: number) => {
+  return applicationStatusClassMapper[applicationStatus];
+};
+
+export const applicantStatusDecoder: {
+  [index: number]: string;
+} = {
+  [ApplicantStatus.InActive]: "Inactive",
+  [ApplicantStatus.Active]: "Active",
+};
+
+const applicantStatusClassMapper: {
+  [index: number]: string;
+} = {
+  [ApplicantStatus.InActive]: "danger",
+  [ApplicantStatus.Active]: "success",
 };
 
 export const getApplicantStatusClass = (applicantStatus: number) => {
-  switch (applicantStatus) {
-    case ApplicantStatus.New:
-      return "info";
-    case ApplicantStatus.Active:
-      return "success";
-    case ApplicantStatus.InActive:
-      return "danger";
-    default:
-      return "";
-  }
+  return applicantStatusClassMapper[applicantStatus] || "";
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -110,7 +104,7 @@ export const commentActionEncoderForApplicationStatus = (
     case ApplicationStatus.Rejected:
       return CommentAction.Rejection;
     default:
-     return CommentAction.InProgress;
+      return CommentAction.InProgress;
   }
 };
 
@@ -152,155 +146,7 @@ export const statusDecoder = (status: boolean) => {
   }
 };
 
-export const ApplicantStatusMapper: {
-  [index: number]: ApplicantStatus;
-} = {
-  [ApplicationStatus.New]: ApplicantStatus.New,
-  [ApplicationStatus.InProgress]: ApplicantStatus.Active,
-  [ApplicationStatus.OnHold]: ApplicantStatus.Active,
-  [ApplicationStatus.Shortlisted]: ApplicantStatus.Active,
-  [ApplicationStatus.Selected]: ApplicantStatus.Active,
-  [ApplicationStatus.Rejected]: ApplicantStatus.InActive,
-};
-
-export const experienceCategoryList = [
-  { id: 1, label: "0 - 1", value: 1 },
-  {
-    id: 2,
-    label: "1 - 2",
-    value: 2,
-  },
-  {
-    id: 3,
-    label: "2 - 3",
-    value: 3,
-  },
-  {
-    id: 4,
-    label: "3 - 4",
-    value: 4,
-  },
-  {
-    id: 5,
-    label: "4 - 5",
-    value: 5,
-  },
-  {
-    id: 6,
-    label: "5 - 6",
-    value: 6,
-  },
-  {
-    id: 7,
-    label: "6 - 7",
-    value: 7,
-  },
-  {
-    id: 8,
-    label: "7 - 8",
-    value: 8,
-  },
-  {
-    id: 9,
-    label: "8 - 9",
-    value: 9,
-  },
-  {
-    id: 10,
-    label: "9 - 10",
-    value: 10,
-  },
-  {
-    id: 11,
-    label: "10 - 11",
-    value: 11,
-  },
-  {
-    id: 12,
-    label: "11 - 12",
-    value: 12,
-  },
-  {
-    id: 13,
-    label: "12 - 13",
-    value: 13,
-  },
-  {
-    id: 14,
-    label: "13 - 14",
-    value: 14,
-  },
-  {
-    id: 15,
-    label: "14 - 15",
-    value: 15,
-  },
-];
-export const monthsExperienceList = [
-  { id: 1, label: "0", value: 0 },
-  {
-    id: 2,
-    label: "1",
-    value: 1,
-  },
-  {
-    id: 3,
-    label: "2",
-    value: 2,
-  },
-  {
-    id: 4,
-    label: "3",
-    value: 3,
-  },
-  {
-    id: 5,
-    label: "4",
-    value: 4,
-  },
-  {
-    id: 6,
-    label: "5",
-    value: 5,
-  },
-  {
-    id: 7,
-    label: "6",
-    value: 6,
-  },
-  {
-    id: 8,
-    label: "7",
-    value: 7,
-  },
-  {
-    id: 9,
-    label: "8",
-    value: 8,
-  },
-  {
-    id: 10,
-    label: "9",
-    value: 9,
-  },
-  {
-    id: 11,
-    label: "10",
-    value: 10,
-  },
-  {
-    id: 12,
-    label: "11",
-    value: 11,
-  },
-  {
-    id: 13,
-    label: "12",
-    value: 12,
-  },
-];
-
-export const getDateDiffInYears = (from:Dayjs, to: Dayjs= dayjs()) => {
+export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
   return dayjs(to).diff(from, "years");
 };
 
@@ -321,9 +167,29 @@ export const checkPermissionForModuleAndRoute = (
     return false;
   }
   const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === Permission.View
+    (permission) => permission.permissionConstant === Permission.View && permission.hasAccess
   );
-  if(!hasPermission){
+  if (!hasPermission) {
+    return false;
+  }
+  return hasPermission.hasAccess;
+};
+
+export const checkPermissionForModulesFeatureAccess = (
+  moduleName: ModulesName,
+  requiredPermission: Permission,
+  userModulePermissions: ModulePermissoinModel[]
+) => {
+  const module = userModulePermissions.find(
+    (module) => module.moduleConstant === moduleName
+  );
+  if (!module) {
+    return false;
+  }
+  const hasPermission = module.permissions.find(
+    (permission) => permission.permissionConstant === requiredPermission
+  );
+  if (!hasPermission) {
     return false;
   }
   return hasPermission.hasAccess;
@@ -333,7 +199,9 @@ export const findUserDefaultTab = (
   userModulePermissions: ModulePermissoinModel[]
 ) => {
   const defaultTab = SideBarTabList.find(
-    (tab) => checkPermissionForModuleAndRoute(tab.title, userModulePermissions) === true
+    (tab) =>
+      checkPermissionForModuleAndRoute(tab.title, userModulePermissions) ===
+      true
   );
   if (!defaultTab) {
     return "/error/";
@@ -341,49 +209,39 @@ export const findUserDefaultTab = (
   return defaultTab.route;
 };
 
-// export const checkUserPermissionForRouteAccess = (
-//   moduleName: ModulesName,
-//   userPermissions: ModulePermissoinModel[]
-// ) => {
-//   const module = userPermissions.find(
-//     (permission) => permission.moduleConstant === moduleName
-//   );
-//   if (!module) {
-//     return false;
-//   }
-//   const index = module.permissions.findIndex(
-//     (permission) => permission.permissionConstant === Permission.View
-//   );
-
-//   return index !== -1 ? true : false;
-// };
-
-export const sortAscendingOrder = <Rows,>(arr:Rows[], key: keyof Rows)=> {
+export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
-  if( columnValueType === "number" ){
-    arr.sort((a,b)=>(a[key] as number) - (b[key] as number));
+  if (columnValueType === "number") {
+    arr.sort((a, b) => (a[key] as number) - (b[key] as number));
     return arr;
   }
-  if(columnValueType === "string"){
-    arr.sort((a,b)=> (a[key] as string).toLowerCase().localeCompare((b[key] as string).toLowerCase()));
+  if (columnValueType === "string") {
+    arr.sort((a, b) =>
+      (a[key] as string)
+        .toLowerCase()
+        .localeCompare((b[key] as string).toLowerCase())
+    );
     return arr;
   }
   return arr;
 };
 
-export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
+export const sortingDescendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
-  if( columnValueType === "number" ){
-    arr.sort((a,b)=>(b[key] as number) - (a[key] as number));
+  if (columnValueType === "number") {
+    arr.sort((a, b) => (b[key] as number) - (a[key] as number));
     return arr;
   }
-  if(columnValueType === "string"){
-    arr.sort((a,b)=> (b[key] as string).toLowerCase().localeCompare((a[key] as string).toLowerCase()));
+  if (columnValueType === "string") {
+    arr.sort((a, b) =>
+      (b[key] as string)
+        .toLowerCase()
+        .localeCompare((a[key] as string).toLowerCase())
+    );
     return arr;
   }
   return arr;
 };
-
 
 // function handleEmployeeExport() {
 //   const mappedEmployeeData = employeesListMapperforExport(employeeList);
@@ -393,9 +251,11 @@ export const sortingDescendingOrder = <Rows,>(arr:Rows[], key: keyof Rows) => {
 //   XLSX.writeFile(workbook, "Employees.xlsx");
 // }
 
-export const blockInvalidCharOnNumberField = (event:React.KeyboardEvent<HTMLElement>) => ['e', 'E', '+', '-'].includes(event.key) && event.preventDefault();
+export const blockInvalidCharOnNumberField = (
+  event: React.KeyboardEvent<HTMLElement>
+) => ["e", "E", "+", "-"].includes(event.key) && event.preventDefault();
 
-// filter helper 
+// filter helper
 
 export const getAppliedFilters = () => {
   const savedFilters = localStorage.getItem(APP_FILTER_KEY);
@@ -408,19 +268,48 @@ export const getAppliedFilters = () => {
   return appliedfilters;
 };
 
-
-export const setLocalFilter = (filters:FiltersType) => {
-  if(localStorage){
-      localStorage.setItem(APP_FILTER_KEY,JSON.stringify(filters));
+export const setLocalFilter = (filters: FiltersType) => {
+  if (localStorage) {
+    localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
+  } else {
+    console.log("Unable to access localstorage");
   }
-  else{
-      console.log("Unable to access localstorage");
-  }
-}
+};
 
-export const clearAllLocalFilter = ()=>{
-  if(!localStorage){
+export const clearAllLocalFilter = () => {
+  if (!localStorage) {
     return;
   }
   localStorage.removeItem(APP_FILTER_KEY);
-}
+};
+
+export const addCurrentTimeToDate = (date: Dayjs | null) => {
+  const currentDateInMs = dayjs().valueOf();
+  const currentDateWithoutTime = dayjs().startOf("day").valueOf();
+  const diffInMs = currentDateInMs - currentDateWithoutTime;
+  return dayjs(date).startOf("day").add(diffInMs, "milliseconds").toISOString();
+};
+
+export const sanitizeHtmlContent = (htmlString: string) => {
+  return DOMPurify.sanitize(htmlString);
+};
+
+export const removeUnwantedString = (htmlstring: string) => {
+  return htmlstring.replace(/<p><br><\/p>/g, "");
+};
+
+export const getKeyForTableRow = <Row>(row: Row, keyName: keyof Row) => {
+  return row[keyName] as string;
+};
+
+export const flatRolePermissionList = (
+  rolePermissionList: ModulePermissoinModel[]
+) => {
+  const updatedRolePermission: PermissionModel[] = [];
+  rolePermissionList.forEach((module) => {
+    module.permissions.forEach((permission) => {
+      updatedRolePermission.push(permission);
+    });
+  });
+  return updatedRolePermission;
+};

@@ -1,9 +1,10 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Themes from "./themes/Themes";
 import { Roles } from "./permissions/Roles";
-import { EditPermission } from "./permissions/EditPermission";
 import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
 import { ModulesName } from "../../../utils/enums";
+import { AddPermission } from "./permissions/components/AddPermission";
+import { EditPermission } from "./permissions/components/EditPermission";
 
 const SettingPage = () => {
   return (
@@ -31,6 +32,14 @@ const SettingPage = () => {
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <EditPermission />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="addrole"
+          element={
+            <ProtectedRoute module={ModulesName.Permissions}>
+              <AddPermission />
             </ProtectedRoute>
           }
         />

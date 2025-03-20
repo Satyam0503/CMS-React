@@ -1,14 +1,13 @@
-import { FC, memo, useMemo } from "react";
-import { JobModal } from "../../../../../utils/common_types";
-import { CustomisedModal } from "../../../components/CustomisedModal";
-import CustomisedButton from "../../../components/CustomisedButton";
-import { Close, FileOpenOutlined } from "@mui/icons-material";
+import { FC, memo } from "react";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { Close } from "@mui/icons-material";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { StyleStatus } from "../../../components/StyledStatus";
-import { statusDecoder } from "../../../../../utils/common";
+import { StyleStatus } from "../../../../shared/components/StyledStatus";
+import { sanitizeHtmlContent, statusDecoder } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../components/CustomIconButton";
-import DOMPurify from "dompurify";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { JobModal } from "../../models";
 
 interface PropsTypes {
   jobData: JobModal;
@@ -22,13 +21,6 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
     const handleClose = () => {
       setOpen(false);
     };
-
-    const sanitizedContent = useMemo(
-      () => ({
-        __html: DOMPurify.sanitize(jobData.description),
-      }),
-      [jobData]
-    );
 
     return (
       <CustomisedModal open={open} handleClose={handleClose}>
@@ -79,7 +71,9 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
           <hr />
           <Box
             component={"div"}
-            dangerouslySetInnerHTML={sanitizedContent}
+            dangerouslySetInnerHTML={{
+              __html:sanitizeHtmlContent(jobData.description)
+            }}
             sx={{
               maxHeight: "400px",
               overflowY: "scroll",

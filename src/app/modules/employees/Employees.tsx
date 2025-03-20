@@ -10,21 +10,23 @@ import {
   updateEmployee,
 } from "./employeeServices";
 import { toast } from "react-toastify";
-import { CustomisedTable } from "../components/CustomisedTable";
+import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 import dayjs from "dayjs";
 import { EmployeeModel } from "../../../utils/common_types";
-import { ConfirmationModal } from "../components/ConfirmationModal";
+
 import {
   employeesListMapperforExport,
   statusDecoder,
   statusEncoder,
 } from "../../../utils/common";
 import { ViewEmployeeDetails } from "./components/ViewEmployeeDetails";
-import { SearchInput } from "../components/SearchInput";
-import { CustomIconButton } from "../components/CustomIconButton";
-import { Pagination } from "../components/Pagination";
+import { SearchInput } from "../../shared/components/SearchInput";
+import { CustomIconButton } from "../../shared/components/CustomIconButton";
+import { Pagination } from "../../shared/components/Pagination";
 import AddUpdateEmployee from "./components/AddUpdateEmployee";
+import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
+import { ModulesName } from "../../../utils/enums";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -263,7 +265,8 @@ export default function Employees() {
           </Stack>
 
           <CustomisedTable
-            tabName="Employee"
+            tabName={ModulesName.Employees}
+            keyName="userId"
             loading={isLoading}
             rows={employeeList}
             columns={EmployeeTabTableColumnList}

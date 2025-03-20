@@ -53,13 +53,12 @@ const SidebarLogo = (props: PropsType) => {
 
   return (
     <Stack id="kt_app_sidebar_logo" alignItems="center">
-      <Link to="/" style={{ marginTop: "1rem" }}>
+      <Link to="/">
         {config.layoutType === "dark-sidebar" ? (
           <img
             alt="Logo"
             src={toAbsoluteUrl("media/logos/logo.png")}
             style={{ minWidth: "50px" }}
-            // className="app-sidebar-logo-default mt-5"
           />
         ) : (
           <>
@@ -79,7 +78,7 @@ const SidebarLogo = (props: PropsType) => {
           ref={toggleRef}
           id="kt_app_sidebar_toggle"
           className={clsx(
-            "app-sidebar-toggle btn btn-icon btn-shadow btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-50 start-100 translate-middle rotate",
+            "app-sidebar-toggle btn btn-icon  btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-collapse start-100 translate-middle rotate",
             { active: appSidebarDefaultMinimizeDefault }
           )}
           data-kt-toggle="true"

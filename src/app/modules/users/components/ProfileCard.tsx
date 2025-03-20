@@ -24,20 +24,19 @@ import {
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { useUserDetails } from "../UserDataProvider";
+import { useAppSelector } from "../../../Redux/hooks";
 import { updateProfilePicture } from "../userservices";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
-import { CustomIconButton } from "../../components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { getDateDiffInYears } from "../../../../utils/common";
-import CustomisedButton from "../../components/CustomisedButton";
-import { CustomisedModal } from "../../components/CustomisedModal";
-import { ErrorLabel } from "../../components/form_component/ErrorLabel";
-import { useUserDetails } from "../UserDataProvider";
-import { useAppSelector } from "../../../Redux/hooks";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
-  const [isAvatarZoomedOut, setIsAvatarZoomedOut] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
@@ -91,7 +90,7 @@ export default function ProfileCard() {
       }
     }
   }
-
+  
   return (
     <>
       <Card
@@ -126,12 +125,11 @@ export default function ProfileCard() {
           className="gridContainer"
         >
           <Avatar
-            alt="profile picture"
+            alt=""
             src={profileImageUrl}
             sx={{
               width: "100%",
               height: "100%",
-              transform: isAvatarZoomedOut ? "scale(1.4)" : "scale(1)",
             }}
           />
 
@@ -148,8 +146,7 @@ export default function ProfileCard() {
               }
             />
             <CustomIconButton
-              handleClick={() => setIsAvatarZoomedOut((prev) => !prev)}
-              tooltip="Zoom-out profile picture"
+              // handleClick={}
               icon={
                 <Visibility
                   sx={{
@@ -268,14 +265,6 @@ export default function ProfileCard() {
                   iconPosition="end"
                   disabled={!seletedFile}
                   handleClick={handleUpdateAvatar}
-                />
-                <CustomisedButton
-                  variant="outlined"
-                  label="Delete File"
-                  Icon={<DeleteOutlineOutlined />}
-                  iconPosition="end"
-                  handleClick={handleUpdateAvatar}
-                  style={{ visibility: !seletedFile ? "hidden" : "visible" }}
                 />
               </Stack>
 
