@@ -1,17 +1,21 @@
 import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
-import IconStat from "../../../shared/components/IconStat";
-import { colors } from "../../theme/MuiTheme";
+
 import {
   Build,
   CalendarMonth,
   CorporateFareOutlined,
 } from "@mui/icons-material";
-import { useUserDetails } from "../UserDataProvider";
-import { useAppSelector } from "../../../Redux/hooks";
-import { getDateDiffInYears } from "../../../../utils/common";
+
 import { useIntl } from "react-intl";
+import { useAppSelector } from "../../../Redux/hooks";
+import { useUserDetails } from "../UserDataProvider";
 import ProfileCard from "../components/ProfileCard";
 import LeaveAllowences from "../components/LeaveAllowences";
+import { colors } from "../../theme/MuiTheme";
+import IconStat from "../../../shared/components/IconStat";
+import { getDateDiffInYears } from "../../../../utils/common";
+import BasicTabs from "../components/BasicTabs";
+import AboutUser from "../about/AboutUser";
 
 export default function EmployeeProfile() {
   const intl = useIntl();
@@ -83,6 +87,9 @@ export default function EmployeeProfile() {
                 />
               </Box>
             </Grid>
+          </Stack>
+          <Stack sx={{ width: "100%" }}>
+            <AboutUser />
           </Stack>
         </Grid>
       </Grid>
