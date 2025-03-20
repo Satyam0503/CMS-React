@@ -11,7 +11,11 @@ const SidebarMenuMain = () => {
   const filteredTabList = SideBarTabList.filter((tab) => {
     if (tab.hasSubTabs) {
       const filteredSubTabs = tab.subTabs?.filter(
-        (subTab) => checkPermissionForModuleAndRoute(subTab.title, userModulePermission) === true
+        (subTab) =>
+          checkPermissionForModuleAndRoute(
+            subTab.title,
+            userModulePermission
+          ) === true
       )!;
 
       if (filteredSubTabs?.length > 0) {
@@ -20,7 +24,9 @@ const SidebarMenuMain = () => {
       }
       return false;
     }
-    return checkPermissionForModuleAndRoute(tab.title, userModulePermission) === true;
+    return (
+      checkPermissionForModuleAndRoute(tab.title, userModulePermission) === true
+    );
   });
   
   return (

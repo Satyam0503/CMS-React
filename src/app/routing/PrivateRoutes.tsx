@@ -31,7 +31,7 @@ const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(
   () => import("../modules/noticeboard/NoticeBoard.tsx")
 );
-const ProcessLog = lazy(()=>import("../modules/processlog/ProcessLog.tsx"));
+const ProcessLog = lazy(() => import("../modules/processlog/ProcessLog.tsx"));
 
 const PrivateRoutes = () => {
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
@@ -138,7 +138,7 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.ProcessLog}>
-                <ProcessLog/>
+                <ProcessLog />
               </ProtectedRoute>
             </SuspensedView>
           }

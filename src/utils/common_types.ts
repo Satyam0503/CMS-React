@@ -127,13 +127,20 @@ export type NoticeModel = {
   group: string;
   message: string;
 };
-
+export type ProgressLogModel = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export type ColumnListTypes = {
   id: string;
   label: string;
   align?: "center" | "left" | "right" | "inherit" | "justify";
   minWidth?: number;
+  width?: number;
   build?: any;
   sorting?: boolean;
   format?: (value: any) => any;
@@ -160,7 +167,6 @@ export interface SideBarTabListProps {
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
 }
 
-
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
@@ -173,8 +179,6 @@ export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;
 export type EmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
-
-
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 

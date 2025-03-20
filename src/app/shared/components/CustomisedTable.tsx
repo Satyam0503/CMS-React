@@ -17,7 +17,7 @@ import { getKeyForTableRow } from "../../../utils/common";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
-  keyName?:keyof Row;
+  keyName?: keyof Row;
   loading?: boolean;
   rows: Row[];
   columns: Columns[];
@@ -95,14 +95,18 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
               ) : (
                 <>
                   {tableRows.map((row: any, index: number) => (
-                    <TableRow hover key={ keyName ? getKeyForTableRow(row,keyName) : index } onClick={()=>{
-                      if(props.tabName=== ModulesName.Applications){
-                        navigate(`/recruitment/applicant/${row.applicantId}`);
-                      }
-                      if(props.tabName ===ModulesName.Employees){
-                        navigate('/myprofile');
-                      }
-                    }}>
+                    <TableRow
+                      hover
+                      key={keyName ? getKeyForTableRow(row, keyName) : index}
+                      onClick={() => {
+                        if (props.tabName === ModulesName.Applications) {
+                          navigate(`/recruitment/applicant/${row.applicantId}`);
+                        }
+                        if (props.tabName === ModulesName.Employees) {
+                          navigate("/myprofile");
+                        }
+                      }}
+                    >
                       {columns.map((column) => {
                         const value =
                           column.id === "serialNo"

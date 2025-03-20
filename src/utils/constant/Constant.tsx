@@ -300,21 +300,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     label: "S.No.",
     minWidth: 30,
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: any,
-      handleHolidayEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleHolidayEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
-  },
+
   {
     id: "title",
     label: "Title",
@@ -336,6 +322,21 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "description",
     label: "Description",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: any,
+      handleHolidayEdit: (row: any) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleHolidayEdit}
+        openConfirmationModal={openConfirmationModal}
+      />
+    ),
   },
 ];
 
@@ -376,6 +377,30 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
         openConfirmationModal={openConfirmationModal}
       />
     ),
+  },
+];
+export const ProcessLogTableColumnList: ColumnListTypes[] = [
+  {
+    id: "applicant",
+    label: "Applicant",
+  },
+  {
+    id: "jobrole",
+    label: "Job Role",
+  },
+
+  {
+    id: "commentedon",
+    label: "Commented On",
+  },
+
+  {
+    id: "comment",
+    label: "Comment",
+  },
+  {
+    id: "commentedby",
+    label: "Commented By",
   },
 ];
 
@@ -427,7 +452,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Applicant's CV",
+    label: "CV",
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
@@ -472,7 +497,13 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     build: (row: RoleModel) => (
       <Link to={"/admin/editpermission"} state={{ ...row }}>
         <Button variant="contained">
-          <FormattedMessage id={row.isNotEditable ? "ADMIN.VIEW_PERMISSION" :"ADMIN.EDIT_PERMISSION"}  />
+          <FormattedMessage
+            id={
+              row.isNotEditable
+                ? "ADMIN.VIEW_PERMISSION"
+                : "ADMIN.EDIT_PERMISSION"
+            }
+          />
         </Button>
       </Link>
     ),
@@ -483,25 +514,9 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
     label: "S.No.",
-    minWidth: 60,
+    minWidth: 30,
   },
-  {
-    id: "action",
-    label: "Action",
-    build: (
-      row: JobModal,
-      handleJobEdit: (row: JobModal) => void,
-      openDeleteModal: (row: JobModal) => void,
-      openViewJobDetail: (row: JobModal) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        openViewModal={openViewJobDetail}
-      />
-    ),
-  },
+
   {
     id: "title",
     label: "Job Title",
@@ -525,6 +540,23 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
         <StyleStatus label={statusDecoder(status)} className={className} />
       );
     },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: JobModal,
+      handleJobEdit: (row: JobModal) => void,
+      openDeleteModal: (row: JobModal) => void,
+      openViewJobDetail: (row: JobModal) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+        // openViewModal={openViewJobDetail}
+      />
+    ),
   },
 ];
 
@@ -581,12 +613,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             textOverflow: "ellipsis",
             fontSize: "12px",
           }}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
-          sx={{
-            "& p": {
-              margin: 0,
-            },
-          }}
+          dangerouslySetInnerHTML={{ __html: value }}
         />
       </Tooltip>
     ),
@@ -694,11 +721,11 @@ export const SideBarTabList: SideBarTabListProps[] = [
     icon: <AdminPanelSettings />,
   },
   {
-    id:Modules.ProcessLog,
-    title:ModulesName.ProcessLog,
-    route:"/processlog",
-    icon:<Book/>
-  }
+    id: Modules.ProcessLog,
+    title: ModulesName.ProcessLog,
+    route: "/processlog",
+    icon: <Book />,
+  },
 ];
 
 export const indianStates = [
