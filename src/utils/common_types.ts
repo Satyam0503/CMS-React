@@ -137,6 +137,13 @@ export type ProcessLogModel = {
   comments:string;
   commentedBy:string;
 };
+export type LeavesModel = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export type ColumnListTypes = {
   id: string;

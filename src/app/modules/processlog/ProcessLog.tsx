@@ -11,11 +11,9 @@ import { ProcessLogModel } from "../../../utils/common_types";
 const ProcessLogs = () => {
   const intl = useIntl();
   const [searchValue, setSearchValue] = useState("");
-  const [totalRecords, setTotalRecords] = useState(0); 
+  const [totalRecords, setTotalRecords] = useState(0);
   const [isLoading, setLoading] = useState(true);
-  const [processLogList, setProcessLogList] = useState<ProcessLogModel[]>(
-    []
-  );
+  const [processLogList, setProcessLogList] = useState<ProcessLogModel[]>([]);
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
@@ -29,7 +27,7 @@ const ProcessLogs = () => {
     setLoading(true);
     getProcessLogData()
       .then((res) => {
-        const { success, methodResults,totalRecords } = res.data;
+        const { success, methodResults, totalRecords } = res.data;
         if (success) {
           setProcessLogList(methodResults);
           setTotalRecords(totalRecords);
@@ -38,9 +36,9 @@ const ProcessLogs = () => {
       .catch((err) => {
         console.log("Error:", err.message);
       })
-      .finally(()=>{
+      .finally(() => {
         setLoading(false);
-      })
+      });
   }, [searchValue]);
   return (
     <>
