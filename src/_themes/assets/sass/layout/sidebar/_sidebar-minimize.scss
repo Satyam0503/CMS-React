@@ -6,15 +6,6 @@
   display: none;
 }
 
-// Sidebar footer
-.app-sidebar-footer {
-  .btn-custom {
-    .btn-icon {
-      display: none;
-    }
-  }
-}
-
 // Desktop sidebar minimize mode
 @include app-layout-minimize(app-sidebar) {
   .app-sidebar-logo {
@@ -75,8 +66,4 @@
 /* Default dark sidebar style */
 [data-kt-app-layout="dark-sidebar"] .app-sidebar {
   color: white;
-}
-
-/* Light sidebar style */
-[data-kt-app-layout="light-sidebar"] .app-sidebar {
 }
