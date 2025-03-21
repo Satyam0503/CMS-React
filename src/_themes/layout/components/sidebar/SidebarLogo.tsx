@@ -85,6 +85,7 @@ const SidebarLogo = (props: PropsType) => {
           data-kt-toggle-state={toggleState}
           data-kt-toggle-target="body"
           data-kt-toggle-name={`app-sidebar-${toggleType}`}
+          sx={{ visibility: { xs: "hidden", md: "visible" } }}
         >
           <KTIcon iconName="black-left-line" className="fs-3 rotate-180 ms-1" />
         </Grid>
