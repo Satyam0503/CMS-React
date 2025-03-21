@@ -1,14 +1,14 @@
-//
-// Required Label
-//
+// //
+// // Required Label
+// //
 
-.required {
-    &:after {
-        content: "*";
-        position: relative;
-        font-size: inherit;
-        color: var(--#{$prefix}danger);
-        padding-left: 0.25rem;
-        font-weight: $font-weight-bold;
-    }
-}
+// .required {
+//     &:after {
+//         content: "*";
+//         position: relative;
+//         font-size: inherit;
+//         color: var(--#{$prefix}danger);
+//         padding-left: 0.25rem;
+//         font-weight: $font-weight-bold;
+//     }
+// }
