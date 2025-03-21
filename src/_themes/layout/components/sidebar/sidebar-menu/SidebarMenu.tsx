@@ -3,7 +3,7 @@ import { SidebarMenuMain } from "./SidebarMenuMain";
 
 const SidebarMenu = () => {
   return (
-    <Stack className="app-sidebar-menu overflow-y-auto flex-column-fluid">
+    <Stack className="app-sidebar-menu overflow-y-auto overflow-x-hidden flex-column-fluid">
       <Stack
         id="kt_app_sidebar_menu_wrapper"
         className="app-sidebar-wrapper hover-scroll-overlay-y my-5"
