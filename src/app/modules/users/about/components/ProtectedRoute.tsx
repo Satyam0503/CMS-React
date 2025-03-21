@@ -10,7 +10,8 @@ interface PropsTypes {
 }
 
 export const ProtectedRoute: FC<PropsTypes> = ({ children, module }) => {
-  const userModulePermissions = useAppSelector((state) => state.user.userPermissions);
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
+  const userModulePermissions = modulePermissions ?? [];
   const hasAccess = checkPermissionForModuleAndRoute(module, userModulePermissions);  
   if (!userModulePermissions.length) {
     return <Navigate to={"/unauthorize"}/>;

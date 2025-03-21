@@ -9,17 +9,13 @@ import { setAuth, logout } from "../../../Redux/Reducers/authSlice";
 import {
   resetUserSlice,
   setCurrentUser,
-  setProfileImageUrl,
-  setUserPermissions,
 } from "../../../Redux/Reducers/userSlice";
-import { useDispatch } from "react-redux";
 import { resetAllFilters } from "../../../Redux/Reducers/filterSlice";
 
 export const useLogout = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   return () => {
     dispatch(logout());
-    dispatch(setCurrentUser(undefined));
     dispatch(resetUserSlice());
     dispatch(resetAllFilters());
     authHelper.removeLocalKey();
@@ -33,30 +29,16 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   const logout = useLogout();
   const [showSplashScreen, setShowSplashScreen] = useState(true);
 
-  // requesting signed in user details by authToken
   useEffect(() => {
     const requestUserDetails = async () => {
       try {
         if (!currentUser) {
           const { data } = await getSignedUserDetails();
-          const { statusCode, success, message, methodResult } = data;
+          const { statusCode, success, methodResult } = data;
           if (!(success && statusCode === 200)) {
             throw new Error("Request Failed");
           }
-          dispatch(
-            setCurrentUser({
-              userId: methodResult.userId,
-              firstName: methodResult.firstName,
-              lastName: methodResult.lastName,
-              fullName: methodResult.fullName,
-              companyId: methodResult.companyId,
-              companyName:methodResult.companyName,
-              role: methodResult.role,
-              roleId:methodResult.roleId
-            })
-          );
-          dispatch(setUserPermissions(methodResult.modulePermission));
-          dispatch(setProfileImageUrl(methodResult.profileImage))
+          dispatch(setCurrentUser(methodResult));
           dispatch(setAuth());
         }
       } catch (error) {
