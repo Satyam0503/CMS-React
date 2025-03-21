@@ -8,7 +8,13 @@ const Footer = () => {
   useEffect(() => {}, [config]);
   return (
     <>
-      <Grid container display={"flex"} justifyContent={"space-between"} p={2}>
+      <Grid
+        container
+        display={"flex"}
+        justifyContent={"space-between"}
+        p={2}
+        pb={0}
+      >
         <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
           <Typography
             variant="body1"
@@ -16,7 +22,7 @@ const Footer = () => {
             fontWeight={400}
           >
             {" "}
-            Codeji Infotech
+            Codeji Infotech Pvt Ltd
           </Typography>
         </Link>
 

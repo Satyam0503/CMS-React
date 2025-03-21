@@ -35,27 +35,10 @@
       @include app-layout-transition(height);
     }
   }
-
-  .app-sidebar-footer {
-    .btn-custom {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-
-      .btn-label {
-        width: 0;
-        display: none;
-      }
-
-      .btn-icon {
-        width: auto;
-        display: block;
-      }
-    }
-  }
 }
 
 // Logo width
-#kt_app_sidebar_logo {
+.sidebar_logo {
   img {
     max-width: 200px;
     width: 100%;

@@ -52,7 +52,7 @@ const SidebarLogo = (props: PropsType) => {
   }, [toggleRef, props.sidebarRef]);
 
   return (
-    <Stack id="kt_app_sidebar_logo" alignItems="center">
+    <Stack alignItems="center" className="sidebar_logo">
       <Link to="/">
         {config.layoutType === "dark-sidebar" ? (
           <img
