@@ -60,7 +60,6 @@ export default function HeaderUserMenu() {
         id="account-menu"
         open={open}
         onClose={handleClose}
-        onClick={handleClose}
       >
         <MenuItem onClick={handleClose} sx={{ gap: 1 }} className="pe-none px-2">
           <Avatar
@@ -87,7 +86,7 @@ export default function HeaderUserMenu() {
             {intl.formatMessage({ id: "USER.ACCOUNT_SETTING" })}
           </ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleClose} className="px-2">
+        <MenuItem className="px-2">
           <ListItemIcon>
             <Translate />
           </ListItemIcon>

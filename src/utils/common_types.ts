@@ -81,6 +81,7 @@ export interface EmployeeModel {
   password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
+  birthDayThisYear?:Dayjs | string;
 }
 export interface UserEducationModel {
   educationId?: string;
@@ -180,6 +181,10 @@ export interface SideBarTabListProps {
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
+}
+
+export type WithChildren = {
+  children?: ReactNode
 }
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
