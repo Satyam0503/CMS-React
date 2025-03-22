@@ -1,11 +1,11 @@
 import { Stack, Typography, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
-import { colors } from "../../../theme/MuiTheme";
-import { EmployeeModel } from "../../../../../utils/common_types";
-import { CustomCard } from "../../../../shared/components/CustomCard";
 import dayjs, { Dayjs } from "dayjs";
 import { useCallback, useEffect, useState } from "react";
-import { dateFormatter } from "../../../../../utils/common";
+import { dateFormatter } from "../../../../utils/common";
+import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../../shared/components/CustomCard";
+import { EmployeeModel } from "../../../../utils/common_types";
 interface PropsType {
   employees: EmployeeModel[];
 }

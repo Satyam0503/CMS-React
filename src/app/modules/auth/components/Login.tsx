@@ -36,7 +36,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
   const dispatch = useAppDispatch();
-
+  localStorage.removeItem("clientId");
   async function handleLogin(
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void,

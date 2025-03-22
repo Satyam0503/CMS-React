@@ -14,12 +14,17 @@ import {
   getAllJobVacancies,
 } from "../services";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { JobModal } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
-import { removeUnwantedString } from "../../../../utils/common";
+import {
+  getModulePermissions,
+  removeUnwantedString,
+} from "../../../../utils/common";
+import { useAppSelector } from "../../../Redux/hooks";
+import { ModulesName, Permission } from "../../../../utils/enums";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -48,6 +53,14 @@ export default function Jobs() {
   const [loading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
+
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+
+  const userPermissionsForModule = useMemo(
+    () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
+    [userModulesPermissions]
+  );
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
@@ -166,7 +179,6 @@ export default function Jobs() {
     const timeoutId = setTimeout(async () => {
       try {
         const response = await getAllJobVacancies(
-          { companyId: "" },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
@@ -207,13 +219,15 @@ export default function Jobs() {
                 })}
                 icon={<FilterList />}
               />
-              <CustomIconButton
-                tooltip={intl.formatMessage({
-                  id: "ADD.JOB_DESCRIPTION",
-                })}
-                icon={<Add />}
-                handleClick={() => setOpenModal(true)}
-              />
+              {userPermissionsForModule.includes(Permission.Create) && (
+                <CustomIconButton
+                  tooltip={intl.formatMessage({
+                    id: "ADD.JOB_DESCRIPTION",
+                  })}
+                  icon={<Add />}
+                  handleClick={() => setOpenModal(true)}
+                />
+              )}
               <CustomIconButton
                 tooltip={intl.formatMessage({
                   id: "IMPORT.EXCEL",

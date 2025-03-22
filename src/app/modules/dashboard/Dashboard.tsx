@@ -1,28 +1,44 @@
 import { Stack, Typography, Grid, Card } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useAppSelector } from "../../../Redux/hooks";
-import { useEffect, useState } from "react";
-import { getAllEmployees } from "../../employees/employeeServices";
+import { useAppSelector } from "../../Redux/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { getAllEmployees } from "../employees/employeeServices";
 import { AxiosError } from "axios";
+import { AttendanceChart } from "../../shared/components/AttendanceChart";
+import { EmployeeModel } from "../../../utils/common_types";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
 import { ApplicationsChart } from "./components/ApplicationsChart";
 import { DepartmentChart } from "./components/DepartmentChart";
-import NoticeBoard from "./components/NoticeBoard";
+import NoticeBoard from "../noticeboard/NoticeBoard";
 import EmployeePerformance from "./components/EmployeePerformance";
-import { AttendanceChart } from "../../../shared/components/AttendanceChart";
 import EmpOnLeave from "./components/EmpOnLeave";
-import UpcomingBirthday from "./components/UpcomingBirthday";
 import Punctual from "./components/Punctual";
+import UpcomingBirthday from "./components/UpcomingBirthday";
 import EmpOfMonth from "./components/EmpOfMonth";
-import Help from "./components/Help";
-import { EmployeeModel } from "../../../../utils/common_types";
+import { Help } from "@mui/icons-material";
+import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
+import { ModulesName, Permission } from "../../../utils/enums";
 
-export default function DashboardAdmin() {
+export default function Dashboard() {
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+
+  const hasAccessToEmpModule = useMemo(
+    () =>
+      checkPermissionForModulesFeatureAccess(
+        ModulesName.Employees,
+        Permission.View,
+        userModulesPermissions
+      ),
+    [userModulesPermissions]
+  );
+
+  console.log(hasAccessToEmpModule);
 
   useEffect(() => {
     async function getEmployees() {
@@ -36,7 +52,9 @@ export default function DashboardAdmin() {
         console.error((error as AxiosError).message);
       }
     }
-    getEmployees();
+    if (hasAccessToEmpModule) {
+      getEmployees();
+    }
   }, []);
 
   return (
@@ -50,9 +68,12 @@ export default function DashboardAdmin() {
       >
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <EmployeeChart employees={employees} />
-            </Grid>
+            {hasAccessToEmpModule && (
+              <Grid item xs={12} sm={6}>
+                <EmployeeChart employees={employees} />
+              </Grid>
+            )}
+
             <Grid item xs={12} sm={6}>
               <OpenPositions />
             </Grid>
@@ -116,7 +137,7 @@ export default function DashboardAdmin() {
 
             <EmpOnLeave />
             <Punctual />
-            <UpcomingBirthday employees={employees} />
+            {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />}
             <EmpOfMonth />
             <Help />
           </Stack>

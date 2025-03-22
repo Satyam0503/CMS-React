@@ -81,7 +81,7 @@ export interface EmployeeModel {
   password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
-  birthDayThisYear?:Dayjs | string;
+  birthDayThisYear?: Dayjs | string;
 }
 export interface UserEducationModel {
   educationId?: string;
@@ -191,8 +191,8 @@ export interface FiltersType {
 }
 
 export type WithChildren = {
-  children?: ReactNode
-}
+  children?: ReactNode;
+};
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 

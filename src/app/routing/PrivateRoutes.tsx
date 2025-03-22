@@ -18,12 +18,10 @@ const Recruitment = lazy(
 const EmployeePage = lazy(
   () => import("../modules/employees/EmployeesRoute.tsx")
 );
-const AdminDashboard = lazy(
-  () => import("../modules/dashboard/AdminDashboard/DashboardAdmin.tsx")
+const Dashboard = lazy(
+  () => import("../modules/dashboard/Dashboard.tsx")
 );
-const UserDashboard = lazy(
-  () => import("../modules/dashboard/UserDashboard/DashboardUser.tsx")
-);
+
 const ProfilePage = lazy(
   () => import("../modules/users/ProfilePageWrapper.tsx")
 );
@@ -31,7 +29,6 @@ const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(
   () => import("../modules/noticeboard/NoticeBoard.tsx")
 );
-const ProcessLog = lazy(() => import("../modules/processlog/ProcessLog.tsx"));
 
 const PrivateRoutes = () => {
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
@@ -45,22 +42,11 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="admindashboard"
+          path="dashboard"
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.Dashboard}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            </SuspensedView>
-          }
-        />
-
-        <Route
-          path="userdashboard"
-          element={
-            <SuspensedView>
-              <ProtectedRoute module={ModulesName.UserDashboard}>
-                <UserDashboard />
+                <Dashboard />
               </ProtectedRoute>
             </SuspensedView>
           }
@@ -130,16 +116,6 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <SuperAdmin />
-            </SuspensedView>
-          }
-        />
-        <Route
-          path="/processlog"
-          element={
-            <SuspensedView>
-              <ProtectedRoute module={ModulesName.ProcessLog}>
-                <ProcessLog />
-              </ProtectedRoute>
             </SuspensedView>
           }
         />

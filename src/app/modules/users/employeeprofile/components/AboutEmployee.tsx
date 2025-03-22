@@ -28,7 +28,7 @@ export const AboutEmployee: FC<ProfileProps> = ({ employeeId }) => {
       </Typography>
 
       <Typography variant="body1">
-        {aboutEmployee ? aboutEmployee.summary : "NA"}
+        {aboutEmployee && aboutEmployee.summary.trim().length >0 ? aboutEmployee.summary : "NA"}
       </Typography>
     </Card>
   );

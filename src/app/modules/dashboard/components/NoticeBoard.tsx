@@ -13,10 +13,10 @@ import {
   Link,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { KTIcon, toAbsoluteUrl } from "../../../../../_themes/helpers";
-import { colors } from "../../../theme/MuiTheme";
 import { Check, Visibility } from "@mui/icons-material";
 import EmployeePerformance from "./EmployeePerformance";
+import { toAbsoluteUrl } from "../../../../_themes/helpers";
+import { colors } from "../../theme/MuiTheme";
 
 type Props = {
   className: string;

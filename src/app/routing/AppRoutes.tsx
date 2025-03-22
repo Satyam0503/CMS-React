@@ -12,14 +12,16 @@ const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
-  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
-  const userModulePermission= modulePermissions ?? [];
+  const modulePermissions = useAppSelector(
+    (state) => state.user.userData?.modulePermission
+  );
+  const userModulePermission = modulePermissions ?? [];
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
         <Route element={<App />}>
           <Route path="error/*" element={<ErrorsPage />} />
-          <Route path="career/*" element={<ApplyNow />} />
+          <Route path="career/:id" element={<ApplyNow />} />
           <Route path="logout" element={<Logout />} />
 
           {isUserAuthenticated ? (
@@ -27,7 +29,9 @@ const AppRoutes: FC = () => {
               <Route path="/*" element={<PrivateRoutes />} />
               <Route
                 index
-                element={<Navigate to={findUserDefaultTab(userModulePermission)} />}
+                element={
+                  <Navigate to={findUserDefaultTab(userModulePermission)} />
+                }
               />
             </>
           ) : (

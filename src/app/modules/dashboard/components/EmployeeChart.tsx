@@ -1,9 +1,9 @@
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../../shared/components/CustomCard";
 import { FC, useCallback, useEffect, useState } from "react";
-import DonutApexChart from "../../../../shared/components/DonutApexChart";
-import { EmployeeModel } from "../../../../../utils/common_types";
 import { Box, Typography } from "@mui/material";
+import { EmployeeModel } from "../../../../utils/common_types";
+import { CustomCard } from "../../../shared/components/CustomCard";
+import DonutApexChart from "../../../shared/components/DonutApexChart";
 
 interface PropsType {
   employees: EmployeeModel[];
