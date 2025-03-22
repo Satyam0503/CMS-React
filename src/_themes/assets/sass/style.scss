@@ -7,9 +7,9 @@
 
 // Components
 @import "./core/components/components";
-@import "components/components";
+// @import "components/components";
 
 // Layout
 @import "./core/layout/base/layout";
 @import "layout/layout";
-@import "../../../app//styles/app_style.scss";
+@import "./styles/app_style.scss";

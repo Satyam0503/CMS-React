@@ -25,7 +25,9 @@ const Sidebar = () => {
   // const appSidebarDefaultMinimizeDefault =
   //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
-  const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
+  const profileUrl = useAppSelector(
+    (state) => state.user.userData?.profileImage
+  );
 
   useEffect(() => {
     updateDOM(config);

@@ -33,7 +33,11 @@ import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CircularLoader } from "../../shared/components/CircularLoader";
 import { ApplicantModel, JobModal } from "../recruitment/models";
-import { experienceCategoryList, indianStates } from "../../../utils/constant/Constant";
+import {
+  experienceCategoryList,
+  indianStates,
+} from "../../../utils/constant/Constant";
+import { useParams } from "react-router-dom";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -52,8 +56,9 @@ const initialValues: ApplicantModel = {
 };
 
 export default function ApplyNow() {
+  const { id } = useParams();
   const intl = useIntl();
-  const companyId = "18e78b9a-bb78-4074-a39c-35a10b7f0f72";
+  if (id) localStorage.setItem("clientId", id);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<
@@ -84,14 +89,13 @@ export default function ApplyNow() {
       nextState?: Partial<FormikState<ApplicantModel>> | undefined
     ) => void
   ) => {
-      const formData = new FormData();
+    const formData = new FormData();
     formData.append("File", values.resume as File);
     const vacancy = activeJobPositionsList.find(
       (job) => job.jobId === values.vacancyId
     );
-    const payload = {
+    const payload: ApplicantModel = {
       ...values,
-      companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
       experience: values.experience * 12,
     };
@@ -117,7 +121,7 @@ export default function ApplyNow() {
   useEffect(() => {
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies({ companyId });
+        const response = await getAllJobVacancies();
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);
@@ -425,7 +429,7 @@ export default function ApplyNow() {
                               )}
                               options={indianStates}
                               onChange={(event, value) => {
-                                setFieldTouched("state",true)
+                                setFieldTouched("state", true);
                                 setFieldValue("state", value?.value);
                               }}
                               renderInput={(param) => (

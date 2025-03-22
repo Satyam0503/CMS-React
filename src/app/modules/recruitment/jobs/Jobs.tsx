@@ -179,7 +179,6 @@ export default function Jobs() {
     const timeoutId = setTimeout(async () => {
       try {
         const response = await getAllJobVacancies(
-          { companyId: "" },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
