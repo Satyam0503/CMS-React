@@ -9,7 +9,7 @@ import Paper from "@mui/material/Paper";
 import { Card, Link, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { BarChart, GraphicEqOutlined } from "@mui/icons-material";
-import { colors } from "../../../theme/MuiTheme";
+import { colors } from "../../theme/MuiTheme";
 
 function createData(
   sno: number,

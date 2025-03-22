@@ -120,8 +120,12 @@ export const commentActionDecoder = (commentAction: number) => {
       return "Selection";
     case CommentAction.Rejection:
       return "Rejection";
+    case CommentAction.Edit:
+      return "Edit";
+    case CommentAction.Process:
+      return "Process";
     default:
-      "In Process";
+      "Process";
   }
 };
 
@@ -156,25 +160,6 @@ export const convertMonthsToYear = (months: number) => {
   return years + " " + suffix;
 };
 
-export const checkPermissionForModuleAndRoute = (
-  moduleName: ModulesName,
-  userModulePermissions: ModulePermissoinModel[]
-) => {
-  const module = userModulePermissions.find(
-    (module) => module.moduleConstant === moduleName
-  );
-  if (!module) {
-    return false;
-  }
-  const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === Permission.View && permission.hasAccess
-  );
-  if (!hasPermission) {
-    return false;
-  }
-  return hasPermission.hasAccess;
-};
-
 export const checkPermissionForModulesFeatureAccess = (
   moduleName: ModulesName,
   requiredPermission: Permission,
@@ -198,29 +183,45 @@ export const checkPermissionForModulesFeatureAccess = (
 export const findUserDefaultTab = (
   userModulePermissions: ModulePermissoinModel[]
 ) => {
-  const defaultTab = SideBarTabList.find(
-    (tab) =>
-      checkPermissionForModuleAndRoute(tab.title, userModulePermissions) ===
-      true
-  );
+  const defaultTab = SideBarTabList.find((tab) => {
+    if (tab.hasSubTabs) {
+      const defaultSubTab= tab.subTabs?.find(subTabs=>{
+        return checkPermissionForModulesFeatureAccess(subTabs.title,Permission.View,userModulePermissions);
+      })
+      return defaultSubTab ? true: false;
+    }
+    return (
+      checkPermissionForModulesFeatureAccess(
+        tab.title,
+        Permission.View,
+        userModulePermissions
+      ) === true
+    );
+  });
+
   if (!defaultTab) {
     return "/error/";
   }
   return defaultTab.route;
 };
 
-export const getModulePermissions = (moduleName:ModulesName,modulesPermissions:ModulePermissoinModel[])=>{  
-    const allowedPermission : string[] = [];
-    const hasModuleAccess = modulesPermissions.find(module =>module.moduleConstant === moduleName );
-    if(hasModuleAccess){
-      hasModuleAccess.permissions.forEach((permission)=>{
-        if(permission.hasAccess){
-          allowedPermission.push(permission.permissionConstant) 
-        }
-      })
-    }
-    return allowedPermission;
-}
+export const getModulePermissions = (
+  moduleName: ModulesName,
+  modulesPermissions: ModulePermissoinModel[]
+) => {
+  const allowedPermission: string[] = [];
+  const hasModuleAccess = modulesPermissions.find(
+    (module) => module.moduleConstant === moduleName
+  );
+  if (hasModuleAccess) {
+    hasModuleAccess.permissions.forEach((permission) => {
+      if (permission.hasAccess) {
+        allowedPermission.push(permission.permissionConstant);
+      }
+    });
+  }
+  return allowedPermission;
+};
 
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];

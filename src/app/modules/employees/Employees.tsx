@@ -75,14 +75,13 @@ export default function Employees() {
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
-  const modulePermissions = useAppSelector(
-    (state) => state.user.userData?.modulePermission
-  );
-  const userModulesPermissions = modulePermissions ?? [];
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
-  const userPermissionForModule = useMemo(()=>getModulePermissions(ModulesName.Employees,userModulesPermissions),[userModulesPermissions]);
- 
-  
+  const userPermissionForModule = useMemo(
+    () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
+    [userModulesPermissions]
+  );
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -260,18 +259,15 @@ export default function Employees() {
                 tooltip="Filter Employee"
                 handleClick={() => {}}
               />
-              {
-                userPermissionForModule.includes(Permission.Create) && (
-                  <CustomIconButton
+              {userPermissionForModule.includes(Permission.Create) && (
+                <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setModalOpen(true)}
                   tooltip="Add Employee"
                   ariaLabel="Add employee"
                 />
-                )
-              }
-                
-             
+              )}
+
               <CustomIconButton
                 icon={<Download />}
                 tooltip="Import Excel"

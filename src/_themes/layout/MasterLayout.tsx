@@ -8,6 +8,7 @@ import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
+import { PageDataProvider } from "./core";
 
 const MasterLayout = () => {
   const location = useLocation();
@@ -17,45 +18,46 @@ const MasterLayout = () => {
 
   return (
     <>
-      <Grid
-        item
-        display={"flex"}
-        flexDirection={"column"}
-        flexGrow={1}
-        flexBasis={"auto"}
-        flexShrink={0}
-      >
-        <HeaderWrapper />
+      <PageDataProvider>
+        <Grid
+          item
+          display={"flex"}
+          flexDirection={"column"}
+          flexGrow={1}
+          flexBasis={"auto"}
+          flexShrink={0}
+        >
+          <HeaderWrapper />
 
-        <Stack className="app-wrapper flex-row-fluid">
-          <Stack>
-            <Sidebar />
+          <Stack className="app-wrapper flex-row-fluid">
+            <Stack>
+              <Sidebar />
+            </Stack>
+
+            <Stack
+              display={"flex"}
+              flexDirection={"column"}
+              flexGrow={1}
+              flexBasis={"auto"}
+              flexShrink={0}
+              className="bg-body"
+              zIndex={0}
+            >
+              <Container className="d-flex flex-column flex-grow-1">
+                <Outlet />
+              </Container>
+            </Stack>
+            <Footer />
           </Stack>
+        </Grid>
 
-          <Stack
-            display={"flex"}
-            flexDirection={"column"}
-            flexGrow={1}
-            flexBasis={"auto"}
-            flexShrink={0}
-            className="bg-body"
-            zIndex={0}
-          >
-            <Container className="d-flex flex-column flex-grow-1">
-              <Outlet />
-            </Container>
-          </Stack>
-          <Footer />
-        </Stack>
-      </Grid>
+        <ActivityDrawer />
+        <RightToolbar />
+        <DrawerMessenger />
 
-      <ActivityDrawer />
-      <RightToolbar />
-      <DrawerMessenger />
-
-      <ScrollTop />
+        <ScrollTop />
+      </PageDataProvider>
     </>
-
   );
 };
 

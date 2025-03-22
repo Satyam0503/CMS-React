@@ -85,7 +85,10 @@ export const UserSummary = () => {
           <CustomIconButton
             tooltip="Edit"
             icon={<Edit />}
-            handleClick={() => setEdit(true)}
+            handleClick={() => {
+              setEdit(true);
+              setUpdatedSummary(userSummary?.summary ?? "");
+            }}
           />
         )}
       </Stack>
@@ -102,7 +105,7 @@ export const UserSummary = () => {
         />
       ) : (
         <Typography variant="body1">
-          {userSummary ? userSummary.summary : "Add Your Summary"}
+          {userSummary && userSummary.summary.trim().length >0 ? userSummary.summary : "Add Your Summary"}
         </Typography>
       )}
     </Card>

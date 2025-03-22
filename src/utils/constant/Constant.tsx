@@ -46,7 +46,7 @@ import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 export const BaseUrl =
-  import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
+  import.meta.env.VITE_BASEURL ;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
@@ -432,6 +432,12 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     minWidth:150
   },
   {
+    id: "actionCategory",
+    label: "Action",
+    minWidth:150,
+    format: (value: number) => commentActionDecoder(value),
+  },
+  {
     id: "comments",
     label: "Comment",
     minWidth: 200,
@@ -773,13 +779,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
     title: ModulesName.Dashboard,
-    route: "/admindashboard",
-    icon: <DashboardIcon />,
-  },
-  {
-    id: Modules.UserDashboard,
-    title: ModulesName.UserDashboard,
-    route: "/userdashboard",
+    route: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
@@ -834,6 +834,12 @@ export const SideBarTabList: SideBarTabListProps[] = [
         route: "/recruitment/applications",
         icon: <Mail />,
       },
+      {
+        id: Modules.ProcessLog,
+        title: ModulesName.ProcessLog,
+        route: "/recruitment/processlog",
+        icon: <Book />,
+      },
     ],
   },
   {
@@ -868,12 +874,6 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesName.NoticeBoard,
     route: "/noticeboard",
     icon: <AdminPanelSettings />,
-  },
-  {
-    id: Modules.ProcessLog,
-    title: ModulesName.ProcessLog,
-    route: "/processlog",
-    icon: <Book />,
   },
 ];
 
