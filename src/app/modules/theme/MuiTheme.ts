@@ -659,8 +659,9 @@ export const MuiTheme = createTheme({
     MuiListItemIcon: {
       styleOverrides: {
         root: {
+          minWidth:25,
           width:20,
-          padding: "0px",
+          padding:0,
           color: colors.alpha.secondary[500],
         },
       },
@@ -669,6 +670,9 @@ export const MuiTheme = createTheme({
     MuiListItemButton: {
       styleOverrides: {
         root: {
+          paddingInline:"8px",
+          borderRadius:"4px",
+          paddingBlock:0,
           "& .MuiTouchRipple-root": {
             opacity: 0.3,
           },
@@ -713,7 +717,7 @@ export const MuiTheme = createTheme({
     MuiPopover: {
       styleOverrides: {
         paper: {
-          minWidth: "250px",
+          // minWidth: "250px",
           maxWidth: "500px",
           boxShadow: `0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
         },

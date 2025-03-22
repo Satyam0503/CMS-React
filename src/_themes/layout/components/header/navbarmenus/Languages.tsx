@@ -1,9 +1,18 @@
-import clsx from "clsx";
-import { FC } from "react";
+import { FC, useState } from "react";
 
-import { Stack, Typography } from "@mui/material";
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  Stack,
+} from "@mui/material";
 import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
 import { toAbsoluteUrl } from "../../../../helpers";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 
 const languages = [
   {
@@ -41,6 +50,22 @@ const languages = [
 const Languages: FC = () => {
   const lang = useLang();
   const currentLanguage = languages.find((x) => x.lang === lang);
+  const [languageAnchorEl, setLanguangeAnchorEl] =
+    useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setLanguangeAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setLanguangeAnchorEl(null);
+  };
+
+  const handleChangeLanguage = (lang: (typeof languages)[0]) => {
+    setLanguage(lang.lang);
+  };
+  const open = Boolean(languageAnchorEl);
+  const id = open ? "language-popover" : undefined;
   return (
     <div
       className="menu-item px-5"
@@ -48,47 +73,57 @@ const Languages: FC = () => {
       data-kt-menu-placement="left-start"
       data-kt-menu-flip="bottom"
     >
-      <a href="#" >
-        <Stack
-          direction={"row"}
-          display={"flex"}
-          spacing={1}
-          alignItems={"center"}
+      <Stack className="d-flex flex-row align-items-center gap-2">
+        <span className="text-muted">{currentLanguage?.name}</span>
+        <img
+          className="w-15px h-15px rounded-circle"
+          src={currentLanguage?.flag}
+          alt="countryflag"
+        />
+        <IconButton
+          onClick={handleClick}
+          className="p-0 border-0 bg-transparent"
         >
-          <Stack> {currentLanguage?.name}</Stack>
-          <Stack>
-            <img
-              className="w-15px h-15px rounded-1 "
-              src={currentLanguage?.flag}
-              alt="countryflag"
-            />
-          </Stack>
-        </Stack>
-      </a>
-
-      <div className="menu-sub menu-sub-dropdown w-175px py-4">
-        {languages.map((l) => (
-          <div
-            className="menu-item px-3"
-            key={l.lang}
-            onClick={() => {
-              setLanguage(l.lang);
-            }}
-          >
-            <a
-              href="#"
-              className={clsx("menu-link d-flex px-5", {
-                active: l.lang === currentLanguage?.lang,
-              })}
-            >
-              <span className="symbol symbol-20px me-4">
-                <img className="rounded-1" src={l.flag} alt="metronic" />
-              </span>
-              {l.name}
-            </a>
-          </div>
-        ))}
-      </div>
+          {open ? <ArrowDropUp /> : <ArrowDropDown />}
+        </IconButton>
+      </Stack>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={languageAnchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          horizontal: "right",
+          vertical: "bottom",
+        }}
+        transformOrigin={{
+          horizontal: "right",
+          vertical: "top",
+        }}
+      >
+        <List>
+          {languages.map((lang) => (
+            <ListItem disablePadding className="mb-1">
+              <ListItemButton
+                onClick={() => {
+                  handleChangeLanguage(lang);
+                  handleClose();
+                }}
+                selected={currentLanguage?.lang === lang.lang}
+              >
+                <ListItemIcon>
+                  <img
+                    className="w-15px h-15px rounded-circle"
+                    src={lang.flag}
+                    alt="countryflag"
+                  />
+                </ListItemIcon>
+                <ListItemText primary={lang.name}/>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Popover>
     </div>
   );
 };

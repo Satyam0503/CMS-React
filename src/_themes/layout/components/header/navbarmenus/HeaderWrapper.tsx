@@ -49,7 +49,6 @@ export function HeaderWrapper() {
         >
           <Stack>
             <SearchInput
-              variant="standard"
               search={search}
               setSearch={handleSearchChange}
             />
