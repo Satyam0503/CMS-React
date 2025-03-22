@@ -38,7 +38,15 @@ export default function Dashboard() {
     [userModulesPermissions]
   );
 
-  console.log(hasAccessToEmpModule);
+  const hasAccessToJob = useMemo(
+    () =>
+      checkPermissionForModulesFeatureAccess(
+        ModulesName.Jobs,
+        Permission.View,
+        userModulesPermissions
+      ),
+    [userModulesPermissions]
+  );
 
   useEffect(() => {
     async function getEmployees() {
@@ -74,12 +82,16 @@ export default function Dashboard() {
               </Grid>
             )}
 
-            <Grid item xs={12} sm={6}>
-              <OpenPositions />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <ApplicationsChart />
-            </Grid>
+            {hasAccessToJob && (
+              <Grid item xs={12} sm={6}>
+                <OpenPositions />
+              </Grid>
+            )}
+            {hasAccessToJob && (
+              <Grid item xs={12} sm={6}>
+                <ApplicationsChart />
+              </Grid>
+            )}
             <Grid item xs={12} sm={6}>
               <DepartmentChart employees={employees} />
             </Grid>
