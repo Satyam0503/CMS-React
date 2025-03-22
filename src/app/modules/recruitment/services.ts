@@ -3,7 +3,7 @@ import {
   ApiResponse,  
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { ApplicantModel, ApplicantsResponseData, CommentModel, CommentResponseData, GetApplicationPayloadModel, JobModal, JobsResponseData } from "./models";
+import { ApplicantModel, ApplicantsResponseData, CommentModel, CommentResponseData, GetApplicationPayloadModel, GetProcessLogResponseModel, JobModal, JobsResponseData } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
   return postRequest<JobModal, JobsResponseData>(
@@ -56,4 +56,8 @@ export const addComment = async (payload:CommentModel) =>{
  
 export const getApplicantComments = async (applicantId:string)=>{
   return getRequest<CommentResponseData>(`${ServiceUrl.GET_APPLICANT_COMMENTS}?applicantId=${applicantId}`);
+}
+
+export const getProcessLogData = async ()=>{
+  return getRequest<GetProcessLogResponseModel>(ServiceUrl.GET_PROCESS_LOG);
 }

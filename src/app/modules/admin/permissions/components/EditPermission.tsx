@@ -181,6 +181,7 @@ export const EditPermission = () => {
             <TextField
               fullWidth
               required
+              multiline
               disabled={state?.isNotEditable}
               error={
                 formik.touched.description && Boolean(formik.errors.description)

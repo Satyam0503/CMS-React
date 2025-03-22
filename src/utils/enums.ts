@@ -28,25 +28,23 @@ export enum Permission {
 }
 export enum Modules {
   Dashboard = 1,
-  UserDashboard = 2,
-  Employees = 3,
-  Attendance = 4,
-  LeaveManagement = 5,
-  MyProfile = 6,
-  Recruitment = 7,
-  Admin = 8,
-  Holidays = 9,
-  NoticeBoard = 10,
-  Jobs = 11,
-  Applications = 12,
-  Permissions = 13,
-  Theme = 14,
-  ProcessLog=15
+  Employees = 2,
+  Attendance = 3,
+  LeaveManagement = 4,
+  MyProfile = 5,
+  Recruitment = 6,
+  Admin = 7,
+  Holidays = 8,
+  NoticeBoard = 9,
+  Jobs = 10,
+  Applications = 11,
+  Permissions = 12,
+  Theme = 13,
+  ProcessLog=14
 }
 
 export enum ModulesName {
   Dashboard = "Dashboard",
-  UserDashboard = "User Dashboard",
   Employees = "Employees",
   Attendance = "Attendance",
   LeaveManagement = "Leave Management",

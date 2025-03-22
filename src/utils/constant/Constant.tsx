@@ -773,13 +773,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
     title: ModulesName.Dashboard,
-    route: "/admindashboard",
-    icon: <DashboardIcon />,
-  },
-  {
-    id: Modules.UserDashboard,
-    title: ModulesName.UserDashboard,
-    route: "/userdashboard",
+    route: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
@@ -834,6 +828,12 @@ export const SideBarTabList: SideBarTabListProps[] = [
         route: "/recruitment/applications",
         icon: <Mail />,
       },
+      {
+        id: Modules.ProcessLog,
+        title: ModulesName.ProcessLog,
+        route: "/recruitment/processlog",
+        icon: <Book />,
+      },
     ],
   },
   {
@@ -868,12 +868,6 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesName.NoticeBoard,
     route: "/noticeboard",
     icon: <AdminPanelSettings />,
-  },
-  {
-    id: Modules.ProcessLog,
-    title: ModulesName.ProcessLog,
-    route: "/processlog",
-    icon: <Book />,
   },
 ];
 

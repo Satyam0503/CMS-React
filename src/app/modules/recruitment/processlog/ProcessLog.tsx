@@ -1,12 +1,13 @@
 import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import React, { useCallback, useEffect, useState } from "react";
-import { SearchInput } from "../../shared/components/SearchInput";
-import { CustomisedTable } from "../../shared/components/CustomisedTable";
-import { ProcessLogTableColumnList } from "../../../utils/constant/Constant";
-import { ModulesName } from "../../../utils/enums";
-import { getProcessLogData } from "./services";
-import { ProcessLogModel } from "../../../utils/common_types";
+import { useCallback, useEffect, useState } from "react";
+import { ProcessLogModel } from "../models";
+import { getProcessLogData } from "../services";
+import { SearchInput } from "../../../shared/components/SearchInput";
+import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { ModulesName } from "../../../../utils/enums";
+import { ProcessLogTableColumnList } from "../../../../utils/constant/Constant";
+
 
 const ProcessLogs = () => {
   const intl = useIntl();

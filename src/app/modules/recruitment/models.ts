@@ -77,7 +77,19 @@ export interface ApplicantModel {
     commentId?: string;
     companyId?: string;
   }
+  
+  export type ProcessLogModel = {
+    processId: string;
+    applicantName: string;
+    companyId:string;
+    userId: string;
+    jobRole:string;
+    commentedOn: string;
+    comments:string;
+    commentedBy:string;
+  };
 
 export type JobsResponseData = ResponseData<JobModal>;
   export type ApplicantsResponseData = ResponseData<Applicant>;
   export type CommentResponseData = ResponseData<CommentModel>;
+  export type  GetProcessLogResponseModel = ResponseData<ProcessLogModel>

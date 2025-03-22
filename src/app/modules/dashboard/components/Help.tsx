@@ -1,9 +1,7 @@
 import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../../../_themes/helpers";
-import { colors } from "../../../theme/MuiTheme";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Message } from "@mui/icons-material";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 
 export default function Help() {
   const intl = useIntl();

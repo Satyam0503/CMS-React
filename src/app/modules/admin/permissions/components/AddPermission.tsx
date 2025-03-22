@@ -156,6 +156,7 @@ export const AddPermission = () => {
             <TextField
               fullWidth
               required
+              multiline
               error={
                 formik.touched.description && Boolean(formik.errors.description)
               }

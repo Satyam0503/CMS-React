@@ -2,102 +2,85 @@ import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 import { SideBarTabList } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { checkPermissionForModuleAndRoute } from "../../../../../utils/common";
+import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
+import { Permission } from "../../../../../utils/enums";
 
-const SidebarMenuMain = () => {
-  const modulePermission = useAppSelector((state) => state.user.userData?.modulePermission);
-  const userModulePermission = modulePermission  ?? [];
- 
-  const filteredTabList = SideBarTabList.map((tab)=>{
-    if(tab.hasSubTabs){
-      const subTabsWithPermission = tab.subTabs?.map(subTab=>{
-        const hasAccess = checkPermissionForModuleAndRoute(subTab.title,userModulePermission);
-        if(hasAccess){
-          return subTab;
-        }
-        return null;
-      }).filter(subTab=>subTab !== null);
+export const SidebarMenuMain = () => {
+  const modulePermission = useAppSelector(
+    (state) => state.user.userData?.modulePermission
+  );
+  const userModulePermission = modulePermission ?? [];
 
-      if(subTabsWithPermission && subTabsWithPermission.length>0){
+  const filteredTabList = SideBarTabList.map((tab) => {
+    if (tab.hasSubTabs) {
+      const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
+        checkPermissionForModulesFeatureAccess(
+          subTab.title,
+          Permission.View,
+          userModulePermission
+        )
+      );
+
+      if (subTabsWithPermission && subTabsWithPermission.length > 0) {
         return {
           ...tab,
-          subTabs:subTabsWithPermission
-        }
+          subTabs: subTabsWithPermission,
+        };
       }
+      return null;
     }
-    const hasModulePermission = checkPermissionForModuleAndRoute(tab.title,userModulePermission);
-    if(hasModulePermission){
+    if (
+      checkPermissionForModulesFeatureAccess(
+        tab.title,
+        Permission.View,
+        userModulePermission
+      )
+    ) {
       return tab;
     }
+    return null;  
+  }).filter((tab) => tab !== null);
+
+  if (filteredTabList.length === 0) {
     return null;
-  }).filter(tab=>tab !==null);
-    
+  }
+
   return (
     <>
       {filteredTabList.map((tab) => {
-        if (tab.hasSubTabs) {
+        if (tab?.hasSubTabs) {
           return (
             <SidebarMenuItemWithSub
-              key={tab.id}
-              to={tab.route}
-              title={tab.title}
-              icon={tab.icon}
+              key={tab?.id}
+              to={tab?.route}
+              title={tab?.title}
+              icon={tab?.icon}
             >
-              {tab.subTabs?.map((subTab) => {
+              {tab?.subTabs?.map((subTab) => {
                 return (
                   <SidebarMenuItem
-                    key={subTab.id}
-                    to={subTab.route}
-                    title={subTab.title}
-                    icon={subTab.icon}
+                    key={subTab?.id}
+                    to={subTab?.route}
+                    title={subTab?.title}
+                    icon={subTab?.icon}
                   />
                 );
               })}
             </SidebarMenuItemWithSub>
           );
         }
-        return (
-          <SidebarMenuItem
-            key={tab.id}
-            to={tab.route}
-            icon={tab.icon}
-            title={tab.title}
-          />
-        );
+        if(tab){
+          return (
+            <SidebarMenuItem
+              key={tab.id}
+              to={tab.route}
+              icon={tab.icon}
+              title={tab.title}
+            />
+          );
+        }
       })}
     </>
   );
 };
-
-export { SidebarMenuMain };
-
-
-// const filteredTabList = SideBarTabList
-//   .map((tab) => {
-//     if (tab.hasSubTabs) {
-//       // Filter subTabs that the user has permission for
-//       const subTabsWithPermission = tab.subTabs?.filter((subTab) => {
-//         return checkPermissionForModuleAndRoute(subTab.title, userModulePermission);
-//       });
-      
-//       // If there are any subTabs with permission, return the tab with filtered subTabs
-//       if (subTabsWithPermission && subTabsWithPermission.length > 0) {
-//         return {
-//           ...tab,
-//           subTabs: subTabsWithPermission
-//         };
-//       }
-//     }
-
-//     // Check permission for the current tab itself
-//     const hasModulePermission = checkPermissionForModuleAndRoute(tab.title, userModulePermission);
-//     if (hasModulePermission) {
-//       return tab;
-//     }
-
-//     // Return null if no permission
-//     return null;
-//   })
-//   // Remove null values or undefined from the array
-//   .filter(tab => tab !== null);
 

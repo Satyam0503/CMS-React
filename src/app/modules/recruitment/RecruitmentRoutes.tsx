@@ -5,6 +5,7 @@ import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
 import { ModulesName } from "../../../utils/enums";
 import Jobs from "./jobs/Jobs";
 import { Applications } from "./applications/Applications";
+import ProcessLogs from "./processlog/ProcessLog";
 
 const Recruitment = () => {
   return (
@@ -43,6 +44,15 @@ const Recruitment = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="processlog"
+          element={
+            <ProtectedRoute module={ModulesName.ProcessLog}>
+              <ProcessLogs />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<Navigate to={"/error"} />} />
       </Route>
     </Routes>
