@@ -2,9 +2,12 @@ import { FC, memo } from "react";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Close } from "@mui/icons-material";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
-import { sanitizeHtmlContent, statusDecoder } from "../../../../../utils/common";
+import {
+  sanitizeHtmlContent,
+  statusDecoder,
+} from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { JobModal } from "../../models";
@@ -68,11 +71,11 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
               />
             </Grid>
           </Grid>
-          <hr />
+          <Divider />
           <Box
             component={"div"}
             dangerouslySetInnerHTML={{
-              __html:sanitizeHtmlContent(jobData.description)
+              __html: sanitizeHtmlContent(jobData.description),
             }}
             sx={{
               maxHeight: "400px",

@@ -194,7 +194,9 @@ export const Applications = () => {
 
               <CustomIconButton
                 icon={<Download />}
-                tooltip="Import Excel"
+                tooltip={intl.formatMessage({
+                  id: "IMPORT.EXCEL",
+                })}
                 ariaLabel="import excel"
               />
             </Stack>

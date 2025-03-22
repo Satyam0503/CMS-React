@@ -72,7 +72,7 @@ export function CreatePassword() {
     if (!(queryParam.size && queryParam.has("statusNumber"))) {
       navigate("/error/404", { replace: true });
     }
-  },[]);
+  }, []);
 
   return (
     <Stack spacing={{ xs: 4 }}>

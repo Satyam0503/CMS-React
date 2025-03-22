@@ -214,17 +214,26 @@ export default function Jobs() {
             <SearchInput search={search} setSearch={handleSearchChange} />
             <Stack direction="row" spacing={1}>
               <CustomIconButton
-                tooltip="Filter employee"
+                tooltip={intl.formatMessage({
+                  id: "FILTER.EMP",
+                })}
                 icon={<FilterList />}
               />
               {userPermissionsForModule.includes(Permission.Create) && (
                 <CustomIconButton
-                  tooltip="Add job description"
+                  tooltip={intl.formatMessage({
+                    id: "ADD.JOB_DESCRIPTION",
+                  })}
                   icon={<Add />}
                   handleClick={() => setOpenModal(true)}
                 />
               )}
-              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
+              <CustomIconButton
+                tooltip={intl.formatMessage({
+                  id: "IMPORT.EXCEL",
+                })}
+                icon={<Download />}
+              />
             </Stack>
           </Stack>
           <CustomisedTable
@@ -249,8 +258,12 @@ export default function Jobs() {
           )}
           {isConfirmationModalOpen && selectedJob && (
             <ConfirmationModal
-              title={"Delete Job"}
-              content="Are you sure you want to delete this Job?"
+              title={intl.formatMessage({
+                id: "TITLE.DELETE_JOB",
+              })}
+              content={intl.formatMessage({
+                id: "CONFIRMATION.DELETE_JOB",
+              })}
               open={isConfirmationModalOpen}
               handleClose={closeConfirmationModal}
               handleConfirmation={handledeleteJob}

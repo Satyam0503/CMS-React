@@ -134,7 +134,12 @@ export default function NoticeBoard() {
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
               />
-              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
+              <CustomIconButton
+                tooltip={intl.formatMessage({
+                  id: "IMPORT.EXCEL",
+                })}
+                icon={<Download />}
+              />
             </Stack>
           </Stack>
         </Stack>

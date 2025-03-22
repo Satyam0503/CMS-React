@@ -1,5 +1,6 @@
 import { Check, DeleteOutline } from "@mui/icons-material";
 import {
+  Divider,
   Grid,
   MenuItem,
   Select,
@@ -155,7 +156,7 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid item xs={12} display={"flex"} alignItems={"center"}>
               <Grid item xs={4} md={6}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "ECOMMERCE.COMMON.ACTIVE" })}
+                  {intl.formatMessage({ id: "STATUS.ACTIVE" })}
                 </Typography>
               </Grid>
 
@@ -170,7 +171,7 @@ export const AddEditJob: FC<PropsTypes> = ({
               </Grid>
             </Grid>
           </Grid>
-          <hr />
+          <Divider sx={{ bgcolor: "grey", my: 1.5 }} />
           <Stack>
             <TextEditor
               value={jobDescription}
@@ -184,14 +185,10 @@ export const AddEditJob: FC<PropsTypes> = ({
             alignItems={"end"}
           >
             <Stack>
-              <CustomIconButton
-                icon={
-                  <DeleteOutline
-                    sx={{ color: colors.alpha.danger[500] }}
-                    fontSize="large"
-                  />
-                }
-                tooltip="Delete job description"
+              <CustomisedButton
+                label="Delete"
+                Icon={<DeleteOutline />}
+                iconPosition="start"
               />
             </Stack>
 

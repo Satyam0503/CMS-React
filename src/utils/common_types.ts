@@ -81,7 +81,7 @@ export interface EmployeeModel {
   password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
-  birthDayThisYear?:Dayjs | string;
+  birthDayThisYear?: Dayjs | string;
 }
 export interface UserEducationModel {
   educationId?: string;
@@ -128,7 +128,16 @@ export type NoticeModel = {
   group: string;
   message: string;
 };
-
+export type ProcessLogModel = {
+  processId: string;
+  applicantName: string;
+  companyId: string;
+  userId: string;
+  jobRole: string;
+  commentedOn: string;
+  comments: string;
+  commentedBy: string;
+};
 export type LeavesModel = {
   id: string;
   target: string;
@@ -136,6 +145,13 @@ export type LeavesModel = {
   group: string;
   message: string;
 };
+
+export interface ResetPasswordModel {
+  oldPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  type: string;
+}
 
 export type ColumnListTypes = {
   id: string;
@@ -175,8 +191,8 @@ export interface FiltersType {
 }
 
 export type WithChildren = {
-  children?: ReactNode
-}
+  children?: ReactNode;
+};
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
@@ -194,4 +210,4 @@ export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
 
-
+export type GetProcessLogResponseModel = ResponseData<ProcessLogModel>;
