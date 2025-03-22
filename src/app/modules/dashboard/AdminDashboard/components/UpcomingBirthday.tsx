@@ -99,7 +99,7 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                     color={colors.alpha.primary[500]}
                   >
                     {!isSameDate(dayjs(emp.dateOfBirth))
-                      ? dateFormatter(emp.dateOfBirth, "DD MMM")
+                      ? dateFormatter(emp.birthDayThisYear!, "DD MMM YYYY")
                       : "Today"}
                   </Typography>
                 </Stack>

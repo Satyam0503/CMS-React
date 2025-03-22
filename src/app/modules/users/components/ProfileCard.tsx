@@ -13,6 +13,7 @@ import { useIntl } from "react-intl";
 import {
   AttachFile,
   CloudUploadOutlined,
+  DeleteOutlineOutlined,
   Download,
   Image,
   Visibility,

@@ -15,7 +15,8 @@ import esMessages from './messages/es.json'
 import frMessages from './messages/fr.json'
 import jaMessages from './messages/ja.json'
 import zhMessages from './messages/zh.json'
-import {WithChildren} from '../helpers'
+import { WithChildren } from '../../utils/common_types'
+
 
 const allMessages = {
   de: deMessages,

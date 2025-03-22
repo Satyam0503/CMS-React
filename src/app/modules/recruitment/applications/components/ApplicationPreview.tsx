@@ -86,7 +86,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           <Grid item xs={12} display={"flex"}>
             <Grid item xs={6} fontWeight={400}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "PROFILE.STATUS" })}
+                {intl.formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
               </Typography>
             </Grid>
             <Grid item xs={6}>

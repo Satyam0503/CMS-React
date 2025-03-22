@@ -1,4 +1,4 @@
-import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
+import { Box, CardContent, Grid, Stack } from "@mui/material";
 
 import {
   Build,
@@ -8,26 +8,63 @@ import {
 
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../../Redux/hooks";
-import { useUserDetails } from "../UserDataProvider";
-import ProfileCard from "../components/ProfileCard";
-import LeaveAllowences from "../components/LeaveAllowences";
 import { colors } from "../../theme/MuiTheme";
 import IconStat from "../../../shared/components/IconStat";
 import { getDateDiffInYears } from "../../../../utils/common";
-import BasicTabs from "../components/BasicTabs";
-import AboutUser from "../about/AboutUser";
+import { EmployeeSkills } from "./components/EmployeeSkills";
+import { EmployeeCertification } from "./components/EmployeeCertifications";
+import { EmployeeEducation } from "./components/EmployeeEducation";
+import { AboutEmployee } from "./components/AboutEmployee";
+import { EmployeeDetails } from "./components/EmployeeDetails";
+import { useLocation, useNavigate } from "react-router-dom";
+import { EmployeeProfileCard } from "./components/EmployeeProfileCard";
+import { EmployeeModel } from "../../../../utils/common_types";
+import { useEffect, useState } from "react";
+import { getEmployeeById, getEmployeeSkills } from "../userservices";
 
-export default function EmployeeProfile() {
+const EmployeeProfile = () => {
   const intl = useIntl();
+  const [employeeDetails, setEmployeeDetails] = useState<EmployeeModel>(
+    {} as EmployeeModel
+  );
+  const [employeeSkills, setEmployeeSkills] = useState<string>("");
+
   const companyName = useAppSelector(
     (state) => state.user.userData?.companyName
   );
-  const { userDetails, userSkills } = useUserDetails();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const employeeId = location.state as string;
+  if (!employeeId) {
+    navigate("/error");
+  }
+
+  useEffect(() => {
+    const getEmployeeDetails = async () => {
+      try {
+        const response = await Promise.allSettled([
+          getEmployeeById(employeeId),
+          getEmployeeSkills(employeeId),
+        ]);
+        const empData =
+          response[0].status === "fulfilled"
+            ? response[0].value.data.methodResult
+            : ({} as EmployeeModel);
+        setEmployeeDetails(empData);
+        const empSkills =
+          response[1].status === "fulfilled"
+            ? response[1].value.data.methodResult.skills
+            : "";
+        setEmployeeSkills(empSkills);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getEmployeeDetails();
+  }, []);
+
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.PROFILE" })}
-      </Typography>
       <Grid container spacing={4}>
         <Grid
           item
@@ -40,10 +77,7 @@ export default function EmployeeProfile() {
           justifyContent={{ lg: "flex-start" }}
         >
           <Stack width={"100%"}>
-            <ProfileCard />
-          </Stack>
-          <Stack width={"100%"}>
-            <LeaveAllowences />
+            <EmployeeProfileCard employeeDetails={employeeDetails} />
           </Stack>
         </Grid>
         <Grid item xs={12} md={12} lg={8.2} xl={9}>
@@ -71,7 +105,7 @@ export default function EmployeeProfile() {
                   iconBg={colors.alpha.primary[100]}
                   icon={<CorporateFareOutlined fontSize="large" />}
                   iconColor={colors.alpha.primary[500]}
-                  number={getDateDiffInYears(userDetails.dateOfJoining!)}
+                  number={getDateDiffInYears(employeeDetails.dateOfJoining!)}
                   title={`Years in ${companyName}`}
                 />
               </Box>
@@ -82,17 +116,27 @@ export default function EmployeeProfile() {
                   iconBg={colors.alpha.danger[100]}
                   icon={<Build fontSize="large" />}
                   iconColor={colors.alpha.danger[400]}
-                  number={userSkills.length}
+                  number={
+                    employeeSkills.trim().length === 0
+                      ? 0
+                      : employeeSkills.split(",").length
+                  }
                   title="Skills holder"
                 />
               </Box>
             </Grid>
           </Stack>
-          <Stack sx={{ width: "100%" }}>
-            <AboutUser />
+          <Stack spacing={2} sx={{ my: 2 }}>
+            <AboutEmployee employeeId={employeeId} />
+            <EmployeeDetails employeeDetails={employeeDetails} />
+            <EmployeeSkills employeeSkills={employeeSkills} />
+            <EmployeeEducation employeeId={employeeId} />
+            <EmployeeCertification employeeId={employeeId} />
           </Stack>
         </Grid>
       </Grid>
     </>
   );
-}
+};
+
+export { EmployeeProfile };

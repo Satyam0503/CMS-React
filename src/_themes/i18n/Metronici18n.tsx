@@ -1,6 +1,5 @@
-/* eslint-disable react-refresh/only-export-components */
 import {FC, createContext, useContext} from 'react'
-import {WithChildren} from '../helpers'
+import { WithChildren } from '../../utils/common_types'
 
 const I18N_CONFIG_KEY = import.meta.env.VITE_APP_I18N_CONFIG_KEY || 'i18nConfig'
 
@@ -23,7 +22,6 @@ function getConfig(): Props {
   return initialState
 }
 
-// Side effect
 export function setLanguage(lang: string) {
   localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({selectedLang: lang}))
   window.location.reload()

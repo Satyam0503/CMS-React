@@ -4,6 +4,7 @@ import { ModulesName } from "../../../utils/enums";
 import { EmployeeAttendance } from "../attendance/EmployeeAttendance";
 import { EmployeeLeaves } from "../leaves/EmployeeLeaves";
 import Employees from "./Employees";
+import { EmployeeProfile } from "../users/employeeprofile/EmployeeProfile";
 const EmployeesRoute = () => {
   return (
     <Routes>
@@ -33,6 +34,15 @@ const EmployeesRoute = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/aboutemployee"
+          element={
+            <ProtectedRoute module={ModulesName.Employees}>
+              <EmployeeProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to={"/error"} />} />
       </Route>
     </Routes>
   );

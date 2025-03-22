@@ -103,7 +103,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                           navigate(`/recruitment/applicant/${row.applicantId}`);
                         }
                         if (props.tabName === ModulesName.Employees) {
-                          navigate("/myprofile");
+                          navigate("/employee/aboutemployee",{state:row.userId});
                         }
                       }}
                     >
