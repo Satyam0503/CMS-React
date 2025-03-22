@@ -9,7 +9,10 @@ axios.interceptors.request.use(
       ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
       : "";
     if (token) {
-      config.headers.Authorization=`Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      const cId = localStorage.getItem("clientId") || "";
+      if (cId != null && cId != "") config.headers["cId"] = cId;
     }
     return config;
   },
@@ -21,20 +24,16 @@ axios.interceptors.request.use(
 // response interceptor to handle response error
 axios.interceptors.response.use(
   (response) => response,
-  (error:AxiosError) => {
-    if(!error.response){
+  (error: AxiosError) => {
+    if (!error.response) {
       toast.error("Something Went Wrong");
-    }
-    else if (error.response?.status === 404) {
+    } else if (error.response?.status === 404) {
       toast.error("Requested Resource Not Found");
-    }
-    else if (error.response?.status === 401) {
+    } else if (error.response?.status === 401) {
       toast.error("Token expired");
-    }
-    else if(error.response?.status === 500) {
-      toast.error("Opps! Server is down. Try Again later")
-    }
-    else {
+    } else if (error.response?.status === 500) {
+      toast.error("Opps! Server is down. Try Again later");
+    } else {
       toast.error("Something Went wrong");
     }
     return Promise.reject();
@@ -43,8 +42,8 @@ axios.interceptors.response.use(
 
 export const getRequest = <ResponseData>(
   path: string,
-  config?: AxiosRequestConfig ,
-) => {  
+  config?: AxiosRequestConfig
+) => {
   return axios.get<ResponseData>(path, {
     ...config,
     headers: {
@@ -58,7 +57,7 @@ export const postRequest = <RequestData, ResponseData>(
   path: string,
   data?: RequestData,
   config?: AxiosRequestConfig,
-  isformData: boolean = false,
+  isformData: boolean = false
 ) => {
   return axios.post<ResponseData>(path, data, {
     ...config,
@@ -73,14 +72,21 @@ export const postRequest = <RequestData, ResponseData>(
 export const patchRequest = <D>(
   path: string,
   data?: D,
-  config?: AxiosRequestConfig 
+  config?: AxiosRequestConfig
 ) => {
   return axios.patch(path, data, config);
 };
 
-export const deleteRequest = <ResponseData>(path: string, config?:AxiosRequestConfig) => {
+export const deleteRequest = <ResponseData>(
+  path: string,
+  config?: AxiosRequestConfig
+) => {
   return axios.delete<ResponseData>(path, config);
 };
-export const putRequest = <D>(path: string, data?: D, config?:AxiosRequestConfig) => {
+export const putRequest = <D>(
+  path: string,
+  data?: D,
+  config?: AxiosRequestConfig
+) => {
   return axios.put(path, data, config);
 };
