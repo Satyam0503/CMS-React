@@ -4,12 +4,7 @@ import { Link } from "react-router-dom";
 import { Formik, useFormik } from "formik";
 import { login } from "../core/_requests";
 
-import {
-  Grid,
-  InputAdornment,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
@@ -22,10 +17,7 @@ import { Regex } from "../../../../utils/constant/Constant";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(
-      Regex.Email,
-      "Email must be a valid email"
-    )
+    .matches(Regex.Email, "Email must be a valid email")
     .required("Email is required"),
   password: Yup.string()
     .matches(
@@ -44,7 +36,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
   const dispatch = useAppDispatch();
-
+  localStorage.removeItem("clientId");
   async function handleLogin(
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void,
@@ -61,8 +53,8 @@ export function Login() {
       dispatch(setToken({ token: data.message }));
       setLocalKey(data.message);
       setStatus("");
-    } catch (error:any) {
-      console.error("Error :"+ error.message)
+    } catch (error: any) {
+      console.error("Error :" + error.message);
       setStatus(error.message);
     } finally {
       setSubmitting(false);

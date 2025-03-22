@@ -1,5 +1,5 @@
-
 const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
+const clientId = "ClientId";
 
 const getLocalKey = (): string | undefined => {
   if (!localStorage) {
@@ -12,7 +12,7 @@ const getLocalKey = (): string | undefined => {
   return lsValue;
 };
 
-const setLocalKey = (key:string) => {
+const setLocalKey = (key: string) => {
   if (!localStorage) {
     return;
   }

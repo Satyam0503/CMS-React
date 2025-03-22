@@ -110,7 +110,7 @@ export default function Jobs() {
   ) => {
     const payload = {
       ...values,
-      description: removeUnwantedString(values.description)
+      description: removeUnwantedString(values.description),
     };
     if (isEdit) {
       const jobId = values.jobId;
@@ -166,7 +166,6 @@ export default function Jobs() {
     const timeoutId = setTimeout(async () => {
       try {
         const response = await getAllJobVacancies(
-          { companyId: "" },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
