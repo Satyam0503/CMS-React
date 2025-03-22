@@ -90,7 +90,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     container
                     rowSpacing={1.5}
                     columnSpacing={{ xs: 1, sm: 2 }}
-                    alignItems={"center"}
                   >
                     <Grid item xs={12} sm={6}>
                       <TextInput

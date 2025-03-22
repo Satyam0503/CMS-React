@@ -48,7 +48,7 @@ const Languages: FC = () => {
       data-kt-menu-placement="left-start"
       data-kt-menu-flip="bottom"
     >
-      <a href="#" className="menu-link px-5">
+      <a href="#" >
         <Stack
           direction={"row"}
           display={"flex"}

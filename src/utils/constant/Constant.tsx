@@ -22,7 +22,6 @@ import {
   TIME_PERIOD_MAP,
 } from "../enums";
 
-import { AddressDetailsIcon } from "../../app/shared/components/AddressDetailsIcon";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   AccessTime,
@@ -105,6 +104,9 @@ export const ServiceUrl = {
 
   ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
+
+  // process log
+  GET_PROCESS_LOG: `${BaseUrl}/api/User/GetProcessLogData`,
 };
 
 export const Regex = {
@@ -170,6 +172,28 @@ export const bloodGroups = [
   { id: 6, label: "AB-", value: "AB-" },
   { id: 7, label: "O+", value: "O+" },
   { id: 8, label: "O-", value: "O-" },
+];
+export const Days = [
+  {
+    id: 1,
+    label: "Today",
+    value: "today",
+  },
+  {
+    id: 2,
+    label: "This week",
+    value: "thisWeek",
+  },
+  {
+    id: 3,
+    label: "This month",
+    value: "thisMonth",
+  },
+  {
+    id: 4,
+    label: "This year",
+    value: "thisYear",
+  },
 ];
 
 export const JobTime = [
@@ -382,26 +406,145 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
-    id: "applicant",
-    label: "Applicant",
+    id:'serialNo',
+    label:"S.No.",
+    minWidth:60
   },
   {
-    id: "jobrole",
+    id: "applicantName",
+    label: "Applicant Name",
+    minWidth:150
+  },
+  {
+    id: "jobRole",
     label: "Job Role",
+    minWidth:150
   },
-
   {
-    id: "commentedon",
+    id: "commentedOn",
     label: "Commented On",
+    format:(value:string)=> dateFormatter(value, "DD MMM YYYY hh:mm A"),
+    minWidth:150
+  },
+  {
+    id: "commentedBy",
+    label: "Commented By",
+    minWidth:150
+  },
+  {
+    id: "comments",
+    label: "Comment",
+    minWidth: 200,
+    build: (value: string) => (
+      <Tooltip
+        title={
+          <Typography
+            dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
+            sx={{
+              fontSize: "12px",
+              "& p": {
+                margin: 0,
+                color: "#FFFFFF",
+              },
+            }}
+          />
+        }
+        arrow
+        placement="top"
+      >
+        <Typography
+          variant="body1"
+          style={{
+            width: "200px",
+            overflow: "hidden",
+            textWrap: "nowrap",
+            textOverflow: "ellipsis",
+            fontSize: "12px",
+          }}
+          dangerouslySetInnerHTML={{ __html: value }}
+          sx={{
+            "& p": {
+              margin: 0,
+            },
+          }}
+        />
+      </Tooltip>
+    ),
+  },
+];
+export const LeaveSummaryTableColumnList: ColumnListTypes[] = [
+  {
+    id: "date",
+    label: "Date",
+  },
+  {
+    id: "absent",
+    label: "Absent",
   },
 
   {
-    id: "comment",
-    label: "Comment",
+    id: "firsthalf",
+    label: "First Half",
+  },
+
+  {
+    id: "secondhalf",
+    label: "Second Half",
   },
   {
-    id: "commentedby",
-    label: "Commented By",
+    id: "workfromhome",
+    label: "Working from home",
+  },
+  {
+    id: "total",
+    label: "Total",
+  },
+
+  {
+    id: "action",
+    label: "Action",
+    build: (row: Applicant) => <ActionComponent row={row} />,
+  },
+];
+export const LeaveMangementTableColumnList: ColumnListTypes[] = [
+  {
+    id: "name",
+    label: "Name",
+  },
+  {
+    id: "type",
+    label: "Leave type",
+  },
+
+  {
+    id: "from",
+    label: "From",
+  },
+
+  {
+    id: "to",
+    label: "To",
+  },
+  {
+    id: "days",
+    label: "Days",
+  },
+  {
+    id: "remaining",
+    label: "Remaining",
+  },
+  {
+    id: "reason",
+    label: "Reason",
+  },
+  {
+    id: "status",
+    label: "Status",
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
 
@@ -615,6 +758,11 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             fontSize: "12px",
           }}
           dangerouslySetInnerHTML={{ __html: value }}
+          sx={{
+            "& p": {
+              margin: 0,
+            },
+          }}
         />
       </Tooltip>
     ),

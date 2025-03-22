@@ -5,7 +5,6 @@ import { ILayout, useLayout } from "../../core";
 import { SidebarMenu } from "../sidebar/sidebar-menu/SidebarMenu";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
-import { toAbsoluteUrl } from "../../../helpers/AssetHelpers";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 
 const Sidebar = () => {
@@ -26,7 +25,9 @@ const Sidebar = () => {
   // const appSidebarDefaultMinimizeDefault =
   //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
-  const profileUrl = useAppSelector((state) => state.user.profileImageUrl);
+  const profileUrl = useAppSelector(
+    (state) => state.user.userData?.profileImage
+  );
 
   useEffect(() => {
     updateDOM(config);

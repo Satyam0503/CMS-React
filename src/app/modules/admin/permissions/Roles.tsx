@@ -1,11 +1,7 @@
 import {
   Typography,
-  Grid,
   Stack,
-  Container,
   Card,
-  Link,
-  Button,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
@@ -26,8 +22,8 @@ export const Roles = () => {
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
   const [loading, setLoading] = useState(true);
   const userModulePermission = useAppSelector(
-    (state) => state.user.userPermissions
-  );
+    (state) => state.user.userData?.modulePermission
+  )!;
   const hasAccess = checkPermissionForModulesFeatureAccess(
     ModulesName.Permissions,
     Permission.Create,

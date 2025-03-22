@@ -105,6 +105,7 @@ export const EditApplicant = () => {
       description: comment,
       activityCategory: commentActionEncoderForApplicationStatus(activityType)!,
       userName: user.firstName + " " + user.lastName,
+      jobTitle:state.applicantId,
     };
     const response = await addComment(payload);
     const { success, statusCode } = response.data;

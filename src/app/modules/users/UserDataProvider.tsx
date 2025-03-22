@@ -1,8 +1,6 @@
 import { createContext, FC, useContext, useEffect, useMemo, useState } from "react";
 import { EmployeeModel } from "../../../utils/common_types";
 import { getEmployeeById } from "./userservices";
-import { setProfileImageUrl } from "../../Redux/Reducers/userSlice";
-import { useAppDispatch } from "../../Redux/hooks";
 
 type UserDataContextType = {
   userDetails: EmployeeModel;
@@ -23,7 +21,6 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 
 // User Details Provider
 export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
-  const dispatch = useAppDispatch();
   const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
   const [userSkills, setUserSkills] = useState<string[]>([]);
   const [refresh,setRefresh]= useState(false);
@@ -53,7 +50,6 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         throw new Error(message);
       }  
       setUserDetails(methodResult);
-      dispatch(setProfileImageUrl(methodResult.fullProfileUrl!));
     })
     .catch(error=>{
       console.error(error.message);

@@ -659,7 +659,7 @@ export const MuiTheme = createTheme({
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          minWidth: "20px ",
+          width:20,
           padding: "0px",
           color: colors.alpha.secondary[500],
         },
@@ -713,7 +713,7 @@ export const MuiTheme = createTheme({
     MuiPopover: {
       styleOverrides: {
         paper: {
-          minWidth: "300px",
+          minWidth: "250px",
           maxWidth: "500px",
           boxShadow: `0px 2px 10px 0px ${colors.alpha.neutral[300]}`,
         },
@@ -827,7 +827,7 @@ export const MuiTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         paper: {
-          maxHeight: "200px",
+          maxHeight: "230px", // it must be 230px , which is suitable for all
         },
 
         list: {
@@ -1180,7 +1180,7 @@ export const MuiTheme = createTheme({
           "&:hover": {
             background: "none",
           },
-          
+
           "&.Mui-checked": {
             color: colors.alpha.primary[500],
             background: "none",

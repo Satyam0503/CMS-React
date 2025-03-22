@@ -2,10 +2,8 @@ import {
   alpha,
   Avatar,
   Box,
-  Button,
   Card,
   Container,
-  darken,
   Grid,
   lighten,
   Stack,
@@ -15,17 +13,13 @@ import { useIntl } from "react-intl";
 import {
   AttachFile,
   CloudUploadOutlined,
-  Delete,
-  DeleteForeverOutlined,
-  DeleteOutline,
-  DeleteOutlineOutlined,
   Download,
   Image,
   Visibility,
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
-import { useAppSelector } from "../../../Redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { updateProfilePicture } from "../userservices";
 import { toast } from "react-toastify";
 import { colors } from "../../theme/MuiTheme";
@@ -34,14 +28,16 @@ import { getDateDiffInYears } from "../../../../utils/common";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
+import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
   const [seletedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
   const intl = useIntl();
-  const { userDetails, setRefresh } = useUserDetails();
-  const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
+  const { userDetails } = useUserDetails();
+  const userData = useAppSelector((state) => state.user.userData)!;
+  const dispatch= useAppDispatch();
 
   function handleClose() {
     setOpen(false);
@@ -79,10 +75,14 @@ export default function ProfileCard() {
       formData.append("profilePicture", seletedFile);
       try {
         const response = await updateProfilePicture(formData);
-        const { success } = response.data;
+        const { success ,methodResult} = response.data;
         if (success) {
           toast.success("Profile Updated Successfully");
-          setRefresh();
+          console.log(methodResult);
+          dispatch(setCurrentUser({
+            ...userData,
+            profileImage:methodResult
+          }))
           handleClose();
         }
       } catch (error) {
@@ -90,7 +90,7 @@ export default function ProfileCard() {
       }
     }
   }
-  
+
   return (
     <>
       <Card
@@ -126,7 +126,7 @@ export default function ProfileCard() {
         >
           <Avatar
             alt=""
-            src={profileImageUrl}
+            src={userData.profileImage}
             sx={{
               width: "100%",
               height: "100%",
@@ -271,6 +271,19 @@ export default function ProfileCard() {
               {fileError && <ErrorLabel>{fileError}</ErrorLabel>}
             </Stack>
           </Box>
+          <Stack mt={1}>
+            <CustomisedButton
+              variant="outlined"
+              label="Delete File"
+              Icon={<DeleteOutlineOutlined />}
+              iconPosition="end"
+              handleClick={handleUpdateAvatar}
+              style={{
+                visibility: !seletedFile ? "hidden" : "visible",
+                color: colors.alpha.danger[500],
+              }}
+            />
+          </Stack>
         </CustomisedModal>
       )}
     </>

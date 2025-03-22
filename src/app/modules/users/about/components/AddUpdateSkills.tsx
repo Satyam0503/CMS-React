@@ -11,14 +11,14 @@ type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userSkills: string[];
-  handleSkillUpdate:(skills: string[])=> Promise<void>
+  handleSkillUpdate: (skills: string[]) => Promise<void>;
 };
 
 export const AddUpdateSkills: React.FC<PropsType> = ({
   userSkills,
   open,
   setOpen,
-  handleSkillUpdate
+  handleSkillUpdate,
 }) => {
   const [newSkill, setNewSkill] = React.useState("");
   const [skills, setSkills] = React.useState<string[]>(userSkills);
@@ -29,7 +29,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
   }
 
   function handleAddSkill() {
-    if(newSkill.trim().length===0){
+    if (newSkill.trim().length === 0) {
       return;
     }
     if (!skills.includes(newSkill.trim().toUpperCase())) {
@@ -42,9 +42,9 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
     setNewSkill("");
     setOpen(false);
   }
-  
-  function handleKeyDownEvent(event:React.KeyboardEvent<HTMLDivElement>){
-    if(event.code==="Enter"){
+
+  function handleKeyDownEvent(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.code === "Enter") {
       handleAddSkill();
     }
   }
@@ -65,18 +65,21 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
                     disablePointerEvents={!newSkill}
                   >
                     <CustomIconButton
-                      icon={<Add />}                 
+                      icon={<Add />}
                       handleClick={handleAddSkill}
-                    ></CustomIconButton>
+                      style={{ border: "none" }}
+                    />
                   </InputAdornment>
                 ),
               }}
               variant="outlined"
-              placeholder={ skills.length === 20 ? "Limit Reached" : "Add Upto 20 Skills"}
+              placeholder={
+                skills.length === 20 ? "Limit Reached" : "Add Upto 20 Skills"
+              }
               value={newSkill}
               onChange={(event) => setNewSkill(event.target.value)}
-              onKeyDown={(event)=>handleKeyDownEvent(event)}
-              disabled={skills.length === 20 }
+              onKeyDown={(event) => handleKeyDownEvent(event)}
+              disabled={skills.length === 20}
             />
             <Stack
               direction={"row"}
@@ -103,7 +106,7 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
             <CustomisedButton
               variant="contained"
               label="Update"
-              handleClick={()=>handleSkillUpdate(skills)}
+              handleClick={() => handleSkillUpdate(skills)}
               // disabled={skills.length === 0}
             />
           </Stack>

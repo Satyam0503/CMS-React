@@ -6,13 +6,11 @@ import { colors } from "../../modules/theme/MuiTheme";
 
 type PropsType = {
   search: string;
-  style?: React.CSSProperties;
   setSearch: (value: string) => void;
-  variant?: "outlined" | "filled" | "standard";
 };
 
 export const SearchInput: FC<PropsType> = memo(
-  ({ search, setSearch, style, variant }) => {
+  ({ search, setSearch}) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
 
@@ -27,7 +25,7 @@ export const SearchInput: FC<PropsType> = memo(
     return (
       <>
         <TextField
-          variant={variant}
+          variant="outlined"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

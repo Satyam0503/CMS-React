@@ -19,7 +19,6 @@ import { TextInput } from "../../../../shared/components/form-component/TextInpu
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { EmployeeModel } from "../../../../../utils/common_types";
 import { updateEmployee } from "../../../employees/employeeServices";
-import { AxiosError } from "axios";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
@@ -84,7 +83,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
         handleClose();
       }
     } catch (error: unknown) {
-      console.error((error as AxiosError).message);
+      console.error((error as Error).message);
     } finally {
       setSubmitting(false);
     }
@@ -116,7 +115,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
               handleSubmit,
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={2} alignItems={"center"}>
+                <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextInput
                       label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
@@ -135,9 +134,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Stack>
-                      {/* <Typography variant="body1">
-                        {intl.formatMessage({ id: "USER.DOB" })}
-                      </Typography> */}
                       <CustomisedDatePicker
                         label="Date of birth"
                         name="dateOfBirth"

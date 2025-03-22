@@ -2,7 +2,7 @@ import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   addEmployee,
   deleteEmployee,
@@ -16,7 +16,9 @@ import dayjs from "dayjs";
 import { EmployeeModel } from "../../../utils/common_types";
 
 import {
+  checkPermissionForModulesFeatureAccess,
   employeesListMapperforExport,
+  getModulePermissions,
   statusDecoder,
   statusEncoder,
 } from "../../../utils/common";
@@ -26,7 +28,8 @@ import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { Pagination } from "../../shared/components/Pagination";
 import AddUpdateEmployee from "./components/AddUpdateEmployee";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
-import { ModulesName } from "../../../utils/enums";
+import { ModulesName, Permission } from "../../../utils/enums";
+import { useAppSelector } from "../../Redux/hooks";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -72,6 +75,14 @@ export default function Employees() {
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
+  const modulePermissions = useAppSelector(
+    (state) => state.user.userData?.modulePermission
+  );
+  const userModulesPermissions = modulePermissions ?? [];
+
+  const userPermissionForModule = useMemo(()=>getModulePermissions(ModulesName.Employees,userModulesPermissions),[userModulesPermissions]);
+ 
+  
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -249,15 +260,20 @@ export default function Employees() {
                 tooltip="Filter Employee"
                 handleClick={() => {}}
               />
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-                tooltip="Add Employee"
-                ariaLabel="Add employee"
-              />
+              {
+                userPermissionForModule.includes(Permission.Create) && (
+                  <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setModalOpen(true)}
+                  tooltip="Add Employee"
+                  ariaLabel="Add employee"
+                />
+                )
+              }
+                
+             
               <CustomIconButton
                 icon={<Download />}
-                // handleClick={handleEmployeeExport}
                 tooltip="Import Excel"
                 ariaLabel="import excel"
               />

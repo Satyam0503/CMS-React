@@ -72,6 +72,7 @@ export interface ApplicantModel {
     description: string;
     userName: string;
     activityCategory: number;
+    jobTitle:string;
     createdDate?: string;
     commentId?: string;
     companyId?: string;

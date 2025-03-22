@@ -32,7 +32,7 @@ export default function HeaderNotificationMenu() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const profileImageUrl = useAppSelector((state) => state.user.profileImageUrl);
+  const profileImageUrl = useAppSelector((state) => state.user.userData?.profileImage);
   const handleClose = () => {
     setAnchorEl(null);
   };

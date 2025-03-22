@@ -20,16 +20,16 @@ export const BarChart: FC<BarChartProps> = (props) => {
     chart: {
       animations: {
         enabled: true,
-        speed: 800,  
-        dynamicAnimation:{
-          enabled:true,
-          speed:800,
-        }
+        speed: 800,
+        dynamicAnimation: {
+          enabled: true,
+          speed: 800,
+        },
       },
       height: height || 200,
       type: "bar",
     },
-    colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444","#B3743B","#FFE2B8"],
+    colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444", "#B3743B", "#FFE2B8"],
     fill: {
       opacity: 1,
     },
@@ -37,10 +37,10 @@ export const BarChart: FC<BarChartProps> = (props) => {
     plotOptions: {
       bar: {
         borderRadius: 4,
-        borderRadiusApplication:"end",
-        columnWidth: "40%",
+        borderRadiusApplication: "end",
+        columnWidth: 37,
         distributed: true,
-        barHeight:10,
+        barHeight: 10,
       },
     },
     dataLabels: {
@@ -53,7 +53,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       fontWeight: 600,
       itemMargin: {
         horizontal: 10,
-        vertical:2,
+        vertical: 2,
       },
     },
     xaxis: {
@@ -68,12 +68,12 @@ export const BarChart: FC<BarChartProps> = (props) => {
         offsetY: -2,
       },
     },
-    yaxis:{
-        show:false,
+    yaxis: {
+      show: false,
     },
     tooltip: {
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        const bgColor= w.globals.colors[dataPointIndex];        
+        const bgColor = w.globals.colors[dataPointIndex];
         return `
             <div class="chart_tooltip" style="background-color:${bgColor}"> 
                 <span>${w.globals.labels[dataPointIndex]}</span> :
