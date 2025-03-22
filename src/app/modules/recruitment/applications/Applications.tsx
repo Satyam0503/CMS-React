@@ -7,7 +7,7 @@ import { Pagination } from "../../../shared/components/Pagination";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { ApplicationPreview } from "./components/ApplicationPreview";
@@ -17,7 +17,8 @@ import {
 } from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
-import { ModulesName } from "../../../../utils/enums";
+import { ModulesName, Permission } from "../../../../utils/enums";
+import { getModulePermissions } from "../../../../utils/common";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -71,6 +72,14 @@ export const Applications = () => {
     }
   };
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
+
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+
+  const userPermissionsForModule = useMemo(
+    () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
+    [userModulesPermissions]
+  );
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -176,10 +185,12 @@ export const Applications = () => {
                   handleClick={handleFilterClick}
                 />
               </Badge>
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setAddModalOpen(true)}
-              />
+              {userPermissionsForModule.includes(Permission.Create) && (
+                <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setAddModalOpen(true)}
+                />
+              )}
 
               <CustomIconButton
                 icon={<Download />}
