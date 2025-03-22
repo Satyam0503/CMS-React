@@ -131,12 +131,12 @@ export type NoticeModel = {
 export type ProcessLogModel = {
   processId: string;
   applicantName: string;
-  companyId:string;
+  companyId: string;
   userId: string;
-  jobRole:string;
+  jobRole: string;
   commentedOn: string;
-  comments:string;
-  commentedBy:string;
+  comments: string;
+  commentedBy: string;
 };
 export type LeavesModel = {
   id: string;
@@ -145,6 +145,13 @@ export type LeavesModel = {
   group: string;
   message: string;
 };
+
+export interface ResetPasswordModel {
+  oldPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  type: string;
+}
 
 export type ColumnListTypes = {
   id: string;
@@ -203,4 +210,4 @@ export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
 
-export type  GetProcessLogResponseModel = ResponseData<ProcessLogModel>
+export type GetProcessLogResponseModel = ResponseData<ProcessLogModel>;

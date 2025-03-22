@@ -80,9 +80,10 @@ export default function Employees() {
   );
   const userModulesPermissions = modulePermissions ?? [];
 
-  const userPermissionForModule = useMemo(()=>getModulePermissions(ModulesName.Employees,userModulesPermissions),[userModulesPermissions]);
- 
-  
+  const userPermissionForModule = useMemo(
+    () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
+    [userModulesPermissions]
+  );
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -257,24 +258,27 @@ export default function Employees() {
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
-                tooltip="Filter Employee"
+                tooltip={intl.formatMessage({
+                  id: "FILTER.EMP",
+                })}
                 handleClick={() => {}}
               />
-              {
-                userPermissionForModule.includes(Permission.Create) && (
-                  <CustomIconButton
+              {userPermissionForModule.includes(Permission.Create) && (
+                <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setModalOpen(true)}
-                  tooltip="Add Employee"
+                  tooltip={intl.formatMessage({
+                    id: "ADD.EMP.INFO",
+                  })}
                   ariaLabel="Add employee"
                 />
-                )
-              }
-                
-             
+              )}
+
               <CustomIconButton
                 icon={<Download />}
-                tooltip="Import Excel"
+                tooltip={intl.formatMessage({
+                  id: "IMPORT.EXCEL",
+                })}
                 ariaLabel="import excel"
               />
             </Stack>
@@ -322,8 +326,8 @@ export default function Employees() {
       )}
       {isConfirmModalOpen && (
         <ConfirmationModal
-          title={"Delete Employee"}
-          content="Are you sure you want to delete this Employee?"
+          title={intl.formatMessage({ id: "TITLE.DELETE_EMP" })}
+          content={intl.formatMessage({ id: "CONFIRMATION.DELETE_EMP" })}
           open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={handleEmployeeDeletion}

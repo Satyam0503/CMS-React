@@ -101,7 +101,9 @@ export function Registration() {
             <Stack spacing={2}>
               {status && (
                 <Grid className="mb-lg-15 alert alert-danger">
-                  <Grid className="alert-text font-weight-bold">{status}</Grid>
+                  <Grid className="alert-text" fontWeight={600}>
+                    {status}
+                  </Grid>
                 </Grid>
               )}
               <Stack>
@@ -297,8 +299,10 @@ export function Registration() {
                 />
                 <Typography variant="body1">
                   <Box component="span">
-                    I Accept the
-                    <Link to="#"> Terms and Conditions</Link>
+                    {intl.formatMessage({ id: "TERMS.CONDITION_ACCEPT" })}
+                    <Link to="#">
+                      {intl.formatMessage({ id: "TERMS.CONDITION" })}
+                    </Link>
                   </Box>
                 </Typography>
 
@@ -325,7 +329,10 @@ export function Registration() {
                   type="button"
                 />
                 <Typography variant="body2" align="center">
-                  Already Register ?<Link to={"/auth/login"}> Sign In</Link>
+                  {intl.formatMessage({ id: "STATUS.REGISTRATION" })}
+                  <Link to={"/auth/login"}>
+                    {intl.formatMessage({ id: "AUTH.LOGIN.BUTTON" })}
+                  </Link>
                 </Typography>
               </Stack>
             </Stack>
