@@ -53,7 +53,7 @@ const initialValues: ApplicantModel = {
 
 export default function ApplyNow() {
   const intl = useIntl();
-  const companyId = import.meta.env.VITE_COMPANY_KEY;
+  const companyId = "18e78b9a-bb78-4074-a39c-35a10b7f0f72";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<

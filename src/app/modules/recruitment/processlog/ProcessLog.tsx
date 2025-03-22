@@ -30,7 +30,7 @@ const ProcessLogs = () => {
       .then((res) => {
         const { success, methodResults, totalRecords } = res.data;
         if (success) {
-          setProcessLogList(methodResults);
+          setProcessLogList([...methodResults].reverse());
           setTotalRecords(totalRecords);
         }
       })

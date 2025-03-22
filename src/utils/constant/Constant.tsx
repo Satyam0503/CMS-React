@@ -46,7 +46,7 @@ import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 export const BaseUrl =
-  import.meta.env.VITE_BASEURL || "https://stage.codeji.in";
+  import.meta.env.VITE_BASEURL ;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
@@ -430,6 +430,12 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     id: "commentedBy",
     label: "Commented By",
     minWidth:150
+  },
+  {
+    id: "actionCategory",
+    label: "Action",
+    minWidth:150,
+    format: (value: number) => commentActionDecoder(value),
   },
   {
     id: "comments",

@@ -120,8 +120,12 @@ export const commentActionDecoder = (commentAction: number) => {
       return "Selection";
     case CommentAction.Rejection:
       return "Rejection";
+    case CommentAction.Edit:
+      return "Edit";
+    case CommentAction.Process:
+      return "Process";
     default:
-      "In Process";
+      "Process";
   }
 };
 

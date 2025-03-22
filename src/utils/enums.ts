@@ -12,11 +12,13 @@ export enum ApplicantStatus {
   Active = 1,
 }
 export enum CommentAction {
+  Process=0,
   InProgress = 1,
   OnHold = 2,
   Shortlisted = 3,
   Selection = 4,
   Rejection = 5,
+  Edit=6,
 }
 
 export enum Permission {

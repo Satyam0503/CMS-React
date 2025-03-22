@@ -37,6 +37,7 @@ import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLa
 import { colors } from "../../../theme/MuiTheme";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
+import { CommentAction } from "../../../../../utils/enums";
 
 export const EditApplicant = () => {
   const intl = useIntl();
@@ -99,11 +100,12 @@ export const EditApplicant = () => {
   };
   
   const handleAddComment = async (activityType: number) => {
+    const actionCategory = activityType === state.activityType ? CommentAction.Edit :commentActionEncoderForApplicationStatus(activityType)!   
     const payload = {
       applicantId: state.applicantId,
       userId: user.userId,
       description: comment,
-      activityCategory: commentActionEncoderForApplicationStatus(activityType)!,
+      activityCategory:actionCategory ,
       userName: user.firstName + " " + user.lastName,
       jobTitle:state.applicantId,
     };
