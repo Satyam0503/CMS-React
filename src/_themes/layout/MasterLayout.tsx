@@ -54,8 +54,6 @@ const MasterLayout = () => {
         <ActivityDrawer />
         <RightToolbar />
         <DrawerMessenger />
-
-        <ScrollTop />
       </PageDataProvider>
     </>
   );

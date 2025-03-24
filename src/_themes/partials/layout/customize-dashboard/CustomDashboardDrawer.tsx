@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Close } from "@mui/icons-material";
+import { colors } from "../../../../app/modules/theme/MuiTheme";
 
 const CustomDashboardDrawer = () => {
   const [checked, setChecked] = React.useState([0]);
@@ -36,27 +37,30 @@ const CustomDashboardDrawer = () => {
       data-kt-drawer-name="help"
       data-kt-drawer-activate="true"
       data-kt-drawer-overlay="true"
-      data-kt-drawer-width="{default:'300px', 'md': '525px'}"
+      data-kt-drawer-width="{default:'300px', 'md': '400px'}"
       data-kt-drawer-direction="end"
       data-kt-drawer-toggle="#kt_help_toggle"
       data-kt-drawer-close="#kt_help_close"
     >
-      <Grid container p={5}>
-        <Typography variant="h4">Dashboard Settings</Typography>
+      <Stack p={5}>
         <Stack
-          direction="row"
+          direction={"row"}
           display={"flex"}
-          alignItems={"center"}
           justifyContent={"space-between"}
+          alignItems={"center"}
         >
           <Stack>
-            <Typography variant="h5">
-              Select the fileds, you want to display
-            </Typography>
+            <Typography variant="h4">Dashboard Settings</Typography>
           </Stack>
           <Stack>
             <Close />
           </Stack>
+        </Stack>
+
+        <Stack>
+          <Typography variant="body2" color={colors.alpha.primary[500]}>
+            Select the fields, you want on dashboard
+          </Typography>
         </Stack>
 
         <List>
@@ -94,7 +98,7 @@ const CustomDashboardDrawer = () => {
             );
           })}
         </List>
-      </Grid>
+      </Stack>
     </div>
   );
 };

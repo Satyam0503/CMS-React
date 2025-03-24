@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ILayout, useLayout } from "../../core";
 import { Container, Grid, Link, List, Stack, Typography } from "@mui/material";
 import { colors } from "../../../../app/modules/theme/MuiTheme";
+import { ScrollTop } from "../scroll-top";
 
 const Footer = () => {
   const { config } = useLayout();
@@ -12,8 +13,8 @@ const Footer = () => {
         container
         display={"flex"}
         justifyContent={"space-between"}
-        p={2}
-        pb={0}
+        p={1}
+        alignItems={"center"}
       >
         <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
           <Typography
@@ -56,6 +57,7 @@ const Footer = () => {
               Purchase
             </Typography>
           </Link>
+          <ScrollTop />
         </Stack>
       </Grid>
     </>

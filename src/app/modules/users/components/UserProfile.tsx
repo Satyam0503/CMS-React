@@ -35,6 +35,11 @@ export default function UserProfile() {
           flexDirection={{ xs: "column", sm: "row", lg: "column" }}
           gap={{ xs: 4, sm: 2, md: 4 }}
           justifyContent={{ lg: "flex-start" }}
+          // sx={{
+          //   position: "sticky",
+          //   top: 0,
+          //   height: "100vh",
+          // }}
         >
           <Stack width={"100%"}>
             <ProfileCard />
