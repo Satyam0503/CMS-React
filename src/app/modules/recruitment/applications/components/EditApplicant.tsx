@@ -28,10 +28,12 @@ import {
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicationEvaluationStatus, indianStates, monthsExperienceList } from "../../../../../utils/constant/Constant";
 import {
-  commentActionEncoderForApplicationStatus,
-} from "../../../../../utils/common";
+  ApplicationEvaluationStatus,
+  indianStates,
+  monthsExperienceList,
+} from "../../../../../utils/constant/Constant";
+import { commentActionEncoderForApplicationStatus } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { colors } from "../../../theme/MuiTheme";
@@ -98,16 +100,19 @@ export const EditApplicant = () => {
     experienceInYears: Math.floor(state.experience / 12),
     experienceInMonths: state.experience % 12,
   };
-  
+
   const handleAddComment = async (activityType: number) => {
-    const actionCategory = activityType === state.activityType ? CommentAction.Edit :commentActionEncoderForApplicationStatus(activityType)!   
+    const actionCategory =
+      activityType === state.activityType
+        ? CommentAction.Edit
+        : commentActionEncoderForApplicationStatus(activityType)!;
     const payload = {
       applicantId: state.applicantId,
       userId: user.userId,
       description: comment,
-      activityCategory:actionCategory ,
+      activityCategory: actionCategory,
       userName: user.firstName + " " + user.lastName,
-      jobTitle:state.applicantId,
+      jobTitle: state.applicantId,
     };
     const response = await addComment(payload);
     const { success, statusCode } = response.data;
@@ -381,8 +386,7 @@ export const EditApplicant = () => {
                                 variant="caption"
                                 flexWrap={"wrap"}
                                 textAlign={"center"}
-                              >
-                              </Typography>
+                              ></Typography>
                               <Typography variant="caption">
                                 {values.resume ? values.resume.name : ""}
                               </Typography>
