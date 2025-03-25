@@ -25,7 +25,7 @@ export default function Themes() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "THEME.SETTING" })}
+        {intl.formatMessage({ id: "PAGE.THEME" })}
       </Typography>
 
       <Card sx={{ p: 2 }}>

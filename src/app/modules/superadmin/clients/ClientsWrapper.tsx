@@ -8,7 +8,7 @@ export default function ClientsWrapper() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.CLIENTS" })}
+        {intl.formatMessage({ id: "PAGE.CLIENTS" })}
       </Typography>
       <Clients />
     </>

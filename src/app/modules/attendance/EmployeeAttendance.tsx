@@ -20,7 +20,7 @@ export const EmployeeAttendance: FC = () => {
         />
       </StyledCard> */}
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+        {intl.formatMessage({ id: "PAGE.ATTENDANCE" })}
       </Typography>
       <IconStat
         iconBg={colors.alpha.secondary[100]}

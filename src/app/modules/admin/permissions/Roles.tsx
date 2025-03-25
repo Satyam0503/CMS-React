@@ -53,7 +53,7 @@ export const Roles = () => {
         sx={{ mb: 3 }}
       >
         <Typography variant="h4">
-          {intl.formatMessage({ id: "MENU.USER_PERMISSION" })}
+          {intl.formatMessage({ id: "PAGE.PERMISSION" })}
         </Typography>
         {hasAccess && (
           <CustomisedButton

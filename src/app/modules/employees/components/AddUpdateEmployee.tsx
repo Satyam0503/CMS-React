@@ -33,8 +33,13 @@ interface PropsTypes {
 }
 
 export default function AddUpdateEmployee(props: PropsTypes) {
-  const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit } =
-    props;
+  const {
+    initialValues,
+    open,
+    SaveAddEditEmployee,
+    handleClose,
+    isEdit,
+  } = props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
   const intl = useIntl();
 
@@ -176,7 +181,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         name="roleId"
                         label={intl.formatMessage({ id: "USER.ROLE" })}
                       >
-                        <MenuItem value={""}>None</MenuItem>
                         {filteredRoles.map((role) => {
                           return (
                             <MenuItem key={role.rolesId} value={role.rolesId}>
@@ -293,11 +297,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   >
                     <CustomisedButton
                       variant="outlined"
-                      label="Cancel"
+                      label={intl.formatMessage({id:"BUTTON.CLOSE"})}
                       handleClick={handleClose}
                     />
                     <CustomisedButton
-                      label={isEdit ? "Update" : "Add"}
+                      loading={isSubmitting}
+                      label={intl.formatMessage({ id: isEdit ? "BUTTON.UPDATE" :"BUTTON.ADD" })}
                       type="submit"
                       disabled={isSubmitting || !(isValid && dirty)}
                     />

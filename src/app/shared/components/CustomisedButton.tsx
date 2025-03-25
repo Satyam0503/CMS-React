@@ -32,7 +32,7 @@ const CustomisedButton = (props: Props) => {
     loading,
   } = props;
 
-  return (
+return (
     <>
       {permission && (
         <Button
@@ -45,7 +45,7 @@ const CustomisedButton = (props: Props) => {
           type={type}
         >
           {iconPosition === "start" && Icon}
-          {loading ? <span className="spinner-loader"></span> : label}
+          {loading ? <span className="loader"></span> : label}
           {iconPosition === "end" && Icon}
         </Button>
       )}

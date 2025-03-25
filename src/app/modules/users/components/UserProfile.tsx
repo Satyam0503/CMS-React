@@ -23,7 +23,7 @@ export default function UserProfile() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.PROFILE" })}
+        {intl.formatMessage({ id: "PAGE.MY_PROFILE" })}
       </Typography>
       <Grid container spacing={4}>
         <Grid

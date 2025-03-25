@@ -240,7 +240,7 @@ export default function Employees() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.EMP" })}
+        {intl.formatMessage({ id: "PAGE.EMPLOYEES" })}
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
@@ -256,7 +256,6 @@ export default function Employees() {
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
-                tooltip="Filter Employee"
                 handleClick={() => {}}
               />
               {userPermissionForModule.includes(Permission.Create) && (

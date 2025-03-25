@@ -101,7 +101,7 @@ export default function NoticeBoard() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
+        {intl.formatMessage({ id: "PAGE.NOTICE_BOARD" })}
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack

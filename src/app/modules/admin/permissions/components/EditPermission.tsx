@@ -265,7 +265,8 @@ export const EditPermission = () => {
                   label={intl.formatMessage({ id: "BUTTON.RESET" })}
                 />
                 <CustomisedButton
-                  disabled={state?.isNotEditable}
+                  loading={formik.isSubmitting}
+                  disabled={state?.isNotEditable || formik.isSubmitting}
                   label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                   Icon={<Check />}
                   iconPosition="start"

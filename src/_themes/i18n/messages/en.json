@@ -1,4 +1,19 @@
 {
+  "PAGE.JOBS":"Job Requirements",
+  "PAGE.PROCESS_LOG":"Process Log",
+  "PAGE.APPLICATIONS":"Applications",
+  "PAGE.EMPLOYEES":"Employees",
+  "PAGE.LEAVE_MANAGEMENT":"Leave Management",
+  "PAGE.ATTENDANCE":"Attendance",
+  "PAGE.HOLIDAYS":"Holidays",
+  "PAGE.NOTICE_BOARD":"Notice Board",
+  "PAGE.DASHBOARD":"Dashboard",
+  "PAGE.MY_PROFILE":"My Profile",
+  "PAGE.PERMISSION":"Role And Permissions",
+  "PAGE.THEME":"Theme",
+  "PAGE.CLIENTS":"Clients",
+  "PAGE.PROJECTS":"Projects",
+
   "AUTH.REGISTER.TITLE": "Registration",
   "AUTH.INPUT.EMAIL": "Email",
   "APPLICANT.STATUS": "Applicant Status",
@@ -9,11 +24,12 @@
   "APPLICATION.NOS": " Total number of days",
   "APPLICATION.REASON": "Reason",
   "APPLICATION.DATE": "Application Date",
-  "APPLICATION.COPYRIGHT": "   Copyright CodejiInfotech © 2022 Codeji InfoTech Pvt Ltd | Software Development Company | In Dehradun",
+  "APPLICATION.COPYRIGHT": "Copyright CodejiInfotech © 2022 Codeji InfoTech Pvt Ltd | Software Development Company | In Dehradun",
   "APPLICATION.SEEN_BY": "Application Seen By",
   "APPLICATION.SEEN_DATE": "Application Seen Date",
   "APPLICATION.STATUS": "Application Status",
   "APPLICANT.COMMENT": "Comment History",
+  "APPLICANT.ADD_COMMENT": "Add Comment",
   "APPLICANT.DETAILS": "Applicant Details",
   "APPLICANT.RESUME_PREVIEW": "Resume Preview",
   "AUTH.REGISTER.CMS": "Your CMS Solution",
@@ -36,10 +52,10 @@
   "ADD.CERTIFICATION": "Please Add Your Certification Details",
   "ALERT.HIRING": "We are hiring",
   "BIRTHDAY.TODAY": "Has birthday today",
-  "BUTTON.CLOSE": "Close",
-  "BUTTON.SAVE": "Save",
-  "BUTTON.SUBMIT": "Submit",
-  "BUTTON.RESET": "Reset",
+
+  "ACTIVE":"Active",
+  "INACTIVE":"InActive",
+
   "BUTTON.CONTACT": "Contact",
   "COLOR.PRIMARY": "Primary color",
   "COLOR.SECONDARY": "Secondary color",
@@ -82,8 +98,9 @@
   "INFO.DESCRIPTION": "Description",
   "INFO.SUMMARY": "Summary",
   "INFO.TITLE": "Title",
+
   "JOB.DESCRIPTION": "Job Description",
-  "JOB.DESCRIPTION_EDIT": "Edit job description ",
+  "JOB.DESCRIPTION_EDIT": "Edit Job Description ",
   "JOB.REQUIREMENTS_EDIT": "Edit job requirements",
   "JOB.APPLICATIONS_EDIT": "Edit job application",
   "JOB.LEVEL": "Level",
@@ -95,6 +112,8 @@
   "JOB.APPLICATION_CAPTION": "Please fill the form below to apply:",
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
+
+
   "LINK.NOTIFICATION": "check the submissions",
   "LEAVE.CL": "Casual Leaves",
   "LEAVE.ML": "Medical Leaves",
@@ -106,23 +125,17 @@
   "LEAVE.AVAILABLE": "Available",
   "LEAVE.ASSIGNMENT": "Leave Assignment",
   "LEAVE.REMAINING": "Remaining Leaves",
-  "MENU.DASHBOARD": "Dashboard",
-  "MENU.EMP": "Employees",
-  "MENU.LEAVE_MGMT": "Leave Management",
+
   "MENU.LEAVE_REQUEST": " Leave Request",
-  "MENU.ATTENDANCE": "Attendance",
   "MENU.CONTACTS": "Contacts",
   "MENU.PROJ": "Projects",
   "MENU.CLIENTS": "Clients",
-  "MENU.RECRUITMENT": "Recruitment",
-  "MENU.HOLIDAYS": "Holidays",
-  "MENU.NOTICE_BOARD": "Notice Board",
+
+
   "MENU.USER.NOTICE_BOARD": "My notice board",
   "MENU.NOTICE_EDIT": "Edit Notice",
-  "MENU.PROCESS_LOG": "Process Log",
-  "MENU.PROFILE": "My Profile",
+
   "MENU.SETTINGS": "Settings",
-  "MENU.ADMIN": "Admin",
   "MENU.MGMT": "Management",
   "MENU.USER": "User",
   "MENU.SUP.ADMIN": "Super Admin",
@@ -165,7 +178,6 @@
   "MENU.DOCUMENTS": "Documents",
   "MENU.NOTIFICATIONS": "Notifications",
   "MENU.WORK_HISTORY": "Work History",
-  "MENU.PROJECTS": "Projects",
   "MENU.BDAY_MSG": "Birthday today!",
   "MENU.THEME": "Theme",
   "MENU.MESSAGE": "Message",
@@ -179,8 +191,8 @@
   "MENU.PAGES": "Pages",
   "MENU.FEATURES": "Features",
   "MENU.APPS": "Apps",
-  "NOTIFICATIONS.APPLICATIONS": " New candidates have applied for position,",
-  "PASSWORD.LENGTH": "    Use 8 or more characters with a mix of letters, numbers & symbols.",
+  "NOTIFICATIONS.APPLICATIONS": "New candidates have applied for position,",
+  "PASSWORD.LENGTH": "Use 8 or more characters with a mix of letters, numbers & symbols.",
   "PASSWORD.CONFIRMATION": "Confirm Password",
   "PASSWORD.CREATE": "Create,",
   "PASSWORD.CREATE_NEW": "New Password",
@@ -239,7 +251,7 @@
   "ROLE.NAME": "Role Name",
   "ROLES.ADD": " Add Role",
   "RECRUITMENT.JOBS": "Jobs ",
-  "REQUIREMENT.JOBS": "Job Requirements ",
+
   "SETTING.NOTIFICATION": "Notification",
   "SETTING.NOTIFICATIONS": "Notification Settings",
   "STATUS.SHORT_LISTED": "Shortlisted",
@@ -265,7 +277,6 @@
   "USER.EXPERIENCE.YEARS": "Years",
   "USER.EXPERIENCE.MONTHS": "Months",
   "USER.DETAILS_LOADING": "Loding Employee Details ...",
-  "USER.APPLICATIONS": "Applications",
   "USER.FIRST_NAME": "First name",
   "USER.LAST_NAME": "Last name",
   "USER.ROLE": "Role",
@@ -374,8 +385,24 @@
   "APPLICATION.STATUS.SELECTED": "Selected",
   "APPLICATION.STATUS.REJECTED": "Rejected",
 
+
+
   "ADMIN.ADD_ROLE": "Add New Role",
   "ADMIN.PERMISSION": "Permissions",
   "ADMIN.EDIT_PERMISSION": "Edit Permissions",
-  "ADMIN.VIEW_PERMISSION": "View Permissions"
+  "ADMIN.VIEW_PERMISSION": "View Permissions",
+  "SEE_MORE":"See More",
+  "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
+  "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
+  "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
+
+  "BUTTON.ADD":"Add",
+  "BUTTON.RESET":"Reset",
+  "BUTTON.CLOSE": "Close",
+  "BUTTON.SAVE": "Save",
+  "BUTTON.SUBMIT": "Submit",
+  "BUTTON.UPDATE": "Update",
+  "BUTTON.DELETE": "Delete",
+  "BUTTON.CANCEL": "Cancel"
+  
 }

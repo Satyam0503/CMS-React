@@ -88,7 +88,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
             /> */}
             <CustomisedButton
               variant="outlined"
-              label="Close"
+              label={intl.formatMessage({id:"BUTTON.CLOSE"})}
               handleClick={handleClose}
             />
           </Stack>

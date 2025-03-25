@@ -141,7 +141,7 @@ export const EditApplicant = () => {
     );
     const totalExperienceInMonths =
       values.experienceInYears * 12 + values.experienceInMonths;
-
+    
     const payload = {
       applicantId: values.applicantId,
       firstName: values.firstName,
@@ -413,13 +413,13 @@ export const EditApplicant = () => {
                         <CustomisedButton
                           variant="outlined"
                           size="medium"
-                          label="Cancel"
+                          label={intl.formatMessage({id:"BUTTON.CANCEL"})}
                           handleClick={() => navigate(-1)}
                         />
                         <CustomisedButton
                           variant="contained"
                           size="medium"
-                          label="Update"
+                          label={intl.formatMessage({id:"BUTTON.UPDATE"})}
                           type="button"
                           disabled={formik.isSubmitting || !formik.isValid}
                           handleClick={() => setCommnetModalOpen(true)}
@@ -429,6 +429,7 @@ export const EditApplicant = () => {
 
                     {isCommentModalOpen && (
                       <AddComment
+                        loading={formik.isSubmitting}
                         open={isCommentModalOpen}
                         comment={comment}
                         handleCommentChange={handleCommentChange}

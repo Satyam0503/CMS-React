@@ -39,7 +39,7 @@ export default function ProfileCard() {
   const { userDetails } = useUserDetails();
   const userData = useAppSelector((state) => state.user.userData)!;
   const dispatch= useAppDispatch();
-
+  
   function handleClose() {
     setOpen(false);
     setSelectedFile(null);
@@ -57,8 +57,8 @@ export default function ProfileCard() {
     const fileSizeInMB = selectedFile.size / (1024 * 1024);
     const fileFormat = selectedFile.name.split(".").pop()!;
 
-    if (fileSizeInMB > 2) {
-      setFileError("File size should be less then 2MB");
+    if (fileSizeInMB > 5) {
+      setFileError("File size should be less then 5MB");
       return;
     }
 

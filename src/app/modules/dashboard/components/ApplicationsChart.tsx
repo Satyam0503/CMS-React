@@ -11,6 +11,8 @@ import { initialFilterValues } from "../../recruitment/applications/components/A
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Applicant } from "../../recruitment/models";
 import { BarChart } from "../../../shared/components/BarChart";
+import { CardSkeleton } from "./CardSkeleton";
+import { colors } from "../../theme/MuiTheme";
 
 
 export const ApplicationsChart = () => {
@@ -23,6 +25,7 @@ export const ApplicationsChart = () => {
     labels: [],
     series: [],
   });
+  const [loading,setLoading]= useState(true);
 
   const getCountOfApplicationStatus = useCallback(() => {
     const applicationStatusCount = applicationList.reduce(
@@ -55,6 +58,9 @@ export const ApplicationsChart = () => {
       } catch (error) {
         console.error((error as AxiosError).message);
       }
+      finally{
+        setLoading(false);
+      }
     }
     getAllApplications();
   }, []);
@@ -66,6 +72,10 @@ export const ApplicationsChart = () => {
     }
   }, [applicationList, getCountOfApplicationStatus]);
 
+  if(loading){
+    return <CardSkeleton/>
+  }
+
   return (
     <CustomCard
       label={intl.formatMessage({ id: "MENU.TOTAL_APP" })}
@@ -76,7 +86,7 @@ export const ApplicationsChart = () => {
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
         >
-          <Typography variant="h5">No Applications</Typography>
+          <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{intl.formatMessage({id:"DASHBOARD.APPLICATIONS.NO_APPLICATIONS"})}</Typography>
         </Box>
       ) : (
         <BarChart
