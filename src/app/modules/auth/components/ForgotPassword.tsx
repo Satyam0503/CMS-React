@@ -3,10 +3,10 @@ import * as Yup from "yup";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import { requestPassword } from "../core/_requests";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
 import { colors } from "../../theme/MuiTheme";
+import { useIntl } from "react-intl";
 
 const initialValues = {
   email: "",
@@ -24,6 +24,7 @@ const forgotPasswordSchema = Yup.object().shape({
 export function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState<boolean | undefined>(undefined);
+  const intl = useIntl();
   const formik = useFormik({
     initialValues,
     validationSchema: forgotPasswordSchema,
@@ -87,8 +88,8 @@ export function ForgotPassword() {
         <Link to="/auth/login">
           <CustomisedButton
             variant="contained"
-            type="button"
-            label="Submit"
+            type="button" 
+            label={intl.formatMessage({id:"BUTTON.SUBMIT"})}
             disabled={formik.isSubmitting || !formik.isValid}
           />
           {loading && (
@@ -102,7 +103,7 @@ export function ForgotPassword() {
           <CustomisedButton
             variant="outlined"
             type="button"
-            label="Cancel"
+            label={intl.formatMessage({id:"BUTTON.CANCEL"})}
             disabled={formik.isSubmitting || !formik.isValid}
           />
         </Link>

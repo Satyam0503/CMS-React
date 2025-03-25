@@ -14,8 +14,17 @@
   "PAGE.CLIENTS":"Clients",
   "PAGE.PROJECTS":"Projects",
 
+
+  "FORM.FIRST_NAME":"First Name",
+  "FORM.LAST_NAME":"Last Name",
+  "FORM.FULL_NAME":"Full Name",
+  "FORM.COMPANY_NAME":"Company Name",
+  "FORM.EMAIL":"Email",
+  "FORM.PASSWORD":"Password",
+  "FORM.CONFIRM_PASSWORD":"Confirm Password",
+  "FORM.NEW_PASSWORD":"New Password",
+
   "AUTH.REGISTER.TITLE": "Registration",
-  "AUTH.INPUT.EMAIL": "Email",
   "APPLICANT.STATUS": "Applicant Status",
   "APPLICATION.LEAVE": "Leave Application",
   "APPLICATION.START": "Start Date",
@@ -35,11 +44,8 @@
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.REGISTER": "Register",
   "AUTH.MEMBER.REGISTER": " Not a Member yet ? ",
-  "AUTH.INPUT.FULLNAME": "Full Name",
-  "AUTH.INPUT.PASSWORD": "Password",
   "AUTH.INPUT.PASSWORD.RESET": "Reset profile password",
   "AUTH.PASSWORD.RESET": "Reset password",
-  "AUTH.INPUT.CONFIRM_PASSWORD": "Confirm Password",
   "AUTH.INPUT.FORGOT_PASSWORD": "Forgot Password?",
   "AUTH.TERMS.CONFIRMATION": "Confirm",
   "AUTH.INPUT.USERNAME": "Username",
@@ -203,9 +209,7 @@
   "MENU.APPS": "Apps",
   "NOTIFICATIONS.APPLICATIONS": "New candidates have applied for position,",
   "PASSWORD.LENGTH": "Use 8 or more characters with a mix of letters, numbers & symbols.",
-  "PASSWORD.CONFIRMATION": "Confirm Password",
   "PASSWORD.CREATE": "Create,",
-  "PASSWORD.CREATE_NEW": "New Password",
   "PASSWORD.CREATE_LOGIN": "Login password",
   "PDF.VIEWER": "For improved readability, please view the CV on a larger screen.",
 
@@ -367,6 +371,8 @@
   "BUTTON.SUBMIT": "Submit",
   "BUTTON.UPDATE": "Update",
   "BUTTON.DELETE": "Delete",
-  "BUTTON.CANCEL": "Cancel"
+  "BUTTON.CANCEL": "Cancel",
+  "BUTTON.SIGNIN": "Sign In",
+  "BUTTON.CREATE_PASS": "Create Password"
   
 }
