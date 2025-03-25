@@ -101,7 +101,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                         type="text"
                         name="firstName"
-                        placeholder="First Name"
+                        placeholder={intl.formatMessage({
+                          id: "USER.FIRST_NAME",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -109,7 +111,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                         type="text"
                         name="lastName"
-                        placeholder="Last Name"
+                        placeholder={intl.formatMessage({
+                          id: "USER.LAST_NAME",
+                        })}
                       />
                     </Grid>
 
@@ -130,7 +134,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.EMP_ID" })}
                         type="text"
                         name="employeeId"
-                        placeholder="Employee Id"
+                        placeholder={intl.formatMessage({
+                          id: "USER.EMP_ID",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -171,7 +177,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
                         type="email"
                         name="email"
-                        placeholder="Email"
+                        placeholder={intl.formatMessage({
+                          id: "AUTH.INPUT.EMAIL",
+                        })}
                         disabled={isEdit}
                       />
                     </Grid>
@@ -195,7 +203,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.JOBROLE" })}
                         type="text"
                         name="jobRole"
-                        placeholder="Job Role"
+                        placeholder={intl.formatMessage({ id: "USER.JOBROLE" })}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -217,7 +225,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         })}
                         type="text"
                         name="reportingManager"
-                        placeholder="Reporting Manager"
+                        placeholder={intl.formatMessage({
+                          id: "USER.REPORTING_MANAGER",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -225,7 +235,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.TEAM_LEAD" })}
                         type="text"
                         name="teamLead"
-                        placeholder="Team lead"
+                        placeholder={intl.formatMessage({
+                          id: "USER.TEAM_LEAD",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -233,7 +245,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.PHONE" })}
                         type="text"
                         name="phoneNumber"
-                        placeholder="Phone Number"
+                        placeholder={intl.formatMessage({ id: "USER.PHONE" })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -255,7 +267,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         })}
                         type="text"
                         name="personalEmail"
-                        placeholder="Personal Email"
+                        placeholder={intl.formatMessage({
+                          id: "USER.PERSONAL_EMAIL",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -265,7 +279,9 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         })}
                         type="text"
                         name="emergencyContact"
-                        placeholder="Emergency Contact"
+                        placeholder={intl.formatMessage({
+                          id: "USER.EMERGENCY_CONTACT",
+                        })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -273,8 +289,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         name="status"
                         label={intl.formatMessage({ id: "PROFILE.STATUS" })}
                       >
-                        <MenuItem value={"Active"}>Active</MenuItem>
-                        <MenuItem value={"Inactive"}>Inactive</MenuItem>
+                        <MenuItem value={"Active"}>
+                          {intl.formatMessage({ id: "STATUS.ACTIVE" })}
+                        </MenuItem>
+                        <MenuItem value={"Inactive"}>
+                          {intl.formatMessage({ id: "STATUS.INACTIVE" })}
+                        </MenuItem>
                       </SelectInput>
                     </Grid>
 
@@ -283,7 +303,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={intl.formatMessage({ id: "USER.ADDRESS" })}
                         type="text"
                         name="address"
-                        placeholder="Address"
+                        placeholder={intl.formatMessage({ id: "USER.ADDRESS" })}
                       />
                     </Grid>
                   </Grid>

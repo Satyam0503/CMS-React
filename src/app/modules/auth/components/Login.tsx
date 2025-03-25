@@ -64,7 +64,9 @@ export function Login() {
   return (
     <Stack spacing={4}>
       <Stack sx={{ textAlign: "center" }}>
-        <Typography variant="h3">Sign In</Typography>
+        <Typography variant="h3">
+          {intl.formatMessage({ id: "AUTH.LOGIN.BUTTON" })}
+        </Typography>
         <Typography variant="body1" color={colors.alpha.primary[500]}>
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
@@ -89,7 +91,9 @@ export function Login() {
             <Stack spacing={2}>
               {status && (
                 <Grid className="mb-lg-15 alert alert-danger">
-                  <Grid className="alert-text font-weight-bold">{status}</Grid>
+                  <Grid className="alert-text" fontWeight={600}>
+                    {status}
+                  </Grid>
                 </Grid>
               )}
               <Stack spacing={2}>
@@ -134,7 +138,9 @@ export function Login() {
                 </Stack>
 
                 <Typography>
-                  <Link to="/auth/forgot-password">Forgot Password ?</Link>
+                  <Link to="/auth/forgot-password">
+                    {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
+                  </Link>
                 </Typography>
 
                 <Stack spacing={1}>
@@ -146,8 +152,10 @@ export function Login() {
                     disabled={isSubmitting || !(isValid && dirty)}
                   />
                   <Typography variant="body2" align="center">
-                    Not a Member yet ?{" "}
-                    <Link to="/auth/registration">Register</Link>
+                    {intl.formatMessage({ id: "AUTH.MEMBER.REGISTER" })}
+                    <Link to="/auth/registration">
+                      {intl.formatMessage({ id: "AUTH.REGISTER" })}
+                    </Link>
                   </Typography>
                 </Stack>
               </Stack>
