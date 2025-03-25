@@ -15,6 +15,7 @@ const Footer = () => {
         justifyContent={"space-between"}
         p={1}
         alignItems={"center"}
+        bgcolor={"white"}
       >
         <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
           <Typography

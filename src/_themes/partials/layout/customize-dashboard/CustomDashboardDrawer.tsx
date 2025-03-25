@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { KTIcon } from "../../../helpers";
 import {
+  Box,
   Checkbox,
   Grid,
   List,
@@ -11,8 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Close } from "@mui/icons-material";
+import { Circle, Close, MoreHoriz } from "@mui/icons-material";
 import { colors } from "../../../../app/modules/theme/MuiTheme";
+import { end } from "@popperjs/core";
+import { CustomIconButton } from "../../../../app/shared/components/CustomIconButton";
 
 const CustomDashboardDrawer = () => {
   const [checked, setChecked] = React.useState([0]);
@@ -30,30 +33,25 @@ const CustomDashboardDrawer = () => {
     setChecked(newChecked);
   };
   return (
-    <div
+    <Box
       id="kt_help"
       className="bg-body"
       data-kt-drawer="true"
       data-kt-drawer-name="help"
       data-kt-drawer-activate="true"
       data-kt-drawer-overlay="true"
-      data-kt-drawer-width="{default:'300px', 'md': '400px'}"
+      data-kt-drawer-width="{default:'350px' }"
       data-kt-drawer-direction="end"
       data-kt-drawer-toggle="#kt_help_toggle"
       data-kt-drawer-close="#kt_help_close"
     >
-      <Stack p={5}>
-        <Stack
-          direction={"row"}
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
+      <Stack p={2}>
+        <Stack direction={"row"} justifyContent={"space-between"}>
           <Stack>
-            <Typography variant="h4">Dashboard Settings</Typography>
+            <Typography variant="h6">Dashboard Settings</Typography>
           </Stack>
-          <Stack>
-            <Close />
+          <Stack direction={"row"} spacing={1}>
+            <CustomIconButton icon={<Close />} />
           </Stack>
         </Stack>
 
@@ -99,7 +97,7 @@ const CustomDashboardDrawer = () => {
           })}
         </List>
       </Stack>
-    </div>
+    </Box>
   );
 };
 

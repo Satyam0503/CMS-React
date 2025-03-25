@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { RightToolbar } from "../partials/layout/RightToolbar";
-import { ScrollTop } from "./components/scroll-top";
 import { ActivityDrawer, DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
@@ -47,7 +46,9 @@ const MasterLayout = () => {
                 <Outlet />
               </Container>
             </Stack>
-            <Footer />
+            <Stack>
+              <Footer />
+            </Stack>
           </Stack>
         </Grid>
 

@@ -11,7 +11,6 @@ import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
 import { ApplicationsChart } from "./components/ApplicationsChart";
 import { DepartmentChart } from "./components/DepartmentChart";
-import NoticeBoard from "../noticeboard/NoticeBoard";
 import EmployeePerformance from "./components/EmployeePerformance";
 import EmpOnLeave from "./components/EmpOnLeave";
 import Punctual from "./components/Punctual";
@@ -20,6 +19,7 @@ import EmpOfMonth from "./components/EmpOfMonth";
 import { Help } from "@mui/icons-material";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
+import NoticeBoard from "./components/NoticeBoard";
 
 export default function Dashboard() {
   const user = useAppSelector((state) => state.user.userData)!;

@@ -1,4 +1,4 @@
-import { Box, CardContent, Grid, Stack } from "@mui/material";
+import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
 
 import {
   Build,
@@ -65,6 +65,12 @@ const EmployeeProfile = () => {
 
   return (
     <>
+      {/* //need to add user name in place of my */}
+      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
+        <Typography variant="h4" mb={3}>
+          {intl.formatMessage({ id: "MENU.PROFILE" })}
+        </Typography>
+      </Stack>
       <Grid container spacing={4}>
         <Grid
           item
@@ -75,6 +81,9 @@ const EmployeeProfile = () => {
           flexDirection={{ xs: "column", sm: "row", lg: "column" }}
           gap={{ xs: 4, sm: 2, md: 4 }}
           justifyContent={{ lg: "flex-start" }}
+          position={{ xs: "inherit", lg: "sticky" }}
+          top={{ lg: 100 }}
+          height={{ lg: "60vh" }}
         >
           <Stack width={"100%"}>
             <EmployeeProfileCard employeeDetails={employeeDetails} />
