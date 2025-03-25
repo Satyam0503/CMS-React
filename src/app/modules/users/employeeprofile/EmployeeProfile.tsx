@@ -21,6 +21,8 @@ import { EmployeeProfileCard } from "./components/EmployeeProfileCard";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { getEmployeeById, getEmployeeSkills } from "../userservices";
+import LeaveAllowences from "../components/LeaveAllowences";
+import BasicTabs from "./components/BasicTabs";
 
 const EmployeeProfile = () => {
   const intl = useIntl();
@@ -88,6 +90,9 @@ const EmployeeProfile = () => {
           <Stack width={"100%"}>
             <EmployeeProfileCard employeeDetails={employeeDetails} />
           </Stack>
+          <Stack width={"100%"}>
+            <LeaveAllowences />
+          </Stack>
         </Grid>
         <Grid item xs={12} md={12} lg={8.2} xl={9}>
           <Stack
@@ -135,13 +140,16 @@ const EmployeeProfile = () => {
               </Box>
             </Grid>
           </Stack>
-          <Stack spacing={2} sx={{ my: 2 }}>
+          <Stack sx={{ width: "100%" }}>
+            <BasicTabs />
+          </Stack>
+          {/* <Stack spacing={2} sx={{ my: 2 }}>
             <AboutEmployee employeeId={employeeId} />
             <EmployeeDetails employeeDetails={employeeDetails} />
             <EmployeeSkills employeeSkills={employeeSkills} />
             <EmployeeEducation employeeId={employeeId} />
             <EmployeeCertification employeeId={employeeId} />
-          </Stack>
+          </Stack> */}
         </Grid>
       </Grid>
     </>

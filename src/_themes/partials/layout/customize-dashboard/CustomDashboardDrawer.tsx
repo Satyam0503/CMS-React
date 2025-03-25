@@ -16,9 +16,11 @@ import { Circle, Close, MoreHoriz } from "@mui/icons-material";
 import { colors } from "../../../../app/modules/theme/MuiTheme";
 import { end } from "@popperjs/core";
 import { CustomIconButton } from "../../../../app/shared/components/CustomIconButton";
+import { useIntl } from "react-intl";
 
 const CustomDashboardDrawer = () => {
   const [checked, setChecked] = React.useState([0]);
+  const intl = useIntl();
 
   const handleToggle = (value: any) => () => {
     const currentIndex = checked.indexOf(value);
@@ -48,7 +50,9 @@ const CustomDashboardDrawer = () => {
       <Stack p={2}>
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Stack>
-            <Typography variant="h6">Dashboard Settings</Typography>
+            <Typography variant="h6">
+              {intl.formatMessage({ id: "SETTING.DASHBOARD" })}
+            </Typography>
           </Stack>
           <Stack direction={"row"} spacing={1}>
             <CustomIconButton icon={<Close />} />
@@ -57,7 +61,7 @@ const CustomDashboardDrawer = () => {
 
         <Stack>
           <Typography variant="body2" color={colors.alpha.primary[500]}>
-            Select the fields, you want on dashboard
+            {intl.formatMessage({ id: "SETTING.DASHBOARD_FIELDS" })}
           </Typography>
         </Stack>
 
