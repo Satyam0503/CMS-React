@@ -1,4 +1,4 @@
-import { Grid, Stack, Typography, MenuItem } from "@mui/material";
+import { Grid, Stack, Typography, MenuItem, Autocomplete, TextField } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -30,16 +30,12 @@ interface PropsTypes {
     values: EmployeeModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => void;
+  employeeList:EmployeeModel[]
 }
 
 export default function AddUpdateEmployee(props: PropsTypes) {
-  const {
-    initialValues,
-    open,
-    SaveAddEditEmployee,
-    handleClose,
-    isEdit,
-  } = props;
+  const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit , employeeList } =
+    props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
   const intl = useIntl();
 
@@ -89,8 +85,10 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 errors,
                 dirty,
                 handleSubmit,
-              }) => (
-                <form onSubmit={handleSubmit}>
+              }) => {
+                console.log(errors,values);
+                
+                return <form onSubmit={handleSubmit}>
                   <Grid
                     container
                     rowSpacing={1.5}
@@ -206,7 +204,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder={intl.formatMessage({ id: "USER.JOBROLE" })}
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="department"
                         label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
@@ -219,25 +217,43 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                       </SelectInput>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextInput
-                        label={intl.formatMessage({
-                          id: "USER.REPORTING_MANAGER",
-                        })}
-                        type="text"
-                        name="reportingManager"
-                        placeholder={intl.formatMessage({
-                          id: "USER.REPORTING_MANAGER",
-                        })}
+                      <Autocomplete
+                        id="reporting_manager"
+                        size="small"
+                        value={employeeList.find(
+                          (emp) => emp.userId === values.reportingManager
+                        )}
+                        options={employeeList}
+                        onChange={(event, value) => {
+                          setFieldTouched("reportingManager",true);
+                          setFieldValue("reportingManager", value ? value.userId :"");
+                        }}
+                        renderInput={(param) => (
+                          <TextField {...param} label={intl.formatMessage({
+                            id: "USER.REPORTING_MANAGER",
+                          })} />
+                        )}
+                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextInput
-                        label={intl.formatMessage({ id: "USER.TEAM_LEAD" })}
-                        type="text"
-                        name="teamLead"
-                        placeholder={intl.formatMessage({
-                          id: "USER.TEAM_LEAD",
-                        })}
+                      <Autocomplete
+                        id="teamlead"
+                        size="small"
+                        value={employeeList.find(
+                          (emp) => emp.userId === values.teamLead
+                        )}
+                        options={employeeList}
+                        onChange={(event, value) => {
+                          setFieldTouched("teamLead",true);
+                          setFieldValue("teamLead", value ? value.userId : "");
+                        }}
+                        renderInput={(param) => (
+                          <TextField {...param} label={intl.formatMessage({
+                            id: "USER.TEAM_LEAD",
+                          })} />
+                        )}
+                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -317,18 +333,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   >
                     <CustomisedButton
                       variant="outlined"
-                      label={intl.formatMessage({id:"BUTTON.CLOSE"})}
+                      label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                       handleClick={handleClose}
                     />
                     <CustomisedButton
                       loading={isSubmitting}
-                      label={intl.formatMessage({ id: isEdit ? "BUTTON.UPDATE" :"BUTTON.ADD" })}
+                      label={intl.formatMessage({
+                        id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                      })}
                       type="submit"
-                      disabled={isSubmitting || !(isValid && dirty)}
+                      disabled={isSubmitting }
                     />
                   </Stack>
                 </form>
-              )}
+}}
             </Formik>
           </Stack>
         </CustomisedModal>

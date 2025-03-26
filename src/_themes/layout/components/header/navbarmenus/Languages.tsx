@@ -11,47 +11,8 @@ import {
   Stack,
 } from "@mui/material";
 import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
-import { toAbsoluteUrl } from "../../../../helpers";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
-
-const languages = [
-  {
-    id:1,
-    lang: "en",
-    name: "English",
-    flag: toAbsoluteUrl("media/flags/united-states.svg"),
-  },
-  {
-    id:2,
-    lang: "zh",
-    name: "Mandarin",
-    flag: toAbsoluteUrl("media/flags/china.svg"),
-  },
-  {
-    id:3,
-    lang: "es",
-    name: "Spanish",
-    flag: toAbsoluteUrl("media/flags/spain.svg"),
-  },
-  {
-    id:4,
-    lang: "ja",
-    name: "Japanese",
-    flag: toAbsoluteUrl("media/flags/japan.svg"),
-  },
-  {
-    id:5,
-    lang: "de",
-    name: "German",
-    flag: toAbsoluteUrl("media/flags/germany.svg"),
-  },
-  {
-    id:6,
-    lang: "fr",
-    name: "French",
-    flag: toAbsoluteUrl("media/flags/france.svg"),
-  },
-];
+import { languages } from "../../../../../utils/constant/Constant";
 
 const Languages: FC = () => {
   const lang = useLang();

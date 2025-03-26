@@ -367,6 +367,8 @@
   "BUTTON.SUBMIT": "Submit",
   "BUTTON.UPDATE": "Update",
   "BUTTON.DELETE": "Delete",
-  "BUTTON.CANCEL": "Cancel"
+  "BUTTON.CANCEL": "Cancel",
+  "BUTTON.SIGN_IN": "Sign In",
+  "BUTTON.SIGN_OUT": "Sign Out"
   
 }
