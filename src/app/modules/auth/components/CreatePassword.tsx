@@ -116,20 +116,20 @@ export function CreatePassword() {
               <TextInput
                 type="password"
                 name="newPassword"
-                label={intl.formatMessage({ id: "PASSWORD.CREATE_NEW" })}
-                placeholder="New Password"
+                label={intl.formatMessage({ id: "FORM.NEW_PASSWORD" })}
+                placeholder={intl.formatMessage({ id: "FORM.NEW_PASSWORD" })}
               />
               <TextInput
                 type="password"
                 name="confirmPassword"
-                label={intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
-                placeholder="Confirm Password"
+                label={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
+                placeholder={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
               />
             </Stack>
             <Stack sx={{ marginBlockStart: "3rem" }}>
               <CustomisedButton
                 type="submit"
-                label="Create Password"
+                label={intl.formatMessage({ id: "BUTTON.CREATE_PASS" })}
                 size="large"
                 loading={loading}
                 disabled={

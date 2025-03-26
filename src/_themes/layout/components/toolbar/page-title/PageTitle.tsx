@@ -4,7 +4,7 @@ import {useLayout} from '../../../core'
 import {usePageData} from '../../../core/PageData'
 
 const PageTitle = () => {
-  const {pageTitle, pageDescription, pageBreadcrumbs} = usePageData()
+  const {pageTitle, pageBreadcrumbs} = usePageData()
   const {config, classes} = useLayout()
   const appPageTitleDirection = config.app?.pageTitle?.direction
 
@@ -33,18 +33,6 @@ const PageTitle = () => {
           })}
         >
           {pageTitle}
-          {pageDescription && config.app?.pageTitle && config.app?.pageTitle?.description && (
-            <span
-              className={clsx('page-desc text-muted fs-7 fw-semibold', {
-                'pt-2': appPageTitleDirection === 'column',
-              })}
-            >
-              {config.app?.pageTitle?.direction === 'row' && (
-                <span className='h-20px border-1 border-gray-300 border-start ms-3 mx-2'></span>
-              )}
-              {pageDescription}{' '}
-            </span>
-          )}
         </h1>
       )}
       {/* end::Title */}

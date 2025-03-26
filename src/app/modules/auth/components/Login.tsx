@@ -65,7 +65,7 @@ export function Login() {
     <Stack spacing={4}>
       <Stack sx={{ textAlign: "center" }}>
         <Typography variant="h3">
-          {intl.formatMessage({ id: "BUTTON.SIGN_IN" })}
+          {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
         </Typography>
         <Typography variant="body1" color={colors.alpha.primary[500]}>
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
@@ -100,8 +100,8 @@ export function Login() {
                 <Stack>
                   <TextInput
                     type="email"
-                    label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                    placeholder="Email"
+                    label={intl.formatMessage({ id: "FORM.EMAIL" })}
+                    placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
                     name="email"
                     InputProps={{
                       endAdornment: (
@@ -120,8 +120,8 @@ export function Login() {
                 <Stack>
                   <TextInput
                     type="password"
-                    label={intl.formatMessage({ id: "AUTH.INPUT.PASSWORD" })}
-                    placeholder="Password"
+                    label={intl.formatMessage({ id: "FORM.PASSWORD" })}
+                    placeholder={intl.formatMessage({ id: "FORM.PASSWORD" })}
                     name="password"
                     InputProps={{
                       endAdornment: (
@@ -146,7 +146,7 @@ export function Login() {
                 <Stack spacing={1}>
                   <CustomisedButton
                     type="submit"
-                    label="Sign In"
+                    label={ intl.formatMessage({id:"BUTTON.SIGNIN"})}
                     size="large"
                     loading={loading}
                     disabled={isSubmitting || !(isValid && dirty)}

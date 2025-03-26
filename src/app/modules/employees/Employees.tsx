@@ -16,8 +16,6 @@ import dayjs from "dayjs";
 import { EmployeeModel } from "../../../utils/common_types";
 
 import {
-  checkPermissionForModulesFeatureAccess,
-  employeesListMapperforExport,
   getModulePermissions,
   statusDecoder,
   statusEncoder,
@@ -30,6 +28,7 @@ import AddUpdateEmployee from "./components/AddUpdateEmployee";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
+import { usePageData } from "../../../_themes/layout/core";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -82,6 +81,10 @@ export default function Employees() {
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
     [userModulesPermissions]
   );
+
+  const pageData = usePageData();
+  console.log(pageData);
+  
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
