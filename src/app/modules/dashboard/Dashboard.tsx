@@ -109,7 +109,7 @@ export default function Dashboard() {
             <Card sx={{ height: "100%" }}>
               <Stack p={2}>
                 <Typography variant="h6">
-                  {intl.formatMessage({ id: "MENU.ATTENDANCE" })}
+                  {intl.formatMessage({ id: "PAGE.ATTENDANCE" })}
                 </Typography>
 
                 <Stack

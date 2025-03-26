@@ -16,8 +16,6 @@ import dayjs from "dayjs";
 import { EmployeeModel } from "../../../utils/common_types";
 
 import {
-  checkPermissionForModulesFeatureAccess,
-  employeesListMapperforExport,
   getModulePermissions,
   statusDecoder,
   statusEncoder,
@@ -30,6 +28,7 @@ import AddUpdateEmployee from "./components/AddUpdateEmployee";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
+import { usePageData } from "../../../_themes/layout/core";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -82,6 +81,10 @@ export default function Employees() {
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
     [userModulesPermissions]
   );
+
+  const pageData = usePageData();
+  console.log(pageData);
+  
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -240,7 +243,7 @@ export default function Employees() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.EMP" })}
+        {intl.formatMessage({ id: "PAGE.EMPLOYEES" })}
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
@@ -256,9 +259,6 @@ export default function Employees() {
             <Stack direction="row" spacing={1}>
               <CustomIconButton
                 icon={<FilterList />}
-                tooltip={intl.formatMessage({
-                  id: "FILTER.EMP",
-                })}
                 handleClick={() => {}}
               />
               {userPermissionForModule.includes(Permission.Create) && (

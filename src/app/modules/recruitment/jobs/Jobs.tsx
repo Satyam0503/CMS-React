@@ -200,7 +200,7 @@ export default function Jobs() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "REQUIREMENT.JOBS" })}
+        {intl.formatMessage({ id: "PAGE.JOBS" })}
       </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
@@ -214,16 +214,10 @@ export default function Jobs() {
             <SearchInput search={search} setSearch={handleSearchChange} />
             <Stack direction="row" spacing={1}>
               <CustomIconButton
-                tooltip={intl.formatMessage({
-                  id: "FILTER.EMP",
-                })}
                 icon={<FilterList />}
               />
               {userPermissionsForModule.includes(Permission.Create) && (
                 <CustomIconButton
-                  tooltip={intl.formatMessage({
-                    id: "ADD.JOB_DESCRIPTION",
-                  })}
                   icon={<Add />}
                   handleClick={() => setOpenModal(true)}
                 />

@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
+import { CardSkeleton } from "./CardSkeleton";
 
 interface PropsType {
   employees: EmployeeModel[];
@@ -18,6 +19,7 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
     labels: [],
     series: [],
   });
+  const [loading,setLoading]= useState(true);
 
   const getEmployeesGenderCount = useCallback(() => {
     const genderCount = employees.reduce(
@@ -37,8 +39,13 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
     if (employees.length) {
       const { labels, series } = getEmployeesGenderCount();
       setChartData({ labels, series });
+      setLoading(false)
     }
   }, [employees, getEmployeesGenderCount]);
+
+  if(loading){
+    return <CardSkeleton/>
+  }
 
   return (
     <CustomCard
@@ -50,7 +57,7 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
         >
-          <Typography variant="h5">No Employees</Typography>
+          <Typography variant="h5">{intl.formatMessage({id:"DASHBOARD.EMPLOYEE.NOEMPLOYEE"})}</Typography>
         </Box>
       ) : (
         <DonutApexChart series={chartData.series} labels={chartData.labels} />

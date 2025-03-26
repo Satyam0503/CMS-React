@@ -8,7 +8,7 @@ export default function ProjectsWrapper() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.PROJECTS" })}
+        {intl.formatMessage({ id: "PAGE.PROJECTS" })}
       </Typography>
       <Projects />
     </>

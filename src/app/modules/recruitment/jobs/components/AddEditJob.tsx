@@ -159,7 +159,7 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid item xs={12} display={"flex"} alignItems={"center"}>
               <Grid item xs={4} md={6}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "STATUS.ACTIVE" })}
+                  {intl.formatMessage({ id: "ACTIVE" })}
                 </Typography>
               </Grid>
 
@@ -210,12 +210,12 @@ export const AddEditJob: FC<PropsTypes> = ({
             >
               <CustomisedButton
                 variant="outlined"
-                label="Close"
+                label={intl.formatMessage({id:"BUTTON.CLOSE"})}
                 handleClick={handleClose}
               />
               <CustomisedButton
-                label={isEdit ? "Update" : "Publish"}
-                Icon={<Check />}
+                loading={isSubmitting}
+                label={intl.formatMessage({id: isEdit ? "BUTTON.UPDATE" :"BUTTON.ADD"}) }
                 type="submit"
                 iconPosition="start"
                 disabled={isSubmitting || !(dirty && isValid)}

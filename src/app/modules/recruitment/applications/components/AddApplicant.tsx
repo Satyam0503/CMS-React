@@ -315,16 +315,17 @@ export const AddApplicant: FC<PropsTypes> = ({
                     >
                       <CustomisedButton
                         variant="outlined"
-                        label="Close"
+                        label={intl.formatMessage({id:"BUTTON.CLOSE"})}
                         handleClick={handleClose}
                       />
                       <CustomisedButton
                         variant="outlined"
-                        label="Reset"
+                        label={intl.formatMessage({id:"BUTTON.RESET"})}
                         handleClick={() => formik.resetForm()}
                       />
                       <CustomisedButton
-                        label="Add"
+                        loading={formik.isSubmitting}
+                        label={intl.formatMessage({id:"BUTTON.ADD"})}
                         type="submit"
                         disabled={
                           formik.isSubmitting ||

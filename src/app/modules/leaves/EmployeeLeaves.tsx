@@ -61,7 +61,7 @@ export const EmployeeLeaves: FC = () => {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.LEAVE_MGMT" })}
+        {intl.formatMessage({ id: "PAGE.LEAVE_MANAGEMENT" })}
       </Typography>
       <Grid
         container

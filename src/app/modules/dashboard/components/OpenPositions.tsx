@@ -7,9 +7,11 @@ import { JobModal } from "../../recruitment/models";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { colors } from "../../theme/MuiTheme";
+import { CardSkeleton } from "./CardSkeleton";
 
 export default function OpenPositions() {
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
+  const [loading,setLoading]= useState(true);
   const intl = useIntl();
   useEffect(() => {
     async function getActiveJobs() {
@@ -22,9 +24,15 @@ export default function OpenPositions() {
       } catch (error) {
         console.error((error as AxiosError).message);
       }
+      finally{
+        setLoading(false);
+      }
     }
     getActiveJobs();
   }, []);
+  if(loading){
+    return <CardSkeleton/>
+  }
 
   return (
     <CustomCard
@@ -42,7 +50,7 @@ export default function OpenPositions() {
             component={"div"}
             sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
           >
-            <Typography variant="h5">No Active Vacancies</Typography>
+            <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{intl.formatMessage({id:"DASHBOARD.VACANCY.NOVACANCIES"})}</Typography>
           </Box>
         ) : (
           <>
@@ -76,7 +84,7 @@ export default function OpenPositions() {
                 <Typography
                   sx={{ fontSize: "12px", textDecoration: "underline" }}
                 >
-                  {"See more"}
+                  {intl.formatMessage({id:"SEE_MORE"})}
                 </Typography>
               </Link>
             )}
