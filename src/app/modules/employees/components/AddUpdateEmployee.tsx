@@ -172,11 +172,11 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                        label={intl.formatMessage({ id: "FORM.EMAIL" })}
                         type="email"
                         name="email"
                         placeholder={intl.formatMessage({
-                          id: "AUTH.INPUT.EMAIL",
+                          id: "FORM.EMAIL",
                         })}
                         disabled={isEdit}
                       />
