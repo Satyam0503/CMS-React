@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { RightToolbar } from "../partials/layout/RightToolbar";
-import { ScrollTop } from "./components/scroll-top";
-import { ActivityDrawer, DrawerMessenger } from "../partials";
+import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
@@ -47,15 +46,14 @@ const MasterLayout = () => {
                 <Outlet />
               </Container>
             </Stack>
-            <Footer />
+            <Stack>
+              <Footer />
+            </Stack>
           </Stack>
         </Grid>
 
-        <ActivityDrawer />
         <RightToolbar />
         <DrawerMessenger />
-
-        <ScrollTop />
       </PageDataProvider>
     </>
   );

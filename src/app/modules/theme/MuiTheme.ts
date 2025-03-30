@@ -903,7 +903,7 @@ export const MuiTheme = createTheme({
     MuiAutocomplete: {
       styleOverrides: {
         paper: {
-          maxHeight: "240px",
+          maxHeight: "200px",
         },
         clearIndicator: {
           color: colors.alpha.primary[500],

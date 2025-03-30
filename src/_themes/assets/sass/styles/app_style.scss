@@ -252,3 +252,8 @@ button:hover .ql-fill,
   transform: rotate(90deg);
   transform-origin: right top;
 }
+.delete-button {
+  &:hover {
+    background: red !important;
+  }
+}

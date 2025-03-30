@@ -6,14 +6,14 @@ import { UserSummaryModel } from "../../../../../utils/common_types";
 import { ProfileProps } from "../../models";
 
 export const AboutEmployee: FC<ProfileProps> = ({ employeeId }) => {
-  const [ aboutEmployee , setAboutEmployee] = useState<UserSummaryModel>();
+  const [aboutEmployee, setAboutEmployee] = useState<UserSummaryModel>();
   const intl = useIntl();
   useEffect(() => {
     getEmployeeSummary(employeeId)
       .then((response) => {
         const { success, methodResult, statusCode } = response.data;
         if (success && statusCode === 200) {
-          setAboutEmployee(methodResult)
+          setAboutEmployee(methodResult);
         }
       })
       .catch((error) => {
@@ -22,14 +22,18 @@ export const AboutEmployee: FC<ProfileProps> = ({ employeeId }) => {
   }, []);
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        {intl.formatMessage({ id: "INFO.SUMMARY" })}
-      </Typography>
+    <>
+      <Card sx={{ p: 2 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          {intl.formatMessage({ id: "INFO.SUMMARY" })}
+        </Typography>
 
-      <Typography variant="body1">
-        {aboutEmployee && aboutEmployee.summary.trim().length >0 ? aboutEmployee.summary : "NA"}
-      </Typography>
-    </Card>
+        <Typography variant="body1">
+          {aboutEmployee && aboutEmployee.summary.trim().length > 0
+            ? aboutEmployee.summary
+            : "NA"}
+        </Typography>
+      </Card>
+    </>
   );
 };

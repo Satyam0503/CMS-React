@@ -1,57 +1,69 @@
-import {useEffect, useState} from 'react'
-import {useLocation} from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   DrawerComponent,
   ScrollTopComponent,
   StickyComponent,
   ToggleComponent,
-} from '../../../assets/ts/components'
-import {KTIcon} from '../../../helpers'
+} from "../../../assets/ts/components";
+import { KTIcon } from "../../../helpers";
+import { ArrowUpward } from "@mui/icons-material";
+import { IconButton, Tooltip } from "@mui/material";
 
 export function ScrollTop() {
-  const {pathname} = useLocation()
-  const [initialized, setInintialized] = useState(false)
+  const { pathname } = useLocation();
+  const [initialized, setInintialized] = useState(false);
 
   const pluginsReinitialization = () => {
     setTimeout(() => {
-      StickyComponent.reInitialization()
+      StickyComponent.reInitialization();
       setTimeout(() => {
-        ToggleComponent.reinitialization()
-        DrawerComponent.reinitialization()
-      }, 70)
-    }, 140)
-  }
+        ToggleComponent.reinitialization();
+        DrawerComponent.reinitialization();
+      }, 70);
+    }, 140);
+  };
 
   const scrollTop = () => {
-    ScrollTopComponent.goTop()
-  }
+    ScrollTopComponent.goTop();
+  };
 
   const updateHeaderSticky = () => {
-    const stickyHeader = document.body.querySelectorAll(`[data-kt-sticky-name="header"]`)
+    const stickyHeader = document.body.querySelectorAll(
+      `[data-kt-sticky-name="header"]`
+    );
     if (stickyHeader && stickyHeader.length > 0) {
-      const sticky = StickyComponent.getInstance(stickyHeader[0] as HTMLElement)
+      const sticky = StickyComponent.getInstance(
+        stickyHeader[0] as HTMLElement
+      );
       if (sticky) {
-        sticky.update()
+        sticky.update();
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (!initialized) {
-      setInintialized(true)
+      setInintialized(true);
     } else {
-      pluginsReinitialization()
+      pluginsReinitialization();
     }
 
-    updateHeaderSticky()
+    updateHeaderSticky();
     setTimeout(() => {
-      scrollTop()
-    }, 0)
-  }, [initialized, pathname])
+      scrollTop();
+    }, 0);
+  }, [initialized, pathname]);
 
   return (
-    <div id='kt_scrolltop' className='scrolltop' data-kt-scrolltop='true'>
-      <KTIcon iconName='arrow-up' />
-    </div>
-  )
+    <Tooltip title="Scroll top">
+      <IconButton
+        id="kt_scrolltop"
+        className="scrolltop"
+        data-kt-scrolltop="true"
+      >
+        <ArrowUpward />
+      </IconButton>
+    </Tooltip>
+  );
 }

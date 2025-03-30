@@ -22,10 +22,13 @@ export default function UserProfile() {
   const { userDetails, userSkills } = useUserDetails();
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.MY_PROFILE" })}
-      </Typography>
-      <Grid container spacing={4}>
+      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
+        <Typography variant="h4" mb={3}>
+          {intl.formatMessage({ id: "MENU.PROFILE" })}
+        </Typography>
+      </Stack>
+
+      <Grid container spacing={4} zIndex={0}>
         <Grid
           item
           xs={12}
@@ -35,6 +38,9 @@ export default function UserProfile() {
           flexDirection={{ xs: "column", sm: "row", lg: "column" }}
           gap={{ xs: 4, sm: 2, md: 4 }}
           justifyContent={{ lg: "flex-start" }}
+          position={{ xs: "inherit", lg: "sticky" }}
+          top={{ lg: 100 }}
+          height={{ lg: "60vh" }}
         >
           <Stack width={"100%"}>
             <ProfileCard />
