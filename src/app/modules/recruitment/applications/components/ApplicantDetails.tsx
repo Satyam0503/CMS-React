@@ -42,7 +42,7 @@ import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentModel } from "../../models";
 
 export const ApplicantDetails = () => {
-  const intl = useIntl();   
+  const intl = useIntl();
   const navigate = useNavigate();
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(false);
@@ -158,8 +158,7 @@ export const ApplicantDetails = () => {
         activityCategory: commentActionEncoderForApplicationStatus(
           status.applicationStatus
         ),
-        userName: currentUser.firstName + " " + currentUser.lastName,
-        jobTitle:applicant.vacancyName
+        jobTitle: applicant.vacancyName,
       };
       const commentResponse = await addComment(commentPayload);
       if (!commentResponse.data.success) {
@@ -173,9 +172,8 @@ export const ApplicantDetails = () => {
       setRefreshComment(!refreshComment);
     } catch (error: any) {
       toast.error(error.message);
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -371,7 +369,7 @@ export const ApplicantDetails = () => {
                 {intl.formatMessage({ id: "APPLICANT.COMMENT" })}
               </Typography>
               <CustomisedButton
-                label={intl.formatMessage({id:"APPLICANT.ADD_COMMENT"})}
+                label={intl.formatMessage({ id: "APPLICANT.ADD_COMMENT" })}
                 Icon={<Add />}
                 handleClick={() => {
                   setModalOpen(true);
@@ -380,7 +378,7 @@ export const ApplicantDetails = () => {
             </Stack>
 
             <CustomisedTable
-              keyName="commentId"
+              //keyName="commentId"
               rows={commentList}
               columns={CommentTableColumnList}
               page={0}

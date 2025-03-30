@@ -65,7 +65,7 @@ export function Login() {
     <Stack spacing={4}>
       <Stack sx={{ textAlign: "center" }}>
         <Typography variant="h3">
-          {intl.formatMessage({ id: "AUTH.LOGIN.BUTTON" })}
+          {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
         </Typography>
         <Typography variant="body1" color={colors.alpha.primary[500]}>
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}

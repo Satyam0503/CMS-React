@@ -45,8 +45,8 @@ import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
-export const BaseUrl =
-  import.meta.env.VITE_BASEURL ;
+import { toAbsoluteUrl } from "../../_themes/helpers";
+export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
@@ -96,18 +96,57 @@ export const ServiceUrl = {
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
-  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
+  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/Applicants/GetAllComment`,
   GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `${BaseUrl}/api/Applicants/EditApplicant`,
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
 
-  ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
+  ADD_COMMENT: `${BaseUrl}/api/Applicants/AddComment`,
   APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
 
   // process log
-  GET_PROCESS_LOG: `${BaseUrl}/api/User/GetProcessLogData`,
+  GET_PROCESS_LOG: `${BaseUrl}/api/Applicants/GetProcessLogData`,
 };
+
+export const languages = [
+  {
+    id: 1,
+    lang: "en",
+    name: "English",
+    flag: toAbsoluteUrl("media/flags/united-states.svg"),
+  },
+  {
+    id: 2,
+    lang: "zh",
+    name: "Mandarin",
+    flag: toAbsoluteUrl("media/flags/china.svg"),
+  },
+  {
+    id: 3,
+    lang: "es",
+    name: "Spanish",
+    flag: toAbsoluteUrl("media/flags/spain.svg"),
+  },
+  {
+    id: 4,
+    lang: "ja",
+    name: "Japanese",
+    flag: toAbsoluteUrl("media/flags/japan.svg"),
+  },
+  {
+    id: 5,
+    lang: "de",
+    name: "German",
+    flag: toAbsoluteUrl("media/flags/germany.svg"),
+  },
+  {
+    id: 6,
+    lang: "fr",
+    name: "French",
+    flag: toAbsoluteUrl("media/flags/france.svg"),
+  },
+];
 
 export const Regex = {
   Name: /^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/,
@@ -406,35 +445,35 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
-    id:'serialNo',
-    label:"S.No.",
-    minWidth:60
+    id: "serialNo",
+    label: "S.No.",
+    minWidth: 60,
   },
   {
     id: "applicantName",
     label: "Applicant Name",
-    minWidth:150
+    minWidth: 150,
   },
   {
     id: "jobRole",
     label: "Job Role",
-    minWidth:150
+    minWidth: 150,
   },
   {
     id: "commentedOn",
     label: "Commented On",
-    format:(value:string)=> dateFormatter(value, "DD MMM YYYY hh:mm A"),
-    minWidth:150
+    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
+    minWidth: 150,
   },
   {
     id: "commentedBy",
     label: "Commented By",
-    minWidth:150
+    minWidth: 150,
   },
   {
     id: "actionCategory",
     label: "Action",
-    minWidth:150,
+    minWidth: 150,
     format: (value: number) => commentActionDecoder(value),
   },
   {
@@ -717,7 +756,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "userName",
+    id: "userId",
     label: "Action By",
     minWidth: 150,
   },

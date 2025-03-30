@@ -30,66 +30,16 @@ import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
+import { ImageCropper } from "./ImageCropper";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
-  const [seletedFile, setSelectedFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState("");
   const intl = useIntl();
   const { userDetails } = useUserDetails();
   const userData = useAppSelector((state) => state.user.userData)!;
-  const dispatch= useAppDispatch();
-  
+
   function handleClose() {
     setOpen(false);
-    setSelectedFile(null);
-    setFileError("");
-  }
-
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const supportedImageFormat = ["jpg", "jpeg", "png"];
-    const files = event.target.files;
-    if (!files || files.length === 0) {
-      setFileError("Please select a image");
-      return;
-    }
-    const selectedFile = files[0];
-    const fileSizeInMB = selectedFile.size / (1024 * 1024);
-    const fileFormat = selectedFile.name.split(".").pop()!;
-
-    if (fileSizeInMB > 5) {
-      setFileError("File size should be less then 5MB");
-      return;
-    }
-
-    if (!supportedImageFormat.includes(fileFormat.toLowerCase())) {
-      setFileError("Only .jpg, .jpeg or .png images are allowed");
-      return;
-    }
-    setSelectedFile(selectedFile);
-    setFileError("");
-  }
-
-  async function handleUpdateAvatar() {
-    if (seletedFile) {
-      const formData = new FormData();
-      formData.append("profilePicture", seletedFile);
-      try {
-        const response = await updateProfilePicture(formData);
-        const { success ,methodResult} = response.data;
-        if (success) {
-          toast.success("Profile Updated Successfully");
-          console.log(methodResult);
-          dispatch(setCurrentUser({
-            ...userData,
-            profileImage:methodResult
-          }))
-          handleClose();
-        }
-      } catch (error) {
-        toast.error("Request Failed");
-      }
-    }
   }
 
   return (
@@ -147,7 +97,6 @@ export default function ProfileCard() {
               }
             />
             <CustomIconButton
-              // handleClick={}
               icon={
                 <Visibility
                   sx={{
@@ -209,84 +158,9 @@ export default function ProfileCard() {
           label="Salary slip"
         />
       </Card>
-      {open && (
-        <CustomisedModal open={open} handleClose={handleClose}>
-          <Box>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "UPLOAD.PROFILE_PICTURE" })}
-            </Typography>
-            <Stack
-              direction={"column"}
-              spacing={2}
-              sx={{ marginBlockStart: 2 }}
-            >
-              <Box
-                component="label"
-                sx={{
-                  border: "1px dashed grey",
-                  borderRadius: 1,
-                  cursor: "pointer",
-                }}
-              >
-                <Container
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: 1,
-                    alignItems: "center",
-                  }}
-                >
-                  <Grid item xs={6} md={6} textAlign={"center"}>
-                    <CloudUploadOutlined
-                      fontSize="large"
-                      sx={{ margin: "auto" }}
-                    />
-                    <input
-                      type="file"
-                      accept=".jpg,.png"
-                      onChange={handleFileChange}
-                      hidden
-                    />
-                    <Typography variant="body1" flexWrap={"wrap"}>
-                      {intl.formatMessage({ id: "FILE.SELECTED" })}:
-                      {seletedFile?.name}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} md={6}>
-                    <Typography variant="body2" flexWrap={"wrap"}>
-                      {intl.formatMessage({ id: "FILE.UPLOAD_INSTRUCTION" })}
-                    </Typography>
-                  </Grid>
-                </Container>
-              </Box>
-              <Stack spacing={0.5}>
-                <CustomisedButton
-                  label="Upload File"
-                  Icon={<AttachFile />}
-                  iconPosition="end"
-                  disabled={!seletedFile}
-                  handleClick={handleUpdateAvatar}
-                />
-              </Stack>
-
-              {fileError && <ErrorLabel>{fileError}</ErrorLabel>}
-            </Stack>
-          </Box>
-          <Stack mt={1}>
-            <CustomisedButton
-              variant="outlined"
-              label="Delete File"
-              Icon={<DeleteOutlineOutlined />}
-              iconPosition="end"
-              handleClick={handleUpdateAvatar}
-              style={{
-                visibility: !seletedFile ? "hidden" : "visible",
-                color: colors.alpha.danger[500],
-              }}
-            />
-          </Stack>
-        </CustomisedModal>
-      )}
+      {
+        open && <ImageCropper open={open} handleClose={handleClose}/>
+      }
     </>
   );
 }

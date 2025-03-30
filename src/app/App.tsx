@@ -9,6 +9,7 @@ import { ThemeProvider } from "@mui/material";
 import { MuiTheme, setColorsAsCSSVariables } from "./modules/theme/MuiTheme";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import 'react-image-crop/dist/ReactCrop.css'
 
 const App = () => {
   useEffect(() => {
