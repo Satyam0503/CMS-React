@@ -159,7 +159,7 @@ export const Applications = () => {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "USER.APPLICATIONS" })}
+        {intl.formatMessage({ id: "PAGE.APPLICATIONS" })}
       </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
@@ -180,7 +180,6 @@ export const Applications = () => {
               >
                 <CustomIconButton
                   icon={<FilterList />}
-                  tooltip="Filter Application"
                   ariaLabel="Filter Application"
                   handleClick={handleFilterClick}
                 />

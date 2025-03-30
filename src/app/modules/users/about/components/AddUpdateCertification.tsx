@@ -101,11 +101,6 @@ export default function AddUpdateCertification(props: PropTypes) {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Stack>
-                      {/* <Typography>
-                        {intl.formatMessage({
-                          id: "APPLICATION.END",
-                        })}
-                      </Typography> */}
                       <CustomisedDatePicker
                         label={intl.formatMessage({
                           id: "APPLICATION.END",
@@ -148,12 +143,15 @@ export default function AddUpdateCertification(props: PropTypes) {
                   mt={2}
                 >
                   <CustomisedButton
-                    label="Cancel"
+                    label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                     handleClick={handleClose}
                     variant="outlined"
                   />
                   <CustomisedButton
-                    label={isEdit ? "Update" : "Save"}
+                    loading={isSubmitting}
+                    label={intl.formatMessage({
+                      id: isEdit ? "BUTTON.UPDATE" : "BUTTON.SAVE",
+                    })}
                     type="submit"
                     disabled={!(isValid && dirty) || isSubmitting}
                   />

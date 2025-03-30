@@ -110,8 +110,8 @@ export function Registration() {
                 <TextInput
                   type="text"
                   name="firstName"
-                  label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                  placeholder="First Name"
+                  label={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
+                  placeholder={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -130,8 +130,8 @@ export function Registration() {
                 <TextInput
                   type="text"
                   name="lastName"
-                  label={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                  placeholder="Last Name"
+                  label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
+                  placeholder={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -150,8 +150,8 @@ export function Registration() {
                 <TextInput
                   type="text"
                   name="companyName"
-                  label={intl.formatMessage({ id: "COMPANY.NAME" })}
-                  placeholder="Company Name"
+                  label={intl.formatMessage({ id: "FORM.COMPANY_NAME" })}
+                  placeholder={intl.formatMessage({ id: "FORM.COMPANY_NAME" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -169,8 +169,8 @@ export function Registration() {
                 <TextInput
                   type="email"
                   name="email"
-                  label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
-                  placeholder="Email"
+                  label={intl.formatMessage({ id: "FORM.EMAIL" })}
+                  placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -190,8 +190,8 @@ export function Registration() {
                   <TextInput
                     type="password"
                     name="password"
-                    label={intl.formatMessage({ id: "AUTH.INPUT.PASSWORD" })}
-                    placeholder="Password"
+                    label={intl.formatMessage({ id: "FORM.PASSWORD" })}
+                    placeholder={intl.formatMessage({ id: "FORM.PASSWORD" })}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -275,8 +275,8 @@ export function Registration() {
                 <TextInput
                   type="password"
                   name="changePassword"
-                  label={intl.formatMessage({ id: "PASSWORD.CONFIRMATION" })}
-                  placeholder="Password Confirmation"
+                  label={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
+                  placeholder={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -316,7 +316,7 @@ export function Registration() {
               <Stack spacing={1}>
                 <CustomisedButton
                   disabled={!(dirty && isValid) || isSubmitting}
-                  label="Submit"
+                  label={intl.formatMessage({id:"BUTTON.SUBMIT"})}
                   size="large"
                   type="submit"
                   loading={loading}
@@ -324,7 +324,7 @@ export function Registration() {
                 <CustomisedButton
                   handleClick={() => resetForm()}
                   variant="outlined"
-                  label="Reset"
+                  label={intl.formatMessage({id:"BUTTON.RESET"})}
                   size="large"
                   type="button"
                 />

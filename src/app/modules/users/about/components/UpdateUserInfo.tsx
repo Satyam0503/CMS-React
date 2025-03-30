@@ -220,14 +220,14 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   mt={2}
                 >
                   <CustomisedButton
-                    label="Cancel"
+                    label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                     handleClick={handleClose}
                     variant="outlined"
                   />
                   <CustomisedButton
-                    label="Save"
+                    loading={isSubmitting}
+                    label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                     type="submit"
-                    variant="contained"
                     disabled={!(isValid && dirty) || isSubmitting}
                   />
                 </Stack>

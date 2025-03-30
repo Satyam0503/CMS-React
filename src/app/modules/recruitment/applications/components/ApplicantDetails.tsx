@@ -45,7 +45,7 @@ export const ApplicantDetails = () => {
   const intl = useIntl();   
   const navigate = useNavigate();
   const currentUser = useAppSelector((state) => state.user.userData)!;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
   const [commentList, setCommentList] = useState<CommentModel[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -128,6 +128,7 @@ export const ApplicantDetails = () => {
   };
 
   const handleAddComment = async () => {
+    setLoading(true);
     try {
       if (status.applicationStatus !== applicant.activityType) {
         const payload = {
@@ -172,6 +173,9 @@ export const ApplicantDetails = () => {
       setRefreshComment(!refreshComment);
     } catch (error: any) {
       toast.error(error.message);
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -314,10 +318,6 @@ export const ApplicantDetails = () => {
                 <Typography variant="body1" fontWeight={600}>
                   {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
                 </Typography>
-                {/* <StyleStatus
-                  label={applicationStatusMapper[applicant.activityType]}
-                  className={getApplicationStatusClass(applicant.activityType)}
-                /> */}
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
                     {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
@@ -371,7 +371,7 @@ export const ApplicantDetails = () => {
                 {intl.formatMessage({ id: "APPLICANT.COMMENT" })}
               </Typography>
               <CustomisedButton
-                label="Add Comment"
+                label={intl.formatMessage({id:"APPLICANT.ADD_COMMENT"})}
                 Icon={<Add />}
                 handleClick={() => {
                   setModalOpen(true);
@@ -388,6 +388,7 @@ export const ApplicantDetails = () => {
             />
             {isModalOpen && (
               <AddComment
+                loading={loading}
                 open={isModalOpen}
                 comment={comment}
                 handleCommentChange={handleCommentChange}

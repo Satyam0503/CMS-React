@@ -1,4 +1,4 @@
-import { Box, CardContent, Grid, Stack } from "@mui/material";
+import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
 
 import {
   Build,
@@ -21,6 +21,8 @@ import { EmployeeProfileCard } from "./components/EmployeeProfileCard";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { getEmployeeById, getEmployeeSkills } from "../userservices";
+import LeaveAllowences from "../components/LeaveAllowences";
+import BasicTabs from "./components/BasicTabs";
 
 const EmployeeProfile = () => {
   const intl = useIntl();
@@ -65,6 +67,12 @@ const EmployeeProfile = () => {
 
   return (
     <>
+      {/* //need to add user name in place of my */}
+      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
+        <Typography variant="h4" mb={3}>
+          {intl.formatMessage({ id: "MENU.PROFILE" })}
+        </Typography>
+      </Stack>
       <Grid container spacing={4}>
         <Grid
           item
@@ -75,9 +83,15 @@ const EmployeeProfile = () => {
           flexDirection={{ xs: "column", sm: "row", lg: "column" }}
           gap={{ xs: 4, sm: 2, md: 4 }}
           justifyContent={{ lg: "flex-start" }}
+          position={{ xs: "inherit", lg: "sticky" }}
+          top={{ lg: 100 }}
+          height={{ lg: "60vh" }}
         >
           <Stack width={"100%"}>
             <EmployeeProfileCard employeeDetails={employeeDetails} />
+          </Stack>
+          <Stack width={"100%"}>
+            <LeaveAllowences />
           </Stack>
         </Grid>
         <Grid item xs={12} md={12} lg={8.2} xl={9}>
@@ -126,13 +140,16 @@ const EmployeeProfile = () => {
               </Box>
             </Grid>
           </Stack>
-          <Stack spacing={2} sx={{ my: 2 }}>
+          <Stack sx={{ width: "100%" }}>
+            <BasicTabs />
+          </Stack>
+          {/* <Stack spacing={2} sx={{ my: 2 }}>
             <AboutEmployee employeeId={employeeId} />
             <EmployeeDetails employeeDetails={employeeDetails} />
             <EmployeeSkills employeeSkills={employeeSkills} />
             <EmployeeEducation employeeId={employeeId} />
             <EmployeeCertification employeeId={employeeId} />
-          </Stack>
+          </Stack> */}
         </Grid>
       </Grid>
     </>

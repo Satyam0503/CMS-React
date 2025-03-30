@@ -239,8 +239,9 @@ export const AddPermission = () => {
                   handleClick={handleReset}
                 />
                 <CustomisedButton
+                  loading={formik.isSubmitting}
                   type="submit"
-                  disabled={selectedPermission.length === 0}
+                  disabled={selectedPermission.length === 0 || formik.isSubmitting}
                   label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                   Icon={<Check />}
                   iconPosition="start"

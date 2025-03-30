@@ -44,7 +44,7 @@ const ProcessLogs = () => {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.PROCESS_LOG" })}
+        {intl.formatMessage({ id: "PAGE.PROCESS_LOG" })}
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack direction="row">

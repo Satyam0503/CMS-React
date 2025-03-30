@@ -100,14 +100,14 @@ export const AddUpdateSkills: React.FC<PropsType> = ({
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
             <CustomisedButton
               variant="outlined"
-              label="Cancel"
+              label={intl.formatMessage({id:"BUTTON.CLOSE"})}
               handleClick={handleClose}
             />
             <CustomisedButton
               variant="contained"
-              label="Update"
+              label={intl.formatMessage({id:"BUTTON.ADD"})}
               handleClick={() => handleSkillUpdate(skills)}
-              // disabled={skills.length === 0}
+              disabled={skills.length === 0}
             />
           </Stack>
         </Stack>

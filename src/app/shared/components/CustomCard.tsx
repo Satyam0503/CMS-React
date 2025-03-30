@@ -9,9 +9,9 @@ interface Props {
 
 export const CustomCard: FC<Props> = (props) => {
   return (
-    <Card sx={{ p: 2, minHeight:"200px",height:"100%", display:"flex",flexDirection:"column" }}>
-      <Stack spacing={1} sx={{ flexGrow: 1 }}>
-        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+    <Card sx={{ p: 2, minHeight:"250px",height:"100%"}} className="d-flex flex-column">
+      <Stack spacing={1} className="flex-grow-1">
+        <Stack direction="row" className="justify-content-between ">
           <Typography variant="h6">{props.label}</Typography>
           {props.value ? (
             <Typography variant="h4">{props.value}</Typography>

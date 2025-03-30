@@ -107,7 +107,7 @@ export default function Holidays() {
   return (
     <>
       <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "MENU.HOLIDAYS" })}
+        {intl.formatMessage({ id: "PAGE.HOLIDAYS" })}
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack

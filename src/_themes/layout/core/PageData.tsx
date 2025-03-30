@@ -15,8 +15,6 @@ export interface PageLink {
 export interface PageDataContextModel {
   pageTitle?: string;
   setPageTitle: (_title: string) => void;
-  pageDescription?: string;
-  setPageDescription: (_description: string) => void;
   pageBreadcrumbs?: Array<PageLink>;
   setPageBreadcrumbs: (_breadcrumbs: Array<PageLink>) => void;
 }
@@ -24,7 +22,6 @@ export interface PageDataContextModel {
 const PageDataContext = createContext<PageDataContextModel>({
   setPageTitle: (_title: string) => {},
   setPageBreadcrumbs: (_breadcrumbs: Array<PageLink>) => {},
-  setPageDescription: (_description: string) => {},
 });
 
 const PageDataProvider: FC<WithChildren> = ({ children }) => {
@@ -34,8 +31,6 @@ const PageDataProvider: FC<WithChildren> = ({ children }) => {
   const value: PageDataContextModel = {
     pageTitle,
     setPageTitle,
-    pageDescription,
-    setPageDescription,
     pageBreadcrumbs,
     setPageBreadcrumbs,
   };
@@ -57,10 +52,9 @@ type Props = {
 
 const PageTitle: FC<Props & WithChildren> = ({
   children,
-  description,
   breadcrumbs,
 }) => {
-  const { setPageTitle, setPageDescription, setPageBreadcrumbs } =
+  const { setPageTitle, setPageBreadcrumbs } =
     usePageData();
   useEffect(() => {
     if (children) {
@@ -70,15 +64,6 @@ const PageTitle: FC<Props & WithChildren> = ({
       setPageTitle("");
     };
   }, [children]);
-
-  useEffect(() => {
-    if (description) {
-      setPageDescription(description);
-    }
-    return () => {
-      setPageDescription("");
-    };
-  }, [description]);
 
   useEffect(() => {
     if (breadcrumbs) {
@@ -92,17 +77,6 @@ const PageTitle: FC<Props & WithChildren> = ({
   return <></>;
 };
 
-const PageDescription: FC<WithChildren> = ({ children }) => {
-  const { setPageDescription } = usePageData();
-  useEffect(() => {
-    if (children) {
-      setPageDescription(children.toString());
-    }
-    return () => {
-      setPageDescription("");
-    };
-  }, [children]);
-  return <></>;
-};
 
-export { PageDescription, PageTitle, PageDataProvider, usePageData };
+
+export {  PageTitle, PageDataProvider, usePageData };
