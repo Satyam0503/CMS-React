@@ -9379,6 +9379,11 @@
     "prop-types" "^15.5.0"
     "react-async-script" "^1.2.0"
 
+"react-image-crop@^11.0.7":
+  "integrity" "sha512-ZciKWHDYzmm366JDL18CbrVyjnjH0ojufGDmScfS4ZUqLHg4nm6ATY+K62C75W4ZRNt4Ii+tX0bSjNk9LQ2xzQ=="
+  "resolved" "https://registry.npmjs.org/react-image-crop/-/react-image-crop-11.0.7.tgz"
+  "version" "11.0.7"
+
 "react-inlinesvg@3.0.0":
   "integrity" "sha512-zUt0DW3cKBk+vYZJJCzJqA9STRb+ZFmKLQFWurTvM4UR6vyHT8kHZSzyZZseX9BUNbTFJAfirtwpt97BWDJoSg=="
   "resolved" "https://registry.npmjs.org/react-inlinesvg/-/react-inlinesvg-3.0.0.tgz"
