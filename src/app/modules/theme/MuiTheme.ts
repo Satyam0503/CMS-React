@@ -9,7 +9,7 @@ const themeColors = {
   warning: "#FFC107",
   error: "#F44336",
   white: "#ffffff",
-  territory: "636D79",
+  territory: "#636D79",
 };
 
 export const colors = {
