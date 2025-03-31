@@ -1,7 +1,7 @@
 import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useCallback, useEffect, useState } from "react";
-import { ProcessLogModel } from "../models";
+import { CommentResponseModel } from "../models";
 import { getProcessLogData } from "../services";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
@@ -14,7 +14,7 @@ const ProcessLogs = () => {
   const [searchValue, setSearchValue] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoading, setLoading] = useState(true);
-  const [processLogList, setProcessLogList] = useState<ProcessLogModel[]>([]);
+  const [processLogList, setProcessLogList] = useState<CommentResponseModel[]>([]);
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
@@ -53,7 +53,7 @@ const ProcessLogs = () => {
         <Stack sx={{ mt: "1rem" }}>
           <CustomisedTable
             tabName={ModulesName.ProcessLog}
-            keyName="processId"
+            keyName="id"
             columns={ProcessLogTableColumnList}
             rows={processLogList}
             page={paginationValues.pageNo}
