@@ -153,10 +153,10 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextInput
-                      label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                      label={intl.formatMessage({ id: "FORM.EMAIL" })}
                       type="email"
                       name="email"
-                      placeholder="Email"
+                      placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
                       disabled={true}
                     />
                   </Grid>

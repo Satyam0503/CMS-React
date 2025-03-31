@@ -1,7 +1,10 @@
 import { Check, DeleteOutline } from "@mui/icons-material";
 import {
+  alpha,
+  darken,
   Divider,
   Grid,
+  lighten,
   MenuItem,
   Select,
   Stack,
@@ -189,6 +192,13 @@ export const AddEditJob: FC<PropsTypes> = ({
                 label="Delete"
                 Icon={<DeleteOutline />}
                 iconPosition="start"
+                className="delete-button"
+                style={{
+                  backgroundColor: alpha(
+                    lighten(colors.alpha.danger[800], 0.2),
+                    0.8
+                  ),
+                }}
               />
             </Stack>
 

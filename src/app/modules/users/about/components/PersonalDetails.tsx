@@ -46,7 +46,7 @@ export const PersonalDetails = () => {
 
         <Grid item xs={12} sm={6}>
           <Typography variant="body2">
-            {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+            {intl.formatMessage({ id: "FORM.EMAIL" })}
           </Typography>
           <Typography variant="body1">{userDetails?.email || "NA"}</Typography>
         </Grid>

@@ -28,10 +28,12 @@ import {
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { ApplicationEvaluationStatus, indianStates, monthsExperienceList } from "../../../../../utils/constant/Constant";
 import {
-  commentActionEncoderForApplicationStatus,
-} from "../../../../../utils/common";
+  ApplicationEvaluationStatus,
+  indianStates,
+  monthsExperienceList,
+} from "../../../../../utils/constant/Constant";
+import { commentActionEncoderForApplicationStatus } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { colors } from "../../../theme/MuiTheme";
@@ -98,16 +100,19 @@ export const EditApplicant = () => {
     experienceInYears: Math.floor(state.experience / 12),
     experienceInMonths: state.experience % 12,
   };
-  
+
   const handleAddComment = async (activityType: number) => {
-    const actionCategory = activityType === state.activityType ? CommentAction.Edit :commentActionEncoderForApplicationStatus(activityType)!   
+    const actionCategory =
+      activityType === state.activityType
+        ? CommentAction.Edit
+        : commentActionEncoderForApplicationStatus(activityType)!;
     const payload = {
       applicantId: state.applicantId,
       userId: user.userId,
       description: comment,
-      activityCategory:actionCategory ,
+      activityCategory: actionCategory,
       userName: user.firstName + " " + user.lastName,
-      jobTitle:state.applicantId,
+      jobTitle: state.applicantId,
     };
     const response = await addComment(payload);
     const { success, statusCode } = response.data;
@@ -205,20 +210,22 @@ export const EditApplicant = () => {
                         <Grid item xs={12} sm={4}>
                           <TextInput
                             label={intl.formatMessage({
-                              id: "USER.FIRST_NAME",
+                              id: "FORM.FIRST_NAME",
                             })}
                             type="text"
                             name="firstName"
-                            placeholder="FirstName"
+                            placeholder={intl.formatMessage({
+                              id: "FORM.FIRST_NAME",
+                            })}
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
                           <TextInput
-                            label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                            label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                             type="text"
                             name="lastName"
-                            placeholder="Last Name"
+                            placeholder={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                           />
                         </Grid>
 
@@ -234,11 +241,13 @@ export const EditApplicant = () => {
                         <Grid item xs={12} sm={4}>
                           <TextInput
                             label={intl.formatMessage({
-                              id: "AUTH.INPUT.EMAIL",
+                              id: "FORM.EMAIL",
                             })}
                             type="email"
                             name="email"
-                            placeholder="Email"
+                            placeholder={intl.formatMessage({
+                              id: "FORM.EMAIL",
+                            })}
                             disabled={true}
                           />
                         </Grid>
@@ -381,8 +390,7 @@ export const EditApplicant = () => {
                                 variant="caption"
                                 flexWrap={"wrap"}
                                 textAlign={"center"}
-                              >
-                              </Typography>
+                              ></Typography>
                               <Typography variant="caption">
                                 {values.resume ? values.resume.name : ""}
                               </Typography>
