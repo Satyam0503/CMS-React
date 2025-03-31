@@ -45,6 +45,7 @@ import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
+import { toAbsoluteUrl } from "../../_themes/helpers";
 export const BaseUrl =
   import.meta.env.VITE_BASEURL ;
 
@@ -108,6 +109,45 @@ export const ServiceUrl = {
   // process log
   GET_PROCESS_LOG: `${BaseUrl}/api/User/GetProcessLogData`,
 };
+
+export const languages = [
+  {
+    id:1,
+    lang: "en",
+    name: "English",
+    flag: toAbsoluteUrl("media/flags/united-states.svg"),
+  },
+  {
+    id:2,
+    lang: "zh",
+    name: "Mandarin",
+    flag: toAbsoluteUrl("media/flags/china.svg"),
+  },
+  {
+    id:3,
+    lang: "es",
+    name: "Spanish",
+    flag: toAbsoluteUrl("media/flags/spain.svg"),
+  },
+  {
+    id:4,
+    lang: "ja",
+    name: "Japanese",
+    flag: toAbsoluteUrl("media/flags/japan.svg"),
+  },
+  {
+    id:5,
+    lang: "de",
+    name: "German",
+    flag: toAbsoluteUrl("media/flags/germany.svg"),
+  },
+  {
+    id:6,
+    lang: "fr",
+    name: "French",
+    flag: toAbsoluteUrl("media/flags/france.svg"),
+  },
+];
 
 export const Regex = {
   Name: /^[A-Za-z]+(?:[-'][A-Za-z]+)*(?: [A-Za-z]+(?:[-'][A-Za-z]+)*)*$/,

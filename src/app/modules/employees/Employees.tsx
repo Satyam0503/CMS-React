@@ -308,6 +308,7 @@ export default function Employees() {
 
       {isModalOpen && (
         <AddUpdateEmployee
+          employeeList={employeeList}
           open={isModalOpen}
           isEdit={isEdit}
           handleClose={handleClose}

@@ -1,9 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { Container, Grid, Typography, Stack, Box } from "@mui/material";
+import { useLang } from "../../../_themes/i18n/Metronici18n";
+import { languages } from "../../../utils/constant/Constant";
+import { Languages } from "../../../_themes/layout/components/header/navbarmenus/Languages";
 
 const AuthLayout = () => {
+  const lang = useLang();
+  const currentLanguage = languages.find((x) => x.lang === lang);
+  const [languageAnchorEl, setLanguangeAnchorEl] =
+    useState<HTMLButtonElement | null>(null);
+  const open = Boolean(languageAnchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setLanguangeAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setLanguangeAnchorEl(null);
+  };
+
   useEffect(() => {
     const root = document.getElementById("root");
     if (root) {
@@ -17,13 +34,18 @@ const AuthLayout = () => {
   }, []);
 
   return (
-    <Container sx={{ height: "100vh", alignContent: "center" }}>
+    <Container
+      sx={{ height: "100vh", alignContent: "center" }}
+      className="d-flex flex-column gap-4"
+    >
+      <Stack className="align-self-end">
+        <Languages />
+      </Stack>
       <Grid
         container
-        py={4}
+        py={2}
         gap={4}
-        alignItems={"center"}
-        justifyContent={"space-evenly"}
+        className="flex-grow-1 justify-content-evenly align-items-center"
       >
         <Grid
           item
