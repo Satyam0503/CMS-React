@@ -20,17 +20,12 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
-import { updateProfilePicture } from "../userservices";
-import { toast } from "react-toastify";
+import { useAppSelector } from "../../../Redux/hooks";
 import { colors } from "../../theme/MuiTheme";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { getDateDiffInYears } from "../../../../utils/common";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
-import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
-import { ImageCropper } from "./ImageCropper";
+import { PictureUpdateModal } from "./ProfileUpdateModal";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -159,7 +154,7 @@ export default function ProfileCard() {
         />
       </Card>
       {
-        open && <ImageCropper open={open} handleClose={handleClose}/>
+        open && <PictureUpdateModal open={open} handleClose={handleClose}/>
       }
     </>
   );

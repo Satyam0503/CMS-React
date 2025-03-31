@@ -97,17 +97,17 @@ export const ServiceUrl = {
 
   // applicant
   GET_ALL_APPLICANTS: `${BaseUrl}/api/Applicants/GetApplicantList`,
-  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/User/GetAllComment`,
   GET_APPLICANT_BY_ID: `${BaseUrl}/api/Applicants/ApplicantById`,
   ADD_APPLICANT: `${BaseUrl}/api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `${BaseUrl}/api/Applicants/EditApplicant`,
   UPLOAD_RESUME: `${BaseUrl}/api/Applicants/UploadResume`,
-
-  ADD_COMMENT: `${BaseUrl}/api/User/AddComment`,
-  APPLY_JOB: `${BaseUrl}/api/applicant/applyJob`,
+  
+  GET_APPLICANT_COMMENTS: `${BaseUrl}/api/Applicants/GetAllComment`,
+  ADD_COMMENT: `${BaseUrl}/api/Applicants/AddComment`,
+  APPLY_JOB: `${BaseUrl}/api/Applicants/applyJob`,
 
   // process log
-  GET_PROCESS_LOG: `${BaseUrl}/api/User/GetProcessLogData`,
+  GET_PROCESS_LOG: `${BaseUrl}/api/Applicants/GetProcessLogData`,
 };
 
 export const languages = [
