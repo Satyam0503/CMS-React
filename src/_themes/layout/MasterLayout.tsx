@@ -8,6 +8,7 @@ import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
 import { PageDataProvider } from "./core";
+import { colors } from "../../app/modules/theme/MuiTheme";
 
 const MasterLayout = () => {
   const location = useLocation();
@@ -39,8 +40,8 @@ const MasterLayout = () => {
               flexGrow={1}
               flexBasis={"auto"}
               flexShrink={0}
-              className="bg-body"
               zIndex={0}
+              bgcolor={colors.alpha.bgbody[500]}
             >
               <Container className="d-flex flex-column flex-grow-1">
                 <Outlet />

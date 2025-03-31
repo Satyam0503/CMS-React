@@ -118,6 +118,10 @@ export const colors = {
       200: "#f4f4f4",
       500: "#ffffff",
     },
+    bgbody: {
+      200: "#f5f5f5",
+      500: "#f5f5f5",
+    },
   },
 };
 
