@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { ResponseData } from "../../../utils/common_types";
+import { BaseModel, ResponseData } from "../../../utils/common_types";
 
 export interface ApplicantModel {
   applicantId: string;
@@ -74,18 +74,11 @@ export interface CommentModel {
   jobTitle: string;
 }
 
-export type ProcessLogModel = {
-  processId: string;
-  applicantName: string;
-  companyId: string;
-  userId: string;
-  jobRole: string;
-  commentedOn: string;
-  comments: string;
-  commentedBy: string;
-};
+export type CommentResponseModel =  CommentModel & BaseModel & {
+  id:string;
+  userName:string;
+}
 
 export type JobsResponseData = ResponseData<JobModal>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
-export type CommentResponseData = ResponseData<CommentModel>;
-export type GetProcessLogResponseModel = ResponseData<ProcessLogModel>;
+export type CommentResponseData = ResponseData< CommentResponseModel >;

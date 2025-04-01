@@ -70,7 +70,7 @@ const EmployeeProfile = () => {
       {/* //need to add user name in place of my */}
       <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
         <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "MENU.PROFILE" })}
+          {intl.formatMessage({ id: "PAGE.PROFILE" })}
         </Typography>
       </Stack>
       <Grid container spacing={4}>

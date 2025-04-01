@@ -24,7 +24,7 @@ export default function UserProfile() {
     <>
       <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
         <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "MENU.PROFILE" })}
+          {intl.formatMessage({ id: "PAGE.MY_PROFILE" })}
         </Typography>
       </Stack>
 

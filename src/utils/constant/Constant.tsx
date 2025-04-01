@@ -460,24 +460,24 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     minWidth: 150,
   },
   {
-    id: "commentedOn",
+    id: "createdDate",
     label: "Commented On",
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
     minWidth: 150,
   },
   {
-    id: "commentedBy",
+    id: "userName",
     label: "Commented By",
     minWidth: 150,
   },
   {
-    id: "actionCategory",
+    id: "activityCategory",
     label: "Action",
     minWidth: 150,
     format: (value: number) => commentActionDecoder(value),
   },
   {
-    id: "comments",
+    id: "description",
     label: "Comment",
     minWidth: 200,
     build: (value: string) => (
@@ -756,7 +756,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "userId",
+    id: "userName",
     label: "Action By",
     minWidth: 150,
   },
