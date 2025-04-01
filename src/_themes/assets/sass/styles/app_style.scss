@@ -28,39 +28,18 @@ $app-primary-footer: #9f6dda;
 $app-primary-100: #e6d9f5;
 $app-white: #ffffff;
 
-.coverChange {
-  position: absolute !important;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.35s ease;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  gap: 0.25rem;
-}
+// .coverChange {
+
+//   opacity: 1;
+
+// }
 
 // rough
-
-.coverChange {
-  position: absolute !important;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 0; /* Initially hidden */
-  transition: opacity 0.35s ease;
-  display: flex;
-  justify-content: center;
-  gap: 0.25rem;
-}
 
 //profile card icon
 .coverChange {
   position: absolute !important;
-  top: 50%;
+  top: 96%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
