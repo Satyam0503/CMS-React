@@ -28,18 +28,10 @@ $app-primary-footer: #9f6dda;
 $app-primary-100: #e6d9f5;
 $app-white: #ffffff;
 
-// .coverChange {
-
-//   opacity: 1;
-
-// }
-
-// rough
-
 //profile card icon
 .coverChange {
   position: absolute !important;
-  top: 96%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -48,6 +40,7 @@ $app-white: #ffffff;
   display: flex;
   justify-content: center;
   gap: 0.25rem;
+  z-index: 4;
 }
 
 .gridContainer:hover .coverChange {
@@ -240,7 +233,11 @@ button:hover .ql-fill,
 
 ::-webkit-scrollbar {
   width: 3px;
+  height: 1px;
+  border-radius: 16px !important;
 }
 ::-webkit-scrollbar-thumb {
-  background: #727275;
+  background: #b6b5b5;
+  outline: 1px solid #8b8b8b;
+  cursor: pointer;
 }
