@@ -278,6 +278,7 @@ export const getAppliedFilters = () => {
     : {
         application: null,
         jobs: null,
+        processLog:null,
       };
   return appliedfilters;
 };
