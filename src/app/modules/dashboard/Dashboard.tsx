@@ -1,12 +1,10 @@
-import { Stack, Typography, Grid, Card } from "@mui/material";
+import { Grid, Stack, Typography, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { getAllEmployees } from "../employees/employeeServices";
 import { AxiosError } from "axios";
 import { AttendanceChart } from "../../shared/components/AttendanceChart";
-import { EmployeeModel } from "../../../utils/common_types";
-import { DashboardHeader } from "./components/DashboardHeader";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
 import { ApplicationsChart } from "./components/ApplicationsChart";
@@ -16,15 +14,35 @@ import EmpOnLeave from "./components/EmpOnLeave";
 import Punctual from "./components/Punctual";
 import UpcomingBirthday from "./components/UpcomingBirthday";
 import EmpOfMonth from "./components/EmpOfMonth";
-import { Help } from "@mui/icons-material";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { DraggableComponent } from "./DraggableComponent";
+import { EmployeeModel } from "../../../utils/common_types";
+import NoticeBoard from "./components/NoticeBoard";
+import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import NoticeBoard from "./components/NoticeBoard";
+import { DashboardHeader } from "./components/DashboardHeader";
 
+// Main Dashboard Component
 export default function Dashboard() {
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
+  const [layout, setLayout] = useState<string[]>([
+    "employees",
+    "open-positions",
+    "applications-chart",
+    "department-chart",
+    "notice-board",
+    "emp-performance",
+    "attendancechart",
+    "Emponleave",
+    "Punctual",
+    "upcomingbirthday",
+    "empofmonth",
+    "help",
+  ]);
+
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -47,7 +65,6 @@ export default function Dashboard() {
       ),
     [userModulesPermissions]
   );
-
   useEffect(() => {
     async function getEmployees() {
       try {
@@ -60,101 +77,59 @@ export default function Dashboard() {
         console.error((error as AxiosError).message);
       }
     }
-    if (hasAccessToEmpModule) {
-      getEmployees();
-    }
+    getEmployees();
   }, []);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = layout.indexOf(active.id);
+      const newIndex = layout.indexOf(over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updatedLayout = Array.from(layout);
+        updatedLayout.splice(oldIndex, 1);
+        updatedLayout.splice(newIndex, 0, active.id);
+        setLayout(updatedLayout);
+      }
+    }
+  };
 
   return (
     <>
       <DashboardHeader fullName={user.fullName} />
-      <Grid
-        container
-        spacing={3}
-        display={"flex"}
-        justifyContent={"space-between"}
-      >
-        <Grid item xs={12} lg={8}>
-          <Grid container spacing={3}>
-            {hasAccessToEmpModule && (
-              <Grid item xs={12} sm={6}>
-                <EmployeeChart employees={employees} />
-              </Grid>
-            )}
-
-            {hasAccessToJob && (
-              <Grid item xs={12} sm={6}>
-                <OpenPositions />
-              </Grid>
-            )}
-            {hasAccessToJob && (
-              <Grid item xs={12} sm={6}>
-                <ApplicationsChart />
-              </Grid>
-            )}
-            <Grid item xs={12} sm={6}>
-              <DepartmentChart employees={employees} />
+      <DndContext onDragEnd={handleDragEnd}>
+        <Grid container spacing={3}>
+          {layout.map((id) => (
+            <Grid item xs={12} sm={6} md={4} key={id}>
+              <DraggableComponent id={id}>
+                {id === "employees" && <EmployeeChart employees={employees} />}
+                {id === "open-positions" && <OpenPositions />}
+                {id === "applications-chart" && <ApplicationsChart />}
+                {id === "department-chart" && (
+                  <DepartmentChart employees={employees} />
+                )}
+                {id === "notice-board" && <NoticeBoard />}
+                {id === "emp-performance" && <EmployeePerformance />}
+                {id === "attendancechart" && (
+                  <AttendanceChart
+                    className="card-xxl-stretch"
+                    chartColor="primary"
+                    chartHeight="200px"
+                  />
+                )}
+                {id === "Emponleave" && <EmpOnLeave />}
+                {id === "Punctual" && <Punctual />}
+                {id === "upcomingbirthday" && (
+                  <UpcomingBirthday employees={employees} />
+                )}
+                {id === "empofmonth" && <EmpOfMonth />}
+                {id === "help" && <Help />}
+              </DraggableComponent>
             </Grid>
-
-            <Grid item xs={12}>
-              <Stack spacing={3}>
-                <NoticeBoard />
-                <EmployeePerformance />
-              </Stack>
-            </Grid>
-          </Grid>
+          ))}
         </Grid>
-        <Grid item xs={12} lg={4}>
-          <Stack direction={"column"} gap={3} width={"100%"}>
-            <Card sx={{ height: "100%" }}>
-              <Stack p={2}>
-                <Typography variant="h6">
-                  {intl.formatMessage({ id: "PAGE.ATTENDANCE" })}
-                </Typography>
-
-                <Stack
-                  direction={"row"}
-                  spacing={8}
-                  display={"flex"}
-                  justifyContent={"flex-start"}
-                  mt={1}
-                >
-                  <Stack>
-                    <Typography variant="body2">
-                      {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}
-                    </Typography>
-                    <Typography variant="h6">185</Typography>
-                  </Stack>
-                  <Stack>
-                    <Typography variant="body2">
-                      {intl.formatMessage({ id: "ATTENDANCE.ABSENT" })}
-                    </Typography>
-                    <Typography variant="h6">16</Typography>
-                  </Stack>
-                  <Stack>
-                    <Typography variant="body2">
-                      {intl.formatMessage({ id: "ATTENDANCE.LATE" })}
-                    </Typography>
-                    <Typography variant="h6">9</Typography>
-                  </Stack>
-                </Stack>
-              </Stack>
-
-              <AttendanceChart
-                className="card-xxl-stretch "
-                chartColor="primary"
-                chartHeight="180px"
-              />
-            </Card>
-
-            <EmpOnLeave />
-            <Punctual />
-            {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />}
-            <EmpOfMonth />
-            <Help />
-          </Stack>
-        </Grid>
-      </Grid>
+      </DndContext>
     </>
   );
 }

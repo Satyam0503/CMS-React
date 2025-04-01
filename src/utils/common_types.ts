@@ -194,6 +194,15 @@ export type WithChildren = {
   children?: ReactNode;
 };
 
+export interface BaseModel {
+  companyId:string;
+  createdBy:string;
+  createdDate:string;
+  updatedBy:string;
+  updatedDate:string;
+}
+
+
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
 export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;

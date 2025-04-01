@@ -9,7 +9,7 @@ const themeColors = {
   warning: "#FFC107",
   error: "#F44336",
   white: "#ffffff",
-  territory: "636D79",
+  territory: "#636D79",
 };
 
 export const colors = {
@@ -117,6 +117,10 @@ export const colors = {
     white: {
       200: "#f4f4f4",
       500: "#ffffff",
+    },
+    bgbody: {
+      200: "#f5f5f5",
+      500: "#f5f5f5",
     },
   },
 };

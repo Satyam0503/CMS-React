@@ -5,6 +5,7 @@ import { useThemeMode } from "../../../_themes/partials/layout/theme-mode/ThemeM
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { getCSSVariableValue } from "../../../_themes/assets/ts/_utils";
 import { useIntl } from "react-intl";
+import { CustomCard } from "./CustomCard";
 
 type Props = {
   className: string;
@@ -44,14 +45,9 @@ const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
   }, [chartRef, mode]);
 
   return (
-    <Grid container>
-      <Card sx={{ width: "100%" }}>
-        <Stack
-          ref={chartRef}
-          className="mixed-widget-5-chart card-rounded-top"
-        />
-      </Card>
-    </Grid>
+    <CustomCard label={intl.formatMessage({ id: "PAGE.ATTENDANCE" })}>
+      <Stack ref={chartRef} className="mixed-widget-5-chart card-rounded-top" />
+    </CustomCard>
   );
 };
 

@@ -13,6 +13,7 @@
   "PAGE.THEME":"Theme",
   "PAGE.CLIENTS":"Clients",
   "PAGE.PROJECTS":"Projects",
+  "PAGE.PROFILE":"Profile",
 
 
   "FORM.FIRST_NAME":"First Name",
@@ -234,6 +235,7 @@
   "PROFILE.COUNT": "Count",
   "PROFILE.LEAVE.ML": "Not well",
   "PROFILE.LEAVE.CL": "Personal",
+  "PROFILE.CROP_IMAGE":"Crop Image",
   "PERFORMANCE.EMPLOYEE": "Employee performance",
   "PERFORMANCE.FEEDBACK": "Feedback",
   "PERFORMANCE.ACHIEVEMENTS": "Achievements",
@@ -375,6 +377,7 @@
   "BUTTON.DELETE": "Delete",
   "BUTTON.CANCEL": "Cancel",
   "BUTTON.SIGNIN": "Sign In",
-  "BUTTON.CREATE_PASS": "Create Password"
+  "BUTTON.CREATE_PASS": "Create Password",
+  "BUTTON.CROP": "Crop"
   
 }

@@ -39,7 +39,7 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
-import { Applicant, CommentModel } from "../../models";
+import { Applicant, CommentResponseModel } from "../../models";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
@@ -47,7 +47,7 @@ export const ApplicantDetails = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(false);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
-  const [commentList, setCommentList] = useState<CommentModel[]>([]);
+  const [commentList, setCommentList] = useState<CommentResponseModel[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [refreshComment, setRefreshComment] = useState(false);
@@ -246,7 +246,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "AUTH.INPUT.FULLNAME" })} :
+                  {intl.formatMessage({ id: "FORM.FULL_NAME" })} :
                 </Typography>{" "}
                 <Typography variant="body1">
                   {applicant?.firstName + " " + applicant?.lastName}
@@ -257,7 +257,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })} :
+                  {intl.formatMessage({ id: "FORM.EMAIL" })} :
                 </Typography>
 
                 <Typography variant="body1">{applicant?.email}</Typography>
@@ -378,7 +378,7 @@ export const ApplicantDetails = () => {
             </Stack>
 
             <CustomisedTable
-              //keyName="commentId"
+              keyName="id"
               rows={commentList}
               columns={CommentTableColumnList}
               page={0}

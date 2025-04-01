@@ -210,20 +210,22 @@ export const EditApplicant = () => {
                         <Grid item xs={12} sm={4}>
                           <TextInput
                             label={intl.formatMessage({
-                              id: "USER.FIRST_NAME",
+                              id: "FORM.FIRST_NAME",
                             })}
                             type="text"
                             name="firstName"
-                            placeholder="FirstName"
+                            placeholder={intl.formatMessage({
+                              id: "FORM.FIRST_NAME",
+                            })}
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={4}>
                           <TextInput
-                            label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                            label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                             type="text"
                             name="lastName"
-                            placeholder="Last Name"
+                            placeholder={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                           />
                         </Grid>
 
@@ -239,11 +241,13 @@ export const EditApplicant = () => {
                         <Grid item xs={12} sm={4}>
                           <TextInput
                             label={intl.formatMessage({
-                              id: "AUTH.INPUT.EMAIL",
+                              id: "FORM.EMAIL",
                             })}
                             type="email"
                             name="email"
-                            placeholder="Email"
+                            placeholder={intl.formatMessage({
+                              id: "FORM.EMAIL",
+                            })}
                             disabled={true}
                           />
                         </Grid>
