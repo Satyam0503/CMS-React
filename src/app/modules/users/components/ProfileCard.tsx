@@ -15,6 +15,8 @@ import {
   CloudUploadOutlined,
   DeleteOutlineOutlined,
   Download,
+  Edit,
+  EditOutlined,
   Image,
   Visibility,
 } from "@mui/icons-material";
@@ -84,16 +86,7 @@ export default function ProfileCard() {
               handleClick={() => setOpen(true)}
               tooltip="Upload profile picture"
               icon={
-                <Image
-                  sx={{
-                    color: "white",
-                  }}
-                />
-              }
-            />
-            <CustomIconButton
-              icon={
-                <Visibility
+                <Edit
                   sx={{
                     color: "white",
                   }}
@@ -153,9 +146,7 @@ export default function ProfileCard() {
           label="Salary slip"
         />
       </Card>
-      {
-        open && <PictureUpdateModal open={open} handleClose={handleClose}/>
-      }
+      {open && <PictureUpdateModal open={open} handleClose={handleClose} />}
     </>
   );
 }
