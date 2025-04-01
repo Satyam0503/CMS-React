@@ -2,15 +2,13 @@ import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../../shared/components/CustomCard";
 
 export default function EmpOnLeave() {
   const intl = useIntl();
   return (
     <>
-      <Card sx={{ p: 2 }}>
-        <Typography variant="h6" mb={1}>
-          {intl.formatMessage({ id: "MENU.LEAVE" })}
-        </Typography>
+      <CustomCard label={intl.formatMessage({ id: "MENU.LEAVE" })}>
         <Stack
           direction="row"
           display={"flex"}
@@ -67,7 +65,7 @@ export default function EmpOnLeave() {
             </Typography>
           </Stack>
         </Stack>
-      </Card>
+      </CustomCard>
     </>
   );
 }

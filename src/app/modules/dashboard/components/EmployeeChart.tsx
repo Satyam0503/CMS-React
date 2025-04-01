@@ -19,7 +19,7 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
     labels: [],
     series: [],
   });
-  const [loading,setLoading]= useState(true);
+  const [loading, setLoading] = useState(true);
 
   const getEmployeesGenderCount = useCallback(() => {
     const genderCount = employees.reduce(
@@ -39,12 +39,12 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
     if (employees.length) {
       const { labels, series } = getEmployeesGenderCount();
       setChartData({ labels, series });
-      setLoading(false)
+      setLoading(false);
     }
   }, [employees, getEmployeesGenderCount]);
 
-  if(loading){
-    return <CardSkeleton/>
+  if (loading) {
+    return <CardSkeleton />;
   }
 
   return (
@@ -57,7 +57,9 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
         >
-          <Typography variant="h5">{intl.formatMessage({id:"DASHBOARD.EMPLOYEE.NOEMPLOYEE"})}</Typography>
+          <Typography variant="h5">
+            {intl.formatMessage({ id: "DASHBOARD.EMPLOYEE.NOEMPLOYEE" })}
+          </Typography>
         </Box>
       ) : (
         <DonutApexChart series={chartData.series} labels={chartData.labels} />

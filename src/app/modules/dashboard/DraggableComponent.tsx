@@ -16,23 +16,16 @@ export function DraggableComponent({
   const { setNodeRef: droppableRef, isOver } = useDroppable({
     id: id,
   });
+
   const style = {
-    // Outputs `translate3d(x, y, 0)`
+    cursor: "move",
+    transform: CSS.Translate.toString(transform),
+    transition: isOver ? "background-color 0.2s ease" : "none",
   };
 
   return (
-    <Stack
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={{
-        cursor: "move",
-        transform: CSS.Translate.toString(transform),
-      }}
-    >
-      <Stack ref={droppableRef} style={style}>
-        {children}
-      </Stack>
+    <Stack ref={setNodeRef} {...listeners} {...attributes} style={style}>
+      <Stack ref={droppableRef}>{children}</Stack>
     </Stack>
   );
 }

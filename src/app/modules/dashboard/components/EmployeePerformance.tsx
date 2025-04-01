@@ -10,6 +10,7 @@ import { Card, Link, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { BarChart, GraphicEqOutlined } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../../shared/components/CustomCard";
 
 function createData(
   sno: number,
@@ -26,10 +27,7 @@ export default function EmployeePerformance() {
   const intl = useIntl();
   return (
     <>
-      <Card sx={{ width: "100%", p: 2 }}>
-        <Typography variant="h6" mb={1}>
-          {intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}
-        </Typography>
+      <CustomCard label={intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}>
         <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -63,7 +61,7 @@ export default function EmployeePerformance() {
         <Link href="employeeperformance" underline="always">
           {"See more"}
         </Link>
-      </Card>
+      </CustomCard>
     </>
   );
 }

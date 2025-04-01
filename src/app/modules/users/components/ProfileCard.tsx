@@ -28,6 +28,7 @@ import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { getDateDiffInYears } from "../../../../utils/common";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { PictureUpdateModal } from "./ProfileUpdateModal";
+import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -66,6 +67,7 @@ export default function ProfileCard() {
             borderRadius: "50%",
             position: "relative",
             transition: "transform 0.3s ease-in-out",
+            zIndex: 0,
             "&:hover img": {
               opacity: 0.2,
             },
@@ -74,7 +76,8 @@ export default function ProfileCard() {
         >
           <Avatar
             alt=""
-            src={userData.profileImage}
+            // src={userData.profileImage}
+            src={toAbsoluteUrl("media/avatars/300-6.jpg")} //static data for text purpose only, need to remove later and consider above commented data
             sx={{
               width: "100%",
               height: "100%",
