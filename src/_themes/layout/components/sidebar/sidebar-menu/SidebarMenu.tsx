@@ -3,17 +3,17 @@ import { SidebarMenuMain } from "./SidebarMenuMain";
 
 const SidebarMenu = () => {
   return (
-    <Stack className="app-sidebar-menu overflow-y-auto overflow-x-hidden flex-column-fluid">
+    <Stack className="app-sidebar-menu overflow-y-auto overflow-x-hidden  ">
       <Stack
         id="kt_app_sidebar_menu_wrapper"
-        className="app-sidebar-wrapper hover-scroll-overlay-y my-5"
+        className="app-sidebar-wrapper "
         data-kt-scroll="true"
         data-kt-scroll-activate="true"
-        data-kt-scroll-height="auto"
+        // data-kt-scroll-height="auto"
         data-kt-scroll-dependencies="#kt_app_sidebar_logo, #kt_app_sidebar_footer"
         data-kt-scroll-wrappers="#kt_app_sidebar_menu"
-        data-kt-scroll-offset="5px"
-        data-kt-scroll-save-state="true"
+        // data-kt-scroll-offset="5px"
+        // data-kt-scroll-save-state="true"
       >
         <Stack
           className="menu menu-column menu-rounded menu-sub-indention px-3"
