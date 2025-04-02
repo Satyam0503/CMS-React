@@ -2,7 +2,7 @@ import { get } from "http";
 import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { ApplicantModel, ApplicantsResponseData, CommentModel, CommentResponseData, GetApplicationPayloadModel, JobModal, JobsResponseData, ProcessLogPayoadModel } from "./models";
+import { ApplicantModel, ApplicantsResponseData, CommentModel, CommentResponseData, GetApplicationPayloadModel, GetCommentPayloadModel, JobModal, JobsResponseData, ProcessLogPayoadModel } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
   return postRequest<JobModal, JobsResponseData>(
@@ -84,8 +84,8 @@ export const addComment = async (payload: CommentModel) => {
   );
 };
 
-export const getApplicantComments = async (applicantId: string) => {
+export const getApplicantComments = async (payload:GetCommentPayloadModel ) => {
   return getRequest<CommentResponseData>(
-    `${ServiceUrl.GET_APPLICANT_COMMENTS}?applicantId=${applicantId}`
+    `${ServiceUrl.GET_APPLICANT_COMMENTS}/${payload.applicantId}?pageNo=${payload.pageNo}&pageSize=${payload.pageSize}`
   );
 };

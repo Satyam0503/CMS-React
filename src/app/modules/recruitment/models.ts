@@ -87,12 +87,17 @@ export type ProcessLogPayoadModel = ProcessLogFilterModel &  {
   pageSize: number;
   applicantName: string;
 }
+export type GetCommentPayloadModel = {
+  pageNo: number;
+  pageSize: number;
+  applicantId: string;
+}
 
 export type CommentResponseModel = CommentModel &
   BaseModel & {
     id: string;
     userName: string;
-  };
+};
 
 export type JobsResponseData = ResponseData<JobModal>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
