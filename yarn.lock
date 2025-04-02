@@ -9333,6 +9333,11 @@
     "uncontrollable" "^7.2.1"
     "warning" "^4.0.3"
 
+"react-breadcrumble@^1.4.0":
+  "integrity" "sha512-zEDqnzJEomd9R3CJGNEJ+lAMoZS7yObBWqibRANoPm4bDGloaYlLYyjp7XFBIIx4C2fZMWN4Gs5B61u07VBY3w=="
+  "resolved" "https://registry.npmjs.org/react-breadcrumble/-/react-breadcrumble-1.4.0.tgz"
+  "version" "1.4.0"
+
 "react-copy-to-clipboard@5.1.0":
   "integrity" "sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A=="
   "resolved" "https://registry.npmjs.org/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz"

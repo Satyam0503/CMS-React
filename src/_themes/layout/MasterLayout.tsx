@@ -9,6 +9,8 @@ import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
 import { PageDataProvider } from "./core";
 import { colors } from "../../app/modules/theme/MuiTheme";
+import {BreadcrumbProvider} from 'react-breadcrumble';
+import { PageData } from "../../app/shared/components/PageData";
 
 const MasterLayout = () => {
   const location = useLocation();
@@ -18,6 +20,8 @@ const MasterLayout = () => {
 
   return (
     <>
+      <BreadcrumbProvider>
+     
       <PageDataProvider>
         <Grid
           item
@@ -44,6 +48,7 @@ const MasterLayout = () => {
               bgcolor={colors.alpha.bgbody[500]}
             >
               <Container className="d-flex flex-column flex-grow-1">
+                <PageData />
                 <Outlet />
               </Container>
             </Stack>
@@ -53,9 +58,10 @@ const MasterLayout = () => {
           </Stack>
         </Grid>
 
-        <RightToolbar />
+        {/* <RightToolbar /> */}
         <DrawerMessenger />
       </PageDataProvider>
+      </BreadcrumbProvider>
     </>
   );
 };

@@ -22,6 +22,7 @@ import {
   countAppliedFilter,
   getModulePermissions,
 } from "../../../../utils/common";
+import { usePageData } from "../../../../_themes/layout/core";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -31,6 +32,7 @@ const initialFilter = {
 };
 
 export const Applications = () => {
+  const {setPageTitle}= usePageData();
   const intl = useIntl();
   const navigate = useNavigate();
   const [paginationValues, setPaginationValues] = useState({
@@ -63,6 +65,8 @@ export const Applications = () => {
     () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
     [userModulesPermissions]
   );
+
+  setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -136,12 +140,9 @@ export const Applications = () => {
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
-
+  
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.APPLICATIONS" })}
-      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack

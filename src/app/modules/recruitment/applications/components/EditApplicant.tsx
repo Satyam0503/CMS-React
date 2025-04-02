@@ -188,8 +188,7 @@ export const EditApplicant = () => {
   };
 
   return (
-    <Container>
-      <Card sx={{ p: 2.6 }}>
+      <Card sx={{ p: 2.6 ,mt:2 }} >
         <Stack spacing={2}>
           <Typography variant="h5">
             {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
@@ -452,6 +451,5 @@ export const EditApplicant = () => {
           </Grid>
         </Stack>
       </Card>
-    </Container>
   );
 };
