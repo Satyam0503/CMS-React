@@ -342,6 +342,8 @@
   "FILTER.MIN_EXPERIENCE": "Min. Experience",
   "FILTER.MAX_EXPERIENCE": "Max. Experience",
   "FILTER.APPLICATION_STATUS": "Application Status",
+  "FILTER.ACTION_CATEGORY": "Action Category",
+  "FILTER.CATEGORY": "Category",
   "FILTER.LAST_WEEK": "Last Week",
   "FILTER.LAST_TWO_WEEK": "Last Two Week",
   "FILTER.LAST_MONTH": "Last Month",
@@ -378,6 +380,7 @@
   "BUTTON.CANCEL": "Cancel",
   "BUTTON.SIGNIN": "Sign In",
   "BUTTON.CREATE_PASS": "Create Password",
-  "BUTTON.CROP": "Crop"
+  "BUTTON.CROP": "Crop",
+  "BUTTON.APPLY": "Apply"
   
 }

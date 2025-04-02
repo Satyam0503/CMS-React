@@ -165,9 +165,7 @@ export const Applications = () => {
         <Stack spacing={2}>
           <Stack
             direction="row"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            flexWrap={"wrap-reverse"}
+            className="justify-content-between align-items-center flex-wrap-reverse"
             gap={2}
           >
             <SearchInput search={search} setSearch={handleSearchChange} />
@@ -208,19 +206,18 @@ export const Applications = () => {
               />
             )}
           </Stack>
-          <Stack>
-            <CustomisedTable
-              tabName={ModulesName.Applications}
-              keyName="applicantId"
-              rows={applicationsList}
-              columns={ApplicationTabTableColumnList}
-              page={paginationValues.pageNo}
-              rowsPerPage={paginationValues.records}
-              handleEdit={handleApplicantEdit}
-              openViewModal={handleOpenPreview}
-              loading={loading}
-            />
-          </Stack>
+
+          <CustomisedTable
+            tabName={ModulesName.Applications}
+            keyName="applicantId"
+            rows={applicationsList}
+            columns={ApplicationTabTableColumnList}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
+            handleEdit={handleApplicantEdit}
+            openViewModal={handleOpenPreview}
+            loading={loading}
+          />
 
           {totalRecords > 0 && (
             <Pagination
