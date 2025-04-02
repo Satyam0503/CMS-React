@@ -21,7 +21,10 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
     <Stack direction={"row"} spacing={1}>
       {handleEdit && (
         <CustomIconButton
-          handleClick={() => handleEdit(row)}
+          handleClick={(e) => {
+            e.stopPropagation();
+            handleEdit(row);
+          }}
           icon={<Edit />}
           tooltip="Edit"
           ariaLabel="Edit"
@@ -29,7 +32,10 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       )}
       {openConfirmationModal && (
         <CustomIconButton
-          handleClick={() => openConfirmationModal(row)}
+          handleClick={(e) => {
+            e.stopPropagation();
+            openConfirmationModal(row);
+          }}
           icon={<DeleteOutlineOutlined />}
           tooltip="Delete"
           ariaLabel="Delete"

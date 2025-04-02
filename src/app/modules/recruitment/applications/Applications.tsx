@@ -18,7 +18,10 @@ import {
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
 import { ModulesName, Permission } from "../../../../utils/enums";
-import { countAppliedFilter, getModulePermissions } from "../../../../utils/common";
+import {
+  countAppliedFilter,
+  getModulePermissions,
+} from "../../../../utils/common";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -69,10 +72,8 @@ export const Applications = () => {
     setSearch(value);
   }, []);
 
-  const handleApplicantEdit = (applicant: Applicant) => {
-    if (applicant) {
-      navigate(`/recruitment/applicant/${applicant.applicantId}`);
-    }
+  const rowClickHandler = (applicant: Applicant) => {
+    navigate(`/recruitment/applicant/${applicant.applicantId}`);
   };
 
   const handleOpenPreview = (applicant: Applicant) => {
@@ -188,15 +189,15 @@ export const Applications = () => {
           </Stack>
 
           <CustomisedTable
+            loading={loading}
             tabName={ModulesName.Applications}
             keyName="applicantId"
             rows={applicationsList}
             columns={ApplicationTabTableColumnList}
             page={paginationValues.pageNo}
             rowsPerPage={paginationValues.records}
-            handleEdit={handleApplicantEdit}
             openViewModal={handleOpenPreview}
-            loading={loading}
+            rowClickHandler={rowClickHandler}
           />
 
           {totalRecords > 0 && (

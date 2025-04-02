@@ -29,6 +29,7 @@ import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { usePageData } from "../../../_themes/layout/core";
+import { useNavigate } from "react-router-dom";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -82,9 +83,12 @@ export default function Employees() {
     [userModulesPermissions]
   );
 
+  const currentEmpId = useAppSelector(state=>state.user.userData?.userId);
+
   const pageData = usePageData();
   console.log(pageData);
-  
+
+  const navigate = useNavigate();
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -211,6 +215,14 @@ export default function Employees() {
       pageNo: 0,
     });
   };
+
+
+  const rowClickHandler = (employee:EmployeeModel)=>{
+    const empId = employee.userId;
+    empId === currentEmpId ? 
+    navigate("/myprofile") : navigate("/employee/aboutemployee",{state:empId});        
+  }
+
   useEffect(() => {
     setLoading(true);
     const getAllEmployeesList = async () => {
@@ -293,6 +305,7 @@ export default function Employees() {
             handleEdit={handleEmployeeEdit}
             openConfirmationModal={openConfirmationModal}
             openViewModal={openViewModal}
+            rowClickHandler={rowClickHandler}
           />
           {totalRecords > 0 && (
             <Pagination
