@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { I18nProvider } from "../_themes/i18n/i18nProvider";
 import { LayoutProvider, LayoutSplashScreen } from "../_themes/layout/core";
@@ -9,12 +9,19 @@ import { ThemeProvider } from "@mui/material";
 import { MuiTheme, setColorsAsCSSVariables } from "./modules/theme/MuiTheme";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import 'react-image-crop/dist/ReactCrop.css'
+import "react-image-crop/dist/ReactCrop.css";
 
 const App = () => {
+  const [currentTheme, setCurrentTheme] = useState("light");
+
+  const toggleTheme = () => {
+    setCurrentTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
   useEffect(() => {
-    setColorsAsCSSVariables(); // Set CSS variables when the app initializes
+    setColorsAsCSSVariables();
   }, []);
+
   return (
     <ThemeProvider theme={MuiTheme}>
       <Suspense fallback={<LayoutSplashScreen />}>
@@ -39,6 +46,23 @@ const App = () => {
           stacked={true}
           theme="light"
         />
+        <button
+          onClick={toggleTheme}
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: "pointer",
+            backgroundColor: currentTheme === "light" ? "#f0f0f0" : "#333",
+            color: currentTheme === "light" ? "#000" : "#fff",
+            borderRadius: "5px",
+            border: "none",
+          }}
+        >
+          Toggle {currentTheme === "light" ? "Dark" : "Light"} Mode
+        </button>
       </Suspense>
     </ThemeProvider>
   );

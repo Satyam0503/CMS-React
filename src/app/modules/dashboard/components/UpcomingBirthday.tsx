@@ -58,7 +58,9 @@ export default function UpcomingBirthday({ employees }: PropsType) {
             component={"div"}
             sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
           >
-            <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>No Employees</Typography>
+            <Typography variant="h5" sx={{ color: colors.alpha.neutral[400] }}>
+              No Employees
+            </Typography>
           </Box>
         ) : (
           <Stack spacing={1}>

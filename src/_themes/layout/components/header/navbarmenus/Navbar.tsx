@@ -1,4 +1,4 @@
-import {Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import HeaderNotificationMenu from "./HeaderNotificationMenu";
 import HeaderUserMenu from "./HeaderUserMenu";
 
@@ -21,3 +21,4 @@ const Navbar = () => {
 };
 
 export { Navbar };
+  

@@ -17,6 +17,7 @@ import { Check, Visibility } from "@mui/icons-material";
 import EmployeePerformance from "./EmployeePerformance";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../../shared/components/CustomCard";
 
 type Props = {
   className: string;
@@ -26,17 +27,7 @@ export default function NoticeBoard() {
   const intl = useIntl();
   return (
     <>
-      <Card
-        sx={{
-          width: "100%",
-          p: 2,
-          height: "100%",
-          overflow: "auto",
-        }}
-      >
-        <Typography variant="h6" mb={1}>
-          {intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}
-        </Typography>
+      <CustomCard label={intl.formatMessage({ id: "MENU.NOTICE_BOARD" })}>
         <Stack
           display={"flex"}
           justifyContent={"space-between"}
@@ -109,7 +100,7 @@ export default function NoticeBoard() {
             </IconButton>
           </Stack>
         </Stack>
-      </Card>
+      </CustomCard>
     </>
   );
 }

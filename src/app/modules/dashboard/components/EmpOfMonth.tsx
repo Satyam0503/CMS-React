@@ -2,15 +2,13 @@ import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
+import { CustomCard } from "../../../shared/components/CustomCard";
 
 export default function EmpOfMonth() {
   const intl = useIntl();
   return (
     <>
-      <Card sx={{ p: 2 }}>
-        <Typography variant="h6" mb={1}>
-          {intl.formatMessage({ id: "MENU.EMP_OF_MONTH" })}
-        </Typography>
+      <CustomCard label={intl.formatMessage({ id: "MENU.EMP_OF_MONTH" })}>
         <Stack
           direction="row"
           display={"flex"}
@@ -94,7 +92,7 @@ export default function EmpOfMonth() {
             </Typography>
           </Stack>
         </Stack>
-      </Card>
+      </CustomCard>
     </>
   );
 }
