@@ -19,7 +19,7 @@ import { processLogFilterSchema } from "../../../../../utils/Schema/filterValida
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { setProcessLogFilter } from "../../../../Redux/Reducers/filterSlice";
+import { resetFilter, setProcessLogFilter } from "../../../../Redux/Reducers/filterSlice";
 import { CommentActionCategory } from "../../../../../utils/constant/Constant";
 import { JobModal } from "../../models";
 import { getAllJobVacancies } from "../../services";
@@ -35,8 +35,7 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
   const processLogFilters = useAppSelector((state) => state.filters.processLog);
   const dispatch = useAppDispatch();
   const [jobList, setJobList] = useState<JobModal[]>([]);
-
-  const { values, handleSubmit, errors, setFieldValue } = useFormik({
+  const { values, handleSubmit, setFieldValue,initialValues } = useFormik({
     initialValues: processLogFilters ?? processLogInitialFilter,
     enableReinitialize: true,
     validationSchema: processLogFilterSchema,
@@ -44,7 +43,7 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
       dispatch(setProcessLogFilter(value))
       handleClose();
     },
-  });
+  }); 
 
   useEffect(() => {
       const getActiveJobs = async () => {
@@ -59,8 +58,8 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
         }
       };
       getActiveJobs();
-    }, []);
-
+    }, []);    
+    
   return (
     <Popover
       open={open}
@@ -131,32 +130,14 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
                   size="small"
                   id="jobs-dropdown"
                   options={jobList}
-                  disableCloseOnSelect
-                  value={jobList.find(job=>{
-                    job.title === values.jobRole
-                  }) }
+                  value={jobList.find(job => job.title === values.jobRole) ?? null}
                   onChange={(event, selectedJobs) => {
-                    setFieldValue(
-                      "jobRole",
-                      selectedJobs?.title
-                    );
+                    setFieldValue("jobRole",selectedJobs?.title);
                   }}
                   getOptionLabel={(option) => option.title}
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Jobs" />
                   )}
-                  renderOption={(props, option, state) => {
-                    return (
-                      <li {...props}>
-                        <Checkbox
-                          key={option.jobId}
-                          checked={state.selected}
-                          sx={{ mr: 1 }}
-                        />
-                        <ListItemText primary={option.title} />
-                      </li>
-                    );
-                  }}
                 />
               </Stack>
 
@@ -212,7 +193,7 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
                 label={intl.formatMessage({ id: "BUTTON.RESET" })}
                 variant="outlined"
                 handleClick={() => {
-                  dispatch(setProcessLogFilter(processLogInitialFilter));
+                  dispatch( resetFilter({page:"processLog"}) );
                   handleClose();
                 }}
               />

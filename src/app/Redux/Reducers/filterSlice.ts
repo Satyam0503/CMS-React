@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   FiltersType,
-  ProcessLogModel,
 } from "../../../utils/common_types";
 import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
 import { ApplicationFilterModel, ProcessLogFilterModel } from "../../modules/recruitment/models";

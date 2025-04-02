@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Badge, Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -16,6 +16,7 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { FilterList } from "@mui/icons-material";
 import { ProcessLogFilter } from "./components/ProcessLogFilter";
+import { countAppliedFilter } from "../../../../utils/common";
 
 export const processLogInitialFilter: ProcessLogFilterModel = {
   jobRole: "",
@@ -43,6 +44,8 @@ const ProcessLogs = () => {
     useAppSelector((state) => state.filters.processLog) ??
     processLogInitialFilter;
 
+  const totalAppliedFilters = countAppliedFilter(processLogFilters);
+
   const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -66,9 +69,9 @@ const ProcessLogs = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleCloseFilter = ()=>{
+  const handleCloseFilter = () => {
     setAnchorEl(null);
-  }
+  };
 
   useEffect(() => {
     const payload: ProcessLogPayoadModel = {
@@ -92,8 +95,8 @@ const ProcessLogs = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [searchValue, paginationValues ,processLogFilters]);
-  
+  }, [searchValue, paginationValues, processLogFilters]);
+
   return (
     <>
       <Typography variant="h4" mb={3}>
@@ -101,17 +104,28 @@ const ProcessLogs = () => {
       </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
-          <Stack direction="row" className="align-items-center justify-content-between">
+          <Stack
+            direction="row"
+            className="align-items-center justify-content-between"
+          >
             <SearchInput search={searchValue} setSearch={handleSearchChange} />
-            <CustomIconButton 
-              icon={<FilterList />}
-              handleClick={handleFilterClick}
-            />
-            {
-              open && (
-                <ProcessLogFilter open={open} handleClose={handleCloseFilter} anchorEl={anchorEl}  />
-              )
-            }
+            <Badge
+              badgeContent={totalAppliedFilters}
+              anchorOrigin={{ horizontal: "left", vertical: "top" }}
+              color="info"
+            >
+              <CustomIconButton
+                icon={<FilterList />}
+                handleClick={handleFilterClick}
+              />
+            </Badge>
+            {open && (
+              <ProcessLogFilter
+                open={open}
+                handleClose={handleCloseFilter}
+                anchorEl={anchorEl}
+              />
+            )}
           </Stack>
 
           <CustomisedTable

@@ -18,7 +18,7 @@ import {
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
 import { ModulesName, Permission } from "../../../../utils/enums";
-import { getModulePermissions } from "../../../../utils/common";
+import { countAppliedFilter, getModulePermissions } from "../../../../utils/common";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -51,26 +51,6 @@ export const Applications = () => {
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
   const isFilterAvailable = applicationFilters !== null;
-  const countAppliedFilter = (filter: Record<string, any> | null) => {
-    if (!filter || Object.keys(filter).length === 0) {
-      return 0;
-    } else {
-      let count = 0;
-
-      Object.keys(filter).forEach((element) => {
-        if (filter[element] !== null) {
-          if (Array.isArray(filter[element])) {
-            count += Boolean(filter[element].length) ? 1 : 0;
-          } else if (typeof filter[element] === "string") {
-            count += Boolean(filter[element]) ? 1 : 0;
-          } else if (typeof filter[element] === "number") {
-            count += filter[element] >= 0 ? 1 : 0;
-          }
-        }
-      });
-      return count;
-    }
-  };
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
   const userModulesPermissions =
