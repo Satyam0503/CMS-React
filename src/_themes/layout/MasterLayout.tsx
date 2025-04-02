@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { RightToolbar } from "../partials/layout/RightToolbar";
 import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
@@ -53,7 +52,6 @@ const MasterLayout = () => {
           </Stack>
         </Grid>
 
-        <RightToolbar />
         <DrawerMessenger />
       </PageDataProvider>
     </>

@@ -15,10 +15,7 @@ import {
   Stack,
   Tooltip,
 } from "@mui/material";
-import {
-  Close,
-  NotificationsOutlined,
-} from "@mui/icons-material";
+import { Close, NotificationsOutlined } from "@mui/icons-material";
 
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
@@ -54,10 +51,9 @@ export default function HeaderNotificationMenu() {
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
           >
-            <NotificationsOutlined
-              sx={{ color: colors.alpha.neutral[400] }}
-              fontSize="large"
-            />
+            <Badge badgeContent={4} color="primary">
+              <NotificationsOutlined fontSize="large" />
+            </Badge>
           </IconButton>
         </Tooltip>
       </Box>
