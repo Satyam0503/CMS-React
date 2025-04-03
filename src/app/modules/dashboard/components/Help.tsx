@@ -12,12 +12,14 @@ export default function Help() {
         <Typography variant="body2" my={1}>
           {intl.formatMessage({ id: "MENU.HELP_INFO" })}
         </Typography>
-        <CustomisedButton
-          variant="contained"
-          label="Contact"
-          Icon={<Message />}
-          iconPosition="start"
-        />
+        <Stack direction={"row"} display={"flex"} justifyContent={"flex-start"}>
+          <CustomisedButton
+            variant="contained"
+            label="Contact"
+            Icon={<Message />}
+            iconPosition="start"
+          />
+        </Stack>
       </CustomCard>
     </>
   );

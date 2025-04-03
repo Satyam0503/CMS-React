@@ -99,10 +99,11 @@ export default function Dashboard() {
   return (
     <>
       <DashboardHeader fullName={user.fullName} />
-      <DndContext onDragEnd={handleDragEnd}>
-        <Grid container spacing={3}>
+
+      <Grid container spacing={3}>
+        <DndContext onDragEnd={handleDragEnd}>
           {layout.map((id) => (
-            <Grid item xs={12} sm={6} md={4} key={id}>
+            <Grid item xs={12} sm={6} lg={4} key={id}>
               <DraggableComponent id={id}>
                 {id === "employees" && <EmployeeChart employees={employees} />}
                 {id === "open-positions" && <OpenPositions />}
@@ -129,8 +130,8 @@ export default function Dashboard() {
               </DraggableComponent>
             </Grid>
           ))}
-        </Grid>
-      </DndContext>
+        </DndContext>
+      </Grid>
     </>
   );
 }

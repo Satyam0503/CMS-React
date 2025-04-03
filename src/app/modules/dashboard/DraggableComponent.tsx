@@ -6,9 +6,13 @@ import zIndex from "@mui/material/styles/zIndex";
 export function DraggableComponent({
   id,
   children,
+  isDragging,
+  withOpacity,
 }: {
   id: string;
   children: React.ReactNode;
+  isDragging?: boolean;
+  withOpacity?: boolean;
 }) {
   const { setNodeRef, attributes, listeners, transform } = useDraggable({
     id: id,
@@ -20,14 +24,14 @@ export function DraggableComponent({
 
   const style = {
     cursor: "move",
-    transform: CSS.Translate.toString(transform),
+    // transform: CSS.Translate.toString(transform),
     transition: isOver ? "background-color 0.2s ease" : "none",
-    zIndex: 4,
+    transform: isDragging ? "scale(1.05)" : "scale(1)",
   };
 
   return (
     <Stack ref={setNodeRef} {...listeners} {...attributes} style={style}>
-      <Tooltip title="Drag me" followCursor arrow placement="left-end">
+      <Tooltip title="Drag / Drop" followCursor arrow placement="left-end">
         <Stack ref={droppableRef}>{children}</Stack>
       </Tooltip>
     </Stack>
