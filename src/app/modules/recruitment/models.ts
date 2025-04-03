@@ -52,6 +52,18 @@ export interface ApplicationFilterModel {
   maxExperience: number | string;
 }
 
+export interface ProcessLogFilterModel {
+  jobRole:string;
+  activityCategory: number[];
+  filterFrom: null | Dayjs | string;
+  filterTo: null | Dayjs | string;
+}
+
+export interface JobsFilterModel {
+  jobType: string;
+  status: number;
+}
+
 export interface JobModal {
   jobId: string;
   companyId?: string;
@@ -60,10 +72,6 @@ export interface JobModal {
   jobType: string;
   status: boolean;
   description: string;
-}
-export interface JobsFilterModel {
-  jobType: string;
-  status: number;
 }
 
 export interface CommentModel {
@@ -74,11 +82,23 @@ export interface CommentModel {
   jobTitle: string;
 }
 
-export type CommentResponseModel =  CommentModel & BaseModel & {
-  id:string;
-  userName:string;
+export type ProcessLogPayoadModel = ProcessLogFilterModel &  {
+  pageNo: number;
+  pageSize: number;
+  applicantName: string;
 }
+export type GetCommentPayloadModel = {
+  pageNo: number;
+  pageSize: number;
+  applicantId: string;
+}
+
+export type CommentResponseModel = CommentModel &
+  BaseModel & {
+    id: string;
+    userName: string;
+};
 
 export type JobsResponseData = ResponseData<JobModal>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
-export type CommentResponseData = ResponseData< CommentResponseModel >;
+export type CommentResponseData = ResponseData<CommentResponseModel>;

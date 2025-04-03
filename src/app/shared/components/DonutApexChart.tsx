@@ -35,7 +35,7 @@ function DonutApexChart(props: DonutApexChartProps) {
         speed: 800,
         dynamicAnimation: {
           enabled: true,
-          speed: 800,          
+          speed: 800,
         },
       },
       stacked: false,
@@ -137,7 +137,7 @@ function DonutApexChart(props: DonutApexChartProps) {
       width: 0,
     },
   };
-  
+
   return (
     <Grid item xs={12}>
       <Chart

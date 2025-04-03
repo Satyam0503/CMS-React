@@ -270,7 +270,6 @@ export const blockInvalidCharOnNumberField = (
 ) => ["e", "E", "+", "-"].includes(event.key) && event.preventDefault();
 
 // filter helper
-
 export const getAppliedFilters = () => {
   const savedFilters = localStorage.getItem(APP_FILTER_KEY);
   const appliedfilters: FiltersType = savedFilters
@@ -278,6 +277,7 @@ export const getAppliedFilters = () => {
     : {
         application: null,
         jobs: null,
+        processLog:null,
       };
   return appliedfilters;
 };
@@ -296,6 +296,27 @@ export const clearAllLocalFilter = () => {
   }
   localStorage.removeItem(APP_FILTER_KEY);
 };
+
+export const countAppliedFilter = (filter: Record<string, any> | null) => {
+    if (!filter || Object.keys(filter).length === 0) {
+      return 0;
+    } else {
+      let count = 0;
+
+      Object.keys(filter).forEach((element) => {
+        if (filter[element] !== null) {
+          if (Array.isArray(filter[element])) {
+            count += Boolean(filter[element].length) ? 1 : 0;
+          } else if (typeof filter[element] === "string") {
+            count += Boolean(filter[element]) ? 1 : 0;
+          } else if (typeof filter[element] === "number") {
+            count += filter[element] >= 0 ? 1 : 0;
+          }
+        }
+      });
+      return count;
+    }
+  };
 
 export const addCurrentTimeToDate = (date: Dayjs | null) => {
   const currentDateInMs = dayjs().valueOf();

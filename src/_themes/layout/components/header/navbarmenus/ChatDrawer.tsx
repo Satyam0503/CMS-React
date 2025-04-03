@@ -12,7 +12,7 @@ import {
   ForumTwoTone,
 } from "@mui/icons-material";
 
-import { Avatar, IconButton, Tooltip } from "@mui/material";
+import { Avatar, Badge, IconButton, Tooltip } from "@mui/material";
 import ChatMessenger from "../chats/ChatMessanger";
 import { InnerChat } from "../chats/InnerChat";
 import { colors } from "../../../../../app/modules/theme/MuiTheme";
@@ -50,14 +50,9 @@ export default function ChatDrawer() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <ForumOutlined
-              fontSize="large"
-              sx={{ color: colors.alpha.neutral[400] }}
-            />
-            <Circle
-              sx={{ width: "15px", color: colors.alpha.success[500] }}
-              className=" position-absolute translate-middle  animation-blink"
-            />
+            <Badge badgeContent={1} color="primary" className="animation-blink">
+              <ForumOutlined fontSize="large" />
+            </Badge>
           </IconButton>
         </Tooltip>
       </Box>

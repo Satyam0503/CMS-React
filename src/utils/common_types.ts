@@ -4,6 +4,7 @@ import { Modules, ModulesName } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
+  ProcessLogFilterModel,
 } from "../app/modules/recruitment/models";
 
 export interface ApiResponse {
@@ -188,6 +189,7 @@ export interface SideBarTabListProps {
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
+  processLog : ProcessLogFilterModel | null;
 }
 
 export type WithChildren = {

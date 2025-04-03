@@ -48,10 +48,7 @@ export function HeaderWrapper() {
           gap={2}
         >
           <Stack>
-            <SearchInput
-              search={search}
-              setSearch={handleSearchChange}
-            />
+            <SearchInput search={search} setSearch={handleSearchChange} />
           </Stack>
           <Stack>
             <Navbar />

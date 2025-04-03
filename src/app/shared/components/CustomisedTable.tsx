@@ -11,8 +11,6 @@ import { ColumnListTypes } from "../../../utils/common_types";
 import TableSkeleton from "./TableSkeleton";
 import { useEffect, useState } from "react";
 import { TableSorting } from "./TableSorting";
-import { useNavigate } from "react-router-dom";
-import { ModulesName } from "../../../utils/enums";
 import { getKeyForTableRow } from "../../../utils/common";
 
 interface PropsTypes<Row, Columns> {
@@ -26,6 +24,7 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
+  rowClickHandler?:(row:Row)=>void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -42,9 +41,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
+    rowClickHandler
   } = props;
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     setTableRows(rows);
@@ -98,14 +96,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                     <TableRow
                       hover
                       key={keyName ? getKeyForTableRow(row, keyName) : index}
-                      onClick={() => {
-                        if (props.tabName === ModulesName.Applications) {
-                          navigate(`/recruitment/applicant/${row.applicantId}`);
-                        }
-                        if (props.tabName === ModulesName.Employees) {
-                          navigate("/employee/aboutemployee",{state:row.userId});
-                        }
-                      }}
+                      onClick={()=>rowClickHandler?.(row)}
                     >
                       {columns.map((column) => {
                         const value =

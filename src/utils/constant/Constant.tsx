@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import {
   ApplicantStatus,
   ApplicationStatus,
+  CommentAction,
   Modules,
   ModulesName,
   TIME_PERIOD_MAP,
@@ -286,6 +287,18 @@ export const ApplicantApplicationStatus = [
   { id: 4, label: "Selected", value: ApplicationStatus.Selected },
   { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
 ];
+
+export const CommentActionCategory = [
+  { id: 0, label: "Process", value: CommentAction.Process },
+  { id: 1, label: "In Process", value: CommentAction.InProgress },
+  { id: 2, label: "On Hold", value: CommentAction.OnHold },
+  { id: 3, label: "Shortlisted", value: CommentAction.Shortlisted },
+  { id: 4, label: "Selection", value: CommentAction.Selection },
+  { id: 5, label: "Rejection", value: CommentAction.Rejection },
+  { id: 6, label: "Edit", value: CommentAction.Edit },
+];
+
+
 export const ApplicantStatusConstant = [
   { id: 1, label: "InActive", value: ApplicantStatus.InActive },
   { id: 2, label: "Active", value: ApplicantStatus.Active },
@@ -464,6 +477,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     label: "Commented On",
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
     minWidth: 150,
+    sorting:true
   },
   {
     id: "userName",

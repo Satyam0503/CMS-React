@@ -3,7 +3,7 @@ import {
   FiltersType,
 } from "../../../utils/common_types";
 import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
-import { ApplicationFilterModel } from "../../modules/recruitment/models";
+import { ApplicationFilterModel, ProcessLogFilterModel } from "../../modules/recruitment/models";
 
 const filterSlice = createSlice({
   name: "filters",
@@ -16,6 +16,10 @@ const filterSlice = createSlice({
       state.application= action.payload;
       setLocalFilter(state);
     },
+    setProcessLogFilter:(state,action:PayloadAction<ProcessLogFilterModel> )=>{
+      state.processLog = action.payload;
+      setLocalFilter(state);
+    },
     resetFilter:(state,action:PayloadAction<{page:keyof FiltersType}>)=>{
         state[action.payload.page] = null;
         setLocalFilter(state);
@@ -23,10 +27,11 @@ const filterSlice = createSlice({
     resetAllFilters:(state)=>{
       state.application=null;
       state.jobs=null;
+      state.processLog= null;
       clearAllLocalFilter();
     }
   },
 });
 
 export const filterReducers = filterSlice.reducer;
-export const { setApplicationFilter,resetFilter,resetAllFilters } = filterSlice.actions;
+export const { setApplicationFilter,setProcessLogFilter, resetFilter,resetAllFilters } = filterSlice.actions;

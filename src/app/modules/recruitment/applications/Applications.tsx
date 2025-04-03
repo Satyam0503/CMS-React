@@ -18,7 +18,11 @@ import {
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
 import { ModulesName, Permission } from "../../../../utils/enums";
-import { getModulePermissions } from "../../../../utils/common";
+import {
+  countAppliedFilter,
+  getModulePermissions,
+} from "../../../../utils/common";
+import { usePageData } from "../../../../_themes/layout/core";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -28,6 +32,7 @@ const initialFilter = {
 };
 
 export const Applications = () => {
+  const {setPageTitle}= usePageData();
   const intl = useIntl();
   const navigate = useNavigate();
   const [paginationValues, setPaginationValues] = useState({
@@ -51,26 +56,6 @@ export const Applications = () => {
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
   const isFilterAvailable = applicationFilters !== null;
-  const countAppliedFilter = (filter: Record<string, any> | null) => {
-    if (!filter || Object.keys(filter).length === 0) {
-      return 0;
-    } else {
-      let count = 0;
-
-      Object.keys(filter).forEach((element) => {
-        if (filter[element] !== null) {
-          if (Array.isArray(filter[element])) {
-            count += Boolean(filter[element].length) ? 1 : 0;
-          } else if (typeof filter[element] === "string") {
-            count += Boolean(filter[element]) ? 1 : 0;
-          } else if (typeof filter[element] === "number") {
-            count += filter[element] >= 0 ? 1 : 0;
-          }
-        }
-      });
-      return count;
-    }
-  };
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
   const userModulesPermissions =
@@ -81,6 +66,8 @@ export const Applications = () => {
     [userModulesPermissions]
   );
 
+  setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
+
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,10 +76,8 @@ export const Applications = () => {
     setSearch(value);
   }, []);
 
-  const handleApplicantEdit = (applicant: Applicant) => {
-    if (applicant) {
-      navigate(`/recruitment/applicant/${applicant.applicantId}`);
-    }
+  const rowClickHandler = (applicant: Applicant) => {
+    navigate(`/recruitment/applicant/${applicant.applicantId}`);
   };
 
   const handleOpenPreview = (applicant: Applicant) => {
@@ -155,19 +140,14 @@ export const Applications = () => {
     }, 1000);
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
-
+  
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.APPLICATIONS" })}
-      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
             direction="row"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            flexWrap={"wrap-reverse"}
+            className="justify-content-between align-items-center flex-wrap-reverse"
             gap={2}
           >
             <SearchInput search={search} setSearch={handleSearchChange} />
@@ -208,19 +188,18 @@ export const Applications = () => {
               />
             )}
           </Stack>
-          <Stack>
-            <CustomisedTable
-              tabName={ModulesName.Applications}
-              keyName="applicantId"
-              rows={applicationsList}
-              columns={ApplicationTabTableColumnList}
-              page={paginationValues.pageNo}
-              rowsPerPage={paginationValues.records}
-              handleEdit={handleApplicantEdit}
-              openViewModal={handleOpenPreview}
-              loading={loading}
-            />
-          </Stack>
+
+          <CustomisedTable
+            loading={loading}
+            tabName={ModulesName.Applications}
+            keyName="applicantId"
+            rows={applicationsList}
+            columns={ApplicationTabTableColumnList}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
+            openViewModal={handleOpenPreview}
+            rowClickHandler={rowClickHandler}
+          />
 
           {totalRecords > 0 && (
             <Pagination

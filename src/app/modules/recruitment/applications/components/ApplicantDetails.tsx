@@ -40,6 +40,7 @@ import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
+import { Pagination } from "../../../../shared/components/Pagination";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
@@ -53,6 +54,11 @@ export const ApplicantDetails = () => {
   const [refreshComment, setRefreshComment] = useState(false);
   const [comment, setComment] = useState("");
   const param = useParams();
+  const [totalRecords,setTotalRecords]= useState(0);
+  const [paginationValues,setPaginationValues] = useState({
+    pageNo:0,
+    pageSize:10,
+  })
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -79,14 +85,19 @@ export const ApplicantDetails = () => {
   }, [refresh]);
 
   useEffect(() => {
+    const payload= {
+      pageNo:paginationValues.pageNo +1,
+      pageSize:paginationValues.pageSize,
+      applicantId:applicantId
+    }
     const getAllComments = async () => {
       try {
-        const response = await getApplicantComments(applicantId);
-        const { methodResults, success, statusCode, message } = response.data;
-        if (!(success && statusCode === 200)) {
-          throw new Error(message);
+        const response = await getApplicantComments(payload);
+        const { methodResults, success,totalRecords} = response.data;
+        if(success){
+          setCommentList(methodResults.reverse());
+          setTotalRecords(totalRecords);          
         }
-        setCommentList(methodResults.reverse());
       } catch (error: any) {
         console.error(error.message);
       }
@@ -211,6 +222,20 @@ export const ApplicantDetails = () => {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      pageNo: page,
+    });
+  };
+
+  const handleRowPerPageChange = (rowPerPage: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      pageSize: rowPerPage,
+      pageNo: 0,
+    });
+  };
   return (
     <>
       <Stack spacing={2} mt={2}>
@@ -383,6 +408,13 @@ export const ApplicantDetails = () => {
               columns={CommentTableColumnList}
               page={0}
               rowsPerPage={0}
+            />
+            <Pagination 
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.pageSize}
+              setPage={handlePageChange}
+              setRowPerPage={handleRowPerPageChange}
+              totalRecords={totalRecords}
             />
             {isModalOpen && (
               <AddComment
