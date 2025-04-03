@@ -1,4 +1,12 @@
-import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  Grid,
+  Card,
+  Avatar,
+  Button,
+  Link,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { colors } from "../../theme/MuiTheme";
@@ -10,59 +18,79 @@ export default function EmpOnLeave() {
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.LEAVE" })}>
         <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
+          sx={{
+            flexGrow: 1,
+            justifyContent: "space-between",
+          }}
         >
-          <Stack direction="row">
-            <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
-              <img
-                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                alt=""
-                style={{ borderRadius: "50%" }}
-              />
+          <Stack>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              mb={1}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Deepak Chaurasiya</Typography>
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  5-Dec to 25-Dec
+                </Typography>
+              </Stack>
             </Stack>
-            <Stack>
-              <Typography variant="body1">Deepak Chaurasiya</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "POSITION.QA" })}
-              </Typography>
+            <Stack
+              direction="row"
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              mb={1}
+            >
+              <Stack direction="row">
+                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                  <img
+                    src={toAbsoluteUrl("media/avatars/300-6.jpg")}
+                    alt=""
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Stack>
+                <Stack>
+                  <Typography variant="body1">Satish Singh</Typography>
+                  <Typography variant="body2">
+                    {intl.formatMessage({ id: "POSITION.QA" })}
+                  </Typography>
+                </Stack>
+              </Stack>
+              <Stack>
+                <Typography
+                  variant="subtitle2"
+                  color={colors.alpha.primary[500]}
+                >
+                  Today
+                </Typography>
+              </Stack>
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
-              5-Dec to 25-Dec
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack
-          direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
-          <Stack direction="row">
-            <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
-              <img
-                src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                alt=""
-                style={{ borderRadius: "50%" }}
-              />
-            </Stack>
-            <Stack>
-              <Typography variant="body1">Satish Singh</Typography>
-              <Typography variant="body2">
-                {intl.formatMessage({ id: "POSITION.QA" })}
-              </Typography>
-            </Stack>
-          </Stack>
-          <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
-              Today
-            </Typography>
+            <Link href="employeeonleave" underline="always">
+              {"See more"}
+            </Link>
           </Stack>
         </Stack>
       </CustomCard>

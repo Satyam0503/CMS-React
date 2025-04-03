@@ -22,14 +22,13 @@ import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import RightDrawer from "./components/RightDrawer";
 
 // Main Dashboard Component
 export default function Dashboard() {
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
-  const [layout, setLayout] = useState<string[]>([
+  const [layout, setLayout] = useState<any[]>([
     "employees",
     "open-positions",
     "applications-chart",
@@ -117,7 +116,7 @@ export default function Dashboard() {
                   <AttendanceChart
                     className="card-xxl-stretch"
                     chartColor="primary"
-                    chartHeight="200px"
+                    chartHeight="160px"
                   />
                 )}
                 {id === "Emponleave" && <EmpOnLeave />}

@@ -26,7 +26,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
           speed: 800,
         },
       },
-      height: height || 200,
+      height: height || 160,
       type: "bar",
     },
     colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444", "#B3743B", "#FFE2B8"],
@@ -53,7 +53,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       fontWeight: 600,
       itemMargin: {
         horizontal: 10,
-        vertical: 2,
+        vertical: 0,
       },
     },
     xaxis: {
@@ -93,7 +93,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
           },
         ]}
         type="bar"
-        height={height || 200}
+        height={height || 160}
       />
     </Grid>
   );

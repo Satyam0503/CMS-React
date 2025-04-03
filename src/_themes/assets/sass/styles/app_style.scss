@@ -242,10 +242,18 @@ button:hover .ql-fill,
   cursor: pointer;
 }
 
-
 .breadcrumb-link {
-  color:#737373;
-  &:hover{
-    color: #9A56D3;
+  color: #737373;
+  &:hover {
+    color: #9a56d3;
   }
+}
+
+.truncate-multi-line {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
 }

@@ -36,7 +36,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export const AddPermission = () => {
-  const intl = useIntl();  
+  const intl = useIntl();
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
   >([]);
@@ -241,7 +241,9 @@ export const AddPermission = () => {
                 <CustomisedButton
                   loading={formik.isSubmitting}
                   type="submit"
-                  disabled={selectedPermission.length === 0 || formik.isSubmitting}
+                  disabled={
+                    selectedPermission.length === 0 || formik.isSubmitting
+                  }
                   label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                   Icon={<Check />}
                   iconPosition="start"

@@ -63,8 +63,8 @@ const chart1Options = (
   return {
     series: [
       {
-        name: "Net Profit",
-        data: [30, 30, 60, 25, 25, 40],
+        name: "Present days",
+        data: [23, 16, 23, 20, 22, 22],
       },
     ],
     chart: {
@@ -113,7 +113,7 @@ const chart1Options = (
       colors: [baseColor],
     },
     xaxis: {
-      categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
       axisBorder: {
         show: false,
       },
@@ -147,7 +147,7 @@ const chart1Options = (
     },
     yaxis: {
       min: 0,
-      max: 65,
+      max: 24,
       labels: {
         show: false,
         style: {
@@ -183,7 +183,7 @@ const chart1Options = (
       },
       y: {
         formatter: function (val) {
-          return "$" + val + " thousands";
+          return val + " days";
         },
       },
     },
