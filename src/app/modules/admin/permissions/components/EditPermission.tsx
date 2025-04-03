@@ -30,6 +30,7 @@ import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 const validationSchema = Yup.object().shape({
   description: Yup.string().required(),
@@ -38,6 +39,7 @@ const validationSchema = Yup.object().shape({
 
 export const EditPermission = () => {
   const intl = useIntl();
+  const {setPageTitle }= usePageData();
   const state = useLocation().state as RoleModel | null;
   const navigate = useNavigate();
   const [modulePermissionList, setModulePermissionList] = useState<
@@ -63,6 +65,7 @@ export const EditPermission = () => {
   });
 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({id:"PAGE.EDIT_PERMISSION"}));
     if (!state || Object.keys(state).length === 0) {
       navigate("/error/404", { replace: true });
     } else {
@@ -158,125 +161,115 @@ export const EditPermission = () => {
   };
 
   return (
-    <>
-      <Stack>
-        <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "ROLES.EDIT_AND_PERMISSION" })}
-        </Typography>
-      </Stack>
-      <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
-        <form
-          onSubmit={formik.handleSubmit}
-          className="flex-grow-1 d-flex flex-column gap-4"
-        >
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              required
-              error={formik.touched.titles && Boolean(formik.errors.titles)}
-              disabled={state?.isNotEditable}
-              label={intl.formatMessage({ id: "ROLE.NAME" })}
-              {...formik.getFieldProps("titles")}
-            />
-            <TextField
-              fullWidth
-              required
-              multiline
-              disabled={state?.isNotEditable}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
-              {...formik.getFieldProps("description")}
-            />
-          </Stack>
-          {isLoading ? (
-            <CircularLoader />
-          ) : (
-            <>
-              <Stack spacing={1}>
-                <Typography variant="h5">
-                  {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
-                </Typography>
-                <Box
-                  component={"div"}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: colors.alpha.neutral[200],
-                    borderRadius: 1,
-                    p: 2,
-                  }}
-                >
-                  {modulePermissionList.length !== 0 && (
-                    <Stack spacing={2} divider={<Divider />}>
-                      {modulePermissionList.map((module, index) => {
-                        return (
-                          <Stack spacing={0.5} key={index}>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontWeight: 600 }}
-                            >
-                              {module.moduleName}
-                            </Typography>
-                            <FormGroup
-                              row
-                              sx={{ paddingInlineStart: 2, fontSize: "12px" }}
-                              className="d-flex flex-row gap-2"
-                            >
-                              {module.permissions.map((permission) => {
-                                return (
-                                  <FormControlLabel
-                                    labelPlacement="end"
-                                    label={permission.permissionName}
-                                    key={permission.modulePermissionId}
-                                    disabled={state?.isNotEditable}
-                                    value={permission.modulePermissionId}
-                                    control={
-                                      <Checkbox
-                                        onChange={(e) => {
-                                          handlePermissionChange(
-                                            permission,
-                                            e.target.checked
-                                          );
-                                        }}
-                                      />
-                                    }
-                                    checked={checkUserModulePermission(
-                                      permission.modulePermissionId
-                                    )}
-                                  />
-                                );
-                              })}
-                            </FormGroup>
-                          </Stack>
-                        );
-                      })}
-                    </Stack>
-                  )}
-                </Box>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={2}
-                className="justify-content-end"
+    <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex-grow-1 d-flex flex-column gap-4"
+      >
+        <Stack spacing={2}>
+          <TextField
+            fullWidth
+            required
+            error={formik.touched.titles && Boolean(formik.errors.titles)}
+            disabled={state?.isNotEditable}
+            label={intl.formatMessage({ id: "ROLE.NAME" })}
+            {...formik.getFieldProps("titles")}
+          />
+          <TextField
+            fullWidth
+            required
+            multiline
+            disabled={state?.isNotEditable}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
+            label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
+            {...formik.getFieldProps("description")}
+          />
+        </Stack>
+        {isLoading ? (
+          <CircularLoader />
+        ) : (
+          <>
+            <Stack spacing={1}>
+              <Typography variant="h5">
+                {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
+              </Typography>
+              <Box
+                component={"div"}
+                sx={{
+                  border: "1px solid",
+                  borderColor: colors.alpha.neutral[200],
+                  borderRadius: 1,
+                  p: 2,
+                }}
               >
-                <CustomisedButton
-                  variant="outlined"
-                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
-                />
-                <CustomisedButton
-                  loading={formik.isSubmitting}
-                  disabled={state?.isNotEditable || formik.isSubmitting}
-                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
-                  Icon={<Check />}
-                  iconPosition="start"
-                  type="submit"
-                />
-              </Stack>
-            </>
-          )}
-        </form>
-      </Card>
-    </>
+                {modulePermissionList.length !== 0 && (
+                  <Stack spacing={2} divider={<Divider />}>
+                    {modulePermissionList.map((module, index) => {
+                      return (
+                        <Stack spacing={0.5} key={index}>
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {module.moduleName}
+                          </Typography>
+                          <FormGroup
+                            row
+                            sx={{ paddingInlineStart: 2, fontSize: "12px" }}
+                            className="d-flex flex-row gap-2"
+                          >
+                            {module.permissions.map((permission) => {
+                              return (
+                                <FormControlLabel
+                                  labelPlacement="end"
+                                  label={permission.permissionName}
+                                  key={permission.modulePermissionId}
+                                  disabled={state?.isNotEditable}
+                                  value={permission.modulePermissionId}
+                                  control={
+                                    <Checkbox
+                                      onChange={(e) => {
+                                        handlePermissionChange(
+                                          permission,
+                                          e.target.checked
+                                        );
+                                      }}
+                                    />
+                                  }
+                                  checked={checkUserModulePermission(
+                                    permission.modulePermissionId
+                                  )}
+                                />
+                              );
+                            })}
+                          </FormGroup>
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                )}
+              </Box>
+            </Stack>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              className="justify-content-end"
+            >
+              <CustomisedButton
+                variant="outlined"
+                label={intl.formatMessage({ id: "BUTTON.RESET" })}
+              />
+              <CustomisedButton
+                loading={formik.isSubmitting}
+                disabled={state?.isNotEditable || formik.isSubmitting}
+                label={intl.formatMessage({ id: "BUTTON.SAVE" })}
+                Icon={<Check />}
+                iconPosition="start"
+                type="submit"
+              />
+            </Stack>
+          </>
+        )}
+      </form>
+    </Card>
   );
 };

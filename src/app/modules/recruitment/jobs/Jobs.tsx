@@ -25,6 +25,7 @@ import {
 } from "../../../../utils/common";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";
+import { usePageData } from "../../../../_themes/layout/core";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -53,6 +54,7 @@ export default function Jobs() {
   const [loading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
+  const {setPageTitle}= usePageData();
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -197,11 +199,11 @@ export default function Jobs() {
     return () => clearTimeout(timeoutId);
   }, [isRefresh, paginationValues]);
 
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({id:"PAGE.JOBS"}));
+  },[])
+
   return (
-    <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.JOBS" })}
-      </Typography>
       <Card sx={{ p: 2.6 }}>
         <Stack spacing={2}>
           <Stack
@@ -281,6 +283,5 @@ export default function Jobs() {
           )}
         </Stack>
       </Card>
-    </>
   );
 }

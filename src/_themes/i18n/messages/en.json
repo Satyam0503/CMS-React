@@ -13,7 +13,12 @@
   "PAGE.THEME":"Theme",
   "PAGE.CLIENTS":"Clients",
   "PAGE.PROJECTS":"Projects",
-  "PAGE.PROFILE":"Profile",
+  "PAGE.PROFILE":"Employee Profile",
+  "PAGE.APPLICANT":"Applicant",
+  "PAGE.EDIT_APPLICANT":"Edit Applicant",
+  "PAGE.EDIT_PERMISSION":"Edit Permission",
+  "PAGE.ADD_ROLE":"Add Role",
+
 
 
   "FORM.FIRST_NAME":"First Name",
@@ -263,10 +268,8 @@
   "PERMISSION.VIEW": "View",
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
-  "ROLES.EDIT_AND_PERMISSION": "Edit Role And Permission",
   "ROLE.NAME": "Role Name",
-  "ROLES.ADD": " Add Role",
-  "RECRUITMENT.JOBS": "Jobs ",
+  "RECRUITMENT.JOBS": "Jobs",
 
   "SETTING.NOTIFICATION": "Notification",
   "SETTING.NOTIFICATIONS": "Notification Settings",
@@ -382,5 +385,4 @@
   "BUTTON.CREATE_PASS": "Create Password",
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply"
-  
 }

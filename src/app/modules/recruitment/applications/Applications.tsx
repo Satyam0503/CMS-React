@@ -66,8 +66,6 @@ export const Applications = () => {
     [userModulesPermissions]
   );
 
-  setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
-
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -141,6 +139,9 @@ export const Applications = () => {
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
   
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
+  },[]);
   return (
     <>
       <Card sx={{ p: 2.6 }}>

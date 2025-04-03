@@ -57,6 +57,8 @@ const employeeInitialValue: EmployeeModel = {
 };
 export default function Employees() {
   const intl = useIntl();
+  const {setPageTitle} = usePageData();
+  const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
     useState(employeeInitialValue);
@@ -85,10 +87,7 @@ export default function Employees() {
 
   const currentEmpId = useAppSelector(state=>state.user.userData?.userId);
 
-  const pageData = usePageData();
-  console.log(pageData);
 
-  const navigate = useNavigate();
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -252,11 +251,12 @@ export default function Employees() {
     getAllEmployeesList();
   }, [paginationValues, isRefresh]);
 
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({id:"PAGE.EMPLOYEES"}))
+  },[])
+
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.EMPLOYEES" })}
-      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
           <Stack

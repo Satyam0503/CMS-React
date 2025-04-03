@@ -23,7 +23,6 @@ import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { colors } from "../../../theme/MuiTheme";
 
 interface PropsTypes {
@@ -182,46 +181,41 @@ export const AddEditJob: FC<PropsTypes> = ({
             />
             <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"end"}
-          >
-            <Stack>
-              <CustomisedButton
-                label="Delete"
-                Icon={<DeleteOutline />}
-                iconPosition="start"
-                className="delete-button"
-                style={{
-                  backgroundColor: alpha(
-                    lighten(colors.alpha.danger[800], 0.2),
-                    0.8
-                  ),
-                }}
-              />
-            </Stack>
-
             <Stack
               direction={{ xs: "column", sm: "row" }}
               justifyContent={"flex-end"}
               mt={2}
               gap={1}
             >
+              {isEdit && (
+                <CustomisedButton
+                  label="Delete"
+                  Icon={<DeleteOutline />}
+                  iconPosition="start"
+                  className="delete-button"
+                  style={{
+                    backgroundColor: alpha(
+                      lighten(colors.alpha.danger[800], 0.2),
+                      0.8
+                    ),
+                  }}
+                />
+              )}
               <CustomisedButton
                 variant="outlined"
-                label={intl.formatMessage({id:"BUTTON.CLOSE"})}
+                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                 handleClick={handleClose}
               />
               <CustomisedButton
                 loading={isSubmitting}
-                label={intl.formatMessage({id: isEdit ? "BUTTON.UPDATE" :"BUTTON.ADD"}) }
+                label={intl.formatMessage({
+                  id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                })}
                 type="submit"
                 iconPosition="start"
                 disabled={isSubmitting || !(dirty && isValid)}
               />
             </Stack>
-          </Stack>
         </form>
       </Stack>
     </CustomisedModal>

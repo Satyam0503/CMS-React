@@ -5,7 +5,35 @@ import { EmployeeAttendance } from "../attendance/EmployeeAttendance";
 import { EmployeeLeaves } from "../leaves/EmployeeLeaves";
 import Employees from "./Employees";
 import { EmployeeProfile } from "../users/employeeprofile/EmployeeProfile";
+import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+
+const employeeBreadCrumbs: Array<Breadcrumb> = [
+  {
+    label: "PAGE.EMPLOYEES",
+    path: "/employee/employees",
+    parent: "/",
+  },
+  {
+    label: "PAGE.LEAVE_MANAGEMENT",
+    path: "/employee/employeeleave",
+    parent: "/",
+  },
+  {
+    label: "PAGE.ATTENDANCE",
+    path: "/employee/attendance",
+    parent: "/",
+  }, 
+  {
+    label: "PAGE.PROFILE",
+    path: "/employee/aboutemployee",
+    parent: "/employee/employees",
+  }, 
+];
+
 const EmployeesRoute = () => {
+  const {setBreadcrumbs} = useBreadcrumbs();
+  setBreadcrumbs(employeeBreadCrumbs);
+
   return (
     <Routes>
       <Route element={<Outlet />}>

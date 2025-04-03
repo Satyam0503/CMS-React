@@ -23,9 +23,11 @@ import { useEffect, useState } from "react";
 import { getEmployeeById, getEmployeeSkills } from "../userservices";
 import LeaveAllowences from "../components/LeaveAllowences";
 import BasicTabs from "./components/BasicTabs";
+import { usePageData } from "../../../../_themes/layout/core";
 
 const EmployeeProfile = () => {
   const intl = useIntl();
+  const {setPageTitle}= usePageData();
   const [employeeDetails, setEmployeeDetails] = useState<EmployeeModel>(
     {} as EmployeeModel
   );
@@ -42,6 +44,7 @@ const EmployeeProfile = () => {
   }
 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.PROFILE" }))
     const getEmployeeDetails = async () => {
       try {
         const response = await Promise.allSettled([
@@ -67,12 +70,6 @@ const EmployeeProfile = () => {
 
   return (
     <>
-      {/* //need to add user name in place of my */}
-      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
-        <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "PAGE.PROFILE" })}
-        </Typography>
-      </Stack>
       <Grid container spacing={4}>
         <Grid
           item

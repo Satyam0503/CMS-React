@@ -22,9 +22,11 @@ import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
+import { usePageData } from "../../../_themes/layout/core";
 
 // Main Dashboard Component
 export default function Dashboard() {
+  const { setPageTitle}= usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
@@ -65,6 +67,7 @@ export default function Dashboard() {
       ),
     [userModulesPermissions]
   );
+  setPageTitle("");
   useEffect(() => {
     async function getEmployees() {
       try {

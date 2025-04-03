@@ -8,29 +8,29 @@ import { Applications } from "./applications/Applications";
 import ProcessLogs from "./processlog/ProcessLog";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 
-const applicationBreadcrumb: Array<Breadcrumb> = [
+const recruitmentBreadcrumb: Array<Breadcrumb> = [
   {
-    label: "Application",
+    label: "PAGE.APPLICATIONS",
     path: "/recruitment/applications",
     parent: "/",
   },
   {
-    label: "Applicant",
+    label: "PAGE.APPLICANT",
     path: "/recruitment/applicant/{id}",
     parent: "/recruitment/applications",
   },
   {
-    label: "Edit",
+    label: "PAGE.EDIT_APPLICANT",
     path: "/recruitment/editapplicant",
     parent: "/recruitment/applicant/{id}",
   },
   {
-    label: "Jobs",
+    label: "PAGE.JOBS",
     path: "/recruitment/jobs",
     parent: "/",
   },
   {
-    label: "Process log",
+    label: "PAGE.PROCESS_LOG",
     path: "/recruitment/processlog",
     parent: "/",
   },
@@ -39,7 +39,7 @@ const applicationBreadcrumb: Array<Breadcrumb> = [
 
 const Recruitment = () => {
   const { setBreadcrumbs } = useBreadcrumbs();
-  setBreadcrumbs(applicationBreadcrumb);
+  setBreadcrumbs(recruitmentBreadcrumb);
 
   return (
     <Routes>

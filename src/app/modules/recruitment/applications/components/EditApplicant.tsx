@@ -40,6 +40,7 @@ import { colors } from "../../../theme/MuiTheme";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 export const EditApplicant = () => {
   const intl = useIntl();
@@ -51,8 +52,10 @@ export const EditApplicant = () => {
   const [activeVacancyList, setActiveVacancyList] = useState<JobModal[]>([]);
   const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const state = useLocation().state as Applicant;
+  const {setPageTitle}= usePageData();
 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({id:"PAGE.EDIT_APPLICANT"}));
     if (!state || Object.keys(state).length === 0) {
       navigate("/error", { replace: true });
     }
@@ -188,12 +191,12 @@ export const EditApplicant = () => {
   };
 
   return (
-      <Card sx={{ p: 2.6 ,mt:2 }} >
+      <Card sx={{ p: 2.6}} >
         <Stack spacing={2}>
           <Typography variant="h5">
             {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
           </Typography>
-          <Grid container display={"flex"} direction={"column"} gap={1}>
+          <Grid container direction={"column"} gap={1}>
             <Formik
               initialValues={initialValues}
               validationSchema={editApplicantValidationSchema}

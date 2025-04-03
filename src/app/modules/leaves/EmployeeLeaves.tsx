@@ -3,11 +3,8 @@ import {
   Card,
   CardContent,
   Grid,
-  Button,
-  IconButton,
   Stack,
   Typography,
-  FormControl,
   Select,
   MenuItem,
 } from "@mui/material";
@@ -27,10 +24,8 @@ import {
 // import BasicTable from "../components/BasicTable";
 import AddLeaves from "./components/AddLeaves";
 import LeaveAssignment from "./components/LeaveAssignment";
-import LeaveSummary from "./components/LeaveSummary";
 import IconStat from "../../shared/components/IconStat";
 import { colors } from "../theme/MuiTheme";
-import BasicTable from "../../shared/components/BasicTable";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import {
   Days,
@@ -40,10 +35,11 @@ import {
 import { LeavesModel } from "../../../utils/common_types";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
-import { SelectInput } from "../../shared/components/form-component/SelectInput";
+import { usePageData } from "../../../_themes/layout/core";
 
 export const EmployeeLeaves: FC = () => {
   const intl = useIntl();
+  const {setPageTitle}= usePageData();
   const [searchValue, setSearchValue] = React.useState("");
   const [LeaveList, setLeaveList] = React.useState<LeavesModel[]>([]);
   const [page, setPage] = React.useState(0);
@@ -58,11 +54,12 @@ export const EmployeeLeaves: FC = () => {
     setSelectedDay(event.target.value);
   };
 
+  React.useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.LEAVE_MANAGEMENT" }))
+  },[])
+
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.LEAVE_MANAGEMENT" })}
-      </Typography>
       <Grid
         container
         sx={{

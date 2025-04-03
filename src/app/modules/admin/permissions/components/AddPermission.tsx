@@ -25,6 +25,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 const initialValues = {
   description: "",
@@ -37,6 +38,7 @@ const validationSchema = Yup.object().shape({
 
 export const AddPermission = () => {
   const intl = useIntl();  
+  const {setPageTitle}= usePageData();
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
   >([]);
@@ -47,6 +49,7 @@ export const AddPermission = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({id:"PAGE.ADD_ROLE"}))
     const getAllPermissions = async () => {
       try {
         const response = await getAllModulePermission();
@@ -134,10 +137,6 @@ export const AddPermission = () => {
   };
 
   return (
-    <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "ROLES.ADD" })}
-      </Typography>
       <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
         <form
           onSubmit={formik.handleSubmit}
@@ -251,6 +250,5 @@ export const AddPermission = () => {
           )}
         </form>
       </Card>
-    </>
   );
 };
