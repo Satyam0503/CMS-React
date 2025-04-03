@@ -29,6 +29,8 @@
   "FORM.PASSWORD":"Password",
   "FORM.CONFIRM_PASSWORD":"Confirm Password",
   "FORM.NEW_PASSWORD":"New Password",
+  "FORM.DEPARTMENT_NAME":"Department Name",
+  "FORM.DESCRIPTION":"Description",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",

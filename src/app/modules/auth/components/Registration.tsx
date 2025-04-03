@@ -286,7 +286,6 @@ export function Registration() {
                     ),
                   }}
                 />
-                <Typography variant="body1"></Typography>
               </Stack>
 
               <Stack direction={"row"} alignItems={"center"} className="ms-n2">

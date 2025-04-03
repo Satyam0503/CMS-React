@@ -22,6 +22,7 @@ export interface AddEditRoleModel {
 }
 
 export interface AddDepartmentPayloadModel {
+  departmentId?:string;
   departmentName: string;
   departmentDescription: string;
 }

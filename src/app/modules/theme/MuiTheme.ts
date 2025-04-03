@@ -1025,7 +1025,7 @@ export const MuiTheme = createTheme({
             padding: "32px",
           },
           "@media (min-width:1280px)": {
-            padding: "48px",
+            padding: "40px",
           },
         },
       },
