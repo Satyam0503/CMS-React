@@ -108,6 +108,10 @@ export const ServiceUrl = {
 
   // process log
   GET_PROCESS_LOG: `${BaseUrl}/api/Applicants/GetProcessLogData`,
+
+  // departments
+  GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
+  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddDeparments`,
 };
 
 export const languages = [
@@ -914,6 +918,12 @@ export const SideBarTabList: SideBarTabListProps[] = [
         route: "/admin/theme",
         icon: <ColorLens />,
       },
+      {
+        id: Modules.CompanyMaster,
+        title: ModulesName.CompanyMaster,
+        route: "/admin/companymaster",
+        icon: <AdminPanelSettings />,
+      }
     ],
   },
   {

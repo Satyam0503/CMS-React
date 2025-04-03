@@ -21,7 +21,7 @@ const recruitmentBreadcrumb: Array<Breadcrumb> = [
   },
   {
     label: "PAGE.EDIT_APPLICANT",
-    path: "/recruitment/editapplicant",
+    path: "/recruitment/editapplicant/{id}",
     parent: "/recruitment/applicant/{id}",
   },
   {
@@ -70,7 +70,7 @@ const Recruitment = () => {
           }
         />
         <Route
-          path="editapplicant"
+          path="editapplicant/:applicantid"
           element={
             <ProtectedRoute module={ModulesName.Applications}>
               <EditApplicant />

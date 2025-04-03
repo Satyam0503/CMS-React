@@ -16,9 +16,14 @@ export interface AddEditRoleModel {
   roleId?: string | null;
   roleTitle: string;
   description: string;
-  rolePermissions: PermissionModel[]
+  rolePermissions: PermissionModel[];
   hasAppAccess: boolean;
   userRoles: string[];
+}
+
+export interface AddDepartmentPayloadModel {
+  departmentName: string;
+  departmentDescription: string;
 }
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;

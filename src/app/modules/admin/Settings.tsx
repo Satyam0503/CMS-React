@@ -6,6 +6,7 @@ import { ModulesName } from "../../../utils/enums";
 import { AddPermission } from "./permissions/components/AddPermission";
 import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+import { CompanyMaster } from "./companymaster/CompanyMaster";
 
 const adminBreadcrumbs:Array<Breadcrumb> = [
   {
@@ -27,6 +28,11 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
     label: "PAGE.ADD_ROLE",
     path: "/admin/addrole",
     parent: "/admin/permissions",
+  },
+  {
+    label: "PAGE.COMPANY_MASTER",
+    path: "/admin/companymaster",
+    parent: "/",
   },
 ] 
 
@@ -66,6 +72,14 @@ const SettingPage = () => {
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <AddPermission />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="companymaster"
+          element={
+            <ProtectedRoute module={ModulesName.CompanyMaster}>
+              <CompanyMaster />
             </ProtectedRoute>
           }
         />

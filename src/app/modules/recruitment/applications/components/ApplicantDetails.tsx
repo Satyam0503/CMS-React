@@ -68,7 +68,6 @@ export const ApplicantDetails = () => {
   });
 
   useEffect(() => {
-    // setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
         if (data.success && data.statusCode === 200) {
@@ -106,7 +105,7 @@ export const ApplicantDetails = () => {
       }
     };
     getAllComments();
-  }, [refreshComment]);
+  }, [refreshComment,paginationValues]);
 
   const handleCommentChange = useCallback((comment: string) => {
     setComment(comment);
@@ -263,7 +262,7 @@ export const ApplicantDetails = () => {
                 icon={<Edit />}
                 tooltip="Edit Applicant"
                 handleClick={() => {
-                  navigate("/recruitment/editapplicant", { state: applicant });
+                  navigate(`/recruitment/editapplicant/${applicant.applicantId}`);
                 }}
               />
             </Stack>
