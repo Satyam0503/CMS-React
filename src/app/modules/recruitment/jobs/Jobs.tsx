@@ -236,10 +236,10 @@ export default function Jobs() {
             rows={jobList}
             page={paginationValues.pageNo}
             rowsPerPage={paginationValues.records}
-            handleEdit={handleEditJob}
             openConfirmationModal={openConfirmationModal}
             openViewModal={handleJobDetailView}
             loading={loading}
+            rowClickHandler={handleEditJob}
           />
           {totalRecords > 0 && (
             <Pagination
