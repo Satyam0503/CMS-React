@@ -249,3 +249,39 @@ button:hover .ql-fill,
     color: #9A56D3;
   }
 }
+
+.department-card-conatiner{
+  display: grid;
+  gap:1.5rem;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  justify-content:flex-start;
+  margin-block-start: 1rem;
+}
+
+.department-card-conatiner .department-card {
+  position: relative;
+  border-left:10px solid #9f6dda;
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0px 0px 3px .4px #b8b8b8;
+
+  &>.department-label{
+    font-size: 1.5rem;
+    font-weight:bold;
+    color:#737373;
+    text-overflow: ellipsis;
+  }
+
+  &>.edit-btn{
+    display: none;
+    position: absolute;
+    border: none;
+    top: 50%;
+    right: 0%;
+    transform: translate(-50%,-50%)
+  }
+  &:hover .edit-btn{
+    display: block;
+  }
+}

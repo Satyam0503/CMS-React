@@ -3,22 +3,22 @@ import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { Stack, Typography } from "@mui/material";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
-import { AddDepartmentPayloadModel } from "../../models";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
+import { DepartmentModel } from "../../models";
 
 interface Props {
   open: true;
   handleClose: () => void;
-  handleAddEdit:(value:AddDepartmentPayloadModel,setSubmitting: (isSubmitting: boolean) => void)=>void,
+  handleAddEdit:(value:DepartmentModel,setSubmitting: (isSubmitting: boolean) => void)=>void,
   isEdit: boolean;
-  initialValues:AddDepartmentPayloadModel;
+  initialValues:DepartmentModel;
 }
 
 const validationSchema = Yup.object().shape({
-  departmentName: Yup.string().required(),
-  departmentDescription: Yup.string().required(),
+  departmentName: Yup.string().required("department name is required"),
+  departmentDescription: Yup.string().required("description is required"),
 });
 
 const AddEditDepartment: FC<Props> = ({ open, handleClose, isEdit,handleAddEdit,initialValues }) => {
@@ -26,7 +26,7 @@ const AddEditDepartment: FC<Props> = ({ open, handleClose, isEdit,handleAddEdit,
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Typography variant="h5" className="mb-5">
-        {intl.formatMessage({ id: "COMPANY_MASTER.ADD_DEPARTMENT" })}
+        {intl.formatMessage({ id: isEdit ? "COMPANY_MASTER.EDIT_DEPARTMENT":"COMPANY_MASTER.ADD_DEPARTMENT" })}
       </Typography>
       <Formik
         initialValues={initialValues}

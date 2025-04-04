@@ -1,14 +1,14 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useEffect, useState } from "react";
-import { Add } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { addDepartment, getAllDepartments } from "../../adminservices";
 import { AddEditDepartment } from "./AddEditDeparment";
-import { AddDepartmentPayloadModel } from "../../models";
 import { toast } from "react-toastify";
+import { DepartmentModel } from "../../models";
 
-const initialValues: AddDepartmentPayloadModel = {
+const initialValues:DepartmentModel = {
   departmentName: "",
   departmentDescription: "",
 };
@@ -16,23 +16,28 @@ const initialValues: AddDepartmentPayloadModel = {
 const Departments = () => {
   const intl = useIntl();
   const [isOpen, setOpen] = useState(false);
-  const [departmentList, setDepartmentList] = useState([]);
+  const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [isEdit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [initialDepartmentValues,setInitialDepartmentValue] = useState<DepartmentModel>(initialValues);
+
   const handleClose = () => {
     setOpen(false);
+    setEdit(false);
+    setInitialDepartmentValue(initialValues);
   };
 
   const handleAddEdit = async (
-    value: AddDepartmentPayloadModel,
+    value: DepartmentModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
     try {
       if (!isEdit) {
         const response = await addDepartment(value);
         if (response.data.success) {
-          toast.success("department successfully added");
+          toast.success(response.data.message);
           setRefresh(!refresh);
+          handleClose();
         }
       }
     } catch (error) {
@@ -42,13 +47,19 @@ const Departments = () => {
     }
   };
 
+  const handleEditDepartment = (department:DepartmentModel)=>{
+    setOpen(true);
+    setEdit(true);
+    setInitialDepartmentValue(department);
+  }
+
   useEffect(() => {
     const getAllDeps = async () => {
       try {
         const response = await getAllDepartments();
-        const { success } = response.data;
+        const { success,methodResults } = response.data;
         if (success) {
-          setDepartmentList([]);
+          setDepartmentList(methodResults);
         }
       } catch (error) {
         console.log(error);
@@ -58,7 +69,7 @@ const Departments = () => {
   }, [refresh]);
 
   return (
-    <Box component={"div"} sx={{ p: 2 }} className="mt-4">
+    <Box component={"div"} sx={{ p:3 }} className="d-flex flex-column gap-5">
       <Stack
         direction={"row"}
         className="justify-content-between align-items-center"
@@ -74,12 +85,16 @@ const Departments = () => {
         />
       </Stack>
 
-      <Box component={"div"}>
+      <Box component={"div"} className="department-card-conatiner">
         { 
-          departmentList.length && 
+          departmentList.length>0 && 
           departmentList.map(department=>(
-            <Card className="p-4 border-left border-4" >
-              <Typography variant="h6">{department.departmentName}</Typography>
+            <Card className="department-card" key={department.departmentId}>
+              <Typography variant="h6" className="department-label">{department.departmentName}</Typography>
+              <Typography variant="body1" >{department.departmentDescription}</Typography>
+              <IconButton className="edit-btn" onClick={()=>handleEditDepartment(department)}>
+                <Edit/>
+              </IconButton>
             </Card>
           ))
         }
@@ -87,7 +102,7 @@ const Departments = () => {
       {isOpen && (
         <AddEditDepartment
           open={isOpen}
-          initialValues={initialValues}
+          initialValues={initialDepartmentValues}
           handleClose={handleClose}
           isEdit={isEdit}
           handleAddEdit={handleAddEdit}

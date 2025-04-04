@@ -21,7 +21,7 @@ export interface AddEditRoleModel {
   userRoles: string[];
 }
 
-export interface AddDepartmentPayloadModel {
+export interface DepartmentModel {
   departmentId?:string;
   departmentName: string;
   departmentDescription: string;
@@ -30,3 +30,4 @@ export interface AddDepartmentPayloadModel {
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
+export type GetDepartmentResponseModel = ResponseData<DepartmentModel>

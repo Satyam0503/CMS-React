@@ -1,7 +1,7 @@
 import { getRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { AddDepartmentPayloadModel, AddEditRoleModel, AddEditRoleResponseData, GetAllModulePermissionData, GetAllRolesResponseData } from "./models";
+import { AddEditRoleModel, AddEditRoleResponseData, DepartmentModel, GetAllModulePermissionData, GetAllRolesResponseData, GetDepartmentResponseModel } from "./models";
 
 export const getAllRoles = async () => {
   return getRequest<GetAllRolesResponseData>(ServiceUrl.GET_ALL_ROLES);
@@ -20,9 +20,9 @@ export const addEditRole = async (payload:AddEditRoleModel)=>{
 // departments
 
 export const getAllDepartments = async ()=>{
-  return getRequest<ApiResponse>(ServiceUrl.GET_DEPARTMENTLIST);
+  return getRequest<GetDepartmentResponseModel>(ServiceUrl.GET_DEPARTMENTLIST);
 }
 
-export const addDepartment = async (payload:AddDepartmentPayloadModel)=>{
-  return postRequest<AddDepartmentPayloadModel,ApiResponse>(ServiceUrl.ADD_DEPARTMENT,payload);
+export const addDepartment = async (payload:DepartmentModel)=>{
+  return postRequest<DepartmentModel,ApiResponse>(ServiceUrl.ADD_DEPARTMENT,payload);
 }
