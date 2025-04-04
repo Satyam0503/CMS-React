@@ -6,6 +6,7 @@ import { EmployeeLeaves } from "../leaves/EmployeeLeaves";
 import Employees from "./Employees";
 import { EmployeeProfile } from "../users/employeeprofile/EmployeeProfile";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+import { useEffect } from "react";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -32,7 +33,10 @@ const employeeBreadCrumbs: Array<Breadcrumb> = [
 
 const EmployeesRoute = () => {
   const {setBreadcrumbs} = useBreadcrumbs();
-  setBreadcrumbs(employeeBreadCrumbs);
+
+  useEffect(()=>{
+    setBreadcrumbs(employeeBreadCrumbs);
+  },[])
 
   return (
     <Routes>

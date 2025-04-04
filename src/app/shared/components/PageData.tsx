@@ -19,7 +19,7 @@ const PageData = () => {
       direction={"row"}
       className="justify-content-between"
     >
-      {pageTitle && <Typography variant="h4">{pageTitle}</Typography>}
+      {pageTitle && <Typography variant="h4" className="fw-bold">{pageTitle}</Typography>}
       {trail.length > 1 && (
         <Stack
           direction={"row"}
@@ -35,7 +35,7 @@ const PageData = () => {
           <Breadcrumbs aria-label="breadcrumb">
             {trail.map((breadcrumb, index) => {
               return trail.length === index + 1 ? (
-                <Typography>
+                <Typography key={index}>
                   {intl.formatMessage({ id: breadcrumb.label })}
                 </Typography>
               ) : (

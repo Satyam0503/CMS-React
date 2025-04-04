@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { EmployeeModel } from "../../../../utils/common_types";
 import {
   Gender,
-  DepartmentList,
   bloodGroups,
 } from "../../../../utils/constant/Constant";
 import { Roles } from "../../../../utils/enums";
@@ -18,8 +17,8 @@ import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
-import { RoleModel } from "../../admin/models";
-import { getAllRoles } from "../../admin/adminservices";
+import { DepartmentModel, RoleModel } from "../../admin/models";
+import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 
 interface PropsTypes {
   initialValues: EmployeeModel;
@@ -37,25 +36,29 @@ export default function AddUpdateEmployee(props: PropsTypes) {
   const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit , employeeList } =
     props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
+  const [departmentList,setDepartmentList]= useState<DepartmentModel[]>([]);
   const intl = useIntl();
 
   useEffect(() => {
-    getAllRoles()
-      .then((res) => {
-        const { success, statusCode, methodResults } = res.data;
-        if (success && statusCode === 200) {
-          setRoles(methodResults);
-        }
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
+    Promise.all([getAllRoles(),getAllDepartments()])
+    .then(res=>{
+      setRoles(res[0].data.methodResults);
+      if(res[1].data.totalRecords ===0){
+        toast.error(intl.formatMessage({id:"MESSAGE.DEPARTMENT.ADD"}));
+        handleClose();
+      }
+      else{
+        setDepartmentList(res[1].data.methodResults);
+      }
+    }).catch(err=>{
+      console.log(err.message);
+    })
   }, []);
 
   const filteredRoles = roles?.filter(
     (role) => role.titles !== Roles.Administrator
   );
-
+  
   return (
     <>
       {filteredRoles && filteredRoles?.length > 0 && (
@@ -86,8 +89,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                 dirty,
                 handleSubmit,
               }) => {
-                console.log(errors,values);
-                
                 return <form onSubmit={handleSubmit}>
                   <Grid
                     container
@@ -96,21 +97,21 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   >
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
+                        label={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
                         type="text"
                         name="firstName"
                         placeholder={intl.formatMessage({
-                          id: "USER.FIRST_NAME",
+                          id: "FORM.FIRST_NAME",
                         })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                        label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
                         type="text"
                         name="lastName"
                         placeholder={intl.formatMessage({
-                          id: "USER.LAST_NAME",
+                          id: "FORM.LAST_NAME",
                         })}
                       />
                     </Grid>
@@ -118,7 +119,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="gender"
-                        label={intl.formatMessage({ id: "USER.GENDER" })}
+                        label={intl.formatMessage({ id: "FORM.GENDER" })}
                       >
                         {Gender.map((item) => (
                           <MenuItem key={item.id} value={item.value}>
@@ -129,17 +130,17 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.EMP_ID" })}
+                        label={intl.formatMessage({ id: "FORM.EMPID" })}
                         type="text"
                         name="employeeId"
                         placeholder={intl.formatMessage({
-                          id: "USER.EMP_ID",
+                          id: "FORM.EMPID",
                         })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "USER.DOB" })}
+                        label={intl.formatMessage({ id: "FORM.DOB" })}
                         name={"dateOfBirth"}
                         value={values.dateOfBirth}
                         setValue={(newDate: Dayjs | null) => {
@@ -156,7 +157,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "USER.DOJ" })}
+                        label={intl.formatMessage({ id: "FORM.DOJ" })}
                         value={values.dateOfJoining}
                         setValue={(newDate: Dayjs | null) => {
                           setFieldTouched("dateOfJoining", true);
@@ -185,7 +186,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="roleId"
-                        label={intl.formatMessage({ id: "USER.ROLE" })}
+                        label={intl.formatMessage({ id: "FORM.ROLE" })}
                       >
                         {filteredRoles.map((role) => {
                           return (
@@ -198,20 +199,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.JOBROLE" })}
+                        label={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
                         type="text"
                         name="jobRole"
-                        placeholder={intl.formatMessage({ id: "USER.JOBROLE" })}
+                        placeholder={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="department"
-                        label={intl.formatMessage({ id: "USER.DEPARTMENT" })}
+                        label={intl.formatMessage({ id: "FORM.DEPARTMENT" })}
                       >
-                        {DepartmentList.map((dep) => (
-                          <MenuItem key={dep.id} value={dep.value}>
-                            {dep.label}
+                        {departmentList.map((dep) => (
+                          <MenuItem key={dep.departmentId} value={dep.departmentId}>
+                            {dep.departmentName}
                           </MenuItem>
                         ))}
                       </SelectInput>

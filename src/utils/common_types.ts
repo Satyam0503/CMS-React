@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
-import { Modules, ModulesName } from "./enums";
+import { Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
@@ -179,7 +179,8 @@ export interface ResponseData<T> {
 
 export interface SideBarTabListProps {
   id: Modules;
-  title: ModulesName;
+  title: ModulesTitles;
+  constant:ModulesName;
   route: string;
   icon: JSX.Element;
   hasSubTabs?: boolean;

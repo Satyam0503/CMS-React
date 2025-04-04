@@ -30,6 +30,7 @@ import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { usePageData } from "../../../_themes/layout/core";
 import { useNavigate } from "react-router-dom";
+import { EmployeeGridView } from "./components/EmployeeGridView";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -55,9 +56,11 @@ const employeeInitialValue: EmployeeModel = {
   emergencyContact: "",
   password: null,
 };
+type EmployeeViewType = "table" | "grid";
+
 export default function Employees() {
   const intl = useIntl();
-  const {setPageTitle} = usePageData();
+  const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [employeeInitialValues, setEmployeeInitialValues] =
@@ -85,9 +88,8 @@ export default function Employees() {
     [userModulesPermissions]
   );
 
-  const currentEmpId = useAppSelector(state=>state.user.userData?.userId);
-
-
+  const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
+  const [employeeViewMode, setEmployeeViewMode] = useState<EmployeeViewType>("grid");
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -215,12 +217,12 @@ export default function Employees() {
     });
   };
 
-
-  const rowClickHandler = (employee:EmployeeModel)=>{
+  const rowClickHandler = (employee: EmployeeModel) => {
     const empId = employee.userId;
-    empId === currentEmpId ? 
-    navigate("/myprofile") : navigate("/employee/aboutemployee",{state:empId});        
-  }
+    empId === currentEmpId
+      ? navigate("/myprofile")
+      : navigate("/employee/aboutemployee", { state: empId });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -251,13 +253,13 @@ export default function Employees() {
     getAllEmployeesList();
   }, [paginationValues, isRefresh]);
 
-  useEffect(()=>{
-    setPageTitle(intl.formatMessage({id:"PAGE.EMPLOYEES"}))
-  },[])
+  useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.EMPLOYEES" }));
+  }, []);
 
   return (
     <>
-      <Card sx={{ p: "2rem" }}>
+      <Card sx={{ p: "2rem" }} className="flex-grow-1">
         <Stack spacing={2}>
           <Stack
             direction="row"
@@ -269,10 +271,7 @@ export default function Employees() {
             <SearchInput search={search} setSearch={handleSearchChange} />
 
             <Stack direction="row" spacing={1}>
-              <CustomIconButton
-                icon={<FilterList />}
-                handleClick={() => {}}
-              />
+              <CustomIconButton icon={<FilterList />} handleClick={() => {}} />
               {userPermissionForModule.includes(Permission.Create) && (
                 <CustomIconButton
                   icon={<Add />}
@@ -293,20 +292,27 @@ export default function Employees() {
               />
             </Stack>
           </Stack>
+          {employeeViewMode === "table" ? (
+            <CustomisedTable
+              tabName={ModulesName.Employees}
+              keyName="userId"
+              loading={isLoading}
+              rows={employeeList}
+              columns={EmployeeTabTableColumnList}
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.records}
+              handleEdit={handleEmployeeEdit}
+              openConfirmationModal={openConfirmationModal}
+              openViewModal={openViewModal}
+              rowClickHandler={rowClickHandler}
+            />
+          ) : (
+            <EmployeeGridView 
+              employeeList={employeeList}
+              isLoading= {isLoading}
+            />
+          )}
 
-          <CustomisedTable
-            tabName={ModulesName.Employees}
-            keyName="userId"
-            loading={isLoading}
-            rows={employeeList}
-            columns={EmployeeTabTableColumnList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            handleEdit={handleEmployeeEdit}
-            openConfirmationModal={openConfirmationModal}
-            openViewModal={openViewModal}
-            rowClickHandler={rowClickHandler}
-          />
           {totalRecords > 0 && (
             <Pagination
               page={paginationValues.pageNo}

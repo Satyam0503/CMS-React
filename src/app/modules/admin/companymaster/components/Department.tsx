@@ -72,7 +72,7 @@ const Departments = () => {
     <Box component={"div"} sx={{ p:3 }} className="d-flex flex-column gap-5">
       <Stack
         direction={"row"}
-        className="justify-content-between align-items-center"
+        className="justify-content-between align-items-center flex-wrap gap-4"
       >
         <Typography variant="h5">
           {intl.formatMessage({ id: "COMPANY_MASTER.DEPARTMENT.TOTAL" })}:{" "}

@@ -15,7 +15,7 @@ export const SidebarMenuMain = () => {
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         checkPermissionForModulesFeatureAccess(
-          subTab.title,
+          subTab.constant,
           Permission.View,
           userModulePermission
         )
@@ -31,7 +31,7 @@ export const SidebarMenuMain = () => {
     }
     if (
       checkPermissionForModulesFeatureAccess(
-        tab.title,
+        tab.constant,
         Permission.View,
         userModulePermission
       )

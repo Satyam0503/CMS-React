@@ -7,6 +7,7 @@ import Jobs from "./jobs/Jobs";
 import { Applications } from "./applications/Applications";
 import ProcessLogs from "./processlog/ProcessLog";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+import { useEffect } from "react";
 
 const recruitmentBreadcrumb: Array<Breadcrumb> = [
   {
@@ -39,7 +40,9 @@ const recruitmentBreadcrumb: Array<Breadcrumb> = [
 
 const Recruitment = () => {
   const { setBreadcrumbs } = useBreadcrumbs();
-  setBreadcrumbs(recruitmentBreadcrumb);
+  useEffect(()=>{
+    setBreadcrumbs(recruitmentBreadcrumb);
+  },[]);
 
   return (
     <Routes>

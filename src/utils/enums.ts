@@ -49,6 +49,24 @@ export enum ModulesName {
   Dashboard = "Dashboard",
   Employees = "Employees",
   Attendance = "Attendance",
+  LeaveManagement = "Leave_Management",
+  MyProfile = "My_Profile",
+  Recruitment = "Recruitment",
+  Admin = "Admin",
+  Holidays = "Holidays",
+  NoticeBoard = "Notice_board",
+  Jobs = "Jobs",
+  Applications = "Applications",
+  Permissions = "Permissions",
+  Theme = "Theme",
+  ProcessLog= "Process_Log",
+  CompanyMaster="Company_Master"
+}
+
+export enum ModulesTitles {
+  Dashboard = "Dashboard",
+  Employees = "Employees",
+  Attendance = "Attendance",
   LeaveManagement = "Leave Management",
   MyProfile = "My Profile",
   Recruitment = "Recruitment",

@@ -23,6 +23,8 @@
 
   "FORM.FIRST_NAME":"First Name",
   "FORM.LAST_NAME":"Last Name",
+  "FORM.GENDER":"Gender",
+  "FORM.EMPID":"Employee Id",
   "FORM.FULL_NAME":"Full Name",
   "FORM.COMPANY_NAME":"Company Name",
   "FORM.EMAIL":"Email",
@@ -31,6 +33,11 @@
   "FORM.NEW_PASSWORD":"New Password",
   "FORM.DEPARTMENT_NAME":"Department Name",
   "FORM.DESCRIPTION":"Description",
+  "FORM.DOB":"Date Of Birth",
+  "FORM.DOJ":"Date Of Joining",
+  "FORM.ROLE":"Role",
+  "FORM.JOB_ROLE":"Job Role",
+  "FORM.DEPARTMENT":"Department",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
@@ -392,5 +399,7 @@
   "BUTTON.SIGNIN": "Sign In",
   "BUTTON.CREATE_PASS": "Create Password",
   "BUTTON.CROP": "Crop",
-  "BUTTON.APPLY": "Apply"
+  "BUTTON.APPLY": "Apply",
+
+  "MESSAGE.DEPARTMENT.ADD":"Please add departments."
 }

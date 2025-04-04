@@ -186,13 +186,13 @@ export const findUserDefaultTab = (
   const defaultTab = SideBarTabList.find((tab) => {
     if (tab.hasSubTabs) {
       const defaultSubTab= tab.subTabs?.find(subTabs=>{
-        return checkPermissionForModulesFeatureAccess(subTabs.title,Permission.View,userModulePermissions);
+        return checkPermissionForModulesFeatureAccess(subTabs.constant,Permission.View,userModulePermissions);
       })
       return defaultSubTab ? true: false;
     }
     return (
       checkPermissionForModulesFeatureAccess(
-        tab.title,
+        tab.constant,
         Permission.View,
         userModulePermissions
       ) === true

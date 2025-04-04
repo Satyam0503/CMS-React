@@ -7,6 +7,7 @@ import { AddPermission } from "./permissions/components/AddPermission";
 import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { CompanyMaster } from "./companymaster/CompanyMaster";
+import { useEffect } from "react";
 
 const adminBreadcrumbs:Array<Breadcrumb> = [
   {
@@ -38,7 +39,9 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
 
 const SettingPage = () => {
   const {setBreadcrumbs}= useBreadcrumbs();
-  setBreadcrumbs(adminBreadcrumbs);
+  useEffect(()=>{
+    setBreadcrumbs(adminBreadcrumbs);
+  },[]);
   return (
     <Routes>
       <Route element={<Outlet />}>
