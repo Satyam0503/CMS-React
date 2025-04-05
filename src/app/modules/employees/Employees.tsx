@@ -1,6 +1,18 @@
-import { Card, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, FilterList } from "@mui/icons-material";
+import {
+  Add,
+  Download,
+  FilterList,
+  GridView,
+  ViewList,
+} from "@mui/icons-material";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -56,7 +68,7 @@ const employeeInitialValue: EmployeeModel = {
   emergencyContact: "",
   password: null,
 };
-type EmployeeViewType = "table" | "grid";
+type ViewMode = "table" | "grid";
 
 export default function Employees() {
   const intl = useIntl();
@@ -89,7 +101,8 @@ export default function Employees() {
   );
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
-  const [employeeViewMode, setEmployeeViewMode] = useState<EmployeeViewType>("grid");
+  const [viewMode, setViewMode] =
+    useState<ViewMode>("table");
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -224,6 +237,13 @@ export default function Employees() {
       : navigate("/employee/aboutemployee", { state: empId });
   };
 
+  const handleViewChange = (
+    event: React.MouseEvent<HTMLElement>,
+    nextView: ViewMode
+  ) => {
+    setViewMode(nextView);
+  };
+
   useEffect(() => {
     setLoading(true);
     const getAllEmployeesList = async () => {
@@ -259,18 +279,33 @@ export default function Employees() {
 
   return (
     <>
-      <Card sx={{ p: "2rem" }} className="flex-grow-1">
-        <Stack spacing={2}>
+      <Card sx={{ p: "2rem" }} className="d-flex flex-column flex-grow-1">
+        <Stack spacing={2} className="flex-grow-1">
           <Stack
             direction="row"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            flexWrap={"wrap-reverse"}
             gap={2}
+            className="justify-content-between flex-wrap-reverse align-items-center"
           >
             <SearchInput search={search} setSearch={handleSearchChange} />
 
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1.5}>
+              <ToggleButtonGroup
+                orientation="horizontal"
+                value={viewMode}
+                exclusive
+                onChange={handleViewChange}
+                size="small"
+                sx={{
+                  height:32,
+                }}
+              >
+                <ToggleButton value="table" aria-label="table">
+                  <ViewList />
+                </ToggleButton>
+                <ToggleButton value="grid" aria-label="grid">
+                  <GridView />
+                </ToggleButton>
+              </ToggleButtonGroup>
               <CustomIconButton icon={<FilterList />} handleClick={() => {}} />
               {userPermissionForModule.includes(Permission.Create) && (
                 <CustomIconButton
@@ -282,17 +317,9 @@ export default function Employees() {
                   ariaLabel="Add employee"
                 />
               )}
-
-              <CustomIconButton
-                icon={<Download />}
-                tooltip={intl.formatMessage({
-                  id: "IMPORT.EXCEL",
-                })}
-                ariaLabel="import excel"
-              />
             </Stack>
           </Stack>
-          {employeeViewMode === "table" ? (
+          {viewMode === "table" ? (
             <CustomisedTable
               tabName={ModulesName.Employees}
               keyName="userId"
@@ -307,9 +334,9 @@ export default function Employees() {
               rowClickHandler={rowClickHandler}
             />
           ) : (
-            <EmployeeGridView 
+            <EmployeeGridView
               employeeList={employeeList}
-              isLoading= {isLoading}
+              isLoading={isLoading}
             />
           )}
 
