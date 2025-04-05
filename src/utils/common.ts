@@ -161,42 +161,29 @@ export const convertMonthsToYear = (months: number) => {
 };
 
 export const checkPermissionForModulesFeatureAccess = (
-  moduleName: ModulesName,
-  requiredPermission: Permission,
-  userModulePermissions: ModulePermissoinModel[]
+  requiredPermission: string,
+  userModulePermissions: string []
 ) => {
-  const module = userModulePermissions.find(
-    (module) => module.moduleConstant === moduleName
-  );
-  if (!module) {
-    return false;
-  }
-  const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === requiredPermission
-  );
-  if (!hasPermission) {
-    return false;
-  }
-  return hasPermission.hasAccess;
+  // const module = userModulePermissions.find(
+  //   (module) => module.moduleConstant === moduleName
+  // );
+  // if (!module) {
+  //   return false;
+  // }
+  return userModulePermissions.findIndex(x=> x==requiredPermission)>-1
 };
 
 export const findUserDefaultTab = (
-  userModulePermissions: ModulePermissoinModel[]
+  userModulePermissions: string[]
 ) => {
   const defaultTab = SideBarTabList.find((tab) => {
     if (tab.hasSubTabs) {
       const defaultSubTab= tab.subTabs?.find(subTabs=>{
-        return checkPermissionForModulesFeatureAccess(subTabs.constant,Permission.View,userModulePermissions);
+        return checkPermissionForModulesFeatureAccess(`${subTabs.constant}.${Permission.View}`,userModulePermissions);
       })
       return defaultSubTab ? true: false;
     }
-    return (
-      checkPermissionForModulesFeatureAccess(
-        tab.constant,
-        Permission.View,
-        userModulePermissions
-      ) === true
-    );
+     return checkPermissionForModulesFeatureAccess(`${tab.constant}.${Permission.View}`,userModulePermissions);
   });
 
   if (!defaultTab) {

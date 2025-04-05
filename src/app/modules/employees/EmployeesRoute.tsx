@@ -26,7 +26,7 @@ const employeeBreadCrumbs: Array<Breadcrumb> = [
   }, 
   {
     label: "PAGE.PROFILE",
-    path: "/employee/aboutemployee",
+    path: "/employee/{employeeid}",
     parent: "/employee/employees",
   }, 
 ];
@@ -67,7 +67,7 @@ const EmployeesRoute = () => {
           }
         />
         <Route
-          path="/aboutemployee"
+          path="/:employeeid"
           element={
             <ProtectedRoute module={ModulesName.Employees}>
               <EmployeeProfile />

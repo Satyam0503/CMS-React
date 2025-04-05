@@ -89,7 +89,7 @@ const Departments = () => {
         { 
           departmentList.length>0 && 
           departmentList.map(department=>(
-            <Card className="department-card" key={department.departmentId}>
+            <Card className="department-card shadow-sm" key={department.departmentId}>
               <Typography variant="h6" className="department-label">{department.departmentName}</Typography>
               <Typography variant="body1" >{department.departmentDescription}</Typography>
               <IconButton className="edit-btn" onClick={()=>handleEditDepartment(department)}>

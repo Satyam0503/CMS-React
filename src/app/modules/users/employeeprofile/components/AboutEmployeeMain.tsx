@@ -1,25 +1,14 @@
-import { Box, CardContent, Grid, Stack, Typography } from "@mui/material";
+import {  Grid } from "@mui/material";
 
-import {
-  Build,
-  CalendarMonth,
-  CorporateFareOutlined,
-} from "@mui/icons-material";
 
 import { useIntl } from "react-intl";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { EmployeeModel } from "../../../../../utils/common_types";
 import { getEmployeeById, getEmployeeSkills } from "../../userservices";
-import { EmployeeProfileCard } from "./EmployeeProfileCard";
-import LeaveAllowences from "../../components/LeaveAllowences";
-import { colors } from "../../../theme/MuiTheme";
-import IconStat from "../../../../shared/components/IconStat";
-import { getDateDiffInYears } from "../../../../../utils/common";
-import BasicTabs from "./BasicTabs";
 import { AboutEmployee } from "./AboutEmployee";
 import { EmployeeDetails } from "./EmployeeDetails";
 import { EmployeeSkills } from "./EmployeeSkills";
@@ -36,12 +25,13 @@ const AboutEmployeeMain = () => {
   const companyName = useAppSelector(
     (state) => state.user.userData?.companyName
   );
-  const location = useLocation();
   const navigate = useNavigate();
-  const employeeId = location.state as string;
-  if (!employeeId) {
-    navigate("/error");
+  const param = useParams();
+
+  if (Object.keys(param).length === 0 || !param.employeeid) {
+    navigate("/error", { replace: true });
   }
+  const employeeId = param.employeeid ?? "";
 
   useEffect(() => {
     const getEmployeeDetails = async () => {

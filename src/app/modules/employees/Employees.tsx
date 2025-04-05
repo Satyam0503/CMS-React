@@ -234,7 +234,7 @@ export default function Employees() {
     const empId = employee.userId;
     empId === currentEmpId
       ? navigate("/myprofile")
-      : navigate("/employee/aboutemployee", { state: empId });
+      : navigate(`/employee/${empId}`);
   };
 
   const handleViewChange = (

@@ -27,8 +27,7 @@ export interface UserModel {
   lastName: string;
   fullName: string;
   profileImage: string;
-  permissions: PermissionModel[];
-  modulePermission: ModulePermissoinModel[];
+  modulePermission: string[];
 }
 
 export type UserSummaryModel = {

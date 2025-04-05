@@ -16,8 +16,7 @@ export const ProtectedRoute: FC<PropsTypes> = ({ children, module }) => {
   );
   const userModulePermissions = modulePermissions ?? [];
   const hasAccess = checkPermissionForModulesFeatureAccess(
-    module,
-    Permission.View,
+    `${module}.${Permission.View}`,
     userModulePermissions
   );
   if (!userModulePermissions.length) {
