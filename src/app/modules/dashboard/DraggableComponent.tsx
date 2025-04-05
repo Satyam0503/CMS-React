@@ -1,6 +1,7 @@
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { Stack } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import { CSS } from "@dnd-kit/utilities";
+import zIndex from "@mui/material/styles/zIndex";
 
 export function DraggableComponent({
   id,
@@ -21,11 +22,14 @@ export function DraggableComponent({
     cursor: "move",
     transform: CSS.Translate.toString(transform),
     transition: isOver ? "background-color 0.2s ease" : "none",
+    zIndex: 4,
   };
 
   return (
     <Stack ref={setNodeRef} {...listeners} {...attributes} style={style}>
-      <Stack ref={droppableRef}>{children}</Stack>
+      <Tooltip title="Drag me" followCursor arrow placement="left-end">
+        <Stack ref={droppableRef}>{children}</Stack>
+      </Tooltip>
     </Stack>
   );
 }

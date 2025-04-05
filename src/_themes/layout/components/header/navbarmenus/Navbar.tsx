@@ -1,8 +1,11 @@
-import { Grid } from "@mui/material";
+import { Grid, Tooltip } from "@mui/material";
 import HeaderNotificationMenu from "./HeaderNotificationMenu";
 import HeaderUserMenu from "./HeaderUserMenu";
 
 import ChatDrawer from "./ChatDrawer";
+import RightDrawer from "../../../../../app/modules/dashboard/components/RightDrawer";
+
+import LightDarkMode from "./LightDarkMode";
 
 const Navbar = () => {
   return (
@@ -11,8 +14,10 @@ const Navbar = () => {
       display={"flex"}
       justifyContent={"flex-end"}
       alignItems={"center"}
-      gap={1}
+      gap={2}
     >
+      <RightDrawer />
+      <LightDarkMode />
       <ChatDrawer />
       <HeaderNotificationMenu />
       <HeaderUserMenu />
@@ -21,4 +26,3 @@ const Navbar = () => {
 };
 
 export { Navbar };
-  
