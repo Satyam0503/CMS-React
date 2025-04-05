@@ -23,8 +23,7 @@ export const Roles = () => {
     (state) => state.user.userData?.modulePermission
   )!;
   const hasAccess = checkPermissionForModulesFeatureAccess(
-    ModulesName.Permissions,
-    Permission.Create,
+    `${ModulesName.Permissions}.${Permission.Create}`,
     userModulePermission
   );
   useEffect(() => {

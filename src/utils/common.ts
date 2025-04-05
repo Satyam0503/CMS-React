@@ -162,28 +162,32 @@ export const convertMonthsToYear = (months: number) => {
 
 export const checkPermissionForModulesFeatureAccess = (
   requiredPermission: string,
-  userModulePermissions: string []
-) => {
-  // const module = userModulePermissions.find(
-  //   (module) => module.moduleConstant === moduleName
-  // );
-  // if (!module) {
-  //   return false;
-  // }
-  return userModulePermissions.findIndex(x=> x==requiredPermission)>-1
-};
-
-export const findUserDefaultTab = (
   userModulePermissions: string[]
 ) => {
+  console.log(
+    "requiredPermission=",
+    requiredPermission,
+    "userModulePermissions>",
+    userModulePermissions?.length
+  );
+  return userModulePermissions.findIndex((x) => x == requiredPermission) > -1;
+};
+
+export const findUserDefaultTab = (userModulePermissions: string[]) => {
   const defaultTab = SideBarTabList.find((tab) => {
     if (tab.hasSubTabs) {
-      const defaultSubTab= tab.subTabs?.find(subTabs=>{
-        return checkPermissionForModulesFeatureAccess(`${subTabs.constant}.${Permission.View}`,userModulePermissions);
-      })
-      return defaultSubTab ? true: false;
+      const defaultSubTab = tab.subTabs?.find((subTabs) => {
+        return checkPermissionForModulesFeatureAccess(
+          `${subTabs.constant}.${Permission.View}`,
+          userModulePermissions
+        );
+      });
+      return defaultSubTab ? true : false;
     }
-     return checkPermissionForModulesFeatureAccess(`${tab.constant}.${Permission.View}`,userModulePermissions);
+    return checkPermissionForModulesFeatureAccess(
+      `${tab.constant}.${Permission.View}`,
+      userModulePermissions
+    );
   });
 
   if (!defaultTab) {
@@ -264,7 +268,7 @@ export const getAppliedFilters = () => {
     : {
         application: null,
         jobs: null,
-        processLog:null,
+        processLog: null,
       };
   return appliedfilters;
 };
@@ -285,25 +289,25 @@ export const clearAllLocalFilter = () => {
 };
 
 export const countAppliedFilter = (filter: Record<string, any> | null) => {
-    if (!filter || Object.keys(filter).length === 0) {
-      return 0;
-    } else {
-      let count = 0;
+  if (!filter || Object.keys(filter).length === 0) {
+    return 0;
+  } else {
+    let count = 0;
 
-      Object.keys(filter).forEach((element) => {
-        if (filter[element] !== null) {
-          if (Array.isArray(filter[element])) {
-            count += Boolean(filter[element].length) ? 1 : 0;
-          } else if (typeof filter[element] === "string") {
-            count += Boolean(filter[element]) ? 1 : 0;
-          } else if (typeof filter[element] === "number") {
-            count += filter[element] >= 0 ? 1 : 0;
-          }
+    Object.keys(filter).forEach((element) => {
+      if (filter[element] !== null) {
+        if (Array.isArray(filter[element])) {
+          count += Boolean(filter[element].length) ? 1 : 0;
+        } else if (typeof filter[element] === "string") {
+          count += Boolean(filter[element]) ? 1 : 0;
+        } else if (typeof filter[element] === "number") {
+          count += filter[element] >= 0 ? 1 : 0;
         }
-      });
-      return count;
-    }
-  };
+      }
+    });
+    return count;
+  }
+};
 
 export const addCurrentTimeToDate = (date: Dayjs | null) => {
   const currentDateInMs = dayjs().valueOf();

@@ -30,14 +30,13 @@ export const SidebarMenuMain = () => {
     }
     if (
       checkPermissionForModulesFeatureAccess(
-        tab.constant,
-        Permission.View,
+        `${tab.constant}.${Permission.View}`,
         userModulePermission
       )
     ) {
       return tab;
     }
-    return null;  
+    return null;
   }).filter((tab) => tab !== null);
 
   if (filteredTabList.length === 0) {
@@ -68,7 +67,7 @@ export const SidebarMenuMain = () => {
             </SidebarMenuItemWithSub>
           );
         }
-        if(tab){
+        if (tab) {
           return (
             <SidebarMenuItem
               key={tab.id}
@@ -82,4 +81,3 @@ export const SidebarMenuMain = () => {
     </>
   );
 };
-
