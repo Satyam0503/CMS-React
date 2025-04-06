@@ -218,7 +218,7 @@ export default function Jobs() {
               <CustomIconButton
                 icon={<FilterList />}
               />
-              {userPermissionsForModule.includes(Permission.Create) && (
+              {userPermissionsForModule.includes(`${ModulesName.Jobs}.${Permission.Create}`) && (
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setOpenModal(true)}

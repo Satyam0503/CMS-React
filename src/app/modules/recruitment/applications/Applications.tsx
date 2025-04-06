@@ -62,7 +62,7 @@ export const Applications = () => {
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionsForModule = useMemo(
-    () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
+    () => getModulePermissions(ModulesName.Applications, userModulesPermissions),
     [userModulesPermissions]
   );
 
@@ -142,6 +142,8 @@ export const Applications = () => {
   useEffect(()=>{
     setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
   },[]);
+
+  
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -165,7 +167,7 @@ export const Applications = () => {
                   handleClick={handleFilterClick}
                 />
               </Badge>
-              {userPermissionsForModule.includes(Permission.Create) && (
+              {userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`) && (
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setAddModalOpen(true)}

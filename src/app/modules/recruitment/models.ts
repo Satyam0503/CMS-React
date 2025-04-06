@@ -3,7 +3,6 @@ import { BaseModel, ResponseData } from "../../../utils/common_types";
 
 export interface ApplicantModel {
   applicantId: string;
-  companyId: string;
   firstName: string;
   lastName: string;
   state: string;

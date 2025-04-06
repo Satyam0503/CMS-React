@@ -98,7 +98,7 @@ export default function Employees() {
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
     [userModulesPermissions]
-  );
+  ); 
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
   const [viewMode, setViewMode] =
@@ -307,7 +307,7 @@ export default function Employees() {
                 </ToggleButton>
               </ToggleButtonGroup>
               <CustomIconButton icon={<FilterList />} handleClick={() => {}} />
-              {userPermissionForModule.includes(Permission.Create) && (
+              {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setModalOpen(true)}

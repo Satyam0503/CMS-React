@@ -19,10 +19,7 @@ export interface CreatePasswordModel {
 
 export interface UserModel {
   userId: string;
-  companyId: string;
   companyName: string;
-  role: string;
-  roleId: string;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -35,11 +32,6 @@ export type UserSummaryModel = {
   summaryId: string;
   summary: string;
 };
-
-export type UserDataModel = Omit<
-  UserModel,
-  "modulePermission" | "permissions" | "profileImage"
->;
 
 export interface ModulePermissoinModel {
   moduleName: string;

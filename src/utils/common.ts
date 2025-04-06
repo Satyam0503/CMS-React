@@ -164,12 +164,6 @@ export const checkPermissionForModulesFeatureAccess = (
   requiredPermission: string,
   userModulePermissions: string[]
 ) => {
-  console.log(
-    "requiredPermission=",
-    requiredPermission,
-    "userModulePermissions>",
-    userModulePermissions?.length
-  );
   return userModulePermissions.findIndex((x) => x == requiredPermission) > -1;
 };
 
@@ -198,19 +192,11 @@ export const findUserDefaultTab = (userModulePermissions: string[]) => {
 
 export const getModulePermissions = (
   moduleName: ModulesName,
-  modulesPermissions: ModulePermissoinModel[]
+  modulesPermissions: string[]
 ) => {
-  const allowedPermission: string[] = [];
-  const hasModuleAccess = modulesPermissions.find(
-    (module) => module.moduleConstant === moduleName
+  const allowedPermission = modulesPermissions.filter((permission) =>
+    permission.includes(moduleName)
   );
-  if (hasModuleAccess) {
-    hasModuleAccess.permissions.forEach((permission) => {
-      if (permission.hasAccess) {
-        allowedPermission.push(permission.permissionConstant);
-      }
-    });
-  }
   return allowedPermission;
 };
 
@@ -274,11 +260,10 @@ export const getAppliedFilters = () => {
 };
 
 export const setLocalFilter = (filters: FiltersType) => {
-  if (localStorage) {
-    localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
-  } else {
-    console.log("Unable to access localstorage");
+  if (!localStorage) {
+    return;
   }
+  localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
 };
 
 export const clearAllLocalFilter = () => {
