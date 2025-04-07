@@ -27,6 +27,7 @@ import { AddNotice } from "./components/AddNotice";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import CustomisedButton from "../../shared/components/CustomisedButton";
+import { usePageData } from "../../../_themes/layout/core";
 
 const rows = [
   {
@@ -61,8 +62,8 @@ export default function NoticeBoard() {
   const [selectedNotice, setSelectedNotice] =
     React.useState<NoticeModel | null>(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
-
   const intl = useIntl();
+  const {setPageTitle}= usePageData();
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
@@ -98,11 +99,12 @@ export default function NoticeBoard() {
     setSelectedNotice(null);
   }
 
+  React.useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.NOTICE_BOARD" }))
+  },[])
+
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.NOTICE_BOARD" })}
-      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"

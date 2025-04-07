@@ -13,17 +13,31 @@
   "PAGE.THEME":"Theme",
   "PAGE.CLIENTS":"Clients",
   "PAGE.PROJECTS":"Projects",
-  "PAGE.PROFILE":"Profile",
+  "PAGE.PROFILE":"Employee Profile",
+  "PAGE.APPLICANT":"Applicant",
+  "PAGE.EDIT_APPLICANT":"Edit Applicant",
+  "PAGE.EDIT_PERMISSION":"Edit Permission",
+  "PAGE.ADD_ROLE":"Add Role",
+  "PAGE.COMPANY_MASTER":"Company Master",
 
 
   "FORM.FIRST_NAME":"First Name",
   "FORM.LAST_NAME":"Last Name",
+  "FORM.GENDER":"Gender",
+  "FORM.EMPID":"Employee Id",
   "FORM.FULL_NAME":"Full Name",
   "FORM.COMPANY_NAME":"Company Name",
   "FORM.EMAIL":"Email",
   "FORM.PASSWORD":"Password",
   "FORM.CONFIRM_PASSWORD":"Confirm Password",
   "FORM.NEW_PASSWORD":"New Password",
+  "FORM.DEPARTMENT_NAME":"Department Name",
+  "FORM.DESCRIPTION":"Description",
+  "FORM.DOB":"Date Of Birth",
+  "FORM.DOJ":"Date Of Joining",
+  "FORM.ROLE":"Role",
+  "FORM.JOB_ROLE":"Job Role",
+  "FORM.DEPARTMENT":"Department",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
@@ -263,10 +277,8 @@
   "PERMISSION.VIEW": "View",
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
-  "ROLES.EDIT_AND_PERMISSION": "Edit Role And Permission",
   "ROLE.NAME": "Role Name",
-  "ROLES.ADD": " Add Role",
-  "RECRUITMENT.JOBS": "Jobs ",
+  "RECRUITMENT.JOBS": "Jobs",
 
   "SETTING.NOTIFICATION": "Notification",
   "SETTING.NOTIFICATIONS": "Notification Settings",
@@ -370,6 +382,12 @@
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
 
+  "COMPANY_MASTER.TAB.DEPARTMENT":"Departments",
+  "COMPANY_MASTER.TAB.JOBS":"Jobs",
+  "COMPANY_MASTER.DEPARTMENT.TOTAL":"Total Departments",
+  "COMPANY_MASTER.ADD_DEPARTMENT":"Add Department",
+  "COMPANY_MASTER.EDIT_DEPARTMENT":"Edit Department",
+
   "BUTTON.ADD":"Add",
   "BUTTON.RESET":"Reset",
   "BUTTON.CLOSE": "Close",
@@ -381,6 +399,7 @@
   "BUTTON.SIGNIN": "Sign In",
   "BUTTON.CREATE_PASS": "Create Password",
   "BUTTON.CROP": "Crop",
-  "BUTTON.APPLY": "Apply"
-  
+  "BUTTON.APPLY": "Apply",
+
+  "MESSAGE.DEPARTMENT.ADD":"Please add departments."
 }

@@ -26,7 +26,6 @@ export enum Permission {
   Delete = "Delete",
   Edit = "Edit",
   Create = "Create",
-  List = "List",
 }
 export enum Modules {
   Dashboard = 1,
@@ -42,10 +41,29 @@ export enum Modules {
   Applications = 11,
   Permissions = 12,
   Theme = 13,
-  ProcessLog=14
+  ProcessLog=14,
+  CompanyMaster=15
 }
 
 export enum ModulesName {
+  Dashboard = "Dashboard",
+  Employees = "Employees",
+  Attendance = "Attendance",
+  LeaveManagement = "Leave_Management",
+  MyProfile = "My_Profile",
+  Recruitment = "Recruitment",
+  Admin = "Admin",
+  Holidays = "Holidays",
+  NoticeBoard = "Notice_board",
+  Jobs = "Jobs",
+  Applications = "Applications",
+  Permissions = "Permissions",
+  Theme = "Theme",
+  ProcessLog= "Process_Log",
+  CompanyMaster="Company_Master"
+}
+
+export enum ModulesTitles {
   Dashboard = "Dashboard",
   Employees = "Employees",
   Attendance = "Attendance",
@@ -59,7 +77,8 @@ export enum ModulesName {
   Applications = "Applications",
   Permissions = "Permissions",
   Theme = "Theme",
-  ProcessLog= "Process Log"
+  ProcessLog= "Process Log",
+  CompanyMaster="Company Master"
 }
 
 export enum Roles {

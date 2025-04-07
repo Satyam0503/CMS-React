@@ -31,14 +31,13 @@ const NoticeBoard = lazy(
 );
 
 const PrivateRoutes = () => {
-  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission);
-  const userPermissions = modulePermissions ?? [];
+  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   return (
     <Routes>
       <Route element={<MasterLayout />}>
         <Route
           path="auth/*"
-          element={<Navigate to={findUserDefaultTab(userPermissions)} />}
+          element={<Navigate to={findUserDefaultTab(modulePermissions)} />}
         />
 
         <Route

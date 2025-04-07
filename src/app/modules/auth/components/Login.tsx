@@ -33,7 +33,6 @@ const initialValues = {
 };
 
 export function Login() {
-  const [loading, setLoading] = useState(false);
   const intl = useIntl();
   const dispatch = useAppDispatch();
   localStorage.removeItem("clientId");
@@ -42,8 +41,6 @@ export function Login() {
     setSubmitting: (isSubmitting: boolean) => void,
     setStatus: (status?: any) => void
   ) {
-    setLoading(true);
-
     try {
       const response = await login({ ...values });
       const data = response.data;
@@ -58,7 +55,6 @@ export function Login() {
       setStatus(error.message);
     } finally {
       setSubmitting(false);
-      setLoading(false);
     }
   }
   return (
@@ -148,7 +144,7 @@ export function Login() {
                     type="submit"
                     label={ intl.formatMessage({id:"BUTTON.SIGNIN"})}
                     size="large"
-                    loading={loading}
+                    loading={isSubmitting}
                     disabled={isSubmitting || !(isValid && dirty)}
                   />
                   <Typography variant="body2" align="center">

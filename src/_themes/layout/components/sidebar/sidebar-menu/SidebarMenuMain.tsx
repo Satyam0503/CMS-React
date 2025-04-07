@@ -15,8 +15,7 @@ export const SidebarMenuMain = () => {
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         checkPermissionForModulesFeatureAccess(
-          subTab.title,
-          Permission.View,
+          `${subTab.constant}.${Permission.View}`,
           userModulePermission
         )
       );
@@ -31,14 +30,13 @@ export const SidebarMenuMain = () => {
     }
     if (
       checkPermissionForModulesFeatureAccess(
-        tab.title,
-        Permission.View,
+        `${tab.constant}.${Permission.View}`,
         userModulePermission
       )
     ) {
       return tab;
     }
-    return null;  
+    return null;
   }).filter((tab) => tab !== null);
 
   if (filteredTabList.length === 0) {
@@ -69,7 +67,7 @@ export const SidebarMenuMain = () => {
             </SidebarMenuItemWithSub>
           );
         }
-        if(tab){
+        if (tab) {
           return (
             <SidebarMenuItem
               key={tab.id}
@@ -83,4 +81,3 @@ export const SidebarMenuMain = () => {
     </>
   );
 };
-

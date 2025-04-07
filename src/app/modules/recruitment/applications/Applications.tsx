@@ -62,11 +62,9 @@ export const Applications = () => {
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionsForModule = useMemo(
-    () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
+    () => getModulePermissions(ModulesName.Applications, userModulesPermissions),
     [userModulesPermissions]
   );
-
-  setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -141,6 +139,11 @@ export const Applications = () => {
     return () => clearTimeout(timeoutId);
   }, [refresh, applicationFilters, search, paginationValues]);
   
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
+  },[]);
+
+  
   return (
     <>
       <Card sx={{ p: 2.6 }}>
@@ -164,7 +167,7 @@ export const Applications = () => {
                   handleClick={handleFilterClick}
                 />
               </Badge>
-              {userPermissionsForModule.includes(Permission.Create) && (
+              {userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`) && (
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setAddModalOpen(true)}

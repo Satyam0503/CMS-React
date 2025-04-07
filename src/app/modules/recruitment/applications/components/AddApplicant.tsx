@@ -29,7 +29,6 @@ import { experienceCategoryList, indianStates } from "../../../../../utils/const
 
 const initialValues: ApplicantModel = {
   applicantId: "",
-  companyId: "",
   firstName: "",
   lastName: "",
   email: "",
@@ -55,7 +54,6 @@ export const AddApplicant: FC<PropsTypes> = ({
   setRefresh,
   refresh,
 }) => {
-  const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
 
@@ -89,7 +87,6 @@ export const AddApplicant: FC<PropsTypes> = ({
     );
     const payload = {
       ...values,
-      companyId: companyId,
       vacancyName: vacancy ? vacancy.title : "",
       activityType: ApplicationStatus.New,
       experience: values.experience * 12,

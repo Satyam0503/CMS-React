@@ -17,6 +17,7 @@ import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { FilterList } from "@mui/icons-material";
 import { ProcessLogFilter } from "./components/ProcessLogFilter";
 import { countAppliedFilter } from "../../../../utils/common";
+import { usePageData } from "../../../../_themes/layout/core";
 
 export const processLogInitialFilter: ProcessLogFilterModel = {
   jobRole: "",
@@ -27,6 +28,7 @@ export const processLogInitialFilter: ProcessLogFilterModel = {
 
 const ProcessLogs = () => {
   const intl = useIntl();
+  const {setPageTitle }= usePageData();
   const [searchValue, setSearchValue] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoading, setLoading] = useState(true);
@@ -73,6 +75,10 @@ const ProcessLogs = () => {
     setAnchorEl(null);
   };
 
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.PROCESS_LOG" }));
+  },[])
+
   useEffect(() => {
     const payload: ProcessLogPayoadModel = {
       ...processLogFilters,
@@ -98,10 +104,6 @@ const ProcessLogs = () => {
   }, [searchValue, paginationValues, processLogFilters]);
 
   return (
-    <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.PROCESS_LOG" })}
-      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack spacing={2}>
           <Stack
@@ -149,7 +151,6 @@ const ProcessLogs = () => {
           )}
         </Stack>
       </Card>
-    </>
   );
 };
 

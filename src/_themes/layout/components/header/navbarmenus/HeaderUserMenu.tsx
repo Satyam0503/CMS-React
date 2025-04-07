@@ -71,7 +71,6 @@ export default function HeaderUserMenu() {
             <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
               {currentUser?.firstName} {currentUser?.lastName}
             </Typography>
-            <Typography variant="body2">{currentUser?.role || ""}</Typography>
           </Box>
         </MenuItem>
         <Divider/>

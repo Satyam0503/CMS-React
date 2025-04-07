@@ -5,7 +5,39 @@ import { EmployeeAttendance } from "../attendance/EmployeeAttendance";
 import { EmployeeLeaves } from "../leaves/EmployeeLeaves";
 import Employees from "./Employees";
 import { EmployeeProfile } from "../users/employeeprofile/EmployeeProfile";
+import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+import { useEffect } from "react";
+
+const employeeBreadCrumbs: Array<Breadcrumb> = [
+  {
+    label: "PAGE.EMPLOYEES",
+    path: "/employee/employees",
+    parent: "/",
+  },
+  {
+    label: "PAGE.LEAVE_MANAGEMENT",
+    path: "/employee/employeeleave",
+    parent: "/",
+  },
+  {
+    label: "PAGE.ATTENDANCE",
+    path: "/employee/attendance",
+    parent: "/",
+  }, 
+  {
+    label: "PAGE.PROFILE",
+    path: "/employee/{employeeid}",
+    parent: "/employee/employees",
+  }, 
+];
+
 const EmployeesRoute = () => {
+  const {setBreadcrumbs} = useBreadcrumbs();
+
+  useEffect(()=>{
+    setBreadcrumbs(employeeBreadCrumbs);
+  },[])
+
   return (
     <Routes>
       <Route element={<Outlet />}>
@@ -35,7 +67,7 @@ const EmployeesRoute = () => {
           }
         />
         <Route
-          path="/aboutemployee"
+          path="/:employeeid"
           element={
             <ProtectedRoute module={ModulesName.Employees}>
               <EmployeeProfile />

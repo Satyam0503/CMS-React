@@ -41,10 +41,12 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 export const ApplicantDetails = () => {
   const intl = useIntl();
   const navigate = useNavigate();
+  const { setPageTitle}= usePageData();
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(false);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
@@ -66,7 +68,6 @@ export const ApplicantDetails = () => {
   });
 
   useEffect(() => {
-    // setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
         if (data.success && data.statusCode === 200) {
@@ -85,6 +86,7 @@ export const ApplicantDetails = () => {
   }, [refresh]);
 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({id:"PAGE.APPLICANT"}));
     const payload= {
       pageNo:paginationValues.pageNo +1,
       pageSize:paginationValues.pageSize,
@@ -103,7 +105,7 @@ export const ApplicantDetails = () => {
       }
     };
     getAllComments();
-  }, [refreshComment]);
+  }, [refreshComment,paginationValues]);
 
   const handleCommentChange = useCallback((comment: string) => {
     setComment(comment);
@@ -237,8 +239,7 @@ export const ApplicantDetails = () => {
     });
   };
   return (
-    <>
-      <Stack spacing={2} mt={2}>
+      <Stack spacing={2}>
         <Card sx={{ p: 2 }}>
           <Stack
             direction={"row"}
@@ -261,7 +262,7 @@ export const ApplicantDetails = () => {
                 icon={<Edit />}
                 tooltip="Edit Applicant"
                 handleClick={() => {
-                  navigate("/recruitment/editapplicant", { state: applicant });
+                  navigate(`/recruitment/editapplicant/${applicant.applicantId}`);
                 }}
               />
             </Stack>
@@ -429,6 +430,5 @@ export const ApplicantDetails = () => {
           </Stack>
         </Card>
       </Stack>
-    </>
   );
 };

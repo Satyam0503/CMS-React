@@ -20,6 +20,7 @@ import {
   CommentAction,
   Modules,
   ModulesName,
+  ModulesTitles,
   TIME_PERIOD_MAP,
 } from "../enums";
 
@@ -108,6 +109,10 @@ export const ServiceUrl = {
 
   // process log
   GET_PROCESS_LOG: `${BaseUrl}/api/Applicants/GetProcessLogData`,
+
+  // departments
+  GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
+  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddDeparments`,
 };
 
 export const languages = [
@@ -302,13 +307,6 @@ export const CommentActionCategory = [
 export const ApplicantStatusConstant = [
   { id: 1, label: "InActive", value: ApplicantStatus.InActive },
   { id: 2, label: "Active", value: ApplicantStatus.Active },
-];
-
-export const DepartmentList = [
-  { id: 1, label: "Human Resource", value: "Human Resource" },
-  { id: 2, label: "Sales", value: "Sales" },
-  { id: 3, label: "Marketing", value: "Marketing" },
-  { id: 4, label: "IT", value: "IT" },
 ];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
@@ -831,38 +829,44 @@ export const CommentTableColumnList: ColumnListTypes[] = [
 export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
-    title: ModulesName.Dashboard,
+    title:ModulesTitles.Dashboard,
+    constant: ModulesName.Dashboard,
     route: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
     id: Modules.MyProfile,
-    title: ModulesName.MyProfile,
+    title:ModulesTitles.MyProfile,
+    constant: ModulesName.MyProfile,
     route: "/myprofile",
     icon: <AccountCircle />,
   },
   {
     id: Modules.Employees,
-    title: ModulesName.Employees,
+    constant: ModulesName.Employees,
+    title:ModulesTitles.Employees,
     route: "/employee/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
       {
         id: Modules.Employees,
-        title: ModulesName.Employees,
+        constant: ModulesName.Employees,
+        title:ModulesTitles.Employees,
         route: "/employee/employees",
         icon: <Person />,
       },
       {
         id: Modules.LeaveManagement,
-        title: ModulesName.LeaveManagement,
+        constant: ModulesName.LeaveManagement,
+        title:ModulesTitles.LeaveManagement,
         route: "/employee/employeeleave",
         icon: <PermContactCalendar />,
       },
       {
         id: Modules.Attendance,
-        title: ModulesName.Attendance,
+        title:ModulesTitles.Attendance,
+        constant: ModulesName.Attendance,
         route: "/employee/attendance",
         icon: <AccessTime />,
       },
@@ -870,26 +874,30 @@ export const SideBarTabList: SideBarTabListProps[] = [
   },
   {
     id: Modules.Recruitment,
-    title: ModulesName.Recruitment,
+    title: ModulesTitles.Recruitment,
+    constant: ModulesName.Recruitment,
     route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
     subTabs: [
       {
         id: Modules.Jobs,
-        title: ModulesName.Jobs,
+        constant: ModulesName.Jobs,
+        title: ModulesTitles.Jobs,
         route: "/recruitment/jobs",
         icon: <Work />,
       },
       {
         id: Modules.Applications,
-        title: ModulesName.Applications,
+        title: ModulesTitles.Applications,
+        constant: ModulesName.Applications,
         route: "/recruitment/applications",
         icon: <Mail />,
       },
       {
         id: Modules.ProcessLog,
-        title: ModulesName.ProcessLog,
+        constant: ModulesName.ProcessLog,
+        title: ModulesTitles.ProcessLog,
         route: "/recruitment/processlog",
         icon: <Book />,
       },
@@ -897,34 +905,46 @@ export const SideBarTabList: SideBarTabListProps[] = [
   },
   {
     id: Modules.Admin,
-    title: ModulesName.Admin,
+    title: ModulesTitles.Admin,
+    constant: ModulesName.Admin,
     route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
     subTabs: [
       {
         id: Modules.Permissions,
-        title: ModulesName.Permissions,
+        title: ModulesTitles.Permissions,
+        constant: ModulesName.Permissions,
         route: "/admin/permissions",
         icon: <ToggleOn />,
       },
       {
         id: Modules.Theme,
-        title: ModulesName.Theme,
+        title: ModulesTitles.Theme,
+        constant: ModulesName.Theme,
         route: "/admin/theme",
         icon: <ColorLens />,
       },
+      {
+        id: Modules.CompanyMaster,
+        title: ModulesTitles.CompanyMaster,
+        constant: ModulesName.CompanyMaster,
+        route: "/admin/companymaster",
+        icon: <AdminPanelSettings />,
+      }
     ],
   },
   {
     id: Modules.Holidays,
-    title: ModulesName.Holidays,
+    title: ModulesTitles.Holidays,
+    constant: ModulesName.Holidays,
     route: "/holidays",
     icon: <CalendarMonth />,
   },
   {
     id: Modules.NoticeBoard,
-    title: ModulesName.NoticeBoard,
+    constant: ModulesName.NoticeBoard,
+    title: ModulesTitles.NoticeBoard,
     route: "/noticeboard",
     icon: <AdminPanelSettings />,
   },

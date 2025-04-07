@@ -9,7 +9,6 @@ import { AboutEmployee } from "./AboutEmployee";
 import { LeaveTracker } from "../../leavetracker/LeaveTracker";
 import { UserPerformance } from "../../performance/UserPerformance";
 import { WorkHistory } from "../../workhistory/WorkHistory";
-import { EmployeeProfileMain } from "./EmployeeProfileMain";
 import { AboutEmployeeMain } from "./AboutEmployeeMain";
 
 interface TabPanelProps {
