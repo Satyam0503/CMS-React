@@ -19,10 +19,25 @@ import { getEmployeeById, getEmployeeSkills } from "../userservices";
 import LeaveAllowences from "../components/LeaveAllowences";
 import BasicTabs from "./components/BasicTabs";
 import { usePageData } from "../../../../_themes/layout/core";
+import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+
+const employeeBreadCrumbs: Array<Breadcrumb> = [ 
+  {
+    label: "PAGE.EMPLOYEES",
+    path: "/employees",
+    parent: "/",
+  },
+  {
+    label: "PAGE.PROFILE",
+    path: "/employees/{employeeid}",
+    parent: "/employees",
+  } 
+];
 
 const EmployeeProfile = () => {
   const intl = useIntl();
   const { setPageTitle } = usePageData();
+  const {setBreadcrumbs}= useBreadcrumbs();
   const [employeeDetails, setEmployeeDetails] = useState<EmployeeModel>(
     {} as EmployeeModel
   );
@@ -63,6 +78,10 @@ const EmployeeProfile = () => {
     };
     getEmployeeDetails();
   }, []);
+
+  useEffect(()=>{
+    setBreadcrumbs(employeeBreadCrumbs);
+  },[])
 
   return (
     <>
@@ -142,4 +161,4 @@ const EmployeeProfile = () => {
   );
 };
 
-export { EmployeeProfile };
+export default EmployeeProfile ;

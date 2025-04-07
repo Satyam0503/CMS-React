@@ -1,4 +1,4 @@
-import { Button, Tooltip, Typography } from "@mui/material";
+import { Button, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
   EmployeeModel,
@@ -48,6 +48,7 @@ import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
+import clsx from "clsx";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -303,7 +304,6 @@ export const CommentActionCategory = [
   { id: 6, label: "Edit", value: CommentAction.Edit },
 ];
 
-
 export const ApplicantStatusConstant = [
   { id: 1, label: "InActive", value: ApplicantStatus.InActive },
   { id: 2, label: "Active", value: ApplicantStatus.Active },
@@ -475,7 +475,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     label: "Commented On",
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
     minWidth: 150,
-    sorting:true
+    sorting: true,
   },
   {
     id: "userName",
@@ -687,16 +687,26 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     minWidth: 200,
   },
   {
-    id: "accessToApp",
+    id: "hasAppAccess",
     label: "Access To Application",
     minWidth: 180,
+    format: (hasAccess: boolean) => (
+      <Stack direction="row" className="align-items-center justify-content-center gap-2">
+        <span
+          className={clsx({ "has-access": hasAccess, "no-access": !hasAccess })}
+        />
+        <FormattedMessage
+          id={hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS"}
+        />
+      </Stack>
+    ),
   },
   {
     id: "action",
     label: "Action",
     minWidth: 180,
     build: (row: RoleModel) => (
-      <Link to={"/admin/editpermission"} state={{ ...row }}>
+      <Link to={`/admin/roles/edit/${row.rolesId}`}>
         <Button variant="contained">
           <FormattedMessage
             id={
@@ -829,45 +839,38 @@ export const CommentTableColumnList: ColumnListTypes[] = [
 export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
-    title:ModulesTitles.Dashboard,
+    title: ModulesTitles.Dashboard,
     constant: ModulesName.Dashboard,
     route: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
-    id: Modules.MyProfile,
-    title:ModulesTitles.MyProfile,
-    constant: ModulesName.MyProfile,
-    route: "/myprofile",
-    icon: <AccountCircle />,
-  },
-  {
     id: Modules.Employees,
     constant: ModulesName.Employees,
-    title:ModulesTitles.Employees,
-    route: "/employee/",
+    title: ModulesTitles.Employees,
+    route: "/employees",
+    icon: <Person />,
+  },
+  {
+    id: Modules.PayRoll,
+    constant: ModulesName.PayRoll,
+    title: ModulesTitles.PayRoll,
+    route: "/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
       {
-        id: Modules.Employees,
-        constant: ModulesName.Employees,
-        title:ModulesTitles.Employees,
-        route: "/employee/employees",
-        icon: <Person />,
-      },
-      {
         id: Modules.LeaveManagement,
         constant: ModulesName.LeaveManagement,
-        title:ModulesTitles.LeaveManagement,
-        route: "/employee/employeeleave",
+        title: ModulesTitles.LeaveManagement,
+        route: "/leavemanagement",
         icon: <PermContactCalendar />,
       },
       {
         id: Modules.Attendance,
-        title:ModulesTitles.Attendance,
+        title: ModulesTitles.Attendance,
         constant: ModulesName.Attendance,
-        route: "/employee/attendance",
+        route: "/attendance",
         icon: <AccessTime />,
       },
     ],
@@ -931,7 +934,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.CompanyMaster,
         route: "/admin/companymaster",
         icon: <AdminPanelSettings />,
-      }
+      },
     ],
   },
   {

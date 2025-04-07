@@ -45,9 +45,9 @@ const SettingPage = () => {
   return (
     <Routes>
       <Route element={<Outlet />}>
-        <Route index element={<Navigate to={"/admin/permissions"} />} />
+        <Route index element={<Navigate to={"/admin/roles"} />} />
         <Route
-          path="permissions"
+          path="roles"
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <Roles />
@@ -63,7 +63,7 @@ const SettingPage = () => {
           }
         />
         <Route
-          path="editpermission"
+          path="roles/edit/:id"
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <EditPermission />
@@ -71,7 +71,7 @@ const SettingPage = () => {
           }
         />
         <Route
-          path="addrole"
+          path="roles/add"
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <AddPermission />

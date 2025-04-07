@@ -7,7 +7,7 @@ import { HourglassBottom } from "@mui/icons-material";
 import { colors } from "../theme/MuiTheme";
 import { usePageData } from "../../../_themes/layout/core";
 
-export const EmployeeAttendance: FC = () => {
+const EmployeeAttendance: FC = () => {
   const intl = useIntl();
   const {setPageTitle}= usePageData();
 
@@ -35,3 +35,5 @@ export const EmployeeAttendance: FC = () => {
     </Grid>
   );
 };
+
+export default EmployeeAttendance;

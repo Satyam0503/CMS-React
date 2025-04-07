@@ -6,11 +6,12 @@ import {
   FormControlLabel,
   FormGroup,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
 import { colors } from "../../../theme/MuiTheme";
@@ -39,7 +40,8 @@ const validationSchema = Yup.object().shape({
 
 export const EditPermission = () => {
   const intl = useIntl();
-  const {setPageTitle }= usePageData();
+  const { setPageTitle } = usePageData();
+  const param = useParams();
   const state = useLocation().state as RoleModel | null;
   const navigate = useNavigate();
   const [modulePermissionList, setModulePermissionList] = useState<
@@ -48,11 +50,7 @@ export const EditPermission = () => {
   const [rolePermissionList, setRolePermissionList] = useState<
     PermissionModel[]
   >([]);
-  const [currentRoleDetails, setCurrentRoleDetails] = useState({
-    description: "",
-    titles: "",
-  });
-
+  const [currentRoleDetails, setCurrentRoleDetails] = useState({description: "", titles: "", });
   const [isLoading, setLoading] = useState(true);
 
   const formik = useFormik({
@@ -64,8 +62,10 @@ export const EditPermission = () => {
     },
   });
 
+  console.log(param);
+  
   useEffect(() => {
-    setPageTitle(intl.formatMessage({id:"PAGE.EDIT_PERMISSION"}));
+    setPageTitle(intl.formatMessage({ id: "PAGE.EDIT_PERMISSION" }));
     if (!state || Object.keys(state).length === 0) {
       navigate("/error/404", { replace: true });
     } else {
@@ -195,6 +195,21 @@ export const EditPermission = () => {
               <Typography variant="h5">
                 {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
               </Typography>
+              <Box className="p-5 shadow-sm">
+                <Stack
+                  spacing={2}
+                  direction={"row"}
+                  className="align-items-center mb-4"
+                >
+                  <Typography variant="h6">
+                    {intl.formatMessage({ id: "ADMIN.APP_ACCESS" })} :
+                  </Typography>
+                  {/* <Switch  checked={state?.hasAppAccess} onChange={()=>handleChnage}/> */}
+                </Stack>
+                <Typography>
+                    {intl.formatMessage({ id: "ADMIN.APP_ACCESS_INSTRUCTION" })}
+                </Typography>
+              </Box>
               <Box
                 component={"div"}
                 sx={{

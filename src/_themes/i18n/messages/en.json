@@ -285,6 +285,8 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
   "ROLE.NAME": "Role Name",
+  "ROLE.HAS_ACCESS": "Has Access",
+  "ROLE.NO_ACCESS": "No Access",
   "RECRUITMENT.JOBS": "Jobs",
 
   "SETTING.NOTIFICATION": "Notification",
@@ -384,6 +386,8 @@
   "ADMIN.PERMISSION": "Permissions",
   "ADMIN.EDIT_PERMISSION": "Edit Permissions",
   "ADMIN.VIEW_PERMISSION": "View Permissions",
+  "ADMIN.APP_ACCESS":"App Access",
+  "ADMIN.APP_ACCESS_INSTRUCTION":"Note :  ",
   "SEE_MORE":"See More",
   "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",

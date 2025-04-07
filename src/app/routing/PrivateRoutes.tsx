@@ -15,12 +15,11 @@ const Setting = lazy(() => import("../modules/admin/Settings.tsx"));
 const Recruitment = lazy(
   () => import("../modules/recruitment/RecruitmentRoutes.tsx")
 );
-const EmployeePage = lazy(
-  () => import("../modules/employees/EmployeesRoute.tsx")
+const Employees = lazy(
+  () => import("../modules/employees/Employees.tsx")
 );
-const Dashboard = lazy(
-  () => import("../modules/dashboard/Dashboard.tsx")
-);
+const EmployeeProfile = lazy(()=> import("../modules/users/employeeprofile/EmployeeProfile.tsx"));
+const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
 
 const ProfilePage = lazy(
   () => import("../modules/users/ProfilePageWrapper.tsx")
@@ -30,8 +29,12 @@ const NoticeBoard = lazy(
   () => import("../modules/noticeboard/NoticeBoard.tsx")
 );
 
+const Attendance = lazy(()=> import("../modules/attendance/EmployeeAttendance.tsx"));
+const EmployeeLeaves = lazy(()=> import("../modules/leaves/EmployeeLeaves.tsx"));
+
 const PrivateRoutes = () => {
-  const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const modulePermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   return (
     <Routes>
       <Route element={<MasterLayout />}>
@@ -85,11 +88,44 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="employee/*"
+          path="employees"
           element={
-            <SuspensedView>
-              <EmployeePage />
-            </SuspensedView>
+            <ProtectedRoute module={ModulesName.Employees}>
+              <SuspensedView>
+                <Employees />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="employees/:employeeid"
+          element={
+            <ProtectedRoute module={ModulesName.Employees}>
+              <SuspensedView>
+                <EmployeeProfile />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="attendance"
+          element={
+            <ProtectedRoute module={ModulesName.Attendance}>
+              <SuspensedView>
+                < Attendance/>
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="leavemanagement"
+          element={
+            <ProtectedRoute module={ModulesName.LeaveManagement}>
+              <SuspensedView>
+                <EmployeeLeaves />
+              </SuspensedView>
+            </ProtectedRoute>
           }
         />
 
