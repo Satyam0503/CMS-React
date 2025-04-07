@@ -1,4 +1,11 @@
 {
+  "Language.English":"English",
+  "Language.Mandarin":"Mandarin",
+  "Language.Spanish":"Spanish",
+  "Language.Japanese":"Japanese",
+  "Language.German":"German",
+  "Language.French":"French",
+
   "PAGE.JOBS":"Job Requirements",
   "PAGE.PROCESS_LOG":"Process Log",
   "PAGE.APPLICATIONS":"Applications",
@@ -335,7 +342,7 @@
   "USER.RESUME": "Resume Preview",
   "USER.AGE": "Years Old",
   "USER.LANGUAGE": "Languages",
-  "USER.ACCOUNT_SETTING": "Account Setting",
+  "USER.MY_PROFILE": "My Profile",
   "USER.ORGNISATION": "Orgnisation name",
   "USER.DESIGNATION": "Designation",
   "VACANCY.TEXT1": " Thank you for exploring our website!",
@@ -401,5 +408,12 @@
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
 
-  "MESSAGE.DEPARTMENT.ADD":"Please add departments."
+
+  "MESSAGE.DEPARTMENT.ADD_SUCCESS":"Please add departments",
+
+  "MESSAGE.APPLICANT.ADD_SUCCESS":"Application has been submitted successfully",
+  "MESSAGE.APPLICANT.ALREADY_APPLIED":"Application has already been submitted. Please reapply after the waiting period",
+  "MESSAGE.APPLICANT.UPDATED":"Applicant Updated Successfully",
+
+  "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully"
 }

@@ -9,7 +9,6 @@ export interface ApplicantModel {
   email: string;
   phone: string;
   vacancyId: string;
-  vacancyName: string;
   experience: number;
   status: number;
   activityType: number;
@@ -22,6 +21,7 @@ export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
 };
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
+  vacancyName:string;
   statusName: string;
   status: number;
   activityTypeName: string;

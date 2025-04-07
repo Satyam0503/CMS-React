@@ -119,37 +119,37 @@ export const languages = [
   {
     id: 1,
     lang: "en",
-    name: "English",
+    name: <FormattedMessage id="Language.English" />,
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
     lang: "zh",
-    name: "Mandarin",
+    name: <FormattedMessage id="Language.Mandarin" />,
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
     lang: "es",
-    name: "Spanish",
+    name: <FormattedMessage id="Language.Spanish" />,
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
     lang: "ja",
-    name: "Japanese",
+    name: <FormattedMessage id="Language.Japanese" />,
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
     lang: "de",
-    name: "German",
+    name: <FormattedMessage id="Language.German" />,
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
     lang: "fr",
-    name: "French",
+    name: <FormattedMessage id="Language.French" />,
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
 ];

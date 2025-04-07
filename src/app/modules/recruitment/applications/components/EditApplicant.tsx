@@ -55,7 +55,6 @@ export const EditApplicant = () => {
   const [applicantDetails, setApplicantDetails] = useState<Applicant>(
     {} as Applicant
   );
-  const companyId = useAppSelector((state) => state.user.userData?.companyId)!;
   const { setPageTitle } = usePageData();
   const param = useParams();
 
@@ -109,13 +108,11 @@ export const EditApplicant = () => {
 
   const initialValues: EditApplicantModel = {
     applicantId: applicantDetails?.applicantId,
-    companyId: "",
     firstName: applicantDetails.firstName,
     lastName: applicantDetails.lastName,
     email: applicantDetails.email,
     phone: applicantDetails.phone,
     vacancyId: applicantDetails.vacancyId,
-    vacancyName: applicantDetails.vacancyName,
     state: applicantDetails.state,
     resume: null,
     status: applicantDetails.status,
@@ -181,8 +178,6 @@ export const EditApplicant = () => {
       resumeUrl: "",
       status: values.status,
       activityType: values.activityType,
-      companyId: companyId,
-      vacancyName: vacancy ? vacancy.title : "",
       experience: totalExperienceInMonths,
     };
     try {

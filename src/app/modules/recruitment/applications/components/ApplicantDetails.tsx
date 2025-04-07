@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, Edit, Visibility } from "@mui/icons-material";
+import { Add,  Edit, Visibility } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -120,22 +120,20 @@ export const ApplicantDetails = () => {
   const handleEditApplicant = async (applicantStatus: ApplicantStatus) => {
     const payload = {
       applicantId: applicant.applicantId,
-      companyId: currentUser.companyId,
       firstName: applicant.firstName,
       lastName: applicant.lastName,
       email: applicant.email,
       phone: applicant.phone,
       vacancyId: applicant.vacancyId,
       experience: applicant.experience,
-      vacancyName: applicant.vacancyName,
       activityType: status.applicationStatus,
       status: applicantStatus,
       state: applicant.state,
     };
     const response = await editApplicant(payload);
-    const { success } = response.data;
+    const { success,message } = response.data;
     if (success) {
-      toast.success("Applicant status updated.");
+      toast.success(intl.formatMessage({id:message}));
       setRefresh(!refresh);
     }
   };
@@ -146,14 +144,12 @@ export const ApplicantDetails = () => {
       if (status.applicationStatus !== applicant.activityType) {
         const payload = {
           applicantId: applicant.applicantId,
-          companyId: currentUser.companyId,
           firstName: applicant.firstName,
           lastName: applicant.lastName,
           email: applicant.email,
           phone: applicant.phone,
           vacancyId: applicant.vacancyId,
           experience: applicant.experience,
-          vacancyName: applicant.vacancyName,
           activityType: status.applicationStatus,
           status: applicant.status,
           state: applicant.state,
@@ -177,7 +173,7 @@ export const ApplicantDetails = () => {
       if (!commentResponse.data.success) {
         throw new Error(commentResponse.data.message);
       }
-      toast.success(commentResponse.data.message);
+      toast.success(intl.formatMessage({id:commentResponse.data.message}));
       handleClose();
       if (status.applicationStatus !== applicant.activityType) {
         setRefresh(!refresh);

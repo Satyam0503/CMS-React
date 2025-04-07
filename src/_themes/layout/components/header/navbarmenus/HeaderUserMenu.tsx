@@ -82,7 +82,7 @@ export default function HeaderUserMenu() {
             <AccountCircle />
           </ListItemIcon>
           <ListItemText>
-            {intl.formatMessage({ id: "USER.ACCOUNT_SETTING" })}
+            {intl.formatMessage({ id: "USER.MY_PROFILE" })}
           </ListItemText>
         </MenuItem>
         <MenuItem className="px-2">
