@@ -202,7 +202,7 @@ export const EditPermission = () => {
             error={
               formik.touched.description && Boolean(formik.errors.description)
             }
-            label={formatMessage({ id: "INFO.DESCRIPTION" })}
+            label={formatMessage({ id: "ROLE.DESCRIPTION" })}
             {...formik.getFieldProps("description")}
           />
         </Stack>

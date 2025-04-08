@@ -42,10 +42,9 @@ import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
 import { usePageData } from "../../../../../_themes/layout/core";
-import { useBreadcrumbs } from "react-breadcrumble";
 
 export const EditApplicant = () => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
@@ -64,7 +63,7 @@ export const EditApplicant = () => {
   const applicantId = param.applicantid ?? "";
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({ id: "PAGE.EDIT_APPLICANT" }));
+    setPageTitle(formatMessage({ id: "PAGE.EDIT_APPLICANT" }));
     setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
@@ -209,7 +208,7 @@ export const EditApplicant = () => {
     <Card sx={{ p: 2.6 }}>
       <Stack spacing={2}>
         <Typography variant="h5">
-          {intl.formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
+          {formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
         </Typography>
         <Grid container direction={"column"} gap={1}>
           <Formik
@@ -226,12 +225,12 @@ export const EditApplicant = () => {
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={intl.formatMessage({
+                          label={formatMessage({
                             id: "FORM.FIRST_NAME",
                           })}
                           type="text"
                           name="firstName"
-                          placeholder={intl.formatMessage({
+                          placeholder={formatMessage({
                             id: "FORM.FIRST_NAME",
                           })}
                         />
@@ -239,10 +238,10 @@ export const EditApplicant = () => {
 
                       <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
+                          label={formatMessage({ id: "FORM.LAST_NAME" })}
                           type="text"
                           name="lastName"
-                          placeholder={intl.formatMessage({
+                          placeholder={formatMessage({
                             id: "FORM.LAST_NAME",
                           })}
                         />
@@ -250,7 +249,7 @@ export const EditApplicant = () => {
 
                       <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={intl.formatMessage({ id: "USER.PHONE" })}
+                          label={formatMessage({ id: "USER.PHONE" })}
                           type="text"
                           name="phone"
                           placeholder="Phone Number"
@@ -259,12 +258,12 @@ export const EditApplicant = () => {
 
                       <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={intl.formatMessage({
+                          label={formatMessage({
                             id: "FORM.EMAIL",
                           })}
                           type="email"
                           name="email"
-                          placeholder={intl.formatMessage({
+                          placeholder={formatMessage({
                             id: "FORM.EMAIL",
                           })}
                           disabled={true}
@@ -272,7 +271,7 @@ export const EditApplicant = () => {
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <SelectInput
-                          label={intl.formatMessage({ id: "JOB.POSITION" })}
+                          label={formatMessage({ id: "JOB.POSITION" })}
                           name="vacancyId"
                         >
                           {activeVacancyList.map((vacancy) => (
@@ -284,12 +283,12 @@ export const EditApplicant = () => {
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <SelectInput
-                          label={intl.formatMessage({ id: "PROFILE.STATUS" })}
+                          label={formatMessage({ id: "PROFILE.STATUS" })}
                           name="activityType"
                         >
                           {ApplicationEvaluationStatus.map((status) => (
                             <MenuItem key={status.id} value={status.value}>
-                              {status.label}
+                              {formatMessage({id:status.label})}
                             </MenuItem>
                           ))}
                         </SelectInput>
@@ -315,12 +314,12 @@ export const EditApplicant = () => {
 
                     <Stack mt={2} spacing={2}>
                       <Typography variant="h6" fontWeight={600}>
-                        {intl.formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
+                        {formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
                       </Typography>
                       <Grid container gap={2}>
                         <Grid item xs={12} sm={4} md={4}>
                           <TextInput
-                            label={intl.formatMessage({
+                            label={formatMessage({
                               id: "USER.EXPERIENCE.YEARS",
                             })}
                             type="number"
@@ -333,7 +332,7 @@ export const EditApplicant = () => {
                         </Grid>
                         <Grid item xs={12} sm={3} md={2}>
                           <SelectInput
-                            label={intl.formatMessage({
+                            label={formatMessage({
                               id: "USER.EXPERIENCE.MONTHS",
                             })}
                             name="experienceInMonths"
@@ -354,7 +353,7 @@ export const EditApplicant = () => {
                         mb={1}
                         color={colors.alpha.primary[500]}
                       >
-                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                        {formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                     </Stack>
 
@@ -415,7 +414,7 @@ export const EditApplicant = () => {
 
                         <Stack>
                           <Typography variant="body2">
-                            {intl.formatMessage({
+                            {formatMessage({
                               id: "RESUME.UPLOAD_INSTRUCTION",
                             })}
                           </Typography>
@@ -437,13 +436,13 @@ export const EditApplicant = () => {
                       <CustomisedButton
                         variant="outlined"
                         size="medium"
-                        label={intl.formatMessage({ id: "BUTTON.CANCEL" })}
+                        label={formatMessage({ id: "BUTTON.CANCEL" })}
                         handleClick={() => navigate(-1)}
                       />
                       <CustomisedButton
                         variant="contained"
                         size="medium"
-                        label={intl.formatMessage({ id: "BUTTON.UPDATE" })}
+                        label={formatMessage({ id: "BUTTON.UPDATE" })}
                         type="button"
                         disabled={formik.isSubmitting || !formik.isValid}
                         handleClick={() => setCommnetModalOpen(true)}

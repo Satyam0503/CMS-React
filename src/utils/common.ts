@@ -48,19 +48,19 @@ export const employeesListMapperforExport = (
 export const applicationStatusMapper: {
   [index: number]: string;
 } = {
-  [ApplicationStatus.New]: "New",
-  [ApplicationStatus.InProgress]: "In Progress",
-  [ApplicationStatus.OnHold]: "On Hold",
-  [ApplicationStatus.Shortlisted]: "Shortlisted",
-  [ApplicationStatus.Selected]: "Selected",
-  [ApplicationStatus.Rejected]: "Rejected",
+  [ApplicationStatus.New]: "APPLICATION.STATUS.NEW",
+  [ApplicationStatus.InProgress]: "APPLICATION.STATUS.INPROGRESS",
+  [ApplicationStatus.OnHold]: "APPLICATION.STATUS.ONHOLD",
+  [ApplicationStatus.Shortlisted]: "APPLICATION.STATUS.SHORTLISTED",
+  [ApplicationStatus.Selected]: "APPLICATION.STATUS.SELECTED",
+  [ApplicationStatus.Rejected]: "APPLICATION.STATUS.REJECTED",
 };
 
 export const applicantStatusDecoder: {
   [index: number]: string;
 } = {
-  [ApplicantStatus.InActive]: "Inactive",
-  [ApplicantStatus.Active]: "Active",
+  [ApplicantStatus.InActive]: "APPLICANT.STATUS.ACTIVE",
+  [ApplicantStatus.Active]: "APPLICANT.STATUS.INACTIVE",
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -82,25 +82,14 @@ export const commentActionEncoderForApplicationStatus = (
   }
 };
 
-export const commentActionDecoder = (commentAction: number) => {
-  switch (commentAction) {
-    case CommentAction.InProgress:
-      return "In Process";
-    case CommentAction.OnHold:
-      return "On Hold";
-    case CommentAction.Shortlisted:
-      return "Shortlisted";
-    case CommentAction.Selection:
-      return "Selection";
-    case CommentAction.Rejection:
-      return "Rejection";
-    case CommentAction.Edit:
-      return "Edit";
-    case CommentAction.Process:
-      return "Process";
-    default:
-      "Process";
-  }
+export const commentActionMapper: { [index: number]: string } = {
+  [CommentAction.InProgress]: "COMMENT.ACTION.INPROGRESS",
+  [CommentAction.OnHold]: "COMMENT.ACTION.ONHOLD",
+  [CommentAction.Shortlisted]: "COMMENT.ACTION.SHORTLISTED",
+  [CommentAction.Selection]: "COMMENT.ACTION.SELECTION",
+  [CommentAction.Rejection]: "COMMENT.ACTION.REJECTION",
+  [CommentAction.Edit]: "COMMENT.ACTION.EDIT",
+  [CommentAction.Process]: "COMMENT.ACTION.PROCESS",
 };
 
 export const statusEncoder = (status: string) => {

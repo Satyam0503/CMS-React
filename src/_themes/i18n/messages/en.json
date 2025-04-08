@@ -6,6 +6,19 @@
   "Language.German":"German",
   "Language.French":"French",
 
+  "GENDER.MALE":"Male",
+  "GENDER.OTHER":"Other",
+  "GENDER.FEMALE":"Female",
+
+  "Jobtype.Onsite":"Onsite",
+  "Jobtype.Hybrid":"Hybrid",
+  "Jobtype.Remote":"Remote",
+
+  "Table.S_No":"S.No.",
+  "Table.Column.Action":"Actions",
+ 
+
+
   "PAGE.JOBS":"Job Requirements",
   "PAGE.PROCESS_LOG":"Process Log",
   "PAGE.APPLICATIONS":"Applications",
@@ -45,6 +58,8 @@
   "FORM.ROLE":"Role",
   "FORM.JOB_ROLE":"Job Role",
   "FORM.DEPARTMENT":"Department",
+  "FORM.PHONE":"Phone Number",
+  "FORM.EXPERIENCE":"Experience",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
@@ -59,10 +74,18 @@
   "APPLICATION.SEEN_BY": "Application Seen By",
   "APPLICATION.SEEN_DATE": "Application Seen Date",
   "APPLICATION.STATUS": "Application Status",
+  "APPLICATION.APPLIED_DATE":"Applied Date",
+  "APPLICATION.CV":"CV",
+
   "APPLICANT.COMMENT": "Comment History",
   "APPLICANT.ADD_COMMENT": "Add Comment",
   "APPLICANT.DETAILS": "Applicant Details",
   "APPLICANT.RESUME_PREVIEW": "Resume Preview",
+  "APPLICANT.NAME": "Applicant Name",
+
+  "EMPLOYEE.EMPID":"Emp Id",
+
+
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.REGISTER": "Register",
   "AUTH.MEMBER.REGISTER": " Not a Member yet ? ",
@@ -144,7 +167,10 @@
   "JOB.VACANCIES": "Vacancies",
   "JOB.MODE": "Job Mode",
   "JOB.TYPE": "Job Type",
+  "JOB.JOB_TITLE":"Job Title",
+  "JOB.STATUS":"Status",
   "JOB.POSITION": "Job Position",
+  "JOB.NO_OF_VACANCIES":"No. Of Vacancies",
   "JOB.APPLICATION": "Job Application",
   "JOB.APPLICATION_CAPTION": "Please fill the form below to apply:",
   "JOB.REPO.MANAGER": "Reporting Manager",
@@ -284,9 +310,6 @@
   "PERMISSION.VIEW": "View",
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
-  "ROLE.NAME": "Role Name",
-  "ROLE.HAS_ACCESS": "Has Access",
-  "ROLE.NO_ACCESS": "No Access",
   "RECRUITMENT.JOBS": "Jobs",
 
   "SETTING.NOTIFICATION": "Notification",
@@ -380,7 +403,23 @@
   "APPLICATION.STATUS.SELECTED": "Selected",
   "APPLICATION.STATUS.REJECTED": "Rejected",
 
+  "APPLICANT.STATUS.ACTIVE":"Active",
+  "APPLICANT.STATUS.INACTIVE":"Inactive",
 
+  "COMMENT.ACTION.INPROGRESS":"In Process",
+  "COMMENT.ACTION.ONHOLD":"On Hold",
+  "COMMENT.ACTION.SHORTLISTED":"Shortlisted",
+  "COMMENT.ACTION.SELECTION":"Selection",
+  "COMMENT.ACTION.REJECTION":"Rejection",
+  "COMMENT.ACTION.EDIT":"Edit",
+  "COMMENT.ACTION.PROCESS":"Process",
+  "COMMENT.DATE":"Date",
+  "COMMENT.ACTION_BY":"Action By",
+  "COMMENT.ACTION_CATEGORY":"Action Category",
+  "COMMENT.COMMENT":"Comment",
+  "COMMENT.COMMENT_BY":"Commented By",
+  "COMMENT.COMMENT_ON":"Commented On",
+  
 
   "ROLE.ADD_ROLE": "Add New Role",
   "ROLE.PERMISSION": "Permissions",
@@ -394,6 +433,11 @@
   "ROLE.UPDATE.SUCCESS":"Role Updated Successfully",
   "ROLE.APP_ACCESS.UPDATED" :"App access for this role has been changed",
   "ROLE.NOT_EXIST" :"Role not found",
+  "ROLE.NAME": "Role Name",
+  "ROLE.DESCRIPTION":"Role Description",
+  "ROLE.HAS_APP_ACCESS":"Access To Application",
+  "ROLE.HAS_ACCESS": "Has Access",
+  "ROLE.NO_ACCESS": "No Access",
 
   "SEE_MORE":"See More",
   "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
