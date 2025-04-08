@@ -16,6 +16,23 @@
 
   "Table.S_No":"S.No.",
   "Table.Column.Action":"Actions",
+
+  "Modules.Dashboard" : "Dashboard",
+  "Modules.Employees" : "Employees",
+  "Modules.Attendance" : "Attendance",
+  "Modules.LeaveManagement": "Leave Management",
+  "Modules.MyProfile" : "My Profile",
+  "Modules.Recruitment" : "Recruitment",
+  "Modules.Admin" : "Admin",
+  "Modules.Holidays" : "Holidays",
+  "Modules.NoticeBoard" : "Notice board",
+  "Modules.Jobs" : "Jobs",
+  "Modules.Applications" : "Applications",
+  "Modules.Permissions" : "Roles & Permissions",
+  "Modules.Theme" : "Theme",
+  "Modules.ProcessLog" : "Process Log",
+  "Modules.CompanyMaster" : "Company Master",
+  "Modules.PayRoll" : "PayRoll",
  
 
 
@@ -60,6 +77,7 @@
   "FORM.DEPARTMENT":"Department",
   "FORM.PHONE":"Phone Number",
   "FORM.EXPERIENCE":"Experience",
+  "FORM.TYPE":"Type...",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
@@ -148,7 +166,6 @@
   "EMP.MALE": "Male",
   "EMP.FEMALE": "Female",
   "FORM.TITLE": "Title",
-  "FORM.TYPE": "Type",
 
   "FILE.UPLOAD_INSTRUCTION": "Note : Please select .jpg/.png/.webp images upto 2 MB",
   "RESUME.UPLOAD_INSTRUCTION": "Note : Please upload .pdf file upto 5 MB",
@@ -370,6 +387,8 @@
   "USER.MY_PROFILE": "My Profile",
   "USER.ORGNISATION": "Orgnisation name",
   "USER.DESIGNATION": "Designation",
+  "USER.ADD_SUMMARY" :"Add Your Summary",
+
   "VACANCY.TEXT1": " Thank you for exploring our website!",
   "VACANCY.TEXT2": " Our available positions are being refreshed at the moment. Stay tuned and visit us again soon for updated job openings.We truly appreciate your interest and look forward to the possibility of working together!",
   "VACANCY.TEXT3": " Please note that we accept applications only on working days, between 9:00 AM and 6:00 PM IST.",

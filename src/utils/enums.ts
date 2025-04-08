@@ -66,22 +66,22 @@ export enum ModulesName {
 }
 
 export enum ModulesTitles {
-  Dashboard = "Dashboard",
-  Employees = "Employees",
-  Attendance = "Attendance",
-  LeaveManagement = "Leave Management",
-  MyProfile = "My Profile",
-  Recruitment = "Recruitment",
-  Admin = "Admin",
-  Holidays = "Holidays",
-  NoticeBoard = "Notice board",
-  Jobs = "Jobs",
-  Applications = "Applications",
-  Permissions = "Roles & Permissions",
-  Theme = "Theme",
-  ProcessLog = "Process Log",
-  CompanyMaster = "Company Master",
-  PayRoll = "PayRoll",
+  Dashboard = "Modules.Dashboard",
+  Employees = "Modules.Employees",
+  Attendance = "Modules.Attendance",
+  LeaveManagement = "Modules.LeaveManagement",
+  MyProfile = "Modules.MyProfile",
+  Recruitment = "Modules.Recruitment",
+  Admin = "Modules.Admin",
+  Holidays = "Modules.Holidays",
+  NoticeBoard = "Modules.Notice board",
+  Jobs = "Modules.Jobs",
+  Applications = "Modules.Applications",
+  Permissions = "Modules.Permissions",
+  Theme = "Modules.Theme",
+  ProcessLog = "Modules.ProcessLog",
+  CompanyMaster = "Modules.CompanyMaster",
+  PayRoll = "Modules.PayRoll",
 }
 
 export enum Roles {

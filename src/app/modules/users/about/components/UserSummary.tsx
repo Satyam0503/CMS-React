@@ -16,7 +16,7 @@ export const UserSummary = () => {
   const [updatedSummary, setUpdatedSummary] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
 
   const handleClose = () => {
     setEdit(false);
@@ -65,17 +65,17 @@ export const UserSummary = () => {
         mb={1}
       >
         <Typography variant="h5">
-          {intl.formatMessage({ id: "INFO.SUMMARY" })}
+          {formatMessage({ id: "INFO.SUMMARY" })}
         </Typography>
         {isEdit ? (
           <Stack direction={"row"} spacing={1}>
             <CustomisedButton
-              label="Cancel"
+              label={formatMessage({id:"BUTTON.CANCEL"})}
               variant="outlined"
               handleClick={() => handleClose()}
             />
             <CustomisedButton
-              label="Update"
+              label={formatMessage({id:"BUTTON.UPDATE"})}
               variant="contained"
               handleClick={handleUpdateSummary}
               disabled={updatedSummary.length === 0}
@@ -98,14 +98,14 @@ export const UserSummary = () => {
           fullWidth
           multiline
           id="user_summary"
-          placeholder="Type..."
+          placeholder={formatMessage({id:"FORM.TYPE"})}
           variant="outlined"
           value={updatedSummary}
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
         <Typography variant="body1">
-          {userSummary && userSummary.summary.trim().length >0 ? userSummary.summary : "Add Your Summary"}
+          {userSummary && userSummary.summary.trim().length >0 ? userSummary.summary : formatMessage({id:"USER.ADD_SUMMARY"}) }
         </Typography>
       )}
     </Card>

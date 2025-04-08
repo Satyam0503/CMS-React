@@ -258,7 +258,7 @@ export const ApplicantDetails = () => {
                 icon={<Edit />}
                 tooltip="Edit Applicant"
                 handleClick={() => {
-                  navigate(`/recruitment/editapplicant/${applicant.applicantId}`);
+                  navigate(`/recruitment/applicant/edit/${applicant.applicantId}`);
                 }}
               />
             </Stack>
