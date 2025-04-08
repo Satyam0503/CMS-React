@@ -37,7 +37,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export const AddPermission = () => {
-  const intl = useIntl();  
+  const {formatMessage} = useIntl();  
   const {setPageTitle}= usePageData();
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
@@ -49,7 +49,7 @@ export const AddPermission = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({id:"PAGE.ADD_ROLE"}))
+    setPageTitle(formatMessage({id:"PAGE.ADD_ROLE"}))
     const getAllPermissions = async () => {
       try {
         const response = await getAllModulePermission();
@@ -124,8 +124,8 @@ export const AddPermission = () => {
       const response = await addEditRole(payload);
       const { success, message } = response.data;
       if (success) {
-        toast.success(message);
-        navigate("/admin/permissions");
+        toast.success(formatMessage({id:message}));
+        navigate("/admin/roles");
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -146,7 +146,7 @@ export const AddPermission = () => {
             <TextField
               fullWidth
               required
-              label={intl.formatMessage({ id: "ROLE.NAME" })}
+              label={formatMessage({ id: "ROLE.NAME" })}
               error={
                 formik.touched.roleTitle && Boolean(formik.errors.roleTitle)
               }
@@ -159,7 +159,7 @@ export const AddPermission = () => {
               error={
                 formik.touched.description && Boolean(formik.errors.description)
               }
-              label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
+              label={formatMessage({ id: "INFO.DESCRIPTION" })}
               {...formik.getFieldProps("description")}
             />
           </Stack>
@@ -169,7 +169,7 @@ export const AddPermission = () => {
             <>
               <Stack spacing={1}>
                 <Typography variant="h5">
-                  {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
+                  {formatMessage({ id: "ROLE.PERMISSION" })}
                 </Typography>
                 <Box
                   component={"div"}
@@ -234,14 +234,14 @@ export const AddPermission = () => {
               >
                 <CustomisedButton
                   variant="outlined"
-                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
+                  label={formatMessage({ id: "BUTTON.RESET" })}
                   handleClick={handleReset}
                 />
                 <CustomisedButton
                   loading={formik.isSubmitting}
                   type="submit"
-                  disabled={selectedPermission.length === 0 || formik.isSubmitting}
-                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
+                  disabled={formik.isSubmitting}
+                  label={formatMessage({ id: "BUTTON.SAVE" })}
                   Icon={<Check />}
                   iconPosition="start"
                 />

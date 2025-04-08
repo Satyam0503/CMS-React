@@ -12,7 +12,7 @@ import { useEffect } from "react";
 const adminBreadcrumbs:Array<Breadcrumb> = [
   {
     label: "PAGE.PERMISSION",
-    path: "/admin/permissions",
+    path: "/admin/roles",
     parent: "/",
   },
   {
@@ -22,13 +22,13 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
   },
   {
     label: "PAGE.EDIT_PERMISSION",
-    path: "/admin/editpermission",
-    parent: "/admin/permissions",
+    path: "/admin/roles/edit/{id}",
+    parent: "/admin/roles",
   },
   {
     label: "PAGE.ADD_ROLE",
-    path: "/admin/addrole",
-    parent: "/admin/permissions",
+    path: "/admin/roles/add",
+    parent: "/admin/roles",
   },
   {
     label: "PAGE.COMPANY_MASTER",
@@ -37,7 +37,7 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
   },
 ] 
 
-const SettingPage = () => {
+const AdminRoutes = () => {
   const {setBreadcrumbs}= useBreadcrumbs();
   useEffect(()=>{
     setBreadcrumbs(adminBreadcrumbs);
@@ -63,7 +63,7 @@ const SettingPage = () => {
           }
         />
         <Route
-          path="roles/edit/:id"
+          path="roles/edit/:roleid"
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <EditPermission />
@@ -87,8 +87,9 @@ const SettingPage = () => {
           }
         />
       </Route>
+      <Route path="*" element={<Navigate to={"/error"}/>} />
     </Routes>
   );
 };
 
-export default SettingPage;
+export default AdminRoutes;

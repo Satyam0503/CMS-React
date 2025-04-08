@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import { FC } from "react";
+import { useIntl } from "react-intl";
 
 interface PropsTypes {
   className: string;
@@ -16,9 +17,10 @@ const style = {
 };
 
 export const StyleStatus: FC<PropsTypes> = ({ className, label }) => {
+  const { formatMessage } = useIntl();
   return (
-    <Typography sx={style} className={className}>
-      {label}
-    </Typography>
+      <Typography sx={style} className={className}>
+        {formatMessage({ id: label })}
+      </Typography>
   );
 };

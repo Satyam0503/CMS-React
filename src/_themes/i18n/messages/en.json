@@ -382,12 +382,19 @@
 
 
 
-  "ADMIN.ADD_ROLE": "Add New Role",
-  "ADMIN.PERMISSION": "Permissions",
-  "ADMIN.EDIT_PERMISSION": "Edit Permissions",
-  "ADMIN.VIEW_PERMISSION": "View Permissions",
-  "ADMIN.APP_ACCESS":"App Access",
-  "ADMIN.APP_ACCESS_INSTRUCTION":"Note :  ",
+  "ROLE.ADD_ROLE": "Add New Role",
+  "ROLE.PERMISSION": "Permissions",
+  "ROLE.EDIT_PERMISSION": "Edit Permissions",
+  "ROLE.VIEW_PERMISSION": "View Permissions",
+  "ROLE.DISABLE_ACCESS_NOTE":"Note: Disabling access removes this role's access to the application entirely.",
+  "ROLE.ENABLE_ACCESS_NOTE":"Note: Enabling access grants this role's  access to the application.",
+  "ROLE.ENABLE_ACCESS":"Enable App Access for {role}",
+  "ROLE.DISABLE_ACCESS":"Disable App Access for {role}",
+  "ROLE.ADD.SUCCESS":"Role Added Successfully",
+  "ROLE.UPDATE.SUCCESS":"Role Updated Successfully",
+  "ROLE.APP_ACCESS.UPDATED" :"App access for this role has been changed",
+  "ROLE.NOT_EXIST" :"Role not found",
+
   "SEE_MORE":"See More",
   "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",

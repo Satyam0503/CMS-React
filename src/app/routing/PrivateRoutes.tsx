@@ -11,7 +11,7 @@ import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 
 const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
-const Setting = lazy(() => import("../modules/admin/Settings.tsx"));
+const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
 const Recruitment = lazy(
   () => import("../modules/recruitment/RecruitmentRoutes.tsx")
 );
@@ -141,7 +141,7 @@ const PrivateRoutes = () => {
           path="admin/*"
           element={
             <SuspensedView>
-              <Setting />
+              <Admin />
             </SuspensedView>
           }
         />

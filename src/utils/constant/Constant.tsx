@@ -9,7 +9,6 @@ import {
   statusDecoder,
   commentActionDecoder,
   applicantStatusDecoder,
-  getApplicantStatusClass,
   convertMonthsToYear,
   sanitizeHtmlContent,
 } from "../common";
@@ -27,7 +26,6 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   AccessTime,
-  AccountCircle,
   AdminPanelSettings,
   Book,
   CalendarMonth,
@@ -66,6 +64,8 @@ export const ServiceUrl = {
   GET_ALL_MODULE_PERMISSION: `${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
   GET_ROLE_ALL_PERMISSIONS: `${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
+  GET_ROLE_BY_ID:`${BaseUrl}/api/Roles/GetRoleById`,
+  CHANGE_APP_ACCESS:`${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -627,8 +627,11 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "Status",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
-      const className = getApplicantStatusClass(status);
-      return <StyleStatus label={values} className={className} />;
+      return <StyleStatus label={values} className={clsx(
+          {  success:status === ApplicantStatus.Active,
+            danger: status === ApplicantStatus.InActive
+          }
+      )} />;
     },
   },
   {
@@ -691,14 +694,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "Access To Application",
     minWidth: 180,
     format: (hasAccess: boolean) => (
-      <Stack direction="row" className="align-items-center justify-content-center gap-2">
-        <span
-          className={clsx({ "has-access": hasAccess, "no-access": !hasAccess })}
-        />
-        <FormattedMessage
-          id={hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS"}
-        />
-      </Stack>
+      <StyleStatus label={ hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS" }  className={clsx({ "success": hasAccess, "danger": !hasAccess })} />
     ),
   },
   {
@@ -711,8 +707,8 @@ export const RoleTableColumnList: ColumnListTypes[] = [
           <FormattedMessage
             id={
               row.isNotEditable
-                ? "ADMIN.VIEW_PERMISSION"
-                : "ADMIN.EDIT_PERMISSION"
+                ? "ROLE.VIEW_PERMISSION"
+                : "ROLE.EDIT_PERMISSION"
             }
           />
         </Button>
@@ -746,9 +742,8 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     id: "status",
     label: "Status",
     build: (status: boolean) => {
-      const className = status ? "success" : "danger";
       return (
-        <StyleStatus label={statusDecoder(status)} className={className} />
+        <StyleStatus label={statusDecoder(status)} className={clsx({ success:status, danger: !status  })} />
       );
     },
   },
@@ -918,7 +913,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.Permissions,
         title: ModulesTitles.Permissions,
         constant: ModulesName.Permissions,
-        route: "/admin/permissions",
+        route: "/admin/roles",
         icon: <ToggleOn />,
       },
       {

@@ -56,37 +56,11 @@ export const applicationStatusMapper: {
   [ApplicationStatus.Rejected]: "Rejected",
 };
 
-export const applicationStatusClassMapper: {
-  [index: number]: string;
-} = {
-  [ApplicationStatus.New]: "info",
-  [ApplicationStatus.InProgress]: "warning",
-  [ApplicationStatus.OnHold]: "warning",
-  [ApplicationStatus.Shortlisted]: "warning",
-  [ApplicationStatus.Selected]: "success",
-  [ApplicationStatus.Rejected]: "danger",
-};
-
-export const getApplicationStatusClass = (applicationStatus: number) => {
-  return applicationStatusClassMapper[applicationStatus];
-};
-
 export const applicantStatusDecoder: {
   [index: number]: string;
 } = {
   [ApplicantStatus.InActive]: "Inactive",
   [ApplicantStatus.Active]: "Active",
-};
-
-const applicantStatusClassMapper: {
-  [index: number]: string;
-} = {
-  [ApplicantStatus.InActive]: "danger",
-  [ApplicantStatus.Active]: "success",
-};
-
-export const getApplicantStatusClass = (applicantStatus: number) => {
-  return applicantStatusClassMapper[applicantStatus] || "";
 };
 
 export const commentActionEncoderForApplicationStatus = (

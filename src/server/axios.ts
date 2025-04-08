@@ -69,12 +69,17 @@ export const postRequest = <RequestData, ResponseData>(
   });
 };
 
-export const patchRequest = <D>(
+export const patchRequest = <Data,ResponseData>(
   path: string,
-  data?: D,
+  data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return axios.patch(path, data, config);
+  return axios.patch<ResponseData>(path, data, {
+    ...config,
+    headers:{
+      "Content-Type":"application/json",
+    }
+  });
 };
 
 export const deleteRequest = <ResponseData>(

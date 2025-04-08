@@ -77,7 +77,7 @@ export enum ModulesTitles {
   NoticeBoard = "Notice board",
   Jobs = "Jobs",
   Applications = "Applications",
-  Permissions = "Permissions",
+  Permissions = "Role & Permissions",
   Theme = "Theme",
   ProcessLog = "Process Log",
   CompanyMaster = "Company Master",
