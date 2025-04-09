@@ -32,8 +32,7 @@ const CompanyMaster = () => {
         variant={isSmallScreen ? "scrollable" : "fullWidth"}
         scrollButtons="auto"
         allowScrollButtonsMobile={true}
-        sx={{ borderRadius: ".5rem" }}
-        
+        sx={{ borderRadius: ".5rem" }} 
       >
         <Tab
           icon={<CorporateFare />}
@@ -61,7 +60,6 @@ const CompanyMaster = () => {
           }}
         />
       </Tabs>
-
       <CustomTabPanel value={tabIndex} index={0}>
         <Departments />
       </CustomTabPanel>

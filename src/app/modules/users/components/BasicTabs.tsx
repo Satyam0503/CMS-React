@@ -22,7 +22,6 @@ export function CustomTabPanel(props: TabPanelProps) {
   return (
     <Box
       role="tabpanel"
-      
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}

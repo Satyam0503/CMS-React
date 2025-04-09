@@ -1,4 +1,4 @@
-import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Card, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import { DepartmentModel } from "../../models";
 import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
 import { DepartmentTableColumnList } from "../../../../../utils/constant/Constant";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { DepartmentRow } from "./DepartmentRow";
+import { colors } from "../../../theme/MuiTheme";
 
 const initialValues: DepartmentModel = {
   departmentName: "",
@@ -17,7 +19,7 @@ const initialValues: DepartmentModel = {
 };
 
 const Departments = () => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [isEdit, setEdit] = useState(false);
@@ -63,7 +65,7 @@ const Departments = () => {
   };
 
   const handleDepartmentDelete =()=>{
-
+    
   }
 
   useEffect(() => {
@@ -81,21 +83,40 @@ const Departments = () => {
     getAllDeps();
   }, [refresh]);
 
+  console.log(departmentList);
+  
   return (
-    <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-5">
+    <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
         direction={"row"}
         className="justify-content-between align-items-center flex-wrap gap-4"
       >
         <Typography variant="h5">
-          {intl.formatMessage({ id: "COMPANY_MASTER.DEPARTMENT.TOTAL" })}:{" "}
+          {formatMessage({ id: "COMPANY_MASTER.DEPARTMENT.TOTAL" })}:{" "}
           {departmentList.length}
         </Typography>
         <CustomisedButton
           Icon={<Add />}
-          label={intl.formatMessage({ id: "BUTTON.ADD" })}
+          label={formatMessage({ id: "BUTTON.ADD" })}
           handleClick={() => setOpen(true)}
         />
+      </Stack>
+
+      <Stack className="department-container">
+          <Box className="department-row" >
+            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"Department.Title"})}</Typography>
+            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"Department.Description"})}</Typography>
+            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"JOB.STATUS"})}</Typography>
+          </Box>
+          {
+            departmentList.map(department=>(
+              <DepartmentRow departmentData={department}/>
+            ))
+          }
+          <Stack spacing={1} direction={"row"} sx={{justifyContent:"flex-end",mt:3}}>
+            <CustomisedButton variant="outlined" label={formatMessage({id:"BUTTON.CANCEL"})} handleClick={()=>setDepartmentList([...departmentList])} />
+            <CustomisedButton label={formatMessage({id:"BUTTON.UPDATE"})} />
+          </Stack>
       </Stack>
 
       {isOpen && (
@@ -111,8 +132,8 @@ const Departments = () => {
         isConfirmModalOpen && (
           <ConfirmationModal 
             open={isConfirmModalOpen}
-            title={intl.formatMessage({id:"Department.Delete"})}
-            content={intl.formatMessage({id:"Department.Delete.Alert"})}
+            title={formatMessage({id:"Department.Delete"})}
+            content={formatMessage({id:"Department.Delete.Alert"})}
             handleClose={()=>setConfirmModalOpen(false)}
             handleConfirmation={handleDepartmentDelete}
           />

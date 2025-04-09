@@ -495,5 +495,6 @@
   "MESSAGE.APPLICANT.ALREADY_APPLIED":"Application has already been submitted. Please reapply after the waiting period",
   "MESSAGE.APPLICANT.UPDATED":"Applicant Updated Successfully",
 
-  "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully"
+  "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully",
+  "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access"
 }
