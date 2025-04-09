@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
-import { Modules, ModulesName } from "./enums";
+import { Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
@@ -19,16 +19,12 @@ export interface CreatePasswordModel {
 
 export interface UserModel {
   userId: string;
-  companyId: string;
   companyName: string;
-  role: string;
-  roleId: string;
   firstName: string;
   lastName: string;
   fullName: string;
   profileImage: string;
-  permissions: PermissionModel[];
-  modulePermission: ModulePermissoinModel[];
+  modulePermission: string[];
 }
 
 export type UserSummaryModel = {
@@ -36,11 +32,6 @@ export type UserSummaryModel = {
   summaryId: string;
   summary: string;
 };
-
-export type UserDataModel = Omit<
-  UserModel,
-  "modulePermission" | "permissions" | "profileImage"
->;
 
 export interface ModulePermissoinModel {
   moduleName: string;
@@ -179,7 +170,8 @@ export interface ResponseData<T> {
 
 export interface SideBarTabListProps {
   id: Modules;
-  title: ModulesName;
+  title: ModulesTitles;
+  constant:ModulesName;
   route: string;
   icon: JSX.Element;
   hasSubTabs?: boolean;

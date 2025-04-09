@@ -32,7 +32,6 @@ const initialValues = {
 };
 
 export function Registration() {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const intl = useIntl();
 
@@ -41,7 +40,6 @@ export function Registration() {
     setSubmitting: (isSubmitting: boolean) => void,
     setStatus: (status?: any) => void
   ) {
-    setLoading(true);
     const payload = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -60,7 +58,6 @@ export function Registration() {
     } catch (error: any) {
       setStatus(error.message);
     } finally {
-      setLoading(false);
       setSubmitting(false);
     }
   }
@@ -289,7 +286,6 @@ export function Registration() {
                     ),
                   }}
                 />
-                <Typography variant="body1"></Typography>
               </Stack>
 
               <Stack direction={"row"} alignItems={"center"} className="ms-n2">
@@ -319,7 +315,7 @@ export function Registration() {
                   label={intl.formatMessage({id:"BUTTON.SUBMIT"})}
                   size="large"
                   type="submit"
-                  loading={loading}
+                  loading={isSubmitting}
                 />
                 <CustomisedButton
                   handleClick={() => resetForm()}

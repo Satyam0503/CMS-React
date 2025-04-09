@@ -4,8 +4,10 @@ import { SideBarTabList } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
 import { Permission } from "../../../../../utils/enums";
+import { useIntl } from "react-intl";
 
 export const SidebarMenuMain = () => {
+  const {formatMessage }= useIntl();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission
   );
@@ -15,8 +17,7 @@ export const SidebarMenuMain = () => {
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         checkPermissionForModulesFeatureAccess(
-          subTab.title,
-          Permission.View,
+          `${subTab.constant}.${Permission.View}`,
           userModulePermission
         )
       );
@@ -31,14 +32,13 @@ export const SidebarMenuMain = () => {
     }
     if (
       checkPermissionForModulesFeatureAccess(
-        tab.title,
-        Permission.View,
+        `${tab.constant}.${Permission.View}`,
         userModulePermission
       )
     ) {
       return tab;
     }
-    return null;  
+    return null;
   }).filter((tab) => tab !== null);
 
   if (filteredTabList.length === 0) {
@@ -53,7 +53,7 @@ export const SidebarMenuMain = () => {
             <SidebarMenuItemWithSub
               key={tab?.id}
               to={tab?.route}
-              title={tab?.title}
+              title={formatMessage({id:tab?.title})}
               icon={tab?.icon}
             >
               {tab?.subTabs?.map((subTab) => {
@@ -61,7 +61,7 @@ export const SidebarMenuMain = () => {
                   <SidebarMenuItem
                     key={subTab?.id}
                     to={subTab?.route}
-                    title={subTab?.title}
+                    title={formatMessage({id:subTab?.title})}
                     icon={subTab?.icon}
                   />
                 );
@@ -69,13 +69,13 @@ export const SidebarMenuMain = () => {
             </SidebarMenuItemWithSub>
           );
         }
-        if(tab){
+        if (tab) {
           return (
             <SidebarMenuItem
               key={tab.id}
               to={tab.route}
               icon={tab.icon}
-              title={tab.title}
+              title={formatMessage({id:tab.title})}
             />
           );
         }
@@ -83,4 +83,3 @@ export const SidebarMenuMain = () => {
     </>
   );
 };
-

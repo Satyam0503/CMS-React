@@ -3,14 +3,12 @@ import { BaseModel, ResponseData } from "../../../utils/common_types";
 
 export interface ApplicantModel {
   applicantId: string;
-  companyId: string;
   firstName: string;
   lastName: string;
   state: string;
   email: string;
   phone: string;
   vacancyId: string;
-  vacancyName: string;
   experience: number;
   status: number;
   activityType: number;
@@ -23,6 +21,7 @@ export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
 };
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
+  vacancyName:string;
   statusName: string;
   status: number;
   activityTypeName: string;

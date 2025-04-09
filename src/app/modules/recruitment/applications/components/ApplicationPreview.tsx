@@ -9,11 +9,12 @@ import {
   applicationStatusMapper,
   convertMonthsToYear,
   dateFormatter,
-  getApplicationStatusClass,
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { Applicant } from "../../models";
 import { CvPreview } from "./CvPreview";
+import clsx from "clsx";
+import { ApplicationStatus } from "../../../../../utils/enums";
 
 interface PropsType {
   open: boolean;
@@ -27,8 +28,6 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const intl = useIntl();
-  const className = getApplicationStatusClass(applicantData.activityType);
-
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
@@ -93,7 +92,12 @@ export const ApplicationPreview: FC<PropsType> = ({
               <Typography variant="body1" fontWeight={400}>
                 <StyleStatus
                   label={applicationStatusMapper[applicantData.activityType]}
-                  className={className}
+                  className={clsx({
+                    info:applicantData.activityType === ApplicationStatus.New,
+                    warning: [ApplicationStatus.InProgress,ApplicationStatus.OnHold,ApplicationStatus.Shortlisted].includes(applicantData.activityType),
+                    success: applicantData.activityType === ApplicationStatus.Selected,
+                    danger:applicantData.activityType === ApplicationStatus.Rejected
+                  })}
                 />
               </Typography>
             </Grid>

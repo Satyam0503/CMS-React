@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, Edit, Visibility } from "@mui/icons-material";
+import { Add,  Edit, Visibility } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -41,10 +41,12 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 export const ApplicantDetails = () => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const navigate = useNavigate();
+  const { setPageTitle}= usePageData();
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(false);
   const [applicant, setApplicant] = useState<Applicant>({} as Applicant);
@@ -66,7 +68,6 @@ export const ApplicantDetails = () => {
   });
 
   useEffect(() => {
-    // setLoading(true);
     getApplicantById(applicantId)
       .then(({ data }) => {
         if (data.success && data.statusCode === 200) {
@@ -85,6 +86,7 @@ export const ApplicantDetails = () => {
   }, [refresh]);
 
   useEffect(() => {
+    setPageTitle(formatMessage({id:"PAGE.APPLICANT"}));
     const payload= {
       pageNo:paginationValues.pageNo +1,
       pageSize:paginationValues.pageSize,
@@ -103,7 +105,7 @@ export const ApplicantDetails = () => {
       }
     };
     getAllComments();
-  }, [refreshComment]);
+  }, [refreshComment,paginationValues]);
 
   const handleCommentChange = useCallback((comment: string) => {
     setComment(comment);
@@ -118,22 +120,20 @@ export const ApplicantDetails = () => {
   const handleEditApplicant = async (applicantStatus: ApplicantStatus) => {
     const payload = {
       applicantId: applicant.applicantId,
-      companyId: currentUser.companyId,
       firstName: applicant.firstName,
       lastName: applicant.lastName,
       email: applicant.email,
       phone: applicant.phone,
       vacancyId: applicant.vacancyId,
       experience: applicant.experience,
-      vacancyName: applicant.vacancyName,
       activityType: status.applicationStatus,
       status: applicantStatus,
       state: applicant.state,
     };
     const response = await editApplicant(payload);
-    const { success } = response.data;
+    const { success,message } = response.data;
     if (success) {
-      toast.success("Applicant status updated.");
+      toast.success(formatMessage({id:message}));
       setRefresh(!refresh);
     }
   };
@@ -144,14 +144,12 @@ export const ApplicantDetails = () => {
       if (status.applicationStatus !== applicant.activityType) {
         const payload = {
           applicantId: applicant.applicantId,
-          companyId: currentUser.companyId,
           firstName: applicant.firstName,
           lastName: applicant.lastName,
           email: applicant.email,
           phone: applicant.phone,
           vacancyId: applicant.vacancyId,
           experience: applicant.experience,
-          vacancyName: applicant.vacancyName,
           activityType: status.applicationStatus,
           status: applicant.status,
           state: applicant.state,
@@ -175,7 +173,7 @@ export const ApplicantDetails = () => {
       if (!commentResponse.data.success) {
         throw new Error(commentResponse.data.message);
       }
-      toast.success(commentResponse.data.message);
+      toast.success(formatMessage({id:commentResponse.data.message}));
       handleClose();
       if (status.applicationStatus !== applicant.activityType) {
         setRefresh(!refresh);
@@ -237,8 +235,7 @@ export const ApplicantDetails = () => {
     });
   };
   return (
-    <>
-      <Stack spacing={2} mt={2}>
+      <Stack spacing={2}>
         <Card sx={{ p: 2 }}>
           <Stack
             direction={"row"}
@@ -248,7 +245,7 @@ export const ApplicantDetails = () => {
             mb={2}
           >
             <Typography variant="h5">
-              {intl.formatMessage({ id: "APPLICANT.DETAILS" })}
+              {formatMessage({ id: "APPLICANT.DETAILS" })}
             </Typography>
 
             <Stack direction={"row"} spacing={1}>
@@ -261,7 +258,7 @@ export const ApplicantDetails = () => {
                 icon={<Edit />}
                 tooltip="Edit Applicant"
                 handleClick={() => {
-                  navigate("/recruitment/editapplicant", { state: applicant });
+                  navigate(`/recruitment/applicant/edit/${applicant.applicantId}`);
                 }}
               />
             </Stack>
@@ -271,7 +268,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "FORM.FULL_NAME" })} :
+                  {formatMessage({ id: "FORM.FULL_NAME" })} :
                 </Typography>{" "}
                 <Typography variant="body1">
                   {applicant?.firstName + " " + applicant?.lastName}
@@ -282,7 +279,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "FORM.EMAIL" })} :
+                  {formatMessage({ id: "FORM.EMAIL" })} :
                 </Typography>
 
                 <Typography variant="body1">{applicant?.email}</Typography>
@@ -292,7 +289,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "USER.PHONE" })} :
+                  {formatMessage({ id: "USER.PHONE" })} :
                 </Typography>
 
                 <Typography variant="body1">{applicant?.phone}</Typography>
@@ -302,7 +299,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "JOB.POSITION" })} :
+                  {formatMessage({ id: "JOB.POSITION" })} :
                 </Typography>
 
                 <Typography variant="body1">
@@ -313,7 +310,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "USER.EXPERIENCE" })} :
+                  {formatMessage({ id: "USER.EXPERIENCE" })} :
                 </Typography>
 
                 <Typography variant="body1">
@@ -324,7 +321,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "APPLICATION.DATE" })} :
+                  {formatMessage({ id: "APPLICATION.DATE" })} :
                 </Typography>
                 <Typography variant="body1">
                   {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
@@ -339,11 +336,11 @@ export const ApplicantDetails = () => {
                 sx={{ alignItems: "center" }}
               >
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
+                  {formatMessage({ id: "APPLICATION.STATUS" })} :
                 </Typography>
                 <FormControl>
                   <InputLabel id="demo-simple-select-label">
-                    {intl.formatMessage({ id: "APPLICATION.STATUS" })} :
+                    {formatMessage({ id: "APPLICATION.STATUS" })} :
                   </InputLabel>
                   <Select
                     name="applicantStatus"
@@ -351,11 +348,11 @@ export const ApplicantDetails = () => {
                     sx={{ width: "150px" }}
                     onChange={handleStatusChange}
                     className="select"
-                    label="Application Status"
+                    label= {formatMessage({ id: "APPLICATION.STATUS" })}
                   >
                     {ApplicationEvaluationStatus.map((status) => (
                       <MenuItem key={status.id} value={status.value}>
-                        {status.label}
+                         {formatMessage({ id: status.label })}
                       </MenuItem>
                     ))}
                   </Select>
@@ -365,7 +362,7 @@ export const ApplicantDetails = () => {
             <Grid item xs={12} sm={6} lg={4}>
               <Stack direction={"row"} spacing={2} alignItems={"center"}>
                 <Typography variant="body1" fontWeight={600}>
-                  {intl.formatMessage({ id: "APPLICANT.STATUS" })}:
+                  {formatMessage({ id: "APPLICANT.STATUS" })}:
                 </Typography>
                 <Switch
                   checked={status.applicantStatus === ApplicantStatus.Active}
@@ -391,10 +388,10 @@ export const ApplicantDetails = () => {
               alignItems={"center"}
             >
               <Typography variant="h5">
-                {intl.formatMessage({ id: "APPLICANT.COMMENT" })}
+                {formatMessage({ id: "APPLICANT.COMMENT" })}
               </Typography>
               <CustomisedButton
-                label={intl.formatMessage({ id: "APPLICANT.ADD_COMMENT" })}
+                label={formatMessage({ id: "APPLICANT.ADD_COMMENT" })}
                 Icon={<Add />}
                 handleClick={() => {
                   setModalOpen(true);
@@ -429,6 +426,5 @@ export const ApplicantDetails = () => {
           </Stack>
         </Card>
       </Stack>
-    </>
   );
 };

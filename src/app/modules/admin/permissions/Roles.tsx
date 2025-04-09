@@ -1,8 +1,4 @@
-import {
-  Typography,
-  Stack,
-  Card,
-} from "@mui/material";
+import { Typography, Stack, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { RoleTableColumnList } from "../../../../utils/constant/Constant";
@@ -15,9 +11,11 @@ import { RoleModel } from "../models";
 import { getAllRoles } from "../adminservices";
 import { useAppSelector } from "../../../Redux/hooks";
 import { checkPermissionForModulesFeatureAccess } from "../../../../utils/common";
+import { usePageData } from "../../../../_themes/layout/core";
 
 export const Roles = () => {
   const intl = useIntl();
+  const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,11 +23,11 @@ export const Roles = () => {
     (state) => state.user.userData?.modulePermission
   )!;
   const hasAccess = checkPermissionForModulesFeatureAccess(
-    ModulesName.Permissions,
-    Permission.Create,
+    `${ModulesName.Permissions}.${Permission.Create}`,
     userModulePermission
   );
   useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.PERMISSION" }));
     getAllRoles()
       .then((res) => {
         const { success, methodResults } = res.data;
@@ -47,26 +45,17 @@ export const Roles = () => {
 
   return (
     <>
-      <Stack
-        direction={"row"}
-        className="justify-content-between align-items-center"
-        sx={{ mb: 3 }}
-      >
-        <Typography variant="h4">
-          {intl.formatMessage({ id: "PAGE.PERMISSION" })}
-        </Typography>
+      <Card sx={{ p: "2rem" }} className="d-flex flex-column">
         {hasAccess && (
           <CustomisedButton
-            label={intl.formatMessage({ id: "ADMIN.ADD_ROLE" })}
+            label={intl.formatMessage({ id: "ROLE.ADD_ROLE" })}
             handleClick={() => {
-              navigate("/admin/addrole");
+              navigate("/admin/roles/add");
             }}
             Icon={<Add />}
+            className="align-self-end mb-4"
           />
         )}
-      </Stack>
-
-      <Card sx={{ p: "2rem" }}>
         <CustomisedTable
           tabName={ModulesName.Permissions}
           keyName="rolesId"

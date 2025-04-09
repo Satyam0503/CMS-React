@@ -22,12 +22,6 @@ export default function UserProfile() {
   const { userDetails, userSkills } = useUserDetails();
   return (
     <>
-      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
-        <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "PAGE.MY_PROFILE" })}
-        </Typography>
-      </Stack>
-
       <Grid container spacing={4} zIndex={0}>
         <Grid
           item

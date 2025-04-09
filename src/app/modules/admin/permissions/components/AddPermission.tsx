@@ -25,6 +25,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 const initialValues = {
   description: "",
@@ -36,7 +37,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export const AddPermission = () => {
-  const intl = useIntl();
+  const { formatMessage } = useIntl();
+  const { setPageTitle } = usePageData();
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
   >([]);
@@ -47,6 +49,7 @@ export const AddPermission = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setPageTitle(formatMessage({ id: "PAGE.ADD_ROLE" }));
     const getAllPermissions = async () => {
       try {
         const response = await getAllModulePermission();
@@ -121,8 +124,8 @@ export const AddPermission = () => {
       const response = await addEditRole(payload);
       const { success, message } = response.data;
       if (success) {
-        toast.success(message);
-        navigate("/admin/permissions");
+        toast.success(formatMessage({ id: message }));
+        navigate("/admin/roles");
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -134,125 +137,113 @@ export const AddPermission = () => {
   };
 
   return (
-    <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "ROLES.ADD" })}
-      </Typography>
-      <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
-        <form
-          onSubmit={formik.handleSubmit}
-          className="flex-grow-1 d-flex flex-column gap-4"
-        >
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              required
-              label={intl.formatMessage({ id: "ROLE.NAME" })}
-              error={
-                formik.touched.roleTitle && Boolean(formik.errors.roleTitle)
-              }
-              {...formik.getFieldProps("roleTitle")}
-            />
-            <TextField
-              fullWidth
-              required
-              multiline
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
-              {...formik.getFieldProps("description")}
-            />
-          </Stack>
-          {isLoading ? (
-            <CircularLoader />
-          ) : (
-            <>
-              <Stack spacing={1}>
-                <Typography variant="h5">
-                  {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
-                </Typography>
-                <Box
-                  component={"div"}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: colors.alpha.neutral[200],
-                    borderRadius: 1,
-                    p: 2,
-                  }}
-                >
-                  {modulePermissionList.length !== 0 && (
-                    <Stack spacing={2} divider={<Divider />}>
-                      {modulePermissionList.map((module, index) => {
-                        return (
-                          <Stack spacing={0.5} key={index}>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontWeight: 600 }}
-                            >
-                              {module.moduleName}
-                            </Typography>
-                            <FormGroup
-                              row
-                              sx={{ paddingInlineStart: 2, fontSize: "12px" }}
-                              className="d-flex flex-row gap-2"
-                            >
-                              {module.permissions.map((permission) => {
-                                return (
-                                  <FormControlLabel
-                                    labelPlacement="end"
-                                    label={permission.permissionName}
-                                    key={permission.modulePermissionId}
-                                    value={permission.modulePermissionId}
-                                    control={
-                                      <Checkbox
-                                        onChange={(e) => {
-                                          handlePermissionChange(
-                                            permission,
-                                            e.target.checked
-                                          );
-                                        }}
-                                      />
-                                    }
-                                    checked={checkUserModulePermission(
-                                      permission.modulePermissionId
-                                    )}
-                                  />
-                                );
-                              })}
-                            </FormGroup>
-                          </Stack>
-                        );
-                      })}
-                    </Stack>
-                  )}
-                </Box>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={2}
-                className="justify-content-end"
+    <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex-grow-1 d-flex flex-column gap-4"
+      >
+        <Stack spacing={2}>
+          <TextField
+            fullWidth
+            required
+            label={formatMessage({ id: "ROLE.NAME" })}
+            error={formik.touched.roleTitle && Boolean(formik.errors.roleTitle)}
+            {...formik.getFieldProps("roleTitle")}
+          />
+          <TextField
+            fullWidth
+            required
+            multiline
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
+            label={formatMessage({ id: "ROLE.DESCRIPTION" })}
+            {...formik.getFieldProps("description")}
+          />
+        </Stack>
+        {isLoading ? (
+          <CircularLoader />
+        ) : (
+          <>
+            <Stack spacing={1}>
+              <Typography variant="h5">
+                {formatMessage({ id: "ROLE.PERMISSION" })}
+              </Typography>
+              <Box
+                component={"div"}
+                sx={{
+                  border: "1px solid",
+                  borderColor: colors.alpha.neutral[200],
+                  borderRadius: 1,
+                  p: 2,
+                }}
               >
-                <CustomisedButton
-                  variant="outlined"
-                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
-                  handleClick={handleReset}
-                />
-                <CustomisedButton
-                  loading={formik.isSubmitting}
-                  type="submit"
-                  disabled={
-                    selectedPermission.length === 0 || formik.isSubmitting
-                  }
-                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
-                  Icon={<Check />}
-                  iconPosition="start"
-                />
-              </Stack>
-            </>
-          )}
-        </form>
-      </Card>
-    </>
+                {modulePermissionList.length !== 0 && (
+                  <Stack spacing={2} divider={<Divider />}>
+                    {modulePermissionList.map((module, index) => {
+                      return (
+                        <Stack spacing={0.5} key={index}>
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {module.moduleName}
+                          </Typography>
+                          <FormGroup
+                            row
+                            sx={{ paddingInlineStart: 2, fontSize: "12px" }}
+                            className="d-flex flex-row gap-2"
+                          >
+                            {module.permissions.map((permission) => {
+                              return (
+                                <FormControlLabel
+                                  labelPlacement="end"
+                                  label={permission.permissionName}
+                                  key={permission.modulePermissionId}
+                                  value={permission.modulePermissionId}
+                                  control={
+                                    <Checkbox
+                                      onChange={(e) => {
+                                        handlePermissionChange(
+                                          permission,
+                                          e.target.checked
+                                        );
+                                      }}
+                                    />
+                                  }
+                                  checked={checkUserModulePermission(
+                                    permission.modulePermissionId
+                                  )}
+                                />
+                              );
+                            })}
+                          </FormGroup>
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                )}
+              </Box>
+            </Stack>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              className="justify-content-end"
+            >
+              <CustomisedButton
+                variant="outlined"
+                label={formatMessage({ id: "BUTTON.RESET" })}
+                handleClick={handleReset}
+              />
+              <CustomisedButton
+                loading={formik.isSubmitting}
+                type="submit"
+                disabled={formik.isSubmitting}
+                label={formatMessage({ id: "BUTTON.SAVE" })}
+                Icon={<Check />}
+                iconPosition="start"
+              />
+            </Stack>
+          </>
+        )}
+      </form>
+    </Card>
   );
 };

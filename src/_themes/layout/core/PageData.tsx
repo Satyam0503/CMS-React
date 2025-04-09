@@ -1,8 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { FC, createContext, useContext, useEffect, useState } from "react";
+import { FC, createContext, useContext, useState } from "react";
 import { WithChildren } from "../../helpers";
 
 export interface PageDataContextModel {

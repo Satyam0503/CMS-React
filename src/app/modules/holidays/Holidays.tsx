@@ -20,13 +20,14 @@ import {
 } from "@mui/icons-material";
 import { HolidayType } from "../../../utils/common_types";
 import dayjs from "dayjs";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { HolidayTabTableColumnList } from "../../../utils/constant/Constant";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import HolidayForm from "./components/HolidayForm";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
+import { usePageData } from "../../../_themes/layout/core";
 
 // remove this array later
 const rows = [
@@ -50,6 +51,7 @@ const initialValues: HolidayType = {
 };
 
 export default function Holidays() {
+  const {setPageTitle}= usePageData();
   const [initialHolidayValues, setInitialHolidayValues] =
     useState(initialValues);
   const [searchValue, setSearchValue] = useState("");
@@ -104,11 +106,12 @@ export default function Holidays() {
     setSelectedHolidayId(null);
   }
 
+  useEffect(()=>{
+    setPageTitle(intl.formatMessage({ id: "PAGE.HOLIDAYS" }))
+  },[])
+  
   return (
     <>
-      <Typography variant="h4" mb={3}>
-        {intl.formatMessage({ id: "PAGE.HOLIDAYS" })}
-      </Typography>
       <Card sx={{ p: "2rem" }}>
         <Stack
           direction="row"

@@ -41,7 +41,6 @@ import { useParams } from "react-router-dom";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
-  companyId: "",
   firstName: "",
   lastName: "",
   email: "",
@@ -50,7 +49,6 @@ const initialValues: ApplicantModel = {
   experience: 1,
   resume: null,
   vacancyId: "",
-  vacancyName: "",
   status: ApplicantStatus.InActive,
   activityType: ApplicationStatus.New,
 };
@@ -91,12 +89,8 @@ export default function ApplyNow() {
   ) => {
     const formData = new FormData();
     formData.append("File", values.resume as File);
-    const vacancy = activeJobPositionsList.find(
-      (job) => job.jobId === values.vacancyId
-    );
     const payload: ApplicantModel = {
       ...values,
-      vacancyName: vacancy ? vacancy.title : "",
       experience: values.experience * 12,
     };
     try {
