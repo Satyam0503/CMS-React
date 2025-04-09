@@ -11,21 +11,33 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { colors } from "../../theme/MuiTheme";
 import IconStat from "../../../shared/components/IconStat";
 import { getDateDiffInYears } from "../../../../utils/common";
-import { EmployeeSkills } from "./components/EmployeeSkills";
-import { EmployeeCertification } from "./components/EmployeeCertifications";
-import { EmployeeEducation } from "./components/EmployeeEducation";
-import { AboutEmployee } from "./components/AboutEmployee";
-import { EmployeeDetails } from "./components/EmployeeDetails";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EmployeeProfileCard } from "./components/EmployeeProfileCard";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { getEmployeeById, getEmployeeSkills } from "../userservices";
 import LeaveAllowences from "../components/LeaveAllowences";
 import BasicTabs from "./components/BasicTabs";
+import { usePageData } from "../../../../_themes/layout/core";
+import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+
+const employeeBreadCrumbs: Array<Breadcrumb> = [ 
+  {
+    label: "PAGE.EMPLOYEES",
+    path: "/employees",
+    parent: "/",
+  },
+  {
+    label: "PAGE.PROFILE",
+    path: "/employees/{employeeid}",
+    parent: "/employees",
+  } 
+];
 
 const EmployeeProfile = () => {
   const intl = useIntl();
+  const { setPageTitle } = usePageData();
+  const {setBreadcrumbs}= useBreadcrumbs();
   const [employeeDetails, setEmployeeDetails] = useState<EmployeeModel>(
     {} as EmployeeModel
   );
@@ -34,14 +46,16 @@ const EmployeeProfile = () => {
   const companyName = useAppSelector(
     (state) => state.user.userData?.companyName
   );
-  const location = useLocation();
+  const param = useParams();
   const navigate = useNavigate();
-  const employeeId = location.state as string;
-  if (!employeeId) {
-    navigate("/error");
-  }
 
+  if (Object.keys(param).length === 0 || !param.employeeid) {
+    navigate("/error", { replace: true });
+  }
+  const employeeId = param.employeeid;
+ 
   useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.PROFILE" }));
     const getEmployeeDetails = async () => {
       try {
         const response = await Promise.allSettled([
@@ -65,14 +79,12 @@ const EmployeeProfile = () => {
     getEmployeeDetails();
   }, []);
 
+  useEffect(()=>{
+    setBreadcrumbs(employeeBreadCrumbs);
+  },[])
+
   return (
     <>
-      {/* //need to add user name in place of my */}
-      <Stack position={{ lg: "sticky" }} top={{ lg: 80 }}>
-        <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "PAGE.PROFILE" })}
-        </Typography>
-      </Stack>
       <Grid container spacing={4}>
         <Grid
           item
@@ -143,17 +155,10 @@ const EmployeeProfile = () => {
           <Stack sx={{ width: "100%" }}>
             <BasicTabs />
           </Stack>
-          {/* <Stack spacing={2} sx={{ my: 2 }}>
-            <AboutEmployee employeeId={employeeId} />
-            <EmployeeDetails employeeDetails={employeeDetails} />
-            <EmployeeSkills employeeSkills={employeeSkills} />
-            <EmployeeEducation employeeId={employeeId} />
-            <EmployeeCertification employeeId={employeeId} />
-          </Stack> */}
         </Grid>
       </Grid>
     </>
   );
 };
 
-export { EmployeeProfile };
+export default EmployeeProfile ;

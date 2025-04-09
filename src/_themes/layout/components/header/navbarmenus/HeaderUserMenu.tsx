@@ -71,7 +71,6 @@ export default function HeaderUserMenu() {
             <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
               {currentUser?.firstName} {currentUser?.lastName}
             </Typography>
-            <Typography variant="body2">{currentUser?.role || ""}</Typography>
           </Box>
         </MenuItem>
         <Divider/>
@@ -83,7 +82,7 @@ export default function HeaderUserMenu() {
             <AccountCircle />
           </ListItemIcon>
           <ListItemText>
-            {intl.formatMessage({ id: "USER.ACCOUNT_SETTING" })}
+            {intl.formatMessage({ id: "USER.MY_PROFILE" })}
           </ListItemText>
         </MenuItem>
         <MenuItem className="px-2">

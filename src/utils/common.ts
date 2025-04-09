@@ -48,45 +48,19 @@ export const employeesListMapperforExport = (
 export const applicationStatusMapper: {
   [index: number]: string;
 } = {
-  [ApplicationStatus.New]: "New",
-  [ApplicationStatus.InProgress]: "In Progress",
-  [ApplicationStatus.OnHold]: "On Hold",
-  [ApplicationStatus.Shortlisted]: "Shortlisted",
-  [ApplicationStatus.Selected]: "Selected",
-  [ApplicationStatus.Rejected]: "Rejected",
-};
-
-export const applicationStatusClassMapper: {
-  [index: number]: string;
-} = {
-  [ApplicationStatus.New]: "info",
-  [ApplicationStatus.InProgress]: "warning",
-  [ApplicationStatus.OnHold]: "warning",
-  [ApplicationStatus.Shortlisted]: "warning",
-  [ApplicationStatus.Selected]: "success",
-  [ApplicationStatus.Rejected]: "danger",
-};
-
-export const getApplicationStatusClass = (applicationStatus: number) => {
-  return applicationStatusClassMapper[applicationStatus];
+  [ApplicationStatus.New]: "APPLICATION.STATUS.NEW",
+  [ApplicationStatus.InProgress]: "APPLICATION.STATUS.INPROGRESS",
+  [ApplicationStatus.OnHold]: "APPLICATION.STATUS.ONHOLD",
+  [ApplicationStatus.Shortlisted]: "APPLICATION.STATUS.SHORTLISTED",
+  [ApplicationStatus.Selected]: "APPLICATION.STATUS.SELECTED",
+  [ApplicationStatus.Rejected]: "APPLICATION.STATUS.REJECTED",
 };
 
 export const applicantStatusDecoder: {
   [index: number]: string;
 } = {
-  [ApplicantStatus.InActive]: "Inactive",
-  [ApplicantStatus.Active]: "Active",
-};
-
-const applicantStatusClassMapper: {
-  [index: number]: string;
-} = {
-  [ApplicantStatus.InActive]: "danger",
-  [ApplicantStatus.Active]: "success",
-};
-
-export const getApplicantStatusClass = (applicantStatus: number) => {
-  return applicantStatusClassMapper[applicantStatus] || "";
+  [ApplicantStatus.InActive]: "APPLICANT.STATUS.ACTIVE",
+  [ApplicantStatus.Active]: "APPLICANT.STATUS.INACTIVE",
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -108,25 +82,14 @@ export const commentActionEncoderForApplicationStatus = (
   }
 };
 
-export const commentActionDecoder = (commentAction: number) => {
-  switch (commentAction) {
-    case CommentAction.InProgress:
-      return "In Process";
-    case CommentAction.OnHold:
-      return "On Hold";
-    case CommentAction.Shortlisted:
-      return "Shortlisted";
-    case CommentAction.Selection:
-      return "Selection";
-    case CommentAction.Rejection:
-      return "Rejection";
-    case CommentAction.Edit:
-      return "Edit";
-    case CommentAction.Process:
-      return "Process";
-    default:
-      "Process";
-  }
+export const commentActionMapper: { [index: number]: string } = {
+  [CommentAction.InProgress]: "COMMENT.ACTION.INPROGRESS",
+  [CommentAction.OnHold]: "COMMENT.ACTION.ONHOLD",
+  [CommentAction.Shortlisted]: "COMMENT.ACTION.SHORTLISTED",
+  [CommentAction.Selection]: "COMMENT.ACTION.SELECTION",
+  [CommentAction.Rejection]: "COMMENT.ACTION.REJECTION",
+  [CommentAction.Edit]: "COMMENT.ACTION.EDIT",
+  [CommentAction.Process]: "COMMENT.ACTION.PROCESS",
 };
 
 export const statusEncoder = (status: string) => {
@@ -161,41 +124,26 @@ export const convertMonthsToYear = (months: number) => {
 };
 
 export const checkPermissionForModulesFeatureAccess = (
-  moduleName: ModulesName,
-  requiredPermission: Permission,
-  userModulePermissions: ModulePermissoinModel[]
+  requiredPermission: string,
+  userModulePermissions: string[]
 ) => {
-  const module = userModulePermissions.find(
-    (module) => module.moduleConstant === moduleName
-  );
-  if (!module) {
-    return false;
-  }
-  const hasPermission = module.permissions.find(
-    (permission) => permission.permissionConstant === requiredPermission
-  );
-  if (!hasPermission) {
-    return false;
-  }
-  return hasPermission.hasAccess;
+  return userModulePermissions.findIndex((x) => x == requiredPermission) > -1;
 };
 
-export const findUserDefaultTab = (
-  userModulePermissions: ModulePermissoinModel[]
-) => {
+export const findUserDefaultTab = (userModulePermissions: string[]) => {
   const defaultTab = SideBarTabList.find((tab) => {
     if (tab.hasSubTabs) {
-      const defaultSubTab= tab.subTabs?.find(subTabs=>{
-        return checkPermissionForModulesFeatureAccess(subTabs.title,Permission.View,userModulePermissions);
-      })
-      return defaultSubTab ? true: false;
+      const defaultSubTab = tab.subTabs?.find((subTabs) => {
+        return checkPermissionForModulesFeatureAccess(
+          `${subTabs.constant}.${Permission.View}`,
+          userModulePermissions
+        );
+      });
+      return defaultSubTab ? true : false;
     }
-    return (
-      checkPermissionForModulesFeatureAccess(
-        tab.title,
-        Permission.View,
-        userModulePermissions
-      ) === true
+    return checkPermissionForModulesFeatureAccess(
+      `${tab.constant}.${Permission.View}`,
+      userModulePermissions
     );
   });
 
@@ -207,19 +155,11 @@ export const findUserDefaultTab = (
 
 export const getModulePermissions = (
   moduleName: ModulesName,
-  modulesPermissions: ModulePermissoinModel[]
+  modulesPermissions: string[]
 ) => {
-  const allowedPermission: string[] = [];
-  const hasModuleAccess = modulesPermissions.find(
-    (module) => module.moduleConstant === moduleName
+  const allowedPermission = modulesPermissions.filter((permission) =>
+    permission.includes(moduleName)
   );
-  if (hasModuleAccess) {
-    hasModuleAccess.permissions.forEach((permission) => {
-      if (permission.hasAccess) {
-        allowedPermission.push(permission.permissionConstant);
-      }
-    });
-  }
   return allowedPermission;
 };
 
@@ -277,17 +217,16 @@ export const getAppliedFilters = () => {
     : {
         application: null,
         jobs: null,
-        processLog:null,
+        processLog: null,
       };
   return appliedfilters;
 };
 
 export const setLocalFilter = (filters: FiltersType) => {
-  if (localStorage) {
-    localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
-  } else {
-    console.log("Unable to access localstorage");
+  if (!localStorage) {
+    return;
   }
+  localStorage.setItem(APP_FILTER_KEY, JSON.stringify(filters));
 };
 
 export const clearAllLocalFilter = () => {
@@ -298,25 +237,25 @@ export const clearAllLocalFilter = () => {
 };
 
 export const countAppliedFilter = (filter: Record<string, any> | null) => {
-    if (!filter || Object.keys(filter).length === 0) {
-      return 0;
-    } else {
-      let count = 0;
+  if (!filter || Object.keys(filter).length === 0) {
+    return 0;
+  } else {
+    let count = 0;
 
-      Object.keys(filter).forEach((element) => {
-        if (filter[element] !== null) {
-          if (Array.isArray(filter[element])) {
-            count += Boolean(filter[element].length) ? 1 : 0;
-          } else if (typeof filter[element] === "string") {
-            count += Boolean(filter[element]) ? 1 : 0;
-          } else if (typeof filter[element] === "number") {
-            count += filter[element] >= 0 ? 1 : 0;
-          }
+    Object.keys(filter).forEach((element) => {
+      if (filter[element] !== null) {
+        if (Array.isArray(filter[element])) {
+          count += Boolean(filter[element].length) ? 1 : 0;
+        } else if (typeof filter[element] === "string") {
+          count += Boolean(filter[element]) ? 1 : 0;
+        } else if (typeof filter[element] === "number") {
+          count += filter[element] >= 0 ? 1 : 0;
         }
-      });
-      return count;
-    }
-  };
+      }
+    });
+    return count;
+  }
+};
 
 export const addCurrentTimeToDate = (date: Dayjs | null) => {
   const currentDateInMs = dayjs().valueOf();

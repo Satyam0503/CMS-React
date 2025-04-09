@@ -22,9 +22,11 @@ import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
+import RightDrawer from "./components/RightDrawer";
 
 // Main Dashboard Component
 export default function Dashboard() {
+  const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
@@ -49,8 +51,7 @@ export default function Dashboard() {
   const hasAccessToEmpModule = useMemo(
     () =>
       checkPermissionForModulesFeatureAccess(
-        ModulesName.Employees,
-        Permission.View,
+        `${ModulesName.Employees}.${Permission.View}`,
         userModulesPermissions
       ),
     [userModulesPermissions]
@@ -59,12 +60,12 @@ export default function Dashboard() {
   const hasAccessToJob = useMemo(
     () =>
       checkPermissionForModulesFeatureAccess(
-        ModulesName.Jobs,
-        Permission.View,
+        `${ModulesName.Jobs}.${Permission.View}`,
         userModulesPermissions
       ),
     [userModulesPermissions]
   );
+  setPageTitle("");
   useEffect(() => {
     async function getEmployees() {
       try {

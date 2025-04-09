@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { getAllJobVacancies } from "../../services";
@@ -53,7 +53,7 @@ export const ApplicationFilter: FC<PropsType> = ({
   handleClose,
   anchorEl,
 }) => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const dispatch = useAppDispatch();
   const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(
     null
@@ -133,7 +133,7 @@ export const ApplicationFilter: FC<PropsType> = ({
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
             <Typography variant="h6">
-              {intl.formatMessage({ id: "FILTER" })}
+              {formatMessage({ id: "FILTER" })}
             </Typography>
             <IconButton className="border-0" onClick={handleClose}>
               <Close />{" "}
@@ -147,7 +147,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                   sx={{ justifyContent: "space-between" }}
                 >
                   <Typography variant="body1">
-                    {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
+                    {formatMessage({ id: "FILTER.APPLIED_DATE" })}
                   </Typography>
                   <Stack
                     direction={"row"}
@@ -183,7 +183,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                           handleTimePeriodChange(index, values, setFieldValue);
                         }}
                       >
-                        {intl.formatMessage({ id: option.name })}
+                        {formatMessage({ id: option.name })}
                       </MenuItem>
                     ))}
                   </Menu>
@@ -191,7 +191,7 @@ export const ApplicationFilter: FC<PropsType> = ({
 
                 <Stack spacing={2} direction={"row"}>
                   <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "FILTER.FROM" })}
+                    label={formatMessage({ id: "FILTER.FROM" })}
                     value={
                       Boolean(values.filterFrom)
                         ? dayjs(values.filterFrom)
@@ -206,7 +206,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                     }}
                   />
                   <CustomisedDatePicker
-                    label={intl.formatMessage({ id: "FILTER.TO" })}
+                    label={formatMessage({ id: "FILTER.TO" })}
                     value={
                       Boolean(values.filterTo) ? dayjs(values.filterTo) : null
                     }
@@ -221,7 +221,7 @@ export const ApplicationFilter: FC<PropsType> = ({
 
               <Stack spacing={1}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "FILTER.JOB_TITLE" })}
+                  {formatMessage({ id: "FILTER.JOB_TITLE" })}
                 </Typography>
                 <Autocomplete
                   multiple
@@ -258,7 +258,7 @@ export const ApplicationFilter: FC<PropsType> = ({
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
+                  {formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
                 </Typography>
                 <Autocomplete
                   multiple
@@ -275,7 +275,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                       value.map((item) => item.value)
                     );
                   }}
-                  getOptionLabel={(option) => option.label}
+                  getOptionLabel={(option) => formatMessage({id:option.label})}
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Status" />
                   )}
@@ -287,7 +287,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                           checked={state.selected}
                           sx={{ mr: 1 }}
                         />
-                        <ListItemText primary={option.label} />
+                        <ListItemText primary={formatMessage({id:option.label})} />
                       </li>
                     );
                   }}
@@ -295,7 +295,7 @@ export const ApplicationFilter: FC<PropsType> = ({
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "FILTER.STATUS" })}
+                  {formatMessage({ id: "FILTER.STATUS" })}
                 </Typography>
                 <Autocomplete
                   multiple
@@ -333,13 +333,13 @@ export const ApplicationFilter: FC<PropsType> = ({
 
               <Stack spacing={1}>
                 <Typography variant="body1">
-                  {intl.formatMessage({ id: "FILTER.EXPERIENCE" })}
+                  {formatMessage({ id: "FILTER.EXPERIENCE" })}
                 </Typography>
                 <Stack spacing={1} direction={"row"} useFlexGap>
                   <TextField
                     fullWidth
                     error={Boolean(errors.minExperience)}
-                    label={intl.formatMessage({ id: "FILTER.MIN_EXPERIENCE" })}
+                    label={formatMessage({ id: "FILTER.MIN_EXPERIENCE" })}
                     type="number"
                     {...getFieldProps("minExperience")}
                     inputProps={{
@@ -353,7 +353,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                     }}
                   />
                   <TextField
-                    label={intl.formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
+                    label={formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
                     fullWidth
                     type="number"
                     required={Boolean(values.minExperience)}

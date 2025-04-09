@@ -14,8 +14,8 @@ const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
   const modulePermissions = useAppSelector(
     (state) => state.user.userData?.modulePermission
-  );
-  const userModulePermission = modulePermissions ?? [];
+  ) ?? [];
+
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
@@ -30,7 +30,7 @@ const AppRoutes: FC = () => {
               <Route
                 index
                 element={
-                  <Navigate to={findUserDefaultTab(userModulePermission)} />
+                  <Navigate to={findUserDefaultTab(modulePermissions)} />
                 }
               />
             </>

@@ -6,11 +6,12 @@ import {
   FormControlLabel,
   FormGroup,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
 import { colors } from "../../../theme/MuiTheme";
@@ -21,7 +22,9 @@ import {
 } from "../../../../../utils/common_types";
 import {
   addEditRole,
+  changeAppAccess,
   getAllModulePermission,
+  getRoleById,
   getRolePermissionsById,
 } from "../../adminservices";
 import { AddEditRoleModel, RoleModel } from "../../models";
@@ -30,15 +33,17 @@ import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { usePageData } from "../../../../../_themes/layout/core";
 
 const validationSchema = Yup.object().shape({
   description: Yup.string().required(),
-  titles: Yup.string().required(),
+  title: Yup.string().required(),
 });
 
 export const EditPermission = () => {
-  const intl = useIntl();
-  const state = useLocation().state as RoleModel | null;
+  const { formatMessage } = useIntl();
+  const { setPageTitle } = usePageData();
+  const { roleid = "" } = useParams();
   const navigate = useNavigate();
   const [modulePermissionList, setModulePermissionList] = useState<
     ModulePermissoinModel[]
@@ -46,15 +51,15 @@ export const EditPermission = () => {
   const [rolePermissionList, setRolePermissionList] = useState<
     PermissionModel[]
   >([]);
-  const [currentRoleDetails, setCurrentRoleDetails] = useState({
-    description: "",
-    titles: "",
-  });
-
+  const [currentRoleDetails, setCurrentRoleDetails] = useState<RoleModel>();
   const [isLoading, setLoading] = useState(true);
+  const [refresh,setRefresh] = useState(false);
 
   const formik = useFormik({
-    initialValues: currentRoleDetails,
+    initialValues: {
+      title: currentRoleDetails?.titles ?? "",
+      description: currentRoleDetails?.description ?? "",
+    },
     enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: (value) => {
@@ -63,23 +68,25 @@ export const EditPermission = () => {
   });
 
   useEffect(() => {
-    if (!state || Object.keys(state).length === 0) {
-      navigate("/error/404", { replace: true });
-    } else {
-      setCurrentRoleDetails({
-        ...currentRoleDetails,
-        description: state.description,
-        titles: state.titles,
+    setPageTitle(formatMessage({ id: "PAGE.EDIT_PERMISSION" }));
+    getRoleById(roleid)
+      .then((res) => {
+        const { success, methodResult } = res.data;
+        if (success) {
+          setCurrentRoleDetails(methodResult);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
-    }
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     const getPermissions = async () => {
       try {
         const response = await Promise.all([
           getAllModulePermission(),
-          getRolePermissionsById(state?.rolesId!),
+          getRolePermissionsById(roleid),
         ]);
         setModulePermissionList(response[0].data.methodResults);
         setRolePermissionList(
@@ -135,13 +142,13 @@ export const EditPermission = () => {
   };
 
   const handleRolePermissionUpdate = async (
-    roleValues: typeof currentRoleDetails
+    roleValues: typeof formik.initialValues
   ) => {
     const payload: AddEditRoleModel = {
-      roleId: state?.rolesId,
-      roleTitle: roleValues.titles,
+      roleId: currentRoleDetails?.rolesId,
+      roleTitle: roleValues.title,
       description: roleValues.description,
-      hasAppAccess: rolePermissionList.length !== 0,
+      hasAppAccess: currentRoleDetails?.hasAppAccess!,
       rolePermissions: rolePermissionList,
       userRoles: [],
     };
@@ -150,133 +157,170 @@ export const EditPermission = () => {
       const { success, message } = response.data;
       if (success) {
         toast.success(message);
-        navigate("/admin/permissions");
+        navigate("/admin/roles");
       }
     } catch (error) {
       toast.error("Failed To Update Permission");
     }
   };
 
+  const handleAppAccessChange=async (event: React.ChangeEvent<HTMLInputElement>, checked: boolean)=>{
+    try {
+      const res= await changeAppAccess(currentRoleDetails?.rolesId!,checked);
+      if(res.data.success){
+        toast.success(formatMessage({id:res.data.message}))
+        setRefresh(!refresh);
+      }
+      else {
+        toast.error(formatMessage({id:res.data.message}));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <>
-      <Stack>
-        <Typography variant="h4" mb={3}>
-          {intl.formatMessage({ id: "ROLES.EDIT_AND_PERMISSION" })}
-        </Typography>
-      </Stack>
-      <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
-        <form
-          onSubmit={formik.handleSubmit}
-          className="flex-grow-1 d-flex flex-column gap-4"
-        >
-          <Stack spacing={2}>
-            <TextField
-              fullWidth
-              required
-              error={formik.touched.titles && Boolean(formik.errors.titles)}
-              disabled={state?.isNotEditable}
-              label={intl.formatMessage({ id: "ROLE.NAME" })}
-              {...formik.getFieldProps("titles")}
-            />
-            <TextField
-              fullWidth
-              required
-              multiline
-              disabled={state?.isNotEditable}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              label={intl.formatMessage({ id: "INFO.DESCRIPTION" })}
-              {...formik.getFieldProps("description")}
-            />
-          </Stack>
-          {isLoading ? (
-            <CircularLoader />
-          ) : (
-            <>
-              <Stack spacing={1}>
-                <Typography variant="h5">
-                  {intl.formatMessage({ id: "ADMIN.PERMISSION" })}
-                </Typography>
-                <Box
-                  component={"div"}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: colors.alpha.neutral[200],
-                    borderRadius: 1,
-                    p: 2,
-                  }}
-                >
-                  {modulePermissionList.length !== 0 && (
-                    <Stack spacing={2} divider={<Divider />}>
-                      {modulePermissionList.map((module, index) => {
-                        return (
-                          <Stack spacing={0.5} key={index}>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontWeight: 600 }}
-                            >
-                              {module.moduleName}
-                            </Typography>
-                            <FormGroup
-                              row
-                              sx={{ paddingInlineStart: 2, fontSize: "12px" }}
-                              className="d-flex flex-row gap-2"
-                            >
-                              {module.permissions.map((permission) => {
-                                return (
-                                  <FormControlLabel
-                                    labelPlacement="end"
-                                    label={permission.permissionName}
-                                    key={permission.modulePermissionId}
-                                    disabled={state?.isNotEditable}
-                                    value={permission.modulePermissionId}
-                                    control={
-                                      <Checkbox
-                                        onChange={(e) => {
-                                          handlePermissionChange(
-                                            permission,
-                                            e.target.checked
-                                          );
-                                        }}
-                                      />
-                                    }
-                                    checked={checkUserModulePermission(
-                                      permission.modulePermissionId
-                                    )}
-                                  />
-                                );
-                              })}
-                            </FormGroup>
-                          </Stack>
-                        );
-                      })}
-                    </Stack>
-                  )}
+    <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex-grow-1 d-flex flex-column gap-5"
+      >
+        <Stack spacing={2}>
+          <TextField
+            fullWidth
+            required
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            disabled={currentRoleDetails?.isNotEditable}
+            label={formatMessage({ id: "ROLE.NAME" })}
+            {...formik.getFieldProps("title")}
+          />
+          <TextField
+            fullWidth
+            required
+            multiline
+            disabled={currentRoleDetails?.isNotEditable}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
+            label={formatMessage({ id: "ROLE.DESCRIPTION" })}
+            {...formik.getFieldProps("description")}
+          />
+        </Stack>
+        {isLoading ? (
+          <CircularLoader />
+        ) : (
+          <>
+            <Stack spacing={1}>
+              <Typography variant="h5">
+                {formatMessage({ id: "ROLE.PERMISSION" })}
+              </Typography>
+              {!currentRoleDetails?.isNotEditable && (
+                <Box className="p-5 shadow-sm mb-2">
+                  <Stack
+                    spacing={2}
+                    direction={"row"}
+                    className="align-items-center mb-4"
+                  >
+                    <Typography variant="h6">
+                      {formatMessage(
+                        {
+                          id: currentRoleDetails?.hasAppAccess
+                            ? "ROLE.DISABLE_ACCESS"
+                            : "ROLE.ENABLE_ACCESS",
+                        },
+                        { role: currentRoleDetails?.titles }
+                      )}{" "}
+                      :
+                    </Typography>
+                    <Switch checked={currentRoleDetails?.hasAppAccess}  onChange={handleAppAccessChange }/>
+                  </Stack>
+                  <Typography variant="caption">
+                    {formatMessage({
+                      id: currentRoleDetails?.hasAppAccess
+                        ? "ROLE.DISABLE_ACCESS_NOTE"
+                        : "ROLE.ENABLE_ACCESS_NOTE",
+                    })}
+                  </Typography>
                 </Box>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={2}
-                className="justify-content-end"
+              )}
+              <Box
+                component={"div"}
+                sx={{
+                  border: "1px solid",
+                  borderColor: colors.alpha.neutral[200],
+                  borderRadius: 1,
+                  p: 2,
+                }}
               >
-                <CustomisedButton
-                  variant="outlined"
-                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
-                />
-                <CustomisedButton
-                  loading={formik.isSubmitting}
-                  disabled={state?.isNotEditable || formik.isSubmitting}
-                  label={intl.formatMessage({ id: "BUTTON.SAVE" })}
-                  Icon={<Check />}
-                  iconPosition="start"
-                  type="submit"
-                />
-              </Stack>
-            </>
-          )}
-        </form>
-      </Card>
-    </>
+                {modulePermissionList.length !== 0 && (
+                  <Stack spacing={2} divider={<Divider />}>
+                    {modulePermissionList.map((module, index) => {
+                      return (
+                        <Stack spacing={0.5} key={index}>
+                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {module.moduleName}
+                          </Typography>
+                          <FormGroup
+                            row
+                            sx={{ paddingInlineStart: 2, fontSize: "12px" }}
+                            className="d-flex flex-row gap-2"
+                          >
+                            {module.permissions.map((permission) => {
+                              return (
+                                <FormControlLabel
+                                  labelPlacement="end"
+                                  label={permission.permissionName}
+                                  key={permission.modulePermissionId}
+                                  disabled={currentRoleDetails?.isNotEditable || !currentRoleDetails?.hasAppAccess}
+                                  value={permission.modulePermissionId}
+                                  control={
+                                    <Checkbox
+                                      onChange={(e) => {
+                                        handlePermissionChange(
+                                          permission,
+                                          e.target.checked
+                                        );
+                                      }}
+                                    />
+                                  }
+                                  checked={checkUserModulePermission(
+                                    permission.modulePermissionId
+                                  )}
+                                />
+                              );
+                            })}
+                          </FormGroup>
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                )}
+              </Box>
+            </Stack>
+            <Stack
+              direction={"row"}
+              spacing={2}
+              className="justify-content-end"
+            >
+              <CustomisedButton
+                variant="outlined"
+                label={formatMessage({ id: "BUTTON.CANCEL" })}
+                handleClick={()=>history.back()}
+              />
+              <CustomisedButton
+                loading={formik.isSubmitting}
+                disabled={
+                  currentRoleDetails?.isNotEditable || formik.isSubmitting  || !currentRoleDetails?.hasAppAccess
+                }
+                label={formatMessage({ id: "BUTTON.SAVE" })}
+                Icon={<Check />}
+                iconPosition="start"
+                type="submit"
+              />
+            </Stack>
+          </>
+        )}
+      </form>
+    </Card>
   );
 };

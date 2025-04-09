@@ -22,11 +22,11 @@ const container = document.getElementById("root");
 if (container) {
   createRoot(container).render(
     <I18nProvider>
-      <ErrorBoundary>
+      {/* <ErrorBoundary> */}
         <Provider store={store}>
           <AppRoutes />
         </Provider>
-      </ErrorBoundary>
+      {/* </ErrorBoundary> */}
     </I18nProvider>
   );
 }
