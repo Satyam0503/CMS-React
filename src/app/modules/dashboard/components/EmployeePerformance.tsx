@@ -35,7 +35,7 @@ export default function EmployeePerformance() {
           }}
         >
           <TableContainer>
-            <Table sx={{ maxWidth: 450 }} aria-label="simple table">
+            <Table sx={{ width: "100%" }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="left">#</TableCell>

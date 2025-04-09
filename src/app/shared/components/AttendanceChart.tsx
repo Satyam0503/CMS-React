@@ -46,6 +46,32 @@ const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
 
   return (
     <CustomCard label={intl.formatMessage({ id: "PAGE.ATTENDANCE" })}>
+      <Stack
+        direction={"row"}
+        spacing={8}
+        display={"flex"}
+        justifyContent={"flex-start"}
+        mt={1}
+      >
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}
+          </Typography>
+          <Typography variant="h6">185</Typography>
+        </Stack>
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.ABSENT" })}
+          </Typography>
+          <Typography variant="h6">16</Typography>
+        </Stack>
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.LATE" })}
+          </Typography>
+          <Typography variant="h6">9</Typography>
+        </Stack>
+      </Stack>
       <Stack ref={chartRef} className="mixed-widget-5-chart card-rounded-top" />
     </CustomCard>
   );

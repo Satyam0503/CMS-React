@@ -8,7 +8,7 @@ import { AddEditDepartment } from "./AddEditDeparment";
 import { toast } from "react-toastify";
 import { DepartmentModel } from "../../models";
 
-const initialValues:DepartmentModel = {
+const initialValues: DepartmentModel = {
   departmentName: "",
   departmentDescription: "",
 };
@@ -19,7 +19,8 @@ const Departments = () => {
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [isEdit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [initialDepartmentValues,setInitialDepartmentValue] = useState<DepartmentModel>(initialValues);
+  const [initialDepartmentValues, setInitialDepartmentValue] =
+    useState<DepartmentModel>(initialValues);
 
   const handleClose = () => {
     setOpen(false);
@@ -47,17 +48,17 @@ const Departments = () => {
     }
   };
 
-  const handleEditDepartment = (department:DepartmentModel)=>{
+  const handleEditDepartment = (department: DepartmentModel) => {
     setOpen(true);
     setEdit(true);
     setInitialDepartmentValue(department);
-  }
+  };
 
   useEffect(() => {
     const getAllDeps = async () => {
       try {
         const response = await getAllDepartments();
-        const { success,methodResults } = response.data;
+        const { success, methodResults } = response.data;
         if (success) {
           setDepartmentList(methodResults);
         }
@@ -69,7 +70,7 @@ const Departments = () => {
   }, [refresh]);
 
   return (
-    <Box component={"div"} sx={{ p:3 }} className="d-flex flex-column gap-5">
+    <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-5">
       <Stack
         direction={"row"}
         className="justify-content-between align-items-center flex-wrap gap-4"
@@ -86,18 +87,26 @@ const Departments = () => {
       </Stack>
 
       <Box component={"div"} className="department-card-conatiner">
-        { 
-          departmentList.length>0 && 
-          departmentList.map(department=>(
-            <Card className="department-card shadow-sm" key={department.departmentId}>
-              <Typography variant="h6" className="department-label">{department.departmentName}</Typography>
-              <Typography variant="body1" >{department.departmentDescription}</Typography>
-              <IconButton className="edit-btn" onClick={()=>handleEditDepartment(department)}>
-                <Edit/>
+        {departmentList.length > 0 &&
+          departmentList.map((department) => (
+            <Card
+              className="department-card shadow-sm"
+              key={department.departmentId}
+            >
+              <Typography variant="h6" className="department-label">
+                {department.departmentName}
+              </Typography>
+              <Typography variant="body1">
+                {department.departmentDescription}
+              </Typography>
+              <IconButton
+                className="edit-btn"
+                onClick={() => handleEditDepartment(department)}
+              >
+                <Edit />
               </IconButton>
             </Card>
-          ))
-        }
+          ))}
       </Box>
       {isOpen && (
         <AddEditDepartment

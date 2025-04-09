@@ -364,3 +364,6 @@ button:hover .ql-fill,
   -webkit-line-clamp: 2;
   text-overflow: ellipsis;
 }
+.shadow-md {
+  box-shadow: 0 0.1px 5px 0px $app-primary-100 !important;
+}

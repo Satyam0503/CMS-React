@@ -53,7 +53,7 @@ export const EditPermission = () => {
   >([]);
   const [currentRoleDetails, setCurrentRoleDetails] = useState<RoleModel>();
   const [isLoading, setLoading] = useState(true);
-  const [refresh,setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -164,20 +164,22 @@ export const EditPermission = () => {
     }
   };
 
-  const handleAppAccessChange=async (event: React.ChangeEvent<HTMLInputElement>, checked: boolean)=>{
+  const handleAppAccessChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
     try {
-      const res= await changeAppAccess(currentRoleDetails?.rolesId!,checked);
-      if(res.data.success){
-        toast.success(formatMessage({id:res.data.message}))
+      const res = await changeAppAccess(currentRoleDetails?.rolesId!, checked);
+      if (res.data.success) {
+        toast.success(formatMessage({ id: res.data.message }));
         setRefresh(!refresh);
-      }
-      else {
-        toast.error(formatMessage({id:res.data.message}));
+      } else {
+        toast.error(formatMessage({ id: res.data.message }));
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <Card sx={{ p: "2rem" }} className="flex-grow-1 d-flex flex-column">
@@ -206,6 +208,38 @@ export const EditPermission = () => {
             {...formik.getFieldProps("description")}
           />
         </Stack>
+        {!currentRoleDetails?.isNotEditable && (
+          <Box className="p-5 shadow-md mb-2">
+            <Stack
+              spacing={2}
+              direction={"row"}
+              className="align-items-center mb-4"
+            >
+              <Typography variant="h6">
+                {formatMessage(
+                  {
+                    id: currentRoleDetails?.hasAppAccess
+                      ? "ROLE.DISABLE_ACCESS"
+                      : "ROLE.ENABLE_ACCESS",
+                  },
+                  { role: currentRoleDetails?.titles }
+                )}{" "}
+                :
+              </Typography>
+              <Switch
+                checked={currentRoleDetails?.hasAppAccess}
+                onChange={handleAppAccessChange}
+              />
+            </Stack>
+            <Typography variant="caption">
+              {formatMessage({
+                id: currentRoleDetails?.hasAppAccess
+                  ? "ROLE.DISABLE_ACCESS_NOTE"
+                  : "ROLE.ENABLE_ACCESS_NOTE",
+              })}
+            </Typography>
+          </Box>
+        )}
         {isLoading ? (
           <CircularLoader />
         ) : (
@@ -214,35 +248,7 @@ export const EditPermission = () => {
               <Typography variant="h5">
                 {formatMessage({ id: "ROLE.PERMISSION" })}
               </Typography>
-              {!currentRoleDetails?.isNotEditable && (
-                <Box className="p-5 shadow-sm mb-2">
-                  <Stack
-                    spacing={2}
-                    direction={"row"}
-                    className="align-items-center mb-4"
-                  >
-                    <Typography variant="h6">
-                      {formatMessage(
-                        {
-                          id: currentRoleDetails?.hasAppAccess
-                            ? "ROLE.DISABLE_ACCESS"
-                            : "ROLE.ENABLE_ACCESS",
-                        },
-                        { role: currentRoleDetails?.titles }
-                      )}{" "}
-                      :
-                    </Typography>
-                    <Switch checked={currentRoleDetails?.hasAppAccess}  onChange={handleAppAccessChange }/>
-                  </Stack>
-                  <Typography variant="caption">
-                    {formatMessage({
-                      id: currentRoleDetails?.hasAppAccess
-                        ? "ROLE.DISABLE_ACCESS_NOTE"
-                        : "ROLE.ENABLE_ACCESS_NOTE",
-                    })}
-                  </Typography>
-                </Box>
-              )}
+
               <Box
                 component={"div"}
                 sx={{
@@ -271,7 +277,10 @@ export const EditPermission = () => {
                                   labelPlacement="end"
                                   label={permission.permissionName}
                                   key={permission.modulePermissionId}
-                                  disabled={currentRoleDetails?.isNotEditable || !currentRoleDetails?.hasAppAccess}
+                                  disabled={
+                                    currentRoleDetails?.isNotEditable ||
+                                    !currentRoleDetails?.hasAppAccess
+                                  }
                                   value={permission.modulePermissionId}
                                   control={
                                     <Checkbox
@@ -305,12 +314,14 @@ export const EditPermission = () => {
               <CustomisedButton
                 variant="outlined"
                 label={formatMessage({ id: "BUTTON.CANCEL" })}
-                handleClick={()=>history.back()}
+                handleClick={() => history.back()}
               />
               <CustomisedButton
                 loading={formik.isSubmitting}
                 disabled={
-                  currentRoleDetails?.isNotEditable || formik.isSubmitting  || !currentRoleDetails?.hasAppAccess
+                  currentRoleDetails?.isNotEditable ||
+                  formik.isSubmitting ||
+                  !currentRoleDetails?.hasAppAccess
                 }
                 label={formatMessage({ id: "BUTTON.SAVE" })}
                 Icon={<Check />}
