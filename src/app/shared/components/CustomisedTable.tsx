@@ -51,7 +51,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   }, [rows]);
 
   return (
-    <Grid container>
+    <Grid container className="flex-grow-1">
       <TableContainer>
         <Table stickyHeader aria-label="table">
           <TableHead>

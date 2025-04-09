@@ -74,7 +74,7 @@ export enum ModulesTitles {
   Recruitment = "Modules.Recruitment",
   Admin = "Modules.Admin",
   Holidays = "Modules.Holidays",
-  NoticeBoard = "Modules.Notice board",
+  NoticeBoard = "Modules.NoticeBoard",
   Jobs = "Modules.Jobs",
   Applications = "Modules.Applications",
   Permissions = "Modules.Permissions",

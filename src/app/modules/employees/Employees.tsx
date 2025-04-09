@@ -30,7 +30,6 @@ import {
   statusDecoder,
   statusEncoder,
 } from "../../../utils/common";
-import { ViewEmployeeDetails } from "./components/ViewEmployeeDetails";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { Pagination } from "../../shared/components/Pagination";
@@ -89,7 +88,6 @@ const Employees=()=> {
   const [totalRecords, setTotalRecords] = useState(0);
   const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [isViewModalOpen, setViewModalOpen] = useState(false);
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -195,13 +193,6 @@ const Employees=()=> {
     setSelectedEmployee(undefined);
   }
 
-  function openViewModal(employee: EmployeeModel) {
-    setViewModalOpen(true);
-    if (employee) {
-      setSelectedEmployee(employee);
-    }
-  }
-
   function handleEmployeeEdit(employee: EmployeeModel) {
     setEmployeeInitialValues({
       ...employee,
@@ -277,8 +268,7 @@ const Employees=()=> {
 
   return (
     <>
-      <Card sx={{ p: "2rem" }} className="d-flex flex-column flex-grow-1">
-        <Stack spacing={2} className="flex-grow-1">
+      <Card sx={{ p: "2rem", gap:2 }} className="d-flex flex-column flex-grow-1">
           <Stack
             direction="row"
             gap={2}
@@ -328,7 +318,6 @@ const Employees=()=> {
               rowsPerPage={paginationValues.records}
               handleEdit={handleEmployeeEdit}
               openConfirmationModal={openConfirmationModal}
-              openViewModal={openViewModal}
               rowClickHandler={rowClickHandler}
             />
           ) : (
@@ -347,7 +336,6 @@ const Employees=()=> {
               totalRecords={totalRecords}
             />
           )}
-        </Stack>
       </Card>
 
       {isModalOpen && (
@@ -360,13 +348,7 @@ const Employees=()=> {
           SaveAddEditEmployee={SaveAddEditEmployee}
         />
       )}
-      {selectedEmployee && isViewModalOpen && (
-        <ViewEmployeeDetails
-          open={isViewModalOpen}
-          setOpen={setViewModalOpen}
-          employeeData={selectedEmployee}
-        />
-      )}
+
       {isConfirmModalOpen && (
         <ConfirmationModal
           title={intl.formatMessage({ id: "TITLE.DELETE_EMP" })}

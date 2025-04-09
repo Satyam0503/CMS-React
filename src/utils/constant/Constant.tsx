@@ -43,7 +43,7 @@ import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
-import { RoleModel } from "../../app/modules/admin/models";
+import { DepartmentModel, RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
@@ -820,6 +820,39 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+
+export const DepartmentTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "Table.S_No",
+    minWidth: 60,
+  },
+  {
+    id:"departmentName",
+    label:"Department.Name",
+    minWidth:200,
+  },
+  {
+    id:"departmentDescription",
+    label:"Department.Description",
+    minWidth:200,
+  },
+  {
+    id: "action",
+    label: "Table.Column.Action",
+    build: (
+      row: DepartmentModel,
+      handleJobEdit: (row: DepartmentModel) => void,
+      openDeleteModal: (row: DepartmentModel) => void,
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+      />
+    ),
+  },
+]
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {

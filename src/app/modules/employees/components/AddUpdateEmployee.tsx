@@ -37,14 +37,14 @@ export default function AddUpdateEmployee(props: PropsTypes) {
     props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
   const [departmentList,setDepartmentList]= useState<DepartmentModel[]>([]);
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
 
   useEffect(() => {
     Promise.all([getAllRoles(),getAllDepartments()])
     .then(res=>{
       setRoles(res[0].data.methodResults);
       if(res[1].data.totalRecords ===0){
-        toast.error(intl.formatMessage({id:"MESSAGE.DEPARTMENT.ADD"}));
+        toast.error(formatMessage({id:"MESSAGE.DEPARTMENT.NO_DEPARTMENTS"}));
         handleClose();
       }
       else{
@@ -66,8 +66,8 @@ export default function AddUpdateEmployee(props: PropsTypes) {
           <Stack direction="column" spacing={2}>
             <Typography variant="h5">
               {isEdit
-                ? intl.formatMessage({ id: "UPDATE.EMP.INFO" })
-                : intl.formatMessage({ id: "ADD.EMP.INFO" })}
+                ? formatMessage({ id: "UPDATE.EMP.INFO" })
+                : formatMessage({ id: "ADD.EMP.INFO" })}
             </Typography>
             <Formik
               initialValues={initialValues}
@@ -97,20 +97,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   >
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
+                        label={formatMessage({ id: "FORM.FIRST_NAME" })}
                         type="text"
                         name="firstName"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "FORM.FIRST_NAME",
                         })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
+                        label={formatMessage({ id: "FORM.LAST_NAME" })}
                         type="text"
                         name="lastName"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "FORM.LAST_NAME",
                         })}
                       />
@@ -119,7 +119,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="gender"
-                        label={intl.formatMessage({ id: "FORM.GENDER" })}
+                        label={formatMessage({ id: "FORM.GENDER" })}
                       >
                         {Gender.map((item) => (
                           <MenuItem key={item.id} value={item.value}>
@@ -130,17 +130,17 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "FORM.EMPID" })}
+                        label={formatMessage({ id: "FORM.EMPID" })}
                         type="text"
                         name="employeeId"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "FORM.EMPID",
                         })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "FORM.DOB" })}
+                        label={formatMessage({ id: "FORM.DOB" })}
                         name={"dateOfBirth"}
                         value={values.dateOfBirth}
                         setValue={(newDate: Dayjs | null) => {
@@ -157,7 +157,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "FORM.DOJ" })}
+                        label={formatMessage({ id: "FORM.DOJ" })}
                         value={values.dateOfJoining}
                         setValue={(newDate: Dayjs | null) => {
                           setFieldTouched("dateOfJoining", true);
@@ -173,10 +173,10 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "FORM.EMAIL" })}
+                        label={formatMessage({ id: "FORM.EMAIL" })}
                         type="email"
                         name="email"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "FORM.EMAIL",
                         })}
                         disabled={isEdit}
@@ -186,7 +186,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="roleId"
-                        label={intl.formatMessage({ id: "FORM.ROLE" })}
+                        label={formatMessage({ id: "FORM.ROLE" })}
                       >
                         {filteredRoles.map((role) => {
                           return (
@@ -199,16 +199,16 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
+                        label={formatMessage({ id: "FORM.JOB_ROLE" })}
                         type="text"
                         name="jobRole"
-                        placeholder={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
+                        placeholder={formatMessage({ id: "FORM.JOB_ROLE" })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="department"
-                        label={intl.formatMessage({ id: "FORM.DEPARTMENT" })}
+                        label={formatMessage({ id: "FORM.DEPARTMENT" })}
                       >
                         {departmentList.map((dep) => (
                           <MenuItem key={dep.departmentId} value={dep.departmentId}>
@@ -230,7 +230,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                           setFieldValue("reportingManager", value ? value.userId :"");
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={intl.formatMessage({
+                          <TextField {...param} label={formatMessage({
                             id: "USER.REPORTING_MANAGER",
                           })} />
                         )}
@@ -250,7 +250,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                           setFieldValue("teamLead", value ? value.userId : "");
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={intl.formatMessage({
+                          <TextField {...param} label={formatMessage({
                             id: "USER.TEAM_LEAD",
                           })} />
                         )}
@@ -259,16 +259,16 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.PHONE" })}
+                        label={formatMessage({ id: "USER.PHONE" })}
                         type="text"
                         name="phoneNumber"
-                        placeholder={intl.formatMessage({ id: "USER.PHONE" })}
+                        placeholder={formatMessage({ id: "USER.PHONE" })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="bloodGroup"
-                        label={intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+                        label={formatMessage({ id: "USER.BLOOD_GROUP" })}
                       >
                         {bloodGroups.map((item) => (
                           <MenuItem key={item.id} value={item.value}>
@@ -279,24 +279,24 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({
+                        label={formatMessage({
                           id: "USER.PERSONAL_EMAIL",
                         })}
                         type="text"
                         name="personalEmail"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "USER.PERSONAL_EMAIL",
                         })}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({
+                        label={formatMessage({
                           id: "USER.EMERGENCY_CONTACT",
                         })}
                         type="text"
                         name="emergencyContact"
-                        placeholder={intl.formatMessage({
+                        placeholder={formatMessage({
                           id: "USER.EMERGENCY_CONTACT",
                         })}
                       />
@@ -304,23 +304,23 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="status"
-                        label={intl.formatMessage({ id: "PROFILE.STATUS" })}
+                        label={formatMessage({ id: "PROFILE.STATUS" })}
                       >
                         <MenuItem value={"Active"}>
-                          {intl.formatMessage({ id: "STATUS.ACTIVE" })}
+                          {formatMessage({ id: "STATUS.ACTIVE" })}
                         </MenuItem>
                         <MenuItem value={"Inactive"}>
-                          {intl.formatMessage({ id: "STATUS.INACTIVE" })}
+                          {formatMessage({ id: "STATUS.INACTIVE" })}
                         </MenuItem>
                       </SelectInput>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
                       <TextInput
-                        label={intl.formatMessage({ id: "USER.ADDRESS" })}
+                        label={formatMessage({ id: "USER.ADDRESS" })}
                         type="text"
                         name="address"
-                        placeholder={intl.formatMessage({ id: "USER.ADDRESS" })}
+                        placeholder={formatMessage({ id: "USER.ADDRESS" })}
                       />
                     </Grid>
                   </Grid>
@@ -334,12 +334,12 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                   >
                     <CustomisedButton
                       variant="outlined"
-                      label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+                      label={formatMessage({ id: "BUTTON.CLOSE" })}
                       handleClick={handleClose}
                     />
                     <CustomisedButton
                       loading={isSubmitting}
-                      label={intl.formatMessage({
+                      label={formatMessage({
                         id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
                       })}
                       type="submit"

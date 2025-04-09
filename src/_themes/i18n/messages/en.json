@@ -25,7 +25,7 @@
   "Modules.Recruitment" : "Recruitment",
   "Modules.Admin" : "Admin",
   "Modules.Holidays" : "Holidays",
-  "Modules.NoticeBoard" : "Notice board",
+  "Modules.NoticeBoard" :"Notice board",
   "Modules.Jobs" : "Jobs",
   "Modules.Applications" : "Applications",
   "Modules.Permissions" : "Roles & Permissions",
@@ -102,6 +102,7 @@
   "APPLICANT.NAME": "Applicant Name",
 
   "EMPLOYEE.EMPID":"Emp Id",
+  "Employee.No_Employee":"No Employees Available. Please Add New Employees",
 
 
   "AUTH.REGISTER.CMS": "Your CMS Solution",
@@ -463,6 +464,11 @@
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
 
+  "Department.Title":"Title",
+  "Department.Description":"Description",
+  "Department.Delete":"Delete Department",
+  "Department.Delete.Alert":"Are You Sure?",
+
   "COMPANY_MASTER.TAB.DEPARTMENT":"Departments",
   "COMPANY_MASTER.TAB.JOBS":"Jobs",
   "COMPANY_MASTER.DEPARTMENT.TOTAL":"Total Departments",
@@ -483,7 +489,7 @@
   "BUTTON.APPLY": "Apply",
 
 
-  "MESSAGE.DEPARTMENT.ADD_SUCCESS":"Please add departments",
+  "MESSAGE.DEPARTMENT.NO_DEPARTMENTS":"Please add departments",
 
   "MESSAGE.APPLICANT.ADD_SUCCESS":"Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED":"Application has already been submitted. Please reapply after the waiting period",

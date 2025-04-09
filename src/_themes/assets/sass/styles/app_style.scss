@@ -15,6 +15,10 @@
   }
 }
 
+.text-wrap-balance{
+  text-wrap:balance;
+}
+
 // List of colors
 $color-list: primary, secondary, success, info, neutral, warning, error,
   territory;
@@ -83,6 +87,7 @@ input:-webkit-autofill {
   padding: 0.8rem !important;
   font-size: 14px !important;
 }
+
 .success {
   background-color: #c8f2cc;
   color: #37843c;
@@ -335,17 +340,4 @@ button:hover .ql-fill,
     gap: .25rem;
     padding: 1rem .5rem;
   }
-}
-
-.has-access{
-  width: 15px;
-  height:15px;
-  border-radius: 50%;
-  background-color: #37843c;
-}
-.no-access{
-  width: 15px;
-  height:15px;
-  border-radius: 50%;
-  background-color: #c62828;
 }

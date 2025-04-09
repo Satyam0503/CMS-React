@@ -5,6 +5,8 @@ import { colors } from "../../theme/MuiTheme";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmpCardSkeleton } from "./EmployeeCardSkeleton";
+import { useIntl } from "react-intl";
+import { CardMessage } from "../../../shared/CardMessage";
 
 interface Props {
   employeeList: EmployeeModel[];
@@ -22,12 +24,8 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
       : navigate(`/employees/${employeeId}`);
   };
 
-  if (employeeList.length === 0) {
-    return (
-      <Box className="d-flex flex-grow-1 align-items-center justify-content-center">
-        <Typography variant="h4" className="fw-bold" sx={{color:colors.alpha.neutral[400]}} >No Employee Available</Typography>
-      </Box>
-    );
+  if (employeeList.length===0) {
+    return  <CardMessage title="Employee.No_Employee"/>
   }
 
   return (

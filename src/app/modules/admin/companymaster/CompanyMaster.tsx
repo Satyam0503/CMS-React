@@ -24,7 +24,7 @@ const CompanyMaster = () => {
   }, []);
 
   return (
-    <Card className="flex-grow-1">
+    <Card className="d-flex flex-column flex-grow-1">
       <Tabs
         value={tabIndex}
         onChange={handleTabChange}
