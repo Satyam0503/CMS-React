@@ -10,48 +10,50 @@ export default function Help() {
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.HELP" })}>
-        <Grid
-          item
-          xs={7}
-          zIndex={1}
-          display={"flex"}
-          flexDirection={"column"}
-          gap={3}
-        >
-          <Stack>
-            <Typography variant="body2">
-              {intl.formatMessage({ id: "MENU.HELP_INFO" })}
-            </Typography>
-          </Stack>
+        <Stack position="relative">
+          <Grid
+            item
+            xs={7}
+            zIndex={1}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={3}
+          >
+            <Stack>
+              <Typography variant="body2">
+                {intl.formatMessage({ id: "MENU.HELP_INFO" })}
+              </Typography>
+            </Stack>
+
+            <Stack
+              direction={"row"}
+              display={"flex"}
+              justifyContent={"flex-start"}
+            >
+              <CustomisedButton
+                variant="contained"
+                label="Contact"
+                Icon={<Message />}
+                iconPosition="start"
+              />
+            </Stack>
+          </Grid>
 
           <Stack
+            height={"200px"}
             direction={"row"}
             display={"flex"}
-            justifyContent={"flex-start"}
+            justifyContent={"flex-end"}
+            position={"absolute"}
+            zIndex={0}
+            right={0}
           >
-            <CustomisedButton
-              variant="contained"
-              label="Contact"
-              Icon={<Message />}
-              iconPosition="start"
+            <img
+              src={toAbsoluteUrl("media/auth/need_help.svg")}
+              width={"100%"}
+              height={"100%"}
             />
           </Stack>
-        </Grid>
-
-        <Stack
-          height={"200px"}
-          direction={"row"}
-          display={"flex"}
-          justifyContent={"flex-end"}
-          position={"absolute"}
-          zIndex={0}
-          right={20}
-        >
-          <img
-            src={toAbsoluteUrl("media/auth/need_help.svg")}
-            width={"100%"}
-            height={"100%"}
-          />
         </Stack>
       </CustomCard>
     </>
