@@ -196,6 +196,12 @@ export interface BaseModel {
   updatedDate:string;
 }
 
+export interface TabModel {
+  to: string;
+  title: string;
+  icon: JSX.Element;
+  tabId:number;
+}
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 

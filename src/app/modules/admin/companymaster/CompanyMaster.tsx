@@ -1,36 +1,30 @@
 import { useIntl } from "react-intl";
 import { usePageData } from "../../../../_themes/layout/core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Box,
   Card,
   Stack,
-  Tab,
-  Tabs,
   Theme,
   useMediaQuery,
 } from "@mui/material";
-import { a11yProps, CustomTabPanel } from "../../users/components/BasicTabs";
-import { colors } from "../../theme/MuiTheme";
 import { Departments } from "./components/Department";
 import { CorporateFare, Edit, Work } from "@mui/icons-material";
-import { CompanyMasterTabModel } from "../models";
 import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { checkIsActive } from "../../../../_themes/helpers";
 import clsx from "clsx";
+import { TabModel } from "../../../../utils/common_types";
 
-const tabsRoutes: CompanyMasterTabModel[] = [
+const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
     to: "/admin/companymaster/department",
     title: "COMPANY_MASTER.TAB.DEPARTMENT",
-    component: <Departments />,
     icon: <CorporateFare />,
   },
   {
     tabId: 2,
     to: "/admin/companymaster/jobtitle",
-    component: <Edit />,
     title: "COMPANY_MASTER.TAB.JOBS",
     icon: <Work />,
   },
