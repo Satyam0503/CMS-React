@@ -465,6 +465,7 @@
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
 
   "Department.Title":"Title",
+  "Department.Status":"Status",
   "Department.Description":"Description",
   "Department.Delete":"Delete Department",
   "Department.Delete.Alert":"Are You Sure?",

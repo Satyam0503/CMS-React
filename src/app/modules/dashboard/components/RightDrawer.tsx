@@ -75,11 +75,11 @@ export default function RightDrawer() {
           "Employee of the month",
           "Employee performance",
           "Help",
-        ].map((value: any) => {
+        ].map((value: any,index) => {
           const labelId = `checkbox-list-label-${value}`;
           return (
             <>
-              <ListItem key={value}>
+              <ListItem key={index}>
                 <ListItemIcon>
                   <Checkbox
                     edge="start"

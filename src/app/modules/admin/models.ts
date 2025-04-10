@@ -28,6 +28,14 @@ export interface DepartmentModel {
   departmentDescription: string;
 }
 
+export interface CompanyMasterTabModel {
+  to: string;
+  title: string;
+  component: JSX.Element;
+  icon: JSX.Element;
+  tabId:number;
+}
+
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;

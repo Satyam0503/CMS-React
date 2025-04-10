@@ -44,6 +44,7 @@ export enum Modules {
   ProcessLog = 14,
   CompanyMaster = 15,
   PayRoll = 16,
+  CompanyDetails =17,
 }
 
 export enum ModulesName {
@@ -63,6 +64,7 @@ export enum ModulesName {
   ProcessLog = "Process_Log",
   CompanyMaster = "Company_Master",
   PayRoll = "PayRoll",
+  CompanyDetails = "Company_Details",
 }
 
 export enum ModulesTitles {
@@ -82,6 +84,7 @@ export enum ModulesTitles {
   ProcessLog = "Modules.ProcessLog",
   CompanyMaster = "Modules.CompanyMaster",
   PayRoll = "Modules.PayRoll",
+  CompanyDetails="Modules.CompanyDeatails",
 }
 
 export enum Roles {

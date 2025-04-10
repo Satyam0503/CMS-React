@@ -6,7 +6,7 @@ import { ModulesName } from "../../../utils/enums";
 import { AddPermission } from "./permissions/components/AddPermission";
 import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
-import { CompanyMaster } from "./companymaster/CompanyMaster";
+import { CompanyMasterTab } from "./companymaster/CompanyMaster";
 import { useEffect } from "react";
 
 const adminBreadcrumbs:Array<Breadcrumb> = [
@@ -79,10 +79,10 @@ const AdminRoutes = () => {
           }
         />
         <Route
-          path="companymaster"
+          path="companymaster/*"
           element={
             <ProtectedRoute module={ModulesName.CompanyMaster}>
-              <CompanyMaster />
+              <CompanyMasterTab />
             </ProtectedRoute>
           }
         />

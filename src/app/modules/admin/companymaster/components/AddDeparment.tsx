@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { Stack, Typography } from "@mui/material";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
@@ -7,32 +6,64 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { DepartmentModel } from "../../models";
+import { addDepartment } from "../../adminservices";
+import { toast } from "react-toastify";
+import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 
 interface Props {
   open: true;
   handleClose: () => void;
-  handleAddEdit:(value:DepartmentModel,setSubmitting: (isSubmitting: boolean) => void)=>void,
-  isEdit: boolean;
-  initialValues:DepartmentModel;
+  refresh: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+const initialValues: DepartmentModel = {
+  departmentName: "",
+  departmentDescription: "",
+};
 
 const validationSchema = Yup.object().shape({
   departmentName: Yup.string().required("department name is required"),
   departmentDescription: Yup.string().required("description is required"),
 });
 
-const AddEditDepartment: FC<Props> = ({ open, handleClose, isEdit,handleAddEdit,initialValues }) => {
+const AddDepartment: FC<Props> = ({
+  open,
+  handleClose,
+  refresh,
+  setRefresh,
+}) => {
+
   const intl = useIntl();
+  
+  const handleAdd = async (
+    value: DepartmentModel,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    try {
+      const response = await addDepartment(value);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setRefresh(!refresh);
+        handleClose();
+      }
+    } catch (error) {
+      console.log(error instanceof Error ? error.message : error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Typography variant="h5" className="mb-5">
-        {intl.formatMessage({ id: isEdit ? "COMPANY_MASTER.EDIT_DEPARTMENT":"COMPANY_MASTER.ADD_DEPARTMENT" })}
+        {intl.formatMessage({ id: "COMPANY_MASTER.ADD_DEPARTMENT" })}
       </Typography>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values,{setSubmitting}) => {
-            handleAddEdit(values,setSubmitting);
+        onSubmit={(values, { setSubmitting }) => {
+          handleAdd(values, setSubmitting);
         }}
       >
         {(formik) => (
@@ -65,7 +96,7 @@ const AddEditDepartment: FC<Props> = ({ open, handleClose, isEdit,handleAddEdit,
               />
               <CustomisedButton
                 label={intl.formatMessage({
-                  id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                  id: "BUTTON.ADD",
                 })}
                 type="submit"
                 disabled={formik.isSubmitting}
@@ -78,4 +109,4 @@ const AddEditDepartment: FC<Props> = ({ open, handleClose, isEdit,handleAddEdit,
     </CustomisedModal>
   );
 };
-export { AddEditDepartment };
+export { AddDepartment };

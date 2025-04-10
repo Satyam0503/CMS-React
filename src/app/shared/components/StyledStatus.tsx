@@ -19,8 +19,10 @@ const style = {
 export const StyleStatus: FC<PropsTypes> = ({ className, label }) => {
   const { formatMessage } = useIntl();
   return (
+    <div>
       <Typography sx={style} className={className}>
         {formatMessage({ id: label })}
       </Typography>
+    </div>
   );
 };

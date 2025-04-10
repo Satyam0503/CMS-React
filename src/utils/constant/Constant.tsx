@@ -621,6 +621,8 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "JOB.STATUS",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
+      console.log(values);
+      
       return <StyleStatus label={values} className={clsx(
           {  success:status === ApplicantStatus.Active,
             danger: status === ApplicantStatus.InActive
@@ -950,7 +952,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.CompanyMaster,
         title: ModulesTitles.CompanyMaster,
         constant: ModulesName.CompanyMaster,
-        route: "/admin/companymaster",
+        route: "/admin/companymaster/",
+        icon: <AdminPanelSettings />,
+      },
+      {
+        id: Modules.CompanyDetails,
+        title: ModulesTitles.CompanyDetails,
+        constant: ModulesName.CompanyDetails,
+        route: "/admin/company",
         icon: <AdminPanelSettings />,
       },
     ],

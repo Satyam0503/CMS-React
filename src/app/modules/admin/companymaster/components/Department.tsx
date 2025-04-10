@@ -1,72 +1,29 @@
-import { Box, Card, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useEffect, useState } from "react";
-import { Add, Edit } from "@mui/icons-material";
-import { addDepartment, getAllDepartments } from "../../adminservices";
-import { AddEditDepartment } from "./AddEditDeparment";
-import { toast } from "react-toastify";
+import { Add } from "@mui/icons-material";
+import { getAllDepartments } from "../../adminservices";
 import { DepartmentModel } from "../../models";
-import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
-import { DepartmentTableColumnList } from "../../../../../utils/constant/Constant";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { DepartmentRow } from "./DepartmentRow";
-import { colors } from "../../../theme/MuiTheme";
-
-const initialValues: DepartmentModel = {
-  departmentName: "",
-  departmentDescription: "",
-};
+import { AddDepartment } from "./AddDeparment";
 
 const Departments = () => {
-  const {formatMessage} = useIntl();
+  const { formatMessage } = useIntl();
   const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
-  const [isEdit, setEdit] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [selectedDepartment,setSelectedDepatment]= useState<string>();
-  const [isConfirmModalOpen,setConfirmModalOpen]= useState(false);
-  const [initialDepartmentValues, setInitialDepartmentValue] =  useState<DepartmentModel>(initialValues);
+  const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
+  const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>( null);
 
-  const handleClose = () => {
-    setOpen(false);
-    setEdit(false);
-    setInitialDepartmentValue(initialValues);
+  const handleDepartmentEdit = (department: DepartmentModel | null) => {
+    setEditedDepartment(department);
   };
 
-  const handleAddEdit = async (
-    value: DepartmentModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => {
-    try {
-      if (!isEdit) {
-        const response = await addDepartment(value);
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setRefresh(!refresh);
-          handleClose();
-        }
-      }
-    } catch (error) {
-      console.log(error instanceof Error ? error.message : error);
-    } finally {
-      setSubmitting(false);
-    }
+  const handleReset = () => {
+    setCurrentEditDepartment(null);
+    setEditedDepartment(null);
   };
-
-  const handleEditDepartment = (department: DepartmentModel) => {
-    setOpen(true);
-    setEdit(true);
-    setInitialDepartmentValue(department);
-  };
-  const openConfirmationModal = (department:DepartmentModel) => {
-    setConfirmModalOpen(true);
-    setSelectedDepatment(department.departmentId);
-  };
-
-  const handleDepartmentDelete =()=>{
-    
-  }
 
   useEffect(() => {
     const getAllDeps = async () => {
@@ -83,8 +40,7 @@ const Departments = () => {
     getAllDeps();
   }, [refresh]);
 
-  console.log(departmentList);
-  
+
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -103,42 +59,51 @@ const Departments = () => {
       </Stack>
 
       <Stack className="department-container">
-          <Box className="department-row" >
-            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"Department.Title"})}</Typography>
-            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"Department.Description"})}</Typography>
-            <Typography variant="body1" className="fw-bolder">{formatMessage({id:"JOB.STATUS"})}</Typography>
-          </Box>
-          {
-            departmentList.map(department=>(
-              <DepartmentRow departmentData={department}/>
-            ))
-          }
-          <Stack spacing={1} direction={"row"} sx={{justifyContent:"flex-end",mt:3}}>
-            <CustomisedButton variant="outlined" label={formatMessage({id:"BUTTON.CANCEL"})} handleClick={()=>setDepartmentList([...departmentList])} />
-            <CustomisedButton label={formatMessage({id:"BUTTON.UPDATE"})} />
-          </Stack>
+        <Box className="department-row">
+          {[
+            "Department.Title",
+            "Department.Description",
+            "Department.Status",
+          ].map((title) => (
+            <Typography variant="body1" className="fw-bolder">
+              {formatMessage({ id: title })}
+            </Typography>
+          ))}
+        </Box>
+        {departmentList.map((department) => (
+          <DepartmentRow
+            key={department.departmentId}
+            departmentData={department}
+            handleDepartmentEdit={handleDepartmentEdit}
+            currentEditDepartment={currentEditDepartment}
+            setCurrentEditDepartment={setCurrentEditDepartment}
+          />
+        ))}
+        <Stack
+          spacing={1}
+          direction={"row"}
+          sx={{ justifyContent: "flex-end", mt: 3, flexShrink: 0 }}
+        >
+          <CustomisedButton
+            variant="outlined"
+            label={formatMessage({ id: "BUTTON.CANCEL" })}
+            handleClick={handleReset}
+          />
+          <CustomisedButton
+            label={formatMessage({ id: "BUTTON.UPDATE" })}
+            handleClick={() => console.log(editedDeparment)}
+          />
+        </Stack>
       </Stack>
 
       {isOpen && (
-        <AddEditDepartment
+        <AddDepartment
           open={isOpen}
-          initialValues={initialDepartmentValues}
-          handleClose={handleClose}
-          isEdit={isEdit}
-          handleAddEdit={handleAddEdit}
+          handleClose={()=>setOpen(false)}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       )}
-      {
-        isConfirmModalOpen && (
-          <ConfirmationModal 
-            open={isConfirmModalOpen}
-            title={formatMessage({id:"Department.Delete"})}
-            content={formatMessage({id:"Department.Delete.Alert"})}
-            handleClose={()=>setConfirmModalOpen(false)}
-            handleConfirmation={handleDepartmentDelete}
-          />
-        )
-      }
     </Box>
   );
 };
