@@ -322,6 +322,8 @@ button:hover .ql-fill,
 }
 
 .tab-container {
+  overflow-x:scroll !important ;
+  scrollbar-width:none;
   & >* {
     flex-grow: 1;
   }
@@ -330,13 +332,13 @@ button:hover .ql-fill,
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: .5rem;
     font-weight: bolder;
     color:#737373;
     padding:1.5rem ;
     font-size: 1rem;
     cursor: pointer;
-
+    min-width: 150px;
     &:hover{
       transition: background-color .2s ease-in;
       background-color:color-mix(in oklab, #9f6dda 30%, #ffffff 50%);

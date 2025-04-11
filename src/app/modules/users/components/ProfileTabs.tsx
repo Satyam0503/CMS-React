@@ -10,7 +10,7 @@ const ProfileTabs = () => {
   return (
     <Routes>
       <Route element={<UserProfile />}>
-        <Route index element={<Navigate to={"/about"} />} />
+        <Route index element={<Navigate to={"about"} />} />
         <Route path="about" element={<AboutUser />} />
         <Route path="leave" element={<LeaveTracker />} />
         <Route path="performance" element={<UserPerformance />} />

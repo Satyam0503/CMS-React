@@ -287,7 +287,12 @@
   "PROFILE.CERTIFICATION": "Certification",
   "PROFILE.UPDATE_CERTIFICATION": "Update Certification",
   "PROFILE.EXP": "Years of experience",
-  "PROFILE.EXP_CURRENT": "Years in Codeji",
+  "PROFILE.EXP_CURRENT": "Years in {companyName}",
+  "PROFILE.TAB.ABOUT":"About",
+  "PROFILE.TAB.LEAVE":"Leave",
+  "PROFILE.TAB.PERFORMANCE":"Performance",
+  "PROFILE.TAB.WORK":"Work History",
+  "PROFILE.TAB.SETTING":"Setting",
 
   "PROFILE.EMPLOYMENT": "Work experience",
   "PROFILE.CURRENT_CTC": "Current CTC",
