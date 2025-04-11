@@ -11,7 +11,7 @@ import { CardSkeleton } from "./CardSkeleton";
 
 export default function OpenPositions() {
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
-  const [loading,setLoading]= useState(true);
+  const [loading, setLoading] = useState(true);
   const intl = useIntl();
   useEffect(() => {
     async function getActiveJobs() {
@@ -23,15 +23,14 @@ export default function OpenPositions() {
         }
       } catch (error) {
         console.error((error as AxiosError).message);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     }
     getActiveJobs();
   }, []);
-  if(loading){
-    return <CardSkeleton/>
+  if (loading) {
+    return <CardSkeleton />;
   }
 
   return (
@@ -50,11 +49,13 @@ export default function OpenPositions() {
             component={"div"}
             sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
           >
-            <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{intl.formatMessage({id:"DASHBOARD.VACANCY.NOVACANCIES"})}</Typography>
+            <Typography variant="h5" sx={{ color: colors.alpha.neutral[400] }}>
+              {intl.formatMessage({ id: "DASHBOARD.VACANCY.NOVACANCIES" })}
+            </Typography>
           </Box>
         ) : (
           <>
-            <Stack spacing={1} sx={{marginBlockEnd:1}}>
+            <Stack spacing={1} sx={{ marginBlockEnd: 1 }}>
               {activeJobs.slice(-4).map((job) => (
                 <Stack
                   key={job.jobId}
@@ -84,7 +85,7 @@ export default function OpenPositions() {
                 <Typography
                   sx={{ fontSize: "12px", textDecoration: "underline" }}
                 >
-                  {intl.formatMessage({id:"SEE_MORE"})}
+                  {intl.formatMessage({ id: "SEE_MORE" })}
                 </Typography>
               </Link>
             )}

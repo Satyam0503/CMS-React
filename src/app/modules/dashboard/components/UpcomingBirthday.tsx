@@ -1,4 +1,4 @@
-import { Stack, Typography, Avatar, Box } from "@mui/material";
+import { Stack, Typography, Avatar, Box, Link } from "@mui/material";
 import { useIntl } from "react-intl";
 import dayjs, { Dayjs } from "dayjs";
 import { useCallback, useEffect, useState } from "react";
@@ -53,62 +53,77 @@ export default function UpcomingBirthday({ employees }: PropsType) {
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.BIRTHDAY" })}>
-        {!employees.length ? (
-          <Box
-            component={"div"}
-            sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
-          >
-            <Typography variant="h5" sx={{ color: colors.alpha.neutral[400] }}>
-              No Employees
-            </Typography>
-          </Box>
-        ) : (
-          <Stack spacing={1}>
-            {employeeList.slice(0, 5).map((emp) => {
-              return (
-                <Stack
-                  key={emp.userId}
-                  direction="row"
-                  sx={{
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+        <Stack
+          sx={{
+            flexGrow: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          {!employees.length ? (
+            <Box
+              component={"div"}
+              sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
+            >
+              <Typography
+                variant="h5"
+                sx={{ color: colors.alpha.neutral[400] }}
+              >
+                No Employees
+              </Typography>
+            </Box>
+          ) : (
+            <Stack spacing={1}>
+              {employeeList.slice(0, 3).map((emp) => {
+                return (
                   <Stack
+                    key={emp.userId}
                     direction="row"
-                    sx={{ alignItems: "center" }}
-                    spacing={1}
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
                   >
-                    <Avatar
-                      alt="User Profile"
-                      src={emp.fullProfileUrl}
-                      sx={{
-                        width: 45,
-                        height: 45,
-                        fontSize: "1rem",
-                      }}
+                    <Stack
+                      direction="row"
+                      sx={{ alignItems: "center" }}
+                      spacing={1}
                     >
-                      {emp.firstName.charAt(0)}
-                    </Avatar>
-                    <Stack>
-                      <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
-                      <Typography variant="body2">{emp.jobRole}</Typography>
+                      <Avatar
+                        alt="User Profile"
+                        src={emp.fullProfileUrl}
+                        sx={{
+                          width: 45,
+                          height: 45,
+                          fontSize: "1rem",
+                        }}
+                      >
+                        {emp.firstName.charAt(0)}
+                      </Avatar>
+                      <Stack>
+                        <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
+                        <Typography variant="body2">{emp.jobRole}</Typography>
+                      </Stack>
                     </Stack>
-                  </Stack>
 
-                  <Typography
-                    variant="subtitle2"
-                    color={colors.alpha.primary[500]}
-                  >
-                    {!isSameDate(dayjs(emp.dateOfBirth))
-                      ? dateFormatter(emp.birthDayThisYear!, "DD MMM YYYY")
-                      : "Today"}
-                  </Typography>
-                </Stack>
-              );
-            })}
+                    <Typography
+                      variant="subtitle2"
+                      color={colors.alpha.primary[500]}
+                    >
+                      {!isSameDate(dayjs(emp.dateOfBirth))
+                        ? dateFormatter(emp.birthDayThisYear!, "DD MMM YYYY")
+                        : "Today"}
+                    </Typography>
+                  </Stack>
+                );
+              })}
+            </Stack>
+          )}
+          <Stack>
+            <Link href="employeeperformance" underline="always">
+              {"See more"}
+            </Link>
           </Stack>
-        )}
+        </Stack>
       </CustomCard>
     </>
   );

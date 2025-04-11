@@ -44,7 +44,7 @@ import { CommentAction } from "../../../../../utils/enums";
 import { usePageData } from "../../../../../_themes/layout/core";
 
 export const EditApplicant = () => {
-  const {formatMessage} = useIntl();
+  const { formatMessage } = useIntl();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.userData)!;
   const [loading, setLoading] = useState(true);
@@ -288,7 +288,7 @@ export const EditApplicant = () => {
                         >
                           {ApplicationEvaluationStatus.map((status) => (
                             <MenuItem key={status.id} value={status.value}>
-                              {formatMessage({id:status.label})}
+                              {formatMessage({ id: status.label })}
                             </MenuItem>
                           ))}
                         </SelectInput>

@@ -8,8 +8,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { Checkbox, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -103,7 +101,13 @@ export default function RightDrawer() {
   return (
     <>
       <CustomIconButton
-        icon={<DashboardCustomizeOutlined />}
+        icon={
+          <DashboardCustomizeOutlined
+            sx={{
+              color: colors.alpha.white[500],
+            }}
+          />
+        }
         handleClick={toggleDrawer(true)}
         tooltip="Customize Dashboard"
         size="large"

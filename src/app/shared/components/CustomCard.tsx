@@ -10,7 +10,7 @@ interface Props {
 export const CustomCard: FC<Props> = (props) => {
   return (
     <Card
-      sx={{ p: 2, minHeight: "300px", height: "100%" }}
+      sx={{ p: 2, minHeight: "250px", height: "100%" }}
       className="d-flex flex-column"
     >
       <Stack spacing={1} className="flex-grow-1">

@@ -3,21 +3,58 @@ import { useIntl } from "react-intl";
 import { Message } from "@mui/icons-material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomCard } from "../../../shared/components/CustomCard";
+import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export default function Help() {
   const intl = useIntl();
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.HELP" })}>
-        <Typography variant="body2" my={1}>
-          {intl.formatMessage({ id: "MENU.HELP_INFO" })}
-        </Typography>
-        <CustomisedButton
-          variant="contained"
-          label="Contact"
-          Icon={<Message />}
-          iconPosition="start"
-        />
+        <Stack position="relative">
+          <Grid
+            item
+            xs={7}
+            zIndex={1}
+            display={"flex"}
+            flexDirection={"column"}
+            gap={3}
+          >
+            <Stack>
+              <Typography variant="body2">
+                {intl.formatMessage({ id: "MENU.HELP_INFO" })}
+              </Typography>
+            </Stack>
+
+            <Stack
+              direction={"row"}
+              display={"flex"}
+              justifyContent={"flex-start"}
+            >
+              <CustomisedButton
+                variant="contained"
+                label="Contact"
+                Icon={<Message />}
+                iconPosition="start"
+              />
+            </Stack>
+          </Grid>
+
+          <Stack
+            height={"200px"}
+            direction={"row"}
+            display={"flex"}
+            justifyContent={"flex-end"}
+            position={"absolute"}
+            zIndex={0}
+            right={0}
+          >
+            <img
+              src={toAbsoluteUrl("media/auth/need_help.svg")}
+              width={"100%"}
+              height={"100%"}
+            />
+          </Stack>
+        </Stack>
       </CustomCard>
     </>
   );

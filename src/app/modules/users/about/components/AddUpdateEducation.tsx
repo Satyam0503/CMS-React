@@ -75,7 +75,6 @@ export default function AddUpdateEducation(props: PropTypes) {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Stack>
-            
                   <CustomisedDatePicker
                     label={intl.formatMessage({
                       id: "APPLICATION.START",
@@ -141,13 +140,13 @@ export default function AddUpdateEducation(props: PropTypes) {
               <CustomisedButton
                 variant="outlined"
                 size="medium"
-                label={intl.formatMessage({id:"BUTTON.CLOSE"})}
+                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                 handleClick={handleClose}
               />
 
               <CustomisedButton
                 loading={isSubmitting}
-                label={intl.formatMessage({id:"BUTTON.SAVE"})}
+                label={intl.formatMessage({ id: "BUTTON.SAVE" })}
                 type="submit"
                 disabled={!(isValid && dirty) || isSubmitting}
               />

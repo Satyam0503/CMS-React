@@ -8,7 +8,7 @@ import { getEmployeeEducations } from "../../userservices";
 import { colors } from "../../../theme/MuiTheme";
 import { ProfileProps } from "../../models";
 
-export const EmployeeEducation:FC<ProfileProps>  = ({employeeId}) => {
+export const EmployeeEducation: FC<ProfileProps> = ({ employeeId }) => {
   const intl = useIntl();
   const [employeeEducations, setEmployeeEducations] = useState<
     UserEducationModel[]

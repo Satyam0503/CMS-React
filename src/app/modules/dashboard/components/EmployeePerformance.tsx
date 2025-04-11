@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Card, Link, Typography } from "@mui/material";
+import { Card, Link, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { BarChart, GraphicEqOutlined } from "@mui/icons-material";
 import { colors } from "../../theme/MuiTheme";
@@ -28,39 +28,46 @@ export default function EmployeePerformance() {
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}>
-        <TableContainer>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">#</TableCell>
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="left">Performance</TableCell>
-                <TableCell align="right">Graph</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.sno}
-                  </TableCell>
-                  <TableCell align="left">{row.name}</TableCell>
-                  <TableCell align="left">{row.performance}</TableCell>
-                  <TableCell align="right">
-                    {row.graph}{" "}
-                    <BarChart sx={{ color: colors.alpha.primary[500] }} />
-                  </TableCell>
+        <Stack
+          sx={{
+            flexGrow: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <TableContainer>
+            <Table sx={{ width: "100%" }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">#</TableCell>
+                  <TableCell align="left">Name</TableCell>
+                  <TableCell align="left">Performance</TableCell>
+                  <TableCell align="right">Graph</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Link href="employeeperformance" underline="always">
-          {"See more"}
-        </Link>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.sno}
+                    </TableCell>
+                    <TableCell align="left">{row.name}</TableCell>
+                    <TableCell align="left">{row.performance}</TableCell>
+                    <TableCell align="right">
+                      {row.graph}{" "}
+                      <BarChart sx={{ color: colors.alpha.primary[500] }} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Link href="employeeperformance" underline="always">
+            {"See more"}
+          </Link>
+        </Stack>
       </CustomCard>
     </>
   );
