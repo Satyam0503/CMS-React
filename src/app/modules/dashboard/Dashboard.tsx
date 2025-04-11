@@ -21,13 +21,15 @@ import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import RightDrawer from "./components/RightDrawer";
+import { usePageData } from "../../../_themes/layout/core";
+import { GetAllEmployeeResponseModel } from "../employees/models";
 
 // Main Dashboard Component
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
-  const [employees, setEmployees] = useState<EmployeeModel[]>([]);
+  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -111,7 +113,6 @@ export default function Dashboard() {
               chartColor="primary"
               chartHeight="180px"
             />
-
             <EmpOnLeave />
             <Punctual />
             {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />}

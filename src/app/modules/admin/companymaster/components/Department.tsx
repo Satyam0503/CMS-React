@@ -30,7 +30,6 @@ const Departments = () => {
       try {
         const response = await getAllDepartments();
         const { success, methodResults } = response.data;
-        const { success, methodResults } = response.data;
         if (success) {
           setDepartmentList(methodResults);
         }

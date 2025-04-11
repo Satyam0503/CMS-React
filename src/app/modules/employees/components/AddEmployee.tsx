@@ -1,14 +1,18 @@
-import { Grid, Stack, Typography, MenuItem, Autocomplete, TextField } from "@mui/material";
+import {
+  Grid,
+  Stack,
+  Typography,
+  MenuItem,
+  Autocomplete,
+  TextField,
+} from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmployeeModel } from "../../../../utils/common_types";
-import {
-  Gender,
-  bloodGroups,
-} from "../../../../utils/constant/Constant";
+import { Gender, bloodGroups } from "../../../../utils/constant/Constant";
 import { Roles } from "../../../../utils/enums";
 import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
@@ -19,77 +23,126 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { DepartmentModel, RoleModel } from "../../admin/models";
 import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
+import { GetAllEmployeeResponseModel } from "../models";
+import { statusEncoder } from "../../../../utils/common";
+import { addEmployee } from "../employeeServices";
+
+const employeeInitialValue: EmployeeModel = {
+  userId: "",
+  employeeId: "",
+  roleId: "",
+  companyId: "",
+  firstName: "",
+  lastName: "",
+  gender: "",
+  email: "",
+  dateOfBirth: null,
+  department: "",
+  reportingManager: null,
+  teamLead: null,
+  phoneNumber: "",
+  bloodGroup: "",
+  address: "",
+  jobRole: "",
+  status: "Active",
+  isEmailVerified: false,
+  dateOfJoining: null,
+  personalEmail: "",
+  emergencyContact: "",
+  password: null,
+};
 
 interface PropsTypes {
-  initialValues: EmployeeModel;
-  isEdit: boolean;
   open: boolean;
   handleClose: () => void;
-  SaveAddEditEmployee: (
-    values: EmployeeModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => void;
-  employeeList:EmployeeModel[]
+  employeeList: GetAllEmployeeResponseModel[];
+  refresh:boolean;
+  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function AddUpdateEmployee(props: PropsTypes) {
-  const { initialValues, open, SaveAddEditEmployee, handleClose, isEdit , employeeList } =
-    props;
+export const AddEmployee = (props: PropsTypes) => {
+  const { open, handleClose, employeeList,refresh,setRefresh } = props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
-  const [departmentList,setDepartmentList]= useState<DepartmentModel[]>([]);
-  const {formatMessage} = useIntl();
+  const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
+  const { formatMessage } = useIntl();
+
+  async function SaveAddEditEmployee(
+    values: EmployeeModel,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) {
+    const payload = {
+      ...values,
+      status: statusEncoder(values.status as string),
+    };
+    try {
+      const response = await addEmployee(payload);
+      const {success,message}=response.data;
+      if(success){
+        toast.success(message);
+        setSubmitting(false);
+        handleClose();
+        setRefresh(!refresh);
+      }
+    } catch (error:any) {
+      toast.error(error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   useEffect(() => {
-    Promise.all([getAllRoles(),getAllDepartments()])
-    .then(res=>{
-      setRoles(res[0].data.methodResults);
-      if(res[1].data.totalRecords ===0){
-        toast.error(formatMessage({id:"MESSAGE.DEPARTMENT.NO_DEPARTMENTS"}));
-        handleClose();
-      }
-      else{
-        setDepartmentList(res[1].data.methodResults);
-      }
-    }).catch(err=>{
-      console.log(err.message);
-    })
+    Promise.all([getAllRoles(), getAllDepartments()])
+      .then((res) => {
+        setRoles(res[0].data.methodResults);
+        if (res[1].data.totalRecords === 0) {
+          toast.error(
+            formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" })
+          );
+          handleClose();
+        } else {
+          setDepartmentList(res[1].data.methodResults);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }, []);
 
   const filteredRoles = roles?.filter(
     (role) => role.titles !== Roles.Administrator
   );
-  
+
   return (
     <>
-      {filteredRoles && filteredRoles?.length > 0 && (
-        <CustomisedModal open={open} handleClose={handleClose}>
-          <Stack direction="column" spacing={2}>
-            <Typography variant="h5">
-              {isEdit
-                ? formatMessage({ id: "UPDATE.EMP.INFO" })
-                : formatMessage({ id: "ADD.EMP.INFO" })}
-            </Typography>
-            <Formik
-              initialValues={initialValues}
-              validationSchema={employeeSchema}
-              onSubmit={(values, { setSubmitting }) => {
-                delete values.fullProfileUrl;
-                delete values.profileUrl;
-                SaveAddEditEmployee(values, setSubmitting);
-              }}
-            >
-              {({
-                isSubmitting,
-                values,
-                setFieldTouched,
-                setFieldValue,
-                isValid,
-                touched,
-                errors,
-                dirty,
-                handleSubmit,
-              }) => {
-                return <form onSubmit={handleSubmit}>
+      <CustomisedModal open={open} handleClose={handleClose}>
+        <Stack direction="column" spacing={2}>
+          <Typography variant="h5">
+            {formatMessage({ id: "ADD.EMP.INFO" })}
+          </Typography>
+          <Formik
+            initialValues={employeeInitialValue}
+            validationSchema={employeeSchema}
+            onSubmit={(values, { setSubmitting }) => {
+              delete values.fullProfileUrl;
+              delete values.profileUrl;
+              SaveAddEditEmployee(values, setSubmitting);
+            }}
+          >
+            {({
+              isSubmitting,
+              values,
+              setFieldTouched,
+              setFieldValue,
+              isValid,
+              touched,
+              errors,
+              dirty,
+              handleSubmit,
+            }) => {
+              console.log(errors,isValid);
+              
+              return (
+                <form onSubmit={handleSubmit}>
                   <Grid
                     container
                     rowSpacing={1.5}
@@ -179,7 +232,6 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         placeholder={formatMessage({
                           id: "FORM.EMAIL",
                         })}
-                        disabled={isEdit}
                       />
                     </Grid>
 
@@ -188,7 +240,7 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         name="roleId"
                         label={formatMessage({ id: "FORM.ROLE" })}
                       >
-                        {filteredRoles.map((role) => {
+                        {filteredRoles && filteredRoles.map((role) => {
                           return (
                             <MenuItem key={role.rolesId} value={role.rolesId}>
                               {role.titles}
@@ -211,7 +263,10 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         label={formatMessage({ id: "FORM.DEPARTMENT" })}
                       >
                         {departmentList.map((dep) => (
-                          <MenuItem key={dep.departmentId} value={dep.departmentId}>
+                          <MenuItem
+                            key={dep.departmentId}
+                            value={dep.departmentId}
+                          >
                             {dep.departmentName}
                           </MenuItem>
                         ))}
@@ -226,15 +281,23 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         )}
                         options={employeeList}
                         onChange={(event, value) => {
-                          setFieldTouched("reportingManager",true);
-                          setFieldValue("reportingManager", value ? value.userId :"");
+                          setFieldTouched("reportingManager", true);
+                          setFieldValue(
+                            "reportingManager",
+                            value ? value.userId : ""
+                          );
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={formatMessage({
-                            id: "USER.REPORTING_MANAGER",
-                          })} />
+                          <TextField
+                            {...param}
+                            label={formatMessage({
+                              id: "USER.REPORTING_MANAGER",
+                            })}
+                          />
                         )}
-                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                        getOptionLabel={(option) =>
+                          `${option.firstName} ${option.lastName}`
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -246,15 +309,20 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                         )}
                         options={employeeList}
                         onChange={(event, value) => {
-                          setFieldTouched("teamLead",true);
+                          setFieldTouched("teamLead", true);
                           setFieldValue("teamLead", value ? value.userId : "");
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={formatMessage({
-                            id: "USER.TEAM_LEAD",
-                          })} />
+                          <TextField
+                            {...param}
+                            label={formatMessage({
+                              id: "USER.TEAM_LEAD",
+                            })}
+                          />
                         )}
-                        getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                        getOptionLabel={(option) =>
+                          `${option.firstName} ${option.lastName}`
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -339,19 +407,17 @@ export default function AddUpdateEmployee(props: PropsTypes) {
                     />
                     <CustomisedButton
                       loading={isSubmitting}
-                      label={formatMessage({
-                        id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
-                      })}
+                      label={formatMessage({ id: "BUTTON.ADD" })}
                       type="submit"
-                      disabled={isSubmitting }
+                      disabled={isSubmitting}
                     />
                   </Stack>
                 </form>
-}}
-            </Formik>
-          </Stack>
-        </CustomisedModal>
-      )}
+              );
+            }}
+          </Formik>
+        </Stack>
+      </CustomisedModal>
     </>
   );
-}
+};

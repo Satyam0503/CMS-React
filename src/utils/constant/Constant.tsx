@@ -47,6 +47,7 @@ import { DepartmentModel, RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
+import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -337,7 +338,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "name",
     label: "FORM.FULL_NAME",
     minWidth: 200,
-    avatarCell: (row: EmployeeModel) => {
+    avatarCell: (row:GetAllEmployeeResponseModel) => {
       const fullName = row.firstName + " " + row.lastName;
       const jobRole = row.jobRole;
       return (

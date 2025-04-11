@@ -18,16 +18,16 @@ export const employeeSchema = Yup.object().shape({
   jobRole: Yup.string().required("Job role is required"),
   gender: Yup.string().required("Gender is required"),
   department: Yup.string().required("Department is required"),
-  reportingManager: Yup.string().required("Reporting manager name is required"),
+  reportingManager: Yup.string().nullable(),
   roleId: Yup.string().required("Role is required"),
-  teamLead: Yup.string().required("Team lead name is required"),
+  teamLead: Yup.string().nullable(),
   phoneNumber: Yup.string()
     .matches(
       Regex.Phone,
       "Phone number is not valid"
     )
     .required("Phone number is required"),
-  bloodGroup: Yup.string().required("Blood group is required"),
+  bloodGroup: Yup.string().nullable(),
   status: Yup.string().required("Status is required"),
   dateOfJoining: Yup.date()
     .required("Date of Joining is required")
@@ -38,7 +38,7 @@ export const employeeSchema = Yup.object().shape({
     .typeError("Invalid Date of Birth")
     .max(new Date(), "Date of Birth cannot be in the future"),
   personalEmail: Yup.string()
-    .required("Personal email is required")
+    .nullable()
     .matches(
       Regex.Email,
       "Email is not valid"

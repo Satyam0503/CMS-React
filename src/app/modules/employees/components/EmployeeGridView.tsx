@@ -7,9 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { EmpCardSkeleton } from "./EmployeeCardSkeleton";
 import { useIntl } from "react-intl";
 import { CardMessage } from "../../../shared/CardMessage";
+import { GetAllEmployeeResponseModel } from "../models";
 
 interface Props {
-  employeeList: EmployeeModel[];
+  employeeList: GetAllEmployeeResponseModel[];
   isLoading: boolean;
 }
 
