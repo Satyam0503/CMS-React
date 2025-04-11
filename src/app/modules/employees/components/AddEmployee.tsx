@@ -133,14 +133,10 @@ export const AddEmployee = (props: PropsTypes) => {
               values,
               setFieldTouched,
               setFieldValue,
-              isValid,
               touched,
               errors,
-              dirty,
               handleSubmit,
             }) => {
-              console.log(errors,isValid);
-              
               return (
                 <form onSubmit={handleSubmit}>
                   <Grid
@@ -153,6 +149,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.FIRST_NAME" })}
                         type="text"
                         name="firstName"
+                        required= {true}
                         placeholder={formatMessage({
                           id: "FORM.FIRST_NAME",
                         })}
@@ -163,6 +160,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.LAST_NAME" })}
                         type="text"
                         name="lastName"
+                        required= {true}
                         placeholder={formatMessage({
                           id: "FORM.LAST_NAME",
                         })}
@@ -186,6 +184,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.EMPID" })}
                         type="text"
                         name="employeeId"
+                        required= {true}
                         placeholder={formatMessage({
                           id: "FORM.EMPID",
                         })}
@@ -229,6 +228,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.EMAIL" })}
                         type="email"
                         name="email"
+                        required= {true}
                         placeholder={formatMessage({
                           id: "FORM.EMAIL",
                         })}
@@ -254,6 +254,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.JOB_ROLE" })}
                         type="text"
                         name="jobRole"
+                        required= {true}
                         placeholder={formatMessage({ id: "FORM.JOB_ROLE" })}
                       />
                     </Grid>
@@ -295,9 +296,7 @@ export const AddEmployee = (props: PropsTypes) => {
                             })}
                           />
                         )}
-                        getOptionLabel={(option) =>
-                          `${option.firstName} ${option.lastName}`
-                        }
+                        getOptionLabel={(option) => option.fullName}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -320,9 +319,7 @@ export const AddEmployee = (props: PropsTypes) => {
                             })}
                           />
                         )}
-                        getOptionLabel={(option) =>
-                          `${option.firstName} ${option.lastName}`
-                        }
+                        getOptionLabel={(option) => option.fullName}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -330,6 +327,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "USER.PHONE" })}
                         type="text"
                         name="phoneNumber"
+                        required= {true}
                         placeholder={formatMessage({ id: "USER.PHONE" })}
                       />
                     </Grid>
@@ -388,6 +386,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "USER.ADDRESS" })}
                         type="text"
                         name="address"
+                        required= {true}
                         placeholder={formatMessage({ id: "USER.ADDRESS" })}
                       />
                     </Grid>

@@ -12,6 +12,7 @@ interface PropsTypes {
   name: string;
   type: React.InputHTMLAttributes<unknown>['type'];
   placeholder?: string;
+  required?:boolean;
   disabled?: boolean;
   multiline?: boolean;
   inputProps?: InputBaseProps["inputProps"];

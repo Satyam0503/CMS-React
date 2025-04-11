@@ -54,7 +54,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
                   className="fw-bold"
                   sx={{ color: colors.alpha.white[500] }}
                 >
-                  {emp.firstName} {emp.lastName}
+                  {emp.fullName}
                 </Typography>
                 <Typography variant="body2">{emp.jobRole ?? "NA"}</Typography>
               </Box>

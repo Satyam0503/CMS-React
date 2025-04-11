@@ -98,10 +98,10 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                           fontSize: "1rem",
                         }}
                       >
-                        {emp.firstName.charAt(0)}
+                        {emp.fullName.charAt(0)}
                       </Avatar>
                       <Stack>
-                        <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
+                        <Typography variant="body1">{emp.fullName}</Typography>
                         <Typography variant="body2">{emp.jobRole}</Typography>
                       </Stack>
                     </Stack>

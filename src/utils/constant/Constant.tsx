@@ -338,14 +338,12 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "name",
     label: "FORM.FULL_NAME",
     minWidth: 200,
-    avatarCell: (row:GetAllEmployeeResponseModel) => {
-      const fullName = row.firstName + " " + row.lastName;
-      const jobRole = row.jobRole;
+    avatarCell: (emp:GetAllEmployeeResponseModel) => {
       return (
         <AvatarCell
-          avatarSrc={row.fullProfileUrl}
-          title={fullName}
-          subTitle={jobRole}
+          avatarSrc={emp.fullProfileUrl}
+          title={emp.fullName}
+          subTitle={emp.jobRole}
         />
       );
     },
@@ -361,6 +359,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "department",
     label: "FORM.DEPARTMENT",
+    format:(value: string | null) => value ?? <FormattedMessage id="NOT_AVAILABLE"/>
   },
 ];
 

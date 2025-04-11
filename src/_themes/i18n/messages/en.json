@@ -498,5 +498,6 @@
   "MESSAGE.APPLICANT.UPDATED": "Applicant Updated Successfully",
 
   "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully",
-  "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access"
+  "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access",
+  "NOT_AVAILABLE":"NA"
 }
