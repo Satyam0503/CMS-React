@@ -21,6 +21,7 @@ import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import RightDrawer from "./components/RightDrawer";
+import { usePageData } from "../../../_themes/layout/core";
 
 // Main Dashboard Component
 export default function Dashboard() {

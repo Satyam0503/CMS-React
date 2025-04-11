@@ -20,12 +20,12 @@ export default function LightDarkMode() {
         handleClick={toggleTheme}
         icon={<LightModeOutlined fontSize="large" />}
         tooltip="Light /Dark mode"
-        // style={{
-        //   border: "none",
-        //   cursor: "pointer",
-        //   backgroundColor: currentTheme === "light" ? "#ffff" : "#333",
-        //   color: currentTheme === "light" ? "#000" : "#fff",
-        // }}
+        style={{
+          border: "none",
+          cursor: "pointer",
+          backgroundColor: theme === "light" ? "#ffff" : "#333",
+          color: theme === "light" ? "#000" : "#fff",
+        }}
       />
     </>
   );

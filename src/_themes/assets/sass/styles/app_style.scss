@@ -27,7 +27,14 @@ $app-primary-wave: #35126c;
 $app-primary-footer: #9f6dda;
 $app-primary-100: #e6d9f5;
 $app-white: #ffffff;
-
+$success-700: #37843c;
+$success-200: #c8f2cc;
+$warning-200: #fff2b3;
+$warning-900: #ba4303;
+$danger-200: #ffc8c7;
+$danger-700: #c62828;
+$info-300: #cfd8ff;
+$info-800: #2b46a5;
 //profile card icon
 .coverChange {
   position: absolute !important;
@@ -54,7 +61,7 @@ input:-webkit-autofill {
 .loader {
   width: 1.4rem;
   height: 1.4rem;
-  border: 3px solid #fff;
+  border: 3px solid $app-white;
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;
@@ -84,20 +91,20 @@ input:-webkit-autofill {
   font-size: 14px !important;
 }
 .success {
-  background-color: #c8f2cc;
-  color: #37843c;
+  background-color: $success-200;
+  color: $success-700;
 }
 .warning {
-  background-color: #fff2b3;
-  color: #b3743b;
+  background-color: $warning-200;
+  color: $warning-900;
 }
 .danger {
-  background-color: #ffc8c7;
-  color: #c62828;
+  background-color: $danger-200;
+  color: $danger-700;
 }
 .info {
-  background-color: #cfd8ff;
-  color: #2b46a5;
+  background-color: $info-300;
+  color: $info-800;
 }
 
 // .pdf_viewer {
@@ -245,7 +252,7 @@ button:hover .ql-fill,
 .breadcrumb-link {
   color: #737373;
   &:hover {
-    color: #9a56d3;
+    color: $app-primary-500;
   }
 }
 

@@ -38,7 +38,7 @@ const MasterLayout = () => {
             flexGrow={1}
             flexBasis={"auto"}
             flexShrink={0}
-            className="app-container"
+            className="container-main"
           >
             <HeaderWrapper />
 
@@ -55,7 +55,7 @@ const MasterLayout = () => {
                 flexShrink={0}
                 zIndex={0}
                 className="bgcolor_gray"
-                // bgcolor={colors.alpha.bgbody[500]}
+                bgcolor={colors.alpha.bgbody[500]}
               >
                 <Container className="d-flex flex-column flex-grow-1">
                   <PageData />
