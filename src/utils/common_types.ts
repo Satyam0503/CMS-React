@@ -137,6 +137,13 @@ export type LeavesModel = {
   group: string;
   message: string;
 };
+export type AttendanceModel = {
+  id: string;
+  target: string;
+  type: string;
+  group: string;
+  message: string;
+};
 
 export interface ResetPasswordModel {
   oldPassword?: string;
@@ -171,7 +178,7 @@ export interface ResponseData<T> {
 export interface SideBarTabListProps {
   id: Modules;
   title: ModulesTitles;
-  constant:ModulesName;
+  constant: ModulesName;
   route: string;
   icon: JSX.Element;
   hasSubTabs?: boolean;
@@ -181,7 +188,7 @@ export interface SideBarTabListProps {
 export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
-  processLog : ProcessLogFilterModel | null;
+  processLog: ProcessLogFilterModel | null;
 }
 
 export type WithChildren = {
@@ -189,13 +196,12 @@ export type WithChildren = {
 };
 
 export interface BaseModel {
-  companyId:string;
-  createdBy:string;
-  createdDate:string;
-  updatedBy:string;
-  updatedDate:string;
+  companyId: string;
+  createdBy: string;
+  createdDate: string;
+  updatedBy: string;
+  updatedDate: string;
 }
-
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 

@@ -21,7 +21,7 @@ export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
 };
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
-  vacancyName:string;
+  vacancyName: string;
   statusName: string;
   status: number;
   activityTypeName: string;
@@ -52,7 +52,7 @@ export interface ApplicationFilterModel {
 }
 
 export interface ProcessLogFilterModel {
-  jobRole:string;
+  jobRole: string;
   activityCategory: number[];
   filterFrom: null | Dayjs | string;
   filterTo: null | Dayjs | string;
@@ -81,22 +81,22 @@ export interface CommentModel {
   jobTitle: string;
 }
 
-export type ProcessLogPayoadModel = ProcessLogFilterModel &  {
+export type ProcessLogPayoadModel = ProcessLogFilterModel & {
   pageNo: number;
   pageSize: number;
   applicantName: string;
-}
+};
 export type GetCommentPayloadModel = {
   pageNo: number;
   pageSize: number;
   applicantId: string;
-}
+};
 
 export type CommentResponseModel = CommentModel &
   BaseModel & {
     id: string;
     userName: string;
-};
+  };
 
 export type JobsResponseData = ResponseData<JobModal>;
 export type ApplicantsResponseData = ResponseData<Applicant>;
