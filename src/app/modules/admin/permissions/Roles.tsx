@@ -48,9 +48,9 @@ export const Roles = () => {
       <Card sx={{ p: "2rem" }} className="d-flex flex-column">
         {hasAccess && (
           <CustomisedButton
-            label={intl.formatMessage({ id: "ADMIN.ADD_ROLE" })}
+            label={intl.formatMessage({ id: "ROLE.ADD_ROLE" })}
             handleClick={() => {
-              navigate("/admin/addrole");
+              navigate("/admin/roles/add");
             }}
             Icon={<Add />}
             className="align-self-end mb-4"

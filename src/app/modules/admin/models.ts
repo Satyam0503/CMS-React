@@ -11,6 +11,7 @@ export interface RoleModel {
   isNotEditable: boolean;
   isDefault: boolean;
   userRoles: string[];
+  hasAppAccess:boolean;
 }
 export interface AddEditRoleModel {
   roleId?: string | null;

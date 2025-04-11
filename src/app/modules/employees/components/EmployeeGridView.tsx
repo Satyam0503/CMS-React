@@ -19,7 +19,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
   const handleClick = (employeeId: string) => {
     employeeId === currentEmpId
       ? navigate("/myprofile")
-      : navigate(`/employee/${employeeId}`);
+      : navigate(`/employees/${employeeId}`);
   };
 
   if (employeeList.length === 0) {

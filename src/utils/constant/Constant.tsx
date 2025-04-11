@@ -1,4 +1,4 @@
-import { Button, Tooltip, Typography } from "@mui/material";
+import { Button, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
   EmployeeModel,
@@ -7,11 +7,10 @@ import {
 import {
   dateFormatter,
   statusDecoder,
-  commentActionDecoder,
   applicantStatusDecoder,
-  getApplicantStatusClass,
   convertMonthsToYear,
   sanitizeHtmlContent,
+  commentActionMapper,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -27,7 +26,6 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import {
   AccessTime,
-  AccountCircle,
   AdminPanelSettings,
   Book,
   CalendarMonth,
@@ -48,6 +46,7 @@ import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
+import clsx from "clsx";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -65,6 +64,8 @@ export const ServiceUrl = {
   GET_ALL_MODULE_PERMISSION: `${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
   GET_ROLE_ALL_PERMISSIONS: `${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
+  GET_ROLE_BY_ID:`${BaseUrl}/api/Roles/GetRoleById`,
+  CHANGE_APP_ACCESS:`${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -119,37 +120,37 @@ export const languages = [
   {
     id: 1,
     lang: "en",
-    name: "English",
+    name: <FormattedMessage id="Language.English" />,
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
     lang: "zh",
-    name: "Mandarin",
+    name: <FormattedMessage id="Language.Mandarin" />,
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
     lang: "es",
-    name: "Spanish",
+    name: <FormattedMessage id="Language.Spanish" />,
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
     lang: "ja",
-    name: "Japanese",
+    name: <FormattedMessage id="Language.Japanese" />,
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
     lang: "de",
-    name: "German",
+    name: <FormattedMessage id="Language.German" />,
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
     lang: "fr",
-    name: "French",
+    name: <FormattedMessage id="Language.French" />,
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
 ];
@@ -164,17 +165,17 @@ export const Regex = {
 export const Gender = [
   {
     id: 1,
-    label: "Male",
+    label: <FormattedMessage id="GENDER.MALE" />,
     value: "male",
   },
   {
     id: 2,
-    label: "Female",
+    label: <FormattedMessage id="GENDER.FEMALE" />,
     value: "female",
   },
   {
     id: 3,
-    label: "Other",
+    label: <FormattedMessage id="GENDER.OTHER" />,
     value: "other",
   },
 ];
@@ -261,48 +262,47 @@ export const JobTime = [
 export const JobType = [
   {
     id: 1,
-    label: "Onsite",
+    label: <FormattedMessage id="Jobtype.Onsite" />,
     value: "Onsite",
   },
   {
     id: 2,
-    label: "Hybrid",
+    label: <FormattedMessage id="Jobtype.Hybrid" />,
     value: "Hybrid",
   },
   {
     id: 3,
-    label: "Remote",
+    label: <FormattedMessage id="Jobtype.Remote" />,
     value: "Remote",
   },
 ];
 
 export const ApplicationEvaluationStatus = [
-  { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
-  { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
-  { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
-  { id: 4, label: "Selected", value: ApplicationStatus.Selected },
-  { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
+  { id: 1, label: "APPLICATION.STATUS.INPROGRESS", value: ApplicationStatus.InProgress },
+  { id: 2, label: "APPLICATION.STATUS.ONHOLD", value: ApplicationStatus.OnHold },
+  { id: 3, label: "APPLICATION.STATUS.SHORTLISTED", value: ApplicationStatus.Shortlisted },
+  { id: 4, label: "APPLICATION.STATUS.SELECTED", value: ApplicationStatus.Selected },
+  { id: 5, label: "APPLICATION.STATUS.REJECTED", value: ApplicationStatus.Rejected }
 ];
 
 export const ApplicantApplicationStatus = [
-  { id: 0, label: "New", value: ApplicationStatus.New },
-  { id: 1, label: "In Progress", value: ApplicationStatus.InProgress },
-  { id: 2, label: "On Hold", value: ApplicationStatus.OnHold },
-  { id: 3, label: "Shortlisted", value: ApplicationStatus.Shortlisted },
-  { id: 4, label: "Selected", value: ApplicationStatus.Selected },
-  { id: 5, label: "Rejected", value: ApplicationStatus.Rejected },
+  { id: 0, label: "APPLICATION.STATUS.NEW", value: ApplicationStatus.New },
+  { id: 1, label: "APPLICATION.STATUS.INPROGRESS", value: ApplicationStatus.InProgress },
+  { id: 2, label: "APPLICATION.STATUS.ONHOLD", value: ApplicationStatus.OnHold },
+  { id: 3, label: "APPLICATION.STATUS.SHORTLISTED", value: ApplicationStatus.Shortlisted },
+  { id: 4, label: "APPLICATION.STATUS.SELECTED", value: ApplicationStatus.Selected },
+  { id: 5, label: "APPLICATION.STATUS.REJECTED", value: ApplicationStatus.Rejected },
 ];
 
 export const CommentActionCategory = [
-  { id: 0, label: "Process", value: CommentAction.Process },
-  { id: 1, label: "In Process", value: CommentAction.InProgress },
-  { id: 2, label: "On Hold", value: CommentAction.OnHold },
-  { id: 3, label: "Shortlisted", value: CommentAction.Shortlisted },
-  { id: 4, label: "Selection", value: CommentAction.Selection },
-  { id: 5, label: "Rejection", value: CommentAction.Rejection },
-  { id: 6, label: "Edit", value: CommentAction.Edit },
+  { id: 0, label: "COMMENT.ACTION.PROCESS", value: CommentAction.Process },
+  { id: 1, label: "COMMENT.ACTION.INPROGRESS", value: CommentAction.InProgress },
+  { id: 2, label: "COMMENT.ACTION.ONHOLD", value: CommentAction.OnHold },
+  { id: 3, label: "COMMENT.ACTION.SHORTLISTED", value: CommentAction.Shortlisted },
+  { id: 4, label: "COMMENT.ACTION.SELECTION", value: CommentAction.Selection },
+  { id: 5, label: "COMMENT.ACTION.REJECTION", value: CommentAction.Rejection },
+  { id: 6, label: "COMMENT.ACTION.EDIT", value: CommentAction.Edit },
 ];
-
 
 export const ApplicantStatusConstant = [
   { id: 1, label: "InActive", value: ApplicantStatus.InActive },
@@ -312,7 +312,7 @@ export const ApplicantStatusConstant = [
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "employeeId",
-    label: "Emp Id",
+    label: "EMPLOYEE.EMPID",
     minWidth: 60,
   },
   // {
@@ -335,7 +335,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   // },
   {
     id: "name",
-    label: "Name",
+    label: "FORM.FULL_NAME",
     minWidth: 200,
     avatarCell: (row: EmployeeModel) => {
       const fullName = row.firstName + " " + row.lastName;
@@ -351,22 +351,16 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "email",
-    label: "Email",
+    label: "FORM.EMAIL",
   },
   {
     id: "phoneNumber",
-    label: "Phone Number",
+    label: "FORM.PHONE",
   },
   {
     id: "department",
-    label: "Department",
+    label: "FORM.DEPARTMENT",
   },
-  // {
-  //   id: "address",
-  //   label: "Address",
-  //   align: "left",
-  //   build: (address: string) => <AddressDetailsIcon address={address} />,
-  // },
 ];
 
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
@@ -457,40 +451,40 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 60,
   },
   {
     id: "applicantName",
-    label: "Applicant Name",
+    label: "APPLICANT.NAME",
     minWidth: 150,
   },
   {
     id: "jobRole",
-    label: "Job Role",
+    label: "FORM.JOB_ROLE",
     minWidth: 150,
   },
   {
     id: "createdDate",
-    label: "Commented On",
+    label: "COMMENT.COMMENT_ON",
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
     minWidth: 150,
-    sorting:true
+    sorting: true,
   },
   {
     id: "userName",
-    label: "Commented By",
+    label: "COMMENT.COMMENT_BY",
     minWidth: 150,
   },
   {
     id: "activityCategory",
-    label: "Action",
+    label: "Table.Column.Action",
     minWidth: 150,
-    format: (value: number) => commentActionDecoder(value),
+    format: (value: number) => <FormattedMessage id={commentActionMapper[value]} />
   },
   {
     id: "description",
-    label: "Comment",
+    label: "COMMENT.COMMENT",
     minWidth: 200,
     build: (value: string) => (
       <Tooltip
@@ -600,7 +594,7 @@ export const LeaveMangementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Action",
+    label: "Table.Column.Action",
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
@@ -608,52 +602,51 @@ export const LeaveMangementTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 60,
   },
 
   {
     id: "fullName",
-    label: "Full Name",
+    label: "FORM.FULL_NAME",
     minWidth: 150,
   },
   {
     id: "vacancyName",
-    label: "Job Title",
+    label: "JOB.JOB_TITLE",
     minWidth: 150,
   },
   {
     id: "status",
-    label: "Status",
+    label: "JOB.STATUS",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
-      const className = getApplicantStatusClass(status);
-      return <StyleStatus label={values} className={className} />;
+      return <StyleStatus label={values} className={clsx(
+          {  success:status === ApplicantStatus.Active,
+            danger: status === ApplicantStatus.InActive
+          }
+      )} />;
     },
   },
   {
     id: "experience",
-    label: "Experience",
+    label: "FORM.EXPERIENCE",
     align: "center",
     sorting: true,
     format: (value: number) => {
       return convertMonthsToYear(value);
     },
   },
-  // {
-  //   id: "email",
-  //   label: "Email",
-  // },
   {
     id: "applyDate",
-    label: "Applied",
+    label: "APPLICATION.APPLIED_DATE",
     minWidth: 180,
     sorting: true,
     format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
   {
     id: "action",
-    label: "CV",
+    label: "APPLICATION.CV",
     build: (
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
@@ -673,36 +666,39 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 60,
   },
   {
     id: "titles",
-    label: "Role Name",
+    label:"ROLE.NAME",
     minWidth: 200,
   },
   {
     id: "description",
-    label: "Description",
+    label: "ROLE.DESCRIPTION",
     minWidth: 200,
   },
   {
-    id: "accessToApp",
-    label: "Access To Application",
+    id: "hasAppAccess",
+    label: "ROLE.HAS_APP_ACCESS",
     minWidth: 180,
+    format: (hasAccess: boolean) => (
+      <StyleStatus label={ hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS" }  className={clsx({ "success": hasAccess, "danger": !hasAccess })} />
+    ),
   },
   {
     id: "action",
-    label: "Action",
+    label: "Table.Column.Action",
     minWidth: 180,
     build: (row: RoleModel) => (
-      <Link to={"/admin/editpermission"} state={{ ...row }}>
+      <Link to={`/admin/roles/edit/${row.rolesId}`}>
         <Button variant="contained">
           <FormattedMessage
             id={
               row.isNotEditable
-                ? "ADMIN.VIEW_PERMISSION"
-                : "ADMIN.EDIT_PERMISSION"
+                ? "ROLE.VIEW_PERMISSION"
+                : "ROLE.EDIT_PERMISSION"
             }
           />
         </Button>
@@ -714,37 +710,36 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 30,
   },
 
   {
     id: "title",
-    label: "Job Title",
+    label: "JOB.JOB_TITLE",
   },
   {
     id: "vacancies",
-    label: "No of Position",
+    label: "JOB.NO_OF_VACANCIES",
     align: "center",
     sorting: true,
   },
   {
     id: "jobType",
-    label: "Job Type",
+    label: "JOB.TYPE",
   },
   {
     id: "status",
-    label: "Status",
+    label: "JOB.STATUS",
     build: (status: boolean) => {
-      const className = status ? "success" : "danger";
       return (
-        <StyleStatus label={statusDecoder(status)} className={className} />
+        <StyleStatus label={statusDecoder(status)} className={clsx({ success:status, danger: !status  })} />
       );
     },
   },
   {
     id: "action",
-    label: "Action",
+    label: "Table.Column.Action",
     build: (
       row: JobModal,
       handleJobEdit: (row: JobModal) => void,
@@ -764,29 +759,29 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 60,
   },
   {
     id: "userName",
-    label: "Action By",
+    label: "COMMENT.ACTION_BY",
     minWidth: 150,
   },
   {
     id: "createdDate",
-    label: "Date",
+    label: "COMMENT.DATE",
     minWidth: 200,
     format: (value: string) => dateFormatter(value, "MMMM DD YYYY  hh:mm A"),
   },
   {
     id: "activityCategory",
-    label: "Action Category",
+    label: "COMMENT.ACTION_CATEGORY",
     minWidth: 150,
-    format: (value: number) => commentActionDecoder(value),
+    format: (value: number) => <FormattedMessage id={commentActionMapper[value]} />,
   },
   {
     id: "description",
-    label: "Comment",
+    label: "COMMENT.COMMENT",
     minWidth: 200,
     build: (value: string) => (
       <Tooltip
@@ -829,45 +824,38 @@ export const CommentTableColumnList: ColumnListTypes[] = [
 export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
-    title:ModulesTitles.Dashboard,
+    title: ModulesTitles.Dashboard,
     constant: ModulesName.Dashboard,
     route: "/dashboard",
     icon: <DashboardIcon />,
   },
   {
-    id: Modules.MyProfile,
-    title:ModulesTitles.MyProfile,
-    constant: ModulesName.MyProfile,
-    route: "/myprofile",
-    icon: <AccountCircle />,
-  },
-  {
     id: Modules.Employees,
     constant: ModulesName.Employees,
-    title:ModulesTitles.Employees,
-    route: "/employee/",
+    title: ModulesTitles.Employees,
+    route: "/employees",
+    icon: <Person />,
+  },
+  {
+    id: Modules.PayRoll,
+    constant: ModulesName.PayRoll,
+    title: ModulesTitles.PayRoll,
+    route: "/",
     icon: <Contacts />,
     hasSubTabs: true,
     subTabs: [
       {
-        id: Modules.Employees,
-        constant: ModulesName.Employees,
-        title:ModulesTitles.Employees,
-        route: "/employee/employees",
-        icon: <Person />,
-      },
-      {
         id: Modules.LeaveManagement,
         constant: ModulesName.LeaveManagement,
-        title:ModulesTitles.LeaveManagement,
-        route: "/employee/employeeleave",
+        title: ModulesTitles.LeaveManagement,
+        route: "/leavemanagement",
         icon: <PermContactCalendar />,
       },
       {
         id: Modules.Attendance,
-        title:ModulesTitles.Attendance,
+        title: ModulesTitles.Attendance,
         constant: ModulesName.Attendance,
-        route: "/employee/attendance",
+        route: "/attendance",
         icon: <AccessTime />,
       },
     ],
@@ -915,7 +903,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.Permissions,
         title: ModulesTitles.Permissions,
         constant: ModulesName.Permissions,
-        route: "/admin/permissions",
+        route: "/admin/roles",
         icon: <ToggleOn />,
       },
       {
@@ -931,7 +919,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.CompanyMaster,
         route: "/admin/companymaster",
         icon: <AdminPanelSettings />,
-      }
+      },
     ],
   },
   {

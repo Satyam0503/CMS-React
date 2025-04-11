@@ -1,10 +1,11 @@
 import { Add, Check, Download, Edit, Sort } from "@mui/icons-material";
 import {
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
   MenuItem,
   Select,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -13,7 +14,7 @@ import { useIntl } from "react-intl";
 
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-
+import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 
 export default function AddLeaves() {
   const intl = useIntl();
@@ -39,50 +40,67 @@ export default function AddLeaves() {
             {intl.formatMessage({ id: "ADD.EMP.LEAVE" })}
           </Typography>
         </Grid>
-        <Grid container rowSpacing={1} columnSpacing={2}>
+        <Grid
+          container
+          rowSpacing={2}
+          columnSpacing={{ xs: 1, sm: 2 }}
+          alignItems={"end"}
+        >
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "AUTH.INPUT.FULLNAME" })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+            <TextField
+              label={intl.formatMessage({ id: "FORM.FULL_NAME" })}
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "FORM.TITLE" })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+            <TextField
+              label={intl.formatMessage({ id: "FORM.TITLE" })}
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({ id: "MENU.DEPT" })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+            <TextField
+              label={intl.formatMessage({ id: "MENU.DEPT" })}
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "AUTH.INPUT.EMAIL",
+            <TextField
+              label={intl.formatMessage({
+                id: "FORM.EMAIL",
               })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({
+            <TextField
+              label={intl.formatMessage({
                 id: "LEAVE.TYPE",
               })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="body1">
-              {intl.formatMessage({
+            <TextField
+              label={intl.formatMessage({
                 id: "LEAVE.REMAINING",
               })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
 
           <Grid
@@ -90,47 +108,59 @@ export default function AddLeaves() {
             xs={12}
             display={"flex"}
             flexDirection={{ xs: "column", md: "row" }}
-            gap={2}
+            columnGap={1}
+            alignItems={"end"}
           >
-            <Grid item xs={12} md={3.4}>
-              <Typography variant="body1">
-                {intl.formatMessage({ id: "APPLICATION.DURATION" })}
-              </Typography>
-              <Select fullWidth id="outlined-basic" variant="outlined">
-                <MenuItem>Full day</MenuItem>
-                <MenuItem>Half Day</MenuItem>
-              </Select>
+            <Grid item xs={12} md={3.9}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  {intl.formatMessage({ id: "APPLICATION.DURATION" })}
+                </InputLabel>
+                <Select
+                  label={intl.formatMessage({ id: "APPLICATION.DURATION" })}
+                  fullWidth
+                  id="outlined-basic"
+                  variant="outlined"
+                >
+                  <MenuItem>Full day</MenuItem>
+                  <MenuItem>Half Day</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
-            <Grid item xs={12} md={3.4}>
-              <Typography variant="body1">
-                {intl.formatMessage({
+            <Grid item xs={12} md={3.9}>
+              <CustomisedDatePicker
+                label={intl.formatMessage({
                   id: "APPLICATION.START",
                 })}
-              </Typography>
-              {/* <CustomisedDatePicker /> */}
+                name="startDate"
+              />
             </Grid>
-            <Grid item xs={12} md={3.4}>
-              <Typography variant="body1">
-                {intl.formatMessage({
+            <Grid item xs={12} md={3.9}>
+              <CustomisedDatePicker
+                label={intl.formatMessage({
                   id: "APPLICATION.END",
                 })}
-              </Typography>
+                name="startDate"
+              />
+
               {/* <CustomisedDatePicker /> */}
             </Grid>
             <Grid item xs={0.8} alignContent={"end"}>
-              <IconButton size="large" sx={{ width: "40px", height: "40px" }}>
+              <IconButton size="small" sx={{ width: "35px", height: "35px" }}>
                 <Add />
               </IconButton>
             </Grid>
           </Grid>
 
           <Grid item xs={12}>
-            <Typography variant="body1">
-              {intl.formatMessage({
+            <TextField
+              label={intl.formatMessage({
                 id: "APPLICATION.REASON",
               })}
-            </Typography>
-            <TextField fullWidth id="outlined-basic" variant="outlined" />
+              fullWidth
+              id="outlined-basic"
+              variant="outlined"
+            />
           </Grid>
 
           <Grid

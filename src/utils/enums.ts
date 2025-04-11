@@ -12,13 +12,13 @@ export enum ApplicantStatus {
   Active = 1,
 }
 export enum CommentAction {
-  Process=0,
+  Process = 0,
   InProgress = 1,
   OnHold = 2,
   Shortlisted = 3,
   Selection = 4,
   Rejection = 5,
-  Edit=6,
+  Edit = 6,
 }
 
 export enum Permission {
@@ -41,8 +41,9 @@ export enum Modules {
   Applications = 11,
   Permissions = 12,
   Theme = 13,
-  ProcessLog=14,
-  CompanyMaster=15
+  ProcessLog = 14,
+  CompanyMaster = 15,
+  PayRoll = 16,
 }
 
 export enum ModulesName {
@@ -59,26 +60,28 @@ export enum ModulesName {
   Applications = "Applications",
   Permissions = "Permissions",
   Theme = "Theme",
-  ProcessLog= "Process_Log",
-  CompanyMaster="Company_Master"
+  ProcessLog = "Process_Log",
+  CompanyMaster = "Company_Master",
+  PayRoll = "PayRoll",
 }
 
 export enum ModulesTitles {
-  Dashboard = "Dashboard",
-  Employees = "Employees",
-  Attendance = "Attendance",
-  LeaveManagement = "Leave Management",
-  MyProfile = "My Profile",
-  Recruitment = "Recruitment",
-  Admin = "Admin",
-  Holidays = "Holidays",
-  NoticeBoard = "Notice board",
-  Jobs = "Jobs",
-  Applications = "Applications",
-  Permissions = "Permissions",
-  Theme = "Theme",
-  ProcessLog= "Process Log",
-  CompanyMaster="Company Master"
+  Dashboard = "Modules.Dashboard",
+  Employees = "Modules.Employees",
+  Attendance = "Modules.Attendance",
+  LeaveManagement = "Modules.LeaveManagement",
+  MyProfile = "Modules.MyProfile",
+  Recruitment = "Modules.Recruitment",
+  Admin = "Modules.Admin",
+  Holidays = "Modules.Holidays",
+  NoticeBoard = "Modules.Notice board",
+  Jobs = "Modules.Jobs",
+  Applications = "Modules.Applications",
+  Permissions = "Modules.Permissions",
+  Theme = "Modules.Theme",
+  ProcessLog = "Modules.ProcessLog",
+  CompanyMaster = "Modules.CompanyMaster",
+  PayRoll = "Modules.PayRoll",
 }
 
 export enum Roles {
@@ -94,4 +97,4 @@ export enum TIME_PERIOD_MAP {
   LAST_SIX_MONTHS = 4,
   LAST_12_MONTHS = 5,
   LAST_TWO_WEEK = 7,
- }
+}

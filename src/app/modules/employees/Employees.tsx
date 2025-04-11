@@ -3,12 +3,10 @@ import {
   Stack,
   ToggleButton,
   ToggleButtonGroup,
-  Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
-  Download,
   FilterList,
   GridView,
   ViewList,
@@ -70,7 +68,7 @@ const employeeInitialValue: EmployeeModel = {
 };
 type ViewMode = "table" | "grid";
 
-export default function Employees() {
+const Employees=()=> {
   const intl = useIntl();
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
@@ -234,7 +232,7 @@ export default function Employees() {
     const empId = employee.userId;
     empId === currentEmpId
       ? navigate("/myprofile")
-      : navigate(`/employee/${empId}`);
+      : navigate(`/employees/${empId}`);
   };
 
   const handleViewChange = (
@@ -381,3 +379,5 @@ export default function Employees() {
     </>
   );
 }
+
+export default Employees;

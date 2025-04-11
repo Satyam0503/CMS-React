@@ -46,6 +46,32 @@ const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
 
   return (
     <CustomCard label={intl.formatMessage({ id: "PAGE.ATTENDANCE" })}>
+      <Stack
+        direction={"row"}
+        spacing={8}
+        display={"flex"}
+        justifyContent={"flex-start"}
+        mt={1}
+      >
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.PRESENT" })}
+          </Typography>
+          <Typography variant="h6">185</Typography>
+        </Stack>
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.ABSENT" })}
+          </Typography>
+          <Typography variant="h6">16</Typography>
+        </Stack>
+        <Stack>
+          <Typography variant="body2">
+            {intl.formatMessage({ id: "ATTENDANCE.LATE" })}
+          </Typography>
+          <Typography variant="h6">9</Typography>
+        </Stack>
+      </Stack>
       <Stack ref={chartRef} className="mixed-widget-5-chart card-rounded-top" />
     </CustomCard>
   );
@@ -63,8 +89,8 @@ const chart1Options = (
   return {
     series: [
       {
-        name: "Net Profit",
-        data: [30, 30, 60, 25, 25, 40],
+        name: "Present days",
+        data: [23, 16, 23, 20, 22, 22],
       },
     ],
     chart: {
@@ -113,7 +139,7 @@ const chart1Options = (
       colors: [baseColor],
     },
     xaxis: {
-      categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
       axisBorder: {
         show: false,
       },
@@ -147,7 +173,7 @@ const chart1Options = (
     },
     yaxis: {
       min: 0,
-      max: 65,
+      max: 24,
       labels: {
         show: false,
         style: {
@@ -183,7 +209,7 @@ const chart1Options = (
       },
       y: {
         formatter: function (val) {
-          return "$" + val + " thousands";
+          return val + " days";
         },
       },
     },

@@ -12,6 +12,7 @@ import TableSkeleton from "./TableSkeleton";
 import { useEffect, useState } from "react";
 import { TableSorting } from "./TableSorting";
 import { getKeyForTableRow } from "../../../utils/common";
+import { useIntl } from "react-intl";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -30,6 +31,7 @@ interface PropsTypes<Row, Columns> {
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
+  const {formatMessage}= useIntl();
   const [tableRows, setTableRows] = useState(props.rows);
   const {
     rows,
@@ -68,7 +70,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                       columnKey={column.id}
                     />
                   ) : (
-                    column.label
+                    formatMessage({id:column.label})
                   )}
                 </TableCell>
               ))}

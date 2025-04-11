@@ -4,8 +4,10 @@ import { SideBarTabList } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
 import { Permission } from "../../../../../utils/enums";
+import { useIntl } from "react-intl";
 
 export const SidebarMenuMain = () => {
+  const {formatMessage }= useIntl();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission
   );
@@ -51,7 +53,7 @@ export const SidebarMenuMain = () => {
             <SidebarMenuItemWithSub
               key={tab?.id}
               to={tab?.route}
-              title={tab?.title}
+              title={formatMessage({id:tab?.title})}
               icon={tab?.icon}
             >
               {tab?.subTabs?.map((subTab) => {
@@ -59,7 +61,7 @@ export const SidebarMenuMain = () => {
                   <SidebarMenuItem
                     key={subTab?.id}
                     to={subTab?.route}
-                    title={subTab?.title}
+                    title={formatMessage({id:subTab?.title})}
                     icon={subTab?.icon}
                   />
                 );
@@ -73,7 +75,7 @@ export const SidebarMenuMain = () => {
               key={tab.id}
               to={tab.route}
               icon={tab.icon}
-              title={tab.title}
+              title={formatMessage({id:tab.title})}
             />
           );
         }

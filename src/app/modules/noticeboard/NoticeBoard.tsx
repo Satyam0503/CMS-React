@@ -63,7 +63,7 @@ export default function NoticeBoard() {
     React.useState<NoticeModel | null>(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = React.useState(false);
   const intl = useIntl();
-  const {setPageTitle}= usePageData();
+  const { setPageTitle } = usePageData();
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
@@ -99,9 +99,9 @@ export default function NoticeBoard() {
     setSelectedNotice(null);
   }
 
-  React.useEffect(()=>{
-    setPageTitle(intl.formatMessage({ id: "PAGE.NOTICE_BOARD" }))
-  },[])
+  React.useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.NOTICE_BOARD" }));
+  }, []);
 
   return (
     <>

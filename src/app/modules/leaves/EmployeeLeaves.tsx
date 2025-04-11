@@ -37,7 +37,7 @@ import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { usePageData } from "../../../_themes/layout/core";
 
-export const EmployeeLeaves: FC = () => {
+const EmployeeLeaves: FC = () => {
   const intl = useIntl();
   const {setPageTitle}= usePageData();
   const [searchValue, setSearchValue] = React.useState("");
@@ -211,3 +211,6 @@ export const EmployeeLeaves: FC = () => {
     </>
   );
 };
+
+
+export default EmployeeLeaves;

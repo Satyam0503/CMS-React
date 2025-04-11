@@ -37,7 +37,6 @@ const initialValues: ApplicantModel = {
   state:"",
   resume: null,
   vacancyId: "",
-  vacancyName: "",
   status: ApplicantStatus.Active,
   activityType: ApplicationStatus.New,
 };
@@ -82,26 +81,22 @@ export const AddApplicant: FC<PropsTypes> = ({
   ) => {
     const formData = new FormData();
     formData.append("File", values.resume as File);
-    const vacancy = vacancyList.find(
-      (vacancy) => vacancy.jobId === values.vacancyId
-    );
     const payload = {
       ...values,
-      vacancyName: vacancy ? vacancy.title : "",
       activityType: ApplicationStatus.New,
       experience: values.experience * 12,
     };
     try {
       const { data } = await addApplicant(payload);
       if (!data.success) {
-        throw new Error(data.message);
+        throw new Error(intl.formatMessage({id:data.message }) );
       }
       const uploadResumeResponse = await uploadResume(values.email, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) {
         throw new Error(responseData.message);
       }
-      toast.success(data.message);
+      toast.success(intl.formatMessage({id:"MESSAGE.APPLICANT.ADD_SUCCESS"}));
       setRefresh(!refresh);
       handleClose();
     } catch (error: any) {
@@ -152,7 +147,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <TextInput
                           label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                           type="text"
-                          placeholder="First Name"
+                          placeholder={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                           name="firstName"
                         />
                       </Grid>
@@ -160,15 +155,15 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <TextInput
                           label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                           type="text"
-                          placeholder="Last Name"
+                          placeholder={intl.formatMessage({ id: "USER.LAST_NAME" })}
                           name="lastName"
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextInput
-                          label={intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
+                          label={intl.formatMessage({ id: "FORM.EMAIL" })}
                           type="email"
-                          placeholder="Email"
+                          placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
                           name="email"
                         />
                       </Grid>
@@ -176,7 +171,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <TextInput
                           label={intl.formatMessage({ id: "USER.PHONE" })}
                           type="text"
-                          placeholder="Phone Number"
+                          placeholder={intl.formatMessage({ id: "USER.PHONE" })}
                           name="phone"
                         />
                       </Grid>
