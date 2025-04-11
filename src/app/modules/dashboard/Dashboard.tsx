@@ -20,7 +20,7 @@ import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import { usePageData } from "../../../_themes/layout/core";
+import RightDrawer from "./components/RightDrawer";
 
 // Main Dashboard Component
 export default function Dashboard() {
