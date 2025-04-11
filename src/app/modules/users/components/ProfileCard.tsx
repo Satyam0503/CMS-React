@@ -34,7 +34,6 @@ export default function ProfileCard() {
   const [open, setOpen] = useState(false);
   const intl = useIntl();
   const { userDetails } = useUserDetails();
-  const userData = useAppSelector((state) => state.user.userData)!;
 
   function handleClose() {
     setOpen(false);

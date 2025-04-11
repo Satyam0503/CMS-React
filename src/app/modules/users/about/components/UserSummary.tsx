@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { UserSummaryModel } from "../../../../../utils/common_types";
 import { AxiosError } from "axios";
+import { useParams } from "react-router-dom";
 
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
@@ -17,6 +18,7 @@ export const UserSummary = () => {
   const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const {formatMessage} = useIntl();
+  const {employeeid} = useParams()
 
   const handleClose = () => {
     setEdit(false);
@@ -44,7 +46,7 @@ export const UserSummary = () => {
   };
 
   useEffect(() => {
-    getEmployeeSummary()
+    getEmployeeSummary(employeeid ?? "")
       .then((response) => {
         const { success, methodResult, statusCode } = response.data;
         if (success && statusCode === 200) {
