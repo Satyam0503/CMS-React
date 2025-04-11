@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
-import { Container, Grid, Stack } from "@mui/material";
+import { Button, Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
@@ -16,6 +16,16 @@ const MasterLayout = () => {
   useEffect(() => {
     reInitMenu();
   }, [location.key]);
+  const [theme, setTheme] = useState("light");
+
+  // Apply class to body
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
 
   return (
     <>
@@ -28,6 +38,7 @@ const MasterLayout = () => {
             flexGrow={1}
             flexBasis={"auto"}
             flexShrink={0}
+            className="app-container"
           >
             <HeaderWrapper />
 
@@ -43,7 +54,8 @@ const MasterLayout = () => {
                 flexBasis={"auto"}
                 flexShrink={0}
                 zIndex={0}
-                bgcolor={colors.alpha.bgbody[500]}
+                className="bgcolor_gray"
+                // bgcolor={colors.alpha.bgbody[500]}
               >
                 <Container className="d-flex flex-column flex-grow-1">
                   <PageData />
