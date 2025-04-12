@@ -4,9 +4,10 @@ import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { BarChart } from "../../../shared/components/BarChart";
 import { EmployeeModel } from "../../../../utils/common_types";
+import { GetAllEmployeeResponseModel } from "../../employees/models";
 
 interface PropsTypes {
-  employees: EmployeeModel[];
+  employees: GetAllEmployeeResponseModel[];
 }
 
 export const DepartmentChart: FC<PropsTypes> = ({ employees }) => {

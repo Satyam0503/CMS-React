@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { useParams } from "react-router-dom";
 
 const initialValue: UserCertificationModel = {
   certificationTitle: "",
@@ -45,6 +46,7 @@ export const UserCertification = () => {
   const [selectedCertificationId, setSelectedCertificationId] = useState<
     string | undefined
   >();
+  const {employeeid} = useParams();
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
@@ -111,7 +113,7 @@ export const UserCertification = () => {
   }
 
   useEffect(() => {
-    getEmployeeCertifications()
+    getEmployeeCertifications(employeeid??"")
       .then((response) => {
         const { success, methodResults, message } = response.data;
         if (!success) {

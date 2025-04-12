@@ -15,6 +15,10 @@
   }
 }
 
+.text-wrap-balance {
+  text-wrap: balance;
+}
+
 // List of colors
 $color-list: primary, secondary, success, info, neutral, warning, error,
   territory;
@@ -90,6 +94,7 @@ input:-webkit-autofill {
   padding: 0.8rem !important;
   font-size: 14px !important;
 }
+
 .success {
   background-color: $success-200;
   color: $success-700;
@@ -264,43 +269,27 @@ button:hover .ql-fill,
   -webkit-line-clamp: 2;
   text-overflow: ellipsis;
 }
-.department-card-conatiner {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  justify-content: flex-start;
-  margin-block-start: 1rem;
+.department-container  {
+  border: 1px solid #d8d8d8;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  overflow:scroll;
 }
 
-.department-card-conatiner .department-card {
-  position: relative;
-  border-left: 10px solid #9f6dda;
-  padding: 1.5rem 1rem;
-  overflow: hidden;
-  cursor: pointer;
-
-  & > .department-label {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #737373;
-    text-overflow: ellipsis;
-  }
-
-  & > .edit-btn {
-    display: none;
-    position: absolute;
-    border: none;
-    top: 50%;
-    right: 0%;
-    transform: translate(-50%, -50%);
-  }
-  &:hover .edit-btn {
-    display: block;
-  }
+.department-row {
+  display: grid;
+  align-items: center;
+  grid-template-columns: minmax(150px,1fr) minmax(150px,1fr) 80px 80px;
+  gap: 2rem;
+  padding-block: .6rem;
 }
 
 .employee-grid-container {
   display: grid;
+  gap: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 240px));
+  grid-template-rows: repeat(auto-fill, 270px);
+  justify-content: space-evenly;
   gap: 3rem;
   grid-template-columns: repeat(auto-fill, minmax(220px, 240px));
   grid-template-rows: repeat(auto-fill, 270px);
@@ -313,6 +302,7 @@ button:hover .ql-fill,
   position: relative;
   height: 270px;
   border-radius: 0.75rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   & > img {
     width: 100%;
@@ -320,16 +310,18 @@ button:hover .ql-fill,
     object-fit: cover;
     border-radius: inherit;
   }
-
   &::before {
     border-radius: inherit;
     position: absolute;
     z-index: 2;
     content: "";
+    content: "";
     width: 100%;
+    height: 100%;
     height: 100%;
     top: 0;
     left: 0;
+    background: linear-gradient(to top, #000, transparent);
     background: linear-gradient(to top, #000, transparent);
   }
 
@@ -340,6 +332,7 @@ button:hover .ql-fill,
     content: "";
     width: 100%;
     height: 100%;
+    height: 100%;
     top: 0;
     left: 0;
     display: flex;
@@ -348,21 +341,50 @@ button:hover .ql-fill,
     align-items: center;
     gap: 0.25rem;
     padding: 1rem 0.5rem;
+    gap: 0.25rem;
+    padding: 1rem 0.5rem;
   }
 }
 
-.has-access {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #37843c;
+.tab-container {
+  overflow-x:scroll !important ;
+  scrollbar-width:none;
+  & >* {
+    flex-grow: 1;
+  }
+  & .tab-box {
+    border-bottom: 2px solid #8b8b8b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font-weight: bolder;
+    color:#737373;
+    padding:1.5rem ;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 150px;
+    &:hover{
+      transition: background-color .2s ease-in;
+      background-color:color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
+      color:#9a56d3;
+    }
+
+    & > svg{
+      width: 25px;
+      height: 25px;
+      aspect-ratio: 1;
+    }
+
+  }
 }
-.no-access {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #c62828;
+
+.tab_active {
+  border-bottom: 2px solid #9a56d3  !important;
+  color: #9a56d3 !important;
 }
+
+
 .truncate-multi-line {
   display: -webkit-box;
   -webkit-box-orient: vertical;

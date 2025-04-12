@@ -21,18 +21,20 @@
   "Modules.Employees": "Employees",
   "Modules.Attendance": "Attendance",
   "Modules.LeaveManagement": "Leave Management",
-  "Modules.MyProfile": "My Profile",
-  "Modules.Recruitment": "Recruitment",
-  "Modules.Admin": "Admin",
-  "Modules.Holidays": "Holidays",
-  "Modules.NoticeBoard": "Notice board",
-  "Modules.Jobs": "Jobs",
-  "Modules.Applications": "Applications",
-  "Modules.Permissions": "Roles & Permissions",
-  "Modules.Theme": "Theme",
-  "Modules.ProcessLog": "Process Log",
-  "Modules.CompanyMaster": "Company Master",
-  "Modules.PayRoll": "PayRoll",
+  "Modules.MyProfile" : "My Profile",
+  "Modules.Recruitment" : "Recruitment",
+  "Modules.Admin" : "Admin",
+  "Modules.Holidays" : "Holidays",
+  "Modules.NoticeBoard" :"Notice board",
+  "Modules.Jobs" : "Jobs",
+  "Modules.Applications" : "Applications",
+  "Modules.Permissions" : "Roles & Permissions",
+  "Modules.Theme" : "Theme",
+  "Modules.ProcessLog" : "Process Log",
+  "Modules.CompanyMaster" : "Company Master",
+  "Modules.PayRoll" : "PayRoll",
+ 
+
 
   "PAGE.JOBS": "Job Requirements",
   "PAGE.PROCESS_LOG": "Process Log",
@@ -98,7 +100,9 @@
   "APPLICANT.RESUME_PREVIEW": "Resume Preview",
   "APPLICANT.NAME": "Applicant Name",
 
-  "EMPLOYEE.EMPID": "Emp Id",
+  "EMPLOYEE.EMPID":"Emp Id",
+  "Employee.No_Employee":"No Employees Available. Please Add New Employees",
+
 
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.REGISTER": "Register",
@@ -280,7 +284,12 @@
   "PROFILE.CERTIFICATION": "Certification",
   "PROFILE.UPDATE_CERTIFICATION": "Update Certification",
   "PROFILE.EXP": "Years of experience",
-  "PROFILE.EXP_CURRENT": "Years in Codeji",
+  "PROFILE.EXP_CURRENT": "Years in {companyName}",
+  "PROFILE.TAB.ABOUT":"About",
+  "PROFILE.TAB.LEAVE":"Leave",
+  "PROFILE.TAB.PERFORMANCE":"Performance",
+  "PROFILE.TAB.WORK":"Work History",
+  "PROFILE.TAB.SETTING":"Setting",
 
   "PROFILE.EMPLOYMENT": "Work experience",
   "PROFILE.CURRENT_CTC": "Current CTC",
@@ -451,10 +460,16 @@
   "ROLE.HAS_ACCESS": "Has Access",
   "ROLE.NO_ACCESS": "No Access",
 
-  "SEE_MORE": "See More",
-  "DASHBOARD.VACANCY.NOVACANCIES": "No Active Vacancies",
-  "DASHBOARD.EMPLOYEE.NOEMPLOYEE": "No Employees",
-  "DASHBOARD.APPLICATIONS.NO_APPLICATIONS": "No Applications",
+  "SEE_MORE":"See More",
+  "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
+  "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
+  "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
+
+  "Department.Title":"Title",
+  "Department.Status":"Status",
+  "Department.Description":"Description",
+  "Department.Delete":"Delete Department",
+  "Department.Delete.Alert":"Are You Sure?",
 
   "COMPANY_MASTER.TAB.DEPARTMENT": "Departments",
   "COMPANY_MASTER.TAB.JOBS": "Jobs",
@@ -475,11 +490,14 @@
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
 
-  "MESSAGE.DEPARTMENT.ADD_SUCCESS": "Please add departments",
+
+  "MESSAGE.DEPARTMENT.NO_DEPARTMENTS":"Please add departments",
 
   "MESSAGE.APPLICANT.ADD_SUCCESS": "Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "Application has already been submitted. Please reapply after the waiting period",
   "MESSAGE.APPLICANT.UPDATED": "Applicant Updated Successfully",
 
-  "MESSAGE.COMMENT.ADD_SUCCESS": "Comment Added Successfully"
+  "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully",
+  "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access",
+  "NOT_AVAILABLE":"NA"
 }

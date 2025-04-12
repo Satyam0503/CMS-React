@@ -1113,12 +1113,12 @@ export const MuiTheme = createTheme({
     MuiSwitch: {
       styleOverrides: {
         root: {
-          width: 36,
-          height: 20,
+          width: 42,
+          height: 26,
           padding: 0,
           "& .MuiSwitch-switchBase": {
             padding: 0,
-            margin: 0,
+            margin: 2,
             transitionDuration: "300ms",
             "&.Mui-checked": {
               transform: "translateX(16px)",
@@ -1145,8 +1145,8 @@ export const MuiTheme = createTheme({
           },
           "& .MuiSwitch-thumb": {
             boxSizing: "border-box",
-            width: 19,
-            height: 20,
+            width: 22,
+            height: 22,
             border: "1px solid " + colors.alpha.neutral[300],
           },
           "& .MuiSwitch-track": {

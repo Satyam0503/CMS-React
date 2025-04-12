@@ -5,13 +5,14 @@ import { useCallback, useEffect, useState } from "react";
 import { dateFormatter } from "../../../../utils/common";
 import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import { EmployeeModel } from "../../../../utils/common_types";
+import { GetAllEmployeeResponseModel } from "../../employees/models";
+
 interface PropsType {
-  employees: EmployeeModel[];
+  employees: GetAllEmployeeResponseModel[];
 }
 export default function UpcomingBirthday({ employees }: PropsType) {
   const intl = useIntl();
-  const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
+  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
 
   const getUpcomingBirthDays = useCallback(() => {
     const sortedEmployee = employees
@@ -90,17 +91,17 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                     >
                       <Avatar
                         alt="User Profile"
-                        src={emp.fullProfileUrl}
+                        src={emp.fullProfileUrl ?? ""}
                         sx={{
                           width: 45,
                           height: 45,
                           fontSize: "1rem",
                         }}
                       >
-                        {emp.firstName.charAt(0)}
+                        {emp.fullName.charAt(0)}
                       </Avatar>
                       <Stack>
-                        <Typography variant="body1">{`${emp.firstName} ${emp.lastName}`}</Typography>
+                        <Typography variant="body1">{emp.fullName}</Typography>
                         <Typography variant="body2">{emp.jobRole}</Typography>
                       </Stack>
                     </Stack>
@@ -110,7 +111,7 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                       color={colors.alpha.primary[500]}
                     >
                       {!isSameDate(dayjs(emp.dateOfBirth))
-                        ? dateFormatter(emp.birthDayThisYear!, "DD MMM YYYY")
+                        ? dateFormatter(emp.birthDayThisYear , "DD MMM YYYY")
                         : "Today"}
                     </Typography>
                   </Stack>

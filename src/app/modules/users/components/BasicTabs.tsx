@@ -20,16 +20,16 @@ export function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <Grid
-      container
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
+      className="flex-grow-1"
     >
-      {value === index && <Box sx={{ p: 0, width: "100%" }}>{children}</Box>}
-    </Grid>
+      {value === index && <Box>{children}</Box>}
+    </Box>
   );
 }
 

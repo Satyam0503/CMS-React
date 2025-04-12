@@ -1,13 +1,13 @@
 import { useIntl } from "react-intl";
 import { FC, useCallback, useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { EmployeeModel } from "../../../../utils/common_types";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
 import { CardSkeleton } from "./CardSkeleton";
+import { GetAllEmployeeResponseModel } from "../../employees/models";
 
 interface PropsType {
-  employees: EmployeeModel[];
+  employees: GetAllEmployeeResponseModel[];
 }
 
 export const EmployeeChart: FC<PropsType> = ({ employees }) => {

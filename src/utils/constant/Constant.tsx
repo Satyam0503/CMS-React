@@ -43,10 +43,11 @@ import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
-import { RoleModel } from "../../app/modules/admin/models";
+import { DepartmentModel, RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
+import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -385,14 +386,12 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "name",
     label: "FORM.FULL_NAME",
     minWidth: 200,
-    avatarCell: (row: EmployeeModel) => {
-      const fullName = row.firstName + " " + row.lastName;
-      const jobRole = row.jobRole;
+    avatarCell: (emp: GetAllEmployeeResponseModel) => {
       return (
         <AvatarCell
-          avatarSrc={row.fullProfileUrl}
-          title={fullName}
-          subTitle={jobRole}
+          avatarSrc={emp.fullProfileUrl}
+          title={emp.fullName}
+          subTitle={emp.jobRole}
         />
       );
     },
@@ -408,6 +407,8 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "department",
     label: "FORM.DEPARTMENT",
+    format: (value: string | null) =>
+      value ?? <FormattedMessage id="NOT_AVAILABLE" />,
   },
 ];
 
@@ -921,6 +922,39 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
 ];
 
+export const DepartmentTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "Table.S_No",
+    minWidth: 60,
+  },
+  {
+    id: "departmentName",
+    label: "Department.Name",
+    minWidth: 200,
+  },
+  {
+    id: "departmentDescription",
+    label: "Department.Description",
+    minWidth: 200,
+  },
+  {
+    id: "action",
+    label: "Table.Column.Action",
+    build: (
+      row: DepartmentModel,
+      handleJobEdit: (row: DepartmentModel) => void,
+      openDeleteModal: (row: DepartmentModel) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleJobEdit}
+        openConfirmationModal={openDeleteModal}
+      />
+    ),
+  },
+];
+
 export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,
@@ -1017,7 +1051,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.CompanyMaster,
         title: ModulesTitles.CompanyMaster,
         constant: ModulesName.CompanyMaster,
-        route: "/admin/companymaster",
+        route: "/admin/companymaster/",
+        icon: <AdminPanelSettings />,
+      },
+      {
+        id: Modules.CompanyDetails,
+        title: ModulesTitles.CompanyDetails,
+        constant: ModulesName.CompanyDetails,
+        route: "/admin/company",
         icon: <AdminPanelSettings />,
       },
     ],

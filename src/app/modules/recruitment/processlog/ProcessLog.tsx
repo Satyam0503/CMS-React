@@ -104,8 +104,8 @@ const ProcessLogs = () => {
   }, [searchValue, paginationValues, processLogFilters]);
 
   return (
-      <Card sx={{ p: "2rem" }}>
-        <Stack spacing={2}>
+      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+        
           <Stack
             direction="row"
             className="align-items-center justify-content-between"
@@ -149,7 +149,6 @@ const ProcessLogs = () => {
               totalRecords={totalRecords}
             />
           )}
-        </Stack>
       </Card>
   );
 };

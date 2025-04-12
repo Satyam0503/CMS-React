@@ -14,58 +14,30 @@ import {
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  addEmployee,
   deleteEmployee,
   getAllEmployees,
-  updateEmployee,
 } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
-import dayjs from "dayjs";
 import { EmployeeModel } from "../../../utils/common_types";
 
 import {
   getModulePermissions,
-  statusDecoder,
-  statusEncoder,
 } from "../../../utils/common";
-import { ViewEmployeeDetails } from "./components/ViewEmployeeDetails";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { Pagination } from "../../shared/components/Pagination";
-import AddUpdateEmployee from "./components/AddUpdateEmployee";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { usePageData } from "../../../_themes/layout/core";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
+import { GetAllEmployeeResponseModel } from "./models";
+import { AddEmployee } from "./components/AddEmployee";
 
-const employeeInitialValue: EmployeeModel = {
-  userId: "",
-  employeeId: "",
-  roleId: "",
-  companyId: "",
-  firstName: "",
-  lastName: "",
-  gender: "",
-  email: "",
-  dateOfBirth: null,
-  department: "",
-  reportingManager: "",
-  teamLead: "",
-  phoneNumber: "",
-  bloodGroup: "",
-  address: "",
-  jobRole: "",
-  status: "Active",
-  isEmailVerified: false,
-  dateOfJoining: null,
-  personalEmail: "",
-  emergencyContact: "",
-  password: null,
-};
+
 type ViewMode = "table" | "grid";
 
 const Employees=()=> {
@@ -73,23 +45,19 @@ const Employees=()=> {
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [employeeInitialValues, setEmployeeInitialValues] =
-    useState(employeeInitialValue);
   const [selectedEmployee, setSelectedEmployee] = useState<
-    EmployeeModel | undefined
+    GetAllEmployeeResponseModel | undefined
   >();
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
   });
-  const [employeeList, setEmployeeList] = useState<EmployeeModel[]>([]);
+  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
-  const [isEdit, setEdit] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [isViewModalOpen, setViewModalOpen] = useState(false);
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -105,61 +73,6 @@ const Employees=()=> {
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
   }, []);
-
-  function handleClose() {
-    setModalOpen(false);
-    setEmployeeInitialValues(employeeInitialValue);
-    setEdit(false);
-  }
-  function SaveAddEditEmployee(
-    values: EmployeeModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) {
-    setLoading(true);
-    const payload = {
-      ...values,
-      status: statusEncoder(values.status as string),
-    };
-    if (isEdit) {
-      const userId = values.userId;
-      updateEmployee(payload, userId)
-        .then((res) => {
-          const { success, message, statusCode } = res.data;
-          if (!success) {
-            throw new Error(message);
-          }
-          toast.success(message);
-          setRefresh(!isRefresh);
-          handleClose();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        })
-        .finally(() => {
-          setSubmitting(false);
-          setLoading(false);
-        });
-    } else {
-      addEmployee(payload)
-        .then((res) => {
-          const { success, message } = res.data;
-          if (!success) {
-            throw new Error(message);
-          }
-          setRefresh(!isRefresh);
-          toast.success(message);
-          setSubmitting(false);
-          handleClose();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        })
-        .finally(() => {
-          setLoading(false);
-          setSubmitting(false);
-        });
-    }
-  }
 
   const handleEmployeeDeletion = async (res: string) => {
     if (res !== "ok" || selectedEmployee === undefined) {
@@ -185,7 +98,7 @@ const Employees=()=> {
     }
   };
 
-  const openConfirmationModal = (employee: EmployeeModel) => {
+  const openConfirmationModal = (employee: GetAllEmployeeResponseModel) => {
     setConfirmModalOpen(true);
     setSelectedEmployee(employee);
   };
@@ -193,24 +106,6 @@ const Employees=()=> {
   function closeConfirmationModal() {
     setConfirmModalOpen(false);
     setSelectedEmployee(undefined);
-  }
-
-  function openViewModal(employee: EmployeeModel) {
-    setViewModalOpen(true);
-    if (employee) {
-      setSelectedEmployee(employee);
-    }
-  }
-
-  function handleEmployeeEdit(employee: EmployeeModel) {
-    setEmployeeInitialValues({
-      ...employee,
-      status: statusDecoder(employee.status as boolean),
-      dateOfBirth: dayjs(employee.dateOfBirth),
-      dateOfJoining: dayjs(employee.dateOfJoining),
-    });
-    setModalOpen(true);
-    setEdit(true);
   }
 
   const handlePageChange = (page: number) => {
@@ -228,7 +123,7 @@ const Employees=()=> {
     });
   };
 
-  const rowClickHandler = (employee: EmployeeModel) => {
+  const rowClickHandler = (employee:GetAllEmployeeResponseModel) => {   
     const empId = employee.userId;
     empId === currentEmpId
       ? navigate("/myprofile")
@@ -277,8 +172,7 @@ const Employees=()=> {
 
   return (
     <>
-      <Card sx={{ p: "2rem" }} className="d-flex flex-column flex-grow-1">
-        <Stack spacing={2} className="flex-grow-1">
+      <Card sx={{ p: "2rem", gap:2 }} className="d-flex flex-column flex-grow-1">
           <Stack
             direction="row"
             gap={2}
@@ -326,9 +220,7 @@ const Employees=()=> {
               columns={EmployeeTabTableColumnList}
               page={paginationValues.pageNo}
               rowsPerPage={paginationValues.records}
-              handleEdit={handleEmployeeEdit}
               openConfirmationModal={openConfirmationModal}
-              openViewModal={openViewModal}
               rowClickHandler={rowClickHandler}
             />
           ) : (
@@ -347,26 +239,18 @@ const Employees=()=> {
               totalRecords={totalRecords}
             />
           )}
-        </Stack>
       </Card>
 
       {isModalOpen && (
-        <AddUpdateEmployee
+        <AddEmployee
           employeeList={employeeList}
           open={isModalOpen}
-          isEdit={isEdit}
-          handleClose={handleClose}
-          initialValues={employeeInitialValues}
-          SaveAddEditEmployee={SaveAddEditEmployee}
+          handleClose={()=>setModalOpen(false)}
+          refresh={isRefresh}
+          setRefresh={setRefresh}
         />
       )}
-      {selectedEmployee && isViewModalOpen && (
-        <ViewEmployeeDetails
-          open={isViewModalOpen}
-          setOpen={setViewModalOpen}
-          employeeData={selectedEmployee}
-        />
-      )}
+
       {isConfirmModalOpen && (
         <ConfirmationModal
           title={intl.formatMessage({ id: "TITLE.DELETE_EMP" })}

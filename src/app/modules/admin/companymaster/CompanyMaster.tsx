@@ -1,71 +1,81 @@
 import { useIntl } from "react-intl";
 import { usePageData } from "../../../../_themes/layout/core";
-import { useEffect, useState } from "react";
-import { Box, Card, Tab, Tabs, Theme, useMediaQuery } from "@mui/material";
-import { a11yProps, CustomTabPanel } from "../../users/components/BasicTabs";
-import { colors } from "../../theme/MuiTheme";
+import { useEffect } from "react";
+import {
+  Box,
+  Card,
+  Stack,
+  Theme,
+  useMediaQuery,
+} from "@mui/material";
 import { Departments } from "./components/Department";
-import { CorporateFare, Work } from "@mui/icons-material";
+import { CorporateFare, Edit, Work } from "@mui/icons-material";
+import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { checkIsActive } from "../../../../_themes/helpers";
+import clsx from "clsx";
+import { TabModel } from "../../../../utils/common_types";
+
+const tabsRoutes: TabModel[] = [
+  {
+    tabId: 1,
+    to: "/admin/companymaster/department",
+    title: "COMPANY_MASTER.TAB.DEPARTMENT",
+    icon: <CorporateFare />,
+  },
+  {
+    tabId: 2,
+    to: "/admin/companymaster/jobtitle",
+    title: "COMPANY_MASTER.TAB.JOBS",
+    icon: <Work />,
+  },
+];
+
+export const CompanyMasterTab = () => {
+  return (
+    <Routes>
+      <Route element={<CompanyMaster />}>
+        <Route index element={<Navigate to={"department"} />} />
+        <Route path="department" element={<Departments />} />
+        <Route path="jobtitle" element={<Edit />} />
+      </Route>
+      <Route path="*" element={<Navigate to={"/error"} />} />
+    </Routes>
+  );
+};
 
 const CompanyMaster = () => {
   const { setPageTitle } = usePageData();
-  const intl = useIntl();
-  const [tabIndex, setTabIndex] = useState(0);
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
 
-  const handleTabChange = (e: React.SyntheticEvent, value: any) => {
-    setTabIndex(value);
-  };
   const isSmallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({ id: "PAGE.COMPANY_MASTER" }));
+    setPageTitle(formatMessage({ id: "PAGE.COMPANY_MASTER" }));
   }, []);
 
   return (
-    <Card className="flex-grow-1">
-      <Tabs
-        value={tabIndex}
-        onChange={handleTabChange}
-        aria-label="company-master-tabs"
-        variant={isSmallScreen ? "scrollable" : "fullWidth"}
-        scrollButtons="auto"
-        allowScrollButtonsMobile={true}
-        sx={{ borderRadius: ".5rem" }}
-        
-      >
-        <Tab
-          icon={<CorporateFare />}
-          iconPosition="start"
-          label={intl.formatMessage({ id: "COMPANY_MASTER.TAB.DEPARTMENT" })}
-          {...a11yProps(0)}
-          sx={{
-            borderBottom:"2px solid " + colors.alpha.neutral[400],
-            "&:focus, &.Mui-selected, &.Mui-selected:hover": {
-              borderBottom: "2px solid " + colors.alpha.primary[500],
-            },
-          }}
-        />
-        <Tab
-          icon={<Work />}
-          iconPosition="start"
-          label={intl.formatMessage({ id: "COMPANY_MASTER.TAB.JOBS" })}
-          {...a11yProps(1)}
-          sx={{
-            borderBottom:"2px solid " + colors.alpha.neutral[400],
-            flexShrink: 0,
-            "&:focus, &.Mui-selected, &.Mui-selected:hover": {
-              borderBottom: " 2px solid " + colors.alpha.primary[500],
-            },
-          }}
-        />
-      </Tabs>
-
-      <CustomTabPanel value={tabIndex} index={0}>
-        <Departments />
-      </CustomTabPanel>
-      <CustomTabPanel value={tabIndex} index={1}></CustomTabPanel>
+    <Card className="d-flex flex-column flex-grow-1">
+      <Stack direction={"row"} spacing={0.5} className="tab-container">
+        {tabsRoutes.map((tab) => {
+          return (
+            <Box
+              component={"div"}
+              key={tab.tabId}
+              className={clsx("tab-box",{tab_active: checkIsActive(location.pathname,tab.to) })}
+              onClick={() => navigate(tab.to)}
+            >
+              {tab.icon}
+              {formatMessage({ id: tab.title })}
+            </Box>
+          );
+        })}
+      </Stack>
+      <Box component="div" className="flex-grow-1">
+        <Outlet />
+      </Box>
     </Card>
   );
 };

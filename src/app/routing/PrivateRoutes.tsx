@@ -21,8 +21,8 @@ const Employees = lazy(
 const EmployeeProfile = lazy(()=> import("../modules/users/employeeprofile/EmployeeProfile.tsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
 
-const ProfilePage = lazy(
-  () => import("../modules/users/ProfilePageWrapper.tsx")
+const Profile = lazy(
+  () => import("../modules/users/components/ProfileTabs.tsx")
 );
 const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(
@@ -55,11 +55,11 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="myprofile"
+          path="myprofile/*"
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.MyProfile}>
-                <ProfilePage />
+                <Profile />
               </ProtectedRoute>
             </SuspensedView>
           }

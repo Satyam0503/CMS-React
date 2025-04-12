@@ -146,8 +146,7 @@ export const Applications = () => {
   
   return (
     <>
-      <Card sx={{ p: 2.6 }}>
-        <Stack spacing={2}>
+      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
           <Stack
             direction="row"
             className="justify-content-between align-items-center flex-wrap-reverse"
@@ -213,7 +212,6 @@ export const Applications = () => {
               totalRecords={totalRecords}
             />
           )}
-        </Stack>
       </Card>
 
       {isAddModalOpen && (

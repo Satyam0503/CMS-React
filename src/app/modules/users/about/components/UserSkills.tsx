@@ -8,12 +8,14 @@ import { getEmployeeSkills, udpateEmployeeSkills } from "../../userservices";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useUserDetails } from "../../UserDataProvider";
+import { useParams } from "react-router-dom";
 
 export const UserSkills = () => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const {userSkills:skills,updateUserSkills } = useUserDetails();
+  const {employeeid} = useParams();
  
   useEffect(()=>{
     getEmployeeSkills()

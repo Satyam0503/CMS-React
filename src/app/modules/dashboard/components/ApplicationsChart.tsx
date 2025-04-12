@@ -16,7 +16,7 @@ import { colors } from "../../theme/MuiTheme";
 
 
 export const ApplicationsChart = () => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const [applicationList, setApplicationList] = useState<Applicant[]>([]);
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -30,8 +30,8 @@ export const ApplicationsChart = () => {
   const getCountOfApplicationStatus = useCallback(() => {
     const applicationStatusCount = applicationList.reduce(
       (status: Record<string, number>, application) => {
-        status[applicationStatusMapper[application.activityType]] =
-          (status[applicationStatusMapper[application.activityType]] || 0) + 1;
+        status[formatMessage({id:applicationStatusMapper[application.activityType]}) ] =
+          (status[formatMessage({id:applicationStatusMapper[application.activityType]}) ] || 0) + 1;
         return status;
       },
       {}
@@ -75,10 +75,10 @@ export const ApplicationsChart = () => {
   if(loading){
     return <CardSkeleton/>
   }
-
+  
   return (
     <CustomCard
-      label={intl.formatMessage({ id: "MENU.TOTAL_APP" })}
+      label={formatMessage({ id: "MENU.TOTAL_APP" })}
       value={applicationList.length}
     >
       {!applicationList.length ? (
@@ -86,7 +86,7 @@ export const ApplicationsChart = () => {
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
         >
-          <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{intl.formatMessage({id:"DASHBOARD.APPLICATIONS.NO_APPLICATIONS"})}</Typography>
+          <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{formatMessage({id:"DASHBOARD.APPLICATIONS.NO_APPLICATIONS"})}</Typography>
         </Box>
       ) : (
         <BarChart

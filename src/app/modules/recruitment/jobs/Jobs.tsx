@@ -54,7 +54,7 @@ export default function Jobs() {
   const [loading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
-  const {setPageTitle}= usePageData();
+  const { setPageTitle } = usePageData();
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -199,89 +199,87 @@ export default function Jobs() {
     return () => clearTimeout(timeoutId);
   }, [isRefresh, paginationValues]);
 
-  useEffect(()=>{
-    setPageTitle(intl.formatMessage({id:"PAGE.JOBS"}));
-  },[])
+  useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.JOBS" }));
+  }, []);
 
   return (
-      <Card sx={{ p: 2.6 }}>
-        <Stack spacing={2}>
-          <Stack
-            direction="row"
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            flexWrap={"wrap-reverse"}
-            gap={2}
-          >
-            <SearchInput search={search} setSearch={handleSearchChange} />
-            <Stack direction="row" spacing={1}>
+    <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+        <Stack
+          direction="row"
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          flexWrap={"wrap-reverse"}
+          gap={2}
+        >
+          <SearchInput search={search} setSearch={handleSearchChange} />
+          <Stack direction="row" spacing={1}>
+            <CustomIconButton icon={<FilterList />} />
+            {userPermissionsForModule.includes(
+              `${ModulesName.Jobs}.${Permission.Create}`
+            ) && (
               <CustomIconButton
-                icon={<FilterList />}
+                icon={<Add />}
+                handleClick={() => setOpenModal(true)}
               />
-              {userPermissionsForModule.includes(`${ModulesName.Jobs}.${Permission.Create}`) && (
-                <CustomIconButton
-                  icon={<Add />}
-                  handleClick={() => setOpenModal(true)}
-                />
-              )}
-              <CustomIconButton
-                tooltip={intl.formatMessage({
-                  id: "IMPORT.EXCEL",
-                })}
-                icon={<Download />}
-              />
-            </Stack>
+            )}
+            <CustomIconButton
+              tooltip={intl.formatMessage({
+                id: "IMPORT.EXCEL",
+              })}
+              icon={<Download />}
+            />
           </Stack>
-          <CustomisedTable
-            keyName="jobId"
-            columns={JobRequirementTableColumnList}
-            rows={jobList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            openConfirmationModal={openConfirmationModal}
-            openViewModal={handleJobDetailView}
-            loading={loading}
-            rowClickHandler={handleEditJob}
-          />
-          {totalRecords > 0 && (
-            <Pagination
-              page={paginationValues.pageNo}
-              setPage={handlePageChange}
-              setRowPerPage={handleRowPerPageChange}
-              rowsPerPage={paginationValues.records}
-              totalRecords={totalRecords}
-            />
-          )}
-          {isConfirmationModalOpen && selectedJob && (
-            <ConfirmationModal
-              title={intl.formatMessage({
-                id: "TITLE.DELETE_JOB",
-              })}
-              content={intl.formatMessage({
-                id: "CONFIRMATION.DELETE_JOB",
-              })}
-              open={isConfirmationModalOpen}
-              handleClose={closeConfirmationModal}
-              handleConfirmation={handledeleteJob}
-            />
-          )}
-          {openModal && (
-            <AddEditJob
-              initialValues={jobInitialValues}
-              isEdit={isEdit}
-              open={openModal}
-              handleClose={handleClose}
-              handleAddEditJob={handleAddEditJob}
-            />
-          )}
-          {isViewModalOpen && selectedJob && (
-            <ViewJobDetails
-              open={isViewModalOpen}
-              setOpen={setViewModalOpen}
-              jobData={selectedJob}
-            />
-          )}
         </Stack>
-      </Card>
+        <CustomisedTable
+          keyName="jobId"
+          columns={JobRequirementTableColumnList}
+          rows={jobList}
+          page={paginationValues.pageNo}
+          rowsPerPage={paginationValues.records}
+          openConfirmationModal={openConfirmationModal}
+          openViewModal={handleJobDetailView}
+          loading={loading}
+          rowClickHandler={handleEditJob}
+        />
+        {totalRecords > 0 && (
+          <Pagination
+            page={paginationValues.pageNo}
+            setPage={handlePageChange}
+            setRowPerPage={handleRowPerPageChange}
+            rowsPerPage={paginationValues.records}
+            totalRecords={totalRecords}
+          />
+        )}
+        {isConfirmationModalOpen && selectedJob && (
+          <ConfirmationModal
+            title={intl.formatMessage({
+              id: "TITLE.DELETE_JOB",
+            })}
+            content={intl.formatMessage({
+              id: "CONFIRMATION.DELETE_JOB",
+            })}
+            open={isConfirmationModalOpen}
+            handleClose={closeConfirmationModal}
+            handleConfirmation={handledeleteJob}
+          />
+        )}
+        {openModal && (
+          <AddEditJob
+            initialValues={jobInitialValues}
+            isEdit={isEdit}
+            open={openModal}
+            handleClose={handleClose}
+            handleAddEditJob={handleAddEditJob}
+          />
+        )}
+        {isViewModalOpen && selectedJob && (
+          <ViewJobDetails
+            open={isViewModalOpen}
+            setOpen={setViewModalOpen}
+            jobData={selectedJob}
+          />
+        )}
+    </Card>
   );
 }

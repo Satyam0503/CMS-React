@@ -59,8 +59,8 @@ export interface EmployeeModel {
   employeeId: string;
   department: string;
   dateOfBirth: Dayjs | null;
-  reportingManager: string;
-  teamLead: string;
+  reportingManager: string | null;
+  teamLead: string | null;
   phoneNumber: string;
   bloodGroup: string;
   address: string;
@@ -203,9 +203,14 @@ export interface BaseModel {
   updatedDate: string;
 }
 
-export type GetUserDetailsResponseData = ResponseData<UserModel>;
+export interface TabModel {
+  to: string;
+  title: string;
+  icon: JSX.Element;
+  tabId: number;
+}
 
-export type GetAllEmployeeResponseData = ResponseData<EmployeeModel>;
+export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
 export type EmployeeResponseData = ResponseData<EmployeeModel>;
 

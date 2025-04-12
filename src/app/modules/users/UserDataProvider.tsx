@@ -1,6 +1,7 @@
 import { createContext, FC, useContext, useEffect, useMemo, useState } from "react";
 import { EmployeeModel } from "../../../utils/common_types";
 import { getEmployeeById } from "./userservices";
+import { useParams } from "react-router-dom";
 
 type UserDataContextType = {
   userDetails: EmployeeModel;
@@ -24,6 +25,8 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
   const [userSkills, setUserSkills] = useState<string[]>([]);
   const [refresh,setRefresh]= useState(false);
+  const param = useParams();
+  const employeeId = param.employeeid  ?? "";
 
   function updateUserDetails(userData?: EmployeeModel) {
     if (!userData) {
@@ -43,7 +46,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   }
  
   useEffect(()=>{
-    getEmployeeById()
+    getEmployeeById(employeeId)
     .then(response=>{
       const {success,message,methodResult,statusCode}= response.data;
       if(!(success && statusCode ===200)){
@@ -55,6 +58,9 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
       console.error(error.message);
     })
   },[refresh])  
+
+  console.log(param);
+  
   
   return (
     <UserDetailsContext.Provider

@@ -5,7 +5,7 @@ import { FC, ReactNode } from "react";
 interface PropsTypes {
   label: string;
   name: string;
-  children: ReactNode[];
+  children: ReactNode;
 }
 
 export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {

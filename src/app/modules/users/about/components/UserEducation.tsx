@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { colors } from "../../../theme/MuiTheme";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { useParams } from "react-router-dom";
 
 const initialValue: UserEducationModel = {
   userId: "",
@@ -45,6 +46,7 @@ export const UserEducation = () => {
     string | undefined
   >();
   const [refresh, setRefresh] = useState(false);
+  const {employeeid}= useParams();
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -109,7 +111,7 @@ export const UserEducation = () => {
   };
 
   useEffect(() => {
-    getEmployeeEducations()
+    getEmployeeEducations(employeeid?? "")
       .then((response) => {
         const { success, message, methodResults } = response.data;
         if (!success) {

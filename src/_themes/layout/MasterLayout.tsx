@@ -41,32 +41,20 @@ const MasterLayout = () => {
             className="container-main"
           >
             <HeaderWrapper />
-
-            <Stack className="app-wrapper flex-row-fluid">
-              <Stack>
-                <Sidebar />
-              </Stack>
-
-              <Stack
-                display={"flex"}
-                flexDirection={"column"}
-                flexGrow={1}
-                flexBasis={"auto"}
-                flexShrink={0}
-                zIndex={0}
-                className="bgcolor_gray"
-                bgcolor={colors.alpha.bgbody[500]}
-              >
-                <Container className="d-flex flex-column flex-grow-1">
-                  <PageData />
-                  <Outlet />
-                </Container>
-              </Stack>
-              <Stack>
+            <Stack
+              className="app-wrapper flex-row-fluid"
+              sx={{ bgcolor: colors.alpha.bgbody[500] }}
+            >
+              <Sidebar />
+              <Container className="d-flex flex-column flex-grow-1">
+                <PageData />
+                <Outlet />
+              </Container>
+              {/* <Stack>
                 <Footer />
-              </Stack>
+              </Stack> */}
             </Stack>
-          </Grid>
+          </Stack>
 
           <DrawerMessenger />
         </PageDataProvider>

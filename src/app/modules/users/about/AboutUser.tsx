@@ -8,7 +8,7 @@ import { UserSkills } from "./components/UserSkills";
 export default function AboutUser() {
   return (
     <>
-      <Grid container display={"flex"} gap={2} mt={1}>
+      <Grid container display={"flex"} gap={2}>
         <Grid item xs={12}>
           <UserSummary />
         </Grid>

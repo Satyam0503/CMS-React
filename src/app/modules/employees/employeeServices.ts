@@ -4,9 +4,9 @@ import {
   AddEmployeeResponseData,
   ApiResponse,
   EmployeeModel,
-  GetAllEmployeeResponseData,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
+import { GetAllEmployeeResponseData } from "./models";
 
 export const addEmployee = async (payload: EmployeeModel) => {
   return postRequest<EmployeeModel, AddEmployeeResponseData>(

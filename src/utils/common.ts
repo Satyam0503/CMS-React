@@ -59,8 +59,8 @@ export const applicationStatusMapper: {
 export const applicantStatusDecoder: {
   [index: number]: string;
 } = {
-  [ApplicantStatus.InActive]: "APPLICANT.STATUS.ACTIVE",
-  [ApplicantStatus.Active]: "APPLICANT.STATUS.INACTIVE",
+  [ApplicantStatus.Active]: "APPLICANT.STATUS.ACTIVE",
+  [ApplicantStatus.InActive]: "APPLICANT.STATUS.INACTIVE",
 };
 
 export const commentActionEncoderForApplicationStatus = (
