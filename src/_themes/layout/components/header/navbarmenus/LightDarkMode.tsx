@@ -5,14 +5,15 @@ import { setColorsAsCSSVariables } from "../../../../../app/modules/theme/MuiThe
 import { IconButton } from "@mui/material";
 
 export default function LightDarkMode() {
-  const [currentTheme, setCurrentTheme] = useState("light");
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   const toggleTheme = () => {
-    setCurrentTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
-  useEffect(() => {
-    setColorsAsCSSVariables();
-  }, []);
   return (
     <>
       <CustomIconButton
@@ -22,8 +23,8 @@ export default function LightDarkMode() {
         style={{
           border: "none",
           cursor: "pointer",
-          backgroundColor: currentTheme === "light" ? "#ffff" : "#333",
-          color: currentTheme === "light" ? "#000" : "#fff",
+          backgroundColor: theme === "light" ? "#ffff" : "#333",
+          color: theme === "light" ? "#000" : "#fff",
         }}
       />
     </>

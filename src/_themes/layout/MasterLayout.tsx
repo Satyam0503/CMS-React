@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
-import { Container, Grid, Stack } from "@mui/material";
+import { Button, Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
@@ -16,12 +16,30 @@ const MasterLayout = () => {
   useEffect(() => {
     reInitMenu();
   }, [location.key]);
+  const [theme, setTheme] = useState("light");
+
+  // Apply class to body
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
 
   return (
     <>
       <BreadcrumbProvider>
         <PageDataProvider>
-          <Stack flexBasis={"auto"} className="flex-grow-1 flex-shrink-0">
+          <Grid
+            item
+            display={"flex"}
+            flexDirection={"column"}
+            flexGrow={1}
+            flexBasis={"auto"}
+            flexShrink={0}
+            className="container-main"
+          >
             <HeaderWrapper />
             <Stack
               className="app-wrapper flex-row-fluid"

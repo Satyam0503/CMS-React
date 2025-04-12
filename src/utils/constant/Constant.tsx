@@ -65,8 +65,8 @@ export const ServiceUrl = {
   GET_ALL_MODULE_PERMISSION: `${BaseUrl}/api/Roles/GetAllRolesWithPermission`,
   GET_ROLE_ALL_PERMISSIONS: `${BaseUrl}/api/Roles/GetRoleWithPermissionById`,
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
-  GET_ROLE_BY_ID:`${BaseUrl}/api/Roles/GetRoleById`,
-  CHANGE_APP_ACCESS:`${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
+  GET_ROLE_BY_ID: `${BaseUrl}/api/Roles/GetRoleById`,
+  CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -279,27 +279,75 @@ export const JobType = [
 ];
 
 export const ApplicationEvaluationStatus = [
-  { id: 1, label: "APPLICATION.STATUS.INPROGRESS", value: ApplicationStatus.InProgress },
-  { id: 2, label: "APPLICATION.STATUS.ONHOLD", value: ApplicationStatus.OnHold },
-  { id: 3, label: "APPLICATION.STATUS.SHORTLISTED", value: ApplicationStatus.Shortlisted },
-  { id: 4, label: "APPLICATION.STATUS.SELECTED", value: ApplicationStatus.Selected },
-  { id: 5, label: "APPLICATION.STATUS.REJECTED", value: ApplicationStatus.Rejected }
+  {
+    id: 1,
+    label: "APPLICATION.STATUS.INPROGRESS",
+    value: ApplicationStatus.InProgress,
+  },
+  {
+    id: 2,
+    label: "APPLICATION.STATUS.ONHOLD",
+    value: ApplicationStatus.OnHold,
+  },
+  {
+    id: 3,
+    label: "APPLICATION.STATUS.SHORTLISTED",
+    value: ApplicationStatus.Shortlisted,
+  },
+  {
+    id: 4,
+    label: "APPLICATION.STATUS.SELECTED",
+    value: ApplicationStatus.Selected,
+  },
+  {
+    id: 5,
+    label: "APPLICATION.STATUS.REJECTED",
+    value: ApplicationStatus.Rejected,
+  },
 ];
 
 export const ApplicantApplicationStatus = [
   { id: 0, label: "APPLICATION.STATUS.NEW", value: ApplicationStatus.New },
-  { id: 1, label: "APPLICATION.STATUS.INPROGRESS", value: ApplicationStatus.InProgress },
-  { id: 2, label: "APPLICATION.STATUS.ONHOLD", value: ApplicationStatus.OnHold },
-  { id: 3, label: "APPLICATION.STATUS.SHORTLISTED", value: ApplicationStatus.Shortlisted },
-  { id: 4, label: "APPLICATION.STATUS.SELECTED", value: ApplicationStatus.Selected },
-  { id: 5, label: "APPLICATION.STATUS.REJECTED", value: ApplicationStatus.Rejected },
+  {
+    id: 1,
+    label: "APPLICATION.STATUS.INPROGRESS",
+    value: ApplicationStatus.InProgress,
+  },
+  {
+    id: 2,
+    label: "APPLICATION.STATUS.ONHOLD",
+    value: ApplicationStatus.OnHold,
+  },
+  {
+    id: 3,
+    label: "APPLICATION.STATUS.SHORTLISTED",
+    value: ApplicationStatus.Shortlisted,
+  },
+  {
+    id: 4,
+    label: "APPLICATION.STATUS.SELECTED",
+    value: ApplicationStatus.Selected,
+  },
+  {
+    id: 5,
+    label: "APPLICATION.STATUS.REJECTED",
+    value: ApplicationStatus.Rejected,
+  },
 ];
 
 export const CommentActionCategory = [
   { id: 0, label: "COMMENT.ACTION.PROCESS", value: CommentAction.Process },
-  { id: 1, label: "COMMENT.ACTION.INPROGRESS", value: CommentAction.InProgress },
+  {
+    id: 1,
+    label: "COMMENT.ACTION.INPROGRESS",
+    value: CommentAction.InProgress,
+  },
   { id: 2, label: "COMMENT.ACTION.ONHOLD", value: CommentAction.OnHold },
-  { id: 3, label: "COMMENT.ACTION.SHORTLISTED", value: CommentAction.Shortlisted },
+  {
+    id: 3,
+    label: "COMMENT.ACTION.SHORTLISTED",
+    value: CommentAction.Shortlisted,
+  },
   { id: 4, label: "COMMENT.ACTION.SELECTION", value: CommentAction.Selection },
   { id: 5, label: "COMMENT.ACTION.REJECTION", value: CommentAction.Rejection },
   { id: 6, label: "COMMENT.ACTION.EDIT", value: CommentAction.Edit },
@@ -338,7 +386,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     id: "name",
     label: "FORM.FULL_NAME",
     minWidth: 200,
-    avatarCell: (emp:GetAllEmployeeResponseModel) => {
+    avatarCell: (emp: GetAllEmployeeResponseModel) => {
       return (
         <AvatarCell
           avatarSrc={emp.fullProfileUrl}
@@ -359,7 +407,8 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "department",
     label: "FORM.DEPARTMENT",
-    format:(value: string | null) => value ?? <FormattedMessage id="NOT_AVAILABLE"/>
+    format: (value: string | null) =>
+      value ?? <FormattedMessage id="NOT_AVAILABLE" />,
   },
 ];
 
@@ -480,7 +529,9 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     id: "activityCategory",
     label: "Table.Column.Action",
     minWidth: 150,
-    format: (value: number) => <FormattedMessage id={commentActionMapper[value]} />
+    format: (value: number) => (
+      <FormattedMessage id={commentActionMapper[value]} />
+    ),
   },
   {
     id: "description",
@@ -598,6 +649,44 @@ export const LeaveMangementTableColumnList: ColumnListTypes[] = [
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
+export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
+  {
+    id: "name",
+    label: "Name",
+  },
+  {
+    id: "first_in",
+    label: "First in",
+  },
+
+  {
+    id: "break",
+    label: "Break",
+  },
+
+  {
+    id: "last_out",
+    label: "Last Out",
+  },
+  {
+    id: "total_hours",
+    label: "Total Hours ",
+  },
+  {
+    id: "shift",
+    label: "Shift",
+  },
+  {
+    id: "status",
+    label: "Status",
+  },
+
+  {
+    id: "action",
+    label: "Table.Column.Action",
+    build: (row: Applicant) => <ActionComponent row={row} />,
+  },
+];
 
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
@@ -621,13 +710,15 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     label: "JOB.STATUS",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
-      console.log(values);
-      
-      return <StyleStatus label={values} className={clsx(
-          {  success:status === ApplicantStatus.Active,
-            danger: status === ApplicantStatus.InActive
-          }
-      )} />;
+      return (
+        <StyleStatus
+          label={values}
+          className={clsx({
+            success: status === ApplicantStatus.Active,
+            danger: status === ApplicantStatus.InActive,
+          })}
+        />
+      );
     },
   },
   {
@@ -673,7 +764,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "titles",
-    label:"ROLE.NAME",
+    label: "ROLE.NAME",
     minWidth: 200,
   },
   {
@@ -686,7 +777,10 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     label: "ROLE.HAS_APP_ACCESS",
     minWidth: 180,
     format: (hasAccess: boolean) => (
-      <StyleStatus label={ hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS" }  className={clsx({ "success": hasAccess, "danger": !hasAccess })} />
+      <StyleStatus
+        label={hasAccess ? "ROLE.HAS_ACCESS" : "ROLE.NO_ACCESS"}
+        className={clsx({ success: hasAccess, danger: !hasAccess })}
+      />
     ),
   },
   {
@@ -735,7 +829,10 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     label: "JOB.STATUS",
     build: (status: boolean) => {
       return (
-        <StyleStatus label={statusDecoder(status)} className={clsx({ success:status, danger: !status  })} />
+        <StyleStatus
+          label={statusDecoder(status)}
+          className={clsx({ success: status, danger: !status })}
+        />
       );
     },
   },
@@ -779,7 +876,9 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     id: "activityCategory",
     label: "COMMENT.ACTION_CATEGORY",
     minWidth: 150,
-    format: (value: number) => <FormattedMessage id={commentActionMapper[value]} />,
+    format: (value: number) => (
+      <FormattedMessage id={commentActionMapper[value]} />
+    ),
   },
   {
     id: "description",
@@ -830,14 +929,14 @@ export const DepartmentTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id:"departmentName",
-    label:"Department.Name",
-    minWidth:200,
+    id: "departmentName",
+    label: "Department.Name",
+    minWidth: 200,
   },
   {
-    id:"departmentDescription",
-    label:"Department.Description",
-    minWidth:200,
+    id: "departmentDescription",
+    label: "Department.Description",
+    minWidth: 200,
   },
   {
     id: "action",
@@ -845,7 +944,7 @@ export const DepartmentTableColumnList: ColumnListTypes[] = [
     build: (
       row: DepartmentModel,
       handleJobEdit: (row: DepartmentModel) => void,
-      openDeleteModal: (row: DepartmentModel) => void,
+      openDeleteModal: (row: DepartmentModel) => void
     ) => (
       <ActionComponent
         row={row}
@@ -854,7 +953,7 @@ export const DepartmentTableColumnList: ColumnListTypes[] = [
       />
     ),
   },
-]
+];
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {
