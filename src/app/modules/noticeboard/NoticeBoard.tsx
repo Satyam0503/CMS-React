@@ -28,22 +28,45 @@ import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import { usePageData } from "../../../_themes/layout/core";
+import dayjs from "dayjs";
 
+
+// Original
+// const rows = [
+//   {
+//     title: "Test",
+//     type: "Custom Notice",
+//     startDate: new Date(),
+//     endDate: new Date(),
+//     description: "Test",
+//   },
+// ];
+
+// By Rajdeep
 const rows = [
   {
-    title: "Test",
-    type: "Custom Notice",
-    startDate: new Date(),
-    endDate: new Date(),
-    description: "Test",
+    id: "1",
+    name: "Rajdeep Rautela",
+    date: new Date(),
+    type: "General",
+    message: "This is my first task. Learning continues...",
   },
 ];
 
+// const initialValues: NoticeModel = {
+//   id: "",
+//   type: "",
+//   target: "",
+//   group: "",
+//   message: "",
+// };
+
+// By Rajdeep
 const initialValues: NoticeModel = {
   id: "",
+  name: "",
+  date: dayjs(Date.now()),
   type: "",
-  target: "",
-  group: "",
   message: "",
 };
 
@@ -52,7 +75,10 @@ export default function NoticeBoard() {
     React.useState(initialValues);
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [NoticeList, setNoticeList] = React.useState<NoticeModel[]>([]);
+
+  // const [NoticeList, setNoticeList] = React.useState<NoticeModel[]>([]); // original
+  const [NoticeList, setNoticeList] = React.useState<any[]>(rows); // By Rajdeep
+  
   const [page, setPage] = React.useState(0);
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);

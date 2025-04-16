@@ -27,11 +27,12 @@ type PropsTypes = {
     setSubmitting: (isSubmitting: boolean) => void
   ) => void;
   initialValues: HolidayType;
+  isEdit: boolean; /* Line added by Rajdeep */
 };
 
 const HolidayForm: React.FC<PropsTypes> = (props) => {
   const intl = useIntl();
-  const { open, handleClose, handleAddUpdateHoliday, initialValues } = props;
+  const { open, handleClose, handleAddUpdateHoliday, initialValues, isEdit } = props; // isEdit added by Rajdeep in object destructuring
 
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
@@ -55,7 +56,9 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
         }) => (
           <form onSubmit={handleSubmit}>
             <Typography variant="h5" mb={2}>
-              {intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}
+              {/* {intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })} */}                                                         {/* Original code */}
+              { isEdit ? intl.formatMessage({ id: "MENU.EDIT_HOLIDAYS" }) : intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}    {/* By Rajdeep */}
+
             </Typography>
 
             <Grid container spacing={2}>

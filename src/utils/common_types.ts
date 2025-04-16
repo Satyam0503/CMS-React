@@ -113,13 +113,24 @@ export type HolidayType = {
   type: string;
 };
 
-export type NoticeModel = {
+/* export type NoticeModel = {
   id: string;
   target: string;
   type: string;
   group: string;
   message: string;
 };
+*/
+
+// By Rajdeep
+export type NoticeModel = {
+  id: string;
+  name: string;
+  date: Dayjs | null;
+  type: string;
+  message: string;
+};
+
 export type ProcessLogModel = {
   processId: string;
   applicantName: string;
