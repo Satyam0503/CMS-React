@@ -18,6 +18,7 @@ interface Props {
 }
 
 const initialValues: DepartmentModel = {
+departmentId: "", // Added Key and value for intialization by Rajdeep
   departmentName: "",
   departmentDescription: "",
 };

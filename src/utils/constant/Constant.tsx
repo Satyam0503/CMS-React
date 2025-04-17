@@ -114,7 +114,8 @@ export const ServiceUrl = {
 
   // departments
   GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
-  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddDeparments`,
+  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddEditDepartment`, // Updated endpoint from AddDeparments to AddEditDepartment`,
+
 };
 
 export const languages = [
