@@ -12,23 +12,12 @@ import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx"
 
 const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
-const Recruitment = lazy(
-  () => import("../modules/recruitment/RecruitmentRoutes.tsx")
-);
-const Employees = lazy(
-  () => import("../modules/employees/Employees.tsx")
-);
-const EmployeeProfile = lazy(()=> import("../modules/users/employeeprofile/EmployeeProfile.tsx"));
+const Recruitment = lazy(() => import("../modules/recruitment/RecruitmentRoutes.tsx"));
+const Employees = lazy(() => import("../modules/employees/Employees.tsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
-
-const Profile = lazy(
-  () => import("../modules/users/components/ProfileTabs.tsx")
-);
+const Profile = lazy(() => import("../modules/users/components/ProfileTabs.tsx"));
 const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
-const NoticeBoard = lazy(
-  () => import("../modules/noticeboard/NoticeBoard.tsx")
-);
-
+const NoticeBoard = lazy(() => import("../modules/noticeboard/NoticeBoard.tsx"));
 const Attendance = lazy(()=> import("../modules/attendance/EmployeeAttendance.tsx"));
 const EmployeeLeaves = lazy(()=> import("../modules/leaves/EmployeeLeaves.tsx"));
 
@@ -55,7 +44,7 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="myprofile/*"
+          path="profile/*"
           element={
             <SuspensedView>
               <ProtectedRoute module={ModulesName.MyProfile}>
@@ -99,11 +88,11 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="employees/:employeeid"
+          path="employees/:employeeid/*"
           element={
             <ProtectedRoute module={ModulesName.Employees}>
               <SuspensedView>
-                <EmployeeProfile />
+                < Profile />
               </SuspensedView>
             </ProtectedRoute>
           }

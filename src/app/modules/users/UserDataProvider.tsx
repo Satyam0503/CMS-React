@@ -25,8 +25,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
   const [userSkills, setUserSkills] = useState<string[]>([]);
   const [refresh,setRefresh]= useState(false);
-  const param = useParams();
-  const employeeId = param.employeeid  ?? "";
+  const employeeId = useParams().employeeid ?? "";
 
   function updateUserDetails(userData?: EmployeeModel) {
     if (!userData) {
@@ -58,9 +57,6 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
       console.error(error.message);
     })
   },[refresh])  
-
-  console.log(param);
-  
   
   return (
     <UserDetailsContext.Provider

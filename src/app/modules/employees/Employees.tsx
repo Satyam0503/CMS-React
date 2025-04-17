@@ -20,7 +20,6 @@ import {
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
-import { EmployeeModel } from "../../../utils/common_types";
 
 import {
   getModulePermissions,
@@ -126,7 +125,7 @@ const Employees=()=> {
   const rowClickHandler = (employee:GetAllEmployeeResponseModel) => {   
     const empId = employee.userId;
     empId === currentEmpId
-      ? navigate("/myprofile")
+      ? navigate("/profile")
       : navigate(`/employees/${empId}`);
   };
 

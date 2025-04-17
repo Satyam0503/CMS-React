@@ -10,7 +10,10 @@ import {
 import { UserEducationModel } from "../../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { dateFormatter } from "../../../../../utils/common";
+import {
+  checkPermissionForModulesFeatureAccess,
+  dateFormatter,
+} from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
 import {
   addEmployeeEducation,
@@ -23,6 +26,8 @@ import { colors } from "../../../theme/MuiTheme";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
+import { ModulesName, Permission } from "../../../../../utils/enums";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 const initialValue: UserEducationModel = {
   userId: "",
@@ -46,7 +51,9 @@ export const UserEducation = () => {
     string | undefined
   >();
   const [refresh, setRefresh] = useState(false);
-  const {employeeid}= useParams();
+  const employeeId = useParams().employeeid;
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -111,7 +118,7 @@ export const UserEducation = () => {
   };
 
   useEffect(() => {
-    getEmployeeEducations(employeeid?? "")
+    getEmployeeEducations(employeeId ?? "")
       .then((response) => {
         const { success, message, methodResults } = response.data;
         if (!success) {
@@ -135,11 +142,17 @@ export const UserEducation = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
-        <CustomIconButton
-          tooltip="Add"
-          icon={<Add />}
-          handleClick={() => setOpen(true)}
-        />
+        {(!employeeId ||
+          checkPermissionForModulesFeatureAccess(
+            `${ModulesName.Employees}.${Permission.Edit}`,
+            userPermissions
+          )) && (
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        )}
       </Stack>
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userEducations.length === 0 ? (

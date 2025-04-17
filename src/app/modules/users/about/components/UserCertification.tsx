@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
 import { colors } from "../../../theme/MuiTheme";
-import { dateFormatter } from "../../../../../utils/common";
+import { checkPermissionForModulesFeatureAccess, dateFormatter } from "../../../../../utils/common";
 import AddUpdateCertification from "./AddUpdateCertification";
 import {
   addEmployeeCertification,
@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
+import { ModulesName, Permission } from "../../../../../utils/enums";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 const initialValue: UserCertificationModel = {
   certificationTitle: "",
@@ -46,7 +48,8 @@ export const UserCertification = () => {
   const [selectedCertificationId, setSelectedCertificationId] = useState<
     string | undefined
   >();
-  const {employeeid} = useParams();
+  const employeeId = useParams().employeeid;
+  const userPermissions = useAppSelector(state =>state.user.userData?.modulePermission) ?? [];
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
@@ -113,7 +116,7 @@ export const UserCertification = () => {
   }
 
   useEffect(() => {
-    getEmployeeCertifications(employeeid??"")
+    getEmployeeCertifications(employeeId ?? "")
       .then((response) => {
         const { success, methodResults, message } = response.data;
         if (!success) {
@@ -137,11 +140,18 @@ export const UserCertification = () => {
         <Typography variant="h5" flexWrap={"wrap"}>
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
+        {
+          (!employeeId ||
+                    checkPermissionForModulesFeatureAccess(
+                      `${ModulesName.Employees}.${Permission.Edit}`,
+                      userPermissions
+                    )) && 
         <CustomIconButton
-          tooltip="Add"
-          icon={<Add />}
-          handleClick={() => setOpen(true)}
+        tooltip="Add"
+        icon={<Add />}
+        handleClick={() => setOpen(true)}
         />
+      }
       </Stack>
 
       <Stack spacing={{ xs: 0.5, sm: 1 }}>

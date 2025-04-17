@@ -75,7 +75,7 @@ export default function HeaderUserMenu() {
         </MenuItem>
         <Divider/>
         <MenuItem onClick={()=>{
-          navigate("/myprofile")
+          navigate("/profile")
           handleClose();
         }} className="px-2">
           <ListItemIcon>

@@ -54,7 +54,7 @@ const MasterLayout = () => {
                 <Footer />
               </Stack> */}
             </Stack>
-          </Stack>
+          </Grid>
 
           <DrawerMessenger />
         </PageDataProvider>
