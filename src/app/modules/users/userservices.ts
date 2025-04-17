@@ -70,6 +70,7 @@ export const updateEmployeeDetails = async (payload: any) => {
 
 export const udpateEmployeeSkills = async (payload: {
   totalSkills: string;
+  userId:string;
 }) => {
   return postRequest<{ totalSkills: string }, ApiResponse>(
     ServiceUrl.UPDATE_EMPLOYEE_SKILLS,

@@ -43,6 +43,7 @@ export const UserSkills = () => {
     try {
       const response = await udpateEmployeeSkills({
         totalSkills: skills.join(","),
+        userId: employeeId ?? "",
       });
       const { message, success } = response.data;
       if (success) {

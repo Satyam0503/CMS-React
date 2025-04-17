@@ -97,9 +97,8 @@ export type UserCertificationModel = {
   companyId?: string;
 };
 
-export type UserSkillsModel = {
+export type UserSkillsModel = BaseModel & {
   id: string;
-  companyId: string;
   userId: string;
   skills: string;
 };
