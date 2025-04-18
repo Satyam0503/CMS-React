@@ -68,7 +68,15 @@ export const UserEducation = () => {
 
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
-    setEducationInitialValues({ ...education });
+    setEducationInitialValues({
+      educationId: education.educationId,
+      userId: education.userId,
+      educationTitle: education.educationTitle,
+      collegeName: education.collegeName,
+      startDate: education.startDate,
+      endDate: education.endDate,
+      type: education.type,
+    });
     setOpen(true);
   }
 
@@ -76,6 +84,7 @@ export const UserEducation = () => {
     values: UserEducationModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
+    values.userId = employeeId ?? "";
     try {
       if (isEdit) {
         const response = await updateEmployeeEducation(values);
@@ -104,7 +113,10 @@ export const UserEducation = () => {
   const handleDeleteEducation = async () => {
     if (selectedEducationId) {
       try {
-        const response = await deleteEmployeeEducation(selectedEducationId);
+        const response = await deleteEmployeeEducation(
+          selectedEducationId,
+          employeeId
+        );
         const { success, message } = response.data;
         if (success) {
           toast.success(message);
@@ -226,29 +238,35 @@ export const UserEducation = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack
-                direction={{ sx: "column", sm: "row" }}
-                spacing={1}
-                rowGap={0.5}
-                sx={{
-                  visibility: "hidden",
-                  transition: "visibility 0.3s ease-in-out",
-                }}
-              >
-                <CustomIconButton
-                  icon={<Edit />}
-                  tooltip="Edit"
-                  handleClick={() => handleEducationEdit(education)}
-                />
-                <CustomIconButton
-                  icon={<DeleteOutline />}
-                  tooltip="Delete"
-                  handleClick={() => {
-                    setSeletedEducationId(education.educationId);
-                    setConfirmModalOpen(true);
+              {(!employeeId ||
+                checkPermissionForModulesFeatureAccess(
+                  `${ModulesName.Employees}.${Permission.Edit}`,
+                  userPermissions
+                )) && (
+                <Stack
+                  direction={{ sx: "column", sm: "row" }}
+                  spacing={1}
+                  rowGap={0.5}
+                  sx={{
+                    visibility: "hidden",
+                    transition: "visibility 0.3s ease-in-out",
                   }}
-                />
-              </Stack>
+                >
+                  <CustomIconButton
+                    icon={<Edit />}
+                    tooltip="Edit"
+                    handleClick={() => handleEducationEdit(education)}
+                  />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    tooltip="Delete"
+                    handleClick={() => {
+                      setSeletedEducationId(education.educationId);
+                      setConfirmModalOpen(true);
+                    }}
+                  />
+                </Stack>
+              )}
             </Stack>
           ))
         )}
