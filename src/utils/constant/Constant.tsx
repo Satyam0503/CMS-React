@@ -1059,9 +1059,9 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.CompanyDetails,
         title: ModulesTitles.CompanyDetails,
         constant: ModulesName.CompanyDetails,
-        route: "/admin/company",
+        route: "/admin/companydetails",
         icon: <AdminPanelSettings />,
-      },
+      },  
     ],
   },
   {

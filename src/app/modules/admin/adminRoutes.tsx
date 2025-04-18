@@ -8,6 +8,7 @@ import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { CompanyMasterTab } from "./companymaster/CompanyMaster";
 import { useEffect } from "react";
+import { CompanyDetails } from './companydetails/CompanyDetails'
 
 const adminBreadcrumbs:Array<Breadcrumb> = [
   {
@@ -84,6 +85,16 @@ const AdminRoutes = () => {
             <ProtectedRoute module={ModulesName.CompanyMaster}>
               <CompanyMasterTab />
             </ProtectedRoute>
+          }
+        />
+        {/* Route for CompanyDetail -> Added by Rajdeep */}
+        <Route
+          path="companydetails/*"
+          element={
+            // Protected Routes commented as modulePermission is not created for  Company Details module
+            // <ProtectedRoute module={ModulesName.CompanyDetails}>
+              <CompanyDetails />
+            //</ProtectedRoute
           }
         />
       </Route>

@@ -56,6 +56,8 @@
   "PAGE.EDIT_PERMISSION": "Edit Permission",
   "PAGE.ADD_ROLE": "Add Role",
   "PAGE.COMPANY_MASTER": "Company Master",
+  "PAGE.COMPANY_DETAILS": "Company Details",
+
 
   "FORM.FIRST_NAME": "First Name",
   "FORM.LAST_NAME": "Last Name",
@@ -476,6 +478,11 @@
   "COMPANY_MASTER.DEPARTMENT.TOTAL": "Total Departments",
   "COMPANY_MASTER.ADD_DEPARTMENT": "Add Department",
   "COMPANY_MASTER.EDIT_DEPARTMENT": "Edit Department",
+
+
+  "COMPANY_DETAILS.TAB.APPLICATIONS": "Applications",
+  "COMPANY_DETAILS.TAB.DEMO": "Demo",
+
 
   "BUTTON.ADD": "Add",
   "BUTTON.RESET": "Reset",
