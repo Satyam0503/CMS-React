@@ -24,7 +24,9 @@ export const CompanyInfo: FC = () => {
       <Box component={Card} p={3}>
         <Stack>
           <Typography variant="h4" mb={1}>
-            Localization
+            {intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION",
+            })}
           </Typography>
         </Stack>
         <Divider sx={{ my: 2 }} />
@@ -32,24 +34,32 @@ export const CompanyInfo: FC = () => {
         <Stack spacing={2}>
           <Stack spacing={1}>
             <Stack>
-              <Typography variant="h6">Languages</Typography>
+              <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+            })}</Typography>
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} md={4}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                  Default Company Language
+                {intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE",
+            })}
                 </Typography>
                 <Typography variant="body2">English</Typography>
               </Grid>
               <Grid item xs={12} md={4}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                  Application Language
+                {intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE",
+            })}
                 </Typography>
                 <Typography variant="body2">English, French</Typography>
               </Grid>
               <Grid item xs={12} md={4}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                  Survey Language
+                {intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.SURVEY_LANGUAGE",
+            })}
                 </Typography>
                 <Typography variant="body2">English, French</Typography>
               </Grid>
@@ -58,7 +68,9 @@ export const CompanyInfo: FC = () => {
 
           <Stack spacing={1}>
             <Stack>
-              <Typography variant="h6">Company Name</Typography>
+              <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+            })}</Typography>
               <Typography variant="body2">
                 The company name is displayed on the application side menu and
                 it is also displayed in all survey questions having a tag such
@@ -83,7 +95,9 @@ export const CompanyInfo: FC = () => {
 
           <Stack spacing={1}>
             <Stack>
-              <Typography variant="h6">Mangers Identification</Typography>
+              <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.MANAGERS_IDENTIFICATION",
+            })}</Typography>
               <Typography variant="body2">
                 The manager tag will be replaced according to your choosen
                 terminology, for some orgnization, it will be manager, but for
