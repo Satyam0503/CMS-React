@@ -1,20 +1,32 @@
-import { Box, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useEffect, useState } from "react";
-import { Add } from "@mui/icons-material";
-import { getAllDepartments } from "../../adminservices";
+import { addEditDepartment, getAllDepartments } from "../../adminservices";
 import { DepartmentModel } from "../../models";
 import { DepartmentRow } from "./DepartmentRow";
-import { AddDepartment } from "./AddDeparment";
+import { languages } from "../../../../../utils/constant/Constant";
+import { toast } from "react-toastify";
 
 const Departments = () => {
   const { formatMessage } = useIntl();
   const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
-  const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>( null);
+  const [editedDeparment, setEditedDepartment] =
+    useState<DepartmentModel | null>(null);
+  const [currentEditDepartment, setCurrentEditDepartment] = useState<
+    string | null
+  >(null);
+  const [translationLang, setTranslationLang] = useState<string>(languages[1].lang);
 
   const handleDepartmentEdit = (department: DepartmentModel | null) => {
     setEditedDepartment(department);
@@ -24,6 +36,22 @@ const Departments = () => {
     setCurrentEditDepartment(null);
     setEditedDepartment(null);
   };
+  
+  const handleEditDepartment =async  ()=>{
+    if(editedDeparment){
+      try {
+        const response = await addEditDepartment(editedDeparment);
+        const {success,message}= response.data;
+        if(success){
+          toast.success(message);
+          setRefresh(!refresh);
+          setCurrentEditDepartment(null);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   useEffect(() => {
     const getAllDeps = async () => {
@@ -39,8 +67,7 @@ const Departments = () => {
     };
     getAllDeps();
   }, [refresh]);
-
-
+  
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -51,22 +78,38 @@ const Departments = () => {
           {formatMessage({ id: "COMPANY_MASTER.DEPARTMENT.TOTAL" })}:{" "}
           {departmentList.length}
         </Typography>
-        <CustomisedButton
-          Icon={<Add />}
-          label={formatMessage({ id: "BUTTON.ADD" })}
-          handleClick={() => setOpen(true)}
-        />
+
+        <FormControl sx={{minWidth: 200 }}>
+          <InputLabel id="language-translation">
+            {formatMessage({id:"SELECT.LANGUAGE.TRANSLATE"})}
+          </InputLabel>
+
+          <Select
+            label={formatMessage({id:"SELECT.LANGUAGE.TRANSLATE"})}
+            labelId="language-translation"
+            variant="outlined"
+            value={translationLang}
+            onChange={(e)=>setTranslationLang(e.target.value)}
+          >
+            {languages.map((lang) => {
+              if(lang.lang === "en"){
+                return ;
+              }
+              return <MenuItem value={lang.lang}>{lang.name}</MenuItem>
+            })}
+          </Select>
+        </FormControl>
       </Stack>
 
       <Stack className="department-container">
         <Box className="department-row">
           {[
             "Department.Title",
-            "Department.Description",
+            "Department.Title2",
             "Department.Status",
           ].map((title) => (
             <Typography variant="body1" className="fw-bolder">
-              {formatMessage({ id: title })}
+              {formatMessage({ id: title },{language:translationLang})}
             </Typography>
           ))}
         </Box>
@@ -77,8 +120,10 @@ const Departments = () => {
             handleDepartmentEdit={handleDepartmentEdit}
             currentEditDepartment={currentEditDepartment}
             setCurrentEditDepartment={setCurrentEditDepartment}
+            translationLanguage= {translationLang}
           />
         ))}
+        {/* add button to add new department */}
         <Stack
           spacing={1}
           direction={"row"}
@@ -91,19 +136,10 @@ const Departments = () => {
           />
           <CustomisedButton
             label={formatMessage({ id: "BUTTON.UPDATE" })}
-            handleClick={() => console.log(editedDeparment)}
+            handleClick={() => handleEditDepartment()}
           />
         </Stack>
       </Stack>
-
-      {isOpen && (
-        <AddDepartment
-          open={isOpen}
-          handleClose={()=>setOpen(false)}
-          refresh={refresh}
-          setRefresh={setRefresh}
-        />
-      )}
     </Box>
   );
 };
