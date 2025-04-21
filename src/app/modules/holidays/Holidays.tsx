@@ -157,6 +157,7 @@ export default function Holidays() {
           handleClose={handleCloseModal}
           initialValues={initialHolidayValues}
           handleAddUpdateHoliday={handleAddUpdateHoliday}
+          isEdit={isEdit} // Lined added by Rajdeep  
         />
       )}
       {isConfirmModalOpen && (

@@ -22,7 +22,6 @@ import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import RightDrawer from "./components/RightDrawer";
 import { usePageData } from "../../../_themes/layout/core";
-import { usePageData } from "../../../_themes/layout/core";
 import { GetAllEmployeeResponseModel } from "../employees/models";
 
 // Main Dashboard Component
