@@ -9,32 +9,24 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useIntl } from "react-intl";
-import {
-  AttachFile,
-  CloudUploadOutlined,
-  DeleteOutlineOutlined,
-  Download,
-  Edit,
-  EditOutlined,
-  Image,
-  Visibility,
-} from "@mui/icons-material";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Download, Edit } from "@mui/icons-material";
 import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
-import { useAppSelector } from "../../../Redux/hooks";
 import { colors } from "../../theme/MuiTheme";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { getDateDiffInYears } from "../../../../utils/common";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { PictureUpdateModal } from "./ProfileUpdateModal";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
+import { useParams } from "react-router-dom";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
   const intl = useIntl();
   const { userDetails } = useUserDetails();
-
+  const employeeId = useParams().employeeid;
+  
   function handleClose() {
     setOpen(false);
   }
@@ -114,7 +106,7 @@ export default function ProfileCard() {
               ),
             }}
           >
-            {userDetails.jobRole || "NA"}
+            {userDetails.jobRole || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Stack>
         <Stack
@@ -134,19 +126,23 @@ export default function ProfileCard() {
           </Stack>
           <Stack>
             <Typography variant="h2" color={"white"}>
-              {userDetails.bloodGroup || "NA"}
+              {userDetails.bloodGroup || (
+                <FormattedMessage id="NOT_AVAILABLE" />
+              )}
             </Typography>
             <Typography variant="body2" color={"white"}>
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
             </Typography>
           </Stack>
         </Stack>
-        <CustomisedButton
-          variant="contained"
-          Icon={<Download />}
-          iconPosition="start"
-          label="Salary slip"
-        />
+        {!employeeId && (
+          <CustomisedButton
+            variant="contained"
+            Icon={<Download />}
+            iconPosition="start"
+            label={intl.formatMessage({ id: "DOWNLOAD.SALARY_SLIP" })}
+          />
+        )}
       </Card>
       {open && <PictureUpdateModal open={open} handleClose={handleClose} />}
     </>

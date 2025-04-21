@@ -8,7 +8,7 @@ import { getDateDiffInYears } from "../../../../../utils/common"
 import { useIntl } from "react-intl"
 
 export const ProfileHeader = ()=>{
- const companyName = useAppSelector(state=>state.user.userData?.companyName);
+const companyName = useAppSelector(state=>state.user.userData?.companyName);
 const {userDetails,userSkills} = useUserDetails();
 const {formatMessage}= useIntl();
  return (

@@ -10,7 +10,10 @@ import {
 import { UserEducationModel } from "../../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { dateFormatter } from "../../../../../utils/common";
+import {
+  checkPermissionForModulesFeatureAccess,
+  dateFormatter,
+} from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
 import {
   addEmployeeEducation,
@@ -23,6 +26,8 @@ import { colors } from "../../../theme/MuiTheme";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
+import { ModulesName, Permission } from "../../../../../utils/enums";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 const initialValue: UserEducationModel = {
   userId: "",
@@ -46,7 +51,9 @@ export const UserEducation = () => {
     string | undefined
   >();
   const [refresh, setRefresh] = useState(false);
-  const {employeeid}= useParams();
+  const employeeId = useParams().employeeid;
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -61,7 +68,15 @@ export const UserEducation = () => {
 
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
-    setEducationInitialValues({ ...education });
+    setEducationInitialValues({
+      educationId: education.educationId,
+      userId: education.userId,
+      educationTitle: education.educationTitle,
+      collegeName: education.collegeName,
+      startDate: education.startDate,
+      endDate: education.endDate,
+      type: education.type,
+    });
     setOpen(true);
   }
 
@@ -69,6 +84,7 @@ export const UserEducation = () => {
     values: UserEducationModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
+    values.userId = employeeId ?? "";
     try {
       if (isEdit) {
         const response = await updateEmployeeEducation(values);
@@ -97,7 +113,10 @@ export const UserEducation = () => {
   const handleDeleteEducation = async () => {
     if (selectedEducationId) {
       try {
-        const response = await deleteEmployeeEducation(selectedEducationId);
+        const response = await deleteEmployeeEducation(
+          selectedEducationId,
+          employeeId
+        );
         const { success, message } = response.data;
         if (success) {
           toast.success(message);
@@ -111,7 +130,7 @@ export const UserEducation = () => {
   };
 
   useEffect(() => {
-    getEmployeeEducations(employeeid?? "")
+    getEmployeeEducations(employeeId ?? "")
       .then((response) => {
         const { success, message, methodResults } = response.data;
         if (!success) {
@@ -135,11 +154,17 @@ export const UserEducation = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
-        <CustomIconButton
-          tooltip="Add"
-          icon={<Add />}
-          handleClick={() => setOpen(true)}
-        />
+        {(!employeeId ||
+          checkPermissionForModulesFeatureAccess(
+            `${ModulesName.Employees}.${Permission.Edit}`,
+            userPermissions
+          )) && (
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        )}
       </Stack>
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userEducations.length === 0 ? (
@@ -213,29 +238,35 @@ export const UserEducation = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack
-                direction={{ sx: "column", sm: "row" }}
-                spacing={1}
-                rowGap={0.5}
-                sx={{
-                  visibility: "hidden",
-                  transition: "visibility 0.3s ease-in-out",
-                }}
-              >
-                <CustomIconButton
-                  icon={<Edit />}
-                  tooltip="Edit"
-                  handleClick={() => handleEducationEdit(education)}
-                />
-                <CustomIconButton
-                  icon={<DeleteOutline />}
-                  tooltip="Delete"
-                  handleClick={() => {
-                    setSeletedEducationId(education.educationId);
-                    setConfirmModalOpen(true);
+              {(!employeeId ||
+                checkPermissionForModulesFeatureAccess(
+                  `${ModulesName.Employees}.${Permission.Edit}`,
+                  userPermissions
+                )) && (
+                <Stack
+                  direction={{ sx: "column", sm: "row" }}
+                  spacing={1}
+                  rowGap={0.5}
+                  sx={{
+                    visibility: "hidden",
+                    transition: "visibility 0.3s ease-in-out",
                   }}
-                />
-              </Stack>
+                >
+                  <CustomIconButton
+                    icon={<Edit />}
+                    tooltip="Edit"
+                    handleClick={() => handleEducationEdit(education)}
+                  />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    tooltip="Delete"
+                    handleClick={() => {
+                      setSeletedEducationId(education.educationId);
+                      setConfirmModalOpen(true);
+                    }}
+                  />
+                </Stack>
+              )}
             </Stack>
           ))
         )}

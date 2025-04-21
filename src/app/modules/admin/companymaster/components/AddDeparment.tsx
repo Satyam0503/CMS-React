@@ -34,9 +34,8 @@ const AddDepartment: FC<Props> = ({
   refresh,
   setRefresh,
 }) => {
-
   const intl = useIntl();
-  
+
   const handleAdd = async (
     value: DepartmentModel,
     setSubmitting: (isSubmitting: boolean) => void

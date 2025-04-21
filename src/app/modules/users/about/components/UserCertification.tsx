@@ -11,7 +11,10 @@ import { useEffect, useState } from "react";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
 import { colors } from "../../../theme/MuiTheme";
-import { dateFormatter } from "../../../../../utils/common";
+import {
+  checkPermissionForModulesFeatureAccess,
+  dateFormatter,
+} from "../../../../../utils/common";
 import AddUpdateCertification from "./AddUpdateCertification";
 import {
   addEmployeeCertification,
@@ -24,6 +27,8 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
+import { ModulesName, Permission } from "../../../../../utils/enums";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 const initialValue: UserCertificationModel = {
   certificationTitle: "",
@@ -46,20 +51,24 @@ export const UserCertification = () => {
   const [selectedCertificationId, setSelectedCertificationId] = useState<
     string | undefined
   >();
-  const {employeeid} = useParams();
+  const employeeId = useParams().employeeid;
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
     setSubmitting: (isSubmitting: boolean) => void
-  ) {   
+  ) {
+    values.userId = employeeId ?? "";
     try {
       if (isEdit) {
         const response = await updateEmployeeCertification(values);
         const { success, message } = response.data;
-        if (success) {
-          toast.success(message);
-          setRefresh(!refresh);
+        if (!success) {
+          throw new Error(message);
         }
+        toast.success(message);
+        setRefresh(!refresh);
       } else {
         const response = await addEmployeeCertification(values);
         const { success, message } = response.data;
@@ -79,7 +88,15 @@ export const UserCertification = () => {
 
   function handleCertificationEdit(certification: UserCertificationModel) {
     setEdit(true);
-    setInitialValues({ ...certification });
+    setInitialValues({
+      certificationTitle: certification.certificationTitle,
+      certificationId: certification.certificationId,
+      organisationName: certification.organisationName,
+      startDate: certification.startDate,
+      endDate: certification.endDate,
+      mode: certification.mode,
+      userId: certification.userId,
+    });
     setOpen(true);
   }
 
@@ -98,7 +115,7 @@ export const UserCertification = () => {
     if (selectedCertificationId) {
       try {
         const response = await deleteEmployeeCertification(
-          selectedCertificationId
+          selectedCertificationId,employeeId
         );
         const { success, message } = response.data;
         if (success) {
@@ -113,7 +130,7 @@ export const UserCertification = () => {
   }
 
   useEffect(() => {
-    getEmployeeCertifications(employeeid??"")
+    getEmployeeCertifications(employeeId ?? "")
       .then((response) => {
         const { success, methodResults, message } = response.data;
         if (!success) {
@@ -137,11 +154,17 @@ export const UserCertification = () => {
         <Typography variant="h5" flexWrap={"wrap"}>
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
-        <CustomIconButton
-          tooltip="Add"
-          icon={<Add />}
-          handleClick={() => setOpen(true)}
-        />
+        {(!employeeId ||
+          checkPermissionForModulesFeatureAccess(
+            `${ModulesName.Employees}.${Permission.Edit}`,
+            userPermissions
+          )) && (
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        )}
       </Stack>
 
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
@@ -217,7 +240,14 @@ export const UserCertification = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              <Stack
+              {
+                (!employeeId ||
+                checkPermissionForModulesFeatureAccess(
+                  `${ModulesName.Employees}.${Permission.Edit}`,
+                  userPermissions
+                ))
+                && 
+                <Stack
                 direction={{ sx: "column", sm: "row" }}
                 spacing={1}
                 rowGap={0.5}
@@ -240,6 +270,8 @@ export const UserCertification = () => {
                   }}
                 />
               </Stack>
+              }
+              
             </Stack>
           ))
         )}

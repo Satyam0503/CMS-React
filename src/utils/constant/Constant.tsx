@@ -365,24 +365,6 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     label: "EMPLOYEE.EMPID",
     minWidth: 60,
   },
-  // {
-  //   id: "action",
-  //   label: "Action",
-  //   align: "left",
-  //   build: (
-  //     row: EmployeeModel,
-  //     handleEmployeeEdit: (row: EmployeeModel) => void,
-  //     openConfirmationModal: (row: EmployeeModel) => void,
-  //     openViewModal: (row: EmployeeModel) => void
-  //   ) => (
-  //     <ActionComponent
-  //       row={row}
-  //       handleEdit={handleEmployeeEdit}
-  //       openConfirmationModal={openConfirmationModal}
-  //       openViewModal={openViewModal}
-  //     />
-  //   ),
-  // },
   {
     id: "name",
     label: "FORM.FULL_NAME",

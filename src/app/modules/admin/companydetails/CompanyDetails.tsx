@@ -14,6 +14,7 @@ import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
 import { checkIsActive } from "../../../../_themes/helpers";
 
+import {ApplicationModules} from "./components/ApplicationModules"
 import {Applications} from "./components/Applications"
 
 
@@ -26,8 +27,8 @@ const tabsRoutes: TabModel[] = [
   },
   {
     tabId: 2,
-    to: "/admin/companydetails/demo",
-    title: "COMPANY_DETAILS.TAB.DEMO",
+    to: "/admin/companydetails/companydetails",
+    title: "COMPANY_DETAILS.TAB.COMPANY_DETAIL",
     icon: <Work />,
   },
 ];
@@ -37,7 +38,8 @@ export const CompanyDetailsTab = ()=>{
       <Routes>
         <Route element={<CompanyDetails />}>
           <Route index element={<Navigate to={"applications"} />} />
-          <Route path="applications" element={<Applications />} />
+          <Route path="applications" element={<ApplicationModules />} />
+          <Route path="companydetails" element={<Applications />} />
         </Route>
         <Route path="*" element={<Navigate to={"/error"} />} />
       </Routes>

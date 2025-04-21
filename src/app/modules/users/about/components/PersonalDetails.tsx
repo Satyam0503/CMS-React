@@ -1,16 +1,25 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { dateFormatter } from "../../../../../utils/common";
+import {
+  checkPermissionForModulesFeatureAccess,
+  dateFormatter,
+} from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
 import { useState } from "react";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
+import { useParams } from "react-router-dom";
+import { ModulesName, Permission } from "../../../../../utils/enums";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 export const PersonalDetails = () => {
   const intl = useIntl();
   const [isModalOpen, setModalOpen] = useState(false);
-  const { userDetails } = useUserDetails();  
+  const { userDetails } = useUserDetails();
+  const employeeId = useParams().employeeid;
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) || [];
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -22,10 +31,17 @@ export const PersonalDetails = () => {
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        <CustomIconButton
-          icon={<Edit />}
-          handleClick={() => setModalOpen(true)}
-        />
+        {(!employeeId ||
+          checkPermissionForModulesFeatureAccess(
+            `${ModulesName.Employees}.${Permission.Edit}`,
+            userPermissions
+          )) && (
+          <CustomIconButton
+            icon={<Edit />}
+            handleClick={() => setModalOpen(true)}
+          />
+        )}
+
         {isModalOpen && userDetails && (
           <UpdateUserInfo
             open={isModalOpen}
