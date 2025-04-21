@@ -15,7 +15,7 @@ import clsx from "clsx";
 import { checkIsActive } from "../../../../_themes/helpers";
 
 import {ApplicationModules} from "./components/ApplicationModules"
-import {Applications} from "./components/Applications"
+import { CompanyInfo } from "./components/CompanyInfo";
 
 
 const tabsRoutes: TabModel[] = [
@@ -39,7 +39,7 @@ export const CompanyDetailsTab = ()=>{
         <Route element={<CompanyDetails />}>
           <Route index element={<Navigate to={"applications"} />} />
           <Route path="applications" element={<ApplicationModules />} />
-          <Route path="companydetails" element={<Applications />} />
+          <Route path="companydetails" element={<CompanyInfo />} />
         </Route>
         <Route path="*" element={<Navigate to={"/error"} />} />
       </Routes>
