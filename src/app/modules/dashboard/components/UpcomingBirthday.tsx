@@ -12,7 +12,9 @@ interface PropsType {
 }
 export default function UpcomingBirthday({ employees }: PropsType) {
   const intl = useIntl();
-  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [employeeList, setEmployeeList] = useState<
+    GetAllEmployeeResponseModel[]
+  >([]);
 
   const getUpcomingBirthDays = useCallback(() => {
     const sortedEmployee = employees
@@ -111,7 +113,7 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                       color={colors.alpha.primary[500]}
                     >
                       {!isSameDate(dayjs(emp.dateOfBirth))
-                        ? dateFormatter(emp.birthDayThisYear , "DD MMM YYYY")
+                        ? dateFormatter(emp.birthDayThisYear, "DD MMM YYYY")
                         : "Today"}
                     </Typography>
                   </Stack>

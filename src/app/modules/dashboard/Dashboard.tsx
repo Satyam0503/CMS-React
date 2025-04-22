@@ -115,7 +115,7 @@ export default function Dashboard() {
             />
             <EmpOnLeave />
             <Punctual />
-            {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />}
+            {/* {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />} */}
             <EmpOfMonth />
             <Help />
           </Stack>
