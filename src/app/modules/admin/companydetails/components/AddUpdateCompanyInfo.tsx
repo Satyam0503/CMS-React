@@ -40,6 +40,7 @@ export const AddUpdateCompanyInfo: FC = () => {
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value as string);
   };
+
   return (
     <>
       <Stack spacing={2}>
@@ -66,7 +67,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 <Typography variant="h6">Languages</Typography>
               </Stack>
               <Grid container spacing={1}>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                       Select Language
@@ -84,19 +85,13 @@ export const AddUpdateCompanyInfo: FC = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                   {/* <Typography
                     variant="body1"
                     mb={1}
                     color={colors.alpha.primary[500]}
                   >
                     Application Language
-                  </Typography> */}
-                  <CustomSelectChip />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  {/* <Typography variant="body1" color={colors.alpha.primary[500]}>
-                    Survey Language
                   </Typography> */}
                   <CustomSelectChip />
                 </Grid>
@@ -217,8 +212,8 @@ export const AddUpdateCompanyInfo: FC = () => {
             <Typography variant="h5">Cutomization</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
-          <Stack spacing={1}>
-            <Stack width={"200px"}>
+          <Grid container flexDirection={"column"}>
+            <Stack width={"150px"}>
               <Avatar
                 alt=""
                 src={toAbsoluteUrl("media/avatars/300-6.jpg")}
@@ -228,15 +223,17 @@ export const AddUpdateCompanyInfo: FC = () => {
                 }}
               />
             </Stack>
-
-            <TextField
-              variant="standard"
-              type="text"
-              id="outlined-required"
-              label="Company Name"
-              sx={{ color: colors.alpha.primary[500] }}
-            />
-            <Stack className="text-nowrap">
+            <Grid item xs={12} md={6} my={1}>
+              <TextField
+                fullWidth
+                variant="standard"
+                type="text"
+                id="outlined-required"
+                label="Company Name"
+                sx={{ color: colors.alpha.primary[500] }}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} className="text-nowrap">
               <TextField
                 fullWidth
                 variant="standard"
@@ -245,34 +242,44 @@ export const AddUpdateCompanyInfo: FC = () => {
                 label="Industry"
                 sx={{ color: colors.alpha.primary[500] }}
               />
-            </Stack>
-          </Stack>
+            </Grid>
+          </Grid>
         </Box>
         <Box component={Card} p={3}>
           <Stack>
             <Typography variant="h5">Employee management</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
-          <Stack width={"200px"} spacing={1}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              type="text"
-              id="outlined-required"
-              label="Primary Contact"
-              sx={{ color: colors.alpha.primary[500] }}
-            />
-            <Stack className="text-nowrap">
+          <Grid container spacing={1} flexDirection={"column"}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 variant="outlined"
                 type="text"
                 id="outlined-required"
-                label="Email id"
+                label="Primary Contact"
                 sx={{ color: colors.alpha.primary[500] }}
               />
-            </Stack>
-          </Stack>
+            </Grid>
+
+            <Grid item xs={12} md={6} className="text-nowrap mt-4">
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Default import attribute
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={language}
+                  label="Default import attribute"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={10}>Email Id</MenuItem>
+                  <MenuItem value={20}>Emp Id</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
         </Box>
       </Stack>
     </>
