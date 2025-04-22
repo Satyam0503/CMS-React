@@ -906,6 +906,10 @@ export const MuiTheme = createTheme({
     // },
     MuiAutocomplete: {
       styleOverrides: {
+        inputRoot: {
+          padding: "0px",
+        },
+
         paper: {
           maxHeight: "200px",
         },
