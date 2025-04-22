@@ -10,6 +10,7 @@ import { checkIsActive } from "../../../../_themes/helpers";
 
 import { ApplicationModules } from "./components/ApplicationModules";
 import { CompanyInfo } from "./components/CompanyInfo";
+import {AddUpdateCompanyInfo} from "./components/AddUpdateCompanyInfo"
 
 const tabsRoutes: TabModel[] = [
   {
@@ -20,7 +21,7 @@ const tabsRoutes: TabModel[] = [
   },
   {
     tabId: 2,
-    to: "/admin/companydetails/companydetails",
+    to: "/admin/companydetails/companyinfo",
     title: "COMPANY_DETAILS.TAB.COMPANY_DETAIL",
     icon: <Work />,
   },
@@ -32,12 +33,14 @@ export const CompanyDetailsTab = () => {
       <Route element={<CompanyDetails />}>
         <Route index element={<Navigate to={"applications"} />} />
         <Route path="applications" element={<ApplicationModules />} />
-        <Route path="companydetails" element={<CompanyInfo />} />
+        <Route path="companyinfo" element={<CompanyInfo />} />
+        <Route path="companyinfo/editcompanydetails" element={<AddUpdateCompanyInfo/>}></Route>
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>
   );
 };
+
 
 const CompanyDetails = () => {
   const { setPageTitle } = usePageData();

@@ -1,19 +1,35 @@
 import { Card, Stack, Switch, Typography } from "@mui/material";
-import { FC } from "react";
-
+import {useState, FC } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 
 export const ApplicationModules: FC = () => {
   const intl = useIntl();
-  const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = useState(true);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
+  const closeConfirmationModal = () => {
+    setIsConfirmModalOpen(false);
+  }
+  const handleModuleHiding = async(res: string) => {
+    if (res !== "ok") {
+      closeConfirmationModal();
+    } 
+    else {
+  }
+}
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Checked value: ", checked);
-    setChecked(event.target.checked);
+    console.log("Here: ",event.target.checked)
+
+    if(!event.target.checked){
+      setIsConfirmModalOpen(true);
+      // if(isConfirmModalOpen){
+      //   setChecked(event.target.checked);
+      // }
+    }
   };
 
-  return (
+  return (<>
     <Stack component={Card} spacing={3} p={4} my={6}>
       <Stack>
         <Typography variant="h5" mb={1}>
@@ -26,8 +42,9 @@ export const ApplicationModules: FC = () => {
           company.
         </Typography>
       </Stack>
-
-        <Stack direction="row" spacing={1} alignItems={"center"}>
+        
+        {/* Map for each API response data object with below Stack tab. */}
+        <Stack direction="row" spacing={ 1} alignItems={"center"}>
           <Stack>
             <Switch checked={checked} onChange={handleChange} />
           </Stack>
@@ -148,7 +165,14 @@ export const ApplicationModules: FC = () => {
         </Stack>
       </Stack>
       {
-        // !checked && (<CustomisedModal/>)
+        isConfirmModalOpen && (<ConfirmationModal
+        title={intl.formatMessage({ id: "TITLE.HIDE_MODULE" })}
+        content={intl.formatMessage({ id: "CONFIRMATION.HIDE_MODULE" })}
+        open={isConfirmModalOpen}
+        handleClose={closeConfirmationModal}
+        handleConfirmation={handleModuleHiding}
+        ok_btn={true}
+      />)
       }
     </>
   );

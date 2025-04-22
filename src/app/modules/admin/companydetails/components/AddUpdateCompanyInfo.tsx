@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { FC } from "react";
-
+import {languages} from "../../../../../utils/constant/Constant"
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { colors } from "../../../theme/MuiTheme";
@@ -57,14 +57,18 @@ export const AddUpdateCompanyInfo: FC = () => {
         </Stack>
         <Box component={Card} p={3}>
           <Stack>
-            <Typography variant="h5">Localization</Typography>
+            <Typography variant="h5">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION",
+            })}</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
 
           <Stack spacing={2}>
             <Stack spacing={1}>
               <Stack>
-                <Typography variant="h6">Languages</Typography>
+                <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+            })}</Typography>
               </Stack>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6} lg={4}>
@@ -79,9 +83,9 @@ export const AddUpdateCompanyInfo: FC = () => {
                       label="Language"
                       onChange={handleChange}
                     >
-                      <MenuItem value={10}>English</MenuItem>
-                      <MenuItem value={20}>German</MenuItem>
-                      <MenuItem value={30}>French</MenuItem>
+                      {languages.map((language)=>{
+                        return ( <MenuItem key={language.id} value={language.lang}>{language.name}</MenuItem> )
+                      })}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -100,7 +104,9 @@ export const AddUpdateCompanyInfo: FC = () => {
 
             <Stack spacing={1}>
               <Stack>
-                <Typography variant="h6">Company Name</Typography>
+                <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+            })}</Typography>
                 <Typography variant="body2">
                   The company name is displayed on the application side menu and
                   it is also displayed in all survey questions having a tag such
@@ -154,7 +160,9 @@ export const AddUpdateCompanyInfo: FC = () => {
 
             <Stack spacing={1}>
               <Stack>
-                <Typography variant="h6">Managers Identification</Typography>
+                <Typography variant="h6">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.MANAGERS_IDENTIFICATION",
+            })}</Typography>
                 <Typography variant="body2">
                   The manager tag will be replaced according to your choosen
                   terminology, for some orgnization, it will be manager, but for
@@ -209,7 +217,9 @@ export const AddUpdateCompanyInfo: FC = () => {
         </Box>
         <Box component={Card} p={3}>
           <Stack>
-            <Typography variant="h5">Cutomization</Typography>
+            <Typography variant="h5">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.CUSTOMIZATION",
+            })}</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
           <Grid container flexDirection={"column"}>
@@ -247,7 +257,9 @@ export const AddUpdateCompanyInfo: FC = () => {
         </Box>
         <Box component={Card} p={3}>
           <Stack>
-            <Typography variant="h5">Employee management</Typography>
+            <Typography variant="h5">{intl.formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMPLOYEE_MANAGEMENT",
+            })}</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
           <Grid container spacing={1} flexDirection={"column"}>
