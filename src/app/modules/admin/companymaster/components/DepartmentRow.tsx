@@ -6,6 +6,8 @@ import { ConfirmationModal } from "../../../../shared/components/ConfirmationMod
 import { useIntl } from "react-intl";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import clsx from "clsx";
+import { deleteDepartment } from "../../adminservices";
+import { toast } from "react-toastify";
 
 type Props = {
   departmentData: DepartmentModel;
@@ -13,6 +15,8 @@ type Props = {
   currentEditDepartment: string | null;
   setCurrentEditDepartment: React.Dispatch<React.SetStateAction<string | null>>;
   translationLanguage: string;
+  refresh: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const DepartmentRow: FC<Props> = React.memo(
@@ -22,6 +26,7 @@ export const DepartmentRow: FC<Props> = React.memo(
     currentEditDepartment,
     setCurrentEditDepartment,
     translationLanguage,
+    refresh,setRefresh
   }) => {
     const { formatMessage } = useIntl();
     const [department, setDepartment] = useState<DepartmentModel>(departmentData);
@@ -57,8 +62,19 @@ export const DepartmentRow: FC<Props> = React.memo(
       }
     };
 
-    const handleDepartmentDelete = () => {
-      console.log(department.departmentId);
+    const handleDepartmentDelete = async () => {
+      try {
+        const response = await deleteDepartment(department.departmentId!)
+        const {success,message}= response.data;
+        if(!success){
+          throw new Error(message);
+        }
+        toast.success(message);
+        setConfirmModalOpen(false);
+        setRefresh(!refresh);
+      } catch (error) {
+        toast.error( (error as Error).message);
+      }
     };
 
     const handleEditCancel = () => {

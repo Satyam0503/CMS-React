@@ -34,6 +34,7 @@ const Departments = () => {
   const handleReset = () => {
     setCurrentEditDepartment(null);
     setEditedDepartment(null);
+    setOpen(false);
   };
 
   const handleEditDepartment = async () => {    
@@ -95,7 +96,7 @@ const Departments = () => {
               if (lang.lang === "en") {
                 return;
               }
-              return <MenuItem value={lang.lang}>{lang.name}</MenuItem>;
+              return <MenuItem key={lang.id} value={lang.lang}>{lang.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -119,6 +120,8 @@ const Departments = () => {
             currentEditDepartment={currentEditDepartment}
             setCurrentEditDepartment={setCurrentEditDepartment}
             translationLanguage={translationLang}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
         ))}
         {
