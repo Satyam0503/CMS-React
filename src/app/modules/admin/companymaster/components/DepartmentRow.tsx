@@ -154,9 +154,9 @@ export const DepartmentRow: FC<Props> = React.memo(
               />
             </>
           )}
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-2">
             {!isEdit ? (
-              <IconButton onClick={handleEdit} className="border-0">
+              <IconButton onClick={handleEdit} className="border-0 bg-transparent">
                 <Edit />
               </IconButton>
             ) : (

@@ -73,7 +73,7 @@ const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleC
         checked={departmentValue.isActive}
         onChange={handleSwitchChange}
       />
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center gap-2">
         <IconButton
           className="border-0"
           type="submit"

@@ -281,7 +281,7 @@ button:hover .ql-fill,
 .department-row {
   display: grid;
   align-items: center;
-  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 80px 80px;
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(80px,120px) 80px;
   gap: 2rem;
   padding-block: 0.6rem;
 }
