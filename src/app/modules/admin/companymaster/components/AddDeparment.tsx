@@ -1,47 +1,33 @@
-import { FC } from "react";
-import { Stack, Typography } from "@mui/material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { useIntl } from "react-intl";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { TextInput } from "../../../../shared/components/form-component/TextInput";
-import { DepartmentModel } from "../../models";
-import { addDepartment } from "../../adminservices";
+import { FC, useState } from "react";
+import { IconButton, Switch, TextField } from "@mui/material";
 import { toast } from "react-toastify";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { addEditDepartment } from "../../adminservices";
+import { Check, Close } from "@mui/icons-material";
 
 interface Props {
-  open: true;
-  handleClose: () => void;
+  translationLang: string;
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  handleClose:()=>void;
 }
 
-const initialValues: DepartmentModel = {
-departmentId: "", // Added Key and value for intialization by Rajdeep
-  departmentName: "",
-  departmentDescription: "",
-};
+const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleClose }) => {
 
-const validationSchema = Yup.object().shape({
-  departmentName: Yup.string().required("department name is required"),
-  departmentDescription: Yup.string().required("description is required"),
-});
+  const [departmentValue, setDepartmentValue] = useState({
+    departmentName: "",
+    isActive: true,
+    title: "",
+  });
 
-const AddDepartment: FC<Props> = ({
-  open,
-  handleClose,
-  refresh,
-  setRefresh,
-}) => {
-  const intl = useIntl();
-
-  const handleAdd = async (
-    value: DepartmentModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => {
+  const handleAdd = async ( value: typeof departmentValue,e:React.FormEvent<HTMLFormElement> ) => {
+    e.preventDefault();
+    const payload = {
+      departmentName:value.departmentName,
+      isActive:value.isActive,
+      titles:value.title.trim().length === 0 ? [] : [{language:translationLang,label:value.title}]
+    }
     try {
-      const response = await addDepartment(value);
+      const response = await addEditDepartment(payload);
       if (response.data.success) {
         toast.success(response.data.message);
         setRefresh(!refresh);
@@ -49,64 +35,59 @@ const AddDepartment: FC<Props> = ({
       }
     } catch (error) {
       console.log(error instanceof Error ? error.message : error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
-  return (
-    <CustomisedModal open={open} handleClose={handleClose}>
-      <Typography variant="h5" className="mb-5">
-        {intl.formatMessage({ id: "COMPANY_MASTER.ADD_DEPARTMENT" })}
-      </Typography>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          handleAdd(values, setSubmitting);
-        }}
-      >
-        {(formik) => (
-          <form onSubmit={formik.handleSubmit}>
-            <Stack spacing={2}>
-              <TextInput
-                label={intl.formatMessage({ id: "FORM.DEPARTMENT_NAME" })}
-                placeholder={intl.formatMessage({ id: "FORM.DEPARTMENT_NAME" })}
-                name="departmentName"
-                type="text"
-              />
-              <TextInput
-                label={intl.formatMessage({ id: "FORM.DESCRIPTION" })}
-                placeholder={intl.formatMessage({ id: "FORM.DESCRIPTION" })}
-                name="departmentDescription"
-                type="text"
-                multiline={true}
-              />
-            </Stack>
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setDepartmentValue({
+      ...departmentValue,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-            <Stack
-              direction={"row"}
-              spacing={1}
-              className="justify-content-end mt-5"
-            >
-              <CustomisedButton
-                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-                handleClick={handleClose}
-                variant="outlined"
-              />
-              <CustomisedButton
-                label={intl.formatMessage({
-                  id: "BUTTON.ADD",
-                })}
-                type="submit"
-                disabled={formik.isSubmitting}
-                loading={formik.isSubmitting}
-              />
-            </Stack>
-          </form>
-        )}
-      </Formik>
-    </CustomisedModal>
+  const handleSwitchChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    setDepartmentValue({
+      ...departmentValue,
+      isActive: checked,
+    });
+  };
+  return (
+    <form className="department-row" onSubmit={(e)=>handleAdd(departmentValue,e)}>
+      <TextField
+        value={departmentValue.departmentName}
+        onChange={handleChange}
+        name="departmentName"
+        required
+      />
+      <TextField
+        value={departmentValue.title}
+        onChange={handleChange}
+        name="title"
+      />
+      <Switch
+        checked={departmentValue.isActive}
+        onChange={handleSwitchChange}
+      />
+      <div className="d-flex align-items-center">
+        <IconButton
+          className="border-0"
+          type="submit"
+        >
+         <Check/>
+        </IconButton>
+        <IconButton
+          onClick={handleClose}
+          className="border-0"
+        >
+          <Close />
+        </IconButton>
+      </div>
+    </form>
   );
 };
 export { AddDepartment };

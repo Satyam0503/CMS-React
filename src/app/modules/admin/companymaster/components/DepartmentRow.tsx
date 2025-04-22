@@ -9,7 +9,7 @@ import clsx from "clsx";
 
 type Props = {
   departmentData: DepartmentModel;
-  handleDepartmentEdit: (department: DepartmentModel | null) => void;
+  setUpdatedDepartmentData: (department: DepartmentModel | null) => void;
   currentEditDepartment: string | null;
   setCurrentEditDepartment: React.Dispatch<React.SetStateAction<string | null>>;
   translationLanguage: string;
@@ -18,42 +18,36 @@ type Props = {
 export const DepartmentRow: FC<Props> = React.memo(
   ({
     departmentData,
-    handleDepartmentEdit,
+    setUpdatedDepartmentData,
     currentEditDepartment,
     setCurrentEditDepartment,
     translationLanguage,
   }) => {
     const { formatMessage } = useIntl();
-    const [department, setDepartment] =
-      useState<DepartmentModel>(departmentData);
+    const [department, setDepartment] = useState<DepartmentModel>(departmentData);
     const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
     const [isEdit, setEdit] = useState(false);
 
-    const translatedTitle =  department.titles.find((title) => title.language === translationLanguage)?.label ?? "";
-
-    console.log(translatedTitle);
-    
+    const translatedTitle = department.titles.find((title) => title.language === translationLanguage)?.label;
+   
 
     const handleChange = (
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
       if (e.target.name === "departmentTitle") {
-        const updatedDepartment = {
+        const updatedTitles = department.titles.findIndex(title=>title.language === translationLanguage) > -1 ? department.titles.map(title=>{
+          if(title.language === translationLanguage){
+            return {
+              ...title,
+              label: e.target.value
+            }
+          }
+          return title;
+        }) : [ ...department.titles, { language: translationLanguage, label: e.target.value }]; 
+        setDepartment({
           ...department,
-          titles:
-            department.titles.length === 0
-              ? [{ language: translationLanguage, label: e.target.value }]
-              : department.titles.map((title) => {
-                  if (title.language === translationLanguage) {
-                    return {
-                      ...title,
-                      label: e.target.value,
-                    };
-                  }
-                  return title;
-                }),
-        };       
-        setDepartment(updatedDepartment);
+          titles:updatedTitles
+        });
       }
       if(e.target.name === "departmentName"){
         setDepartment({
@@ -71,23 +65,25 @@ export const DepartmentRow: FC<Props> = React.memo(
       setEdit(false);
       setDepartment(departmentData);
       setCurrentEditDepartment(null);
-      handleDepartmentEdit(null);
+      setUpdatedDepartmentData(null);
     };
 
     const handleEdit = () => {
       setEdit(true);
       setCurrentEditDepartment(departmentData.departmentId!);
-      handleDepartmentEdit(null);
+      setUpdatedDepartmentData(null);
     };
 
     const handleSwitchChange = (
       event: React.ChangeEvent<HTMLInputElement>,
       checked: boolean
     ) => {
-      setDepartment({
+      const updatedDepartment = {
         ...department,
         isActive: checked,
-      });
+      }
+      setDepartment(updatedDepartment);
+      setUpdatedDepartmentData(updatedDepartment);
     };
 
     useEffect(() => {
@@ -97,6 +93,10 @@ export const DepartmentRow: FC<Props> = React.memo(
       }
     }, [currentEditDepartment]);
 
+    useEffect(()=>{
+      setDepartment(departmentData);
+    },[departmentData])
+    
     return (
       <>
         <Box className="department-row">
@@ -106,13 +106,13 @@ export const DepartmentRow: FC<Props> = React.memo(
                 value={department.departmentName}
                 onChange={handleChange}
                 name="departmentName"
-                onBlur={() => handleDepartmentEdit(department)}
+                onBlur={() => setUpdatedDepartmentData(department)}
               />
               <TextField
                 value={translatedTitle ?? ""}
                 onChange={handleChange}
                 name="departmentTitle"
-                onBlur={() => handleDepartmentEdit(department)}
+                onBlur={() => setUpdatedDepartmentData(department)}
               />
               <Switch
                 checked={department.isActive}

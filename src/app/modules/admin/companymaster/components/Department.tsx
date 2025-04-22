@@ -15,20 +15,19 @@ import { DepartmentModel } from "../../models";
 import { DepartmentRow } from "./DepartmentRow";
 import { languages } from "../../../../../utils/constant/Constant";
 import { toast } from "react-toastify";
+import { AddDepartment } from "./AddDeparment";
+import { Add } from "@mui/icons-material";
 
 const Departments = () => {
   const { formatMessage } = useIntl();
   const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [editedDeparment, setEditedDepartment] =
-    useState<DepartmentModel | null>(null);
-  const [currentEditDepartment, setCurrentEditDepartment] = useState<
-    string | null
-  >(null);
-  const [translationLang, setTranslationLang] = useState<string>(languages[1].lang);
+  const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
+  const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>(null);
+  const [translationLang, setTranslationLang] = useState<string>(languages[1].lang );
 
-  const handleDepartmentEdit = (department: DepartmentModel | null) => {
+  const setUpdatedDepartmentData = (department: DepartmentModel | null) => {
     setEditedDepartment(department);
   };
 
@@ -36,22 +35,23 @@ const Departments = () => {
     setCurrentEditDepartment(null);
     setEditedDepartment(null);
   };
-  
-  const handleEditDepartment =async  ()=>{
-    if(editedDeparment){
+
+  const handleEditDepartment = async () => {    
+    if (editedDeparment) {
       try {
         const response = await addEditDepartment(editedDeparment);
-        const {success,message}= response.data;
-        if(success){
+        const { success, message } = response.data;
+        if (success) {
           toast.success(message);
-          setRefresh(!refresh);
           setCurrentEditDepartment(null);
+          setEditedDepartment(null);
+          setRefresh(!refresh);
         }
       } catch (error) {
         console.log(error);
       }
     }
-  }
+  };
 
   useEffect(() => {
     const getAllDeps = async () => {
@@ -67,7 +67,7 @@ const Departments = () => {
     };
     getAllDeps();
   }, [refresh]);
-  
+
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -79,23 +79,23 @@ const Departments = () => {
           {departmentList.length}
         </Typography>
 
-        <FormControl sx={{minWidth: 200 }}>
+        <FormControl sx={{ minWidth: 200 }}>
           <InputLabel id="language-translation">
-            {formatMessage({id:"SELECT.LANGUAGE.TRANSLATE"})}
+            {formatMessage({ id: "SELECT.LANGUAGE.TRANSLATE" })}
           </InputLabel>
 
           <Select
-            label={formatMessage({id:"SELECT.LANGUAGE.TRANSLATE"})}
+            label={formatMessage({ id: "SELECT.LANGUAGE.TRANSLATE" })}
             labelId="language-translation"
             variant="outlined"
             value={translationLang}
-            onChange={(e)=>setTranslationLang(e.target.value)}
+            onChange={(e) => setTranslationLang(e.target.value)}
           >
             {languages.map((lang) => {
-              if(lang.lang === "en"){
-                return ;
+              if (lang.lang === "en") {
+                return;
               }
-              return <MenuItem value={lang.lang}>{lang.name}</MenuItem>
+              return <MenuItem value={lang.lang}>{lang.name}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -103,27 +103,28 @@ const Departments = () => {
 
       <Stack className="department-container">
         <Box className="department-row">
-          {[
-            "Department.Title",
-            "Department.Title2",
-            "Department.Status",
-          ].map((title) => (
-            <Typography variant="body1" className="fw-bolder">
-              {formatMessage({ id: title },{language:translationLang})}
-            </Typography>
-          ))}
+          {["Department.Title", "Department.Title2", "Department.Status"].map(
+            (title) => (
+              <Typography variant="body1" className="fw-bolder">
+                {formatMessage({ id: title }, { language: translationLang })}
+              </Typography>
+            )
+          )}
         </Box>
         {departmentList.map((department) => (
           <DepartmentRow
             key={department.departmentId}
             departmentData={department}
-            handleDepartmentEdit={handleDepartmentEdit}
+            setUpdatedDepartmentData={setUpdatedDepartmentData}
             currentEditDepartment={currentEditDepartment}
             setCurrentEditDepartment={setCurrentEditDepartment}
-            translationLanguage= {translationLang}
+            translationLanguage={translationLang}
           />
         ))}
-        {/* add button to add new department */}
+        {
+          isOpen && <AddDepartment translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
+        }
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/>  Add New</span>
         <Stack
           spacing={1}
           direction={"row"}
