@@ -40,6 +40,7 @@ export const AddUpdateCompanyInfo: FC = () => {
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value as string);
   };
+
   return (
     <>
       <Stack spacing={2}>
@@ -66,7 +67,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 <Typography variant="h6">Languages</Typography>
               </Stack>
               <Grid container spacing={1}>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                       Select Language
@@ -84,7 +85,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6} lg={4}>
                   {/* <Typography
                     variant="body1"
                     mb={1}
@@ -222,7 +223,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 }}
               />
             </Stack>
-            <Grid item xs={6} my={1}>
+            <Grid item xs={12} md={6} my={1}>
               <TextField
                 fullWidth
                 variant="standard"
@@ -232,7 +233,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 sx={{ color: colors.alpha.primary[500] }}
               />
             </Grid>
-            <Grid item xs={6} className="text-nowrap">
+            <Grid item xs={12} md={6} className="text-nowrap">
               <TextField
                 fullWidth
                 variant="standard"
@@ -249,16 +250,19 @@ export const AddUpdateCompanyInfo: FC = () => {
             <Typography variant="h5">Employee management</Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
-          <Stack width={"200px"} spacing={1}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              type="text"
-              id="outlined-required"
-              label="Primary Contact"
-              sx={{ color: colors.alpha.primary[500] }}
-            />
-            <Stack className="text-nowrap mt-4">
+          <Grid container spacing={1} flexDirection={"column"}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                type="text"
+                id="outlined-required"
+                label="Primary Contact"
+                sx={{ color: colors.alpha.primary[500] }}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={6} className="text-nowrap mt-4">
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">
                   Default import attribute
@@ -274,8 +278,8 @@ export const AddUpdateCompanyInfo: FC = () => {
                   <MenuItem value={20}>Emp Id</MenuItem>
                 </Select>
               </FormControl>
-            </Stack>
-          </Stack>
+            </Grid>
+          </Grid>
         </Box>
       </Stack>
     </>

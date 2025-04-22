@@ -1,82 +1,51 @@
 import * as React from "react";
-import { Theme, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import { Close } from "@mui/icons-material";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const languages = ["English", "french", "German"];
-
-function getStyles(name: string, language: readonly string[], theme: Theme) {
-  return {
-    fontWeight: language.includes(name)
-      ? theme.typography.fontWeightMedium
-      : theme.typography.fontWeightRegular,
-  };
-}
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export default function CustomSelectChip() {
-  const theme = useTheme();
-  const [language, setlanguage] = React.useState<string[]>([]);
-
-  const handleChange = (event: SelectChangeEvent<typeof language>) => {
-    const {
-      target: { value },
-    } = event;
-    setlanguage(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
-
   return (
-    <div>
-      <FormControl sx={{ width: "100%" }}>
-        <InputLabel id="demo-multiple-chip-label">
-          Select Application Language
-        </InputLabel>
-        <Select
-          labelId="demo-multiple-chip-label"
-          id="demo-multiple-chip"
-          multiple
-          value={language}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {languages.map((name) => (
-            <MenuItem
-              key={name}
-              value={name}
-              style={getStyles(name, language, theme)}
-            >
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+    <Autocomplete
+      multiple
+      id="checkboxes-tags-demo"
+      options={languages}
+      disableCloseOnSelect
+      getOptionLabel={(option) => option.title}
+      renderOption={(props, option, { selected }) => {
+        const { key, ...optionProps } = props;
+        return (
+          <li key={key} {...optionProps}>
+            <Checkbox
+              icon={icon}
+              checkedIcon={checkedIcon}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option.title}
+          </li>
+        );
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Select application languages"
+          placeholder="Languages"
+        />
+      )}
+    />
   );
 }
+
+const languages = [
+  { title: "English" },
+  { title: "French" },
+  { title: "German" },
+  { title: "Arabic" },
+  { title: "Hindi" },
+  { title: "Hebrew" },
+];
