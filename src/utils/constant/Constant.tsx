@@ -114,7 +114,8 @@ export const ServiceUrl = {
 
   // departments
   GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
-  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddDeparments`,
+  ADD_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddEditDepartment`, // Updated endpoint from AddDeparments to AddEditDepartment`,
+
 };
 
 export const languages = [
@@ -364,24 +365,6 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
     label: "EMPLOYEE.EMPID",
     minWidth: 60,
   },
-  // {
-  //   id: "action",
-  //   label: "Action",
-  //   align: "left",
-  //   build: (
-  //     row: EmployeeModel,
-  //     handleEmployeeEdit: (row: EmployeeModel) => void,
-  //     openConfirmationModal: (row: EmployeeModel) => void,
-  //     openViewModal: (row: EmployeeModel) => void
-  //   ) => (
-  //     <ActionComponent
-  //       row={row}
-  //       handleEdit={handleEmployeeEdit}
-  //       openConfirmationModal={openConfirmationModal}
-  //       openViewModal={openViewModal}
-  //     />
-  //   ),
-  // },
   {
     id: "name",
     label: "FORM.FULL_NAME",
@@ -1058,9 +1041,9 @@ export const SideBarTabList: SideBarTabListProps[] = [
         id: Modules.CompanyDetails,
         title: ModulesTitles.CompanyDetails,
         constant: ModulesName.CompanyDetails,
-        route: "/admin/company",
+        route: "/admin/companydetails",
         icon: <AdminPanelSettings />,
-      },
+      },  
     ],
   },
   {

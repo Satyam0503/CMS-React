@@ -6,14 +6,14 @@ import { IconButton } from "@mui/material";
 
 export default function LightDarkMode() {
   const [theme, setTheme] = useState("light");
-
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));                                   
   };
+
   return (
     <>
       <CustomIconButton

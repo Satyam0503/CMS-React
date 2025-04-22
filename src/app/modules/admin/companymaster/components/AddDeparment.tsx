@@ -18,6 +18,7 @@ interface Props {
 }
 
 const initialValues: DepartmentModel = {
+departmentId: "", // Added Key and value for intialization by Rajdeep
   departmentName: "",
   departmentDescription: "",
 };
@@ -33,9 +34,8 @@ const AddDepartment: FC<Props> = ({
   refresh,
   setRefresh,
 }) => {
-
   const intl = useIntl();
-  
+
   const handleAdd = async (
     value: DepartmentModel,
     setSubmitting: (isSubmitting: boolean) => void

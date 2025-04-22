@@ -77,7 +77,6 @@ export interface EmployeeModel {
 }
 export interface UserEducationModel {
   educationId?: string;
-  companyId?: string;
   userId: string;
   educationTitle: string;
   collegeName: string;
@@ -94,12 +93,10 @@ export type UserCertificationModel = {
   mode: string;
   userId?: string;
   certificationId?: string;
-  companyId?: string;
 };
 
-export type UserSkillsModel = {
+export type UserSkillsModel = BaseModel & {
   id: string;
-  companyId: string;
   userId: string;
   skills: string;
 };

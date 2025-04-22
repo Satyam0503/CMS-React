@@ -10,6 +10,8 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { UserSummaryModel } from "../../../../../utils/common_types";
 import { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
+import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
+import { ModulesName, Permission } from "../../../../../utils/enums";
 
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
@@ -17,8 +19,10 @@ export const UserSummary = () => {
   const [updatedSummary, setUpdatedSummary] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
-  const {formatMessage} = useIntl();
-  const {employeeid} = useParams()
+  const { formatMessage } = useIntl();
+  const { employeeid } = useParams();
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const handleClose = () => {
     setEdit(false);
@@ -28,7 +32,7 @@ export const UserSummary = () => {
     const payload = {
       summary: updatedSummary,
       summaryId: userSummary?.summaryId ?? "",
-      userId: currentUser.userId,
+      userId: employeeid ?? currentUser.userId,
     };
     try {
       const response = await updateEmployeeSummary(payload);
@@ -72,26 +76,33 @@ export const UserSummary = () => {
         {isEdit ? (
           <Stack direction={"row"} spacing={1}>
             <CustomisedButton
-              label={formatMessage({id:"BUTTON.CANCEL"})}
+              label={formatMessage({ id: "BUTTON.CANCEL" })}
               variant="outlined"
               handleClick={() => handleClose()}
             />
             <CustomisedButton
-              label={formatMessage({id:"BUTTON.UPDATE"})}
+              label={formatMessage({ id: "BUTTON.UPDATE" })}
               variant="contained"
               handleClick={handleUpdateSummary}
               disabled={updatedSummary.length === 0}
             />
           </Stack>
         ) : (
-          <CustomIconButton
-            tooltip="Edit"
-            icon={<Edit />}
-            handleClick={() => {
-              setEdit(true);
-              setUpdatedSummary(userSummary?.summary ?? "");
-            }}
-          />
+          <>
+            { (!employeeid  || checkPermissionForModulesFeatureAccess(
+              `${ModulesName.Employees}.${Permission.Edit}`,
+              userPermissions
+            ))  && (
+              <CustomIconButton
+                tooltip="Edit"
+                icon={<Edit />}
+                handleClick={() => {
+                  setEdit(true);
+                  setUpdatedSummary(userSummary?.summary ?? "");
+                }}
+              />
+            )}
+          </>
         )}
       </Stack>
       {isEdit ? (
@@ -100,14 +111,16 @@ export const UserSummary = () => {
           fullWidth
           multiline
           id="user_summary"
-          placeholder={formatMessage({id:"FORM.TYPE"})}
+          placeholder={formatMessage({ id: "FORM.TYPE" })}
           variant="outlined"
           value={updatedSummary}
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
         <Typography variant="body1">
-          {userSummary && userSummary.summary.trim().length >0 ? userSummary.summary : formatMessage({id:"USER.ADD_SUMMARY"}) }
+          {userSummary && userSummary.summary.trim().length > 0
+            ? userSummary.summary
+            : formatMessage({ id: "USER.ADD_SUMMARY" })}
         </Typography>
       )}
     </Card>

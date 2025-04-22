@@ -70,6 +70,7 @@ export const updateEmployeeDetails = async (payload: any) => {
 
 export const udpateEmployeeSkills = async (payload: {
   totalSkills: string;
+  userId: string;
 }) => {
   return postRequest<{ totalSkills: string }, ApiResponse>(
     ServiceUrl.UPDATE_EMPLOYEE_SKILLS,
@@ -124,14 +125,32 @@ export const updateProfilePicture = async (payload: FormData) => {
   );
 };
 
-export const deleteEmployeeEducation = async (educationId: string) => {
+export const deleteEmployeeEducation = async (
+  educationId: string,
+  userId: string = ""
+) => {
   return deleteRequest<ApiResponse>(
-    `${ServiceUrl.DELETE_EMPLOYEE_EDUCATION}?educationId=${educationId}`
+    `${ServiceUrl.DELETE_EMPLOYEE_EDUCATION}/${educationId}`,
+    {
+      data: userId,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   );
 };
 
-export const deleteEmployeeCertification = async (certificationId: string) => {
+export const deleteEmployeeCertification = async (
+  certificationId: string,
+  userId: string = ""
+) => {
   return deleteRequest<ApiResponse>(
-    `${ServiceUrl.DELETE_EMPLOYEE_CERTIFICATION}?certificationId=${certificationId}`
+    `${ServiceUrl.DELETE_EMPLOYEE_CERTIFICATION}/${certificationId}`,
+    {
+      data: userId,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   );
 };
