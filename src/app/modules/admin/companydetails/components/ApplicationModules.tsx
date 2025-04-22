@@ -1,5 +1,5 @@
-import { Grid, Stack, Switch, Typography } from "@mui/material";
-import React, { FC } from "react";
+import { Card, Stack, Switch, Typography } from "@mui/material";
+import { FC } from "react";
 
 import { useIntl } from "react-intl";
 
@@ -7,13 +7,12 @@ export const ApplicationModules: FC = () => {
   const intl = useIntl();
 
   return (
-    <Stack spacing={3} p={4}>
+    <Stack component={Card} spacing={3} p={4} my={6}>
       <Stack>
-        <Typography variant="h4" mb={1}>
-        {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.APPLICATIONS",
-            })}
-          
+        <Typography variant="h5" mb={1}>
+          {intl.formatMessage({
+            id: "COMPANY_DETAILS.TAB.APPLICATIONS",
+          })}
         </Typography>
         <Typography variant="body2">
           Select which application modules you want to be enabled for your
