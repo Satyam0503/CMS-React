@@ -53,12 +53,6 @@ export const CompanyInfo: FC = () => {
                   </Typography>
                   <Typography variant="body2">English, French</Typography>
                 </Grid>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="body1" color={colors.alpha.primary[500]}>
-                    Survey Language
-                  </Typography>
-                  <Typography variant="body2">English, French</Typography>
-                </Grid>
               </Grid>
             </Stack>
 

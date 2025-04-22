@@ -47,7 +47,9 @@ export default function CustomSelectChip() {
   return (
     <div>
       <FormControl sx={{ width: "100%" }}>
-        <InputLabel id="demo-multiple-chip-label">Select Language</InputLabel>
+        <InputLabel id="demo-multiple-chip-label">
+          Select Application Language
+        </InputLabel>
         <Select
           labelId="demo-multiple-chip-label"
           id="demo-multiple-chip"
