@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Card,
   Divider,
@@ -12,6 +13,7 @@ import React, { FC } from "react";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { colors } from "../../../theme/MuiTheme";
+import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 
 export const CompanyInfo: FC = () => {
   const intl = useIntl();
@@ -24,7 +26,7 @@ export const CompanyInfo: FC = () => {
       <Box component={Card} p={3}>
         <Stack>
           <Typography variant="h4" mb={1}>
-            {intl.formatMessage({
+          {intl.formatMessage({
               id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION",
             })}
           </Typography>

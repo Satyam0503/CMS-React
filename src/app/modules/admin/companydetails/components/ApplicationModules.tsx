@@ -1,5 +1,6 @@
-import { Grid, Stack, Switch, Typography } from "@mui/material";
-import React, { FC } from "react";
+import { Card, Stack, Switch, Typography } from "@mui/material";
+import { FC } from "react";
+
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 
@@ -13,19 +14,18 @@ export const ApplicationModules: FC = () => {
   };
 
   return (
-    <>
-      <Stack spacing={3} p={4}>
-        <Stack>
-          <Typography variant="h4" mb={1}>
-            {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.APPLICATIONS",
-            })}
-          </Typography>
-          <Typography variant="body2">
-            Select which application modules you want to be enabled for your
-            company.
-          </Typography>
-        </Stack>
+    <Stack component={Card} spacing={3} p={4} my={6}>
+      <Stack>
+        <Typography variant="h5" mb={1}>
+          {intl.formatMessage({
+            id: "COMPANY_DETAILS.TAB.APPLICATIONS",
+          })}
+        </Typography>
+        <Typography variant="body2">
+          Select which application modules you want to be enabled for your
+          company.
+        </Typography>
+      </Stack>
 
         <Stack direction="row" spacing={1} alignItems={"center"}>
           <Stack>
