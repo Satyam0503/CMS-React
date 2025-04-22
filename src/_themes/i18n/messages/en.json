@@ -469,7 +469,7 @@
 
   "Department.Title":"Title",
   "Department.Status":"Status",
-  "Department.Description":"Description",
+  "Department.Title2":"Title ({language})",
   "Department.Delete":"Delete Department",
   "Department.Delete.Alert":"Are You Sure?",
 
@@ -497,6 +497,7 @@
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
 
+  "SELECT.LANGUAGE.TRANSLATE":"Select language to translate",
 
   "MESSAGE.DEPARTMENT.NO_DEPARTMENTS":"Please add departments",
 

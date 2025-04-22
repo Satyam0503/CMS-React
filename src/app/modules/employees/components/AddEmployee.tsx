@@ -26,6 +26,7 @@ import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { GetAllEmployeeResponseModel } from "../models";
 import { statusEncoder } from "../../../../utils/common";
 import { addEmployee } from "../employeeServices";
+import { useLang } from "../../../../_themes/i18n/Metronici18n";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
@@ -61,6 +62,7 @@ interface PropsTypes {
 }
 
 export const AddEmployee = (props: PropsTypes) => {
+  const currentLanguage=  useLang();
   const { open, handleClose, employeeList,refresh,setRefresh } = props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
@@ -95,12 +97,10 @@ export const AddEmployee = (props: PropsTypes) => {
       .then((res) => {
         setRoles(res[0].data.methodResults);
         if (res[1].data.totalRecords === 0) {
-          toast.error(
-            formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" })
-          );
+          toast.error( formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" }));
           handleClose();
         } else {
-          setDepartmentList(res[1].data.methodResults);
+          setDepartmentList(res[1].data.methodResults.filter(dep=>dep.isActive));
         }
       })
       .catch((err) => {
@@ -268,7 +268,7 @@ export const AddEmployee = (props: PropsTypes) => {
                             key={dep.departmentId}
                             value={dep.departmentId}
                           >
-                            {dep.departmentName}
+                            {dep.titles.length === 0 ? dep.departmentName : dep.titles.find(title=>title.language === currentLanguage)?.label ?? dep.departmentName}
                           </MenuItem>
                         ))}
                       </SelectInput>

@@ -25,7 +25,13 @@ export interface AddEditRoleModel {
 export interface DepartmentModel {
   departmentId?:string;
   departmentName: string;
-  departmentDescription: string;
+  titles: MultilingualModel[]
+  isActive:boolean;
+}
+
+export interface MultilingualModel {
+  language :string;
+  label :string;
 }
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
