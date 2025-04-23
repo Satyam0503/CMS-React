@@ -3,16 +3,20 @@ import { CustomIconButton } from "../../../../../app/shared/components/CustomIco
 import { useEffect, useState } from "react";
 import { setColorsAsCSSVariables } from "../../../../../app/modules/theme/MuiTheme";
 import { IconButton } from "@mui/material";
+import { useThemeContext } from "../../../../../app/Context/ThemeContext";
+
 
 export default function LightDarkMode() {
   const [theme, setTheme] = useState("light");
+  const { toggleTheme } = useThemeContext();
+
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));                                   
-  };
+  // const toggleTheme = () => {
+  //   setTheme((prev) => (prev === "light" ? "dark" : "light"));                                   
+  // };
 
   return (
     <>

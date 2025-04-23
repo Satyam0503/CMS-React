@@ -521,10 +521,10 @@ export const DarkTheme = createTheme({
         },
 
         contained: {
-          backgroundColor: colors.alpha.primary[500],
+          backgroundColor: colors.alpha.secondary[500],
           color: colors.alpha.white[500],
           "&:hover, &.MuiSelected": {
-            backgroundColor: colors.alpha.primary[800],
+            backgroundColor: colors.alpha.secondary[800],
             color: colors.alpha.white[500],
           },
         },
