@@ -12,50 +12,30 @@ import { useParams } from "react-router-dom";
 import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
+import { SkillModel } from "../../models";
 
 export const UserSkills = () => {
   const intl = useIntl();
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const { userSkills: skills, updateUserSkills } = useUserDetails();
+  const { updateTotalSkills } = useUserDetails();
   const employeeId  = useParams().employeeid;
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) || [];
-
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
+  const [userSkills,setUserSkills]= useState<SkillModel[]>([]);
+ 
   useEffect(() => {
     getEmployeeSkills(employeeId ?? "")
       .then((response) => {
         const { success, methodResult } = response.data;
         if (success) {
-          if (!methodResult.skills.trim().length) {
-            updateUserSkills([]);
-          } else {
-            updateUserSkills(methodResult.skills.split(","));
-          }
+            setUserSkills(methodResult.skills);
+            updateTotalSkills(methodResult.skills.length);
         }
       })
       .catch((error) => {
         toast.error(error.message);
       });
   }, [refresh]);
-
-  async function handleSkillUpdate(skills: string[]) {
-    try {
-      const response = await udpateEmployeeSkills({
-        totalSkills: skills.join(","),
-        userId: employeeId ?? "",
-      });
-      const { message, success } = response.data;
-      if (success) {
-        toast.success(message);
-        setRefresh(!refresh);
-      }
-    } catch (error) {
-      toast.error((error as AxiosError).message);
-    } finally {
-      setOpen(false);
-    }
-  }
  
   return (
     <Card sx={{ p: 2 }}>
@@ -78,12 +58,12 @@ export const UserSkills = () => {
       </Stack>
 
       <Stack direction="row" gap={1} flexWrap={"wrap"}>
-        {skills?.length === 0 ? (
+        {userSkills?.length === 0 ? (
           <Typography variant="body2">
             {intl.formatMessage({ id: "ADD.SKILLS" })}
           </Typography>
         ) : (
-          skills?.map((skill, index) => <Chip key={index} label={skill} />)
+          userSkills?.map((skill, index) => <Chip key={index} label={skill.name} />)
         )}
       </Stack>
 
@@ -91,8 +71,9 @@ export const UserSkills = () => {
         <AddUpdateSkills
           open={open}
           setOpen={setOpen}
-          userSkills={skills}
-          handleSkillUpdate={handleSkillUpdate}
+          userSkills={userSkills}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
       )}
     </Card>

@@ -84,7 +84,7 @@ export const ServiceUrl = {
   ADD_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/AddEmployeeCertification`,
 
   UPDATE_EMPLOYEE_SUMMARY: `${BaseUrl}/api/User/AddEditEmployeeSummary`,
-  UPDATE_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddSkills`,
+  ADD_EDIT_EMPLOYEE_SKILLS: `${BaseUrl}/api/User/AddEditEmpSkills`,
   UPDATE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/EditEmployeeCertification`,
   UPDATE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/EditEmployeeEducation`,
 
@@ -116,6 +116,11 @@ export const ServiceUrl = {
   GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
   ADD_EDIT_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddEditDepartment`,
   DELETE_DEPARTMENT:`${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
+
+  // skills
+
+  GET_SKILLS_LIST:`${BaseUrl}/api/User/GetSuggestedSkills`,
+  ADD_SKILL:`${BaseUrl}/api/User/AddSkill`,
 };
 
 export const languages = [

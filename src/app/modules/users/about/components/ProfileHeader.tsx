@@ -9,7 +9,7 @@ import { useIntl } from "react-intl"
 
 export const ProfileHeader = ()=>{
 const companyName = useAppSelector(state=>state.user.userData?.companyName);
-const {userDetails,userSkills} = useUserDetails();
+const {userDetails,totalSkills} = useUserDetails();
 const {formatMessage}= useIntl();
  return (
     <Stack
@@ -46,7 +46,7 @@ const {formatMessage}= useIntl();
           iconBg={colors.alpha.danger[100]}
           icon={<Build fontSize="large" />}
           iconColor={colors.alpha.danger[400]}
-          number={userSkills.length}
+          number={totalSkills}
           title={formatMessage({id:"PROFILE.SKILLS_HOLDER"})}
         />
       </Box>

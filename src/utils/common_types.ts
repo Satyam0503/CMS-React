@@ -95,11 +95,7 @@ export type UserCertificationModel = {
   certificationId?: string;
 };
 
-export type UserSkillsModel = BaseModel & {
-  id: string;
-  userId: string;
-  skills: string;
-};
+
 
 export type HolidayType = {
   id: string;
@@ -226,7 +222,6 @@ export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
-export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
