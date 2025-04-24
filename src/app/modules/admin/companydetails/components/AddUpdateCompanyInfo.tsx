@@ -27,6 +27,8 @@ import { SelectInput } from "../../../../shared/components/form-component/Select
 import { TagFacesOutlined } from "@mui/icons-material";
 import { Days } from "../../../../../utils/constant/Constant";
 import CustomSelectChip from "../../../../shared/components/CustomSelectChip";
+import { useNavigate } from "react-router-dom";
+
 
 const ListItem = styled("li")(({ theme }) => ({
   margin: theme.spacing(0.5),
@@ -36,6 +38,7 @@ export const AddUpdateCompanyInfo: FC = () => {
 
   const intl = useIntl();
   const [language, setLanguage] = React.useState("");
+  const navigate = useNavigate();
 
   const handleChange = (event: SelectChangeEvent) => {
     setLanguage(event.target.value as string);
@@ -52,7 +55,7 @@ export const AddUpdateCompanyInfo: FC = () => {
           pt={2}
           spacing={1}
         >
-          <CustomisedButton variant="outlined" label="Cancel" />
+          <CustomisedButton variant="outlined" label="Cancel" handleClick={()=>navigate("../companyinfo")}  />
           <CustomisedButton variant="contained" label="Update" />
         </Stack>
         <Box component={Card} p={3}>

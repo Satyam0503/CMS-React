@@ -27,11 +27,15 @@ const ThemeContext = createContext<ThemeContextType>(defaultValue);
 export const useThemeContext = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState("light");
-//   const [mode, setMode] = useState(()=> localStorage.getItem('themMode') || 'light');
+
+  const [mode, setMode] = useState(()=> localStorage.getItem('themeMode') || 'light');
 
   const toggleTheme = () => {
-    setMode((prev) => (prev == "light" ? "dark" : "light"));
+    setMode((prev) => {
+      const newMode = (prev == "light" ? "dark" : "light");
+      localStorage.setItem('themeMode',newMode);
+      return newMode;
+    });
   };
 
   const theme: Theme = useMemo(() => (mode == "light" ? MuiTheme : DarkTheme), [mode]);
