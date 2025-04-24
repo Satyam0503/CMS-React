@@ -10,6 +10,7 @@ import {
 } from "@mui/icons-material";
 import {
   Avatar,
+  Box,
   FilledInput,
   FormControl,
   IconButton,
@@ -23,6 +24,7 @@ import {
 
 import { relative } from "path";
 import { colors } from "../../../../../app/modules/theme/MuiTheme";
+import { wrap } from "module";
 
 type Props = {
   isDrawer?: boolean;
@@ -39,36 +41,38 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
         justifyContent={"space-between"}
         spacing={2}
       >
-        <Stack spacing={2} overflow={"visible"} minHeight={"83vh"}>
-          <Stack spacing={2}>
-            <Stack direction={"row"} spacing={2}>
-              <Stack width={"120px"}>
+        <Stack spacing={2} minHeight={"83vh"} py={4}>
+          <Stack spacing={0.5}>
+            <Stack direction={"row"} spacing={1} alignItems={"center"}>
+              <Box width="40px" height="40px">
                 <Avatar
                   alt="profile picture"
-                  src="media/avatars/300-1.jpg"
+                  src="media/avatars/300-6.jpg"
                   sx={{
                     width: "100%",
                     height: "100%",
+                    position: "relative",
                   }}
                 />
-              </Stack>
+              </Box>
               <Stack
                 bgcolor={colors.alpha.primary[300]}
                 flexWrap={"wrap"}
-                borderRadius={0.5}
-                p={2}
+                borderRadius={8}
+                p={1.5}
+                textAlign={"center"}
               >
-                <Typography variant="body1">
-                  Hey Prachi, I just finished the code for the new feature. Do
-                  you have a moment to review it?
+                <Typography variant="body1" className="text-wrap">
+                  Hey Prachi, I just finished the code for the new feature.
                 </Typography>
               </Stack>
             </Stack>
             <Stack
               bgcolor={colors.alpha.primary[100]}
               flexWrap={"wrap"}
-              borderRadius={0.5}
-              p={2}
+              borderRadius={8}
+              p={1.5}
+              textAlign={"justify"}
             >
               <Typography variant="body1">
                 Hey Prachi, I just finished the code for the new feature. Do you
@@ -76,46 +80,37 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Typography>
             </Stack>
           </Stack>
-          <Stack spacing={2}>
-            <Stack direction={"row"} spacing={2}>
+          <Stack spacing={0.5}>
+            <Stack direction={"row"} spacing={1} alignItems={"center"}>
               <Stack
                 bgcolor={colors.alpha.primary[300]}
                 flexWrap={"wrap"}
-                borderRadius={0.5}
-                p={2}
+                borderRadius={8}
+                p={1.5}
+                textAlign={"center"}
               >
-                <Typography variant="body1">
-                  Hey Prachi, I just finished the code for the new feature. Do
-                  you have a moment to review it?
+                <Typography variant="body1" className="text-wrap">
+                  Hey Prachi, I just finished the code for the new feature.
                 </Typography>
               </Stack>
-              <Stack width={"120px"}>
+              <Box width="40px" height="40px">
                 <Avatar
                   alt="profile picture"
                   src="media/avatars/300-1.jpg"
                   sx={{
                     width: "100%",
                     height: "100%",
+                    position: "relative",
                   }}
                 />
-              </Stack>
+              </Box>
             </Stack>
             <Stack
               bgcolor={colors.alpha.primary[100]}
               flexWrap={"wrap"}
-              borderRadius={0.5}
-              p={2}
-            >
-              <Typography variant="body1">
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
-              </Typography>
-            </Stack>
-            <Stack
-              bgcolor={colors.alpha.primary[100]}
-              flexWrap={"wrap"}
-              borderRadius={0.5}
-              p={2}
+              borderRadius={8}
+              p={1.5}
+              textAlign={"justify"}
             >
               <Typography variant="body1">
                 Hey Prachi, I just finished the code for the new feature. Do you
@@ -142,11 +137,11 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
             />
           </FormControl>
           {/* 
-          <Stack direction={"row"} justifyContent={"flex-end"}>
-            <CustomIconButton icon={<AttachFile />} tooltip="Attach file" />
-            <CustomIconButton icon={<Upload />} tooltip="Upload" />
-            <CustomisedButton variant="contained" type="button" label="Send" />
-          </Stack> */}
+     <Stack direction={"row"} justifyContent={"flex-end"}>
+      <CustomIconButton icon={<AttachFile />} tooltip="Attach file" />
+      <CustomIconButton icon={<Upload />} tooltip="Upload" />
+      <CustomisedButton variant="contained" type="button" label="Send" />
+     </Stack> */}
         </Stack>
       </Stack>
     </>

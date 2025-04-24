@@ -26,7 +26,7 @@ export default function ChatDrawer() {
 
   const DrawerList = (
     <Box
-      sx={{ width: { xs: "250px", md: "500px" }, p: 2 }}
+      sx={{ width: { xs: "300px", md: "500px" }, p: 2 }}
       role="presentation"
       onClick={toggleDrawer(false)}
     >

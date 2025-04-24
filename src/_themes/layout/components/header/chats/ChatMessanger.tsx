@@ -22,7 +22,7 @@ export default function ChatMessenger() {
           display={"flex"}
           justifyContent={"space-between"}
         >
-          <Stack>
+          <Stack spacing={1}>
             <Link href="#">
               <Typography variant="h5">Brian Cox</Typography>
             </Link>
@@ -32,8 +32,7 @@ export default function ChatMessenger() {
             </Stack>
           </Stack>
 
-          <Stack direction={"row"} spacing={1}>
-            <CustomIconButton icon={<MoreHoriz />} />
+          <Stack direction={"row"}>
             <CustomIconButton icon={<Close />} />
           </Stack>
         </Stack>
