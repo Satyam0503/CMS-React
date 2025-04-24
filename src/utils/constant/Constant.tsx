@@ -910,39 +910,6 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const DepartmentTableColumnList: ColumnListTypes[] = [
-  {
-    id: "serialNo",
-    label: "Table.S_No",
-    minWidth: 60,
-  },
-  {
-    id: "departmentName",
-    label: "Department.Name",
-    minWidth: 200,
-  },
-  {
-    id: "departmentDescription",
-    label: "Department.Description",
-    minWidth: 200,
-  },
-  {
-    id: "action",
-    label: "Table.Column.Action",
-    build: (
-      row: DepartmentModel,
-      handleJobEdit: (row: DepartmentModel) => void,
-      openDeleteModal: (row: DepartmentModel) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-      />
-    ),
-  },
-];
-
 export const SideBarTabList: SideBarTabListProps[] = [
   {
     id: Modules.Dashboard,

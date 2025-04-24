@@ -471,10 +471,10 @@
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
 
-  "Department.Title":"Title",
-  "Department.Status":"Status",
-  "Department.Title2":"Title ({language})",
-  "Department.Delete":"Delete Department",
+  "Attribute.Title":"Title ({language})",
+  "Attribute.Title2":"Title ({language})",
+  "Attribute.Status":"Status",
+  "Attribute.Delete":"Delete {attributeName}",
   "Department.Delete.Alert":"Are You Sure?",
 
   "COMPANY_MASTER.TAB.DEPARTMENT": "Departments",
@@ -525,5 +525,6 @@
 
   "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully",
   "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access",
-  "NOT_AVAILABLE":"NA"
+  "NOT_AVAILABLE":"NA",
+  "TRANSLATION_MISSING":"Translation Missing"
 }

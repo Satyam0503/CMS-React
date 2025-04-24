@@ -12,11 +12,12 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useEffect, useState } from "react";
 import { addEditDepartment, getAllDepartments } from "../../adminservices";
 import { DepartmentModel } from "../../models";
-import { DepartmentRow } from "./DepartmentRow";
+import { AttributeItemRow } from "./AttributeItemRow";
 import { languages } from "../../../../../utils/constant/Constant";
 import { toast } from "react-toastify";
-import { AddDepartment } from "./AddDeparment";
+import { AddNewAttributeItem } from "./AddNewAttributeItem";
 import { Add } from "@mui/icons-material";
+import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 
 const Departments = () => {
   const { formatMessage } = useIntl();
@@ -26,6 +27,7 @@ const Departments = () => {
   const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
   const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>(null);
   const [translationLang, setTranslationLang] = useState<string>(languages[1].lang );
+  const currentLang = useLang();
 
   const setUpdatedDepartmentData = (department: DepartmentModel | null) => {
     setEditedDepartment(department);
@@ -68,7 +70,7 @@ const Departments = () => {
     };
     getAllDeps();
   }, [refresh]);
-
+  
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -93,7 +95,7 @@ const Departments = () => {
             onChange={(e) => setTranslationLang(e.target.value)}
           >
             {languages.map((lang) => {
-              if (lang.lang === "en") {
+              if (lang.lang === currentLang) {
                 return;
               }
               return <MenuItem key={lang.id} value={lang.lang}>{lang.name}</MenuItem>;
@@ -104,28 +106,32 @@ const Departments = () => {
 
       <Stack className="department-container">
         <Box className="department-row">
-          {["Department.Title", "Department.Title2", "Department.Status"].map(
-            (title) => (
               <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: title }, { language: translationLang })}
+                {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang=>lang.lang===currentLang)?.name })}
               </Typography>
-            )
-          )}
+              <Typography variant="body1" className="fw-bolder">
+                {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang=>lang.lang===translationLang)?.name })}
+              </Typography>
+              <Typography variant="body1" className="fw-bolder">
+                {formatMessage({ id: "Attribute.Status" })}
+              </Typography>
         </Box>
+
         {departmentList.map((department) => (
-          <DepartmentRow
+          <AttributeItemRow
             key={department.departmentId}
-            departmentData={department}
-            setUpdatedDepartmentData={setUpdatedDepartmentData}
-            currentEditDepartment={currentEditDepartment}
-            setCurrentEditDepartment={setCurrentEditDepartment}
+            itemData={department}
+            setUpdatedItemData={setUpdatedDepartmentData}
+            currentActiveItem={currentEditDepartment}
+            setCurrentActiveItem={setCurrentEditDepartment}
             translationLanguage={translationLang}
             refresh={refresh}
             setRefresh={setRefresh}
           />
         ))}
+
         {
-          isOpen && <AddDepartment translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
+          isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
         }
         <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/>  Add New</span>
         <Stack
