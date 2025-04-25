@@ -13,7 +13,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import { ThemeProvider, useThemeContext } from "./Context/ThemeContext";
 
 const App = () => {
-  const { theme, mode } = useThemeContext();
+  const { theme} = useThemeContext();
 
   return (
     // <ThemeProvider>
@@ -21,12 +21,12 @@ const App = () => {
         <Suspense fallback={<LayoutSplashScreen />}>
           <I18nProvider>
             <LayoutProvider>
-              <ThemeModeProvider>
+              {/* <ThemeModeProvider> */}
                 <AuthInit>
                   <Outlet />
                   <MasterInit />
                 </AuthInit>
-              </ThemeModeProvider>
+              {/* </ThemeModeProvider> */}
             </LayoutProvider>
           </I18nProvider>
           <ToastContainer

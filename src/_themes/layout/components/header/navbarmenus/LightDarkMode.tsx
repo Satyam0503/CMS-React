@@ -8,7 +8,7 @@ import { useThemeContext } from "../../../../../app/Context/ThemeContext";
 
 export default function LightDarkMode() {
   const [theme, setTheme] = useState("light");
-  const { toggleTheme } = useThemeContext();
+  const { toggleTheme, mode } = useThemeContext();
 
   useEffect(() => {
     document.body.className = theme;
@@ -27,8 +27,8 @@ export default function LightDarkMode() {
         style={{
           border: "none",
           cursor: "pointer",
-          backgroundColor: theme === "light" ? "#ffff" : "#333",
-          color: theme === "light" ? "#000" : "#fff",
+          backgroundColor:  mode === "light" ? "#ffff" : "#333",
+          color: mode === "light" ? "#000" : "#fff",
         }}
       />
     </>
