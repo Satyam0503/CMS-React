@@ -21,13 +21,13 @@ import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 
 const Departments = () => {
   const { formatMessage } = useIntl();
+  const currentLang = useLang();
   const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
   const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>(null);
-  const [translationLang, setTranslationLang] = useState<string>(languages[1].lang );
-  const currentLang = useLang();
+  const [translationLang, setTranslationLang] = useState<string>(languages.find(lang =>lang.lang !== currentLang)?.lang!);
 
   const setUpdatedDepartmentData = (department: DepartmentModel | null) => {
     setEditedDepartment(department);
@@ -133,7 +133,7 @@ const Departments = () => {
         {
           isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
         }
-        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/>  Add New</span>
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/> {formatMessage({id:"Attribute.Add_New"})} </span>
         <Stack
           spacing={1}
           direction={"row"}

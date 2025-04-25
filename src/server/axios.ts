@@ -1,13 +1,15 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { AUTH_LOCAL_STORAGE_KEY } from "../app/modules/auth";
 import { toast } from "react-toastify";
+import { getConfig } from "../_themes/i18n/Metronici18n";
 
-// using interceptors to automatically set token for each request
+// using interceptors to automatically set token and current Language for each request
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
       ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
       : "";
+    config.headers["Accept-Language"] = getConfig().selectedLang;    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {

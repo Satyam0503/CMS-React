@@ -14,6 +14,9 @@ export const SidebarMenuMain = () => {
   const userModulePermission = modulePermission ?? [];
 
   const filteredTabList = SideBarTabList.map((tab) => {
+    if(tab.isDefault){
+      return tab;
+    }
     if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         checkPermissionForModulesFeatureAccess(

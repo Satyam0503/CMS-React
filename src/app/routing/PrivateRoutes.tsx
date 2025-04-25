@@ -41,9 +41,7 @@ const PrivateRoutes = () => {
           path="profile/*"
           element={
             <SuspensedView>
-              <ProtectedRoute module={ModulesName.MyProfile}>
                 <Profile />
-              </ProtectedRoute>
             </SuspensedView>
           }
         />

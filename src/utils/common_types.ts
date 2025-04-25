@@ -187,6 +187,7 @@ export interface SideBarTabListProps {
   icon: JSX.Element;
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
+  isDefault:boolean;
 }
 
 export interface FiltersType {

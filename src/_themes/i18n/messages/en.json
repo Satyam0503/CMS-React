@@ -475,6 +475,7 @@
   "Attribute.Title2":"Title ({language})",
   "Attribute.Status":"Status",
   "Attribute.Delete":"Delete {attributeName}",
+  "Attribute.Add_New":"Add New",
   "Department.Delete.Alert":"Are You Sure?",
 
   "COMPANY_MASTER.TAB.DEPARTMENT": "Departments",
