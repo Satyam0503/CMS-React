@@ -3,6 +3,7 @@ import { IconButton, Switch, TextField } from "@mui/material";
 import { toast } from "react-toastify";
 import { addEditDepartment } from "../../adminservices";
 import { Check, Close } from "@mui/icons-material";
+import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 
 interface Props {
   translationLang: string;
@@ -11,20 +12,19 @@ interface Props {
   handleClose:()=>void;
 }
 
-const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleClose }) => {
-
-  const [departmentValue, setDepartmentValue] = useState({
-    departmentName: "",
+const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh,handleClose }) => {
+  const currentLang = useLang();
+  const [newAttributeValue, setNewAttributeValue] = useState({
     isActive: true,
-    title: "",
+    currentLangTitle:"",
+    translationTitle: "",
   });
 
-  const handleAdd = async ( value: typeof departmentValue,e:React.FormEvent<HTMLFormElement> ) => {
+  const handleAdd = async ( value: typeof newAttributeValue,e:React.FormEvent<HTMLFormElement> ) => {
     e.preventDefault();
     const payload = {
-      departmentName:value.departmentName,
       isActive:value.isActive,
-      titles:value.title.trim().length === 0 ? [] : [{language:translationLang,label:value.title}]
+      titles:[{language:translationLang,label:value.translationTitle},{language:currentLang,label:value.currentLangTitle}]
     }
     try {
       const response = await addEditDepartment(payload);
@@ -41,8 +41,8 @@ const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleC
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setDepartmentValue({
-      ...departmentValue,
+    setNewAttributeValue({
+      ...newAttributeValue,
       [e.target.name]: e.target.value,
     });
   };
@@ -51,26 +51,27 @@ const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleC
     event: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
   ) => {
-    setDepartmentValue({
-      ...departmentValue,
+    setNewAttributeValue({
+      ...newAttributeValue,
       isActive: checked,
     });
   };
   return (
-    <form className="department-row" onSubmit={(e)=>handleAdd(departmentValue,e)}>
+    <form className="department-row" onSubmit={(e)=>handleAdd(newAttributeValue,e)}>
       <TextField
-        value={departmentValue.departmentName}
+        value={newAttributeValue.currentLangTitle}
         onChange={handleChange}
-        name="departmentName"
+        name="currentLangTitle"
         required
       />
       <TextField
-        value={departmentValue.title}
+        value={newAttributeValue.translationTitle}
         onChange={handleChange}
-        name="title"
+        name="translationTitle"
+        required
       />
       <Switch
-        checked={departmentValue.isActive}
+        checked={newAttributeValue.isActive}
         onChange={handleSwitchChange}
       />
       <div className="d-flex align-items-center gap-2">
@@ -90,4 +91,4 @@ const AddDepartment: FC<Props> = ({ translationLang, refresh, setRefresh,handleC
     </form>
   );
 };
-export { AddDepartment };
+export { AddNewAttributeItem };

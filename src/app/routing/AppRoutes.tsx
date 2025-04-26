@@ -5,17 +5,12 @@ import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";
-import { findUserDefaultTab } from "../../utils/common";
 import ApplyNow from "../modules/applynow/ApplyNow";
 
 const { BASE_URL } = import.meta.env;
 
 const AppRoutes: FC = () => {
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
-  const modulePermissions = useAppSelector(
-    (state) => state.user.userData?.modulePermission
-  ) ?? [];
-
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
@@ -30,7 +25,7 @@ const AppRoutes: FC = () => {
               <Route
                 index
                 element={
-                  <Navigate to={findUserDefaultTab(modulePermissions)} />
+                  <Navigate to={"/dashboard"} />
                 }
               />
             </>

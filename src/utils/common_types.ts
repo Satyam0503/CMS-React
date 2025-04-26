@@ -95,11 +95,7 @@ export type UserCertificationModel = {
   certificationId?: string;
 };
 
-export type UserSkillsModel = BaseModel & {
-  id: string;
-  userId: string;
-  skills: string;
-};
+
 
 export type HolidayType = {
   id: string;
@@ -191,6 +187,7 @@ export interface SideBarTabListProps {
   icon: JSX.Element;
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
+  isDefault:boolean;
 }
 
 export interface FiltersType {
@@ -226,7 +223,6 @@ export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
-export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 

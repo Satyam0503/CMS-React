@@ -10,7 +10,7 @@ const initialState: Props = {
   selectedLang: 'en',
 }
 
-function getConfig(): Props {
+export function getConfig(): Props {
   const ls = localStorage.getItem(I18N_CONFIG_KEY)
   if (ls) {
     try {

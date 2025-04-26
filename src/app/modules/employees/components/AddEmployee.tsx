@@ -9,7 +9,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmployeeModel } from "../../../../utils/common_types";
 import { Gender, bloodGroups } from "../../../../utils/constant/Constant";
@@ -268,7 +268,7 @@ export const AddEmployee = (props: PropsTypes) => {
                             key={dep.departmentId}
                             value={dep.departmentId}
                           >
-                            {dep.titles.length === 0 ? dep.departmentName : dep.titles.find(title=>title.language === currentLanguage)?.label ?? dep.departmentName}
+                            {dep.titles.find(title=>title.language === currentLanguage)?.label ?? <FormattedMessage id={"TRANSLATION_MISSING"}/>}
                           </MenuItem>
                         ))}
                       </SelectInput>
