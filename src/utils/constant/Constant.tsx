@@ -31,7 +31,9 @@ import {
   CalendarMonth,
   ColorLens,
   Contacts,
+  Info,
   Mail,
+  NoteAlt,
   PermContactCalendar,
   Person,
   PersonSearch,
@@ -67,6 +69,7 @@ export const ServiceUrl = {
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
   GET_ROLE_BY_ID: `${BaseUrl}/api/Roles/GetRoleById`,
   CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
+  UPDATE_MODULE_ACCESS:`${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -1019,7 +1022,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.CompanyDetails,
         constant: ModulesName.CompanyDetails,
         route: "/admin/companydetails",
-        icon: <AdminPanelSettings />,
+        icon: <Info />,
         isDefault:false,
       },  
     ],
@@ -1037,7 +1040,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     constant: ModulesName.NoticeBoard,
     title: ModulesTitles.NoticeBoard,
     route: "/noticeboard",
-    icon: <AdminPanelSettings />,
+    icon: <NoteAlt />,
     isDefault:false,
   },
 ];

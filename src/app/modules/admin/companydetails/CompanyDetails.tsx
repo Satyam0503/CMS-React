@@ -15,8 +15,8 @@ import {AddUpdateCompanyInfo} from "./components/AddUpdateCompanyInfo"
 const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
-    to: "/admin/companydetails/applications",
-    title: "COMPANY_DETAILS.TAB.APPLICATIONS",
+    to: "/admin/companydetails/modules",
+    title: "COMPANY_DETAILS.TAB.MODULES",
     icon: <CorporateFare />,
   },
   {
@@ -31,8 +31,8 @@ export const CompanyDetailsTab = () => {
   return (
     <Routes>
       <Route element={<CompanyDetails />}>
-        <Route index element={<Navigate to={"applications"} />} />
-        <Route path="applications" element={<ApplicationModules />} />
+        <Route index element={<Navigate to={"modules"} />} />
+        <Route path="modules" element={<ApplicationModules />} />
         <Route path="companyinfo" element={<CompanyInfo />} />
         <Route path="companyinfo/editcompanydetails" element={<AddUpdateCompanyInfo/>}></Route>
       </Route>
@@ -56,7 +56,7 @@ const CompanyDetails = () => {
   }, []);
 
   return (
-    <Box className="d-flex flex-column flex-grow-1">
+    <Card className="d-flex flex-column flex-grow-1">
       <Stack direction={"row"} spacing={0.5} className="tab-container">
         {tabsRoutes.map((tab) => {
           return (
@@ -77,7 +77,7 @@ const CompanyDetails = () => {
       <Box component="div" className="flex-grow-1">
         <Outlet />
       </Box>
-    </Box>
+    </Card>
   );
 };
 

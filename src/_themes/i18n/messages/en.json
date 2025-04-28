@@ -33,6 +33,7 @@
   "Modules.ProcessLog" : "Process Log",
   "Modules.CompanyMaster" : "Company Master",
   "Modules.PayRoll" : "PayRoll",
+  "Modules.CompanyDeatails":"Company Details",
  
 
 
@@ -485,7 +486,7 @@
   "COMPANY_MASTER.EDIT_DEPARTMENT": "Edit Department",
 
 
-  "COMPANY_DETAILS.TAB.APPLICATIONS": "Applications",
+  "COMPANY_DETAILS.TAB.MODULES": "Application Modules",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL": "Company Details",
 
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION": "Localization",
