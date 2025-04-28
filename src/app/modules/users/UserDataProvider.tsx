@@ -5,9 +5,9 @@ import { useParams } from "react-router-dom";
 
 type UserDataContextType = {
   userDetails: EmployeeModel;
-  userSkills: string[];
+  totalSkills:number;
   updateUserDetails: (userData?: EmployeeModel ) => void;
-  updateUserSkills:(skills:string[])=>void;
+  updateTotalSkills:(totalSkills:number)=>void;
   setRefresh:()=> void;
 };
 
@@ -23,7 +23,7 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 // User Details Provider
 export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
-  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [totalSkills, setTotalSkills] = useState(0);
   const [refresh,setRefresh]= useState(false);
   const employeeId = useParams().employeeid ?? "";
 
@@ -36,8 +36,8 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
     }
   }
 
-  function updateUserSkills(skills:string[]){
-    setUserSkills(skills);
+  function updateTotalSkills(totalSkills:number){
+    setTotalSkills(totalSkills);
   }
 
   function handleRefresh(){
@@ -62,9 +62,9 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
     <UserDetailsContext.Provider
       value={{
         userDetails,
-        userSkills,
+        totalSkills,
         updateUserDetails,
-        updateUserSkills,
+        updateTotalSkills,
         setRefresh:handleRefresh,
       }}
     >

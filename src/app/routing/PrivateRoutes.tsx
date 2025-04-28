@@ -4,8 +4,6 @@ import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
 import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
 import { WithChildren } from "../../_themes/helpers";
-import { findUserDefaultTab } from "../../utils/common.ts";
-import { useAppSelector } from "../Redux/hooks.ts";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
@@ -22,23 +20,19 @@ const Attendance = lazy(()=> import("../modules/attendance/EmployeeAttendance.ts
 const EmployeeLeaves = lazy(()=> import("../modules/leaves/EmployeeLeaves.tsx"));
 
 const PrivateRoutes = () => {
-  const modulePermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   return (
     <Routes>
       <Route element={<MasterLayout />}>
         <Route
           path="auth/*"
-          element={<Navigate to={findUserDefaultTab(modulePermissions)} />}
+          element={<Navigate to={'/dashboard'} />}
         />
 
         <Route
           path="dashboard"
           element={
             <SuspensedView>
-              <ProtectedRoute module={ModulesName.Dashboard}>
                 <Dashboard />
-              </ProtectedRoute>
             </SuspensedView>
           }
         />
@@ -47,9 +41,7 @@ const PrivateRoutes = () => {
           path="profile/*"
           element={
             <SuspensedView>
-              <ProtectedRoute module={ModulesName.MyProfile}>
                 <Profile />
-              </ProtectedRoute>
             </SuspensedView>
           }
         />

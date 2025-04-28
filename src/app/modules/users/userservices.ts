@@ -7,11 +7,10 @@ import {
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
-  UserSkillsResponseData,
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
-import { UploadProfileResponseModel } from "./models";
+import { GetSkillListResponseModel, UploadProfileResponseModel, UserSkillsResponseData } from "./models";
 
 export const getEmployeeById = async (userId?: string) => {
   if (userId) {
@@ -69,11 +68,11 @@ export const updateEmployeeDetails = async (payload: any) => {
 };
 
 export const udpateEmployeeSkills = async (payload: {
-  totalSkills: string;
+  skills: Array<string>;
   userId: string;
 }) => {
-  return postRequest<{ totalSkills: string }, ApiResponse>(
-    ServiceUrl.UPDATE_EMPLOYEE_SKILLS,
+  return postRequest< typeof payload, ApiResponse>(
+    ServiceUrl.ADD_EDIT_EMPLOYEE_SKILLS,
     payload
   );
 };
@@ -154,3 +153,14 @@ export const deleteEmployeeCertification = async (
     }
   );
 };
+
+
+// skills 
+
+export const getSkillsList = async (skill:string)=>{
+  return getRequest<GetSkillListResponseModel>(`${ServiceUrl.GET_SKILLS_LIST}?query=${encodeURIComponent(skill)}`);
+}
+
+export const addSkill = async (skill:string) =>{
+  return postRequest<string,ApiResponse>(ServiceUrl.ADD_SKILL,skill);
+}

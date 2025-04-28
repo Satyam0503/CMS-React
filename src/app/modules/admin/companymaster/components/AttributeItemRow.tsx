@@ -1,5 +1,5 @@
-import { Box, IconButton, Switch, TextField, Typography } from "@mui/material";
-import React, { ChangeEvent, FC, useEffect, useMemo, useState } from "react";
+import { IconButton, Switch, TextField, Typography } from "@mui/material";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { DepartmentModel } from "../../models";
 import { ClearRounded, Delete, Edit } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
@@ -8,63 +8,59 @@ import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import clsx from "clsx";
 import { deleteDepartment } from "../../adminservices";
 import { toast } from "react-toastify";
+import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 
 type Props = {
-  departmentData: DepartmentModel;
-  setUpdatedDepartmentData: (department: DepartmentModel | null) => void;
-  currentEditDepartment: string | null;
-  setCurrentEditDepartment: React.Dispatch<React.SetStateAction<string | null>>;
+  itemData: DepartmentModel;
+  setUpdatedItemData: (item: DepartmentModel | null) => void;
+  currentActiveItem: string | null;
+  setCurrentActiveItem: React.Dispatch<React.SetStateAction<string | null>>;
   translationLanguage: string;
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const DepartmentRow: FC<Props> = React.memo(
+export const AttributeItemRow: FC<Props> = React.memo(
   ({
-    departmentData,
-    setUpdatedDepartmentData,
-    currentEditDepartment,
-    setCurrentEditDepartment,
+    itemData,
+    setUpdatedItemData,
+    currentActiveItem,
+    setCurrentActiveItem,
     translationLanguage,
     refresh,setRefresh
   }) => {
     const { formatMessage } = useIntl();
-    const [department, setDepartment] = useState<DepartmentModel>(departmentData);
+    const [item, setItem] = useState<DepartmentModel>(itemData);
     const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
     const [isEdit, setEdit] = useState(false);
+    const currentLanguage = useLang();
 
-    const translatedTitle = department.titles.find((title) => title.language === translationLanguage)?.label;
+    const translatedTitle = item.titles.find((title) => title.language === translationLanguage)?.label;
+    const currentTitle = item.titles.find(title=>title.language === currentLanguage)?.label;
    
 
     const handleChange = (
       e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-      if (e.target.name === "departmentTitle") {
-        const updatedTitles = department.titles.findIndex(title=>title.language === translationLanguage) > -1 ? department.titles.map(title=>{
-          if(title.language === translationLanguage){
+        const updatedLanguage = e.target.name;       
+        const updatedTitles = item.titles.findIndex(title=>title.language === updatedLanguage) > -1 ? item.titles.map(title=>{
+          if(title.language === updatedLanguage){
             return {
               ...title,
               label: e.target.value
             }
           }
           return title;
-        }) : [ ...department.titles, { language: translationLanguage, label: e.target.value }]; 
-        setDepartment({
-          ...department,
+        }) : [ ...item.titles, { language: updatedLanguage, label: e.target.value }]; 
+        setItem({
+          ...item,
           titles:updatedTitles
         });
-      }
-      if(e.target.name === "departmentName"){
-        setDepartment({
-          ...department,
-          [e.target.name]: e.target.value,
-        });
-      }
     };
 
     const handleDepartmentDelete = async () => {
       try {
-        const response = await deleteDepartment(department.departmentId!)
+        const response = await deleteDepartment(item.departmentId!)
         const {success,message}= response.data;
         if(!success){
           throw new Error(message);
@@ -79,15 +75,15 @@ export const DepartmentRow: FC<Props> = React.memo(
 
     const handleEditCancel = () => {
       setEdit(false);
-      setDepartment(departmentData);
-      setCurrentEditDepartment(null);
-      setUpdatedDepartmentData(null);
+      setItem(itemData);
+      setCurrentActiveItem(null);
+      setUpdatedItemData(null);
     };
 
     const handleEdit = () => {
       setEdit(true);
-      setCurrentEditDepartment(departmentData.departmentId!);
-      setUpdatedDepartmentData(null);
+      setCurrentActiveItem(item.departmentId!);
+      setUpdatedItemData(null);
     };
 
     const handleSwitchChange = (
@@ -95,61 +91,62 @@ export const DepartmentRow: FC<Props> = React.memo(
       checked: boolean
     ) => {
       const updatedDepartment = {
-        ...department,
+        ...item,
         isActive: checked,
       }
-      setDepartment(updatedDepartment);
-      setUpdatedDepartmentData(updatedDepartment);
+      setItem(updatedDepartment);
+      setUpdatedItemData(updatedDepartment);
     };
 
     useEffect(() => {
-      setEdit(currentEditDepartment === departmentData.departmentId);
-      if (currentEditDepartment !== departmentData.departmentId) {
-        setDepartment(departmentData);
+      setEdit(currentActiveItem === itemData.departmentId);
+      if (currentActiveItem !== itemData.departmentId) {
+        setItem(itemData);
       }
-    }, [currentEditDepartment]);
+    }, [currentActiveItem]);
 
     useEffect(()=>{
-      setDepartment(departmentData);
-    },[departmentData])
+      setItem(itemData);
+    },[itemData])
     
     return (
       <>
-        <Box className="department-row">
+        <form className="department-row">
           {isEdit ? (
             <>
               <TextField
-                value={department.departmentName}
+                name={currentLanguage}
+                value={currentTitle ?? ""}
                 onChange={handleChange}
-                name="departmentName"
-                onBlur={() => setUpdatedDepartmentData(department)}
+                onBlur={() => setUpdatedItemData(item)}
+                required
               />
               <TextField
+                name={translationLanguage}
                 value={translatedTitle ?? ""}
                 onChange={handleChange}
-                name="departmentTitle"
-                onBlur={() => setUpdatedDepartmentData(department)}
+                onBlur={() => setUpdatedItemData(item)}
               />
               <Switch
-                checked={department.isActive}
+                checked={item.isActive}
                 onChange={handleSwitchChange}
               />
             </>
           ) : (
             <>
               <Typography variant="body1">
-                {department.departmentName}
+                {currentTitle ?? formatMessage({ id: "NOT_AVAILABLE" })}
               </Typography>
               <Typography variant="body1">
                 {translatedTitle ?? formatMessage({ id: "NOT_AVAILABLE" })}
               </Typography>
               <StyleStatus
                 label={
-                  department.isActive ? "STATUS.ACTIVE" : "STATUS.INACTIVE"
+                  item.isActive ? "STATUS.ACTIVE" : "STATUS.INACTIVE"
                 }
                 className={clsx({
-                  success: department.isActive,
-                  danger: !department.isActive,
+                  success: item.isActive,
+                  danger: !item.isActive,
                 })}
               />
             </>
@@ -171,7 +168,7 @@ export const DepartmentRow: FC<Props> = React.memo(
               <Delete color="error" />
             </IconButton>
           </div>
-        </Box>
+        </form>
         {isConfirmModalOpen && (
           <ConfirmationModal
             open={isConfirmModalOpen}
