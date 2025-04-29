@@ -1,7 +1,7 @@
 import { deleteRequest, getRequest, patchRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { AddEditRoleModel, AddEditRoleResponseData, DepartmentModel, GetAllModulePermissionData, GetAllRolesResponseData, GetDepartmentResponseModel } from "./models";
+import { AddEditRoleModel, AddEditRoleResponseData, DepartmentModel, GetAllModulePermissionData, GetAllRolesResponseData, GetDepartmentResponseModel, GetAllModulesInfoResponseModel } from "./models";
 
 export const getAllRoles = async () => {
   return getRequest<GetAllRolesResponseData>(ServiceUrl.GET_ALL_ROLES);
@@ -36,4 +36,10 @@ export const addEditDepartment = async (payload:DepartmentModel)=>{
 
 export const deleteDepartment = async (departmentId : string )=>{
   return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_DEPARTMENT}/${departmentId}`);
+}
+
+
+//modules
+export const getAllModulesInfo = async() =>{
+  return getRequest<GetAllModulesInfoResponseModel>(ServiceUrl.GET_ALL_MODULES_INFO)
 }
