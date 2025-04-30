@@ -70,6 +70,8 @@ export const ServiceUrl = {
   GET_ROLE_BY_ID: `${BaseUrl}/api/Roles/GetRoleById`,
   CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
   UPDATE_MODULE_ACCESS:`${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
+  GET_ALL_MODULES_INFO:`${BaseUrl}/api/Roles/GetAllModuleDetails`,
+
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,

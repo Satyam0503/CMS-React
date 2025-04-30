@@ -39,7 +39,15 @@ export interface AttributeModel {
   isActive:boolean;
 }
 
+export interface ModulesInfoModel{
+  moduleId:number;
+  moduleName:string;
+  moduleConstant:string;
+  isAccessible:boolean;
+}
+
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
 export type GetDepartmentResponseModel = ResponseData<DepartmentModel>
+export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>

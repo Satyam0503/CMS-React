@@ -81,7 +81,7 @@ export enum ModulesTitles {
   ProcessLog = "Modules.ProcessLog",
   CompanyMaster = "Modules.CompanyMaster",
   PayRoll = "Modules.PayRoll",
-  CompanyDetails="Modules.CompanyDeatails",
+  CompanyDetails="Modules.CompanyDetails",
 }
 
 export enum Roles {

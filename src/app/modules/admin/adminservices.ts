@@ -14,6 +14,15 @@ import {
   GetAllRolesResponseData,
   GetDepartmentResponseModel,
 } from "./models";
+import {
+  AddEditRoleModel,
+  AddEditRoleResponseData,
+  DepartmentModel,
+  GetAllModulePermissionData,
+  GetAllRolesResponseData,
+  GetDepartmentResponseModel,
+  GetAllModulesInfoResponseModel,
+} from "./models";
 
 export const getAllRoles = async () => {
   return getRequest<GetAllRolesResponseData>(ServiceUrl.GET_ALL_ROLES);
@@ -80,5 +89,12 @@ export const updateModuleAccess = async (
   return patchRequest(
     `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`,
     hasAccess
+  );
+};
+
+//modules
+export const getAllModulesInfo = async () => {
+  return getRequest<GetAllModulesInfoResponseModel>(
+    ServiceUrl.GET_ALL_MODULES_INFO
   );
 };
