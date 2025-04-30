@@ -6,27 +6,50 @@ import { getAllModulesInfo } from "../../adminservices";
 import { ModulesInfoModel } from "../../models";
 export const ApplicationModules: FC = () => {
   const intl = useIntl();
-  const [checked, setChecked] = useState(true);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [moduleInfo, setModuleInfo] = useState<ModulesInfoModel[]>([]);
+  const [refresh, setRefresh] = useState(false);
+  const [currentModuleId, setCurrentModuleId] = useState<number | undefined>();
 
   const closeConfirmationModal = () => {
     setIsConfirmModalOpen(false);
   };
-  const handleModuleHiding = async (res: string) => {
+
+  const updateModuleAccessibility = (moduleId: number) => {
+    try {
+      // Call Update Module API here...
+      setRefresh(!refresh);
+      setIsConfirmModalOpen(false);
+    } 
+    catch (error) {
+      console.log(error);
+      setIsConfirmModalOpen(false);
+    }
+
+  }
+
+  const handleModuleHiding =  (res: string, moduleId?: number): void => {
     if (res !== "ok") {
       closeConfirmationModal();
-    } else {
+    } 
+    else {
+      if (moduleId !== undefined) {
+        updateModuleAccessibility(moduleId);
+      }
     }
   };
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>,moduleId :number) => {
-    console.log("Here: ", event.target.checked);
 
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    moduleId: number
+  ) => {
     if (!event.target.checked) {
+      setCurrentModuleId(()=>moduleId)
       setIsConfirmModalOpen(true);
-      // if(isConfirmModalOpen){
-      //   setChecked(event.target.checked);
-      // }
+    } 
+    else {
+      updateModuleAccessibility(moduleId);
     }
   };
 
@@ -44,7 +67,7 @@ export const ApplicationModules: FC = () => {
       }
     };
     getAllModules();
-  }, []);
+  }, [refresh]);
 
   return (
     <>
@@ -61,145 +84,29 @@ export const ApplicationModules: FC = () => {
           </Typography>
         </Stack>
 
-        {/* Map for each API response data object with below Stack tab. */}
-        {/* <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch checked={checked} onChange={handleChange} />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.Dashboard",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              A home page, summary of various modules, to give an overview of
-              the portal.
-            </Typography>
-          </Stack>
-        </Stack> */}
-
         {moduleInfo.map((module) => {
           return (
             <>
-              <Stack direction="row" spacing={1} alignItems={"center"} key={module.moduleId}>
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems={"center"}
+                key={module.moduleId}
+              >
                 <Stack>
-                  <Switch checked={module.isAccessible} onChange={(e)=>handleChange(e,module.moduleId)} />
+                  <Switch
+                    checked={module.isAccessible}
+                    onChange={(e) => handleChange(e, module.moduleId)}
+                  />
                 </Stack>
 
                 <Stack>
-                  <Typography variant="body1">
-                    {module.moduleName}
-                  </Typography>
+                  <Typography variant="body1">{module.moduleName}</Typography>
                 </Stack>
               </Stack>
             </>
           );
         })}
-
-        {/* <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.Employees",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              This module allows you to add employees and their detail in the
-              company.
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.PayRoll",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              This module allows to manage leave application and attendance of
-              the employee,
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.Recruitment",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              This module allows to add job vacancies, manage received
-              application and check previous process logs.
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {" "}
-              {intl.formatMessage({
-                id: "Modules.Admin",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              Admin module is for assign role and permission based on positions.
-              Set theme and company master.
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.Holidays",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              This module allows to add, update and view holiday list of the
-              year.
-            </Typography>
-          </Stack>
-        </Stack>
-        <Stack direction="row" spacing={1} alignItems={"center"}>
-          <Stack>
-            <Switch />
-          </Stack>
-
-          <Stack>
-            <Typography variant="body1">
-              {intl.formatMessage({
-                id: "Modules.NoticeBoard",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              This module is used to post, edit and view notices.
-            </Typography>
-          </Stack>
-        </Stack> */}
       </Stack>
       {isConfirmModalOpen && (
         <ConfirmationModal
@@ -209,6 +116,7 @@ export const ApplicationModules: FC = () => {
           handleClose={closeConfirmationModal}
           handleConfirmation={handleModuleHiding}
           ok_btn={true}
+          moduleId={currentModuleId}
         />
       )}
     </>
