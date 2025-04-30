@@ -9,7 +9,7 @@ axios.interceptors.request.use(
     const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
       ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
       : "";
-    config.headers["Accept-Language"] = getConfig().selectedLang;    
+    config.headers["Accept-Language"] = getConfig().selectedLang;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
@@ -71,16 +71,16 @@ export const postRequest = <RequestData, ResponseData>(
   });
 };
 
-export const patchRequest = <Data,ResponseData>(
+export const patchRequest = <Data, ResponseData>(
   path: string,
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
   return axios.patch<ResponseData>(path, data, {
     ...config,
-    headers:{
-      "Content-Type":"application/json",
-    }
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

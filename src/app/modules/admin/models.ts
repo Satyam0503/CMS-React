@@ -11,7 +11,7 @@ export interface RoleModel {
   isNotEditable: boolean;
   isDefault: boolean;
   userRoles: string[];
-  hasAppAccess:boolean;
+  hasAppAccess: boolean;
 }
 export interface AddEditRoleModel {
   roleId?: string | null;
@@ -23,31 +23,32 @@ export interface AddEditRoleModel {
 }
 
 export interface DepartmentModel {
-  departmentId?:string;
-  titles: MultilingualModel[]
-  isActive:boolean;
+  departmentId?: string;
+  titles: MultilingualModel[];
+  isActive: boolean;
 }
 
 export interface MultilingualModel {
-  language :string;
-  label :string;
+  language: string;
+  label: string;
 }
 
 export interface AttributeModel {
-  id:string;
-  titles:MultilingualModel[];
-  isActive:boolean;
+  id: string;
+  titles: MultilingualModel[];
+  isActive: boolean;
 }
 
-export interface ModulesInfoModel{
-  moduleId:number;
-  moduleName:string;
-  moduleConstant:string;
-  isAccessible:boolean;
+export interface ModulesInfoModel {
+  moduleId: string;
+  moduleName: string;
+  moduleConstant: string;
+  isAccessible: boolean;
 }
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
-export type GetDepartmentResponseModel = ResponseData<DepartmentModel>
-export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>
+export type GetDepartmentResponseModel = ResponseData<DepartmentModel>;
+export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>;
+export type UpdateModuleAccessResponse = ResponseData<Array<string>>;

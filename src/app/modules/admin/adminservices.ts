@@ -13,15 +13,8 @@ import {
   GetAllModulePermissionData,
   GetAllRolesResponseData,
   GetDepartmentResponseModel,
-} from "./models";
-import {
-  AddEditRoleModel,
-  AddEditRoleResponseData,
-  DepartmentModel,
-  GetAllModulePermissionData,
-  GetAllRolesResponseData,
-  GetDepartmentResponseModel,
   GetAllModulesInfoResponseModel,
+  UpdateModuleAccessResponse,
 } from "./models";
 
 export const getAllRoles = async () => {
@@ -81,14 +74,9 @@ export const deleteDepartment = async (departmentId: string) => {
 };
 
 // application modules
-
-export const updateModuleAccess = async (
-  moduleId: string,
-  hasAccess: boolean
-) => {
-  return patchRequest(
-    `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`,
-    hasAccess
+export const updateModuleAccess = async (moduleId: string) => {
+  return patchRequest<{}, UpdateModuleAccessResponse>(
+    `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`
   );
 };
 

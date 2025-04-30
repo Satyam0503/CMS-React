@@ -2,63 +2,71 @@ import { Card, Stack, Switch, Typography } from "@mui/material";
 import { useState, FC, useEffect } from "react";
 import { useIntl } from "react-intl";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
-import { getAllModulesInfo } from "../../adminservices";
+import { getAllModulesInfo, updateModuleAccess } from "../../adminservices";
 import { ModulesInfoModel } from "../../models";
+import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
+import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
+
 export const ApplicationModules: FC = () => {
-  const intl = useIntl();
+  const {formatMessage} = useIntl();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [moduleInfo, setModuleInfo] = useState<ModulesInfoModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [currentModuleId, setCurrentModuleId] = useState<number | undefined>();
+  const [currentModuleId, setCurrentModuleId] = useState<string | undefined>();
+  const user = useAppSelector(state=>state.user.userData)!;
+  const dispatch = useAppDispatch();
 
   const closeConfirmationModal = () => {
     setIsConfirmModalOpen(false);
+    setCurrentModuleId(undefined);
   };
 
-  const updateModuleAccessibility = (moduleId: number) => {
+  const updateModuleAccessibility = async (moduleId: string) => {
     try {
-      // Call Update Module API here...
-      setRefresh(!refresh);
-      setIsConfirmModalOpen(false);
+      const response= await updateModuleAccess(moduleId);
+      const {success,methodResult} =response.data;
+      if(success){
+        dispatch(setCurrentUser({...user,modulePermission:[...methodResult]}))
+        setRefresh(!refresh);
+        closeConfirmationModal();
+      }
     } 
     catch (error) {
       console.log(error);
-      setIsConfirmModalOpen(false);
+      toast.error(formatMessage({id:"MESSAGE.MODULE.UPDATE.FAILED"}));
+      closeConfirmationModal();
     }
-
   }
 
-  const handleModuleHiding =  (res: string, moduleId?: number): void => {
-    if (res !== "ok") {
+  const handleModuleHiding =  (res: string): void => {
+    if (res !== "ok" || !currentModuleId) {
       closeConfirmationModal();
     } 
     else {
-      if (moduleId !== undefined) {
-        updateModuleAccessibility(moduleId);
-      }
+        updateModuleAccessibility(currentModuleId);
     }
   };
 
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    moduleId: number
+    moduleId: string
   ) => {
     if (!event.target.checked) {
-      setCurrentModuleId(()=>moduleId)
+      setCurrentModuleId(moduleId);
       setIsConfirmModalOpen(true);
     } 
     else {
       updateModuleAccessibility(moduleId);
     }
   };
-
+  
   useEffect(() => {
     const getAllModules = async () => {
       try {
         const response = await getAllModulesInfo();
         const { success, methodResults } = response.data;
-        console.log(methodResults);
         if (success) {
           setModuleInfo(methodResults);
         }
@@ -71,16 +79,17 @@ export const ApplicationModules: FC = () => {
 
   return (
     <>
-      <Stack component={Card} spacing={3} p={4} my={6}>
+      <Stack component={Card} spacing={3} p={3}>
         <Stack>
           <Typography variant="h5" mb={1}>
-            {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.APPLICATIONS",
+            {formatMessage({
+              id: "COMPANY_DETAILS.TAB.MODULES",
             })}
           </Typography>
           <Typography variant="body2">
-            Select which application modules you want to be enabled for your
-            company.
+            {formatMessage({
+              id: "COMPANY_DETAILS.MODULES.NOTE",
+            })}
           </Typography>
         </Stack>
 
@@ -110,13 +119,12 @@ export const ApplicationModules: FC = () => {
       </Stack>
       {isConfirmModalOpen && (
         <ConfirmationModal
-          title={intl.formatMessage({ id: "TITLE.HIDE_MODULE" })}
-          content={intl.formatMessage({ id: "CONFIRMATION.HIDE_MODULE" })}
+          title={formatMessage({ id: "TITLE.HIDE_MODULE" })}
+          content={formatMessage({ id: "CONFIRMATION.HIDE_MODULE" })}
           open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={handleModuleHiding}
           ok_btn={true}
-          moduleId={currentModuleId}
         />
       )}
     </>
