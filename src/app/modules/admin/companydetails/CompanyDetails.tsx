@@ -10,20 +10,20 @@ import { checkIsActive } from "../../../../_themes/helpers";
 
 import { ApplicationModules } from "./components/ApplicationModules";
 import { CompanyInfo } from "./components/CompanyInfo";
-import {AddUpdateCompanyInfo} from "./components/AddUpdateCompanyInfo"
+import { AddUpdateCompanyInfo } from "./components/AddUpdateCompanyInfo"
 
 const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
-    to: "/admin/companydetails/modules",
-    title: "COMPANY_DETAILS.TAB.MODULES",
-    icon: <CorporateFare />,
-  },
-  {
-    tabId: 2,
     to: "/admin/companydetails/companyinfo",
     title: "COMPANY_DETAILS.TAB.COMPANY_DETAIL",
     icon: <Work />,
+  },
+  {
+    tabId: 2,
+    to: "/admin/companydetails/modules",
+    title: "COMPANY_DETAILS.TAB.MODULES",
+    icon: <CorporateFare />,
   },
 ];
 
@@ -34,7 +34,7 @@ export const CompanyDetailsTab = () => {
         <Route index element={<Navigate to={"modules"} />} />
         <Route path="modules" element={<ApplicationModules />} />
         <Route path="companyinfo" element={<CompanyInfo />} />
-        <Route path="companyinfo/editcompanydetails" element={<AddUpdateCompanyInfo/>}></Route>
+        <Route path="companyinfo/editcompanydetails" element={<AddUpdateCompanyInfo />}></Route>
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>

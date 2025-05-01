@@ -9,22 +9,22 @@ interface Props {
   translationLang: string;
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  handleClose:()=>void;
+  handleClose: () => void;
 }
 
-const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh,handleClose }) => {
+const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh, handleClose }) => {
   const currentLang = useLang();
   const [newAttributeValue, setNewAttributeValue] = useState({
     isActive: true,
-    currentLangTitle:"",
+    currentLangTitle: "",
     translationTitle: "",
   });
 
-  const handleAdd = async ( value: typeof newAttributeValue,e:React.FormEvent<HTMLFormElement> ) => {
+  const handleAdd = async (value: typeof newAttributeValue, e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const payload = {
-      isActive:value.isActive,
-      titles:[{language:translationLang,label:value.translationTitle},{language:currentLang,label:value.currentLangTitle}]
+      isActive: value.isActive,
+      titles: [{ language: translationLang, label: value.translationTitle }, { language: currentLang, label: value.currentLangTitle }]
     }
     try {
       const response = await addEditDepartment(payload);
@@ -57,7 +57,7 @@ const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh,h
     });
   };
   return (
-    <form className="department-row" onSubmit={(e)=>handleAdd(newAttributeValue,e)}>
+    <form className="attribute-row" onSubmit={(e) => handleAdd(newAttributeValue, e)}>
       <TextField
         value={newAttributeValue.currentLangTitle}
         onChange={handleChange}
@@ -74,13 +74,7 @@ const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh,h
         checked={newAttributeValue.isActive}
         onChange={handleSwitchChange}
       />
-      <div className="d-flex align-items-center gap-2">
-        <IconButton
-          className="border-0"
-          type="submit"
-        >
-         <Check/>
-        </IconButton>
+      <div className="d-flex align-items-center">
         <IconButton
           onClick={handleClose}
           className="border-0"

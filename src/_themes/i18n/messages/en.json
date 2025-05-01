@@ -485,6 +485,7 @@
   "COMPANY_DETAILS.TAB.MODULES": "Application Modules",
   "COMPANY_DETAILS.MODULES.NOTE": "Select which application modules you want to be enabled for your company",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL": "Company Details",
+  "COMPANY_DETAILS.EDIT_DETAILS": "Edit Details",
 
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION": "Localization",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES": "Languages",

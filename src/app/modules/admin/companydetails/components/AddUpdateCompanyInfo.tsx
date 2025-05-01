@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { FC } from "react";
-import {languages} from "../../../../../utils/constant/Constant"
+import { languages } from "../../../../../utils/constant/Constant"
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { colors } from "../../../theme/MuiTheme";
@@ -55,7 +55,7 @@ export const AddUpdateCompanyInfo: FC = () => {
           pt={2}
           spacing={1}
         >
-          <CustomisedButton variant="outlined" label="Cancel" handleClick={()=>navigate("../companyinfo")}  />
+          <CustomisedButton variant="outlined" label="Cancel" handleClick={() => navigate("../companyinfo")} />
           <CustomisedButton variant="contained" label="Update" />
         </Stack>
         <Box component={Card} p={3}>
@@ -70,8 +70,8 @@ export const AddUpdateCompanyInfo: FC = () => {
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
-            })}</Typography>
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+                })}</Typography>
               </Stack>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6} lg={4}>
@@ -86,8 +86,8 @@ export const AddUpdateCompanyInfo: FC = () => {
                       label="Language"
                       onChange={handleChange}
                     >
-                      {languages.map((language)=>{
-                        return ( <MenuItem key={language.id} value={language.lang}>{language.name}</MenuItem> )
+                      {languages.map((language) => {
+                        return (<MenuItem key={language.id} value={language.lang}>{language.name}</MenuItem>)
                       })}
                     </Select>
                   </FormControl>
@@ -108,8 +108,8 @@ export const AddUpdateCompanyInfo: FC = () => {
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
-            })}</Typography>
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+                })}</Typography>
                 <Typography variant="body2">
                   The company name is displayed on the application side menu and
                   it is also displayed in all survey questions having a tag such
@@ -147,62 +147,6 @@ export const AddUpdateCompanyInfo: FC = () => {
                     </InputLabel>
                     <NativeSelect
                       defaultValue={10}
-                      inputProps={{
-                        name: "selectLanguage",
-                        id: "uncontrolled-native",
-                      }}
-                    >
-                      <option value={10}>French</option>
-                      <option value={20}>German</option>
-                      <option value={30}>Japanease</option>
-                    </NativeSelect>
-                  </FormControl>
-                </Grid>
-              </Grid>
-            </Stack>
-
-            <Stack spacing={1}>
-              <Stack>
-                <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.MANAGERS_IDENTIFICATION",
-            })}</Typography>
-                <Typography variant="body2">
-                  The manager tag will be replaced according to your choosen
-                  terminology, for some orgnization, it will be manager, but for
-                  some others, it will be supervisor or director.
-                </Typography>
-              </Stack>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    variant="standard"
-                    type="text"
-                    id="outlined-required"
-                    label="English"
-                    sx={{ color: colors.alpha.primary[500] }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    fullWidth
-                    variant="standard"
-                    type="text"
-                    id="outlined-required"
-                    label="French"
-                    sx={{ color: colors.alpha.primary[500] }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <FormControl fullWidth>
-                    <InputLabel
-                      variant="standard"
-                      htmlFor="uncontrolled-native"
-                    >
-                      Select Language
-                    </InputLabel>
-                    <NativeSelect
-                      defaultValue={30}
                       inputProps={{
                         name: "selectLanguage",
                         id: "uncontrolled-native",

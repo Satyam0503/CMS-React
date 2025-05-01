@@ -26,27 +26,35 @@ const Departments = () => {
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
-  const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>(null);
-  const [translationLang, setTranslationLang] = useState<string>(languages.find(lang =>lang.lang !== currentLang)?.lang!);
+  const [translationLang, setTranslationLang] = useState<string>(languages.find(lang => lang.lang !== currentLang)?.lang!);
+  const [newDepartment, setNewDepartments] = useState<number[]>([]);
 
-  const setUpdatedDepartmentData = (department: DepartmentModel | null) => {
-    setEditedDepartment(department);
+  const setUpdatedDepartmentData = (department: DepartmentModel) => {
+    if (department?.departmentId) {
+      setDepartmentList(departmentList.map(dep => {
+        if (dep.departmentId === department.departmentId) {
+          return department;
+        }
+        return dep;
+      }));
+    }
+    else {
+      setDepartmentList([...departmentList, department])
+    }
   };
 
   const handleReset = () => {
-    setCurrentEditDepartment(null);
     setEditedDepartment(null);
     setOpen(false);
   };
 
-  const handleEditDepartment = async () => {    
+  const handleEditDepartment = async () => {
     if (editedDeparment) {
       try {
         const response = await addEditDepartment(editedDeparment);
         const { success, message } = response.data;
         if (success) {
           toast.success(message);
-          setCurrentEditDepartment(null);
           setEditedDepartment(null);
           setRefresh(!refresh);
         }
@@ -55,6 +63,9 @@ const Departments = () => {
       }
     }
   };
+
+  console.log(departmentList);
+
 
   useEffect(() => {
     const getAllDeps = async () => {
@@ -70,7 +81,7 @@ const Departments = () => {
     };
     getAllDeps();
   }, [refresh]);
-  
+
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -104,17 +115,17 @@ const Departments = () => {
         </FormControl>
       </Stack>
 
-      <Stack className="department-container">
-        <Box className="department-row">
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang=>lang.lang===currentLang)?.name })}
-              </Typography>
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang=>lang.lang===translationLang)?.name })}
-              </Typography>
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Status" })}
-              </Typography>
+      <Stack className="attribute-container">
+        <Box className="attribute-row">
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang => lang.lang === currentLang)?.name })}
+          </Typography>
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang => lang.lang === translationLang)?.name })}
+          </Typography>
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Status" })}
+          </Typography>
         </Box>
 
         {departmentList.map((department) => (
@@ -122,8 +133,6 @@ const Departments = () => {
             key={department.departmentId}
             itemData={department}
             setUpdatedItemData={setUpdatedDepartmentData}
-            currentActiveItem={currentEditDepartment}
-            setCurrentActiveItem={setCurrentEditDepartment}
             translationLanguage={translationLang}
             refresh={refresh}
             setRefresh={setRefresh}
@@ -131,9 +140,9 @@ const Departments = () => {
         ))}
 
         {
-          isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
+          isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={() => setOpen(false)} />
         }
-        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/> {formatMessage({id:"Attribute.Add_New"})} </span>
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={() => setOpen(true)}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
         <Stack
           spacing={1}
           direction={"row"}

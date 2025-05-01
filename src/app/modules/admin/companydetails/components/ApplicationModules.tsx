@@ -9,12 +9,12 @@ import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 
 export const ApplicationModules: FC = () => {
-  const {formatMessage} = useIntl();
+  const { formatMessage } = useIntl();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [moduleInfo, setModuleInfo] = useState<ModulesInfoModel[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [currentModuleId, setCurrentModuleId] = useState<string | undefined>();
-  const user = useAppSelector(state=>state.user.userData)!;
+  const user = useAppSelector(state => state.user.userData)!;
   const dispatch = useAppDispatch();
 
   const closeConfirmationModal = () => {
@@ -24,27 +24,27 @@ export const ApplicationModules: FC = () => {
 
   const updateModuleAccessibility = async (moduleId: string) => {
     try {
-      const response= await updateModuleAccess(moduleId);
-      const {success,methodResult} =response.data;
-      if(success){
-        dispatch(setCurrentUser({...user,modulePermission:[...methodResult]}))
+      const response = await updateModuleAccess(moduleId);
+      const { success, methodResult } = response.data;
+      if (success) {
+        dispatch(setCurrentUser({ ...user, modulePermission: [...methodResult] }))
         setRefresh(!refresh);
         closeConfirmationModal();
       }
-    } 
+    }
     catch (error) {
       console.log(error);
-      toast.error(formatMessage({id:"MESSAGE.MODULE.UPDATE.FAILED"}));
+      toast.error(formatMessage({ id: "MESSAGE.MODULE.UPDATE.FAILED" }));
       closeConfirmationModal();
     }
   }
 
-  const handleModuleHiding =  (res: string): void => {
+  const handleModuleHiding = (res: string): void => {
     if (res !== "ok" || !currentModuleId) {
       closeConfirmationModal();
-    } 
+    }
     else {
-        updateModuleAccessibility(currentModuleId);
+      updateModuleAccessibility(currentModuleId);
     }
   };
 
@@ -56,12 +56,12 @@ export const ApplicationModules: FC = () => {
     if (!event.target.checked) {
       setCurrentModuleId(moduleId);
       setIsConfirmModalOpen(true);
-    } 
+    }
     else {
       updateModuleAccessibility(moduleId);
     }
   };
-  
+
   useEffect(() => {
     const getAllModules = async () => {
       try {

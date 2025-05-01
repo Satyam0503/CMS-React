@@ -43,7 +43,7 @@ export enum Modules {
   ProcessLog = 13,
   CompanyMaster = 14,
   PayRoll = 15,
-  CompanyDetails =16,
+  CompanyDetails = 16,
 }
 
 export enum ModulesName {
@@ -81,7 +81,7 @@ export enum ModulesTitles {
   ProcessLog = "Modules.ProcessLog",
   CompanyMaster = "Modules.CompanyMaster",
   PayRoll = "Modules.PayRoll",
-  CompanyDetails="Modules.CompanyDetails",
+  CompanyDetails = "Modules.CompanyDetails",
 }
 
 export enum Roles {
@@ -97,4 +97,13 @@ export enum TIME_PERIOD_MAP {
   LAST_SIX_MONTHS = 4,
   LAST_12_MONTHS = 5,
   LAST_TWO_WEEK = 7,
+}
+
+export enum LANGUAGE {
+  ENGLISH = "en",
+  MANDARIN = "zh",
+  SPANISH = "es",
+  JAPANESE = "ja",
+  GERMAN = "de",
+  FRENCH = "fr",
 }
