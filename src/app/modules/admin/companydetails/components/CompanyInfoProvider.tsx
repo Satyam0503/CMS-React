@@ -1,5 +1,6 @@
-import { createContext, FC, ReactNode, useContext, useState } from "react"
+import { createContext, FC, ReactNode, useContext, useEffect, useState } from "react"
 import { CompanyInfoModel } from "../../models"
+import { getCompanyDetails } from "../../adminservices";
 
 type PropTypes = {
     children: React.ReactNode;
@@ -13,6 +14,15 @@ const CompanyInfoContext = createContext<CompanyInfoContextType | undefined>(und
 
 export const CompanyInfoProvider: FC<PropTypes> = ({ children }) => {
     const [companyInfo, setCompanyInfo] = useState({} as CompanyInfoModel);
+    useEffect(() => {
+        (async () => {
+            const response = await getCompanyDetails();
+            if (response.data.success) {
+                setCompanyInfo(response.data.methodResult);
+            }
+        })();
+    }, [])
+
     return (
         <CompanyInfoContext.Provider value={{ companyInfo }}>
             {children}
@@ -23,7 +33,7 @@ export const CompanyInfoProvider: FC<PropTypes> = ({ children }) => {
 export const useCompanyInfoContext = () => {
     const companyInfo = useContext(CompanyInfoContext);
     if (!companyInfo) {
-        throw new Error("Company rDetails must be used within a CompanyDetailsProvider");
+        throw new Error("Company Details must be used within a CompanyDetailsProvider");
     }
     return companyInfo;
 }

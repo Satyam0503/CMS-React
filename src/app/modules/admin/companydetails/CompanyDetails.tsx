@@ -56,7 +56,7 @@ const CompanyDetails = () => {
   }, []);
 
   return (
-    <Card className="d-flex flex-column flex-grow-1">
+    <Box className="d-flex flex-column flex-grow-1">
       <Stack direction={"row"} spacing={0.5} className="tab-container">
         {tabsRoutes.map((tab) => {
           return (
@@ -77,7 +77,7 @@ const CompanyDetails = () => {
       <Box component="div" className="flex-grow-1">
         <Outlet />
       </Box>
-    </Card>
+    </Box>
   );
 };
 

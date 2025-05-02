@@ -124,9 +124,11 @@ export const ServiceUrl = {
   DELETE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
 
   // skills
-
   GET_SKILLS_LIST: `${BaseUrl}/api/User/GetSuggestedSkills`,
   ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
+
+  // company 
+  GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`
 };
 
 export const languages = [

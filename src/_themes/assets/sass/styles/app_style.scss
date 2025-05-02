@@ -383,6 +383,7 @@ button:hover .ql-fill,
 .tab_active {
   border-bottom: 2px solid #9a56d3 !important;
   color: #9a56d3 !important;
+  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
 }
 
 .truncate-multi-line {

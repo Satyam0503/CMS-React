@@ -15,6 +15,7 @@ import {
   GetDepartmentResponseModel,
   GetAllModulesInfoResponseModel,
   UpdateModuleAccessResponse,
+  GetCompanyDetailsResponse,
 } from "./models";
 
 export const getAllRoles = async () => {
@@ -85,4 +86,9 @@ export const getAllModulesInfo = async () => {
   return getRequest<GetAllModulesInfoResponseModel>(
     ServiceUrl.GET_ALL_MODULES_INFO
   );
+};
+
+// company details
+export const getCompanyDetails = async () => {
+  return getRequest<GetCompanyDetailsResponse>(ServiceUrl.GET_COMPANY_DETAILS);
 };

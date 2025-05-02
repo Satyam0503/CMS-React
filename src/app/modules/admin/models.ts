@@ -53,9 +53,11 @@ export type CompanyInfoModel = BaseModel & {
   companyName: string;
   companyLogo: string | null;
   defaultLanguage: string;
-  applicationLanguage: string;
+  applicationLanguage: string[];
   primaryContact: string;
   country: string;
+  companyId: string;
+  state: null;
 };
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
@@ -64,3 +66,4 @@ export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
 export type GetDepartmentResponseModel = ResponseData<DepartmentModel>;
 export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>;
 export type UpdateModuleAccessResponse = ResponseData<Array<string>>;
+export type GetCompanyDetailsResponse = ResponseData<CompanyInfoModel>;

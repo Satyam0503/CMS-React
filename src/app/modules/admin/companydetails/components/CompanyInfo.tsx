@@ -11,7 +11,7 @@ export const CompanyInfo: FC = () => {
   return (
     <>
       <CompanyInfoProvider>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <CompanyLocalization />
           <CompanyLogo />
         </Stack>
