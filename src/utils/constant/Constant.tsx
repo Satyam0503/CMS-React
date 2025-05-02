@@ -70,8 +70,8 @@ export const ServiceUrl = {
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
   GET_ROLE_BY_ID: `${BaseUrl}/api/Roles/GetRoleById`,
   CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
-  UPDATE_MODULE_ACCESS:`${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
-  GET_ALL_MODULES_INFO:`${BaseUrl}/api/CompanyMaster/GetAllModuleDetails`,
+  UPDATE_MODULE_ACCESS: `${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
+  GET_ALL_MODULES_INFO: `${BaseUrl}/api/CompanyMaster/GetAllModuleDetails`,
 
 
   //user
@@ -120,13 +120,13 @@ export const ServiceUrl = {
 
   // departments
   GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
-  ADD_EDIT_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddEditDepartment`,
-  DELETE_DEPARTMENT:`${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
+  UPDATE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/UpdateDepartment`,
+  DELETE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
 
   // skills
 
-  GET_SKILLS_LIST:`${BaseUrl}/api/User/GetSuggestedSkills`,
-  ADD_SKILL:`${BaseUrl}/api/User/AddSkill`,
+  GET_SKILLS_LIST: `${BaseUrl}/api/User/GetSuggestedSkills`,
+  ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
 };
 
 export const languages = [
@@ -742,8 +742,6 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        // handleEdit={handleApplicationEdit}
-        // openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
@@ -841,9 +839,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        // openViewModal={openViewJobDetail}
+        openViewModal={openViewJobDetail}
       />
     ),
   },
@@ -923,7 +919,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     constant: ModulesName.Dashboard,
     route: "/dashboard",
     icon: <DashboardIcon />,
-    isDefault:true,
+    isDefault: true,
   },
   {
     id: Modules.Employees,
@@ -931,7 +927,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesTitles.Employees,
     route: "/employees",
     icon: <Person />,
-    isDefault:false,
+    isDefault: false,
   },
   {
     id: Modules.PayRoll,
@@ -940,7 +936,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/",
     icon: <Contacts />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.LeaveManagement,
@@ -948,7 +944,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.LeaveManagement,
         route: "/leavemanagement",
         icon: <PermContactCalendar />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.Attendance,
@@ -956,7 +952,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Attendance,
         route: "/attendance",
         icon: <AccessTime />,
-        isDefault:false,
+        isDefault: false,
       },
     ],
   },
@@ -967,7 +963,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.Jobs,
@@ -975,7 +971,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.Jobs,
         route: "/recruitment/jobs",
         icon: <Work />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.Applications,
@@ -983,7 +979,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Applications,
         route: "/recruitment/applications",
         icon: <Mail />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.ProcessLog,
@@ -991,7 +987,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.ProcessLog,
         route: "/recruitment/processlog",
         icon: <Book />,
-        isDefault:false,
+        isDefault: false,
       },
     ],
   },
@@ -1002,7 +998,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.Permissions,
@@ -1010,7 +1006,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Permissions,
         route: "/admin/roles",
         icon: <ToggleOn />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.CompanyMaster,
@@ -1018,7 +1014,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.CompanyMaster,
         route: "/admin/companymaster/",
         icon: <AdminPanelSettings />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.CompanyDetails,
@@ -1026,8 +1022,8 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.CompanyDetails,
         route: "/admin/companydetails",
         icon: <Info />,
-        isDefault:false,
-      },  
+        isDefault: false,
+      },
     ],
   },
   {
@@ -1036,7 +1032,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     constant: ModulesName.Holidays,
     route: "/holidays",
     icon: <CalendarMonth />,
-    isDefault:false,
+    isDefault: false,
   },
   {
     id: Modules.NoticeBoard,
@@ -1044,7 +1040,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesTitles.NoticeBoard,
     route: "/noticeboard",
     icon: <NoteAlt />,
-    isDefault:false,
+    isDefault: false,
   },
 ];
 

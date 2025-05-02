@@ -1,4 +1,4 @@
-import { IconButton, Switch, TextField, Typography } from "@mui/material";
+import { Box, IconButton, Switch, TextField, Typography } from "@mui/material";
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { DepartmentModel } from "../../models";
 import { Delete, Edit } from "@mui/icons-material";
@@ -83,7 +83,7 @@ export const AttributeItemRow: FC<Props> = React.memo(
 
     return (
       <>
-        <form className="attribute-row">
+        <Box className="attribute-row">
           <>
             <TextField
               name={currentLanguage}
@@ -111,7 +111,7 @@ export const AttributeItemRow: FC<Props> = React.memo(
               <Delete color="error" />
             </IconButton>
           </div>
-        </form>
+        </Box>
         {isConfirmModalOpen && (
           <ConfirmationModal
             open={isConfirmModalOpen}

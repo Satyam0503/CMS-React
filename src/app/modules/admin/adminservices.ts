@@ -60,9 +60,9 @@ export const getAllDepartments = async () => {
   return getRequest<GetDepartmentResponseModel>(ServiceUrl.GET_DEPARTMENTLIST);
 };
 
-export const addEditDepartment = async (payload: DepartmentModel) => {
-  return postRequest<DepartmentModel, ApiResponse>(
-    ServiceUrl.ADD_EDIT_DEPARTMENT,
+export const updateDepartment = async (payload: DepartmentModel[]) => {
+  return postRequest<DepartmentModel[], ApiResponse>(
+    ServiceUrl.UPDATE_DEPARTMENT,
     payload
   );
 };

@@ -31,7 +31,7 @@ export const CompanyDetailsTab = () => {
   return (
     <Routes>
       <Route element={<CompanyDetails />}>
-        <Route index element={<Navigate to={"modules"} />} />
+        <Route index element={<Navigate to={"companyinfo"} />} />
         <Route path="modules" element={<ApplicationModules />} />
         <Route path="companyinfo" element={<CompanyInfo />} />
         <Route path="companyinfo/editcompanydetails" element={<AddUpdateCompanyInfo />}></Route>

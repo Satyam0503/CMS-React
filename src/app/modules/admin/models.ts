@@ -27,6 +27,7 @@ export interface DepartmentModel {
   departmentId?: string;
   titles: MultilingualModel[];
   isActive: boolean;
+  newDepartmentKey?: string;
 }
 
 export interface MultilingualModel {

@@ -1,88 +1,84 @@
 import { FC, useState } from "react";
-import { IconButton, Switch, TextField } from "@mui/material";
-import { toast } from "react-toastify";
-import { addEditDepartment } from "../../adminservices";
-import { Check, Close } from "@mui/icons-material";
+import { Box, Switch, TextField } from "@mui/material";
 import { useLang } from "../../../../../_themes/i18n/Metronici18n";
+import { DepartmentModel } from "../../models";
 
 interface Props {
   translationLang: string;
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  handleClose: () => void;
+  setNewDepartmentsData: (department: DepartmentModel) => void;
+  newDepartmentKey: string;
 }
 
-const AddNewAttributeItem: FC<Props> = ({ translationLang, refresh, setRefresh, handleClose }) => {
+const AddNewAttributeItem: FC<Props> = ({ translationLang, setNewDepartmentsData, newDepartmentKey }) => {
   const currentLang = useLang();
-  const [newAttributeValue, setNewAttributeValue] = useState({
-    isActive: true,
-    currentLangTitle: "",
-    translationTitle: "",
-  });
+  const [newAttributeValue, setNewAttributeValue] = useState<DepartmentModel>({ isActive: true, titles: [], newDepartmentKey: newDepartmentKey });
 
-  const handleAdd = async (value: typeof newAttributeValue, e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const payload = {
-      isActive: value.isActive,
-      titles: [{ language: translationLang, label: value.translationTitle }, { language: currentLang, label: value.currentLangTitle }]
-    }
-    try {
-      const response = await addEditDepartment(payload);
-      if (response.data.success) {
-        toast.success(response.data.message);
-        setRefresh(!refresh);
-        handleClose();
-      }
-    } catch (error) {
-      console.log(error instanceof Error ? error.message : error);
-    }
-  };
+  const translationLanguageTitle = newAttributeValue.titles.find(title => title.language === translationLang)?.label ?? "";
+  const currentLanguageTitle = newAttributeValue.titles.find(title => title.language === currentLang)?.label ?? "";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setNewAttributeValue({
-      ...newAttributeValue,
-      [e.target.name]: e.target.value,
-    });
+    const titles = newAttributeValue.titles;
+    const { value, name } = e.target;
+    if (name === "currentLangTitle") {
+      const index = titles.findIndex(title => title.language === currentLang);
+      if (index > -1) {
+        titles[index] = { label: value, language: currentLang };
+      }
+      else {
+        titles.push({ label: value, language: currentLang })
+      }
+    }
+    if (name === "translationTitle") {
+      const index = titles.findIndex(title => title.language === translationLang);
+      if (index > -1) {
+        titles[index] = { label: value, language: translationLang };
+      }
+      else {
+        titles.push({ label: value, language: translationLang })
+      }
+    }
+    setNewAttributeValue({ ...newAttributeValue, titles: titles });
   };
+
+  const handleOnBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
+    setNewDepartmentsData(newAttributeValue);
+  }
 
   const handleSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
   ) => {
-    setNewAttributeValue({
+    const department = {
       ...newAttributeValue,
       isActive: checked,
-    });
+    }
+    setNewAttributeValue(department);
+    setNewDepartmentsData(department);
   };
+
   return (
-    <form className="attribute-row" onSubmit={(e) => handleAdd(newAttributeValue, e)}>
+    <Box className="attribute-row" >
       <TextField
-        value={newAttributeValue.currentLangTitle}
+        value={currentLanguageTitle}
         onChange={handleChange}
         name="currentLangTitle"
-        required
+        onBlur={handleOnBlur}
       />
       <TextField
-        value={newAttributeValue.translationTitle}
+        value={translationLanguageTitle}
         onChange={handleChange}
         name="translationTitle"
-        required
+        onBlur={handleOnBlur}
       />
       <Switch
         checked={newAttributeValue.isActive}
         onChange={handleSwitchChange}
       />
-      <div className="d-flex align-items-center">
-        <IconButton
-          onClick={handleClose}
-          className="border-0"
-        >
-          <Close />
-        </IconButton>
-      </div>
-    </form>
+    </Box>
   );
 };
 export { AddNewAttributeItem };

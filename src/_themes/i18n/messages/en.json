@@ -516,6 +516,8 @@
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
   "MESSAGE.DEPARTMENT.NO_DEPARTMENTS": "Please add departments",
+  "MESSAGE.DEPARTMENT.UPDATE_SUCCESS": "Departments Updated Successfully",
+  "MESSAGE.DEPARTMENT.UPDATE_FAILED": "Request Failed",
 
   "MESSAGE.APPLICANT.ADD_SUCCESS": "Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "Application has already been submitted. Please reapply after the waiting period",

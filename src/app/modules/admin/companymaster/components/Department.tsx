@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { useEffect, useState } from "react";
-import { addEditDepartment, getAllDepartments } from "../../adminservices";
+import { useEffect, useRef, useState } from "react";
+import { updateDepartment, getAllDepartments } from "../../adminservices";
 import { DepartmentModel } from "../../models";
 import { AttributeItemRow } from "./AttributeItemRow";
 import { languages } from "../../../../../utils/constant/Constant";
@@ -22,12 +22,12 @@ import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 const Departments = () => {
   const { formatMessage } = useIntl();
   const currentLang = useLang();
-  const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
+  const [newDepartmentsList, setNewDepartmentsList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
   const [translationLang, setTranslationLang] = useState<string>(languages.find(lang => lang.lang !== currentLang)?.lang!);
-  const [newDepartment, setNewDepartments] = useState<number[]>([]);
+  const [newItemIds, setNewItemIds] = useState<string[]>([]);
+  const initialAttributeValue = useRef<DepartmentModel[]>([]);
 
   const setUpdatedDepartmentData = (department: DepartmentModel) => {
     if (department?.departmentId) {
@@ -43,28 +43,52 @@ const Departments = () => {
     }
   };
 
+  const setNewDepartmentsData = (department: DepartmentModel) => {
+    const index = newDepartmentsList.findIndex(dep => dep.newDepartmentKey === department.newDepartmentKey);
+    if (index > -1) {
+      setNewDepartmentsList(newDepartmentsList.map(dep => {
+        if (dep.newDepartmentKey === department.newDepartmentKey) {
+          return department;
+        }
+        else {
+          return dep;
+        }
+      }))
+    } else {
+      setNewDepartmentsList([...newDepartmentsList, department])
+    }
+  }
+
   const handleReset = () => {
-    setEditedDepartment(null);
-    setOpen(false);
+    setDepartmentList(initialAttributeValue.current);
+    setNewItemIds([]);
+    setNewDepartmentsList([]);
   };
 
-  const handleEditDepartment = async () => {
-    if (editedDeparment) {
-      try {
-        const response = await addEditDepartment(editedDeparment);
-        const { success, message } = response.data;
-        if (success) {
-          toast.success(message);
-          setEditedDepartment(null);
-          setRefresh(!refresh);
+  const handleUpdateDepartment = async () => {
+    let allDepartments: DepartmentModel[] = [];
+    if (newDepartmentsList.length > 0) {
+      allDepartments = newDepartmentsList.map(dep => {
+        return {
+          isActive: dep.isActive,
+          titles: [...dep.titles]
         }
-      } catch (error) {
-        console.log(error);
+      })
+    }
+    try {
+      const response = await updateDepartment([...allDepartments, ...departmentList]);
+      const { success } = response.data;
+      if (success) {
+        toast.success(formatMessage({ id: "MESSAGE.DEPARTMENT.UPDATE_SUCCESS" }));
+        setNewItemIds([]);
+        setNewDepartmentsList([]);
+        setRefresh(!refresh);
       }
+    } catch (error) {
+      toast.success(formatMessage({ id: "MESSAGE.DEPARTMENT.UPDATE_FAILED" }));
+      console.log(error);
     }
   };
-
-  console.log(departmentList);
 
 
   useEffect(() => {
@@ -74,6 +98,7 @@ const Departments = () => {
         const { success, methodResults } = response.data;
         if (success) {
           setDepartmentList(methodResults);
+          initialAttributeValue.current = methodResults;
         }
       } catch (error) {
         console.log(error);
@@ -138,11 +163,10 @@ const Departments = () => {
             setRefresh={setRefresh}
           />
         ))}
-
         {
-          isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={() => setOpen(false)} />
+          newItemIds.map(item => <AddNewAttributeItem key={item} translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} setNewDepartmentsData={setNewDepartmentsData} newDepartmentKey={item} />)
         }
-        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={() => setOpen(true)}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={() => setNewItemIds([...newItemIds, Date.now().toString()])}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
         <Stack
           spacing={1}
           direction={"row"}
@@ -155,7 +179,7 @@ const Departments = () => {
           />
           <CustomisedButton
             label={formatMessage({ id: "BUTTON.UPDATE" })}
-            handleClick={() => handleEditDepartment()}
+            handleClick={() => handleUpdateDepartment()}
           />
         </Stack>
       </Stack>
