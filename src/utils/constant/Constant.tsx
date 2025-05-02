@@ -69,7 +69,6 @@ export const ServiceUrl = {
   CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
   GET_ALL_MODULES_INFO:`${BaseUrl}/api/Roles/GetAllModuleDetails`,
 
-
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
@@ -120,9 +119,11 @@ export const ServiceUrl = {
   DELETE_DEPARTMENT:`${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
 
   // skills
-
   GET_SKILLS_LIST:`${BaseUrl}/api/User/GetSuggestedSkills`,
   ADD_SKILL:`${BaseUrl}/api/User/AddSkill`,
+
+  // dashboard
+  GET_ALL_GENDERS: `${BaseUrl}/API/Dashboard/GetAllGenderDetails`
 };
 
 export const languages = [

@@ -58,7 +58,6 @@ export const ApplicationModules: FC = () => {
       try {
         const response = await getAllModulesInfo();
         const { success, methodResults } = response.data;
-        console.log(methodResults);
         if (success) {
           setModuleInfo(methodResults);
         }
