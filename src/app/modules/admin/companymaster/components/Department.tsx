@@ -166,7 +166,7 @@ const Departments = () => {
         {
           newItemIds.map(item => <AddNewAttributeItem key={item} translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} setNewDepartmentsData={setNewDepartmentsData} newDepartmentKey={item} />)
         }
-        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={() => setNewItemIds([...newItemIds, Date.now().toString()])}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-6" onClick={() => setNewItemIds([...newItemIds, Date.now().toString()])}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
         <Stack
           spacing={1}
           direction={"row"}

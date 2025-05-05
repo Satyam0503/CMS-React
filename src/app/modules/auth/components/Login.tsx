@@ -1,7 +1,6 @@
-import { useState } from "react";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
-import { Formik, useFormik } from "formik";
+import { Formik } from "formik";
 import { login } from "../core/_requests";
 
 import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
@@ -142,7 +141,7 @@ export function Login() {
                 <Stack spacing={1}>
                   <CustomisedButton
                     type="submit"
-                    label={ intl.formatMessage({id:"BUTTON.SIGNIN"})}
+                    label={intl.formatMessage({ id: "BUTTON.SIGNIN" })}
                     size="large"
                     loading={isSubmitting}
                     disabled={isSubmitting || !(isValid && dirty)}

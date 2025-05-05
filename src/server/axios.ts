@@ -49,7 +49,7 @@ export const getRequest = <ResponseData>(
   return axios.get<ResponseData>(path, {
     ...config,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Origin": "*",
       "Cache-Control": "max-age=3600",
     },
   });
@@ -64,7 +64,7 @@ export const postRequest = <RequestData, ResponseData>(
   return axios.post<ResponseData>(path, data, {
     ...config,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Origin": "*",
       "Content-Type": isformData ? "multipart/form-data" : "application/json ",
       "Cache-Control": " max-age=3600",
     },

@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { FC, useState, useEffect } from "react";
 import { LayoutSplashScreen } from "../../../../_themes/layout/core";
 import * as authHelper from "./AuthHelpers";

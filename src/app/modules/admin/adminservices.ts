@@ -92,3 +92,7 @@ export const getAllModulesInfo = async () => {
 export const getCompanyDetails = async () => {
   return getRequest<GetCompanyDetailsResponse>(ServiceUrl.GET_COMPANY_DETAILS);
 };
+
+export const updateCompanyDetails = async () => {
+  return postRequest(ServiceUrl.UPDATE_COMPANY_DETAILS);
+};

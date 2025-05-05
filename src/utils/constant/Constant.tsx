@@ -128,7 +128,8 @@ export const ServiceUrl = {
   ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
 
   // company 
-  GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`
+  GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`,
+  UPDATE_COMPANY_DETAILS: `${BaseUrl}/api/Company/UpdateCompanyDetails`
 };
 
 export const languages = [

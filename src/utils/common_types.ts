@@ -24,6 +24,8 @@ export interface UserModel {
   lastName: string;
   fullName: string;
   profileImage: string;
+  defaultLanguage: string;
+  applicationLanguage: string[];
   modulePermission: string[];
 }
 
@@ -94,8 +96,6 @@ export type UserCertificationModel = {
   userId?: string;
   certificationId?: string;
 };
-
-
 
 export type HolidayType = {
   id: string;
@@ -187,7 +187,7 @@ export interface SideBarTabListProps {
   icon: JSX.Element;
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
-  isDefault:boolean;
+  isDefault: boolean;
 }
 
 export interface FiltersType {
@@ -222,7 +222,6 @@ export type EmployeeResponseData = ResponseData<EmployeeModel>;
 export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
-
 
 export type UserEducationResponseData = ResponseData<UserEducationModel>;
 
