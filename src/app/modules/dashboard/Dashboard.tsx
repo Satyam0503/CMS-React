@@ -96,7 +96,9 @@ export default function Dashboard() {
               </Grid>
             )}
             <Grid item xs={12} sm={6}>
-              <DepartmentChart employees={employees} />
+              {/* <DepartmentChart employees={employees} /> */}
+              <DepartmentChart/>
+
             </Grid>
 
             <Grid item xs={12}>

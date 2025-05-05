@@ -123,7 +123,8 @@ export const ServiceUrl = {
   ADD_SKILL:`${BaseUrl}/api/User/AddSkill`,
 
   // dashboard
-  GET_ALL_GENDERS: `${BaseUrl}/API/Dashboard/GetAllGenderDetails`
+  GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
+  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`
 };
 
 export const languages = [

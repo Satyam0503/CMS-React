@@ -59,8 +59,7 @@ export const EmployeeChart: FC = () => {
           try {
             const response = await getAllGenderInfo();
             const { success, methodResults } = response.data;
-            console.log("Gender Info : ",methodResults);
-            if (success) {
+           if (success) {
               var labels: string[] = [];
               var series: number[] = [];
               methodResults.forEach((data)=>{
