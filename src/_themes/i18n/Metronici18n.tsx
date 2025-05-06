@@ -1,5 +1,6 @@
-import {FC, createContext, useContext} from 'react'
+import { FC, createContext, useContext } from 'react'
 import { WithChildren } from '../../utils/common_types'
+import { LANGUAGE } from '../../utils/enums'
 
 const I18N_CONFIG_KEY = import.meta.env.VITE_APP_I18N_CONFIG_KEY || 'i18nConfig'
 
@@ -7,7 +8,7 @@ type Props = {
   selectedLang: 'de' | 'en' | 'es' | 'fr' | 'ja' | 'zh'
 }
 const initialState: Props = {
-  selectedLang: 'en',
+  selectedLang: LANGUAGE.ENGLISH,
 }
 
 export function getConfig(): Props {
@@ -23,7 +24,7 @@ export function getConfig(): Props {
 }
 
 export function setLanguage(lang: string) {
-  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({selectedLang: lang}))
+  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }))
   window.location.reload()
 }
 
@@ -33,9 +34,9 @@ const useLang = () => {
   return useContext(I18nContext).selectedLang
 }
 
-const I18nProvider: FC<WithChildren> = ({children}) => {
+const I18nProvider: FC<WithChildren> = ({ children }) => {
   const lang = getConfig()
   return <I18nContext.Provider value={lang}>{children}</I18nContext.Provider>
 }
 
-export {I18nProvider, useLang}
+export { I18nProvider, useLang }

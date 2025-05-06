@@ -1,5 +1,4 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import Themes from "./themes/Themes";
 import { Roles } from "./permissions/Roles";
 import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
 import { ModulesName } from "../../../utils/enums";
@@ -17,11 +16,6 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
     parent: "/",
   },
   {
-    label: "PAGE.THEME",
-    path: "/admin/theme",
-    parent: "/",
-  },
-  {
     label: "PAGE.EDIT_PERMISSION",
     path: "/admin/roles/edit/{id}",
     parent: "/admin/roles",
@@ -34,6 +28,11 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
   {
     label: "PAGE.COMPANY_MASTER",
     path: "/admin/companymaster",
+    parent: "/",
+  },
+  {
+    label: "PAGE.COMPANY_DETAILS",
+    path: "/admin/companydetails",
     parent: "/",
   },
 ] 
@@ -52,14 +51,6 @@ const AdminRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.Permissions}>
               <Roles />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="theme"
-          element={
-            <ProtectedRoute module={ModulesName.Theme}>
-              <Themes />
             </ProtectedRoute>
           }
         />
@@ -87,14 +78,12 @@ const AdminRoutes = () => {
             </ProtectedRoute>
           }
         />
-        {/* Route for CompanyDetail -> Added by Rajdeep */}
         <Route
           path="companydetails/*"
           element={
-            // Protected Routes commented as modulePermission is not created for  Company Details module
-            // <ProtectedRoute module={ModulesName.CompanyDetails}>
-              <CompanyDetailsTab />
-            //</ProtectedRoute
+              <ProtectedRoute module={ModulesName.CompanyDetails}>
+                <CompanyDetailsTab />
+              </ProtectedRoute>
           }
         />
       </Route>

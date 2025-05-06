@@ -9,7 +9,7 @@ axios.interceptors.request.use(
     const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
       ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
       : "";
-    config.headers["Accept-Language"] = getConfig().selectedLang;    
+    config.headers["Accept-Language"] = getConfig().selectedLang;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
@@ -49,7 +49,7 @@ export const getRequest = <ResponseData>(
   return axios.get<ResponseData>(path, {
     ...config,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Origin": "*",
       "Cache-Control": "max-age=3600",
     },
   });
@@ -64,23 +64,23 @@ export const postRequest = <RequestData, ResponseData>(
   return axios.post<ResponseData>(path, data, {
     ...config,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      // "Access-Control-Allow-Origin": "*",
       "Content-Type": isformData ? "multipart/form-data" : "application/json ",
       "Cache-Control": " max-age=3600",
     },
   });
 };
 
-export const patchRequest = <Data,ResponseData>(
+export const patchRequest = <Data, ResponseData>(
   path: string,
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
   return axios.patch<ResponseData>(path, data, {
     ...config,
-    headers:{
-      "Content-Type":"application/json",
-    }
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

@@ -1,25 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {  UserModel } from "../../../utils/common_types";
-
+import { UserModel } from "../../../utils/common_types";
 
 interface UserDetailsModel {
-  userData:UserModel | undefined;
+  userData: UserModel | undefined;
 }
 
 const initialState: UserDetailsModel = {
-  userData:undefined,
+  userData: undefined,
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setCurrentUser:(state,action:PayloadAction<UserModel | undefined>)=>{
-      state.userData= action.payload;
+    setCurrentUser: (state, action: PayloadAction<UserModel | undefined>) => {
+      state.userData = action.payload;
     },
-    resetUserSlice:(state)=>{
-      state.userData= undefined;
-    }
+    resetUserSlice: (state) => {
+      state.userData = undefined;
+    },
   },
 });
 
