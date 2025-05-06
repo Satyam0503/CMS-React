@@ -4,6 +4,8 @@ import {
 } from "../../../utils/common_types";
 import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
 import { ApplicationFilterModel, ProcessLogFilterModel } from "../../modules/recruitment/models";
+import { EmployeeFilterModel } from "../../modules/employees/models"
+import { actions } from "react-table";
 
 const filterSlice = createSlice({
   name: "filters",
@@ -29,6 +31,10 @@ const filterSlice = createSlice({
       state.jobs=null;
       state.processLog= null;
       clearAllLocalFilter();
+    },
+    setEmployeesFilter: (state, action: PayloadAction<EmployeeFilterModel>) =>{
+      state.employee = action.payload;
+      setLocalFilter(state);
     }
   },
 });

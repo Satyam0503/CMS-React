@@ -12,5 +12,13 @@ export interface GetAllEmployeeResponseModel {
   dateOfBirth :string ;
 }
 
+export interface EmployeeFilterModel {
+  departmentId: string[];
+}
+
+export interface GetAllEmployeePayloadModel {
+  name: string;
+  departmentId?: string[] ;
+}
 
 export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;

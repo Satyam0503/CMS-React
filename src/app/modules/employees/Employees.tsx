@@ -35,7 +35,15 @@ import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
+import {
+  
+  initialFilterValues,
+} from "./components/EmployeeFilter";
 
+const initialFilter = {
+  ...initialFilterValues,
+  name: "",
+};
 
 type ViewMode = "table" | "grid";
 
@@ -68,6 +76,11 @@ const Employees=()=> {
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
   const [viewMode, setViewMode] =
     useState<ViewMode>("table");
+
+  const employeeFilters = useAppSelector((state)=> state.filters.employee);
+
+  const isFilterAvailable = employeeFilters !== null;
+
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -138,9 +151,15 @@ const Employees=()=> {
 
   useEffect(() => {
     setLoading(true);
+    const payload = {
+      ...employeeFilters,
+      name: search,
+    }
+
     const getAllEmployeesList = async () => {
       try {
         const response = await getAllEmployees(
+          isFilterAvailable ? payload : { ...initialFilter, name: search },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
@@ -163,7 +182,7 @@ const Employees=()=> {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, isRefresh]);
+  }, [paginationValues, isRefresh, search]);
 
   useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.EMPLOYEES" }));
