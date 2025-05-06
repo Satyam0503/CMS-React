@@ -39,7 +39,7 @@ import { AddEmployee } from "./components/AddEmployee";
 
 type ViewMode = "table" | "grid";
 
-const Employees=()=> {
+const Employees = () => {
   const intl = useIntl();
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
@@ -63,11 +63,10 @@ const Employees=()=> {
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
     [userModulesPermissions]
-  ); 
+  );
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
-  const [viewMode, setViewMode] =
-    useState<ViewMode>("table");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -122,7 +121,7 @@ const Employees=()=> {
     });
   };
 
-  const rowClickHandler = (employee:GetAllEmployeeResponseModel) => {   
+  const rowClickHandler = (employee: GetAllEmployeeResponseModel) => {
     const empId = employee.userId;
     empId === currentEmpId
       ? navigate("/profile")
@@ -171,80 +170,80 @@ const Employees=()=> {
 
   return (
     <>
-      <Card sx={{ p: "2rem", gap:2 }} className="d-flex flex-column flex-grow-1">
-          <Stack
-            direction="row"
-            gap={2}
-            className="justify-content-between flex-wrap-reverse align-items-center"
-          >
-            <SearchInput search={search} setSearch={handleSearchChange} />
+      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+        <Stack
+          direction="row"
+          gap={2}
+          className="justify-content-between flex-wrap-reverse align-items-center"
+        >
+          <SearchInput search={search} setSearch={handleSearchChange} />
 
-            <Stack direction="row" spacing={1.5}>
-              <ToggleButtonGroup
-                orientation="horizontal"
-                value={viewMode}
-                exclusive
-                onChange={handleViewChange}
-                size="small"
-                sx={{
-                  height:32,
-                }}
-              >
-                <ToggleButton value="table" aria-label="table">
-                  <ViewList />
-                </ToggleButton>
-                <ToggleButton value="grid" aria-label="grid">
-                  <GridView />
-                </ToggleButton>
-              </ToggleButtonGroup>
-              <CustomIconButton icon={<FilterList />} handleClick={() => {}} />
-              {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
-                <CustomIconButton
-                  icon={<Add />}
-                  handleClick={() => setModalOpen(true)}
-                  tooltip={intl.formatMessage({
-                    id: "ADD.EMP.INFO",
-                  })}
-                  ariaLabel="Add employee"
-                />
-              )}
-            </Stack>
+          <Stack direction="row" spacing={1.5}>
+            <ToggleButtonGroup
+              orientation="horizontal"
+              value={viewMode}
+              exclusive
+              onChange={handleViewChange}
+              size="small"
+              sx={{
+                height: 32,
+              }}
+            >
+              <ToggleButton value="table" aria-label="table">
+                <ViewList />
+              </ToggleButton>
+              <ToggleButton value="grid" aria-label="grid">
+                <GridView />
+              </ToggleButton>
+            </ToggleButtonGroup>
+            <CustomIconButton icon={<FilterList />} handleClick={() => { }} />
+            {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setModalOpen(true)}
+                tooltip={intl.formatMessage({
+                  id: "ADD.EMP.INFO",
+                })}
+                ariaLabel="Add employee"
+              />
+            )}
           </Stack>
-          {viewMode === "table" ? (
-            <CustomisedTable
-              tabName={ModulesName.Employees}
-              keyName="userId"
-              loading={isLoading}
-              rows={employeeList}
-              columns={EmployeeTabTableColumnList}
-              page={paginationValues.pageNo}
-              rowsPerPage={paginationValues.records}
-              openConfirmationModal={openConfirmationModal}
-              rowClickHandler={rowClickHandler}
-            />
-          ) : (
-            <EmployeeGridView
-              employeeList={employeeList}
-              isLoading={isLoading}
-            />
-          )}
+        </Stack>
+        {viewMode === "table" ? (
+          <CustomisedTable
+            tabName={ModulesName.Employees}
+            keyName="userId"
+            loading={isLoading}
+            rows={employeeList}
+            columns={EmployeeTabTableColumnList}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
+            openConfirmationModal={openConfirmationModal}
+            rowClickHandler={rowClickHandler}
+          />
+        ) : (
+          <EmployeeGridView
+            employeeList={employeeList}
+            isLoading={isLoading}
+          />
+        )}
 
-          {totalRecords > 0 && (
-            <Pagination
-              page={paginationValues.pageNo}
-              rowsPerPage={paginationValues.records}
-              setPage={handlePageChange}
-              setRowPerPage={handleRowPerPageChange}
-              totalRecords={totalRecords}
-            />
-          )}
+        {totalRecords > 0 && (
+          <Pagination
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
+            setPage={handlePageChange}
+            setRowPerPage={handleRowPerPageChange}
+            totalRecords={totalRecords}
+          />
+        )}
       </Card>
 
       {isModalOpen && (
         <AddEmployee
           employeeList={employeeList}
           open={isModalOpen}
-          handleClose={()=>setModalOpen(false)}
+          handleClose={() => setModalOpen(false)}
           refresh={isRefresh}
           setRefresh={setRefresh}
         />

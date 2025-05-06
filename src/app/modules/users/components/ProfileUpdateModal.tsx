@@ -15,6 +15,7 @@ import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { colors } from "../../theme/MuiTheme";
 import { ImageCropper } from "./ImageCropper";
+import { useUserDetails } from "../UserDataProvider";
 
 interface Props {
   open: boolean;
@@ -87,9 +88,9 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
         const response = await updateProfilePicture(formData);
         const { success, methodResult } = response.data;
         if (success) {
-          toast.success("Profile Updated Successfully");
           dispatch(setCurrentUser({ ...userData, profileImage: methodResult }));
           handleClose();
+          toast.success("Profile Updated Successfully");
         }
       } catch (error) {
         toast.error("Request Failed");
@@ -102,7 +103,7 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
     setImgSrc("");
     setCropperOpen(false);
   };
-  const handleImageCropSuccess = (croppedImageDataUrl:string) => {
+  const handleImageCropSuccess = (croppedImageDataUrl: string) => {
     setCroppedImage(croppedImageDataUrl);
     setCropperOpen(false);
   };
@@ -163,7 +164,7 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                 label="Delete File"
                 Icon={<DeleteOutlineOutlined />}
                 iconPosition="end"
-                handleClick={() => {}}
+                handleClick={() => { }}
                 style={{
                   visibility: !selectedImage ? "hidden" : "visible",
                   color: colors.alpha.danger[500],

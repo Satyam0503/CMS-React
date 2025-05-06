@@ -12,7 +12,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CompanyInfoModel } from "../../models";
 import { getCompanyDetails } from "../../adminservices";
-import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { colors } from "../../../theme/MuiTheme";
 import { languages } from "../../../../../utils/constant/Constant";
 
@@ -114,6 +113,9 @@ export const CompanyInfo: FC = () => {
               width: "200px",
               height: "50px",
               marginBlockStart: 2,
+              objectFit: "contain",
+              objectPosition: "center",
+              backgroundColor: "black"
             }}
           />
           <Typography variant="body1">{companyInfo.companyName}</Typography>

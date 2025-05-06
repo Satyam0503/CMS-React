@@ -77,10 +77,6 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
             dangerouslySetInnerHTML={{
               __html: sanitizeHtmlContent(jobData.description),
             }}
-            sx={{
-              maxHeight: "400px",
-              overflowY: "scroll",
-            }}
           />
           <Stack direction={"row"} justifyContent={"flex-end"} mt={2} gap={1}>
             {/* <CustomisedButton
@@ -91,7 +87,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
             /> */}
             <CustomisedButton
               variant="outlined"
-              label={intl.formatMessage({id:"BUTTON.CLOSE"})}
+              label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
               handleClick={handleClose}
             />
           </Stack>

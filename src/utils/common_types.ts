@@ -24,6 +24,7 @@ export interface UserModel {
   lastName: string;
   fullName: string;
   profileImage: string;
+  companyLogo: string;
   defaultLanguage: string;
   applicationLanguage: string[];
   modulePermission: string[];

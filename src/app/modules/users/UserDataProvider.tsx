@@ -5,10 +5,10 @@ import { useParams } from "react-router-dom";
 
 type UserDataContextType = {
   userDetails: EmployeeModel;
-  totalSkills:number;
-  updateUserDetails: (userData?: EmployeeModel ) => void;
-  updateTotalSkills:(totalSkills:number)=>void;
-  setRefresh:()=> void;
+  totalSkills: number;
+  updateUserDetails: (userData?: EmployeeModel) => void;
+  updateTotalSkills: (totalSkills: number) => void;
+  setRefresh: () => void;
 };
 
 type PropTypes = {
@@ -24,40 +24,40 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
   const [totalSkills, setTotalSkills] = useState(0);
-  const [refresh,setRefresh]= useState(false);
+  const [refresh, setRefresh] = useState(false);
   const employeeId = useParams().employeeid ?? "";
 
   function updateUserDetails(userData?: EmployeeModel) {
     if (!userData) {
-      setUserDetails(prev =>prev);
+      setUserDetails(prev => prev);
     }
-    else{
+    else {
       setUserDetails(userData);
     }
   }
 
-  function updateTotalSkills(totalSkills:number){
+  function updateTotalSkills(totalSkills: number) {
     setTotalSkills(totalSkills);
   }
 
-  function handleRefresh(){
+  function handleRefresh() {
     setRefresh(!refresh);
   }
- 
-  useEffect(()=>{
+
+  useEffect(() => {
     getEmployeeById(employeeId)
-    .then(response=>{
-      const {success,message,methodResult,statusCode}= response.data;
-      if(!(success && statusCode ===200)){
-        throw new Error(message);
-      }  
-      setUserDetails(methodResult);
-    })
-    .catch(error=>{
-      console.error(error.message);
-    })
-  },[refresh])  
-  
+      .then(response => {
+        const { success, message, methodResult, statusCode } = response.data;
+        if (!(success && statusCode === 200)) {
+          throw new Error(message);
+        }
+        setUserDetails(methodResult);
+      })
+      .catch(error => {
+        console.error(error.message);
+      })
+  }, [refresh])
+
   return (
     <UserDetailsContext.Provider
       value={{
@@ -65,7 +65,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         totalSkills,
         updateUserDetails,
         updateTotalSkills,
-        setRefresh:handleRefresh,
+        setRefresh: handleRefresh,
       }}
     >
       {children}
