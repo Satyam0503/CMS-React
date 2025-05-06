@@ -45,7 +45,7 @@ export const Roles = () => {
 
   return (
     <>
-      <Card sx={{ p: "2rem" }} className="d-flex flex-column">
+      <Card sx={{ p: "2rem" }} className="d-flex flex-column flex-grow-1">
         {hasAccess && (
           <CustomisedButton
             label={intl.formatMessage({ id: "ROLE.ADD_ROLE" })}

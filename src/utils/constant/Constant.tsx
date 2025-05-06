@@ -17,6 +17,7 @@ import {
   ApplicantStatus,
   ApplicationStatus,
   CommentAction,
+  LANGUAGE,
   Modules,
   ModulesName,
   ModulesTitles,
@@ -31,7 +32,9 @@ import {
   CalendarMonth,
   ColorLens,
   Contacts,
+  Info,
   Mail,
+  NoteAlt,
   PermContactCalendar,
   Person,
   PersonSearch,
@@ -67,7 +70,9 @@ export const ServiceUrl = {
   ADD_EDIT_ROLE: `${BaseUrl}/api/Roles/AddEditRole`,
   GET_ROLE_BY_ID: `${BaseUrl}/api/Roles/GetRoleById`,
   CHANGE_APP_ACCESS: `${BaseUrl}/api/Roles/UpdateAppAccessForRole`,
-  GET_ALL_MODULES_INFO:`${BaseUrl}/api/Roles/GetAllModuleDetails`,
+  UPDATE_MODULE_ACCESS: `${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
+  GET_ALL_MODULES_INFO: `${BaseUrl}/api/CompanyMaster/GetAllModuleDetails`,
+
 
   //user
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
@@ -115,12 +120,15 @@ export const ServiceUrl = {
 
   // departments
   GET_DEPARTMENTLIST: `${BaseUrl}/api/CompanyMaster/GetDepartmentList`,
-  ADD_EDIT_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/AddEditDepartment`,
-  DELETE_DEPARTMENT:`${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
+  UPDATE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/UpdateDepartment`,
+  DELETE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
 
   // skills
-  GET_SKILLS_LIST:`${BaseUrl}/api/User/GetSuggestedSkills`,
-  ADD_SKILL:`${BaseUrl}/api/User/AddSkill`,
+  GET_SKILLS_LIST: `${BaseUrl}/api/User/GetSuggestedSkills`,
+  ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
+  // company 
+  GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`,
+  UPDATE_COMPANY_DETAILS: `${BaseUrl}/api/Company/UpdateCompanyDetails`,
 
   // dashboard
   GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
@@ -130,37 +138,37 @@ export const ServiceUrl = {
 export const languages = [
   {
     id: 1,
-    lang: "en",
+    lang: LANGUAGE.ENGLISH,
     name: <FormattedMessage id="Language.English" />,
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
-    lang: "zh",
+    lang: LANGUAGE.MANDARIN,
     name: <FormattedMessage id="Language.Mandarin" />,
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
-    lang: "es",
+    lang: LANGUAGE.SPANISH,
     name: <FormattedMessage id="Language.Spanish" />,
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
-    lang: "ja",
+    lang: LANGUAGE.JAPANESE,
     name: <FormattedMessage id="Language.Japanese" />,
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
-    lang: "de",
+    lang: LANGUAGE.GERMAN,
     name: <FormattedMessage id="Language.German" />,
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
-    lang: "fr",
+    lang: LANGUAGE.FRENCH,
     name: <FormattedMessage id="Language.French" />,
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
@@ -740,8 +748,6 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        // handleEdit={handleApplicationEdit}
-        // openConfirmationModal={openConfirmationModal}
         openViewModal={openViewApplication}
       />
     ),
@@ -839,9 +845,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        handleEdit={handleJobEdit}
-        openConfirmationModal={openDeleteModal}
-        // openViewModal={openViewJobDetail}
+        openViewModal={openViewJobDetail}
       />
     ),
   },
@@ -921,7 +925,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     constant: ModulesName.Dashboard,
     route: "/dashboard",
     icon: <DashboardIcon />,
-    isDefault:true,
+    isDefault: true,
   },
   {
     id: Modules.Employees,
@@ -929,7 +933,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesTitles.Employees,
     route: "/employees",
     icon: <Person />,
-    isDefault:false,
+    isDefault: false,
   },
   {
     id: Modules.PayRoll,
@@ -938,7 +942,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/",
     icon: <Contacts />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.LeaveManagement,
@@ -946,7 +950,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.LeaveManagement,
         route: "/leavemanagement",
         icon: <PermContactCalendar />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.Attendance,
@@ -954,7 +958,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Attendance,
         route: "/attendance",
         icon: <AccessTime />,
-        isDefault:false,
+        isDefault: false,
       },
     ],
   },
@@ -965,7 +969,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/recruitment/",
     icon: <PersonSearch />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.Jobs,
@@ -973,7 +977,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.Jobs,
         route: "/recruitment/jobs",
         icon: <Work />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.Applications,
@@ -981,7 +985,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Applications,
         route: "/recruitment/applications",
         icon: <Mail />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.ProcessLog,
@@ -989,7 +993,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         title: ModulesTitles.ProcessLog,
         route: "/recruitment/processlog",
         icon: <Book />,
-        isDefault:false,
+        isDefault: false,
       },
     ],
   },
@@ -1000,7 +1004,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     route: "/admin/",
     icon: <Settings />,
     hasSubTabs: true,
-    isDefault:false,
+    isDefault: false,
     subTabs: [
       {
         id: Modules.Permissions,
@@ -1008,7 +1012,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Permissions,
         route: "/admin/roles",
         icon: <ToggleOn />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.CompanyMaster,
@@ -1016,16 +1020,16 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.CompanyMaster,
         route: "/admin/companymaster/",
         icon: <AdminPanelSettings />,
-        isDefault:false,
+        isDefault: false,
       },
       {
         id: Modules.CompanyDetails,
         title: ModulesTitles.CompanyDetails,
         constant: ModulesName.CompanyDetails,
         route: "/admin/companydetails",
-        icon: <AdminPanelSettings />,
-        isDefault:false,
-      },  
+        icon: <Info />,
+        isDefault: false,
+      },
     ],
   },
   {
@@ -1034,15 +1038,15 @@ export const SideBarTabList: SideBarTabListProps[] = [
     constant: ModulesName.Holidays,
     route: "/holidays",
     icon: <CalendarMonth />,
-    isDefault:false,
+    isDefault: false,
   },
   {
     id: Modules.NoticeBoard,
     constant: ModulesName.NoticeBoard,
     title: ModulesTitles.NoticeBoard,
     route: "/noticeboard",
-    icon: <AdminPanelSettings />,
-    isDefault:false,
+    icon: <NoteAlt />,
+    isDefault: false,
   },
 ];
 

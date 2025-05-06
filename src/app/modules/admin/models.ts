@@ -1,4 +1,5 @@
 import {
+  BaseModel,
   ModulePermissoinModel,
   PermissionModel,
   ResponseData,
@@ -11,7 +12,7 @@ export interface RoleModel {
   isNotEditable: boolean;
   isDefault: boolean;
   userRoles: string[];
-  hasAppAccess:boolean;
+  hasAppAccess: boolean;
 }
 export interface AddEditRoleModel {
   roleId?: string | null;
@@ -23,31 +24,46 @@ export interface AddEditRoleModel {
 }
 
 export interface DepartmentModel {
-  departmentId?:string;
-  titles: MultilingualModel[]
-  isActive:boolean;
+  departmentId?: string;
+  titles: MultilingualModel[];
+  isActive: boolean;
+  newDepartmentKey?: string;
 }
 
 export interface MultilingualModel {
-  language :string;
-  label :string;
+  language: string;
+  label: string;
 }
 
 export interface AttributeModel {
-  id:string;
-  titles:MultilingualModel[];
-  isActive:boolean;
+  id: string;
+  titles: MultilingualModel[];
+  isActive: boolean;
 }
 
-export interface ModulesInfoModel{
-  moduleId:number;
-  moduleName:string;
-  moduleConstant:string;
-  isAccessible:boolean;
+export interface ModulesInfoModel {
+  moduleId: string;
+  moduleName: string;
+  moduleConstant: string;
+  isAccessible: boolean;
 }
+
+export type CompanyInfoModel = BaseModel & {
+  status: boolean;
+  companyName: string;
+  companyLogo: string | null;
+  defaultLanguage: string;
+  applicationLanguage: string[];
+  primaryContact: string;
+  country: string;
+  companyId: string;
+  state: null;
+};
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
-export type GetDepartmentResponseModel = ResponseData<DepartmentModel>
-export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>
+export type GetDepartmentResponseModel = ResponseData<DepartmentModel>;
+export type GetAllModulesInfoResponseModel = ResponseData<ModulesInfoModel>;
+export type UpdateModuleAccessResponse = ResponseData<Array<string>>;
+export type GetCompanyDetailsResponse = ResponseData<CompanyInfoModel>;

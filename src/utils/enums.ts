@@ -32,19 +32,18 @@ export enum Modules {
   Employees = 2,
   Attendance = 3,
   LeaveManagement = 4,
-  MyProfile = 5,
-  Recruitment = 6,
-  Admin = 7,
-  Holidays = 8,
-  NoticeBoard = 9,
-  Jobs = 10,
-  Applications = 11,
-  Permissions = 12,
-  Theme = 13,
-  ProcessLog = 14,
-  CompanyMaster = 15,
-  PayRoll = 16,
-  CompanyDetails =17,
+  Recruitment = 5,
+  Admin = 6,
+  Holidays = 7,
+  NoticeBoard = 8,
+  Jobs = 9,
+  Applications = 10,
+  Permissions = 11,
+  Theme = 12,
+  ProcessLog = 13,
+  CompanyMaster = 14,
+  PayRoll = 15,
+  CompanyDetails = 16,
 }
 
 export enum ModulesName {
@@ -52,7 +51,6 @@ export enum ModulesName {
   Employees = "Employees",
   Attendance = "Attendance",
   LeaveManagement = "Leave_Management",
-  MyProfile = "My_Profile",
   Recruitment = "Recruitment",
   Admin = "Admin",
   Holidays = "Holidays",
@@ -72,7 +70,6 @@ export enum ModulesTitles {
   Employees = "Modules.Employees",
   Attendance = "Modules.Attendance",
   LeaveManagement = "Modules.LeaveManagement",
-  MyProfile = "Modules.MyProfile",
   Recruitment = "Modules.Recruitment",
   Admin = "Modules.Admin",
   Holidays = "Modules.Holidays",
@@ -84,7 +81,7 @@ export enum ModulesTitles {
   ProcessLog = "Modules.ProcessLog",
   CompanyMaster = "Modules.CompanyMaster",
   PayRoll = "Modules.PayRoll",
-  CompanyDetails="Modules.CompanyDetails",
+  CompanyDetails = "Modules.CompanyDetails",
 }
 
 export enum Roles {
@@ -100,4 +97,13 @@ export enum TIME_PERIOD_MAP {
   LAST_SIX_MONTHS = 4,
   LAST_12_MONTHS = 5,
   LAST_TWO_WEEK = 7,
+}
+
+export enum LANGUAGE {
+  ENGLISH = "en",
+  MANDARIN = "zh",
+  SPANISH = "es",
+  JAPANESE = "ja",
+  GERMAN = "de",
+  FRENCH = "fr",
 }

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { useEffect, useState } from "react";
-import { addEditDepartment, getAllDepartments } from "../../adminservices";
+import { useEffect, useRef, useState } from "react";
+import { updateDepartment, getAllDepartments } from "../../adminservices";
 import { DepartmentModel } from "../../models";
 import { AttributeItemRow } from "./AttributeItemRow";
 import { languages } from "../../../../../utils/constant/Constant";
@@ -22,39 +22,74 @@ import { useLang } from "../../../../../_themes/i18n/Metronici18n";
 const Departments = () => {
   const { formatMessage } = useIntl();
   const currentLang = useLang();
-  const [isOpen, setOpen] = useState(false);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
+  const [newDepartmentsList, setNewDepartmentsList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const [editedDeparment, setEditedDepartment] = useState<DepartmentModel | null>(null);
-  const [currentEditDepartment, setCurrentEditDepartment] = useState<string | null>(null);
-  const [translationLang, setTranslationLang] = useState<string>(languages.find(lang =>lang.lang !== currentLang)?.lang!);
+  const [translationLang, setTranslationLang] = useState<string>(languages.find(lang => lang.lang !== currentLang)?.lang!);
+  const [newItemIds, setNewItemIds] = useState<string[]>([]);
+  const initialAttributeValue = useRef<DepartmentModel[]>([]);
 
-  const setUpdatedDepartmentData = (department: DepartmentModel | null) => {
-    setEditedDepartment(department);
-  };
-
-  const handleReset = () => {
-    setCurrentEditDepartment(null);
-    setEditedDepartment(null);
-    setOpen(false);
-  };
-
-  const handleEditDepartment = async () => {    
-    if (editedDeparment) {
-      try {
-        const response = await addEditDepartment(editedDeparment);
-        const { success, message } = response.data;
-        if (success) {
-          toast.success(message);
-          setCurrentEditDepartment(null);
-          setEditedDepartment(null);
-          setRefresh(!refresh);
+  const setUpdatedDepartmentData = (department: DepartmentModel) => {
+    if (department?.departmentId) {
+      setDepartmentList(departmentList.map(dep => {
+        if (dep.departmentId === department.departmentId) {
+          return department;
         }
-      } catch (error) {
-        console.log(error);
-      }
+        return dep;
+      }));
+    }
+    else {
+      setDepartmentList([...departmentList, department])
     }
   };
+
+  const setNewDepartmentsData = (department: DepartmentModel) => {
+    const index = newDepartmentsList.findIndex(dep => dep.newDepartmentKey === department.newDepartmentKey);
+    if (index > -1) {
+      setNewDepartmentsList(newDepartmentsList.map(dep => {
+        if (dep.newDepartmentKey === department.newDepartmentKey) {
+          return department;
+        }
+        else {
+          return dep;
+        }
+      }))
+    } else {
+      setNewDepartmentsList([...newDepartmentsList, department])
+    }
+  }
+
+  const handleReset = () => {
+    setDepartmentList(initialAttributeValue.current);
+    setNewItemIds([]);
+    setNewDepartmentsList([]);
+  };
+
+  const handleUpdateDepartment = async () => {
+    let allDepartments: DepartmentModel[] = [];
+    if (newDepartmentsList.length > 0) {
+      allDepartments = newDepartmentsList.map(dep => {
+        return {
+          isActive: dep.isActive,
+          titles: [...dep.titles]
+        }
+      })
+    }
+    try {
+      const response = await updateDepartment([...allDepartments, ...departmentList]);
+      const { success } = response.data;
+      if (success) {
+        toast.success(formatMessage({ id: "MESSAGE.DEPARTMENT.UPDATE_SUCCESS" }));
+        setNewItemIds([]);
+        setNewDepartmentsList([]);
+        setRefresh(!refresh);
+      }
+    } catch (error) {
+      toast.success(formatMessage({ id: "MESSAGE.DEPARTMENT.UPDATE_FAILED" }));
+      console.log(error);
+    }
+  };
+
 
   useEffect(() => {
     const getAllDeps = async () => {
@@ -63,6 +98,7 @@ const Departments = () => {
         const { success, methodResults } = response.data;
         if (success) {
           setDepartmentList(methodResults);
+          initialAttributeValue.current = methodResults;
         }
       } catch (error) {
         console.log(error);
@@ -70,7 +106,7 @@ const Departments = () => {
     };
     getAllDeps();
   }, [refresh]);
-  
+
   return (
     <Box component={"div"} sx={{ p: 3 }} className="d-flex flex-column gap-8">
       <Stack
@@ -104,17 +140,17 @@ const Departments = () => {
         </FormControl>
       </Stack>
 
-      <Stack className="department-container">
-        <Box className="department-row">
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang=>lang.lang===currentLang)?.name })}
-              </Typography>
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang=>lang.lang===translationLang)?.name })}
-              </Typography>
-              <Typography variant="body1" className="fw-bolder">
-                {formatMessage({ id: "Attribute.Status" })}
-              </Typography>
+      <Stack className="attribute-container">
+        <Box className="attribute-row">
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang => lang.lang === currentLang)?.name })}
+          </Typography>
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang => lang.lang === translationLang)?.name })}
+          </Typography>
+          <Typography variant="body1" className="fw-bolder">
+            {formatMessage({ id: "Attribute.Status" })}
+          </Typography>
         </Box>
 
         {departmentList.map((department) => (
@@ -122,18 +158,15 @@ const Departments = () => {
             key={department.departmentId}
             itemData={department}
             setUpdatedItemData={setUpdatedDepartmentData}
-            currentActiveItem={currentEditDepartment}
-            setCurrentActiveItem={setCurrentEditDepartment}
             translationLanguage={translationLang}
             refresh={refresh}
             setRefresh={setRefresh}
           />
         ))}
-
         {
-          isOpen && <AddNewAttributeItem translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} handleClose={()=>setOpen(false)}/>
+          newItemIds.map(item => <AddNewAttributeItem key={item} translationLang={translationLang} refresh={refresh} setRefresh={setRefresh} setNewDepartmentsData={setNewDepartmentsData} newDepartmentKey={item} />)
         }
-        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-4" onClick={()=>setOpen(true)}> <Add/> {formatMessage({id:"Attribute.Add_New"})} </span>
+        <span role="button" className="fw-bolder d-flex align-items-center align-self-start mt-6" onClick={() => setNewItemIds([...newItemIds, Date.now().toString()])}> <Add /> {formatMessage({ id: "Attribute.Add_New" })} </span>
         <Stack
           spacing={1}
           direction={"row"}
@@ -146,7 +179,7 @@ const Departments = () => {
           />
           <CustomisedButton
             label={formatMessage({ id: "BUTTON.UPDATE" })}
-            handleClick={() => handleEditDepartment()}
+            handleClick={() => handleUpdateDepartment()}
           />
         </Stack>
       </Stack>

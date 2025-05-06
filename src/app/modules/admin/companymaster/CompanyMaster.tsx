@@ -36,7 +36,7 @@ export const CompanyMasterTab = () => {
       <Route element={<CompanyMaster />}>
         <Route index element={<Navigate to={"department"} />} />
         <Route path="department" element={<Departments />} />
-        <Route path="jobtitle" element={<Edit />} />
+        <Route path="jobtitle" element={<></>} />
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>
@@ -64,7 +64,7 @@ const CompanyMaster = () => {
             <Box
               component={"div"}
               key={tab.tabId}
-              className={clsx("tab-box",{tab_active: checkIsActive(location.pathname,tab.to) })}
+              className={clsx("tab-box", { tab_active: checkIsActive(location.pathname, tab.to) })}
               onClick={() => navigate(tab.to)}
             >
               {tab.icon}
