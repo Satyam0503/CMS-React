@@ -21,20 +21,20 @@
   "Modules.Employees": "Employees",
   "Modules.Attendance": "Attendance",
   "Modules.LeaveManagement": "Leave Management",
-  "Modules.MyProfile" : "My Profile",
-  "Modules.Recruitment" : "Recruitment",
-  "Modules.Admin" : "Admin",
-  "Modules.Holidays" : "Holidays",
-  "Modules.NoticeBoard" :"Notice board",
-  "Modules.Jobs" : "Jobs",
-  "Modules.Applications" : "Applications",
-  "Modules.Permissions" : "Roles & Permissions",
-  "Modules.Theme" : "Theme",
-  "Modules.ProcessLog" : "Process Log",
-  "Modules.CompanyMaster" : "Company Master",
-  "Modules.PayRoll" : "PayRoll",
- 
-
+  "Modules.MyProfile": "My Profile",
+  "Modules.Recruitment": "Recruitment",
+  "Modules.Admin": "Admin",
+  "Modules.Holidays": "Holidays",
+  "Modules.NoticeBoard": "Notice board",
+  "Modules.Jobs": "Jobs",
+  "Modules.Applications": "Applications",
+  "Modules.Permissions": "Roles & Permissions",
+  "Modules.Theme": "Theme",
+  "Modules.ProcessLog": "Process Log",
+  "Modules.CompanyMaster": "Company Master",
+  "Modules.CompanyDetails": "Company Details",
+  "Modules.PayRoll": "PayRoll",
+  "Modules.CompanyDeatails": "Company Details",
 
   "PAGE.JOBS": "Job Requirements",
   "PAGE.PROCESS_LOG": "Process Log",
@@ -57,7 +57,6 @@
   "PAGE.ADD_ROLE": "Add Role",
   "PAGE.COMPANY_MASTER": "Company Master",
   "PAGE.COMPANY_DETAILS": "Company Details",
-
 
   "FORM.FIRST_NAME": "First Name",
   "FORM.LAST_NAME": "Last Name",
@@ -102,9 +101,8 @@
   "APPLICANT.RESUME_PREVIEW": "Resume Preview",
   "APPLICANT.NAME": "Applicant Name",
 
-  "EMPLOYEE.EMPID":"Emp Id",
-  "Employee.No_Employee":"No Employees Available. Please Add New Employees",
-
+  "EMPLOYEE.EMPID": "Emp Id",
+  "Employee.No_Employee": "No Employees Available. Please Add New Employees",
 
   "AUTH.REGISTER.CMS": "Your CMS Solution",
   "AUTH.REGISTER": "Register",
@@ -290,11 +288,11 @@
   "PROFILE.UPDATE_CERTIFICATION": "Update Certification",
   "PROFILE.EXP": "Years of experience",
   "PROFILE.EXP_CURRENT": "Years in {companyName}",
-  "PROFILE.TAB.ABOUT":"About",
-  "PROFILE.TAB.LEAVE":"Leave",
-  "PROFILE.TAB.PERFORMANCE":"Performance",
-  "PROFILE.TAB.WORK":"Work History",
-  "PROFILE.TAB.SETTING":"Setting",
+  "PROFILE.TAB.ABOUT": "About",
+  "PROFILE.TAB.LEAVE": "Leave",
+  "PROFILE.TAB.PERFORMANCE": "Performance",
+  "PROFILE.TAB.WORK": "Work History",
+  "PROFILE.TAB.SETTING": "Setting",
 
   "PROFILE.EMPLOYMENT": "Work experience",
   "PROFILE.CURRENT_CTC": "Current CTC",
@@ -466,17 +464,17 @@
   "ROLE.HAS_ACCESS": "Has Access",
   "ROLE.NO_ACCESS": "No Access",
 
-  "SEE_MORE":"See More",
-  "DASHBOARD.VACANCY.NOVACANCIES":"No Active Vacancies",
-  "DASHBOARD.EMPLOYEE.NOEMPLOYEE":"No Employees",
-  "DASHBOARD.APPLICATIONS.NO_APPLICATIONS":"No Applications",
+  "SEE_MORE": "See More",
+  "DASHBOARD.VACANCY.NOVACANCIES": "No Active Vacancies",
+  "DASHBOARD.EMPLOYEE.NOEMPLOYEE": "No Employees",
+  "DASHBOARD.APPLICATIONS.NO_APPLICATIONS": "No Applications",
 
-  "Attribute.Title":"Title ({language})",
-  "Attribute.Title2":"Title ({language})",
-  "Attribute.Status":"Status",
-  "Attribute.Delete":"Delete {attributeName}",
-  "Attribute.Add_New":"Add New",
-  "Department.Delete.Alert":"Are You Sure?",
+  "Attribute.Title": "Title ({language})",
+  "Attribute.Title2": "Title ({language})",
+  "Attribute.Status": "Status",
+  "Attribute.Delete": "Delete {attributeName}",
+  "Attribute.Add_New": "Add New",
+  "Department.Delete.Alert": "Are You Sure?",
 
   "COMPANY_MASTER.TAB.DEPARTMENT": "Departments",
   "COMPANY_MASTER.TAB.JOBS": "Jobs",
@@ -484,9 +482,10 @@
   "COMPANY_MASTER.ADD_DEPARTMENT": "Add Department",
   "COMPANY_MASTER.EDIT_DEPARTMENT": "Edit Department",
 
-
-  "COMPANY_DETAILS.TAB.APPLICATIONS": "Applications",
+  "COMPANY_DETAILS.TAB.MODULES": "Application Modules",
+  "COMPANY_DETAILS.MODULES.NOTE": "Select which application modules you want to be enabled for your company",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL": "Company Details",
+  "COMPANY_DETAILS.EDIT_DETAILS": "Edit Details",
 
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION": "Localization",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES": "Languages",
@@ -500,8 +499,7 @@
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMPLOYEE_MANAGEMENT": "Employee Management",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.PRIMARY_CONTACT": "Primary Contact",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMAIL": "Email",
-
-
+  "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO": "Company Logo",
 
   "BUTTON.ADD": "Add",
   "BUTTON.RESET": "Reset",
@@ -516,16 +514,20 @@
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
 
-  "SELECT.LANGUAGE.TRANSLATE":"Select language to translate",
+  "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
-  "MESSAGE.DEPARTMENT.NO_DEPARTMENTS":"Please add departments",
+  "MESSAGE.DEPARTMENT.NO_DEPARTMENTS": "Please add departments",
+  "MESSAGE.DEPARTMENT.UPDATE_SUCCESS": "Departments Updated Successfully",
+  "MESSAGE.DEPARTMENT.UPDATE_FAILED": "Request Failed",
 
   "MESSAGE.APPLICANT.ADD_SUCCESS": "Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "Application has already been submitted. Please reapply after the waiting period",
   "MESSAGE.APPLICANT.UPDATED": "Applicant Updated Successfully",
 
-  "MESSAGE.COMMENT.ADD_SUCCESS":"Comment Added Successfully",
-  "MESSAGE.APPLICATION.ACCESS_DENIED":"You Don't Have App Access",
-  "NOT_AVAILABLE":"NA",
-  "TRANSLATION_MISSING":"Translation Missing"
+  "MESSAGE.COMMENT.ADD_SUCCESS": "Comment Added Successfully",
+  "MESSAGE.APPLICATION.ACCESS_DENIED": "You Don't Have App Access",
+  "MESSAGE.MODULE.UPDATE.SUCCESS": "Module Updated Successfully",
+  "MESSAGE.MODULE.UPDATE.FAILED": "Request Failed",
+  "NOT_AVAILABLE": "NA",
+  "TRANSLATION_MISSING": "Translation Missing"
 }

@@ -13,12 +13,14 @@ import {
 import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { LANGUAGE } from "../../../../../utils/enums";
 
 const Languages: FC = () => {
   const lang = useLang();
+  const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage) ?? [LANGUAGE.ENGLISH];
   const currentLanguage = languages.find((x) => x.lang === lang);
-  const [languageAnchorEl, setLanguangeAnchorEl] =
-    useState<HTMLButtonElement | null>(null);
+  const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setLanguangeAnchorEl(event.currentTarget);
@@ -28,8 +30,10 @@ const Languages: FC = () => {
     setLanguangeAnchorEl(null);
   };
 
-  const handleChangeLanguage = (lang: (typeof languages)[0]) => {
-    setLanguage(lang.lang);
+  const handleChangeLanguage = (language: (typeof languages)[0]) => {
+    if (language.lang !== currentLanguage?.lang) {
+      setLanguage(language.lang);
+    }
   };
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
@@ -69,7 +73,7 @@ const Languages: FC = () => {
         }}
       >
         <List>
-          {languages.map((lang) => (
+          {languages.filter(lang => appLanguages.includes(lang.lang)).map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {
@@ -85,7 +89,7 @@ const Languages: FC = () => {
                     alt="countryflag"
                   />
                 </ListItemIcon>
-                <ListItemText primary={lang.name}/>
+                <ListItemText primary={lang.name} />
               </ListItemButton>
             </ListItem>
           ))}

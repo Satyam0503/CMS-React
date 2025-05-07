@@ -26,7 +26,7 @@ export const ConfirmationModal = (props: PropsTypes) => {
             variant="outlined"
           />
           <CustomisedButton
-            label={ok_btn ? "OK" : "Delete"}
+            label={ok_btn ? "Ok" : "Delete"}
             handleClick={() => handleConfirmation("ok")}
           />
         </Stack>

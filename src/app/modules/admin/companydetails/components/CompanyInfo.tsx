@@ -1,91 +1,97 @@
 import {
   Avatar,
   Box,
-  Card,
   Divider,
   Grid,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
-import React, { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { colors } from "../../../theme/MuiTheme";
+import { CompanyInfoModel } from "../../models";
+import { getCompanyDetails } from "../../adminservices";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
-import { Navigate, useNavigate, Routes, Route } from "react-router-dom";
+import { colors } from "../../../theme/MuiTheme";
+import { languages } from "../../../../../utils/constant/Constant";
 
 export const CompanyInfo: FC = () => {
-  const intl = useIntl();
-  const navigate = useNavigate();
+  const { formatMessage } = useIntl();
+  const [isEdit, setEdit] = useState(false);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
 
+  const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? <FormattedMessage id={"NOT_AVAILABLE"} />
+  const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : <FormattedMessage id={"NOT_AVAILABLE"} />;
+  useEffect(() => {
+    (async () => {
+      const response = await getCompanyDetails();
+      if (response.data.success) {
+        setCompanyInfo(response.data.methodResult);
+      }
+    })();
+  }, [])
   return (
-    <>
-      <Stack spacing={2}>
-        <Stack
-          display="flex"
-          justifyContent="flex-end"
-          alignItems={"end"}
-          pt={2}
-        >
-          <CustomisedButton label="Edit company details" handleClick={()=>navigate("editcompanydetails")} />
+    <Stack spacing={1}>
+      <Box component="div" sx={{ p: 3, bgcolor: colors.alpha.white[500] }}>
+        <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
+          <Typography variant="h5">
+            {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION" })}
+          </Typography>
+          {
+            isEdit ?
+              <Stack direction="row" spacing={1}>
+                <CustomisedButton variant="outlined" label={formatMessage({ id: "BUTTON.CANCEL" })} handleClick={() => setEdit(false)} />
+                <CustomisedButton label={formatMessage({ id: "BUTTON.UPDATE" })} />
+              </Stack>
+              :
+              <CustomisedButton
+                label={formatMessage({ id: "COMPANY_DETAILS.EDIT_DETAILS" })}
+                handleClick={() => setEdit(true)}
+              />
+          }
         </Stack>
-        <Box component={Card} p={3}>
-          <Stack>
-            <Typography variant="h5">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION",
-            })}</Typography>
-          </Stack>
-          <Divider sx={{ my: 2 }} />
-
+        <Divider sx={{ my: 2 }} />
         <Stack spacing={2}>
           <Stack spacing={1}>
             <Stack>
-              <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
-            })}</Typography>
+              <Typography variant="h6">
+                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES" })}
+              </Typography>
             </Stack>
             <Grid container spacing={1}>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE",
-            })}
+                  {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE" })}
                 </Typography>
-                <Typography variant="body2">English</Typography>
+                <Typography variant="body2">{defaultLanguage}</Typography>
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} sm={6}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE",
-            })}
+                  {formatMessage({
+                    id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE",
+                  })}
                 </Typography>
-                <Typography variant="body2">English, French</Typography>
+                <Typography variant="body2">{applicationLanguages}</Typography>
               </Grid>
-
             </Grid>
           </Stack>
-
+          <Divider sx={{ my: 2 }} />
           <Stack spacing={1}>
             <Stack>
-              <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
-            })}</Typography>
+              <Typography variant="h6">
+                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME", })}
+              </Typography>
               <Typography variant="body2">
-                The company name is displayed on the application side menu and
-                it is also displayed in all survey questions having a tag such
-                as [company].
+                The company name is displayed on the application side menu.
               </Typography>
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} md={4}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
-                {intl.formatMessage({
-              id: "Language.English",
-            })}
+                  {formatMessage({ id: "Language.English" })}
                 </Typography>
-                <Typography variant="body2">Keywords pvt ltd</Typography>
+                <Typography variant="body2">{companyInfo.companyName}</Typography>
               </Grid>
               <Grid item xs={12} md={4}>
                 <Typography variant="body1" color={colors.alpha.primary[500]}>
@@ -95,83 +101,30 @@ export const CompanyInfo: FC = () => {
               </Grid>
             </Grid>
           </Stack>
-
-            <Stack spacing={1}>
-              <Stack>
-                <Typography variant="h6">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.MANAGERS_IDENTIFICATION",
-            })}</Typography>
-                <Typography variant="body2">
-                  The manager tag will be replaced according to your choosen
-                  terminology, for some orgnization, it will be manager, but for
-                  some others, it will be supervisor or director.
-                </Typography>
-              </Stack>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="body1" color={colors.alpha.primary[500]}>
-                  {intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
-            })}
-                  </Typography>
-                  <Typography variant="body2">Manager</Typography>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <Typography variant="body1" color={colors.alpha.primary[500]}>
-                    French
-                  </Typography>
-                  <Typography variant="body2">gestionnaire</Typography>
-                </Grid>
-              </Grid>
-            </Stack>
-          </Stack>
-        </Box>
-        <Box component={Card} p={3}>
-          <Stack>
-            <Typography variant="h5">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.CUSTOMIZATION",
-            })}</Typography>
-          </Stack>
-          <Divider sx={{ my: 2 }} />
-          <Stack width={"150px"} spacing={1}>
-            <Avatar
-              alt=""
-              src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-              sx={{
-                width: "100%",
-                height: "100%",
-              }}
-            />
-            <Typography variant="body1">Keywords pvt ltd</Typography>
-            <Stack className="text-nowrap">
-              <Typography variant="body1">{intl.formatMessage({
+        </Stack>
+      </Box >
+      <Box component="div" sx={{ p: 3, bgcolor: colors.alpha.white[500] }}>
+        <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}</Typography>
+        <Stack spacing={1} sx={{ marginBlockStart: 2 }}>
+          <Avatar
+            variant="square"
+            alt={formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}
+            src={companyInfo.companyLogo}
+            sx={{
+              width: "200px",
+              height: "50px",
+              marginBlockStart: 2,
+            }}
+          />
+          <Typography variant="body1">{companyInfo.companyName}</Typography>
+          <Stack className="text-nowrap">
+            <Typography variant="body1">{formatMessage({
               id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.INDUSTRY",
             })}</Typography>
-              <Typography variant="body2">Software Development</Typography>
-            </Stack>
+            <Typography variant="body2">Software Development</Typography>
           </Stack>
-        </Box>
-        <Box component={Card} p={3}>
-          <Stack>
-            <Typography variant="h5">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMPLOYEE_MANAGEMENT",
-            })}</Typography>
-          </Stack>
-          <Divider sx={{ my: 2 }} />
-          <Stack width={"150px"} spacing={1}>
-            <Typography variant="body1">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.PRIMARY_CONTACT",
-            })}</Typography>
-            <Typography variant="body2">Sohan Singh</Typography>
-            <Stack className="text-nowrap">
-              <Typography variant="body1">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMAIL",
-            })}</Typography>
-              <Typography variant="body2">Keywords@gmail.com</Typography>
-            </Stack>
-          </Stack>
-        </Box>
-      </Stack>
-    </>
+        </Stack>
+      </Box>
+    </Stack >
   );
 };
