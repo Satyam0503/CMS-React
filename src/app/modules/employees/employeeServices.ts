@@ -32,7 +32,7 @@ export const deleteEmployee = async (employeeId: string) => {
 };
 
 export const getAllEmployees = async (
-  filters: GetAllEmployeePayloadModel,
+  filters?: GetAllEmployeePayloadModel,
   pageNo: number = 0,
   records: number = 0
 ) => {

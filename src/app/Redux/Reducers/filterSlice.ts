@@ -40,4 +40,4 @@ const filterSlice = createSlice({
 });
 
 export const filterReducers = filterSlice.reducer;
-export const { setApplicationFilter,setProcessLogFilter, resetFilter,resetAllFilters } = filterSlice.actions;
+export const { setApplicationFilter, setEmployeesFilter ,setProcessLogFilter, resetFilter,resetAllFilters } = filterSlice.actions;
