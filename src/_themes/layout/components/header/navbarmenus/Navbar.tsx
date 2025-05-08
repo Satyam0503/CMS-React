@@ -3,7 +3,6 @@ import HeaderNotificationMenu from "./HeaderNotificationMenu";
 import HeaderUserMenu from "./HeaderUserMenu";
 
 import ChatDrawer from "./ChatDrawer";
-import RightDrawer from "../../../../../app/modules/dashboard/components/RightDrawer";
 
 import LightDarkMode from "./LightDarkMode";
 
@@ -14,9 +13,8 @@ const Navbar = () => {
       display={"flex"}
       justifyContent={"flex-end"}
       alignItems={"center"}
-      gap={2}
+      gap={{ xs: 0.8, sm: 2 }}
     >
-      <RightDrawer />
       <LightDarkMode />
       <ChatDrawer />
       <HeaderNotificationMenu />

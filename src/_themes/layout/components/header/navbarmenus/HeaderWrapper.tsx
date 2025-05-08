@@ -45,9 +45,9 @@ export function HeaderWrapper() {
           justifyContent={"flex-end"}
           flexGrow={1}
           alignItems={"center"}
-          gap={2}
+          gap={{ xs: 0.5, md: 2 }}
         >
-          <Stack>
+          <Stack pl={1}>
             <SearchInput search={search} setSearch={handleSearchChange} />
           </Stack>
           <Stack>
