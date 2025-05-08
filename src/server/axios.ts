@@ -65,7 +65,7 @@ export const postRequest = <RequestData, ResponseData>(
     ...config,
     headers: {
       // "Access-Control-Allow-Origin": "*",
-      "Content-Type": isformData ? "multipart/form-data" : "application/json ",
+      "Content-Type": isformData ? "multipart/form-data" : "application/json",
       "Cache-Control": " max-age=3600",
     },
   });

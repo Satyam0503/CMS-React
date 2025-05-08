@@ -18,7 +18,7 @@ export interface EmployeeFilterModel {
 
 export interface GetAllEmployeePayloadModel {
   name: string;
-  departmentId?: string[] ;
+  departmentId?: string[];
 }
 
 export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;

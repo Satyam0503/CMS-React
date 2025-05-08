@@ -1,4 +1,4 @@
-import { Card, Stack, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Card, Stack, ToggleButton, ToggleButtonGroup, Badge } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
 
@@ -21,7 +21,9 @@ import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
-
+import {
+  countAppliedFilter
+} from "../../../utils/common"
 const initialFilter = {
   ...initialFilterValues,
   name: "",
@@ -66,6 +68,7 @@ const Employees = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const employeeFilters = useAppSelector((state) => state.filters.employee);
+  const totalAppliedFilter = countAppliedFilter(employeeFilters);
 
   const isFilterAvailable = employeeFilters !== null;
 
@@ -173,7 +176,7 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, isRefresh, search]);
+  }, [paginationValues, employeeFilters, isRefresh, search]);
 
   useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.EMPLOYEES" }));
@@ -210,11 +213,17 @@ const Employees = () => {
                 <GridView />
               </ToggleButton>
             </ToggleButtonGroup>
+            <Badge
+                badgeContent={totalAppliedFilter}
+                anchorOrigin={{ horizontal: "left", vertical: "top" }}
+                color="info"
+              >
             <CustomIconButton
               icon={<FilterList />}
               ariaLabel="Filter Department"
               handleClick={handleFilterClick}
             />
+            </Badge>
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
