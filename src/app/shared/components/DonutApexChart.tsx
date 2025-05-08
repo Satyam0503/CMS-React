@@ -103,7 +103,7 @@ function DonutApexChart(props: DonutApexChartProps) {
       style: {
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
-        colors: [colors.alpha.primary[600]],
+        colors: [colors.primary[600]],
       },
       background: {
         enabled: false,

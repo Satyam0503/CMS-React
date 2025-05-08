@@ -12,7 +12,6 @@ import { Checkbox, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { Close, DashboardCustomizeOutlined } from "@mui/icons-material";
-import { colors } from "../../theme/MuiTheme";
 
 export default function RightDrawer() {
   const [open, setOpen] = React.useState(false);
@@ -54,7 +53,7 @@ export default function RightDrawer() {
       </Stack>
 
       <Stack>
-        <Typography variant="body2" color={colors.alpha.primary[500]}>
+        <Typography variant="body2">
           {intl.formatMessage({ id: "SETTING.DASHBOARD_FIELDS" })}
         </Typography>
       </Stack>
@@ -73,7 +72,7 @@ export default function RightDrawer() {
           "Employee of the month",
           "Employee performance",
           "Help",
-        ].map((value: any,index) => {
+        ].map((value: any, index) => {
           const labelId = `checkbox-list-label-${value}`;
           return (
             <>
@@ -102,11 +101,7 @@ export default function RightDrawer() {
     <>
       <CustomIconButton
         icon={
-          <DashboardCustomizeOutlined
-            sx={{
-              color: colors.alpha.white[500],
-            }}
-          />
+          <DashboardCustomizeOutlined />
         }
         handleClick={toggleDrawer(true)}
         tooltip="Customize Dashboard"

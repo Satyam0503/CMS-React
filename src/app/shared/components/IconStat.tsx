@@ -27,7 +27,7 @@ const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
       </Stack>
       <Stack>
         <Typography variant="h2">{number}</Typography>
-        <Typography variant="body2" color={colors.alpha.neutral[500]}>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
           {title}
         </Typography>
       </Stack>

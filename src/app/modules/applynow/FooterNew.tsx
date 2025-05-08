@@ -31,7 +31,7 @@ export default function Footer() {
             flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-evenly",
             gap: 4,
-            color: colors.alpha.white[500],
+            color: colors.white[500],
           }}
         >
           <Grid
@@ -52,7 +52,7 @@ export default function Footer() {
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
+              bgcolor={colors.secondary[500]}
               borderRadius={2}
               height={"5px"}
               width={"25%"}
@@ -83,38 +83,38 @@ export default function Footer() {
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
+              bgcolor={colors.secondary[500]}
               borderRadius={2}
               height={"5px"}
               width={"25%"}
             />
 
             <Stack gap={1}>
-              <Link href="https://codeji.in/" color={colors.alpha.white[500]}>
+              <Link href="https://codeji.in/" color={colors.white[500]}>
                 <Typography>Home</Typography>
               </Link>
               <Link
                 href="https://codeji.in/about-us/"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <Typography>About Us</Typography>
               </Link>
               <Link
                 href="          https://codeji.in/services/"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <Typography>Services</Typography>
               </Link>
 
               <Link
                 href="https://admin.codeji.in/careers/apply-now"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <Typography>Career</Typography>
               </Link>
               <Link
                 href="https://codeji.in/contact-us/"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <Typography>Contact Us</Typography>
               </Link>
@@ -134,7 +134,7 @@ export default function Footer() {
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
+              bgcolor={colors.secondary[500]}
               borderRadius={2}
               height={"5px"}
               width={"25%"}
@@ -179,7 +179,7 @@ export default function Footer() {
             </Stack>
             <Stack
               divider={<Divider orientation="horizontal" />}
-              bgcolor={colors.alpha.secondary[500]}
+              bgcolor={colors.secondary[500]}
               borderRadius={2}
               height={"5px"}
               width={"25%"}
@@ -187,24 +187,24 @@ export default function Footer() {
             <Stack direction={"row"} gap={1}>
               <Link
                 href="https://www.facebook.com/codejiinfotech"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <FacebookIcon fontSize="large" />
               </Link>
               <Link
                 href="https://www.instagram.com/codejiinfotech/"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <InstagramIcon fontSize="large" />
               </Link>
 
               <Link
                 href="https://www.linkedin.com/company/codeji-infotech"
-                color={colors.alpha.white[500]}
+                color={colors.white[500]}
               >
                 <LinkedInIcon fontSize="large" />
               </Link>
-              <Link href="#" color={colors.alpha.white[500]}>
+              <Link href="#" color={colors.white[500]}>
                 <WhatsAppIcon fontSize="large" />
               </Link>
             </Stack>

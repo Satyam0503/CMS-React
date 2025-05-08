@@ -64,12 +64,6 @@ export default function ProfileCard() {
           <Typography
             variant="body2"
             color={"white"}
-            sx={{
-              backgroundColor: alpha(
-                lighten(colors.alpha.white[500], 0.2),
-                0.2
-              ),
-            }}
             className="px-4 py-2 rounded-pill"
           >
             {userDetails.jobRole || <FormattedMessage id="NOT_AVAILABLE" />}

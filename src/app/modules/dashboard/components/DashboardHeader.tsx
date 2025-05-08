@@ -54,9 +54,9 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
 
         <IconButton
           sx={{
-            bgcolor: colors.alpha.primary[300],
-            color: colors.alpha.white[500],
-            "&:hover": { bgcolor: colors.alpha.primary[500] },
+            bgcolor: 'primary.light',
+            color: 'common.white',
+            "&:hover": { bgcolor: 'primary.main' },
           }}
         >
           <RightDrawer />

@@ -86,9 +86,7 @@ export default function HeaderNotificationMenu() {
             </Stack>
           </Stack>
 
-          <Divider
-            sx={{ boxShadow: "1px 1px 1px " + colors.alpha.neutral[300] }}
-          />
+          <Divider />
           <MenuList>
             <Stack>
               <Link href="/userdashboard">

@@ -62,7 +62,7 @@ export function Login() {
         <Typography variant="h3">
           {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
         </Typography>
-        <Typography variant="body1" color={colors.alpha.primary[500]}>
+        <Typography variant="body1">
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
       </Stack>

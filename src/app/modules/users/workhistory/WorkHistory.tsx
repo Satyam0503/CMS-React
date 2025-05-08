@@ -49,13 +49,13 @@ export const WorkHistory: FC = () => {
                   sx={{
                     minWidth: 48,
                     height: 48,
-                    bgcolor: colors.alpha.primary[100],
+                    bgcolor: colors.primary[100],
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,
                   }}
                 >
-                  <Stack color={colors.alpha.primary[500]}>
+                  <Stack color={colors.primary[500]}>
                     <Business />
                   </Stack>
                 </Stack>
@@ -64,7 +64,7 @@ export const WorkHistory: FC = () => {
                   <Typography variant="body1">
                     {intl.formatMessage({ id: "COMPANY.PRESENT" })}
                   </Typography>
-                  <Typography variant="body2" color={colors.alpha.primary[500]}>
+                  <Typography variant="body2" >
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
 
@@ -113,13 +113,13 @@ export const WorkHistory: FC = () => {
                   sx={{
                     minWidth: 48,
                     height: 48,
-                    bgcolor: colors.alpha.primary[100],
+                    bgcolor: colors.primary[100],
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,
                   }}
                 >
-                  <Stack color={colors.alpha.primary[500]}>
+                  <Stack color={colors.primary[500]}>
                     <Business />
                   </Stack>
                 </Stack>
@@ -128,7 +128,7 @@ export const WorkHistory: FC = () => {
                   <Typography variant="body1">
                     {intl.formatMessage({ id: "COMPANY.PRESENT" })}
                   </Typography>
-                  <Typography variant="body2" color={colors.alpha.primary[500]}>
+                  <Typography variant="body2" color={colors.primary[500]}>
                     {intl.formatMessage({ id: "POSITION.DOT_NET" })}
                   </Typography>
 

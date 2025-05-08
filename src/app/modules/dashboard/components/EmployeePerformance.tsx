@@ -57,7 +57,7 @@ export default function EmployeePerformance() {
                     <TableCell align="left">{row.performance}</TableCell>
                     <TableCell align="right">
                       {row.graph}{" "}
-                      <BarChart sx={{ color: colors.alpha.primary[500] }} />
+                      <BarChart />
                     </TableCell>
                   </TableRow>
                 ))}

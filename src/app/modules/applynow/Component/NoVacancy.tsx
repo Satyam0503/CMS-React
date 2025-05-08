@@ -11,7 +11,7 @@ export default function NoVacancy() {
     <>
       <Grid container display={"flex"} gap={1.5}>
         <Stack spacing={1}>
-          <Typography variant="h4" color={colors.alpha.primary[500]}>
+          <Typography variant="h4" color={colors.primary[500]}>
             {intl.formatMessage({
               id: "VACANCY.TEXT1",
             })}
@@ -35,7 +35,7 @@ export default function NoVacancy() {
         <Stack m={auto} textAlign={"justify"}>
           <Typography
             variant="body1"
-            color={colors.alpha.primary[500]}
+            color={colors.primary[500]}
             fontWeight={400}
           >
             {intl.formatMessage({

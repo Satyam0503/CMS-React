@@ -13,7 +13,6 @@ import { toast } from "react-toastify";
 import { updateProfilePicture } from "../userservices";
 import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
-import { colors } from "../../theme/MuiTheme";
 import { ImageCropper } from "./ImageCropper";
 import { useUserDetails } from "../UserDataProvider";
 
@@ -165,10 +164,6 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                 Icon={<DeleteOutlineOutlined />}
                 iconPosition="end"
                 handleClick={() => { }}
-                style={{
-                  visibility: !selectedImage ? "hidden" : "visible",
-                  color: colors.alpha.danger[500],
-                }}
               />
               <CustomisedButton
                 label="Upload File"
@@ -191,6 +186,7 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
             handleClose={handleImageCropDiscard}
             imgSrc={imgSrc}
             handleCrop={handleImageCropSuccess}
+            circularCrop={true}
           />
         )
       }

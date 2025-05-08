@@ -71,7 +71,7 @@ export function Registration() {
         <Typography variant="h3">
           {intl.formatMessage({ id: "AUTH.REGISTER.TITLE" })}
         </Typography>
-        <Typography variant="body1" color={colors.alpha.primary[500]}>
+        <Typography variant="body1" color={colors.primary[500]}>
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
       </Stack>
@@ -209,53 +209,53 @@ export function Registration() {
                   >
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={colors.secondary[500]}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
@@ -312,7 +312,7 @@ export function Registration() {
               <Stack spacing={1}>
                 <CustomisedButton
                   disabled={!(dirty && isValid) || isSubmitting}
-                  label={intl.formatMessage({id:"BUTTON.SUBMIT"})}
+                  label={intl.formatMessage({ id: "BUTTON.SUBMIT" })}
                   size="large"
                   type="submit"
                   loading={isSubmitting}
@@ -320,7 +320,7 @@ export function Registration() {
                 <CustomisedButton
                   handleClick={() => resetForm()}
                   variant="outlined"
-                  label={intl.formatMessage({id:"BUTTON.RESET"})}
+                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
                   size="large"
                   type="button"
                 />

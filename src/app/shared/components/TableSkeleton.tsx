@@ -11,9 +11,9 @@ export default function TableSkeleton() {
         <Box
           key={item}
           sx={{
-            border: "2px solid" + colors.alpha.neutral[100],
+            border: "2px solid" + colors.neutral[100],
             borderRadius: 1,
-            padding:1,
+            padding: 1,
             width: "100%",
             display: "flex",
             justifyContent: "space-between",
@@ -23,17 +23,15 @@ export default function TableSkeleton() {
           }}
         >
           <Skeleton
-            sx={{ bgcolor: colors.alpha.neutral[100] }}
             variant="circular"
             width={45}
             height={45}
           />
-          <Stack sx={{flex:"auto" }}>
+          <Stack sx={{ flex: "auto" }}>
             <Skeleton
               animation="wave"
               height={10}
               sx={{
-                bgcolor: colors.alpha.neutral[100],
                 width: "100%",
                 mb: 1,
               }}
@@ -43,7 +41,6 @@ export default function TableSkeleton() {
               height={10}
               width="100%"
               sx={{
-                bgcolor: colors.alpha.neutral[100],
                 width: "100%",
                 mb: 1,
               }}
@@ -53,7 +50,6 @@ export default function TableSkeleton() {
               height={10}
               width="100%"
               sx={{
-                bgcolor: colors.alpha.neutral[100],
                 width: "100%",
                 borderRadius: 1,
               }}
@@ -62,21 +58,21 @@ export default function TableSkeleton() {
 
           <Stack spacing={1} direction={"row"}>
             <Skeleton
-              sx={{ bgcolor: colors.alpha.neutral[100], borderRadius: 1 }}
+              sx={{ borderRadius: 1 }}
               variant="rounded"
               width={35}
               height={35}
             />
 
             <Skeleton
-              sx={{ bgcolor: colors.alpha.neutral[100], borderRadius: 1 }}
+              sx={{ borderRadius: 1 }}
               variant="rounded"
               width={35}
               height={35}
             />
 
             <Skeleton
-              sx={{ bgcolor: colors.alpha.neutral[100], borderRadius: 1 }}
+              sx={{ borderRadius: 1 }}
               variant="rounded"
               width={35}
               height={35}

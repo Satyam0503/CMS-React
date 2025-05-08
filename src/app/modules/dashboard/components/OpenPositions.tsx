@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { JobModal } from "../../recruitment/models";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import { colors } from "../../theme/MuiTheme";
 import { CardSkeleton } from "./CardSkeleton";
 
 export default function OpenPositions() {
@@ -49,7 +48,7 @@ export default function OpenPositions() {
             component={"div"}
             sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
           >
-            <Typography variant="h5" sx={{ color: colors.alpha.neutral[400] }}>
+            <Typography variant="h5">
               {intl.formatMessage({ id: "DASHBOARD.VACANCY.NOVACANCIES" })}
             </Typography>
           </Box>
@@ -70,7 +69,6 @@ export default function OpenPositions() {
 
                     <Typography
                       variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
                     >
                       {job.jobType}
                     </Typography>

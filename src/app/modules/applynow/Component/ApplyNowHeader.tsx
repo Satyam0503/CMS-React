@@ -21,7 +21,7 @@ export default function ApplyNowHeader() {
   return (
     <Grid
       container
-      color={colors.alpha.secondary[500]}
+      color={colors.secondary[500]}
       bgcolor={"#35126c"}
       flexDirection={{ xs: "column", sm: "row" }}
       justifyContent={"space-between"}

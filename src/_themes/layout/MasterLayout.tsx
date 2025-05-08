@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
-import { Button, Container, Grid, Stack } from "@mui/material";
+import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
-import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
 import { PageDataProvider } from "./core";
-import { colors } from "../../app/modules/theme/MuiTheme";
 import { BreadcrumbProvider } from "react-breadcrumble";
 import { PageData } from "../../app/shared/components/PageData";
 
@@ -43,7 +41,7 @@ const MasterLayout = () => {
             <HeaderWrapper />
             <Stack
               className="app-wrapper flex-row-fluid"
-              sx={{ bgcolor: colors.alpha.bgbody[500] }}
+              sx={{ bgcolor: 'background.lightGray' }}
             >
               <Sidebar />
               <Container className="d-flex flex-column flex-grow-1">

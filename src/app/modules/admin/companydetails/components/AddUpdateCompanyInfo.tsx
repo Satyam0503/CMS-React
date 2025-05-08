@@ -84,7 +84,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Company Name"
-                sx={{ color: colors.alpha.primary[500] }}
+                sx={{ color: colors.primary[500] }}
               />
             </Grid>
             <Grid item xs={12} md={6} className="text-nowrap">
@@ -94,7 +94,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Industry"
-                sx={{ color: colors.alpha.primary[500] }}
+                sx={{ color: colors.primary[500] }}
               />
             </Grid>
           </Grid>
@@ -114,7 +114,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Primary Contact"
-                sx={{ color: colors.alpha.primary[500] }}
+                sx={{ color: colors.primary[500] }}
               />
             </Grid>
 

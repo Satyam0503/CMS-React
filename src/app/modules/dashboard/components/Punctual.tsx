@@ -26,13 +26,13 @@ export default function Punctual() {
             </Stack>
             <Stack>
               <Typography variant="body1">Deepak Chaurasiya</Typography>
-              <Typography variant="body2" color={colors.alpha.neutral[400]}>
+              <Typography variant="body2" >
                 {intl.formatMessage({ id: "POSITION.QA" })}
               </Typography>
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2" >
               1st
             </Typography>
           </Stack>
@@ -60,7 +60,7 @@ export default function Punctual() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2">
               2nd
             </Typography>
           </Stack>
@@ -88,7 +88,7 @@ export default function Punctual() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2">
               3rd
             </Typography>
           </Stack>

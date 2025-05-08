@@ -18,7 +18,6 @@ import { AttendanceChart } from "../../../shared/components/AttendanceChart";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import { LeaveApplication } from "./components/LeaveApplication";
 import { Block, CalendarToday } from "@mui/icons-material";
-import { colors } from "../../theme/MuiTheme";
 
 export const LeaveTracker: FC = () => {
   const intl = useIntl();

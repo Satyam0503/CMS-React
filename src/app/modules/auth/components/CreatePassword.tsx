@@ -82,7 +82,7 @@ export function CreatePassword() {
         justifyContent={"space-between"}
       >
         <Stack spacing={1}>
-          <Typography variant="h1" color={colors.alpha.primary[500]}>
+          <Typography variant="h1" sx={{ color: 'primary.main' }}>
             {intl.formatMessage({ id: "PASSWORD.CREATE" })}
           </Typography>
           <Typography variant="h3">

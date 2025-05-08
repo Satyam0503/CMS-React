@@ -1,5 +1,4 @@
 import { Avatar, Stack, Typography } from "@mui/material";
-import { colors } from "../../modules/theme/MuiTheme";
 
 interface AvatarCellPropsTypes {
   title?: string;
@@ -20,7 +19,6 @@ export const AvatarCell = ({
           variant="body2"
           display={"block"}
           fontWeight={500}
-          color={colors.alpha.neutral[800]}
         >
           {title || "NA"}
         </Typography>

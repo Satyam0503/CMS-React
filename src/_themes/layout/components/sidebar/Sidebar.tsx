@@ -13,19 +13,6 @@ const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
-
-  // const appSidebarDefaultMinimizeDesktopEnabled =
-  //   config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
-  // const appSidebarDefaultCollapseDesktopEnabled =
-  //   config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
-  // const toggleType = appSidebarDefaultCollapseDesktopEnabled
-  //   ? "collapse"
-  //   : appSidebarDefaultMinimizeDesktopEnabled
-  //   ? "minimize"
-  //   : "";
-  // const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
-  // const appSidebarDefaultMinimizeDefault =
-  //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
   const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
   const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
@@ -46,7 +33,13 @@ const Sidebar = () => {
     >
       <Stack padding={3} gap={4} alignItems="center" width="100%">
         <Link to="/" className="company-logo-container">
-          <img src={companyLogo} alt="Logo" className="company-logo" />
+          <Avatar
+            src={companyLogo}
+            sx={{
+              width: 200,
+              height: "100%"
+            }}
+          />
         </Link>
         <Stack spacing={2} alignItems={"center"}>
           <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>

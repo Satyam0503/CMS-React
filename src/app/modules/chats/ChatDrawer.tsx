@@ -13,7 +13,6 @@ import {
   ForumRounded,
   ForumTwoTone,
 } from "@mui/icons-material";
-import { colors } from "../theme/MuiTheme";
 import { Avatar, IconButton, Tooltip } from "@mui/material";
 
 export default function ChatDrawer() {
@@ -51,10 +50,9 @@ export default function ChatDrawer() {
           >
             <ForumOutlined
               fontSize="large"
-              sx={{ color: colors.alpha.neutral[400] }}
             />
             <Circle
-              sx={{ width: "15px", color: colors.alpha.success[500] }}
+              sx={{ width: "15px" }}
               className=" position-absolute translate-middle  animation-blink"
             />
           </IconButton>

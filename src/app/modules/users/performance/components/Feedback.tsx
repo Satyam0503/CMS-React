@@ -37,13 +37,13 @@ export default function Feedback() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Announcement />
               </Stack>
             </Stack>
@@ -74,13 +74,13 @@ export default function Feedback() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Announcement />
               </Stack>
             </Stack>

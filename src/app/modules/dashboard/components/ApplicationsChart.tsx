@@ -12,11 +12,10 @@ import { CustomCard } from "../../../shared/components/CustomCard";
 import { Applicant } from "../../recruitment/models";
 import { BarChart } from "../../../shared/components/BarChart";
 import { CardSkeleton } from "./CardSkeleton";
-import { colors } from "../../theme/MuiTheme";
 
 
 export const ApplicationsChart = () => {
-  const {formatMessage} = useIntl();
+  const { formatMessage } = useIntl();
   const [applicationList, setApplicationList] = useState<Applicant[]>([]);
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -25,13 +24,13 @@ export const ApplicationsChart = () => {
     labels: [],
     series: [],
   });
-  const [loading,setLoading]= useState(true);
+  const [loading, setLoading] = useState(true);
 
   const getCountOfApplicationStatus = useCallback(() => {
     const applicationStatusCount = applicationList.reduce(
       (status: Record<string, number>, application) => {
-        status[formatMessage({id:applicationStatusMapper[application.activityType]}) ] =
-          (status[formatMessage({id:applicationStatusMapper[application.activityType]}) ] || 0) + 1;
+        status[formatMessage({ id: applicationStatusMapper[application.activityType] })] =
+          (status[formatMessage({ id: applicationStatusMapper[application.activityType] })] || 0) + 1;
         return status;
       },
       {}
@@ -58,7 +57,7 @@ export const ApplicationsChart = () => {
       } catch (error) {
         console.error((error as AxiosError).message);
       }
-      finally{
+      finally {
         setLoading(false);
       }
     }
@@ -72,10 +71,10 @@ export const ApplicationsChart = () => {
     }
   }, [applicationList, getCountOfApplicationStatus]);
 
-  if(loading){
-    return <CardSkeleton/>
+  if (loading) {
+    return <CardSkeleton />
   }
-  
+
   return (
     <CustomCard
       label={formatMessage({ id: "MENU.TOTAL_APP" })}
@@ -86,7 +85,7 @@ export const ApplicationsChart = () => {
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
         >
-          <Typography variant="h5" sx={{color:colors.alpha.neutral[400]}}>{formatMessage({id:"DASHBOARD.APPLICATIONS.NO_APPLICATIONS"})}</Typography>
+          <Typography variant="h5">{formatMessage({ id: "DASHBOARD.APPLICATIONS.NO_APPLICATIONS" })}</Typography>
         </Box>
       ) : (
         <BarChart

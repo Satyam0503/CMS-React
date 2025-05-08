@@ -351,7 +351,7 @@ export const EditApplicant = () => {
                       <Typography
                         variant="body1"
                         mb={1}
-                        color={colors.alpha.primary[500]}
+                        color={colors.primary[500]}
                       >
                         {formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
@@ -378,7 +378,7 @@ export const EditApplicant = () => {
                           <Tooltip title="Upload file here" placement="top">
                             <Box
                               component="label"
-                              bgcolor={colors.alpha.primary[100]}
+                              bgcolor={colors.primary[100]}
                               px={2}
                               py={0.5}
                               borderRadius={1}

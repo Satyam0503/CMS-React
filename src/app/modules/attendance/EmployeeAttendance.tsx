@@ -77,9 +77,9 @@ const EmployeeAttendance: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.success[100]}
+                  iconBg="info.main"
+                  iconColor="info.light"
                   icon={<EventAvailable fontSize="large" />}
-                  iconColor={colors.alpha.success[500]}
                   number={"175"}
                   title="Present"
                 />
@@ -91,9 +91,9 @@ const EmployeeAttendance: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.warning[100]}
+                  iconBg={'success.main'}
                   icon={<TimerOffOutlined fontSize="large" />}
-                  iconColor={colors.alpha.warning[700]}
+                  iconColor={'success.light'}
                   number={"16"}
                   title="Late"
                 />
@@ -104,9 +104,9 @@ const EmployeeAttendance: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.danger[100]}
+                  iconBg={'warning.main'}
                   icon={<EventBusy fontSize="large" />}
-                  iconColor={colors.alpha.danger[500]}
+                  iconColor={'warning.light'}
                   number={"1"}
                   title="Abscent"
                 />
@@ -117,9 +117,9 @@ const EmployeeAttendance: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.primary[100]}
+                  iconBg={colors.primary[100]}
                   icon={<SupervisorAccount fontSize="large" />}
-                  iconColor={colors.alpha.primary[500]}
+                  iconColor={colors.primary[500]}
                   number={"200"}
                   title="Total"
                 />
@@ -141,7 +141,7 @@ const EmployeeAttendance: FC = () => {
               value={selectedDay}
               sx={{
                 minWidth: "130px",
-                bgcolor: colors.alpha.white[500],
+                bgcolor: colors.white[500],
               }}
             >
               {Days.map((item) => (

@@ -18,7 +18,9 @@ import { LANGUAGE } from "../../../../../utils/enums";
 
 const Languages: FC = () => {
   const lang = useLang();
-  const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage) ?? [LANGUAGE.ENGLISH];
+  const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage);
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage);
+  const supportedLanguages = appLanguages ? (appLanguages.length > 0 ? appLanguages : [defaultLanguage]) : ["en"]
   const currentLanguage = languages.find((x) => x.lang === lang);
   const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -73,7 +75,7 @@ const Languages: FC = () => {
         }}
       >
         <List>
-          {languages.filter(lang => appLanguages.includes(lang.lang)).map((lang) => (
+          {languages.filter(lang => supportedLanguages.includes(lang.lang)).map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {

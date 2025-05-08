@@ -69,7 +69,6 @@ export default function UpcomingBirthday({ employees }: PropsType) {
             >
               <Typography
                 variant="h5"
-                sx={{ color: colors.alpha.neutral[400] }}
               >
                 No Employees
               </Typography>
@@ -110,7 +109,6 @@ export default function UpcomingBirthday({ employees }: PropsType) {
 
                     <Typography
                       variant="subtitle2"
-                      color={colors.alpha.primary[500]}
                     >
                       {!isSameDate(dayjs(emp.dateOfBirth))
                         ? dateFormatter(emp.birthDayThisYear, "DD MMM YYYY")

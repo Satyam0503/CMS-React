@@ -6,7 +6,6 @@ import { MasterInit } from "../_themes/layout/MasterInit";
 import { AuthInit } from "./modules/auth";
 import { ThemeModeProvider } from "../_themes/partials";
 import { ThemeProvider as MuiThemeProvider, StyledEngineProvider } from "@mui/material";
-import { MuiTheme, setColorsAsCSSVariables } from "./modules/theme/MuiTheme";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-image-crop/dist/ReactCrop.css";
