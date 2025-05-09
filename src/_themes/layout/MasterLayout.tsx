@@ -37,11 +37,11 @@ const MasterLayout = () => {
             flexBasis={"auto"}
             flexShrink={0}
             className="container-main"
+            sx={{ backgroundColor: "background.body" }}
           >
             <HeaderWrapper />
             <Stack
               className="app-wrapper flex-row-fluid"
-              sx={{ bgcolor: 'background.lightGray' }}
             >
               <Sidebar />
               <Container className="d-flex flex-column flex-grow-1">

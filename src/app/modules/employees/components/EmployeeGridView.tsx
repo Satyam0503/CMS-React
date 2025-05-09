@@ -1,7 +1,5 @@
 import { FC } from "react";
-import { EmployeeModel } from "../../../../utils/common_types";
 import { Box, Card, Typography } from "@mui/material";
-import { colors } from "../../theme/MuiTheme";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmpCardSkeleton } from "./EmployeeCardSkeleton";
@@ -51,7 +49,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
               <Typography
                 variant="h6"
                 className="fw-bold"
-                sx={{ color: colors.alpha.white[500] }}
+                sx={{ color: 'common.white' }}
               >
                 {emp.fullName}
               </Typography>

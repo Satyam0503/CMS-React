@@ -1,12 +1,10 @@
 import { LightModeOutlined } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../../app/shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
-import { useThemeContext } from "../../../../../app/Context/ThemeContext";
 
 
 export default function LightDarkMode() {
   const [theme, setTheme] = useState("light");
-  const { toggleTheme, mode } = useThemeContext();
 
   useEffect(() => {
     document.body.className = theme;
@@ -19,14 +17,14 @@ export default function LightDarkMode() {
   return (
     <>
       <CustomIconButton
-        handleClick={toggleTheme}
+        // handleClick={toggleTheme}
         icon={<LightModeOutlined fontSize="large" />}
         tooltip="Light /Dark mode"
         style={{
           border: "none",
           cursor: "pointer",
-          backgroundColor: mode === "light" ? "#ffff" : "#333",
-          color: mode === "light" ? "#000" : "#fff",
+          // backgroundColor: mode === "light" ? "#ffff" : "#333",
+          // color: mode === "light" ? "#000" : "#fff",
         }}
       />
     </>

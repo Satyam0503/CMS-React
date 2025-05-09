@@ -13,23 +13,20 @@ import { I18nProvider } from "./_themes/i18n/Metronici18n";
 import { Provider } from "react-redux";
 import { store } from "./app/Redux/store";
 import { ErrorBoundary } from "./app/shared/components/ErrorBoundary";
-import { ThemeProvider } from "./app/Context/ThemeContext";
-
-// setupAxios(axios)
 
 Chart.register(...registerables);
 
 const container = document.getElementById("root");
 if (container) {
   createRoot(container).render(
-    <ThemeProvider>
-      <I18nProvider>
-        {/* <ErrorBoundary> */}
-        <Provider store={store}>
-          <AppRoutes />
-        </Provider>
-        {/* </ErrorBoundary> */}
-      </I18nProvider>
-    </ThemeProvider>
+    // <ThemeProvider>
+    <I18nProvider>
+      {/* <ErrorBoundary> */}
+      <Provider store={store}>
+        <AppRoutes />
+      </Provider>
+      {/* </ErrorBoundary> */}
+    </I18nProvider>
+    // </ThemeProvider>
   );
 }

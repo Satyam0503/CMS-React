@@ -16,7 +16,7 @@ export default function LeaveAllowences() {
         flexDirection={"row"}
         alignItems={"center"}
       >
-        <Typography variant="h6">
+        <Typography variant="h4" sx={{ fontSize: 16 }}>
           {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
         </Typography>
         <Typography variant="h4">4</Typography>

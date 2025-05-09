@@ -16,7 +16,7 @@ export const AvatarCell = ({
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
       <Stack direction="column" sx={{ alignSelf: "center" }}>
         <Typography
-          variant="body2"
+          variant="body1"
           display={"block"}
           fontWeight={500}
         >

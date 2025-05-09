@@ -24,11 +24,13 @@ export function HeaderWrapper() {
   return (
     <Grid
       item
-      position={"sticky"}
-      top={0}
-      zIndex={3}
-      bgcolor={"#fcfcfc"}
-      py={1}
+      sx={{
+        backgroundColor: 'background.header',
+        py: 1,
+        zIndex: 3,
+        top: 0,
+        position: "sticky"
+      }}
     >
       <Grid item display={"flex"} alignItems={"center"} px={1}>
         <Grid

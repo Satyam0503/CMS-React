@@ -30,6 +30,7 @@ const Sidebar = () => {
       ref={sidebarRef}
       id="kt_app_sidebar"
       className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
+      sx={{ backgroundColor: "background.sidebar" }}
     >
       <Stack padding={3} gap={4} alignItems="center" width="100%">
         <Link to="/" className="company-logo-container">

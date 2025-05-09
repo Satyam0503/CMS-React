@@ -15,7 +15,7 @@ export const CustomCard: FC<Props> = (props) => {
     >
       <Stack spacing={1} className="flex-grow-1">
         <Stack direction="row" className="justify-content-between ">
-          <Typography variant="h6">{props.label}</Typography>
+          <Typography variant="h4" sx={{ fontSize: 16 }}>{props.label}</Typography>
           {props.value ? (
             <Typography variant="h4">{props.value}</Typography>
           ) : (

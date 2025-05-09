@@ -144,7 +144,7 @@ export const UserEducation = () => {
   }, [refresh]);
 
   return (
-    <Card sx={{ p: 2 }}>
+    <Card sx={{ p: 2 }} >
       <Stack
         direction="row"
         display={"flex"}
