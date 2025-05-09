@@ -421,6 +421,7 @@
   "FILTER.LAST_SIX_MONTHS": "Last Six Months",
   "FILTER.LAST_12_MONTHS": "Last 12 Months",
   "FILTER.EMP": "Filter employee",
+  "FILTER.DEPT_TITLE": "Department Title",
 
   "APPLICATION.STATUS.NEW": "New",
   "APPLICATION.STATUS.INPROGRESS": "In Progress",

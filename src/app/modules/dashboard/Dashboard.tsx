@@ -52,20 +52,20 @@ export default function Dashboard() {
     [userModulesPermissions]
   );
   setPageTitle("");
-  useEffect(() => {
-    async function getEmployees() {
-      try {
-        const response = await getAllEmployees();
-        const { success, methodResults } = response.data;
-        if (success) {
-          setEmployees(methodResults);
-        }
-      } catch (error) {
-        console.error((error as AxiosError).message);
-      }
-    }
-    getEmployees();
-  }, []);
+  // useEffect(() => {
+  //   async function getEmployees() {
+  //     try {
+  //       const response = await getAllEmployees();
+  //       const { success, methodResults } = response.data;
+  //       if (success) {
+  //         setEmployees(methodResults);
+  //       }
+  //     } catch (error) {
+  //       console.error((error as AxiosError).message);
+  //     }
+  //   }
+  //   getEmployees();
+  // }, []);
 
   return (
     <>
@@ -81,7 +81,8 @@ export default function Dashboard() {
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
               <Grid item xs={12} sm={6}>
-                <EmployeeChart employees={employees} />
+                {/* <EmployeeChart employees={employees} /> */}
+                <EmployeeChart/>
               </Grid>
             )}
             {hasAccessToJob && (
@@ -95,7 +96,9 @@ export default function Dashboard() {
               </Grid>
             )}
             <Grid item xs={12} sm={6}>
-              <DepartmentChart employees={employees} />
+              {/* <DepartmentChart employees={employees} /> */}
+              <DepartmentChart/>
+
             </Grid>
 
             <Grid item xs={12}>

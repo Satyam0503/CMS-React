@@ -6,7 +6,7 @@ import {
   EmployeeModel,
 } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { GetAllEmployeeResponseData } from "./models";
+import { GetAllEmployeePayloadModel, GetAllEmployeeResponseData } from "./models";
 
 export const addEmployee = async (payload: EmployeeModel) => {
   return postRequest<EmployeeModel, AddEmployeeResponseData>(
@@ -32,11 +32,12 @@ export const deleteEmployee = async (employeeId: string) => {
 };
 
 export const getAllEmployees = async (
+  filters?: GetAllEmployeePayloadModel,
   pageNo: number = 0,
   records: number = 0
 ) => {
-  return getRequest<GetAllEmployeeResponseData>(
-    `${ServiceUrl.GET_ALL_EMPLOYEE}?pageNo=${pageNo}&records=${records}`
+  return postRequest<GetAllEmployeePayloadModel, GetAllEmployeeResponseData>(
+    `${ServiceUrl.GET_ALL_EMPLOYEE}?pageNo=${pageNo}&records=${records}`, filters
   );
 };
 

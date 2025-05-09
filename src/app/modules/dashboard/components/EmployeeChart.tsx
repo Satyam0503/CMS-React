@@ -5,12 +5,13 @@ import { CustomCard } from "../../../shared/components/CustomCard";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
 import { CardSkeleton } from "./CardSkeleton";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
+import { getAllGenderInfo } from '../dashboardservices';
 
-interface PropsType {
-  employees: GetAllEmployeeResponseModel[];
-}
+// interface PropsType {
+//   employees: GetAllEmployeeResponseModel[];
+// }
 
-export const EmployeeChart: FC<PropsType> = ({ employees }) => {
+export const EmployeeChart: FC = () => {
   const intl = useIntl();
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -20,8 +21,9 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
     series: [],
   });
   const [loading, setLoading] = useState(true);
+  const [allEmpCount, setAllEmpCount] = useState<number>(0);
 
-  const getEmployeesGenderCount = useCallback(() => {
+/*  const getEmployeesGenderCount = useCallback(() => {
     const genderCount = employees.reduce(
       (acc: { [key: string]: number }, employee) => {
         acc[employee.gender] = (acc[employee.gender] || 0) + 1;
@@ -34,7 +36,10 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
       series: Object.values(genderCount),
     };
   }, [employees]);
+*/
 
+
+/*
   useEffect(() => {
     if (employees.length) {
       const { labels, series } = getEmployeesGenderCount();
@@ -46,13 +51,39 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
   if (loading) {
     return <CardSkeleton />;
   }
+  */
+
+  useEffect(()=>{
+
+        const getAllGenderDetails = async () => {
+          try {
+            const response = await getAllGenderInfo();
+            const { success, methodResults } = response.data;
+           if (success) {
+              var labels: string[] = [];
+              var series: number[] = [];
+              methodResults.forEach((data)=>{
+                labels.push(data.gender || "null");
+                series.push(data.count || 0);
+              })
+              setChartData({labels, series});
+              setAllEmpCount(series.reduce((acc,value)=>{ return acc+value},0));
+          }
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    getAllGenderDetails();
+
+  },[])
 
   return (
+    <>
     <CustomCard
       label={intl.formatMessage({ id: "MENU.TOTAL_EMP" })}
-      value={employees.length}
+      value={allEmpCount}
     >
-      {!employees.length ? (
+      {!allEmpCount ? (
         <Box
           component={"div"}
           sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
@@ -65,5 +96,6 @@ export const EmployeeChart: FC<PropsType> = ({ employees }) => {
         <DonutApexChart series={chartData.series} labels={chartData.labels} />
       )}
     </CustomCard>
+    </>
   );
 };

@@ -20,9 +20,10 @@ const Languages: FC = () => {
   const lang = useLang();
   const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage) ?? [LANGUAGE.ENGLISH];
   const currentLanguage = languages.find((x) => x.lang === lang);
-  const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [languageAnchorEl, setLanguangeAnchorEl] =
+    useState<HTMLElement | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event:React.MouseEvent<HTMLElement>) => {
     setLanguangeAnchorEl(event.currentTarget);
   };
 
@@ -35,16 +36,18 @@ const Languages: FC = () => {
       setLanguage(language.lang);
     }
   };
+
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
+ 
   return (
     <div
       className="menu-item px-5"
       data-kt-menu-trigger="hover"
       data-kt-menu-placement="left-start"
-      data-kt-menu-flip="bottom"
+      data-kt-menu-flip="bottom" 
     >
-      <Stack className="d-flex flex-row align-items-center gap-2">
+      <Stack className="d-flex flex-row align-items-center gap-2" onClick={handleClick}> {/* Setting Popper to open on whole Language instead of just the icon */}
         <span className="text-muted">{currentLanguage?.name}</span>
         <img
           className="w-15px h-15px rounded-circle"
@@ -52,7 +55,7 @@ const Languages: FC = () => {
           alt="countryflag"
         />
         <IconButton
-          onClick={handleClick}
+          // onClick={handleClick}
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}
