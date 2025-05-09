@@ -11,7 +11,7 @@ import {
   }
 
   export interface DepartmentModel {
-    titles: MultilingualModel[],
+    label: string,
     departmentId: string;
     employeeCount: number;
   }

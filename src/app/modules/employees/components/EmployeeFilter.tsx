@@ -61,6 +61,7 @@ export const EmployeeFilter: FC<PropsType> = ({
         const response = await getAllDepartmentInfo();
         const { success, methodResults } = response.data;
         if (success) {
+          console.log("Here: ",methodResults)
           setDeptList(methodResults);
         }
       } catch (error: any) {
@@ -116,7 +117,7 @@ export const EmployeeFilter: FC<PropsType> = ({
                         selectedDept.map((dept) => dept.departmentId)
                       );
                     }}
-                    getOptionLabel={(option) => option.titles[0].label}
+                    getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
                       <TextField {...params} placeholder="Departments" />
                     )}
@@ -128,7 +129,7 @@ export const EmployeeFilter: FC<PropsType> = ({
                             checked={state.selected}
                             sx={{ mr: 1 }}
                           />
-                          <ListItemText primary={option.titles[0].label} />
+                          <ListItemText primary={option.label} />
                         </li>
                       );
                     }}
