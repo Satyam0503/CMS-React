@@ -12,6 +12,10 @@ export const applicationFilterSchema = Yup.object().shape({
   maxExperience: Yup.number().min(Yup.ref("minExperience"),"max experience nust be greater than min experience").notRequired(),
 });
 
+export const departmentFilterSchema = Yup.object().shape({
+  departmentIds: Yup.array().notRequired(),
+});
+
 export const processLogFilterSchema = Yup.object().shape({
   filterFrom: Yup.date().notRequired(),
   filterTo: Yup.date().min(Yup.ref("filterFrom")).notRequired(),
