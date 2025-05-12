@@ -49,7 +49,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                   alt="profile picture"
                   src="media/avatars/300-6.jpg"
                   sx={{
-                    width: "100%",
                     height: "100%",
                     position: "relative",
                   }}
@@ -98,7 +97,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                   alt="profile picture"
                   src="media/avatars/300-1.jpg"
                   sx={{
-                    width: "100%",
                     height: "100%",
                     position: "relative",
                   }}
