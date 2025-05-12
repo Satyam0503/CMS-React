@@ -120,7 +120,7 @@ export const colors = {
     },
     bgbody: {
       200: "#f5f5f5",
-      500: "#081028",
+      500: "#f5f5f5",
     },
   },
 };
