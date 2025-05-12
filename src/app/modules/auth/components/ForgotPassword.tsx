@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Box, Grid, Stack, TextField, Typography } from "@mui/material";
-import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
 
 const initialValues = {
@@ -44,7 +43,7 @@ export function ForgotPassword() {
     >
       <Stack className="text-center mb-10">
         <Typography variant="h3">Forgot Password ?</Typography>
-        <Typography variant="body1" color={colors.primary[500]}>
+        <Typography variant="body1" >
           Enter your email to reset your password.
         </Typography>
       </Stack>

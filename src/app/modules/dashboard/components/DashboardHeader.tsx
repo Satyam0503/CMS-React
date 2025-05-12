@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import { dateFormatter } from "../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import RightDrawer from "./RightDrawer";
-import { colors } from "../../theme/MuiTheme";
 
 export const DashboardHeader = memo((props: { fullName: string }) => {
   const intl = useIntl();
@@ -21,17 +20,6 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
         <Typography variant="h2">
           {intl.formatMessage({ id: "MENU.WELCOME" })} {props.fullName || ""}
         </Typography>
-        {/* <Typography
-          variant="body1"
-          sx={{ color: colors.alpha.neutral[600], mt: 1 }}
-        >
-          4{intl.formatMessage({ id: "NOTIFICATIONS.APPLICATIONS" })}
-          <Link
-            to={"#"}
-          >
-            {"Check the submissions"}
-          </Link>
-        </Typography> */}
       </Stack>
 
       <Stack direction="row" alignItems="center" spacing={2}>

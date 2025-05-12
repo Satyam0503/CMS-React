@@ -28,10 +28,10 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
       {meta.touched && meta.error && (
         <FormHelperText
           sx={{
-            fontSize: "12px",
-            color: "#d32f2f",
-            marginInline: "8px !important",
-            marginTop: "3px !important",
+            fontSize: 10,
+            color: 'error.main',
+            marginInline: "8px",
+            marginTop: "3px",
           }}
         >
           {meta.error}

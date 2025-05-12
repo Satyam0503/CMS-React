@@ -120,6 +120,7 @@ const UserProfile = () => {
                     tab_active: checkIsActive(location.pathname, tabTo),
                   })}
                   onClick={() => navigate(tab.to)}
+                  sx={{ color: "text.secondary" }}
                 >
                   {tab.icon}
                   {intl.formatMessage({ id: tab.title })}

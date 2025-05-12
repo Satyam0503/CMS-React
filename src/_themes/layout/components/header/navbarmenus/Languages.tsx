@@ -47,7 +47,7 @@ const Languages: FC = () => {
       data-kt-menu-flip="bottom"
     >
       <Stack className="d-flex flex-row align-items-center gap-2">
-        <span className="text-muted">{currentLanguage?.name}</span>
+        <span >{currentLanguage?.name}</span>
         <img
           className="w-15px h-15px rounded-circle"
           src={currentLanguage?.flag}

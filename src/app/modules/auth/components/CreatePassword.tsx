@@ -4,7 +4,6 @@ import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import * as Yup from "yup";
-import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";
 import { TextInput } from "../../../shared/components/form-component/TextInput";

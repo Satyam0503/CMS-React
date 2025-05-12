@@ -1,23 +1,19 @@
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
-import { colors } from "../../modules/theme/MuiTheme";
 import { Stack } from "@mui/material";
 
 export default function TableSkeleton() {
-  const array = [1, 2, 3, 4, 5, 6];
   return (
     <>
-      {array.map((item) => (
+      {Array.from({ length: 6 }).map((_, index) => (
         <Box
-          key={item}
+          key={index}
           sx={{
-            border: "2px solid" + colors.neutral[100],
-            borderRadius: 1,
             padding: 1,
             width: "100%",
             display: "flex",
             justifyContent: "space-between",
-            gap: 2,
+            gap: 1,
             alignItems: "center",
             mb: 1,
           }}

@@ -6,8 +6,8 @@ export const ErrorLabel = ({ children }: Props) => {
   return (
     <FormHelperText
       sx={{
-        fontSize: "12px",
-        color: "#d32f2f",
+        fontSize: "10px",
+        color: 'error.main',
         marginInline: "8px",
         marginTop: "3px",
       }}

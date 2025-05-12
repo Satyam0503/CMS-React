@@ -4,7 +4,6 @@ import { Formik } from "formik";
 import { login } from "../core/_requests";
 
 import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
-import { colors } from "../../theme/MuiTheme";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
@@ -58,11 +57,11 @@ export function Login() {
   }
   return (
     <Stack spacing={4}>
-      <Stack sx={{ textAlign: "center" }}>
-        <Typography variant="h3">
+      <Stack sx={{ textAlign: "center" }} spacing={1}>
+        <Typography variant="h1">
           {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
         </Typography>
-        <Typography variant="body1">
+        <Typography variant="h4">
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
       </Stack>
@@ -102,7 +101,7 @@ export function Login() {
                       endAdornment: (
                         <InputAdornment position="end">
                           {touched.email && errors.email ? (
-                            <ErrorOutline color="warning" />
+                            <ErrorOutline color="error" />
                           ) : touched.email && !errors.email ? (
                             <Check color="success" />
                           ) : null}
@@ -122,7 +121,7 @@ export function Login() {
                       endAdornment: (
                         <InputAdornment position="end">
                           {touched.password && errors.password ? (
-                            <ErrorOutline color="warning" />
+                            <ErrorOutline color="error" />
                           ) : touched.password && !errors.password ? (
                             <Check color="success" />
                           ) : null}
@@ -131,13 +130,9 @@ export function Login() {
                     }}
                   />
                 </Stack>
-
-                <Typography>
-                  <Link to="/auth/forgot-password">
-                    {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
-                  </Link>
-                </Typography>
-
+                <Link to="/auth/forgot-password" >
+                  {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
+                </Link>
                 <Stack spacing={1}>
                   <CustomisedButton
                     type="submit"
@@ -146,7 +141,7 @@ export function Login() {
                     loading={isSubmitting}
                     disabled={isSubmitting || !(isValid && dirty)}
                   />
-                  <Typography variant="body2" align="center">
+                  <Typography variant="body2" align="center"  >
                     {intl.formatMessage({ id: "AUTH.MEMBER.REGISTER" })}
                     <Link to="/auth/registration">
                       {intl.formatMessage({ id: "AUTH.REGISTER" })}

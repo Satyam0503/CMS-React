@@ -29,7 +29,7 @@ export function HeaderWrapper() {
         py: 1,
         zIndex: 3,
         top: 0,
-        position: "sticky"
+        position: "sticky",
       }}
     >
       <Grid item display={"flex"} alignItems={"center"} px={1}>
@@ -49,10 +49,8 @@ export function HeaderWrapper() {
           alignItems={"center"}
           gap={{ xs: 0.5, md: 2 }}
         >
-          <Stack pl={1}>
+          <Stack direction={"row"} sx={{ alignItems: "center" }} spacing={2}>
             <SearchInput search={search} setSearch={handleSearchChange} />
-          </Stack>
-          <Stack>
             <Navbar />
           </Stack>
         </Grid>

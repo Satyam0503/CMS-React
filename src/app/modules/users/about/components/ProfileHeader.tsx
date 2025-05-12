@@ -16,7 +16,7 @@ export const ProfileHeader = () => {
       direction={{ xs: "column", sm: "row" }}
       justifyContent={"center"}
       borderRadius={1}
-      sx={{ bgcolor: "common.white" }}
+      sx={{ bgcolor: 'background.card' }}
     >
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>

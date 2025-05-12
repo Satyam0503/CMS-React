@@ -51,7 +51,7 @@ export default function HeaderUserMenu() {
         aria-expanded={open ? "true" : undefined}
         src={profileImageUrl}
         variant="rounded"
-        sx={{ width: 40, height: 40 }}
+        sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
       />
       <Menu
         anchorEl={anchorEl}
@@ -63,7 +63,7 @@ export default function HeaderUserMenu() {
           <Avatar
             variant="rounded"
             src={profileImageUrl}
-            sx={{ width: 40, height: 40 }}
+            sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
           />
           <Box>
             <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>

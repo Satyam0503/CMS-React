@@ -529,5 +529,10 @@
   "MESSAGE.MODULE.UPDATE.SUCCESS": "Module Updated Successfully",
   "MESSAGE.MODULE.UPDATE.FAILED": "Request Failed",
   "NOT_AVAILABLE": "NA",
-  "TRANSLATION_MISSING": "Translation Missing"
+  "TRANSLATION_MISSING": "Translation Missing",
+
+  "Link.Register": "register",
+  "Link.Term": "Term",
+  "Link.Plan": "Plan",
+  "Link.ContactUs": "Contact Us"
 }

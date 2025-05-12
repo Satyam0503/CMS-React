@@ -14,16 +14,6 @@ const MasterLayout = () => {
   useEffect(() => {
     reInitMenu();
   }, [location.key]);
-  const [theme, setTheme] = useState("light");
-
-  // Apply class to body
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
 
   return (
     <>

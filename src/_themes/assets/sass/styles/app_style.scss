@@ -21,6 +21,14 @@
   text-wrap: balance;
 }
 
+.dark-mode {
+  background-color: "#121212";
+}
+
+.light-mode {
+  background-color: "#f5f5f5";
+}
+
 // List of colors
 $color-list: primary, secondary, success, info, neutral, warning, error,
   territory;
@@ -384,7 +392,6 @@ button:hover .ql-fill,
     justify-content: center;
     gap: 0.5rem;
     font-weight: bolder;
-    color: #737373;
     padding: 1.5rem;
     font-size: 1rem;
     cursor: pointer;
@@ -406,7 +413,7 @@ button:hover .ql-fill,
 .tab_active {
   border-bottom: 2px solid #9a56d3 !important;
   color: #9a56d3 !important;
-  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
+  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 70%);
 }
 
 .truncate-multi-line {
