@@ -37,6 +37,10 @@ const initialValues: JobModal = {
   status: true,
 };
 
+const initialPayload = {
+  name: "",
+};
+
 export default function Jobs() {
   const intl = useIntl();
   const [paginationValues, setPaginationValues] = useState({
@@ -66,6 +70,7 @@ export default function Jobs() {
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
+    console.log(search);
   }, []);
 
   const handleClose = () => {
@@ -178,16 +183,19 @@ export default function Jobs() {
 
   useEffect(() => {
     setLoading(true);
+    const payload = {
+      name: search,
+    };
     const timeoutId = setTimeout(async () => {
       try {
         const response = await getAllJobVacancies(
           paginationValues.pageNo + 1,
-          paginationValues.records
+          paginationValues.records,
+          payload.name=="" ? initialPayload : payload,
         );
         const { success, methodResults, totalRecords } = response.data;
         if (success) {
           setJobList(methodResults.reverse());
-          setTotalRecords(totalRecords);
         }
         setLoading(false);
       } catch (error: any) {
@@ -197,7 +205,7 @@ export default function Jobs() {
       }
     }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [isRefresh, paginationValues]);
+  }, [isRefresh, paginationValues, search]);
 
   useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.JOBS" }));

@@ -7,8 +7,9 @@
   "Language.French": "French",
 
   "GENDER.MALE": "Male",
-  "GENDER.OTHER": "Other",
   "GENDER.FEMALE": "Female",
+  "GENDER.OTHER": "Other",
+  "GENDER.NULL": "Null",
 
   "Jobtype.Onsite": "Onsite",
   "Jobtype.Hybrid": "Hybrid",
