@@ -21,7 +21,7 @@ export const colors = {
 
   layout: {
     general: {
-      bodyBg: "#f5f5f5",
+      bodyBg: "#081028",
     },
     sidebar: {
       background: themeColors.territory,
@@ -82,15 +82,15 @@ export const colors = {
       100: "#F0F4FF",
     },
     neutral: {
-      200: "#E5E5E5",
-      300: "#D4D4D4",
-      400: "#A3A3A3",
-      500: "#737373",
-      600: "#525252",
-      700: "#404040",
-      800: "#262626",
-      900: "#171717",
-      100: "#F5F5F5",
+      100: "#9A9CA7",
+      200: "#7D7F8F",
+      300: "#61657C",
+      400: "#4B4F69",
+      500: "#384257",
+      600: "#2C3645",
+      700: "#1F2832",
+      800: "#111C20",
+      900: "#081028",
     },
     warning: {
       200: "#FFF2B3",
@@ -119,21 +119,21 @@ export const colors = {
       500: "#ffffff",
     },
     bgbody: {
-      200: "#f5f5f5",
-      500: "#272b4a",
+      200: "#081028",
+      500: "#081028",
     },
   },
 };
 
 const colorThemeText = {
-  heading: colors.alpha.neutral[800],
+  heading: colors.alpha.neutral[900],
   secondaryHeading: colors.alpha.primary[500],
   bodyText: colors.alpha.neutral[600],
   linkText: colors.alpha.primary[500],
   sidebarBG: themeColors.territory,
   sidebarText: themeColors.white,
   sidebarLink: colors.alpha.secondary[500],
-  bodyBG: colors.alpha.neutral[100],
+  bodyBG: colors.alpha.neutral[900],
 };
 export const DarkTheme = createTheme({
   colors: {
@@ -142,7 +142,7 @@ export const DarkTheme = createTheme({
     },
   },
   general: {
-    reactFrameworkColor: "#00D8FF",
+    reactFrameworkColor: "#141b2d",
     borderRadiusSm: "6px",
     borderRadius: "10px",
     borderRadiusLg: "12px",
@@ -172,11 +172,11 @@ export const DarkTheme = createTheme({
 
     /// text of table
     text: {
-      primary: colors.alpha.neutral[800],
+      primary: colors.alpha.neutral[100],
     },
     background: {
-      paper: colors.alpha.white[500],
-      default: colors.alpha.white[500],
+      paper: colors.alpha.neutral[900],
+      default: colors.alpha.neutral[900],
     },
     action: {
       active: colors.alpha.neutral[100],
@@ -330,7 +330,8 @@ export const DarkTheme = createTheme({
           padding: "0px ",
           "& .MuiInputAdornment-positionEnd.MuiInputAdornment-outlined,": {
             paddingRight: ".5rem",
-            borderColor: colors.alpha.primary[500],
+            borderColor: colors.alpha.neutral[500],
+            background: colors.alpha.neutral[100],
           },
           "&:hover, &.MuiOutlinedInput-notchedOutline": {
             border: " none ",
@@ -340,13 +341,13 @@ export const DarkTheme = createTheme({
           // },
           "&.Mui-focused": {
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: colors.alpha.primary[500],
+              borderColor: colors.alpha.neutral[500],
             },
           },
 
           "&:hover:not(.Mui-focused)": {
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: colors.alpha.primary[500],
+              borderColor: colors.alpha.neutral[500],
             },
           },
         },
@@ -367,8 +368,8 @@ export const DarkTheme = createTheme({
           fontWeight: "bold",
           lineHeight: "40px",
           fontSize: 13,
-          background: colors.alpha.primary[500],
-          color: colors.alpha.primary[700],
+          background: colors.alpha.neutral[500],
+          color: colors.alpha.neutral[100],
         },
       },
     },
@@ -395,14 +396,14 @@ export const DarkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 4,
-          background: colors.alpha.primary[100],
-          color: colors.alpha.primary[500],
+          background: colors.alpha.neutral[100],
+          color: colors.alpha.neutral[500],
           fontSize: "12px",
 
           ".MuiChip-deleteIcon": {
-            color: colors.alpha.primary[500],
+            color: colors.alpha.neutral[500],
             "&:hover": {
-              color: colors.alpha.primary[500],
+              color: colors.alpha.neutral[500],
             },
           },
         },
@@ -430,8 +431,8 @@ export const DarkTheme = createTheme({
           fontWeight: "bold",
         },
         colorDefault: {
-          background: colors.alpha.secondary[500],
-          color: themeColors.white,
+          background: colors.alpha.neutral[500],
+          color: colors.alpha.white[500],
         },
       },
     },
@@ -481,10 +482,10 @@ export const DarkTheme = createTheme({
             boxShadow: colors.shadows.medium,
           },
           "&.MuiButtonBase-root:hover": {
-            background: colors.alpha.primary[500],
+            background: colors.alpha.white[500],
           },
           "&.Mui-selected.MuiButtonBase-root:hover": {
-            background: colors.alpha.primary[500],
+            background: colors.alpha.white[500],
           },
         },
       },
@@ -499,12 +500,12 @@ export const DarkTheme = createTheme({
           fontWeight: "bold",
           textTransform: "none",
           paddingInline: 16,
-          background: colors.alpha.white[500],
-          color: colors.alpha.neutral[800],
+          background: colors.alpha.neutral[500],
+          color: colors.alpha.white[500],
           border: " 1px solid " + colors.alpha.neutral[200],
           "&:hover, &.MuiSelected": {
             backgroundColor: colors.alpha.neutral[100],
-            color: colors.alpha.neutral[800],
+            color: colors.alpha.neutral[900],
             border: "1px solid " + colors.alpha.neutral[200],
           },
 
@@ -521,28 +522,28 @@ export const DarkTheme = createTheme({
         },
 
         contained: {
-          backgroundColor: colors.alpha.secondary[500],
+          backgroundColor: colors.alpha.primary[500],
           color: colors.alpha.white[500],
           "&:hover, &.MuiSelected": {
-            backgroundColor: colors.alpha.secondary[800],
+            backgroundColor: colors.alpha.primary[800],
             color: colors.alpha.white[500],
           },
         },
         outlined: {
-          backgroundColor: colors.alpha.white[500],
+          backgroundColor: colors.alpha.neutral[300],
           border: " 1px solid " + colors.alpha.neutral[200],
 
           "&:hover, &.MuiSelected": {
             backgroundColor: colors.alpha.neutral[100],
-            color: colors.alpha.neutral[800],
+            color: colors.alpha.white[500],
             border: "1px solid " + colors.alpha.neutral[200],
           },
         },
         text: {
-          backgroundColor: colors.alpha.white[500],
+          backgroundColor: colors.alpha.neutral[500],
           border: "none",
           "&:hover,  &.MuiSelected ": {
-            backgroundColor: colors.alpha.primary[500],
+            backgroundColor: colors.alpha.neutral[600],
             color: colors.alpha.white[500],
             border: "none",
           },
@@ -580,7 +581,7 @@ export const DarkTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          background: colors.alpha.white[500],
+          background: colors.alpha.neutral[800],
         },
       },
     },
@@ -603,7 +604,8 @@ export const DarkTheme = createTheme({
       styleOverrides: {
         root: {
           color: colors.alpha.primary[500],
-          background: themeColors.white,
+          background: colors.alpha.neutral[800],
+          borderColor: colors.alpha.neutral[500],
           transition: "all .2s",
 
           "&:hover, &.Mui-selected, &.Mui-selected:hover": {
@@ -619,14 +621,14 @@ export const DarkTheme = createTheme({
         root: {
           "& .MuiInput-root": {
             "&:before": {
-              borderColor: colors.alpha.neutral[400],
+              borderColor: colors.alpha.neutral[100],
             },
             "&:after": {
-              borderColor: colors.alpha.primary[400],
+              borderColor: colors.alpha.neutral[100],
             },
             ":hover:not(.Mui-focused)": {
               "&:before": {
-                borderColor: colors.alpha.primary[400],
+                borderColor: colors.alpha.neutral[100],
               },
             },
           },
@@ -642,7 +644,7 @@ export const DarkTheme = createTheme({
           borderRadius: 8,
           padding: 5,
           marginInline: 0,
-          color: colors.alpha.neutral[800],
+          color: colors.alpha.neutral[100],
           border: " 1px solid " + colors.alpha.neutral[200],
 
           "& .MuiTouchRipple-root": {
@@ -666,7 +668,7 @@ export const DarkTheme = createTheme({
           minWidth: 25,
           width: 20,
           padding: 0,
-          color: colors.alpha.secondary[500],
+          color: colors.alpha.primary[500],
         },
       },
     },
@@ -790,7 +792,7 @@ export const DarkTheme = createTheme({
           minHeight: 59,
           borderRadius: 0,
           background: themeColors.white,
-          color: colors.alpha.neutral[800],
+          color: colors.alpha.neutral[900],
         },
 
         scroller: {
@@ -824,7 +826,7 @@ export const DarkTheme = createTheme({
           },
 
           " &:hover, &.Mui-selected, &.Mui-selected:hover": {
-            color: colors.alpha.primary[500],
+            color: colors.alpha.neutral[500],
             zIndex: 5,
           },
         },
@@ -849,7 +851,7 @@ export const DarkTheme = createTheme({
             },
             "&.Mui-selected": {
               color: "#000000",
-              background: colors.alpha.primary[200],
+              background: colors.alpha.neutral[200],
               // "&:hover": {
               //   color: colors.alpha.white[500],
               //   background: colors.alpha.primary[500],
@@ -873,7 +875,7 @@ export const DarkTheme = createTheme({
           //Background of list
           "& .MuiMenuItem-root.MuiButtonBase-root .MuiTouchRipple-root": {
             opacity: 0.5,
-            color: colors.alpha.primary[800],
+            color: colors.alpha.neutral[800],
             // background: colors.alpha.primary[400],
           },
         },
@@ -967,8 +969,8 @@ export const DarkTheme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         head: {
-          background: themeColors.white,
-          color: colors.alpha.neutral[800],
+          background: colors.alpha.neutral[900],
+          color: colors.alpha.white[500],
           fontWeight: 600,
           fontSize: "12px",
         },
@@ -976,7 +978,7 @@ export const DarkTheme = createTheme({
           transition: "background-color .2s",
 
           "&.MuiTableRow-hover:hover": {
-            backgroundColor: alpha(colors.alpha.primary["100"], 0.25),
+            backgroundColor: alpha(colors.alpha.neutral[100], 0.25),
           },
         },
       },
@@ -991,7 +993,7 @@ export const DarkTheme = createTheme({
 
           fontSize: 12,
           fontWeight: "bolder",
-          color: colors.alpha.neutral[800],
+          color: colors.alpha.neutral[100],
           borderBottom: "1px solid " + colors.alpha.neutral[300],
         },
         // body: {
@@ -1051,12 +1053,12 @@ export const DarkTheme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: alpha(colors.alpha.primary["400"], 0.95),
+          backgroundColor: alpha(colors.alpha.primary[400], 0.95),
           padding: ".5rem 1rem",
           fontSize: 13,
         },
         arrow: {
-          color: alpha(colors.alpha.primary["400"], 0.95),
+          color: alpha(colors.alpha.primary[400], 0.95),
         },
       },
     },
@@ -1170,7 +1172,7 @@ export const DarkTheme = createTheme({
       styleOverrides: {
         root: {
           "&:hover, &.MuiSelected, &.Mui-focused": {
-            color: colors.alpha.primary[500],
+            color: colors.alpha.white[500],
           },
         },
       },
@@ -1260,12 +1262,12 @@ export const DarkTheme = createTheme({
     h4: {
       fontWeight: 500,
       fontSize: 24,
-      color: colors.alpha.neutral[800],
+      color: colors.alpha.neutral[100],
     },
     h5: {
       fontWeight: 500,
       fontSize: 20,
-      color: colors.alpha.primary[500],
+      color: colors.alpha.white[500],
     },
     h6: {
       fontSize: 16,
@@ -1276,7 +1278,7 @@ export const DarkTheme = createTheme({
     },
     body2: {
       fontSize: 12,
-      color: colors.alpha.neutral[400],
+      color: colors.alpha.neutral[200],
     },
     button: {
       fontWeight: 600,
@@ -1291,7 +1293,7 @@ export const DarkTheme = createTheme({
     },
     subtitle2: {
       fontSize: 10,
-      color: colors.alpha.neutral[400],
+      color: colors.alpha.neutral[200],
     },
     overline: {
       fontSize: 13,

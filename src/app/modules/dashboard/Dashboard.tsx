@@ -82,7 +82,7 @@ export default function Dashboard() {
             {hasAccessToEmpModule && (
               <Grid item xs={12} sm={6}>
                 {/* <EmployeeChart employees={employees} /> */}
-                <EmployeeChart/>
+                <EmployeeChart />
               </Grid>
             )}
             {hasAccessToJob && (
@@ -97,8 +97,7 @@ export default function Dashboard() {
             )}
             <Grid item xs={12} sm={6}>
               {/* <DepartmentChart employees={employees} /> */}
-              <DepartmentChart/>
-
+              <DepartmentChart />
             </Grid>
 
             <Grid item xs={12}>
