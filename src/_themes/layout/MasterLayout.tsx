@@ -28,6 +28,7 @@ const MasterLayout = () => {
             flexShrink={0}
             className="container-main"
             sx={{ backgroundColor: "background.body" }}
+
           >
             <HeaderWrapper />
             <Stack

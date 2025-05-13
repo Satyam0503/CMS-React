@@ -55,11 +55,6 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
         [mode],
     );
 
-    useEffect(() => {
-        if (mode === "dark") {
-            document.documentElement.classList.add("dark-mode");
-        }
-    }, [])
     return (
         <ThemeContext.Provider value={themeMode}>
             <ThemeProvider theme={theme}>

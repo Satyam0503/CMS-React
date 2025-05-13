@@ -1,4 +1,4 @@
-import { Grid, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, IconButton, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
 import {
   Edit,
   MenuOutlined,
@@ -11,12 +11,10 @@ import { Navbar } from "./Navbar";
 import { SearchInput } from "../../../../../app/shared/components/SearchInput";
 
 export function HeaderWrapper() {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState<string>("");
   const theme = useTheme();
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+  const [search, setSearch] = useState<string>("");
+
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
   }, []);
@@ -26,35 +24,20 @@ export function HeaderWrapper() {
       item
       sx={{
         backgroundColor: 'background.header',
-        py: 1,
-        zIndex: 3,
-        top: 0,
-        position: "sticky",
+        p: 1
       }}
+      className="header-wrapper"
     >
-      <Grid item display={"flex"} alignItems={"center"} px={1}>
-        <Grid
-          item
-          display={{ xs: "block", md: "none" }}
-          id="kt_app_sidebar_mobile_toggle"
-        >
-          <MenuOutlined fontSize="large" onClick={toggleDrawer} />
-        </Grid>
-
-        <Grid
-          item
-          display={"flex"}
-          justifyContent={"flex-end"}
-          flexGrow={1}
-          alignItems={"center"}
-          gap={{ xs: 0.5, md: 2 }}
-        >
-          <Stack direction={"row"} sx={{ alignItems: "center" }} spacing={2}>
-            <SearchInput search={search} setSearch={handleSearchChange} />
-            <Navbar />
-          </Stack>
-        </Grid>
-      </Grid>
+      {
+        isSmallScreen &&
+        <IconButton sx={{ border: 0 }}>
+          <MenuOutlined fontSize="large" />
+        </IconButton>
+      }
+      <Stack direction={"row"} sx={{ alignItems: "center", flexGrow: 1, justifyContent: "flex-end" }} spacing={2}>
+        <SearchInput search={search} setSearch={handleSearchChange} />
+        <Navbar />
+      </Stack>
     </Grid>
   );
 }

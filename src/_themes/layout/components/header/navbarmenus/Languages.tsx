@@ -9,12 +9,12 @@ import {
   ListItemText,
   Popover,
   Stack,
+  Typography,
 } from "@mui/material";
 import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { LANGUAGE } from "../../../../../utils/enums";
 
 const Languages: FC = () => {
   const lang = useLang();
@@ -47,7 +47,7 @@ const Languages: FC = () => {
       data-kt-menu-flip="bottom"
     >
       <Stack className="d-flex flex-row align-items-center gap-2">
-        <span >{currentLanguage?.name}</span>
+        <Typography variant="body1">{currentLanguage?.name}</Typography>
         <img
           className="w-15px h-15px rounded-circle"
           src={currentLanguage?.flag}
