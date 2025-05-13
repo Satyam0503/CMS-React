@@ -1,37 +1,28 @@
-/* eslint-disable no-prototype-builtins */
-import clsx from "clsx";
-import { useEffect, useRef } from "react";
-import { ILayout, useLayout } from "../../core";
+import { FC } from "react";
 import { SidebarMenu } from "../sidebar/sidebar-menu/SidebarMenu";
-import { SidebarLogo } from "./SidebarLogo";
-import { Avatar, Grid, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Drawer, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { Link } from "react-router-dom";
-import { toAbsoluteUrl } from "../../../helpers";
 
-const Sidebar = () => {
-  const { config } = useLayout();
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const toggleRef = useRef<HTMLDivElement>(null);
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+}
+
+const Sidebar: FC<Props> = ({ open, handleClose }) => {
+  const theme = useTheme();
   const currentUser = useAppSelector((state) => state.user.userData);
   const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
   const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
 
-  useEffect(() => {
-    updateDOM(config);
-  }, [config]);
-
-  if (!config.app?.sidebar?.display) {
-    return null;
-  }
   return (
-    <Grid
-      item
-      ref={sidebarRef}
-      id="kt_app_sidebar"
-      className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
-      sx={{ backgroundColor: "background.sidebar" }}
+    <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open} PaperProps={{
+      sx: { backgroundColor: "background.sidebar", width: "265px" }
+    }}
+      onClose={handleClose}
     >
+      {/* <Box sx={{ width: 250 }} role="presentation" onClick={handleClose}> */}
       <Stack padding={3} gap={4} alignItems="center" width="100%">
         <Link to="/" className="company-logo-container">
           <Avatar
@@ -56,135 +47,15 @@ const Sidebar = () => {
               }}
             />
           </Stack>
-          <Typography variant="h6" color="inherit">
+          <Typography variant="h5" sx={{ color: 'common.white' }}>
             {`${currentUser?.firstName}  ${currentUser?.lastName}`}
           </Typography>
         </Stack>
       </Stack>
       <SidebarMenu />
-    </Grid>
+      {/* </Box> */}
+    </Drawer >
   );
-};
-
-const updateDOM = (config: ILayout) => {
-  if (
-    config.layoutType === "dark-sidebar" ||
-    config.layoutType === "light-sidebar"
-  ) {
-    if (config.app?.sidebar?.default?.minimize?.desktop?.enabled) {
-      if (config.app?.sidebar?.default?.minimize?.desktop?.default) {
-        document.body.setAttribute("data-kt-app-sidebar-minimize", "on");
-      }
-
-      if (config.app?.sidebar?.default?.minimize?.desktop?.hoverable) {
-        document.body.setAttribute("data-kt-app-sidebar-hoverable", "true");
-      }
-    }
-
-    if (config.app?.sidebar?.default?.minimize?.mobile?.enabled) {
-      if (config.app?.sidebar?.default?.minimize?.mobile?.default) {
-        document.body.setAttribute("data-kt-app-sidebar-minimize-mobile", "on");
-      }
-
-      if (config.app?.sidebar?.default?.minimize?.mobile?.hoverable) {
-        document.body.setAttribute(
-          "data-kt-app-sidebar-hoverable-mobile",
-          "true"
-        );
-      }
-    }
-
-    if (config.app?.sidebar?.default?.collapse?.desktop?.enabled) {
-      if (config.app?.sidebar?.default?.collapse?.desktop?.default) {
-        document.body.setAttribute("data-kt-app-sidebar-collapse", "on");
-      }
-    }
-
-    if (config.app?.sidebar?.default?.collapse?.mobile?.enabled) {
-      if (config.app?.sidebar?.default?.collapse?.mobile?.default) {
-        document.body.setAttribute("data-kt-app-sidebar-collapse-mobile", "on");
-      }
-    }
-
-    if (config.app?.sidebar?.default?.push) {
-      if (config.app?.sidebar?.default?.push?.header) {
-        document.body.setAttribute("data-kt-app-sidebar-push-header", "true");
-      }
-
-      if (config.app?.sidebar?.default?.push?.toolbar) {
-        document.body.setAttribute("data-kt-app-sidebar-push-toolbar", "true");
-      }
-
-      if (config.app?.sidebar?.default?.push?.footer) {
-        document.body.setAttribute("data-kt-app-sidebar-push-footer", "true");
-      }
-    }
-
-    if (config.app?.sidebar?.default?.stacked) {
-      document.body.setAttribute("app-sidebar-stacked", "true");
-    }
-
-    document.body.setAttribute("data-kt-app-sidebar-enabled", "true");
-    document.body.setAttribute(
-      "data-kt-app-sidebar-fixed",
-      config.app?.sidebar?.default?.fixed?.desktop?.toString() || ""
-    );
-
-    const appSidebarDefaultDrawerEnabled =
-      config.app?.sidebar?.default?.drawer?.enabled;
-    let appSidebarDefaultDrawerAttributes: { [attrName: string]: string } = {};
-    if (appSidebarDefaultDrawerEnabled) {
-      appSidebarDefaultDrawerAttributes = config.app?.sidebar?.default?.drawer
-        ?.attributes as {
-          [attrName: string]: string;
-        };
-    }
-
-    const appSidebarDefaultStickyEnabled =
-      config.app?.sidebar?.default?.sticky?.enabled;
-    let appSidebarDefaultStickyAttributes: { [attrName: string]: string } = {};
-    if (appSidebarDefaultStickyEnabled) {
-      appSidebarDefaultStickyAttributes = config.app?.sidebar?.default?.sticky
-        ?.attributes as {
-          [attrName: string]: string;
-        };
-    }
-
-    setTimeout(() => {
-      const sidebarElement = document.getElementById("kt_app_sidebar");
-      // sidebar
-      if (sidebarElement) {
-        const sidebarAttributes = sidebarElement
-          .getAttributeNames()
-          .filter((t) => t.indexOf("data-") > -1);
-        sidebarAttributes.forEach((attr) =>
-          sidebarElement.removeAttribute(attr)
-        );
-
-        if (appSidebarDefaultDrawerEnabled) {
-          for (const key in appSidebarDefaultDrawerAttributes) {
-            if (appSidebarDefaultDrawerAttributes.hasOwnProperty(key)) {
-              sidebarElement.setAttribute(
-                key,
-                appSidebarDefaultDrawerAttributes[key]
-              );
-            }
-          }
-        }
-
-        if (appSidebarDefaultStickyEnabled) {
-          for (const key in appSidebarDefaultStickyAttributes) {
-            if (appSidebarDefaultStickyAttributes.hasOwnProperty(key)) {
-              sidebarElement.setAttribute(
-                key,
-                appSidebarDefaultStickyAttributes[key]
-              );
-            }
-          }
-        }
-      }
-    }, 0);
-  }
 };
 
 export { Sidebar };

@@ -1,16 +1,14 @@
 import { Grid, IconButton, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
-import {
-  Edit,
-  MenuOutlined,
-  RecordVoiceOver,
-  Search,
-} from "@mui/icons-material";
-import { useCallback, useState } from "react";
-
+import { MenuOutlined } from "@mui/icons-material";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Navbar } from "./Navbar";
 import { SearchInput } from "../../../../../app/shared/components/SearchInput";
 
-export function HeaderWrapper() {
+type Props = {
+  openSideBar: () => void;
+}
+
+export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [search, setSearch] = useState<string>("");
@@ -30,7 +28,7 @@ export function HeaderWrapper() {
     >
       {
         isSmallScreen &&
-        <IconButton sx={{ border: 0 }}>
+        <IconButton sx={{ border: 0 }} onClick={openSideBar}>
           <MenuOutlined fontSize="large" />
         </IconButton>
       }

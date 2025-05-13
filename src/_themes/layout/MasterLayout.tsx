@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
-import { Container, Grid, Stack } from "@mui/material";
+import { Container, Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Sidebar } from "./components/sidebar";
 import { PageDataProvider } from "./core";
@@ -10,10 +10,16 @@ import { BreadcrumbProvider } from "react-breadcrumble";
 import { PageData } from "../../app/shared/components/PageData";
 
 const MasterLayout = () => {
-  const location = useLocation();
-  useEffect(() => {
-    reInitMenu();
-  }, [location.key]);
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+
+  const handleOpenSidebar = () => {
+    setOpen(true);
+  }
+  const handleSideBarClose = () => {
+    setOpen(false)
+  }
 
   return (
     <>
@@ -28,13 +34,14 @@ const MasterLayout = () => {
             flexShrink={0}
             className="container-main"
             sx={{ backgroundColor: "background.body" }}
-
           >
-            <HeaderWrapper />
+            <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack
-              className="app-wrapper flex-row-fluid"
+              direction={"row"}
+              className="flex-row-fluid application-wrapper"
+              sx={{ marginLeft: isSmallScreen ? 0 : "265px" }}
             >
-              <Sidebar />
+              <Sidebar open={open} handleClose={handleSideBarClose} />
               <Container className="d-flex flex-column flex-grow-1">
                 <PageData />
                 <Outlet />

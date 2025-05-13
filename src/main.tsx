@@ -2,10 +2,10 @@ import { createRoot } from "react-dom/client";
 import { Chart, registerables } from "chart.js";
 // Apps
 import "./_themes/assets/sass/style.react.scss";
-import "./_themes/assets/fonticon/fonticon.css";
-import "./_themes/assets/keenicons/duotone/style.css";
-import "./_themes/assets/keenicons/outline/style.css";
-import "./_themes/assets/keenicons/solid/style.css";
+// import "./_themes/assets/fonticon/fonticon.css";
+// import "./_themes/assets/keenicons/duotone/style.css";
+// import "./_themes/assets/keenicons/outline/style.css";
+// import "./_themes/assets/keenicons/solid/style.css";
 
 import "./_themes/assets/sass/style.scss";
 import { AppRoutes } from "./app/routing/AppRoutes";

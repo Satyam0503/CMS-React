@@ -52,7 +52,6 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 //profile card icon
 
 // header
-
 .header-wrapper {
   display: flex;
   align-items: center;
@@ -60,7 +59,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
   justify-content: space-between;
   position: sticky;
   top: 0;
-  // padding: 0.75rem;
+  z-index: 10;
 }
 
 .profile-picture-card {

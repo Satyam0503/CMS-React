@@ -76,7 +76,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             body: "#f5f5f5",
             header: "#ffffff",
             card: "#ffffff",
-            sidebar: "#f0f0f0",
+            sidebar: "#0D0E12",
           },
         }
       : {
@@ -84,7 +84,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             body: "#121212",
             header: "#282828",
             card: "#282828",
-            sidebar: "#282828",
+            sidebar: "#0D0E12",
           },
         }),
   },

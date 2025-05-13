@@ -27,9 +27,10 @@ const SidebarMenuItem: FC<Props & WithChildren> = ({
       <Link
         className={clsx("menu-link without-sub", { active: isActive })}
         to={to}
+        color="secondary.main"
       >
-        <Box className="menu-icon">{icon}</Box>
-        <Box className="menu-title">{title}</Box>
+        <Box component={"div"} className="menu-icon" >{icon}</Box>
+        <Box component={"p"} className="menu-title" >{title}</Box>
       </Link>
       {children}
     </Stack>
