@@ -59,7 +59,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                 flexWrap={"wrap"}
                 borderRadius={8}
                 p={1.5}
-                textAlign={"center"}
               >
                 <Typography variant="body1" className="text-wrap">
                   Hey Prachi, I just finished the code for the new feature.
@@ -71,7 +70,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               flexWrap={"wrap"}
               borderRadius={8}
               p={1.5}
-              textAlign={"justify"}
             >
               <Typography variant="body1">
                 Hey Prachi, I just finished the code for the new feature. Do you
@@ -86,7 +84,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                 flexWrap={"wrap"}
                 borderRadius={8}
                 p={1.5}
-                textAlign={"center"}
               >
                 <Typography variant="body1" className="text-wrap">
                   Hey Prachi, I just finished the code for the new feature.
@@ -108,7 +105,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               flexWrap={"wrap"}
               borderRadius={8}
               p={1.5}
-              textAlign={"justify"}
             >
               <Typography variant="body1">
                 Hey Prachi, I just finished the code for the new feature. Do you
