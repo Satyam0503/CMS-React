@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
 

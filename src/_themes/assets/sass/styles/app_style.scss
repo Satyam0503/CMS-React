@@ -22,11 +22,11 @@
 }
 
 .dark-mode {
-  background-color: "#121212";
+  background-color: $app-dark;
 }
 
 .light-mode {
-  background-color: "#f5f5f5";
+  background-color: $neutral-100;
 }
 
 // List of colors
@@ -67,7 +67,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #9a56d3;
+  background-color: $app-primary-500;
   gap: 1rem;
   padding: 1rem;
   & > .profile-picture {
@@ -78,7 +78,7 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
     height: 150px;
     width: 150px;
     aspect-ratio: 1;
-    border: 3px solid white;
+    border: 3px solid $app-white;
     border-radius: 50%;
     position: relative;
     transition: "transform 0.8s ease-in-out";
@@ -260,7 +260,7 @@ button:hover .ql-fill,
 // }
 .chart_tooltip {
   position: relative;
-  color: #ffffff !important;
+  color: $app-white !important;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
 }
@@ -283,7 +283,7 @@ button:hover .ql-fill,
 }
 .delete-button {
   &:hover {
-    background: red !important;
+    background: $danger-700 !important;
   }
 }
 //scroll bar
@@ -294,13 +294,13 @@ button:hover .ql-fill,
   border-radius: 16px !important;
 }
 ::-webkit-scrollbar-thumb {
-  background: #b6b5b5;
-  outline: 1px solid #8b8b8b;
+  background: $neutral-400;
+  outline: 1px solid $neutral-500;
   cursor: pointer;
 }
 
 .breadcrumb-link {
-  color: #737373;
+  color: $neutral-500;
   &:hover {
     color: $app-primary-500;
   }
@@ -363,11 +363,9 @@ button:hover .ql-fill,
     content: "";
     width: 100%;
     height: 100%;
-    height: 100%;
     top: 0;
     left: 0;
-    background: linear-gradient(to top, #000, transparent);
-    background: linear-gradient(to top, #000, transparent);
+    background: linear-gradient(to top, $app-black, transparent);
   }
 
   & > .employee-card-content {
@@ -398,7 +396,7 @@ button:hover .ql-fill,
     flex-grow: 1;
   }
   & .tab-box {
-    border-bottom: 2px solid #8b8b8b;
+    border-bottom: 2px solid $neutral-400;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -410,8 +408,12 @@ button:hover .ql-fill,
     min-width: 150px;
     &:hover {
       transition: background-color 0.2s ease-in;
-      background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
-      color: #9a56d3;
+      background-color: color-mix(
+        in oklab,
+        $app-primary-400 30%,
+        $app-white 50%
+      );
+      color: $app-primary-500;
     }
 
     & > svg {
@@ -423,9 +425,9 @@ button:hover .ql-fill,
 }
 
 .tab_active {
-  border-bottom: 2px solid #9a56d3 !important;
-  color: #9a56d3 !important;
-  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 70%);
+  border-bottom: 2px solid $app-primary-500 !important;
+  color: $app-primary-500 !important;
+  background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
 }
 
 .truncate-multi-line {
