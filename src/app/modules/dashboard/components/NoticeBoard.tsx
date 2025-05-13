@@ -55,7 +55,7 @@ export default function NoticeBoard() {
                 </Typography>
                 <Typography
                   variant="subtitle2"
-                  color={colors.alpha.primary[500]}
+                  color={colors.primary[500]}
                 >
                   10 mins ago
                 </Typography>
@@ -79,7 +79,7 @@ export default function NoticeBoard() {
                 </Typography>
                 <Typography
                   variant="subtitle2"
-                  color={colors.alpha.primary[500]}
+                  color={colors.primary[500]}
                 >
                   1 Hour ago
                 </Typography>

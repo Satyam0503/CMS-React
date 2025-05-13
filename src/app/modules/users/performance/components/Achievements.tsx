@@ -49,13 +49,13 @@ export default function Achievements() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Whatshot />
               </Stack>
             </Stack>
@@ -89,13 +89,13 @@ export default function Achievements() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Celebration />
               </Stack>
             </Stack>
@@ -128,13 +128,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <LocalFlorist />
               </Stack>
             </Stack>
@@ -167,13 +167,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Stars />
               </Stack>
             </Stack>
@@ -201,13 +201,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <LocalCafe />
               </Stack>
             </Stack>
@@ -235,13 +235,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: colors.primary[100],
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color={colors.primary[500]}>
                 <Work />
               </Stack>
             </Stack>

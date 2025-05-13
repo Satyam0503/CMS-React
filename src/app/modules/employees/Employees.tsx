@@ -1,4 +1,10 @@
-import { Card, Stack, ToggleButton, ToggleButtonGroup, Badge } from "@mui/material";
+import {
+  Card,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Badge,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
 
@@ -20,10 +26,11 @@ import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
-import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
 import {
-  countAppliedFilter
-} from "../../../utils/common"
+  EmployeeFilter,
+  initialFilterValues,
+} from "./components/EmployeeFilter";
+import { countAppliedFilter } from "../../../utils/common";
 const initialFilter = {
   ...initialFilterValues,
   name: "",
@@ -66,11 +73,6 @@ const Employees = () => {
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
-
-  const employeeFilters = useAppSelector((state) => state.filters.employee);
-  const totalAppliedFilter = countAppliedFilter(employeeFilters);
-
-  const isFilterAvailable = employeeFilters !== null;
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -213,17 +215,7 @@ const Employees = () => {
                 <GridView />
               </ToggleButton>
             </ToggleButtonGroup>
-            <Badge
-                badgeContent={totalAppliedFilter}
-                anchorOrigin={{ horizontal: "left", vertical: "top" }}
-                color="info"
-              >
-            <CustomIconButton
-              icon={<FilterList />}
-              ariaLabel="Filter Department"
-              handleClick={handleFilterClick}
-            />
-            </Badge>
+            <CustomIconButton icon={<FilterList />} handleClick={() => {}} />
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
@@ -237,14 +229,6 @@ const Employees = () => {
               />
             )}
           </Stack>
-          {open && (
-            <EmployeeFilter
-              open={open}
-              id={id}
-              anchorEl={anchorEl}
-              handleClose={() => setAnchorEl(null)}
-            />
-          )}
         </Stack>
         {viewMode === "table" ? (
           <CustomisedTable

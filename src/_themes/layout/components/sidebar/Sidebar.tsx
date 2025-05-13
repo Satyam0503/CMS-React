@@ -6,28 +6,16 @@ import { SidebarMenu } from "../sidebar/sidebar-menu/SidebarMenu";
 import { SidebarLogo } from "./SidebarLogo";
 import { Avatar, Grid, Stack, Typography } from "@mui/material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
+import { Link } from "react-router-dom";
+import { toAbsoluteUrl } from "../../../helpers";
 
 const Sidebar = () => {
   const { config } = useLayout();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
-
-  // const appSidebarDefaultMinimizeDesktopEnabled =
-  //   config?.app?.sidebar?.default?.minimize?.desktop?.enabled;
-  // const appSidebarDefaultCollapseDesktopEnabled =
-  //   config?.app?.sidebar?.default?.collapse?.desktop?.enabled;
-  // const toggleType = appSidebarDefaultCollapseDesktopEnabled
-  //   ? "collapse"
-  //   : appSidebarDefaultMinimizeDesktopEnabled
-  //   ? "minimize"
-  //   : "";
-  // const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
-  // const appSidebarDefaultMinimizeDefault =
-  //   config.app?.sidebar?.default?.minimize?.desktop?.default;
   const currentUser = useAppSelector((state) => state.user.userData);
-  const profileUrl = useAppSelector(
-    (state) => state.user.userData?.profileImage
-  );
+  const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
+  const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
 
   useEffect(() => {
     updateDOM(config);
@@ -37,38 +25,44 @@ const Sidebar = () => {
     return null;
   }
   return (
-    <>
-      <Grid
-        item
-        ref={sidebarRef}
-        id="kt_app_sidebar"
-        className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
-      >
-        <Stack padding={3} gap={4} alignItems="center" width="100%">
-          <SidebarLogo sidebarRef={sidebarRef} />
-          <Stack spacing={2} alignItems={"center"}>
-            <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
-              <Avatar
-                alt=""
-                src={profileUrl}
-                sizes="100"
-                // use media query for avatar
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  aspectRatio: 1,
-                }}
-              />
-            </Stack>
-            <Typography variant="h6" color="inherit">
-              {`${currentUser?.firstName}  ${currentUser?.lastName}`}
-            </Typography>
+    <Grid
+      item
+      ref={sidebarRef}
+      id="kt_app_sidebar"
+      className={clsx("app-sidebar", config.app?.sidebar?.default?.class)}
+      sx={{ backgroundColor: "background.sidebar" }}
+    >
+      <Stack padding={3} gap={4} alignItems="center" width="100%">
+        <Link to="/" className="company-logo-container">
+          <Avatar
+            src={companyLogo}
+            sx={{
+              width: 200,
+              height: "100%"
+            }}
+          />
+        </Link>
+        <Stack spacing={2} alignItems={"center"}>
+          <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
+            <Avatar
+              alt=""
+              src={profileUrl}
+              sizes="100"
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                aspectRatio: 1,
+              }}
+            />
           </Stack>
+          <Typography variant="h6" color="inherit">
+            {`${currentUser?.firstName}  ${currentUser?.lastName}`}
+          </Typography>
         </Stack>
-        <SidebarMenu />
-      </Grid>
-    </>
+      </Stack>
+      <SidebarMenu />
+    </Grid>
   );
 };
 
@@ -142,8 +136,8 @@ const updateDOM = (config: ILayout) => {
     if (appSidebarDefaultDrawerEnabled) {
       appSidebarDefaultDrawerAttributes = config.app?.sidebar?.default?.drawer
         ?.attributes as {
-        [attrName: string]: string;
-      };
+          [attrName: string]: string;
+        };
     }
 
     const appSidebarDefaultStickyEnabled =
@@ -152,8 +146,8 @@ const updateDOM = (config: ILayout) => {
     if (appSidebarDefaultStickyEnabled) {
       appSidebarDefaultStickyAttributes = config.app?.sidebar?.default?.sticky
         ?.attributes as {
-        [attrName: string]: string;
-      };
+          [attrName: string]: string;
+        };
     }
 
     setTimeout(() => {

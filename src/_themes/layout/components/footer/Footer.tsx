@@ -6,7 +6,7 @@ import { ScrollTop } from "../scroll-top";
 
 const Footer = () => {
   const { config } = useLayout();
-  useEffect(() => {}, [config]);
+  useEffect(() => { }, [config]);
   return (
     <>
       <Grid
@@ -20,7 +20,7 @@ const Footer = () => {
         <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
           <Typography
             variant="body1"
-            color={colors.alpha.neutral[400]}
+            color={colors.neutral[400]}
             fontWeight={400}
           >
             {" "}
@@ -32,7 +32,7 @@ const Footer = () => {
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
             <Typography
               variant="body1"
-              color={colors.alpha.neutral[600]}
+              color={colors.neutral[600]}
               fontWeight={400}
             >
               {" "}
@@ -42,7 +42,7 @@ const Footer = () => {
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
             <Typography
               variant="body1"
-              color={colors.alpha.neutral[600]}
+              color={colors.neutral[600]}
               fontWeight={400}
             >
               Support
@@ -52,7 +52,7 @@ const Footer = () => {
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
             <Typography
               variant="body1"
-              color={colors.alpha.neutral[600]}
+              color={colors.neutral[600]}
               fontWeight={400}
             >
               Purchase

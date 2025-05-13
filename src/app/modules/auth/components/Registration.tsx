@@ -67,11 +67,11 @@ export function Registration() {
   }, []);
   return (
     <Stack spacing={4}>
-      <Stack sx={{ alignItems: "center" }}>
-        <Typography variant="h3">
+      <Stack sx={{ alignItems: "center" }} spacing={1}>
+        <Typography variant="h1">
           {intl.formatMessage({ id: "AUTH.REGISTER.TITLE" })}
         </Typography>
-        <Typography variant="body1" color={colors.alpha.primary[500]}>
+        <Typography variant="h4">
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
       </Stack>
@@ -113,7 +113,7 @@ export function Registration() {
                     endAdornment: (
                       <InputAdornment position="end">
                         {touched.firstName && errors.firstName ? (
-                          <ErrorOutline color="warning" />
+                          <ErrorOutline color="error" />
                         ) : touched.firstName && !errors.firstName ? (
                           <Check color="success" />
                         ) : null}
@@ -133,7 +133,7 @@ export function Registration() {
                     endAdornment: (
                       <InputAdornment position="end">
                         {touched.lastName && errors.lastName ? (
-                          <ErrorOutline color="warning" />
+                          <ErrorOutline color="error" />
                         ) : touched.lastName && !errors.lastName ? (
                           <Check color="success" />
                         ) : null}
@@ -153,7 +153,7 @@ export function Registration() {
                     endAdornment: (
                       <InputAdornment position="end">
                         {touched.companyName && errors.companyName ? (
-                          <ErrorOutline color="warning" />
+                          <ErrorOutline color="error" />
                         ) : touched.companyName && !errors.companyName ? (
                           <Check color="success" />
                         ) : null}
@@ -172,7 +172,7 @@ export function Registration() {
                     endAdornment: (
                       <InputAdornment position="end">
                         {touched.email && errors.email ? (
-                          <ErrorOutline color="warning" />
+                          <ErrorOutline color="error" />
                         ) : touched.email && !errors.email ? (
                           <Check color="success" />
                         ) : null}
@@ -193,7 +193,7 @@ export function Registration() {
                       endAdornment: (
                         <InputAdornment position="end">
                           {touched.password && errors.password ? (
-                            <ErrorOutline color="warning" />
+                            <ErrorOutline color="error" />
                           ) : touched.password && !errors.password ? (
                             <Check color="success" />
                           ) : null}
@@ -209,53 +209,53 @@ export function Registration() {
                   >
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={colors.secondary[500]}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.alpha.secondary[500]}
+                      bgcolor={'secondary.main'}
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: colors.alpha.success[500],
+                          bgcolor: 'success.main',
                         },
                       }}
                     />
@@ -278,7 +278,7 @@ export function Registration() {
                     endAdornment: (
                       <InputAdornment position="end">
                         {touched.changePassword && errors.changePassword ? (
-                          <ErrorOutline color="warning" />
+                          <ErrorOutline color="error" />
                         ) : touched.changePassword && !errors.changePassword ? (
                           <Check color="success" />
                         ) : null}
@@ -312,7 +312,7 @@ export function Registration() {
               <Stack spacing={1}>
                 <CustomisedButton
                   disabled={!(dirty && isValid) || isSubmitting}
-                  label={intl.formatMessage({id:"BUTTON.SUBMIT"})}
+                  label={intl.formatMessage({ id: "BUTTON.SUBMIT" })}
                   size="large"
                   type="submit"
                   loading={isSubmitting}
@@ -320,7 +320,7 @@ export function Registration() {
                 <CustomisedButton
                   handleClick={() => resetForm()}
                   variant="outlined"
-                  label={intl.formatMessage({id:"BUTTON.RESET"})}
+                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
                   size="large"
                   type="button"
                 />

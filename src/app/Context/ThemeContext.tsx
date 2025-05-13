@@ -1,48 +1,69 @@
-import React, {
-  createContext,
-  useMemo,
-  useContext,
-  useState,
-  ReactNode,
-} from "react";
-import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
-import { MuiTheme } from "../modules/theme/MuiTheme";
-import { DarkTheme } from "../modules/theme/DarkTheme";
-import { Theme } from '@mui/material/styles';
+import { PaletteMode, ThemeProvider, useMediaQuery } from "@mui/material"
+import React, { FC, useContext, useEffect, useMemo, useState } from "react"
+import { createApplicationTheme } from "../modules/theme/MuiTheme"
 
-interface ThemeContextType {
-  mode: string;
-  toggleTheme: () => void;
-  theme: Theme
+type ThemeContextType = {
+    theme: PaletteMode,
+    toggleThemeMode: () => void,
+}
+type Props = {
+    children: React.ReactNode,
 }
 
-const defaultValue: ThemeContextType = {
-  mode: "light",
-  toggleTheme: () => {},
-  theme: MuiTheme
+const APP_THEME_MODE = 'theme-mode';
+const ThemeContext = React.createContext<ThemeContextType>({
+    theme: "light",
+    toggleThemeMode: () => { },
+})
+
+const getCurrentThemeMode = (): string | undefined => {
+    if (!localStorage) {
+        return;
+    }
+    const themeMode = localStorage.getItem(APP_THEME_MODE);
+    if (!themeMode) {
+        return;
+    }
+    return themeMode;
+}
+
+export const setCurrentThemeMode = (key: PaletteMode) => {
+    if (!localStorage) {
+        return;
+    }
+    try {
+        localStorage.setItem(APP_THEME_MODE, key);
+    } catch (error) {
+        console.error("AUTH LOCAL STORAGE SAVE ERROR", error);
+    }
 };
 
-const ThemeContext = createContext<ThemeContextType>(defaultValue);
+export const ThemeContextProvider: FC<Props> = ({ children }) => {
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const [mode, setMode] = useState<PaletteMode>((getCurrentThemeMode() as PaletteMode) ?? (prefersDarkMode ? "dark" : "light"));
+    const themeMode = useMemo(
+        () => ({
+            theme: mode,
+            toggleThemeMode: () => {
+                setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+            },
+        }),
+        [mode],
+    );
+    const theme = React.useMemo(
+        () => createApplicationTheme(mode),
+        [mode],
+    );
 
-export const useThemeContext = () => useContext(ThemeContext);
+    return (
+        <ThemeContext.Provider value={themeMode}>
+            <ThemeProvider theme={theme}>
+                {children}
+            </ThemeProvider>
+        </ThemeContext.Provider>
+    )
+}
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-
-  const [mode, setMode] = useState(()=> localStorage.getItem('themeMode') || 'light');
-
-  const toggleTheme = () => {
-    setMode((prev) => {
-      const newMode = (prev == "light" ? "dark" : "light");
-      localStorage.setItem('themeMode',newMode);
-      return newMode;
-    });
-  };
-
-  const theme: Theme = useMemo(() => (mode == "light" ? MuiTheme : DarkTheme), [mode]);
-
-  return (
-    <ThemeContext.Provider value={{ mode, toggleTheme, theme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
+export const useThemeContext = () => {
+    return useContext(ThemeContext);
+}

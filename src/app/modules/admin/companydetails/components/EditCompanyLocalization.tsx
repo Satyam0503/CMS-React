@@ -1,7 +1,6 @@
 import { Box, Card, Stack, Typography, Divider, Grid, FormControl, InputLabel, Select, MenuItem, TextField, NativeSelect } from "@mui/material"
 import CustomSelectChip from "../../../../shared/components/CustomSelectChip"
 import { useIntl } from "react-intl"
-import { colors } from "../../../theme/MuiTheme"
 import { languages } from "../../../../../utils/constant/Constant"
 
 export const EditCompanyLocalization = () => {
@@ -63,7 +62,6 @@ export const EditCompanyLocalization = () => {
                             type="text"
                             id="outlined-required"
                             label="English"
-                            sx={{ color: colors.alpha.primary[500] }}
                         />
                     </Grid>
                     <Grid item xs={12} md={4}>
@@ -73,7 +71,6 @@ export const EditCompanyLocalization = () => {
                             type="text"
                             id="outlined-required"
                             label="French"
-                            sx={{ color: colors.alpha.primary[500] }}
                         />
                     </Grid>
                     <Grid item xs={12} md={4}>

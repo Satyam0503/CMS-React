@@ -33,10 +33,7 @@ import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CircularLoader } from "../../shared/components/CircularLoader";
 import { ApplicantModel, JobModal } from "../recruitment/models";
-import {
-  experienceCategoryList,
-  indianStates,
-} from "../../../utils/constant/Constant";
+import { experienceCategoryList, indianStates, } from "../../../utils/constant/Constant";
 import { useParams } from "react-router-dom";
 
 const initialValues: ApplicantModel = {
@@ -194,14 +191,12 @@ export default function ApplyNow() {
                   <Stack mb={2} spacing={1}>
                     <Typography
                       variant="h3"
-                      color={colors.alpha.secondary[500]}
                     >
                       {intl.formatMessage({ id: "VACANCY.TEXT4" })}
                     </Typography>
                     <Typography
                       variant="h4"
                       fontWeight={600}
-                      color={colors.alpha.primary[500]}
                     >
                       {intl.formatMessage({ id: "VACANCY.TEXT5" })}
                     </Typography>
@@ -251,7 +246,6 @@ export default function ApplyNow() {
                           <Typography
                             variant="body1"
                             fontWeight={400}
-                            color={colors.alpha.neutral[600]}
                             dangerouslySetInnerHTML={{
                               __html: selectedJobPosition.description,
                             }}
@@ -440,7 +434,6 @@ export default function ApplyNow() {
                           <Typography
                             variant="body1"
                             mb={1}
-                            color={colors.alpha.primary[500]}
                           >
                             {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                           </Typography>
@@ -467,7 +460,6 @@ export default function ApplyNow() {
                               <Tooltip title="Upload file here" placement="top">
                                 <Box
                                   component="label"
-                                  bgcolor={colors.alpha.primary[100]}
                                   px={2}
                                   py={0.5}
                                   borderRadius={1}

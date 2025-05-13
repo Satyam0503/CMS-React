@@ -181,41 +181,35 @@ export const AddEditJob: FC<PropsTypes> = ({
             />
             <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent={"flex-end"}
-              mt={2}
-              gap={1}
-            >
-              {isEdit && (
-                <CustomisedButton
-                  label="Delete"
-                  Icon={<DeleteOutline />}
-                  iconPosition="start"
-                  className="delete-button"
-                  style={{
-                    backgroundColor: alpha(
-                      lighten(colors.alpha.danger[800], 0.2),
-                      0.8
-                    ),
-                  }}
-                />
-              )}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent={"flex-end"}
+            mt={2}
+            gap={1}
+          >
+            {isEdit && (
               <CustomisedButton
-                variant="outlined"
-                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-                handleClick={handleClose}
-              />
-              <CustomisedButton
-                loading={isSubmitting}
-                label={intl.formatMessage({
-                  id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
-                })}
-                type="submit"
+                label="Delete"
+                Icon={<DeleteOutline />}
                 iconPosition="start"
-                disabled={isSubmitting || !(dirty && isValid)}
+                className="delete-button"
               />
-            </Stack>
+            )}
+            <CustomisedButton
+              variant="outlined"
+              label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              loading={isSubmitting}
+              label={intl.formatMessage({
+                id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+              })}
+              type="submit"
+              iconPosition="start"
+              disabled={isSubmitting || !(dirty && isValid)}
+            />
+          </Stack>
         </form>
       </Stack>
     </CustomisedModal>

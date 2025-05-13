@@ -41,7 +41,6 @@ export default function ChatDrawer() {
         <Tooltip title="Chat">
           <IconButton
             sx={{
-              bgcolor: "inherit",
               border: "none",
               "&:hover": { bgcolor: "inherit", border: "none" },
             }}

@@ -128,5 +128,5 @@ export const ApplicationModules: FC = () => {
         />
       )}
     </>
-  );
-};
+  )
+}

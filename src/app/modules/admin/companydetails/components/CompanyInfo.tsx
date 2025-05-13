@@ -1,9 +1,14 @@
 import {
+  Autocomplete,
   Avatar,
   Box,
   Divider,
   Grid,
+  ListItemText,
+  MenuItem,
+  Select,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
@@ -12,14 +17,22 @@ import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CompanyInfoModel } from "../../models";
 import { getCompanyDetails } from "../../adminservices";
-import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { colors } from "../../../theme/MuiTheme";
 import { languages } from "../../../../../utils/constant/Constant";
+import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
+
+// const initialCompanyInfo: CompanyInfoModel = {
+//   defaultLanguage: null,
+//   applicationLanguage: [],
+//   companyLogo: null;
+// }
 
 export const CompanyInfo: FC = () => {
   const { formatMessage } = useIntl();
   const [isEdit, setEdit] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
+  const [editedInfo, setEditedInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
 
   const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? <FormattedMessage id={"NOT_AVAILABLE"} />
   const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : <FormattedMessage id={"NOT_AVAILABLE"} />;
@@ -28,12 +41,18 @@ export const CompanyInfo: FC = () => {
       const response = await getCompanyDetails();
       if (response.data.success) {
         setCompanyInfo(response.data.methodResult);
+        setEditedInfo(response.data.methodResult);
+        setLoading(false);
       }
     })();
   }, [])
+
+  if (loading) {
+    return <CompanyInfoSkeleton />
+  }
   return (
-    <Stack spacing={1}>
-      <Box component="div" sx={{ p: 3, bgcolor: colors.alpha.white[500] }}>
+    <Stack spacing={1} sx={{ mt: 1 }}>
+      <Box component="div" sx={{ p: 3, bgcolor: colors.white[500] }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
           <Typography variant="h5">
             {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION" })}
@@ -61,18 +80,66 @@ export const CompanyInfo: FC = () => {
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body1" color={colors.alpha.primary[500]}>
+                <Typography variant="body1" color={colors.primary[500]} id="defaultLanguage">
                   {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE" })}
                 </Typography>
-                <Typography variant="body2">{defaultLanguage}</Typography>
+                {
+                  isEdit ?
+                    <Select
+                      labelId="defaultLanguage"
+                      id="default-language"
+                      value={editedInfo.defaultLanguage}
+                      sx={{ width: 300, mt: 1 }}
+                      variant="outlined"
+                    >
+                      {
+                        languages.map(item =>
+                          <MenuItem key={item.id} value={item.lang}>{item.name}</MenuItem>
+                        )
+                      }
+                    </Select>
+                    :
+                    <Typography variant="body2">{defaultLanguage}</Typography>
+                }
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body1" color={colors.alpha.primary[500]}>
+                <Typography variant="body1" color={colors.primary[500]}>
                   {formatMessage({
                     id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE",
                   })}
                 </Typography>
-                <Typography variant="body2">{applicationLanguages}</Typography>
+                {
+                  isEdit ?
+                    <Autocomplete
+                      multiple
+                      size="small"
+                      id="application-language"
+                      options={languages}
+                      disableCloseOnSelect
+                      value={languages.filter((lang) =>
+                        editedInfo.applicationLanguage.includes(lang.lang)
+                      )}
+                      onChange={(event, selectedJobs) => {
+                        // setFieldValue(
+                        //   "vacancyIds",
+                        //   selectedJobs.map((job) => job.jobId)
+                        // );
+                      }}
+                      getOptionLabel={(option) => option.name as unknown as string}
+                      renderInput={(params) => (
+                        <TextField {...params} />
+                      )}
+                      renderOption={(props, option, state) => {
+                        return (
+                          <li {...props}>
+                            <ListItemText primary={option.name} />
+                          </li>
+                        );
+                      }}
+                      sx={{ mt: 1 }}
+                    />
+                    : <Typography variant="body2">{applicationLanguages}</Typography>
+                }
               </Grid>
             </Grid>
           </Stack>
@@ -88,13 +155,13 @@ export const CompanyInfo: FC = () => {
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} md={4}>
-                <Typography variant="body1" color={colors.alpha.primary[500]}>
+                <Typography variant="body1" color={colors.primary[500]}>
                   {formatMessage({ id: "Language.English" })}
                 </Typography>
                 <Typography variant="body2">{companyInfo.companyName}</Typography>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Typography variant="body1" color={colors.alpha.primary[500]}>
+                <Typography variant="body1" color={colors.primary[500]}>
                   French
                 </Typography>
                 <Typography variant="body2"></Typography>
@@ -103,7 +170,7 @@ export const CompanyInfo: FC = () => {
           </Stack>
         </Stack>
       </Box >
-      <Box component="div" sx={{ p: 3, bgcolor: colors.alpha.white[500] }}>
+      <Box component="div" sx={{ p: 3, bgcolor: colors.white[500] }}>
         <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}</Typography>
         <Stack spacing={1} sx={{ marginBlockStart: 2 }}>
           <Avatar
@@ -114,6 +181,9 @@ export const CompanyInfo: FC = () => {
               width: "200px",
               height: "50px",
               marginBlockStart: 2,
+              objectFit: "contain",
+              objectPosition: "center",
+              backgroundColor: "black"
             }}
           />
           <Typography variant="body1">{companyInfo.companyName}</Typography>

@@ -22,7 +22,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { colors } from "../theme/MuiTheme";
 import { relative } from "path";
 
 type Props = {
@@ -54,7 +53,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                 />
               </Stack>
               <Stack
-                bgcolor={colors.alpha.primary[300]}
                 flexWrap={"wrap"}
                 borderRadius={0.5}
                 p={2}
@@ -66,7 +64,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Stack>
             </Stack>
             <Stack
-              bgcolor={colors.alpha.primary[100]}
               flexWrap={"wrap"}
               borderRadius={0.5}
               p={2}
@@ -80,7 +77,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
           <Stack spacing={2}>
             <Stack direction={"row"} spacing={2}>
               <Stack
-                bgcolor={colors.alpha.primary[300]}
                 flexWrap={"wrap"}
                 borderRadius={0.5}
                 p={2}
@@ -102,7 +98,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Stack>
             </Stack>
             <Stack
-              bgcolor={colors.alpha.primary[100]}
               flexWrap={"wrap"}
               borderRadius={0.5}
               p={2}
@@ -113,7 +108,6 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Typography>
             </Stack>
             <Stack
-              bgcolor={colors.alpha.primary[100]}
               flexWrap={"wrap"}
               borderRadius={0.5}
               p={2}

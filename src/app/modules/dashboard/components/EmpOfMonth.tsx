@@ -32,7 +32,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2" color={colors.primary[500]}>
               1st
             </Typography>
           </Stack>
@@ -60,7 +60,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2" color={colors.primary[500]}>
               2nd
             </Typography>
           </Stack>
@@ -87,7 +87,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.alpha.primary[500]}>
+            <Typography variant="subtitle2" color={colors.primary[500]}>
               3rd
             </Typography>
           </Stack>

@@ -21,8 +21,8 @@ const SidebarLogo = (props: PropsType) => {
   const toggleType = appSidebarDefaultCollapseDesktopEnabled
     ? "collapse"
     : appSidebarDefaultMinimizeDesktopEnabled
-    ? "minimize"
-    : "";
+      ? "minimize"
+      : "";
   const toggleState = appSidebarDefaultMinimizeDesktopEnabled ? "active" : "";
   const appSidebarDefaultMinimizeDefault =
     config.app?.sidebar?.default?.minimize?.desktop?.default;
@@ -54,42 +54,32 @@ const SidebarLogo = (props: PropsType) => {
   return (
     <Stack alignItems="center" className="sidebar_logo">
       <Link to="/">
-        {config.layoutType === "dark-sidebar" ? (
-          <img
-            alt="Logo"
-            src={toAbsoluteUrl("media/logos/logo.png")}
-            style={{ minWidth: "50px" }}
-          />
-        ) : (
-          <>
-            <Avatar
-              alt="Logo"
-              src={toAbsoluteUrl("media/logos/default.svg")}
-              // className="app-sidebar-logo-default theme-light-show"
-            />
-          </>
-        )}
+        <Avatar
+          alt="Logo"
+          src={toAbsoluteUrl("media/logos/default.svg")}
+        // className="app-sidebar-logo-default theme-light-show"
+        />
       </Link>
 
       {(appSidebarDefaultMinimizeDesktopEnabled ||
         appSidebarDefaultCollapseDesktopEnabled) && (
-        <Grid
-          item
-          ref={toggleRef}
-          id="kt_app_sidebar_toggle"
-          className={clsx(
-            "app-sidebar-toggle btn btn-icon  btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-collapse start-100 translate-middle rotate",
-            { active: appSidebarDefaultMinimizeDefault }
-          )}
-          data-kt-toggle="true"
-          data-kt-toggle-state={toggleState}
-          data-kt-toggle-target="body"
-          data-kt-toggle-name={`app-sidebar-${toggleType}`}
-          sx={{ visibility: { xs: "hidden", md: "visible" } }}
-        >
-          <KTIcon iconName="black-left-line" className="fs-3 rotate-180 ms-1" />
-        </Grid>
-      )}
+          <Grid
+            item
+            ref={toggleRef}
+            id="kt_app_sidebar_toggle"
+            className={clsx(
+              "app-sidebar-toggle btn btn-icon  btn-sm btn-color-muted btn-active-color-primary w-30px position-absolute top-collapse start-100 translate-middle rotate",
+              { active: appSidebarDefaultMinimizeDefault }
+            )}
+            data-kt-toggle="true"
+            data-kt-toggle-state={toggleState}
+            data-kt-toggle-target="body"
+            data-kt-toggle-name={`app-sidebar-${toggleType}`}
+            sx={{ visibility: { xs: "hidden", md: "visible" } }}
+          >
+            <KTIcon iconName="black-left-line" className="fs-3 rotate-180 ms-1" />
+          </Grid>
+        )}
     </Stack>
   );
 };

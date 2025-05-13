@@ -12,10 +12,12 @@ import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
 
 interface Props {
+  circularCrop?: boolean,
   open: boolean;
   imgSrc: string;
   handleClose: () => void;
   handleCrop: (value: string) => void;
+  displayPreview?: boolean;
 }
 
 const MIN_DIMENSION = 150;
@@ -69,6 +71,7 @@ export const ImageCropper: FC<Props> = ({
   handleClose,
   imgSrc,
   handleCrop,
+  circularCrop = false
 }) => {
   const [crop, setCrop] = useState<Crop>();
   const [croppedImage, setCroppedImage] = useState("");
@@ -112,9 +115,9 @@ export const ImageCropper: FC<Props> = ({
           onChange={(pixelCrop, percentCrop) => {
             setCrop(percentCrop);
           }}
-          circularCrop
+          circularCrop={circularCrop}
           keepSelection
-          aspect={1}
+          aspect={circularCrop ? 1 : undefined}
           minHeight={MIN_DIMENSION}
           minWidth={MIN_DIMENSION}
           onComplete={onCropComplete}

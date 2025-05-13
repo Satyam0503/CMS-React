@@ -34,7 +34,7 @@ const initialValues: ApplicantModel = {
   email: "",
   phone: "",
   experience: 1,
-  state:"",
+  state: "",
   resume: null,
   vacancyId: "",
   status: ApplicantStatus.Active,
@@ -89,14 +89,14 @@ export const AddApplicant: FC<PropsTypes> = ({
     try {
       const { data } = await addApplicant(payload);
       if (!data.success) {
-        throw new Error(intl.formatMessage({id:data.message }) );
+        throw new Error(intl.formatMessage({ id: data.message }));
       }
       const uploadResumeResponse = await uploadResume(values.email, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) {
         throw new Error(responseData.message);
       }
-      toast.success(intl.formatMessage({id:"MESSAGE.APPLICANT.ADD_SUCCESS"}));
+      toast.success(intl.formatMessage({ id: "MESSAGE.APPLICANT.ADD_SUCCESS" }));
       setRefresh(!refresh);
       handleClose();
     } catch (error: any) {
@@ -135,7 +135,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                 handleAddApplicant(values, setSubmitting);
               }}
             >
-              {(formik) => {               
+              {(formik) => {
                 return (
                   <form onSubmit={formik.handleSubmit}>
                     <Grid
@@ -203,26 +203,26 @@ export const AddApplicant: FC<PropsTypes> = ({
                         </SelectInput>
                       </Grid>
                       <Grid item xs={12}>
-                          <Autocomplete 
-                            id="state-dropdown"
-                            size="small"
-                            value={indianStates.find(state=>state.value === formik.values.state)}
-                            options={indianStates}
-                            onChange={(event,value)=>{
-                              formik.setFieldValue("state",value?.value);
-                            }}
-                            renderInput={(param)=>(
-                              <TextField  {...param}  label={"Select State"}/>
-                            )}
-                            getOptionLabel={option=> option.label}
-                          />
+                        <Autocomplete
+                          id="state-dropdown"
+                          size="small"
+                          value={indianStates.find(state => state.value === formik.values.state)}
+                          options={indianStates}
+                          onChange={(event, value) => {
+                            formik.setFieldValue("state", value?.value);
+                          }}
+                          renderInput={(param) => (
+                            <TextField  {...param} label={"Select State"} />
+                          )}
+                          getOptionLabel={option => option.label}
+                        />
                       </Grid>
                     </Grid>
                     <Stack mt={2}>
                       <Typography
                         variant="body1"
                         mb={1}
-                        color={colors.alpha.primary[500]}
+                        color={colors.primary[500]}
                       >
                         {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
@@ -245,13 +245,15 @@ export const AddApplicant: FC<PropsTypes> = ({
                         alignItems={"center"}
                       >
                         <Stack alignItems={"center"}>
-                          <Tooltip title="Upload file here" placement="top">
+                          <Tooltip title="Upload file here" placement="top" >
                             <Box
                               component="label"
-                              bgcolor={colors.alpha.primary[100]}
-                              px={2}
-                              py={0.5}
-                              borderRadius={1}
+                              sx={{
+                                px: 2,
+                                py: 1,
+                                borderRadius: 1,
+                                backgroundColor: 'primary.lighter'
+                              }}
                             >
                               <CloudUploadOutlined
                                 fontSize="large"
@@ -307,17 +309,17 @@ export const AddApplicant: FC<PropsTypes> = ({
                     >
                       <CustomisedButton
                         variant="outlined"
-                        label={intl.formatMessage({id:"BUTTON.CLOSE"})}
+                        label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
                         handleClick={handleClose}
                       />
                       <CustomisedButton
                         variant="outlined"
-                        label={intl.formatMessage({id:"BUTTON.RESET"})}
+                        label={intl.formatMessage({ id: "BUTTON.RESET" })}
                         handleClick={() => formik.resetForm()}
                       />
                       <CustomisedButton
                         loading={formik.isSubmitting}
-                        label={intl.formatMessage({id:"BUTTON.ADD"})}
+                        label={intl.formatMessage({ id: "BUTTON.ADD" })}
                         type="submit"
                         disabled={
                           formik.isSubmitting ||

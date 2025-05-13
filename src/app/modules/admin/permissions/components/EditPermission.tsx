@@ -253,7 +253,7 @@ export const EditPermission = () => {
                 component={"div"}
                 sx={{
                   border: "1px solid",
-                  borderColor: colors.alpha.neutral[200],
+                  borderColor: colors.neutral[200],
                   borderRadius: 1,
                   p: 2,
                 }}

@@ -1,5 +1,4 @@
 import { Avatar, Stack, Typography } from "@mui/material";
-import { colors } from "../../modules/theme/MuiTheme";
 
 interface AvatarCellPropsTypes {
   title?: string;
@@ -17,10 +16,9 @@ export const AvatarCell = ({
       <Avatar src={avatarSrc || ""}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
       <Stack direction="column" sx={{ alignSelf: "center" }}>
         <Typography
-          variant="body2"
+          variant="body1"
           display={"block"}
           fontWeight={500}
-          color={colors.alpha.neutral[800]}
         >
           {title || "NA"}
         </Typography>

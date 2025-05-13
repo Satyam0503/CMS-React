@@ -15,7 +15,7 @@ export function SingleBannerNew({ title, titleorange, path }: Props) {
         <Stack className="single_banner">
           <Typography
             variant="h2"
-            color={colors.alpha.white[500]}
+            color={colors.white[500]}
             mb={2}
             mt={6}
           >

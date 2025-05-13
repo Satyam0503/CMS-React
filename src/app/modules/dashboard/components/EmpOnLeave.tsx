@@ -49,7 +49,7 @@ export default function EmpOnLeave() {
               <Stack>
                 <Typography
                   variant="subtitle2"
-                  color={colors.alpha.primary[500]}
+                  color={colors.primary[500]}
                 >
                   5-Dec to 25-Dec
                 </Typography>
@@ -80,7 +80,7 @@ export default function EmpOnLeave() {
               <Stack>
                 <Typography
                   variant="subtitle2"
-                  color={colors.alpha.primary[500]}
+                  color={colors.primary[500]}
                 >
                   Today
                 </Typography>

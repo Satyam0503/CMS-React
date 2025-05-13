@@ -115,7 +115,7 @@ export const UserCertification = () => {
     if (selectedCertificationId) {
       try {
         const response = await deleteEmployeeCertification(
-          selectedCertificationId,employeeId
+          selectedCertificationId, employeeId
         );
         const { success, message } = response.data;
         if (success) {
@@ -159,12 +159,12 @@ export const UserCertification = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-          <CustomIconButton
-            tooltip="Add"
-            icon={<Add />}
-            handleClick={() => setOpen(true)}
-          />
-        )}
+            <CustomIconButton
+              tooltip="Add"
+              icon={<Add />}
+              handleClick={() => setOpen(true)}
+            />
+          )}
       </Stack>
 
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
@@ -192,13 +192,13 @@ export const UserCertification = () => {
                   sx={{
                     width: 48,
                     height: 48,
-                    bgcolor: colors.alpha.secondary[100],
+                    bgcolor: 'secondary.lighter',
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,
                   }}
                 >
-                  <Stack color={colors.alpha.secondary[500]}>
+                  <Stack sx={{ color: 'secondary.main' }}>
                     <LocalActivity />
                   </Stack>
                 </Stack>
@@ -207,7 +207,7 @@ export const UserCertification = () => {
                   <Typography
                     variant="body1"
                     fontWeight={500}
-                    color={colors.alpha.neutral[800]}
+                    color={'text.secondary'}
                   >
                     {certification.certificationTitle}
                   </Typography>
@@ -242,36 +242,36 @@ export const UserCertification = () => {
               </Stack>
               {
                 (!employeeId ||
-                checkPermissionForModulesFeatureAccess(
-                  `${ModulesName.Employees}.${Permission.Edit}`,
-                  userPermissions
-                ))
-                && 
+                  checkPermissionForModulesFeatureAccess(
+                    `${ModulesName.Employees}.${Permission.Edit}`,
+                    userPermissions
+                  ))
+                &&
                 <Stack
-                direction={{ sx: "column", sm: "row" }}
-                spacing={1}
-                rowGap={0.5}
-                sx={{
-                  visibility: "hidden",
-                  transition: "visibility 0.3s ease-in-out",
-                }}
-              >
-                <CustomIconButton
-                  icon={<Edit />}
-                  tooltip="Edit"
-                  handleClick={() => handleCertificationEdit(certification)}
-                />
-                <CustomIconButton
-                  icon={<DeleteOutline />}
-                  tooltip="Delete"
-                  handleClick={() => {
-                    setConfirmModalOpen(true);
-                    setSelectedCertificationId(certification.certificationId);
+                  direction={{ sx: "column", sm: "row" }}
+                  spacing={1}
+                  rowGap={0.5}
+                  sx={{
+                    visibility: "hidden",
+                    transition: "visibility 0.3s ease-in-out",
                   }}
-                />
-              </Stack>
+                >
+                  <CustomIconButton
+                    icon={<Edit />}
+                    tooltip="Edit"
+                    handleClick={() => handleCertificationEdit(certification)}
+                  />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    tooltip="Delete"
+                    handleClick={() => {
+                      setConfirmModalOpen(true);
+                      setSelectedCertificationId(certification.certificationId);
+                    }}
+                  />
+                </Stack>
               }
-              
+
             </Stack>
           ))
         )}

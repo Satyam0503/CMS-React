@@ -4,7 +4,6 @@ import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import * as Yup from "yup";
-import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
@@ -82,7 +81,7 @@ export function CreatePassword() {
         justifyContent={"space-between"}
       >
         <Stack spacing={1}>
-          <Typography variant="h1" color={colors.alpha.primary[500]}>
+          <Typography variant="h1" sx={{ color: 'primary.main' }}>
             {intl.formatMessage({ id: "PASSWORD.CREATE" })}
           </Typography>
           <Typography variant="h3">

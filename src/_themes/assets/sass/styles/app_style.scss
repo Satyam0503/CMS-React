@@ -21,6 +21,14 @@
   text-wrap: balance;
 }
 
+.dark-mode {
+  background-color: "#121212";
+}
+
+.light-mode {
+  background-color: "#f5f5f5";
+}
+
 // List of colors
 $color-list: primary, secondary, success, info, neutral, warning, error,
   territory;
@@ -42,22 +50,57 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
 // $info-300: #cfd8ff;
 // $info-800: #2b46a5;
 //profile card icon
-.coverChange {
-  position: absolute !important;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.35s ease;
+
+// header
+
+.header-wrapper {
   display: flex;
-  justify-content: center;
-  gap: 0.25rem;
-  z-index: 4;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  // padding: 0.75rem;
 }
 
-.gridContainer:hover .coverChange {
-  opacity: 1;
+.profile-picture-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #9a56d3;
+  gap: 1rem;
+  padding: 1rem;
+  & > .profile-picture {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    aspect-ratio: 1;
+    border: 3px solid white;
+    border-radius: 50%;
+    position: relative;
+    transition: "transform 0.8s ease-in-out";
+    z-index: 0;
+
+    & > .profile-picture-cover {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      z-index: 4;
+    }
+    &:hover .profile-picture-cover {
+      opacity: 1;
+    }
+  }
 }
 
 input:-webkit-autofill {
@@ -361,7 +404,6 @@ button:hover .ql-fill,
     justify-content: center;
     gap: 0.5rem;
     font-weight: bolder;
-    color: #737373;
     padding: 1.5rem;
     font-size: 1rem;
     cursor: pointer;
@@ -383,7 +425,7 @@ button:hover .ql-fill,
 .tab_active {
   border-bottom: 2px solid #9a56d3 !important;
   color: #9a56d3 !important;
-  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
+  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 70%);
 }
 
 .truncate-multi-line {
@@ -396,4 +438,16 @@ button:hover .ql-fill,
 }
 .shadow-md {
   box-shadow: 0 0.1px 5px 0px $app-primary-100 !important;
+}
+
+// sidebar
+.company-logo-container {
+  max-width: 200px;
+  height: 50px;
+  & > .company-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
 }

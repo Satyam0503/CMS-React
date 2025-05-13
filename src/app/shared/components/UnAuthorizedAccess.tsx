@@ -3,7 +3,6 @@ import CustomisedButton from "./CustomisedButton";
 import { Home } from "@mui/icons-material";
 import { FC } from "react";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { colors } from "../../modules/theme/MuiTheme";
 
 interface PropsTypes {
   type: "error" | "unauthorise";
@@ -47,7 +46,6 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
         )}
         <CustomisedButton
           label="Return to Dashboard"
-          style={{ backgroundColor: colors.alpha.primary[500] }}
           Icon={<Home />}
           iconPosition="end"
           handleClick={() => (window.location.href = "/")}

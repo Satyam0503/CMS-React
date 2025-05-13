@@ -73,12 +73,12 @@ const UserProfile = () => {
   const empId = useParams().employeeid;
 
   useEffect(() => {
-    if(empId){
+    if (empId) {
       setPageTitle(intl.formatMessage({ id: "PAGE.PROFILE" }));
-    }else{
+    } else {
       setPageTitle(intl.formatMessage({ id: "PAGE.MY_PROFILE" }));
     }
-  }, []); 
+  }, []);
 
   return (
     <UserDetailsProvider>
@@ -120,6 +120,7 @@ const UserProfile = () => {
                     tab_active: checkIsActive(location.pathname, tabTo),
                   })}
                   onClick={() => navigate(tab.to)}
+                  sx={{ color: "text.secondary" }}
                 >
                   {tab.icon}
                   {intl.formatMessage({ id: tab.title })}
