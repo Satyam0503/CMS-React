@@ -126,7 +126,7 @@ const EmployeeAttendance: FC = () => {
             value={selectedDay}
             sx={{
               minWidth: "130px",
-              bgcolor: "white",
+              bgcolor: "common.white",
             }}
           >
             {Days.map((item) => (

@@ -7,6 +7,7 @@ import {
   Typography,
   Select,
   MenuItem,
+  useTheme,
 } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
@@ -42,7 +43,7 @@ const EmployeeLeaves: FC = () => {
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
   const [selectedDay, setSelectedDay] = React.useState("today");
-
+  const theme = useTheme();
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -68,7 +69,7 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg="secondary.lighter"
+                  iconBg={theme.palette.secondary.lighter}
                   icon={<HourglassBottom fontSize="large" />}
                   iconColor="secondary.main"
                   number={"3"}
@@ -82,7 +83,7 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg="primary.lighter"
+                  iconBg={theme.palette.primary.lighter}
                   icon={<HourglassTop fontSize="large" />}
                   iconColor="primary.main"
                   number={"1"}
@@ -95,7 +96,7 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg="info.lighter"
+                  iconBg={theme.palette.info.lighter}
                   icon={<Home fontSize="large" />}
                   iconColor="info.main"
                   number={"1"}
@@ -108,7 +109,7 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg="error.lighter"
+                  iconBg={theme.palette.error.lighter}
                   icon={<WorkOff fontSize="large" />}
                   iconColor="error.light"
                   number={"7"}
@@ -132,7 +133,7 @@ const EmployeeLeaves: FC = () => {
               value={selectedDay}
               sx={{
                 minWidth: "130px",
-                bgcolor: "white",
+                bgcolor: "common.white",
               }}
             >
               {Days.map((item) => (

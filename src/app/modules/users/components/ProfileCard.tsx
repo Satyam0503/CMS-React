@@ -39,7 +39,7 @@ export default function ProfileCard() {
                 icon={
                   <Edit
                     sx={{
-                      color: "white",
+                      color: "common.white",
                     }}
                   />
                 }
@@ -48,12 +48,12 @@ export default function ProfileCard() {
           )}
         </Box>
         <Stack className="text-center align-items-center" spacing={1}>
-          <Typography variant="h5" color="white">
+          <Typography variant="h5" color="common.white">
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
           <Typography
             variant="body2"
-            color="white"
+            color="common.white"
             className="px-4 py-2 rounded-pill"
           >
             {userDetails.jobRole || <FormattedMessage id="NOT_AVAILABLE" />}
@@ -65,20 +65,20 @@ export default function ProfileCard() {
           textAlign={"center"}
         >
           <Stack>
-            <Typography variant="h2" color="white">
+            <Typography variant="h2" color="common.white">
               {getDateDiffInYears(userDetails.dateOfBirth!) || "NA"}
             </Typography>
-            <Typography variant="body2" color="white">
+            <Typography variant="body2" color="common.white">
               {intl.formatMessage({ id: "USER.AGE" })}
             </Typography>
           </Stack>
           <Stack>
-            <Typography variant="h2" color="white">
+            <Typography variant="h2" color="common.white">
               {userDetails.bloodGroup || (
                 <FormattedMessage id="NOT_AVAILABLE" />
               )}
             </Typography>
-            <Typography variant="body2" color="white">
+            <Typography variant="body2" color="common.white">
               {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
             </Typography>
           </Stack>

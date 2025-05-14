@@ -64,7 +64,7 @@ export const CompanyInfo: FC = () => {
   }
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
-      <Box component="div" sx={{ p: 3, bgcolor: "white" }}>
+      <Box component="div" sx={{ p: 3, bgcolor: "common.white" }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
           <Typography variant="h5">
             {formatMessage({
@@ -202,7 +202,7 @@ export const CompanyInfo: FC = () => {
           </Stack>
         </Stack>
       </Box>
-      <Box component="div" sx={{ p: 3, bgcolor: "white" }}>
+      <Box component="div" sx={{ p: 3, bgcolor: "common.white" }}>
         <Typography variant="h6">
           {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}
         </Typography>

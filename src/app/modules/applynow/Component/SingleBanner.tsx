@@ -16,7 +16,7 @@ export function SingleBanner({ title, titleorange, path }: Props) {
         justifyContent={"center"}
         gap={1}
       >
-        <Typography variant="h2" color="white" my={2}>
+        <Typography variant="h2" color="common.white" my={2}>
           Apply
         </Typography>
         <Typography variant="h2" color="secondary.main" my={2}>

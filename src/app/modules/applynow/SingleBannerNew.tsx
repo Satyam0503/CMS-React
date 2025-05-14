@@ -12,7 +12,7 @@ export function SingleBannerNew({ title, titleorange, path }: Props) {
     <>
       <Stack className="banner-wave">
         <Stack className="single_banner">
-          <Typography variant="h2" color="white" mb={2} mt={6}>
+          <Typography variant="h2" color="common.white" mb={2} mt={6}>
             Apply Now
           </Typography>
         </Stack>

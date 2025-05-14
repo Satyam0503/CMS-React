@@ -30,7 +30,7 @@ export default function Footer() {
             flexDirection: { xs: "column", md: "row" },
             justifyContent: "space-evenly",
             gap: 4,
-            color: "white",
+            color: "common.white",
           }}
         >
           <Grid
@@ -89,23 +89,26 @@ export default function Footer() {
             />
 
             <Stack gap={1}>
-              <Link href="https://codeji.in/" color="white">
+              <Link href="https://codeji.in/" color="common.white">
                 <Typography>Home</Typography>
               </Link>
-              <Link href="https://codeji.in/about-us/" color="white">
+              <Link href="https://codeji.in/about-us/" color="common.white">
                 <Typography>About Us</Typography>
               </Link>
-              <Link href="          https://codeji.in/services/" color="white">
+              <Link
+                href="          https://codeji.in/services/"
+                color="common.white"
+              >
                 <Typography>Services</Typography>
               </Link>
 
               <Link
                 href="https://admin.codeji.in/careers/apply-now"
-                color="white"
+                color="common.white"
               >
                 <Typography>Career</Typography>
               </Link>
-              <Link href="https://codeji.in/contact-us/" color="white">
+              <Link href="https://codeji.in/contact-us/" color="common.white">
                 <Typography>Contact Us</Typography>
               </Link>
             </Stack>
@@ -177,24 +180,24 @@ export default function Footer() {
             <Stack direction={"row"} gap={1}>
               <Link
                 href="https://www.facebook.com/codejiinfotech"
-                color="white"
+                color="common.white"
               >
                 <FacebookIcon fontSize="large" />
               </Link>
               <Link
                 href="https://www.instagram.com/codejiinfotech/"
-                color="white"
+                color="common.white"
               >
                 <InstagramIcon fontSize="large" />
               </Link>
 
               <Link
                 href="https://www.linkedin.com/company/codeji-infotech"
-                color="white"
+                color="common.white"
               >
                 <LinkedInIcon fontSize="large" />
               </Link>
-              <Link href="#" color="white">
+              <Link href="#" color="common.white">
                 <WhatsAppIcon fontSize="large" />
               </Link>
             </Stack>

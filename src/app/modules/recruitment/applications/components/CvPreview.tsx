@@ -82,7 +82,7 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
             spacing={2}
             sx={{
               width: "100%",
-              backgroundColor: "white",
+              backgroundColor: "common.white",
               position: "absolute",
               zIndex: 10,
               left: "0",
