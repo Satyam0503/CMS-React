@@ -5,7 +5,7 @@ type Props = {
   icon: JSX.Element;
   number?: number | string;
   title?: string;
-  iconBg: string;
+  iconBg?: string;
   iconColor?: string;
 };
 const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {

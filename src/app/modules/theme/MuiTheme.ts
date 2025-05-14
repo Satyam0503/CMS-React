@@ -270,6 +270,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       MuiListItemIcon: {
         styleOverrides: {
           root: {
+            color: "inherit",
             minWidth: 25,
             width: 20,
             padding: 0,

@@ -62,6 +62,94 @@ $color-list: primary, secondary, success, info, neutral, warning, error,
   z-index: 10;
 }
 
+// sidebar
+
+.sidebar {
+  & .sidebar-paper {
+    width: 265px;
+    overflow-y: visible;
+    white-space: nowrap;
+    transition: width 0.3s ease-in;
+  }
+  & .sidebar-collapse-button {
+    padding: 1rem;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    right: 0;
+    transform: translate(50%);
+    top: 20%;
+    z-index: 20;
+  }
+
+  // logo
+  & .company-logo-wrapper {
+    max-width: 200px;
+    height: auto;
+  }
+
+  & .user-profile-wrapper {
+    width: 100%;
+    max-width: 128px;
+    max-height: 128px;
+    aspect-ratio: 1;
+  }
+
+  & .sidebar-menu-main {
+    padding: 1rem;
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+    & .sidebar-menu-item {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      padding-block: 0.25rem;
+      margin-block: 4px;
+
+      & .MuiTypography-root {
+        font-weight: 600 !important;
+        opacity: 1;
+        transition: opacity 0.3s ease-in;
+      }
+      & .MuiListItemIcon-root {
+        color: inherit;
+        margin-inline-end: 0.25rem;
+      }
+
+      &.Mui-selected {
+        background-color: $app-white;
+        color: $app-primary-500;
+      }
+    }
+  }
+
+  &:not(:hover) {
+    &[data-sidebar-mini="true"] {
+      & .sidebar-paper {
+        width: 90px !important;
+      }
+      & .sidebar-menu-main {
+        & .sidebar-menu-item {
+          margin-block: 0.5rem;
+
+          & .MuiTypography-root {
+            display: none;
+          }
+          & .MuiSvgIcon-root {
+            font-size: 2rem;
+          }
+          & .menu-arrow {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
 .profile-picture-card {
   width: 100%;
   display: flex;
@@ -440,13 +528,3 @@ button:hover .ql-fill,
 }
 
 // sidebar
-.company-logo-container {
-  max-width: 200px;
-  height: 50px;
-  & > .company-logo {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
-}
