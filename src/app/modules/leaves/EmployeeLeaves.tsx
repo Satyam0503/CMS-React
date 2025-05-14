@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import { FC } from "react";
 import { useIntl } from "react-intl";
-// import IconStat from "../components/IconStat";
-// import { colors } from "../theme/MuiTheme";
 import {
   Add,
   Download,
@@ -21,11 +19,9 @@ import {
   HourglassTop,
   WorkOff,
 } from "@mui/icons-material";
-// import BasicTable from "../components/BasicTable";
 import AddLeaves from "./components/AddLeaves";
 import LeaveAssignment from "./components/LeaveAssignment";
 import IconStat from "../../shared/components/IconStat";
-import { colors } from "../theme/MuiTheme";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import {
   Days,
@@ -39,7 +35,7 @@ import { usePageData } from "../../../_themes/layout/core";
 
 const EmployeeLeaves: FC = () => {
   const intl = useIntl();
-  const {setPageTitle}= usePageData();
+  const { setPageTitle } = usePageData();
   const [searchValue, setSearchValue] = React.useState("");
   const [LeaveList, setLeaveList] = React.useState<LeavesModel[]>([]);
   const [page, setPage] = React.useState(0);
@@ -54,12 +50,12 @@ const EmployeeLeaves: FC = () => {
     setSelectedDay(event.target.value);
   };
 
-  React.useEffect(()=>{
-    setPageTitle(intl.formatMessage({ id: "PAGE.LEAVE_MANAGEMENT" }))
-  },[])
+  React.useEffect(() => {
+    setPageTitle(intl.formatMessage({ id: "PAGE.LEAVE_MANAGEMENT" }));
+  }, []);
 
   return (
-    <>
+    <React.Fragment>
       <Grid
         container
         sx={{
@@ -72,9 +68,9 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.secondary[100]}
+                  iconBg="secondary.lighter"
                   icon={<HourglassBottom fontSize="large" />}
-                  iconColor={colors.alpha.secondary[500]}
+                  iconColor="secondary.main"
                   number={"3"}
                   title="First Half"
                 />
@@ -86,9 +82,9 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.primary[100]}
+                  iconBg="primary.lighter"
                   icon={<HourglassTop fontSize="large" />}
-                  iconColor={colors.alpha.primary[500]}
+                  iconColor="primary.main"
                   number={"1"}
                   title="Second Half"
                 />
@@ -99,9 +95,9 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.info[100]}
+                  iconBg="info.lighter"
                   icon={<Home fontSize="large" />}
-                  iconColor={colors.alpha.info[600]}
+                  iconColor="info.main"
                   number={"1"}
                   title="Work from Home"
                 />
@@ -112,9 +108,9 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={colors.alpha.danger[100]}
+                  iconBg="error.lighter"
                   icon={<WorkOff fontSize="large" />}
-                  iconColor={colors.alpha.danger[400]}
+                  iconColor="error.light"
                   number={"7"}
                   title="Absent"
                 />
@@ -136,7 +132,7 @@ const EmployeeLeaves: FC = () => {
               value={selectedDay}
               sx={{
                 minWidth: "130px",
-                bgcolor: colors.alpha.white[500],
+                bgcolor: "white",
               }}
             >
               {Days.map((item) => (
@@ -208,9 +204,8 @@ const EmployeeLeaves: FC = () => {
           </Stack>
         </Grid>
       </Grid>
-    </>
+    </React.Fragment>
   );
 };
-
 
 export default EmployeeLeaves;

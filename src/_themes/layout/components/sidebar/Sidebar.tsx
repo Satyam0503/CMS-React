@@ -14,8 +14,12 @@ const Sidebar = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLDivElement>(null);
   const currentUser = useAppSelector((state) => state.user.userData);
-  const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
-  const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
+  const profileUrl = useAppSelector(
+    (state) => state.user.userData?.profileImage
+  );
+  const companyLogo = useAppSelector(
+    (state) => state.user.userData?.companyLogo
+  );
 
   useEffect(() => {
     updateDOM(config);
@@ -34,13 +38,14 @@ const Sidebar = () => {
     >
       <Stack padding={3} gap={4} alignItems="center" width="100%">
         <Link to="/" className="company-logo-container">
-          <Avatar
+          {/* <Avatar
             src={companyLogo}
             sx={{
               width: 200,
               height: "100%"
             }}
-          />
+          /> */}
+          Company Logo
         </Link>
         <Stack spacing={2} alignItems={"center"}>
           <Stack maxWidth={"128px"} minWidth={"50px"} px={0.5}>
@@ -57,7 +62,7 @@ const Sidebar = () => {
             />
           </Stack>
           <Typography variant="h6" color="inherit">
-            {`${currentUser?.firstName}  ${currentUser?.lastName}`}
+            {`${currentUser?.firstName} ${currentUser?.lastName}`}
           </Typography>
         </Stack>
       </Stack>
@@ -136,8 +141,8 @@ const updateDOM = (config: ILayout) => {
     if (appSidebarDefaultDrawerEnabled) {
       appSidebarDefaultDrawerAttributes = config.app?.sidebar?.default?.drawer
         ?.attributes as {
-          [attrName: string]: string;
-        };
+        [attrName: string]: string;
+      };
     }
 
     const appSidebarDefaultStickyEnabled =
@@ -146,8 +151,8 @@ const updateDOM = (config: ILayout) => {
     if (appSidebarDefaultStickyEnabled) {
       appSidebarDefaultStickyAttributes = config.app?.sidebar?.default?.sticky
         ?.attributes as {
-          [attrName: string]: string;
-        };
+        [attrName: string]: string;
+      };
     }
 
     setTimeout(() => {

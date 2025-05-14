@@ -568,6 +568,12 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       button: {
         fontWeight: 600,
       },
+      subtitle1: {
+        color: colors.primary[500],
+      },
+      subtitle2: {
+        color: colors.primary[500],
+      },
     },
   });
   return extendedTheme;

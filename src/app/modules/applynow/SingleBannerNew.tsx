@@ -1,6 +1,5 @@
 import { Stack, Typography } from "@mui/material";
 import Wave from "react-wavify";
-import { colors } from "../theme/MuiTheme";
 
 type Props = {
   title: string;
@@ -13,12 +12,7 @@ export function SingleBannerNew({ title, titleorange, path }: Props) {
     <>
       <Stack className="banner-wave">
         <Stack className="single_banner">
-          <Typography
-            variant="h2"
-            color={colors.white[500]}
-            mb={2}
-            mt={6}
-          >
+          <Typography variant="h2" color="white" mb={2} mt={6}>
             Apply Now
           </Typography>
         </Stack>

@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 import dayjs, { Dayjs } from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { dateFormatter } from "../../../../utils/common";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 
@@ -67,11 +66,7 @@ export default function UpcomingBirthday({ employees }: PropsType) {
               component={"div"}
               sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
             >
-              <Typography
-                variant="h5"
-              >
-                No Employees
-              </Typography>
+              <Typography variant="h5">No Employees</Typography>
             </Box>
           ) : (
             <Stack spacing={1}>
@@ -107,9 +102,7 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                       </Stack>
                     </Stack>
 
-                    <Typography
-                      variant="subtitle2"
-                    >
+                    <Typography variant="subtitle2">
                       {!isSameDate(dayjs(emp.dateOfBirth))
                         ? dateFormatter(emp.birthDayThisYear, "DD MMM YYYY")
                         : "Today"}

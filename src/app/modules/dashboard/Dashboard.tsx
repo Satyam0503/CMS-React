@@ -1,9 +1,7 @@
-import { Grid, Stack, Typography, Card } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
-import { useEffect, useMemo, useState } from "react";
-import { getAllEmployees } from "../employees/employeeServices";
-import { AxiosError } from "axios";
+import React, { useMemo, useState } from "react";
 import { AttendanceChart } from "../../shared/components/AttendanceChart";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
@@ -12,15 +10,12 @@ import { DepartmentChart } from "./components/DepartmentChart";
 import EmployeePerformance from "./components/EmployeePerformance";
 import EmpOnLeave from "./components/EmpOnLeave";
 import Punctual from "./components/Punctual";
-import UpcomingBirthday from "./components/UpcomingBirthday";
 import EmpOfMonth from "./components/EmpOfMonth";
-import { EmployeeModel } from "../../../utils/common_types";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import RightDrawer from "./components/RightDrawer";
 import { usePageData } from "../../../_themes/layout/core";
 import { GetAllEmployeeResponseModel } from "../employees/models";
 
@@ -68,7 +63,7 @@ export default function Dashboard() {
   // }, []);
 
   return (
-    <>
+    <React.Fragment>
       <DashboardHeader fullName={user.fullName} />
 
       <Grid
@@ -123,6 +118,6 @@ export default function Dashboard() {
           </Stack>
         </Grid>
       </Grid>
-    </>
+    </React.Fragment>
   );
 }

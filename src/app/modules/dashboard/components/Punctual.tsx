@@ -1,7 +1,6 @@
 import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 
 export default function Punctual() {
@@ -26,15 +25,13 @@ export default function Punctual() {
             </Stack>
             <Stack>
               <Typography variant="body1">Deepak Chaurasiya</Typography>
-              <Typography variant="body2" >
+              <Typography variant="body2">
                 {intl.formatMessage({ id: "POSITION.QA" })}
               </Typography>
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" >
-              1st
-            </Typography>
+            <Typography variant="subtitle2">1st</Typography>
           </Stack>
         </Stack>
         <Stack
@@ -60,9 +57,7 @@ export default function Punctual() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2">
-              2nd
-            </Typography>
+            <Typography variant="subtitle2">2nd</Typography>
           </Stack>
         </Stack>
         <Stack
@@ -88,9 +83,7 @@ export default function Punctual() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2">
-              3rd
-            </Typography>
+            <Typography variant="subtitle2">3rd</Typography>
           </Stack>
         </Stack>
       </CustomCard>

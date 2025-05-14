@@ -37,7 +37,6 @@ import {
 import { commentActionEncoderForApplicationStatus } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
-import { colors } from "../../../theme/MuiTheme";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
@@ -348,11 +347,7 @@ export const EditApplicant = () => {
                     </Stack>
 
                     <Stack mt={2}>
-                      <Typography
-                        variant="body1"
-                        mb={1}
-                        color={colors.primary[500]}
-                      >
+                      <Typography variant="body1" mb={1} color="primary">
                         {formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                     </Stack>
@@ -378,7 +373,7 @@ export const EditApplicant = () => {
                           <Tooltip title="Upload file here" placement="top">
                             <Box
                               component="label"
-                              bgcolor={colors.primary[100]}
+                              bgcolor="primary.lighter"
                               px={2}
                               py={0.5}
                               borderRadius={1}

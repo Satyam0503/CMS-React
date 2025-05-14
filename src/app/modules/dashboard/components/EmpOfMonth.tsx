@@ -1,7 +1,6 @@
 import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 
 export default function EmpOfMonth() {
@@ -32,9 +31,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.primary[500]}>
-              1st
-            </Typography>
+            <Typography variant="subtitle2">1st</Typography>
           </Stack>
         </Stack>
         <Stack
@@ -60,9 +57,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.primary[500]}>
-              2nd
-            </Typography>
+            <Typography variant="subtitle2">2nd</Typography>
           </Stack>
         </Stack>
         <Stack
@@ -87,9 +82,7 @@ export default function EmpOfMonth() {
             </Stack>
           </Stack>
           <Stack>
-            <Typography variant="subtitle2" color={colors.primary[500]}>
-              3rd
-            </Typography>
+            <Typography variant="subtitle2">3rd</Typography>
           </Stack>
         </Stack>
       </CustomCard>

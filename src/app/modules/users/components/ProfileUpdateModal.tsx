@@ -141,13 +141,13 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                     onChange={handleFileChange}
                     hidden
                   />
-                  <Typography variant="body1" flexWrap={"wrap"}>
+                  <Typography variant="body1" flexWrap="wrap">
                     {intl.formatMessage({ id: "FILE.SELECTED" })}:
                     {selectedImage?.name}
                   </Typography>
                 </Grid>
                 <Grid item xs={6} md={6}>
-                  <Typography variant="body2" flexWrap={"wrap"}>
+                  <Typography variant="body2" flexWrap="wrap">
                     {intl.formatMessage({ id: "FILE.UPLOAD_INSTRUCTION" })}
                   </Typography>
                 </Grid>
@@ -163,7 +163,7 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                 label="Delete File"
                 Icon={<DeleteOutlineOutlined />}
                 iconPosition="end"
-                handleClick={() => { }}
+                handleClick={() => {}}
               />
               <CustomisedButton
                 label="Upload File"
@@ -179,17 +179,15 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
         </Box>
       </CustomisedModal>
 
-      {
-        isCropperOpen && (
-          <ImageCropper
-            open={isCropperOpen}
-            handleClose={handleImageCropDiscard}
-            imgSrc={imgSrc}
-            handleCrop={handleImageCropSuccess}
-            circularCrop={true}
-          />
-        )
-      }
+      {isCropperOpen && (
+        <ImageCropper
+          open={isCropperOpen}
+          handleClose={handleImageCropDiscard}
+          imgSrc={imgSrc}
+          handleCrop={handleImageCropSuccess}
+          circularCrop={true}
+        />
+      )}
     </>
   );
 };
