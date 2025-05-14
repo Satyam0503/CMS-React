@@ -21,9 +21,10 @@ const Sidebar: FC<Props> = ({ open, handleClose }) => {
 
   const handleSideBarToggle = () => {
     setMiniSidebar(!isMiniSidebar);
+    setOpenIndex(null);
   }
 
-  const handleToggle = (index: number) => {
+  const handleToggle = (index: number | null) => {
     setOpenIndex(index);
   }
 
@@ -75,7 +76,7 @@ const Sidebar: FC<Props> = ({ open, handleClose }) => {
           {`${currentUser?.firstName}  ${currentUser?.lastName}`}
         </Typography>
       </Stack>
-      <SidebarMenuMain index={openIndex} handleToggle={handleToggle} />
+      <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
       {/* </Box> */}
     </Drawer >
   );

@@ -9,11 +9,11 @@ import { Box, Stack } from "@mui/material";
 import { FC } from "react";
 
 type Props = {
-  index: number,
-  handleToggle: (index: number) => void;
+  currentIndex: number | null,
+  handleToggle: (index: number | null) => void;
 }
 
-export const SidebarMenuMain: FC<Props> = ({ index, handleToggle }) => {
+export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
   const { formatMessage } = useIntl();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission
@@ -58,14 +58,17 @@ export const SidebarMenuMain: FC<Props> = ({ index, handleToggle }) => {
   return (
     <Box className="sidebar-menu-main" sx={{ my: 2 }}>
       <Stack >
-        {filteredTabList.map((tab) => {
+        {filteredTabList.map((tab, index) => {
           if (tab?.hasSubTabs) {
             return (
               <SidebarMenuItemWithSub
+                index={index}
                 key={tab?.id}
                 to={tab?.route}
+                isOpen={currentIndex ? index === currentIndex : false}
                 title={formatMessage({ id: tab?.title })}
                 icon={tab?.icon}
+                setCurrentMenuIndex={handleToggle}
               >
                 {tab?.subTabs?.map((subTab) => {
                   return (
