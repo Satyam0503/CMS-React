@@ -3,7 +3,7 @@ import {
   CorporateFareOutlined,
   Build,
 } from "@mui/icons-material";
-import { Stack, Grid, Box, CardContent } from "@mui/material";
+import { Stack, Grid, Box, CardContent, useTheme } from "@mui/material";
 import IconStat from "../../../../shared/components/IconStat";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useUserDetails } from "../../UserDataProvider";
@@ -16,6 +16,7 @@ export const ProfileHeader = () => {
   );
   const { userDetails, totalSkills } = useUserDetails();
   const { formatMessage } = useIntl();
+  const theme = useTheme();
   return (
     <Stack
       direction={{ xs: "column", sm: "row" }}
@@ -26,9 +27,9 @@ export const ProfileHeader = () => {
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg="secondary.lighter"
+            iconBg={theme.palette.secondary.lighter}
             icon={<CalendarMonth fontSize="large" />}
-            iconColor="secondary.main"
+            iconColor="secondary.dark"
             number={14}
             title={formatMessage({ id: "PROFILE.EXP" })}
           />
@@ -37,7 +38,7 @@ export const ProfileHeader = () => {
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg="primary.lighter"
+            iconBg={theme.palette.primary.lighter}
             icon={<CorporateFareOutlined fontSize="large" />}
             iconColor="primary.main"
             number={getDateDiffInYears(userDetails.dateOfJoining!)}
@@ -51,9 +52,9 @@ export const ProfileHeader = () => {
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg="primary.light"
+            iconBg={theme.palette.error.lighter}
             icon={<Build fontSize="large" />}
-            iconColor="primary.light"
+            iconColor="error.light"
             number={totalSkills}
             title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
           />

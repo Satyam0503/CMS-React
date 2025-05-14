@@ -13,7 +13,6 @@ export interface RoleModel {
   isDefault: boolean;
   userRoles: string[];
   hasAppAccess: boolean;
-  hasAppAccess: boolean;
 }
 export interface AddEditRoleModel {
   roleId?: string | null;
@@ -34,14 +33,9 @@ export interface DepartmentModel {
 export interface MultilingualModel {
   language: string;
   label: string;
-  language: string;
-  label: string;
 }
 
 export interface AttributeModel {
-  id: string;
-  titles: MultilingualModel[];
-  isActive: boolean;
   id: string;
   titles: MultilingualModel[];
   isActive: boolean;

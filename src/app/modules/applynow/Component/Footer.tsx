@@ -37,7 +37,6 @@ export default function Footer() {
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h3">
-                  {" "}
                   {intl.formatMessage({
                     id: "MENU.ABOUT_US",
                   })}

@@ -70,7 +70,7 @@ const EmployeeAttendance: FC = () => {
             <CardContent>
               <IconStat
                 iconBg={theme.palette.primary.lighter}
-                iconColor="info.light"
+                iconColor="info.dark"
                 icon={<EventAvailable fontSize="large" />}
                 number={"175"}
                 title="Present"

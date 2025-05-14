@@ -96,9 +96,9 @@ const EmployeeLeaves: FC = () => {
             <Card>
               <CardContent>
                 <IconStat
-                  iconBg={theme.palette.info.lighter}
+                  iconBg={theme.palette.info.light}
                   icon={<Home fontSize="large" />}
-                  iconColor="info.main"
+                  iconColor="info.dark"
                   number={"1"}
                   title="Work from Home"
                 />
