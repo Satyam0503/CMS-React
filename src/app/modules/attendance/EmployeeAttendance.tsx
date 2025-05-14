@@ -10,6 +10,7 @@ import {
   Select,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import {
   Add,
@@ -44,6 +45,7 @@ const EmployeeAttendance: FC = () => {
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
   const [page, setPage] = React.useState(0);
+  const theme = useTheme();
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -67,7 +69,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg="info.main"
+                iconBg={theme.palette.primary.lighter}
                 iconColor="info.light"
                 icon={<EventAvailable fontSize="large" />}
                 number={"175"}
@@ -81,7 +83,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg={"success.main"}
+                iconBg={theme.palette.primary.lighter}
                 icon={<TimerOffOutlined fontSize="large" />}
                 iconColor={"success.light"}
                 number={"16"}
@@ -94,7 +96,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg={"warning.main"}
+                iconBg={theme.palette.secondary.lighter}
                 icon={<EventBusy fontSize="large" />}
                 iconColor={"warning.light"}
                 number={"1"}
@@ -107,7 +109,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg="primary.lighter"
+                iconBg={theme.palette.primary.lighter}
                 icon={<SupervisorAccount fontSize="large" />}
                 iconColor="primary.main"
                 number={"200"}
