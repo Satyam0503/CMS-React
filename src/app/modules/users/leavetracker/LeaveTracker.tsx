@@ -52,7 +52,7 @@ export const LeaveTracker: FC = () => {
 
                   return "";
                 }}
-                sx={{ background: "common.white" }}
+                sx={{ background: "red" }}
               >
                 <MenuItem value={19}>Today</MenuItem>
                 <MenuItem value={20}>This Week</MenuItem>

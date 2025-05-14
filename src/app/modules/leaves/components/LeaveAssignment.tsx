@@ -33,7 +33,7 @@ export default function LeaveAssignment() {
     <form>
       <Grid container>
         <CustomisedButton
-          variant="text"
+          variant="contained"
           size="medium"
           label="Leave Assignment"
           Icon={<Person sx={{ px: "2px" }} />}

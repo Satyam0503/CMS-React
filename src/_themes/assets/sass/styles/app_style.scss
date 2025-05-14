@@ -282,6 +282,8 @@ button:hover .ql-fill,
   transform-origin: right top;
 }
 .delete-button {
+  background: $danger-500 !important;
+  color: $app-white !important;
   &:hover {
     background: $danger-700 !important;
   }

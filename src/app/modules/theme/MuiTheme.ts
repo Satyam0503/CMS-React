@@ -233,6 +233,9 @@ export const createApplicationTheme = (mode: PaletteMode) => {
             padding: 5,
             marginInline: 0,
             border: "1px solid " + theme.palette.grey[500],
+            "&:hover": {
+              color: theme.palette.primary.dark,
+            },
           },
           sizeSmall: {
             padding: 4,

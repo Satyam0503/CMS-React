@@ -1,29 +1,16 @@
 import { FC, useState } from "react";
 
-import {
-  AccountCircle,
-  AttachFile,
-  DisplaySettings,
-  Send,
-  Upload,
-  Visibility,
-} from "@mui/icons-material";
+import { Send } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   FilledInput,
   FormControl,
-  IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-
-import { relative } from "path";
-import { wrap } from "module";
 
 type Props = {
   isDrawer?: boolean;
@@ -56,7 +43,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               <Stack
                 bgcolor="primary.light"
                 flexWrap={"wrap"}
-                borderRadius={8}
+                borderRadius="1.5rem 1.5rem 1.5rem.25rem"
                 p={1.5}
               >
                 <Typography variant="body1" className="text-wrap">
@@ -65,15 +52,12 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Stack>
             </Stack>
             <Stack
-              bgcolor="primary.light"
+              bgcolor="primary.main"
               flexWrap={"wrap"}
-              borderRadius={8}
+              borderRadius=".25rem 1.5rem 1.5rem 1.5rem"
               p={1.5}
             >
-              <Typography variant="body1">
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
-              </Typography>
+              <Typography variant="body1">Hey Prachi</Typography>
             </Stack>
           </Stack>
           <Stack spacing={0.5}>
@@ -81,7 +65,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               <Stack
                 bgcolor="primary.light"
                 flexWrap={"wrap"}
-                borderRadius={8}
+                borderRadius="1.5rem 1.5rem .25rem 1.5rem"
                 p={1.5}
               >
                 <Typography variant="body1" className="text-wrap">
@@ -100,9 +84,9 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Box>
             </Stack>
             <Stack
-              bgcolor="primary.light"
-              flexWrap={"wrap"}
-              borderRadius={8}
+              bgcolor="primary.main"
+              flexWrap="wrap"
+              borderRadius="1.5rem .25rem 1.5rem 1.5rem"
               p={1.5}
             >
               <Typography variant="body1">

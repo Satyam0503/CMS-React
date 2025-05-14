@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { DrawerMessenger } from "../partials";
+// import { DrawerMessenger } from "../partials";
 import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
@@ -28,12 +28,9 @@ const MasterLayout = () => {
             flexShrink={0}
             className="container-main"
             sx={{ backgroundColor: "background.body" }}
-
           >
             <HeaderWrapper />
-            <Stack
-              className="app-wrapper flex-row-fluid"
-            >
+            <Stack className="app-wrapper flex-row-fluid">
               <Sidebar />
               <Container className="d-flex flex-column flex-grow-1">
                 <PageData />
@@ -44,8 +41,6 @@ const MasterLayout = () => {
               </Stack> */}
             </Stack>
           </Grid>
-
-          <DrawerMessenger />
         </PageDataProvider>
       </BreadcrumbProvider>
     </>

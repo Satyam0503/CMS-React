@@ -27,7 +27,7 @@ export default function AddLeaves() {
   return (
     <Grid container>
       <CustomisedButton
-        variant="text"
+        variant="contained"
         size="medium"
         label="Add leave"
         Icon={<Add sx={{ px: "2px" }} />}

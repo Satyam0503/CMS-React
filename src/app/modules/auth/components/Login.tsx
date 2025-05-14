@@ -2,7 +2,6 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login } from "../core/_requests";
-
 import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
@@ -130,7 +129,7 @@ export function Login() {
                     }}
                   />
                 </Stack>
-                <Link to="/auth/forgot-password" >
+                <Link to="/auth/forgot-password">
                   {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
                 </Link>
                 <Stack spacing={1}>
@@ -141,7 +140,7 @@ export function Login() {
                     loading={isSubmitting}
                     disabled={isSubmitting || !(isValid && dirty)}
                   />
-                  <Typography variant="body2" align="center"  >
+                  <Typography variant="body2" align="center">
                     {intl.formatMessage({ id: "AUTH.MEMBER.REGISTER" })}
                     <Link to="/auth/registration">
                       {intl.formatMessage({ id: "AUTH.REGISTER" })}

@@ -98,7 +98,7 @@ export default function RightDrawer() {
   return (
     <>
       <CustomIconButton
-        icon={<DashboardCustomizeOutlined />}
+        icon={<DashboardCustomizeOutlined sx={{ color: "common.white" }} />}
         handleClick={toggleDrawer(true)}
         tooltip="Customize Dashboard"
         size="large"
