@@ -22,7 +22,6 @@ export const CustomIconButton = (props: Props) => {
     onMouseLeave,
     icon,
     tooltip,
-    className,
     size,
     style,
     disabled = false,

@@ -1,16 +1,7 @@
-import { Typography, Card, Grid, Stack, IconButton } from "@mui/material";
+import { Typography, Card, Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Announcement,
-  Business,
-  CalendarToday,
-  DeleteOutline,
-  Edit,
-} from "@mui/icons-material";
+import { Announcement, CalendarToday } from "@mui/icons-material";
 import HalfRating from "../../../../shared/components/HalfRating";
-import { CalendarIcon } from "@mui/x-date-pickers";
-import { colors } from "../../../theme/MuiTheme";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 
 type Props = {
   className: string;
@@ -37,13 +28,13 @@ export default function Feedback() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.primary[500]}>
+              <Stack color="primary.main">
                 <Announcement />
               </Stack>
             </Stack>
@@ -74,13 +65,13 @@ export default function Feedback() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.primary[500]}>
+              <Stack color="primary.main">
                 <Announcement />
               </Stack>
             </Stack>

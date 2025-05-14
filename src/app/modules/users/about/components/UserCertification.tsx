@@ -10,7 +10,6 @@ import { CustomIconButton } from "../../../../shared/components/CustomIconButton
 import { useEffect, useState } from "react";
 import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
-import { colors } from "../../../theme/MuiTheme";
 import {
   checkPermissionForModulesFeatureAccess,
   dateFormatter,
@@ -115,7 +114,8 @@ export const UserCertification = () => {
     if (selectedCertificationId) {
       try {
         const response = await deleteEmployeeCertification(
-          selectedCertificationId, employeeId
+          selectedCertificationId,
+          employeeId
         );
         const { success, message } = response.data;
         if (success) {
@@ -159,12 +159,12 @@ export const UserCertification = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-            <CustomIconButton
-              tooltip="Add"
-              icon={<Add />}
-              handleClick={() => setOpen(true)}
-            />
-          )}
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        )}
       </Stack>
 
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
@@ -192,13 +192,13 @@ export const UserCertification = () => {
                   sx={{
                     width: 48,
                     height: 48,
-                    bgcolor: 'secondary.lighter',
+                    bgcolor: "secondary.lighter",
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,
                   }}
                 >
-                  <Stack sx={{ color: 'secondary.main' }}>
+                  <Stack sx={{ color: "secondary.main" }}>
                     <LocalActivity />
                   </Stack>
                 </Stack>
@@ -207,7 +207,7 @@ export const UserCertification = () => {
                   <Typography
                     variant="body1"
                     fontWeight={500}
-                    color={'text.secondary'}
+                    color={"text.secondary"}
                   >
                     {certification.certificationTitle}
                   </Typography>
@@ -240,13 +240,11 @@ export const UserCertification = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              {
-                (!employeeId ||
-                  checkPermissionForModulesFeatureAccess(
-                    `${ModulesName.Employees}.${Permission.Edit}`,
-                    userPermissions
-                  ))
-                &&
+              {(!employeeId ||
+                checkPermissionForModulesFeatureAccess(
+                  `${ModulesName.Employees}.${Permission.Edit}`,
+                  userPermissions
+                )) && (
                 <Stack
                   direction={{ sx: "column", sm: "row" }}
                   spacing={1}
@@ -270,8 +268,7 @@ export const UserCertification = () => {
                     }}
                   />
                 </Stack>
-              }
-
+              )}
             </Stack>
           ))
         )}

@@ -18,17 +18,15 @@ import {
   Typography,
 } from "@mui/material";
 import React, { FC } from "react";
-import { languages } from "../../../../../utils/constant/Constant"
+import { languages } from "../../../../../utils/constant/Constant";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { colors } from "../../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { TagFacesOutlined } from "@mui/icons-material";
 import { Days } from "../../../../../utils/constant/Constant";
 import CustomSelectChip from "../../../../shared/components/CustomSelectChip";
 import { useNavigate } from "react-router-dom";
-
 
 const ListItem = styled("li")(({ theme }) => ({
   margin: theme.spacing(0.5),
@@ -55,15 +53,21 @@ export const AddUpdateCompanyInfo: FC = () => {
           pt={2}
           spacing={1}
         >
-          <CustomisedButton variant="outlined" label="Cancel" handleClick={() => navigate("../companyinfo")} />
+          <CustomisedButton
+            variant="outlined"
+            label="Cancel"
+            handleClick={() => navigate("../companyinfo")}
+          />
           <CustomisedButton variant="contained" label="Update" />
         </Stack>
 
         <Box component={Card} p={3}>
           <Stack>
-            <Typography variant="h5">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.CUSTOMIZATION",
-            })}</Typography>
+            <Typography variant="h5">
+              {intl.formatMessage({
+                id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.CUSTOMIZATION",
+              })}
+            </Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
           <Grid container flexDirection={"column"}>
@@ -84,7 +88,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Company Name"
-                sx={{ color: colors.primary[500] }}
+                sx={{ color: "primary.main" }}
               />
             </Grid>
             <Grid item xs={12} md={6} className="text-nowrap">
@@ -94,16 +98,18 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Industry"
-                sx={{ color: colors.primary[500] }}
+                sx={{ color: "primary.main" }}
               />
             </Grid>
           </Grid>
         </Box>
         <Box component={Card} p={3}>
           <Stack>
-            <Typography variant="h5">{intl.formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMPLOYEE_MANAGEMENT",
-            })}</Typography>
+            <Typography variant="h5">
+              {intl.formatMessage({
+                id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.EMPLOYEE_MANAGEMENT",
+              })}
+            </Typography>
           </Stack>
           <Divider sx={{ my: 2 }} />
           <Grid container spacing={1} flexDirection={"column"}>
@@ -114,7 +120,7 @@ export const AddUpdateCompanyInfo: FC = () => {
                 type="text"
                 id="outlined-required"
                 label="Primary Contact"
-                sx={{ color: colors.primary[500] }}
+                sx={{ color: "primary.main" }}
               />
             </Grid>
 

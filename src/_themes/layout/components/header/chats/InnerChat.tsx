@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 
 import { relative } from "path";
-import { colors } from "../../../../../app/modules/theme/MuiTheme";
 import { wrap } from "module";
 
 type Props = {
@@ -55,7 +54,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
                 />
               </Box>
               <Stack
-                bgcolor={colors.primary[300]}
+                bgcolor="primary.light"
                 flexWrap={"wrap"}
                 borderRadius={8}
                 p={1.5}
@@ -66,7 +65,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Stack>
             </Stack>
             <Stack
-              bgcolor={colors.primary[100]}
+              bgcolor="primary.light"
               flexWrap={"wrap"}
               borderRadius={8}
               p={1.5}
@@ -80,7 +79,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
           <Stack spacing={0.5}>
             <Stack direction={"row"} spacing={1} alignItems={"center"}>
               <Stack
-                bgcolor={colors.primary[300]}
+                bgcolor="primary.light"
                 flexWrap={"wrap"}
                 borderRadius={8}
                 p={1.5}
@@ -101,7 +100,7 @@ const InnerChat: FC<Props> = ({ isDrawer = false }) => {
               </Box>
             </Stack>
             <Stack
-              bgcolor={colors.primary[100]}
+              bgcolor="primary.light"
               flexWrap={"wrap"}
               borderRadius={8}
               p={1.5}

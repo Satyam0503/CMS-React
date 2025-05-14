@@ -1,14 +1,19 @@
-import { CalendarMonth, CorporateFareOutlined, Build } from "@mui/icons-material"
-import { Stack, Grid, Box, CardContent } from "@mui/material"
-import IconStat from "../../../../shared/components/IconStat"
-import { colors } from "../../../theme/MuiTheme"
-import { useAppSelector } from "../../../../Redux/hooks"
-import { useUserDetails } from "../../UserDataProvider"
-import { getDateDiffInYears } from "../../../../../utils/common"
-import { useIntl } from "react-intl"
+import {
+  CalendarMonth,
+  CorporateFareOutlined,
+  Build,
+} from "@mui/icons-material";
+import { Stack, Grid, Box, CardContent } from "@mui/material";
+import IconStat from "../../../../shared/components/IconStat";
+import { useAppSelector } from "../../../../Redux/hooks";
+import { useUserDetails } from "../../UserDataProvider";
+import { getDateDiffInYears } from "../../../../../utils/common";
+import { useIntl } from "react-intl";
 
 export const ProfileHeader = () => {
-  const companyName = useAppSelector(state => state.user.userData?.companyName);
+  const companyName = useAppSelector(
+    (state) => state.user.userData?.companyName
+  );
   const { userDetails, totalSkills } = useUserDetails();
   const { formatMessage } = useIntl();
   return (
@@ -16,14 +21,14 @@ export const ProfileHeader = () => {
       direction={{ xs: "column", sm: "row" }}
       justifyContent={"center"}
       borderRadius={1}
-      sx={{ bgcolor: 'background.card' }}
+      sx={{ bgcolor: "background.card" }}
     >
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg={colors.secondary[100]}
+            iconBg="secondary.lighter"
             icon={<CalendarMonth fontSize="large" />}
-            iconColor={colors.secondary[500]}
+            iconColor="secondary.main"
             number={14}
             title={formatMessage({ id: "PROFILE.EXP" })}
           />
@@ -32,25 +37,28 @@ export const ProfileHeader = () => {
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg={colors.primary[100]}
+            iconBg="primary.lighter"
             icon={<CorporateFareOutlined fontSize="large" />}
-            iconColor={colors.primary[500]}
+            iconColor="primary.main"
             number={getDateDiffInYears(userDetails.dateOfJoining!)}
-            title={formatMessage({ id: "PROFILE.EXP_CURRENT" }, { companyName })}
+            title={formatMessage(
+              { id: "PROFILE.EXP_CURRENT" },
+              { companyName }
+            )}
           />
         </Box>
       </Grid>
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg={colors.primary[200]}
+            iconBg="primary.light"
             icon={<Build fontSize="large" />}
-            iconColor={colors.primary[400]}
+            iconColor="primary.light"
             number={totalSkills}
             title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
           />
         </Box>
       </Grid>
     </Stack>
-  )
-}
+  );
+};

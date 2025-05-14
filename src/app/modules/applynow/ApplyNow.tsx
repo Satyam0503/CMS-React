@@ -18,7 +18,6 @@ import { SingleBanner } from "./Component/SingleBanner";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Component/Footer";
-import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { SelectInput } from "../../shared/components/form-component/SelectInput";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
@@ -33,7 +32,10 @@ import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CircularLoader } from "../../shared/components/CircularLoader";
 import { ApplicantModel, JobModal } from "../recruitment/models";
-import { experienceCategoryList, indianStates, } from "../../../utils/constant/Constant";
+import {
+  experienceCategoryList,
+  indianStates,
+} from "../../../utils/constant/Constant";
 import { useParams } from "react-router-dom";
 
 const initialValues: ApplicantModel = {
@@ -189,15 +191,10 @@ export default function ApplyNow() {
               <>
                 <Grid item xs={12}>
                   <Stack mb={2} spacing={1}>
-                    <Typography
-                      variant="h3"
-                    >
+                    <Typography variant="h3">
                       {intl.formatMessage({ id: "VACANCY.TEXT4" })}
                     </Typography>
-                    <Typography
-                      variant="h4"
-                      fontWeight={600}
-                    >
+                    <Typography variant="h4" fontWeight={600}>
                       {intl.formatMessage({ id: "VACANCY.TEXT5" })}
                     </Typography>
                   </Stack>
@@ -431,10 +428,7 @@ export default function ApplyNow() {
                           </Grid>
                         </Grid>
                         <Stack mt={2}>
-                          <Typography
-                            variant="body1"
-                            mb={1}
-                          >
+                          <Typography variant="body1" mb={1}>
                             {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                           </Typography>
                         </Stack>

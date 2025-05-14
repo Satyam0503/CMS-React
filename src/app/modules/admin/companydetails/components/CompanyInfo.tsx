@@ -17,7 +17,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CompanyInfoModel } from "../../models";
 import { getCompanyDetails } from "../../adminservices";
-import { colors } from "../../../theme/MuiTheme";
 import { languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 
@@ -31,11 +30,24 @@ export const CompanyInfo: FC = () => {
   const { formatMessage } = useIntl();
   const [isEdit, setEdit] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
-  const [editedInfo, setEditedInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>(
+    {} as CompanyInfoModel
+  );
+  const [editedInfo, setEditedInfo] = useState<CompanyInfoModel>(
+    {} as CompanyInfoModel
+  );
 
-  const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? <FormattedMessage id={"NOT_AVAILABLE"} />
-  const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : <FormattedMessage id={"NOT_AVAILABLE"} />;
+  const defaultLanguage = languages.find(
+    (lang) => lang.lang === companyInfo?.defaultLanguage
+  )?.name ?? <FormattedMessage id={"NOT_AVAILABLE"} />;
+  const applicationLanguages =
+    companyInfo?.applicationLanguage?.length > 0 ? (
+      languages
+        .filter((lang) => companyInfo?.applicationLanguage.includes(lang.lang))
+        .map((lang) => lang.name)
+    ) : (
+      <FormattedMessage id={"NOT_AVAILABLE"} />
+    );
   useEffect(() => {
     (async () => {
       const response = await getCompanyDetails();
@@ -45,101 +57,117 @@ export const CompanyInfo: FC = () => {
         setLoading(false);
       }
     })();
-  }, [])
+  }, []);
 
   if (loading) {
-    return <CompanyInfoSkeleton />
+    return <CompanyInfoSkeleton />;
   }
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
-      <Box component="div" sx={{ p: 3, bgcolor: colors.white[500] }}>
+      <Box component="div" sx={{ p: 3, bgcolor: "white" }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between" }}>
           <Typography variant="h5">
-            {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION" })}
+            {formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION",
+            })}
           </Typography>
-          {
-            isEdit ?
-              <Stack direction="row" spacing={1}>
-                <CustomisedButton variant="outlined" label={formatMessage({ id: "BUTTON.CANCEL" })} handleClick={() => setEdit(false)} />
-                <CustomisedButton label={formatMessage({ id: "BUTTON.UPDATE" })} />
-              </Stack>
-              :
+          {isEdit ? (
+            <Stack direction="row" spacing={1}>
               <CustomisedButton
-                label={formatMessage({ id: "COMPANY_DETAILS.EDIT_DETAILS" })}
-                handleClick={() => setEdit(true)}
+                variant="outlined"
+                label={formatMessage({ id: "BUTTON.CANCEL" })}
+                handleClick={() => setEdit(false)}
               />
-          }
+              <CustomisedButton
+                label={formatMessage({ id: "BUTTON.UPDATE" })}
+              />
+            </Stack>
+          ) : (
+            <CustomisedButton
+              label={formatMessage({ id: "COMPANY_DETAILS.EDIT_DETAILS" })}
+              handleClick={() => setEdit(true)}
+            />
+          )}
         </Stack>
         <Divider sx={{ my: 2 }} />
         <Stack spacing={2}>
           <Stack spacing={1}>
             <Stack>
               <Typography variant="h6">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES" })}
+                {formatMessage({
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+                })}
               </Typography>
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body1" color={colors.primary[500]} id="defaultLanguage">
-                  {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE" })}
+                <Typography
+                  variant="body1"
+                  color="primary.main"
+                  id="defaultLanguage"
+                >
+                  {formatMessage({
+                    id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE",
+                  })}
                 </Typography>
-                {
-                  isEdit ?
-                    <Select
-                      labelId="defaultLanguage"
-                      id="default-language"
-                      value={editedInfo.defaultLanguage}
-                      sx={{ width: 300, mt: 1 }}
-                      variant="outlined"
-                    >
-                      {
-                        languages.map(item =>
-                          <MenuItem key={item.id} value={item.lang}>{item.name}</MenuItem>
-                        )
-                      }
-                    </Select>
-                    :
-                    <Typography variant="body2">{defaultLanguage}</Typography>
-                }
+                {isEdit ? (
+                  <Select
+                    labelId="defaultLanguage"
+                    id="default-language"
+                    value={editedInfo.defaultLanguage}
+                    sx={{ width: 300, mt: 1 }}
+                    variant="outlined"
+                  >
+                    {languages.map((item) => (
+                      <MenuItem key={item.id} value={item.lang}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : (
+                  <Typography variant="body2">{defaultLanguage}</Typography>
+                )}
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body1" color={colors.primary[500]}>
+                <Typography variant="body1" color={"primary.main"}>
                   {formatMessage({
                     id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE",
                   })}
                 </Typography>
-                {
-                  isEdit ?
-                    <Autocomplete
-                      multiple
-                      size="small"
-                      id="application-language"
-                      options={languages}
-                      disableCloseOnSelect
-                      value={languages.filter((lang) =>
-                        editedInfo.applicationLanguage.includes(lang.lang)
-                      )}
-                      onChange={(event, selectedJobs) => {
-                        // setFieldValue(
-                        //   "vacancyIds",
-                        //   selectedJobs.map((job) => job.jobId)
-                        // );
-                      }}
-                      getOptionLabel={(option) => option.name as unknown as string}
-                      renderInput={(params) => (
-                        <TextField {...params} />
-                      )}
-                      renderOption={(props, option, state) => {
-                        return (
-                          <li {...props}>
-                            <ListItemText primary={option.name} />
-                          </li>
-                        );
-                      }}
-                      sx={{ mt: 1 }}
-                    />
-                    : <Typography variant="body2">{applicationLanguages}</Typography>
-                }
+                {isEdit ? (
+                  <Autocomplete
+                    multiple
+                    size="small"
+                    id="application-language"
+                    options={languages}
+                    disableCloseOnSelect
+                    value={languages.filter((lang) =>
+                      editedInfo.applicationLanguage.includes(lang.lang)
+                    )}
+                    onChange={(event, selectedJobs) => {
+                      // setFieldValue(
+                      //   "vacancyIds",
+                      //   selectedJobs.map((job) => job.jobId)
+                      // );
+                    }}
+                    getOptionLabel={(option) =>
+                      option.name as unknown as string
+                    }
+                    renderInput={(params) => <TextField {...params} />}
+                    renderOption={(props, option, state) => {
+                      return (
+                        <li {...props}>
+                          <ListItemText primary={option.name} />
+                        </li>
+                      );
+                    }}
+                    sx={{ mt: 1 }}
+                  />
+                ) : (
+                  <Typography variant="body2">
+                    {applicationLanguages}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </Stack>
@@ -147,7 +175,9 @@ export const CompanyInfo: FC = () => {
           <Stack spacing={1}>
             <Stack>
               <Typography variant="h6">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME", })}
+                {formatMessage({
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+                })}
               </Typography>
               <Typography variant="body2">
                 The company name is displayed on the application side menu.
@@ -155,13 +185,15 @@ export const CompanyInfo: FC = () => {
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={12} md={4}>
-                <Typography variant="body1" color={colors.primary[500]}>
+                <Typography variant="body1" color={"primary.main"}>
                   {formatMessage({ id: "Language.English" })}
                 </Typography>
-                <Typography variant="body2">{companyInfo.companyName}</Typography>
+                <Typography variant="body2">
+                  {companyInfo.companyName}
+                </Typography>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Typography variant="body1" color={colors.primary[500]}>
+                <Typography variant="body1" color={"primary.main"}>
                   French
                 </Typography>
                 <Typography variant="body2"></Typography>
@@ -169,13 +201,17 @@ export const CompanyInfo: FC = () => {
             </Grid>
           </Stack>
         </Stack>
-      </Box >
-      <Box component="div" sx={{ p: 3, bgcolor: colors.white[500] }}>
-        <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}</Typography>
+      </Box>
+      <Box component="div" sx={{ p: 3, bgcolor: "white" }}>
+        <Typography variant="h6">
+          {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}
+        </Typography>
         <Stack spacing={1} sx={{ marginBlockStart: 2 }}>
           <Avatar
             variant="square"
-            alt={formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}
+            alt={formatMessage({
+              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO",
+            })}
             src={companyInfo.companyLogo}
             sx={{
               width: "200px",
@@ -183,18 +219,20 @@ export const CompanyInfo: FC = () => {
               marginBlockStart: 2,
               objectFit: "contain",
               objectPosition: "center",
-              backgroundColor: "black"
+              backgroundColor: "black",
             }}
           />
           <Typography variant="body1">{companyInfo.companyName}</Typography>
           <Stack className="text-nowrap">
-            <Typography variant="body1">{formatMessage({
-              id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.INDUSTRY",
-            })}</Typography>
+            <Typography variant="body1">
+              {formatMessage({
+                id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.INDUSTRY",
+              })}
+            </Typography>
             <Typography variant="body2">Software Development</Typography>
           </Stack>
         </Stack>
       </Box>
-    </Stack >
+    </Stack>
   );
 };

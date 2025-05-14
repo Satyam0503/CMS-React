@@ -14,7 +14,6 @@ import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import { colors } from "../../../theme/MuiTheme";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import {
   ModulePermissoinModel,
@@ -252,8 +251,7 @@ export const EditPermission = () => {
               <Box
                 component={"div"}
                 sx={{
-                  border: "1px solid",
-                  borderColor: colors.neutral[200],
+                  border: "1px solid grey",
                   borderRadius: 1,
                   p: 2,
                 }}
