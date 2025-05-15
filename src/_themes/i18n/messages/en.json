@@ -541,5 +541,7 @@
   "Error.404.PAGE_NOT_FOUND": "Page Not Found",
   "Error.404.OPPS": "Opps!",
   "Error.500.SYSTEM_ERROR": "System Error",
-  "Error.500.NOTE": "Something went wrong! Please try again later!"
+  "Error.500.NOTE": "Something went wrong! Please try again later!",
+  "Error.UNAUTHORIZED": "Unauthorized Access",
+  "Error.SWR": "Something Went Wrong"
 }

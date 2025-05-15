@@ -17,16 +17,15 @@ body.page-loading {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  font-family: Inter, Helvetica, 'sans-serif';
-  background-color: #f9f9f9;
-  color: #5e6278;
+  font-family: Inter, Helvetica, "sans-serif";
+  /* background-color: #f9f9f9; */
+  color: #000000;
   line-height: 1;
   font-size: 14px;
   font-weight: 400;
 }
 
 .page-loading .splash-screen span {
-  color: #5e6278;
   transition: none !important;
   -webkit-font-smoothing: antialiased;
 }
@@ -34,11 +33,11 @@ body.page-loading {
 .page-loading .splash-screen img {
   margin-left: calc(100vw - 100%);
   margin-bottom: 30px;
-  height: 30px !important;
+  height: 40px !important;
 }
 
-html[data-bs-theme='dark'] .page-loading .splash-screen {
-  background-color: #151521;
+html[data-bs-theme="dark"] .page-loading .splash-screen {
+  background-color: #121212;
   color: #ffffff;
 }
 
@@ -50,10 +49,10 @@ html[data-bs-theme='dark'] .page-loading .splash-screen {
   display: block;
 }
 
-html[data-bs-theme='dark'] .splash-screen .light-logo {
+html[data-bs-theme="dark"] .splash-screen .light-logo {
   display: none;
 }
 
-html[data-bs-theme='dark'] .splash-screen .dark-logo {
+html[data-bs-theme="dark"] .splash-screen .dark-logo {
   display: block;
 }
