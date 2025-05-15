@@ -51,7 +51,7 @@ export default function Dashboard() {
       ),
     [userModulesPermissions]
   );
-  setPageTitle("");
+
   useEffect(() => {
     async function getEmployees() {
       try {
@@ -64,6 +64,7 @@ export default function Dashboard() {
         console.error((error as AxiosError).message);
       }
     }
+    setPageTitle("");
     getEmployees();
   }, []);
 

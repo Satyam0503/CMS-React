@@ -8,20 +8,23 @@ import { East, West } from "@mui/icons-material";
 type Props = {
   open: boolean;
   handleClose: () => void;
+  isMiniSidebar: boolean;
+  setMiniSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Sidebar: FC<Props> = ({ open, handleClose }) => {
+const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }) => {
   const theme = useTheme();
   const currentUser = useAppSelector((state) => state.user.userData);
   const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
   const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
-  const [isMiniSidebar, setMiniSidebar] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
 
   const handleSideBarToggle = () => {
     setMiniSidebar(!isMiniSidebar);
-    setOpenIndex(null);
+    if (openIndex) {
+      setOpenIndex(null);
+    }
   }
 
   const handleToggle = (index: number | null) => {
@@ -42,12 +45,9 @@ const Sidebar: FC<Props> = ({ open, handleClose }) => {
         !isSmallScreen &&
         <IconButton size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
           onClick={handleSideBarToggle}
+          onMouseOver={(e) => e.stopPropagation()}
         >
-          {
-            isMiniSidebar ?
-              <East /> :
-              <West />
-          }
+          <West />
         </IconButton>
       }
       <Stack sx={{ p: 2 }} spacing={2} alignItems="center" width="100%">

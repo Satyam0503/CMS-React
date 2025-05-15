@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { DrawerMessenger } from "../partials";
-import { reInitMenu } from "../helpers";
 import { Container, Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Sidebar } from "./components/sidebar";
@@ -13,7 +12,7 @@ const MasterLayout = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
-
+  const [isMiniSidebar, setMiniSidebar] = useState(false);
   const handleOpenSidebar = () => {
     setOpen(true);
   }
@@ -39,9 +38,12 @@ const MasterLayout = () => {
             <Stack
               direction={"row"}
               className="flex-row-fluid application-wrapper"
-              sx={{ marginLeft: isSmallScreen ? 0 : "265px" }}
+              sx={{
+                marginLeft: isSmallScreen ? 0 : isMiniSidebar ? "90px" : "265px",
+                transition: "margin .3s linear"
+              }}
             >
-              <Sidebar open={open} handleClose={handleSideBarClose} />
+              <Sidebar open={open} handleClose={handleSideBarClose} isMiniSidebar={isMiniSidebar} setMiniSidebar={setMiniSidebar} />
               <Container className="d-flex flex-column flex-grow-1">
                 <PageData />
                 <Outlet />
