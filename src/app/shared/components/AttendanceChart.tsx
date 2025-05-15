@@ -1,7 +1,5 @@
 import { useEffect, useRef, FC } from "react";
 import ApexCharts, { ApexOptions } from "apexcharts";
-import { useThemeMode } from "../../../_themes/partials/layout/theme-mode/ThemeModeProvider";
-
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { getCSSVariableValue } from "../../../_themes/assets/ts/_utils";
 import { useIntl } from "react-intl";
@@ -16,7 +14,6 @@ type Props = {
 const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const intl = useIntl();
-  const { mode } = useThemeMode();
   const refreshChart = () => {
     if (!chartRef.current) {
       return;
@@ -42,7 +39,7 @@ const AttendanceChart: FC<Props> = ({ className, chartColor, chartHeight }) => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartRef, mode]);
+  }, [chartRef]);
 
   return (
     <CustomCard label={intl.formatMessage({ id: "PAGE.ATTENDANCE" })}>

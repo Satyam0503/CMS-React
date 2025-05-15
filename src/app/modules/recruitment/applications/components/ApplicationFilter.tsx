@@ -53,7 +53,7 @@ export const ApplicationFilter: FC<PropsType> = ({
   handleClose,
   anchorEl,
 }) => {
-  const {formatMessage} = useIntl();
+  const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
   const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(
     null
@@ -125,8 +125,15 @@ export const ApplicationFilter: FC<PropsType> = ({
       onClose={handleClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
+      slotProps={{
+        paper: {
+          sx: {
+            maxWidth: 450
+          }
+        }
+      }}
     >
-      <Box component={"div"} sx={{ padding: "1.5rem" }}>
+      <Box component={"div"} sx={{ padding: 2.5 }}>
         <Stack spacing={2}>
           <Stack
             direction={"row"}
@@ -275,7 +282,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                       value.map((item) => item.value)
                     );
                   }}
-                  getOptionLabel={(option) => formatMessage({id:option.label})}
+                  getOptionLabel={(option) => formatMessage({ id: option.label })}
                   renderInput={(params) => (
                     <TextField {...params} placeholder="Status" />
                   )}
@@ -287,7 +294,7 @@ export const ApplicationFilter: FC<PropsType> = ({
                           checked={state.selected}
                           sx={{ mr: 1 }}
                         />
-                        <ListItemText primary={formatMessage({id:option.label})} />
+                        <ListItemText primary={formatMessage({ id: option.label })} />
                       </li>
                     );
                   }}

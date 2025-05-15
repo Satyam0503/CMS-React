@@ -1,5 +1,5 @@
 import { PaletteMode, ThemeProvider, useMediaQuery } from "@mui/material"
-import React, { FC, useContext, useEffect, useMemo, useState } from "react"
+import React, { FC, useContext, useMemo, useState } from "react"
 import { createApplicationTheme } from "../modules/theme/MuiTheme"
 
 type ThemeContextType = {

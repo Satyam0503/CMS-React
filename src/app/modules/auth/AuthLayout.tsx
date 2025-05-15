@@ -4,6 +4,7 @@ import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { Container, Grid, Typography, Stack, Box } from "@mui/material";
 import { Languages } from "../../../_themes/layout/components/header/navbarmenus/Languages";
 import { useIntl } from "react-intl";
+import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
 
 const AuthLayout = () => {
   const { formatMessage } = useIntl();
@@ -24,7 +25,11 @@ const AuthLayout = () => {
       sx={{ height: "100vh", alignContent: "center" }}
       className="d-flex flex-column gap-4"
     >
-      <Stack className="align-self-end">
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center",
+        justifyContent: "flex-end"
+      }}>
+        <LightDarkMode />
         <Languages />
       </Stack>
       <Grid

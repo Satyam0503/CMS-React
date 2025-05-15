@@ -2,7 +2,6 @@ import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { I18nProvider } from "../_themes/i18n/i18nProvider";
 import { LayoutProvider, LayoutSplashScreen } from "../_themes/layout/core";
-import { MasterInit } from "../_themes/layout/MasterInit";
 import { AuthInit } from "./modules/auth";
 import { CssBaseline, StyledEngineProvider } from "@mui/material";
 import { ToastContainer } from "react-toastify";
@@ -20,7 +19,6 @@ const App = () => {
             <LayoutProvider>
               <AuthInit>
                 <Outlet />
-                <MasterInit />
               </AuthInit>
             </LayoutProvider>
           </I18nProvider>

@@ -32,7 +32,7 @@ export default function EmpOnLeave() {
               mb={1}
             >
               <Stack direction="row">
-                <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
+                <Stack className="symbol symbol-45px" sx={{ mr: 1 }}>
                   <img
                     src={toAbsoluteUrl("media/avatars/300-6.jpg")}
                     alt=""

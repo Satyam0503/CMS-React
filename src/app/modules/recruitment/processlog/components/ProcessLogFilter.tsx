@@ -35,31 +35,31 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
   const processLogFilters = useAppSelector((state) => state.filters.processLog);
   const dispatch = useAppDispatch();
   const [jobList, setJobList] = useState<JobModal[]>([]);
-  const { values, handleSubmit, setFieldValue,initialValues } = useFormik({
+  const { values, handleSubmit, setFieldValue, initialValues } = useFormik({
     initialValues: processLogFilters ?? processLogInitialFilter,
     enableReinitialize: true,
     validationSchema: processLogFilterSchema,
-    onSubmit: (value) => {    
+    onSubmit: (value) => {
       dispatch(setProcessLogFilter(value))
       handleClose();
     },
-  }); 
+  });
 
   useEffect(() => {
-      const getActiveJobs = async () => {
-        try {
-          const response = await getAllJobVacancies();
-          const { success, methodResults } = response.data;
-          if (success) {
-            setJobList(methodResults);
-          }
-        } catch (error: any) {
-          console.log(error.message);
+    const getActiveJobs = async () => {
+      try {
+        const response = await getAllJobVacancies();
+        const { success, methodResults } = response.data;
+        if (success) {
+          setJobList(methodResults);
         }
-      };
-      getActiveJobs();
-    }, []);    
-    
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    };
+    getActiveJobs();
+  }, []);
+
   return (
     <Popover
       open={open}
@@ -68,6 +68,13 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
       onClose={handleClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
+      slotProps={{
+        paper: {
+          sx: {
+            maxWidth: 450
+          }
+        }
+      }}
     >
       <Box component={"div"} sx={{ padding: "1.5rem" }}>
         <Stack spacing={2}>
@@ -132,7 +139,7 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
                   options={jobList}
                   value={jobList.find(job => job.title === values.jobRole) ?? null}
                   onChange={(event, selectedJobs) => {
-                    setFieldValue("jobRole",selectedJobs?.title);
+                    setFieldValue("jobRole", selectedJobs?.title);
                   }}
                   getOptionLabel={(option) => option.title}
                   renderInput={(params) => (
@@ -193,7 +200,7 @@ const ProcessLogFilter: FC<Props> = ({ open, anchorEl, handleClose }) => {
                 label={intl.formatMessage({ id: "BUTTON.RESET" })}
                 variant="outlined"
                 handleClick={() => {
-                  dispatch( resetFilter({page:"processLog"}) );
+                  dispatch(resetFilter({ page: "processLog" }));
                   handleClose();
                 }}
               />

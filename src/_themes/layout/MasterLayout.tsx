@@ -37,7 +37,7 @@ const MasterLayout = () => {
             <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack
               direction={"row"}
-              className="flex-row-fluid application-wrapper"
+              className="flex-grow-1"
               sx={{
                 marginLeft: isSmallScreen ? 0 : isMiniSidebar ? "90px" : "265px",
                 transition: "margin .3s linear"
@@ -54,7 +54,7 @@ const MasterLayout = () => {
             </Stack>
           </Grid>
 
-          <DrawerMessenger />
+          {/* <DrawerMessenger /> */}
         </PageDataProvider>
       </BreadcrumbProvider>
     </>
