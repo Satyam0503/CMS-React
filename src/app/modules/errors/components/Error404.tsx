@@ -1,44 +1,43 @@
 import { FC } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { Container, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Home } from "@mui/icons-material";
+import { useIntl } from "react-intl";
 
 const Error404: FC = () => {
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
   return (
-    <>
-      <Container className="d-flex justify-content-center align-items-center flex-grow-1 gap-5" sx={{ bgcolor: "background.body" }}>
-        <Stack alignItems={"center"} my={3}>
-          <img
-            src={toAbsoluteUrl("media/auth/404-error.png")}
-            alt=""
-            style={{ maxHeight: "500px", maxWidth: "100%" }}
-          />
+    <Grid container spacing={2} sx={{ flexGrow: 1, alignItems: "center", justifyContent: "center", p: 2 }}>
+      <Grid item sm={9} md={5} sx={{ alignItems: "center" }}>
+        <img
+          src={toAbsoluteUrl("media/auth/404-error.png")}
+          alt=""
+          style={{ maxHeight: "500px", maxWidth: "100%" }}
+        />
+      </Grid>
+      <Grid item sm={10} md={6}>
+        <Stack spacing={1}>
+          <Typography variant="h1" fontWeight={700} fontSize="52px" >
+            {formatMessage({ id: "Error.404.OPPS" })}
+          </Typography>
+          <Typography variant="h2" fontWeight={700}> {formatMessage({ id: "Error.404.PAGE_NOT_FOUND" })}</Typography>
+          <Typography variant="h6">
+            {formatMessage({ id: "Error.404.NOTE" })}
+          </Typography>
         </Stack>
-        <Stack spacing={6}>
-          <Stack spacing={1}>
-            <Typography variant="h1" fontWeight={700} fontSize="52px" >
-              Oops!
-            </Typography>
-            <Typography variant="h1">Page not found</Typography>
-            <Typography variant="body1">
-              We're sorry, the page you requested could not be found. Please go
-              back to the homepage!
-            </Typography>
-          </Stack>
 
-          <Link to="/">
-            <CustomisedButton
-              label="Return Home"
-              variant="contained"
-              Icon={<Home />}
-              iconPosition="start"
-            />
-          </Link>
-        </Stack>
-      </Container>
-    </>
+        <CustomisedButton
+          label={formatMessage({ id: "BUTTON.RETURN_HOME" })}
+          Icon={<Home />}
+          iconPosition="start"
+          handleClick={() => navigate("/")}
+          className="mt-10"
+        />
+      </Grid>
+    </Grid>
   );
 };
 

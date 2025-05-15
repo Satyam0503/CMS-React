@@ -1,13 +1,11 @@
 import { Outlet } from "react-router-dom";
-import { Stack } from "@mui/material";
+import { Container, Stack } from "@mui/material";
 
 const ErrorsLayout = () => {
   return (
-    <>
-      <Stack flexGrow={1} sx={{ backgroundColor: 'background.body' }}>
-        <Outlet />
-      </Stack>
-    </>
+    <Container className="flex-grow-1 d-flex" sx={{ bgcolor: "background.body" }}>
+      <Outlet />
+    </Container>
   );
 };
 

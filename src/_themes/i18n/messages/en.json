@@ -513,6 +513,7 @@
   "BUTTON.CREATE_PASS": "Create Password",
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
+  "BUTTON.RETURN_HOME": "Return Home",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
@@ -534,5 +535,11 @@
   "Link.Register": "register",
   "Link.Term": "Term",
   "Link.Plan": "Plan",
-  "Link.ContactUs": "Contact Us"
+  "Link.ContactUs": "Contact Us",
+
+  "Error.404.NOTE": "We're sorry, the page you requested could not be found. Please go back to the homepage!",
+  "Error.404.PAGE_NOT_FOUND": "Page Not Found",
+  "Error.404.OPPS": "Opps!",
+  "Error.500.SYSTEM_ERROR": "System Error",
+  "Error.500.NOTE": "Something went wrong! Please try again later!"
 }

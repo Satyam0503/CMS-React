@@ -7,6 +7,7 @@ import { WithChildren } from "../../_themes/helpers";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
+import { useTheme } from "@mui/material";
 
 const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
@@ -16,8 +17,8 @@ const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
 const Profile = lazy(() => import("../modules/users/components/ProfileTabs.tsx"));
 const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(() => import("../modules/noticeboard/NoticeBoard.tsx"));
-const Attendance = lazy(()=> import("../modules/attendance/EmployeeAttendance.tsx"));
-const EmployeeLeaves = lazy(()=> import("../modules/leaves/EmployeeLeaves.tsx"));
+const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
+const EmployeeLeaves = lazy(() => import("../modules/leaves/EmployeeLeaves.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -32,7 +33,7 @@ const PrivateRoutes = () => {
           path="dashboard"
           element={
             <SuspensedView>
-                <Dashboard />
+              <Dashboard />
             </SuspensedView>
           }
         />
@@ -41,7 +42,7 @@ const PrivateRoutes = () => {
           path="profile/*"
           element={
             <SuspensedView>
-                <Profile />
+              <Profile />
             </SuspensedView>
           }
         />
@@ -94,7 +95,7 @@ const PrivateRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.Attendance}>
               <SuspensedView>
-                < Attendance/>
+                < Attendance />
               </SuspensedView>
             </ProtectedRoute>
           }
@@ -147,10 +148,11 @@ const PrivateRoutes = () => {
 };
 
 const SuspensedView: FC<WithChildren> = ({ children }) => {
+  const theme = useTheme();
   const baseColor = getCSSVariableValue("--bs-primary");
   TopBarProgress.config({
     barColors: {
-      "0": baseColor,
+      "0": theme.palette.primary.main,
     },
     barThickness: 5,
     shadowBlur: 3,
