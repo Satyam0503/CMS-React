@@ -136,37 +136,37 @@ export const languages = [
   {
     id: 1,
     lang: LANGUAGE.ENGLISH,
-    name: <FormattedMessage id="Language.English" />,
+    name: "Language.English",
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
     lang: LANGUAGE.MANDARIN,
-    name: <FormattedMessage id="Language.Mandarin" />,
+    name: "Language.Mandarin",
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
     lang: LANGUAGE.SPANISH,
-    name: <FormattedMessage id="Language.Spanish" />,
+    name: "Language.Spanish",
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
     lang: LANGUAGE.JAPANESE,
-    name: <FormattedMessage id="Language.Japanese" />,
+    name: "Language.Japanese",
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
     lang: LANGUAGE.GERMAN,
-    name: <FormattedMessage id="Language.German" />,
+    name: "Language.German",
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
     lang: LANGUAGE.FRENCH,
-    name: <FormattedMessage id="Language.French" />,
+    name: "Language.French",
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
 ];
@@ -181,17 +181,17 @@ export const Regex = {
 export const Gender = [
   {
     id: 1,
-    label: <FormattedMessage id="GENDER.MALE" />,
+    label: "GENDER.MALE",
     value: "male",
   },
   {
     id: 2,
-    label: <FormattedMessage id="GENDER.FEMALE" />,
+    label: "GENDER.FEMALE",
     value: "female",
   },
   {
     id: 3,
-    label: <FormattedMessage id="GENDER.OTHER" />,
+    label: "GENDER.OTHER",
     value: "other",
   },
 ];

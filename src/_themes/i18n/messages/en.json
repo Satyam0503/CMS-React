@@ -487,7 +487,10 @@
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL": "Company Details",
   "COMPANY_DETAILS.EDIT_DETAILS": "Edit Details",
 
-  "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION": "Localization",
+  "COMPANY_DETAILS.TAB.COMPANY_PROFILE": "Company Profile",
+  "COMPANY_DETAILS.TAB.NOTE": "Update your company details and logo here",
+  "COMPANY_DETAILS.LOGO_NOTE": "Update your company logo",
+  "COMPANY_DETAILS.LOGO_UPDATE_NOTE": "Upload your logo (PNG, JPG, JPEG, max 5MB).Transparent background recommended ",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES": "Languages",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE": "Default Company Language",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE": "Application Language",

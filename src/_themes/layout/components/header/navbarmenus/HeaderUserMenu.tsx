@@ -45,6 +45,7 @@ export default function HeaderUserMenu() {
   return (
     <>
       <Avatar
+        alt="User Profile"
         onClick={handleClick}
         aria-controls={open ? "account-menu" : undefined}
         aria-haspopup="true"

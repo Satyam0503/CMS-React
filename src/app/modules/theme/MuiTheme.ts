@@ -230,7 +230,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
         styleOverrides: {
           root: {
             borderRadius: 8,
-            padding: 5,
+            padding: 4,
             marginInline: 0,
             border: "1px solid " + theme.palette.grey[500],
           },
@@ -556,6 +556,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       },
       h6: {
         fontSize: 16,
+        fontWeight: 600,
         color: theme.palette.text.secondary,
       },
       body1: {
@@ -564,7 +565,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       },
       body2: {
         fontSize: 12,
-        color: colors.neutral[400],
+        color: theme.palette.text.secondary,
       },
       button: {
         fontWeight: 600,

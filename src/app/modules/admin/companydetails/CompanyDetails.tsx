@@ -47,10 +47,6 @@ const CompanyDetails = () => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
 
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
-  );
-
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.COMPANY_DETAILS" }));
   }, []);
@@ -67,6 +63,9 @@ const CompanyDetails = () => {
                 tab_active: checkIsActive(location.pathname, tab.to),
               })}
               onClick={() => navigate(tab.to)}
+              sx={{
+                color: "text.secondary"
+              }}
             >
               {tab.icon}
               {formatMessage({ id: tab.title })}

@@ -57,13 +57,13 @@ interface PropsTypes {
   open: boolean;
   handleClose: () => void;
   employeeList: GetAllEmployeeResponseModel[];
-  refresh:boolean;
-  setRefresh:React.Dispatch<React.SetStateAction<boolean>>
+  refresh: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const AddEmployee = (props: PropsTypes) => {
-  const currentLanguage=  useLang();
-  const { open, handleClose, employeeList,refresh,setRefresh } = props;
+  const currentLanguage = useLang();
+  const { open, handleClose, employeeList, refresh, setRefresh } = props;
   const [roles, setRoles] = useState<RoleModel[] | undefined>();
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const { formatMessage } = useIntl();
@@ -78,14 +78,14 @@ export const AddEmployee = (props: PropsTypes) => {
     };
     try {
       const response = await addEmployee(payload);
-      const {success,message}=response.data;
-      if(success){
+      const { success, message } = response.data;
+      if (success) {
         toast.success(message);
         setSubmitting(false);
         handleClose();
         setRefresh(!refresh);
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.message);
     } finally {
       setSubmitting(false);
@@ -97,10 +97,10 @@ export const AddEmployee = (props: PropsTypes) => {
       .then((res) => {
         setRoles(res[0].data.methodResults);
         if (res[1].data.totalRecords === 0) {
-          toast.error( formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" }));
+          toast.error(formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" }));
           handleClose();
         } else {
-          setDepartmentList(res[1].data.methodResults.filter(dep=>dep.isActive));
+          setDepartmentList(res[1].data.methodResults.filter(dep => dep.isActive));
         }
       })
       .catch((err) => {
@@ -149,7 +149,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.FIRST_NAME" })}
                         type="text"
                         name="firstName"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({
                           id: "FORM.FIRST_NAME",
                         })}
@@ -160,7 +160,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.LAST_NAME" })}
                         type="text"
                         name="lastName"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({
                           id: "FORM.LAST_NAME",
                         })}
@@ -174,7 +174,7 @@ export const AddEmployee = (props: PropsTypes) => {
                       >
                         {Gender.map((item) => (
                           <MenuItem key={item.id} value={item.value}>
-                            {item.label}
+                            {formatMessage({ id: item.label })}
                           </MenuItem>
                         ))}
                       </SelectInput>
@@ -184,7 +184,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.EMPID" })}
                         type="text"
                         name="employeeId"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({
                           id: "FORM.EMPID",
                         })}
@@ -228,7 +228,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.EMAIL" })}
                         type="email"
                         name="email"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({
                           id: "FORM.EMAIL",
                         })}
@@ -254,7 +254,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "FORM.JOB_ROLE" })}
                         type="text"
                         name="jobRole"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({ id: "FORM.JOB_ROLE" })}
                       />
                     </Grid>
@@ -268,7 +268,7 @@ export const AddEmployee = (props: PropsTypes) => {
                             key={dep.departmentId}
                             value={dep.departmentId}
                           >
-                            {dep.titles.find(title=>title.language === currentLanguage)?.label ?? <FormattedMessage id={"TRANSLATION_MISSING"}/>}
+                            {dep.titles.find(title => title.language === currentLanguage)?.label ?? <FormattedMessage id={"TRANSLATION_MISSING"} />}
                           </MenuItem>
                         ))}
                       </SelectInput>
@@ -327,7 +327,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "USER.PHONE" })}
                         type="text"
                         name="phoneNumber"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({ id: "USER.PHONE" })}
                       />
                     </Grid>
@@ -386,7 +386,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         label={formatMessage({ id: "USER.ADDRESS" })}
                         type="text"
                         name="address"
-                        required= {true}
+                        required={true}
                         placeholder={formatMessage({ id: "USER.ADDRESS" })}
                       />
                     </Grid>

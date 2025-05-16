@@ -5,13 +5,12 @@
     width: 265px;
     overflow-y: visible;
     white-space: nowrap;
-    transition: width 0.3s ease-in;
+    transition: width 0.4s linear;
   }
   & .sidebar-collapse-button {
-    padding: 1rem;
     position: absolute;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     right: 0;
     transform: translate(50%);
     top: 20%;
@@ -19,7 +18,7 @@
     pointer-events: auto;
 
     & > .MuiSvgIcon-root {
-      transition: rotate 0.5s linear;
+      transition: rotate 0.4s linear;
     }
   }
 
@@ -53,13 +52,16 @@
       & .MuiTypography-root {
         font-weight: 600 !important;
         opacity: 1;
-        transition: opacity 0.3s ease-in;
+        transition: display 0.4s linear;
       }
       & .MuiListItemIcon-root {
         color: inherit;
         margin-inline-end: 0.25rem;
       }
 
+      & .MuiSvgIcon-root {
+        transition: all 0.4s linear;
+      }
       &.Mui-selected {
         background-color: $app-white;
         color: $app-primary-500;
@@ -80,6 +82,7 @@
           margin-block: 0.5rem;
 
           & .MuiTypography-root {
+            opacity: 0;
             display: none;
           }
           & .MuiSvgIcon-root {
