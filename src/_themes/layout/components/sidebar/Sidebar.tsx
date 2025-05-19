@@ -50,17 +50,21 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
           <West />
         </IconButton>
       }
-      <Stack sx={{ p: 2 }} spacing={2} alignItems="center" width="100%">
-        <Link to="/" className="company-logo-wrapper">
-          <Avatar
-            alt="Company Logo"
-            src={companyLogo}
-            sx={{
-              width: "100%",
-              height: "100%"
-            }}
-          />
-        </Link>
+      <Stack sx={{ p: 2 }} spacing={4} alignItems="center" width="100%">
+        <Avatar
+          variant="square"
+          alt="Company Logo"
+          src={companyLogo}
+          className="company-logo"
+          sx={{
+            maxWidth: "200px",
+            width: "100%",
+            height: "60px",
+            "& .MuiAvatar-img": {
+              objectFit: "contain",
+            }
+          }}
+        />
         <Box component="div" className="user-profile-wrapper">
           <Avatar
             alt=""

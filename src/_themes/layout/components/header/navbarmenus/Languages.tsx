@@ -15,8 +15,10 @@ import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { useIntl } from "react-intl";
 
 const Languages: FC = () => {
+  const { formatMessage } = useIntl();
   const lang = useLang();
   const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage);
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage);
@@ -47,7 +49,7 @@ const Languages: FC = () => {
       data-kt-menu-flip="bottom"
     >
       <Stack className="d-flex flex-row align-items-center gap-2">
-        <Typography variant="body1">{currentLanguage?.name}</Typography>
+        <Typography variant="body1">{formatMessage({ id: currentLanguage?.name })}</Typography>
         <img
           className="w-15px h-15px rounded-circle"
           src={currentLanguage?.flag}
@@ -91,7 +93,7 @@ const Languages: FC = () => {
                     alt="countryflag"
                   />
                 </ListItemIcon>
-                <ListItemText primary={lang.name} />
+                <ListItemText primary={formatMessage({ id: lang.name })} />
               </ListItemButton>
             </ListItem>
           ))}

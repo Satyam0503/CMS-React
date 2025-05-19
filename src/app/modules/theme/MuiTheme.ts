@@ -78,6 +78,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             card: "#ffffff",
             sidebar: "#0D0E12",
           },
+          divider: colors.neutral[300],
         }
       : {
           background: {
