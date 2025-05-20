@@ -218,6 +218,7 @@ export const getAppliedFilters = () => {
         application: null,
         jobs: null,
         processLog: null,
+        employee: null,
       };
   return appliedfilters;
 };

@@ -1,29 +1,14 @@
-import {
-  Card,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
+import { Card, Stack, ToggleButton, ToggleButtonGroup, Badge } from "@mui/material";
 import { useIntl } from "react-intl";
-import {
-  Add,
-  FilterList,
-  GridView,
-  ViewList,
-} from "@mui/icons-material";
+import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  deleteEmployee,
-  getAllEmployees,
-} from "./employeeServices";
+import { deleteEmployee, getAllEmployees } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 
-import {
-  getModulePermissions,
-} from "../../../utils/common";
+import { getModulePermissions } from "../../../utils/common";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { Pagination } from "../../shared/components/Pagination";
@@ -35,7 +20,14 @@ import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
-
+import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
+import {
+  countAppliedFilter
+} from "../../../utils/common"
+const initialFilter = {
+  ...initialFilterValues,
+  name: "",
+};
 
 type ViewMode = "table" | "grid";
 
@@ -51,12 +43,19 @@ const Employees = () => {
     pageNo: 0,
     records: 10,
   });
-  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [employeeList, setEmployeeList] = useState<
+    GetAllEmployeeResponseModel[]
+  >([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
+
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const id = open ? "department-filter" : undefined;
+
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -67,6 +66,11 @@ const Employees = () => {
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
+
+  const employeeFilters = useAppSelector((state) => state.filters.employee);
+  const totalAppliedFilter = countAppliedFilter(employeeFilters);
+
+  const isFilterAvailable = employeeFilters !== null;
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -135,11 +139,21 @@ const Employees = () => {
     setViewMode(nextView);
   };
 
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   useEffect(() => {
     setLoading(true);
+    const payload = {
+      ...employeeFilters,
+      name: search,
+    };
+
     const getAllEmployeesList = async () => {
       try {
         const response = await getAllEmployees(
+          isFilterAvailable ? payload : { ...initialFilter, name: search },
           paginationValues.pageNo + 1,
           paginationValues.records
         );
@@ -162,7 +176,7 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, isRefresh]);
+  }, [paginationValues, employeeFilters, isRefresh, search]);
 
   useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.EMPLOYEES" }));
@@ -170,7 +184,10 @@ const Employees = () => {
 
   return (
     <>
-      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+      <Card
+        sx={{ p: "2rem", gap: 2 }}
+        className="d-flex flex-column flex-grow-1"
+      >
         <Stack
           direction="row"
           gap={2}
@@ -196,18 +213,38 @@ const Employees = () => {
                 <GridView />
               </ToggleButton>
             </ToggleButtonGroup>
-            <CustomIconButton icon={<FilterList />} handleClick={() => { }} />
-            {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
+            <Badge
+              badgeContent={totalAppliedFilter}
+              anchorOrigin={{ horizontal: "left", vertical: "top" }}
+              color="info"
+            >
               <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setModalOpen(true)}
-                tooltip={intl.formatMessage({
-                  id: "ADD.EMP.INFO",
-                })}
-                ariaLabel="Add employee"
+                icon={<FilterList />}
+                ariaLabel="Filter Department"
+                handleClick={handleFilterClick}
               />
-            )}
+            </Badge>
+            {userPermissionForModule.includes(
+              `${ModulesName.Employees}.${Permission.Create}`
+            ) && (
+                <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setModalOpen(true)}
+                  tooltip={intl.formatMessage({
+                    id: "ADD.EMP.INFO",
+                  })}
+                  ariaLabel="Add employee"
+                />
+              )}
           </Stack>
+          {open && (
+            <EmployeeFilter
+              open={open}
+              id={id}
+              anchorEl={anchorEl}
+              handleClose={() => setAnchorEl(null)}
+            />
+          )}
         </Stack>
         {viewMode === "table" ? (
           <CustomisedTable
@@ -222,10 +259,7 @@ const Employees = () => {
             rowClickHandler={rowClickHandler}
           />
         ) : (
-          <EmployeeGridView
-            employeeList={employeeList}
-            isLoading={isLoading}
-          />
+          <EmployeeGridView employeeList={employeeList} isLoading={isLoading} />
         )}
 
         {totalRecords > 0 && (
@@ -260,6 +294,6 @@ const Employees = () => {
       )}
     </>
   );
-}
+};
 
 export default Employees;

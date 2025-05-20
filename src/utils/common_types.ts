@@ -4,8 +4,9 @@ import { Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
-  ProcessLogFilterModel,
+  ProcessLogFilterModel, 
 } from "../app/modules/recruitment/models";
+import { EmployeeFilterModel } from '../app/modules/employees/models'
 
 export interface ApiResponse {
   success: boolean;
@@ -195,6 +196,7 @@ export interface FiltersType {
   application: ApplicationFilterModel | null;
   jobs: JobsFilterModel | null;
   processLog: ProcessLogFilterModel | null;
+  employee: EmployeeFilterModel | null;
 }
 
 export type WithChildren = {

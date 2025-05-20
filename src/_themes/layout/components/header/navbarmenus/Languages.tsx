@@ -24,9 +24,10 @@ const Languages: FC = () => {
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage);
   const supportedLanguages = appLanguages ? (appLanguages.length > 0 ? appLanguages : [defaultLanguage]) : ["en"]
   const currentLanguage = languages.find((x) => x.lang === lang);
-  const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [languageAnchorEl, setLanguangeAnchorEl] =
+    useState<HTMLElement | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setLanguangeAnchorEl(event.currentTarget);
   };
 
@@ -39,8 +40,10 @@ const Languages: FC = () => {
       setLanguage(language.lang);
     }
   };
+
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
+
   return (
     <div
       className="menu-item px-5"
@@ -56,7 +59,7 @@ const Languages: FC = () => {
           alt="countryflag"
         />
         <IconButton
-          onClick={handleClick}
+          // onClick={handleClick}
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}

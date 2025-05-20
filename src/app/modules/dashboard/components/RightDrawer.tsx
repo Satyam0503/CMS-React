@@ -75,8 +75,8 @@ export default function RightDrawer() {
         ].map((value: any, index) => {
           const labelId = `checkbox-list-label-${value}`;
           return (
-            <>
-              <ListItem key={index}>
+            <React.Fragment key={index}>
+              <ListItem >
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
@@ -90,7 +90,7 @@ export default function RightDrawer() {
                 <ListItemText id={labelId} primary={`${value}`} />
               </ListItem>
               <Divider />
-            </>
+            </ React.Fragment>
           );
         })}
       </List>

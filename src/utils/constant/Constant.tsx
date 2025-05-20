@@ -126,10 +126,13 @@ export const ServiceUrl = {
   // skills
   GET_SKILLS_LIST: `${BaseUrl}/api/User/GetSuggestedSkills`,
   ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
-
   // company 
   GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`,
-  UPDATE_COMPANY_DETAILS: `${BaseUrl}/api/Company/UpdateCompanyDetails`
+  UPDATE_COMPANY_DETAILS: `${BaseUrl}/api/Company/UpdateCompanyDetails`,
+
+  // dashboard
+  GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
+  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`
 };
 
 export const languages = [
