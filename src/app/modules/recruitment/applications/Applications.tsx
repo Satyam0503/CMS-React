@@ -50,9 +50,7 @@ export const Applications = () => {
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const applicationFilters = useAppSelector(
-    (state) => state.filters.application
-  );
+  const applicationFilters = useAppSelector((state) => state.filters.application);
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
   const isFilterAvailable = applicationFilters !== null;

@@ -1,21 +1,17 @@
 import { EmployeeFilterModel } from "../models";
 import { DepartmentModel } from "../../dashboard/model";
 import { FC, useEffect, useState } from "react";
-import { Close } from "@mui/icons-material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setEmployeesFilter } from "../../../Redux/Reducers/filterSlice";
 import { getAllDepartmentInfo } from "../../dashboard/dashboardservices";
 import { useFormik } from "formik";
-import { departmentFilterSchema } from "../../../../utils/Schema/filterValidationSchema";
 
 import {
   Autocomplete,
-  Box,
   Checkbox,
-  IconButton,
+  Chip,
   ListItemText,
-  Popover,
   Stack,
   TextField,
   Typography,
@@ -26,32 +22,29 @@ interface PropsType {
   handleClose: () => void;
   anchorEl: null | Element;
 }
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
+import { employeeFilterValidationSchema } from "../../../../utils/Schema/filterValidationSchema";
+import { Gender } from "../../../../utils/constant/Constant";
+import { FilterComponent } from "../../../shared/components/FilterComponent";
 
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
+  gender: [],
 };
 
-export const EmployeeFilter: FC<PropsType> = ({
-  id,
-  open,
-  handleClose,
-  anchorEl,
-}) => {
+export const EmployeeFilter: FC<PropsType> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
   const [deptList, setDeptList] = useState<DepartmentModel[]>([]);
-  const departmentFilters = useAppSelector(
-    (state) => state.filters.employee
-   );
-  const { values, errors, handleSubmit, getFieldProps, setFieldValue } =
+  const appliedEmpFilters = useAppSelector(state => state.filters.employee);
+  const { values, handleSubmit, setFieldValue } =
     useFormik({
-      initialValues: departmentFilters || initialFilterValues,
+      initialValues: appliedEmpFilters || initialFilterValues,
       enableReinitialize: true,
-      validationSchema: departmentFilterSchema,
+      validationSchema: employeeFilterValidationSchema,
       onSubmit: (values) => {
         dispatch(setEmployeesFilter(values));
-        handleClose();
+        props.handleClose();
       },
     });
 
@@ -61,7 +54,6 @@ export const EmployeeFilter: FC<PropsType> = ({
         const response = await getAllDepartmentInfo();
         const { success, methodResults } = response.data;
         if (success) {
-          console.log("Here: ",methodResults)
           setDeptList(methodResults);
         }
       } catch (error: any) {
@@ -73,88 +65,107 @@ export const EmployeeFilter: FC<PropsType> = ({
 
 
   return (
-    <>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        elevation={10}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Box component={"div"} sx={{ padding: "1.5rem" }}>
-          <Stack spacing={2}>
-            <Stack
-              direction={"row"}
-              sx={{ justifyContent: "space-between", alignItems: "center" }}
-            >
-              <Typography variant="h6">
-                {formatMessage({ id: "FILTER" })}
-              </Typography>
-              <IconButton className="border-0" onClick={handleClose}>
-                <Close />{" "}
-              </IconButton>
-            </Stack>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={2}>
-                <Stack spacing={1}>
-                  <Typography variant="body1">
-                    {formatMessage({ id: "FILTER.DEPT_TITLE" })}
-                  </Typography>
-                  <Autocomplete
-                    multiple
-                    size="small"
-                    id="jobs-dropdown"
-                    options={deptList}
-                    disableCloseOnSelect
-                    value={deptList.filter((dept) =>
-                      values.departmentId.includes(dept.departmentId)
-                    )}
-                    onChange={(event, selectedDept) => {
-                      setFieldValue(
-                        "departmentId",
-                        selectedDept.map((dept) => dept.departmentId)
-                      );
-                    }}
-                    getOptionLabel={(option) => option.label}
-                    renderInput={(params) => (
-                      <TextField {...params} placeholder="Departments" />
-                    )}
-                    renderOption={(props, option, state) => {
-                      return (
-                        <li {...props}>
-                          <Checkbox
-                            key={option.departmentId}
-                            checked={state.selected}
-                            sx={{ mr: 1 }}
-                          />
-                          <ListItemText primary={option.label} />
-                        </li>
-                      );
-                    }}
+    <FilterComponent {...props}>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={.5}>
+          <Typography variant="body1">
+            {formatMessage({ id: "FILTER.DEPT_TITLE" })}
+          </Typography>
+          <Autocomplete
+            multiple
+            size="small"
+            id="jobs-dropdown"
+            options={deptList}
+            disableCloseOnSelect
+            value={deptList.filter((dept) =>
+              values.departmentId.includes(dept.departmentId)
+            )}
+            onChange={(_, selectedDept) => {
+              setFieldValue(
+                "departmentId",
+                selectedDept.map((dept) => dept.departmentId)
+              );
+            }}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Departments" />
+            )}
+            renderOption={(props, option, state) => {
+              return (
+                <li {...props}>
+                  <Checkbox
+                    key={option.departmentId}
+                    checked={state.selected}
+                    sx={{ mr: 1 }}
                   />
-                </Stack>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={2}
-                sx={{ justifyContent: "flex-end", marginBlockStart: 2 }}
-              >
-                <CustomisedButton
-                  label="Reset"
-                  variant="outlined"
-                  handleClick={() => {
-                    dispatch(setEmployeesFilter(initialFilterValues));
-                    handleClose();
-                  }}
-                />
-                <CustomisedButton type="submit" label="Apply" />
-              </Stack>
-            </form>
-          </Stack>
-        </Box>
-      </Popover>
-    </>
+                  <ListItemText primary={option.label} />
+                </li>
+              );
+            }}
+          />
+        </Stack>
+        <Stack spacing={.5} sx={{ mt: 2 }}>
+          <Typography variant="body1">
+            {formatMessage({ id: "FORM.GENDER" })}
+          </Typography>
+          <Autocomplete
+            multiple
+            size="small"
+            id="gender-dropdown"
+            options={Gender}
+            disableCloseOnSelect
+            value={Gender.filter((item) =>
+              values.gender.includes(item.value)
+            )}
+            onChange={(_, selectedGender) => {
+              setFieldValue(
+                "gender",
+                selectedGender.map((item) => item.value)
+              );
+            }}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <TextField {...params} placeholder={formatMessage({ id: "FORM.GENDER" })} />
+            )}
+            renderOption={(props, option, state) => {
+              return (
+                <li {...props}>
+                  <Checkbox
+                    key={option.id}
+                    checked={state.selected}
+                    sx={{ mr: 1 }}
+                  />
+                  <ListItemText primary={formatMessage({ id: option.label })} />
+                </li>
+              );
+            }}
+            renderTags={(value, getTagProps) => (
+              value.map((option, index: number) => {
+                const { key, ...tagProps } = getTagProps({ index });
+                return (
+                  <Chip label={formatMessage({ id: option.label })} size="small" key={key} {...tagProps} />
+                );
+              })
+            )}
+          />
+        </Stack>
+
+        <Stack
+          direction={"row"}
+          spacing={2}
+          sx={{ justifyContent: "flex-end", marginBlockStart: 2 }}
+        >
+          <CustomisedButton
+            label={formatMessage({ id: "BUTTON.RESET" })}
+            variant="outlined"
+            handleClick={() => {
+              dispatch(setEmployeesFilter(initialFilterValues));
+              props.handleClose();
+            }}
+          />
+          <CustomisedButton type="submit" label={formatMessage({ id: "BUTTON.APPLY" })} />
+        </Stack>
+      </form>
+    </FilterComponent>
   );
 };

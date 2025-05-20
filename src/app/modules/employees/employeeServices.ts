@@ -31,14 +31,8 @@ export const deleteEmployee = async (employeeId: string) => {
   });
 };
 
-export const getAllEmployees = async (
-  filters?: GetAllEmployeePayloadModel,
-  pageNo: number = 0,
-  records: number = 0
-) => {
-  return postRequest<GetAllEmployeePayloadModel, GetAllEmployeeResponseData>(
-    `${ServiceUrl.GET_ALL_EMPLOYEE}?pageNo=${pageNo}&records=${records}`, filters
-  );
+export const getAllEmployees = async (payload: GetAllEmployeePayloadModel) => {
+  return postRequest<GetAllEmployeePayloadModel, GetAllEmployeeResponseData>(ServiceUrl.GET_ALL_EMPLOYEE, payload);
 };
 
 

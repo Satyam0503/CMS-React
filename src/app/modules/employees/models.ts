@@ -2,23 +2,28 @@ import { ResponseData } from "../../../utils/common_types";
 
 export interface GetAllEmployeeResponseModel {
   userId: string;
-  fullName:string;
+  fullName: string;
   email: string;
   employeeId: string;
   jobRole: string;
   department: string;
   phoneNumber: string;
-  fullProfileUrl:string| null;
-  dateOfBirth :string ;
+  fullProfileUrl: string | null;
+  dateOfBirth: string;
 }
 
 export interface EmployeeFilterModel {
   departmentId: string[];
+  gender: string[];
 }
 
 export interface GetAllEmployeePayloadModel {
   name: string;
-  departmentId?: string[];
+  pageNo: number;
+  records: number;
+  departmentId: string[];
+  gender: string[];
 }
 
-export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;
+export type GetAllEmployeeResponseData =
+  ResponseData<GetAllEmployeeResponseModel>;

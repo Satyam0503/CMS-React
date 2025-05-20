@@ -45,13 +45,8 @@ const Languages: FC = () => {
   const id = open ? "language-popover" : undefined;
 
   return (
-    <div
-      className="menu-item px-5"
-      data-kt-menu-trigger="hover"
-      data-kt-menu-placement="left-start"
-      data-kt-menu-flip="bottom"
-    >
-      <Stack className="d-flex flex-row align-items-center gap-2">
+    <>
+      <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} sx={{ bgcolor: "background.card", borderRadius: 4 }} >
         <Typography variant="body1">{formatMessage({ id: currentLanguage?.name })}</Typography>
         <img
           className="w-15px h-15px rounded-circle"
@@ -59,7 +54,7 @@ const Languages: FC = () => {
           alt="countryflag"
         />
         <IconButton
-          // onClick={handleClick}
+
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}
@@ -102,7 +97,7 @@ const Languages: FC = () => {
           ))}
         </List>
       </Popover>
-    </div>
+    </ >
   );
 };
 

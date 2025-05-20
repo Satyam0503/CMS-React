@@ -215,11 +215,11 @@ export const getAppliedFilters = () => {
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
     : {
-        application: null,
-        jobs: null,
-        processLog: null,
-        employee: null,
-      };
+      application: null,
+      jobs: null,
+      processLog: null,
+      employee: null,
+    };
   return appliedfilters;
 };
 

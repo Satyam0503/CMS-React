@@ -29,7 +29,6 @@ export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
-  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -51,26 +50,14 @@ export default function Dashboard() {
       ),
     [userModulesPermissions]
   );
-  setPageTitle("");
-  // useEffect(() => {
-  //   async function getEmployees() {
-  //     try {
-  //       const response = await getAllEmployees();
-  //       const { success, methodResults } = response.data;
-  //       if (success) {
-  //         setEmployees(methodResults);
-  //       }
-  //     } catch (error) {
-  //       console.error((error as AxiosError).message);
-  //     }
-  //   }
-  //   getEmployees();
-  // }, []);
+
+  useEffect(() => {
+    setPageTitle("");
+  }, [])
 
   return (
     <>
       <DashboardHeader fullName={user.fullName} />
-
       <Grid
         container
         spacing={3}

@@ -21,13 +21,8 @@ import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
-import {
-  countAppliedFilter
-} from "../../../utils/common"
-const initialFilter = {
-  ...initialFilterValues,
-  name: "",
-};
+import { countAppliedFilter } from "../../../utils/common"
+
 
 type ViewMode = "table" | "grid";
 
@@ -54,10 +49,9 @@ const Employees = () => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const id = open ? "department-filter" : undefined;
+  const id = open ? "employee-filter" : undefined;
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
@@ -70,7 +64,6 @@ const Employees = () => {
   const employeeFilters = useAppSelector((state) => state.filters.employee);
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
 
-  const isFilterAvailable = employeeFilters !== null;
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
@@ -132,10 +125,7 @@ const Employees = () => {
       : navigate(`/employees/${empId}`);
   };
 
-  const handleViewChange = (
-    event: React.MouseEvent<HTMLElement>,
-    nextView: ViewMode
-  ) => {
+  const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: ViewMode) => {
     setViewMode(nextView);
   };
 
@@ -145,20 +135,17 @@ const Employees = () => {
 
   useEffect(() => {
     setLoading(true);
-    const payload = {
-      ...employeeFilters,
-      name: search,
-    };
-
     const getAllEmployeesList = async () => {
       try {
         const response = await getAllEmployees(
-          isFilterAvailable ? payload : { ...initialFilter, name: search },
-          paginationValues.pageNo + 1,
-          paginationValues.records
+          {
+            pageNo: paginationValues.pageNo + 1,
+            records: paginationValues.records,
+            name: search,
+            ...(employeeFilters ?? initialFilterValues)
+          }
         );
-        const { success, statusCode, methodResults, totalRecords } =
-          response.data;
+        const { success, statusCode, methodResults, totalRecords } = response.data;
         if (!(success && statusCode === 200)) {
           throw new Error("Failed To fetch Data");
         }
@@ -167,9 +154,7 @@ const Employees = () => {
           setTotalRecords(totalRecords);
         }
       } catch (error) {
-        console.error(
-          "error :",
-          error instanceof Error ? error.message : error
+        console.error("error :", error instanceof Error ? error.message : error
         );
       } finally {
         setLoading(false);
@@ -216,11 +201,11 @@ const Employees = () => {
             <Badge
               badgeContent={totalAppliedFilter}
               anchorOrigin={{ horizontal: "left", vertical: "top" }}
-              color="info"
+              color="primary"
             >
               <CustomIconButton
                 icon={<FilterList />}
-                ariaLabel="Filter Department"
+                ariaLabel="Filter Employee"
                 handleClick={handleFilterClick}
               />
             </Badge>
@@ -230,9 +215,7 @@ const Employees = () => {
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setModalOpen(true)}
-                  tooltip={intl.formatMessage({
-                    id: "ADD.EMP.INFO",
-                  })}
+                  tooltip={intl.formatMessage({ id: "ADD.EMP.INFO" })}
                   ariaLabel="Add employee"
                 />
               )}

@@ -40,7 +40,7 @@ const initialCompanyInfo: CompanyModel = {
   state: null,
 }
 const SupportedImageFormat = ["jpg", "jpeg", "png", "webp"];
-const MAX_FILE_SIZE = .1; // 5MB Max file size
+const MAX_FILE_SIZE = 5; // 5MB Max file size
 
 export const CompanyInfo: FC = () => {
   const { formatMessage } = useIntl();

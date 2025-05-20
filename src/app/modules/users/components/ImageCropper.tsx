@@ -128,6 +128,10 @@ export const ImageCropper: FC<Props> = ({
           className="mx-auto"
         >
           <img
+            style={{
+              maxWidth: "400px",
+              objectFit: "contain",
+            }}
             ref={imageRef}
             src={imgSrc}
             alt="profile-preview"

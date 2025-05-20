@@ -129,6 +129,9 @@ function DonutApexChart(props: DonutApexChartProps) {
         horizontal: 10,
         vertical: 5,
       },
+      labels: {
+        useSeriesColors: true,
+      },
       formatter: function (seriesName) {
         return `<span style="text-transform:Capitalize">${seriesName}</span>`;
       },

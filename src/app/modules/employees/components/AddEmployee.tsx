@@ -279,7 +279,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         size="small"
                         value={employeeList.find(
                           (emp) => emp.userId === values.reportingManager
-                        )}
+                        ) || null}
                         options={employeeList}
                         onChange={(event, value) => {
                           setFieldTouched("reportingManager", true);
@@ -305,7 +305,7 @@ export const AddEmployee = (props: PropsTypes) => {
                         size="small"
                         value={employeeList.find(
                           (emp) => emp.userId === values.teamLead
-                        )}
+                        ) || null}
                         options={employeeList}
                         onChange={(event, value) => {
                           setFieldTouched("teamLead", true);
