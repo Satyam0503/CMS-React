@@ -415,35 +415,35 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 30,
   },
 
   {
     id: "title",
-    label: "Title",
+    label: "FORM.TITLE",
   },
   {
     id: "type",
-    label: "Type",
+    label: "NOTICE_BOARD.TYPE",
   },
   {
     id: "startDate",
-    label: "Start Date",
+    label: "APPLICATION.START",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
     id: "endDate",
-    label: "End Date",
+    label: "APPLICATION.START",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
     id: "description",
-    label: "Description",
+    label: "INFO.DESCRIPTION",
   },
   {
     id: "action",
-    label: "Action",
+    label: "Table.Column.Action",
     build: (
       row: any,
       handleHolidayEdit: (row: any) => void,
@@ -461,29 +461,29 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "S.No.",
+    label: "Table.S_No",
     minWidth: 60,
   },
   {
     id: "name",
-    label: "Name",
+    label: "APPLICANT.NAME",
   },
   {
     id: "datetime",
-    label: "Date/Time",
+    label: "NOTICE_BOARD.DATE_TIME",
   },
 
   {
     id: "type",
-    label: "Type",
+    label: "NOTICE_BOARD.TYPE",
   },
   {
     id: "message",
-    label: "Message",
+    label: "MENU.MESSAGE",
   },
   {
     id: "action",
-    label: "Action",
+    label: "Table.Column.Action",
     build: (
       row: any,
       handleNoticeEdit: (row: any) => void,
@@ -577,71 +577,71 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
 export const LeaveSummaryTableColumnList: ColumnListTypes[] = [
   {
     id: "date",
-    label: "Date",
+    label: "COMMENT.DATE",
   },
   {
     id: "absent",
-    label: "Absent",
+    label: "ATTENDANCE.ABSENT",
   },
 
   {
     id: "firsthalf",
-    label: "First Half",
+    label: "ATTENDANCE.FIRST_HALF",
   },
 
   {
     id: "secondhalf",
-    label: "Second Half",
+    label: "ATTENDANCE.SECOND_HALF",
   },
   {
     id: "workfromhome",
-    label: "Working from home",
+    label: "ATTENDANCE.WFH",
   },
   {
     id: "total",
-    label: "Total",
+    label: "ATTENDANCE.TOTAL",
   },
 
   {
     id: "action",
-    label: "Action",
+    label: "MENU.ACTION",
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
 export const LeaveMangementTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
-    label: "Name",
+    label: "Table.Name",
   },
   {
     id: "type",
-    label: "Leave type",
+    label: "LEAVE.TYPE",
   },
 
   {
     id: "from",
-    label: "From",
+    label: "FILTER.FROM",
   },
 
   {
     id: "to",
-    label: "To",
+    label: "FILTER.TO",
   },
   {
     id: "days",
-    label: "Days",
+    label: "Table.Days",
   },
   {
     id: "remaining",
-    label: "Remaining",
+    label: "Table.Remaining",
   },
   {
     id: "reason",
-    label: "Reason",
+    label: "APPLICATION.REASON",
   },
   {
     id: "status",
-    label: "Status",
+    label: "FILTER.STATUS",
   },
   {
     id: "action",
@@ -652,33 +652,33 @@ export const LeaveMangementTableColumnList: ColumnListTypes[] = [
 export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
-    label: "Name",
+    label: "Table.Name",
   },
   {
     id: "first_in",
-    label: "First in",
+    label: "Table.First_in",
   },
 
   {
     id: "break",
-    label: "Break",
+    label: "Table.Break",
   },
 
   {
     id: "last_out",
-    label: "Last Out",
+    label: "Table.Last_out",
   },
   {
     id: "total_hours",
-    label: "Total Hours ",
+    label: "Table.Total_Hours",
   },
   {
     id: "shift",
-    label: "Shift",
+    label: "Table.Shift",
   },
   {
     id: "status",
-    label: "Status",
+    label: "FILTER.STATUS",
   },
 
   {

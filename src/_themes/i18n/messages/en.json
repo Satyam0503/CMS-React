@@ -7,8 +7,9 @@
   "Language.French": "French",
 
   "GENDER.MALE": "Male",
-  "GENDER.OTHER": "Other",
   "GENDER.FEMALE": "Female",
+  "GENDER.OTHER": "Other",
+  "GENDER.NULL": "Null",
 
   "Jobtype.Onsite": "Onsite",
   "Jobtype.Hybrid": "Hybrid",
@@ -16,6 +17,14 @@
 
   "Table.S_No": "S.No.",
   "Table.Column.Action": "Actions",
+  "Table.Name": "Name",
+  "Table.Days": "Days",
+  "Table.Remaining": "Remaining",
+  "Table.First_in": "First in",
+  "Table.Last_out": "Last out",
+  "Table.Break": "Break",
+  "Table.Total_Hours": "Total Hours",
+  "Table.Shift": "Shift",
 
   "Modules.Dashboard": "Dashboard",
   "Modules.Employees": "Employees",
@@ -116,6 +125,10 @@
   "AUTH.SIGNOUT": "Sign Out",
   "ATTENDANCE.PRESENT": "Present",
   "ATTENDANCE.ABSENT": "Absent",
+  "ATTENDANCE.FIRST_HALF": "First Half",
+  "ATTENDANCE.SECOND_HALF": "First Half",
+  "ATTENDANCE.WFH":"Working from home",
+  "ATTENDANCE.TOTAL":"Total",
   "ATTENDANCE.GRAPH": "My Attendance Graph of this year",
   "ATTENDANCE.LATE": "Late",
   "APPLICATION.DURATION": "Duration",
@@ -193,6 +206,9 @@
   "JOB.APPLICATION_CAPTION": "Please fill the form below to apply:",
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
+
+  "NOTICE_BOARD.DATE_TIME": "Date/Time",
+  "NOTICE_BOARD.TYPE": "Type",
 
   "LINK.NOTIFICATION": "check the submissions",
   "LEAVE.CL": "Casual Leaves",
