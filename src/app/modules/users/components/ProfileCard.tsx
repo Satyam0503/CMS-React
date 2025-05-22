@@ -51,13 +51,9 @@ export default function ProfileCard() {
           <Typography variant="h5" color="common.white">
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
-          <Typography
-            variant="body2"
-            color="common.white"
-            className="px-4 py-2 rounded-pill"
-          >
+          <Box sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className="px-4 py-1 rounded-pill">
             {userDetails.jobRole || <FormattedMessage id="NOT_AVAILABLE" />}
-          </Typography>
+          </Box>
         </Stack>
         <Stack
           direction={"row"}
@@ -85,7 +81,8 @@ export default function ProfileCard() {
         </Stack>
         {!employeeId && (
           <CustomisedButton
-            variant="contained"
+            variant="outlined"
+            style={{ color: "white", borderColor: "white" }}
             Icon={<Download />}
             iconPosition="start"
             className="align-self-center"

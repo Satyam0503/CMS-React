@@ -479,11 +479,12 @@ export const createApplicationTheme = (mode: PaletteMode) => {
                 },
               },
               "&.Mui-focusVisible .MuiSwitch-thumb": {
-                color: theme.palette.grey[300],
+                color: theme.palette.common.white,
                 border: "6px solid" + theme.palette.common.white,
               },
               "&.Mui-disabled .MuiSwitch-thumb": {
                 color: theme.palette.common.white,
+                backgroundColor: theme.palette.common.white
               },
               "&.Mui-disabled + .MuiSwitch-track": {
                 opacity: 0.7,
@@ -494,6 +495,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
               width: 22,
               height: 22,
               border: "1px solid " + theme.palette.common.white,
+              color: theme.palette.common.white,
             },
             "& .MuiSwitch-track": {
               borderRadius: 26 / 2,

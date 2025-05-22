@@ -1,7 +1,7 @@
 import { Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AttendanceChart } from "../../shared/components/AttendanceChart";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
@@ -64,7 +64,6 @@ export default function Dashboard() {
             {hasAccessToEmpModule && (
               <Grid item xs={12} sm={6}>
                 {/* <EmployeeChart employees={employees} /> */}
-                <EmployeeChart />
                 <EmployeeChart />
               </Grid>
             )}

@@ -66,6 +66,9 @@ const CompanyMaster = () => {
               key={tab.tabId}
               className={clsx("tab-box", { tab_active: checkIsActive(location.pathname, tab.to) })}
               onClick={() => navigate(tab.to)}
+              sx={{
+                color: "text.secondary"
+              }}
             >
               {tab.icon}
               {formatMessage({ id: tab.title })}

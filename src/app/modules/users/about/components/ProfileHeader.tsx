@@ -52,9 +52,9 @@ export const ProfileHeader = () => {
       <Grid item xs={12} sm={4}>
         <Box component={CardContent}>
           <IconStat
-            iconBg={theme.palette.error.lighter}
+            iconBg={theme.palette.secondary.lighter}
             icon={<Build fontSize="large" />}
-            iconColor="error.light"
+            iconColor="secondary.dark"
             number={totalSkills}
             title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
           />
