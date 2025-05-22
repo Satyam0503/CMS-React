@@ -37,6 +37,7 @@ export const PersonalDetails = () => {
             userPermissions
           )) && (
           <CustomIconButton
+            tooltip="Edit"
             icon={<Edit />}
             handleClick={() => setModalOpen(true)}
           />

@@ -1,15 +1,6 @@
-import {
-  Stack,
-  Typography,
-  Grid,
-  Card,
-  Avatar,
-  Button,
-  Link,
-} from "@mui/material";
+import { Stack, Typography, Link } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 
 export default function EmpOnLeave() {
@@ -47,12 +38,7 @@ export default function EmpOnLeave() {
                 </Stack>
               </Stack>
               <Stack>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.primary[500]}
-                >
-                  5-Dec to 25-Dec
-                </Typography>
+                <Typography variant="subtitle2">5-Dec to 25-Dec</Typography>
               </Stack>
             </Stack>
             <Stack
@@ -78,12 +64,7 @@ export default function EmpOnLeave() {
                 </Stack>
               </Stack>
               <Stack>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.primary[500]}
-                >
-                  Today
-                </Typography>
+                <Typography variant="subtitle2">Today</Typography>
               </Stack>
             </Stack>
           </Stack>

@@ -1,14 +1,6 @@
 import * as React from "react";
 
-import {
-  Button,
-  Card,
-  Container,
-  Grid,
-  Link,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
@@ -19,7 +11,6 @@ import {
 
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
-import { colors } from "../../modules/theme/MuiTheme";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeModel } from "../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
@@ -29,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import { usePageData } from "../../../_themes/layout/core";
 import dayjs from "dayjs";
-
 
 // Original
 // const rows = [
@@ -78,7 +68,7 @@ export default function NoticeBoard() {
 
   // const [NoticeList, setNoticeList] = React.useState<NoticeModel[]>([]); // original
   const [NoticeList, setNoticeList] = React.useState<any[]>(rows); // By Rajdeep
-  
+
   const [page, setPage] = React.useState(0);
   const [totalRecords, setTotalRecords] = React.useState(0);
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);

@@ -176,10 +176,10 @@ export const CompanyInfo: FC = () => {
         console.log(error);
       }
     })();
-  }, [])
+  }, []);
 
   if (loading) {
-    return <CompanyInfoSkeleton />
+    return <CompanyInfoSkeleton />;
   }
 
   console.log(errors);
@@ -216,7 +216,9 @@ export const CompanyInfo: FC = () => {
           <Grid container sx={{ gap: 3 }}>
             <Grid item xs={12} sm={4} md={5}>
               <Typography variant="h6">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES" })}
+                {formatMessage({
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+                })}
               </Typography>
               <Typography variant="body2">
                 {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES_NOTE" })}
@@ -300,7 +302,9 @@ export const CompanyInfo: FC = () => {
           <Grid container sx={{ gap: 3 }} >
             <Grid item xs={12} sm={4} md={5} className="d-flex flex-column gap-1">
               <Typography variant="h6">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME", })}
+                {formatMessage({
+                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+                })}
               </Typography>
               <Typography variant="body2">
                 {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME.NOTE" })}

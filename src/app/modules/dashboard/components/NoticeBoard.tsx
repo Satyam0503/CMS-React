@@ -1,23 +1,6 @@
-import {
-  Typography,
-  Card,
-  Grid,
-  Stack,
-  IconButton,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Link,
-  Divider,
-} from "@mui/material";
+import { Typography, Stack, Link, Divider } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Check, Visibility } from "@mui/icons-material";
-import EmployeePerformance from "./EmployeePerformance";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 
 type Props = {
@@ -53,12 +36,7 @@ export default function NoticeBoard() {
                   normal distribution of letters, as opposed to using 'Content
                   here, content here', making it look like readable English
                 </Typography>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.primary[500]}
-                >
-                  10 mins ago
-                </Typography>
+                <Typography variant="subtitle2">10 mins ago</Typography>
               </Stack>
             </Stack>
             <Divider />
@@ -77,12 +55,7 @@ export default function NoticeBoard() {
                   Outlines keep you honest. They stop you from indulging in
                   poorly thought-out
                 </Typography>
-                <Typography
-                  variant="subtitle2"
-                  color={colors.primary[500]}
-                >
-                  1 Hour ago
-                </Typography>
+                <Typography variant="subtitle2">1 Hour ago</Typography>
               </Stack>
             </Stack>
           </Stack>

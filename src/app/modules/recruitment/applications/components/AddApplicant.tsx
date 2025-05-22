@@ -20,12 +20,14 @@ import { useIntl } from "react-intl";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
 import { toast } from "react-toastify";
-import { colors } from "../../../theme/MuiTheme";
 import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { ApplicantModel, JobModal } from "../../models";
-import { experienceCategoryList, indianStates } from "../../../../../utils/constant/Constant";
+import {
+  experienceCategoryList,
+  indianStates,
+} from "../../../../../utils/constant/Constant";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -96,7 +98,9 @@ export const AddApplicant: FC<PropsTypes> = ({
       if (!responseData.success) {
         throw new Error(responseData.message);
       }
-      toast.success(intl.formatMessage({ id: "MESSAGE.APPLICANT.ADD_SUCCESS" }));
+      toast.success(
+        intl.formatMessage({ id: "MESSAGE.APPLICANT.ADD_SUCCESS" })
+      );
       setRefresh(!refresh);
       handleClose();
     } catch (error: any) {
@@ -147,7 +151,9 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <TextInput
                           label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
                           type="text"
-                          placeholder={intl.formatMessage({ id: "USER.FIRST_NAME" })}
+                          placeholder={intl.formatMessage({
+                            id: "USER.FIRST_NAME",
+                          })}
                           name="firstName"
                         />
                       </Grid>
@@ -155,7 +161,9 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <TextInput
                           label={intl.formatMessage({ id: "USER.LAST_NAME" })}
                           type="text"
-                          placeholder={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                          placeholder={intl.formatMessage({
+                            id: "USER.LAST_NAME",
+                          })}
                           name="lastName"
                         />
                       </Grid>
@@ -206,24 +214,22 @@ export const AddApplicant: FC<PropsTypes> = ({
                         <Autocomplete
                           id="state-dropdown"
                           size="small"
-                          value={indianStates.find(state => state.value === formik.values.state)}
+                          value={indianStates.find(
+                            (state) => state.value === formik.values.state
+                          )}
                           options={indianStates}
                           onChange={(event, value) => {
                             formik.setFieldValue("state", value?.value);
                           }}
                           renderInput={(param) => (
-                            <TextField  {...param} label={"Select State"} />
+                            <TextField {...param} label={"Select State"} />
                           )}
-                          getOptionLabel={option => option.label}
+                          getOptionLabel={(option) => option.label}
                         />
                       </Grid>
                     </Grid>
                     <Stack mt={2}>
-                      <Typography
-                        variant="body1"
-                        mb={1}
-                        color={colors.primary[500]}
-                      >
+                      <Typography variant="body1" mb={1} color="primary">
                         {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                     </Stack>
@@ -245,14 +251,14 @@ export const AddApplicant: FC<PropsTypes> = ({
                         alignItems={"center"}
                       >
                         <Stack alignItems={"center"}>
-                          <Tooltip title="Upload file here" placement="top" >
+                          <Tooltip title="Upload file here" placement="top">
                             <Box
                               component="label"
                               sx={{
                                 px: 2,
                                 py: 1,
                                 borderRadius: 1,
-                                backgroundColor: 'primary.lighter'
+                                backgroundColor: "primary.lighter",
                               }}
                             >
                               <CloudUploadOutlined
@@ -277,8 +283,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                               variant="caption"
                               flexWrap={"wrap"}
                               textAlign={"center"}
-                            >
-                            </Typography>
+                            ></Typography>
                             <Typography variant="caption">
                               {formik.values.resume?.name}
                             </Typography>

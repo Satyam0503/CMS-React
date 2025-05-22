@@ -10,6 +10,7 @@ import {
   Select,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import {
   Add,
@@ -17,19 +18,10 @@ import {
   EventAvailable,
   EventBusy,
   FilterList,
-  Home,
-  HourglassBottom,
-  HourglassTop,
   SupervisorAccount,
-  SupervisorAccountOutlined,
-  SupervisorAccountTwoTone,
-  TimerOff,
   TimerOffOutlined,
-  WorkOff,
 } from "@mui/icons-material";
-import { colors } from "../theme/MuiTheme";
 import { usePageData } from "../../../_themes/layout/core";
-import AddLeaves from "../leaves/components/AddLeaves";
 
 import {
   AttendanceMangementTableColumnList,
@@ -53,6 +45,7 @@ const EmployeeAttendance: FC = () => {
   const [rowPerPage, setRowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
   const [page, setPage] = React.useState(0);
+  const theme = useTheme();
   const handleSearchChange = React.useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -64,141 +57,131 @@ const EmployeeAttendance: FC = () => {
     setPageTitle(intl.formatMessage({ id: "PAGE.ATTENDANCE" }));
   }, []);
   return (
-    <>
-      <Grid
-        container
-        sx={{
-          display: "flex",
-          gap: 2,
-        }}
-      >
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg="info.main"
-                  iconColor="info.light"
-                  icon={<EventAvailable fontSize="large" />}
-                  number={"175"}
-                  title="Present"
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={'success.main'}
-                  icon={<TimerOffOutlined fontSize="large" />}
-                  iconColor={'success.light'}
-                  number={"16"}
-                  title="Late"
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={'warning.main'}
-                  icon={<EventBusy fontSize="large" />}
-                  iconColor={'warning.light'}
-                  number={"1"}
-                  title="Abscent"
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={colors.primary[100]}
-                  icon={<SupervisorAccount fontSize="large" />}
-                  iconColor={colors.primary[500]}
-                  number={"200"}
-                  title="Total"
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          display={"flex"}
-          justifyContent={"space-between"}
-          gap={2}
-        >
-          <Stack>
-            <Select
-              name="days"
-              onChange={handleChange}
-              value={selectedDay}
-              sx={{
-                minWidth: "130px",
-                bgcolor: colors.white[500],
-              }}
-            >
-              {Days.map((item) => (
-                <MenuItem key={item.id} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </Stack>
-
-          <Stack>
-            <AddAttendance />
-          </Stack>
-        </Grid>
-        <Grid item xs={12}>
-          <Card sx={{ p: "2rem" }}>
-            <Typography variant="h6" mb={3}>
-              {intl.formatMessage({ id: "Modules.Attendance" })}
-            </Typography>
-            <Stack
-              direction="row"
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              flexWrap={"wrap-reverse"}
-              gap={2}
-            >
-              <SearchInput
-                search={searchValue}
-                setSearch={handleSearchChange}
+    <Grid
+      container
+      sx={{
+        display: "flex",
+        gap: 2,
+      }}
+    >
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <IconStat
+                iconBg={theme.palette.primary.lighter}
+                iconColor="info.dark"
+                icon={<EventAvailable fontSize="large" />}
+                number={"175"}
+                title="Present"
               />
-
-              <Stack direction="row" spacing={1}>
-                <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
-                <CustomIconButton tooltip="Add Attendance" icon={<Add />} />
-                <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-              </Stack>
-            </Stack>
-            <CustomisedTable
-              tabName="Attendance"
-              columns={AttendanceMangementTableColumnList}
-              rows={AttendanceList}
-              page={page}
-              rowsPerPage={rowPerPage}
-              loading={isLoading}
-            />
+            </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
-          <AttendanceChart
-            className="card-xxl-stretch"
-            chartColor="primary"
-            chartHeight="180px"
-          />
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <IconStat
+                iconBg={theme.palette.primary.lighter}
+                icon={<TimerOffOutlined fontSize="large" />}
+                iconColor={"success.light"}
+                number={"16"}
+                title="Late"
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <IconStat
+                iconBg={theme.palette.secondary.lighter}
+                icon={<EventBusy fontSize="large" />}
+                iconColor={"warning.light"}
+                number={"1"}
+                title="Abscent"
+              />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <IconStat
+                iconBg={theme.palette.primary.lighter}
+                icon={<SupervisorAccount fontSize="large" />}
+                iconColor="primary.main"
+                number={"200"}
+                title="Total"
+              />
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
-    </>
+
+      <Grid container display={"flex"} justifyContent={"space-between"} gap={2}>
+        <Stack>
+          <Select
+            name="days"
+            onChange={handleChange}
+            value={selectedDay}
+            sx={{
+              minWidth: "130px",
+              bgcolor: "common.white",
+            }}
+          >
+            {Days.map((item) => (
+              <MenuItem key={item.id} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
+
+        <Stack>
+          <AddAttendance />
+        </Stack>
+      </Grid>
+      <Grid item xs={12}>
+        <Card sx={{ p: "2rem" }}>
+          <Typography variant="h6" mb={3}>
+            {intl.formatMessage({ id: "Modules.Attendance" })}
+          </Typography>
+          <Stack
+            direction="row"
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            flexWrap={"wrap-reverse"}
+            gap={2}
+          >
+            <SearchInput search={searchValue} setSearch={handleSearchChange} />
+
+            <Stack direction="row" spacing={1}>
+              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
+              <CustomIconButton tooltip="Add Attendance" icon={<Add />} />
+              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
+            </Stack>
+          </Stack>
+          <CustomisedTable
+            tabName="Attendance"
+            columns={AttendanceMangementTableColumnList}
+            rows={AttendanceList}
+            page={page}
+            rowsPerPage={rowPerPage}
+            loading={isLoading}
+          />
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <AttendanceChart
+          className="card-xxl-stretch"
+          chartColor="primary"
+          chartHeight="180px"
+        />
+      </Grid>
+    </Grid>
   );
 };
 

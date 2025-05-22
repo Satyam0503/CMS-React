@@ -1,10 +1,7 @@
-import { Check, DeleteOutline } from "@mui/icons-material";
+import { DeleteOutline } from "@mui/icons-material";
 import {
-  alpha,
-  darken,
   Divider,
   Grid,
-  lighten,
   MenuItem,
   Select,
   Stack,
@@ -23,7 +20,6 @@ import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
-import { colors } from "../../../theme/MuiTheme";
 
 interface PropsTypes {
   initialValues: JobModal;

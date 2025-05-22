@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Formik, useFormik } from "formik";
+import { useEffect } from "react";
+import { Formik } from "formik";
 import { registerCompany } from "../core/_requests";
 import { Link, useNavigate } from "react-router-dom";
 import { PasswordMeterComponent } from "../../../../_themes/assets/ts/components";
@@ -10,12 +10,10 @@ import {
   Grid,
   InputAdornment,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { colors } from "../../theme/MuiTheme";
 import { Check, ErrorOutline } from "@mui/icons-material";
 import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 import { toast } from "react-toastify";
@@ -209,53 +207,53 @@ export function Registration() {
                   >
                     <Stack
                       flexGrow={1}
-                      bgcolor={colors.secondary[500]}
+                      bgcolor="secondary.main"
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: 'success.main',
+                          bgcolor: "success.main",
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={'secondary.main'}
+                      bgcolor="secondary.main"
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: 'success.main',
+                          bgcolor: "success.main",
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={'secondary.main'}
+                      bgcolor="secondary.main"
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: 'success.main',
+                          bgcolor: "success.main",
                         },
                       }}
                     />
                     <Stack
                       flexGrow={1}
-                      bgcolor={'secondary.main'}
+                      bgcolor="secondary.main"
                       className="bg-active-success"
                       sx={{
                         mr: 1,
                         height: "5px",
                         borderRadius: "8px",
                         "&:active": {
-                          bgcolor: 'success.main',
+                          bgcolor: "success.main",
                         },
                       }}
                     />
@@ -273,7 +271,9 @@ export function Registration() {
                   type="password"
                   name="changePassword"
                   label={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
-                  placeholder={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
+                  placeholder={intl.formatMessage({
+                    id: "FORM.CONFIRM_PASSWORD",
+                  })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">

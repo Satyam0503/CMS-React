@@ -19,7 +19,6 @@ import {
 
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { colors } from "../../theme/MuiTheme";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { NoticeModel } from "../../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../../utils/constant/Constant";

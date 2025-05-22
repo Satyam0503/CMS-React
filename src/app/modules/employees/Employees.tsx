@@ -1,4 +1,10 @@
-import { Card, Stack, ToggleButton, ToggleButtonGroup, Badge } from "@mui/material";
+import {
+  Card,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Badge,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
 

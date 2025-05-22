@@ -138,11 +138,11 @@ export const createApplicationTheme = (mode: PaletteMode) => {
             },
             "&:hover:not(.Mui-focused)": {
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#00000",
+                borderColor: theme.palette.text.secondary,
               },
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.text.secondary,
+              borderColor: theme.palette.text.disabled,
             },
           },
         },
@@ -234,6 +234,9 @@ export const createApplicationTheme = (mode: PaletteMode) => {
             padding: 4,
             marginInline: 0,
             border: "1px solid " + theme.palette.grey[500],
+            "&:hover": {
+              color: theme.palette.primary.dark,
+            },
           },
           sizeSmall: {
             padding: 4,
@@ -571,6 +574,12 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       },
       button: {
         fontWeight: 600,
+      },
+      subtitle1: {
+        color: colors.neutral[500],
+      },
+      subtitle2: {
+        color: colors.primary[500],
       },
     },
   });

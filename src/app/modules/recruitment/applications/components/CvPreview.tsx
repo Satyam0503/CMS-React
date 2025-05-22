@@ -7,7 +7,6 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { colors } from "../../../theme/MuiTheme";
 import { ResumeError } from "./ResumeError";
 import { ResumeLoader } from "./ResumeLoader";
 import { useIntl } from "react-intl";
@@ -41,7 +40,7 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
   return (
     <Stack
       sx={{
-        border: `1px solid ${colors.alpha.neutral[200]}`,
+        border: `1px solid grey`,
         borderRadius: ".5rem",
       }}
     >
@@ -49,14 +48,16 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
         direction={"column"}
         sx={{
           padding: "1rem !important",
-          borderBottom: `1px solid ${colors.alpha.neutral[200]}`,
+          borderBottom: `1px solid grey`,
         }}
       >
-        <Typography variant="h6">{intl.formatMessage({ id: "APPLICANT.RESUME_PREVIEW" })}</Typography>
+        <Typography variant="h6">
+          {intl.formatMessage({ id: "APPLICANT.RESUME_PREVIEW" })}
+        </Typography>
         <Typography
           variant="body2"
           display={{ sm: "none" }}
-          color={colors.alpha.secondary[500]}
+          color="secondary.main"
         >
           {intl.formatMessage({ id: "PDF.VIEWER" })}
         </Typography>
@@ -81,7 +82,7 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
             spacing={2}
             sx={{
               width: "100%",
-              backgroundColor: colors.alpha.white[500],
+              backgroundColor: "common.white",
               position: "absolute",
               zIndex: 10,
               left: "0",

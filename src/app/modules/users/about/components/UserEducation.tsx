@@ -22,7 +22,6 @@ import {
   updateEmployeeEducation,
 } from "../../userservices";
 import { toast } from "react-toastify";
-import { colors } from "../../../theme/MuiTheme";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
@@ -144,7 +143,7 @@ export const UserEducation = () => {
   }, [refresh]);
 
   return (
-    <Card sx={{ p: 2 }} >
+    <Card sx={{ p: 2 }}>
       <Stack
         direction="row"
         display={"flex"}
@@ -159,12 +158,12 @@ export const UserEducation = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-            <CustomIconButton
-              tooltip="Add"
-              icon={<Add />}
-              handleClick={() => setOpen(true)}
-            />
-          )}
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        )}
       </Stack>
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userEducations.length === 0 ? (
@@ -187,11 +186,11 @@ export const UserEducation = () => {
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
-                  color={'primary.main'}
+                  color="primary.main"
                   sx={{
                     width: 48,
                     height: 48,
-                    bgcolor: 'primary.lighter',
+                    bgcolor: "primary.lighter",
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,
@@ -243,30 +242,30 @@ export const UserEducation = () => {
                   `${ModulesName.Employees}.${Permission.Edit}`,
                   userPermissions
                 )) && (
-                  <Stack
-                    direction={{ sx: "column", sm: "row" }}
-                    spacing={1}
-                    rowGap={0.5}
-                    sx={{
-                      visibility: "hidden",
-                      transition: "visibility 0.3s ease-in-out",
+                <Stack
+                  direction={{ sx: "column", sm: "row" }}
+                  spacing={1}
+                  rowGap={0.5}
+                  sx={{
+                    visibility: "hidden",
+                    transition: "visibility 0.3s ease-in-out",
+                  }}
+                >
+                  <CustomIconButton
+                    icon={<Edit />}
+                    tooltip="Edit"
+                    handleClick={() => handleEducationEdit(education)}
+                  />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    tooltip="Delete"
+                    handleClick={() => {
+                      setSeletedEducationId(education.educationId);
+                      setConfirmModalOpen(true);
                     }}
-                  >
-                    <CustomIconButton
-                      icon={<Edit />}
-                      tooltip="Edit"
-                      handleClick={() => handleEducationEdit(education)}
-                    />
-                    <CustomIconButton
-                      icon={<DeleteOutline />}
-                      tooltip="Delete"
-                      handleClick={() => {
-                        setSeletedEducationId(education.educationId);
-                        setConfirmModalOpen(true);
-                      }}
-                    />
-                  </Stack>
-                )}
+                  />
+                </Stack>
+              )}
             </Stack>
           ))
         )}

@@ -1,7 +1,6 @@
 import { Typography, Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { auto } from "@popperjs/core";
-import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export default function NoVacancy() {
@@ -11,7 +10,7 @@ export default function NoVacancy() {
     <>
       <Grid container display={"flex"} gap={1.5}>
         <Stack spacing={1}>
-          <Typography variant="h4" color={colors.primary[500]}>
+          <Typography variant="h4" color="primary.main">
             {intl.formatMessage({
               id: "VACANCY.TEXT1",
             })}
@@ -33,11 +32,7 @@ export default function NoVacancy() {
         </Stack>
 
         <Stack m={auto} textAlign={"justify"}>
-          <Typography
-            variant="body1"
-            color={colors.primary[500]}
-            fontWeight={400}
-          >
+          <Typography variant="body1" fontWeight={400}>
             {intl.formatMessage({
               id: "VACANCY.TEXT3",
             })}

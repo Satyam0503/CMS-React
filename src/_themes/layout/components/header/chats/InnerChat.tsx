@@ -1,122 +1,157 @@
 import { FC, useState } from "react";
+type Props = {
+  isDrawer?: boolean;
+  contact: { name: string };
+  goBack: () => void;
+};
 
 import {
-  AccountCircle,
-  AttachFile,
-  DisplaySettings,
+  ArrowBack,
+  Circle,
+  Close,
+  KeyboardArrowLeft,
   Send,
-  Upload,
-  Visibility,
 } from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  Divider,
   FilledInput,
   FormControl,
-  IconButton,
-  Input,
   InputAdornment,
   InputLabel,
+  Link,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CustomIconButton } from "../../../../../app/shared/components/CustomIconButton";
 
-import { relative } from "path";
-import { colors } from "../../../../../app/modules/theme/MuiTheme";
-import { wrap } from "module";
-
-type Props = {
-  isDrawer?: boolean;
-};
-
-const InnerChat: FC<Props> = ({ isDrawer = false }) => {
+const InnerChat: FC<Props> = ({ isDrawer = false, contact, goBack }) => {
   const [message, setMessage] = useState<string>("");
 
   return (
     <>
+      <Stack>
+        <Stack
+          direction={"row"}
+          display={"flex"}
+          justifyContent={"space-between"}
+        >
+          <Stack spacing={1}>
+            <Typography variant="h5">
+              <Circle color="success" sx={{ mr: 1 }} />
+              Brian Cox
+            </Typography>
+          </Stack>
+
+          <Stack direction={"row"}>
+            <CustomIconButton
+              icon={<KeyboardArrowLeft />}
+              handleClick={goBack}
+            />
+          </Stack>
+        </Stack>
+        <Divider sx={{ py: 1 }} />
+      </Stack>
       <Stack
         display={"flex"}
         flexDirection={"column"}
         justifyContent={"space-between"}
         spacing={2}
       >
-        <Stack spacing={2} minHeight={"83vh"} py={4}>
-          <Stack spacing={0.5}>
-            <Stack direction={"row"} spacing={1} alignItems={"center"}>
-              <Box width="40px" height="40px">
-                <Avatar
-                  alt="profile picture"
-                  src="media/avatars/300-6.jpg"
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    position: "relative",
-                  }}
-                />
-              </Box>
-              <Stack
-                bgcolor={colors.primary[300]}
+        <Stack spacing={1} minHeight={"83vh"} py={4}>
+          <Stack spacing={0.5} direction="row" alignItems="end">
+            <Box width="40px" height="40px">
+              <Avatar
+                alt="profile picture"
+                src="media/avatars/300-6.jpg"
+                sx={{
+                  height: "100%",
+                  position: "relative",
+                }}
+              />
+            </Box>
+            <Stack spacing={0.25} alignItems={"start"}>
+              <Box
+                component="span"
+                bgcolor="primary.light"
                 flexWrap={"wrap"}
-                borderRadius={8}
-                p={1.5}
-                textAlign={"center"}
+                borderRadius="1.5rem 1.5rem 1.5rem.25rem"
+                px={1.5}
+                py={1}
               >
                 <Typography variant="body1" className="text-wrap">
-                  Hey Prachi, I just finished the code for the new feature.
+                  Hey Prachi ccccccccccccccccccccc
                 </Typography>
-              </Stack>
-            </Stack>
-            <Stack
-              bgcolor={colors.primary[100]}
-              flexWrap={"wrap"}
-              borderRadius={8}
-              p={1.5}
-              textAlign={"justify"}
-            >
-              <Typography variant="body1">
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
-              </Typography>
+              </Box>
+              <Box
+                component="span"
+                bgcolor="primary.main"
+                flexWrap="wrap"
+                borderRadius=".25rem 1.25rem 1.5rem .25rem"
+                px={1.5}
+                py={1}
+              >
+                <Typography variant="body1">Hey Prachi</Typography>
+              </Box>
+              <Box
+                component="span"
+                bgcolor="primary.main"
+                flexWrap="wrap"
+                borderRadius=".25rem 1.25rem 1.5rem 1.5rem"
+                px={1.5}
+                py={1}
+              >
+                <Typography variant="body1">
+                  Hey Prachi, , how are u ?
+                </Typography>
+              </Box>
             </Stack>
           </Stack>
-          <Stack spacing={0.5}>
-            <Stack direction={"row"} spacing={1} alignItems={"center"}>
-              <Stack
-                bgcolor={colors.primary[300]}
+          <Stack
+            spacing={0.5}
+            direction="row"
+            justifyContent="end"
+            alignItems="end"
+          >
+            <Stack spacing={0.25} alignItems={"end"} justifyContent={"end"}>
+              <Box
+                component="span"
+                bgcolor="primary.light"
                 flexWrap={"wrap"}
-                borderRadius={8}
-                p={1.5}
-                textAlign={"center"}
+                borderRadius="1.5rem 1.5rem .25rem 1.5rem"
+                px={1.5}
+                py={1}
               >
                 <Typography variant="body1" className="text-wrap">
-                  Hey Prachi, I just finished the code for the new feature.
+                  Hey Prachi
                 </Typography>
-              </Stack>
-              <Box width="40px" height="40px">
-                <Avatar
-                  alt="profile picture"
-                  src="media/avatars/300-1.jpg"
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    position: "relative",
-                  }}
-                />
+              </Box>
+
+              <Box
+                component="span"
+                bgcolor="primary.main"
+                flexWrap="wrap"
+                borderRadius="1.5rem .25rem 1.5rem 1.5rem"
+                px={1.5}
+                py={1}
+              >
+                <Typography variant="body1">
+                  Hey Prachi, , I just finishe
+                </Typography>
               </Box>
             </Stack>
-            <Stack
-              bgcolor={colors.primary[100]}
-              flexWrap={"wrap"}
-              borderRadius={8}
-              p={1.5}
-              textAlign={"justify"}
-            >
-              <Typography variant="body1">
-                Hey Prachi, I just finished the code for the new feature. Do you
-                have a moment to review it?
-              </Typography>
-            </Stack>
+
+            <Box width="40px" height="40px">
+              <Avatar
+                alt="profile picture"
+                src="media/avatars/300-1.jpg"
+                sx={{
+                  height: "100%",
+                  position: "relative",
+                }}
+              />
+            </Box>
           </Stack>
         </Stack>
 
