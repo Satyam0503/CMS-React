@@ -73,11 +73,7 @@ const UserProfile = () => {
   const empId = useParams().employeeid;
 
   useEffect(() => {
-    if (empId) {
-      setPageTitle(intl.formatMessage({ id: "PAGE.PROFILE" }));
-    } else {
-      setPageTitle(intl.formatMessage({ id: "PAGE.MY_PROFILE" }));
-    }
+    setPageTitle(intl.formatMessage({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
   }, []);
 
   return (

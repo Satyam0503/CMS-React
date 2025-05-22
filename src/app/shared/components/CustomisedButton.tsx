@@ -32,7 +32,7 @@ const CustomisedButton = (props: Props) => {
     loading,
   } = props;
 
-return (
+  return (
     <>
       {permission && (
         <Button

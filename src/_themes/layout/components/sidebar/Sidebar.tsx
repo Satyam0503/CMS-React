@@ -33,14 +33,14 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
 
   return (
     <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open} PaperProps={{
-      sx: { backgroundColor: "background.sidebar" },
+      sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
       className: 'sidebar-paper',
     }}
       onClose={handleClose}
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
     >
-      {/* <Box sx={{ width: 250 }} role="presentation" onClick={handleClose}> */}
+      {/* <Box role="presentation" onClick={handleClose}> */}
       {
         !isSmallScreen &&
         <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}

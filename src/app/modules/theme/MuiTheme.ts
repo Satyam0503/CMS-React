@@ -72,22 +72,22 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     },
     ...(mode === "light"
       ? {
-          background: {
-            body: "#f5f5f5",
-            header: "#ffffff",
-            card: "#ffffff",
-            sidebar: "#0D0E12",
-          },
-          divider: colors.neutral[300],
-        }
+        background: {
+          body: "#f5f5f5",
+          header: "#ffffff",
+          card: "#ffffff",
+          sidebar: "#0D0E12",
+        },
+        divider: colors.neutral[300],
+      }
       : {
-          background: {
-            body: "#121212",
-            header: "#282828",
-            card: "#282828",
-            sidebar: "#0D0E12",
-          },
-        }),
+        background: {
+          body: "#121212",
+          header: "#282828",
+          card: "#282828",
+          sidebar: "#0D0E12",
+        },
+      }),
   },
 });
 
@@ -264,7 +264,8 @@ export const createApplicationTheme = (mode: PaletteMode) => {
         styleOverrides: {
           root: {
             color: theme.palette.primary.main,
-          },
+
+          }
         },
       },
 

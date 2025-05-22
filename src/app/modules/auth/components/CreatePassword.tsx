@@ -39,7 +39,8 @@ export function CreatePassword() {
   const navigate = useNavigate();
   const [queryParam] = useSearchParams();
 
-  const statusNumber = queryParam.get("statusNumber") || "";
+  const token = queryParam.get("token") || "";
+  const uid = queryParam.get("uid") || "";
 
   async function handlePasswordChange(
     values: typeof initialValues,
@@ -48,13 +49,14 @@ export function CreatePassword() {
   ) {
     const payload = {
       newPassword: values.newPassword,
-      statusNumber,
+      token,
+      uid,
     };
     try {
       const response = await createPassword(payload);
       const { success, message } = response.data;
       if (!success) {
-        throw new AxiosError("Failed To Create New Password");
+        throw new AxiosError(message);
       }
       toast.success(message);
       setStatus("");
@@ -68,10 +70,14 @@ export function CreatePassword() {
   }
 
   useEffect(() => {
-    if (!(queryParam.size && queryParam.has("statusNumber"))) {
+    if (!(queryParam.size && queryParam.has("token") && queryParam.has("uid"))) {
       navigate("/error/404", { replace: true });
     }
   }, []);
+
+  console.log(token);
+  console.log(uid);
+
 
   return (
     <Stack spacing={{ xs: 4 }}>

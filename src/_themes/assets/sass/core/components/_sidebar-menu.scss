@@ -6,6 +6,7 @@
     overflow-y: visible;
     white-space: nowrap;
     transition: width 0.4s linear;
+    background-color: $sidebar-bg;
   }
   & .sidebar-collapse-button {
     position: absolute;
@@ -21,16 +22,6 @@
       transition: rotate 0.4s linear;
     }
   }
-
-  // logo
-  // & .company-logo {
-  //   max-width: "200px" !important;
-  //   width: "100%" !important;
-  //   max-height: "60px" !important;
-
-  //   object-fit: contain;
-  //   object-position: center;
-  // }
 
   & .user-profile-wrapper {
     width: 100%;

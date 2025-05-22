@@ -4,7 +4,7 @@ import { Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
-  ProcessLogFilterModel, 
+  ProcessLogFilterModel,
 } from "../app/modules/recruitment/models";
 import { EmployeeFilterModel } from '../app/modules/employees/models'
 
@@ -15,7 +15,8 @@ export interface ApiResponse {
 }
 export interface CreatePasswordModel {
   newPassword: string;
-  statusNumber: string;
+  token: string;
+  uid: string;
 }
 
 export interface UserModel {
