@@ -208,7 +208,7 @@ export const EditPermission = () => {
           />
         </Stack>
         {!currentRoleDetails?.isNotEditable && (
-          <Box className="p-5 shadow-md mb-2">
+          <Box className="p-5 mb-2" sx={{ border: 1, borderRadius: 1, borderColor: 'text.disabled' }}>
             <Stack
               spacing={2}
               direction={"row"}

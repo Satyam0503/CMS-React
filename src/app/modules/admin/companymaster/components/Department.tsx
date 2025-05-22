@@ -134,7 +134,7 @@ const Departments = () => {
               if (lang.lang === currentLang) {
                 return;
               }
-              return <MenuItem key={lang.id} value={lang.lang}>{lang.name}</MenuItem>;
+              return <MenuItem key={lang.id} value={lang.lang}>{formatMessage({ id: lang.name })}</MenuItem>;
             })}
           </Select>
         </FormControl>
@@ -143,10 +143,10 @@ const Departments = () => {
       <Stack className="attribute-container">
         <Box className="attribute-row">
           <Typography variant="body1" className="fw-bolder">
-            {formatMessage({ id: "Attribute.Title" }, { language: languages.find(lang => lang.lang === currentLang)?.name })}
+            {formatMessage({ id: "Attribute.Title" }, { language: formatMessage({ id: languages.find(lang => lang.lang === currentLang)?.name }) })}
           </Typography>
           <Typography variant="body1" className="fw-bolder">
-            {formatMessage({ id: "Attribute.Title2" }, { language: languages.find(lang => lang.lang === translationLang)?.name })}
+            {formatMessage({ id: "Attribute.Title2" }, { language: formatMessage({ id: languages.find(lang => lang.lang === translationLang)?.name }) })}
           </Typography>
           <Typography variant="body1" className="fw-bolder">
             {formatMessage({ id: "Attribute.Status" })}

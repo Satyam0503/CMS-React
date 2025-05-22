@@ -35,7 +35,6 @@ const CustomisedDatePicker = (props: PropsTypes) => {
                 inputProps: {
                   readOnly: true,
                   onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
-                  onWheel: (e) => e.preventDefault(), // Disable scrolling
                   onScroll: (e) => e.preventDefault(),
                 },
               },

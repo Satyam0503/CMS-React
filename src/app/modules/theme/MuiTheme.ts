@@ -329,6 +329,10 @@ export const createApplicationTheme = (mode: PaletteMode) => {
 
       MuiAutocomplete: {
         styleOverrides: {
+          option: {
+            marginBlockEnd: 2,
+            fontSize: 12,
+          },
           root: {
             "& .MuiOutlinedInput-root.MuiInputBase-sizeSmall": {
               padding: 4,
