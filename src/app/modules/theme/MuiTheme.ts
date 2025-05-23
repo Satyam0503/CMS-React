@@ -183,10 +183,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
           root: {
             backgroundColor: theme.palette.background.card,
             fontSize: "12px",
-            boxShadow:
-              theme.palette.mode === "light"
-                ? "0px 4px 4px" + theme.palette.grey[200]
-                : "none",
+            boxShadow: "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
           },
         },
       },

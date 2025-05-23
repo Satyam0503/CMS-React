@@ -18,8 +18,8 @@ export const PersonalDetails = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const { userDetails } = useUserDetails();
   const employeeId = useParams().employeeid;
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) || [];
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
+
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -36,12 +36,12 @@ export const PersonalDetails = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-          <CustomIconButton
-            tooltip="Edit"
-            icon={<Edit />}
-            handleClick={() => setModalOpen(true)}
-          />
-        )}
+            <CustomIconButton
+              tooltip="Edit"
+              icon={<Edit />}
+              handleClick={() => setModalOpen(true)}
+            />
+          )}
 
         {isModalOpen && userDetails && (
           <UpdateUserInfo

@@ -6,6 +6,7 @@ interface PropsTypes {
   label: string;
   name: string;
   children: ReactNode;
+  required?: boolean;
 }
 
 export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {

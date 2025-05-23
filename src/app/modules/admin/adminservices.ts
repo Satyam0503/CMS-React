@@ -18,8 +18,8 @@ import {
   GetCompanyDetailsResponse,
 } from "./models";
 
-export const getAllRoles = async () => {
-  return getRequest<GetAllRolesResponseData>(ServiceUrl.GET_ALL_ROLES);
+export const getAllRoles = async (excludeAdmin: boolean = false) => {
+  return getRequest<GetAllRolesResponseData>(excludeAdmin ? `${ServiceUrl.GET_ALL_ROLES}?excludeAdmin=${true}` : ServiceUrl.GET_ALL_ROLES);
 };
 export const getAllModulePermission = async () => {
   return getRequest<GetAllModulePermissionData>(
@@ -57,8 +57,8 @@ export const changeAppAccess = async (
 };
 
 // departments
-export const getAllDepartments = async () => {
-  return getRequest<GetDepartmentResponseModel>(ServiceUrl.GET_DEPARTMENTLIST);
+export const getAllDepartments = async (isActive: boolean = false) => {
+  return getRequest<GetDepartmentResponseModel>(isActive ? `${ServiceUrl.GET_DEPARTMENTLIST}?isActive=${isActive}` : ServiceUrl.GET_DEPARTMENTLIST);
 };
 
 export const updateDepartment = async (payload: DepartmentModel[]) => {

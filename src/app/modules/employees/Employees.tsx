@@ -29,7 +29,6 @@ import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
 import { countAppliedFilter } from "../../../utils/common"
 
-
 type ViewMode = "table" | "grid";
 
 const Employees = () => {
@@ -37,16 +36,9 @@ const Employees = () => {
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<
-    GetAllEmployeeResponseModel | undefined
-  >();
-  const [paginationValues, setPaginationValues] = useState({
-    pageNo: 0,
-    records: 10,
-  });
-  const [employeeList, setEmployeeList] = useState<
-    GetAllEmployeeResponseModel[]
-  >([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | undefined>();
+  const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
+  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -264,7 +256,6 @@ const Employees = () => {
 
       {isModalOpen && (
         <AddEmployee
-          employeeList={employeeList}
           open={isModalOpen}
           handleClose={() => setModalOpen(false)}
           refresh={isRefresh}
