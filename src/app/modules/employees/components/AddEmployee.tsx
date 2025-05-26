@@ -25,14 +25,13 @@ import { DepartmentModel, RoleModel } from "../../admin/models";
 import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { GetAllEmployeeResponseModel } from "../models";
 import { statusEncoder } from "../../../../utils/common";
-import { addEmployee } from "../employeeServices";
+import { addEmployee, getAllEmployees } from "../employeeServices";
 import { useLang } from "../../../../_themes/i18n/Metronici18n";
 
 const employeeInitialValue: EmployeeModel = {
   userId: "",
   employeeId: "",
   roleId: "",
-  companyId: "",
   firstName: "",
   lastName: "",
   gender: "",
@@ -42,30 +41,28 @@ const employeeInitialValue: EmployeeModel = {
   reportingManager: null,
   teamLead: null,
   phoneNumber: "",
-  bloodGroup: "",
-  address: "",
+  bloodGroup: null,
+  address: null,
   jobRole: "",
   status: "Active",
-  isEmailVerified: false,
   dateOfJoining: null,
-  personalEmail: "",
-  emergencyContact: "",
-  password: null,
+  personalEmail: null,
+  emergencyContact: null,
 };
 
 interface PropsTypes {
   open: boolean;
   handleClose: () => void;
-  employeeList: GetAllEmployeeResponseModel[];
   refresh: boolean;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const AddEmployee = (props: PropsTypes) => {
   const currentLanguage = useLang();
-  const { open, handleClose, employeeList, refresh, setRefresh } = props;
-  const [roles, setRoles] = useState<RoleModel[] | undefined>();
+  const { open, handleClose, refresh, setRefresh } = props;
+  const [roles, setRoles] = useState<RoleModel[]>([]);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
+  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const { formatMessage } = useIntl();
 
   async function SaveAddEditEmployee(
@@ -93,14 +90,14 @@ export const AddEmployee = (props: PropsTypes) => {
   }
 
   useEffect(() => {
-    Promise.all([getAllRoles(), getAllDepartments()])
+    Promise.all([getAllRoles(true), getAllDepartments(true)])
       .then((res) => {
         setRoles(res[0].data.methodResults);
         if (res[1].data.totalRecords === 0) {
           toast.error(formatMessage({ id: "MESSAGE.DEPARTMENT.NO_DEPARTMENTS" }));
           handleClose();
         } else {
-          setDepartmentList(res[1].data.methodResults.filter(dep => dep.isActive));
+          setDepartmentList(res[1].data.methodResults);
         }
       })
       .catch((err) => {
@@ -108,9 +105,18 @@ export const AddEmployee = (props: PropsTypes) => {
       });
   }, []);
 
-  const filteredRoles = roles?.filter(
-    (role) => role.titles !== Roles.Administrator
-  );
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getAllEmployees();
+        if (data.success) {
+          setEmployeeList(data.methodResults);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [])
 
   return (
     <>
@@ -171,6 +177,7 @@ export const AddEmployee = (props: PropsTypes) => {
                       <SelectInput
                         name="gender"
                         label={formatMessage({ id: "FORM.GENDER" })}
+                        required={true}
                       >
                         {Gender.map((item) => (
                           <MenuItem key={item.id} value={item.value}>
@@ -239,8 +246,9 @@ export const AddEmployee = (props: PropsTypes) => {
                       <SelectInput
                         name="roleId"
                         label={formatMessage({ id: "FORM.ROLE" })}
+                        required={true}
                       >
-                        {filteredRoles && filteredRoles.map((role) => {
+                        {roles.map((role) => {
                           return (
                             <MenuItem key={role.rolesId} value={role.rolesId}>
                               {role.titles}
@@ -262,6 +270,7 @@ export const AddEmployee = (props: PropsTypes) => {
                       <SelectInput
                         name="department"
                         label={formatMessage({ id: "FORM.DEPARTMENT" })}
+                        required={true}
                       >
                         {departmentList.map((dep) => (
                           <MenuItem

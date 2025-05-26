@@ -2,11 +2,12 @@ import { createContext, FC, useContext, useEffect, useMemo, useState } from "rea
 import { EmployeeModel } from "../../../utils/common_types";
 import { getEmployeeById } from "./userservices";
 import { useParams } from "react-router-dom";
+import { EmployeeByIdResponse } from "./models";
 
 type UserDataContextType = {
-  userDetails: EmployeeModel;
+  userDetails: EmployeeByIdResponse;
   totalSkills: number;
-  updateUserDetails: (userData?: EmployeeModel) => void;
+  updateUserDetails: (userData?: EmployeeByIdResponse) => void;
   updateTotalSkills: (totalSkills: number) => void;
   setRefresh: () => void;
 };
@@ -22,12 +23,12 @@ const UserDetailsContext = createContext<UserDataContextType | undefined>(
 
 // User Details Provider
 export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
-  const [userDetails, setUserDetails] = useState<EmployeeModel>({} as EmployeeModel);
+  const [userDetails, setUserDetails] = useState<EmployeeByIdResponse>({} as EmployeeByIdResponse);
   const [totalSkills, setTotalSkills] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const employeeId = useParams().employeeid ?? "";
 
-  function updateUserDetails(userData?: EmployeeModel) {
+  function updateUserDetails(userData?: EmployeeByIdResponse) {
     if (!userData) {
       setUserDetails(prev => prev);
     }

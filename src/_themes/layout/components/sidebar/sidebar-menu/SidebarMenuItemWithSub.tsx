@@ -26,7 +26,8 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
 
-  const handleMenuToggle = () => {
+  const handleMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     if (isOpen) {
       setCurrentMenuIndex(null)
     } else {

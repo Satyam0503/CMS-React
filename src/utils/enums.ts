@@ -11,6 +11,12 @@ export enum ApplicantStatus {
   InActive = 0,
   Active = 1,
 }
+
+export enum EmployeeStatus {
+  InActive = 0,
+  Active = 1
+}
+
 export enum CommentAction {
   Process = 0,
   InProgress = 1,

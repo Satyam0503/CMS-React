@@ -1,5 +1,5 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import {
   checkPermissionForModulesFeatureAccess,
   dateFormatter,
@@ -57,7 +57,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.ADDRESS" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.address || "NA"}{" "}
+            {userDetails?.address || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -65,14 +65,14 @@ export const PersonalDetails = () => {
           <Typography variant="body2">
             {intl.formatMessage({ id: "FORM.EMAIL" })}
           </Typography>
-          <Typography variant="body1">{userDetails?.email || "NA"}</Typography>
+          <Typography variant="body1">{userDetails?.email}</Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="body2">
             {intl.formatMessage({ id: "USER.PHONE" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.phoneNumber || "NA"}
+            {userDetails?.phoneNumber || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -81,14 +81,14 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.DOB" })}
           </Typography>
           <Typography variant="body1">
-            {dateFormatter(userDetails?.dateOfBirth!, "DD MMMM YYYY") || "NA"}
+            {dateFormatter(userDetails?.dateOfBirth!, "DD MMMM YYYY") || intl.formatMessage({ id: "NOT_AVAILABLE" })}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
           <Typography variant="body2">
             {intl.formatMessage({ id: "USER.GENDER" })}
           </Typography>
-          <Typography variant="body1">{userDetails?.gender || "NA"}</Typography>
+          <Typography variant="body1">{userDetails?.gender}</Typography>
         </Grid>
 
         <Grid item xs={12} sm={6}>
@@ -96,7 +96,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.DOJ" })}
           </Typography>
           <Typography variant="body1">
-            {dateFormatter(userDetails?.dateOfJoining!, "DD MMMM YYYY")}
+            {dateFormatter(userDetails?.dateOfJoining!, "DD MMMM YYYY") || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -105,7 +105,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.EMP_ID" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.employeeId || "NA"}
+            {userDetails?.employeeId}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -113,7 +113,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.DEPARTMENT" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.department || "NA"}
+            {userDetails?.departmentName || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -122,7 +122,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.REPORTING_MANAGER" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.reportingManager || "NA"}
+            {userDetails?.reportingManagerName || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -130,7 +130,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.TEAM_LEAD" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.teamLead || "NA"}
+            {userDetails?.teamLeadName || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -139,7 +139,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.personalEmail || "NA"}
+            {userDetails?.personalEmail || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -147,7 +147,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.emergencyContact || "NA"}
+            {userDetails?.emergencyContact || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
@@ -156,7 +156,7 @@ export const PersonalDetails = () => {
             {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.bloodGroup || "NA"}
+            {userDetails?.bloodGroup || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
       </Grid>

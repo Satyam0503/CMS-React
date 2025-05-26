@@ -3,7 +3,6 @@ import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { BarChart } from "../../../shared/components/BarChart";
-import { EmployeeModel } from "../../../../utils/common_types";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllDepartmentInfo } from '../dashboardservices';
 

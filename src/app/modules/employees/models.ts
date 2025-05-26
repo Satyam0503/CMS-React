@@ -1,4 +1,5 @@
-import { ResponseData } from "../../../utils/common_types";
+import { EmployeeModel, ResponseData } from "../../../utils/common_types";
+import { EmployeeByIdResponse } from "../users/models";
 
 export interface GetAllEmployeeResponseModel {
   userId: string;
@@ -25,5 +26,8 @@ export interface GetAllEmployeePayloadModel {
   gender: string[];
 }
 
-export type GetAllEmployeeResponseData =
-  ResponseData<GetAllEmployeeResponseModel>;
+
+export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
+export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
+
+export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;

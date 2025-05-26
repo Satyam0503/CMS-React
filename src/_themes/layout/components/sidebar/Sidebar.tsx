@@ -1,9 +1,8 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { Avatar, Box, Drawer, IconButton, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
-import { Link } from "react-router-dom";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
-import { East, West } from "@mui/icons-material";
+import { West } from "@mui/icons-material";
 
 type Props = {
   open: boolean;
@@ -40,49 +39,49 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
     >
-      {/* <Box role="presentation" onClick={handleClose}> */}
-      {
-        !isSmallScreen &&
-        <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
-          onClick={handleSideBarToggle}
-          onMouseOver={(e) => e.stopPropagation()}
-        >
-          <West />
-        </IconButton>
-      }
-      <Stack sx={{ p: 2 }} spacing={4} alignItems="center" width="100%">
-        <Avatar
-          variant="square"
-          alt="Company Logo"
-          src={companyLogo}
-          className="company-logo"
-          sx={{
-            maxWidth: "200px",
-            width: "100%",
-            height: "60px",
-            "& .MuiAvatar-img": {
-              objectFit: "contain",
-            }
-          }}
-        />
-        <Box component="div" className="user-profile-wrapper">
+      <Box role="presentation" onClick={handleClose}>
+        {
+          !isSmallScreen &&
+          <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
+            onClick={handleSideBarToggle}
+            onMouseOver={(e) => e.stopPropagation()}
+          >
+            <West />
+          </IconButton>
+        }
+        <Stack sx={{ p: 2 }} spacing={4} alignItems="center" width="100%">
           <Avatar
-            alt=""
-            src={profileUrl}
+            variant="square"
+            alt="Company Logo"
+            src={companyLogo}
+            className="company-logo"
             sx={{
+              maxWidth: "200px",
               width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              aspectRatio: 1,
+              height: "60px",
+              "& .MuiAvatar-img": {
+                objectFit: "contain",
+              }
             }}
           />
-        </Box>
-        <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name">
-          {`${currentUser?.firstName}  ${currentUser?.lastName}`}
-        </Typography>
-      </Stack>
-      <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
-      {/* </Box> */}
+          <Box component="div" className="user-profile-wrapper">
+            <Avatar
+              alt=""
+              src={profileUrl}
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                aspectRatio: 1,
+              }}
+            />
+          </Box>
+          <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name">
+            {`${currentUser?.firstName}  ${currentUser?.lastName}`}
+          </Typography>
+        </Stack>
+        <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
+      </Box>
     </Drawer >
   );
 };

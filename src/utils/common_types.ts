@@ -59,27 +59,26 @@ export interface EmployeeModel {
   lastName: string;
   gender: string;
   email: string;
-  companyId: string;
   roleId: string;
   employeeId: string;
-  department: string;
+  department: string | null;
   dateOfBirth: Dayjs | null;
   reportingManager: string | null;
   teamLead: string | null;
   phoneNumber: string;
-  bloodGroup: string;
-  address: string;
+  bloodGroup: string | null;
+  address: string | null;
   jobRole: string;
   dateOfJoining: Dayjs | null;
-  personalEmail: string;
-  emergencyContact: string;
+  personalEmail: string | null;
+  emergencyContact: string | null;
   status: string | boolean;
   isEmailVerified?: boolean;
-  password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
   birthDayThisYear?: Dayjs | string;
 }
+
 export interface UserEducationModel {
   educationId?: string;
   userId: string;
@@ -221,9 +220,7 @@ export interface TabModel {
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
-export type EmployeeResponseData = ResponseData<EmployeeModel>;
 
-export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
