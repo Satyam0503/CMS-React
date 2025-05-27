@@ -10,7 +10,7 @@ export interface GetAllEmployeeResponseModel {
   department: string;
   phoneNumber: string;
   fullProfileUrl: string | null;
-  dateOfBirth: string;
+  dateOfBirth: string | null;
 }
 
 export interface EmployeeFilterModel {

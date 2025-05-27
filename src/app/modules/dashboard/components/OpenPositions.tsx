@@ -15,10 +15,10 @@ export default function OpenPositions() {
   useEffect(() => {
     async function getActiveJobs() {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { success, methodResults } = response.data;
         if (success) {
-          setActiveJobs(methodResults.filter((job) => job.status === true));
+          setActiveJobs(methodResults);
         }
       } catch (error) {
         console.error((error as AxiosError).message);

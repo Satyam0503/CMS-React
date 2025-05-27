@@ -82,12 +82,10 @@ export const EditApplicant = () => {
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { success, methodResults } = response.data;
         if (success) {
-          setActiveVacancyList(
-            methodResults.filter((vacancy) => vacancy.status === true)
-          );
+          setActiveVacancyList(methodResults);
         }
       } catch (error) {
         console.error(error);

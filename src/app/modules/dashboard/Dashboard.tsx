@@ -17,7 +17,7 @@ import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { usePageData } from "../../../_themes/layout/core";
-import { GetAllEmployeeResponseModel } from "../employees/models";
+import UpcomingBirthday from "./components/UpcomingBirthday";
 
 // Main Dashboard Component
 export default function Dashboard() {
@@ -78,9 +78,7 @@ export default function Dashboard() {
               </Grid>
             )}
             <Grid item xs={12} sm={6}>
-              {/* <DepartmentChart employees={employees} /> */}
               <DepartmentChart />
-
             </Grid>
 
             <Grid item xs={12}>
@@ -100,7 +98,7 @@ export default function Dashboard() {
             />
             <EmpOnLeave />
             <Punctual />
-            {/* {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />} */}
+            <UpcomingBirthday />
             <EmpOfMonth />
             <Help />
           </Stack>

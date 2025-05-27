@@ -49,7 +49,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
   useEffect(() => {
     const getActiveJobs = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null);
         const { success, methodResults } = response.data;
         if (success) {
           setJobList(methodResults);

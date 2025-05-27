@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { dateFormatter } from "../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import RightDrawer from "./RightDrawer";
+import { DashboardCustomizeOutlined } from "@mui/icons-material";
 
 export const DashboardHeader = memo((props: { fullName: string }) => {
   const intl = useIntl();
@@ -40,15 +41,19 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
           </Stack>
         </Stack>
 
-        <IconButton
+        {/* <IconButton
           sx={{
             bgcolor: "primary.light",
             color: "common.white",
             "&:hover": { bgcolor: "primary.main" },
+            width: 42,
+            height: 42,
+
           }}
+          size="large"
         >
-          <RightDrawer />
-        </IconButton>
+          <DashboardCustomizeOutlined />
+        </IconButton> */}
       </Stack>
     </Stack>
   );

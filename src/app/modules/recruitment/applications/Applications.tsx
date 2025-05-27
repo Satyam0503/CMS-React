@@ -53,11 +53,9 @@ export const Applications = () => {
   const applicationFilters = useAppSelector((state) => state.filters.application);
   const open = Boolean(anchorEl);
   const id = open ? "application-filter" : undefined;
-  const isFilterAvailable = applicationFilters !== null;
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionsForModule = useMemo(
     () => getModulePermissions(ModulesName.Applications, userModulesPermissions),
@@ -114,15 +112,13 @@ export const Applications = () => {
         typeof applicationFilters?.maxExperience === "string"
           ? null
           : applicationFilters?.maxExperience! * 12,
+      pageNo: paginationValues.pageNo + 1,
+      records: paginationValues.records
     };
 
     const timeoutId = setTimeout(async () => {
       try {
-        const { data } = await getAllApplicantList(
-          isFilterAvailable ? payload : { ...initialFilter, name: search },
-          paginationValues.pageNo + 1,
-          paginationValues.records
-        );
+        const { data } = await getAllApplicantList(applicationFilters != null ? payload : { ...initialFilter, name: search, pageNo: paginationValues.pageNo + 1, records: paginationValues.records });
         setApplicationsList(data.methodResults.reverse());
         setTotalRecords(data.totalRecords);
       } catch (error) {

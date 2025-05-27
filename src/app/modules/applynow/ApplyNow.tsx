@@ -114,15 +114,13 @@ export default function ApplyNow() {
   useEffect(() => {
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);
           throw new Error(message);
         }
-        setActiveJobPositionsList(
-          methodResults.filter((job) => job.status === true)
-        );
+        setActiveJobPositionsList(methodResults);
 
         const selectedJob = methodResults.find((job) => job.status === true);
         if (selectedJob) {
@@ -228,17 +226,15 @@ export default function ApplyNow() {
                         ))
                       ) : (
                         <Typography variant="h5">
-                          {" "}
                           {intl.formatMessage({ id: "NO.VACANCY" })}
                         </Typography>
                       )}
                     </Stack>
                     <Stack spacing={2}>
                       <Typography variant="h5">
-                        {" "}
                         {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
                       </Typography>
-                      <Stack maxHeight={"400px"} overflow={"auto"}>
+                      <Stack >
                         {selectedJobPosition ? (
                           <Typography
                             variant="body1"

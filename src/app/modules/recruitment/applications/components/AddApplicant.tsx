@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Box,
-  FormHelperText,
   Grid,
   MenuItem,
   Stack,
@@ -12,7 +11,6 @@ import {
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { FC, useEffect, useState } from "react";
 import { CloudUploadOutlined, Style } from "@mui/icons-material";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { Formik } from "formik";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
@@ -57,11 +55,6 @@ export const AddApplicant: FC<PropsTypes> = ({
 }) => {
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const intl = useIntl();
-
-  const activeVacancies = vacancyList.filter(
-    (vacancy) => vacancy.status === true
-  );
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -113,9 +106,13 @@ export const AddApplicant: FC<PropsTypes> = ({
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const { data } = await getAllJobVacancies();
+        const { data } = await getAllJobVacancies(null, true);
         if (!(data.success && data.statusCode === 200)) {
           throw new Error(data.message);
+        }
+        if (data.methodResults.length < 1) {
+          toast.error("No active vacancies present");
+          handleClose();
         }
         setVacancyList(data.methodResults);
       } catch (error) {
@@ -126,7 +123,7 @@ export const AddApplicant: FC<PropsTypes> = ({
   }, []);
   return (
     <>
-      {activeVacancies && activeVacancies.length > 0 && (
+      {vacancyList.length > 0 && (
         <CustomisedModal open={open} handleClose={handleClose}>
           <Stack spacing={2}>
             <Typography variant="h5">
@@ -203,7 +200,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           name="vacancyId"
                           label={intl.formatMessage({ id: "USER.DESIGNATION" })}
                         >
-                          {activeVacancies.map((vacancy) => (
+                          {vacancyList.map((vacancy) => (
                             <MenuItem key={vacancy.jobId} value={vacancy.jobId}>
                               {vacancy.title}
                             </MenuItem>

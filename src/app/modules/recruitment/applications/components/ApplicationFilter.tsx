@@ -74,7 +74,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
   useEffect(() => {
     const getActiveJobs = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { success, methodResults } = response.data;
         if (success) {
           setJobList(methodResults);

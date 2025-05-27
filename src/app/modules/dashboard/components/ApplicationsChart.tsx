@@ -1,13 +1,9 @@
 import { useIntl } from "react-intl";
-
 import { useCallback, useEffect, useState } from "react";
-
 import { AxiosError } from "axios";
-
 import { Box, Typography } from "@mui/material";
 import { applicationStatusMapper } from "../../../../utils/common";
 import { getAllApplicantList } from "../../recruitment/services";
-import { initialFilterValues } from "../../recruitment/applications/components/ApplicationFilter";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Applicant } from "../../recruitment/models";
 import { BarChart } from "../../../shared/components/BarChart";
@@ -44,12 +40,7 @@ export const ApplicationsChart = () => {
   useEffect(() => {
     async function getAllApplications() {
       try {
-        const response = await getAllApplicantList({
-          ...initialFilterValues,
-          maxExperience: null,
-          minExperience: null,
-          name: "",
-        });
+        const response = await getAllApplicantList(null);
         const { success, methodResults } = response.data;
         if (success) {
           setApplicationList(methodResults);

@@ -1,11 +1,9 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { BarChart } from "../../../shared/components/BarChart";
-import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllDepartmentInfo } from '../dashboardservices';
-
 
 export const DepartmentChart: FC = () => {
   const intl = useIntl();

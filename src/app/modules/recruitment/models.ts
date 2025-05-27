@@ -39,6 +39,8 @@ export interface GetApplicationPayloadModel {
   status?: number[];
   minExperience?: number | string | null;
   maxExperience?: number | string | null;
+  pageNo: number,
+  records: number
 }
 
 export interface ApplicationFilterModel {
@@ -73,10 +75,6 @@ export interface JobModal {
   description: string;
 }
 
-export interface JobSearchModel {
-  name: string
-}
-
 export interface CommentModel {
   applicantId: string;
   userId: string;
@@ -95,6 +93,12 @@ export type GetCommentPayloadModel = {
   pageSize: number;
   applicantId: string;
 };
+
+export type GetAllVacancyPayload = {
+  pageNo: number,
+  records: number,
+  search: string,
+}
 
 export type CommentResponseModel = CommentModel &
   BaseModel & {
