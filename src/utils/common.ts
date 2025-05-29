@@ -163,6 +163,14 @@ export const getModulePermissions = (
   return allowedPermission;
 };
 
+export const hasModuleFeaturePermission = (moduleName: ModulesName, permission: Permission, modulesPermissions: string[]) => {
+  const modulePermisson = `${moduleName}.${permission}`;
+  if (modulesPermissions.length === 0) {
+    return false;
+  }
+  return modulesPermissions.findIndex(permission => permission === modulePermisson) > -1;
+}
+
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
   if (columnValueType === "number") {

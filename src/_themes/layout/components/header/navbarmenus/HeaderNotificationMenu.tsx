@@ -1,7 +1,4 @@
 import * as React from "react";
-
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 
 import Typography from "@mui/material/Typography";
@@ -10,17 +7,21 @@ import {
   Badge,
   Divider,
   IconButton,
-  Link,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
   MenuList,
   Stack,
   Tooltip,
 } from "@mui/material";
-import { Close, NotificationsOutlined } from "@mui/icons-material";
+import { Close, NotificationsOutlined, Translate } from "@mui/icons-material";
 import { useIntl } from "react-intl";
+import Connector from "../../../../../server/SignalR";
+import { NoticeModel } from "../../../../../app/modules/noticeboard/models";
 
 export default function HeaderNotificationMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const [notificationList, setNotificationList] = React.useState<NoticeModel[]>([])
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,35 +31,50 @@ export default function HeaderNotificationMenu() {
     setAnchorEl(null);
   };
   const intl = useIntl();
+  const connection = Connector.getInstance().getConnetion();
+
+  React.useEffect(() => {
+    if (connection) {
+      connection.on("noticeNotify", (notice: NoticeModel) => {
+        setNotificationList([...notificationList, notice]);
+      })
+    }
+  }, [])
+  console.log(notificationList);
+
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <Tooltip title="Notifications" placement="bottom">
-          <IconButton
-            sx={{
+      <Tooltip title="Notifications" placement="bottom">
+        <IconButton
+          sx={{
+            bgcolor: "inherit",
+            border: "none",
+            "&:hover": {
               bgcolor: "inherit",
               border: "none",
-              "&:hover": {
-                bgcolor: "inherit",
-                border: "none",
-              },
-            }}
-            onClick={handleClick}
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-          >
-            <Badge badgeContent={4} color="primary">
-              <NotificationsOutlined fontSize="large" />
-            </Badge>
-          </IconButton>
-        </Tooltip>
-      </Box>
+            },
+          }}
+          onClick={handleClick}
+          aria-controls={open ? "account-menu" : undefined}
+          aria-haspopup="true"
+        >
+          <Badge badgeContent={4} color="primary">
+            <NotificationsOutlined fontSize="large" />
+          </Badge>
+        </IconButton>
+      </Tooltip>
+
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
         onClose={handleClose}
         onClick={handleClose}
+        slotProps={{
+          paper: {
+            sx: { width: 300 }
+          }
+        }}
       >
         <Stack>
           <Stack
@@ -81,59 +97,21 @@ export default function HeaderNotificationMenu() {
               <Close />
             </Stack>
           </Stack>
-
           <Divider />
           <MenuList>
-            <Stack>
-              <Link href="/userdashboard">
-                <Typography> Birthday Today</Typography>
-              </Link>
-              <Typography variant="body2">
-                One of your collegue has birthday today
-              </Typography>
-            </Stack>
-          </MenuList>
-          <Divider />
-          <MenuList>
-            <Stack>
-              <Link href="/noticeboard">
-                <Typography> Notice Board </Typography>
-              </Link>
-              <Typography variant="body2">
-                Hey, It could be an important message
-              </Typography>
-            </Stack>
-          </MenuList>
-          <Divider />
-
-          <MenuList onClick={handleClose}>
-            <Link href="/userdashboard">
-              <Typography> Birthday Today</Typography>
-            </Link>
-            <Typography variant="body2">
-              One of your collegue has birthday today
-            </Typography>
-          </MenuList>
-          <Divider />
-
-          <MenuList>
-            <Link href="/myprofile">
-              <Typography variant="body1">
-                Unread message in Leave Tracker
-              </Typography>
-            </Link>
-            <Typography variant="body2">
-              Status of your leave is changed
-            </Typography>
-          </MenuList>
-          <Divider />
-          <MenuList>
-            <Link href="/myprofile">
-              <Typography variant="body1">Account setting</Typography>
-            </Link>
-            <Typography variant="body2">
-              Password of portal has been changed
-            </Typography>
+            {
+              notificationList.map(notification => (
+                <MenuItem className="px-2">
+                  <ListItemIcon>
+                    <Translate />
+                  </ListItemIcon>
+                  <ListItemText>
+                    {notification.title}
+                  </ListItemText>
+                  {notification.target}
+                </MenuItem>
+              ))
+            }
           </MenuList>
         </Stack>
       </Menu>

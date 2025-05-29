@@ -8,8 +8,20 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-image-crop/dist/ReactCrop.css";
 import { ThemeContextProvider } from "./Context/ThemeContext";
+import { useAppSelector } from "./Redux/hooks";
+import Connector from '../server/SignalR';
 
 const App = () => {
+  const { token, isUserAuthenticated } = useAppSelector(state => state.auth);
+  useEffect(() => {
+    const instance = Connector.getInstance()
+    if (isUserAuthenticated && token) {
+      instance.startConnection(token);
+    } else {
+      instance.stopConnection();
+    }
+  }, [isUserAuthenticated, token]);
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeContextProvider>

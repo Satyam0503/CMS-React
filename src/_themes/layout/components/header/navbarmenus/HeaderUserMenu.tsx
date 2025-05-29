@@ -18,7 +18,6 @@ import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { Languages } from "./Languages";
 import {
   AccountCircle,
-  GTranslate,
   Logout,
   Translate,
 } from "@mui/icons-material";
@@ -93,11 +92,11 @@ export default function HeaderUserMenu() {
           </ListItemText>
           <Languages />
         </MenuItem>
-        <MenuItem onClick={handleClose} className="px-2">
+        <MenuItem onClick={logout} className="px-2">
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
-          <ListItemText onClick={logout}>
+          <ListItemText >
             {intl.formatMessage({ id: "AUTH.SIGNOUT" })}
           </ListItemText>
         </MenuItem>

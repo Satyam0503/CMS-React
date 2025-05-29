@@ -133,7 +133,11 @@ export const ServiceUrl = {
 
   // dashboard
   GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
-  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`
+  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`,
+
+  // notice 
+  GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
+  POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
 };
 
 export const languages = [

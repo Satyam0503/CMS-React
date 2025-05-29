@@ -210,6 +210,9 @@
 
   "NOTICE_BOARD.DATE_TIME": "Date/Time",
   "NOTICE_BOARD.TYPE": "Type",
+  "NOTICE.POST_NOTICE": "Post Notice",
+  "NOTICE.MY_NOTICE": "My Notice",
+  "NOTICE.EDIT_NOTICE": "Edit Notice",
 
   "LINK.NOTIFICATION": "check the submissions",
   "LEAVE.CL": "Casual Leaves",
@@ -538,6 +541,7 @@
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
   "BUTTON.RETURN_HOME": "Return Home",
+  "BUTTON.PUBLISH": "Publish",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 

@@ -11,45 +11,48 @@ import { NoticeTypes } from "../../../../utils/constant/Constant";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import noticeSchema from "../../../../utils/Schema/noticeSchema";
 
+const initialValues = {
+
+}
+
 interface PropsTypes {
-  initialValues: NoticeModel;
+  // initialValues: NoticeModel;
   open: boolean;
   handleClose: () => void;
   isEdit: boolean;
-  handleAddEditNotice: (
-    values: NoticeModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => void;
+  // handleAddEditNotice: (
+  //   values: NoticeModel,
+  //   setSubmitting: (isSubmitting: boolean) => void
+  // ) => void;
 }
 
 export const AddNotice: FC<PropsTypes> = ({
   open,
   isEdit,
   handleClose,
-  handleAddEditNotice,
-  initialValues,
+  // initialValues,
 }) => {
-  const intl = useIntl();
+  const { formatMessage } = useIntl();
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Formik
         initialValues={initialValues}
         validationSchema={noticeSchema}
         onSubmit={(values, { setSubmitting }) => {
-          handleAddEditNotice(values, setSubmitting);
+          // handleAddEditNotice(values, setSubmitting);
         }}
       >
         {({ isValid, dirty, isSubmitting, handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Typography variant="h5" mb={2}>
               {isEdit
-                ? intl.formatMessage({ id: "MENU.NOTICE_EDIT" })
-                : intl.formatMessage({ id: "MENU.POST_NOTICE" })}
+                ? formatMessage({ id: "NOTICE.EDIT_NOTICE" })
+                : formatMessage({ id: "NOTICE.POST_NOTICE" })}
             </Typography>
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2 }}>
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12} md={6}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "FORM.TYPE" })}
+                  label={formatMessage({ id: "FORM.TYPE" })}
                   name="type"
                 >
                   {NoticeTypes.map((notice) => (
@@ -61,7 +64,7 @@ export const AddNotice: FC<PropsTypes> = ({
               </Grid>
               <Grid item xs={12} md={6}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "USER.TARGET" })}
+                  label={formatMessage({ id: "USER.TARGET" })}
                   name="target"
                 >
                   {NoticeTypes.map((notice) => (
@@ -74,7 +77,7 @@ export const AddNotice: FC<PropsTypes> = ({
 
               <Grid item xs={12}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "USER.GROUP" })}
+                  label={formatMessage({ id: "USER.GROUP" })}
                   name="group"
                 >
                   {NoticeTypes.map((notice) => (
@@ -87,7 +90,7 @@ export const AddNotice: FC<PropsTypes> = ({
               <Grid item xs={12}>
                 <TextInput
                   multiline={true}
-                  label={intl.formatMessage({ id: "MENU.MESSAGE" })}
+                  label={formatMessage({ id: "MENU.MESSAGE" })}
                   name="message"
                   placeholder="Message"
                   type="text"
@@ -96,13 +99,13 @@ export const AddNotice: FC<PropsTypes> = ({
             </Grid>
             <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>
               <CustomisedButton
-                label="Cancel"
+                label={formatMessage({ id: "BUTTON.CANCEL" })}
                 handleClick={handleClose}
                 variant="outlined"
               />
               <CustomisedButton
                 disabled={isSubmitting || !(isValid && dirty)}
-                label={isEdit ? "Update" : "Publish"}
+                label={isEdit ? formatMessage({ id: "BUTTON.UPDATE" }) : formatMessage({ id: "BUTTON.PUBLISH" })}
                 type="submit"
                 Icon={<Send />}
               />
