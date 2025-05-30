@@ -420,7 +420,7 @@ button:hover .ql-fill,
 .tab_active {
   border-bottom: 2px solid $app-primary-500 !important;
   color: $app-primary-500 !important;
-  background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
+  // background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
 }
 
 .truncate-multi-line {

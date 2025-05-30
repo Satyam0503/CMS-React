@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login } from "../core/_requests";
-import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
+import { Alert, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
@@ -83,11 +83,7 @@ export function Login() {
           <form onSubmit={handleSubmit} noValidate id="kt_login_signin_form">
             <Stack spacing={2}>
               {status && (
-                <Grid className="mb-lg-15 alert alert-danger">
-                  <Grid className="alert-text" fontWeight={600}>
-                    {status}
-                  </Grid>
-                </Grid>
+                <Alert severity="error" sx={{ my: 2 }} className="mb-5">{status}</Alert>
               )}
               <Stack spacing={2}>
                 <Stack>

@@ -5,9 +5,9 @@
 // Custom functions & mixins
 
 // Custom variables
-@import "./styles/variables.scss";
 @import "./core/components/variables";
 @import "./core/components/variables-dark";
+@import "./styles/variables.scss";
 
 // Bootstrap initializaton
 @import "bootstrap/scss/functions";

@@ -36,7 +36,7 @@ body.page-loading {
   height: 40px !important;
 }
 
-html[data-bs-theme="dark"] .page-loading .splash-screen {
+html[data-theme="dark"] .page-loading .splash-screen {
   background-color: #121212;
   color: #ffffff;
 }
@@ -49,10 +49,10 @@ html[data-bs-theme="dark"] .page-loading .splash-screen {
   display: block;
 }
 
-html[data-bs-theme="dark"] .splash-screen .light-logo {
+html[data-theme="dark"] .splash-screen .light-logo {
   display: none;
 }
 
-html[data-bs-theme="dark"] .splash-screen .dark-logo {
+html[data-theme="dark"] .splash-screen .dark-logo {
   display: block;
 }
