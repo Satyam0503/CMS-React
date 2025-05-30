@@ -1,15 +1,15 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { I18nProvider } from "../_themes/i18n/i18nProvider";
-import { LayoutProvider, LayoutSplashScreen } from "../_themes/layout/core";
+import { LayoutSplashScreen } from "../_themes/layout/core";
 import { AuthInit } from "./modules/auth";
 import { CssBaseline, StyledEngineProvider } from "@mui/material";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-image-crop/dist/ReactCrop.css";
 import { ThemeContextProvider } from "./Context/ThemeContext";
 import { useAppSelector } from "./Redux/hooks";
 import Connector from '../server/SignalR';
+import { ToastProvider } from "../_themes/layout/core/ToastProvider";
 
 const App = () => {
   const { token, isUserAuthenticated } = useAppSelector(state => state.auth);
@@ -28,23 +28,11 @@ const App = () => {
         <CssBaseline />
         <Suspense fallback={<LayoutSplashScreen />}>
           <I18nProvider>
-            <LayoutProvider>
-              <AuthInit>
-                <Outlet />
-              </AuthInit>
-            </LayoutProvider>
+            <AuthInit>
+              <Outlet />
+            </AuthInit>
           </I18nProvider>
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={true}
-            pauseOnFocusLoss
-            pauseOnHover
-            stacked={true}
-            theme="light"
-          />
+          <ToastProvider />
         </Suspense>
       </ThemeContextProvider>
     </StyledEngineProvider>

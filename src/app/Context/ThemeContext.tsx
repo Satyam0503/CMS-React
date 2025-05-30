@@ -16,7 +16,7 @@ const ThemeContext = React.createContext<ThemeContextType>({
     toggleThemeMode: () => { },
 })
 
-const getCurrentThemeMode = (): string | undefined => {
+export const getCurrentThemeMode = (): string | undefined => {
     if (!localStorage) {
         return;
     }

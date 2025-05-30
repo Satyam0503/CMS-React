@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { DrawerMessenger } from "../partials";
 import { Container, Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Sidebar } from "./components/sidebar";
