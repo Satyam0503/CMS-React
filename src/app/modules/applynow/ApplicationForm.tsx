@@ -154,7 +154,6 @@ export default function ApplicationForm() {
             <CustomisedButton
               variant="outlined"
               Icon={<Close />}
-              iconPosition="start"
               label="Close"
               size="large"
               style={{ paddingInline: "3rem" }}

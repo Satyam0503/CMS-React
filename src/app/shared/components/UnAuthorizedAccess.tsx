@@ -48,7 +48,6 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
         <CustomisedButton
           label={formatMessage({ id: "BUTTON.RETURN_HOME" })}
           Icon={<Home />}
-          iconPosition="end"
           handleClick={() => navigate('/')}
         />
       </Stack>

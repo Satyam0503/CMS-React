@@ -31,7 +31,6 @@ const Error500 = () => {
         <CustomisedButton
           label={formatMessage({ id: "BUTTON.RETURN_HOME" })}
           Icon={<Home />}
-          iconPosition="start"
           handleClick={() => navigate("/")}
           className="mt-10"
         />

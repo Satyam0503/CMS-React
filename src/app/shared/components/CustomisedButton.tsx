@@ -12,7 +12,6 @@ type Props = {
   disabled?: boolean;
   permission?: boolean;
   style?: React.CSSProperties;
-  iconPosition?: "start" | "end";
   loading?: boolean;
 };
 
@@ -26,8 +25,6 @@ const CustomisedButton = (props: Props) => {
     size,
     disabled = false,
     permission = true,
-    style = { gap: ".5rem" },
-    iconPosition = "end",
     type = "button",
     loading,
   } = props;
@@ -37,17 +34,21 @@ const CustomisedButton = (props: Props) => {
       {permission && (
         <Button
           variant={variant}
-          style={style}
           onClick={handleClick}
           disabled={disabled}
           size={size}
           className={className}
           type={type}
+          sx={{ gap: 1 }}
         >
-          {iconPosition === "start" && Icon}
-          {loading ? <span className="loader"></span> : label}
-          {iconPosition === "end" && Icon}
-        </Button>
+          {
+            loading ? <span className="loader" /> :
+              <>
+                {label}
+                {Icon}
+              </>
+          }
+        </Button >
       )}
     </>
   );

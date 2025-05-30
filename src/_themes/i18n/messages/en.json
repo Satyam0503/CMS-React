@@ -208,11 +208,16 @@
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
 
-  "NOTICE_BOARD.DATE_TIME": "Date/Time",
-  "NOTICE_BOARD.TYPE": "Type",
+  "NOTICE_BOARD.POSTED_DATETIME": "Posted Date/Time",
+  "NOTICE_BOARD.POSTED_BY": "Posted By",
+  "NOTICE_BOARD.TYPE": "Notice Type",
   "NOTICE.POST_NOTICE": "Post Notice",
   "NOTICE.MY_NOTICE": "My Notice",
   "NOTICE.EDIT_NOTICE": "Edit Notice",
+  "NOTICE_TYPE.GENERAL": "General",
+  "NOTICE_TYPE.IMPORTANT": "Important",
+  "NOTICE_TYPE.URGENT": "Urgent",
+  "NOTICE_TYPE.ALL": "All",
 
   "LINK.NOTIFICATION": "check the submissions",
   "LEAVE.CL": "Casual Leaves",

@@ -17,18 +17,18 @@ import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { NoticeModel } from "./models";
+import { NoticeModel, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 
-export default function NoticeBoard() {
+const NoticeBoard = () => {
   const { formatMessage } = useIntl();
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [NoticeList, setNoticeList] = React.useState<NoticeModel[]>([]);
+  const [NoticeList, setNoticeList] = React.useState<NoticeResponseModel[]>([]);
   const [loading, setLoading] = useState(true);
-  const [paginationValues, setPaginationValues] = useState({ pageNo: 1, records: 10 })
+  const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 })
   const { setPageTitle } = usePageData();
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const navigate = useNavigate();
@@ -106,8 +106,10 @@ export default function NoticeBoard() {
       </Card>
       {
         isModalOpen &&
-        < AddNotice open={isModalOpen} handleClose={handleClose} isEdit={false} />
+        <AddNotice open={isModalOpen} handleClose={handleClose} isEdit={false} />
       }
     </>
   );
 }
+
+export default NoticeBoard;

@@ -113,3 +113,9 @@ export enum LANGUAGE {
   GERMAN = "de",
   FRENCH = "fr",
 }
+
+export enum NOTICE_TYPE {
+  GENERAL = 1,
+  IMPORTANT = 2,
+  URGENT = 3
+}

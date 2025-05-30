@@ -323,7 +323,6 @@ export const EditPermission = () => {
                 }
                 label={formatMessage({ id: "BUTTON.SAVE" })}
                 Icon={<Check />}
-                iconPosition="start"
                 type="submit"
               />
             </Stack>

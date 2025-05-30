@@ -84,7 +84,6 @@ export default function ProfileCard() {
             variant="outlined"
             style={{ color: "white", borderColor: "white" }}
             Icon={<Download />}
-            iconPosition="start"
             className="align-self-center"
             label={intl.formatMessage({ id: "DOWNLOAD.SALARY_SLIP" })}
           />

@@ -21,6 +21,7 @@ import {
   Modules,
   ModulesName,
   ModulesTitles,
+  NOTICE_TYPE,
   TIME_PERIOD_MAP,
 } from "../enums";
 
@@ -51,6 +52,7 @@ import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
+import { NoticeResponseModel } from "../../app/modules/noticeboard/models";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -204,6 +206,24 @@ export const Gender = [
   },
 ];
 
+export const NoticeTypes = [
+  {
+    id: 1,
+    label: "NOTICE_TYPE.GENERAL",
+    value: NOTICE_TYPE.GENERAL,
+  },
+  {
+    id: 2,
+    label: "NOTICE_TYPE.IMPORTANT",
+    value: NOTICE_TYPE.IMPORTANT,
+  },
+  {
+    id: 3,
+    label: "NOTICE_TYPE.URGENT",
+    value: NOTICE_TYPE.URGENT,
+  }
+]
+
 export const EducationType = [
   {
     id: 1,
@@ -225,12 +245,6 @@ export const EducationType = [
 export const HolidayTypes = [
   { id: 1, label: "Public Holiday", value: "Public Holiday" },
   { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
-];
-
-export const NoticeTypes = [
-  { id: 1, label: "General", value: "General" },
-  { id: 2, label: "Important", value: "Important" },
-  { id: 3, label: "Urgent", value: "Urgent" },
 ];
 
 export const bloodGroups = [
@@ -470,36 +484,32 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "name",
-    label: "APPLICANT.NAME",
+    id: "userName",
+    label: "NOTICE_BOARD.POSTED_BY",
+    avatarCell: (notice: NoticeResponseModel) => {
+      return (
+        <AvatarCell
+          avatarSrc={notice.userProfile}
+          title={notice.userName}
+          subTitle={notice.userDesignation}
+        />
+      );
+    },
   },
   {
-    id: "datetime",
-    label: "NOTICE_BOARD.DATE_TIME",
+    id: "createdDateTime",
+    label: "NOTICE_BOARD.POSTED_DATETIME",
+    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
 
   {
-    id: "type",
+    id: "noticeType",
     label: "NOTICE_BOARD.TYPE",
   },
   {
-    id: "message",
+    id: "noticeMessage",
     label: "MENU.MESSAGE",
-  },
-  {
-    id: "action",
-    label: "Table.Column.Action",
-    build: (
-      row: any,
-      handleNoticeEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleNoticeEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
+    minWidth: 300,
   },
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [

@@ -187,7 +187,6 @@ export const AddEditJob: FC<PropsTypes> = ({
               <CustomisedButton
                 label="Delete"
                 Icon={<DeleteOutline />}
-                iconPosition="start"
                 className="delete-button"
               />
             )}
@@ -202,7 +201,6 @@ export const AddEditJob: FC<PropsTypes> = ({
                 id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
               })}
               type="submit"
-              iconPosition="start"
               disabled={isSubmitting || !(dirty && isValid)}
             />
           </Stack>

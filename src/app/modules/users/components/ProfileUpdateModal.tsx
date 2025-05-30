@@ -162,13 +162,11 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                 variant="outlined"
                 label="Delete File"
                 Icon={<DeleteOutlineOutlined />}
-                iconPosition="end"
-                handleClick={() => {}}
+                handleClick={() => { }}
               />
               <CustomisedButton
                 label="Upload File"
                 Icon={<AttachFile />}
-                iconPosition="end"
                 disabled={!selectedImage}
                 handleClick={handleUpdateAvatar}
               />

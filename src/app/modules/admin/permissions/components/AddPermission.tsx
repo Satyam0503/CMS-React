@@ -237,7 +237,6 @@ export const AddPermission = () => {
                 disabled={formik.isSubmitting}
                 label={formatMessage({ id: "BUTTON.SAVE" })}
                 Icon={<Check />}
-                iconPosition="start"
               />
             </Stack>
           </>
