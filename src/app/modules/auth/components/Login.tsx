@@ -2,9 +2,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login } from "../core/_requests";
-
-import { Grid, InputAdornment, Stack, Typography } from "@mui/material";
-import { colors } from "../../theme/MuiTheme";
+import { Alert, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
@@ -58,11 +56,11 @@ export function Login() {
   }
   return (
     <Stack spacing={4}>
-      <Stack sx={{ textAlign: "center" }}>
-        <Typography variant="h3">
+      <Stack sx={{ textAlign: "center" }} spacing={1}>
+        <Typography variant="h1">
           {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
         </Typography>
-        <Typography variant="body1" color={colors.alpha.primary[500]}>
+        <Typography variant="h4">
           {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
         </Typography>
       </Stack>
@@ -85,11 +83,7 @@ export function Login() {
           <form onSubmit={handleSubmit} noValidate id="kt_login_signin_form">
             <Stack spacing={2}>
               {status && (
-                <Grid className="mb-lg-15 alert alert-danger">
-                  <Grid className="alert-text" fontWeight={600}>
-                    {status}
-                  </Grid>
-                </Grid>
+                <Alert severity="error" sx={{ my: 2 }} className="mb-5">{status}</Alert>
               )}
               <Stack spacing={2}>
                 <Stack>
@@ -102,7 +96,7 @@ export function Login() {
                       endAdornment: (
                         <InputAdornment position="end">
                           {touched.email && errors.email ? (
-                            <ErrorOutline color="warning" />
+                            <ErrorOutline color="error" />
                           ) : touched.email && !errors.email ? (
                             <Check color="success" />
                           ) : null}
@@ -122,7 +116,7 @@ export function Login() {
                       endAdornment: (
                         <InputAdornment position="end">
                           {touched.password && errors.password ? (
-                            <ErrorOutline color="warning" />
+                            <ErrorOutline color="error" />
                           ) : touched.password && !errors.password ? (
                             <Check color="success" />
                           ) : null}
@@ -131,13 +125,9 @@ export function Login() {
                     }}
                   />
                 </Stack>
-
-                <Typography>
-                  <Link to="/auth/forgot-password">
-                    {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
-                  </Link>
-                </Typography>
-
+                <Link to="/auth/forgot-password">
+                  {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
+                </Link>
                 <Stack spacing={1}>
                   <CustomisedButton
                     type="submit"

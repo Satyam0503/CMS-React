@@ -95,28 +95,26 @@ export const ApplicationModules: FC = () => {
 
         {moduleInfo.map((module) => {
           return (
-            <>
-              <Stack
-                direction="row"
-                spacing={1}
-                alignItems={"center"}
-                key={module.moduleId}
-              >
-                <Stack>
-                  <Switch
-                    checked={module.isAccessible}
-                    onChange={(e) => handleChange(e, module.moduleId)}
-                  />
-                </Stack>
-
-                <Stack>
-                  <Typography variant="body1">{module.moduleName}</Typography>
-                </Stack>
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems={"center"}
+              key={module.moduleId}
+            >
+              <Stack>
+                <Switch
+                  checked={module.isAccessible}
+                  onChange={(e) => handleChange(e, module.moduleId)}
+                />
               </Stack>
-            </>
+
+              <Stack>
+                <Typography variant="body1">{module.moduleName}</Typography>
+              </Stack>
+            </Stack>
           );
         })}
-      </Stack>
+      </Stack >
       {isConfirmModalOpen && (
         <ConfirmationModal
           title={formatMessage({ id: "TITLE.HIDE_MODULE" })}
@@ -126,7 +124,8 @@ export const ApplicationModules: FC = () => {
           handleConfirmation={handleModuleHiding}
           ok_btn={true}
         />
-      )}
+      )
+      }
     </>
-  );
-};
+  )
+}

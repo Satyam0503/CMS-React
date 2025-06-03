@@ -1,48 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Metronic React Demo 1" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700"
+    />
+    <title>Codeji Infotech Pvt Ltd</title>
+    <link rel="shortcut icon" href="media/logos/favicon.png" />
+    <link
+      rel="stylesheet"
+      id="layout-styles-anchor"
+      href="/splash-screen.css"
+    />
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Metronic React Demo 1" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-  <title>Codeji Infotech Pvt Ltd</title>
-  <link rel="shortcut icon" href="media/logos/favicon.png" />
-  <link rel="stylesheet" id="layout-styles-anchor" href="/splash-screen.css" />
-</head>
+  <body class="page-loading">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!--begin::Theme mode setup on page load-->
+    <script>
+      let themeMode = "system";
 
-<body id="kt_body" class="page-loading">
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <!--begin::Theme mode setup on page load-->
+      if (localStorage.getItem("theme-mode")) {
+        themeMode = localStorage.getItem("theme-mode");
+      }
 
-  <script>
-    let themeMode = 'system'
+      if (themeMode === "system") {
+        themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      }
 
-    if (localStorage.getItem('kt_theme_mode_value')) {
-      themeMode = localStorage.getItem('kt_theme_mode_value')
-    }
+      document.documentElement.setAttribute("data-theme", themeMode);
+    </script>
+    <!--end::Theme mode setup on page load-->
 
-    if (themeMode === 'system') {
-      themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    }
+    <div id="root"></div>
 
-    document.documentElement.setAttribute('data-bs-theme', themeMode)
-  </script>
-  <!--end::Theme mode setup on page load-->
+    <!--begin::Loading markup-->
+    <div id="splash-screen" class="splash-screen">
+      <img
+        src="media/logos/favicon.png"
+        class="dark-logo"
+        alt="Codeji dark logo"
+      />
+      <img
+        src="media/logos/favicon.png"
+        class="light-logo"
+        alt="Codeji light logo"
+      />
+      <span>Loading ...</span>
+    </div>
+    <!--end::Loading markup-->
 
-  <div id="root"></div>
-
-  <!--begin::Loading markup-->
-  <div id="splash-screen" class="splash-screen">
-    <img src="media/logos/favicon.png" class="dark-logo" alt="Codeji dark logo" />
-    <img src="media/logos/favicon.png" class="light-logo" alt="Codeji light logo" />
-    <span>Loading ...</span>
-  </div>
-  <!--end::Loading markup-->
-
-  <div id="root-modals"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+    <div id="root-modals"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

@@ -34,7 +34,6 @@ export default function Help() {
                 variant="contained"
                 label="Contact"
                 Icon={<Message />}
-                iconPosition="start"
               />
             </Stack>
           </Grid>

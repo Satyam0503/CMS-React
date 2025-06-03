@@ -1,18 +1,15 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Checkbox, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { Close, DashboardCustomizeOutlined } from "@mui/icons-material";
-import { colors } from "../../theme/MuiTheme";
 
 export default function RightDrawer() {
   const [open, setOpen] = React.useState(false);
@@ -54,7 +51,7 @@ export default function RightDrawer() {
       </Stack>
 
       <Stack>
-        <Typography variant="body2" color={colors.alpha.primary[500]}>
+        <Typography variant="body2">
           {intl.formatMessage({ id: "SETTING.DASHBOARD_FIELDS" })}
         </Typography>
       </Stack>
@@ -73,11 +70,11 @@ export default function RightDrawer() {
           "Employee of the month",
           "Employee performance",
           "Help",
-        ].map((value: any,index) => {
+        ].map((value: any, index) => {
           const labelId = `checkbox-list-label-${value}`;
           return (
             <React.Fragment key={index}>
-              <ListItem >
+              <ListItem>
                 <ListItemIcon>
                   <Checkbox
                     edge="start"
@@ -91,7 +88,7 @@ export default function RightDrawer() {
                 <ListItemText id={labelId} primary={`${value}`} />
               </ListItem>
               <Divider />
-            </ React.Fragment>
+            </React.Fragment>
           );
         })}
       </List>
@@ -101,13 +98,7 @@ export default function RightDrawer() {
   return (
     <>
       <CustomIconButton
-        icon={
-          <DashboardCustomizeOutlined
-            sx={{
-              color: colors.alpha.white[500],
-            }}
-          />
-        }
+        icon={<DashboardCustomizeOutlined sx={{ color: "common.white" }} />}
         handleClick={toggleDrawer(true)}
         tooltip="Customize Dashboard"
         size="large"

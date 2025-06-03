@@ -99,10 +99,9 @@ class LayoutSetup {
       .getAttributeNames()
       .filter((t) => t.indexOf("data-") > -1);
     bodyAttributes.forEach((attr) => document.body.removeAttribute(attr));
-    document.body.setAttribute("style", "");
-    document.body.setAttribute("id", "kt_app_body");
-    document.body.setAttribute("data-kt-app-layout", updatedConfig.layoutType);
-    document.body.classList.add("app-default");
+    // document.body.setAttribute("style", "");
+    // document.body.setAttribute("id", "kt_app_body");
+    // document.body.setAttribute("data-kt-app-layout", updatedConfig.layoutType);
 
     const pageWidth = updatedConfig.app?.general?.pageWidth;
     if (

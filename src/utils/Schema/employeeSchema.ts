@@ -14,7 +14,7 @@ export const employeeSchema = Yup.object().shape({
       "Email must be a valid email"
     ),
   employeeId: Yup.string().required("Employee Id is required"),
-  address: Yup.string().required("Address is required"),
+  address: Yup.string().notRequired(),
   jobRole: Yup.string().required("Job role is required"),
   gender: Yup.string().required("Gender is required"),
   department: Yup.string().required("Department is required"),
@@ -27,26 +27,24 @@ export const employeeSchema = Yup.object().shape({
       "Phone number is not valid"
     )
     .required("Phone number is required"),
-  bloodGroup: Yup.string().nullable(),
+  bloodGroup: Yup.string().notRequired().nullable(),
   status: Yup.string().required("Status is required"),
   dateOfJoining: Yup.date()
-    .required("Date of Joining is required")
     .typeError("Invalid Date Format")
-    .max(new Date(), "Date of Joining cannot be in the future"),
+    .max(new Date(), "Date of Joining cannot be in the future").nullable(),
   dateOfBirth: Yup.date()
-    .required("Date of Birth is required")
     .typeError("Invalid Date of Birth")
-    .max(new Date(), "Date of Birth cannot be in the future"),
+    .max(new Date(), "Date of Birth cannot be in the future").nullable(),
   personalEmail: Yup.string()
-    .nullable()
     .matches(
       Regex.Email,
       "Email is not valid"
-    ),
+    )
+    .nullable(),
   emergencyContact: Yup.string()
     .matches(
       Regex.Phone,
       "Emergency Contact is not valid"
     )
-    .required("Emergency Contact is required"),
+    .nullable(),
 });

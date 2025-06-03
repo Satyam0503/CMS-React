@@ -5,16 +5,23 @@ import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
 import { Permission } from "../../../../../utils/enums";
 import { useIntl } from "react-intl";
+import { Box, Stack } from "@mui/material";
+import { FC } from "react";
 
-export const SidebarMenuMain = () => {
-  const {formatMessage }= useIntl();
+type Props = {
+  currentIndex: number | null,
+  handleToggle: (index: number | null) => void;
+}
+
+export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
+  const { formatMessage } = useIntl();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission
   );
   const userModulePermission = modulePermission ?? [];
 
   const filteredTabList = SideBarTabList.map((tab) => {
-    if(tab.isDefault){
+    if (tab.isDefault) {
       return tab;
     }
     if (tab.hasSubTabs) {
@@ -49,40 +56,45 @@ export const SidebarMenuMain = () => {
   }
 
   return (
-    <>
-      {filteredTabList.map((tab) => {
-        if (tab?.hasSubTabs) {
-          return (
-            <SidebarMenuItemWithSub
-              key={tab?.id}
-              to={tab?.route}
-              title={formatMessage({id:tab?.title})}
-              icon={tab?.icon}
-            >
-              {tab?.subTabs?.map((subTab) => {
-                return (
-                  <SidebarMenuItem
-                    key={subTab?.id}
-                    to={subTab?.route}
-                    title={formatMessage({id:subTab?.title})}
-                    icon={subTab?.icon}
-                  />
-                );
-              })}
-            </SidebarMenuItemWithSub>
-          );
-        }
-        if (tab) {
-          return (
-            <SidebarMenuItem
-              key={tab.id}
-              to={tab.route}
-              icon={tab.icon}
-              title={formatMessage({id:tab.title})}
-            />
-          );
-        }
-      })}
-    </>
+    <Box className="sidebar-menu-main" sx={{ my: 2 }}>
+      <Stack >
+        {filteredTabList.map((tab, index) => {
+          if (tab?.hasSubTabs) {
+            return (
+              <SidebarMenuItemWithSub
+                index={index}
+                key={tab?.id}
+                to={tab?.route}
+                isOpen={currentIndex ? index === currentIndex : false}
+                title={formatMessage({ id: tab?.title })}
+                icon={tab?.icon}
+                setCurrentMenuIndex={handleToggle}
+              >
+                {tab?.subTabs?.map((subTab) => {
+                  return (
+                    <SidebarMenuItem
+                      key={subTab?.id}
+                      to={subTab?.route}
+                      title={formatMessage({ id: subTab?.title })}
+                      icon={subTab?.icon}
+                    />
+                  );
+                })}
+              </SidebarMenuItemWithSub>
+            );
+          }
+          if (tab) {
+            return (
+              <SidebarMenuItem
+                key={tab.id}
+                to={tab.route}
+                icon={tab.icon}
+                title={formatMessage({ id: tab.title })}
+              />
+            );
+          }
+        })}
+      </Stack>
+    </Box>
   );
 };

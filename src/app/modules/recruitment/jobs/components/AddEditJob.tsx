@@ -1,10 +1,7 @@
-import { Check, DeleteOutline } from "@mui/icons-material";
+import { DeleteOutline } from "@mui/icons-material";
 import {
-  alpha,
-  darken,
   Divider,
   Grid,
-  lighten,
   MenuItem,
   Select,
   Stack,
@@ -23,7 +20,6 @@ import { JobType } from "../../../../../utils/constant/Constant";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
-import { colors } from "../../../theme/MuiTheme";
 
 interface PropsTypes {
   initialValues: JobModal;
@@ -181,41 +177,33 @@ export const AddEditJob: FC<PropsTypes> = ({
             />
             <ErrorLabel>{touched.description && errors.description}</ErrorLabel>
           </Stack>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              justifyContent={"flex-end"}
-              mt={2}
-              gap={1}
-            >
-              {isEdit && (
-                <CustomisedButton
-                  label="Delete"
-                  Icon={<DeleteOutline />}
-                  iconPosition="start"
-                  className="delete-button"
-                  style={{
-                    backgroundColor: alpha(
-                      lighten(colors.alpha.danger[800], 0.2),
-                      0.8
-                    ),
-                  }}
-                />
-              )}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            justifyContent={"flex-end"}
+            mt={2}
+            gap={1}
+          >
+            {isEdit && (
               <CustomisedButton
-                variant="outlined"
-                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-                handleClick={handleClose}
+                label="Delete"
+                Icon={<DeleteOutline />}
+                className="delete-button"
               />
-              <CustomisedButton
-                loading={isSubmitting}
-                label={intl.formatMessage({
-                  id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
-                })}
-                type="submit"
-                iconPosition="start"
-                disabled={isSubmitting || !(dirty && isValid)}
-              />
-            </Stack>
+            )}
+            <CustomisedButton
+              variant="outlined"
+              label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+              handleClick={handleClose}
+            />
+            <CustomisedButton
+              loading={isSubmitting}
+              label={intl.formatMessage({
+                id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+              })}
+              type="submit"
+              disabled={isSubmitting || !(dirty && isValid)}
+            />
+          </Stack>
         </form>
       </Stack>
     </CustomisedModal>

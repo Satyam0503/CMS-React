@@ -1,9 +1,7 @@
-import { Grid, Stack, Typography, Card } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
-import { useEffect, useMemo, useState } from "react";
-import { getAllEmployees } from "../employees/employeeServices";
-import { AxiosError } from "axios";
+import React, { useEffect, useMemo, useState } from "react";
 import { AttendanceChart } from "../../shared/components/AttendanceChart";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
@@ -12,24 +10,20 @@ import { DepartmentChart } from "./components/DepartmentChart";
 import EmployeePerformance from "./components/EmployeePerformance";
 import EmpOnLeave from "./components/EmpOnLeave";
 import Punctual from "./components/Punctual";
-import UpcomingBirthday from "./components/UpcomingBirthday";
 import EmpOfMonth from "./components/EmpOfMonth";
-import { EmployeeModel } from "../../../utils/common_types";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
 import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import RightDrawer from "./components/RightDrawer";
 import { usePageData } from "../../../_themes/layout/core";
-import { GetAllEmployeeResponseModel } from "../employees/models";
+import UpcomingBirthday from "./components/UpcomingBirthday";
 
 // Main Dashboard Component
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
   const intl = useIntl();
-  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -51,26 +45,14 @@ export default function Dashboard() {
       ),
     [userModulesPermissions]
   );
-  setPageTitle("");
-  // useEffect(() => {
-  //   async function getEmployees() {
-  //     try {
-  //       const response = await getAllEmployees();
-  //       const { success, methodResults } = response.data;
-  //       if (success) {
-  //         setEmployees(methodResults);
-  //       }
-  //     } catch (error) {
-  //       console.error((error as AxiosError).message);
-  //     }
-  //   }
-  //   getEmployees();
-  // }, []);
+
+  useEffect(() => {
+    setPageTitle("");
+  }, [])
 
   return (
-    <>
+    <React.Fragment>
       <DashboardHeader fullName={user.fullName} />
-
       <Grid
         container
         spacing={3}
@@ -82,7 +64,7 @@ export default function Dashboard() {
             {hasAccessToEmpModule && (
               <Grid item xs={12} sm={6}>
                 {/* <EmployeeChart employees={employees} /> */}
-                <EmployeeChart/>
+                <EmployeeChart />
               </Grid>
             )}
             {hasAccessToJob && (
@@ -96,9 +78,7 @@ export default function Dashboard() {
               </Grid>
             )}
             <Grid item xs={12} sm={6}>
-              {/* <DepartmentChart employees={employees} /> */}
-              <DepartmentChart/>
-
+              <DepartmentChart />
             </Grid>
 
             <Grid item xs={12}>
@@ -118,12 +98,12 @@ export default function Dashboard() {
             />
             <EmpOnLeave />
             <Punctual />
-            {/* {hasAccessToEmpModule && <UpcomingBirthday employees={employees} />} */}
+            <UpcomingBirthday />
             <EmpOfMonth />
             <Help />
           </Stack>
         </Grid>
       </Grid>
-    </>
+    </React.Fragment>
   );
 }

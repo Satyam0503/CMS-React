@@ -92,7 +92,6 @@ export default function Setting() {
             <CustomisedButton
               label={intl.formatMessage({ id: "AUTH.PASSWORD.RESET" })}
               Icon={<KeyOutlined />}
-              iconPosition="start"
               handleClick={handleOpenModal}
             />
           </Stack>
@@ -164,7 +163,6 @@ export default function Setting() {
               label="Change Password"
               variant="contained"
               Icon={<Check />}
-              iconPosition="start"
               handleClick={() => {
                 setModalOpen(false);
               }}

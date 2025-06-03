@@ -18,7 +18,6 @@ import { AttendanceChart } from "../../../shared/components/AttendanceChart";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import { LeaveApplication } from "./components/LeaveApplication";
 import { Block, CalendarToday } from "@mui/icons-material";
-import { colors } from "../../theme/MuiTheme";
 
 export const LeaveTracker: FC = () => {
   const intl = useIntl();
@@ -53,7 +52,7 @@ export const LeaveTracker: FC = () => {
 
                   return "";
                 }}
-                sx={{ background: "white" }}
+                sx={{ background: "red" }}
               >
                 <MenuItem value={19}>Today</MenuItem>
                 <MenuItem value={20}>This Week</MenuItem>

@@ -9,11 +9,12 @@ export const applicationFilterSchema = Yup.object().shape({
   minExperience: Yup.number()
     .min(0, "Experience value must be positive")
     .notRequired(),
-  maxExperience: Yup.number().min(Yup.ref("minExperience"),"max experience nust be greater than min experience").notRequired(),
+  maxExperience: Yup.number().min(Yup.ref("minExperience"), "max experience nust be greater than min experience").notRequired(),
 });
 
-export const departmentFilterSchema = Yup.object().shape({
-  departmentIds: Yup.array().notRequired(),
+export const employeeFilterValidationSchema = Yup.object().shape({
+  departmentId: Yup.array().of(Yup.string()).notRequired(),
+  gender: Yup.array().of(Yup.string()).notRequired()
 });
 
 export const processLogFilterSchema = Yup.object().shape({

@@ -4,7 +4,7 @@ import { Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
-  ProcessLogFilterModel, 
+  ProcessLogFilterModel,
 } from "../app/modules/recruitment/models";
 import { EmployeeFilterModel } from '../app/modules/employees/models'
 
@@ -15,7 +15,8 @@ export interface ApiResponse {
 }
 export interface CreatePasswordModel {
   newPassword: string;
-  statusNumber: string;
+  token: string;
+  uid: string;
 }
 
 export interface UserModel {
@@ -25,6 +26,7 @@ export interface UserModel {
   lastName: string;
   fullName: string;
   profileImage: string;
+  companyLogo: string;
   defaultLanguage: string;
   applicationLanguage: string[];
   modulePermission: string[];
@@ -57,27 +59,26 @@ export interface EmployeeModel {
   lastName: string;
   gender: string;
   email: string;
-  companyId: string;
   roleId: string;
   employeeId: string;
-  department: string;
+  department: string | null;
   dateOfBirth: Dayjs | null;
   reportingManager: string | null;
   teamLead: string | null;
   phoneNumber: string;
-  bloodGroup: string;
-  address: string;
+  bloodGroup: string | null;
+  address: string | null;
   jobRole: string;
   dateOfJoining: Dayjs | null;
-  personalEmail: string;
-  emergencyContact: string;
+  personalEmail: string | null;
+  emergencyContact: string | null;
   status: string | boolean;
   isEmailVerified?: boolean;
-  password?: string | null;
   profileUrl?: string;
   fullProfileUrl?: string;
   birthDayThisYear?: Dayjs | string;
 }
+
 export interface UserEducationModel {
   educationId?: string;
   userId: string;
@@ -116,14 +117,6 @@ export type HolidayType = {
 };
 */
 
-// By Rajdeep
-export type NoticeModel = {
-  id: string;
-  name: string;
-  date: Dayjs | null;
-  type: string;
-  message: string;
-};
 
 export type ProcessLogModel = {
   processId: string;
@@ -219,9 +212,7 @@ export interface TabModel {
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
 
-export type EmployeeResponseData = ResponseData<EmployeeModel>;
 
-export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 

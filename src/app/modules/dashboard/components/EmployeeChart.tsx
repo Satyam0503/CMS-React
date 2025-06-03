@@ -4,7 +4,6 @@ import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
 import { CardSkeleton } from "./CardSkeleton";
-import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllGenderInfo } from "../dashboardservices";
 
 // interface PropsType {

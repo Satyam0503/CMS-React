@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Stack, Typography } from "@mui/material";
+import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import { useEffect, useMemo, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
-import { JobModal } from "../models";
+import { GetAllVacancyPayload, JobModal } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
 import {
   getModulePermissions,
@@ -29,7 +29,6 @@ import { usePageData } from "../../../../_themes/layout/core";
 
 const initialValues: JobModal = {
   jobId: "",
-  companyId: "",
   title: "",
   vacancies: 1,
   description: "",
@@ -37,16 +36,9 @@ const initialValues: JobModal = {
   status: true,
 };
 
-const initialPayload = {
-  name: "",
-};
-
 export default function Jobs() {
   const intl = useIntl();
-  const [paginationValues, setPaginationValues] = useState({
-    pageNo: 0,
-    records: 10,
-  });
+  const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10, });
   const [jobInitialValues, setJobInitialValues] = useState(initialValues);
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -60,8 +52,7 @@ export default function Jobs() {
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const { setPageTitle } = usePageData();
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionsForModule = useMemo(
     () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
@@ -70,7 +61,6 @@ export default function Jobs() {
 
   const handleSearchChange = React.useCallback((value: string) => {
     setSearch(value);
-    console.log(search);
   }, []);
 
   const handleClose = () => {
@@ -183,28 +173,25 @@ export default function Jobs() {
 
   useEffect(() => {
     setLoading(true);
-    const payload = {
-      name: search,
+    const payload: GetAllVacancyPayload = {
+      search: search,
+      pageNo: paginationValues.pageNo + 1,
+      records: paginationValues.records,
     };
-    const timeoutId = setTimeout(async () => {
+    (async () => {
       try {
-        const response = await getAllJobVacancies(
-          paginationValues.pageNo + 1,
-          paginationValues.records,
-          payload.name=="" ? initialPayload : payload,
-        );
+        const response = await getAllJobVacancies(payload);
         const { success, methodResults, totalRecords } = response.data;
         if (success) {
           setJobList(methodResults.reverse());
+          setTotalRecords(totalRecords);
         }
-        setLoading(false);
       } catch (error: any) {
         toast.error(error.message);
       } finally {
         setLoading(false);
       }
-    }, 1500);
-    return () => clearTimeout(timeoutId);
+    })();
   }, [isRefresh, paginationValues, search]);
 
   useEffect(() => {
@@ -213,81 +200,81 @@ export default function Jobs() {
 
   return (
     <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
-        <Stack
-          direction="row"
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          flexWrap={"wrap-reverse"}
-          gap={2}
-        >
-          <SearchInput search={search} setSearch={handleSearchChange} />
-          <Stack direction="row" spacing={1}>
-            <CustomIconButton icon={<FilterList />} />
-            {userPermissionsForModule.includes(
-              `${ModulesName.Jobs}.${Permission.Create}`
-            ) && (
+      <Stack
+        direction="row"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        flexWrap={"wrap-reverse"}
+        gap={2}
+      >
+        <SearchInput search={search} setSearch={handleSearchChange} />
+        <Stack direction="row" spacing={1}>
+          <CustomIconButton icon={<FilterList />} />
+          {userPermissionsForModule.includes(
+            `${ModulesName.Jobs}.${Permission.Create}`
+          ) && (
               <CustomIconButton
                 icon={<Add />}
                 handleClick={() => setOpenModal(true)}
               />
             )}
-            <CustomIconButton
-              tooltip={intl.formatMessage({
-                id: "IMPORT.EXCEL",
-              })}
-              icon={<Download />}
-            />
-          </Stack>
+          <CustomIconButton
+            tooltip={intl.formatMessage({
+              id: "IMPORT.EXCEL",
+            })}
+            icon={<Download />}
+          />
         </Stack>
-        <CustomisedTable
-          keyName="jobId"
-          columns={JobRequirementTableColumnList}
-          rows={jobList}
+      </Stack>
+      <CustomisedTable
+        keyName="jobId"
+        columns={JobRequirementTableColumnList}
+        rows={jobList}
+        page={paginationValues.pageNo}
+        rowsPerPage={paginationValues.records}
+        openConfirmationModal={openConfirmationModal}
+        openViewModal={handleJobDetailView}
+        loading={loading}
+        rowClickHandler={handleEditJob}
+      />
+      {totalRecords > 0 && (
+        <Pagination
           page={paginationValues.pageNo}
+          setPage={handlePageChange}
+          setRowPerPage={handleRowPerPageChange}
           rowsPerPage={paginationValues.records}
-          openConfirmationModal={openConfirmationModal}
-          openViewModal={handleJobDetailView}
-          loading={loading}
-          rowClickHandler={handleEditJob}
+          totalRecords={totalRecords}
         />
-        {totalRecords > 0 && (
-          <Pagination
-            page={paginationValues.pageNo}
-            setPage={handlePageChange}
-            setRowPerPage={handleRowPerPageChange}
-            rowsPerPage={paginationValues.records}
-            totalRecords={totalRecords}
-          />
-        )}
-        {isConfirmationModalOpen && selectedJob && (
-          <ConfirmationModal
-            title={intl.formatMessage({
-              id: "TITLE.DELETE_JOB",
-            })}
-            content={intl.formatMessage({
-              id: "CONFIRMATION.DELETE_JOB",
-            })}
-            open={isConfirmationModalOpen}
-            handleClose={closeConfirmationModal}
-            handleConfirmation={handledeleteJob}
-          />
-        )}
-        {openModal && (
-          <AddEditJob
-            initialValues={jobInitialValues}
-            isEdit={isEdit}
-            open={openModal}
-            handleClose={handleClose}
-            handleAddEditJob={handleAddEditJob}
-          />
-        )}
-        {isViewModalOpen && selectedJob && (
-          <ViewJobDetails
-            open={isViewModalOpen}
-            setOpen={setViewModalOpen}
-            jobData={selectedJob}
-          />
-        )}
+      )}
+      {isConfirmationModalOpen && selectedJob && (
+        <ConfirmationModal
+          title={intl.formatMessage({
+            id: "TITLE.DELETE_JOB",
+          })}
+          content={intl.formatMessage({
+            id: "CONFIRMATION.DELETE_JOB",
+          })}
+          open={isConfirmationModalOpen}
+          handleClose={closeConfirmationModal}
+          handleConfirmation={handledeleteJob}
+        />
+      )}
+      {openModal && (
+        <AddEditJob
+          initialValues={jobInitialValues}
+          isEdit={isEdit}
+          open={openModal}
+          handleClose={handleClose}
+          handleAddEditJob={handleAddEditJob}
+        />
+      )}
+      {isViewModalOpen && selectedJob && (
+        <ViewJobDetails
+          open={isViewModalOpen}
+          setOpen={setViewModalOpen}
+          jobData={selectedJob}
+        />
+      )}
     </Card>
   );
 }

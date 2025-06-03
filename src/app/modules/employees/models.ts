@@ -1,24 +1,33 @@
-import { ResponseData } from "../../../utils/common_types";
+import { EmployeeModel, ResponseData } from "../../../utils/common_types";
+import { EmployeeByIdResponse } from "../users/models";
 
 export interface GetAllEmployeeResponseModel {
   userId: string;
-  fullName:string;
+  fullName: string;
   email: string;
   employeeId: string;
   jobRole: string;
   department: string;
   phoneNumber: string;
-  fullProfileUrl:string| null;
-  dateOfBirth :string ;
+  fullProfileUrl: string | null;
+  dateOfBirth: string | null;
 }
 
 export interface EmployeeFilterModel {
   departmentId: string[];
+  gender: string[];
 }
 
 export interface GetAllEmployeePayloadModel {
   name: string;
-  departmentId?: string[];
+  pageNo: number;
+  records: number;
+  departmentId: string[];
+  gender: string[];
 }
+
+
+export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
+export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
 export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;

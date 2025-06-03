@@ -119,6 +119,7 @@
   "AUTH.INPUT.PASSWORD.RESET": "Reset profile password",
   "AUTH.PASSWORD.RESET": "Reset password",
   "AUTH.INPUT.FORGOT_PASSWORD": "Forgot Password?",
+  "AUTH.FORGOT_PASSWORD.NOTE": "Enter your email to reset your password",
   "AUTH.TERMS.CONFIRMATION": "Confirm",
   "AUTH.INPUT.USERNAME": "Username",
   "AUTH.LOGIN.BUTTON": "Sign In",
@@ -127,8 +128,8 @@
   "ATTENDANCE.ABSENT": "Absent",
   "ATTENDANCE.FIRST_HALF": "First Half",
   "ATTENDANCE.SECOND_HALF": "First Half",
-  "ATTENDANCE.WFH":"Working from home",
-  "ATTENDANCE.TOTAL":"Total",
+  "ATTENDANCE.WFH": "Working from home",
+  "ATTENDANCE.TOTAL": "Total",
   "ATTENDANCE.GRAPH": "My Attendance Graph of this year",
   "ATTENDANCE.LATE": "Late",
   "APPLICATION.DURATION": "Duration",
@@ -207,8 +208,16 @@
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
 
-  "NOTICE_BOARD.DATE_TIME": "Date/Time",
-  "NOTICE_BOARD.TYPE": "Type",
+  "NOTICE_BOARD.POSTED_DATETIME": "Posted Date/Time",
+  "NOTICE_BOARD.POSTED_BY": "Posted By",
+  "NOTICE_BOARD.TYPE": "Notice Type",
+  "NOTICE.POST_NOTICE": "Post Notice",
+  "NOTICE.MY_NOTICE": "My Notice",
+  "NOTICE.EDIT_NOTICE": "Edit Notice",
+  "NOTICE_TYPE.GENERAL": "General",
+  "NOTICE_TYPE.IMPORTANT": "Important",
+  "NOTICE_TYPE.URGENT": "Urgent",
+  "NOTICE_TYPE.ALL": "All",
 
   "LINK.NOTIFICATION": "check the submissions",
   "LEAVE.CL": "Casual Leaves",
@@ -504,12 +513,18 @@
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL": "Company Details",
   "COMPANY_DETAILS.EDIT_DETAILS": "Edit Details",
 
-  "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOCALIZATION": "Localization",
+  "COMPANY_DETAILS.TAB.COMPANY_PROFILE": "Company Profile",
+  "COMPANY_DETAILS.TAB.NOTE": "Update your company details and logo here",
+  "COMPANY_DETAILS.LOGO_NOTE": "Update your company logo. The company logo is displayed in the application sidebar",
+  "COMPANY_DETAILS.LOGO_UPDATE_NOTE": "Upload your logo (PNG, JPG, JPEG, max 5MB).Transparent background recommended ",
+  "COMPANY_DETAILS.SELECTED_LOGO": "Selected File: {image}",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES": "Languages",
+  "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES_NOTE": "Set your company’s default language and choose the supported languages for the application",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE": "Default Company Language",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE": "Application Language",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.SURVEY_LANGUAGE": "Survey Language",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME": "Company Name",
+  "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME.NOTE": "The company name is displayed on the employee profile page.",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.MANAGERS_IDENTIFICATION": "Managers Identification",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.CUSTOMIZATION": "Customization",
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.INDUSTRY": "Industry",
@@ -530,6 +545,8 @@
   "BUTTON.CREATE_PASS": "Create Password",
   "BUTTON.CROP": "Crop",
   "BUTTON.APPLY": "Apply",
+  "BUTTON.RETURN_HOME": "Return Home",
+  "BUTTON.PUBLISH": "Publish",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
@@ -546,5 +563,20 @@
   "MESSAGE.MODULE.UPDATE.SUCCESS": "Module Updated Successfully",
   "MESSAGE.MODULE.UPDATE.FAILED": "Request Failed",
   "NOT_AVAILABLE": "NA",
-  "TRANSLATION_MISSING": "Translation Missing"
+  "TRANSLATION_MISSING": "Translation Missing",
+
+  "Link.Register": "register",
+  "Link.Term": "Term",
+  "Link.Plan": "Plan",
+  "Link.ContactUs": "Contact Us",
+
+  "Error.404.NOTE": "We're sorry, the page you requested could not be found. Please go back to the homepage!",
+  "Error.404.PAGE_NOT_FOUND": "Page Not Found",
+  "Error.404.OPPS": "Opps!",
+  "Error.500.SYSTEM_ERROR": "System Error",
+  "Error.500.NOTE": "Something went wrong! Please try again later!",
+  "Error.UNAUTHORIZED": "Unauthorized Access",
+  "Error.SWR": "Something Went Wrong",
+
+  "Date.Today": "Today"
 }

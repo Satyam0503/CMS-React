@@ -5,11 +5,9 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Card, Link, Stack, Typography } from "@mui/material";
+import { Link, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { BarChart, GraphicEqOutlined } from "@mui/icons-material";
-import { colors } from "../../theme/MuiTheme";
+import { BarChart } from "@mui/icons-material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 
 function createData(
@@ -26,7 +24,7 @@ const rows = [createData(1, "Ganesh Singh", "Good", "")];
 export default function EmployeePerformance() {
   const intl = useIntl();
   return (
-    <>
+    <React.Fragment>
       <CustomCard label={intl.formatMessage({ id: "PERFORMANCE.EMPLOYEE" })}>
         <Stack
           sx={{
@@ -56,8 +54,7 @@ export default function EmployeePerformance() {
                     <TableCell align="left">{row.name}</TableCell>
                     <TableCell align="left">{row.performance}</TableCell>
                     <TableCell align="right">
-                      {row.graph}{" "}
-                      <BarChart sx={{ color: colors.alpha.primary[500] }} />
+                      {row.graph} <BarChart />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -69,6 +66,6 @@ export default function EmployeePerformance() {
           </Link>
         </Stack>
       </CustomCard>
-    </>
+    </React.Fragment>
   );
 }

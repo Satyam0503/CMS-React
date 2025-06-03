@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { JobModal } from "../../recruitment/models";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import { colors } from "../../theme/MuiTheme";
 import { CardSkeleton } from "./CardSkeleton";
 
 export default function OpenPositions() {
@@ -16,10 +15,10 @@ export default function OpenPositions() {
   useEffect(() => {
     async function getActiveJobs() {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { success, methodResults } = response.data;
         if (success) {
-          setActiveJobs(methodResults.filter((job) => job.status === true));
+          setActiveJobs(methodResults);
         }
       } catch (error) {
         console.error((error as AxiosError).message);
@@ -49,7 +48,7 @@ export default function OpenPositions() {
             component={"div"}
             sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
           >
-            <Typography variant="h5" sx={{ color: colors.alpha.neutral[400] }}>
+            <Typography variant="h5">
               {intl.formatMessage({ id: "DASHBOARD.VACANCY.NOVACANCIES" })}
             </Typography>
           </Box>
@@ -63,14 +62,12 @@ export default function OpenPositions() {
                   alignItems={"center"}
                   spacing={1}
                 >
-                  <Avatar variant="rounded">{job.title.charAt(0)}</Avatar>
+                  <Avatar variant="rounded" sx={{ bgcolor: "secondary.main" }}>{job.title.charAt(0)}</Avatar>
 
                   <Stack flexGrow={1}>
                     <Typography variant="body1">{job.title}</Typography>
-
                     <Typography
                       variant="body2"
-                      sx={{ color: colors.alpha.neutral[400] }}
                     >
                       {job.jobType}
                     </Typography>

@@ -13,8 +13,8 @@ import { toast } from "react-toastify";
 import { updateProfilePicture } from "../userservices";
 import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
-import { colors } from "../../theme/MuiTheme";
 import { ImageCropper } from "./ImageCropper";
+import { useUserDetails } from "../UserDataProvider";
 
 interface Props {
   open: boolean;
@@ -87,9 +87,9 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
         const response = await updateProfilePicture(formData);
         const { success, methodResult } = response.data;
         if (success) {
-          toast.success("Profile Updated Successfully");
           dispatch(setCurrentUser({ ...userData, profileImage: methodResult }));
           handleClose();
+          toast.success("Profile Updated Successfully");
         }
       } catch (error) {
         toast.error("Request Failed");
@@ -102,7 +102,7 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
     setImgSrc("");
     setCropperOpen(false);
   };
-  const handleImageCropSuccess = (croppedImageDataUrl:string) => {
+  const handleImageCropSuccess = (croppedImageDataUrl: string) => {
     setCroppedImage(croppedImageDataUrl);
     setCropperOpen(false);
   };
@@ -141,13 +141,13 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                     onChange={handleFileChange}
                     hidden
                   />
-                  <Typography variant="body1" flexWrap={"wrap"}>
+                  <Typography variant="body1" flexWrap="wrap">
                     {intl.formatMessage({ id: "FILE.SELECTED" })}:
                     {selectedImage?.name}
                   </Typography>
                 </Grid>
                 <Grid item xs={6} md={6}>
-                  <Typography variant="body2" flexWrap={"wrap"}>
+                  <Typography variant="body2" flexWrap="wrap">
                     {intl.formatMessage({ id: "FILE.UPLOAD_INSTRUCTION" })}
                   </Typography>
                 </Grid>
@@ -162,17 +162,11 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
                 variant="outlined"
                 label="Delete File"
                 Icon={<DeleteOutlineOutlined />}
-                iconPosition="end"
-                handleClick={() => {}}
-                style={{
-                  visibility: !selectedImage ? "hidden" : "visible",
-                  color: colors.alpha.danger[500],
-                }}
+                handleClick={() => { }}
               />
               <CustomisedButton
                 label="Upload File"
                 Icon={<AttachFile />}
-                iconPosition="end"
                 disabled={!selectedImage}
                 handleClick={handleUpdateAvatar}
               />
@@ -183,16 +177,15 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
         </Box>
       </CustomisedModal>
 
-      {
-        isCropperOpen && (
-          <ImageCropper
-            open={isCropperOpen}
-            handleClose={handleImageCropDiscard}
-            imgSrc={imgSrc}
-            handleCrop={handleImageCropSuccess}
-          />
-        )
-      }
+      {isCropperOpen && (
+        <ImageCropper
+          open={isCropperOpen}
+          handleClose={handleImageCropDiscard}
+          imgSrc={imgSrc}
+          handleCrop={handleImageCropSuccess}
+          circularCrop={true}
+        />
+      )}
     </>
   );
 };

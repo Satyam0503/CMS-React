@@ -37,7 +37,6 @@ import {
 import { commentActionEncoderForApplicationStatus } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
-import { colors } from "../../../theme/MuiTheme";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
@@ -83,12 +82,10 @@ export const EditApplicant = () => {
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { success, methodResults } = response.data;
         if (success) {
-          setActiveVacancyList(
-            methodResults.filter((vacancy) => vacancy.status === true)
-          );
+          setActiveVacancyList(methodResults);
         }
       } catch (error) {
         console.error(error);
@@ -348,11 +345,7 @@ export const EditApplicant = () => {
                     </Stack>
 
                     <Stack mt={2}>
-                      <Typography
-                        variant="body1"
-                        mb={1}
-                        color={colors.alpha.primary[500]}
-                      >
+                      <Typography variant="body1" mb={1} color="primary">
                         {formatMessage({ id: "UPLOAD.RESUME" })}
                       </Typography>
                     </Stack>
@@ -378,7 +371,7 @@ export const EditApplicant = () => {
                           <Tooltip title="Upload file here" placement="top">
                             <Box
                               component="label"
-                              bgcolor={colors.alpha.primary[100]}
+                              bgcolor="primary.lighter"
                               px={2}
                               py={0.5}
                               borderRadius={1}

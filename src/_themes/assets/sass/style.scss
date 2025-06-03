@@ -11,6 +11,7 @@
 
 // Layout
 @import "./core/layout/base/layout";
-@import "layout/layout";
 @import "./styles/app_style.scss";
-@import "./styles/light_dark.scss";
+#root {
+  display: contents;
+}

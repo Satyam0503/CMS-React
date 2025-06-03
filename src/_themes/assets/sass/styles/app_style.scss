@@ -21,43 +21,77 @@
   text-wrap: balance;
 }
 
-// List of colors
-$color-list: primary, secondary, success, info, neutral, warning, error,
-  territory;
-
-// Generate classes
-@include generate-color-classes($color-list);
-
-// $app-primary-500: #9a56d3;
-// $app-primary-wave: #35126c;
-// $app-primary-footer: #9f6dda;
-// $app-primary-100: #e6d9f5;
-// $app-white: #ffffff;
-// $success-700: #37843c;
-// $success-200: #c8f2cc;
-// $warning-200: #fff2b3;
-// $warning-900: #ba4303;
-// $danger-200: #ffc8c7;
-// $danger-700: #c62828;
-// $info-300: #cfd8ff;
-// $info-800: #2b46a5;
-//profile card icon
-.coverChange {
-  position: absolute !important;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  display: flex;
-  justify-content: center;
-  gap: 0.25rem;
-  z-index: 4;
+.dark-mode {
+  background-color: $app-dark;
 }
 
-.gridContainer:hover .coverChange {
-  opacity: 1;
+.light-mode {
+  background-color: $neutral-100;
+}
+
+// symbols
+
+.symbol {
+  width: 45px;
+  height: 45px;
+  aspect-ratio: 1;
+  & > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// header
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+// sidebar
+
+.profile-picture-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: $app-primary-500;
+  gap: 1rem;
+  padding: 1rem;
+  & > .profile-picture {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 150px;
+    aspect-ratio: 1;
+    border: 3px solid $app-white;
+    border-radius: 50%;
+    position: relative;
+    transition: "transform 0.8s ease-in-out";
+    z-index: 0;
+
+    & > .profile-picture-cover {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      z-index: 4;
+    }
+    &:hover .profile-picture-cover {
+      opacity: 1;
+    }
+  }
 }
 
 input:-webkit-autofill {
@@ -217,7 +251,7 @@ button:hover .ql-fill,
 // }
 .chart_tooltip {
   position: relative;
-  color: #ffffff !important;
+  color: $app-white !important;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
 }
@@ -239,8 +273,10 @@ button:hover .ql-fill,
   transform-origin: right top;
 }
 .delete-button {
+  background: $danger-500 !important;
+  color: $app-white !important;
   &:hover {
-    background: red !important;
+    background: $danger-700 !important;
   }
 }
 //scroll bar
@@ -251,13 +287,13 @@ button:hover .ql-fill,
   border-radius: 16px !important;
 }
 ::-webkit-scrollbar-thumb {
-  background: #b6b5b5;
-  outline: 1px solid #8b8b8b;
+  background: $neutral-400;
+  outline: 1px solid $neutral-500;
   cursor: pointer;
 }
 
 .breadcrumb-link {
-  color: #737373;
+  color: $neutral-500;
   &:hover {
     color: $app-primary-500;
   }
@@ -320,11 +356,9 @@ button:hover .ql-fill,
     content: "";
     width: 100%;
     height: 100%;
-    height: 100%;
     top: 0;
     left: 0;
-    background: linear-gradient(to top, #000, transparent);
-    background: linear-gradient(to top, #000, transparent);
+    background: linear-gradient(to top, $app-black, transparent);
   }
 
   & > .employee-card-content {
@@ -355,21 +389,24 @@ button:hover .ql-fill,
     flex-grow: 1;
   }
   & .tab-box {
-    border-bottom: 2px solid #8b8b8b;
+    border-bottom: 2px solid $neutral-400;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     font-weight: bolder;
-    color: #737373;
     padding: 1.5rem;
     font-size: 1rem;
     cursor: pointer;
     min-width: 150px;
     &:hover {
       transition: background-color 0.2s ease-in;
-      background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
-      color: #9a56d3;
+      background-color: color-mix(
+        in oklab,
+        $app-primary-400 30%,
+        $app-white 50%
+      );
+      color: $app-primary-500;
     }
 
     & > svg {
@@ -381,9 +418,9 @@ button:hover .ql-fill,
 }
 
 .tab_active {
-  border-bottom: 2px solid #9a56d3 !important;
-  color: #9a56d3 !important;
-  background-color: color-mix(in oklab, #9f6dda 30%, #ffffff 50%);
+  border-bottom: 2px solid $app-primary-500 !important;
+  color: $app-primary-500 !important;
+  // background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
 }
 
 .truncate-multi-line {
@@ -396,4 +433,39 @@ button:hover .ql-fill,
 }
 .shadow-md {
   box-shadow: 0 0.1px 5px 0px $app-primary-100 !important;
+}
+
+// sidebar
+
+// company details
+
+.company-logo-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  .logo-update-button {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 2rem;
+    max-width: 350px;
+    min-width: 230px;
+    & svg {
+      font-size: 32px;
+    }
+    & > p {
+      text-align: center;
+      text-wrap: balance;
+    }
+  }
+}
+
+.logo-preview-container {
+  border: 1px solid black;
+  width: 200px;
+  height: auto;
+  object-fit: contain;
 }

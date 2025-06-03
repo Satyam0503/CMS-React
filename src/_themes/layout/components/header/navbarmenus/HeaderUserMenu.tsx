@@ -3,7 +3,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
-import MenuList from "@mui/material/MenuList";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import {
@@ -16,11 +15,9 @@ import {
 
 import { useLogout } from "../../../../../app/modules/auth";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { colors } from "../../../../../app/modules/theme/MuiTheme";
 import { Languages } from "./Languages";
 import {
   AccountCircle,
-  GTranslate,
   Logout,
   Translate,
 } from "@mui/icons-material";
@@ -47,13 +44,14 @@ export default function HeaderUserMenu() {
   return (
     <>
       <Avatar
+        alt="User Profile"
         onClick={handleClick}
         aria-controls={open ? "account-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         src={profileImageUrl}
         variant="rounded"
-        sx={{ width: 40, height: 40 }}
+        sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
       />
       <Menu
         anchorEl={anchorEl}
@@ -65,7 +63,7 @@ export default function HeaderUserMenu() {
           <Avatar
             variant="rounded"
             src={profileImageUrl}
-            sx={{ width: 40, height: 40 }}
+            sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
           />
           <Box>
             <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>
@@ -73,8 +71,8 @@ export default function HeaderUserMenu() {
             </Typography>
           </Box>
         </MenuItem>
-        <Divider/>
-        <MenuItem onClick={()=>{
+        <Divider />
+        <MenuItem onClick={() => {
           navigate("/profile")
           handleClose();
         }} className="px-2">
@@ -94,11 +92,11 @@ export default function HeaderUserMenu() {
           </ListItemText>
           <Languages />
         </MenuItem>
-        <MenuItem onClick={handleClose} className="px-2">
+        <MenuItem onClick={logout} className="px-2">
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
-          <ListItemText onClick={logout}>
+          <ListItemText >
             {intl.formatMessage({ id: "AUTH.SIGNOUT" })}
           </ListItemText>
         </MenuItem>

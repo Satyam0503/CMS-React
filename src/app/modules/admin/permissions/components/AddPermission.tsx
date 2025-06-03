@@ -12,7 +12,6 @@ import {
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import { colors } from "../../../theme/MuiTheme";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { addEditRole, getAllModulePermission } from "../../adminservices";
 import {
@@ -172,8 +171,8 @@ export const AddPermission = () => {
               <Box
                 component={"div"}
                 sx={{
-                  border: "1px solid",
-                  borderColor: colors.alpha.neutral[200],
+                  border: "1px solid grey",
+
                   borderRadius: 1,
                   p: 2,
                 }}
@@ -238,7 +237,6 @@ export const AddPermission = () => {
                 disabled={formik.isSubmitting}
                 label={formatMessage({ id: "BUTTON.SAVE" })}
                 Icon={<Check />}
-                iconPosition="start"
               />
             </Stack>
           </>

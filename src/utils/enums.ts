@@ -11,6 +11,12 @@ export enum ApplicantStatus {
   InActive = 0,
   Active = 1,
 }
+
+export enum EmployeeStatus {
+  InActive = 0,
+  Active = 1
+}
+
 export enum CommentAction {
   Process = 0,
   InProgress = 1,
@@ -106,4 +112,10 @@ export enum LANGUAGE {
   JAPANESE = "ja",
   GERMAN = "de",
   FRENCH = "fr",
+}
+
+export enum NOTICE_TYPE {
+  GENERAL = 1,
+  IMPORTANT = 2,
+  URGENT = 3
 }

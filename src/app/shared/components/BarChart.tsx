@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, useTheme } from "@mui/material";
 import { ApexOptions } from "apexcharts";
 import { FC } from "react";
 import Chart from "react-apexcharts";
@@ -16,6 +16,7 @@ interface BarChartProps {
 
 export const BarChart: FC<BarChartProps> = (props) => {
   const { series, labels, height, legendOption, showXAxisLabel } = props;
+  const theme = useTheme();
   const chartOption: ApexOptions = {
     chart: {
       animations: {
@@ -55,6 +56,9 @@ export const BarChart: FC<BarChartProps> = (props) => {
         horizontal: 10,
         vertical: 0,
       },
+      labels: {
+        useSeriesColors: true
+      }
     },
     xaxis: {
       categories: labels,

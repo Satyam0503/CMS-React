@@ -103,7 +103,7 @@ function DonutApexChart(props: DonutApexChartProps) {
       style: {
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
-        colors: [colors.alpha.primary[600]],
+        colors: ["primary"],
       },
       background: {
         enabled: false,
@@ -128,6 +128,9 @@ function DonutApexChart(props: DonutApexChartProps) {
       itemMargin: {
         horizontal: 10,
         vertical: 5,
+      },
+      labels: {
+        useSeriesColors: true,
       },
       formatter: function (seriesName) {
         return `<span style="text-transform:Capitalize">${seriesName}</span>`;

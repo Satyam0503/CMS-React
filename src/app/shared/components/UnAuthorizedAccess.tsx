@@ -3,14 +3,16 @@ import CustomisedButton from "./CustomisedButton";
 import { Home } from "@mui/icons-material";
 import { FC } from "react";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { colors } from "../../modules/theme/MuiTheme";
+import { useIntl } from "react-intl";
+import { useNavigate } from "react-router-dom";
 
 interface PropsTypes {
   type: "error" | "unauthorise";
 }
 
 export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
-  // const navigate = useNavigate();
+  const { formatMessage } = useIntl();
+  const navigate = useNavigate();
   return (
     <Box component={"div"} className="align-child-center">
       <Stack spacing={3} sx={{ alignItems: "center" }}>
@@ -26,8 +28,7 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
                 height={"100%"}
               />
             </Box>
-            <Typography variant="h3">Unauthorized Access</Typography>
-            <Typography variant="h4"></Typography>
+            <Typography variant="h3">{formatMessage({ id: "Error.UNAUTHORIZED" })}</Typography>
           </>
         ) : (
           <>
@@ -41,16 +42,13 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
                 height={"100%"}
               />
             </Box>
-            <Typography variant="h3">Something Went Wrong</Typography>
-            <Typography variant="h4"></Typography>
+            <Typography variant="h3">{formatMessage({ id: "Error.SWR" })}</Typography>
           </>
         )}
         <CustomisedButton
-          label="Return to Dashboard"
-          style={{ backgroundColor: colors.alpha.primary[500] }}
+          label={formatMessage({ id: "BUTTON.RETURN_HOME" })}
           Icon={<Home />}
-          iconPosition="end"
-          handleClick={() => (window.location.href = "/")}
+          handleClick={() => navigate('/')}
         />
       </Stack>
     </Box>

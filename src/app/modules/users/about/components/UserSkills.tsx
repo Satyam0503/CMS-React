@@ -19,24 +19,25 @@ export const UserSkills = () => {
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const { updateTotalSkills } = useUserDetails();
-  const employeeId  = useParams().employeeid;
-  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
-  const [userSkills,setUserSkills]= useState<SkillModel[]>([]);
- 
+  const employeeId = useParams().employeeid;
+  const userPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) || [];
+  const [userSkills, setUserSkills] = useState<SkillModel[]>([]);
+
   useEffect(() => {
     getEmployeeSkills(employeeId ?? "")
       .then((response) => {
         const { success, methodResult } = response.data;
         if (success) {
-            setUserSkills(methodResult.skills);
-            updateTotalSkills(methodResult.skills.length);
+          setUserSkills(methodResult.skills);
+          updateTotalSkills(methodResult.skills.length);
         }
       })
       .catch((error) => {
         toast.error(error.message);
       });
   }, [refresh]);
- 
+
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -53,7 +54,11 @@ export const UserSkills = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-          <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} />
+          <CustomIconButton
+            tooltip="Add"
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
         )}
       </Stack>
 
@@ -63,7 +68,9 @@ export const UserSkills = () => {
             {intl.formatMessage({ id: "ADD.SKILLS" })}
           </Typography>
         ) : (
-          userSkills?.map((skill, index) => <Chip key={index} label={skill.name} />)
+          userSkills?.map((skill, index) => (
+            <Chip key={index} label={skill.name} />
+          ))
         )}
       </Stack>
 

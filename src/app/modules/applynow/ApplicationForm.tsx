@@ -11,11 +11,6 @@ import {
 import { useIntl } from "react-intl";
 import { Close, CloudUploadOutlined } from "@mui/icons-material";
 import CustomisedButton from "../../shared/components/CustomisedButton";
-import { useState } from "react";
-import { toAbsoluteUrl } from "../../../_themes/helpers";
-import { colors } from "../theme/MuiTheme";
-import { SingleBannerNew } from "./SingleBannerNew";
-import FooterNew from "./FooterNew";
 
 type Props = {
   className: string;
@@ -159,7 +154,6 @@ export default function ApplicationForm() {
             <CustomisedButton
               variant="outlined"
               Icon={<Close />}
-              iconPosition="start"
               label="Close"
               size="large"
               style={{ paddingInline: "3rem" }}

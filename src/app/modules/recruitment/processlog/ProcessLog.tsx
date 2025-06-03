@@ -28,7 +28,7 @@ export const processLogInitialFilter: ProcessLogFilterModel = {
 
 const ProcessLogs = () => {
   const intl = useIntl();
-  const {setPageTitle }= usePageData();
+  const { setPageTitle } = usePageData();
   const [searchValue, setSearchValue] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoading, setLoading] = useState(true);
@@ -75,9 +75,9 @@ const ProcessLogs = () => {
     setAnchorEl(null);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.PROCESS_LOG" }));
-  },[])
+  }, [])
 
   useEffect(() => {
     const payload: ProcessLogPayoadModel = {
@@ -104,52 +104,52 @@ const ProcessLogs = () => {
   }, [searchValue, paginationValues, processLogFilters]);
 
   return (
-      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
-        
-          <Stack
-            direction="row"
-            className="align-items-center justify-content-between"
-          >
-            <SearchInput search={searchValue} setSearch={handleSearchChange} />
-            <Badge
-              badgeContent={totalAppliedFilters}
-              anchorOrigin={{ horizontal: "left", vertical: "top" }}
-              color="info"
-            >
-              <CustomIconButton
-                icon={<FilterList />}
-                handleClick={handleFilterClick}
-              />
-            </Badge>
-            {open && (
-              <ProcessLogFilter
-                open={open}
-                handleClose={handleCloseFilter}
-                anchorEl={anchorEl}
-              />
-            )}
-          </Stack>
+    <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
 
-          <CustomisedTable
-            tabName={ModulesName.ProcessLog}
-            keyName="id"
-            columns={ProcessLogTableColumnList}
-            rows={processLogList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.pageSize}
-            loading={isLoading}
+      <Stack
+        direction="row"
+        className="align-items-center justify-content-between"
+      >
+        <SearchInput search={searchValue} setSearch={handleSearchChange} />
+        <Badge
+          badgeContent={totalAppliedFilters}
+          anchorOrigin={{ horizontal: "left", vertical: "top" }}
+          color="primary"
+        >
+          <CustomIconButton
+            icon={<FilterList />}
+            handleClick={handleFilterClick}
           />
+        </Badge>
+        {open && (
+          <ProcessLogFilter
+            open={open}
+            handleClose={handleCloseFilter}
+            anchorEl={anchorEl}
+          />
+        )}
+      </Stack>
 
-          {totalRecords > 0 && (
-            <Pagination
-              page={paginationValues.pageNo}
-              rowsPerPage={paginationValues.pageSize}
-              setPage={handlePageChange}
-              setRowPerPage={handleRowPerPageChange}
-              totalRecords={totalRecords}
-            />
-          )}
-      </Card>
+      <CustomisedTable
+        tabName={ModulesName.ProcessLog}
+        keyName="id"
+        columns={ProcessLogTableColumnList}
+        rows={processLogList}
+        page={paginationValues.pageNo}
+        rowsPerPage={paginationValues.pageSize}
+        loading={isLoading}
+      />
+
+      {totalRecords > 0 && (
+        <Pagination
+          page={paginationValues.pageNo}
+          rowsPerPage={paginationValues.pageSize}
+          setPage={handlePageChange}
+          setRowPerPage={handleRowPerPageChange}
+          totalRecords={totalRecords}
+        />
+      )}
+    </Card>
   );
 };
 

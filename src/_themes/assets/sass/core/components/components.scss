@@ -9,16 +9,5 @@
 @import "bootstrap/scss/bootstrap";
 
 // Custom components
-@import "root";
 
-@import "menu";
-
-@import "buttons";
-
-@import "symbol";
-
-@import "drawer";
-
-@import "rotate";
-
-@import "helpers";
+@import "./sidebar-menu";

@@ -21,6 +21,7 @@ import {
   Modules,
   ModulesName,
   ModulesTitles,
+  NOTICE_TYPE,
   TIME_PERIOD_MAP,
 } from "../enums";
 
@@ -51,6 +52,7 @@ import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
+import { NoticeResponseModel } from "../../app/modules/noticeboard/models";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -62,6 +64,7 @@ export const ServiceUrl = {
   USER_LOGIN: `${BaseUrl}/api/account/login`,
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
   CREATE_NEW_PASSWORD: `${BaseUrl}/api/CreateNewPassword`,
+  RESET_PASSWORD: `${BaseUrl}/api/account/ResetPassword`,
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
@@ -132,44 +135,48 @@ export const ServiceUrl = {
 
   // dashboard
   GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
-  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`
+  GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`,
+
+  // notice 
+  GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
+  POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
 };
 
 export const languages = [
   {
     id: 1,
     lang: LANGUAGE.ENGLISH,
-    name: <FormattedMessage id="Language.English" />,
+    name: "Language.English",
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
     lang: LANGUAGE.MANDARIN,
-    name: <FormattedMessage id="Language.Mandarin" />,
+    name: "Language.Mandarin",
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
     lang: LANGUAGE.SPANISH,
-    name: <FormattedMessage id="Language.Spanish" />,
+    name: "Language.Spanish",
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
     lang: LANGUAGE.JAPANESE,
-    name: <FormattedMessage id="Language.Japanese" />,
+    name: "Language.Japanese",
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
     lang: LANGUAGE.GERMAN,
-    name: <FormattedMessage id="Language.German" />,
+    name: "Language.German",
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
     lang: LANGUAGE.FRENCH,
-    name: <FormattedMessage id="Language.French" />,
+    name: "Language.French",
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
 ];
@@ -184,20 +191,38 @@ export const Regex = {
 export const Gender = [
   {
     id: 1,
-    label: <FormattedMessage id="GENDER.MALE" />,
+    label: "GENDER.MALE",
     value: "male",
   },
   {
     id: 2,
-    label: <FormattedMessage id="GENDER.FEMALE" />,
+    label: "GENDER.FEMALE",
     value: "female",
   },
   {
     id: 3,
-    label: <FormattedMessage id="GENDER.OTHER" />,
+    label: "GENDER.OTHER",
     value: "other",
   },
 ];
+
+export const NoticeTypes = [
+  {
+    id: 1,
+    label: "NOTICE_TYPE.GENERAL",
+    value: NOTICE_TYPE.GENERAL,
+  },
+  {
+    id: 2,
+    label: "NOTICE_TYPE.IMPORTANT",
+    value: NOTICE_TYPE.IMPORTANT,
+  },
+  {
+    id: 3,
+    label: "NOTICE_TYPE.URGENT",
+    value: NOTICE_TYPE.URGENT,
+  }
+]
 
 export const EducationType = [
   {
@@ -220,12 +245,6 @@ export const EducationType = [
 export const HolidayTypes = [
   { id: 1, label: "Public Holiday", value: "Public Holiday" },
   { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
-];
-
-export const NoticeTypes = [
-  { id: 1, label: "General", value: "General" },
-  { id: 2, label: "Important", value: "Important" },
-  { id: 3, label: "Urgent", value: "Urgent" },
 ];
 
 export const bloodGroups = [
@@ -465,36 +484,32 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "name",
-    label: "APPLICANT.NAME",
+    id: "userName",
+    label: "NOTICE_BOARD.POSTED_BY",
+    avatarCell: (notice: NoticeResponseModel) => {
+      return (
+        <AvatarCell
+          avatarSrc={notice.userProfile}
+          title={notice.userName}
+          subTitle={notice.userDesignation}
+        />
+      );
+    },
   },
   {
-    id: "datetime",
-    label: "NOTICE_BOARD.DATE_TIME",
+    id: "createdDateTime",
+    label: "NOTICE_BOARD.POSTED_DATETIME",
+    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
   },
 
   {
-    id: "type",
+    id: "noticeType",
     label: "NOTICE_BOARD.TYPE",
   },
   {
-    id: "message",
+    id: "noticeMessage",
     label: "MENU.MESSAGE",
-  },
-  {
-    id: "action",
-    label: "Table.Column.Action",
-    build: (
-      row: any,
-      handleNoticeEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleNoticeEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
+    minWidth: 300,
   },
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [

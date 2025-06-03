@@ -9,21 +9,34 @@ import {
   ListItemText,
   Popover,
   Stack,
+  Typography,
 } from "@mui/material";
 import { setLanguage, useLang } from "../../../../i18n/Metronici18n";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { LANGUAGE } from "../../../../../utils/enums";
+import { useIntl } from "react-intl";
 
-const Languages: FC = () => {
+const Languages = () => {
+  const { formatMessage } = useIntl();
   const lang = useLang();
-  const appLanguages = useAppSelector(state => state.user.userData?.applicationLanguage) ?? [LANGUAGE.ENGLISH];
+  const appLanguages = useAppSelector(
+    (state) => state.user.userData?.applicationLanguage
+  );
+  const defaultLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
+  );
+  const supportedLanguages = appLanguages
+    ? appLanguages.length > 0
+      ? appLanguages
+      : [defaultLanguage]
+    : ["en"];
   const currentLanguage = languages.find((x) => x.lang === lang);
-  const [languageAnchorEl, setLanguangeAnchorEl] =
-    useState<HTMLElement | null>(null);
+  const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLElement | null>(
+    null
+  );
 
-  const handleClick = (event:React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setLanguangeAnchorEl(event.currentTarget);
   };
 
@@ -39,23 +52,18 @@ const Languages: FC = () => {
 
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
- 
+
   return (
-    <div
-      className="menu-item px-5"
-      data-kt-menu-trigger="hover"
-      data-kt-menu-placement="left-start"
-      data-kt-menu-flip="bottom" 
-    >
-      <Stack className="d-flex flex-row align-items-center gap-2" onClick={handleClick}> {/* Setting Popper to open on whole Language instead of just the icon */}
-        <span className="text-muted">{currentLanguage?.name}</span>
+    <>
+      <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} sx={{ bgcolor: "background.card", borderRadius: 4 }} >
+        <Typography variant="body1">{formatMessage({ id: currentLanguage?.name })}</Typography>
         <img
           className="w-15px h-15px rounded-circle"
           src={currentLanguage?.flag}
           alt="countryflag"
         />
         <IconButton
-          // onClick={handleClick}
+
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}
@@ -76,7 +84,7 @@ const Languages: FC = () => {
         }}
       >
         <List>
-          {languages.filter(lang => appLanguages.includes(lang.lang)).map((lang) => (
+          {languages.filter(lang => supportedLanguages.includes(lang.lang)).map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {
@@ -92,13 +100,13 @@ const Languages: FC = () => {
                     alt="countryflag"
                   />
                 </ListItemIcon>
-                <ListItemText primary={lang.name} />
+                <ListItemText primary={formatMessage({ id: lang.name })} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
       </Popover>
-    </div>
+    </ >
   );
 };
 

@@ -48,17 +48,19 @@ export interface ModulesInfoModel {
   isAccessible: boolean;
 }
 
-export type CompanyInfoModel = BaseModel & {
-  status: boolean;
+export type CompanyModel = {
+  status?: boolean;
   companyName: string;
   companyLogo: string | null;
   defaultLanguage: string;
   applicationLanguage: string[];
   primaryContact: string;
   country: string;
-  companyId: string;
-  state: null;
+  companyId?: string;
+  state: string | null;
 };
+
+export type CompanyInfoModel = BaseModel & CompanyModel;
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;

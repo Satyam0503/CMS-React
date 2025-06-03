@@ -1,37 +1,43 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 
-import {
-  BuildCircle,
-  ChatBubbleOutlineOutlined,
-  Circle,
-  ForumOutlined,
-  ForumRounded,
-  ForumTwoTone,
-} from "@mui/icons-material";
+import { ForumOutlined } from "@mui/icons-material";
 
-import { Avatar, Badge, IconButton, Tooltip } from "@mui/material";
+import { Badge, IconButton, Tooltip } from "@mui/material";
 import ChatMessenger from "../chats/ChatMessanger";
 import { InnerChat } from "../chats/InnerChat";
-import { colors } from "../../../../../app/modules/theme/MuiTheme";
 
 export default function ChatDrawer() {
   const [open, setOpen] = React.useState(false);
+  const [selectedChat, setSelectedChat] = React.useState(null);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
+    if (!newOpen) {
+      setSelectedChat(null); // Reset view when closing
+    }
   };
 
   const DrawerList = (
     <Box
-      sx={{ width: { xs: "250px", md: "500px" }, p: 2 }}
+      sx={{
+        width: { xs: "320px", sm: "400px", md: "480px" },
+        p: 2,
+        minHeight: "100vh",
+      }}
       role="presentation"
-      onClick={toggleDrawer(false)}
+      onClick={toggleDrawer(true)}
     >
-      <ChatMessenger />
-      <InnerChat />
+      {selectedChat ? (
+        <InnerChat
+          isDrawer={true}
+          contact={selectedChat}
+          goBack={() => setSelectedChat(null)}
+        />
+      ) : (
+        <ChatMessenger onChatSelect={(contact) => setSelectedChat(contact)} />
+      )}
     </Box>
   );
 
@@ -41,7 +47,6 @@ export default function ChatDrawer() {
         <Tooltip title="Chat">
           <IconButton
             sx={{
-              bgcolor: "inherit",
               border: "none",
               "&:hover": { bgcolor: "inherit", border: "none" },
             }}

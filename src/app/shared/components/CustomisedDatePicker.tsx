@@ -12,10 +12,11 @@ interface PropsTypes {
   minDate?: Dayjs;
   name?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name, minDate, className } = props;
+  const { label, value, setValue, maxDate, name, minDate, disabled = false } = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -30,12 +31,12 @@ const CustomisedDatePicker = (props: PropsTypes) => {
             }}
             maxDate={maxDate}
             minDate={minDate}
+            disabled={disabled}
             slotProps={{
               textField: {
                 inputProps: {
                   readOnly: true,
                   onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
-                  onWheel: (e) => e.preventDefault(), // Disable scrolling
                   onScroll: (e) => e.preventDefault(),
                 },
               },

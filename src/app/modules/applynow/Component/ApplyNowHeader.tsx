@@ -4,16 +4,9 @@ import { PhoneAndroidOutlined } from "@mui/icons-material";
 import { EmailRounded } from "@mui/icons-material";
 import { Grid, Link, Stack } from "@mui/material";
 
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 import { useIntl } from "react-intl";
-import { colors } from "../../theme/MuiTheme";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export default function ApplyNowHeader() {
@@ -21,7 +14,7 @@ export default function ApplyNowHeader() {
   return (
     <Grid
       container
-      color={colors.alpha.secondary[500]}
+      color="secondary.main"
       bgcolor={"#35126c"}
       flexDirection={{ xs: "column", sm: "row" }}
       justifyContent={"space-between"}

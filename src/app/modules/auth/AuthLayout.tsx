@@ -1,26 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { Container, Grid, Typography, Stack, Box } from "@mui/material";
-import { useLang } from "../../../_themes/i18n/Metronici18n";
-import { languages } from "../../../utils/constant/Constant";
 import { Languages } from "../../../_themes/layout/components/header/navbarmenus/Languages";
+import { useIntl } from "react-intl";
+import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
 
 const AuthLayout = () => {
-  const lang = useLang();
-  const currentLanguage = languages.find((x) => x.lang === lang);
-  const [languageAnchorEl, setLanguangeAnchorEl] =
-    useState<HTMLButtonElement | null>(null);
-  const open = Boolean(languageAnchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setLanguangeAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setLanguangeAnchorEl(null);
-  };
-
+  const { formatMessage } = useIntl();
   useEffect(() => {
     const root = document.getElementById("root");
     if (root) {
@@ -38,7 +25,11 @@ const AuthLayout = () => {
       sx={{ height: "100vh", alignContent: "center" }}
       className="d-flex flex-column gap-4"
     >
-      <Stack className="align-self-end">
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center",
+        justifyContent: "flex-end"
+      }}>
+        <LightDarkMode />
         <Languages />
       </Stack>
       <Grid
@@ -64,15 +55,9 @@ const AuthLayout = () => {
             justifyContent={"space-evenly"}
             sx={{ marginBlock: "2rem" }}
           >
-            <Typography variant="body1">
-              <Link to={"/"}>{"Terms"} </Link>
-            </Typography>
-            <Typography variant="body1">
-              <Link to={"/"}> {"Plans"} </Link>
-            </Typography>
-            <Typography variant="body1">
-              <Link to={"/"}>{"Contact Us"}</Link>
-            </Typography>
+            <Link to={"/"}>{formatMessage({ id: "Link.Term" })} </Link>
+            <Link to={"/"}> {formatMessage({ id: "Link.Plan" })} </Link>
+            <Link to={"/"}>{formatMessage({ id: "Link.ContactUs" })} </Link>
           </Stack>
         </Grid>
 

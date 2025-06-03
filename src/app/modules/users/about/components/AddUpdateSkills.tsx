@@ -41,9 +41,9 @@ export const AddUpdateSkills: FC<PropsType> = ({
   const [isListOpen, setListOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [skillsOption, setSkillsOptions] = useState<SkillModel[]>([]);
-  const [selectedSkills, setSelectedSkills] =  useState<SkillModel[]>(userSkills);
+  const [selectedSkills, setSelectedSkills] = useState<SkillModel[]>(userSkills);
   const employeeId = useParams().employeeid;
-  const debouncedSearch  = useDebounce(searchValue,500);
+  const debouncedSearch = useDebounce(searchValue, 500);
 
   function handleClose() {
     setOpen(false);
@@ -130,6 +130,7 @@ export const AddUpdateSkills: FC<PropsType> = ({
           <Stack>
             <Autocomplete
               multiple
+              size="small"
               open={isListOpen}
               disableCloseOnSelect
               options={skillsOption}
@@ -172,7 +173,7 @@ export const AddUpdateSkills: FC<PropsType> = ({
                 },
               }}
             />
-          <Typography variant="body2" className="mt-2 px-2">{intl.formatMessage({id:"PROFILE.SEARCH_NOTE"})}</Typography>
+            <Typography variant="body2" className="mt-2 px-2">{intl.formatMessage({ id: "PROFILE.SEARCH_NOTE" })}</Typography>
           </Stack>
 
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>

@@ -22,7 +22,6 @@ import {
   updateEmployeeEducation,
 } from "../../userservices";
 import { toast } from "react-toastify";
-import { colors } from "../../../theme/MuiTheme";
 import { AxiosError } from "axios";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useParams } from "react-router-dom";
@@ -187,11 +186,11 @@ export const UserEducation = () => {
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
-                  color={colors.alpha.primary[500]}
+                  color="primary.main"
                   sx={{
                     width: 48,
                     height: 48,
-                    bgcolor: colors.alpha.primary[100],
+                    bgcolor: "primary.lighter",
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 1,

@@ -5,7 +5,6 @@ import {
 import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
 import { ApplicationFilterModel, ProcessLogFilterModel } from "../../modules/recruitment/models";
 import { EmployeeFilterModel } from "../../modules/employees/models"
-import { actions } from "react-table";
 
 const filterSlice = createSlice({
   name: "filters",
@@ -15,29 +14,29 @@ const filterSlice = createSlice({
       state,
       action: PayloadAction<ApplicationFilterModel>
     ) => {
-      state.application= action.payload;
+      state.application = action.payload;
       setLocalFilter(state);
     },
-    setProcessLogFilter:(state,action:PayloadAction<ProcessLogFilterModel> )=>{
+    setProcessLogFilter: (state, action: PayloadAction<ProcessLogFilterModel>) => {
       state.processLog = action.payload;
       setLocalFilter(state);
     },
-    resetFilter:(state,action:PayloadAction<{page:keyof FiltersType}>)=>{
-        state[action.payload.page] = null;
-        setLocalFilter(state);
+    setEmployeesFilter: (state, action: PayloadAction<EmployeeFilterModel>) => {
+      state.employee = action.payload;
+      setLocalFilter(state);
     },
-    resetAllFilters:(state)=>{
-      state.application=null;
-      state.jobs=null;
-      state.processLog= null;
+    resetAllFilters: (state) => {
+      state.application = null;
+      state.jobs = null;
+      state.processLog = null;
       clearAllLocalFilter();
     },
-    setEmployeesFilter: (state, action: PayloadAction<EmployeeFilterModel>) =>{
-      state.employee = action.payload;
+    resetFilter: (state, action: PayloadAction<{ page: keyof FiltersType }>) => {
+      state[action.payload.page] = null;
       setLocalFilter(state);
     }
   },
 });
 
 export const filterReducers = filterSlice.reducer;
-export const { setApplicationFilter, setEmployeesFilter ,setProcessLogFilter, resetFilter,resetAllFilters } = filterSlice.actions;
+export const { setApplicationFilter, setEmployeesFilter, setProcessLogFilter, resetFilter, resetAllFilters } = filterSlice.actions;

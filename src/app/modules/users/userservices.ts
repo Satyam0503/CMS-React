@@ -3,14 +3,13 @@ import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import {
   ApiResponse,
   CertificationResponseData,
-  EmployeeResponseData,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
-import { GetSkillListResponseModel, UploadProfileResponseModel, UserSkillsResponseData } from "./models";
+import { EmployeeResponseData, GetSkillListResponseModel, UploadProfileResponseModel, UserSkillsResponseData } from "./models";
 
 export const getEmployeeById = async (userId?: string) => {
   if (userId) {
@@ -71,7 +70,7 @@ export const udpateEmployeeSkills = async (payload: {
   skills: Array<string>;
   userId: string;
 }) => {
-  return postRequest< typeof payload, ApiResponse>(
+  return postRequest<typeof payload, ApiResponse>(
     ServiceUrl.ADD_EDIT_EMPLOYEE_SKILLS,
     payload
   );
@@ -157,10 +156,10 @@ export const deleteEmployeeCertification = async (
 
 // skills 
 
-export const getSkillsList = async (skill:string)=>{
+export const getSkillsList = async (skill: string) => {
   return getRequest<GetSkillListResponseModel>(`${ServiceUrl.GET_SKILLS_LIST}?query=${encodeURIComponent(skill)}`);
 }
 
-export const addSkill = async (skill:string) =>{
-  return postRequest<string,ApiResponse>(ServiceUrl.ADD_SKILL,skill);
+export const addSkill = async (skill: string) => {
+  return postRequest<string, ApiResponse>(ServiceUrl.ADD_SKILL, skill);
 }

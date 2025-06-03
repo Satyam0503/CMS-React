@@ -18,7 +18,6 @@ import { SingleBanner } from "./Component/SingleBanner";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./Component/Footer";
-import { colors } from "../theme/MuiTheme";
 import { Formik, FormikState } from "formik";
 import { SelectInput } from "../../shared/components/form-component/SelectInput";
 import { getAllJobVacancies, uploadResume } from "../recruitment/services";
@@ -115,15 +114,13 @@ export default function ApplyNow() {
   useEffect(() => {
     const getActiveVacancy = async () => {
       try {
-        const response = await getAllJobVacancies();
+        const response = await getAllJobVacancies(null, true);
         const { statusCode, success, message, methodResults } = response.data;
         if (!(success && statusCode === 200)) {
           setError(true);
           throw new Error(message);
         }
-        setActiveJobPositionsList(
-          methodResults.filter((job) => job.status === true)
-        );
+        setActiveJobPositionsList(methodResults);
 
         const selectedJob = methodResults.find((job) => job.status === true);
         if (selectedJob) {
@@ -192,17 +189,10 @@ export default function ApplyNow() {
               <>
                 <Grid item xs={12}>
                   <Stack mb={2} spacing={1}>
-                    <Typography
-                      variant="h3"
-                      color={colors.alpha.secondary[500]}
-                    >
+                    <Typography variant="h3">
                       {intl.formatMessage({ id: "VACANCY.TEXT4" })}
                     </Typography>
-                    <Typography
-                      variant="h4"
-                      fontWeight={600}
-                      color={colors.alpha.primary[500]}
-                    >
+                    <Typography variant="h4" fontWeight={600}>
                       {intl.formatMessage({ id: "VACANCY.TEXT5" })}
                     </Typography>
                   </Stack>
@@ -236,22 +226,19 @@ export default function ApplyNow() {
                         ))
                       ) : (
                         <Typography variant="h5">
-                          {" "}
                           {intl.formatMessage({ id: "NO.VACANCY" })}
                         </Typography>
                       )}
                     </Stack>
                     <Stack spacing={2}>
                       <Typography variant="h5">
-                        {" "}
                         {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
                       </Typography>
-                      <Stack maxHeight={"400px"} overflow={"auto"}>
+                      <Stack >
                         {selectedJobPosition ? (
                           <Typography
                             variant="body1"
                             fontWeight={400}
-                            color={colors.alpha.neutral[600]}
                             dangerouslySetInnerHTML={{
                               __html: selectedJobPosition.description,
                             }}
@@ -437,11 +424,7 @@ export default function ApplyNow() {
                           </Grid>
                         </Grid>
                         <Stack mt={2}>
-                          <Typography
-                            variant="body1"
-                            mb={1}
-                            color={colors.alpha.primary[500]}
-                          >
+                          <Typography variant="body1" mb={1}>
                             {intl.formatMessage({ id: "UPLOAD.RESUME" })}
                           </Typography>
                         </Stack>
@@ -467,7 +450,6 @@ export default function ApplyNow() {
                               <Tooltip title="Upload file here" placement="top">
                                 <Box
                                   component="label"
-                                  bgcolor={colors.alpha.primary[100]}
                                   px={2}
                                   py={0.5}
                                   borderRadius={1}

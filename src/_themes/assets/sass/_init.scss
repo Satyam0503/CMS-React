@@ -3,15 +3,11 @@
 //
 
 // Custom functions & mixins
-@import "./core/base/functions";
-@import "./core/base/mixins";
-@import "./core/components/mixins";
-@import "./core/vendors/plugins/mixins";
 
 // Custom variables
-
 @import "./core/components/variables";
 @import "./core/components/variables-dark";
+@import "./styles/variables.scss";
 
 // Bootstrap initializaton
 @import "bootstrap/scss/functions";
@@ -20,10 +16,6 @@
 @import "bootstrap/scss/maps";
 @import "bootstrap/scss/mixins";
 @import "bootstrap/scss/utilities";
-
-// 3rd-Party plugins variables
-@import "./core/vendors/plugins/variables";
-@import "./core/vendors/plugins/variables-dark";
 
 // Custom layout variables
 @import "./core/layout/base/variables";

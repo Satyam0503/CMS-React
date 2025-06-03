@@ -1,31 +1,23 @@
-import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { DrawerMessenger } from "../partials";
-import { reInitMenu } from "../helpers";
-import { Button, Container, Grid, Stack } from "@mui/material";
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Container, Grid, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
-import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar";
 import { PageDataProvider } from "./core";
-import { colors } from "../../app/modules/theme/MuiTheme";
 import { BreadcrumbProvider } from "react-breadcrumble";
 import { PageData } from "../../app/shared/components/PageData";
 
 const MasterLayout = () => {
-  const location = useLocation();
-  useEffect(() => {
-    reInitMenu();
-  }, [location.key]);
-  const [theme, setTheme] = useState("light");
-
-  // Apply class to body
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+  const [isMiniSidebar, setMiniSidebar] = useState(false);
+  const handleOpenSidebar = () => {
+    setOpen(true);
+  }
+  const handleSideBarClose = () => {
+    setOpen(false)
+  }
 
   return (
     <>
@@ -39,13 +31,18 @@ const MasterLayout = () => {
             flexBasis={"auto"}
             flexShrink={0}
             className="container-main"
+            sx={{ backgroundColor: "background.body" }}
           >
-            <HeaderWrapper />
+            <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack
-              className="app-wrapper flex-row-fluid"
-              sx={{ bgcolor: colors.alpha.bgbody[500] }}
+              direction={"row"}
+              className="flex-grow-1"
+              sx={{
+                marginLeft: isSmallScreen ? 0 : isMiniSidebar ? "90px" : "265px",
+                transition: "margin .3s linear"
+              }}
             >
-              <Sidebar />
+              <Sidebar open={open} handleClose={handleSideBarClose} isMiniSidebar={isMiniSidebar} setMiniSidebar={setMiniSidebar} />
               <Container className="d-flex flex-column flex-grow-1">
                 <PageData />
                 <Outlet />
@@ -56,7 +53,7 @@ const MasterLayout = () => {
             </Stack>
           </Grid>
 
-          <DrawerMessenger />
+          {/* <DrawerMessenger /> */}
         </PageDataProvider>
       </BreadcrumbProvider>
     </>

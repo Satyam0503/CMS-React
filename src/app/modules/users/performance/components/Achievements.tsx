@@ -1,19 +1,14 @@
 import { Typography, Card, Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
-  Announcement,
-  CalendarMonth,
   CalendarToday,
   Celebration,
-  FeedbackOutlined,
   LocalCafe,
   LocalFlorist,
   Stars,
   Whatshot,
   Work,
 } from "@mui/icons-material";
-import { CalendarIcon } from "@mui/x-date-pickers";
-import { colors } from "../../../theme/MuiTheme";
 
 type Props = {
   className: string;
@@ -49,13 +44,13 @@ export default function Achievements() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <Whatshot />
               </Stack>
             </Stack>
@@ -89,13 +84,13 @@ export default function Achievements() {
               sx={{
                 minWidth: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <Celebration />
               </Stack>
             </Stack>
@@ -128,13 +123,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <LocalFlorist />
               </Stack>
             </Stack>
@@ -167,13 +162,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <Stars />
               </Stack>
             </Stack>
@@ -201,13 +196,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <LocalCafe />
               </Stack>
             </Stack>
@@ -235,13 +230,13 @@ export default function Achievements() {
               sx={{
                 width: 48,
                 height: 48,
-                bgcolor: colors.alpha.primary[100],
+                bgcolor: "primary.lighter",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: 1,
               }}
             >
-              <Stack color={colors.alpha.primary[500]}>
+              <Stack color="primary.main">
                 <Work />
               </Stack>
             </Stack>

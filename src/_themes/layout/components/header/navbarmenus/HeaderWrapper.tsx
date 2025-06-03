@@ -1,22 +1,18 @@
-import { Grid, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
-import {
-  Edit,
-  MenuOutlined,
-  RecordVoiceOver,
-  Search,
-} from "@mui/icons-material";
-import { useCallback, useState } from "react";
-
+import { Grid, IconButton, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { MenuOutlined } from "@mui/icons-material";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Navbar } from "./Navbar";
 import { SearchInput } from "../../../../../app/shared/components/SearchInput";
 
-export function HeaderWrapper() {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState<string>("");
+type Props = {
+  openSideBar: () => void;
+}
+
+export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
   const theme = useTheme();
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
+  const [search, setSearch] = useState<string>("");
+
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
   }, []);
@@ -24,37 +20,22 @@ export function HeaderWrapper() {
   return (
     <Grid
       item
-      position={"sticky"}
-      top={0}
-      zIndex={3}
-      bgcolor={"#fcfcfc"}
-      py={1}
+      sx={{
+        backgroundColor: 'background.header',
+        p: 1
+      }}
+      className="header-wrapper"
     >
-      <Grid item display={"flex"} alignItems={"center"} px={1}>
-        <Grid
-          item
-          display={{ xs: "block", md: "none" }}
-          id="kt_app_sidebar_mobile_toggle"
-        >
-          <MenuOutlined fontSize="large" onClick={toggleDrawer} />
-        </Grid>
-
-        <Grid
-          item
-          display={"flex"}
-          justifyContent={"flex-end"}
-          flexGrow={1}
-          alignItems={"center"}
-          gap={2}
-        >
-          <Stack>
-            <SearchInput search={search} setSearch={handleSearchChange} />
-          </Stack>
-          <Stack>
-            <Navbar />
-          </Stack>
-        </Grid>
-      </Grid>
+      {
+        isSmallScreen &&
+        <IconButton sx={{ border: 0 }} onClick={openSideBar}>
+          <MenuOutlined fontSize="large" />
+        </IconButton>
+      }
+      <Stack direction={"row"} sx={{ alignItems: "center", flexGrow: 1, justifyContent: "flex-end" }} spacing={2}>
+        <SearchInput search={search} setSearch={handleSearchChange} />
+        <Navbar />
+      </Stack>
     </Grid>
   );
 }

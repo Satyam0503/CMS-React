@@ -73,12 +73,8 @@ const UserProfile = () => {
   const empId = useParams().employeeid;
 
   useEffect(() => {
-    if(empId){
-      setPageTitle(intl.formatMessage({ id: "PAGE.PROFILE" }));
-    }else{
-      setPageTitle(intl.formatMessage({ id: "PAGE.MY_PROFILE" }));
-    }
-  }, []); 
+    setPageTitle(intl.formatMessage({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
+  }, []);
 
   return (
     <UserDetailsProvider>
@@ -109,30 +105,33 @@ const UserProfile = () => {
           className="d-flex flex-column gap-4"
         >
           <ProfileHeader />
-          <Card className="tab-container d-flex flex-row">
-            {tabsRoutes.map((tab) => {
-              const tabTo = empId ? `employees/${empId}/${tab.to}` : `profile/${tab.to}`;
-              return (
-                <Box
-                  component={"div"}
-                  key={tab.tabId}
-                  className={clsx("tab-box", {
-                    tab_active: checkIsActive(location.pathname, tabTo),
-                  })}
-                  onClick={() => navigate(tab.to)}
-                >
-                  {tab.icon}
-                  {intl.formatMessage({ id: tab.title })}
-                </Box>
-              );
-            })}
-          </Card>
-          <Box component="div" className="flex-grow-1">
-            <Outlet />
-          </Box>
+          <Stack spacing={1}>
+            <Card className="tab-container d-flex flex-row">
+              {tabsRoutes.map((tab) => {
+                const tabTo = empId ? `employees/${empId}/${tab.to}` : `profile/${tab.to}`;
+                return (
+                  <Box
+                    component={"div"}
+                    key={tab.tabId}
+                    className={clsx("tab-box", {
+                      tab_active: checkIsActive(location.pathname, tabTo),
+                    })}
+                    onClick={() => navigate(tab.to)}
+                    sx={{ color: "text.secondary" }}
+                  >
+                    {tab.icon}
+                    {intl.formatMessage({ id: tab.title })}
+                  </Box>
+                );
+              })}
+            </Card>
+            <Box component="div" className="flex-grow-1">
+              <Outlet />
+            </Box>
+          </Stack>
         </Grid>
       </Grid>
-    </UserDetailsProvider>
+    </UserDetailsProvider >
   );
 };
 

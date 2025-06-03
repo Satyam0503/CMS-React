@@ -1,57 +1,56 @@
 import { Stack, Typography, Avatar, Box, Link } from "@mui/material";
 import { useIntl } from "react-intl";
 import dayjs, { Dayjs } from "dayjs";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { dateFormatter } from "../../../../utils/common";
-import { colors } from "../../theme/MuiTheme";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
+import { getAllEmployees } from "../../employees/employeeServices";
 
-interface PropsType {
-  employees: GetAllEmployeeResponseModel[];
+const isSameDate = (date: Dayjs) => {
+  const currentDateofMonth = dayjs().date();
+  const currentMonth = dayjs().month();
+  if (currentDateofMonth === date.date() && currentMonth === date.month()) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const getUpcomingBirthDays = (empList: GetAllEmployeeResponseModel[]) => {
+  const sortedEmployee = empList.filter(emp => emp.dateOfBirth != null)
+    .map((emp) => {
+      let birthDayThisYear = dayjs(emp.dateOfBirth).set("year", dayjs().get("year"));
+      if (birthDayThisYear.isBefore(dayjs(), "day")) {
+        birthDayThisYear = birthDayThisYear.add(1, "year");
+      }
+      return {
+        ...emp,
+        birthDayThisYear,
+      };
+    })
+    .sort((emp1, emp2) => {
+      return emp1?.birthDayThisYear.diff(emp2?.birthDayThisYear);
+    });
+  return sortedEmployee
 }
-export default function UpcomingBirthday({ employees }: PropsType) {
-  const intl = useIntl();
-  const [employeeList, setEmployeeList] = useState<
-    GetAllEmployeeResponseModel[]
-  >([]);
 
-  const getUpcomingBirthDays = useCallback(() => {
-    const sortedEmployee = employees
-      .map((emp) => {
-        let birthDayThisYear = dayjs(emp.dateOfBirth).set(
-          "year",
-          dayjs().get("year")
-        );
-        if (birthDayThisYear.isBefore(dayjs(), "day")) {
-          birthDayThisYear = birthDayThisYear.add(1, "year");
-        }
-        return {
-          ...emp,
-          birthDayThisYear,
-        };
-      })
-      .sort((emp1, emp2) => {
-        return emp1?.birthDayThisYear.diff(emp2?.birthDayThisYear);
-      });
-    return sortedEmployee;
-  }, [employees]);
+export default function UpcomingBirthday() {
+  const intl = useIntl();
+  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
 
   useEffect(() => {
-    if (employees.length) {
-      setEmployeeList(getUpcomingBirthDays());
-    }
-  }, [employees]);
-
-  const isSameDate = (date: Dayjs) => {
-    const currentDateofMonth = dayjs().date();
-    const currentMonth = dayjs().month();
-    if (currentDateofMonth === date.date() && currentMonth === date.month()) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+    (async () => {
+      try {
+        const { data } = await getAllEmployees(null);
+        if (data.success) {
+          setEmployees(data.methodResults);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [])
 
   return (
     <>
@@ -67,16 +66,11 @@ export default function UpcomingBirthday({ employees }: PropsType) {
               component={"div"}
               sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
             >
-              <Typography
-                variant="h5"
-                sx={{ color: colors.alpha.neutral[400] }}
-              >
-                No Employees
-              </Typography>
+              <Typography variant="h5">No Employees</Typography>
             </Box>
           ) : (
             <Stack spacing={1}>
-              {employeeList.slice(0, 3).map((emp) => {
+              {getUpcomingBirthDays(employees).slice(0, 3).map((emp) => {
                 return (
                   <Stack
                     key={emp.userId}
@@ -99,22 +93,17 @@ export default function UpcomingBirthday({ employees }: PropsType) {
                           height: 45,
                           fontSize: "1rem",
                         }}
-                      >
-                        {emp.fullName.charAt(0)}
-                      </Avatar>
+                      />
                       <Stack>
                         <Typography variant="body1">{emp.fullName}</Typography>
                         <Typography variant="body2">{emp.jobRole}</Typography>
                       </Stack>
                     </Stack>
 
-                    <Typography
-                      variant="subtitle2"
-                      color={colors.alpha.primary[500]}
-                    >
+                    <Typography variant="subtitle2">
                       {!isSameDate(dayjs(emp.dateOfBirth))
                         ? dateFormatter(emp.birthDayThisYear, "DD MMM YYYY")
-                        : "Today"}
+                        : intl.formatMessage({ id: "Date.Today" })}
                     </Typography>
                   </Stack>
                 );

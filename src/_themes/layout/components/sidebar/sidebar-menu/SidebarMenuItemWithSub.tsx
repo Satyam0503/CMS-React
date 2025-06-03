@@ -1,48 +1,55 @@
 import React, { ReactNode } from "react";
-import clsx from "clsx";
 import { useLocation } from "react-router";
-import { checkIsActive, WithChildren } from "../../../../helpers";
-import { useLayout } from "../../../core";
-import { Box, Grid } from "@mui/material";
+import { checkIsActive } from "../../../../helpers";
+import { Collapse, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 type Props = {
+  index: number;
+  isOpen: boolean;
   to: string;
   title: string;
   icon?: ReactNode;
-  fontIcon?: string;
-  hasBullet?: boolean;
+  children: ReactNode;
+  setCurrentMenuIndex: (index: number | null) => void;
 };
 
-const SidebarMenuItemWithSub: React.FC<Props & WithChildren> = ({
+const SidebarMenuItemWithSub: React.FC<Props> = ({
   children,
   to,
   title,
   icon,
+  index,
+  isOpen,
+  setCurrentMenuIndex
 }) => {
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
-  const { config } = useLayout();
-  const { app } = config;
+
+  const handleMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (isOpen) {
+      setCurrentMenuIndex(null)
+    } else {
+      setCurrentMenuIndex(index);
+    }
+  }
 
   return (
-    <Grid
-      item
-      className={clsx("menu-item", { "here show": isActive }, "menu-accordion")}
-      data-kt-menu-trigger="click"
-    >
-      <Box className="menu-link">
-        <Box className="menu-icon">{icon}</Box>
-        <Box className="menu-title">{title}</Box>
-        <Box className="menu-arrow" />
-      </Box>
-      <Box
-        className={clsx("menu-sub menu-sub-accordion", {
-          "menu-active-bg": isActive,
-        })}
-      >
-        {children}
-      </Box>
-    </Grid>
+    <>
+      <ListItemButton onClick={handleMenuToggle} sx={{ color: 'common.white' }} className="sidebar-menu-item">
+        <ListItemIcon>
+          {icon}
+        </ListItemIcon>
+        <ListItemText primary={title} />
+        {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
+      </ListItemButton>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit >
+        <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
+          {children}
+        </List>
+      </Collapse>
+    </>
   );
 };
 

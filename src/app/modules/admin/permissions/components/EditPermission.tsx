@@ -14,7 +14,6 @@ import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import { colors } from "../../../theme/MuiTheme";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import {
   ModulePermissoinModel,
@@ -209,7 +208,7 @@ export const EditPermission = () => {
           />
         </Stack>
         {!currentRoleDetails?.isNotEditable && (
-          <Box className="p-5 shadow-md mb-2">
+          <Box className="p-5 mb-2" sx={{ border: 1, borderRadius: 1, borderColor: 'text.disabled' }}>
             <Stack
               spacing={2}
               direction={"row"}
@@ -252,8 +251,7 @@ export const EditPermission = () => {
               <Box
                 component={"div"}
                 sx={{
-                  border: "1px solid",
-                  borderColor: colors.alpha.neutral[200],
+                  border: "1px solid grey",
                   borderRadius: 1,
                   p: 2,
                 }}
@@ -325,7 +323,6 @@ export const EditPermission = () => {
                 }
                 label={formatMessage({ id: "BUTTON.SAVE" })}
                 Icon={<Check />}
-                iconPosition="start"
                 type="submit"
               />
             </Stack>

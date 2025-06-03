@@ -7,18 +7,23 @@ import ReactCrop, {
   PercentCrop,
   PixelCrop,
 } from "react-image-crop";
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
 
 interface Props {
+  circularCrop?: boolean,
   open: boolean;
   imgSrc: string;
   handleClose: () => void;
   handleCrop: (value: string) => void;
+  displayPreview?: boolean;
 }
 
 const MIN_DIMENSION = 150;
+
+const MIN_WIDTH_RECTANGLE = 150;
+const MIN_HEIGHT_RECTANGLE = 100;
 
 export async function canvasPreview(
   image: HTMLImageElement,
@@ -36,7 +41,6 @@ export async function canvasPreview(
   const pixelRatio = window.devicePixelRatio;
   canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
   canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
-
   ctx.scale(pixelRatio, pixelRatio);
   ctx.imageSmoothingQuality = "high";
 
@@ -69,10 +73,13 @@ export const ImageCropper: FC<Props> = ({
   handleClose,
   imgSrc,
   handleCrop,
+  circularCrop = false,
+  displayPreview = false
 }) => {
   const [crop, setCrop] = useState<Crop>();
   const [croppedImage, setCroppedImage] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const intl = useIntl();
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -112,21 +119,31 @@ export const ImageCropper: FC<Props> = ({
           onChange={(pixelCrop, percentCrop) => {
             setCrop(percentCrop);
           }}
-          circularCrop
+          circularCrop={circularCrop}
           keepSelection
-          aspect={1}
-          minHeight={MIN_DIMENSION}
-          minWidth={MIN_DIMENSION}
+          aspect={circularCrop ? 1 : undefined}
+          minHeight={circularCrop ? MIN_DIMENSION : MIN_HEIGHT_RECTANGLE}
+          minWidth={circularCrop ? MIN_DIMENSION : MIN_WIDTH_RECTANGLE}
           onComplete={onCropComplete}
           className="mx-auto"
         >
           <img
+            style={{
+              maxWidth: "400px",
+              objectFit: "contain",
+            }}
             ref={imageRef}
             src={imgSrc}
             alt="profile-preview"
             onLoad={onImageLoad}
           />
         </ReactCrop>
+        {
+          displayPreview &&
+          <Box >
+            <canvas ref={canvasRef} className="logo-preview-container" />
+          </Box>
+        }
         <Stack direction={"row"} spacing={1} className="justify-content-end">
           <CustomisedButton
             label={intl.formatMessage({ id: "BUTTON.CANCEL" })}
@@ -139,6 +156,6 @@ export const ImageCropper: FC<Props> = ({
           />
         </Stack>
       </Stack>
-    </CustomisedModal>
+    </CustomisedModal >
   );
 };

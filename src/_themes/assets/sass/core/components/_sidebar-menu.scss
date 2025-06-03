@@ -1,0 +1,93 @@
+// sidebar menu
+
+.sidebar {
+  & .sidebar-paper {
+    width: 265px;
+    overflow-y: visible;
+    white-space: nowrap;
+    transition: width 0.4s linear;
+    background-color: $sidebar-bg;
+  }
+  & .sidebar-collapse-button {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    right: 0;
+    transform: translate(50%);
+    top: 20%;
+    z-index: 20;
+    pointer-events: auto;
+
+    & > .MuiSvgIcon-root {
+      transition: rotate 0.4s linear;
+    }
+  }
+
+  & .user-profile-wrapper {
+    width: 100%;
+    max-width: 128px;
+    max-height: 128px;
+    aspect-ratio: 1;
+  }
+
+  & .sidebar-menu-main {
+    padding: 1rem;
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+
+    & .sidebar-menu-item {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      padding-block: 0.25rem;
+      margin-block: 4px;
+
+      & .MuiTypography-root {
+        font-weight: 600 !important;
+        opacity: 1;
+        transition: display 0.4s linear;
+      }
+      & .MuiListItemIcon-root {
+        color: inherit;
+        margin-inline-end: 0.25rem;
+      }
+
+      & .MuiSvgIcon-root {
+        transition: all 0.4s linear;
+      }
+      &.Mui-selected {
+        background-color: $app-white;
+        color: $app-primary-500;
+      }
+    }
+  }
+
+  &:not(:hover) {
+    &[data-sidebar-mini="true"] {
+      & .sidebar-paper {
+        width: 90px !important;
+      }
+      & .sidebar-collapse-button > .MuiSvgIcon-root {
+        rotate: 180deg;
+      }
+      & .sidebar-menu-main {
+        & .sidebar-menu-item {
+          margin-block: 0.5rem;
+
+          & .MuiTypography-root {
+            opacity: 0;
+            display: none;
+          }
+          & .MuiSvgIcon-root {
+            font-size: 2rem;
+          }
+          & .menu-arrow {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
