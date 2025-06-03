@@ -73,6 +73,10 @@ export interface JobModal {
   description: string;
 }
 
+export interface JobSearchModel {
+  name: string
+}
+
 export interface CommentModel {
   applicantId: string;
   userId: string;

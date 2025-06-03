@@ -105,9 +105,9 @@ export const statusEncoder = (status: string) => {
 export const statusDecoder = (status: boolean) => {
   switch (status) {
     case true:
-      return "Active";
+      return "ACTIVE";
     case false:
-      return "Inactive";
+      return "INACTIVE";
     default:
       return "";
   }

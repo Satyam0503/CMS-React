@@ -50,21 +50,11 @@ export const DepartmentChart: FC = () => {
               const response = await getAllDepartmentInfo();
               const { success, methodResults } = response.data;
               if (success) {
-                console.log(methodResults)
                 var labels: string[] = [];
                 var series: number[] = [];
 
-                // selecting current language from localStorage for pushing correct labels, else pushin 'en' label values.
-                const current_lang: string | null = localStorage.getItem("i18nConfig") || "null";
-                const lang = current_lang!="null" ? JSON.parse(current_lang).selectedLang : "en";
-
                 methodResults.forEach((data)=>{
-                  data.titles.forEach((title) => {
-                    if(title.language == lang){
-                      labels.push(title.label || "null");
-                    }
-                  })
-                  
+                  labels.push(data.label || "null");
                   series.push(data.employeeCount || 0);
                 })
                 
