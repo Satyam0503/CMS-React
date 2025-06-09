@@ -547,6 +547,7 @@
   "BUTTON.APPLY": "Apply",
   "BUTTON.RETURN_HOME": "Return Home",
   "BUTTON.PUBLISH": "Publish",
+  "BUTTON.VIEW": "View",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
@@ -577,6 +578,10 @@
   "Error.500.NOTE": "Something went wrong! Please try again later!",
   "Error.UNAUTHORIZED": "Unauthorized Access",
   "Error.SWR": "Something Went Wrong",
+  "Date.Today": "Today",
 
-  "Date.Today": "Today"
+  "Notifications": "Notifications",
+  "Notifications.New": "New",
+  "Notifications.Read": "Read",
+  "Notifications.All": "All"
 }

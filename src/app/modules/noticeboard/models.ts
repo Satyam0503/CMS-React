@@ -1,4 +1,4 @@
-import { BaseModel, ResponseData } from "../../../utils/common_types"
+import { ResponseData } from "../../../utils/common_types"
 import { NOTICE_TYPE } from "../../../utils/enums"
 
 export interface NoticeModel {

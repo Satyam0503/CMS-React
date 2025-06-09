@@ -1,6 +1,6 @@
 import { Brightness4, LightModeOutlined } from "@mui/icons-material";
-import { CustomIconButton } from "../../../../../app/shared/components/CustomIconButton";
 import { setCurrentThemeMode, useThemeContext } from "../../../../../app/Context/ThemeContext";
+import { IconButton, Tooltip } from "@mui/material";
 
 
 export default function LightDarkMode() {
@@ -13,15 +13,13 @@ export default function LightDarkMode() {
 
   return (
     <>
-      <CustomIconButton
-        handleClick={handleThemeChange}
-        icon={theme === "light" ? <Brightness4 fontSize="large" /> : <LightModeOutlined fontSize="large" />}
-        tooltip="Light /Dark mode"
-        style={{
-          border: "none",
-          cursor: "pointer",
-        }}
-      />
+      <Tooltip title="Light /Dark mode">
+        <IconButton
+          onClick={handleThemeChange}
+        >
+          {theme === "light" ? <Brightness4 /> : <LightModeOutlined />}
+        </IconButton>
+      </Tooltip >
     </>
   );
 }

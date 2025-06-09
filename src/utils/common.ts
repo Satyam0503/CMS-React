@@ -1,5 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import DOMPurify from "dompurify";
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime);
 
 import {
   EmployeeModel,
@@ -12,9 +14,11 @@ import {
   ApplicationStatus,
   CommentAction,
   ModulesName,
+  NOTICE_TYPE,
   Permission,
 } from "./enums";
-import { APP_FILTER_KEY, SideBarTabList } from "./constant/Constant";
+import { APP_FILTER_KEY, NoticeTypes, SideBarTabList } from "./constant/Constant";
+
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
@@ -24,6 +28,14 @@ export const dateFormatter = (
   }
   return dayjs(date).format(format);
 };
+
+export const relativeTimeFormatter = (date: Dayjs | string) => {
+  const daysDiff = dayjs().diff(date, "day");
+  if (daysDiff > 3) {
+    return dayjs(date).format("DD MMM YYYY hh:mm A");
+  }
+  return dayjs(date).fromNow();
+}
 
 export const employeesListMapperforExport = (
   employeesList: EmployeeModel[]
@@ -62,6 +74,14 @@ export const applicantStatusDecoder: {
   [ApplicantStatus.Active]: "APPLICANT.STATUS.ACTIVE",
   [ApplicantStatus.InActive]: "APPLICANT.STATUS.INACTIVE",
 };
+
+export const noticeTypeDecoder: {
+  [index: number]: string;
+} = {
+  [NOTICE_TYPE.GENERAL]: "NOTICE_TYPE.GENERAL",
+  [NOTICE_TYPE.IMPORTANT]: "NOTICE_TYPE.IMPORTANT",
+  [NOTICE_TYPE.URGENT]: "NOTICE_TYPE.URGENT",
+}
 
 export const commentActionEncoderForApplicationStatus = (
   activityStatus: number

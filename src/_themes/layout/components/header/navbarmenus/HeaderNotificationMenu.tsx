@@ -5,13 +5,17 @@ import Typography from "@mui/material/Typography";
 
 import {
   Badge,
+  Box,
   Divider,
   IconButton,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
+  Popover,
   Stack,
+  Tab,
+  Tabs,
   Tooltip,
 } from "@mui/material";
 import { Close, NotificationsOutlined, Translate } from "@mui/icons-material";
@@ -19,10 +23,48 @@ import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NoticeModel } from "../../../../../app/modules/noticeboard/models";
 
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+
 export default function HeaderNotificationMenu() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { formatMessage } = useIntl();
   const [notificationList, setNotificationList] = React.useState<NoticeModel[]>([])
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+  const id = open ? 'notification-popover' : undefined;
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -30,91 +72,69 @@ export default function HeaderNotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const intl = useIntl();
   const connection = Connector.getInstance().getConnetion();
 
   React.useEffect(() => {
     if (connection) {
-      connection.on("noticeNotify", (notice: NoticeModel) => {
+      connection.on("noticeNofity", (notice: NoticeModel) => {
         setNotificationList([...notificationList, notice]);
       })
     }
   }, [])
-  console.log(notificationList);
 
   return (
     <>
       <Tooltip title="Notifications" placement="bottom">
-        <IconButton
-          sx={{
-            bgcolor: "inherit",
-            border: "none",
-            "&:hover": {
-              bgcolor: "inherit",
-              border: "none",
-            },
-          }}
-          onClick={handleClick}
-          aria-controls={open ? "account-menu" : undefined}
-          aria-haspopup="true"
-        >
-          <Badge badgeContent={4} color="primary">
-            <NotificationsOutlined fontSize="large" />
-          </Badge>
-        </IconButton>
+        <Badge badgeContent={1} color="primary">
+          <IconButton
+            onClick={handleClick}
+            aria-describedby={id}
+          >
+            <NotificationsOutlined />
+          </IconButton>
+        </Badge>
       </Tooltip>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
+      <Popover
+        id={id}
         open={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        onClick={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
         slotProps={{
           paper: {
-            sx: { width: 300 }
+            sx: {
+              minWidth: 250,
+              padding: 2
+            }
           }
         }}
       >
-        <Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Stack direction={"row"} alignItems={"center"}>
-              <Typography variant="h6" px={1}>
-                Notifications
-              </Typography>
-              <Badge
-                color="secondary"
-                overlap="circular"
-                badgeContent="1"
-                sx={{ pl: 2 }}
-              />
-            </Stack>
-            <Stack>
-              <Close />
-            </Stack>
-          </Stack>
-          <Divider />
-          <MenuList>
-            {
-              notificationList.map(notification => (
-                <MenuItem className="px-2">
-                  <ListItemIcon>
-                    <Translate />
-                  </ListItemIcon>
-                  <ListItemText>
-                    {notification.title}
-                  </ListItemText>
-                  {notification.target}
-                </MenuItem>
-              ))
-            }
-          </MenuList>
-        </Stack>
-      </Menu>
+        <Typography variant="body1">{formatMessage({ id: "Notifications" })}</Typography>
+        <Divider sx={{ mt: 1 }} />
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="notifications tabs">
+            <Tab label={formatMessage({ id: "Notifications.New" })} {...a11yProps(0)} />
+            <Tab label={formatMessage({ id: "Notifications.Read" })} {...a11yProps(1)} />
+            <Tab label={formatMessage({ id: "Notifications.All" })} {...a11yProps(2)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
+          Item One
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          Item Two
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={2}>
+          Item Three
+        </CustomTabPanel>
+      </Popover>
     </>
   );
 }

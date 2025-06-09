@@ -119,7 +119,7 @@ export const Applications = () => {
     const timeoutId = setTimeout(async () => {
       try {
         const { data } = await getAllApplicantList(applicationFilters != null ? payload : { ...initialFilter, name: search, pageNo: paginationValues.pageNo + 1, records: paginationValues.records });
-        setApplicationsList(data.methodResults.reverse());
+        setApplicationsList(data.methodResults);
         setTotalRecords(data.totalRecords);
       } catch (error) {
         console.error(

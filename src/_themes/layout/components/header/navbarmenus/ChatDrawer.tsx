@@ -45,20 +45,16 @@ export default function ChatDrawer() {
     <>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="Chat">
-          <IconButton
-            sx={{
-              border: "none",
-              "&:hover": { bgcolor: "inherit", border: "none" },
-            }}
-            onClick={toggleDrawer(true)}
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-          >
-            <Badge badgeContent={1} color="primary" className="animation-blink">
-              <ForumOutlined fontSize="large" />
-            </Badge>
-          </IconButton>
+          <Badge badgeContent={1} color="primary" className="animation-blink">
+            <IconButton
+              onClick={toggleDrawer(true)}
+              aria-controls={open ? "account-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+            >
+              <ForumOutlined />
+            </IconButton>
+          </Badge>
         </Tooltip>
       </Box>
 

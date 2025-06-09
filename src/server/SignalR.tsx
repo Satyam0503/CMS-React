@@ -2,7 +2,8 @@
 import * as signalR from "@microsoft/signalr";
 import { BaseUrl } from "../utils/constant/Constant";
 
-const NOTICEBOARDURL = '/notice-board'
+// const NOTICEBOARDURL = '/notice-board'
+const NOTIFICATIONHUB = '/notificationhub';
 
 class Connector {
     private static instance: Connector | null = null;
@@ -21,7 +22,7 @@ class Connector {
         if (this.connection) return; // Prevent duplicate connections
 
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${BaseUrl}${NOTICEBOARDURL}`, {
+            .withUrl(`${BaseUrl}${NOTIFICATIONHUB}`, {
                 accessTokenFactory: () => token,
             })
             .withAutomaticReconnect()
