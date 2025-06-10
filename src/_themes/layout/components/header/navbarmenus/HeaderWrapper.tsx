@@ -22,7 +22,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
       item
       sx={{
         backgroundColor: 'background.header',
-        p: 1
+        p: 1.5
       }}
       className="header-wrapper"
     >

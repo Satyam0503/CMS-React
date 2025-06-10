@@ -16,8 +16,9 @@ export default function LightDarkMode() {
       <Tooltip title="Light /Dark mode">
         <IconButton
           onClick={handleThemeChange}
+          sx={{ border: 0, p: 0 }}
         >
-          {theme === "light" ? <Brightness4 /> : <LightModeOutlined />}
+          {theme === "light" ? <Brightness4 fontSize="large" /> : <LightModeOutlined fontSize="large" />}
         </IconButton>
       </Tooltip >
     </>

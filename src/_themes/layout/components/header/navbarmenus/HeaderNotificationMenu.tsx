@@ -76,8 +76,10 @@ export default function HeaderNotificationMenu() {
 
   React.useEffect(() => {
     if (connection) {
-      connection.on("noticeNofity", (notice: NoticeModel) => {
-        setNotificationList([...notificationList, notice]);
+      connection.on("noticeNofity", (notice: string) => {
+        // setNotificationList([...notificationList, notice]);
+        console.log(notice);
+
       })
     }
   }, [])
@@ -89,8 +91,9 @@ export default function HeaderNotificationMenu() {
           <IconButton
             onClick={handleClick}
             aria-describedby={id}
+            sx={{ border: 0, p: 0 }}
           >
-            <NotificationsOutlined />
+            <NotificationsOutlined fontSize="large" />
           </IconButton>
         </Badge>
       </Tooltip>
@@ -117,7 +120,6 @@ export default function HeaderNotificationMenu() {
         }}
       >
         <Typography variant="body1">{formatMessage({ id: "Notifications" })}</Typography>
-        <Divider sx={{ mt: 1 }} />
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="notifications tabs">
             <Tab label={formatMessage({ id: "Notifications.New" })} {...a11yProps(0)} />

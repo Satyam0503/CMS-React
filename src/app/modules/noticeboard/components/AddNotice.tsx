@@ -81,7 +81,6 @@ export const AddNotice: FC<PropsTypes> = ({
         initialValues={initialValues}
         validationSchema={noticeValidationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
           handleNoticePost(values, setSubmitting);
         }}
       >

@@ -51,8 +51,9 @@ export default function ChatDrawer() {
               aria-controls={open ? "account-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
+              sx={{ border: 0, p: 0 }}
             >
-              <ForumOutlined />
+              <ForumOutlined fontSize="large" />
             </IconButton>
           </Badge>
         </Tooltip>
