@@ -104,6 +104,7 @@ export const ServiceUrl = {
   DELETE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/DeleteEducationDetails`,
   DELETE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/DeleteCertificationDetails`,
   DELETE_EMPLOYEE: `${BaseUrl}/api/User/DeleteEmployee`,
+  GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,

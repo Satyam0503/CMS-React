@@ -9,7 +9,7 @@ import {
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
-import { EmployeeResponseData, GetSkillListResponseModel, UploadProfileResponseModel, UserSkillsResponseData } from "./models";
+import { EmployeeResponseData, GetSkillListResponseModel, NotificationResponseModel, UploadProfileResponseModel, UserSkillsResponseData } from "./models";
 
 export const getEmployeeById = async (userId?: string) => {
   if (userId) {
@@ -162,4 +162,10 @@ export const getSkillsList = async (skill: string) => {
 
 export const addSkill = async (skill: string) => {
   return postRequest<string, ApiResponse>(ServiceUrl.ADD_SKILL, skill);
+}
+
+// notifications 
+
+export const getNotifications = async () => {
+  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION);
 }

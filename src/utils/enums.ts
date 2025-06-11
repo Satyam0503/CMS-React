@@ -119,3 +119,8 @@ export enum NOTICE_TYPE {
   IMPORTANT = 2,
   URGENT = 3
 }
+
+export enum NOTIFICATION_TYPE {
+  NOTICE = 1,
+  ALERT = 2
+}

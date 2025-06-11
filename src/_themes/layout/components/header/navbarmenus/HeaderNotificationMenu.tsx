@@ -1,68 +1,43 @@
-import * as React from "react";
-import Menu from "@mui/material/Menu";
-
-import Typography from "@mui/material/Typography";
-
 import {
   Badge,
-  Box,
-  Divider,
+  Chip,
   IconButton,
-  ListItemIcon,
+  List,
+  ListItem,
   ListItemText,
-  MenuItem,
-  MenuList,
   Popover,
   Stack,
-  Tab,
-  Tabs,
   Tooltip,
+  Typography,
 } from "@mui/material";
-import { Close, NotificationsOutlined, Translate } from "@mui/icons-material";
+import { Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
-import { NoticeModel } from "../../../../../app/modules/noticeboard/models";
+import { NotificationModel } from "../../../../../app/modules/users/models";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { getNotifications } from "../../../../../app/modules/users/userservices";
+import { relativeTimeFormatter } from "../../../../../utils/common";
+import clsx from "clsx";
+import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
+export const NotificationIconMapper: {
+  [index: number]: ReactNode
+} = {
+  [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications fontSize="large" />,
+  [NOTIFICATION_TYPE.ALERT]: <Cake fontSize="small" />,
 }
 
 
 export default function HeaderNotificationMenu() {
   const { formatMessage } = useIntl();
-  const [notificationList, setNotificationList] = React.useState<NoticeModel[]>([])
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? 'notification-popover' : undefined;
-  const [value, setValue] = React.useState(0);
+  const [activeTab, setActiveTab] = useState(1);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleChange = (newValue: number) => {
+    setActiveTab(newValue);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -72,22 +47,47 @@ export default function HeaderNotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const connection = Connector.getInstance().getConnetion();
 
-  React.useEffect(() => {
-    if (connection) {
-      connection.on("noticeNofity", (notice: string) => {
-        // setNotificationList([...notificationList, notice]);
-        console.log(notice);
-
-      })
-    }
+  useEffect(() => {
+    const connection = Connector.getInstance().getConnection();
+    if (!connection) return;
+    const handleNewNotification = (notice: NotificationModel) => {
+      // Prepend the new notification to the existing list
+      setNotificationList((prevList) => [notice, ...prevList]);
+    };
+    connection.on("noticeNofity", handleNewNotification);
+    return () => {
+      connection.off("noticeNofity", handleNewNotification);
+    };
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getNotifications();
+        if (data.success) {
+          setNotificationList(data.methodResults);
+        } else {
+          console.log("Failed to Fetch Notifications");
+        }
+      }
+      catch {
+        console.log("Failed to Fetch Notifications");
+      }
+    })();
+  }, [])
+
+  const filteredNotificationList = useMemo(() => {
+    if (activeTab === 1) return notificationList;
+    if (activeTab === 2) return notificationList.filter(item => !item.isRead);
+    return notificationList.filter(item => item.isRead);
+  }, [notificationList, activeTab]);
+
+  const unReadNotificationCount = useMemo(() => notificationList.length === 0 ? 0 : notificationList.filter(item => !item.isRead).length, [notificationList]);
   return (
     <>
       <Tooltip title="Notifications" placement="bottom">
-        <Badge badgeContent={1} color="primary">
+        <Badge badgeContent={unReadNotificationCount} color="primary">
           <IconButton
             onClick={handleClick}
             aria-describedby={id}
@@ -102,6 +102,7 @@ export default function HeaderNotificationMenu() {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
+        className="notification-menu"
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -114,29 +115,48 @@ export default function HeaderNotificationMenu() {
           paper: {
             sx: {
               minWidth: 250,
+              width: 400,
               padding: 2
             }
           }
         }}
       >
-        <Typography variant="body1">{formatMessage({ id: "Notifications" })}</Typography>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} variant="fullWidth" aria-label="notifications tabs">
-            <Tab label={formatMessage({ id: "Notifications.New" })} {...a11yProps(0)} />
-            <Tab label={formatMessage({ id: "Notifications.Read" })} {...a11yProps(1)} />
-            <Tab label={formatMessage({ id: "Notifications.All" })} {...a11yProps(2)} />
-          </Tabs>
-        </Box>
-        <CustomTabPanel value={value} index={0}>
-          Item One
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          Item Two
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={2}>
-          Item Three
-        </CustomTabPanel>
-      </Popover>
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
+        <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
+          <Stack onClick={() => handleChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
+            <span>{formatMessage({ id: "Notifications.All" })}</span>
+            <Chip label={notificationList.length} size="small" color="secondary" />
+          </Stack>
+          <Stack onClick={() => handleChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
+            <span>{formatMessage({ id: "Notifications.New" })}</span>
+            <Chip label={unReadNotificationCount} size="small" color="secondary" />
+          </Stack>
+          <Stack onClick={() => handleChange(3)} className={clsx({ "active-tab": activeTab === 3 })}>
+            <span>{formatMessage({ id: "Notifications.Read" })}</span>
+            <Chip label={notificationList.length - unReadNotificationCount} size="small" color="secondary" />
+          </Stack>
+        </Stack>
+
+        <List disablePadding className="notification-wrapper" >
+          {
+            filteredNotificationList.length > 0 ?
+              filteredNotificationList.map(item => (
+                <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })}>
+                  <Stack sx={{ bgcolor: "secondary.light" }}>
+                    <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
+                  </Stack>
+                  <ListItemText primary={item.title} secondary={relativeTimeFormatter(item.sentDateTime)} />
+                </ListItem>
+              ))
+              :
+              <ListItem>
+                <ListItemText primary={<Typography variant="h6" sx={{ textAlign: "center" }}>{formatMessage({ id: "Notifications.None" })}</Typography>} />
+              </ListItem>
+          }
+        </List>
+
+      </Popover >
     </>
   );
 }
+

@@ -1,8 +1,5 @@
-$app-primary-500: #9a56d3;
-$app-primary-400: #ac89e6;
 $app-primary-wave: #35126c;
 $app-primary-footer: #9f6dda;
-$app-primary-100: #e6d9f5;
 $app-white: #ffffff;
 $app-white-smoke: #f5f5f5;
 $success-700: #37843c;
@@ -16,8 +13,40 @@ $info-300: #cfd8ff;
 $info-800: #2b46a5;
 
 $sidebar-bg: #0d0e12;
-$neutral-400: #a3a3a3;
-$neutral-500: #737373;
-$neutral-100: #f5f5f5;
 $app-black: #000000;
 $app-dark: #121212;
+
+$app-notification: #ffd09030;
+
+// primary
+$app-primary-100: #e6d9f5;
+$app-primary-200: #e6d9f5;
+$app-primary-300: #c0a4eb;
+$app-primary-400: #ac89e6;
+$app-primary-500: #9a56d3;
+$app-primary-600: #8b4cbb;
+$app-primary-700: #7c41a3;
+$app-primary-800: #6d378b;
+$app-primary-900: #5e2d73;
+
+// secondary
+$app-secondary-100: #fff3e0;
+$app-secondary-200: #ffe2b8;
+$app-secondary-300: #ffd090;
+$app-secondary-400: #ffbe78;
+$app-secondary-500: #febb68;
+$app-secondary-600: #e5a359;
+$app-secondary-700: #cc8c4a;
+$app-secondary-800: #b3743b;
+$app-secondary-900: #995d2d;
+
+// grey
+$neutral-100: #f5f5f5;
+$neutral-200: #e5e5e5;
+$neutral-300: #d4d4d4;
+$neutral-400: #a3a3a3;
+$neutral-500: #737373;
+$neutral-600: #525252;
+$neutral-700: #404040;
+$neutral-800: #262626;
+$neutral-900: #171717;

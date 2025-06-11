@@ -583,5 +583,6 @@
   "Notifications": "Notifications",
   "Notifications.New": "New",
   "Notifications.Read": "Read",
-  "Notifications.All": "All"
+  "Notifications.All": "All",
+  "Notifications.None": "No notifications"
 }

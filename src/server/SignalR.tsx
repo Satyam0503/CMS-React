@@ -52,7 +52,7 @@ class Connector {
         }
     };
 
-    public getConnetion = () => {
+    public getConnection = () => {
         return this.connection;
     }
 }
