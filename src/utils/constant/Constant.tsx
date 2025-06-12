@@ -1,7 +1,6 @@
 import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
-  EmployeeModel,
   SideBarTabListProps,
 } from "../common_types";
 import {
@@ -55,7 +54,6 @@ import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 import { NoticeResponseModel } from "../../app/modules/noticeboard/models";
-import CustomisedButton from "../../app/shared/components/CustomisedButton";
 import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
@@ -104,6 +102,10 @@ export const ServiceUrl = {
   DELETE_EMPLOYEE_EDUCATION: `${BaseUrl}/api/User/DeleteEducationDetails`,
   DELETE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/DeleteCertificationDetails`,
   DELETE_EMPLOYEE: `${BaseUrl}/api/User/DeleteEmployee`,
+
+  GET_WORK_HISTORY: `${BaseUrl}/api/User/GetEmpWorkHistory`,
+  ADD_UPDATE_WORK_HISTORY: `${BaseUrl}/api/User/AddUpdateWorkHistory`,
+
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
 
   // jobs

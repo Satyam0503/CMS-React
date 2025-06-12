@@ -53,6 +53,8 @@ export default function HeaderNotificationMenu() {
     if (!connection) return;
     const handleNewNotification = (notice: NotificationModel) => {
       // Prepend the new notification to the existing list
+      console.log(notice);
+
       setNotificationList((prevList) => [notice, ...prevList]);
     };
     connection.on("noticeNofity", handleNewNotification);

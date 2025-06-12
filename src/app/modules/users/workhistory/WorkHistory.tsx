@@ -1,167 +1,172 @@
-import { Card, Grid, IconButton, Link, Stack, Typography } from "@mui/material";
-import { FC, useState } from "react";
+import { Card, Grid, Stack, Typography } from "@mui/material";
+import { FC, useEffect, useState } from "react";
 
 import { useIntl } from "react-intl";
-import { CalendarIcon } from "@mui/x-date-pickers";
 import {
+  Add,
   Business,
   CalendarToday,
-  CorporateFare,
   DeleteOutline,
   Edit,
+  LocationCityRounded,
+  LocationOn,
 } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { AddUpdateWorkHistory } from "./components/AddUpdateWorkHistory";
+import { WorkHistoryModel } from "../models";
+import { getWorkHistory } from "../userservices";
+import { useParams } from "react-router-dom";
+import { dateFormatter } from "../../../../utils/common";
+import dayjs, { Dayjs } from "dayjs";
 
-export const WorkHistory: FC = () => {
-  const intl = useIntl();
+
+const countTotalExperience = (fromDate: string | Dayjs, toDate: string | Dayjs | null) => {
+  if (!toDate) {
+    toDate = dayjs();
+  }
+  const totalMonths = dayjs(toDate).diff(fromDate, "months");
+  if (totalMonths <= 0) {
+    return "";
+  }
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  const parts = [];
+
+  if (years > 0) {
+    parts.push(`${years} year${years !== 1 ? 's' : ''}`);
+  }
+  if (months > 0) {
+    parts.push(`${months} month${months !== 1 ? 's' : ''}`);
+  }
+  return parts.length > 0 ? parts.join(' ') : '0 months';
+}
+
+
+export const WorkHistory = () => {
+  const { formatMessage } = useIntl();
+  const [open, setOpen] = useState(false);
+  const [workHistoryList, setWorkHistoryList] = useState<WorkHistoryModel[]>([]);
+  const employeeId = useParams().employeeid;
+
+
+  const handleClose = () => {
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getWorkHistory(employeeId ?? "");
+        if (data.success) {
+          setWorkHistoryList(data.methodResults);
+        }
+        else {
+          console.log("failed to fetch Work History");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [])
+
   return (
     <>
-      <Grid container>
-        <Card sx={{ p: 2, width: "100%" }}>
-          <Stack
-            direction={"row"}
-            display={"flex"}
-            justifyContent={"space-between"}
-          >
-            <Typography variant="h5" mb={2}>
-              {intl.formatMessage({ id: "MENU.WORK_HISTORY" })}
-            </Typography>
-
-            {/* <CustomIconButton icon={<Add />} tooltip="Add"  /> */}
-            <AddUpdateWorkHistory />
-          </Stack>
-          <Grid container display={"flex"} flexDirection={"column"} gap={1}>
-            <Stack
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              direction={"row"}
-              sx={{
-                "&:hover .MuiStack-root": {
-                  visibility: "visible",
-                },
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems={"center"}>
+      <Card sx={{ p: 2, }}>
+        <Stack
+          direction={"row"}
+          className="justify-content-between"
+        >
+          <Typography variant="h5">
+            {formatMessage({ id: "MENU.WORK_HISTORY" })}
+          </Typography>
+          <CustomIconButton icon={<Add />} tooltip={formatMessage({ id: "BUTTON.ADD" })} handleClick={() => setOpen(true)} />
+        </Stack>
+        <Stack spacing={2} sx={{ my: 1 }} >
+          {
+            workHistoryList.length > 0 ?
+              workHistoryList.map(item =>
                 <Stack
+                  direction="row"
                   sx={{
-                    minWidth: 48,
-                    height: 48,
-                    bgcolor: "primary.lighter",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 1,
+                    justifyContent: "space-between",
+                    "&:hover .MuiStack-root": {
+                      visibility: "visible",
+                    },
                   }}
                 >
-                  <Stack color="primary.main">
-                    <Business />
-                  </Stack>
-                </Stack>
+                  <Stack direction="row" spacing={1} className="align-items-center">
+                    <Stack
+                      sx={{
+                        minWidth: 52,
+                        height: 52,
+                        bgcolor: "primary.lighter",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Business fontSize="large" color="primary" />
+                    </Stack>
 
-                <Stack>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "COMPANY.PRESENT" })}
-                  </Typography>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-                  </Typography>
-
-                  <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={{ xs: 0.5, sm: 2 }}
-                  >
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      Kuwan wala, Dehradun
-                    </Typography>
-                    <Stack direction={"row"} className="text-muted">
-                      <CalendarToday sx={{ fontSize: "14px", mr: 0.5 }} />
-                      <Typography variant="subtitle2">
-                        Jan 2023- Jun 2024 (1 Year 5 Months)
+                    <Stack>
+                      <Typography variant="body1">
+                        {item.organisationName}
                       </Typography>
+                      <Typography variant="body2">
+                        {item.jobRole}
+                      </Typography>
+
+                      <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        spacing={{ xs: 0.5, sm: 2 }}
+                      >
+                        <Stack direction="row" className="align-items-center">
+                          <LocationOn sx={{ fontSize: 14, mr: .5, color: "text.primary" }} />
+                          <Typography variant="body2" fontWeight={600}>
+                            {item.jobLocation}
+                          </Typography>
+                        </Stack>
+                        <Stack direction="row" className="align-items-center">
+                          <CalendarToday sx={{ fontSize: 14, mr: .5, color: "text.primary" }} />
+                          <Typography variant="subtitle2">
+                            {dateFormatter(item.startDate, "MMM YYYY")}
+                            {" - "}
+                            {item.endDate ? dateFormatter(item.endDate, "MMM YYYY") : formatMessage({ id: "WORKING.CURRENT" })}
+                            {" "}
+                            ( {countTotalExperience(item.startDate, item.endDate)})
+                          </Typography>
+                        </Stack>
+                      </Stack>
                     </Stack>
                   </Stack>
-                </Stack>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={1}
-                sx={{
-                  visibility: "hidden",
-                  transition: "visibility 0.3s ease-in-out",
-                }}
-              >
-                <CustomIconButton icon={<Edit />} tooltip="Edit" />
-                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
-              </Stack>
-            </Stack>
-
-            <Stack
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              direction={"row"}
-              sx={{
-                "&:hover .MuiStack-root": {
-                  visibility: "visible",
-                },
-              }}
-            >
-              <Stack direction="row" spacing={1} alignItems={"center"}>
-                <Stack
-                  sx={{
-                    minWidth: 48,
-                    height: 48,
-                    bgcolor: "primary.lighter",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 1,
-                  }}
-                >
-                  <Stack color="primary.main">
-                    <Business />
-                  </Stack>
-                </Stack>
-
-                <Stack>
-                  <Typography variant="body1">
-                    {intl.formatMessage({ id: "COMPANY.PRESENT" })}
-                  </Typography>
-                  <Typography variant="body2" color="primary.main">
-                    {intl.formatMessage({ id: "POSITION.DOT_NET" })}
-                  </Typography>
-
                   <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={{ xs: 0.5, sm: 2 }}
+                    direction={"row"}
+                    sx={{
+                      gap: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexWrap: "wrap",
+                      visibility: "hidden",
+                      transition: "visibility 0.3s ease-in-out",
+                    }}
                   >
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      Kuwan wala, Dehradun
-                    </Typography>
-                    <Stack direction={"row"} className="text-muted">
-                      <CalendarToday sx={{ fontSize: "14px", mr: 0.5 }} />
-                      <Typography variant="subtitle2">
-                        Jan 2023- Jun 2024 (1 Year 5 Months)
-                      </Typography>
-                    </Stack>
+                    <CustomIconButton icon={<Edit />} tooltip="Edit" />
+                    <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
                   </Stack>
                 </Stack>
-              </Stack>
-              <Stack
-                direction={"row"}
-                spacing={1}
-                sx={{
-                  visibility: "hidden",
-                  transition: "visibility 0.3s ease-in-out",
-                }}
-              >
-                <CustomIconButton icon={<Edit />} tooltip="Edit" />
-                <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
-              </Stack>
-            </Stack>
-          </Grid>
-        </Card>
-      </Grid>
+              )
+              :
+              <Typography>No Working History</Typography>
+          }
+
+
+
+
+        </Stack>
+      </Card>
+      {
+        open && <AddUpdateWorkHistory open={open} handleClose={handleClose} />
+      }
     </>
   );
 };

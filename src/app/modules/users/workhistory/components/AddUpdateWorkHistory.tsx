@@ -5,31 +5,24 @@ import {
   Button,
   FormHelperText,
   Grid,
-  MenuItem,
-  Select,
   Stack,
   TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
-import { Add } from "@mui/icons-material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
-export function AddUpdateWorkHistory() {
+type Props = {
+  open: boolean,
+  handleClose: () => void;
+}
+
+export const AddUpdateWorkHistory: React.FC<Props> = ({ open, handleClose }) => {
   const intl = useIntl();
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <>
-      <CustomIconButton icon={<Add />} tooltip="Add" handleClick={handleOpen} />
       <CustomisedModal open={open} handleClose={handleClose}>
         <Typography variant="h5" mb={2}>
           {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
