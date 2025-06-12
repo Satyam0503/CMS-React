@@ -23,8 +23,8 @@ import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 export const NotificationIconMapper: {
   [index: number]: ReactNode
 } = {
-  [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications fontSize="large" />,
-  [NOTIFICATION_TYPE.ALERT]: <Cake fontSize="small" />,
+  [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications />,
+  [NOTIFICATION_TYPE.ALERT]: <Cake />,
 }
 
 
