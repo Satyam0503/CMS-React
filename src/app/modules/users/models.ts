@@ -43,11 +43,12 @@ export type WorkHistoryModel = {
   workHistoryId: string,
   userId: string,
   organisationName: string,
-  startDate: string,
-  endDate: string | null,
+  startDate: Dayjs | null,
+  endDate: Dayjs | null,
   jobRole: string,
   jobLocation: string
 }
+
 
 export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 export type GetSkillListResponseModel = ResponseData<SkillModel>;

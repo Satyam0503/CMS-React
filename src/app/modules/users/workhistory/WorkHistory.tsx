@@ -8,7 +8,6 @@ import {
   CalendarToday,
   DeleteOutline,
   Edit,
-  LocationCityRounded,
   LocationOn,
 } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -20,7 +19,7 @@ import { dateFormatter } from "../../../../utils/common";
 import dayjs, { Dayjs } from "dayjs";
 
 
-const countTotalExperience = (fromDate: string | Dayjs, toDate: string | Dayjs | null) => {
+const countTotalExperience = (fromDate: Dayjs | null, toDate: Dayjs | null) => {
   if (!toDate) {
     toDate = dayjs();
   }
@@ -41,16 +40,32 @@ const countTotalExperience = (fromDate: string | Dayjs, toDate: string | Dayjs |
   return parts.length > 0 ? parts.join(' ') : '0 months';
 }
 
+const initialValues: WorkHistoryModel = {
+  workHistoryId: "",
+  userId: "",
+  organisationName: "",
+  startDate: null,
+  endDate: null,
+  jobLocation: "",
+  jobRole: "",
+};
+
 
 export const WorkHistory = () => {
   const { formatMessage } = useIntl();
   const [open, setOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [workHistoryList, setWorkHistoryList] = useState<WorkHistoryModel[]>([]);
+  const [initialWorkHistoryValue, setInitialWorkHistoryValue] = useState<WorkHistoryModel>(initialValues);
+  const [isEdit, setEdit] = useState(false);
   const employeeId = useParams().employeeid;
 
 
   const handleClose = () => {
     setOpen(false);
+  }
+  const handleRefresh = () => {
+    setRefresh(!refresh);
   }
 
   useEffect(() => {
@@ -67,7 +82,7 @@ export const WorkHistory = () => {
         console.log(error);
       }
     })();
-  }, [])
+  }, [refresh])
 
   return (
     <>
@@ -158,14 +173,10 @@ export const WorkHistory = () => {
               :
               <Typography>No Working History</Typography>
           }
-
-
-
-
         </Stack>
       </Card>
       {
-        open && <AddUpdateWorkHistory open={open} handleClose={handleClose} />
+        open && <AddUpdateWorkHistory refresh={handleRefresh} isEdit={isEdit} initialValues={initialValues} open={open} handleClose={handleClose} />
       }
     </>
   );

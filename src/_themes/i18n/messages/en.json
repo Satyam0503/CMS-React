@@ -88,6 +88,8 @@
   "FORM.PHONE": "Phone Number",
   "FORM.EXPERIENCE": "Experience",
   "FORM.TYPE": "Type...",
+  "FORM.ORGANISATION": "Organisation Name",
+  "FORM.LOCATION": "Location",
 
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
