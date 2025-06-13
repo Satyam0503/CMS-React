@@ -146,6 +146,7 @@ export const ServiceUrl = {
 
   // notice 
   GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
+  GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
 };
 
@@ -530,6 +531,48 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "noticeMessage",
+    label: "MENU.MESSAGE",
+    build: (message: string) => {
+      return <Stack direction="row">
+        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
+        <NoticeViewModel noticeMessage={message} />
+      </Stack>
+    }
+  },
+];
+
+export const MyNoticeTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "Table.S_No",
+    minWidth: 60,
+  },
+  {
+    id: "createdDate",
+    label: "NOTICE_BOARD.POSTED_DATETIME",
+    minWidth: 150,
+    format: (value: string) => relativeTimeFormatter(value),
+  },
+
+  {
+    id: "noticeType",
+    label: "NOTICE_BOARD.TYPE",
+    build: (noticeType: number) => {
+      const type = noticeTypeDecoder[noticeType];
+      return (
+        <StyleStatus
+          label={type}
+          className={clsx({
+            success: noticeType === NOTICE_TYPE.GENERAL,
+            warning: noticeType === NOTICE_TYPE.IMPORTANT,
+            danger: noticeType === NOTICE_TYPE.URGENT,
+          })}
+        />
+      );
+    },
+  },
+  {
+    id: "message",
     label: "MENU.MESSAGE",
     build: (message: string) => {
       return <Stack direction="row">

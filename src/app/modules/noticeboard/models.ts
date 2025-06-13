@@ -20,4 +20,5 @@ export interface NoticeResponseModel {
     noticeType: number,
 }
 
-export type GetAllNoticeResponse = ResponseData<NoticeResponseModel> 
+export type GetAllNoticeResponse = ResponseData<NoticeResponseModel>
+export type GetMyNoticesResponse = ResponseData<NoticeModel> 

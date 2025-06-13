@@ -52,9 +52,7 @@ export default function HeaderNotificationMenu() {
     const connection = Connector.getInstance().getConnection();
     if (!connection) return;
     const handleNewNotification = (notice: NotificationModel) => {
-      // Prepend the new notification to the existing list
-      console.log(notice);
-
+      // Prepend new notification to the existing list
       setNotificationList((prevList) => [notice, ...prevList]);
     };
     connection.on("noticeNofity", handleNewNotification);
@@ -86,6 +84,11 @@ export default function HeaderNotificationMenu() {
   }, [notificationList, activeTab]);
 
   const unReadNotificationCount = useMemo(() => notificationList.length === 0 ? 0 : notificationList.filter(item => !item.isRead).length, [notificationList]);
+
+  const handleNotificationClick = (notification: NotificationModel) => {
+    console.log(notification.userNotificationId);
+  }
+
   return (
     <>
       <Tooltip title="Notifications" placement="bottom">
@@ -143,7 +146,7 @@ export default function HeaderNotificationMenu() {
           {
             filteredNotificationList.length > 0 ?
               filteredNotificationList.map(item => (
-                <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })}>
+                <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
                   <Stack sx={{ bgcolor: "secondary.light" }}>
                     <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
                   </Stack>

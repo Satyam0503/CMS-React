@@ -186,10 +186,10 @@ export const getModulePermissions = (
 };
 
 export const hasModuleFeaturePermission = (moduleName: ModulesName, permission: Permission, modulesPermissions: string[]) => {
-  const modulePermisson = `${moduleName}.${permission}`;
   if (modulesPermissions.length === 0) {
     return false;
   }
+  const modulePermisson = `${moduleName}.${permission}`;
   return modulesPermissions.findIndex(permission => permission === modulePermisson) > -1;
 }
 

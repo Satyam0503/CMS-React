@@ -53,6 +53,7 @@
   "PAGE.ATTENDANCE": "Attendance",
   "PAGE.HOLIDAYS": "Holidays",
   "PAGE.NOTICE_BOARD": "Notice Board",
+  "PAGE.MY_NOTICE": "My Notices",
   "PAGE.DASHBOARD": "Dashboard",
   "PAGE.MY_PROFILE": "My Profile",
   "PAGE.PERMISSION": "Role And Permissions",
@@ -549,6 +550,7 @@
   "BUTTON.RETURN_HOME": "Return Home",
   "BUTTON.PUBLISH": "Publish",
   "BUTTON.VIEW": "View",
+  "BUTTON.GO_BACK": "Go Back",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
