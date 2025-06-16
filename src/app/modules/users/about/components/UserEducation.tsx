@@ -158,12 +158,12 @@ export const UserEducation = () => {
             `${ModulesName.Employees}.${Permission.Edit}`,
             userPermissions
           )) && (
-          <CustomIconButton
-            tooltip="Add"
-            icon={<Add />}
-            handleClick={() => setOpen(true)}
-          />
-        )}
+            <CustomIconButton
+              tooltip="Add"
+              icon={<Add />}
+              handleClick={() => setOpen(true)}
+            />
+          )}
       </Stack>
       <Stack spacing={{ xs: 0.5, sm: 1 }}>
         {userEducations.length === 0 ? (
@@ -213,9 +213,7 @@ export const UserEducation = () => {
                   >
                     <Stack>
                       <Typography
-                        variant="caption"
-                        display={"block"}
-                        fontWeight={600}
+                        variant="body2" fontWeight={600}
                       >
                         {education.collegeName}
                       </Typography>
@@ -242,30 +240,30 @@ export const UserEducation = () => {
                   `${ModulesName.Employees}.${Permission.Edit}`,
                   userPermissions
                 )) && (
-                <Stack
-                  direction={{ sx: "column", sm: "row" }}
-                  spacing={1}
-                  rowGap={0.5}
-                  sx={{
-                    visibility: "hidden",
-                    transition: "visibility 0.3s ease-in-out",
-                  }}
-                >
-                  <CustomIconButton
-                    icon={<Edit />}
-                    tooltip="Edit"
-                    handleClick={() => handleEducationEdit(education)}
-                  />
-                  <CustomIconButton
-                    icon={<DeleteOutline />}
-                    tooltip="Delete"
-                    handleClick={() => {
-                      setSeletedEducationId(education.educationId);
-                      setConfirmModalOpen(true);
+                  <Stack
+                    direction={{ sx: "column", sm: "row" }}
+                    spacing={1}
+                    rowGap={0.5}
+                    sx={{
+                      visibility: "hidden",
+                      transition: "visibility 0.3s ease-in-out",
                     }}
-                  />
-                </Stack>
-              )}
+                  >
+                    <CustomIconButton
+                      icon={<Edit />}
+                      tooltip="Edit"
+                      handleClick={() => handleEducationEdit(education)}
+                    />
+                    <CustomIconButton
+                      icon={<DeleteOutline />}
+                      tooltip="Delete"
+                      handleClick={() => {
+                        setSeletedEducationId(education.educationId);
+                        setConfirmModalOpen(true);
+                      }}
+                    />
+                  </Stack>
+                )}
             </Stack>
           ))
         )}

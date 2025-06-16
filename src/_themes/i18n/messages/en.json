@@ -538,6 +538,7 @@
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO": "Company Logo",
 
   "BUTTON.ADD": "Add",
+  "BUTTON.ADD_NEW": "Add New",
   "BUTTON.RESET": "Reset",
   "BUTTON.CLOSE": "Close",
   "BUTTON.SAVE": "Save",
@@ -589,5 +590,13 @@
   "Notifications.New": "New",
   "Notifications.Read": "Read",
   "Notifications.All": "All",
-  "Notifications.None": "No notifications"
+  "Notifications.None": "No notifications",
+
+  "WorkHistory.Add": "Add Work History",
+  "WorkHistory.Update": "Update Work History",
+
+  "Toast.AddWorkHistorySuccess": "Work History Successfully Added",
+  "Toast.AddWorkHistoryFailed": "Failed to add work history",
+  "Toast.UpdateWorkHistorySuccess": "Work History Successfully Updated",
+  "Toast.UpdateWorkHistoryFailed": "Failed to update Work History"
 }

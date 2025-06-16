@@ -1,23 +1,26 @@
-import * as React from "react";
-
 import Typography from "@mui/material/Typography";
 import {
-  Button,
+  Box,
   FormHelperText,
   Grid,
   Stack,
-  TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { WorkHistoryModel } from "../../models";
-import { Formik } from "formik";
+import { Formik, FormikState } from "formik";
 import { workHistoryValidationSchema } from "../../../../../utils/Schema/workHistoryValidationSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
+import { Add, Check, Edit } from "@mui/icons-material";
+import { FC, useState } from "react";
+import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { addUpdateWorkHistory } from "../../userservices";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 
 type Props = {
   isEdit: boolean,
@@ -27,89 +30,105 @@ type Props = {
   refresh: () => void;
 }
 
-export const AddUpdateWorkHistory: React.FC<Props> = ({ isEdit, initialValues, open, handleClose, refresh }) => {
-  const intl = useIntl();
-  const handleAddUpdateWorkHistory = (values: WorkHistoryModel, setSubmitting: (isSubmitting: boolean) => void) => {
-    console.log(values);
+export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, handleClose, refresh }) => {
+  const { formatMessage } = useIntl();
+  const employeeId = useParams().employeeid;
+
+  const handleAddUpdateWorkHistory = async (values: WorkHistoryModel, setSubmitting: (isSubmitting: boolean) => void) => {
+    try {
+      const payload: WorkHistoryModel = {
+        ...values,
+        userId: employeeId ?? ""
+      }
+      const { data } = await addUpdateWorkHistory(payload);
+      if (data.success) {
+        toast.success(formatMessage({ id: isEdit ? "Toast.UpdateWorkHistorySuccess" : "Toast.AddWorkHistorySuccess" }));
+        handleClose();
+        refresh();
+      }
+    } catch (error) {
+      toast.success(formatMessage({ id: isEdit ? "Toast.UpdateWorkHistoryFailed" : "Toast.AddWorkHistoryFailed" }));
+    } finally {
+      setSubmitting(false);
+    }
   }
+
   return (
     <>
       <CustomisedModal open={open} handleClose={handleClose}>
         <Typography variant="h5" mb={2}>
           {
             isEdit ?
-              intl.formatMessage({ id: "PROFILE.EMPLOYMENT" }) :
-              intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })
+              formatMessage({ id: "WorkHistory.Update" }) :
+              formatMessage({ id: "WorkHistory.Add" })
           }
         </Typography>
-        <Formik initialValues={initialValues} onSubmit={(values, { setSubmitting }) => {
-          handleAddUpdateWorkHistory(values, setSubmitting)
-        }}
+        <Formik
+          initialValues={initialValues}
+          onSubmit={(values, { setSubmitting }) => {
+            handleAddUpdateWorkHistory(values, setSubmitting)
+          }}
           validationSchema={workHistoryValidationSchema}
         >
           {
-            ({ values, errors, touched, setFieldValue, setFieldTouched }) => (
-              <form>
+            ({ values, errors, handleSubmit, resetForm, touched, setFieldValue, setFieldTouched, ...formik }) => (
+              <form onSubmit={handleSubmit}>
                 <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
                   <Grid item xs={12}>
                     <TextInput
-                      label={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
-                      placeholder={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
+                      label={formatMessage({ id: "FORM.JOB_ROLE" })}
+                      placeholder={formatMessage({ id: "FORM.JOB_ROLE" })}
                       type="text"
                       name="jobRole"
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Stack>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "APPLICATION.START" })}
-                        name="startDate"
-                        value={values.startDate && dayjs(values.startDate)}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("startDate", true);
-                          setFieldValue("startDate", newDate);
-                        }}
-                        maxDate={dayjs()}
-                      />
-                      <FormHelperText>
-                        {touched.startDate &&
-                          errors.startDate &&
-                          errors.startDate}
-                      </FormHelperText>
-                    </Stack>
+                    <CustomisedDatePicker
+                      label={formatMessage({ id: "APPLICATION.START" })}
+                      name="startDate"
+                      value={values.startDate && dayjs(values.startDate)}
+                      setValue={(newDate: Dayjs | null) => {
+                        setFieldTouched("startDate", true);
+                        setFieldValue("startDate", newDate);
+                      }}
+                      maxDate={dayjs()}
+                    />
+                    <FormHelperText>
+                      {touched.startDate &&
+                        errors.startDate &&
+                        errors.startDate}
+                    </FormHelperText>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Stack>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({
-                          id: "APPLICATION.END",
-                        })}
-                        name="endDate"
-                        value={values.endDate && dayjs(values.endDate)}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("endDate", true);
-                          setFieldValue("endDate", newDate);
-                        }}
-                        minDate={dayjs(values.startDate) || dayjs()}
-                      />
-                      <FormHelperText>
-                        {touched.endDate && errors.endDate && errors.endDate}
-                      </FormHelperText>
-                    </Stack>
+                    <CustomisedDatePicker
+                      label={formatMessage({
+                        id: "APPLICATION.END",
+                      })}
+                      name="endDate"
+                      value={values.endDate && dayjs(values.endDate)}
+                      setValue={(newDate: Dayjs | null) => {
+                        setFieldTouched("endDate", true);
+                        setFieldValue("endDate", newDate);
+                      }}
+                      minDate={dayjs(values.startDate) || dayjs()}
+                    />
+                    <FormHelperText>
+                      {touched.endDate && errors.endDate && errors.endDate}
+                    </FormHelperText>
                   </Grid>
 
                   <Grid item xs={12} md={6}>
                     <TextInput
-                      label={intl.formatMessage({ id: "FORM.ORGANISATION" })}
-                      placeholder={intl.formatMessage({ id: "FORM.ORGANISATION" })}
+                      label={formatMessage({ id: "FORM.ORGANISATION" })}
+                      placeholder={formatMessage({ id: "FORM.ORGANISATION" })}
                       type="text"
                       name="organisationName"
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <TextInput
-                      label={intl.formatMessage({ id: "FORM.LOCATION" })}
-                      placeholder={intl.formatMessage({ id: "FORM.LOCATION" })}
+                      label={formatMessage({ id: "FORM.LOCATION" })}
+                      placeholder={formatMessage({ id: "FORM.LOCATION" })}
                       type="text"
                       name="jobLocation"
                     />
@@ -122,11 +141,11 @@ export const AddUpdateWorkHistory: React.FC<Props> = ({ isEdit, initialValues, o
                   mt={2}
                 >
                   <CustomisedButton
-                    label={intl.formatMessage({ id: "BUTTON.CANCEL" })}
+                    label={formatMessage({ id: "BUTTON.CANCEL" })}
                     handleClick={handleClose}
                     variant="outlined"
                   />
-                  <CustomisedButton label={intl.formatMessage({ id: "BUTTON.SUBMIT" })} type="submit" />
+                  <CustomisedButton loading={formik.isSubmitting} Icon={<Check />} label={formatMessage({ id: isEdit ? "BUTTON.UPDATE" : "BUTTON.SAVE" })} type="submit" />
                 </Stack>
               </form>
             )

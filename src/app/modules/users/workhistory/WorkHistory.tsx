@@ -24,6 +24,8 @@ const countTotalExperience = (fromDate: Dayjs | null, toDate: Dayjs | null) => {
     toDate = dayjs();
   }
   const totalMonths = dayjs(toDate).diff(fromDate, "months");
+  console.log(totalMonths);
+
   if (totalMonths <= 0) {
     return "";
   }
@@ -63,9 +65,15 @@ export const WorkHistory = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setEdit(false);
+    setInitialWorkHistoryValue(initialValues);
   }
   const handleRefresh = () => {
     setRefresh(!refresh);
+  }
+  const handleEdit = (item: WorkHistoryModel) => {
+    setOpen(true);
+    setInitialWorkHistoryValue(item)
   }
 
   useEffect(() => {
@@ -136,19 +144,17 @@ export const WorkHistory = () => {
                         spacing={{ xs: 0.5, sm: 2 }}
                       >
                         <Stack direction="row" className="align-items-center">
-                          <LocationOn sx={{ fontSize: 14, mr: .5, color: "text.primary" }} />
-                          <Typography variant="body2" fontWeight={600}>
-                            {item.jobLocation}
-                          </Typography>
+                          <LocationOn fontSize="small" className="mx-1" />
+                          <Typography variant="body2" className="fw-bold"> {item.jobLocation}</Typography>
                         </Stack>
-                        <Stack direction="row" className="align-items-center">
-                          <CalendarToday sx={{ fontSize: 14, mr: .5, color: "text.primary" }} />
-                          <Typography variant="subtitle2">
+                        <Stack direction="row" >
+                          <CalendarToday fontSize="small" className="mx-1" />
+                          <Typography variant="body2" sx={{ color: "text.primary" }}>
                             {dateFormatter(item.startDate, "MMM YYYY")}
                             {" - "}
                             {item.endDate ? dateFormatter(item.endDate, "MMM YYYY") : formatMessage({ id: "WORKING.CURRENT" })}
                             {" "}
-                            ( {countTotalExperience(item.startDate, item.endDate)})
+                            ({countTotalExperience(item.startDate, item.endDate)})
                           </Typography>
                         </Stack>
                       </Stack>
@@ -165,8 +171,8 @@ export const WorkHistory = () => {
                       transition: "visibility 0.3s ease-in-out",
                     }}
                   >
-                    <CustomIconButton icon={<Edit />} tooltip="Edit" />
-                    <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" />
+                    <CustomIconButton icon={<Edit />} tooltip="Edit" handleClick={() => handleEdit(item)} />
+                    <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={() => setEdit(true)} />
                   </Stack>
                 </Stack>
               )
@@ -176,7 +182,7 @@ export const WorkHistory = () => {
         </Stack>
       </Card>
       {
-        open && <AddUpdateWorkHistory refresh={handleRefresh} isEdit={isEdit} initialValues={initialValues} open={open} handleClose={handleClose} />
+        open && <AddUpdateWorkHistory refresh={handleRefresh} isEdit={isEdit} initialValues={initialWorkHistoryValue} open={open} handleClose={handleClose} />
       }
     </>
   );

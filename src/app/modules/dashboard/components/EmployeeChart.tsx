@@ -78,9 +78,16 @@ export const EmployeeChart: FC = () => {
       } catch (error) {
         console.log(error);
       }
+      finally {
+        setLoading(false);
+      }
     };
     getAllGenderDetails();
   }, []);
+
+  if (loading) {
+    return <CardSkeleton />;
+  }
 
   return (
     <>

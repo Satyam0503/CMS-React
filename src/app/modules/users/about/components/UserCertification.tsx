@@ -216,9 +216,8 @@ export const UserCertification = () => {
                     alignItems={{ sm: "flex-end" }}
                   >
                     <Typography
-                      variant="caption"
-                      display={"block"}
-                      fontWeight={500}
+                      variant="body2"
+                      fontWeight={600}
                     >
                       {certification.organisationName},{certification.mode}
                     </Typography>
