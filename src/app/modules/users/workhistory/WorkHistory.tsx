@@ -1,7 +1,7 @@
-import { Card, Grid, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
-
+import { Box, Card, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
+
 import {
   Add,
   Business,
@@ -13,10 +13,14 @@ import {
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { AddUpdateWorkHistory } from "./components/AddUpdateWorkHistory";
 import { WorkHistoryModel } from "../models";
-import { getWorkHistory } from "../userservices";
+import { deleteEmployeeWorkHistory, getWorkHistory } from "../userservices";
 import { useParams } from "react-router-dom";
-import { dateFormatter } from "../../../../utils/common";
+import { dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
 import dayjs, { Dayjs } from "dayjs";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { toast } from "react-toastify";
+import { useAppSelector } from "../../../Redux/hooks";
+import { ModulesName, Permission } from "../../../../utils/enums";
 
 
 const countTotalExperience = (fromDate: Dayjs | null, toDate: Dayjs | null) => {
@@ -24,7 +28,6 @@ const countTotalExperience = (fromDate: Dayjs | null, toDate: Dayjs | null) => {
     toDate = dayjs();
   }
   const totalMonths = dayjs(toDate).diff(fromDate, "months");
-  console.log(totalMonths);
 
   if (totalMonths <= 0) {
     return "";
@@ -59,21 +62,45 @@ export const WorkHistory = () => {
   const [refresh, setRefresh] = useState(false);
   const [workHistoryList, setWorkHistoryList] = useState<WorkHistoryModel[]>([]);
   const [initialWorkHistoryValue, setInitialWorkHistoryValue] = useState<WorkHistoryModel>(initialValues);
+  const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
   const [isEdit, setEdit] = useState(false);
   const employeeId = useParams().employeeid;
-
+  const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
+  const hasEditPermission = !employeeId || hasModuleFeaturePermission(ModulesName.Employees, Permission.Create, userModulesPermissions);
 
   const handleClose = () => {
     setOpen(false);
     setEdit(false);
     setInitialWorkHistoryValue(initialValues);
   }
+
+  const handleConfirmationClose = () => {
+    setSelectedWorkId(null);
+  }
   const handleRefresh = () => {
     setRefresh(!refresh);
   }
-  const handleEdit = (item: WorkHistoryModel) => {
-    setOpen(true);
+
+  const handleWorkHistoryEdit = (item: WorkHistoryModel) => {
     setInitialWorkHistoryValue(item)
+    setEdit(true);
+    setOpen(true);
+  }
+
+  const handleWorkHistoryDelete = async (res: string) => {
+    if (res == "ok" && selectedWorkId) {
+      try {
+        const { data } = await deleteEmployeeWorkHistory(selectedWorkId, employeeId);
+        if (!data.success) {
+          toast.success(formatMessage({ id: "Toast.Delete.Failed" }))
+        }
+        toast.success(formatMessage({ id: "Toast.Delete.Success" }))
+        handleRefresh();
+        handleConfirmationClose();
+      } catch (error) {
+        console.log(formatMessage({ id: "Toast.Delete.Success" }));
+      }
+    }
   }
 
   useEffect(() => {
@@ -83,18 +110,15 @@ export const WorkHistory = () => {
         if (data.success) {
           setWorkHistoryList(data.methodResults);
         }
-        else {
-          console.log("failed to fetch Work History");
-        }
-      } catch (error) {
-        console.log(error);
+      } catch {
+        console.log("failed to fetch Work History");
       }
     })();
   }, [refresh])
 
   return (
     <>
-      <Card sx={{ p: 2, }}>
+      <Card sx={{ p: 2 }}>
         <Stack
           direction={"row"}
           className="justify-content-between"
@@ -102,7 +126,10 @@ export const WorkHistory = () => {
           <Typography variant="h5">
             {formatMessage({ id: "MENU.WORK_HISTORY" })}
           </Typography>
-          <CustomIconButton icon={<Add />} tooltip={formatMessage({ id: "BUTTON.ADD" })} handleClick={() => setOpen(true)} />
+          {
+            hasEditPermission &&
+            <CustomIconButton icon={<Add />} tooltip={formatMessage({ id: "BUTTON.ADD" })} handleClick={() => setOpen(true)} />
+          }
         </Stack>
         <Stack spacing={2} sx={{ my: 1 }} >
           {
@@ -171,18 +198,35 @@ export const WorkHistory = () => {
                       transition: "visibility 0.3s ease-in-out",
                     }}
                   >
-                    <CustomIconButton icon={<Edit />} tooltip="Edit" handleClick={() => handleEdit(item)} />
-                    <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={() => setEdit(true)} />
+                    {
+                      hasEditPermission &&
+                      <>
+                        <CustomIconButton icon={<Edit />} tooltip="Edit" handleClick={() => handleWorkHistoryEdit(item)} />
+                        <CustomIconButton icon={<DeleteOutline />} tooltip="Delete" handleClick={() => setSelectedWorkId(item.workHistoryId)} />
+                      </>
+                    }
                   </Stack>
                 </Stack>
               )
               :
-              <Typography>No Working History</Typography>
+              <Box component="div" className="text-center align-content-center" sx={{ height: 200 }}>
+                <Typography variant="h6">No Working History</Typography>
+              </Box>
           }
         </Stack>
       </Card>
       {
         open && <AddUpdateWorkHistory refresh={handleRefresh} isEdit={isEdit} initialValues={initialWorkHistoryValue} open={open} handleClose={handleClose} />
+      }
+      {
+        selectedWorkId &&
+        <ConfirmationModal
+          open={true}
+          title={formatMessage({ id: "Confirmation.Title.WorkHistory" })}
+          content={formatMessage({ id: "Confirmation.Content.WorkHistory" })}
+          handleClose={handleConfirmationClose}
+          handleConfirmation={handleWorkHistoryDelete}
+        />
       }
     </>
   );

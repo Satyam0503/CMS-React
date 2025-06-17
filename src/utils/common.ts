@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
 import DOMPurify from "dompurify";
-import relativeTime from 'dayjs/plugin/relativeTime'
+import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import {
@@ -18,7 +18,11 @@ import {
   NOTIFICATION_TYPE,
   Permission,
 } from "./enums";
-import { APP_FILTER_KEY, NoticeTypes, SideBarTabList } from "./constant/Constant";
+import {
+  APP_FILTER_KEY,
+  NoticeTypes,
+  SideBarTabList,
+} from "./constant/Constant";
 import { ReactNode } from "react";
 
 export const dateFormatter = (
@@ -37,7 +41,7 @@ export const relativeTimeFormatter = (date: Dayjs | string) => {
     return dayjs(date).format("DD MMM YYYY hh:mm A");
   }
   return dayjs(date).fromNow();
-}
+};
 
 export const employeesListMapperforExport = (
   employeesList: EmployeeModel[]
@@ -83,7 +87,7 @@ export const noticeTypeDecoder: {
   [NOTICE_TYPE.GENERAL]: "NOTICE_TYPE.GENERAL",
   [NOTICE_TYPE.IMPORTANT]: "NOTICE_TYPE.IMPORTANT",
   [NOTICE_TYPE.URGENT]: "NOTICE_TYPE.URGENT",
-}
+};
 
 export const commentActionEncoderForApplicationStatus = (
   activityStatus: number
@@ -185,13 +189,21 @@ export const getModulePermissions = (
   return allowedPermission;
 };
 
-export const hasModuleFeaturePermission = (moduleName: ModulesName, permission: Permission, modulesPermissions: string[]) => {
+export const hasModuleFeaturePermission = (
+  moduleName: ModulesName,
+  permission: Permission,
+  modulesPermissions: string[]
+) => {
   if (modulesPermissions.length === 0) {
     return false;
   }
   const modulePermisson = `${moduleName}.${permission}`;
-  return modulesPermissions.findIndex(permission => permission === modulePermisson) > -1;
-}
+  return (
+    modulesPermissions.findIndex(
+      (permission) => permission === modulePermisson
+    ) > -1
+  );
+};
 
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
@@ -245,11 +257,11 @@ export const getAppliedFilters = () => {
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
     : {
-      application: null,
-      jobs: null,
-      processLog: null,
-      employee: null,
-    };
+        application: null,
+        jobs: null,
+        processLog: null,
+        employee: null,
+      };
   return appliedfilters;
 };
 

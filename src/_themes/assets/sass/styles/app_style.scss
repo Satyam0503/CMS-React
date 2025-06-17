@@ -401,12 +401,8 @@ button:hover .ql-fill,
     min-width: 150px;
     white-space: nowrap;
     &:hover {
-      transition: background-color 0.2s ease-in;
-      background-color: color-mix(
-        in oklab,
-        $app-primary-400 30%,
-        $app-white 50%
-      );
+      transition: background-color 0.2s ease-out;
+      background-color: $app-primary-100;
       color: $app-primary-500;
     }
 

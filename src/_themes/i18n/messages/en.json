@@ -595,8 +595,13 @@
   "WorkHistory.Add": "Add Work History",
   "WorkHistory.Update": "Update Work History",
 
+  "Confirmation.Title.WorkHistory": "Delete Work History",
+  "Confirmation.Content.WorkHistory": "Are you sure you want to delete this work history?",
+
   "Toast.AddWorkHistorySuccess": "Work History Successfully Added",
   "Toast.AddWorkHistoryFailed": "Failed to add work history",
   "Toast.UpdateWorkHistorySuccess": "Work History Successfully Updated",
-  "Toast.UpdateWorkHistoryFailed": "Failed to update Work History"
+  "Toast.UpdateWorkHistoryFailed": "Failed to update Work History",
+  "Toast.Delete.Success": "Successfully Deleted",
+  "Toast.Delete.Failed": "Failed to Delete"
 }

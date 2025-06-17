@@ -9,7 +9,15 @@ import {
   UserSummaryModel,
   UserSummaryResponseData,
 } from "../../../utils/common_types";
-import { EmployeeResponseData, GetSkillListResponseModel, NotificationResponseModel, UploadProfileResponseModel, UserSkillsResponseData, WorkHistoryModel, WorkHistoryResponseModel } from "./models";
+import {
+  EmployeeResponseData,
+  GetSkillListResponseModel,
+  NotificationResponseModel,
+  UploadProfileResponseModel,
+  UserSkillsResponseData,
+  WorkHistoryModel,
+  WorkHistoryResponseModel,
+} from "./models";
 
 export const getEmployeeById = async (userId?: string) => {
   if (userId) {
@@ -153,31 +161,52 @@ export const deleteEmployeeCertification = async (
   );
 };
 
-
-// skills 
+// skills
 
 export const getSkillsList = async (skill: string) => {
-  return getRequest<GetSkillListResponseModel>(`${ServiceUrl.GET_SKILLS_LIST}?query=${encodeURIComponent(skill)}`);
-}
+  return getRequest<GetSkillListResponseModel>(
+    `${ServiceUrl.GET_SKILLS_LIST}?query=${encodeURIComponent(skill)}`
+  );
+};
 
 export const addSkill = async (skill: string) => {
   return postRequest<string, ApiResponse>(ServiceUrl.ADD_SKILL, skill);
-}
+};
 
-// notifications 
+// notifications
 
 export const getNotifications = async () => {
   return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION);
-}
+};
 
-// work history 
+// work history
 export const getWorkHistory = async (userId?: string) => {
   if (userId) {
-    return getRequest<WorkHistoryResponseModel>(ServiceUrl.GET_WORK_HISTORY, { params: { userId } })
+    return getRequest<WorkHistoryResponseModel>(ServiceUrl.GET_WORK_HISTORY, {
+      params: { userId },
+    });
   }
-  return getRequest<WorkHistoryResponseModel>(ServiceUrl.GET_WORK_HISTORY)
-}
+  return getRequest<WorkHistoryResponseModel>(ServiceUrl.GET_WORK_HISTORY);
+};
 
 export const addUpdateWorkHistory = async (payload: WorkHistoryModel) => {
-  return postRequest<WorkHistoryModel, ApiResponse>(ServiceUrl.ADD_UPDATE_WORK_HISTORY, payload);
-}
+  return postRequest<WorkHistoryModel, ApiResponse>(
+    ServiceUrl.ADD_UPDATE_WORK_HISTORY,
+    payload
+  );
+};
+
+export const deleteEmployeeWorkHistory = async (
+  workId: string,
+  userId?: string
+) => {
+  return deleteRequest<ApiResponse>(
+    `${ServiceUrl.DELETE_WORK_HISTORY}/${workId}`,
+    {
+      data: userId,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};

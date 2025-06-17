@@ -72,22 +72,22 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     },
     ...(mode === "light"
       ? {
-        background: {
-          body: "#f5f5f5",
-          header: "#ffffff",
-          card: "#ffffff",
-          sidebar: "#0D0E12",
-        },
-        divider: colors.neutral[300],
-      }
+          background: {
+            body: "#f5f5f5",
+            header: "#ffffff",
+            card: "#ffffff",
+            sidebar: "#0D0E12",
+          },
+          divider: colors.neutral[300],
+        }
       : {
-        background: {
-          body: "#121212",
-          header: "#1e1e1e",
-          card: "#1e1e1e",
-          sidebar: "#0D0E12",
-        },
-      }),
+          background: {
+            body: "#121212",
+            header: "#1e1e1e",
+            card: "#1e1e1e",
+            sidebar: "#0D0E12",
+          },
+        }),
   },
 });
 
@@ -183,7 +183,8 @@ export const createApplicationTheme = (mode: PaletteMode) => {
           root: {
             backgroundColor: theme.palette.background.card,
             fontSize: "12px",
-            boxShadow: "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
+            boxShadow:
+              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
           },
         },
       },
@@ -264,8 +265,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
         styleOverrides: {
           root: {
             color: theme.palette.primary.main,
-
-          }
+          },
         },
       },
 
@@ -485,7 +485,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
               },
               "&.Mui-disabled .MuiSwitch-thumb": {
                 color: theme.palette.common.white,
-                backgroundColor: theme.palette.common.white
+                backgroundColor: theme.palette.common.white,
               },
               "&.Mui-disabled + .MuiSwitch-track": {
                 opacity: 0.7,

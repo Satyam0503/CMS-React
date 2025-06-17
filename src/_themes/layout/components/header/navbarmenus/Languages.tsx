@@ -55,7 +55,7 @@ const Languages = () => {
 
   return (
     <>
-      <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} sx={{ bgcolor: "background.card", borderRadius: 4 }} >
+      <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} >
         <Typography variant="body1">{formatMessage({ id: currentLanguage?.name })}</Typography>
         <img
           className="w-15px h-15px rounded-circle"
@@ -63,7 +63,6 @@ const Languages = () => {
           alt="countryflag"
         />
         <IconButton
-
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}

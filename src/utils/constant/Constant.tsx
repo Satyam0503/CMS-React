@@ -105,6 +105,7 @@ export const ServiceUrl = {
 
   GET_WORK_HISTORY: `${BaseUrl}/api/User/GetEmpWorkHistory`,
   ADD_UPDATE_WORK_HISTORY: `${BaseUrl}/api/User/AddUpdateWorkHistory`,
+  DELETE_WORK_HISTORY: `${BaseUrl}/api/User/DeleteWorkHistory`,
 
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
 
