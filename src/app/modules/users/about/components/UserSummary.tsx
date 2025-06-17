@@ -10,7 +10,7 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { UserSummaryModel } from "../../../../../utils/common_types";
 import { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
-import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
+import { checkPermissionForModulesFeatureAccess, hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 
 export const UserSummary = () => {
@@ -21,8 +21,9 @@ export const UserSummary = () => {
   const [isEdit, setEdit] = useState(false);
   const { formatMessage } = useIntl();
   const { employeeid } = useParams();
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasEmployeeEditPermission = !employeeid || hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
+
 
   const handleClose = () => {
     setEdit(false);
@@ -64,12 +65,7 @@ export const UserSummary = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={1}
-      >
+      <Stack className="flex-row justify-content-between" sx={{ mb: 2 }}   >
         <Typography variant="h5">
           {formatMessage({ id: "INFO.SUMMARY" })}
         </Typography>
@@ -89,10 +85,8 @@ export const UserSummary = () => {
           </Stack>
         ) : (
           <>
-            { (!employeeid  || checkPermissionForModulesFeatureAccess(
-              `${ModulesName.Employees}.${Permission.Edit}`,
-              userPermissions
-            ))  && (
+            {
+              hasEmployeeEditPermission &&
               <CustomIconButton
                 tooltip="Edit"
                 icon={<Edit />}
@@ -101,7 +95,7 @@ export const UserSummary = () => {
                   setUpdatedSummary(userSummary?.summary ?? "");
                 }}
               />
-            )}
+            }
           </>
         )}
       </Stack>

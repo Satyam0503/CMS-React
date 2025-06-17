@@ -538,6 +538,7 @@
   "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO": "Company Logo",
 
   "BUTTON.ADD": "Add",
+  "BUTTON.EDIT": "Edit",
   "BUTTON.ADD_NEW": "Add New",
   "BUTTON.RESET": "Reset",
   "BUTTON.CLOSE": "Close",
@@ -597,6 +598,10 @@
 
   "Confirmation.Title.WorkHistory": "Delete Work History",
   "Confirmation.Content.WorkHistory": "Are you sure you want to delete this work history?",
+  "Confirmation.Title.Emp_Certification": "Delete Certification",
+  "Confirmation.Content.Emp_Certification": "Are you sure you want to delete this Certificate?",
+  "Confirmation.Title.Emp_Education": "Delete Education",
+  "Confirmation.Content.Emp_Education": "Are you sure you want to delete this Education?",
 
   "Toast.AddWorkHistorySuccess": "Work History Successfully Added",
   "Toast.AddWorkHistoryFailed": "Failed to add work history",
