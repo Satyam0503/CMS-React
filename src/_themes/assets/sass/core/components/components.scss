@@ -1,13 +1,7 @@
-//
-// Components
-//
-
-// Extended bootstrap utilities
-@import "utilities";
-
-// Bootstrap components
-@import "bootstrap/scss/bootstrap";
-
 // Custom components
+@import "./utilities";
 @import "./sidebar-menu";
 @import "./notificatio_menu";
+
+// include bootstrap sass
+@import "bootstrap/scss/bootstrap";

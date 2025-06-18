@@ -151,7 +151,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            fontSize: "1rem",
+            fontSize: 14,
           },
         },
       },
@@ -213,6 +213,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       MuiButton: {
         styleOverrides: {
           root: {
+            padding: ".25rem 1rem",
             textTransform: "capitalize",
             "&.Mui-disabled": {
               color: theme.palette.common.white,

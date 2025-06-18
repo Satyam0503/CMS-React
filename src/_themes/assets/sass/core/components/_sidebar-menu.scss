@@ -2,7 +2,7 @@
 
 .sidebar {
   & .sidebar-paper {
-    width: 265px;
+    width: $app-sidebar-width;
     overflow-y: visible;
     white-space: nowrap;
     transition: width 0.4s linear;
@@ -25,8 +25,8 @@
 
   & .user-profile-wrapper {
     width: 100%;
-    max-width: 128px;
-    max-height: 128px;
+    max-width: $app-sidebar-user-profile-size;
+    max-height: $app-sidebar-user-profile-size;
     aspect-ratio: 1;
   }
 
@@ -41,7 +41,7 @@
       align-items: center;
       flex-direction: row;
       padding-block: 0.25rem;
-      margin-block: 4px;
+      margin-block: 0.25rem;
 
       & .MuiTypography-root {
         font-weight: 600 !important;
@@ -50,7 +50,7 @@
       }
       & .MuiListItemIcon-root {
         color: inherit;
-        margin-inline-end: 0.25rem;
+        margin-inline-end: 0.5rem;
       }
 
       & .MuiSvgIcon-root {
@@ -66,7 +66,7 @@
   &:not(:hover) {
     &[data-sidebar-mini="true"] {
       & .sidebar-paper {
-        width: 90px !important;
+        width: $app-mini-sidebar-width !important;
       }
       & .sidebar-collapse-button > .MuiSvgIcon-root {
         rotate: 180deg;

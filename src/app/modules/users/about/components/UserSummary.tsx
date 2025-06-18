@@ -65,12 +65,12 @@ export const UserSummary = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between" sx={{ mb: 2 }}   >
+      <Stack className="flex-row justify-content-between mb-4"  >
         <Typography variant="h5">
           {formatMessage({ id: "INFO.SUMMARY" })}
         </Typography>
         {isEdit ? (
-          <Stack direction={"row"} spacing={1}>
+          <Stack direction="row" spacing={1}>
             <CustomisedButton
               label={formatMessage({ id: "BUTTON.CANCEL" })}
               variant="outlined"
@@ -88,7 +88,7 @@ export const UserSummary = () => {
             {
               hasEmployeeEditPermission &&
               <CustomIconButton
-                tooltip="Edit"
+                tooltip={formatMessage({ id: "BUTTON.EDIT" })}
                 icon={<Edit />}
                 handleClick={() => {
                   setEdit(true);
@@ -111,12 +111,13 @@ export const UserSummary = () => {
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
-        <Typography variant="body1">
+        <Typography variant="body1" >
           {userSummary && userSummary.summary.trim().length > 0
             ? userSummary.summary
             : formatMessage({ id: "USER.ADD_SUMMARY" })}
         </Typography>
-      )}
-    </Card>
+      )
+      }
+    </Card >
   );
 };

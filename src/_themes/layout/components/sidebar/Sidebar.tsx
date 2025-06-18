@@ -46,7 +46,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             onClick={handleSideBarToggle}
             onMouseOver={(e) => e.stopPropagation()}
           >
-            <West />
+            <West className="icon-fs-20" />
           </IconButton>
         }
         <Stack spacing={4} alignItems="center" >

@@ -53,7 +53,7 @@ export default function ChatDrawer() {
               aria-expanded={open ? "true" : undefined}
               sx={{ border: 0, p: 0 }}
             >
-              <ForumOutlined fontSize="large" />
+              <ForumOutlined className="icon-fs-32" />
             </IconButton>
           </Badge>
         </Tooltip>

@@ -82,9 +82,8 @@ export default function ProfileCard() {
         {!employeeId && (
           <CustomisedButton
             variant="outlined"
-            style={{ color: "white", borderColor: "white" }}
             Icon={<Download />}
-            className="align-self-center"
+            className="align-self-center border-1 border-white text-white"
             label={intl.formatMessage({ id: "DOWNLOAD.SALARY_SLIP" })}
           />
         )}

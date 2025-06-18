@@ -18,7 +18,7 @@ export default function LightDarkMode() {
           onClick={handleThemeChange}
           sx={{ border: 0, p: 0 }}
         >
-          {theme === "light" ? <Brightness4 fontSize="large" /> : <LightModeOutlined fontSize="large" />}
+          {theme === "light" ? <Brightness4 className="icon-fs-32" /> : <LightModeOutlined className="icon-fs-32" />}
         </IconButton>
       </Tooltip >
     </>

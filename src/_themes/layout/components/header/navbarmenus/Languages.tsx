@@ -58,7 +58,7 @@ const Languages = () => {
       <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} >
         <Typography variant="body1">{formatMessage({ id: currentLanguage?.name })}</Typography>
         <img
-          className="w-15px h-15px rounded-circle"
+          className="rounded-circle country-flag"
           src={currentLanguage?.flag}
           alt="countryflag"
         />

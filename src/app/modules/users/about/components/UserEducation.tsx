@@ -141,7 +141,7 @@ export const UserEducation = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between" sx={{ mb: 2 }}>
+      <Stack className="flex-row justify-content-between mb-4">
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
@@ -156,7 +156,7 @@ export const UserEducation = () => {
       </Stack>
       <Stack spacing={2}>
         {userEducations.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "ADD.EDUCATION" })}
           </Typography>
         ) : (
@@ -190,13 +190,14 @@ export const UserEducation = () => {
                   </Typography>
                   <Stack
                     direction="row"
-                    className="flex-wrap flex-row gap-2"
+                    className="flex-wrap flex-row "
+                    spacing={{ xs: 0.5, sm: 2 }}
                   >
                     <Typography variant="body2" className="fw-bold">
                       {education.collegeName}
                     </Typography>
-                    <Stack className="flex-row gap-2">
-                      <CalendarToday fontSize="small" />
+                    <Stack className="flex-row align-items-center gap-1">
+                      <CalendarToday className="icon-fs-16" />
                       <Typography variant="body2">
                         {dateFormatter(education.startDate, "MMM YYYY")} -{" "}
                         {dateFormatter(education.endDate, "MMM YYYY")}

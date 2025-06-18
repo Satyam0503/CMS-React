@@ -143,7 +143,7 @@ export const UserCertification = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between " sx={{ mb: 2 }} >
+      <Stack className="flex-row justify-content-between mb-4" >
         <Typography variant="h5" >
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
@@ -159,7 +159,7 @@ export const UserCertification = () => {
 
       <Stack spacing={2}>
         {userCertifications.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
           </Typography>
         ) : (
@@ -194,15 +194,15 @@ export const UserCertification = () => {
                   </Typography>
                   <Stack
                     direction="row"
-                    className="flex-wrap flex-row gap-2"
+                    className="flex-wrap flex-row align-items-center"
+                    spacing={{ xs: 0.5, sm: 2 }}
                   >
                     <Typography variant="body2" className="fw-bold">
                       {certification.organisationName},{certification.mode}
                     </Typography>
-                    <Stack className="flex-row gap-2">
-                      <CalendarToday fontSize="small" />
+                    <Stack className="flex-row align-items-center gap-1">
+                      <CalendarToday className="icon-fs-16" />
                       <Typography variant="body2">
-
                         {dateFormatter(certification.startDate, "MMM YYYY")}
                         {" - "}
                         {dateFormatter(certification.endDate, "MMM YYYY")}

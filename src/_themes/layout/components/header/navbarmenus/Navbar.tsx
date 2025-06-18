@@ -1,19 +1,12 @@
-import { Grid, Stack, Tooltip } from "@mui/material";
+import { Stack } from "@mui/material";
 import HeaderNotificationMenu from "./HeaderNotificationMenu";
 import HeaderUserMenu from "./HeaderUserMenu";
-
 import ChatDrawer from "./ChatDrawer";
-
 import LightDarkMode from "./LightDarkMode";
 
 const Navbar = () => {
   return (
-    <Stack
-      direction="row"
-      justifyContent={"flex-end"}
-      alignItems={"center"}
-      spacing={2}
-    >
+    <Stack className="flex-row gap-4 align-items-center">
       <LightDarkMode />
       <ChatDrawer />
       <HeaderNotificationMenu />

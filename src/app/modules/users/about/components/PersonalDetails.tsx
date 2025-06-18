@@ -24,7 +24,7 @@ export const PersonalDetails = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between" sx={{ mb: 2 }}   >
+      <Stack className="flex-row justify-content-between mb-4"    >
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>

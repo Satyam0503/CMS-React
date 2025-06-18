@@ -56,7 +56,7 @@ export const UserSkills = () => {
 
       <Stack direction="row" gap={1} flexWrap={"wrap"}>
         {userSkills?.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "ADD.SKILLS" })}
           </Typography>
         ) : (

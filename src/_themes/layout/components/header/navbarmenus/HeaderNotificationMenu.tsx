@@ -98,7 +98,7 @@ export default function HeaderNotificationMenu() {
             aria-describedby={id}
             sx={{ border: 0, p: 0 }}
           >
-            <NotificationsOutlined fontSize="large" />
+            <NotificationsOutlined className="icon-fs-32" />
           </IconButton>
         </Badge>
       </Tooltip>

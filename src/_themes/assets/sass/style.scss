@@ -1,17 +1,14 @@
-//
-// Theme style
-//
-
 // Initialize
 @import "init";
 
-// Components
+// app Components
 @import "./core/components/components";
-// @import "components/components";
 
 // Layout
 @import "./core/layout/base/layout";
+
 @import "./styles/app_style.scss";
+
 #root {
   display: contents;
 }

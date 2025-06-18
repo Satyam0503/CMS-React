@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import {
   Add,
   Business,
+  CalendarMonth,
   CalendarToday,
   DeleteOutline,
   Edit,
@@ -120,8 +121,8 @@ export const WorkHistory = () => {
     <>
       <Card sx={{ p: 2 }}>
         <Stack
-          direction={"row"}
-          className="justify-content-between"
+          direction="row"
+          className="justify-content-between mb-4"
         >
           <Typography variant="h5">
             {formatMessage({ id: "MENU.WORK_HISTORY" })}
@@ -131,7 +132,7 @@ export const WorkHistory = () => {
             <CustomIconButton icon={<Add />} tooltip={formatMessage({ id: "BUTTON.ADD" })} handleClick={() => setOpen(true)} />
           }
         </Stack>
-        <Stack spacing={2} sx={{ my: 1 }} >
+        <Stack spacing={2}>
           {
             workHistoryList.length > 0 ?
               workHistoryList.map(item =>
@@ -170,12 +171,12 @@ export const WorkHistory = () => {
                         direction={{ xs: "column", sm: "row" }}
                         spacing={{ xs: 0.5, sm: 2 }}
                       >
-                        <Stack direction="row" className="align-items-center">
-                          <LocationOn fontSize="small" className="mx-1" />
+                        <Stack direction="row" className="align-items-center gap-1">
+                          <LocationOn className="icon-fs-16" />
                           <Typography variant="body2" className="fw-bold"> {item.jobLocation}</Typography>
                         </Stack>
-                        <Stack direction="row" >
-                          <CalendarToday fontSize="small" className="mx-1" />
+                        <Stack direction="row" className="align-items-center gap-1">
+                          <CalendarToday className="icon-fs-16" />
                           <Typography variant="body2" sx={{ color: "text.primary" }}>
                             {dateFormatter(item.startDate, "MMM YYYY")}
                             {" - "}

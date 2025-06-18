@@ -12,7 +12,6 @@ type Props = {
   permission?: boolean;
   ariaLabel?: string;
   style?: CSSProperties;
-  className?: string;
 };
 
 export const CustomIconButton = (props: Props) => {
@@ -39,11 +38,16 @@ export const CustomIconButton = (props: Props) => {
             size={size}
             type="button"
             aria-label={ariaLabel}
-            sx={{ width: "32px", height: "32px", bgcolor: "transparent" }}
             style={style}
             onMouseEnter={onMouseClick}
             onMouseLeave={onMouseLeave}
-            className="className"
+            className="ratio-1x1"
+            sx={{
+              width: "32px", height: "32px", bgcolor: "transparent",
+              "& .MuiSvgIcon-root": {
+                fontSize: 20,
+              }
+            }}
           >
             {icon}
           </IconButton>
