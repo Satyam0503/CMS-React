@@ -23,14 +23,8 @@ const MasterLayout = () => {
     <>
       <BreadcrumbProvider>
         <PageDataProvider>
-          <Grid
-            item
-            display={"flex"}
-            flexDirection={"column"}
-            flexGrow={1}
-            flexBasis={"auto"}
-            flexShrink={0}
-            className="container-main"
+          <Stack
+            className="flex-column flex-shrink-0 flex-grow-1"
             sx={{ backgroundColor: "background.body" }}
           >
             <HeaderWrapper openSideBar={handleOpenSidebar} />
@@ -51,7 +45,7 @@ const MasterLayout = () => {
                 <Footer />
               </Stack> */}
             </Stack>
-          </Grid>
+          </Stack>
 
           {/* <DrawerMessenger /> */}
         </PageDataProvider>

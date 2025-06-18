@@ -73,12 +73,13 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
           </Grid>
           <Divider />
           <Box
-            component={"div"}
+            component="div"
+            sx={{ maxHeight: 500, overflow: "scroll" }}
             dangerouslySetInnerHTML={{
               __html: sanitizeHtmlContent(jobData.description),
             }}
           />
-          <Stack direction={"row"} justifyContent={"flex-end"} mt={2} gap={1}>
+          <Stack className="flex-row justify-content-end mt-4 gap-4">
             {/* <CustomisedButton
               variant="contained"
               label="Submissions"

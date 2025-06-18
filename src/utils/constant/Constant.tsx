@@ -1,7 +1,6 @@
-import { Button, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
-  EmployeeModel,
   SideBarTabListProps,
 } from "../common_types";
 import {
@@ -11,6 +10,8 @@ import {
   convertMonthsToYear,
   sanitizeHtmlContent,
   commentActionMapper,
+  noticeTypeDecoder,
+  relativeTimeFormatter,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -53,6 +54,7 @@ import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 import { NoticeResponseModel } from "../../app/modules/noticeboard/models";
+import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -101,6 +103,12 @@ export const ServiceUrl = {
   DELETE_EMPLOYEE_CERTIFICATION: `${BaseUrl}/api/User/DeleteCertificationDetails`,
   DELETE_EMPLOYEE: `${BaseUrl}/api/User/DeleteEmployee`,
 
+  GET_WORK_HISTORY: `${BaseUrl}/api/User/GetEmpWorkHistory`,
+  ADD_UPDATE_WORK_HISTORY: `${BaseUrl}/api/User/AddUpdateWorkHistory`,
+  DELETE_WORK_HISTORY: `${BaseUrl}/api/User/DeleteWorkHistory`,
+
+  GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
+
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
   EDIT_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/EditJobVacancy`,
@@ -139,6 +147,7 @@ export const ServiceUrl = {
 
   // notice 
   GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
+  GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
 };
 
@@ -486,6 +495,7 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "userName",
     label: "NOTICE_BOARD.POSTED_BY",
+    minWidth: 200,
     avatarCell: (notice: NoticeResponseModel) => {
       return (
         <AvatarCell
@@ -499,17 +509,78 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "createdDateTime",
     label: "NOTICE_BOARD.POSTED_DATETIME",
-    format: (value: string) => dateFormatter(value, "DD MMM YYYY hh:mm A"),
+    minWidth: 150,
+    format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
     label: "NOTICE_BOARD.TYPE",
+    build: (noticeType: number) => {
+      const type = noticeTypeDecoder[noticeType];
+      return (
+        <StyleStatus
+          label={type}
+          className={clsx({
+            success: noticeType === NOTICE_TYPE.GENERAL,
+            warning: noticeType === NOTICE_TYPE.IMPORTANT,
+            danger: noticeType === NOTICE_TYPE.URGENT,
+          })}
+        />
+      );
+    },
   },
   {
     id: "noticeMessage",
     label: "MENU.MESSAGE",
-    minWidth: 300,
+    build: (message: string) => {
+      return <Stack direction="row">
+        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
+        <NoticeViewModel noticeMessage={message} />
+      </Stack>
+    }
+  },
+];
+
+export const MyNoticeTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "Table.S_No",
+    minWidth: 60,
+  },
+  {
+    id: "createdDate",
+    label: "NOTICE_BOARD.POSTED_DATETIME",
+    minWidth: 150,
+    format: (value: string) => relativeTimeFormatter(value),
+  },
+
+  {
+    id: "noticeType",
+    label: "NOTICE_BOARD.TYPE",
+    build: (noticeType: number) => {
+      const type = noticeTypeDecoder[noticeType];
+      return (
+        <StyleStatus
+          label={type}
+          className={clsx({
+            success: noticeType === NOTICE_TYPE.GENERAL,
+            warning: noticeType === NOTICE_TYPE.IMPORTANT,
+            danger: noticeType === NOTICE_TYPE.URGENT,
+          })}
+        />
+      );
+    },
+  },
+  {
+    id: "message",
+    label: "MENU.MESSAGE",
+    build: (message: string) => {
+      return <Stack direction="row">
+        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
+        <NoticeViewModel noticeMessage={message} />
+      </Stack>
+    }
   },
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [

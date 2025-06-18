@@ -13,6 +13,7 @@ import { useIntl } from "react-intl";
 import {
   checkPermissionForModulesFeatureAccess,
   dateFormatter,
+  hasModuleFeaturePermission,
 } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
 import {
@@ -45,14 +46,11 @@ export const UserEducation = () => {
     useState(initialValue);
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
-  const [isConfirmModal, setConfirmModalOpen] = useState(false);
-  const [selectedEducationId, setSeletedEducationId] = useState<
-    string | undefined
-  >();
+  const [selectedEducationId, setSeletedEducationId] = useState<string | undefined>();
   const [refresh, setRefresh] = useState(false);
   const employeeId = useParams().employeeid;
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasEmployeeEditPermission = !employeeId || hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions)
 
   const handleClose = () => {
     setEducationInitialValues(initialValue);
@@ -62,7 +60,6 @@ export const UserEducation = () => {
 
   const handleCloseConfirmation = () => {
     setSeletedEducationId(undefined);
-    setConfirmModalOpen(false);
   };
 
   function handleEducationEdit(education: UserEducationModel) {
@@ -144,39 +141,29 @@ export const UserEducation = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={2}
-      >
+      <Stack className="flex-row justify-content-between mb-4">
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
         </Typography>
-        {(!employeeId ||
-          checkPermissionForModulesFeatureAccess(
-            `${ModulesName.Employees}.${Permission.Edit}`,
-            userPermissions
-          )) && (
+        {
+          hasEmployeeEditPermission &&
           <CustomIconButton
-            tooltip="Add"
+            tooltip={intl.formatMessage({ id: "BUTTON.ADD" })}
             icon={<Add />}
             handleClick={() => setOpen(true)}
           />
-        )}
+        }
       </Stack>
-      <Stack spacing={{ xs: 0.5, sm: 1 }}>
+      <Stack spacing={2}>
         {userEducations.length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "ADD.EDUCATION" })}
           </Typography>
         ) : (
           userEducations.map((education) => (
             <Stack
               key={education.educationId}
-              direction="row"
-              justifyContent={"space-between"}
-              alignItems={"center"}
+              className="flex-row justify-content-between align-items-center"
               spacing={1}
               sx={{
                 "&:hover .MuiStack-root": {
@@ -186,50 +173,32 @@ export const UserEducation = () => {
             >
               <Stack direction="row" alignItems={"center"} spacing={1}>
                 <Stack
-                  color="primary.main"
+                  className="flex-shrink-0 align-items-center justify-content-center"
                   sx={{
+                    color: "primary.main",
                     width: 48,
                     height: 48,
                     bgcolor: "primary.lighter",
-                    alignItems: "center",
-                    justifyContent: "center",
                     borderRadius: 1,
                   }}
                 >
                   <School />
                 </Stack>
-                <Stack>
-                  <Typography
-                    variant="body1"
-                    fontWeight={500}
-                    flexWrap={"wrap"}
-                  >
+                <Stack  >
+                  <Typography variant="body1" >
                     {education.educationTitle}
                   </Typography>
                   <Stack
-                    direction={{ sx: "column", sm: "row" }}
-                    spacing={1}
-                    alignItems={{ sm: "flex-end" }}
+                    direction="row"
+                    className="flex-wrap flex-row "
+                    spacing={{ xs: 0.5, sm: 2 }}
                   >
-                    <Stack>
-                      <Typography
-                        variant="caption"
-                        display={"block"}
-                        fontWeight={600}
-                      >
-                        {education.collegeName}
-                      </Typography>
-                    </Stack>
-                    <Stack>
+                    <Typography variant="body2" className="fw-bold">
+                      {education.collegeName}
+                    </Typography>
+                    <Stack className="flex-row align-items-center gap-1">
+                      <CalendarToday className="icon-fs-16" />
                       <Typography variant="body2">
-                        <CalendarToday
-                          sx={{
-                            height: "1rem",
-                            width: "inherit",
-                            mb: 0.5,
-                            mr: 0.5,
-                          }}
-                        />
                         {dateFormatter(education.startDate, "MMM YYYY")} -{" "}
                         {dateFormatter(education.endDate, "MMM YYYY")}
                       </Typography>
@@ -237,15 +206,11 @@ export const UserEducation = () => {
                   </Stack>
                 </Stack>
               </Stack>
-              {(!employeeId ||
-                checkPermissionForModulesFeatureAccess(
-                  `${ModulesName.Employees}.${Permission.Edit}`,
-                  userPermissions
-                )) && (
+              {
+                hasEmployeeEditPermission &&
                 <Stack
-                  direction={{ sx: "column", sm: "row" }}
+                  direction="row"
                   spacing={1}
-                  rowGap={0.5}
                   sx={{
                     visibility: "hidden",
                     transition: "visibility 0.3s ease-in-out",
@@ -253,19 +218,18 @@ export const UserEducation = () => {
                 >
                   <CustomIconButton
                     icon={<Edit />}
-                    tooltip="Edit"
+                    tooltip={intl.formatMessage({ id: "BUTTON.EDIT" })}
                     handleClick={() => handleEducationEdit(education)}
                   />
                   <CustomIconButton
                     icon={<DeleteOutline />}
-                    tooltip="Delete"
+                    tooltip={intl.formatMessage({ id: "BUTTON.DELETE" })}
                     handleClick={() => {
                       setSeletedEducationId(education.educationId);
-                      setConfirmModalOpen(true);
                     }}
                   />
                 </Stack>
-              )}
+              }
             </Stack>
           ))
         )}
@@ -279,11 +243,11 @@ export const UserEducation = () => {
           handleClose={handleClose}
         />
       )}
-      {isConfirmModal && (
+      {selectedEducationId && (
         <ConfirmationModal
-          title="Delete Education"
-          content="Are you sure you want to delete this Education ?"
-          open={isConfirmModal}
+          title={intl.formatMessage({ id: "Confirmation.Title.Emp_Education" })}
+          content={intl.formatMessage({ id: "Confirmation.Content.Emp_Education" })}
+          open={true}
           handleClose={handleCloseConfirmation}
           handleConfirmation={handleDeleteEducation}
         />

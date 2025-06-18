@@ -30,6 +30,28 @@ export type EmployeeByIdResponse = EmployeeModel & {
   teamLeadName: string | null;
 }
 
+export type NotificationModel = {
+  userNotificationId: string,
+  isRead: boolean,
+  title: string,
+  sentDateTime: string,
+  sentBy: string,
+  notificationTypes: number
+}
+
+export type WorkHistoryModel = {
+  workHistoryId: string,
+  userId: string,
+  organisationName: string,
+  startDate: Dayjs | null,
+  endDate: Dayjs | null,
+  jobRole: string,
+  jobLocation: string
+}
+
+
 export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 export type GetSkillListResponseModel = ResponseData<SkillModel>;
+export type NotificationResponseModel = ResponseData<NotificationModel>;
 export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
+export type WorkHistoryResponseModel = ResponseData<WorkHistoryModel>;

@@ -1,8 +1,8 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
-  checkPermissionForModulesFeatureAccess,
   dateFormatter,
+  hasModuleFeaturePermission,
 } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
 import { useState } from "react";
@@ -19,29 +19,23 @@ export const PersonalDetails = () => {
   const { userDetails } = useUserDetails();
   const employeeId = useParams().employeeid;
   const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
+  const hasEmployeeEditPermission = !employeeId || hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions)
+
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={1}
-      >
+      <Stack className="flex-row justify-content-between mb-4"    >
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.PI" })}
         </Typography>
-        {(!employeeId ||
-          checkPermissionForModulesFeatureAccess(
-            `${ModulesName.Employees}.${Permission.Edit}`,
-            userPermissions
-          )) && (
-            <CustomIconButton
-              tooltip="Edit"
-              icon={<Edit />}
-              handleClick={() => setModalOpen(true)}
-            />
-          )}
+        {
+          hasEmployeeEditPermission &&
+          <CustomIconButton
+            tooltip={intl.formatMessage({ id: "BUTTON.EDIT" })}
+            icon={<Edit />}
+            handleClick={() => setModalOpen(true)}
+          />
+        }
 
         {isModalOpen && userDetails && (
           <UpdateUserInfo

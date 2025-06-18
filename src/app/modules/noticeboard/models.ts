@@ -1,4 +1,4 @@
-import { BaseModel, ResponseData } from "../../../utils/common_types"
+import { ResponseData } from "../../../utils/common_types"
 import { NOTICE_TYPE } from "../../../utils/enums"
 
 export interface NoticeModel {
@@ -20,4 +20,5 @@ export interface NoticeResponseModel {
     noticeType: number,
 }
 
-export type GetAllNoticeResponse = ResponseData<NoticeResponseModel> 
+export type GetAllNoticeResponse = ResponseData<NoticeResponseModel>
+export type GetMyNoticesResponse = ResponseData<NoticeModel> 

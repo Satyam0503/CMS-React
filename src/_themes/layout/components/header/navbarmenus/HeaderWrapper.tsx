@@ -1,4 +1,4 @@
-import { Grid, IconButton, Menu, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { MenuOutlined } from "@mui/icons-material";
 import { FC, useCallback, useEffect, useState } from "react";
 import { Navbar } from "./Navbar";
@@ -18,24 +18,23 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
   }, []);
 
   return (
-    <Grid
-      item
+    <Stack
       sx={{
         backgroundColor: 'background.header',
-        p: 1
       }}
-      className="header-wrapper"
+      className="p-4 flex-row align-items-center justify-content-between position-sticky top-0 z-3"
     >
       {
         isSmallScreen &&
         <IconButton sx={{ border: 0 }} onClick={openSideBar}>
-          <MenuOutlined fontSize="large" />
+          <MenuOutlined className="icon-fs-32" />
         </IconButton>
       }
-      <Stack direction={"row"} sx={{ alignItems: "center", flexGrow: 1, justifyContent: "flex-end" }} spacing={2}>
+      <Stack direction={"row"} className="align-items-center flex-grow-1 justify-content-end gap-5" >
         <SearchInput search={search} setSearch={handleSearchChange} />
         <Navbar />
       </Stack>
-    </Grid>
+    </Stack>
   );
 }
+

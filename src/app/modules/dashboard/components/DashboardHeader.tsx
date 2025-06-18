@@ -1,12 +1,9 @@
-import { IconButton, Stack, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { memo } from "react";
 import dayjs from "dayjs";
 import { dateFormatter } from "../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import RightDrawer from "./RightDrawer";
-import { DashboardCustomizeOutlined } from "@mui/icons-material";
 
 export const DashboardHeader = memo((props: { fullName: string }) => {
   const intl = useIntl();

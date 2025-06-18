@@ -91,7 +91,7 @@ const ProcessLogs = () => {
       .then((res) => {
         const { success, methodResults, totalRecords } = res.data;
         if (success) {
-          setProcessLogList([...methodResults].reverse());
+          setProcessLogList(methodResults);
           setTotalRecords(totalRecords);
         }
       })
@@ -104,8 +104,7 @@ const ProcessLogs = () => {
   }, [searchValue, paginationValues, processLogFilters]);
 
   return (
-    <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
-
+    <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
       <Stack
         direction="row"
         className="align-items-center justify-content-between"

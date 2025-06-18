@@ -20,10 +20,10 @@ import {
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
-import { NoticeModel } from "../../../../utils/common_types";
 import { NoticeBoardTableColumnList } from "../../../../utils/constant/Constant";
 import { AddNotice } from "./AddNotice";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { NoticeModel } from "../models";
 
 const rows = [
   {
@@ -36,7 +36,6 @@ const rows = [
 ];
 
 const initialValues: NoticeModel = {
-  id: "",
   type: "",
   target: "",
   group: "",
@@ -83,7 +82,7 @@ export default function UserNoticeBoard() {
     setModalOpen(true);
   };
 
-  const handleNoticeDeletion = () => {};
+  const handleNoticeDeletion = () => { };
 
   const openConfirmationModal = (notice: NoticeModel) => {
     setConfirmModalOpen(true);

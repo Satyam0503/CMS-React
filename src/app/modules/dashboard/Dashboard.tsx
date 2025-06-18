@@ -63,7 +63,6 @@ export default function Dashboard() {
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
               <Grid item xs={12} sm={6}>
-                {/* <EmployeeChart employees={employees} /> */}
                 <EmployeeChart />
               </Grid>
             )}

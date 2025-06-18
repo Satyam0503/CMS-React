@@ -41,7 +41,7 @@ export const FilterComponent: FC<Props> = ({ open, anchorEl, handleClose, id, ch
                         {formatMessage({ id: "FILTER" })}
                     </Typography>
                     <IconButton className="border-0" onClick={handleClose}>
-                        <Close />
+                        <Close className="icon-fs-20" />
                     </IconButton>
                 </Stack>
                 {children}

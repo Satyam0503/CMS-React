@@ -1,5 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import DOMPurify from "dompurify";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 import {
   EmployeeModel,
@@ -12,9 +14,17 @@ import {
   ApplicationStatus,
   CommentAction,
   ModulesName,
+  NOTICE_TYPE,
+  NOTIFICATION_TYPE,
   Permission,
 } from "./enums";
-import { APP_FILTER_KEY, SideBarTabList } from "./constant/Constant";
+import {
+  APP_FILTER_KEY,
+  NoticeTypes,
+  SideBarTabList,
+} from "./constant/Constant";
+import { ReactNode } from "react";
+
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
   format: string
@@ -23,6 +33,14 @@ export const dateFormatter = (
     return "NA";
   }
   return dayjs(date).format(format);
+};
+
+export const relativeTimeFormatter = (date: Dayjs | string) => {
+  const daysDiff = dayjs().diff(date, "day");
+  if (daysDiff > 3) {
+    return dayjs(date).format("DD MMM YYYY hh:mm A");
+  }
+  return dayjs(date).fromNow();
 };
 
 export const employeesListMapperforExport = (
@@ -61,6 +79,14 @@ export const applicantStatusDecoder: {
 } = {
   [ApplicantStatus.Active]: "APPLICANT.STATUS.ACTIVE",
   [ApplicantStatus.InActive]: "APPLICANT.STATUS.INACTIVE",
+};
+
+export const noticeTypeDecoder: {
+  [index: number]: string;
+} = {
+  [NOTICE_TYPE.GENERAL]: "NOTICE_TYPE.GENERAL",
+  [NOTICE_TYPE.IMPORTANT]: "NOTICE_TYPE.IMPORTANT",
+  [NOTICE_TYPE.URGENT]: "NOTICE_TYPE.URGENT",
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -163,13 +189,21 @@ export const getModulePermissions = (
   return allowedPermission;
 };
 
-export const hasModuleFeaturePermission = (moduleName: ModulesName, permission: Permission, modulesPermissions: string[]) => {
-  const modulePermisson = `${moduleName}.${permission}`;
+export const hasModuleFeaturePermission = (
+  moduleName: ModulesName,
+  permission: Permission,
+  modulesPermissions: string[]
+) => {
   if (modulesPermissions.length === 0) {
     return false;
   }
-  return modulesPermissions.findIndex(permission => permission === modulePermisson) > -1;
-}
+  const modulePermisson = `${moduleName}.${permission}`;
+  return (
+    modulesPermissions.findIndex(
+      (permission) => permission === modulePermisson
+    ) > -1
+  );
+};
 
 export const sortAscendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   const columnValueType = typeof arr[0][key];
@@ -223,11 +257,11 @@ export const getAppliedFilters = () => {
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
     : {
-      application: null,
-      jobs: null,
-      processLog: null,
-      employee: null,
-    };
+        application: null,
+        jobs: null,
+        processLog: null,
+        employee: null,
+      };
   return appliedfilters;
 };
 

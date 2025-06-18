@@ -78,34 +78,32 @@ const UserProfile = () => {
 
   return (
     <UserDetailsProvider>
-      <Grid container spacing={4} zIndex={0}>
+      <Grid container spacing={{ xs: 2, lg: 3, xl: 4 }} className="flex-grow-1">
         <Grid
           item
           xs={12}
-          lg={3.8}
+          lg={4}
           xl={3}
-          display={"flex"}
-          flexDirection={{ xs: "column", sm: "row", lg: "column" }}
-          gap={{ xs: 4, sm: 2, md: 4 }}
-          justifyContent={{ lg: "flex-start" }}
         >
-          <Stack width={"100%"}>
-            <ProfileCard />
-          </Stack>
-          <Stack width={"100%"}>
-            <LeaveAllowences />
-          </Stack>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6} lg={12} >
+              <ProfileCard />
+            </Grid>
+            <Grid item xs={12} md={6} lg={12}>
+              <LeaveAllowences />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid
           item
           xs={12}
           md={12}
-          lg={8.2}
+          lg={8}
           xl={9}
           className="d-flex flex-column gap-4"
         >
           <ProfileHeader />
-          <Stack spacing={1}>
+          <Stack spacing={1} className="flex-grow-1">
             <Card className="tab-container d-flex flex-row">
               {tabsRoutes.map((tab) => {
                 const tabTo = empId ? `employees/${empId}/${tab.to}` : `profile/${tab.to}`;

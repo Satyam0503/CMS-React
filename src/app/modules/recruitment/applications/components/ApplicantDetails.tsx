@@ -97,7 +97,7 @@ export const ApplicantDetails = () => {
         const response = await getApplicantComments(payload);
         const { methodResults, success, totalRecords } = response.data;
         if (success) {
-          setCommentList(methodResults.reverse());
+          setCommentList(methodResults);
           setTotalRecords(totalRecords);
         }
       } catch (error: any) {

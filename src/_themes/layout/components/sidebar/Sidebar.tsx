@@ -39,17 +39,17 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
     >
-      <Box role="presentation" onClick={handleClose}>
+      <Stack role="presentation" spacing={2} onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
         {
           !isSmallScreen &&
           <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
             onClick={handleSideBarToggle}
             onMouseOver={(e) => e.stopPropagation()}
           >
-            <West />
+            <West className="icon-fs-20" />
           </IconButton>
         }
-        <Stack sx={{ p: 2 }} spacing={4} alignItems="center" width="100%">
+        <Stack spacing={4} alignItems="center" >
           <Avatar
             variant="square"
             alt="Company Logo"
@@ -81,7 +81,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
           </Typography>
         </Stack>
         <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
-      </Box>
+      </Stack>
     </Drawer >
   );
 };

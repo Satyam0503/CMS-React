@@ -6,6 +6,7 @@ import { dateFormatter } from "../../../../utils/common";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllEmployees } from "../../employees/employeeServices";
+import { CardSkeleton } from "./CardSkeleton";
 
 const isSameDate = (date: Dayjs) => {
   const currentDateofMonth = dayjs().date();
@@ -38,6 +39,7 @@ const getUpcomingBirthDays = (empList: GetAllEmployeeResponseModel[]) => {
 export default function UpcomingBirthday() {
   const intl = useIntl();
   const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -49,42 +51,34 @@ export default function UpcomingBirthday() {
       } catch (error) {
         console.log(error);
       }
+      finally {
+        setLoading(false);
+      }
     })();
   }, [])
+
+  if (isLoading) {
+    return <CardSkeleton />
+  }
 
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.BIRTHDAY" })}>
-        <Stack
-          sx={{
-            flexGrow: 1,
-            justifyContent: "space-between",
-          }}
-        >
+        <Stack className="flex-grow-1 justify-content-between mt-4" >
           {!employees.length ? (
-            <Box
-              component={"div"}
-              sx={{ flexGrow: 1, alignContent: "center", textAlign: "center" }}
+            <Box component="div" className="flex-grow-1 align-content-center text-center"
             >
               <Typography variant="h5">No Employees</Typography>
             </Box>
           ) : (
             <Stack spacing={1}>
-              {getUpcomingBirthDays(employees).slice(0, 3).map((emp) => {
+              {getUpcomingBirthDays(employees).slice(0, 4).map((emp) => {
                 return (
                   <Stack
                     key={emp.userId}
-                    direction="row"
-                    sx={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
+                    className="justify-content-between flex-row align-items-center"
                   >
-                    <Stack
-                      direction="row"
-                      sx={{ alignItems: "center" }}
-                      spacing={1}
-                    >
+                    <Stack className="justify-content-between flex-row gap-2  align-items-center" >
                       <Avatar
                         alt="User Profile"
                         src={emp.fullProfileUrl ?? ""}
@@ -110,13 +104,11 @@ export default function UpcomingBirthday() {
               })}
             </Stack>
           )}
-          <Stack>
-            <Link href="employeeperformance" underline="always">
-              {"See more"}
-            </Link>
-          </Stack>
+          <Link href="employeeperformance" underline="always" color="primary.main">
+            {intl.formatMessage({ id: "SEE_MORE" })}
+          </Link>
         </Stack>
-      </CustomCard>
+      </CustomCard >
     </>
   );
 }

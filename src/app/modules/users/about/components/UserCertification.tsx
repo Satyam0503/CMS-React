@@ -13,6 +13,7 @@ import { useIntl } from "react-intl";
 import {
   checkPermissionForModulesFeatureAccess,
   dateFormatter,
+  hasModuleFeaturePermission,
 } from "../../../../../utils/common";
 import AddUpdateCertification from "./AddUpdateCertification";
 import {
@@ -46,13 +47,10 @@ export const UserCertification = () => {
   const [isEdit, setEdit] = useState(false);
   const [open, setOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [selectedCertificationId, setSelectedCertificationId] = useState<
-    string | undefined
-  >();
+  const [selectedCertificationId, setSelectedCertificationId] = useState<string | undefined>();
   const employeeId = useParams().employeeid;
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasEmployeeEditPermission = !employeeId || hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
 
   async function handleAddUpdateCertification(
     values: UserCertificationModel,
@@ -107,7 +105,6 @@ export const UserCertification = () => {
 
   function closeConfirmationModal() {
     setSelectedCertificationId(undefined);
-    setConfirmModalOpen(false);
   }
 
   async function deleteCertification() {
@@ -139,47 +136,37 @@ export const UserCertification = () => {
         setUserCertifications(methodResults);
       })
       .catch((error) => {
-        toast.error(error.message);
+        console.log(error.message);
       });
   }, [refresh]);
 
+
   return (
     <Card sx={{ p: 2 }}>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={2}
-      >
-        <Typography variant="h5" flexWrap={"wrap"}>
+      <Stack className="flex-row justify-content-between mb-4" >
+        <Typography variant="h5" >
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
         </Typography>
-        {(!employeeId ||
-          checkPermissionForModulesFeatureAccess(
-            `${ModulesName.Employees}.${Permission.Edit}`,
-            userPermissions
-          )) && (
-            <CustomIconButton
-              tooltip="Add"
-              icon={<Add />}
-              handleClick={() => setOpen(true)}
-            />
-          )}
+        {
+          hasEmployeeEditPermission &&
+          <CustomIconButton
+            tooltip={intl.formatMessage({ id: "BUTTON.ADD" })}
+            icon={<Add />}
+            handleClick={() => setOpen(true)}
+          />
+        }
       </Stack>
 
-      <Stack spacing={{ xs: 0.5, sm: 1 }}>
+      <Stack spacing={2}>
         {userCertifications.length === 0 ? (
-          <Typography variant="body2" flexWrap={"wrap"}>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
           </Typography>
         ) : (
           userCertifications.map((certification) => (
             <Stack
               key={certification.certificationId}
-              direction="row"
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}
+              className="flex-row justify-content-between align-items-center"
               spacing={1}
               sx={{
                 "&:hover .MuiStack-root": {
@@ -187,109 +174,92 @@ export const UserCertification = () => {
                 },
               }}
             >
-              <Stack direction="row" alignItems={"center"} spacing={1}>
+              <Stack direction="row" alignItems="center" spacing={1}>
                 <Stack
+                  className="flex-shrink-0 align-items-center justify-content-center"
                   sx={{
                     width: 48,
                     height: 48,
                     bgcolor: "secondary.lighter",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    color: "secondary.dark",
                     borderRadius: 1,
                   }}
                 >
-                  <Stack sx={{ color: "secondary.main" }}>
-                    <LocalActivity />
-                  </Stack>
+                  <LocalActivity />
                 </Stack>
 
                 <Stack>
-                  <Typography
-                    variant="body1"
-                    fontWeight={500}
-                  >
+                  <Typography variant="body1" >
                     {certification.certificationTitle}
                   </Typography>
                   <Stack
-                    direction={{ sx: "column", sm: "row" }}
-                    spacing={1}
-                    alignItems={{ sm: "flex-end" }}
+                    direction="row"
+                    className="flex-wrap flex-row align-items-center"
+                    spacing={{ xs: 0.5, sm: 2 }}
                   >
-                    <Typography
-                      variant="caption"
-                      display={"block"}
-                      fontWeight={500}
-                    >
+                    <Typography variant="body2" className="fw-bold">
                       {certification.organisationName},{certification.mode}
                     </Typography>
-                    <Typography variant="body2">
-                      <CalendarToday
-                        sx={{
-                          height: "1rem",
-                          width: "inherit",
-                          mb: 0.4,
-                          mr: 0.5,
-                        }}
-                      />
-
-                      {dateFormatter(certification.startDate, "MMM YYYY")}
-                      {" - "}
-                      {dateFormatter(certification.endDate, "MMM YYYY")}
-                    </Typography>
+                    <Stack className="flex-row align-items-center gap-1">
+                      <CalendarToday className="icon-fs-16" />
+                      <Typography variant="body2">
+                        {dateFormatter(certification.startDate, "MMM YYYY")}
+                        {" - "}
+                        {dateFormatter(certification.endDate, "MMM YYYY")}
+                      </Typography>
+                    </Stack>
                   </Stack>
                 </Stack>
               </Stack>
-              {(!employeeId ||
-                checkPermissionForModulesFeatureAccess(
-                  `${ModulesName.Employees}.${Permission.Edit}`,
-                  userPermissions
-                )) && (
-                  <Stack
-                    direction={{ sx: "column", sm: "row" }}
-                    spacing={1}
-                    rowGap={0.5}
-                    sx={{
-                      visibility: "hidden",
-                      transition: "visibility 0.3s ease-in-out",
+              {hasEmployeeEditPermission &&
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    visibility: "hidden",
+                    transition: "visibility 0.3s ease-in-out",
+                  }}
+                >
+                  <CustomIconButton
+                    icon={<Edit />}
+                    tooltip={intl.formatMessage({ id: "BUTTON.EDIT" })}
+                    handleClick={() => handleCertificationEdit(certification)}
+                  />
+                  <CustomIconButton
+                    icon={<DeleteOutline />}
+                    tooltip={intl.formatMessage({ id: "BUTTON.DELETE" })}
+                    handleClick={() => {
+                      setSelectedCertificationId(certification.certificationId);
                     }}
-                  >
-                    <CustomIconButton
-                      icon={<Edit />}
-                      tooltip="Edit"
-                      handleClick={() => handleCertificationEdit(certification)}
-                    />
-                    <CustomIconButton
-                      icon={<DeleteOutline />}
-                      tooltip="Delete"
-                      handleClick={() => {
-                        setConfirmModalOpen(true);
-                        setSelectedCertificationId(certification.certificationId);
-                      }}
-                    />
-                  </Stack>
-                )}
+                  />
+                </Stack>
+              }
             </Stack>
           ))
         )}
       </Stack>
-      {open && (
-        <AddUpdateCertification
-          isEdit={isEdit}
-          open={open}
-          initialValues={initialValues}
-          handleAddUpdateCertification={handleAddUpdateCertification}
-          handleClose={handleClose}
-        />
-      )}
-      {isConfirmModalOpen && (
-        <ConfirmationModal
-          title="Delete Certification"
-          content="Are you sure you want to delete this Certification ?"
-          open={isConfirmModalOpen}
-          handleClose={closeConfirmationModal}
-          handleConfirmation={deleteCertification}
-        />
-      )}
-    </Card>
+      {
+        open && (
+          <AddUpdateCertification
+            isEdit={isEdit}
+            open={open}
+            initialValues={initialValues}
+            handleAddUpdateCertification={handleAddUpdateCertification}
+            handleClose={handleClose}
+          />
+        )
+      }
+      {
+        Boolean(selectedCertificationId) && (
+          <ConfirmationModal
+            title={intl.formatMessage({ id: "Confirmation.Title.Emp_Certification" })}
+            content={intl.formatMessage({ id: "Confirmation.Content.Emp_Certification" })}
+            open={true}
+            handleClose={closeConfirmationModal}
+            handleConfirmation={deleteCertification}
+          />
+        )
+      }
+    </Card >
   );
 };

@@ -3,7 +3,6 @@ import { Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
-  FilterList,
   ListAltOutlined,
 } from "@mui/icons-material";
 
@@ -17,17 +16,18 @@ import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { NoticeModel, NoticeResponseModel } from "./models";
+import { NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 
-const NoticeBoard = () => {
+export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
   const [searchValue, setSearchValue] = React.useState("");
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [NoticeList, setNoticeList] = React.useState<NoticeResponseModel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
   const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 })
   const { setPageTitle } = usePageData();
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
@@ -37,6 +37,10 @@ const NoticeBoard = () => {
   const handleClose = () => {
     setModalOpen(false);
   }
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  }
+
   const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -59,10 +63,10 @@ const NoticeBoard = () => {
         setLoading(false)
       }
     })();
-  }, [])
+  }, [refresh])
   return (
     <>
-      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack
           direction="row"
           sx={{
@@ -73,14 +77,17 @@ const NoticeBoard = () => {
         >
           <SearchInput search={searchValue} setSearch={handleSearchChange} />
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
-            <CustomisedButton
-              variant="outlined"
-              Icon={<ListAltOutlined />}
-              label={formatMessage({ id: "NOTICE.MY_NOTICE" })}
-              handleClick={() => {
-                navigate("/noticeboard/usernoticeboard");
-              }}
-            />
+            {
+              hasAddPermission &&
+              <CustomisedButton
+                variant="outlined"
+                Icon={<ListAltOutlined />}
+                label={formatMessage({ id: "NOTICE.MY_NOTICE" })}
+                handleClick={() => {
+                  navigate("/noticeboard/notices/mynotices");
+                }}
+              />
+            }
             {/* <CustomIconButton tooltip="Filter List" icon={<FilterList />} /> */}
             {
               hasAddPermission &&
@@ -92,7 +99,7 @@ const NoticeBoard = () => {
             }
           </Stack>
         </Stack>
-        <Stack sx={{ mt: "1rem" }}>
+        <Stack >
           <CustomisedTable
             tabName="Notice Board"
             rows={NoticeList}
@@ -106,10 +113,8 @@ const NoticeBoard = () => {
       </Card>
       {
         isModalOpen &&
-        <AddNotice open={isModalOpen} handleClose={handleClose} isEdit={false} />
+        <AddNotice refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
       }
     </>
   );
 }
-
-export default NoticeBoard;

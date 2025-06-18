@@ -119,7 +119,7 @@ export const Applications = () => {
     const timeoutId = setTimeout(async () => {
       try {
         const { data } = await getAllApplicantList(applicationFilters != null ? payload : { ...initialFilter, name: search, pageNo: paginationValues.pageNo + 1, records: paginationValues.records });
-        setApplicationsList(data.methodResults.reverse());
+        setApplicationsList(data.methodResults);
         setTotalRecords(data.totalRecords);
       } catch (error) {
         console.error(
@@ -140,7 +140,7 @@ export const Applications = () => {
 
   return (
     <>
-      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack
           direction="row"
           className="justify-content-between align-items-center flex-wrap-reverse"

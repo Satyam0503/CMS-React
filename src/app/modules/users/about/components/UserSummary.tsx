@@ -10,7 +10,7 @@ import { useAppSelector } from "../../../../Redux/hooks";
 import { UserSummaryModel } from "../../../../../utils/common_types";
 import { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
-import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
+import { checkPermissionForModulesFeatureAccess, hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 
 export const UserSummary = () => {
@@ -21,8 +21,9 @@ export const UserSummary = () => {
   const [isEdit, setEdit] = useState(false);
   const { formatMessage } = useIntl();
   const { employeeid } = useParams();
-  const userPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const hasEmployeeEditPermission = !employeeid || hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
+
 
   const handleClose = () => {
     setEdit(false);
@@ -64,17 +65,12 @@ export const UserSummary = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack
-        direction="row"
-        display={"flex"}
-        justifyContent={"space-between"}
-        mb={1}
-      >
+      <Stack className="flex-row justify-content-between mb-4"  >
         <Typography variant="h5">
           {formatMessage({ id: "INFO.SUMMARY" })}
         </Typography>
         {isEdit ? (
-          <Stack direction={"row"} spacing={1}>
+          <Stack direction="row" spacing={1}>
             <CustomisedButton
               label={formatMessage({ id: "BUTTON.CANCEL" })}
               variant="outlined"
@@ -89,19 +85,17 @@ export const UserSummary = () => {
           </Stack>
         ) : (
           <>
-            { (!employeeid  || checkPermissionForModulesFeatureAccess(
-              `${ModulesName.Employees}.${Permission.Edit}`,
-              userPermissions
-            ))  && (
+            {
+              hasEmployeeEditPermission &&
               <CustomIconButton
-                tooltip="Edit"
+                tooltip={formatMessage({ id: "BUTTON.EDIT" })}
                 icon={<Edit />}
                 handleClick={() => {
                   setEdit(true);
                   setUpdatedSummary(userSummary?.summary ?? "");
                 }}
               />
-            )}
+            }
           </>
         )}
       </Stack>
@@ -117,12 +111,13 @@ export const UserSummary = () => {
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
-        <Typography variant="body1">
+        <Typography variant="body1" >
           {userSummary && userSummary.summary.trim().length > 0
             ? userSummary.summary
             : formatMessage({ id: "USER.ADD_SUMMARY" })}
         </Typography>
-      )}
-    </Card>
+      )
+      }
+    </Card >
   );
 };

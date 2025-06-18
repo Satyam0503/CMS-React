@@ -1,28 +1,45 @@
-import * as React from "react";
-import Menu from "@mui/material/Menu";
-
-import Typography from "@mui/material/Typography";
-
 import {
   Badge,
-  Divider,
+  Chip,
   IconButton,
-  ListItemIcon,
+  List,
+  ListItem,
   ListItemText,
-  MenuItem,
-  MenuList,
+  Popover,
   Stack,
   Tooltip,
+  Typography,
 } from "@mui/material";
-import { Close, NotificationsOutlined, Translate } from "@mui/icons-material";
+import { Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
-import { NoticeModel } from "../../../../../app/modules/noticeboard/models";
+import { NotificationModel } from "../../../../../app/modules/users/models";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { getNotifications } from "../../../../../app/modules/users/userservices";
+import { relativeTimeFormatter } from "../../../../../utils/common";
+import clsx from "clsx";
+import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
+
+export const NotificationIconMapper: {
+  [index: number]: ReactNode
+} = {
+  [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications />,
+  [NOTIFICATION_TYPE.ALERT]: <Cake />,
+}
+
 
 export default function HeaderNotificationMenu() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [notificationList, setNotificationList] = React.useState<NoticeModel[]>([])
+  const { formatMessage } = useIntl();
+  const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+  const id = open ? 'notification-popover' : undefined;
+  const [activeTab, setActiveTab] = useState(1);
+
+  const handleChange = (newValue: number) => {
+    setActiveTab(newValue);
+  };
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -30,91 +47,121 @@ export default function HeaderNotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const intl = useIntl();
-  const connection = Connector.getInstance().getConnetion();
 
-  React.useEffect(() => {
-    if (connection) {
-      connection.on("noticeNotify", (notice: NoticeModel) => {
-        setNotificationList([...notificationList, notice]);
-      })
-    }
+  useEffect(() => {
+    const connection = Connector.getInstance().getConnection();
+    if (!connection) return;
+    const handleNewNotification = (notice: NotificationModel) => {
+      // Prepend new notification to the existing list
+      setNotificationList((prevList) => [notice, ...prevList]);
+    };
+    connection.on("noticeNofity", handleNewNotification);
+    return () => {
+      connection.off("noticeNofity", handleNewNotification);
+    };
   }, [])
-  console.log(notificationList);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getNotifications();
+        if (data.success) {
+          setNotificationList(data.methodResults);
+        } else {
+          console.log("Failed to Fetch Notifications");
+        }
+      }
+      catch {
+        console.log("Failed to Fetch Notifications");
+      }
+    })();
+  }, [])
+
+  const filteredNotificationList = useMemo(() => {
+    if (activeTab === 1) return notificationList;
+    if (activeTab === 2) return notificationList.filter(item => !item.isRead);
+    return notificationList.filter(item => item.isRead);
+  }, [notificationList, activeTab]);
+
+  const unReadNotificationCount = useMemo(() => notificationList.length === 0 ? 0 : notificationList.filter(item => !item.isRead).length, [notificationList]);
+
+  const handleNotificationClick = (notification: NotificationModel) => {
+    console.log(notification.userNotificationId);
+  }
 
   return (
     <>
       <Tooltip title="Notifications" placement="bottom">
-        <IconButton
-          sx={{
-            bgcolor: "inherit",
-            border: "none",
-            "&:hover": {
-              bgcolor: "inherit",
-              border: "none",
-            },
-          }}
-          onClick={handleClick}
-          aria-controls={open ? "account-menu" : undefined}
-          aria-haspopup="true"
-        >
-          <Badge badgeContent={4} color="primary">
-            <NotificationsOutlined fontSize="large" />
-          </Badge>
-        </IconButton>
+        <Badge badgeContent={unReadNotificationCount} color="primary">
+          <IconButton
+            onClick={handleClick}
+            aria-describedby={id}
+            sx={{ border: 0, p: 0 }}
+          >
+            <NotificationsOutlined className="icon-fs-32" />
+          </IconButton>
+        </Badge>
       </Tooltip>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
+      <Popover
+        id={id}
         open={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        onClick={handleClose}
+        className="notification-menu"
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
         slotProps={{
           paper: {
-            sx: { width: 300 }
+            sx: {
+              minWidth: 250,
+              width: 400,
+              padding: 2
+            }
           }
         }}
       >
-        <Stack>
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Stack direction={"row"} alignItems={"center"}>
-              <Typography variant="h6" px={1}>
-                Notifications
-              </Typography>
-              <Badge
-                color="secondary"
-                overlap="circular"
-                badgeContent="1"
-                sx={{ pl: 2 }}
-              />
-            </Stack>
-            <Stack>
-              <Close />
-            </Stack>
+        <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
+        <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
+          <Stack onClick={() => handleChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
+            <span>{formatMessage({ id: "Notifications.All" })}</span>
+            <Chip label={notificationList.length} size="small" color="secondary" />
           </Stack>
-          <Divider />
-          <MenuList>
-            {
-              notificationList.map(notification => (
-                <MenuItem className="px-2">
-                  <ListItemIcon>
-                    <Translate />
-                  </ListItemIcon>
-                  <ListItemText>
-                    {notification.title}
-                  </ListItemText>
-                  {notification.target}
-                </MenuItem>
-              ))
-            }
-          </MenuList>
+          <Stack onClick={() => handleChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
+            <span>{formatMessage({ id: "Notifications.New" })}</span>
+            <Chip label={unReadNotificationCount} size="small" color="secondary" />
+          </Stack>
+          <Stack onClick={() => handleChange(3)} className={clsx({ "active-tab": activeTab === 3 })}>
+            <span>{formatMessage({ id: "Notifications.Read" })}</span>
+            <Chip label={notificationList.length - unReadNotificationCount} size="small" color="secondary" />
+          </Stack>
         </Stack>
-      </Menu>
+
+        <List disablePadding className="notification-wrapper" >
+          {
+            filteredNotificationList.length > 0 ?
+              filteredNotificationList.map(item => (
+                <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
+                  <Stack sx={{ bgcolor: "secondary.light" }}>
+                    <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
+                  </Stack>
+                  <ListItemText primary={item.title} secondary={relativeTimeFormatter(item.sentDateTime)} />
+                </ListItem>
+              ))
+              :
+              <ListItem>
+                <ListItemText primary={<Typography variant="h6" sx={{ textAlign: "center" }}>{formatMessage({ id: "Notifications.None" })}</Typography>} />
+              </ListItem>
+          }
+        </List>
+
+      </Popover >
     </>
   );
 }
+

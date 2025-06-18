@@ -29,12 +29,14 @@ interface PropsTypes {
   open: boolean;
   handleClose: () => void;
   isEdit: boolean;
+  refresh: () => void;
 }
 
 export const AddNotice: FC<PropsTypes> = ({
   open,
   isEdit,
   handleClose,
+  refresh,
 }) => {
   const { formatMessage } = useIntl();
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
@@ -66,6 +68,7 @@ export const AddNotice: FC<PropsTypes> = ({
       if (data.success) {
         toast.success(data.message);
         handleClose();
+        refresh();
       }
     } catch (error) {
       console.log(error);
@@ -81,7 +84,6 @@ export const AddNotice: FC<PropsTypes> = ({
         initialValues={initialValues}
         validationSchema={noticeValidationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
           handleNoticePost(values, setSubmitting);
         }}
       >

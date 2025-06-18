@@ -1,0 +1,67 @@
+.notification-menu {
+  .notification-menu-tabList {
+    box-shadow: inset 0 -2px $neutral-300;
+    & > div {
+      min-width: $app-notification-tab-width;
+      flex-direction: row;
+      gap: 0.5rem;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      padding-block: 1rem 0.5rem;
+      cursor: pointer;
+
+      &.active-tab {
+        color: $app-primary-500;
+        border-bottom: 3px solid $app-primary-500;
+        & > .MuiChip-root {
+          background-color: $app-primary-500;
+          color: $app-white;
+        }
+      }
+
+      & > .MuiChip-root {
+        height: auto;
+        padding-inline: 0.25rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+      }
+    }
+  }
+  .notification-wrapper {
+    padding-block: 0.5rem;
+    max-height: $app-notification-max-height;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
+
+    & > .MuiListItem-root {
+      padding: 0.5rem 1rem;
+      margin-block-end: 0.5rem;
+      gap: 1rem;
+      align-items: center;
+      &.unread-notification {
+        background-color: $app-notification;
+        border-radius: 0.5rem;
+      }
+      & > .MuiStack-root {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        aspect-ratio: 1;
+        justify-content: center;
+        align-items: center;
+        & .MuiSvgIcon-root {
+          font-size: 2.5rem;
+        }
+      }
+      & > .MuiListItemText-root .MuiTypography-root {
+        max-width: 300px;
+        min-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
