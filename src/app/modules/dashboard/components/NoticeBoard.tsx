@@ -8,16 +8,11 @@ type Props = {
 };
 
 export default function NoticeBoard() {
-  const intl = useIntl();
+  const { formatMessage } = useIntl();
   return (
     <>
-      <CustomCard label={intl.formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
-        <Stack
-          sx={{
-            flexGrow: 1,
-            justifyContent: "space-between",
-          }}
-        >
+      <CustomCard label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
+        <Stack className="flex-grow-1 justify-content-between">
           <Stack spacing={1}>
             <Stack direction="row" gap={1}>
               <Stack className="symbol symbol-45px">

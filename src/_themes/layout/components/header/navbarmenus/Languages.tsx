@@ -94,7 +94,7 @@ const Languages = () => {
               >
                 <ListItemIcon>
                   <img
-                    className="w-15px h-15px rounded-circle"
+                    className="country-flag rounded-circle"
                     src={lang.flag}
                     alt="countryflag"
                   />
