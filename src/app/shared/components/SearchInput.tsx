@@ -35,7 +35,7 @@ export const SearchInput: FC<PropsType> = memo(
                   }}
                   onClick={handleClearSearch}
                 >
-                  {value ? <Close /> : <Search color="disabled" />}
+                  {value ? <Close className="icon-fs-20" /> : <Search color="disabled" className="icon-fs-20" />}
                 </IconButton>
               </InputAdornment>
             ),

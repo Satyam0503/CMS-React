@@ -22,6 +22,7 @@ import { ConfirmationModal } from "../../../shared/components/ConfirmationModal"
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";
+import { ListSkeleton } from "../about/components/ListSkeleton";
 
 
 const countTotalExperience = (fromDate: Dayjs | null, toDate: Dayjs | null) => {
@@ -68,6 +69,7 @@ export const WorkHistory = () => {
   const employeeId = useParams().employeeid;
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const hasEditPermission = !employeeId || hasModuleFeaturePermission(ModulesName.Employees, Permission.Create, userModulesPermissions);
+  const [isLoading, setLoading] = useState(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -114,8 +116,15 @@ export const WorkHistory = () => {
       } catch {
         console.log("failed to fetch Work History");
       }
+      finally {
+        setLoading(false);
+      }
     })();
   }, [refresh])
+
+  if (isLoading) {
+    return <ListSkeleton />
+  }
 
   return (
     <>
@@ -156,7 +165,7 @@ export const WorkHistory = () => {
                         borderRadius: 1,
                       }}
                     >
-                      <Business fontSize="large" color="primary" />
+                      <Business className="icon-fs-32" color="primary" />
                     </Stack>
 
                     <Stack>

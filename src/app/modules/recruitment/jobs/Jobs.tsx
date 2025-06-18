@@ -199,14 +199,8 @@ export default function Jobs() {
   }, []);
 
   return (
-    <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
-      <Stack
-        direction="row"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        flexWrap={"wrap-reverse"}
-        gap={2}
-      >
+    <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
+      <Stack className="flex-row justify-content-between align-items-center gap-8 flex-wrap-reverse" >
         <SearchInput search={search} setSearch={handleSearchChange} />
         <Stack direction="row" spacing={1}>
           <CustomIconButton icon={<FilterList />} />

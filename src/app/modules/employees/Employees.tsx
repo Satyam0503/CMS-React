@@ -167,10 +167,7 @@ const Employees = () => {
 
   return (
     <>
-      <Card
-        sx={{ p: "2rem", gap: 2 }}
-        className="d-flex flex-column flex-grow-1"
-      >
+      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack
           direction="row"
           gap={2}
@@ -190,10 +187,10 @@ const Employees = () => {
               }}
             >
               <ToggleButton value="table" aria-label="table">
-                <ViewList />
+                <ViewList className="icon-fs-20" />
               </ToggleButton>
               <ToggleButton value="grid" aria-label="grid">
-                <GridView />
+                <GridView className="icon-fs-20" />
               </ToggleButton>
             </ToggleButtonGroup>
             <Badge

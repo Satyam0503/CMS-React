@@ -10,11 +10,11 @@ type Props = {
 };
 const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
   return (
-    <Stack spacing={1.2} alignItems="center" direction="row">
+    <Stack spacing={1} className="flex-row align-items-center gap-2">
       <Stack
         sx={{
-          width: 48,
-          height: 48,
+          width: 52,
+          height: 52,
           background: iconBg,
           borderRadius: "50%",
           alignItems: "center",

@@ -140,7 +140,7 @@ export const Applications = () => {
 
   return (
     <>
-      <Card sx={{ p: "2rem", gap: 2 }} className="d-flex flex-column flex-grow-1">
+      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack
           direction="row"
           className="justify-content-between align-items-center flex-wrap-reverse"
