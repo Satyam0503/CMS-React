@@ -607,6 +607,10 @@
   "Toast.AddWorkHistoryFailed": "Failed to add work history",
   "Toast.UpdateWorkHistorySuccess": "Work History Successfully Updated",
   "Toast.UpdateWorkHistoryFailed": "Failed to update Work History",
+  "Toast.PostNoticeSuccess": "Notice Successfully Posted",
+  "Toast.PostNoticeFailed": "Failed to post notice",
+  "Toast.UpdateNoticeSuccess": "Notice Successfully Updated",
+  "Toast.UpdateNoticeFailed": "Failed to Update notice",
   "Toast.Delete.Success": "Successfully Deleted",
   "Toast.Delete.Failed": "Failed to Delete"
 }

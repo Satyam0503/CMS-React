@@ -1,6 +1,6 @@
 import { FC, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 type Props = {
@@ -20,7 +20,7 @@ export const NoticeViewModel: FC<Props> = ({ noticeMessage }) => {
                 onClick={() => setOpen(true)}>{formatMessage({ id: "BUTTON.VIEW" })}...</Box>
             <CustomisedModal maxWidth="xs" open={open} handleClose={() => setOpen(false)}>
                 <Box sx={{ mb: 3 }}>
-                    {noticeMessage}
+                    <Typography variant="body1">{noticeMessage}</Typography>
                 </Box>
                 <Stack sx={{ alignItems: "flex-end" }}>
                     <CustomisedButton

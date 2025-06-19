@@ -213,7 +213,6 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       MuiButton: {
         styleOverrides: {
           root: {
-            padding: ".25rem 1rem",
             fontSize: 12,
             textTransform: "capitalize",
             "&.Mui-disabled": {
@@ -361,7 +360,8 @@ export const createApplicationTheme = (mode: PaletteMode) => {
           },
           toolbar: {
             "& .MuiIconButton-root": {
-              padding: 4,
+              padding: 2,
+              fontSize: 12,
             },
           },
           select: {

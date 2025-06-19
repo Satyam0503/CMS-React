@@ -89,10 +89,15 @@ export const deleteRequest = <ResponseData>(
   return axios.delete<ResponseData>(path, config);
 };
 
-export const putRequest = <D>(
+export const putRequest = <Data, ResponseData>(
   path: string,
-  data?: D,
+  data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return axios.put(path, data, config);
+  return axios.put<ResponseData>(path, data, {
+    ...config,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
