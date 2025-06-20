@@ -40,6 +40,7 @@
       margin-block-end: 0.5rem;
       gap: 1rem;
       align-items: center;
+      cursor: pointer;
       &.unread-notification {
         background-color: $app-notification;
         border-radius: 0.5rem;

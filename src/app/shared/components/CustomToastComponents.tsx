@@ -38,10 +38,10 @@ const CustomNotificationWithAction = ({ notificationData, closeToast }: CustomTo
     return (
         <Stack className="flex-column gap-1 overflow-hidden w-100">
             <Stack className="flex-row gap-2 align-items-center">
-                <Box sx={{ width: 24, height: 24 }}>
+                <Box sx={{ width: 24, height: 24, color: 'text.primary' }}>
                     {NotificationIconMapper[notificationData.notificationTypes]}
                 </Box>
-                <Typography variant="subtitle2" sx={{ color: "text.secondary" }} className="fw-bold">{formatMessage({ id: "Toast.NotificationType.Notice.Title" })}</Typography>
+                <Typography variant="subtitle2" sx={{ color: "text.primary" }} className="fw-bold">{formatMessage({ id: "Toast.NotificationType.Notice.Title" })}</Typography>
             </Stack>
             <Typography variant="body2" className="text-truncate ms-8">{notificationData.title}</Typography>
             <span aria-label="close button" role="button" className="fw-bold d-inline-block ms-8 mt-1" onClick={closeToast}>

@@ -13,7 +13,7 @@ const CardSkeleton = () => {
         <Stack spacing={1}>
           {
             Array.from({ length: 4 }).map((_, index) => (
-              <Stack direction={"row"} spacing={1}>
+              <Stack key={index} direction={"row"} spacing={1}>
                 <Skeleton variant="rounded" height={40} width={40} />
                 <Stack className="flex-grow-1">
                   <Skeleton variant="text" sx={{ fontSize: "1rem" }} />

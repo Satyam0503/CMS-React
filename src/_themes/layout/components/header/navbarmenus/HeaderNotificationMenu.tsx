@@ -15,11 +15,12 @@ import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel } from "../../../../../app/modules/users/models";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getNotifications } from "../../../../../app/modules/users/userservices";
+import { getNotifications, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
 import { relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 export const NotificationIconMapper: {
   [index: number]: ReactNode
@@ -27,7 +28,14 @@ export const NotificationIconMapper: {
   [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications />,
   [NOTIFICATION_TYPE.ALERT]: <Cake />,
 }
-
+const redirectUserToUrl = (notification: NotificationModel, navigate: NavigateFunction) => {
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE: {
+      navigate("/noticeboard/notices");
+      break;
+    }
+  }
+}
 
 export default function HeaderNotificationMenu() {
   const { formatMessage } = useIntl();
@@ -36,6 +44,7 @@ export default function HeaderNotificationMenu() {
   const open = Boolean(anchorEl);
   const id = open ? 'notification-popover' : undefined;
   const [activeTab, setActiveTab] = useState(1);
+  const navigate = useNavigate();
 
   const handleChange = (newValue: number) => {
     setActiveTab(newValue);
@@ -88,11 +97,33 @@ export default function HeaderNotificationMenu() {
 
   const unReadNotificationCount = useMemo(() => notificationList.length === 0 ? 0 : notificationList.filter(item => !item.isRead).length, [notificationList]);
 
-  const handleNotificationClick = (notification: NotificationModel) => {
-    console.log(notification.userNotificationId);
+  const handleMarkNotificationAsRead = async (userNotificationId: string) => {
+    try {
+      const { data } = await markNotificationAsRead(userNotificationId);
+      if (data.success) {
+        setNotificationList(notificationList.map(notification => {
+          if (notification.userNotificationId !== userNotificationId) {
+            return notification;
+          }
+          return {
+            ...notification,
+            isRead: true
+          }
+        }))
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
   }
 
-  console.log("render");
+  const handleNotificationClick = (notification: NotificationModel) => {
+    if (!notification.isRead) {
+      handleMarkNotificationAsRead(notification.userNotificationId);
+    }
+    redirectUserToUrl(notification, navigate);
+    setAnchorEl(null);
+  }
+
 
   return (
     <>

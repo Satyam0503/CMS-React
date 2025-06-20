@@ -108,6 +108,7 @@ export const ServiceUrl = {
   DELETE_WORK_HISTORY: `${BaseUrl}/api/User/DeleteWorkHistory`,
 
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
+  MARK_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/Notification`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
