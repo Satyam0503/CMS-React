@@ -19,6 +19,7 @@ import { getNotifications } from "../../../../../app/modules/users/userservices"
 import { relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
+import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
 
 export const NotificationIconMapper: {
   [index: number]: ReactNode
@@ -47,14 +48,16 @@ export default function HeaderNotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleNewNotification = (notification: NotificationModel) => {
+    // show custom toast
+    showCustomToast(notification)
+    // Prepend new notification to the existing list
+    setNotificationList((prevList) => [notification, ...prevList]);
+  };
 
   useEffect(() => {
     const connection = Connector.getInstance().getConnection();
     if (!connection) return;
-    const handleNewNotification = (notice: NotificationModel) => {
-      // Prepend new notification to the existing list
-      setNotificationList((prevList) => [notice, ...prevList]);
-    };
     connection.on("noticeNofity", handleNewNotification);
     return () => {
       connection.off("noticeNofity", handleNewNotification);
@@ -88,6 +91,8 @@ export default function HeaderNotificationMenu() {
   const handleNotificationClick = (notification: NotificationModel) => {
     console.log(notification.userNotificationId);
   }
+
+  console.log("render");
 
   return (
     <>
