@@ -187,7 +187,7 @@ export const AddEditJob: FC<PropsTypes> = ({
               <CustomisedButton
                 label="Delete"
                 Icon={<DeleteOutline />}
-                className="delete-button"
+                color="error"
               />
             )}
             <CustomisedButton

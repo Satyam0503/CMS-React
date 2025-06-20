@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Stack } from "@mui/material";
+import { Button, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
@@ -91,14 +91,17 @@ export const NoticeBoard = () => {
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             {
               hasAddPermission &&
-              <CustomisedButton
-                variant="outlined"
-                Icon={<ListAltOutlined className="icon-fs-20" />}
-                label={formatMessage({ id: "NOTICE.MY_NOTICE" })}
-                handleClick={() => {
-                  navigate("/noticeboard/notices/mynotices");
-                }}
-              />
+              // <CustomisedButton
+              //   variant="outlined"
+              //   Icon={<ListAltOutlined className="icon-fs-20" />}
+              //   label=
+              //   handleClick={() => {
+              //     navigate("/noticeboard/notices/mynotices");
+              //   }}
+              // />
+              <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
+                {formatMessage({ id: "NOTICE.MY_NOTICE" })}
+              </Button>
             }
             {/* <CustomIconButton tooltip="Filter List" icon={<FilterList />} /> */}
             {
@@ -130,7 +133,7 @@ export const NoticeBoard = () => {
             totalRecords={totalRecords}
           />
         }
-      </Card>
+      </Card >
       {
         isModalOpen &&
         <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
