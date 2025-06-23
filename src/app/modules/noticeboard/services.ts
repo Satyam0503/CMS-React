@@ -1,4 +1,9 @@
-import { getRequest, postRequest, putRequest } from "../../../server/axios";
+import {
+  deleteRequest,
+  getRequest,
+  postRequest,
+  putRequest,
+} from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
@@ -33,4 +38,8 @@ export const getMyPostedNotices = async (pageNo: number, records: number) => {
       records,
     },
   });
+};
+
+export const deleteMyNotice = async (noticeId: string) => {
+  return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_NOTICE}/${noticeId}`);
 };

@@ -36,7 +36,7 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
             e.stopPropagation();
             openConfirmationModal(row);
           }}
-          icon={<DeleteOutlineOutlined />}
+          icon={<DeleteOutlineOutlined color="error" />}
           tooltip="Delete"
           ariaLabel="Delete"
         />

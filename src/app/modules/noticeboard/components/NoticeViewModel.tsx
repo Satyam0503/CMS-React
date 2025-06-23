@@ -20,7 +20,7 @@ export const NoticeViewModel: FC<Props> = ({ noticeMessage }) => {
                 onClick={() => setOpen(true)}>{formatMessage({ id: "BUTTON.VIEW" })}...</Box>
             <CustomisedModal maxWidth="xs" open={open} handleClose={() => setOpen(false)}>
                 <Box sx={{ mb: 3 }}>
-                    <Typography variant="body1">{noticeMessage}</Typography>
+                    <Typography variant="body1" sx={{ wordWrap: "break-word" }}>{noticeMessage}</Typography>
                 </Box>
                 <Stack sx={{ alignItems: "flex-end" }}>
                     <CustomisedButton

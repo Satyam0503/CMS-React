@@ -151,6 +151,7 @@ export const ServiceUrl = {
   GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
   UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
+  DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`
 };
 
 export const languages = [
@@ -590,12 +591,12 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     build: (
       row: NoticeModel,
       handleNoticeEdit: (row: NoticeModel) => void,
-      openConfirmationModal: (id: string) => void
+      openConfirmationModal: (row: NoticeModel) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleNoticeEdit}
-      // openConfirmationModal={openConfirmationModal}
+        openConfirmationModal={openConfirmationModal}
       />
     ),
   }

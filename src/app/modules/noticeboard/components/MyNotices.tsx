@@ -13,8 +13,10 @@ import { AddNotice } from "./AddNotice";
 import { MyNoticeTableColumnList } from "../../../../utils/constant/Constant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { Add, KeyboardArrowLeft } from "@mui/icons-material";
-import { getMyPostedNotices } from "../services";
+import { deleteMyNotice, getMyPostedNotices } from "../services";
 import { Pagination } from "../../../shared/components/Pagination";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { toast } from "react-toastify";
 
 export const initialNoticeValuesObj: NoticeModel = {
     message: "",
@@ -38,6 +40,7 @@ export const MyNotices = () => {
     const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
     const navigate = useNavigate();
     const [initialNoticeValues, setInitialNoticeValue] = useState<NoticeModel>(initialNoticeValuesObj);
+    const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>();
     const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
     const handleClose = () => {
@@ -74,6 +77,27 @@ export const MyNotices = () => {
         setEdit(true);
     }
 
+    const handleConfirmationOpen = (notice: NoticeModel) => {
+        setSelectedNoticeId(notice.noticeId)
+    }
+
+    const handleNoticeDelete = async (str: string) => {
+        if (str === "ok" && selectedNoticeId) {
+            try {
+                const { data } = await deleteMyNotice(selectedNoticeId);
+                if (data.success) {
+                    toast.success(formatMessage({ id: "Toast.Delete.Success" }));
+                    handleRefresh();
+                    setSelectedNoticeId(null);
+                }
+                else {
+                    toast.error(formatMessage({ id: "Toast.Delete.Failed" }));
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    }
     useEffect(() => {
         setPageTitle(formatMessage({ id: "PAGE.MY_NOTICE" }));
     }, []);
@@ -122,6 +146,7 @@ export const MyNotices = () => {
                     rowsPerPage={paginationValues.records}
                     loading={loading}
                     handleEdit={handleNoticeEdit}
+                    openConfirmationModal={handleConfirmationOpen}
                 />
                 {
                     totalRecords > paginationValues.records &&
@@ -133,11 +158,20 @@ export const MyNotices = () => {
                         totalRecords={totalRecords}
                     />
                 }
-
             </Card>
             {
                 isModalOpen &&
                 <AddNotice initialValues={initialNoticeValues} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={isEdit} />
+            }
+            {
+                selectedNoticeId &&
+                <ConfirmationModal
+                    open={true}
+                    title={formatMessage({ id: "Confirmation.Title.Notice" })}
+                    content={formatMessage({ id: "Confirmation.Content.Notice" })}
+                    handleClose={() => setSelectedNoticeId(null)}
+                    handleConfirmation={handleNoticeDelete}
+                />
             }
         </>
     );

@@ -605,6 +605,8 @@
   "Confirmation.Content.Emp_Certification": "Are you sure you want to delete this Certificate?",
   "Confirmation.Title.Emp_Education": "Delete Education",
   "Confirmation.Content.Emp_Education": "Are you sure you want to delete this Education?",
+  "Confirmation.Title.Notice": "Delete Notice",
+  "Confirmation.Content.Notice": "Are you sure you want to delete this Notice?",
 
   "Toast.NotificationType.Notice.Title": "New Notice Received",
   "Toast.NotificationType.Message.Title": "New Message Received",
