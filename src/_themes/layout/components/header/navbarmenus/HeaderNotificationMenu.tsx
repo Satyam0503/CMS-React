@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { createNotifications } from "../../../../../app/modules/dashboard/components/PushNotification";
 
 export const NotificationIconMapper: {
   [index: number]: ReactNode
@@ -58,8 +59,13 @@ export default function HeaderNotificationMenu() {
     setAnchorEl(null);
   };
   const handleNewNotification = (notification: NotificationModel) => {
-    // show custom toast
-    showCustomToast(notification)
+    if (document.visibilityState === "hidden") {
+      createNotifications(notification);
+    }
+    else {
+      // show custom toast
+      showCustomToast(notification);
+    }
     // Prepend new notification to the existing list
     setNotificationList((prevList) => [notification, ...prevList]);
   };

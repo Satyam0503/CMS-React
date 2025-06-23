@@ -18,6 +18,7 @@ import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { usePageData } from "../../../_themes/layout/core";
 import UpcomingBirthday from "./components/UpcomingBirthday";
+import { PushNotification } from "./components/PushNotification";
 
 // Main Dashboard Component
 export default function Dashboard() {
@@ -88,19 +89,21 @@ export default function Dashboard() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} lg={4}>
-          <Stack direction={"column"} gap={3} width={"100%"}>
-            <AttendanceChart
-              className="card-xxl-stretch"
-              chartColor="primary"
-              chartHeight="180px"
-            />
-            <EmpOnLeave />
-            <Punctual />
-            <UpcomingBirthday />
-            <EmpOfMonth />
-            <Help />
-          </Stack>
+        <Grid item xs={12} lg={4} className="d-flex flex-column gap-4">
+          {
+            Notification.permission == "default" &&
+            <PushNotification />
+          }
+          <AttendanceChart
+            className="card-xxl-stretch"
+            chartColor="primary"
+            chartHeight="180px"
+          />
+          <EmpOnLeave />
+          <Punctual />
+          <UpcomingBirthday />
+          <EmpOfMonth />
+          <Help />
         </Grid>
       </Grid>
     </React.Fragment>

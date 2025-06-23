@@ -435,3 +435,15 @@ button:hover .ql-fill,
   height: auto;
   object-fit: contain;
 }
+
+.push-notification-card {
+  padding: 1rem;
+  background-color: $app-primary-200;
+  color: $neutral-900;
+  & > h6 {
+    color: $neutral-700;
+  }
+  & > button {
+    margin-block-start: 1rem;
+  }
+}

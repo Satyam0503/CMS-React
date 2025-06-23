@@ -555,6 +555,10 @@
   "BUTTON.VIEW": "View",
   "BUTTON.GO_BACK": "Go Back",
   "BUTTON.DISMISS": "Dismiss",
+  "BUTTON.NOTIFY_ME": "Notify Me",
+
+  "PUSH_NOTIFICATION_MESSAGE": "Enable notifications to get alerts about new messages, task updates, or important events",
+  "PUSH_NOTIFICATION_TITLE": "Stay updated!",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
