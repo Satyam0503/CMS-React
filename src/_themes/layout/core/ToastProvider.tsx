@@ -9,7 +9,7 @@ export const ToastProvider = () => {
             autoClose={2000}
             hideProgressBar={false}
             newestOnTop={false}
-            closeOnClick={true}
+            // closeOnClick={true}
             pauseOnFocusLoss
             pauseOnHover
             stacked={true}

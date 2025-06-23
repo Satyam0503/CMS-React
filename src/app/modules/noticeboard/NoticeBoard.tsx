@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Stack } from "@mui/material";
+import { Button, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
@@ -16,10 +16,12 @@ import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { NoticeResponseModel } from "./models";
+import { NoticeModel, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
+import { Pagination } from "../../shared/components/Pagination";
+import { initialNoticeValuesObj } from "./components/MyNotices";
 
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
@@ -29,6 +31,7 @@ export const NoticeBoard = () => {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 })
+  const [totalRecords, setTotalRecords] = useState(0);
   const { setPageTitle } = usePageData();
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const navigate = useNavigate();
@@ -45,6 +48,21 @@ export const NoticeBoard = () => {
     setSearchValue(value);
   }, []);
 
+  const handlePageChange = (page: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      pageNo: page,
+    });
+  };
+
+  const handleRowPerPageChange = (rowPerPage: number) => {
+    setPaginationValues({
+      ...paginationValues,
+      records: rowPerPage,
+      pageNo: 0,
+    });
+  };
+
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.NOTICE_BOARD" }));
   }, []);
@@ -52,9 +70,10 @@ export const NoticeBoard = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data, } = await getAllNotices();
+        const { data } = await getAllNotices(paginationValues.pageNo + 1, paginationValues.records);
         if (data.success) {
           setNoticeList(data.methodResults);
+          setTotalRecords(data.totalRecords);
         }
       } catch (error) {
         console.log(error);
@@ -63,30 +82,26 @@ export const NoticeBoard = () => {
         setLoading(false)
       }
     })();
-  }, [refresh])
+  }, [refresh, paginationValues])
   return (
     <>
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-        <Stack
-          direction="row"
-          sx={{
-            justifyContent: "space-between",
-            gap: 2,
-            flexWrap: "wrap"
-          }}
-        >
+        <Stack className="flex-row justify-content-between gap-4 flex-wrap" >
           <SearchInput search={searchValue} setSearch={handleSearchChange} />
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             {
               hasAddPermission &&
-              <CustomisedButton
-                variant="outlined"
-                Icon={<ListAltOutlined />}
-                label={formatMessage({ id: "NOTICE.MY_NOTICE" })}
-                handleClick={() => {
-                  navigate("/noticeboard/notices/mynotices");
-                }}
-              />
+              // <CustomisedButton
+              //   variant="outlined"
+              //   Icon={<ListAltOutlined className="icon-fs-20" />}
+              //   label=
+              //   handleClick={() => {
+              //     navigate("/noticeboard/notices/mynotices");
+              //   }}
+              // />
+              <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
+                {formatMessage({ id: "NOTICE.MY_NOTICE" })}
+              </Button>
             }
             {/* <CustomIconButton tooltip="Filter List" icon={<FilterList />} /> */}
             {
@@ -99,21 +114,29 @@ export const NoticeBoard = () => {
             }
           </Stack>
         </Stack>
-        <Stack >
-          <CustomisedTable
-            tabName="Notice Board"
-            rows={NoticeList}
-            columns={NoticeBoardTableColumnList}
+        <CustomisedTable
+          keyName="noticeId"
+          tabName="Notice Board"
+          rows={NoticeList}
+          columns={NoticeBoardTableColumnList}
+          page={paginationValues.pageNo}
+          rowsPerPage={paginationValues.records}
+          loading={loading}
+        />
+        {
+          totalRecords > paginationValues.records &&
+          <Pagination
             page={paginationValues.pageNo}
             rowsPerPage={paginationValues.records}
-            loading={loading}
-          // handleEdit={handleNoticeEdit}
+            setPage={handlePageChange}
+            setRowPerPage={handleRowPerPageChange}
+            totalRecords={totalRecords}
           />
-        </Stack>
-      </Card>
+        }
+      </Card >
       {
         isModalOpen &&
-        <AddNotice refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
+        <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
       }
     </>
   );

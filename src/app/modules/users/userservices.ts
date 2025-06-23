@@ -1,5 +1,10 @@
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
+import {
+  deleteRequest,
+  getRequest,
+  patchRequest,
+  postRequest,
+} from "../../../server/axios";
 import {
   ApiResponse,
   CertificationResponseData,
@@ -174,9 +179,14 @@ export const addSkill = async (skill: string) => {
 };
 
 // notifications
-
 export const getNotifications = async () => {
   return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION);
+};
+
+export const markNotificationAsRead = async (userNotificationId: string) => {
+  return patchRequest<string, ApiResponse>(
+    `${ServiceUrl.MARK_NOTIFICATION_AS_READ}/${userNotificationId}/MarkAsRead`
+  );
 };
 
 // work history

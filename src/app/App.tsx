@@ -31,8 +31,8 @@ const App = () => {
             <AuthInit>
               <Outlet />
             </AuthInit>
+            <ToastProvider />
           </I18nProvider>
-          <ToastProvider />
         </Suspense>
       </ThemeContextProvider>
     </StyledEngineProvider>

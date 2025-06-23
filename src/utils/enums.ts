@@ -14,7 +14,7 @@ export enum ApplicantStatus {
 
 export enum EmployeeStatus {
   InActive = 0,
-  Active = 1
+  Active = 1,
 }
 
 export enum CommentAction {
@@ -117,10 +117,11 @@ export enum LANGUAGE {
 export enum NOTICE_TYPE {
   GENERAL = 1,
   IMPORTANT = 2,
-  URGENT = 3
+  URGENT = 3,
 }
 
 export enum NOTIFICATION_TYPE {
   NOTICE = 1,
-  ALERT = 2
+  MESSAGE = 2,
+  ALERT = 3,
 }

@@ -10,25 +10,18 @@ import { NoticeTypes } from "../../../../utils/constant/Constant";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { NoticeModel } from "../models";
 import { noticeValidationSchema } from "../../../../utils/Schema/noticeValidationSchema";
-import { NOTICE_TYPE } from "../../../../utils/enums";
 import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { DepartmentModel, RoleModel } from "../../admin/models";
-import { postNotice } from "../services";
+import { postNotice, updateNotice } from "../services";
 import { toast } from "react-toastify";
 import { useLang } from "../../../../_themes/i18n/Metronici18n";
 
-const initialValues: NoticeModel = {
-  message: "",
-  title: "",
-  target: "all",
-  noticeType: NOTICE_TYPE.GENERAL,
-  departments: "all",
-}
 
 interface PropsTypes {
   open: boolean;
   handleClose: () => void;
   isEdit: boolean;
+  initialValues: NoticeModel;
   refresh: () => void;
 }
 
@@ -37,6 +30,7 @@ export const AddNotice: FC<PropsTypes> = ({
   isEdit,
   handleClose,
   refresh,
+  initialValues
 }) => {
   const { formatMessage } = useIntl();
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
@@ -62,17 +56,31 @@ export const AddNotice: FC<PropsTypes> = ({
     })();
   }, [])
 
-  const handleNoticePost = async (value: NoticeModel, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleAddUpdateNotice = async (value: NoticeModel, setSubmitting: (isSubmitting: boolean) => void) => {
     try {
-      const { data } = await postNotice(value);
-      if (data.success) {
-        toast.success(data.message);
-        handleClose();
-        refresh();
+      if (isEdit) {
+        const { data } = await updateNotice(value);
+        if (!data.success) {
+          toast.error(formatMessage({ id: "Toast.UpdateNoticeFailed" }));
+        }
+        else {
+          toast.success(formatMessage({ id: "Toast.UpdateNoticeSuccess" }));
+          handleClose();
+          refresh();
+        }
+      } else {
+        const { data } = await postNotice(value);
+        if (!data.success) {
+          toast.error(formatMessage({ id: "Toast.PostNoticeFailed" }));
+        }
+        else {
+          toast.success(formatMessage({ id: "Toast.PostNoticeSuccess" }));
+          handleClose();
+          refresh();
+        }
       }
     } catch (error) {
       console.log(error);
-      toast.error("failed to post notice")
     }
     finally {
       setSubmitting(false);
@@ -84,7 +92,7 @@ export const AddNotice: FC<PropsTypes> = ({
         initialValues={initialValues}
         validationSchema={noticeValidationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          handleNoticePost(values, setSubmitting);
+          handleAddUpdateNotice(values, setSubmitting);
         }}
       >
         {({ values, isValid, dirty, isSubmitting, handleSubmit }) => (

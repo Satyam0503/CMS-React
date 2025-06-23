@@ -1,64 +1,75 @@
-import { Typography, Stack, Link, Divider } from "@mui/material";
+import { Typography, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { CustomCard } from "../../../shared/components/CustomCard";
-
-type Props = {
-  className: string;
-};
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NoticeResponseModel } from "../../noticeboard/models";
+import { getAllNotices } from "../../noticeboard/services";
+import clsx from "clsx";
+import { relativeTimeFormatter } from "../../../../utils/common";
+import { CardSkeleton } from "./CardSkeleton";
 
 export default function NoticeBoard() {
+  const [isLoading, setLoading] = useState(true);
+  const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([])
   const { formatMessage } = useIntl();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await getAllNotices(1, 3);
+        if (data.success) {
+          setNoticeList(data.methodResults);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      finally {
+        setLoading(false)
+      }
+    })();
+  }, [])
+
+  if (isLoading) {
+    return <CardSkeleton />
+  }
+
   return (
     <>
       <CustomCard label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
-        <Stack className="flex-grow-1 justify-content-between">
-          <Stack spacing={1}>
-            <Stack direction="row" gap={1}>
-              <Stack className="symbol symbol-45px">
-                <img
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                  alt=""
-                  style={{ borderRadius: "50%" }}
-                />
-              </Stack>
-              <Stack>
-                <Typography variant="body1">Dinesh Chauhan</Typography>
-                <Typography variant="body2" className="truncate-multi-line">
-                  It is a long established fact that a reader will be distracted
-                  by the readable content of a page when looking at its layout.
-                  The point of using Lorem Ipsum is that it has a more-or-less
-                  normal distribution of letters, as opposed to using 'Content
-                  here, content here', making it look like readable English
-                </Typography>
-                <Typography variant="subtitle2">10 mins ago</Typography>
-              </Stack>
-            </Stack>
-            <Divider />
-
-            <Stack direction="row" gap={1}>
-              <Stack className="symbol symbol-45px">
-                <img
-                  src={toAbsoluteUrl("media/avatars/300-6.jpg")}
-                  alt=""
-                  style={{ borderRadius: "50%" }}
-                />
-              </Stack>
-              <Stack>
-                <Typography variant="body1">Ajay Rana</Typography>
-                <Typography variant="body2" className="truncate-multi-line">
-                  Outlines keep you honest. They stop you from indulging in
-                  poorly thought-out
-                </Typography>
-                <Typography variant="subtitle2">1 Hour ago</Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-          <Stack>
-            <Link href="noticeboard" underline="always">
-              {"See more"}
-            </Link>
-          </Stack>
+        <Stack className={clsx("flex-grow-1 gap-4 mt-4", { "justify-content-center": Boolean(noticeList.length) })}>
+          {
+            noticeList.length === 0 ?
+              <Typography className="align-self-center">No Notices Available</Typography>
+              :
+              <>
+                <Stack spacing={1.5} className="flex-grow-1">
+                  {
+                    noticeList.map(item => (
+                      <Stack key={item.noticeId} direction="row" gap={1}>
+                        <Stack className="symbol symbol-45px">
+                          <img
+                            src={item.userProfile}
+                            alt="User Profile"
+                            style={{ borderRadius: "50%" }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <Typography variant="body1">{item.userName}</Typography>
+                          <Typography variant="body2" className="truncate-multi-line" sx={{ fontSize: 14 }}>
+                            {item.noticeMessage}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'primary.main' }}>{relativeTimeFormatter(item.createdDateTime)}</Typography>
+                        </Stack>
+                      </Stack>
+                    ))
+                  }
+                </Stack>
+                <Link to="/noticeboard/notices">
+                  {formatMessage({ id: "SEE_MORE" })}
+                </Link>
+              </>
+          }
         </Stack>
       </CustomCard>
     </>

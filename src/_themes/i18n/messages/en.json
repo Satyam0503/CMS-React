@@ -494,7 +494,6 @@
   "ROLE.HAS_ACCESS": "Has Access",
   "ROLE.NO_ACCESS": "No Access",
 
-  "SEE_MORE": "See More",
   "DASHBOARD.VACANCY.NOVACANCIES": "No Active Vacancies",
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE": "No Employees",
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS": "No Applications",
@@ -555,6 +554,7 @@
   "BUTTON.PUBLISH": "Publish",
   "BUTTON.VIEW": "View",
   "BUTTON.GO_BACK": "Go Back",
+  "BUTTON.DISMISS": "Dismiss",
 
   "SELECT.LANGUAGE.TRANSLATE": "Select language to translate",
 
@@ -572,6 +572,9 @@
   "MESSAGE.MODULE.UPDATE.FAILED": "Request Failed",
   "NOT_AVAILABLE": "NA",
   "TRANSLATION_MISSING": "Translation Missing",
+
+  "SEE_MORE": "See More",
+  "UNDO": "Undo",
 
   "Link.Register": "register",
   "Link.Term": "Term",
@@ -603,10 +606,18 @@
   "Confirmation.Title.Emp_Education": "Delete Education",
   "Confirmation.Content.Emp_Education": "Are you sure you want to delete this Education?",
 
+  "Toast.NotificationType.Notice.Title": "New Notice Received",
+  "Toast.NotificationType.Message.Title": "New Message Received",
+
   "Toast.AddWorkHistorySuccess": "Work History Successfully Added",
   "Toast.AddWorkHistoryFailed": "Failed to add work history",
   "Toast.UpdateWorkHistorySuccess": "Work History Successfully Updated",
   "Toast.UpdateWorkHistoryFailed": "Failed to update Work History",
+  "Toast.PostNoticeSuccess": "Notice Successfully Posted",
+  "Toast.PostNoticeFailed": "Failed to post notice",
+  "Toast.UpdateNoticeSuccess": "Notice Successfully Updated",
+  "Toast.UpdateNoticeFailed": "Failed to Update notice",
   "Toast.Delete.Success": "Successfully Deleted",
-  "Toast.Delete.Failed": "Failed to Delete"
+  "Toast.Delete.Failed": "Failed to Delete",
+  "Toast.Message.Content": "You have new message from {userName}"
 }

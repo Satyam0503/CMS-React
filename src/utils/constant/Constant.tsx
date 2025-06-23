@@ -53,7 +53,7 @@ import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
-import { NoticeResponseModel } from "../../app/modules/noticeboard/models";
+import { NoticeModel, NoticeResponseModel } from "../../app/modules/noticeboard/models";
 import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
@@ -108,6 +108,7 @@ export const ServiceUrl = {
   DELETE_WORK_HISTORY: `${BaseUrl}/api/User/DeleteWorkHistory`,
 
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
+  MARK_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/Notification`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
@@ -149,6 +150,7 @@ export const ServiceUrl = {
   GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
   GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
+  UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
 };
 
 export const languages = [
@@ -582,6 +584,21 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
       </Stack>
     }
   },
+  {
+    id: "action",
+    label: "Table.Column.Action",
+    build: (
+      row: NoticeModel,
+      handleNoticeEdit: (row: NoticeModel) => void,
+      openConfirmationModal: (id: string) => void
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleNoticeEdit}
+      // openConfirmationModal={openConfirmationModal}
+      />
+    ),
+  }
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
