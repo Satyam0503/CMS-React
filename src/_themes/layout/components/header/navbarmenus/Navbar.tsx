@@ -6,10 +6,12 @@ import LightDarkMode from "./LightDarkMode";
 
 const Navbar = () => {
   return (
-    <Stack className="flex-row gap-4 align-items-center">
-      <LightDarkMode />
-      <ChatDrawer />
-      <HeaderNotificationMenu />
+    <Stack className="flex-row gap-8 align-items-center">
+      <Stack direction="row" spacing={2}>
+        <LightDarkMode />
+        <ChatDrawer />
+        <HeaderNotificationMenu />
+      </Stack>
       <HeaderUserMenu />
     </Stack>
   );

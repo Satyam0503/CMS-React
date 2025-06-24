@@ -109,6 +109,7 @@ export const ServiceUrl = {
 
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
   MARK_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/Notification`,
+  MARK_ALL_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/MarkAllNotificationAsRead`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,

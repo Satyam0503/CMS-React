@@ -39,7 +39,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
     >
-      <Stack role="presentation" spacing={2} onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
+      <Stack role="presentation" onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
         {
           !isSmallScreen &&
           <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
@@ -49,7 +49,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             <West className="icon-fs-20" />
           </IconButton>
         }
-        <Stack spacing={4} alignItems="center" >
+        <Stack className="align-items-center mb-6" >
           <Avatar
             variant="square"
             alt="Company Logo"
@@ -73,10 +73,11 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
                 height: "100%",
                 objectFit: "cover",
                 aspectRatio: 1,
+                color: "secondary.main"
               }}
             />
           </Box>
-          <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name">
+          <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name mt-4">
             {`${currentUser?.firstName}  ${currentUser?.lastName}`}
           </Typography>
         </Stack>

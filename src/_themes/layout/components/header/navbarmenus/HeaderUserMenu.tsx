@@ -26,7 +26,6 @@ export default function HeaderUserMenu() {
   const intl = useIntl();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const logout = useLogout();
-
   const currentUser = useAppSelector((state) => state.user.userData);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -49,7 +48,8 @@ export default function HeaderUserMenu() {
         aria-expanded={open ? "true" : undefined}
         src={profileImageUrl}
         variant="rounded"
-        sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
+        className="pe-auto"
+        sx={{ width: 40, height: 40, border: 1, borderColor: 'text.secondary', cursor: "pointer" }}
       />
       <Menu
         anchorEl={anchorEl}
@@ -61,7 +61,7 @@ export default function HeaderUserMenu() {
           <Avatar
             variant="rounded"
             src={profileImageUrl}
-            sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled' }}
+            sx={{ width: 40, height: 40, border: 1, borderColor: 'text.disabled', color: "secondary.main" }}
           />
           <Box>
             <Typography variant="body1" fontWeight="bold" flexWrap={"wrap"}>

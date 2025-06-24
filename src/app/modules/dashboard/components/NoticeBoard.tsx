@@ -1,4 +1,4 @@
-import { Typography, Stack } from "@mui/material";
+import { Typography, Stack, Avatar } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Link } from "react-router-dom";
@@ -46,14 +46,12 @@ export default function NoticeBoard() {
                 <Stack spacing={1.5} className="flex-grow-1">
                   {
                     noticeList.map(item => (
-                      <Stack key={item.noticeId} direction="row" gap={1}>
-                        <Stack className="symbol symbol-45px">
-                          <img
-                            src={item.userProfile}
-                            alt="User Profile"
-                            style={{ borderRadius: "50%" }}
-                          />
-                        </Stack>
+                      <Stack key={item.noticeId} direction="row" gap={1.5}>
+                        <Avatar
+                          src={item.userProfile}
+                          alt="User Profile"
+                          sx={{ width: 45, height: 45, color: "secondary.main" }}
+                        />
                         <Stack>
                           <Typography variant="body1">{item.userName}</Typography>
                           <Typography variant="body2" className="truncate-multi-line" sx={{ fontSize: 14 }}>

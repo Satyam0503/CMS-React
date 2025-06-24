@@ -189,6 +189,12 @@ export const markNotificationAsRead = async (userNotificationId: string) => {
   );
 };
 
+export const markAllNotificationAsRead = async () => {
+  return postRequest<unknown, ApiResponse>(
+    ServiceUrl.MARK_ALL_NOTIFICATION_AS_READ
+  );
+};
+
 // work history
 export const getWorkHistory = async (userId?: string) => {
   if (userId) {

@@ -1,5 +1,7 @@
 import {
   Badge,
+  Box,
+  Button,
   Chip,
   IconButton,
   List,
@@ -10,12 +12,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
+import { AccessTime, Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel } from "../../../../../app/modules/users/models";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getNotifications, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
+import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
 import { relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
@@ -69,6 +71,17 @@ export default function HeaderNotificationMenu() {
     // Prepend new notification to the existing list
     setNotificationList((prevList) => [notification, ...prevList]);
   };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const { data } = await markAllNotificationAsRead();
+      if (data.success) {
+        setAnchorEl(null);
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  }
 
   useEffect(() => {
     const connection = Connector.getInstance().getConnection();
@@ -163,44 +176,59 @@ export default function HeaderNotificationMenu() {
             sx: {
               minWidth: 250,
               width: 400,
-              padding: 2
             }
           }
         }}
       >
-        <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
-        <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
-          <Stack onClick={() => handleChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
-            <span>{formatMessage({ id: "Notifications.All" })}</span>
-            <Chip label={notificationList.length} size="small" color="secondary" />
+        <Box component="div" className="px-4 pt-4"  >
+          <Stack className="flex-row justify-content-between align-items-center">
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
+            <Box component="span" sx={{ color: "primary.main", cursor: "pointer" }} onClick={handleMarkAllAsRead}  >
+              {formatMessage({ id: "MARK_ALL_AS_READ" })}
+            </Box>
           </Stack>
-          <Stack onClick={() => handleChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
-            <span>{formatMessage({ id: "Notifications.New" })}</span>
-            <Chip label={unReadNotificationCount} size="small" color="secondary" />
-          </Stack>
-          <Stack onClick={() => handleChange(3)} className={clsx({ "active-tab": activeTab === 3 })}>
-            <span>{formatMessage({ id: "Notifications.Read" })}</span>
-            <Chip label={notificationList.length - unReadNotificationCount} size="small" color="secondary" />
-          </Stack>
-        </Stack>
 
-        <List disablePadding className="notification-wrapper" >
-          {
-            filteredNotificationList.length > 0 ?
-              filteredNotificationList.map(item => (
-                <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
-                  <Stack sx={{ bgcolor: "secondary.light" }}>
-                    <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
-                  </Stack>
-                  <ListItemText primary={item.title} secondary={relativeTimeFormatter(item.sentDateTime)} />
+          <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
+            <Stack onClick={() => handleChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
+              <span>{formatMessage({ id: "Notifications.All" })}</span>
+              <Chip label={notificationList.length} size="small" color="secondary" />
+            </Stack>
+            <Stack onClick={() => handleChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
+              <span>{formatMessage({ id: "Notifications.New" })}</span>
+              <Chip label={unReadNotificationCount} size="small" color="secondary" />
+            </Stack>
+            <Stack onClick={() => handleChange(3)} className={clsx({ "active-tab": activeTab === 3 })}>
+              <span>{formatMessage({ id: "Notifications.Read" })}</span>
+              <Chip label={notificationList.length - unReadNotificationCount} size="small" color="secondary" />
+            </Stack>
+          </Stack>
+        </Box>
+        <Stack>
+          <List disablePadding className="notification-wrapper" >
+            {
+              filteredNotificationList.length > 0 ?
+                filteredNotificationList.map(item => (
+                  <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
+                    <Stack sx={{ bgcolor: "secondary.light" }}>
+                      <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
+                    </Stack>
+                    <ListItemText primary={item.title} secondary={
+                      <Box component="div" className="d-flex align-items-center gap-1">
+                        <AccessTime className="icon-fs-16" />
+                        <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
+                      </Box>} />
+                  </ListItem>
+                ))
+                :
+                <ListItem>
+                  <ListItemText primary={<Typography variant="h6" sx={{ textAlign: "center" }}>{formatMessage({ id: "Notifications.None" })}</Typography>} />
                 </ListItem>
-              ))
-              :
-              <ListItem>
-                <ListItemText primary={<Typography variant="h6" sx={{ textAlign: "center" }}>{formatMessage({ id: "Notifications.None" })}</Typography>} />
-              </ListItem>
-          }
-        </List>
+            }
+          </List>
+          <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1 }} onClick={handleMarkAllAsRead}  >
+            {formatMessage({ id: "SEE_MORE" })}
+          </Box>
+        </Stack>
 
       </Popover >
     </>

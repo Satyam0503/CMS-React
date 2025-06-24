@@ -29,18 +29,23 @@
     }
   }
   .notification-wrapper {
-    padding-block: 0.5rem;
+    padding-inline: 1rem;
     max-height: $app-notification-max-height;
     overflow-y: scroll;
     overflow-x: hidden;
-    scrollbar-width: none;
+    scrollbar-width: auto;
+    margin-block: 0.5rem;
 
     & > .MuiListItem-root {
-      padding: 0.5rem 1rem;
-      margin-block-end: 0.5rem;
+      padding: 0.25rem 1rem;
+      margin-block-end: 0.25rem;
       gap: 1rem;
       align-items: center;
+      border-radius: 0.5rem;
       cursor: pointer;
+      &:hover {
+        background-color: $app-notification-hover;
+      }
       &.unread-notification {
         background-color: $app-notification;
         border-radius: 0.5rem;
