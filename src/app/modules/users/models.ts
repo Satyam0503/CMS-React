@@ -52,6 +52,12 @@ export type NotificationModel = {
   notificationTypes: number;
 };
 
+export type GetNotificationResponseModel = {
+  notificationList: NotificationModel[];
+  all: number;
+  unread: number;
+};
+
 export type WorkHistoryModel = {
   workHistoryId: string;
   userId: string;
@@ -64,6 +70,7 @@ export type WorkHistoryModel = {
 
 export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 export type GetSkillListResponseModel = ResponseData<SkillModel>;
-export type NotificationResponseModel = ResponseData<NotificationModel>;
+export type NotificationResponseModel =
+  ResponseData<GetNotificationResponseModel>;
 export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 export type WorkHistoryResponseModel = ResponseData<WorkHistoryModel>;

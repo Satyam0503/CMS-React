@@ -43,8 +43,10 @@ const redirectUserToUrl = (notification: NotificationModel, navigate: NavigateFu
 export default function HeaderNotificationMenu() {
   const { formatMessage } = useIntl();
   const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
+  const [totalNotification, setTotalNotification] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+  const [paginationValues, setPaginationValues] = useState({ pageNo: 1, records: 10 });
   const id = open ? 'notification-popover' : undefined;
   const [activeTab, setActiveTab] = useState(1);
   const navigate = useNavigate();
@@ -95,9 +97,10 @@ export default function HeaderNotificationMenu() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getNotifications();
+        const { data } = await getNotifications(paginationValues.pageNo, paginationValues.records);
         if (data.success) {
-          setNotificationList(data.methodResults);
+          setNotificationList(data.methodResult.notificationList);
+          setTotalNotification(data.methodResult.all);
         } else {
           console.log("Failed to Fetch Notifications");
         }

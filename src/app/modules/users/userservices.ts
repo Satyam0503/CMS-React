@@ -179,8 +179,10 @@ export const addSkill = async (skill: string) => {
 };
 
 // notifications
-export const getNotifications = async () => {
-  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION);
+export const getNotifications = async (pageNo: number, records: number) => {
+  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION, {
+    params: { pageNo, records },
+  });
 };
 
 export const markNotificationAsRead = async (userNotificationId: string) => {
