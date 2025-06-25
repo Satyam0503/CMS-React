@@ -17,6 +17,7 @@ import {
 import {
   EmployeeResponseData,
   GetSkillListResponseModel,
+  NotificationRequestPayload,
   NotificationResponseModel,
   UploadProfileResponseModel,
   UserSkillsResponseData,
@@ -179,9 +180,13 @@ export const addSkill = async (skill: string) => {
 };
 
 // notifications
-export const getNotifications = async (pageNo: number, records: number) => {
+export const getNotifications = async (payload: NotificationRequestPayload) => {
   return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION, {
-    params: { pageNo, records },
+    params: {
+      type: payload.type,
+      pageNo: payload.pageNo,
+      records: payload.records,
+    },
   });
 };
 

@@ -15,7 +15,7 @@ import {
 import { AccessTime, Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
-import { NotificationModel } from "../../../../../app/modules/users/models";
+import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
 import { relativeTimeFormatter } from "../../../../../utils/common";
@@ -24,6 +24,7 @@ import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { createNotifications } from "../../../../../app/modules/dashboard/components/PushNotification";
+import { toAbsoluteUrl } from "../../../../helpers";
 
 export const NotificationIconMapper: {
   [index: number]: ReactNode
@@ -40,19 +41,26 @@ const redirectUserToUrl = (notification: NotificationModel, navigate: NavigateFu
   }
 }
 
+const initialPaginationValue = { pageNo: 1, records: 10 }
+
 export default function HeaderNotificationMenu() {
   const { formatMessage } = useIntl();
   const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
-  const [totalNotification, setTotalNotification] = useState<number>(0);
+  const [notificationCount, setNotificationCount] = useState({
+    totalNotification: 0,
+    unread: 0
+  })
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
-  const [paginationValues, setPaginationValues] = useState({ pageNo: 1, records: 10 });
+  const [paginationValues, setPaginationValues] = useState(initialPaginationValue);
   const id = open ? 'notification-popover' : undefined;
   const [activeTab, setActiveTab] = useState(1);
   const navigate = useNavigate();
 
-  const handleChange = (newValue: number) => {
+  const handleTabChange = (newValue: number) => {
     setActiveTab(newValue);
+    setPaginationValues(initialPaginationValue);
+    setNotificationList([]);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -62,6 +70,13 @@ export default function HeaderNotificationMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleLoadMoreNotification = () => {
+    setPaginationValues({
+      ...paginationValues,
+      pageNo: paginationValues.pageNo + 1,
+    })
+  }
   const handleNewNotification = (notification: NotificationModel) => {
     if (document.visibilityState === "hidden") {
       createNotifications(notification);
@@ -71,14 +86,17 @@ export default function HeaderNotificationMenu() {
       showCustomToast(notification);
     }
     // Prepend new notification to the existing list
-    setNotificationList((prevList) => [notification, ...prevList]);
+    setNotificationList(prev => [notification, ...prev,]);
+    setNotificationCount(prev => ({ ...prev, totalNotification: prev.totalNotification + 1, unread: prev.unread + 1 }));
   };
 
   const handleMarkAllAsRead = async () => {
     try {
       const { data } = await markAllNotificationAsRead();
       if (data.success) {
-        setAnchorEl(null);
+        // setAnchorEl(null);
+        setNotificationCount(prev => ({ ...prev, unread: 0 }));
+        setNotificationList(prev => prev.map(n => ({ ...n, isRead: true })));
       }
     } catch (error: any) {
       console.error(error.message);
@@ -97,10 +115,22 @@ export default function HeaderNotificationMenu() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getNotifications(paginationValues.pageNo, paginationValues.records);
+        const payload: NotificationRequestPayload = {
+          type: activeTab === 1 ? "all" : "unread",
+          pageNo: paginationValues.pageNo,
+          records: paginationValues.records
+        }
+        const { data } = await getNotifications(payload);
         if (data.success) {
-          setNotificationList(data.methodResult.notificationList);
-          setTotalNotification(data.methodResult.all);
+          setNotificationList(prev => {
+            const existingIds = new Set(prev.map(n => n.userNotificationId));
+            const newItems = data.methodResult.notificationList.filter(
+              n => !existingIds.has(n.userNotificationId)
+            );
+            return [...prev, ...newItems];
+          });
+
+          setNotificationCount({ totalNotification: data.methodResult.all, unread: data.methodResult.unread })
         } else {
           console.log("Failed to Fetch Notifications");
         }
@@ -109,29 +139,28 @@ export default function HeaderNotificationMenu() {
         console.log("Failed to Fetch Notifications");
       }
     })();
-  }, [])
+  }, [activeTab, paginationValues.pageNo])
 
-  const filteredNotificationList = useMemo(() => {
-    if (activeTab === 1) return notificationList;
-    if (activeTab === 2) return notificationList.filter(item => !item.isRead);
-    return notificationList.filter(item => item.isRead);
-  }, [notificationList, activeTab]);
-
-  const unReadNotificationCount = useMemo(() => notificationList.length === 0 ? 0 : notificationList.filter(item => !item.isRead).length, [notificationList]);
 
   const handleMarkNotificationAsRead = async (userNotificationId: string) => {
     try {
       const { data } = await markNotificationAsRead(userNotificationId);
       if (data.success) {
-        setNotificationList(notificationList.map(notification => {
-          if (notification.userNotificationId !== userNotificationId) {
-            return notification;
-          }
-          return {
-            ...notification,
-            isRead: true
-          }
-        }))
+        if (activeTab == 1) {
+          setNotificationList(notificationList.map(notification => {
+            if (notification.userNotificationId !== userNotificationId) {
+              return notification;
+            }
+            return {
+              ...notification,
+              isRead: true
+            }
+          }));
+        }
+        else {
+          setNotificationList(notificationList.filter(notification => notification.userNotificationId !== userNotificationId));
+        }
+        setNotificationCount({ ...notificationCount, unread: notificationCount.unread - 1 });
       }
     } catch (error: any) {
       console.error(error.message);
@@ -143,14 +172,14 @@ export default function HeaderNotificationMenu() {
       handleMarkNotificationAsRead(notification.userNotificationId);
     }
     redirectUserToUrl(notification, navigate);
-    setAnchorEl(null);
+    // setAnchorEl(null);
   }
 
 
   return (
     <>
       <Tooltip title="Notifications" placement="bottom">
-        <Badge badgeContent={unReadNotificationCount} color="primary">
+        <Badge badgeContent={notificationCount.unread} color="primary">
           <IconButton
             onClick={handleClick}
             aria-describedby={id}
@@ -186,31 +215,30 @@ export default function HeaderNotificationMenu() {
         <Box component="div" className="px-4 pt-4"  >
           <Stack className="flex-row justify-content-between align-items-center">
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
-            <Box component="span" sx={{ color: "primary.main", cursor: "pointer" }} onClick={handleMarkAllAsRead}  >
-              {formatMessage({ id: "MARK_ALL_AS_READ" })}
-            </Box>
+            {
+              notificationCount.unread > 0 &&
+              <Box component="span" sx={{ color: "primary.main", cursor: "pointer" }} onClick={handleMarkAllAsRead}  >
+                {formatMessage({ id: "MARK_ALL_AS_READ" })}
+              </Box>
+            }
           </Stack>
 
           <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
-            <Stack onClick={() => handleChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
+            <Stack onClick={() => handleTabChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
               <span>{formatMessage({ id: "Notifications.All" })}</span>
-              <Chip label={notificationList.length} size="small" color="secondary" />
+              <Chip label={notificationCount.totalNotification} size="small" color="secondary" />
             </Stack>
-            <Stack onClick={() => handleChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
+            <Stack onClick={() => handleTabChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
               <span>{formatMessage({ id: "Notifications.New" })}</span>
-              <Chip label={unReadNotificationCount} size="small" color="secondary" />
-            </Stack>
-            <Stack onClick={() => handleChange(3)} className={clsx({ "active-tab": activeTab === 3 })}>
-              <span>{formatMessage({ id: "Notifications.Read" })}</span>
-              <Chip label={notificationList.length - unReadNotificationCount} size="small" color="secondary" />
+              <Chip label={notificationCount.unread} size="small" color="secondary" />
             </Stack>
           </Stack>
         </Box>
         <Stack>
           <List disablePadding className="notification-wrapper" >
             {
-              filteredNotificationList.length > 0 ?
-                filteredNotificationList.map(item => (
+              notificationList.length > 0 ?
+                notificationList.map(item => (
                   <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
                     <Stack sx={{ bgcolor: "secondary.light" }}>
                       <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
@@ -223,14 +251,19 @@ export default function HeaderNotificationMenu() {
                   </ListItem>
                 ))
                 :
-                <ListItem>
-                  <ListItemText primary={<Typography variant="h6" sx={{ textAlign: "center" }}>{formatMessage({ id: "Notifications.None" })}</Typography>} />
-                </ListItem>
+                <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
+                  <img src={toAbsoluteUrl("media/Icons/no-notification.png")} />
+                  <Typography sx={{ color: "text.secondary" }}>{formatMessage({ id: "Notifications.None" })}</Typography>
+                </Box>
             }
           </List>
-          <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1 }} onClick={handleMarkAllAsRead}  >
-            {formatMessage({ id: "SEE_MORE" })}
-          </Box>
+          {
+            (activeTab == 1 ? notificationList.length < notificationCount.totalNotification :
+              notificationList.length < notificationCount.unread) &&
+            <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification}  >
+              {formatMessage({ id: "SEE_MORE" })}
+            </Box>
+          }
         </Stack>
 
       </Popover >

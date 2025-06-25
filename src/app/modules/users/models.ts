@@ -52,6 +52,14 @@ export type NotificationModel = {
   notificationTypes: number;
 };
 
+export type NotificationRequestType = "all" | "unread";
+
+export type NotificationRequestPayload = {
+  type: NotificationRequestType;
+  pageNo: number;
+  records: number;
+};
+
 export type GetNotificationResponseModel = {
   notificationList: NotificationModel[];
   all: number;
