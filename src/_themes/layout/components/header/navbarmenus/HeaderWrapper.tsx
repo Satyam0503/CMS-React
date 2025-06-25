@@ -31,7 +31,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
         </IconButton>
       }
       <Stack direction={"row"} className="align-items-center flex-grow-1 justify-content-end gap-5" >
-        <SearchInput search={search} setSearch={handleSearchChange} />
+        <SearchInput search={search} setSearch={handleSearchChange} placeholder="Placeholder.Search_Employee_By_Name" />
         <Navbar />
       </Stack>
     </Stack>

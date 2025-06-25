@@ -2,16 +2,19 @@ import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Close, Search } from "@mui/icons-material";
 import { FC, memo, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useIntl } from "react-intl";
 
 type PropsType = {
   search: string;
   setSearch: (value: string) => void;
+  placeholder?: string;
 };
 
 export const SearchInput: FC<PropsType> = memo(
-  ({ search, setSearch }) => {
+  ({ search, setSearch, placeholder = "Placeholder.Search" }) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
+    const { formatMessage: i } = useIntl();
 
     useEffect(() => {
       setSearch(debouncedValue);
@@ -42,7 +45,7 @@ export const SearchInput: FC<PropsType> = memo(
           }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Search ..."
+          placeholder={i({ id: placeholder })}
         />
       </>
     );

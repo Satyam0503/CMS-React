@@ -604,6 +604,9 @@
   "WorkHistory.Add": "Add Work History",
   "WorkHistory.Update": "Update Work History",
 
+  "Placeholder.Search": "Search ...",
+  "Placeholder.Search_Employee_By_Name": "Search by name ...",
+
   "Confirmation.Title.WorkHistory": "Delete Work History",
   "Confirmation.Content.WorkHistory": "Are you sure you want to delete this work history?",
   "Confirmation.Title.Emp_Certification": "Delete Certification",
