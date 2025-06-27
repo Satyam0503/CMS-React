@@ -1,8 +1,27 @@
+/* width */
+::-webkit-scrollbar {
+  width: 0.25rem !important;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: $neutral-200;
+  border-radius: 0.5rem;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: $neutral-400 !important;
+  border-radius: 0.5rem !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .country-flag {
   width: 1rem;
   height: 1rem;
 }
-
 .text-wrap-balance {
   text-wrap: balance;
 }

@@ -78,7 +78,7 @@ export default function HeaderNotificationMenu() {
     })
   }
   const handleNewNotification = (notification: NotificationModel) => {
-    if (document.visibilityState === "hidden") {
+    if (document.visibilityState === "hidden" && Notification.permission === "granted") {
       createNotifications(notification);
     }
     else {

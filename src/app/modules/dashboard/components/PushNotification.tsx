@@ -38,7 +38,7 @@ export const getNotificationOption = (type: number) => {
 }
 
 export const createNotifications = (notificationModel: NotificationModel) => {
-    // only send push notification when window is minimized or opened in background tab
+    // display desktop notification when window is minimized or opened in background tab
     const option = getNotificationOption(notificationModel.notificationTypes);
     const notification = new Notification(notificationModel.title, {
         body: notificationModel.body,

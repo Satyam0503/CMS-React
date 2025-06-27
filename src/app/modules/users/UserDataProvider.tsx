@@ -57,7 +57,7 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
       .catch(error => {
         console.error(error.message);
       })
-  }, [refresh])
+  }, [refresh, employeeId])
 
   return (
     <UserDetailsContext.Provider

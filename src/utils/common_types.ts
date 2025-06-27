@@ -6,7 +6,7 @@ import {
   JobsFilterModel,
   ProcessLogFilterModel,
 } from "../app/modules/recruitment/models";
-import { EmployeeFilterModel } from '../app/modules/employees/models'
+import { EmployeeFilterModel } from "../app/modules/employees/models";
 
 export interface ApiResponse {
   success: boolean;
@@ -117,7 +117,6 @@ export type HolidayType = {
 };
 */
 
-
 export type ProcessLogModel = {
   processId: string;
   applicantName: string;
@@ -210,9 +209,17 @@ export interface TabModel {
   tabId: number;
 }
 
+export type EmployeeSearchModel = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  empId: string | null;
+  jobRole: string | null;
+  profileUrl: string | null;
+  fullProfileUrl: string;
+};
+
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
-
-
 
 export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
 
@@ -221,3 +228,5 @@ export type UserEducationResponseData = ResponseData<UserEducationModel>;
 export type CertificationResponseData = ResponseData<UserCertificationModel>;
 
 export type GetProcessLogResponseModel = ResponseData<ProcessLogModel>;
+
+export type EmployeeSearchResponseModel = ResponseData<EmployeeSearchModel>;

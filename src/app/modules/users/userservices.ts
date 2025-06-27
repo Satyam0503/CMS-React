@@ -8,6 +8,7 @@ import {
 import {
   ApiResponse,
   CertificationResponseData,
+  EmployeeSearchResponseModel,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
@@ -232,4 +233,12 @@ export const deleteEmployeeWorkHistory = async (
       },
     }
   );
+};
+
+// employee search
+
+export const searchEmployee = async (name: string) => {
+  return getRequest<EmployeeSearchResponseModel>(ServiceUrl.SEARCH_EMPLOYEE, {
+    params: { name },
+  });
 };
