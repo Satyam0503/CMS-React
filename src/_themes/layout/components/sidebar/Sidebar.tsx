@@ -56,6 +56,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             src={companyLogo}
             className="company-logo"
             sx={{
+              backgroundColor: "transparent",
               maxWidth: "200px",
               width: "100%",
               height: "60px",

@@ -70,7 +70,14 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
       <Stack direction="row" className="align-items-center flex-grow-1 justify-content-end gap-5" >
         <Autocomplete
           id="employee_search"
-          sx={{ width: 250, maxWidth: 250, }}
+          sx={{ width: 250, maxWidth: 250 }}
+          slotProps={{
+            paper: {
+              sx: {
+                maxHeight: 250,
+              },
+            }
+          }}
           size="small"
           open={open}
           onClose={() => {
