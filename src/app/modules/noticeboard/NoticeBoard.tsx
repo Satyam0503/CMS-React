@@ -3,6 +3,7 @@ import { Button, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
+  FilterList,
   ListAltOutlined,
 } from "@mui/icons-material";
 
@@ -16,12 +17,13 @@ import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { NoticeModel, NoticeResponseModel } from "./models";
+import { GetAllNoticePayload, NoticeModel, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";
+import { initialNoticeFilter, NoticeBoardFilter } from "./components/NoticeBoardFilter";
 
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
@@ -35,6 +37,7 @@ export const NoticeBoard = () => {
   const { setPageTitle } = usePageData();
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
   const handleClose = () => {
@@ -44,9 +47,16 @@ export const NoticeBoard = () => {
     setRefresh(!refresh);
   }
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchValue(value);
-  }, []);
+  const handleFilterOpen = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setAnchorEl(e.currentTarget);
+  }
+
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearchValue(value.trim());
+  };
 
   const handlePageChange = (page: number) => {
     setPaginationValues({
@@ -69,8 +79,14 @@ export const NoticeBoard = () => {
 
   useEffect(() => {
     (async () => {
+      const payload: GetAllNoticePayload = {
+        ...initialNoticeFilter,
+        pageNo: paginationValues.pageNo + 1,
+        records: paginationValues.records,
+        postedBy: searchValue,
+      }
       try {
-        const { data } = await getAllNotices(paginationValues.pageNo + 1, paginationValues.records);
+        const { data } = await getAllNotices(payload);
         if (data.success) {
           setNoticeList(data.methodResults);
           setTotalRecords(data.totalRecords);
@@ -82,7 +98,8 @@ export const NoticeBoard = () => {
         setLoading(false)
       }
     })();
-  }, [refresh, paginationValues])
+  }, [refresh, paginationValues, searchValue])
+
   return (
     <>
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
@@ -91,19 +108,11 @@ export const NoticeBoard = () => {
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             {
               hasAddPermission &&
-              // <CustomisedButton
-              //   variant="outlined"
-              //   Icon={<ListAltOutlined className="icon-fs-20" />}
-              //   label=
-              //   handleClick={() => {
-              //     navigate("/noticeboard/notices/mynotices");
-              //   }}
-              // />
               <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
                 {formatMessage({ id: "NOTICE.MY_NOTICE" })}
               </Button>
             }
-            {/* <CustomIconButton tooltip="Filter List" icon={<FilterList />} /> */}
+            <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />
             {
               hasAddPermission &&
               <CustomIconButton
@@ -124,7 +133,7 @@ export const NoticeBoard = () => {
           loading={loading}
         />
         {
-          totalRecords > paginationValues.records &&
+          totalRecords > 0 &&
           <Pagination
             page={paginationValues.pageNo}
             rowsPerPage={paginationValues.records}
@@ -137,6 +146,14 @@ export const NoticeBoard = () => {
       {
         isModalOpen &&
         <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
+      }
+      {
+        Boolean(anchorEl) && <NoticeBoardFilter
+          id="notice-board-filter"
+          open={true}
+          anchorEl={anchorEl}
+          handleClose={() => setAnchorEl(null)}
+        />
       }
     </>
   );

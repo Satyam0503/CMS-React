@@ -32,7 +32,7 @@ export const FilterComponent: FC<Props> = ({ open, anchorEl, handleClose, id, ch
                 }
             }}
         >
-            <Stack spacing={2} >
+            <Stack spacing={1} >
                 <Stack
                     direction={"row"}
                     sx={{ justifyContent: "space-between", alignItems: "center" }}

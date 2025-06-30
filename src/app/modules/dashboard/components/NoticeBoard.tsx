@@ -8,6 +8,7 @@ import { getAllNotices } from "../../noticeboard/services";
 import clsx from "clsx";
 import { relativeTimeFormatter } from "../../../../utils/common";
 import { CardSkeleton } from "./CardSkeleton";
+import { initialNoticeFilter } from "../../noticeboard/components/NoticeBoardFilter";
 
 export default function NoticeBoard() {
   const [isLoading, setLoading] = useState(true);
@@ -17,7 +18,12 @@ export default function NoticeBoard() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getAllNotices(1, 3);
+        const { data } = await getAllNotices({
+          ...initialNoticeFilter,
+          pageNo: 1,
+          records: 4,
+          postedBy: ""
+        });
         if (data.success) {
           setNoticeList(data.methodResults);
         }

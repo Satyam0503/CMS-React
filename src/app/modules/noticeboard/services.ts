@@ -7,6 +7,7 @@ import {
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
+  GetAllNoticePayload,
   GetAllNoticeResponse,
   GetMyNoticesResponse,
   NoticeModel,
@@ -23,13 +24,11 @@ export const updateNotice = async (payload: NoticeModel) => {
   );
 };
 
-export const getAllNotices = async (pageNo: number, records: number) => {
-  return getRequest<GetAllNoticeResponse>(ServiceUrl.GET_ALL_NOTICES, {
-    params: {
-      pageNo,
-      records,
-    },
-  });
+export const getAllNotices = async (payload: GetAllNoticePayload) => {
+  return postRequest<GetAllNoticePayload, GetAllNoticeResponse>(
+    ServiceUrl.GET_ALL_NOTICES,
+    payload
+  );
 };
 export const getMyPostedNotices = async (pageNo: number, records: number) => {
   return getRequest<GetMyNoticesResponse>(ServiceUrl.GET_MY_NOTICES, {

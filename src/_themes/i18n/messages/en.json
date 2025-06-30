@@ -451,6 +451,9 @@
   "FILTER.LAST_12_MONTHS": "Last 12 Months",
   "FILTER.EMP": "Filter employee",
   "FILTER.DEPT_TITLE": "Department Title",
+  "FILTER.FROM_TO_DATE": "from date - to date",
+  "FILTER.POSTED_DATE": "Posted Date",
+  "FILTER.NOTICE_TYPE": "Notice Type",
 
   "APPLICATION.STATUS.NEW": "New",
   "APPLICATION.STATUS.INPROGRESS": "In Progress",

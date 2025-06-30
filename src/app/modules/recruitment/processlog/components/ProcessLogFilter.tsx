@@ -64,9 +64,9 @@ const ProcessLogFilter: FC<Props> = (props) => {
   return (
     <FilterComponent {...props}>
       <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Stack>
-            <Typography variant="body1">
+            <Typography variant="caption">
               {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
             </Typography>
 
@@ -103,8 +103,8 @@ const ProcessLogFilter: FC<Props> = (props) => {
             </Stack>
           </Stack>
 
-          <Stack spacing={1}>
-            <Typography variant="body1">
+          <Stack>
+            <Typography variant="caption">
               {intl.formatMessage({ id: "FILTER.JOB_TITLE" })}
             </Typography>
             <Autocomplete
@@ -122,8 +122,8 @@ const ProcessLogFilter: FC<Props> = (props) => {
             />
           </Stack>
 
-          <Stack spacing={1}>
-            <Typography variant="body1">
+          <Stack>
+            <Typography variant="caption">
               {intl.formatMessage({ id: "FILTER.ACTION_CATEGORY" })}
             </Typography>
             <Autocomplete
