@@ -17,11 +17,13 @@ export const SearchInput: FC<PropsType> = memo(
     const { formatMessage: i } = useIntl();
 
     useEffect(() => {
-      setSearch(debouncedValue);
+      if (debouncedValue.length > 0) {
+        setSearch(debouncedValue);
+      }
     }, [debouncedValue]);
 
     const handleClearSearch = () => {
-      setValue("");
+      setValue(" ");
     };
 
     return (

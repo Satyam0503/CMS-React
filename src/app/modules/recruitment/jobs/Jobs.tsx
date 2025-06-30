@@ -59,9 +59,12 @@ export default function Jobs() {
     [userModulesPermissions]
   );
 
-  const handleSearchChange = React.useCallback((value: string) => {
-    setSearch(value);
-  }, []);
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearch(value.trim());
+  };
 
   const handleClose = () => {
     setEdit(false);
@@ -183,7 +186,7 @@ export default function Jobs() {
         const response = await getAllJobVacancies(payload);
         const { success, methodResults, totalRecords } = response.data;
         if (success) {
-          setJobList(methodResults.reverse());
+          setJobList(methodResults);
           setTotalRecords(totalRecords);
         }
       } catch (error: any) {

@@ -48,9 +48,12 @@ const ProcessLogs = () => {
 
   const totalAppliedFilters = countAppliedFilter(processLogFilters);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchValue(value);
-  }, []);
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearchValue(value.trim());
+  };
 
   const handlePageChange = (page: number) => {
     setPaginationValues({

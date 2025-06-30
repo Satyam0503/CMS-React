@@ -66,9 +66,12 @@ export const Applications = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-  }, []);
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearch(value.trim());
+  };
 
   const rowClickHandler = (applicant: Applicant) => {
     navigate(`/recruitment/applicant/${applicant.applicantId}`);
