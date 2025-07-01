@@ -466,3 +466,27 @@ button:hover .ql-fill,
     margin-block-start: 1rem;
   }
 }
+
+// text editor styling
+.text-editor {
+  & > .ql-container {
+    border-radius: 0 0 0.25rem 0.25rem;
+    overflow: hidden;
+  }
+
+  & > .ql-toolbar {
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+  &.dark {
+    & .ql-toolbar .ql-picker-label,
+    .ql-toolbar button {
+      color: $app-white;
+    }
+  }
+}
+
+.hover-secondary {
+  &:hover {
+    background-color: $app-notification-hover;
+  }
+}

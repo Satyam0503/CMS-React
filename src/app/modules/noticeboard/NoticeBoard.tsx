@@ -109,7 +109,7 @@ export const NoticeBoard = () => {
             {
               hasAddPermission &&
               <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
-                {formatMessage({ id: "NOTICE.MY_NOTICE" })}
+                {formatMessage({ id: "MY_NOTICE" })}
               </Button>
             }
             <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
@@ -118,7 +118,7 @@ export const NoticeBoard = () => {
             {
               hasAddPermission &&
               <CustomIconButton
-                tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
+                tooltip={formatMessage({ id: "POST_NOTICE" })}
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
               />
@@ -127,7 +127,7 @@ export const NoticeBoard = () => {
         </Stack>
         <CustomisedTable
           keyName="noticeId"
-          tabName="Notice Board"
+          tabName={ModulesName.NoticeBoard}
           rows={NoticeList}
           columns={NoticeBoardTableColumnList}
           page={paginationValues.pageNo}
@@ -147,7 +147,7 @@ export const NoticeBoard = () => {
       </Card >
       {
         isModalOpen &&
-        <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
+        <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={true} handleClose={handleClose} isEdit={false} />
       }
       {
         Boolean(anchorEl) && <NoticeBoardFilter

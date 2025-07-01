@@ -122,7 +122,7 @@ export const MyNotices = () => {
                     {
                         hasAddPermission &&
                         <CustomIconButton
-                            tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
+                            tooltip={formatMessage({ id: "POST_NOTICE" })}
                             icon={<Add />}
                             handleClick={() => setModalOpen(true)}
                         />
@@ -131,7 +131,7 @@ export const MyNotices = () => {
 
                 <CustomisedTable
                     keyName="noticeId"
-                    tabName="Notice Board"
+                    tabName={ModulesName.NoticeBoard}
                     rows={NoticeList}
                     columns={MyNoticeTableColumnList}
                     page={paginationValues.pageNo}
@@ -153,7 +153,7 @@ export const MyNotices = () => {
             </Card>
             {
                 isModalOpen &&
-                <AddNotice initialValues={initialNoticeValues} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={isEdit} />
+                <AddNotice initialValues={initialNoticeValues} refresh={handleRefresh} open={true} handleClose={handleClose} isEdit={isEdit} />
             }
             {
                 selectedNoticeId &&

@@ -1,4 +1,4 @@
-import { Typography, Stack, Avatar } from "@mui/material";
+import { Typography, Stack, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Link } from "react-router-dom";
@@ -9,10 +9,12 @@ import clsx from "clsx";
 import { relativeTimeFormatter } from "../../../../utils/common";
 import { CardSkeleton } from "./CardSkeleton";
 import { initialNoticeFilter } from "../../noticeboard/components/NoticeBoardFilter";
+import { NoticeViewModel } from "../../noticeboard/components/NoticeViewModel";
 
 export default function NoticeBoard() {
   const [isLoading, setLoading] = useState(true);
-  const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([])
+  const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([]);
+  const [selectedNotice, setSelectedNotice] = useState<NoticeResponseModel | null>(null);
   const { formatMessage } = useIntl();
 
   useEffect(() => {
@@ -46,25 +48,35 @@ export default function NoticeBoard() {
         <Stack className={clsx("flex-grow-1 gap-4 mt-4", { "justify-content-center": Boolean(noticeList.length) })}>
           {
             noticeList.length === 0 ?
-              <Typography className="align-self-center">No Notices Available</Typography>
+              <Typography className="align-self-center">{formatMessage({ id: "NO_NOTICE" })}</Typography>
               :
               <>
-                <Stack spacing={1.5} className="flex-grow-1">
+                <Stack spacing={2} className="flex-grow-1">
                   {
                     noticeList.map(item => (
-                      <Stack key={item.noticeId} direction="row" gap={1.5}>
-                        <Avatar
-                          src={item.userProfile}
-                          alt="User Profile"
-                          sx={{ width: 45, height: 45, color: "secondary.main" }}
-                        />
-                        <Stack>
-                          <Typography variant="body1">{item.userName}</Typography>
-                          <Typography variant="body2" className="truncate-multi-line" sx={{ fontSize: 14 }}>
-                            {item.noticeMessage}
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: 'primary.main' }}>{relativeTimeFormatter(item.createdDateTime)}</Typography>
-                        </Stack>
+                      <Stack className="flex-row justify-content-between align-items-center px-2 py-1 rounded-1 hover-secondary">
+                        <Box component="div" key={item.noticeId} className="d-flex flex-row align-items-center gap-2">
+                          <Avatar
+                            src={item.userProfile}
+                            alt="User Profile"
+                            sx={{ width: 45, height: 45, color: "secondary.main" }}
+                          />
+                          <Stack>
+                            <Typography variant="body1">{item.userName}</Typography>
+                            <Typography variant="body2" className="truncate-multi-line" sx={{ fontSize: 14 }}>
+                              {item.noticeTitle}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'primary.main' }}>{relativeTimeFormatter(item.createdDateTime)}</Typography>
+                          </Stack>
+                        </Box>
+                        <Box component="span" sx={{
+                          color: 'secondary.main',
+                          mx: 2, "&:hover": {
+                            color: 'secondary.dark'
+                          },
+                          cursor: "pointer"
+                        }}
+                          onClick={() => setSelectedNotice(item)}>{formatMessage({ id: "BUTTON.VIEW" })}</Box>
                       </Stack>
                     ))
                   }
@@ -75,7 +87,19 @@ export default function NoticeBoard() {
               </>
           }
         </Stack>
-      </CustomCard>
+      </CustomCard >
+      {
+        selectedNotice &&
+        <NoticeViewModel
+          noticeMessage={selectedNotice.noticeMessage}
+          postedBy={selectedNotice.userName}
+          profileImage={selectedNotice.userProfile}
+          postedDateTime={selectedNotice.createdDateTime}
+          jobRole={selectedNotice.userDesignation}
+          open={true}
+          handleClose={() => setSelectedNotice(null)}
+        />
+      }
     </>
   );
 }

@@ -212,12 +212,11 @@
   "JOB.REPO.MANAGER": "Reporting Manager",
   "JOB.REQ.QUALIFICATION": "Required Qualification",
 
-  "NOTICE_BOARD.POSTED_DATETIME": "Posted Date/Time",
-  "NOTICE_BOARD.POSTED_BY": "Posted By",
-  "NOTICE_BOARD.TYPE": "Notice Type",
-  "NOTICE.POST_NOTICE": "Post Notice",
-  "NOTICE.MY_NOTICE": "My Notice",
-  "NOTICE.EDIT_NOTICE": "Edit Notice",
+  "NOTICE_POSTED_DATETIME": "Posted Date/Time",
+  "NOTICE_POSTED_BY": "Posted By",
+  "POST_NOTICE": "Post Notice",
+  "MY_NOTICE": "My Notice",
+  "EDIT_NOTICE": "Edit Notice",
   "NOTICE_TYPE.GENERAL": "General",
   "NOTICE_TYPE.IMPORTANT": "Important",
   "NOTICE_TYPE.URGENT": "Urgent",
@@ -501,6 +500,13 @@
   "DASHBOARD.EMPLOYEE.NOEMPLOYEE": "No Employees",
   "DASHBOARD.APPLICATIONS.NO_APPLICATIONS": "No Applications",
 
+  "NOTICE_MESSAGE": "Message",
+  "NOTICE_TITLE": "Title",
+  "NOTICE_TYPE": "Notice Type",
+  "ROLE": "Role",
+  "DEPARTMENT": "Department",
+  "NO_NOTICE": "No Notice Available",
+
   "Attribute.Title": "Title ({language})",
   "Attribute.Title2": "Title ({language})",
   "Attribute.Status": "Status",
@@ -610,6 +616,7 @@
 
   "Placeholder.Search": "Search ...",
   "Placeholder.Search_Employee_By_Name": "Search by name ...",
+  "Type_Here": "Type here ...",
 
   "Confirmation.Title.WorkHistory": "Delete Work History",
   "Confirmation.Content.WorkHistory": "Are you sure you want to delete this work history?",

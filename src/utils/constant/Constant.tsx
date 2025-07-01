@@ -500,7 +500,7 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "userName",
-    label: "NOTICE_BOARD.POSTED_BY",
+    label: "NOTICE_POSTED_BY",
     minWidth: 200,
     avatarCell: (notice: NoticeResponseModel) => {
       return (
@@ -514,14 +514,14 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDateTime",
-    label: "NOTICE_BOARD.POSTED_DATETIME",
+    label: "NOTICE_POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_BOARD.TYPE",
+    label: "NOTICE_TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -537,12 +537,12 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "noticeMessage",
+    id: "noticeTitle",
     label: "MENU.MESSAGE",
     build: (message: string) => {
       return <Stack direction="row">
         <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        <NoticeViewModel noticeMessage={message} />
+        {/* <NoticeViewModel noticeMessage={message} /> */}
       </Stack>
     }
   },
@@ -556,14 +556,14 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDate",
-    label: "NOTICE_BOARD.POSTED_DATETIME",
+    label: "NOTICE_POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_BOARD.TYPE",
+    label: "NOTICE_TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -579,12 +579,12 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "message",
+    id: "title",
     label: "MENU.MESSAGE",
     build: (message: string) => {
       return <Stack direction="row">
         <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        <NoticeViewModel noticeMessage={message} />
+        {/* <NoticeViewModel noticeMessage={message} /> */}
       </Stack>
     }
   },
