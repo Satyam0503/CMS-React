@@ -28,7 +28,6 @@ export const initialNoticeValuesObj: NoticeModel = {
 
 export const MyNotices = () => {
     const { formatMessage } = useIntl();
-    const [searchValue, setSearchValue] = useState("");
     const [isModalOpen, setModalOpen] = useState(false);
     const [NoticeList, setNoticeList] = useState<NoticeModel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -52,9 +51,6 @@ export const MyNotices = () => {
     const handleRefresh = () => {
         setRefresh(!refresh);
     }
-    const handleSearchChange = useCallback((value: string) => {
-        setSearchValue(value);
-    }, []);
 
     const handlePageChange = (page: number) => {
         setPaginationValues({
@@ -121,20 +117,16 @@ export const MyNotices = () => {
     return (
         <>
             <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-                <Stack className="flex-row justify-content-between gap-4 flex-wrap" >
-                    <SearchInput search={searchValue} setSearch={handleSearchChange} />
-                    <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
-
-                        <CustomIconButton tooltip={formatMessage({ id: "BUTTON.GO_BACK" })} icon={<KeyboardArrowLeft />} handleClick={() => navigate("/noticeboard")} />
-                        {
-                            hasAddPermission &&
-                            <CustomIconButton
-                                tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
-                                icon={<Add />}
-                                handleClick={() => setModalOpen(true)}
-                            />
-                        }
-                    </Stack>
+                <Stack className="flex-row justify-content-end gap-2 flex-wrap" >
+                    <CustomIconButton tooltip={formatMessage({ id: "BUTTON.GO_BACK" })} icon={<KeyboardArrowLeft />} handleClick={() => navigate("/noticeboard")} />
+                    {
+                        hasAddPermission &&
+                        <CustomIconButton
+                            tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
+                            icon={<Add />}
+                            handleClick={() => setModalOpen(true)}
+                        />
+                    }
                 </Stack>
 
                 <CustomisedTable

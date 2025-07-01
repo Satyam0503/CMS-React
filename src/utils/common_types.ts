@@ -7,6 +7,7 @@ import {
   ProcessLogFilterModel,
 } from "../app/modules/recruitment/models";
 import { EmployeeFilterModel } from "../app/modules/employees/models";
+import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 
 export interface ApiResponse {
   success: boolean;
@@ -188,6 +189,7 @@ export interface FiltersType {
   jobs: JobsFilterModel | null;
   processLog: ProcessLogFilterModel | null;
   employee: EmployeeFilterModel | null;
+  noticeBoard: NoticeBoardFilterModel | null;
 }
 
 export type WithChildren = {

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Card, Stack } from "@mui/material";
+import { Badge, Button, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
@@ -10,12 +10,11 @@ import {
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { useNavigate } from "react-router-dom";
-import CustomisedButton from "../../shared/components/CustomisedButton";
 import { usePageData } from "../../../_themes/layout/core";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
-import { hasModuleFeaturePermission } from "../../../utils/common";
+import { countAppliedFilter, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { GetAllNoticePayload, NoticeModel, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
@@ -38,6 +37,7 @@ export const NoticeBoard = () => {
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const noticeBoardFilter = useAppSelector(state => state.filters.noticeBoard);
   const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
   const handleClose = () => {
@@ -80,10 +80,10 @@ export const NoticeBoard = () => {
   useEffect(() => {
     (async () => {
       const payload: GetAllNoticePayload = {
-        ...initialNoticeFilter,
         pageNo: paginationValues.pageNo + 1,
         records: paginationValues.records,
         postedBy: searchValue,
+        ...(noticeBoardFilter ?? initialNoticeFilter)
       }
       try {
         const { data } = await getAllNotices(payload);
@@ -98,7 +98,7 @@ export const NoticeBoard = () => {
         setLoading(false)
       }
     })();
-  }, [refresh, paginationValues, searchValue])
+  }, [refresh, paginationValues, searchValue, noticeBoardFilter])
 
   return (
     <>
@@ -112,7 +112,9 @@ export const NoticeBoard = () => {
                 {formatMessage({ id: "NOTICE.MY_NOTICE" })}
               </Button>
             }
-            <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />
+            <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
+              <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />
+            </Badge>
             {
               hasAddPermission &&
               <CustomIconButton

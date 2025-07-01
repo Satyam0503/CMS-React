@@ -11,6 +11,8 @@ import { NoticeBoardFilterModel } from "../models";
 import { useFormik } from "formik";
 import { noticeBoardFilterSchema } from "../../../../utils/Schema/filterValidationSchema";
 import { addCurrentTimeToDate } from "../../../../utils/common";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { setNoticeBoardFilter } from "../../../Redux/Reducers/filterSlice";
 
 interface PropsType {
     id?: string;
@@ -28,14 +30,16 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
     const { formatMessage } = useIntl();
     const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
     const isTimeOptionOpen = Boolean(optionAnchorEl);
+    const noticeBoardFilter = useAppSelector(state => state.filters.noticeBoard);
+    const dispatch = useAppDispatch();
 
-    const { values, errors, handleSubmit, getFieldProps, setFieldValue } =
+    const { values, errors, handleSubmit, setFieldValue } =
         useFormik({
-            initialValues: initialNoticeFilter,
+            initialValues: noticeBoardFilter ?? initialNoticeFilter,
             enableReinitialize: true,
             validationSchema: noticeBoardFilterSchema,
             onSubmit: (values) => {
-                // dispatch(setApplicationFilter(values));
+                dispatch(setNoticeBoardFilter(values));
                 props.handleClose();
             },
         });
@@ -60,7 +64,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
         const updatedToDate = dayjs(Date.now()).toISOString();
         currentFilters.filterFrom = updatedFromDate;
         currentFilters.filterTo = updatedToDate;
-        // dispatch(setApplicationFilter(currentFilters));
+        dispatch(setNoticeBoardFilter(currentFilters));
         handleTimeOptionMenuClose();
         props.handleClose();
     };
@@ -184,7 +188,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     label={formatMessage({ id: "BUTTON.RESET" })}
                     variant="outlined"
                     handleClick={() => {
-                        // dispatch(setEmployeesFilter(initialFilterValues));
+                        dispatch(setNoticeBoardFilter(initialNoticeFilter));
                         props.handleClose();
                     }}
                 />
