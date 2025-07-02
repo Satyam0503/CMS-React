@@ -154,7 +154,8 @@ export const ServiceUrl = {
   GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
   UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
-  DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`
+  DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`,
+  GET_NOTICE_BY_ID: `${BaseUrl}/api/NoticeBoard/GetNoticeById`,
 };
 
 export const languages = [
@@ -537,12 +538,17 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "noticeTitle",
-    label: "MENU.MESSAGE",
-    build: (message: string) => {
+    id: "noticeMessage",
+    label: "NOTICE_MESSAGE",
+    build: (notice: NoticeResponseModel, handleNoticeView: (notice: NoticeResponseModel) => void) => {
       return <Stack direction="row">
-        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        {/* <NoticeViewModel noticeMessage={message} /> */}
+        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {notice.noticeTitle}</Box>
+        <Box component="span" sx={{
+          color: 'secondary.main', mx: 2, "&:hover": {
+            color: 'secondary.dark'
+          }
+        }}
+          onClick={() => handleNoticeView(notice)}>{<FormattedMessage id="BUTTON.VIEW" />}...</Box>
       </Stack>
     }
   },
@@ -580,7 +586,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "title",
-    label: "MENU.MESSAGE",
+    label: "NOTICE_MESSAGE",
     build: (message: string) => {
       return <Stack direction="row">
         <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>

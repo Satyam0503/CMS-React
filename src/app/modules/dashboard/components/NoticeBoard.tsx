@@ -14,7 +14,7 @@ import { NoticeViewModel } from "../../noticeboard/components/NoticeViewModel";
 export default function NoticeBoard() {
   const [isLoading, setLoading] = useState(true);
   const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([]);
-  const [selectedNotice, setSelectedNotice] = useState<NoticeResponseModel | null>(null);
+  const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>(null);
   const { formatMessage } = useIntl();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function NoticeBoard() {
                 <Stack spacing={2} className="flex-grow-1">
                   {
                     noticeList.map(item => (
-                      <Stack className="flex-row justify-content-between align-items-center px-2 py-1 rounded-1 hover-secondary">
+                      <Stack key={item.noticeId} className="flex-row justify-content-between align-items-center px-2 py-1 rounded-1 hover-secondary">
                         <Box component="div" key={item.noticeId} className="d-flex flex-row align-items-center gap-2">
                           <Avatar
                             src={item.userProfile}
@@ -76,7 +76,7 @@ export default function NoticeBoard() {
                           },
                           cursor: "pointer"
                         }}
-                          onClick={() => setSelectedNotice(item)}>{formatMessage({ id: "BUTTON.VIEW" })}</Box>
+                          onClick={() => setSelectedNoticeId(item.noticeId)}>{formatMessage({ id: "BUTTON.VIEW" })}</Box>
                       </Stack>
                     ))
                   }
@@ -89,15 +89,11 @@ export default function NoticeBoard() {
         </Stack>
       </CustomCard >
       {
-        selectedNotice &&
+        selectedNoticeId &&
         <NoticeViewModel
-          noticeMessage={selectedNotice.noticeMessage}
-          postedBy={selectedNotice.userName}
-          profileImage={selectedNotice.userProfile}
-          postedDateTime={selectedNotice.createdDateTime}
-          jobRole={selectedNotice.userDesignation}
+          noticeId={selectedNoticeId}
           open={true}
-          handleClose={() => setSelectedNotice(null)}
+          handleClose={() => setSelectedNoticeId(null)}
         />
       }
     </>

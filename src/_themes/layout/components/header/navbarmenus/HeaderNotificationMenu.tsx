@@ -18,7 +18,7 @@ import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
-import { relativeTimeFormatter } from "../../../../../utils/common";
+import { redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
@@ -32,14 +32,7 @@ export const NotificationIconMapper: {
   [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications />,
   [NOTIFICATION_TYPE.ALERT]: <Cake />,
 }
-const redirectUserToUrl = (notification: NotificationModel, navigate: NavigateFunction) => {
-  switch (notification.notificationTypes) {
-    case NOTIFICATION_TYPE.NOTICE: {
-      navigate("/noticeboard/notices");
-      break;
-    }
-  }
-}
+
 
 const initialPaginationValue = { pageNo: 1, records: 10 }
 
@@ -171,8 +164,8 @@ export default function HeaderNotificationMenu() {
     if (!notification.isRead) {
       handleMarkNotificationAsRead(notification.userNotificationId);
     }
-    redirectUserToUrl(notification, navigate);
-    // setAnchorEl(null);
+    redirectUserToTargetUrl(notification, navigate);
+    setAnchorEl(null);
   }
 
 
@@ -243,8 +236,12 @@ export default function HeaderNotificationMenu() {
                     <Stack sx={{ bgcolor: "secondary.light" }}>
                       <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
                     </Stack>
-                    <ListItemText primary={item.title} secondary={
-                      <Box component="div" className="d-flex align-items-center gap-1">
+                    <ListItemText primary={
+                      <Typography >{item.title}:
+                        <Box component="span" sx={{ fontSize: 14, color: "text.secondary" }}> {item.body}</Box>
+                      </Typography>
+                    } secondary={
+                      <Box component="span" className="d-flex align-items-center gap-1">
                         <AccessTime className="icon-fs-16" />
                         <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
                       </Box>} />

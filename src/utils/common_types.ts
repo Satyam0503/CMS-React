@@ -118,6 +118,11 @@ export type HolidayType = {
 };
 */
 
+export type NotificationRedirectOption = {
+  targetPath: string;
+  data: any;
+};
+
 export type ProcessLogModel = {
   processId: string;
   applicantName: string;

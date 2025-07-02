@@ -48,6 +48,7 @@ export type NotificationModel = {
   title: string;
   body: string;
   sentDateTime: string;
+  targetId: string | null;
   sentBy: string;
   notificationTypes: number;
 };

@@ -64,6 +64,8 @@ const Employees = () => {
 
 
   const handleSearchChange = (value: string) => {
+    console.log(value.trim().length);
+
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
       setPaginationValues({ ...paginationValues, pageNo: 0 });
     }

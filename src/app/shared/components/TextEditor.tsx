@@ -27,8 +27,6 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "Type_H
     }
   }, [debouncedValue]);
 
-  console.log(themeMode);
-
 
   const modules = {
     toolbar: {

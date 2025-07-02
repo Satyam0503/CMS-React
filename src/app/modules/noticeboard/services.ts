@@ -42,3 +42,9 @@ export const getMyPostedNotices = async (pageNo: number, records: number) => {
 export const deleteMyNotice = async (noticeId: string) => {
   return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_NOTICE}/${noticeId}`);
 };
+
+export const getNoticeById = async (noticeId: string) => {
+  return getRequest<GetAllNoticeResponse>(
+    `${ServiceUrl.GET_NOTICE_BY_ID}/${noticeId}`
+  );
+};

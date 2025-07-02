@@ -7,6 +7,7 @@ import {
   EmployeeModel,
   FiltersType,
   ModulePermissoinModel,
+  NotificationRedirectOption,
   PermissionModel,
 } from "./common_types";
 import {
@@ -24,6 +25,8 @@ import {
   SideBarTabList,
 } from "./constant/Constant";
 import { ReactNode } from "react";
+import { NotificationModel } from "../app/modules/users/models";
+import { NavigateFunction } from "react-router-dom";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -330,4 +333,25 @@ export const flatRolePermissionList = (
     });
   });
   return updatedRolePermission;
+};
+
+export const redirectUserToTargetUrl = (
+  notification: NotificationModel,
+  navigate: NavigateFunction
+) => {
+  const redirectOption: NotificationRedirectOption = {
+    targetPath: "",
+    data: null,
+  };
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE: {
+      redirectOption.targetPath = "/noticeboard/notices";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+  }
+  navigate(redirectOption.targetPath, {
+    state: redirectOption.data,
+    replace: true,
+  });
 };

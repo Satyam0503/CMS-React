@@ -1,59 +1,94 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Avatar, Box, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { relativeTimeFormatter, sanitizeHtmlContent } from "../../../../utils/common";
+import { getNoticeById } from "../services";
+import { NoticeResponseModel } from "../models";
+import { AccessTimeFilled } from "@mui/icons-material";
+
 type Props = {
-    noticeMessage: string,
-    postedBy: string,
-    profileImage: string,
-    postedDateTime: string,
-    jobRole?: string
-    open?: boolean,
-    handleClose?: () => void
+    open: boolean,
+    noticeId: string,
+    handleClose: () => void
 }
 
 export const NoticeViewModel: FC<Props> = (props) => {
-    const [open, setOpen] = useState(false);
     const { formatMessage } = useIntl();
-    return (
-        <>
-            {
-                !props.open &&
-                <Box component="span" sx={{
-                    color: 'secondary.main', mx: 2, "&:hover": {
-                        color: 'secondary.dark'
-                    }
-                }}
-                    onClick={() => setOpen(true)}>{formatMessage({ id: "BUTTON.VIEW" })}...</Box>
+    const [notice, setNotice] = useState<NoticeResponseModel>();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await getNoticeById(props.noticeId);
+                if (data.success) {
+                    setNotice(data.methodResult);
+                }
+                else {
+                    props.handleClose();
+                }
+            } catch (error: any) {
+                console.error(error.message);
             }
-            <CustomisedModal maxWidth="xs" open={props.open ?? open} handleClose={() => setOpen(false)}>
-                <Stack className="flex-row gap-2">
-                    <Avatar
-                        src={props.profileImage}
-                        alt="User Profile"
-                    />
-                    <Stack >
-                        <Typography variant="body1">{props.postedBy}</Typography>
-                        <Typography variant="caption">{relativeTimeFormatter(props.postedDateTime)}</Typography>
+            finally {
+                setLoading(false);
+            }
+        })();
+    }, [])
+
+    return (
+        <CustomisedModal maxWidth="xs" open={props.open} handleClose={props.handleClose}>
+            {
+                loading ?
+                    <Stack spacing={2}>
+                        <Stack direction="row" spacing={1}>
+                            <Skeleton variant="circular" sx={{ width: 40, height: 40 }} />
+                            <Stack className="w-100">
+                                <Skeleton variant="text" />
+                                <Skeleton variant="text" />
+                            </Stack>
+                        </Stack>
+                        <Stack className="w-100">
+                            <Skeleton variant="text" />
+                            <Skeleton variant="text" />
+                            <Skeleton variant="text" />
+                        </Stack>
+                    </Stack> :
+
+                    <Stack spacing={2}>
+                        <Stack className="flex-row gap-2">
+                            <Avatar
+                                src={notice?.userProfile}
+                                alt="User Profile"
+                                className="shadow-sm"
+                            />
+                            <Stack className="w-100">
+                                <Typography variant="body1">{notice?.userName}</Typography>
+                                <Stack className="flex-row gap-4">
+                                    <Typography variant="caption">{notice?.userDesignation}</Typography>
+                                    <Typography variant="caption" sx={{ color: "primary.main" }} className="d-flex align-items-center gap-1 lh-1">
+                                        <AccessTimeFilled className="icon-fs-12" />
+                                        {relativeTimeFormatter(notice?.createdDateTime!)}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+                        <Box
+                            component="div"
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizeHtmlContent(notice?.noticeMessage ?? ""),
+                            }}
+                        />
+                        <CustomisedButton
+                            variant="outlined"
+                            className="align-self-end"
+                            label={formatMessage({ id: "BUTTON.CLOSE" })}
+                            handleClick={props.handleClose}
+                        />
                     </Stack>
-                </Stack>
-                <Box
-                    component="div"
-                    className="my-4"
-                    dangerouslySetInnerHTML={{
-                        __html: sanitizeHtmlContent(props.noticeMessage),
-                    }}
-                />
-                <Stack sx={{ alignItems: "flex-end" }}>
-                    <CustomisedButton
-                        variant="outlined"
-                        label={formatMessage({ id: "BUTTON.CLOSE" })}
-                        handleClick={props.open ? () => props.handleClose?.() : () => setOpen(false)}
-                    />
-                </Stack>
-            </CustomisedModal>
-        </>
+            }
+        </CustomisedModal >
     )
 }

@@ -9,7 +9,7 @@ import {
 
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePageData } from "../../../_themes/layout/core";
 import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
@@ -23,6 +23,7 @@ import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";
 import { initialNoticeFilter, NoticeBoardFilter } from "./components/NoticeBoardFilter";
+import { NoticeViewModel } from "./components/NoticeViewModel";
 
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
@@ -38,6 +39,9 @@ export const NoticeBoard = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const noticeBoardFilter = useAppSelector(state => state.filters.noticeBoard);
+  const noticeIdFromRedirect = useLocation().state as string | null;
+  const [selectedNotice, setSelectedNotice] = useState<string | null>(noticeIdFromRedirect);
+
   const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
   const handleClose = () => {
@@ -45,6 +49,10 @@ export const NoticeBoard = () => {
   }
   const handleRefresh = () => {
     setRefresh(!refresh);
+  }
+
+  const handleNoticeView = (notice: NoticeResponseModel) => {
+    setSelectedNotice(notice.noticeId);
   }
 
   const handleFilterOpen = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -100,6 +108,10 @@ export const NoticeBoard = () => {
     })();
   }, [refresh, paginationValues, searchValue, noticeBoardFilter])
 
+  useEffect(() => {
+    setSelectedNotice(noticeIdFromRedirect);
+    window.history.replaceState(null, document.title, window.location.href);
+  }, [noticeIdFromRedirect])
   return (
     <>
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
@@ -132,6 +144,7 @@ export const NoticeBoard = () => {
           columns={NoticeBoardTableColumnList}
           page={paginationValues.pageNo}
           rowsPerPage={paginationValues.records}
+          openViewModal={handleNoticeView}
           loading={loading}
         />
         {
@@ -156,6 +169,9 @@ export const NoticeBoard = () => {
           anchorEl={anchorEl}
           handleClose={() => setAnchorEl(null)}
         />
+      }
+      {
+        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={() => setSelectedNotice(null)} />
       }
     </>
   );
