@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, MenuItem, Select, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
   SideBarTabListProps,
@@ -12,6 +12,7 @@ import {
   commentActionMapper,
   noticeTypeDecoder,
   relativeTimeFormatter,
+  LeaveTypeMapper,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -19,6 +20,7 @@ import {
   ApplicationStatus,
   CommentAction,
   LANGUAGE,
+  LEAVE_REQUEST_STATUS,
   Modules,
   ModulesName,
   ModulesTitles,
@@ -55,6 +57,8 @@ import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 import { NoticeModel, NoticeResponseModel } from "../../app/modules/noticeboard/models";
 import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
+import { ViewLeaveReason } from "../../app/shared/components/ViewLeaveReason";
+import { LeaveRequestModel } from "../../app/modules/leaves/model";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -411,6 +415,22 @@ export const ApplicantStatusConstant = [
   { id: 2, label: "Active", value: ApplicantStatus.Active },
 ];
 
+export const LeaveRequestStatusTypes = [
+  {
+    id: 1,
+    label: "PENDING",
+    value: LEAVE_REQUEST_STATUS.PENDING,
+  }, {
+    id: 2,
+    label: "APPROVED",
+    value: LEAVE_REQUEST_STATUS.APPROVED,
+  }, {
+    id: 3,
+    label: "REJECTED",
+    value: LEAVE_REQUEST_STATUS.REJECTED
+  }
+]
+
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "employeeId",
@@ -450,7 +470,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 30,
   },
 
@@ -478,7 +498,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: any,
       handleHolidayEdit: (row: any) => void,
@@ -496,7 +516,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -557,7 +577,7 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const MyNoticeTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -596,7 +616,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: NoticeModel,
       handleNoticeEdit: (row: NoticeModel) => void,
@@ -613,7 +633,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -640,7 +660,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "activityCategory",
-    label: "Table.Column.Action",
+    label: "Action",
     minWidth: 150,
     format: (value: number) => (
       <FormattedMessage id={commentActionMapper[value]} />
@@ -687,116 +707,43 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
-export const LeaveSummaryTableColumnList: ColumnListTypes[] = [
-  {
-    id: "date",
-    label: "COMMENT.DATE",
-  },
-  {
-    id: "absent",
-    label: "ATTENDANCE.ABSENT",
-  },
 
-  {
-    id: "firsthalf",
-    label: "ATTENDANCE.FIRST_HALF",
-  },
 
-  {
-    id: "secondhalf",
-    label: "ATTENDANCE.SECOND_HALF",
-  },
-  {
-    id: "workfromhome",
-    label: "ATTENDANCE.WFH",
-  },
-  {
-    id: "total",
-    label: "ATTENDANCE.TOTAL",
-  },
-
-  {
-    id: "action",
-    label: "MENU.ACTION",
-    build: (row: Applicant) => <ActionComponent row={row} />,
-  },
-];
-export const LeaveMangementTableColumnList: ColumnListTypes[] = [
-  {
-    id: "name",
-    label: "Table.Name",
-  },
-  {
-    id: "type",
-    label: "LEAVE.TYPE",
-  },
-
-  {
-    id: "from",
-    label: "FROM",
-  },
-
-  {
-    id: "to",
-    label: "TO",
-  },
-  {
-    id: "days",
-    label: "Table.Days",
-  },
-  {
-    id: "remaining",
-    label: "Table.Remaining",
-  },
-  {
-    id: "reason",
-    label: "APPLICATION.REASON",
-  },
-  {
-    id: "status",
-    label: "FILTER.STATUS",
-  },
-  {
-    id: "action",
-    label: "Table.Column.Action",
-    build: (row: Applicant) => <ActionComponent row={row} />,
-  },
-];
 export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
-    label: "Table.Name",
+    label: "Name",
   },
   {
     id: "first_in",
-    label: "Table.First_in",
+    label: "First_In",
   },
 
   {
     id: "break",
-    label: "Table.Break",
+    label: "Break",
   },
 
   {
-    id: "last_out",
-    label: "Table.Last_out",
+    id: "Last_Out",
+    label: "Last_Out",
   },
   {
     id: "total_hours",
-    label: "Table.Total_Hours",
+    label: "Total_Hours",
   },
   {
     id: "shift",
-    label: "Table.Shift",
+    label: "Shift",
   },
   {
     id: "status",
-    label: "FILTER.STATUS",
+    label: "STATUS",
   },
 
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
@@ -804,7 +751,7 @@ export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
 
@@ -820,7 +767,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "status",
-    label: "JOB.STATUS",
+    label: "STATUS",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
       return (
@@ -870,7 +817,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -896,7 +843,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     minWidth: 180,
     build: (row: RoleModel) => (
       <Link to={`/admin/roles/edit/${row.rolesId}`}>
@@ -917,7 +864,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 30,
   },
 
@@ -937,7 +884,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "status",
-    label: "JOB.STATUS",
+    label: "STATUS",
     build: (status: boolean) => {
       return (
         <StyleStatus
@@ -949,7 +896,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: JobModal,
       handleJobEdit: (row: JobModal) => void,
@@ -967,7 +914,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -1030,6 +977,77 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+
+export const LeaveRequestTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "S_No",
+    minWidth: 60,
+  },
+  {
+    id: "employeeName",
+    label: "Name",
+    minWidth: 200,
+    avatarCell: (request: LeaveRequestModel) => {
+      return (
+        <AvatarCell
+          avatarSrc={request.profileUrl}
+          title={request.employeeName}
+          subTitle={request.jobRole}
+        />
+      );
+    },
+  },
+  {
+    id: "leaveTypeId",
+    label: "LEAVE_TYPE",
+    format: (value: number) => <FormattedMessage id={LeaveTypeMapper[value]} />
+  },
+  {
+    id: "startDate",
+    label: "FROM",
+    format: (value: string) => dateFormatter(value, "DD MMMM YYYY"),
+  },
+  {
+    id: "endDate",
+    label: "TO",
+    format: (value: number) => (value: string) => dateFormatter(value, "DD MMMM YYYY"),
+  },
+  {
+    id: "totalDays",
+    label: "Days",
+    minWidth: 100
+  },
+  {
+    id: "reason",
+    label: "REASON",
+    minWidth: 150,
+    format: (value: string) => (
+      <>
+        <Typography variant="body2" className="text-truncate d-inline-block">{value}</Typography>
+        <ViewLeaveReason reason={value} />
+      </>
+    )
+  },
+  {
+    id: "approvedBy",
+    label: "APPROVED_BY",
+    minWidth: 150,
+  },
+  {
+    id: "status",
+    label: "STATUS",
+    minWidth: 150,
+    format: (value: number) => (
+      <Select value={value} className={clsx({ "text-secondary": value === LEAVE_REQUEST_STATUS.PENDING, "text-success": value === LEAVE_REQUEST_STATUS.APPROVED, "text-danger": LEAVE_REQUEST_STATUS.REJECTED })}>
+        {LeaveRequestStatusTypes.map(item => (
+          <MenuItem value={item.value} key={item.id}
+          ><FormattedMessage id={item.label} /></MenuItem>
+        ))}
+      </Select>
+    )
+  },
+]
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {

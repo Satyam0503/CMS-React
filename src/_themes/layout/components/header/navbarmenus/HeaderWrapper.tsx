@@ -92,7 +92,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
           getOptionLabel={(option) => option.firstName + " " + option.lastName}
           options={employeeList}
           loading={loading}
-          noOptionsText={formatMessage({ id: "No_Result" })}
+          noOptionsText={formatMessage({ id: "NO_RESULT" })}
           renderInput={(params) => (
             <TextField
               {...params}

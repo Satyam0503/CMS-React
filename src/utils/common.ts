@@ -14,6 +14,8 @@ import {
   ApplicantStatus,
   ApplicationStatus,
   CommentAction,
+  LEAVE_REQUEST_STATUS,
+  LEAVE_TYPE,
   ModulesName,
   NOTICE_TYPE,
   NOTIFICATION_TYPE,
@@ -119,6 +121,19 @@ export const commentActionMapper: { [index: number]: string } = {
   [CommentAction.Rejection]: "COMMENT.ACTION.REJECTION",
   [CommentAction.Edit]: "COMMENT.ACTION.EDIT",
   [CommentAction.Process]: "COMMENT.ACTION.PROCESS",
+};
+
+export const leaveRequestStatusMapper: { [index: number]: string } = {
+  [LEAVE_REQUEST_STATUS.PENDING]: "PENDING",
+  [LEAVE_REQUEST_STATUS.APPROVED]: "APPROVED",
+  [LEAVE_REQUEST_STATUS.REJECTED]: "REJECTED",
+};
+
+export const LeaveTypeMapper: { [index: number]: string } = {
+  [LEAVE_TYPE.SICK_LEAVE]: "SICK_LEAVE",
+  [LEAVE_TYPE.CASUAL_LEAVE]: "CASUAL_LEAVE",
+  [LEAVE_TYPE.EARNED_LEAVE]: "EARNED_LEAVE",
+  [LEAVE_TYPE.MATERNITY_LEAVE]: "MATERNITY_LEAVE",
 };
 
 export const statusEncoder = (status: string) => {

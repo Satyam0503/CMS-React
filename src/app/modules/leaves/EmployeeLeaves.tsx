@@ -12,9 +12,6 @@ import {
 import { FC } from "react";
 import { useIntl } from "react-intl";
 import {
-  Add,
-  Download,
-  FilterList,
   Home,
   HourglassBottom,
   HourglassTop,
@@ -23,16 +20,10 @@ import {
 import AddLeaves from "./components/AddLeaves";
 import LeaveAssignment from "./components/LeaveAssignment";
 import IconStat from "../../shared/components/IconStat";
-import { CustomisedTable } from "../../shared/components/CustomisedTable";
-import {
-  Days,
-  LeaveMangementTableColumnList,
-  LeaveSummaryTableColumnList,
-} from "../../../utils/constant/Constant";
 import { LeavesModel } from "../../../utils/common_types";
-import { CustomIconButton } from "../../shared/components/CustomIconButton";
-import { SearchInput } from "../../shared/components/SearchInput";
 import { usePageData } from "../../../_themes/layout/core";
+import { LeaveRequest } from "./components/LeaveRequest";
+import { Days } from "../../../utils/constant/Constant";
 
 const EmployeeLeaves: FC = () => {
   const intl = useIntl();
@@ -57,66 +48,44 @@ const EmployeeLeaves: FC = () => {
 
   return (
     <React.Fragment>
-      <Grid
-        container
-        sx={{
-          display: "flex",
-          gap: 2,
-        }}
-      >
+      <Grid container className="gap-4">
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={theme.palette.secondary.lighter}
-                  icon={<HourglassBottom fontSize="large" />}
-                  iconColor="secondary.main"
-                  number={"3"}
-                  title="First Half"
-                />
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={6} lg={3}>
+            <IconStat
+              iconBg={theme.palette.secondary.lighter}
+              icon={<HourglassBottom fontSize="large" />}
+              iconColor="secondary.main"
+              number={"3"}
+              title="First Half"
+            />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={theme.palette.primary.lighter}
-                  icon={<HourglassTop fontSize="large" />}
-                  iconColor="primary.main"
-                  number={"1"}
-                  title="Second Half"
-                />
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={6} lg={3}>
+            <IconStat
+              iconBg={theme.palette.primary.lighter}
+              icon={<HourglassTop fontSize="large" />}
+              iconColor="primary.main"
+              number={"1"}
+              title="Second Half"
+            />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={theme.palette.info.light}
-                  icon={<Home fontSize="large" />}
-                  iconColor="info.dark"
-                  number={"1"}
-                  title="Work from Home"
-                />
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={6} lg={3}>
+            <IconStat
+              iconBg={theme.palette.secondary.lighter}
+              icon={<Home fontSize="large" />}
+              iconColor="secondary.dark"
+              number={"1"}
+              title="Work from Home"
+            />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <IconStat
-                  iconBg={theme.palette.error.lighter}
-                  icon={<WorkOff fontSize="large" />}
-                  iconColor="error.light"
-                  number={"7"}
-                  title="Absent"
-                />
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={6} lg={3}>
+            <IconStat
+              iconBg={theme.palette.primary.lighter}
+              icon={<WorkOff fontSize="large" />}
+              iconColor="primary.dark"
+              number={"7"}
+              title="Absent"
+            />
           </Grid>
         </Grid>
 
@@ -153,56 +122,7 @@ const EmployeeLeaves: FC = () => {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <Stack spacing={2}>
-            <Card sx={{ p: "2rem" }}>
-              <CustomisedTable
-                tabName="Leave Requests"
-                columns={LeaveSummaryTableColumnList}
-                rows={LeaveList}
-                page={page}
-                rowsPerPage={rowPerPage}
-                loading={isLoading}
-              />
-            </Card>
-            <Card sx={{ p: "2rem" }}>
-              <Typography variant="h6" mb={3}>
-                {intl.formatMessage({ id: "MENU.LEAVE_REQUEST" })}
-              </Typography>
-              <Stack
-                direction="row"
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                flexWrap={"wrap-reverse"}
-                gap={2}
-              >
-                <SearchInput
-                  search={searchValue}
-                  setSearch={handleSearchChange}
-                />
-
-                <Stack direction="row" spacing={1}>
-                  <CustomIconButton
-                    tooltip="Filter List"
-                    icon={<FilterList />}
-                  />
-                  <CustomIconButton tooltip="Add leaves" icon={<Add />} />
-                  <CustomIconButton
-                    tooltip="Import Excel"
-                    icon={<Download />}
-                  />
-                </Stack>
-              </Stack>
-              <CustomisedTable
-                tabName="Leave Requests"
-                columns={LeaveMangementTableColumnList}
-                rows={LeaveList}
-                page={page}
-                rowsPerPage={rowPerPage}
-                loading={isLoading}
-              />
-            </Card>
-          </Stack>
+          <LeaveRequest />
         </Grid>
       </Grid>
     </React.Fragment>

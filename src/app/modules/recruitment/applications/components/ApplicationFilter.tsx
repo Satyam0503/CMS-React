@@ -266,7 +266,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
           </Stack>
           <Stack >
             <Typography variant="caption">
-              {formatMessage({ id: "FILTER.STATUS" })}
+              {formatMessage({ id: "STATUS" })}
             </Typography>
             <Autocomplete
               multiple

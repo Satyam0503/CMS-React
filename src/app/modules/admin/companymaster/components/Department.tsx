@@ -149,7 +149,7 @@ const Departments = () => {
             {formatMessage({ id: "Attribute.Title2" }, { language: formatMessage({ id: languages.find(lang => lang.lang === translationLang)?.name }) })}
           </Typography>
           <Typography variant="body1" className="fw-bolder">
-            {formatMessage({ id: "Attribute.Status" })}
+            {formatMessage({ id: "STATUS" })}
           </Typography>
         </Box>
 

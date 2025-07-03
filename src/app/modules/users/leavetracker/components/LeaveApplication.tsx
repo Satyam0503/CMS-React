@@ -54,7 +54,7 @@ export const LeaveApplication: FC = () => {
           >
             <Grid item xs={12} sm={6}>
               <TextField
-                label={intl.formatMessage({ id: "LEAVE.TYPE" })}
+                label={intl.formatMessage({ id: "LEAVE_TYPE" })}
                 placeholder="Leave type"
                 type="text"
                 name="leaveType"
@@ -109,7 +109,7 @@ export const LeaveApplication: FC = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label={intl.formatMessage({ id: "APPLICATION.REASON" })}
+                label={intl.formatMessage({ id: "REASON" })}
                 placeholder="Reason"
                 type="text"
                 name="leaveReason"

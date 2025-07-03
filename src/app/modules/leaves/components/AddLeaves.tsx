@@ -85,7 +85,7 @@ export default function AddLeaves() {
           <Grid item xs={12} md={6}>
             <TextField
               label={intl.formatMessage({
-                id: "LEAVE.TYPE",
+                id: "LEAVE_TYPE",
               })}
               fullWidth
               id="outlined-basic"
@@ -155,7 +155,7 @@ export default function AddLeaves() {
           <Grid item xs={12}>
             <TextField
               label={intl.formatMessage({
-                id: "APPLICATION.REASON",
+                id: "REASON",
               })}
               fullWidth
               id="outlined-basic"

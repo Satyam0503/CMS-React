@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import { Stack } from "@mui/material";
+import { Avatar, Stack } from "@mui/material";
 
 type Props = {
   icon: JSX.Element;
@@ -10,26 +10,24 @@ type Props = {
 };
 const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
   return (
-    <Stack spacing={1} className="flex-row align-items-center gap-2">
-      <Stack
+    <Stack className="flex-row align-items-start gap-2 rounded p-4 h-100" sx={{ bgcolor: 'background.card' }}>
+      <Avatar color="primary"
         sx={{
           width: 52,
           height: 52,
           background: iconBg,
-          borderRadius: "50%",
-          alignItems: "center",
-          justifyContent: "center",
+          color: iconColor
         }}
       >
-        <Stack color={iconColor}>{icon}</Stack>
-      </Stack>
+        {icon}
+      </Avatar>
       <Stack>
         <Typography variant="h2">{number}</Typography>
         <Typography variant="body1" sx={{ color: "text.secondary" }}>
           {title}
         </Typography>
       </Stack>
-    </Stack>
+    </Stack >
   );
 };
 

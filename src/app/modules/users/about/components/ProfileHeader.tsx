@@ -18,48 +18,37 @@ export const ProfileHeader = () => {
   const { formatMessage } = useIntl();
   const theme = useTheme();
   return (
-    <Stack
-      direction={{ xs: "column", sm: "row" }}
-      justifyContent={"center"}
-      borderRadius={1}
-      sx={{ bgcolor: "background.card" }}
-    >
+    <Grid container spacing={2}>
       <Grid item xs={12} sm={4}>
-        <Box component={CardContent}>
-          <IconStat
-            iconBg={theme.palette.secondary.lighter}
-            icon={<CalendarMonth fontSize="large" />}
-            iconColor="secondary.dark"
-            number={14}
-            title={formatMessage({ id: "PROFILE.EXP" })}
-          />
-        </Box>
+        <IconStat
+          iconBg={theme.palette.secondary.lighter}
+          icon={<CalendarMonth fontSize="large" />}
+          iconColor="secondary.dark"
+          number={14}
+          title={formatMessage({ id: "PROFILE.EXP" })}
+        />
       </Grid>
       <Grid item xs={12} sm={4}>
-        <Box component={CardContent}>
-          <IconStat
-            iconBg={theme.palette.primary.lighter}
-            icon={<CorporateFareOutlined fontSize="large" />}
-            iconColor="primary.main"
-            number={getDateDiffInYears(userDetails.dateOfJoining!)}
-            title={formatMessage(
-              { id: "PROFILE.EXP_CURRENT" },
-              { companyName }
-            )}
-          />
-        </Box>
+        <IconStat
+          iconBg={theme.palette.primary.lighter}
+          icon={<CorporateFareOutlined fontSize="large" />}
+          iconColor="primary.main"
+          number={getDateDiffInYears(userDetails.dateOfJoining!)}
+          title={formatMessage(
+            { id: "PROFILE.EXP_CURRENT" },
+            { companyName }
+          )}
+        />
       </Grid>
       <Grid item xs={12} sm={4}>
-        <Box component={CardContent}>
-          <IconStat
-            iconBg={theme.palette.secondary.lighter}
-            icon={<Build fontSize="large" />}
-            iconColor="secondary.dark"
-            number={totalSkills}
-            title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
-          />
-        </Box>
+        <IconStat
+          iconBg={theme.palette.secondary.lighter}
+          icon={<Build fontSize="large" />}
+          iconColor="secondary.dark"
+          number={totalSkills}
+          title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
+        />
       </Grid>
-    </Stack>
+    </Grid>
   );
 };
