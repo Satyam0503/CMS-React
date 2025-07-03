@@ -31,6 +31,7 @@ export const NoticeViewModel: FC<Props> = (props) => {
                 }
             } catch (error: any) {
                 console.error(error.message);
+                props.handleClose();
             }
             finally {
                 setLoading(false);

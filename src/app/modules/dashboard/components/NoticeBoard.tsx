@@ -51,7 +51,7 @@ export default function NoticeBoard() {
               <Typography className="align-self-center">{formatMessage({ id: "NO_NOTICE" })}</Typography>
               :
               <>
-                <Stack spacing={2} className="flex-grow-1">
+                <Stack spacing={1} className="flex-grow-1">
                   {
                     noticeList.map(item => (
                       <Stack key={item.noticeId} className="flex-row justify-content-between align-items-center px-2 py-1 rounded-1 hover-secondary">

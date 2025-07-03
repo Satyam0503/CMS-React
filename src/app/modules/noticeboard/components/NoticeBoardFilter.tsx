@@ -73,11 +73,11 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
         <form onSubmit={handleSubmit} >
             <Stack>
                 <Stack
-                    direction={"row"}
+                    direction="row"
                     sx={{ justifyContent: "space-between", alignItems: "flex-end" }}
                 >
                     <Typography variant="caption">
-                        {formatMessage({ id: "FILTER.POSTED_DATE" })}
+                        {formatMessage({ id: "POSTED_DATE" })}
                     </Typography>
                     <Stack
                         direction="row"
@@ -85,7 +85,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                         onClick={handleClick}
                     >
                         <Typography variant="body2" sx={{ cursor: "pointer" }}>
-                            {formatMessage({ id: "FILTER.FROM_TO_DATE" })}
+                            {formatMessage({ id: "FROM_TO_DATE" })}
                         </Typography>
                         {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
                     </Stack>
@@ -119,9 +119,9 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     </Menu>
                 </Stack>
 
-                <Stack spacing={1} direction="row">
+                <Stack className="flex-row gap-2" direction="row">
                     <CustomisedDatePicker
-                        label={formatMessage({ id: "FILTER.FROM" })}
+                        label={formatMessage({ id: "FROM" })}
                         value={Boolean(values.filterFrom) ? dayjs(values.filterFrom) : null}
                         maxDate={dayjs()}
                         setValue={(date: Dayjs | null) => {
@@ -132,7 +132,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                         }}
                     />
                     <CustomisedDatePicker
-                        label={formatMessage({ id: "FILTER.TO" })}
+                        label={formatMessage({ id: "TO" })}
                         value={Boolean(values.filterTo) ? dayjs(values.filterTo) : null}
                         minDate={dayjs(values.filterFrom)}
                         maxDate={dayjs()}
@@ -144,7 +144,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
             </Stack>
             <Stack className="mt-2">
                 <Typography variant="caption">
-                    {formatMessage({ id: "FILTER.NOTICE_TYPE" })}
+                    {formatMessage({ id: "NOTICE_TYPE" })}
                 </Typography>
                 <Autocomplete
                     multiple
@@ -163,7 +163,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     }}
                     getOptionLabel={(option) => formatMessage({ id: option.label })}
                     renderInput={(params) => (
-                        <TextField {...params} placeholder={formatMessage({ id: "FILTER.NOTICE_TYPE" })} />
+                        <TextField {...params} placeholder={formatMessage({ id: "NOTICE_TYPE" })} />
                     )}
                     renderOption={(props, option, state) => {
                         return (

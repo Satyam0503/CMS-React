@@ -16,7 +16,7 @@ import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
 import { countAppliedFilter, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { GetAllNoticePayload, NoticeModel, NoticeResponseModel } from "./models";
+import { GetAllNoticePayload, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
@@ -80,6 +80,10 @@ export const NoticeBoard = () => {
       pageNo: 0,
     });
   };
+  const handleNoticeViewClose = () => {
+    setSelectedNotice(null);
+    window.history.replaceState(null, document.title, window.location.href);
+  }
 
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.NOTICE_BOARD" }));
@@ -109,9 +113,12 @@ export const NoticeBoard = () => {
   }, [refresh, paginationValues, searchValue, noticeBoardFilter])
 
   useEffect(() => {
-    setSelectedNotice(noticeIdFromRedirect);
-    window.history.replaceState(null, document.title, window.location.href);
+    if (noticeIdFromRedirect) {
+      setSelectedNotice(noticeIdFromRedirect);
+      window.history.replaceState(null, document.title, window.location.href);
+    }
   }, [noticeIdFromRedirect])
+
   return (
     <>
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
@@ -171,7 +178,7 @@ export const NoticeBoard = () => {
         />
       }
       {
-        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={() => setSelectedNotice(null)} />
+        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={handleNoticeViewClose} />
       }
     </>
   );

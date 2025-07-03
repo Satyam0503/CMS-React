@@ -733,12 +733,12 @@ export const LeaveMangementTableColumnList: ColumnListTypes[] = [
 
   {
     id: "from",
-    label: "FILTER.FROM",
+    label: "FROM",
   },
 
   {
     id: "to",
-    label: "FILTER.TO",
+    label: "TO",
   },
   {
     id: "days",

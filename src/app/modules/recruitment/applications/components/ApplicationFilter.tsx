@@ -126,7 +126,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 onClick={handleClick}
               >
                 <Typography variant="body2" sx={{ cursor: "pointer" }}>
-                  {formatMessage({ id: "FILTER.FROM_TO_DATE" })}
+                  {formatMessage({ id: "FROM_TO_DATE" })}
                 </Typography>
                 {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
               </Stack>
@@ -162,7 +162,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
 
             <Stack spacing={1} direction="row">
               <CustomisedDatePicker
-                label={formatMessage({ id: "FILTER.FROM" })}
+                label={formatMessage({ id: "FROM" })}
                 value={
                   Boolean(values.filterFrom)
                     ? dayjs(values.filterFrom)
@@ -177,7 +177,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 }}
               />
               <CustomisedDatePicker
-                label={formatMessage({ id: "FILTER.TO" })}
+                label={formatMessage({ id: "TO" })}
                 value={
                   Boolean(values.filterTo) ? dayjs(values.filterTo) : null
                 }

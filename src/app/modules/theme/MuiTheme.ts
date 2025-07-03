@@ -333,7 +333,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
           },
           root: {
             "& .MuiOutlinedInput-root.MuiInputBase-sizeSmall": {
-              padding: 4,
+              padding: 5,
             },
           },
           clearIndicator: {

@@ -72,7 +72,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
 
             <Stack spacing={2} direction={"row"}>
               <CustomisedDatePicker
-                label={intl.formatMessage({ id: "FILTER.FROM" })}
+                label={intl.formatMessage({ id: "FROM" })}
                 value={
                   Boolean(values.filterFrom)
                     ? dayjs(values.filterFrom)
@@ -87,7 +87,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
                 }}
               />
               <CustomisedDatePicker
-                label={intl.formatMessage({ id: "FILTER.TO" })}
+                label={intl.formatMessage({ id: "TO" })}
                 value={
                   Boolean(values.filterTo) ? dayjs(values.filterTo) : null
                 }
