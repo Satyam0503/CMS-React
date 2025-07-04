@@ -10,7 +10,7 @@ type Props = {
 };
 const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
   return (
-    <Stack className="flex-row align-items-start gap-2 rounded p-4 h-100" sx={{ bgcolor: 'background.card' }}>
+    <Stack className="flex-row align-items-start gap-2 rounded p-4" sx={{ bgcolor: 'background.card' }}>
       <Avatar color="primary"
         sx={{
           width: 52,

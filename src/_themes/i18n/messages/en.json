@@ -18,7 +18,6 @@
   "S_No": "S.No.",
   "Action": "Actions",
   "Name": "Name",
-  "Days": "Days",
   "Remaining": "Remaining",
   "First_In": "First in",
   "Last_Out": "Last out",
@@ -228,17 +227,17 @@
   "NOTICE_TYPE.ALL": "All",
 
   "LINK.NOTIFICATION": "check the submissions",
-  "LEAVE.CL": "Casual Leaves",
-  "LEAVE.ML": "Medical Leaves",
-  "LEAVE.EL": "Earned Leaves",
-  "LEAVE.UNPAID": "Unpaid Leaves",
-  "LEAVE_TYPE": "Leave Type",
-  "LEAVE.ALLOTTED": "Allotted",
-  "LEAVE.TAKEN": "Taken",
-  "LEAVE.AVAILABLE": "Available",
-  "LEAVE.ASSIGNMENT": "Leave Assignment",
-  "LEAVE.REMAINING": "Remaining Leaves",
 
+  "DAY": "Day",
+  "DAYS": "Days",
+  "HALF_DAY_ALLOWED": "Half Day",
+  "MIN_NOTICE_DAY": "Min Notice Days",
+  "IS_HALF_DAY_LABEL": "Half Day Allowed",
+  "LEAVE_TYPE": "Leave Type",
+  "LEAVE_BALANCE": "Leave Balance",
+  "LEAVE_TYPES": "Leave Types",
+  "LEAVE_REQUEST": "Leave Request",
+  "LEAVE_REQUESTS": "Leave Requests",
   "ADD_LEAVE_TYPE": "Add New Leave Type",
   "EDIT_LEAVE_TYPE": "Edit Leave Type",
   "CASUAL_LEAVE": "Casual Leave",
@@ -650,7 +649,5 @@
   "Toast.UpdateNoticeFailed": "Failed to Update notice",
   "Toast.Delete.Success": "Successfully Deleted",
   "Toast.Delete.Failed": "Failed to Delete",
-  "Toast.Message.Content": "You have new message from {userName}",
-
-  "LEAVE_REQUEST": "Leave Request"
+  "Toast.Message.Content": "You have new message from {userName}"
 }

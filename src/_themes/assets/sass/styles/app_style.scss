@@ -484,6 +484,19 @@ button:hover .ql-fill,
     }
   }
 }
+.html-content {
+  // p {
+  //   margin: 0;
+  // }
+  img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border: 1px solid $neutral-300;
+    display: block;
+    border-radius: 0.25rem;
+  }
+}
 
 .hover-secondary {
   &:hover {

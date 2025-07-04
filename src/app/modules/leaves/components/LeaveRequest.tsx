@@ -11,8 +11,8 @@ export const LeaveRequest = () => {
     const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
     const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
     return (
-        <Card className="p-4">
-            <Typography variant="h5" className="mb-4">{i({ id: "LEAVE_REQUEST" })}</Typography>
+        <Card className="p-4 h-100">
+            <Typography variant="h6" className="mb-4">{i({ id: "LEAVE_REQUESTS" })}</Typography>
             <CustomisedTable
                 keyName="leaveRequestId"
                 rows={leaveRequest}

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Avatar, Box, Skeleton, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { relativeTimeFormatter, sanitizeHtmlContent } from "../../../../utils/common";
@@ -76,7 +76,9 @@ export const NoticeViewModel: FC<Props> = (props) => {
                                 </Stack>
                             </Stack>
                         </Stack>
+                        <Divider className="mt-2" />
                         <Box
+                            className="html-content"
                             component="div"
                             dangerouslySetInnerHTML={{
                                 __html: sanitizeHtmlContent(notice?.noticeMessage ?? ""),

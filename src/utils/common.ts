@@ -147,13 +147,10 @@ export const statusEncoder = (status: string) => {
   }
 };
 export const statusDecoder = (status: boolean) => {
-  switch (status) {
-    case true:
-      return "ACTIVE";
-    case false:
-      return "INACTIVE";
-    default:
-      return "";
+  if (status) {
+    return "ACTIVE";
+  } else {
+    return "INACTIVE";
   }
 };
 

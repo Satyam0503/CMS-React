@@ -21,6 +21,7 @@ import {
   CommentAction,
   LANGUAGE,
   LEAVE_REQUEST_STATUS,
+  LEAVE_TYPE,
   Modules,
   ModulesName,
   ModulesTitles,
@@ -34,6 +35,8 @@ import {
   AdminPanelSettings,
   Book,
   CalendarMonth,
+  Check,
+  Close,
   ColorLens,
   Contacts,
   Info,
@@ -430,6 +433,35 @@ export const LeaveRequestStatusTypes = [
     value: LEAVE_REQUEST_STATUS.REJECTED
   }
 ]
+
+export const LeaveTypeConstant = [
+  {
+    id: 1,
+    label: "SICK_LEAVE",
+    value: LEAVE_TYPE.SICK_LEAVE
+  },
+  {
+    id: 2,
+    label: "CASUAL_LEAVE",
+    value: LEAVE_TYPE.CASUAL_LEAVE
+  },
+  {
+    id: 3,
+    label: "EARNED_LEAVE",
+    value: LEAVE_TYPE.EARNED_LEAVE
+  },
+  {
+    id: 4,
+    label: "MATERNITY_LEAVE",
+    value: LEAVE_TYPE.MATERNITY_LEAVE
+  },
+  {
+    id: 5,
+    label: "PATERNITY_LEAVE",
+    value: LEAVE_TYPE.PATERNITY_LEAVE
+  }
+]
+
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
@@ -1046,6 +1078,50 @@ export const LeaveRequestTableColumnList: ColumnListTypes[] = [
         ))}
       </Select>
     )
+  },
+]
+
+export const LeaveTypeColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "S_No",
+    minWidth: 60,
+  },
+  {
+    id: "leaveTypes",
+    label: "LEAVE_TYPE",
+    minWidth: 200,
+    format: (value: LEAVE_TYPE) => <FormattedMessage id={LeaveTypeMapper[value]} />
+  },
+  {
+    id: "isHalfDay",
+    label: "HALF_DAY_ALLOWED",
+    minWidth: 200,
+    build: (value: boolean) => {
+      return value ? <Check className="text-success icon-fs-16" /> : <Close className="text-danger icon-fs-16" />
+    }
+  },
+  {
+    id: "minAdvanceNoticeDate",
+    label: "MIN_NOTICE_DAY",
+    format: (value: number) => (
+      <>
+        {value}
+        <FormattedMessage id={value > 1 ? "DAYS" : "DAY"} />
+      </>
+    )
+  },
+  {
+    id: "isActive",
+    label: "STATUS",
+    build: (status: boolean) => {
+      return (
+        <StyleStatus
+          label={statusDecoder(status)}
+          className={clsx({ success: status, danger: !status })}
+        />
+      );
+    },
   },
 ]
 
