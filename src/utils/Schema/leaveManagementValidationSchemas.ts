@@ -14,3 +14,8 @@ export const leaveTypeValidationSchma = Yup.object().shape({
   isHalfDay: Yup.bool().required(),
   isActive: Yup.bool().required(),
 });
+
+export const leaveBalanceValidationSchema = Yup.object().shape({
+  employeeId: Yup.string().required("REQUIRED_TYPE"),
+  leaveTypeBalances: Yup.array(),
+});

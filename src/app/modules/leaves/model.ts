@@ -28,4 +28,31 @@ export type LeaveRequestModel = RequestLeaveModel & {
   jobRole: string;
 };
 
+export type LeaveBalanceFilter = {
+  employeeId: string;
+  year: string;
+  pageNo: number;
+  pageSize: number;
+};
+
+export type LeaveBalanceResponseModel = {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  createdBy: string;
+  year: string;
+  leaveTypeBalances: LeaveTypeBalance[];
+};
+
+export type LeaveBalanceInitialValueModel = {
+  employeeId: string;
+  leaveTypeBalances: LeaveTypeBalance[];
+};
+
+export type LeaveTypeBalance = {
+  leaveType: number;
+  maximumLeave: number;
+  remainingLeave?: number;
+};
+
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;

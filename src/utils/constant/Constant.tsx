@@ -166,7 +166,8 @@ export const ServiceUrl = {
 
   // leave management 
   CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
-  GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`
+  GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`,
+  GET_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetLeaveBalance`,
 };
 
 export const languages = [

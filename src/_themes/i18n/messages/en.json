@@ -237,6 +237,8 @@
   "MIN_NOTICE_DAY": "Min Advance Notice Days",
   "LEAVE_TYPE": "Leave Type",
   "LEAVE_BALANCE": "Leave Balance",
+  "ADD_LEAVE_BALANCE": "Add Leave Balance",
+  "PLEASE_ADD_LEAVE_TYPES": "Please add leave types",
   "LEAVE_TYPES": "Leave Types",
   "LEAVE_REQUEST": "Leave Request",
   "LEAVE_REQUESTS": "Leave Requests",
@@ -247,6 +249,7 @@
   "EARNED_LEAVE": "Earned Leave",
   "MATERNITY_LEAVE": "Maternity Leave",
   "PATERNITY_LEAVE": "Paternity Leave",
+  "EMPLOYEE": "Employee",
 
   "MENU.LEAVE_REQUEST": " Leave Request",
   "MENU.CONTACTS": "Contacts",

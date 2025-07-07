@@ -1,7 +1,7 @@
 import { getRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { GetLeaveTypeResponse, LeaveType } from "./model";
+import { GetLeaveTypeResponse, LeaveBalanceFilter, LeaveType } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
   return postRequest<LeaveType, ApiResponse>(
@@ -18,3 +18,7 @@ export const getLeaveTypes = (isActive?: boolean) => {
   }
   return getRequest<GetLeaveTypeResponse>(ServiceUrl.GET_LEAVE_TYPES);
 };
+
+// export const getLeaveBalance = (payload: LeaveBalanceFilter) => {
+//   return postRequest<LeaveBalanceFilter>(ServiceUrl.GET_LEAVE_BALANCE, payload);
+// };

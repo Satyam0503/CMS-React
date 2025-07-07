@@ -59,7 +59,7 @@ export const LeaveTypes = () => {
         <Card className="p-4 h-100">
             <Stack className="flex-row justify-content-between mb-4">
                 <Typography variant="h5">{i({ id: "LEAVE_TYPES" })}</Typography>
-                <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} />
+                <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} tooltip={i({ id: "ADD_LEAVE_TYPE" })} />
             </Stack>
             <CustomisedTable keyName="leaveTypeId" columns={LeaveTypeColumnList} rows={leaveTypes} page={1} rowsPerPage={20} handleEdit={handleLeaveTypeEdit} />
             {
