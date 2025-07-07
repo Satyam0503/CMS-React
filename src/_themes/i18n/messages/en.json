@@ -227,12 +227,14 @@
   "NOTICE_TYPE.ALL": "All",
 
   "LINK.NOTIFICATION": "check the submissions",
-
+  "ALLOWED": "Allowed",
+  "NOT_ALLOWED": "Not Allowed",
+  "YES": "Yes",
+  "NO": "No",
   "DAY": "Day",
   "DAYS": "Days",
-  "HALF_DAY_ALLOWED": "Half Day",
-  "MIN_NOTICE_DAY": "Min Notice Days",
-  "IS_HALF_DAY_LABEL": "Half Day Allowed",
+  "HALF_DAY": "Half Day",
+  "MIN_NOTICE_DAY": "Min Advance Notice Days",
   "LEAVE_TYPE": "Leave Type",
   "LEAVE_BALANCE": "Leave Balance",
   "LEAVE_TYPES": "Leave Types",
@@ -649,5 +651,12 @@
   "Toast.UpdateNoticeFailed": "Failed to Update notice",
   "Toast.Delete.Success": "Successfully Deleted",
   "Toast.Delete.Failed": "Failed to Delete",
-  "Toast.Message.Content": "You have new message from {userName}"
+  "Toast.Message.Content": "You have new message from {userName}",
+  "SUCCESSFULLY_UPDATED": "Updated Successfully",
+  "SUCCESSFULLY_CREATED": "Created Successfully",
+  "LEAVETYPE_ADD_FAILED": "Failed to create leave type. Please try again",
+  "LEAVETYPE_UPDATE_FAILED": "Failed to update leave type",
+  "MIN_ADVANCE_NOTICE_DAY": "Advance notice must be 1 day or more",
+  "INVALID_LEAVE_TYPE": "Invalid leave type",
+  "REQUIRED_TYPE": "Field is required"
 }

@@ -61,7 +61,7 @@ import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models"
 import { NoticeModel, NoticeResponseModel } from "../../app/modules/noticeboard/models";
 import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
 import { ViewLeaveReason } from "../../app/shared/components/ViewLeaveReason";
-import { LeaveRequestModel } from "../../app/modules/leaves/model";
+import { LeaveRequestModel, LeaveType } from "../../app/modules/leaves/model";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -163,6 +163,10 @@ export const ServiceUrl = {
   UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
   DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`,
   GET_NOTICE_BY_ID: `${BaseUrl}/api/NoticeBoard/GetNoticeById`,
+
+  // leave management 
+  CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
+  GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`
 };
 
 export const languages = [
@@ -1095,7 +1099,7 @@ export const LeaveTypeColumnList: ColumnListTypes[] = [
   },
   {
     id: "isHalfDay",
-    label: "HALF_DAY_ALLOWED",
+    label: "HALF_DAY",
     minWidth: 200,
     build: (value: boolean) => {
       return value ? <Check className="text-success icon-fs-16" /> : <Close className="text-danger icon-fs-16" />
@@ -1122,6 +1126,19 @@ export const LeaveTypeColumnList: ColumnListTypes[] = [
         />
       );
     },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: LeaveType,
+      handleLeaveTypeEdit: (row: LeaveType) => void,
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleLeaveTypeEdit}
+      />
+    ),
   },
 ]
 

@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 import { LEAVE_TYPE } from "../../../utils/enums";
+import { ResponseData } from "../../../utils/common_types";
 
 export interface LeaveType {
   leaveTypeId?: string;
@@ -26,3 +27,5 @@ export type LeaveRequestModel = RequestLeaveModel & {
   profileUrl: string;
   jobRole: string;
 };
+
+export type GetLeaveTypeResponse = ResponseData<LeaveType>;
