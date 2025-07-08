@@ -8,19 +8,19 @@ export interface LeaveType {
   minAdvanceNoticeDate: number;
   maxLeaveDays: number;
   isActive: boolean;
-  leaveTypes: LEAVE_TYPE;
+  leaveType: LEAVE_TYPE;
 }
 
 export interface RequestLeaveModel {
   leaveRequestId?: string;
-  employeeId: string;
-  leaveTypeId: string;
+  leaveType: LEAVE_TYPE;
+  isHalfDay: boolean;
   startDate: string | Dayjs | null;
   endDate: string | Dayjs | null;
   totalDays: number;
   reason: string;
-  approvedBy: string;
-  status: number;
+  ReviewedBy?: string;
+  status?: number;
 }
 
 export type LeaveRequestModel = RequestLeaveModel & {

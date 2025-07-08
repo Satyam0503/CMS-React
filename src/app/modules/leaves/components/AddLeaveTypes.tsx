@@ -61,7 +61,7 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                     <Grid item xs={12} >
                                         <SelectInput
                                             label={i({ id: "LEAVE_TYPE" })}
-                                            name="leaveTypes"
+                                            name="leaveType"
                                         >
                                             {LeaveTypeConstant.map(type => (
                                                 <MenuItem key={type.id} value={type.value}>{i({ id: type.label })} </MenuItem>

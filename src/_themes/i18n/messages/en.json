@@ -97,8 +97,8 @@
   "AUTH.REGISTER.TITLE": "Registration",
   "APPLICANT.STATUS": "Applicant Status",
   "APPLICATION.LEAVE": "Leave Application",
-  "APPLICATION.START": "Start Date",
-  "APPLICATION.END": "End date",
+  "START_DATE": "Start Date",
+  "END_DATE": "End Date",
   "APPLICATION.HALF.DAY": "Half Day",
   "APPLICATION.NOS": " Total number of days",
   "REASON": "Reason",
@@ -250,6 +250,7 @@
   "EARNED_LEAVE": "Earned Leave",
   "MATERNITY_LEAVE": "Maternity Leave",
   "PATERNITY_LEAVE": "Paternity Leave",
+  "APPLY_FOR_LEAVE": "Apply for leave",
   "EMPLOYEE": "Employee",
 
   "MENU.LEAVE_REQUEST": " Leave Request",
@@ -334,11 +335,11 @@
   "PROFILE.UPDATE_CERTIFICATION": "Update Certification",
   "PROFILE.EXP": "Years of experience",
   "PROFILE.EXP_CURRENT": "Years in {companyName}",
-  "PROFILE.TAB.ABOUT": "About",
-  "PROFILE.TAB.LEAVE": "Leave",
-  "PROFILE.TAB.PERFORMANCE": "Performance",
-  "PROFILE.TAB.WORK": "Work History",
-  "PROFILE.TAB.SETTING": "Setting",
+  "ABOUT": "About",
+  "LEAVE_TRACKER": "Leave Tracker",
+  "PERFORMANCE": "Performance",
+  "WORK_HISTORY": "Work History",
+  "SETTING": "Setting",
 
   "PROFILE.EMPLOYMENT": "Work experience",
   "PROFILE.CURRENT_CTC": "Current CTC",
@@ -665,5 +666,6 @@
   "INVALID_LEAVE_TYPE": "Invalid leave type",
   "REQUIRED_TYPE": "Field is required",
   "PLEASE_SELECT_EMPLOYEE": "Please select employee",
-  "PLEASE_ADD_LEAVE_BALANCE": "Please add leave balance for employee"
+  "PLEASE_ADD_LEAVE_BALANCE": "Please add leave balance for employee",
+  "PAST_START_DATE_ERROR": "Start date can not be in the past"
 }

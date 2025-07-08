@@ -523,12 +523,12 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "startDate",
-    label: "APPLICATION.START",
+    label: "START_DATE",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
     id: "endDate",
-    label: "APPLICATION.START",
+    label: "START_DATE",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
@@ -1069,7 +1069,7 @@ export const LeaveRequestTableColumnList: ColumnListTypes[] = [
     )
   },
   {
-    id: "approvedBy",
+    id: "reviewedBy",
     label: "APPROVED_BY",
     minWidth: 150,
   },

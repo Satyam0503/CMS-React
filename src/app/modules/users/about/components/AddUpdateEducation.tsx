@@ -77,7 +77,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 <Stack>
                   <CustomisedDatePicker
                     label={intl.formatMessage({
-                      id: "APPLICATION.START",
+                      id: "START_DATE",
                     })}
                     name="startDate"
                     value={values.startDate && dayjs(values.startDate)}
@@ -97,7 +97,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                 <Stack>
                   <CustomisedDatePicker
                     label={intl.formatMessage({
-                      id: "APPLICATION.END",
+                      id: "END_DATE",
                     })}
                     name="endDate"
                     value={values.endDate && dayjs(values.endDate)}

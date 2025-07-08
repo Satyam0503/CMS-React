@@ -77,12 +77,12 @@ export default function AddUpdateCertification(props: PropTypes) {
                     <Stack>
                       {/* <Typography variant="body1">
                         {intl.formatMessage({
-                          id: "APPLICATION.START",
+                          id: "START_DATE",
                         })}
                       </Typography> */}
                       <CustomisedDatePicker
                         label={intl.formatMessage({
-                          id: "APPLICATION.START",
+                          id: "START_DATE",
                         })}
                         name="startDate"
                         value={values.startDate && dayjs(values.startDate)}
@@ -103,7 +103,7 @@ export default function AddUpdateCertification(props: PropTypes) {
                     <Stack>
                       <CustomisedDatePicker
                         label={intl.formatMessage({
-                          id: "APPLICATION.END",
+                          id: "END_DATE",
                         })}
                         name="endDate"
                         value={values.endDate && dayjs(values.endDate)}

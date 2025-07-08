@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import { LEAVE_TYPE } from "../enums";
 
 export const leaveTypeValidationSchma = Yup.object().shape({
-  leaveTypes: Yup.number()
+  leaveType: Yup.number()
     .oneOf(
       Object.values(LEAVE_TYPE).filter((lt) => typeof lt === "number"),
       "INVALID_LEAVE_TYPE"
@@ -33,4 +33,20 @@ export const leaveBalanceValidationSchema = Yup.object().shape({
       })
     )
     .required("Leave balances are required"),
+});
+
+export const leaveRequestValidationSchema = Yup.object().shape({
+  leaveTypes: Yup.number()
+    .oneOf(
+      Object.values(LEAVE_TYPE).filter((lt) => typeof lt === "number"),
+      "INVALID_LEAVE_TYPE"
+    )
+    .required("REQUIRED_TYPE"),
+  isHalfDay: Yup.bool().required("INVALID_LEAVE_TYPE"),
+  startDate: Yup.date()
+    .min(new Date(), "PAST_START_DATE_ERROR")
+    .required("REQUIRED_TYPE"),
+  endDate: Yup.date().min(Yup.ref("startDate")).required("REQUIRED_TYPE"),
+  totalDays: Yup.number().required("REQUIRED_TYPE"),
+  reason: Yup.string().trim().min(10).required("REQUIRED_TYPE"),
 });

@@ -16,7 +16,7 @@ const initialLeaveTypeValue: LeaveType = {
     minAdvanceNoticeDate: 1,
     isActive: true,
     maxLeaveDays: 1,
-    leaveTypes: LEAVE_TYPE.SICK_LEAVE
+    leaveType: LEAVE_TYPE.SICK_LEAVE
 }
 
 export const LeaveTypes = () => {

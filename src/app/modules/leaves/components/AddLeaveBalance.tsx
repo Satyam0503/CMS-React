@@ -134,7 +134,7 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                         return <Grid item xs={12} md={6} key={index}>
                                             <TextField
                                                 fullWidth
-                                                label={i({ id: LeaveTypeMapper[type.leaveTypes] })}
+                                                label={i({ id: LeaveTypeMapper[type.leaveType] })}
                                                 type="number"
                                                 name="leaveTypeBalances"
                                                 inputProps={{
@@ -142,9 +142,9 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                                     max: type.maxLeaveDays
                                                 }}
                                                 disabled={!values.employeeId}
-                                                value={values.leaveTypeBalances.find(item => item.leaveType === type.leaveTypes)?.maximumLeave ?? null}
+                                                value={values.leaveTypeBalances.find(item => item.leaveType === type.leaveType)?.maximumLeave ?? null}
                                                 onChange={(e) => {
-                                                    const index = values.leaveTypeBalances.findIndex(item => item.leaveType === type.leaveTypes);
+                                                    const index = values.leaveTypeBalances.findIndex(item => item.leaveType === type.leaveType);
                                                     const updatedLeaveBalances = [...values.leaveTypeBalances];
                                                     if (e.target.value === "") {
                                                         if (index > -1) {
@@ -153,9 +153,9 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                                     }
                                                     else {
                                                         if (index > -1) {
-                                                            updatedLeaveBalances[index] = { leaveType: type.leaveTypes, maximumLeave: Number(e.target.value) };
+                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: Number(e.target.value) };
                                                         } else {
-                                                            updatedLeaveBalances.push({ leaveType: type.leaveTypes, maximumLeave: Number(e.target.value) });
+                                                            updatedLeaveBalances.push({ leaveType: type.leaveType, maximumLeave: Number(e.target.value) });
                                                         }
                                                     }
                                                     setFieldValue("leaveTypeBalances", updatedLeaveBalances);

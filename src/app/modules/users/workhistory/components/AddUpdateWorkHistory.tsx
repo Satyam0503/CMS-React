@@ -84,7 +84,7 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <CustomisedDatePicker
-                      label={formatMessage({ id: "APPLICATION.START" })}
+                      label={formatMessage({ id: "START_DATE" })}
                       name="startDate"
                       value={values.startDate && dayjs(values.startDate)}
                       setValue={(newDate: Dayjs | null) => {
@@ -102,7 +102,7 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                   <Grid item xs={12} sm={6}>
                     <CustomisedDatePicker
                       label={formatMessage({
-                        id: "APPLICATION.END",
+                        id: "END_DATE",
                       })}
                       name="endDate"
                       value={values.endDate && dayjs(values.endDate)}
