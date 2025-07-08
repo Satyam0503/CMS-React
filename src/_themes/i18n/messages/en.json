@@ -234,7 +234,8 @@
   "DAY": "Day",
   "DAYS": "Days",
   "HALF_DAY": "Half Day",
-  "MIN_NOTICE_DAY": "Min Advance Notice Days",
+  "MAX_LEAVE_DAYS": "Max Leave Days/Year",
+  "MIN_NOTICE_DAY": "Advance Notice Days",
   "LEAVE_TYPE": "Leave Type",
   "LEAVE_BALANCE": "Leave Balance",
   "ADD_LEAVE_BALANCE": "Add Leave Balance",
@@ -660,6 +661,9 @@
   "LEAVETYPE_ADD_FAILED": "Failed to create leave type. Please try again",
   "LEAVETYPE_UPDATE_FAILED": "Failed to update leave type",
   "MIN_ADVANCE_NOTICE_DAY": "Advance notice must be 1 day or more",
+  "MAX_LEAVE_DAY": "Maximum leave must be 1 day or more",
   "INVALID_LEAVE_TYPE": "Invalid leave type",
-  "REQUIRED_TYPE": "Field is required"
+  "REQUIRED_TYPE": "Field is required",
+  "PLEASE_SELECT_EMPLOYEE": "Please select employee",
+  "PLEASE_ADD_LEAVE_BALANCE": "Please add leave balance for employee"
 }

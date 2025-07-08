@@ -6,6 +6,7 @@ export interface LeaveType {
   leaveTypeId?: string;
   isHalfDay: boolean;
   minAdvanceNoticeDate: number;
+  maxLeaveDays: number;
   isActive: boolean;
   leaveTypes: LEAVE_TYPE;
 }
@@ -35,17 +36,10 @@ export type LeaveBalanceFilter = {
   pageSize: number;
 };
 
-export type LeaveBalanceResponseModel = {
-  id: string;
+export type LeaveBalanceRequestModel = {
+  id?: string;
   employeeId: string;
-  employeeName: string;
-  createdBy: string;
-  year: string;
-  leaveTypeBalances: LeaveTypeBalance[];
-};
-
-export type LeaveBalanceInitialValueModel = {
-  employeeId: string;
+  // year: string;
   leaveTypeBalances: LeaveTypeBalance[];
 };
 

@@ -4,10 +4,10 @@ import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { AddLeaveBalance } from "./AddLeaveBalance";
-import { LeaveBalanceInitialValueModel } from "../model";
+import { LeaveBalanceRequestModel } from "../model";
 
 
-const initialLeavBalanceValue: LeaveBalanceInitialValueModel = {
+const initialLeavBalanceValue: LeaveBalanceRequestModel = {
     employeeId: "",
     leaveTypeBalances: []
 }

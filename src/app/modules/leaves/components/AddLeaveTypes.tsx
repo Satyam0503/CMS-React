@@ -26,6 +26,8 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
     const { formatMessage: i } = useIntl();
     const handleLeaveTypeSubmit = async (values: LeaveType, setSubmitting: (isSubmitting: boolean) => void) => {
         try {
+            console.log(values);
+
             const { data } = await createUpdateLeaveType(values);
             if (data.success) {
                 handleClose();
@@ -66,11 +68,18 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                             ))}
                                         </SelectInput>
                                     </Grid>
-                                    <Grid item xs={12} >
+                                    <Grid item xs={12} md={6}>
                                         <TextInput
                                             type="number"
                                             name="minAdvanceNoticeDate"
                                             label={i({ id: "MIN_NOTICE_DAY" })}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <TextInput
+                                            type="number"
+                                            name="maxLeaveDays"
+                                            label={i({ id: "MAX_LEAVE_DAYS" })}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>

@@ -168,6 +168,8 @@ export const ServiceUrl = {
   CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
   GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`,
   GET_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetLeaveBalance`,
+  CREATE_UPDATE_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveBalance`,
+
 };
 
 export const languages = [
@@ -1101,10 +1103,13 @@ export const LeaveTypeColumnList: ColumnListTypes[] = [
   {
     id: "isHalfDay",
     label: "HALF_DAY",
-    minWidth: 200,
     build: (value: boolean) => {
       return value ? <Check className="text-success icon-fs-16" /> : <Close className="text-danger icon-fs-16" />
     }
+  },
+  {
+    id: "maxLeaveDays",
+    label: "MAX_LEAVE_DAYS",
   },
   {
     id: "minAdvanceNoticeDate",

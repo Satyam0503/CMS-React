@@ -15,6 +15,7 @@ const initialLeaveTypeValue: LeaveType = {
     isHalfDay: false,
     minAdvanceNoticeDate: 1,
     isActive: true,
+    maxLeaveDays: 1,
     leaveTypes: LEAVE_TYPE.SICK_LEAVE
 }
 
