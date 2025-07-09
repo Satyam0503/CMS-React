@@ -333,7 +333,7 @@ export const createApplicationTheme = (mode: PaletteMode) => {
           },
           root: {
             "& .MuiOutlinedInput-root.MuiInputBase-sizeSmall": {
-              padding: 4,
+              padding: 5,
             },
           },
           clearIndicator: {
@@ -399,10 +399,10 @@ export const createApplicationTheme = (mode: PaletteMode) => {
               padding: "24px",
             },
             "@media (min-width:900px)": {
-              padding: "32px",
+              padding: "28px",
             },
             "@media (min-width:1280px)": {
-              padding: "40px",
+              padding: "32px",
             },
           },
         },
@@ -412,7 +412,6 @@ export const createApplicationTheme = (mode: PaletteMode) => {
         styleOverrides: {
           paper: {
             maxWidth: "720px",
-            // width:"720px",
             minWidth: "300px", // Default min-width for small screens
             "@media (min-width:600px)": {
               minWidth: "400px", // For small and up screens
@@ -571,7 +570,6 @@ export const createApplicationTheme = (mode: PaletteMode) => {
       },
       body1: {
         fontSize: 14,
-        fontWeight: 500,
       },
       body2: {
         fontSize: 12,
@@ -581,10 +579,10 @@ export const createApplicationTheme = (mode: PaletteMode) => {
         fontWeight: 600,
       },
       subtitle1: {
-        color: colors.neutral[500],
+        color: theme.palette.text.primary,
       },
       subtitle2: {
-        color: colors.primary[500],
+        color: theme.palette.primary.main,
       },
     },
   });

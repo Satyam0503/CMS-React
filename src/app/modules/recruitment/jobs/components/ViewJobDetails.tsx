@@ -61,7 +61,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(
 
             <Grid item xs={4} md={6}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "PROFILE.STATUS" })}
+                {intl.formatMessage({ id: "STATUS" })}
               </Typography>
             </Grid>
             <Grid item xs={8} md={6}>

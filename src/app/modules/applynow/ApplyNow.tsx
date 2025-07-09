@@ -122,7 +122,7 @@ export default function ApplyNow() {
         }
         setActiveJobPositionsList(methodResults);
 
-        const selectedJob = methodResults.find((job) => job.status === true);
+        const selectedJob = methodResults.find((job) => STATUS === true);
         if (selectedJob) {
           setSelectedJobPosition(selectedJob);
           setFromValues({

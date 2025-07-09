@@ -1,10 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { FiltersType } from "../../../utils/common_types";
 import {
-  FiltersType,
-} from "../../../utils/common_types";
-import { clearAllLocalFilter, getAppliedFilters, setLocalFilter } from "../../../utils/common";
-import { ApplicationFilterModel, ProcessLogFilterModel } from "../../modules/recruitment/models";
-import { EmployeeFilterModel } from "../../modules/employees/models"
+  clearAllLocalFilter,
+  getAppliedFilters,
+  setLocalFilter,
+} from "../../../utils/common";
+import {
+  ApplicationFilterModel,
+  ProcessLogFilterModel,
+} from "../../modules/recruitment/models";
+import { EmployeeFilterModel } from "../../modules/employees/models";
+import { NoticeBoardFilterModel } from "../../modules/noticeboard/models";
 
 const filterSlice = createSlice({
   name: "filters",
@@ -17,12 +23,22 @@ const filterSlice = createSlice({
       state.application = action.payload;
       setLocalFilter(state);
     },
-    setProcessLogFilter: (state, action: PayloadAction<ProcessLogFilterModel>) => {
+    setProcessLogFilter: (
+      state,
+      action: PayloadAction<ProcessLogFilterModel>
+    ) => {
       state.processLog = action.payload;
       setLocalFilter(state);
     },
     setEmployeesFilter: (state, action: PayloadAction<EmployeeFilterModel>) => {
       state.employee = action.payload;
+      setLocalFilter(state);
+    },
+    setNoticeBoardFilter: (
+      state,
+      action: PayloadAction<NoticeBoardFilterModel>
+    ) => {
+      state.noticeBoard = action.payload;
       setLocalFilter(state);
     },
     resetAllFilters: (state) => {
@@ -31,12 +47,22 @@ const filterSlice = createSlice({
       state.processLog = null;
       clearAllLocalFilter();
     },
-    resetFilter: (state, action: PayloadAction<{ page: keyof FiltersType }>) => {
+    resetFilter: (
+      state,
+      action: PayloadAction<{ page: keyof FiltersType }>
+    ) => {
       state[action.payload.page] = null;
       setLocalFilter(state);
-    }
+    },
   },
 });
 
 export const filterReducers = filterSlice.reducer;
-export const { setApplicationFilter, setEmployeesFilter, setProcessLogFilter, resetFilter, resetAllFilters } = filterSlice.actions;
+export const {
+  setApplicationFilter,
+  setEmployeesFilter,
+  setProcessLogFilter,
+  resetFilter,
+  resetAllFilters,
+  setNoticeBoardFilter,
+} = filterSlice.actions;

@@ -15,6 +15,7 @@ import { DepartmentModel, RoleModel } from "../../admin/models";
 import { postNotice, updateNotice } from "../services";
 import { toast } from "react-toastify";
 import { useLang } from "../../../../_themes/i18n/Metronici18n";
+import TextEditor from "../../../shared/components/TextEditor";
 
 
 interface PropsTypes {
@@ -86,6 +87,7 @@ export const AddNotice: FC<PropsTypes> = ({
       setSubmitting(false);
     }
   }
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Formik
@@ -95,17 +97,17 @@ export const AddNotice: FC<PropsTypes> = ({
           handleAddUpdateNotice(values, setSubmitting);
         }}
       >
-        {({ values, isValid, dirty, isSubmitting, handleSubmit }) => (
+        {({ values, isValid, dirty, isSubmitting, handleSubmit, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Typography variant="h5" mb={2}>
               {isEdit
-                ? formatMessage({ id: "NOTICE.EDIT_NOTICE" })
-                : formatMessage({ id: "NOTICE.POST_NOTICE" })}
+                ? formatMessage({ id: "EDIT_NOTICE" })
+                : formatMessage({ id: "POST_NOTICE" })}
             </Typography>
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12} sm={6}>
                 <SelectInput
-                  label={formatMessage({ id: "FORM.TYPE" })}
+                  label={formatMessage({ id: "NOTICE_TYPE" })}
                   name="noticeType"
                   required={true}
                 >
@@ -116,7 +118,7 @@ export const AddNotice: FC<PropsTypes> = ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SelectInput
-                  label={formatMessage({ id: "USER.TARGET" })}
+                  label={formatMessage({ id: "ROLE" })}
                   name="target"
                   required={true}
                 >
@@ -128,7 +130,7 @@ export const AddNotice: FC<PropsTypes> = ({
               </Grid>
               <Grid item xs={12} >
                 <SelectInput
-                  label={formatMessage({ id: "MENU.DEPT" })}
+                  label={formatMessage({ id: "DEPARTMENT" })}
                   name="departments"
                   required={true}
                 >
@@ -147,20 +149,16 @@ export const AddNotice: FC<PropsTypes> = ({
               <Grid item xs={12}>
                 <TextInput
                   multiline={true}
-                  label={formatMessage({ id: "FORM.TITLE" })}
+                  label={formatMessage({ id: "NOTICE_TITLE" })}
                   name="title"
-                  placeholder={formatMessage({ id: "FORM.TITLE" })}
+                  placeholder={formatMessage({ id: "NOTICE_TITLE" })}
                   type="text"
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextInput
-                  multiline={true}
-                  label={formatMessage({ id: "MENU.MESSAGE" })}
-                  name="message"
-                  placeholder={formatMessage({ id: "MENU.MESSAGE" })}
-                  type="text"
-                />
+                <TextEditor value={values.message} setValue={(value: string) => {
+                  setFieldValue("message", value);
+                }} placeholder="NOTICE_MESSAGE" />
               </Grid>
             </Grid>
             <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>

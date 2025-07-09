@@ -16,7 +16,7 @@ export const ListSkeleton = () => {
                 <Stack spacing={1}>
                     {
                         Array.from({ length: 4 }).map((_, index) => (
-                            <Stack className="flex-row gap-4" >
+                            <Stack key={index} className="flex-row gap-4" >
                                 <Stack className="flex-row flex-grow-1 gap-2">
                                     <Skeleton variant="rounded" height={48} width={48} />
                                     <Stack className="flex-grow-1">

@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 interface PropsType {
   id?: string;
   open: boolean;
@@ -67,8 +68,8 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
   return (
     <FilterComponent {...props}>
       <form onSubmit={handleSubmit}>
-        <Stack spacing={.5}>
-          <Typography variant="body1">
+        <Stack>
+          <Typography variant="caption">
             {formatMessage({ id: "FILTER.DEPT_TITLE" })}
           </Typography>
           <Autocomplete
@@ -104,8 +105,8 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
             }}
           />
         </Stack>
-        <Stack spacing={.5} sx={{ mt: 2 }}>
-          <Typography variant="body1">
+        <Stack sx={{ mt: 1 }}>
+          <Typography variant="caption">
             {formatMessage({ id: "FORM.GENDER" })}
           </Typography>
           <Autocomplete

@@ -13,12 +13,7 @@ const PageData = () => {
   const intl = useIntl();
 
   return (
-    <Stack
-      spacing={1}
-      sx={{ mb: 2 }}
-      direction={"row"}
-      className="justify-content-between"
-    >
+    <Stack className="justify-content-between flex-row flex-wrap gap-2 mb-4" >
       {pageTitle && <Typography variant="h4" className="fw-bold">{pageTitle}</Typography>}
       {trail.length > 1 && (
         <Stack

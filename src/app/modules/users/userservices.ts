@@ -8,6 +8,7 @@ import {
 import {
   ApiResponse,
   CertificationResponseData,
+  EmployeeSearchResponseModel,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
@@ -17,6 +18,7 @@ import {
 import {
   EmployeeResponseData,
   GetSkillListResponseModel,
+  NotificationRequestPayload,
   NotificationResponseModel,
   UploadProfileResponseModel,
   UserSkillsResponseData,
@@ -179,13 +181,25 @@ export const addSkill = async (skill: string) => {
 };
 
 // notifications
-export const getNotifications = async () => {
-  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION);
+export const getNotifications = async (payload: NotificationRequestPayload) => {
+  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION, {
+    params: {
+      type: payload.type,
+      pageNo: payload.pageNo,
+      records: payload.records,
+    },
+  });
 };
 
 export const markNotificationAsRead = async (userNotificationId: string) => {
   return patchRequest<string, ApiResponse>(
     `${ServiceUrl.MARK_NOTIFICATION_AS_READ}/${userNotificationId}/MarkAsRead`
+  );
+};
+
+export const markAllNotificationAsRead = async () => {
+  return postRequest<unknown, ApiResponse>(
+    ServiceUrl.MARK_ALL_NOTIFICATION_AS_READ
   );
 };
 
@@ -219,4 +233,12 @@ export const deleteEmployeeWorkHistory = async (
       },
     }
   );
+};
+
+// employee search
+
+export const searchEmployee = async (name: string) => {
+  return getRequest<EmployeeSearchResponseModel>(ServiceUrl.SEARCH_EMPLOYEE, {
+    params: { name },
+  });
 };

@@ -37,31 +37,31 @@ const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
     to: "about",
-    title: "PROFILE.TAB.ABOUT",
+    title: "ABOUT",
     icon: <Person />,
   },
   {
     tabId: 2,
     to: "leave",
-    title: "PROFILE.TAB.LEAVE",
+    title: "LEAVE_TRACKER",
     icon: <CalendarMonth />,
   },
   {
     tabId: 3,
     to: "performance",
-    title: "PROFILE.TAB.PERFORMANCE",
+    title: "PERFORMANCE",
     icon: <Speed />,
   },
   {
     tabId: 4,
     to: "workhistory",
-    title: "PROFILE.TAB.WORK",
+    title: "WORK_HISTORY",
     icon: <WorkHistory />,
   },
   {
     tabId: 5,
     to: "setting",
-    title: "PROFILE.TAB.SETTING",
+    title: "SETTING",
     icon: <Settings />,
   },
 ];

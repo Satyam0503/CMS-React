@@ -146,6 +146,7 @@ export const WorkHistory = () => {
             workHistoryList.length > 0 ?
               workHistoryList.map(item =>
                 <Stack
+                  key={item.workHistoryId}
                   direction="row"
                   sx={{
                     justifyContent: "space-between",

@@ -11,7 +11,7 @@ type Props = {
   disabled?: boolean;
   permission?: boolean;
   ariaLabel?: string;
-  style?: CSSProperties;
+  classNames?: string;
 };
 
 export const CustomIconButton = (props: Props) => {
@@ -22,10 +22,10 @@ export const CustomIconButton = (props: Props) => {
     icon,
     tooltip,
     size,
-    style,
     disabled = false,
     permission = true,
     ariaLabel = "button",
+    classNames
   } = props;
 
   return (
@@ -38,10 +38,9 @@ export const CustomIconButton = (props: Props) => {
             size={size}
             type="button"
             aria-label={ariaLabel}
-            style={style}
             onMouseEnter={onMouseClick}
             onMouseLeave={onMouseLeave}
-            className="ratio-1x1"
+            className={`${classNames} ratio-1x1`}
             sx={{
               width: "32px", height: "32px", bgcolor: "transparent",
               "& .MuiSvgIcon-root": {
@@ -51,7 +50,7 @@ export const CustomIconButton = (props: Props) => {
           >
             {icon}
           </IconButton>
-        </Tooltip>
+        </Tooltip >
       )}
     </>
   );

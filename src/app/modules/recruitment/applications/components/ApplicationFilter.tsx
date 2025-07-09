@@ -51,12 +51,8 @@ export const initialFilterValues: ApplicationFilterModel = {
 export const ApplicationFilter: FC<PropsType> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
-  const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const applicationFilters = useAppSelector(
-    (state) => state.filters.application
-  );
+  const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
+  const applicationFilters = useAppSelector((state) => state.filters.application);
   const [jobList, setJobList] = useState<JobModal[]>([]);
   const isTimeOptionOpen = Boolean(optionAnchorEl);
 
@@ -115,13 +111,13 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
   return (
     <FilterComponent {...props}>
       <form onSubmit={handleSubmit}>
-        <Stack spacing={2}>
+        <Stack spacing={1}>
           <Stack>
             <Stack
               direction={"row"}
-              sx={{ justifyContent: "space-between" }}
+              sx={{ justifyContent: "space-between", alignItems: "flex-end" }}
             >
-              <Typography variant="body1">
+              <Typography variant="caption">
                 {formatMessage({ id: "FILTER.APPLIED_DATE" })}
               </Typography>
               <Stack
@@ -130,7 +126,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 onClick={handleClick}
               >
                 <Typography variant="body2" sx={{ cursor: "pointer" }}>
-                  from Date - to date
+                  {formatMessage({ id: "FROM_TO_DATE" })}
                 </Typography>
                 {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
               </Stack>
@@ -164,9 +160,9 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               </Menu>
             </Stack>
 
-            <Stack spacing={2} direction={"row"}>
+            <Stack spacing={1} direction="row">
               <CustomisedDatePicker
-                label={formatMessage({ id: "FILTER.FROM" })}
+                label={formatMessage({ id: "FROM" })}
                 value={
                   Boolean(values.filterFrom)
                     ? dayjs(values.filterFrom)
@@ -181,7 +177,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 }}
               />
               <CustomisedDatePicker
-                label={formatMessage({ id: "FILTER.TO" })}
+                label={formatMessage({ id: "TO" })}
                 value={
                   Boolean(values.filterTo) ? dayjs(values.filterTo) : null
                 }
@@ -194,8 +190,8 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
             </Stack>
           </Stack>
 
-          <Stack spacing={1}>
-            <Typography variant="body1">
+          <Stack>
+            <Typography variant="caption">
               {formatMessage({ id: "FILTER.JOB_TITLE" })}
             </Typography>
             <Autocomplete
@@ -231,8 +227,8 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               }}
             />
           </Stack>
-          <Stack spacing={1}>
-            <Typography variant="body1">
+          <Stack >
+            <Typography variant="caption">
               {formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
             </Typography>
             <Autocomplete
@@ -268,9 +264,9 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               }}
             />
           </Stack>
-          <Stack spacing={1}>
-            <Typography variant="body1">
-              {formatMessage({ id: "FILTER.STATUS" })}
+          <Stack >
+            <Typography variant="caption">
+              {formatMessage({ id: "STATUS" })}
             </Typography>
             <Autocomplete
               multiple
@@ -306,15 +302,15 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
             />
           </Stack>
 
-          <Stack spacing={1}>
-            <Typography variant="body1">
+          <Stack >
+            <Typography variant="caption">
               {formatMessage({ id: "FILTER.EXPERIENCE" })}
             </Typography>
             <Stack spacing={1} direction={"row"} useFlexGap>
               <TextField
                 fullWidth
                 error={Boolean(errors.minExperience)}
-                label={formatMessage({ id: "FILTER.MIN_EXPERIENCE" })}
+                placeholder={formatMessage({ id: "FILTER.MIN_EXPERIENCE" })}
                 type="number"
                 {...getFieldProps("minExperience")}
                 inputProps={{
@@ -328,7 +324,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 }}
               />
               <TextField
-                label={formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
+                placeholder={formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
                 fullWidth
                 type="number"
                 required={Boolean(values.minExperience)}

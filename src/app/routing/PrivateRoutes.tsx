@@ -18,7 +18,7 @@ const Profile = lazy(() => import("../modules/users/components/ProfileTabs.tsx")
 const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
 const NoticeBoard = lazy(() => import("../modules/noticeboard/NoticeBoardRoutes.tsx"));
 const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
-const EmployeeLeaves = lazy(() => import("../modules/leaves/EmployeeLeaves.tsx"));
+const LeaveManagement = lazy(() => import("../modules/leaves/LeaveManagement.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -99,11 +99,11 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="leavemanagement"
+          path="leavemanagement/*"
           element={
             <ProtectedRoute module={ModulesName.LeaveManagement}>
               <SuspensedView>
-                <EmployeeLeaves />
+                <LeaveManagement />
               </SuspensedView>
             </ProtectedRoute>
           }

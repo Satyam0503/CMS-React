@@ -379,7 +379,7 @@ export const AddEmployee = (props: PropsTypes) => {
                     <Grid item xs={12} sm={6}>
                       <SelectInput
                         name="status"
-                        label={formatMessage({ id: "PROFILE.STATUS" })}
+                        label={formatMessage({ id: "STATUS" })}
                       >
                         <MenuItem value={"Active"}>
                           {formatMessage({ id: "STATUS.ACTIVE" })}

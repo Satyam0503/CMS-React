@@ -12,118 +12,80 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { LeaveType, RequestLeaveModel } from "../../../leaves/model";
+import { LEAVE_TYPE } from "../../../../../utils/enums";
+import { Formik } from "formik";
+import { leaveRequestValidationSchema } from "../../../../../utils/Schema/leaveManagementValidationSchemas";
+import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
+import { LeaveTypeMapper } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 
-export const LeaveApplication: FC = () => {
-  const intl = useIntl();
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [degree, setDegree] = React.useState("");
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setDegree(event.target.value as string);
-  };
+const initialLeaveRequestValue: RequestLeaveModel = {
+  leaveType: LEAVE_TYPE.CASUAL_LEAVE,
+  isHalfDay: false,
+  startDate: null,
+  endDate: null,
+  totalDays: 0,
+  reason: "",
+}
+
+type Props = {
+  open: boolean;
+  handleClose: () => void;
+}
+
+export const LeaveApplication: FC<Props> = (props) => {
+  const { formatMessage: i } = useIntl();
+  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
+
   return (
-    <>
-      <CustomisedButton
-        variant="text"
-        label="Leave Application"
-        handleClick={handleOpen}
-      />
+    <CustomisedModal open={props.open} handleClose={props.handleClose}>
+      <Typography variant="h5" className="mb-4">{i({ id: "APPLICATION.LEAVE" })}</Typography>
+      <Formik
+        initialValues={initialLeaveRequestValue}
+        validationSchema={leaveRequestValidationSchema}
+        onSubmit={(values) => {
+          console.log(values);
 
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Stack>
-          <Typography variant="h5">
-            {intl.formatMessage({ id: "APPLICATION.LEAVE" })}
-          </Typography>
-        </Stack>
-        <form>
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={2}
-            my={2}
-            alignItems="end"
-          >
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label={intl.formatMessage({ id: "LEAVE.TYPE" })}
-                placeholder="Leave type"
-                type="text"
-                name="leaveType"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label={intl.formatMessage({ id: "LEAVE.AVAILABLE" })}
-                placeholder="Leave available"
-                type="text"
-                name="leaveAvailable"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label={intl.formatMessage({ id: "APPLICATION.DURATION" })}
-                placeholder="Duration"
-                type="text"
-                name="leaveDuration"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <CustomisedDatePicker
-                label={intl.formatMessage({
-                  id: "APPLICATION.START",
-                })}
-                name="startDate"
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <CustomisedDatePicker
-                label={intl.formatMessage({
-                  id: "APPLICATION.END",
-                })}
-                name="endDate"
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <CustomisedButton variant="outlined" label="Add" Icon={<Add />} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label={intl.formatMessage({ id: "APPLICATION.NOS" })}
-                placeholder="Total nos. of days"
-                type="text"
-                name="totalDays"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label={intl.formatMessage({ id: "APPLICATION.REASON" })}
-                placeholder="Reason"
-                type="text"
-                name="leaveReason"
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        </form>
+        }}
+      >
+        {
+          ({ values, handleSubmit, setFieldValue, ...formik }) => (
+            <form onSubmit={handleSubmit} >
+              <Grid container spacing={2}>
+                <Grid item xs={12} >
+                  <SelectInput name="leaveType" label={i({ id: "LEAVE_TYPE" })}>
+                    {leaveTypes.map(type => (
+                      <MenuItem key={type.leaveTypeId} value={type.leaveType}>{i({ id: LeaveTypeMapper[type.leaveType] })} </MenuItem>
+                    ))}
+                  </SelectInput>
+                </Grid>
+                <Grid item xs={12} sm={6} >
+                  <CustomisedDatePicker label={i({ id: "START_DATE" })} value={values.startDate} />
+                </Grid>
+                <Grid item xs={12} sm={6} >
+                  <CustomisedDatePicker label={i({ id: "END_DATE" })} value={values.endDate} />
+                </Grid>
+                <Grid item xs={12} >
+                  <TextInput multiline={true} type="text" name="reason" label={i({ id: "REASON" })} />
+                </Grid>
+              </Grid>
+              <Grid item className="d-flex gap-2 flex-row justify-content-end mt-4">
+                <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={props.handleClose} />
+                <CustomisedButton label={i({ id: "BUTTON.APPLY" })} />
+              </Grid>
+            </form>
+          )
+        }
+      </Formik>
 
-        <Grid container display={"flex"} justifyContent={"end"} gap={1}>
-          <CustomisedButton variant="outlined" label="Cancel" />
-          <CustomisedButton variant="contained" label="Save" />
-        </Grid>
-      </CustomisedModal>
-    </>
+    </CustomisedModal>
   );
 };

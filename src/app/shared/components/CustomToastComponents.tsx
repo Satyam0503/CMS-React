@@ -43,7 +43,7 @@ const CustomNotificationWithAction = ({ notificationData, closeToast }: CustomTo
                 </Box>
                 <Typography variant="subtitle2" sx={{ color: "text.primary" }} className="fw-bold">{formatMessage({ id: "Toast.NotificationType.Notice.Title" })}</Typography>
             </Stack>
-            <Typography variant="body2" className="text-truncate ms-8">{notificationData.title}</Typography>
+            <Typography variant="body2" className="text-truncate ms-8">{notificationData.body}</Typography>
             <span aria-label="close button" role="button" className="fw-bold d-inline-block ms-8 mt-1" onClick={closeToast}>
                 {formatMessage({ id: "BUTTON.DISMISS" })}
             </span>

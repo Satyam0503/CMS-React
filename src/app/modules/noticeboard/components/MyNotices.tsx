@@ -13,8 +13,10 @@ import { AddNotice } from "./AddNotice";
 import { MyNoticeTableColumnList } from "../../../../utils/constant/Constant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { Add, KeyboardArrowLeft } from "@mui/icons-material";
-import { getMyPostedNotices } from "../services";
+import { deleteMyNotice, getMyPostedNotices } from "../services";
 import { Pagination } from "../../../shared/components/Pagination";
+import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { toast } from "react-toastify";
 
 export const initialNoticeValuesObj: NoticeModel = {
     message: "",
@@ -26,7 +28,6 @@ export const initialNoticeValuesObj: NoticeModel = {
 
 export const MyNotices = () => {
     const { formatMessage } = useIntl();
-    const [searchValue, setSearchValue] = useState("");
     const [isModalOpen, setModalOpen] = useState(false);
     const [NoticeList, setNoticeList] = useState<NoticeModel[]>([]);
     const [loading, setLoading] = useState(true);
@@ -38,6 +39,7 @@ export const MyNotices = () => {
     const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
     const navigate = useNavigate();
     const [initialNoticeValues, setInitialNoticeValue] = useState<NoticeModel>(initialNoticeValuesObj);
+    const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>();
     const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
     const handleClose = () => {
@@ -49,9 +51,6 @@ export const MyNotices = () => {
     const handleRefresh = () => {
         setRefresh(!refresh);
     }
-    const handleSearchChange = useCallback((value: string) => {
-        setSearchValue(value);
-    }, []);
 
     const handlePageChange = (page: number) => {
         setPaginationValues({
@@ -74,6 +73,27 @@ export const MyNotices = () => {
         setEdit(true);
     }
 
+    const handleConfirmationOpen = (notice: NoticeModel) => {
+        setSelectedNoticeId(notice.noticeId)
+    }
+
+    const handleNoticeDelete = async (str: string) => {
+        if (str === "ok" && selectedNoticeId) {
+            try {
+                const { data } = await deleteMyNotice(selectedNoticeId);
+                if (data.success) {
+                    toast.success(formatMessage({ id: "Toast.Delete.Success" }));
+                    handleRefresh();
+                    setSelectedNoticeId(null);
+                }
+                else {
+                    toast.error(formatMessage({ id: "Toast.Delete.Failed" }));
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
+    }
     useEffect(() => {
         setPageTitle(formatMessage({ id: "PAGE.MY_NOTICE" }));
     }, []);
@@ -97,31 +117,28 @@ export const MyNotices = () => {
     return (
         <>
             <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-                <Stack className="flex-row justify-content-between gap-4 flex-wrap" >
-                    <SearchInput search={searchValue} setSearch={handleSearchChange} />
-                    <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
-
-                        <CustomIconButton tooltip={formatMessage({ id: "BUTTON.GO_BACK" })} icon={<KeyboardArrowLeft />} handleClick={() => navigate("/noticeboard")} />
-                        {
-                            hasAddPermission &&
-                            <CustomIconButton
-                                tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
-                                icon={<Add />}
-                                handleClick={() => setModalOpen(true)}
-                            />
-                        }
-                    </Stack>
+                <Stack className="flex-row justify-content-end gap-2 flex-wrap" >
+                    <CustomIconButton tooltip={formatMessage({ id: "BUTTON.GO_BACK" })} icon={<KeyboardArrowLeft />} handleClick={() => navigate("/noticeboard")} />
+                    {
+                        hasAddPermission &&
+                        <CustomIconButton
+                            tooltip={formatMessage({ id: "POST_NOTICE" })}
+                            icon={<Add />}
+                            handleClick={() => setModalOpen(true)}
+                        />
+                    }
                 </Stack>
 
                 <CustomisedTable
                     keyName="noticeId"
-                    tabName="Notice Board"
+                    tabName={ModulesName.NoticeBoard}
                     rows={NoticeList}
                     columns={MyNoticeTableColumnList}
                     page={paginationValues.pageNo}
                     rowsPerPage={paginationValues.records}
                     loading={loading}
                     handleEdit={handleNoticeEdit}
+                    openConfirmationModal={handleConfirmationOpen}
                 />
                 {
                     totalRecords > paginationValues.records &&
@@ -133,11 +150,20 @@ export const MyNotices = () => {
                         totalRecords={totalRecords}
                     />
                 }
-
             </Card>
             {
                 isModalOpen &&
-                <AddNotice initialValues={initialNoticeValues} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={isEdit} />
+                <AddNotice initialValues={initialNoticeValues} refresh={handleRefresh} open={true} handleClose={handleClose} isEdit={isEdit} />
+            }
+            {
+                selectedNoticeId &&
+                <ConfirmationModal
+                    open={true}
+                    title={formatMessage({ id: "Confirmation.Title.Notice" })}
+                    content={formatMessage({ id: "Confirmation.Content.Notice" })}
+                    handleClose={() => setSelectedNoticeId(null)}
+                    handleConfirmation={handleNoticeDelete}
+                />
             }
         </>
     );

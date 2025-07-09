@@ -82,7 +82,7 @@ export default function AddAttendance() {
           <Grid item xs={12} md={6}>
             <TextField
               label={intl.formatMessage({
-                id: "LEAVE.TYPE",
+                id: "LEAVE_TYPE",
               })}
               fullWidth
               id="outlined-basic"
@@ -127,7 +127,7 @@ export default function AddAttendance() {
             <Grid item xs={12} md={3.9}>
               <CustomisedDatePicker
                 label={intl.formatMessage({
-                  id: "APPLICATION.START",
+                  id: "START_DATE",
                 })}
                 name="startDate"
               />
@@ -135,7 +135,7 @@ export default function AddAttendance() {
             <Grid item xs={12} md={3.9}>
               <CustomisedDatePicker
                 label={intl.formatMessage({
-                  id: "APPLICATION.END",
+                  id: "END_DATE",
                 })}
                 name="startDate"
               />
@@ -152,7 +152,7 @@ export default function AddAttendance() {
           <Grid item xs={12}>
             <TextField
               label={intl.formatMessage({
-                id: "APPLICATION.REASON",
+                id: "REASON",
               })}
               fullWidth
               id="outlined-basic"

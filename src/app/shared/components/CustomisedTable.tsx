@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { TableSorting } from "./TableSorting";
 import { getKeyForTableRow } from "../../../utils/common";
 import { useIntl } from "react-intl";
+import { ModulesName } from "../../../utils/enums";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -25,13 +26,13 @@ interface PropsTypes<Row, Columns> {
   openConfirmationModal?: (row: Row) => void;
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
-  rowClickHandler?:(row:Row)=>void;
+  rowClickHandler?: (row: Row) => void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
   props: PropsTypes<Row, Column>
 ) => {
-  const {formatMessage}= useIntl();
+  const { formatMessage } = useIntl();
   const [tableRows, setTableRows] = useState(props.rows);
   const {
     rows,
@@ -70,7 +71,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                       columnKey={column.id}
                     />
                   ) : (
-                    formatMessage({id:column.label})
+                    formatMessage({ id: column.label })
                   )}
                 </TableCell>
               ))}
@@ -98,15 +99,15 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                     <TableRow
                       hover
                       key={keyName ? getKeyForTableRow(row, keyName) : index}
-                      onClick={()=>rowClickHandler?.(row)}
+                      onClick={() => rowClickHandler?.(row)}
                     >
                       {columns.map((column) => {
                         const value =
                           column.id === "serialNo"
                             ? page * rowsPerPage + (index + 1)
                             : column.id === "fullName"
-                            ? row.firstName + " " + row.lastName
-                            : row[column.id];
+                              ? row.firstName + " " + row.lastName
+                              : row[column.id];
                         return (
                           <TableCell
                             className="text pointer-cursor"
@@ -115,28 +116,28 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                             style={
                               column.id === "vacancies"
                                 ? {
-                                    textAlign: "justify",
-                                    paddingInline: "4rem",
-                                  }
+                                  textAlign: "justify",
+                                  paddingInline: "4rem",
+                                }
                                 : {
-                                    textAlign: "inherit",
-                                  }
+                                  textAlign: "inherit",
+                                }
                             }
                           >
                             {column.avatarCell
                               ? column.avatarCell(row)
                               : column.format
-                              ? column.format(value)
-                              : column.build
-                              ? column.id === "action"
-                                ? column.build(
-                                    row,
-                                    handleEdit,
-                                    openConfirmationModal,
-                                    openViewModal
-                                  )
-                                : column.build(value)
-                              : value}
+                                ? column.format(value)
+                                : column.build
+                                  ? column.id === "action"
+                                    ? column.build(
+                                      row,
+                                      handleEdit,
+                                      openConfirmationModal,
+                                      openViewModal
+                                    )
+                                    : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeMessage" || column.id === "message") ? column.build(row, props.openViewModal) : column.build(value)
+                                  : value}
                           </TableCell>
                         );
                       })}

@@ -7,12 +7,15 @@ import {
   EmployeeModel,
   FiltersType,
   ModulePermissoinModel,
+  NotificationRedirectOption,
   PermissionModel,
 } from "./common_types";
 import {
   ApplicantStatus,
   ApplicationStatus,
   CommentAction,
+  LEAVE_REQUEST_STATUS,
+  LEAVE_TYPE,
   ModulesName,
   NOTICE_TYPE,
   NOTIFICATION_TYPE,
@@ -24,6 +27,8 @@ import {
   SideBarTabList,
 } from "./constant/Constant";
 import { ReactNode } from "react";
+import { NotificationModel } from "../app/modules/users/models";
+import { NavigateFunction } from "react-router-dom";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -118,6 +123,19 @@ export const commentActionMapper: { [index: number]: string } = {
   [CommentAction.Process]: "COMMENT.ACTION.PROCESS",
 };
 
+export const leaveRequestStatusMapper: { [index: number]: string } = {
+  [LEAVE_REQUEST_STATUS.PENDING]: "PENDING",
+  [LEAVE_REQUEST_STATUS.APPROVED]: "APPROVED",
+  [LEAVE_REQUEST_STATUS.REJECTED]: "REJECTED",
+};
+
+export const LeaveTypeMapper: { [index: number]: string } = {
+  [LEAVE_TYPE.SICK_LEAVE]: "SICK_LEAVE",
+  [LEAVE_TYPE.CASUAL_LEAVE]: "CASUAL_LEAVE",
+  [LEAVE_TYPE.EARNED_LEAVE]: "EARNED_LEAVE",
+  [LEAVE_TYPE.MATERNITY_LEAVE]: "MATERNITY_LEAVE",
+};
+
 export const statusEncoder = (status: string) => {
   switch (status) {
     case "Active":
@@ -129,13 +147,10 @@ export const statusEncoder = (status: string) => {
   }
 };
 export const statusDecoder = (status: boolean) => {
-  switch (status) {
-    case true:
-      return "ACTIVE";
-    case false:
-      return "INACTIVE";
-    default:
-      return "";
+  if (status) {
+    return "ACTIVE";
+  } else {
+    return "INACTIVE";
   }
 };
 
@@ -261,6 +276,7 @@ export const getAppliedFilters = () => {
         jobs: null,
         processLog: null,
         employee: null,
+        noticeBoard: null,
       };
   return appliedfilters;
 };
@@ -329,4 +345,25 @@ export const flatRolePermissionList = (
     });
   });
   return updatedRolePermission;
+};
+
+export const redirectUserToTargetUrl = (
+  notification: NotificationModel,
+  navigate: NavigateFunction
+) => {
+  const redirectOption: NotificationRedirectOption = {
+    targetPath: "",
+    data: null,
+  };
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE: {
+      redirectOption.targetPath = "/noticeboard/notices";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+  }
+  navigate(redirectOption.targetPath, {
+    state: redirectOption.data,
+    replace: true,
+  });
 };

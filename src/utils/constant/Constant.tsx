@@ -1,4 +1,4 @@
-import { Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, MenuItem, Select, Stack, Tooltip, Typography } from "@mui/material";
 import {
   ColumnListTypes,
   SideBarTabListProps,
@@ -12,6 +12,7 @@ import {
   commentActionMapper,
   noticeTypeDecoder,
   relativeTimeFormatter,
+  LeaveTypeMapper,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -19,6 +20,8 @@ import {
   ApplicationStatus,
   CommentAction,
   LANGUAGE,
+  LEAVE_REQUEST_STATUS,
+  LEAVE_TYPE,
   Modules,
   ModulesName,
   ModulesTitles,
@@ -32,6 +35,8 @@ import {
   AdminPanelSettings,
   Book,
   CalendarMonth,
+  Check,
+  Close,
   ColorLens,
   Contacts,
   Info,
@@ -55,6 +60,8 @@ import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 import { NoticeModel, NoticeResponseModel } from "../../app/modules/noticeboard/models";
 import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
+import { ViewLeaveReason } from "../../app/shared/components/ViewLeaveReason";
+import { LeaveRequestModel, LeaveType } from "../../app/modules/leaves/model";
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -109,6 +116,9 @@ export const ServiceUrl = {
 
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
   MARK_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/Notification`,
+  MARK_ALL_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/MarkAllNotificationAsRead`,
+
+  SEARCH_EMPLOYEE: `${BaseUrl}/api/User/Search`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
@@ -151,6 +161,15 @@ export const ServiceUrl = {
   GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
   UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
+  DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`,
+  GET_NOTICE_BY_ID: `${BaseUrl}/api/NoticeBoard/GetNoticeById`,
+
+  // leave management 
+  CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
+  GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`,
+  GET_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetLeaveBalance`,
+  CREATE_UPDATE_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveBalance`,
+
 };
 
 export const languages = [
@@ -406,6 +425,51 @@ export const ApplicantStatusConstant = [
   { id: 2, label: "Active", value: ApplicantStatus.Active },
 ];
 
+export const LeaveRequestStatusTypes = [
+  {
+    id: 1,
+    label: "PENDING",
+    value: LEAVE_REQUEST_STATUS.PENDING,
+  }, {
+    id: 2,
+    label: "APPROVED",
+    value: LEAVE_REQUEST_STATUS.APPROVED,
+  }, {
+    id: 3,
+    label: "REJECTED",
+    value: LEAVE_REQUEST_STATUS.REJECTED
+  }
+]
+
+export const LeaveTypeConstant = [
+  {
+    id: 1,
+    label: "SICK_LEAVE",
+    value: LEAVE_TYPE.SICK_LEAVE
+  },
+  {
+    id: 2,
+    label: "CASUAL_LEAVE",
+    value: LEAVE_TYPE.CASUAL_LEAVE
+  },
+  {
+    id: 3,
+    label: "EARNED_LEAVE",
+    value: LEAVE_TYPE.EARNED_LEAVE
+  },
+  {
+    id: 4,
+    label: "MATERNITY_LEAVE",
+    value: LEAVE_TYPE.MATERNITY_LEAVE
+  },
+  {
+    id: 5,
+    label: "PATERNITY_LEAVE",
+    value: LEAVE_TYPE.PATERNITY_LEAVE
+  }
+]
+
+
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "employeeId",
@@ -445,7 +509,7 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
 export const HolidayTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 30,
   },
 
@@ -459,12 +523,12 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "startDate",
-    label: "APPLICATION.START",
+    label: "START_DATE",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
     id: "endDate",
-    label: "APPLICATION.START",
+    label: "START_DATE",
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
@@ -473,7 +537,7 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: any,
       handleHolidayEdit: (row: any) => void,
@@ -491,12 +555,12 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
     id: "userName",
-    label: "NOTICE_BOARD.POSTED_BY",
+    label: "NOTICE_POSTED_BY",
     minWidth: 200,
     avatarCell: (notice: NoticeResponseModel) => {
       return (
@@ -510,14 +574,14 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDateTime",
-    label: "NOTICE_BOARD.POSTED_DATETIME",
+    label: "NOTICE_POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_BOARD.TYPE",
+    label: "NOTICE_TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -534,11 +598,16 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "noticeMessage",
-    label: "MENU.MESSAGE",
-    build: (message: string) => {
+    label: "NOTICE_MESSAGE",
+    build: (notice: NoticeResponseModel, handleNoticeView: (notice: NoticeResponseModel) => void) => {
       return <Stack direction="row">
-        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        <NoticeViewModel noticeMessage={message} />
+        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {notice.noticeTitle}</Box>
+        <Box component="span" sx={{
+          color: 'secondary.main', mx: 2, "&:hover": {
+            color: 'secondary.dark'
+          }
+        }}
+          onClick={() => handleNoticeView(notice)}>{<FormattedMessage id="BUTTON.VIEW" />}...</Box>
       </Stack>
     }
   },
@@ -547,19 +616,19 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
 export const MyNoticeTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
     id: "createdDate",
-    label: "NOTICE_BOARD.POSTED_DATETIME",
+    label: "NOTICE_POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_BOARD.TYPE",
+    label: "NOTICE_TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -575,27 +644,27 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "message",
-    label: "MENU.MESSAGE",
+    id: "title",
+    label: "NOTICE_MESSAGE",
     build: (message: string) => {
       return <Stack direction="row">
         <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        <NoticeViewModel noticeMessage={message} />
+        {/* <NoticeViewModel noticeMessage={message} /> */}
       </Stack>
     }
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: NoticeModel,
       handleNoticeEdit: (row: NoticeModel) => void,
-      openConfirmationModal: (id: string) => void
+      openConfirmationModal: (row: NoticeModel) => void
     ) => (
       <ActionComponent
         row={row}
         handleEdit={handleNoticeEdit}
-      // openConfirmationModal={openConfirmationModal}
+        openConfirmationModal={openConfirmationModal}
       />
     ),
   }
@@ -603,7 +672,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -630,7 +699,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "activityCategory",
-    label: "Table.Column.Action",
+    label: "Action",
     minWidth: 150,
     format: (value: number) => (
       <FormattedMessage id={commentActionMapper[value]} />
@@ -677,116 +746,43 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
-export const LeaveSummaryTableColumnList: ColumnListTypes[] = [
-  {
-    id: "date",
-    label: "COMMENT.DATE",
-  },
-  {
-    id: "absent",
-    label: "ATTENDANCE.ABSENT",
-  },
 
-  {
-    id: "firsthalf",
-    label: "ATTENDANCE.FIRST_HALF",
-  },
 
-  {
-    id: "secondhalf",
-    label: "ATTENDANCE.SECOND_HALF",
-  },
-  {
-    id: "workfromhome",
-    label: "ATTENDANCE.WFH",
-  },
-  {
-    id: "total",
-    label: "ATTENDANCE.TOTAL",
-  },
-
-  {
-    id: "action",
-    label: "MENU.ACTION",
-    build: (row: Applicant) => <ActionComponent row={row} />,
-  },
-];
-export const LeaveMangementTableColumnList: ColumnListTypes[] = [
-  {
-    id: "name",
-    label: "Table.Name",
-  },
-  {
-    id: "type",
-    label: "LEAVE.TYPE",
-  },
-
-  {
-    id: "from",
-    label: "FILTER.FROM",
-  },
-
-  {
-    id: "to",
-    label: "FILTER.TO",
-  },
-  {
-    id: "days",
-    label: "Table.Days",
-  },
-  {
-    id: "remaining",
-    label: "Table.Remaining",
-  },
-  {
-    id: "reason",
-    label: "APPLICATION.REASON",
-  },
-  {
-    id: "status",
-    label: "FILTER.STATUS",
-  },
-  {
-    id: "action",
-    label: "Table.Column.Action",
-    build: (row: Applicant) => <ActionComponent row={row} />,
-  },
-];
 export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
-    label: "Table.Name",
+    label: "Name",
   },
   {
     id: "first_in",
-    label: "Table.First_in",
+    label: "First_In",
   },
 
   {
     id: "break",
-    label: "Table.Break",
+    label: "Break",
   },
 
   {
-    id: "last_out",
-    label: "Table.Last_out",
+    id: "Last_Out",
+    label: "Last_Out",
   },
   {
     id: "total_hours",
-    label: "Table.Total_Hours",
+    label: "Total_Hours",
   },
   {
     id: "shift",
-    label: "Table.Shift",
+    label: "Shift",
   },
   {
     id: "status",
-    label: "FILTER.STATUS",
+    label: "STATUS",
   },
 
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
@@ -794,7 +790,7 @@ export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
 export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
 
@@ -810,7 +806,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "status",
-    label: "JOB.STATUS",
+    label: "STATUS",
     build: (status: number) => {
       const values = applicantStatusDecoder[status];
       return (
@@ -860,7 +856,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
 export const RoleTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -886,7 +882,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     minWidth: 180,
     build: (row: RoleModel) => (
       <Link to={`/admin/roles/edit/${row.rolesId}`}>
@@ -907,7 +903,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
 export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 30,
   },
 
@@ -927,7 +923,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "status",
-    label: "JOB.STATUS",
+    label: "STATUS",
     build: (status: boolean) => {
       return (
         <StyleStatus
@@ -939,7 +935,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Table.Column.Action",
+    label: "Action",
     build: (
       row: JobModal,
       handleJobEdit: (row: JobModal) => void,
@@ -957,7 +953,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
 export const CommentTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
-    label: "Table.S_No",
+    label: "S_No",
     minWidth: 60,
   },
   {
@@ -1020,6 +1016,137 @@ export const CommentTableColumnList: ColumnListTypes[] = [
     ),
   },
 ];
+
+export const LeaveRequestTableColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "S_No",
+    minWidth: 60,
+  },
+  {
+    id: "employeeName",
+    label: "Name",
+    minWidth: 200,
+    avatarCell: (request: LeaveRequestModel) => {
+      return (
+        <AvatarCell
+          avatarSrc={request.profileUrl}
+          title={request.employeeName}
+          subTitle={request.jobRole}
+        />
+      );
+    },
+  },
+  {
+    id: "leaveTypeId",
+    label: "LEAVE_TYPE",
+    format: (value: number) => <FormattedMessage id={LeaveTypeMapper[value]} />
+  },
+  {
+    id: "startDate",
+    label: "FROM",
+    format: (value: string) => dateFormatter(value, "DD MMMM YYYY"),
+  },
+  {
+    id: "endDate",
+    label: "TO",
+    format: (value: number) => (value: string) => dateFormatter(value, "DD MMMM YYYY"),
+  },
+  {
+    id: "totalDays",
+    label: "Days",
+    minWidth: 100
+  },
+  {
+    id: "reason",
+    label: "REASON",
+    minWidth: 150,
+    format: (value: string) => (
+      <>
+        <Typography variant="body2" className="text-truncate d-inline-block">{value}</Typography>
+        <ViewLeaveReason reason={value} />
+      </>
+    )
+  },
+  {
+    id: "reviewedBy",
+    label: "APPROVED_BY",
+    minWidth: 150,
+  },
+  {
+    id: "status",
+    label: "STATUS",
+    minWidth: 150,
+    format: (value: number) => (
+      <Select value={value} className={clsx({ "text-secondary": value === LEAVE_REQUEST_STATUS.PENDING, "text-success": value === LEAVE_REQUEST_STATUS.APPROVED, "text-danger": LEAVE_REQUEST_STATUS.REJECTED })}>
+        {LeaveRequestStatusTypes.map(item => (
+          <MenuItem value={item.value} key={item.id}
+          ><FormattedMessage id={item.label} /></MenuItem>
+        ))}
+      </Select>
+    )
+  },
+]
+
+export const LeaveTypeColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "S_No",
+    minWidth: 60,
+  },
+  {
+    id: "leaveTypes",
+    label: "LEAVE_TYPE",
+    minWidth: 200,
+    format: (value: LEAVE_TYPE) => <FormattedMessage id={LeaveTypeMapper[value]} />
+  },
+  {
+    id: "isHalfDay",
+    label: "HALF_DAY",
+    build: (value: boolean) => {
+      return value ? <Check className="text-success icon-fs-16" /> : <Close className="text-danger icon-fs-16" />
+    }
+  },
+  {
+    id: "maxLeaveDays",
+    label: "MAX_LEAVE_DAYS",
+  },
+  {
+    id: "minAdvanceNoticeDate",
+    label: "MIN_NOTICE_DAY",
+    format: (value: number) => (
+      <>
+        {value}
+        <FormattedMessage id={value > 1 ? "DAYS" : "DAY"} />
+      </>
+    )
+  },
+  {
+    id: "isActive",
+    label: "STATUS",
+    build: (status: boolean) => {
+      return (
+        <StyleStatus
+          label={statusDecoder(status)}
+          className={clsx({ success: status, danger: !status })}
+        />
+      );
+    },
+  },
+  {
+    id: "action",
+    label: "Action",
+    build: (
+      row: LeaveType,
+      handleLeaveTypeEdit: (row: LeaveType) => void,
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleLeaveTypeEdit}
+      />
+    ),
+  },
+]
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {

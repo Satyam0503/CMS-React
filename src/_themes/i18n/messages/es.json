@@ -48,11 +48,11 @@
   "AUTH.REGISTER.TITLE": "Registro",
   "APPLICANT.STATUS": "Estado del solicitante",
   "APPLICATION.LEAVE": "Solicitud de permiso",
-  "APPLICATION.START": "Fecha de inicio",
-  "APPLICATION.END": "Fecha de finalización",
+  "START_DATE": "Fecha de inicio",
+  "END_DATE": "Fecha de finalización",
   "APPLICATION.HALF_DAY": "Medio día",
   "APPLICATION.NOS": "Número total de días",
-  "APPLICATION.REASON": "Razón",
+  "REASON": "Razón",
   "APPLICATION.DATE": "Fecha de solicitud",
   "APPLICATION.COPYRIGHT": "Código de derechos de autor CodejiInfotech © 2022 Codeji InfoTech Pvt Ltd | Empresa de desarrollo de software | En Dehradun",
   "APPLICATION.SEEN_BY": "Solicitud vista por",
@@ -154,7 +154,7 @@
   "LEAVE.ML": "Permisos médicos",
   "LEAVE.EL": "Permisos ganados",
   "LEAVE.UNPAID": "Permisos no remunerados",
-  "LEAVE.TYPE": "Tipo de permiso",
+  "LEAVE_TYPE": "Tipo de permiso",
   "LEAVE.ALLOTTED": "Asignado",
   "LEAVE.TAKEN": "Tomado",
   "LEAVE.AVAILABLE": "Disponible",
@@ -244,5 +244,3 @@
 
   "PROFILE.EMPLOYMENT": "Experiencia laboral"
 }
-
- 

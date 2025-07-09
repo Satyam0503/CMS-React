@@ -1,27 +1,29 @@
 import * as React from "react";
-import { Button, Card, Stack } from "@mui/material";
+import { Badge, Button, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
+  FilterList,
   ListAltOutlined,
 } from "@mui/icons-material";
 
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
-import { useNavigate } from "react-router-dom";
-import CustomisedButton from "../../shared/components/CustomisedButton";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePageData } from "../../../_themes/layout/core";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
-import { hasModuleFeaturePermission } from "../../../utils/common";
+import { countAppliedFilter, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { NoticeModel, NoticeResponseModel } from "./models";
+import { GetAllNoticePayload, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";
+import { initialNoticeFilter, NoticeBoardFilter } from "./components/NoticeBoardFilter";
+import { NoticeViewModel } from "./components/NoticeViewModel";
 
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
@@ -35,6 +37,11 @@ export const NoticeBoard = () => {
   const { setPageTitle } = usePageData();
   const userModulesPermissions = useAppSelector(state => state.user.userData?.modulePermission) || [];
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const noticeBoardFilter = useAppSelector(state => state.filters.noticeBoard);
+  const noticeIdFromRedirect = useLocation().state as string | null;
+  const [selectedNotice, setSelectedNotice] = useState<string | null>(noticeIdFromRedirect);
+
   const hasAddPermission = hasModuleFeaturePermission(ModulesName.NoticeBoard, Permission.Create, userModulesPermissions);
 
   const handleClose = () => {
@@ -44,9 +51,20 @@ export const NoticeBoard = () => {
     setRefresh(!refresh);
   }
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchValue(value);
-  }, []);
+  const handleNoticeView = (notice: NoticeResponseModel) => {
+    setSelectedNotice(notice.noticeId);
+  }
+
+  const handleFilterOpen = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setAnchorEl(e.currentTarget);
+  }
+
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearchValue(value.trim());
+  };
 
   const handlePageChange = (page: number) => {
     setPaginationValues({
@@ -62,6 +80,10 @@ export const NoticeBoard = () => {
       pageNo: 0,
     });
   };
+  const handleNoticeViewClose = () => {
+    setSelectedNotice(null);
+    window.history.replaceState(null, document.title, window.location.href);
+  }
 
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.NOTICE_BOARD" }));
@@ -69,8 +91,14 @@ export const NoticeBoard = () => {
 
   useEffect(() => {
     (async () => {
+      const payload: GetAllNoticePayload = {
+        pageNo: paginationValues.pageNo + 1,
+        records: paginationValues.records,
+        postedBy: searchValue,
+        ...(noticeBoardFilter ?? initialNoticeFilter)
+      }
       try {
-        const { data } = await getAllNotices(paginationValues.pageNo + 1, paginationValues.records);
+        const { data } = await getAllNotices(payload);
         if (data.success) {
           setNoticeList(data.methodResults);
           setTotalRecords(data.totalRecords);
@@ -82,7 +110,15 @@ export const NoticeBoard = () => {
         setLoading(false)
       }
     })();
-  }, [refresh, paginationValues])
+  }, [refresh, paginationValues, searchValue, noticeBoardFilter])
+
+  useEffect(() => {
+    if (noticeIdFromRedirect) {
+      setSelectedNotice(noticeIdFromRedirect);
+      window.history.replaceState(null, document.title, window.location.href);
+    }
+  }, [noticeIdFromRedirect])
+
   return (
     <>
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
@@ -91,23 +127,17 @@ export const NoticeBoard = () => {
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             {
               hasAddPermission &&
-              // <CustomisedButton
-              //   variant="outlined"
-              //   Icon={<ListAltOutlined className="icon-fs-20" />}
-              //   label=
-              //   handleClick={() => {
-              //     navigate("/noticeboard/notices/mynotices");
-              //   }}
-              // />
               <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
-                {formatMessage({ id: "NOTICE.MY_NOTICE" })}
+                {formatMessage({ id: "MY_NOTICE" })}
               </Button>
             }
-            {/* <CustomIconButton tooltip="Filter List" icon={<FilterList />} /> */}
+            <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
+              <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />
+            </Badge>
             {
               hasAddPermission &&
               <CustomIconButton
-                tooltip={formatMessage({ id: "NOTICE.POST_NOTICE" })}
+                tooltip={formatMessage({ id: "POST_NOTICE" })}
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
               />
@@ -116,15 +146,16 @@ export const NoticeBoard = () => {
         </Stack>
         <CustomisedTable
           keyName="noticeId"
-          tabName="Notice Board"
+          tabName={ModulesName.NoticeBoard}
           rows={NoticeList}
           columns={NoticeBoardTableColumnList}
           page={paginationValues.pageNo}
           rowsPerPage={paginationValues.records}
+          openViewModal={handleNoticeView}
           loading={loading}
         />
         {
-          totalRecords > paginationValues.records &&
+          totalRecords > 0 &&
           <Pagination
             page={paginationValues.pageNo}
             rowsPerPage={paginationValues.records}
@@ -136,7 +167,18 @@ export const NoticeBoard = () => {
       </Card >
       {
         isModalOpen &&
-        <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={isModalOpen} handleClose={handleClose} isEdit={false} />
+        <AddNotice initialValues={initialNoticeValuesObj} refresh={handleRefresh} open={true} handleClose={handleClose} isEdit={false} />
+      }
+      {
+        Boolean(anchorEl) && <NoticeBoardFilter
+          id="notice-board-filter"
+          open={true}
+          anchorEl={anchorEl}
+          handleClose={() => setAnchorEl(null)}
+        />
+      }
+      {
+        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={handleNoticeViewClose} />
       }
     </>
   );

@@ -280,7 +280,7 @@ export const EditApplicant = () => {
                       </Grid>
                       <Grid item xs={12} sm={4}>
                         <SelectInput
-                          label={formatMessage({ id: "PROFILE.STATUS" })}
+                          label={formatMessage({ id: "STATUS" })}
                           name="activityType"
                         >
                           {ApplicationEvaluationStatus.map((status) => (

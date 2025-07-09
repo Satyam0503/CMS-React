@@ -63,9 +63,12 @@ const Employees = () => {
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
 
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-  }, []);
+  const handleSearchChange = (value: string) => {
+    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
+      setPaginationValues({ ...paginationValues, pageNo: 0 });
+    }
+    setSearch(value.trim());
+  };
 
   const handleEmployeeDeletion = async (res: string) => {
     if (res !== "ok" || selectedEmployee === undefined) {

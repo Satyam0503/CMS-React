@@ -1,35 +1,97 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Box, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { relativeTimeFormatter, sanitizeHtmlContent } from "../../../../utils/common";
+import { getNoticeById } from "../services";
+import { NoticeResponseModel } from "../models";
+import { AccessTimeFilled } from "@mui/icons-material";
+
 type Props = {
-    noticeMessage: string
+    open: boolean,
+    noticeId: string,
+    handleClose: () => void
 }
 
-export const NoticeViewModel: FC<Props> = ({ noticeMessage }) => {
-    const [open, setOpen] = useState(false);
+export const NoticeViewModel: FC<Props> = (props) => {
     const { formatMessage } = useIntl();
-    return (
-        <>
-            <Box component="span" sx={{
-                color: 'secondary.main', mx: 2, "&:hover": {
-                    color: 'secondary.dark'
+    const [notice, setNotice] = useState<NoticeResponseModel>();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await getNoticeById(props.noticeId);
+                if (data.success) {
+                    setNotice(data.methodResult);
                 }
-            }}
-                onClick={() => setOpen(true)}>{formatMessage({ id: "BUTTON.VIEW" })}...</Box>
-            <CustomisedModal maxWidth="xs" open={open} handleClose={() => setOpen(false)}>
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="body1">{noticeMessage}</Typography>
-                </Box>
-                <Stack sx={{ alignItems: "flex-end" }}>
-                    <CustomisedButton
-                        variant="outlined"
-                        label={formatMessage({ id: "BUTTON.CLOSE" })}
-                        handleClick={() => setOpen(false)}
-                    />
-                </Stack>
-            </CustomisedModal>
-        </>
+                else {
+                    props.handleClose();
+                }
+            } catch (error: any) {
+                console.error(error.message);
+                props.handleClose();
+            }
+            finally {
+                setLoading(false);
+            }
+        })();
+    }, [])
+
+    return (
+        <CustomisedModal maxWidth="xs" open={props.open} handleClose={props.handleClose}>
+            {
+                loading ?
+                    <Stack spacing={2}>
+                        <Stack direction="row" spacing={1}>
+                            <Skeleton variant="circular" sx={{ width: 40, height: 40 }} />
+                            <Stack className="w-100">
+                                <Skeleton variant="text" />
+                                <Skeleton variant="text" />
+                            </Stack>
+                        </Stack>
+                        <Stack className="w-100">
+                            <Skeleton variant="text" />
+                            <Skeleton variant="text" />
+                            <Skeleton variant="text" />
+                        </Stack>
+                    </Stack> :
+
+                    <Stack spacing={2}>
+                        <Stack className="flex-row gap-2">
+                            <Avatar
+                                src={notice?.userProfile}
+                                alt="User Profile"
+                                className="shadow-sm"
+                            />
+                            <Stack className="w-100">
+                                <Typography variant="body1">{notice?.userName}</Typography>
+                                <Stack className="flex-row gap-4">
+                                    <Typography variant="caption">{notice?.userDesignation}</Typography>
+                                    <Typography variant="caption" sx={{ color: "primary.main" }} className="d-flex align-items-center gap-1 lh-1">
+                                        <AccessTimeFilled className="icon-fs-12" />
+                                        {relativeTimeFormatter(notice?.createdDateTime!)}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+                        <Divider className="mt-2" />
+                        <Box
+                            className="html-content"
+                            component="div"
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizeHtmlContent(notice?.noticeMessage ?? ""),
+                            }}
+                        />
+                        <CustomisedButton
+                            variant="outlined"
+                            className="align-self-end"
+                            label={formatMessage({ id: "BUTTON.CLOSE" })}
+                            handleClick={props.handleClose}
+                        />
+                    </Stack>
+            }
+        </CustomisedModal >
     )
 }

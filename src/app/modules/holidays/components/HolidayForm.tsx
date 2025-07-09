@@ -57,7 +57,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
           <form onSubmit={handleSubmit}>
             <Typography variant="h5" mb={2}>
               {/* {intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })} */}                                                         {/* Original code */}
-              { isEdit ? intl.formatMessage({ id: "MENU.EDIT_HOLIDAYS" }) : intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}    {/* By Rajdeep */}
+              {isEdit ? intl.formatMessage({ id: "MENU.EDIT_HOLIDAYS" }) : intl.formatMessage({ id: "MENU.ADD_HOLIDAYS" })}    {/* By Rajdeep */}
 
             </Typography>
 
@@ -85,7 +85,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
 
               <Grid item xs={12} sm={6}>
                 <CustomisedDatePicker
-                  label={intl.formatMessage({ id: "APPLICATION.START" })}
+                  label={intl.formatMessage({ id: "START_DATE" })}
                   value={values.startDate}
                   setValue={(newDate: Dayjs | null) => {
                     setFieldTouched("startDate", true);
@@ -100,7 +100,7 @@ const HolidayForm: React.FC<PropsTypes> = (props) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <CustomisedDatePicker
-                  label={intl.formatMessage({ id: "APPLICATION.END" })}
+                  label={intl.formatMessage({ id: "END_DATE" })}
                   value={values.endDate}
                   setValue={(newDate: Dayjs | null) => {
                     setFieldTouched("endDate", true);

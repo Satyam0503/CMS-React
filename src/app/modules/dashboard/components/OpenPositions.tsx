@@ -55,7 +55,7 @@ export default function OpenPositions() {
         ) : (
           <>
             <Stack spacing={1} sx={{ marginBlockEnd: 1 }}>
-              {activeJobs.slice(-4).map((job) => (
+              {activeJobs.slice(0, 4).map((job) => (
                 <Stack
                   key={job.jobId}
                   direction={"row"}
