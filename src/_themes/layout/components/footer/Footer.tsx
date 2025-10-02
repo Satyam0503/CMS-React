@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { ILayout, useLayout } from "../../core";
 import { Container, Grid, Link, List, Stack, Typography } from "@mui/material";
-import { ScrollTop } from "../scroll-top";
 
 const Footer = () => {
   const { config } = useLayout();
-  useEffect(() => {}, [config]);
+  useEffect(() => { }, [config]);
   return (
     <>
       <Grid
@@ -41,7 +40,6 @@ const Footer = () => {
               Purchase
             </Typography>
           </Link>
-          <ScrollTop />
         </Stack>
       </Grid>
     </>

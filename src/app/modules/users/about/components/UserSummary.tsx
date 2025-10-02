@@ -7,11 +7,11 @@ import { Edit } from "@mui/icons-material";
 import { getEmployeeSummary, updateEmployeeSummary } from "../../userservices";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
-import { UserSummaryModel } from "../../../../../utils/common_types";
 import { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
-import { checkPermissionForModulesFeatureAccess, hasModuleFeaturePermission } from "../../../../../utils/common";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
+import { UserSummaryModel } from "../../models";
 
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
@@ -37,14 +37,13 @@ export const UserSummary = () => {
     };
     try {
       const response = await updateEmployeeSummary(payload);
-      const { success, message } = response.data;
-      if (!success) {
-        throw new Error("Failed To Update Summary");
+      const { success } = response.data;
+      if (success) {
+        toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE_SUMMARY" }));
+        setRefresh(!refresh);
       }
-      toast.success(message);
-      setRefresh(!refresh);
     } catch (error) {
-      toast.error((error as AxiosError).message);
+      console.error((error as AxiosError).message);
     } finally {
       handleClose();
     }
@@ -67,7 +66,7 @@ export const UserSummary = () => {
     <Card sx={{ p: 2 }}>
       <Stack className="flex-row justify-content-between mb-4"  >
         <Typography variant="h5">
-          {formatMessage({ id: "INFO.SUMMARY" })}
+          {formatMessage({ id: "PROFILE.ABOUT.TITLE" })}
         </Typography>
         {isEdit ? (
           <Stack direction="row" spacing={1}>
@@ -114,7 +113,7 @@ export const UserSummary = () => {
         <Typography variant="body1" >
           {userSummary && userSummary.summary.trim().length > 0
             ? userSummary.summary
-            : formatMessage({ id: "USER.ADD_SUMMARY" })}
+            : formatMessage({ id: "PROFILE.ABOUT.ADD_SUMMARY" })}
         </Typography>
       )
       }

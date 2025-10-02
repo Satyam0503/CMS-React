@@ -7,10 +7,12 @@ import {
 } from "../../../utils/common";
 import {
   ApplicationFilterModel,
+  JobsFilterModel,
   ProcessLogFilterModel,
 } from "../../modules/recruitment/models";
 import { EmployeeFilterModel } from "../../modules/employees/models";
 import { NoticeBoardFilterModel } from "../../modules/noticeboard/models";
+import { GetHolidayPayloadModel, HolidayFilterModel } from "../../modules/holidays/models";
 
 const filterSlice = createSlice({
   name: "filters",
@@ -34,6 +36,10 @@ const filterSlice = createSlice({
       state.employee = action.payload;
       setLocalFilter(state);
     },
+    setHolidayFilter: (state, action: PayloadAction<HolidayFilterModel>)=>{
+      state.holiday = action.payload;
+      setLocalFilter(state);
+    },
     setNoticeBoardFilter: (
       state,
       action: PayloadAction<NoticeBoardFilterModel>
@@ -41,10 +47,15 @@ const filterSlice = createSlice({
       state.noticeBoard = action.payload;
       setLocalFilter(state);
     },
+    setJobsFilter: (state, action: PayloadAction<JobsFilterModel>) => {
+      state.jobs = action.payload;
+      setLocalFilter(state);
+    },
     resetAllFilters: (state) => {
       state.application = null;
       state.jobs = null;
       state.processLog = null;
+      state.holiday = null;
       clearAllLocalFilter();
     },
     resetFilter: (
@@ -63,6 +74,7 @@ export const {
   setEmployeesFilter,
   setProcessLogFilter,
   resetFilter,
-  resetAllFilters,
+  resetAllFilters, setHolidayFilter,
   setNoticeBoardFilter,
+  setJobsFilter,
 } = filterSlice.actions;

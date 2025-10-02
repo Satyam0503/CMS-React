@@ -1,7 +1,8 @@
-import { Grid } from "@mui/material";
+import { Grid, useTheme } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { colors } from "../../modules/theme/MuiTheme";
+import { useIntl } from "react-intl";
 
 interface DonutApexChartProps {
   series: Array<number>;
@@ -18,12 +19,13 @@ interface DonutApexChartProps {
 }
 
 function DonutApexChart(props: DonutApexChartProps) {
+  const { palette } = useTheme();
   const {
     series,
     labels,
     height,
     legendOption,
-    size = "60%",
+    size = "55%",
     showDataLabels,
     showLabelOnHover = false,
   } = props;
@@ -90,7 +92,7 @@ function DonutApexChart(props: DonutApexChartProps) {
         },
       },
     },
-    colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444"],
+    colors: [palette.primary.main, palette.secondary.main, palette.grey[700], palette.primary.dark],
     dataLabels: {
       enabled: showDataLabels || false,
       formatter: function (value: number, opts) {
@@ -103,7 +105,6 @@ function DonutApexChart(props: DonutApexChartProps) {
       style: {
         fontFamily: "Arial, sans-serif",
         fontWeight: 500,
-        colors: ["primary"],
       },
       background: {
         enabled: false,
@@ -123,18 +124,17 @@ function DonutApexChart(props: DonutApexChartProps) {
     legend: {
       show: legendOption?.show || true,
       position: legendOption?.position || "bottom",
-      offsetY: 15,
+      offsetY: 10,
       fontWeight: 600,
       itemMargin: {
         horizontal: 10,
-        vertical: 5,
       },
       labels: {
         useSeriesColors: true,
       },
-      formatter: function (seriesName) {
-        return `<span style="text-transform:Capitalize">${seriesName}</span>`;
-      },
+      markers: {
+        offsetX: -2
+      }
     },
     stroke: {
       width: 0,
@@ -144,7 +144,7 @@ function DonutApexChart(props: DonutApexChartProps) {
   return (
     <Grid item xs={12}>
       <Chart
-        height={height || 172}
+        height={height || 200}
         options={chartOptions}
         series={series}
         type="donut"

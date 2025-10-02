@@ -1,11 +1,22 @@
-import { getRequest, postRequest } from "../../../server/axios";
+import {
+  deleteRequest,
+  getRequest,
+  patchRequest,
+  postRequest,
+} from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
+import { LEAVE_REQUEST_STATUS } from "../../../utils/enums";
 import {
-  GetLeaveTypeResponse,
   LeaveBalanceFilter,
+  GetLeaveBalanceResponse,
+  GetLeaveTypeResponse,
   LeaveBalanceRequestModel,
   LeaveType,
+  LeaveRequestsFilter,
+  GetLeaveRequestesResponse,
+  GetEmployeeLeaveBalanceResponse,
+  RequestLeaveModel,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -24,13 +35,52 @@ export const getLeaveTypes = (isActive?: boolean) => {
   return getRequest<GetLeaveTypeResponse>(ServiceUrl.GET_LEAVE_TYPES);
 };
 
-// export const getLeaveBalance = (payload: LeaveBalanceFilter) => {
-//   return postRequest<LeaveBalanceFilter>(ServiceUrl.GET_LEAVE_BALANCE, payload);
-// };
-
 export const createUpdateLeaveBalance = (payload: LeaveBalanceRequestModel) => {
   return postRequest<LeaveBalanceRequestModel, ApiResponse>(
     ServiceUrl.CREATE_UPDATE_LEAVE_BALANCE,
     payload
+  );
+};
+
+export const getLeaveBalance = (payload: LeaveBalanceFilter) => {
+  return postRequest<LeaveBalanceFilter, GetLeaveBalanceResponse>(
+    ServiceUrl.GET_LEAVE_BALANCE,
+    payload
+  );
+};
+
+export const createLeaveRequest = (payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    ServiceUrl.CREATE_LEAVE_REQUEST,
+    payload
+  );
+};
+
+export const getAllLeaveRequest = (payload: LeaveRequestsFilter) => {
+  return postRequest<LeaveRequestsFilter, GetLeaveRequestesResponse>(
+    ServiceUrl.GET_LEAVE_REQUESTS,
+    payload
+  );
+};
+
+export const deleteLeaveRequest = (leaveRequestId: string) => {
+  return deleteRequest<ApiResponse>(
+    `${ServiceUrl.DELETE_LEAVE_REQUEST}/${leaveRequestId}`
+  );
+};
+
+export const getEmployeeLeaveBalance = (employeeId: string) => {
+  return getRequest<GetEmployeeLeaveBalanceResponse>(
+    `${ServiceUrl.GET_EMP_LEAVE_BALANCE}/${employeeId}`
+  );
+};
+
+export const updateLeaveRequestStatus = (
+  leaveRequestId: string,
+  status: LEAVE_REQUEST_STATUS
+) => {
+  return patchRequest<LEAVE_REQUEST_STATUS, ApiResponse>(
+    `${ServiceUrl.UPDATE_LEAVE_REQUEST_STATUS}/${leaveRequestId}/Status`,
+    status
   );
 };

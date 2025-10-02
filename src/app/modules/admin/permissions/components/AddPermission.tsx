@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { usePageData } from "../../../../../_themes/layout/core";
+import { usePageData } from "../../../../Context/PageDataProvider";
 
 const initialValues = {
   description: "",
@@ -123,11 +123,10 @@ export const AddPermission = () => {
       const response = await addEditRole(payload);
       const { success, message } = response.data;
       if (success) {
-        toast.success(formatMessage({ id: message }));
         navigate("/admin/roles");
       }
     } catch (error) {
-      toast.error("Request Failed");
+      console.error((error as Error).message);
     }
   };
   const handleReset = () => {

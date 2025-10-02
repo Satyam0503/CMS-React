@@ -3,59 +3,77 @@ import { Regex } from "../constant/Constant";
 
 export const userSchema = Yup.object().shape({
   firstName: Yup.string()
-    .required("First name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   lastName: Yup.string()
-    .required("last name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   email: Yup.string()
-    .required("Email is required")
-    .matches(
-      Regex.Email,
-      "Email must be a valid email"
-    ),
+    .required("VALIDATION_ERR.EMAIL_REQ")
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
   address: Yup.string().notRequired().nullable(),
   phoneNumber: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Phone number is not valid"
-    ).notRequired(),
+    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
+    .notRequired(),
   bloodGroup: Yup.string().notRequired().nullable(),
   dateOfBirth: Yup.date()
-    .typeError("Invalid Date of Birth")
-    .max(new Date(), "Date of Birth cannot be in the future").notRequired(),
-  dateOfJoining: Yup.date()
-    .typeError("Invalid Date of Joining")
-    .max(new Date(), "Date of Joining cannot be in the future").notRequired(),
-  personalEmail: Yup.string()
-    .matches(
-      Regex.Email,
-      "Email is not valid"
-    ).notRequired(),
-  emergencyContact: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Emergency Contact is not valid"
-    )
+    .max(new Date(), "VALIDATION_ERR.FUTURE_DOB")
     .notRequired(),
-  jobRole: Yup.string().required("job Role is Required"),
+  dateOfJoining: Yup.date()
+    .max(new Date(), "VALIDATION_ERR.FUTURE_JOINING_DATE")
+    .notRequired(),
+  personalEmail: Yup.string()
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
+    .notRequired(),
+  emergencyContact: Yup.string()
+    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
+    .notRequired(),
+  jobRole: Yup.string().nullable(),
   department: Yup.string().nullable(),
+  employmentType: Yup.number().nullable(),
   reportingManager: Yup.string().nullable(),
   teamLead: Yup.string().nullable(),
+  bankAccountNumber: Yup.number()
+    .notRequired()
+    .test("AccountNumber", "VALIDATION_ERR.INVALID_BANK_NO", (value: any) => {
+      // validate account number
+      if (value) {
+        var accNo = value.toString() as string;
+        return Regex.BankAccountNo.test(accNo);
+      }
+      return true;
+    }),
+  panNumber: Yup.string()
+    .matches(Regex.PanCard, "VALIDATION_ERR.INVALID_PAN")
+    .notRequired(),
 });
 
 export const userEducationSchema = Yup.object().shape({
-  educationTitle: Yup.string().required("Course name is required").min(3, 'Course name should be at least 3 characters long'),
-  startDate: Yup.date().required("Start Date is Required").max(new Date, "Start date cannot be in the future"),
-  endDate: Yup.date().required("End Date is Required").min(Yup.ref('startDate'), 'End date cannot be before start date'),
-  collegeName: Yup.string().required("College name is required").min(3, 'College name should be at least 3 characters long'),
-  type: Yup.string().required("Education type is required"),
+  educationTitle: Yup.string()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(3, "VALIDATION_ERR.COURSE_NAME_ERROR"),
+  startDate: Yup.date()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .max(new Date(), "VALIDATION_ERR.FUTRE_START_DATE"),
+  endDate: Yup.date()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(Yup.ref("startDate"), "VALIDATION_ERR.END_DATE_EARLIER_ERROR"),
+  collegeName: Yup.string().notRequired(),
+  type: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
 });
 
 export const userCertificationSchema = Yup.object().shape({
-  certificationTitle: Yup.string().required("Certification title is required").min(3, 'Certification title should be at least 3 characters long'),
-  startDate: Yup.date().required("Start Date is Required").max(new Date, "Start date cannot be in the future"),
-  endDate: Yup.date().required("End Date is Required").min(Yup.ref('startDate'), 'End date cannot be before start date'),
-  organisationName: Yup.string().required("Organization name is required").min(3, 'Organization name should be at least 3 characters long'),
-  mode: Yup.string().required("Certification type is required"),
+  certificationTitle: Yup.string()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(3, "VALIDATION_ERR.CERTIFICATION_NAME_ERROR"),
+  startDate: Yup.date()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .max(new Date(), "VALIDATION_ERR.FUTRE_START_DATE"),
+  endDate: Yup.date()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(Yup.ref("startDate"), "VALIDATION_ERR.END_DATE_EARLIER_ERROR"),
+  organisationName: Yup.string()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(3, "VALIDATION_ERR.ORG_NAME"),
+  mode: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
 });

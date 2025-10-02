@@ -21,13 +21,13 @@ import { Pagination } from "../../shared/components/Pagination";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
-import { usePageData } from "../../../_themes/layout/core";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
 import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
 import { countAppliedFilter } from "../../../utils/common"
+import { usePageData } from "../../Context/PageDataProvider";
 
 type ViewMode = "table" | "grid";
 
@@ -39,7 +39,7 @@ const Employees = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | undefined>();
   const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -83,7 +83,7 @@ const Employees = () => {
           setRefresh(!isRefresh);
         }
       } catch (error) {
-        toast.error("Something Went Wrong");
+        toast.error(intl.formatMessage({ id: "ERROR.SOMETHING_WRONG" }));
         console.error(
           "Error :",
           error instanceof Error ? error.message : error
@@ -146,17 +146,13 @@ const Employees = () => {
             ...(employeeFilters ?? initialFilterValues)
           }
         );
-        const { success, statusCode, methodResults, totalRecords } = response.data;
-        if (!(success && statusCode === 200)) {
-          throw new Error("Failed To fetch Data");
-        }
-        if (methodResults) {
-          setEmployeeList(methodResults.reverse());
+        const { success, methodResults, totalRecords } = response.data;
+        if (success) {
+          setEmployeeList(methodResults);
           setTotalRecords(totalRecords);
         }
       } catch (error) {
-        console.error("error :", error instanceof Error ? error.message : error
-        );
+        console.error((error as Error).message);
       } finally {
         setLoading(false);
       }
@@ -190,10 +186,10 @@ const Employees = () => {
               }}
             >
               <ToggleButton value="table" aria-label="table">
-                <ViewList className="icon-fs-20" />
+                <ViewList className="fs-20" />
               </ToggleButton>
               <ToggleButton value="grid" aria-label="grid">
-                <GridView className="icon-fs-20" />
+                <GridView className="fs-20" />
               </ToggleButton>
             </ToggleButtonGroup>
             <Badge
@@ -213,7 +209,7 @@ const Employees = () => {
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setModalOpen(true)}
-                  tooltip={intl.formatMessage({ id: "ADD.EMP.INFO" })}
+                  tooltip={intl.formatMessage({ id: "EMPLOYEE.ADD_NEW_EMP" })}
                   ariaLabel="Add employee"
                 />
               )}
@@ -265,8 +261,8 @@ const Employees = () => {
 
       {isConfirmModalOpen && (
         <ConfirmationModal
-          title={intl.formatMessage({ id: "TITLE.DELETE_EMP" })}
-          content={intl.formatMessage({ id: "CONFIRMATION.DELETE_EMP" })}
+          title={intl.formatMessage({ id: "CONFIRMATION.TITLE.DELETE_EMP" })}
+          content={intl.formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_EMP" })}
           open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={handleEmployeeDeletion}

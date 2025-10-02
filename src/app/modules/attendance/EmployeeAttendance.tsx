@@ -3,6 +3,7 @@ import React, { FC, useEffect } from "react";
 import { useIntl } from "react-intl";
 import IconStat from "../../shared/components/IconStat";
 import {
+  Button,
   Card,
   CardContent,
   Grid,
@@ -21,7 +22,6 @@ import {
   SupervisorAccount,
   TimerOffOutlined,
 } from "@mui/icons-material";
-import { usePageData } from "../../../_themes/layout/core";
 
 import {
   AttendanceMangementTableColumnList,
@@ -31,8 +31,7 @@ import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { AttendanceModel } from "../../../utils/common_types";
-import AddAttendance from "./AddAttendance";
-import { AttendanceChart } from "../../shared/components/AttendanceChart";
+import { usePageData } from "../../Context/PageDataProvider";
 
 const EmployeeAttendance: FC = () => {
   const intl = useIntl();
@@ -120,29 +119,24 @@ const EmployeeAttendance: FC = () => {
         </Grid>
       </Grid>
 
-      <Grid container display={"flex"} justifyContent={"space-between"} gap={2}>
-        <Stack>
-          <Select
-            name="days"
-            onChange={handleChange}
-            value={selectedDay}
-            sx={{
-              minWidth: "130px",
-              bgcolor: "common.white",
-            }}
-          >
-            {Days.map((item) => (
-              <MenuItem key={item.id} value={item.value}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Stack>
-
-        <Stack>
-          <AddAttendance />
-        </Stack>
+      <Grid item xs={12} className="d-flex justify-content-between">
+        <Select
+          name="days"
+          onChange={handleChange}
+          value={selectedDay}
+          sx={{
+            minWidth: "130px",
+            bgcolor: "common.white",
+          }}
+        >
+          {Days.map((item) => (
+            <MenuItem key={item.id} value={item.value}>
+              {item.label}
+            </MenuItem>
+          ))}
+        </Select>
       </Grid>
+
       <Grid item xs={12}>
         <Card sx={{ p: "2rem" }}>
           <Typography variant="h6" mb={3}>
@@ -175,11 +169,7 @@ const EmployeeAttendance: FC = () => {
         </Card>
       </Grid>
       <Grid item xs={12}>
-        <AttendanceChart
-          className="card-xxl-stretch"
-          chartColor="primary"
-          chartHeight="180px"
-        />
+
       </Grid>
     </Grid>
   );

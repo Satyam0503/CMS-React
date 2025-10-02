@@ -90,7 +90,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
               {tableRows?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={12} align="center">
-                    No Data Available
+                    {formatMessage({ id: "MESSAGE.NO_DATA_AVAILABLE" })}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -136,7 +136,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                       openConfirmationModal,
                                       openViewModal
                                     )
-                                    : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeMessage" || column.id === "message") ? column.build(row, props.openViewModal) : column.build(value)
+                                    : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeTitle") ? column.build(row) : column.build(value)
                                   : value}
                           </TableCell>
                         );

@@ -39,8 +39,8 @@ export interface GetApplicationPayloadModel {
   status?: number[];
   minExperience?: number | string | null;
   maxExperience?: number | string | null;
-  pageNo: number,
-  records: number
+  pageNo: number;
+  records: number;
 }
 
 export interface ApplicationFilterModel {
@@ -61,8 +61,8 @@ export interface ProcessLogFilterModel {
 }
 
 export interface JobsFilterModel {
-  jobType: string;
-  status: number;
+  jobTypes: number[];
+  status: number | null;
 }
 
 export interface JobModal {
@@ -70,9 +70,10 @@ export interface JobModal {
   companyId?: string;
   title: string;
   vacancies: number;
-  jobType: string;
+  jobType: number;
   status: boolean;
   description: string;
+  totalSubmissions?: number;
 }
 
 export interface CommentModel {
@@ -95,10 +96,12 @@ export type GetCommentPayloadModel = {
 };
 
 export type GetAllVacancyPayload = {
-  pageNo: number,
-  records: number,
-  search: string,
-}
+  pageNo?: number;
+  records?: number;
+  search?: string;
+  jobTypes: number[];
+  status: boolean | null;
+};
 
 export type CommentResponseModel = CommentModel &
   BaseModel & {

@@ -2,7 +2,6 @@ import { Grid, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
 import React, { useEffect, useMemo, useState } from "react";
-import { AttendanceChart } from "../../shared/components/AttendanceChart";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
 import { ApplicationsChart } from "./components/ApplicationsChart";
@@ -13,12 +12,13 @@ import Punctual from "./components/Punctual";
 import EmpOfMonth from "./components/EmpOfMonth";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
-import { checkPermissionForModulesFeatureAccess } from "../../../utils/common";
+import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import { usePageData } from "../../../_themes/layout/core";
 import UpcomingBirthday from "./components/UpcomingBirthday";
 import { PushNotification } from "./components/PushNotification";
+import { UpComingHolidays } from "./components/UpComingHolidays";
+import { usePageData } from "../../Context/PageDataProvider";
 
 // Main Dashboard Component
 export default function Dashboard() {
@@ -31,19 +31,13 @@ export default function Dashboard() {
 
   const hasAccessToEmpModule = useMemo(
     () =>
-      checkPermissionForModulesFeatureAccess(
-        `${ModulesName.Employees}.${Permission.View}`,
-        userModulesPermissions
-      ),
+      hasModuleFeaturePermission(ModulesName.Employees, Permission.View, userModulesPermissions),
     [userModulesPermissions]
   );
 
   const hasAccessToJob = useMemo(
     () =>
-      checkPermissionForModulesFeatureAccess(
-        `${ModulesName.Jobs}.${Permission.View}`,
-        userModulesPermissions
-      ),
+      hasModuleFeaturePermission(ModulesName.Jobs, Permission.View, userModulesPermissions),
     [userModulesPermissions]
   );
 
@@ -56,14 +50,13 @@ export default function Dashboard() {
       <DashboardHeader fullName={user.fullName} />
       <Grid
         container
-        spacing={3}
-        display={"flex"}
-        justifyContent={"space-between"}
+        spacing={2}
+        className="d-flex justify-content-between"
       >
         <Grid item xs={12} lg={8}>
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} className="h-100">
                 <EmployeeChart />
               </Grid>
             )}
@@ -80,7 +73,6 @@ export default function Dashboard() {
             <Grid item xs={12} sm={6}>
               <DepartmentChart />
             </Grid>
-
             <Grid item xs={12}>
               <Stack spacing={3}>
                 <NoticeBoard />
@@ -94,15 +86,11 @@ export default function Dashboard() {
             Notification.permission == "default" &&
             <PushNotification />
           }
-          <AttendanceChart
-            className="card-xxl-stretch"
-            chartColor="primary"
-            chartHeight="180px"
-          />
           <EmpOnLeave />
-          <Punctual />
+          <UpComingHolidays />
           <UpcomingBirthday />
-          <EmpOfMonth />
+          {/* <Punctual />
+          <EmpOfMonth /> */}
           <Help />
         </Grid>
       </Grid>

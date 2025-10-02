@@ -11,7 +11,7 @@ type PropsType = {
 };
 
 export const SearchInput: FC<PropsType> = memo(
-  ({ search, setSearch, placeholder = "Placeholder.Search" }) => {
+  ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH" }) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
     const { formatMessage: i } = useIntl();
@@ -40,7 +40,7 @@ export const SearchInput: FC<PropsType> = memo(
                   }}
                   onClick={handleClearSearch}
                 >
-                  {value ? <Close className="icon-fs-20" /> : <Search color="disabled" className="icon-fs-20" />}
+                  {value ? <Close className="fs-20" /> : <Search color="disabled" className="fs-20" />}
                 </IconButton>
               </InputAdornment>
             ),

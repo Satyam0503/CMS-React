@@ -13,7 +13,7 @@ type PropsType = {
   placeholder?: string
 };
 
-const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "Type_Here" }) => {
+const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEHOLDER.TYPE_HERE" }) => {
   const [textValue, setTextValue] = useState(value);
   const debouncedValue = useDebounce(textValue);
   const { formatMessage: i } = useIntl();

@@ -26,6 +26,8 @@ import {
   experienceCategoryList,
   indianStates,
 } from "../../../../../utils/constant/Constant";
+import { getVacancyPayload } from "../../jobs/Jobs";
+import { getStatusCodeString } from "../../../../../utils/common";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -54,7 +56,7 @@ export const AddApplicant: FC<PropsTypes> = ({
   refresh,
 }) => {
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const handleClose = () => {
     setOpen(false);
   };
@@ -83,21 +85,21 @@ export const AddApplicant: FC<PropsTypes> = ({
     };
     try {
       const { data } = await addApplicant(payload);
-      if (!data.success) {
-        throw new Error(intl.formatMessage({ id: data.message }));
+      if (data.success) {
+        const uploadResumeResponse = await uploadResume(values.email, formData);
+        const responseData = uploadResumeResponse.data;
+        if (responseData.success) {
+          toast.success(
+            i({ id: "TOAST.SUCCESS.ADD_APPLICANT" })
+          );
+          setRefresh(!refresh);
+          handleClose();
+        }
+      } else {
+        toast.error(i({ id: getStatusCodeString(data.statusCode) }));
       }
-      const uploadResumeResponse = await uploadResume(values.email, formData);
-      const responseData = uploadResumeResponse.data;
-      if (!responseData.success) {
-        throw new Error(responseData.message);
-      }
-      toast.success(
-        intl.formatMessage({ id: "MESSAGE.APPLICANT.ADD_SUCCESS" })
-      );
-      setRefresh(!refresh);
-      handleClose();
     } catch (error: any) {
-      toast.error(error.message);
+      console.error(error.message);
     } finally {
       setSubmitting(false);
     }
@@ -106,12 +108,12 @@ export const AddApplicant: FC<PropsTypes> = ({
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const { data } = await getAllJobVacancies(null, true);
+        const { data } = await getAllJobVacancies(getVacancyPayload);
         if (!(data.success && data.statusCode === 200)) {
           throw new Error(data.message);
         }
         if (data.methodResults.length < 1) {
-          toast.error("No active vacancies present");
+          toast.error(i({ id: "TOAST.FAILED.NO_VACANCY" }));
           handleClose();
         }
         setVacancyList(data.methodResults);
@@ -124,11 +126,10 @@ export const AddApplicant: FC<PropsTypes> = ({
   return (
     <>
       {vacancyList.length > 0 && (
-        <CustomisedModal open={open} handleClose={handleClose}>
-          <Stack spacing={2}>
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "ADD.NEW_APPLICANT" })}
-            </Typography>
+        <CustomisedModal open={open} handleClose={handleClose}
+          title={i({ id: "APPLICANT.ADD_APPLICANT" })}
+        >
+          <Stack>
             <Formik
               initialValues={initialValues}
               validationSchema={applicantValidationSchema}
@@ -146,44 +147,44 @@ export const AddApplicant: FC<PropsTypes> = ({
                     >
                       <Grid item xs={12} sm={6}>
                         <TextInput
-                          label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
+                          label={i({ id: "FORM.FIRST_NAME" })}
                           type="text"
-                          placeholder={intl.formatMessage({
-                            id: "USER.FIRST_NAME",
+                          placeholder={i({
+                            id: "FORM.FIRST_NAME",
                           })}
                           name="firstName"
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextInput
-                          label={intl.formatMessage({ id: "USER.LAST_NAME" })}
+                          label={i({ id: "FORM.LAST_NAME" })}
                           type="text"
-                          placeholder={intl.formatMessage({
-                            id: "USER.LAST_NAME",
+                          placeholder={i({
+                            id: "FORM.LAST_NAME",
                           })}
                           name="lastName"
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextInput
-                          label={intl.formatMessage({ id: "FORM.EMAIL" })}
+                          label={i({ id: "FORM.EMAIL" })}
                           type="email"
-                          placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
+                          placeholder={i({ id: "FORM.EMAIL" })}
                           name="email"
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <TextInput
-                          label={intl.formatMessage({ id: "USER.PHONE" })}
+                          label={i({ id: "FORM.PHONE" })}
                           type="text"
-                          placeholder={intl.formatMessage({ id: "USER.PHONE" })}
+                          placeholder={i({ id: "FORM.PHONE" })}
                           name="phone"
                         />
                       </Grid>
                       <Grid item xs={12} sm={6}>
                         <SelectInput
                           name="experience"
-                          label={intl.formatMessage({ id: "USER.EXPERIENCE" })}
+                          label={i({ id: "FORM.EXPERIENCE" })}
                         >
                           {experienceCategoryList.map((experience) => (
                             <MenuItem
@@ -198,7 +199,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                       <Grid item xs={12} sm={6}>
                         <SelectInput
                           name="vacancyId"
-                          label={intl.formatMessage({ id: "USER.DESIGNATION" })}
+                          label={i({ id: "FORM.DESIGNATION" })}
                         >
                           {vacancyList.map((vacancy) => (
                             <MenuItem key={vacancy.jobId} value={vacancy.jobId}>
@@ -216,18 +217,23 @@ export const AddApplicant: FC<PropsTypes> = ({
                           )}
                           options={indianStates}
                           onChange={(event, value) => {
+                            formik.setFieldTouched("state", true);
                             formik.setFieldValue("state", value?.value);
                           }}
                           renderInput={(param) => (
-                            <TextField {...param} label={"Select State"} />
+                            <TextField {...param} label={i({ id: "APPLICATION.SELECT_STATE" })} />
                           )}
                           getOptionLabel={(option) => option.label}
                         />
+                        {
+                          formik.touched.state && formik.errors.state &&
+                          <ErrorLabel errorLabel={formik.errors.state} />
+                        }
                       </Grid>
                     </Grid>
                     <Stack mt={2}>
                       <Typography variant="body1" mb={1} color="primary">
-                        {intl.formatMessage({ id: "UPLOAD.RESUME" })}
+                        {i({ id: "APPLICATION.UPLOAD_RESUME" })}
                       </Typography>
                     </Stack>
                     <Grid
@@ -236,92 +242,68 @@ export const AddApplicant: FC<PropsTypes> = ({
                       p={3}
                       sx={{
                         border: "1px dashed grey",
-                        cursor: "pointer",
                         borderRadius: 0.5,
                       }}
                     >
-                      <Stack
-                        spacing={2}
-                        direction={"row"}
-                        display={"flex"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <Stack alignItems={"center"}>
-                          <Tooltip title="Upload file here" placement="top">
-                            <Box
-                              component="label"
-                              sx={{
-                                px: 2,
-                                py: 1,
-                                borderRadius: 1,
-                                backgroundColor: "primary.lighter",
-                              }}
-                            >
-                              <CloudUploadOutlined
-                                fontSize="large"
-                                className="text-primary"
-                              />
+                      <Stack className="align-items-center" >
+                        <Box
+                          component="label"
+                          sx={{
+                            px: 2,
+                            py: 1,
+                            borderRadius: 1,
+                            backgroundColor: "primary.lighter",
+                            cursor: "pointer"
+                          }}
+                        >
+                          <CloudUploadOutlined
+                            fontSize="large"
+                            className="text-primary"
+                          />
 
-                              <input
-                                name="resume"
-                                type="file"
-                                accept=".pdf"
-                                onChange={(e) => {
-                                  formik.setFieldTouched("resume", true);
-                                  handleFileChange(e, formik.setFieldValue);
-                                }}
-                                hidden
-                              />
-                            </Box>
-                          </Tooltip>
-                          <Stack>
-                            <Typography
-                              variant="caption"
-                              flexWrap={"wrap"}
-                              textAlign={"center"}
-                            ></Typography>
-                            <Typography variant="caption">
-                              {formik.values.resume?.name}
-                            </Typography>
-                          </Stack>
-                        </Stack>
+                          <input
+                            name="resume"
+                            type="file"
+                            accept=".pdf"
+                            onChange={(e) => {
+                              formik.setFieldTouched("resume", true);
+                              handleFileChange(e, formik.setFieldValue);
+                            }}
+                            hidden
+                          />
+                        </Box>
+                        <Typography variant="caption">
+                          {formik.values.resume?.name}
+                        </Typography>
 
-                        <Stack>
-                          <Typography variant="body2">
-                            {intl.formatMessage({
-                              id: "RESUME.UPLOAD_INSTRUCTION",
-                            })}
-                          </Typography>
-                        </Stack>
+
+                        <Typography variant="body2" className="text-center mt-2">
+                          {i({
+                            id: "APPLICATION.RESUME_INSTRUCTION",
+                          })}
+                        </Typography>
                       </Stack>
                     </Grid>
 
-                    <ErrorLabel>
-                      {formik.touched.resume &&
-                        formik.errors.resume &&
-                        formik.errors.resume}
-                    </ErrorLabel>
+                    {formik.touched.resume &&
+                      formik.errors.resume &&
+                      <ErrorLabel errorLabel={formik.errors.resume} />
+                    }
 
-                    <Stack
-                      direction={"row"}
-                      spacing={1}
-                      justifyContent={"flex-end"}
-                      mt={2}
-                    >
+                    <Stack className="flex-row mt-2 justify-content-end gap-2">
                       <CustomisedButton
                         variant="outlined"
-                        label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+                        label={i({ id: "BUTTON.CLOSE" })}
                         handleClick={handleClose}
                       />
                       <CustomisedButton
                         variant="outlined"
-                        label={intl.formatMessage({ id: "BUTTON.RESET" })}
+                        label={i({ id: "BUTTON.RESET" })}
                         handleClick={() => formik.resetForm()}
                       />
                       <CustomisedButton
                         loading={formik.isSubmitting}
-                        label={intl.formatMessage({ id: "BUTTON.ADD" })}
+                        label={i({ id: "BUTTON.ADD" })}
                         type="submit"
                         disabled={
                           formik.isSubmitting ||

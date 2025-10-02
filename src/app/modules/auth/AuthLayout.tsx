@@ -55,9 +55,9 @@ const AuthLayout = () => {
             justifyContent={"space-evenly"}
             sx={{ marginBlock: "2rem" }}
           >
-            <Link to={"/"}>{formatMessage({ id: "Link.Term" })} </Link>
-            <Link to={"/"}> {formatMessage({ id: "Link.Plan" })} </Link>
-            <Link to={"/"}>{formatMessage({ id: "Link.ContactUs" })} </Link>
+            <Link to={"/"}>{formatMessage({ id: "LINK.TERM" })} </Link>
+            <Link to={"/"}> {formatMessage({ id: "LINK.PLAN" })} </Link>
+            <Link to={"/"}>{formatMessage({ id: "LINK.CONTACTUS" })} </Link>
           </Stack>
         </Grid>
 

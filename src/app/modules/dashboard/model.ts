@@ -1,20 +1,32 @@
-import {
-    ModulePermissoinModel,
-    PermissionModel,
-    ResponseData,
-  } from "../../../utils/common_types";
-  import { MultilingualModel } from "../admin/models"
+import { ResponseData } from "../../../utils/common_types";
 
-  export interface GenderModel {
-    gender: string;
+export interface GenderModel {
+  gender: string;
+  count: number;
+}
+
+export interface DepartmentResponseModel {
+  label: Record<string, string>;
+  departmentId: string;
+  employeeCount: number;
+}
+export interface ApplicationStatusModel {
+  totalApplications: number;
+  applicationStatusData: {
+    activityType: number;
     count: number;
-  }
+  }[];
+}
 
-  export interface DepartmentModel {
-    label: string,
-    departmentId: string;
-    employeeCount: number;
-  }
+export type UpComingHolidayModel = {
+  holidayId: string;
+  holidayName: string;
+  date: string;
+  holidayCoverImageUrl: string | null;
+};
 
-  export type getAllGenderDetailsResponseData = ResponseData<GenderModel>;
-  export type getAllDepartmentDetailsResponseData = ResponseData<DepartmentModel>;
+export type GetAllGenderDetailsResponseData = ResponseData<GenderModel>;
+export type GetAllDepartmentDetailsResponseData =
+  ResponseData<DepartmentResponseModel>;
+export type GetAllApplicationStatusData = ResponseData<ApplicationStatusModel>;
+export type GetUpComingHolidayResponseData = ResponseData<UpComingHolidayModel>;

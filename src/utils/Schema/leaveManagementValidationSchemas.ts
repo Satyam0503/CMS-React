@@ -1,52 +1,47 @@
 import * as Yup from "yup";
-import { LEAVE_TYPE } from "../enums";
+import dayjs from "dayjs";
 
 export const leaveTypeValidationSchma = Yup.object().shape({
   leaveType: Yup.number()
-    .oneOf(
-      Object.values(LEAVE_TYPE).filter((lt) => typeof lt === "number"),
-      "INVALID_LEAVE_TYPE"
-    )
-    .required("REQUIRED_TYPE"),
+    .oneOf([1, 2, 3, 4, 5], "VALIDATION_ERR.INVALID_LEAVE_TYPE")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
   minAdvanceNoticeDate: Yup.number()
-    .min(1, "MIN_ADVANCE_NOTICE_DAY")
-    .required("REQUIRED_TYPE"),
-  maxLeaveDays: Yup.number().min(1, "MAX_LEAVE_DAY").required("REQUIRED_TYPE"),
+    .min(0, "VALIDATION_ERR.MIN_ADVANCE_NOTICE_DAY")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  maxLeaveDays: Yup.number()
+    .min(1, "VALIDATION_ERR.MAX_LEAVE_DAY")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
   isHalfDay: Yup.bool().required(),
   isActive: Yup.bool().required(),
 });
 
 export const leaveBalanceValidationSchema = Yup.object().shape({
-  employeeId: Yup.string().required("REQUIRED_TYPE"),
+  employeeId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   leaveTypeBalances: Yup.array()
     .of(
       Yup.object().shape({
         leaveType: Yup.number()
-          .oneOf(
-            Object.values(LEAVE_TYPE).filter((lt) => typeof lt === "number"),
-            "INVALID_LEAVE_TYPE"
-          )
-          .required("REQUIRED_TYPE"),
+          .oneOf([1, 2, 3, 4, 5], "VALIDATION_ERR.INVALID_LEAVE_TYPE")
+          .required("VALIDATION_ERR.REQUIRED_TYPE"),
         maximumLeave: Yup.number()
-          .required("REQUIRED_TYPE")
-          .min(1, "Leave balance cannot be negative"),
+          .required("VALIDATION_ERR.REQUIRED_TYPE")
+          .min(0, "VALIDATION_ERR.NEGATIVE_LEAVE_BAL"),
       })
     )
-    .required("Leave balances are required"),
+    .required(),
 });
 
 export const leaveRequestValidationSchema = Yup.object().shape({
-  leaveTypes: Yup.number()
-    .oneOf(
-      Object.values(LEAVE_TYPE).filter((lt) => typeof lt === "number"),
-      "INVALID_LEAVE_TYPE"
-    )
-    .required("REQUIRED_TYPE"),
-  isHalfDay: Yup.bool().required("INVALID_LEAVE_TYPE"),
+  leaveType: Yup.number()
+    .oneOf([1, 2, 3, 4, 5], "INVALID_LEAVE_TYPE")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  isHalfDay: Yup.bool().required("VALIDATION_ERR.INVALID_LEAVE_TYPE"),
   startDate: Yup.date()
-    .min(new Date(), "PAST_START_DATE_ERROR")
-    .required("REQUIRED_TYPE"),
-  endDate: Yup.date().min(Yup.ref("startDate")).required("REQUIRED_TYPE"),
-  totalDays: Yup.number().required("REQUIRED_TYPE"),
-  reason: Yup.string().trim().min(10).required("REQUIRED_TYPE"),
+    .min(dayjs().startOf("day"))
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  endDate: Yup.date()
+    .min(Yup.ref("startDate"), "VALIDATION_ERR.END_DATE_EARLIER_ERROR")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  totalDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  reason: Yup.string().trim().min(3).required("VALIDATION_ERR.REQUIRED_TYPE"),
 });

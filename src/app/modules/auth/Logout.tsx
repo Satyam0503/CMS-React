@@ -1,17 +1,21 @@
-import { useEffect } from "react";
-import { Navigate, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useLogout } from "./core/Auth";
+import { CircularLoader } from "../../shared/components/CircularLoader";
+import { Navigate } from "react-router-dom";
 
 export function Logout() {
   const logout = useLogout();
+  const [redirect, setRedirect] = useState(false);
   useEffect(() => {
-    logout();
-    document.location.reload();
+    const logOutUser = async () => {
+      await logout();
+      setRedirect(true);
+    }
+    logOutUser();
   }, [logout]);
 
-  return (
-    // <Routes>
-    <Navigate to="/auth/login" />
-    // </Routes>
-  );
+  if (redirect) {
+    return <Navigate to="/auth/login" />
+  }
+  return <CircularLoader />
 }

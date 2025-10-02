@@ -1,14 +1,16 @@
-import { EmployeeModel, ResponseData } from "../../../utils/common_types";
+import { Dayjs } from "dayjs";
+import { ResponseData } from "../../../utils/common_types";
 import { EmployeeByIdResponse } from "../users/models";
 
 export interface GetAllEmployeeResponseModel {
   userId: string;
   fullName: string;
   email: string;
+  gender: string;
   employeeId: string;
-  jobRole: string;
-  department: string;
-  phoneNumber: string;
+  jobRole: null | Record<string, string>;
+  department: null | Record<string, string>;
+  phoneNumber: string | null;
   fullProfileUrl: string | null;
   dateOfBirth: string | null;
 }
@@ -25,9 +27,32 @@ export interface GetAllEmployeePayloadModel {
   departmentId: string[];
   gender: string[];
 }
+export interface EmployeeModel {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  email: string;
+  roleId: string;
+  employeeId: string;
+  department: string | null;
+  dateOfBirth: Dayjs | null;
+  reportingManager: string | null;
+  phoneNumber: string | null;
+  bloodGroup: string | null;
+  address: string | null;
+  jobRole: string | null;
+  employmentType: number | null;
+  dateOfJoining: Dayjs | null;
+  personalEmail: string | null;
+  emergencyContact: string | null;
+  status: string | boolean;
+  isEmailVerified?: boolean;
+  profileUrl?: string;
+  birthDayThisYear?: Dayjs | string;
+}
 
-
-export type AddEmployeeResponseData = ResponseData<EmployeeModel>;
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
-export type GetAllEmployeeResponseData = ResponseData<GetAllEmployeeResponseModel>;
+export type GetAllEmployeeResponseData =
+  ResponseData<GetAllEmployeeResponseModel>;

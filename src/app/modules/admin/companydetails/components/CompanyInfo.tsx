@@ -20,7 +20,7 @@ import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CompanyInfoModel, CompanyModel } from "../../models";
 import { getCompanyDetails, updateCompanyDetails } from "../../adminservices";
-import { languages } from "../../../../../utils/constant/Constant";
+import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
 import { companyValidationSchema } from "../../../../../utils/Schema/companyValidationSchema";
@@ -29,6 +29,8 @@ import { ImageCropper } from "../../../users/components/ImageCropper";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { LANGUAGE } from "../../../../../utils/enums";
 
 const initialCompanyInfo: CompanyModel = {
   defaultLanguage: "",
@@ -37,12 +39,13 @@ const initialCompanyInfo: CompanyModel = {
   companyName: "",
   primaryContact: "",
   country: "",
-  state: null,
+  address: ""
 }
 const SupportedImageFormat = ["jpg", "jpeg", "png", "webp"];
-const MAX_FILE_SIZE = 5; // 5MB Max file size
+const MAX_FILE_SIZE = 5;
 
-export const CompanyInfo: FC = () => {
+export const CompanyInfo = () => {
+  const { currentLanguage, changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
   const [isEdit, setEdit] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -86,11 +89,11 @@ export const CompanyInfo: FC = () => {
       const fileSizeInMB = selectedFile.size / (1024 * 1024);
       const fileFormat = selectedFile.name.split(".").pop()!;
       if (fileSizeInMB > MAX_FILE_SIZE) {
-        setFieldError("companyLogo", "File size should be less then 5MB");
+        setFieldError("companyLogo", "VALIDATION_ERR.PROFILE_PICTURE_SIZE");
         return;
       }
       if (!SupportedImageFormat.includes(fileFormat.toLowerCase())) {
-        setFieldError("companyLogo", "Only jpg, jpeg or png images are allowed");
+        setFieldError("companyLogo", "VALIDATION_ERR.PICTURE_FORMAT");
         return;
       }
       setFieldValue("companyLogo", selectedFile);
@@ -125,6 +128,7 @@ export const CompanyInfo: FC = () => {
 
     formData.append("CompanyName", values.companyName);
     formData.append("DefaultLanguage", values.defaultLanguage);
+    formData.append("Address", values.address);
     if (values.applicationLanguage.length > 0) {
       values.applicationLanguage.forEach(language =>
         formData.append('ApplicationLanguage', language)
@@ -138,15 +142,17 @@ export const CompanyInfo: FC = () => {
           ...userData, companyLogo: methodResult.companyLogo ?? userData?.companyLogo, defaultLanguage: methodResult.defaultLanguage,
           applicationLanguage: methodResult.applicationLanguage
         }));
+        changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         setCompanyInfo(methodResult);
-        toast.success("Updated Successfully");
+        toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
         setSelectedLogo(null);
+      } else {
+        toast.error(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
       }
     } catch (error) {
-      toast.error("Request Failed");
+      console.error((error as Error).message);
     }
-
   };
 
   const handleEditCancel = () => {
@@ -154,8 +160,6 @@ export const CompanyInfo: FC = () => {
     setSelectedLogo(null);
     resetForm();
   }
-
-
   useEffect(() => {
     (async () => {
       try {
@@ -168,6 +172,7 @@ export const CompanyInfo: FC = () => {
             companyName: methodResult.companyName,
             defaultLanguage: methodResult.defaultLanguage,
             applicationLanguage: methodResult.applicationLanguage,
+            address: methodResult.address
           });
           setLoading(false);
         }
@@ -182,19 +187,16 @@ export const CompanyInfo: FC = () => {
     return <CompanyInfoSkeleton />;
   }
 
-  console.log(errors);
-
-
   return (
     <>
       <Card sx={{ p: 3, mt: 1, height: "100%" }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2, flexWrap: "wrap" }}>
           <Stack spacing={.5}>
             <Typography variant="h5" sx={{ fontSize: 18 }}>
-              {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_PROFILE" })}
+              {formatMessage({ id: "COMPANY_DETAILS.COMPANY_PROFILE" })}
             </Typography>
             <Typography variant="body2" sx={{ fontSize: 12 }}>
-              {formatMessage({ id: "COMPANY_DETAILS.TAB.NOTE" })}
+              {formatMessage({ id: "COMPANY_DETAILS.NOTE" })}
             </Typography>
           </Stack>
 
@@ -206,7 +208,7 @@ export const CompanyInfo: FC = () => {
               </Stack>
               :
               <CustomisedButton
-                label={formatMessage({ id: "COMPANY_DETAILS.EDIT_DETAILS" })}
+                label={formatMessage({ id: "COMPANY_DETAILS.EDIT_BUTTON" })}
                 handleClick={() => setEdit(true)}
               />
           }
@@ -217,17 +219,17 @@ export const CompanyInfo: FC = () => {
             <Grid item xs={12} sm={4} md={5}>
               <Typography variant="h6">
                 {formatMessage({
-                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES",
+                  id: "COMPANY_DETAILS.LANGUAGES",
                 })}
               </Typography>
               <Typography variant="body2">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LANGUAGES_NOTE" })}
+                {formatMessage({ id: "COMPANY_DETAILS.LANGUAGES_NOTE" })}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={7} md={6} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               <Stack spacing={1}>
                 <Typography variant="body1" id="defaultLanguage">
-                  {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.DEFAULT_COMPANY_LANGUAGE" })}
+                  {formatMessage({ id: "COMPANY_DETAILS.DEFAULT_LANG" })}
                 </Typography>
                 {
                   isEdit ?
@@ -253,7 +255,7 @@ export const CompanyInfo: FC = () => {
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="body1" >
-                  {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.APPLICATION_LANGUAGE" })}
+                  {formatMessage({ id: "COMPANY_DETAILS.APP_LANG" })}
                 </Typography>
                 {
                   isEdit ?
@@ -303,11 +305,11 @@ export const CompanyInfo: FC = () => {
             <Grid item xs={12} sm={4} md={5} className="d-flex flex-column gap-1">
               <Typography variant="h6">
                 {formatMessage({
-                  id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME",
+                  id: "COMPANY_DETAILS.COMPANY_NAME",
                 })}
               </Typography>
               <Typography variant="body2">
-                {formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.COMPANY_NAME.NOTE" })}
+                {formatMessage({ id: "COMPANY_DETAILS.NAME_NOTE" })}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={7} md={6}>
@@ -320,9 +322,30 @@ export const CompanyInfo: FC = () => {
             </Grid>
           </Grid>
           <Divider sx={{ my: 1 }} />
+          <Grid container sx={{ gap: 3 }} >
+            <Grid item xs={12} sm={4} md={5} className="d-flex flex-column gap-1">
+              <Typography variant="h6">
+                {formatMessage({
+                  id: "COMPANY_DETAILS.ADDRESS",
+                })}
+              </Typography>
+              <Typography variant="body2">
+                {formatMessage({ id: "COMPANY_DETAILS.ADDRESS_NOTE" })}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={7} md={6}>
+              {
+                isEdit ?
+                  <TextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
+                  :
+                  <Typography variant="body1">{companyInfo.address || formatMessage({ id: "NOT_AVAILABLE" })}</Typography>
+              }
+            </Grid>
+          </Grid>
+          <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }}>
             <Grid item xs={12} sm={4} md={5}>
-              <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}</Typography>
+              <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.LOGO" })}</Typography>
               <Typography variant="body2" sx={{ fontSize: 12 }}>
                 {formatMessage({ id: "COMPANY_DETAILS.LOGO_NOTE" })}
               </Typography>
@@ -331,8 +354,8 @@ export const CompanyInfo: FC = () => {
               <Stack spacing={1}>
                 <Avatar
                   variant="square"
-                  alt={formatMessage({ id: "COMPANY_DETAILS.TAB.COMPANY_DETAIL.LOGO" })}
-                  src={userData.companyLogo ?? ""}
+                  alt={formatMessage({ id: "COMPANY_DETAILS.LOGO" })}
+                  src={userData.companyLogo ?? DEFAULT_COMPANY_LOGO}
                   sx={{
                     width: "250px",
                     height: "70px",
@@ -379,6 +402,7 @@ export const CompanyInfo: FC = () => {
             </Grid>
           </Grid>
           <Divider sx={{ my: 1 }} />
+
         </form>
       </Card >
       {

@@ -10,19 +10,19 @@ const tabsRoutes: TabModel[] = [
     {
         tabId: 1,
         to: "leaverequest",
-        title: "LEAVE_REQUESTS",
+        title: "LEAVE.TITLES.LEAVE_REQUESTS",
         icon: <EditCalendar />,
     },
     {
         tabId: 2,
         to: "leavebalance",
-        title: "LEAVE_BALANCE",
+        title: "LEAVE.TITLES.LEAVE_BALANCE",
         icon: <AccountBalanceWallet />,
     },
     {
         tabId: 3,
         to: "leavetypes",
-        title: "LEAVE_TYPES",
+        title: "LEAVE.TITLES.LEAVE_TYPES",
         icon: <DynamicFeed />,
     },
 ];
@@ -50,7 +50,7 @@ export const LeaveManagementTabs = () => {
                     );
                 })}
             </Card>
-            <Box component="div" className="flex-grow-1">
+            <Box component="div" className="d-flex flex-column flex-grow-1">
                 <Outlet />
             </Box>
         </Stack>

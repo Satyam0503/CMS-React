@@ -1,0 +1,96 @@
+import { useEffect, useState } from "react";
+import { EmployeeSearchModel } from "../../../../../utils/common_types";
+import { Autocomplete, AutocompleteInputChangeReason, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { ClearSharp, Search } from "@mui/icons-material";
+import { useIntl } from "react-intl";
+import { useAppLang } from "../../../../i18n/Metronici18n";
+import { useNavigate } from "react-router-dom";
+import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
+import { useDebounce } from "../../../../../app/hooks/useDebounce";
+import { searchEmployee } from "../../../../../app/modules/users/userservices";
+
+export const EmployeeSearchInput = () => {
+    const theme = useTheme();
+    const { formatMessage } = useIntl();
+    const [loading, setLoading] = useState(false);
+    const [employeeList, setEmployeeList] = useState<EmployeeSearchModel[]>([]);
+    const [open, setOpen] = useState(false);
+    const { currentLanguage } = useAppLang();
+    const [search, setSearch] = useState("");
+    const debouncedValue = useDebounce(search);
+    const navigate = useNavigate();
+    const handleSearchChange = async (event: React.SyntheticEvent, value: string, reason: AutocompleteInputChangeReason) => {
+        setSearch(value)
+    };
+    const handleClick = (empId: string) => {
+        setSearch("");
+        navigate(`/employees/${empId}`);
+        setOpen(false);
+    };
+
+    useEffect(() => {
+        (async () => {
+            if (debouncedValue.trim().length > 0) {
+                setLoading(true);
+                try {
+                    const { data } = await searchEmployee(debouncedValue);
+                    if (data.success) {
+                        setEmployeeList(data.methodResults);
+                        setOpen(true);
+                    }
+                } catch (error: any) {
+                    console.error(error.message);
+                }
+                finally {
+                    setLoading(false);
+                }
+            }
+        })();
+    }, [debouncedValue])
+    return (
+        <Autocomplete
+            id="employee_search"
+            sx={{ minWidth: 250 }}
+            size="small"
+            open={open}
+            onClose={() => {
+                setOpen(false);
+                setSearch("");
+            }}
+            disablePortal={true}
+            inputValue={search}
+            onInputChange={handleSearchChange}
+            popupIcon={open ? <ClearSharp /> : <Search />}
+            forcePopupIcon={!loading}
+            getOptionLabel={(option) => option.firstName + " " + option.lastName}
+            options={employeeList}
+            loading={loading}
+            noOptionsText={formatMessage({ id: "MESSAGE.NO_RESULT" })}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    placeholder={formatMessage({ id: "PLACEHOLDER.SEARCH_EMP" })}
+                    InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                            <>
+                                {loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
+                                {params.InputProps.endAdornment}
+                            </>
+                        ),
+                    }}
+                />
+            )}
+            renderOption={(props, emp, state) => {
+                return (
+                    <ListItemButton key={emp.userId} onClick={() => handleClick(emp.userId)} >
+                        <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>
+                            <Avatar src={emp.fullProfileUrl || DEFAULT_USER_AVATAR} alt={emp.firstName} sx={{ width: 32, height: 32 }} />
+                        </ListItemAvatar>
+                        <ListItemText primary={emp.firstName + " " + emp.lastName} secondary={emp.jobRole?.[currentLanguage] ?? formatMessage({ id: "NOT_AVAILABLE" })} />
+                    </ListItemButton>
+                );
+            }}
+        />
+    )
+}

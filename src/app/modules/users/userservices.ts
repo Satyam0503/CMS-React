@@ -5,23 +5,23 @@ import {
   patchRequest,
   postRequest,
 } from "../../../server/axios";
+import { ApiResponse } from "../../../utils/common_types";
 import {
-  ApiResponse,
   CertificationResponseData,
-  EmployeeSearchResponseModel,
-  UserCertificationModel,
-  UserEducationModel,
-  UserEducationResponseData,
-  UserSummaryModel,
-  UserSummaryResponseData,
-} from "../../../utils/common_types";
-import {
+  ChangePasswordPayload,
   EmployeeResponseData,
+  EmployeeSearchResponseModel,
+  GetCollegeListResponseModel,
   GetSkillListResponseModel,
   NotificationRequestPayload,
   NotificationResponseModel,
   UploadProfileResponseModel,
+  UserCertificationModel,
+  UserEducationModel,
+  UserEducationResponseData,
   UserSkillsResponseData,
+  UserSummaryModel,
+  UserSummaryResponseData,
   WorkHistoryModel,
   WorkHistoryResponseModel,
 } from "./models";
@@ -99,7 +99,7 @@ export const addEmployeeEducation = async (payload: UserEducationModel) => {
 };
 
 export const updateEmployeeSummary = async (payload: UserSummaryModel) => {
-  return postRequest<UserSummaryModel, UserSummaryResponseData>(
+  return postRequest<UserSummaryModel, ApiResponse>(
     ServiceUrl.UPDATE_EMPLOYEE_SUMMARY,
     payload
   );
@@ -136,6 +136,10 @@ export const updateProfilePicture = async (payload: FormData) => {
     {},
     true
   );
+};
+
+export const removeProfilePicture = async () => {
+  return deleteRequest<ApiResponse>(ServiceUrl.REMOVE_PROFILE_PICTURE);
 };
 
 export const deleteEmployeeEducation = async (
@@ -220,10 +224,7 @@ export const addUpdateWorkHistory = async (payload: WorkHistoryModel) => {
   );
 };
 
-export const deleteEmployeeWorkHistory = async (
-  workId: string,
-  userId?: string
-) => {
+export const deleteEmployeeWorkHistory = (workId: string, userId?: string) => {
   return deleteRequest<ApiResponse>(
     `${ServiceUrl.DELETE_WORK_HISTORY}/${workId}`,
     {
@@ -236,9 +237,22 @@ export const deleteEmployeeWorkHistory = async (
 };
 
 // employee search
-
-export const searchEmployee = async (name: string) => {
+export const searchEmployee = (name: string) => {
   return getRequest<EmployeeSearchResponseModel>(ServiceUrl.SEARCH_EMPLOYEE, {
     params: { name },
   });
+};
+
+// college name suggestion
+export const getCollegeList = (name: string) => {
+  return getRequest<GetCollegeListResponseModel>(ServiceUrl.GET_COLLEGE_LIST, {
+    params: { searchValue: name },
+  });
+};
+
+export const changePassword = (payload: ChangePasswordPayload) => {
+  return postRequest<ChangePasswordPayload, ApiResponse>(
+    ServiceUrl.CHANGE_PASSWORD,
+    payload
+  );
 };

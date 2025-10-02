@@ -1,11 +1,13 @@
 import * as Yup from "yup";
 
 const jobSchema = Yup.object().shape({
-  title: Yup.string().required("Job Title is required"),
-  vacancies: Yup.number().min(1,"vacancies number must be non-negative").required("Vacancies is required"),
-  description: Yup.string().required("Job Description is required"),
-  jobType: Yup.string().required("Job type is required"),
-  status: Yup.boolean().required("Status is required"),
+  title: Yup.string().required("VALIDATION_ERR.JOB_TITLE"),
+  vacancies: Yup.number()
+    .min(1, "VALIDATION_ERR.NEGATIVE_VACANCY")
+    .required("VALIDATION_ERR.JOB_VACANCY"),
+  description: Yup.string().required("VALIDATION_ERR.JOB_DESCRIPTION"),
+  jobType: Yup.string().required("VALIDATION_ERR.JOB_TYPE"),
+  status: Yup.boolean().required("VALIDATION_ERR.JOB_STATUS"),
 });
 
 export default jobSchema;

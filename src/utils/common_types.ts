@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
-import { Modules, ModulesName, ModulesTitles } from "./enums";
+import { LANGUAGE, Modules, ModulesName, ModulesTitles } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
@@ -8,36 +8,31 @@ import {
 } from "../app/modules/recruitment/models";
 import { EmployeeFilterModel } from "../app/modules/employees/models";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
+import { HolidayFilterModel } from "../app/modules/holidays/models";
 
 export interface ApiResponse {
   success: boolean;
   message: string;
-  statusCode?: number;
+  statusCode: number;
 }
 export interface CreatePasswordModel {
   newPassword: string;
   token: string;
-  uid: string;
 }
 
 export interface UserModel {
   userId: string;
+  roleType: number;
   companyName: string;
   firstName: string;
   lastName: string;
   fullName: string;
-  profileImage: string;
-  companyLogo: string;
+  profileImage: string | null;
+  companyLogo: string | null;
   defaultLanguage: string;
   applicationLanguage: string[];
   modulePermission: string[];
 }
-
-export type UserSummaryModel = {
-  userId: string;
-  summaryId: string;
-  summary: string;
-};
 
 export interface ModulePermissoinModel {
   moduleName: string;
@@ -54,61 +49,6 @@ export interface PermissionModel {
   permissionConstant: string;
 }
 
-export interface EmployeeModel {
-  userId: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  email: string;
-  roleId: string;
-  employeeId: string;
-  department: string | null;
-  dateOfBirth: Dayjs | null;
-  reportingManager: string | null;
-  teamLead: string | null;
-  phoneNumber: string;
-  bloodGroup: string | null;
-  address: string | null;
-  jobRole: string;
-  dateOfJoining: Dayjs | null;
-  personalEmail: string | null;
-  emergencyContact: string | null;
-  status: string | boolean;
-  isEmailVerified?: boolean;
-  profileUrl?: string;
-  fullProfileUrl?: string;
-  birthDayThisYear?: Dayjs | string;
-}
-
-export interface UserEducationModel {
-  educationId?: string;
-  userId: string;
-  educationTitle: string;
-  collegeName: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  type: string;
-}
-
-export type UserCertificationModel = {
-  certificationTitle: string;
-  organisationName: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  mode: string;
-  userId?: string;
-  certificationId?: string;
-};
-
-export type HolidayType = {
-  id: string;
-  title: string;
-  description: string;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  type: string;
-};
-
 /* export type NoticeModel = {
   id: string;
   target: string;
@@ -117,22 +57,15 @@ export type HolidayType = {
   message: string;
 };
 */
+export type AppLanguageProps = {
+  selectedLang: LANGUAGE;
+};
 
 export type NotificationRedirectOption = {
   targetPath: string;
   data: any;
 };
 
-export type ProcessLogModel = {
-  processId: string;
-  applicantName: string;
-  companyId: string;
-  userId: string;
-  jobRole: string;
-  commentedOn: string;
-  comments: string;
-  commentedBy: string;
-};
 export type LeavesModel = {
   id: string;
   target: string;
@@ -187,6 +120,7 @@ export interface SideBarTabListProps {
   hasSubTabs?: boolean;
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
   isDefault: boolean;
+  adminOnly?: boolean;
 }
 
 export interface FiltersType {
@@ -194,6 +128,7 @@ export interface FiltersType {
   jobs: JobsFilterModel | null;
   processLog: ProcessLogFilterModel | null;
   employee: EmployeeFilterModel | null;
+  holiday: HolidayFilterModel | null;
   noticeBoard: NoticeBoardFilterModel | null;
 }
 
@@ -221,19 +156,19 @@ export type EmployeeSearchModel = {
   firstName: string;
   lastName: string;
   empId: string | null;
-  jobRole: string | null;
-  profileUrl: string | null;
-  fullProfileUrl: string;
+  jobRole: Record<string, string> | null;
+  fullProfileUrl: string | null;
 };
 
+export type FilterComponentProps = {
+  id?: string;
+  open: boolean;
+  handleClose: () => void;
+  anchorEl: null | Element;
+  children?: React.ReactNode;
+};
+
+// nullable utility type
+export type Nullable<T> = { [K in keyof T]: T[K] | null };
+
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
-
-export type UserSummaryResponseData = ResponseData<UserSummaryModel>;
-
-export type UserEducationResponseData = ResponseData<UserEducationModel>;
-
-export type CertificationResponseData = ResponseData<UserCertificationModel>;
-
-export type GetProcessLogResponseModel = ResponseData<ProcessLogModel>;
-
-export type EmployeeSearchResponseModel = ResponseData<EmployeeSearchModel>;

@@ -32,7 +32,7 @@ import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { usePageData } from "../../../../../_themes/layout/core";
+import { usePageData } from "../../../../Context/PageDataProvider";
 
 const validationSchema = Yup.object().shape({
   description: Yup.string().required(),
@@ -153,13 +153,14 @@ export const EditPermission = () => {
     };
     try {
       const response = await addEditRole(payload);
-      const { success, message } = response.data;
+      const { success } = response.data;
       if (success) {
-        toast.success(message);
         navigate("/admin/roles");
+      } else {
+        toast.error(formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }))
       }
     } catch (error) {
-      toast.error("Failed To Update Permission");
+      console.error((error as Error).message);
     }
   };
 
@@ -170,10 +171,8 @@ export const EditPermission = () => {
     try {
       const res = await changeAppAccess(currentRoleDetails?.rolesId!, checked);
       if (res.data.success) {
-        toast.success(formatMessage({ id: res.data.message }));
+        toast.success(formatMessage({ id: "ROLE.APP_ACCESS.UPDATED" }));
         setRefresh(!refresh);
-      } else {
-        toast.error(formatMessage({ id: res.data.message }));
       }
     } catch (error) {
       console.log(error);

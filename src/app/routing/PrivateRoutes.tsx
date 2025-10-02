@@ -1,24 +1,23 @@
-import { lazy, FC, Suspense } from "react";
+import { lazy, FC, Suspense, ReactNode } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { getCSSVariableValue } from "../../_themes/assets/ts/_utils";
-import { WithChildren } from "../../_themes/helpers";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
 
-const SuperAdmin = lazy(() => import("../modules/superadmin/SuperAdmin.tsx"));
+
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
-const Recruitment = lazy(() => import("../modules/recruitment/RecruitmentRoutes.tsx"));
+const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
 const Employees = lazy(() => import("../modules/employees/Employees.tsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
-const Profile = lazy(() => import("../modules/users/components/ProfileTabs.tsx"));
+const Profile = lazy(() => import("./ProfileRoutes.tsx"));
 const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
-const NoticeBoard = lazy(() => import("../modules/noticeboard/NoticeBoardRoutes.tsx"));
+const NoticeBoard = lazy(() => import("./NoticeBoardRoutes.tsx"));
 const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
 const LeaveManagement = lazy(() => import("../modules/leaves/LeaveManagement.tsx"));
+const PayRollManagement = lazy(() => import("../modules/payroll/PayRollManagement.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -108,7 +107,16 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="payroll"
+          element={
+            <ProtectedRoute module={ModulesName.PayRoll}>
+              <SuspensedView>
+                <PayRollManagement />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="recruitment/*"
           element={
@@ -120,20 +128,14 @@ const PrivateRoutes = () => {
         <Route
           path="admin/*"
           element={
-            <SuspensedView>
-              <Admin />
-            </SuspensedView>
+            <ProtectedRoute adminOnly={true}>
+              <SuspensedView>
+                <Admin />
+              </SuspensedView>
+            </ProtectedRoute>
           }
         />
 
-        <Route
-          path="superadmin/*"
-          element={
-            <SuspensedView>
-              <SuperAdmin />
-            </SuspensedView>
-          }
-        />
         <Route
           path="/unauthorize"
           element={<UnAuthorizedAccess type="unauthorise" />}
@@ -145,9 +147,12 @@ const PrivateRoutes = () => {
   );
 };
 
-const SuspensedView: FC<WithChildren> = ({ children }) => {
+type PropsType = {
+  children: ReactNode
+}
+
+const SuspensedView = ({ children }: PropsType) => {
   const theme = useTheme();
-  const baseColor = getCSSVariableValue("--bs-primary");
   TopBarProgress.config({
     barColors: {
       "0": theme.palette.primary.main,

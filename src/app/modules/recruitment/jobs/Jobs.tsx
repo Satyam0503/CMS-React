@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, Stack } from "@mui/material";
+import { Badge, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -20,24 +20,28 @@ import { ConfirmationModal } from "../../../shared/components/ConfirmationModal"
 import { GetAllVacancyPayload, JobModal } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
 import {
-  getModulePermissions,
+  countAppliedFilter,
+  hasModuleFeaturePermission,
   removeUnwantedString,
 } from "../../../../utils/common";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";
-import { usePageData } from "../../../../_themes/layout/core";
+import { initialJobFilter, JobFilter, jobStatusDecoder } from "./components/JobFilter";
+import { usePageData } from "../../../Context/PageDataProvider";
 
 const initialValues: JobModal = {
   jobId: "",
   title: "",
   vacancies: 1,
   description: "",
-  jobType: "",
+  jobType: 1,
   status: true,
 };
 
+export const getVacancyPayload: GetAllVacancyPayload = { ...initialJobFilter, status: true, search: "" }
+
 export default function Jobs() {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10, });
   const [jobInitialValues, setJobInitialValues] = useState(initialValues);
   const [openModal, setOpenModal] = useState(false);
@@ -51,13 +55,14 @@ export default function Jobs() {
   const [isRefresh, setRefresh] = useState(false);
   const [isViewModalOpen, setViewModalOpen] = useState(false);
   const { setPageTitle } = usePageData();
-
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const id = open ? "job-filter" : undefined;
   const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const jobFilters = useAppSelector(state => state.filters.jobs);
 
-  const userPermissionsForModule = useMemo(
-    () => getModulePermissions(ModulesName.Jobs, userModulesPermissions),
-    [userModulesPermissions]
-  );
+  const hasAddPermission = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Create, userModulesPermissions);
+  const hasEditPermission = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Edit, userModulesPermissions);
 
   const handleSearchChange = (value: string) => {
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
@@ -73,16 +78,13 @@ export default function Jobs() {
   };
 
   const handleEditJob = (job: JobModal) => {
-    setJobInitialValues({
-      ...job,
-    });
-    setOpenModal(true);
-    setEdit(true);
-  };
-
-  const openConfirmationModal = (job: JobModal) => {
-    setConfirmModalOpen(true);
-    setSelectedJob(job);
+    if (hasEditPermission) {
+      setJobInitialValues({
+        ...job,
+      });
+      setOpenModal(true);
+      setEdit(true);
+    }
   };
 
   const closeConfirmationModal = () => {
@@ -95,24 +97,25 @@ export default function Jobs() {
     setViewModalOpen(true);
   };
 
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   const handledeleteJob = async (res: string) => {
     if (res !== "ok" || selectedJob === undefined) {
       closeConfirmationModal();
     } else {
       try {
         const response = await deleteJobVacancy(selectedJob.jobId);
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (success) {
           setRefresh(!isRefresh);
-          toast.success(message);
+          toast.success(i({ id: "TOAST.SUCCESS.DELETE" }));
           closeConfirmationModal();
         }
       } catch (error) {
-        console.error(
-          "Error :",
-          error instanceof Error ? error.message : error
-        );
-        toast.error("Request Failed.");
+        console.error(error instanceof Error ? error.message : error);
+        toast.error(i({ id: "TOAST.FAILED.DELETE" }));
       }
     }
   };
@@ -131,26 +134,28 @@ export default function Jobs() {
         const response = await editJobVacancy(payload, jobId);
         const { success, message } = response.data;
         if (!success) {
-          throw new Error(message);
+          toast.error(i({ id: "TOAST.FAILED.UPDATED" }));
+        } else {
+          toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
+          setRefresh(!isRefresh);
+          handleClose();
         }
-        toast.success(message);
-        setRefresh(!isRefresh);
-        handleClose();
       } catch (error: any) {
-        toast.error(error.message);
+        console.error(error.message);
       } finally {
         setSubmitting(false);
       }
     } else {
       try {
         const response = await addJobVacancy(payload);
-        const { message, success } = response.data;
+        const { success } = response.data;
         if (!success) {
-          throw new Error(message);
+          toast.error(i({ id: "TOAST.FAILED.JOB_POST" }))
+        } else {
+          toast.success(i({ id: "TOAST.SUCCESS.JOB_POST" }));
+          setRefresh(!isRefresh);
+          handleClose();
         }
-        toast.success(message);
-        setRefresh(!isRefresh);
-        handleClose();
       } catch (error: any) {
         toast.error(error.message);
       } finally {
@@ -180,6 +185,8 @@ export default function Jobs() {
       search: search,
       pageNo: paginationValues.pageNo + 1,
       records: paginationValues.records,
+      ...(jobFilters ? jobFilters : initialJobFilter),
+      status: jobFilters ? jobFilters.status == null ? null : jobStatusDecoder[jobFilters.status] : null,
     };
     (async () => {
       try {
@@ -195,10 +202,10 @@ export default function Jobs() {
         setLoading(false);
       }
     })();
-  }, [isRefresh, paginationValues, search]);
+  }, [isRefresh, paginationValues, search, jobFilters]);
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({ id: "PAGE.JOBS" }));
+    setPageTitle(i({ id: "PAGE.JOBS" }));
   }, []);
 
   return (
@@ -206,21 +213,23 @@ export default function Jobs() {
       <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse" >
         <SearchInput search={search} setSearch={handleSearchChange} />
         <Stack direction="row" spacing={1}>
-          <CustomIconButton icon={<FilterList />} />
-          {userPermissionsForModule.includes(
-            `${ModulesName.Jobs}.${Permission.Create}`
-          ) && (
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setOpenModal(true)}
-              />
-            )}
-          <CustomIconButton
-            tooltip={intl.formatMessage({
-              id: "IMPORT.EXCEL",
-            })}
-            icon={<Download />}
-          />
+          <Badge anchorOrigin={{
+            horizontal: "left",
+            vertical: "top"
+          }} color="primary" badgeContent={countAppliedFilter(jobFilters)} >
+            <CustomIconButton
+              icon={<FilterList />}
+              ariaLabel="job filter"
+              handleClick={handleFilterClick}
+            />
+          </Badge>
+          {
+            hasAddPermission &&
+            <CustomIconButton
+              icon={<Add />}
+              handleClick={() => setOpenModal(true)}
+            />
+          }
         </Stack>
       </Stack>
       <CustomisedTable
@@ -229,7 +238,6 @@ export default function Jobs() {
         rows={jobList}
         page={paginationValues.pageNo}
         rowsPerPage={paginationValues.records}
-        openConfirmationModal={openConfirmationModal}
         openViewModal={handleJobDetailView}
         loading={loading}
         rowClickHandler={handleEditJob}
@@ -245,11 +253,11 @@ export default function Jobs() {
       )}
       {isConfirmationModalOpen && selectedJob && (
         <ConfirmationModal
-          title={intl.formatMessage({
-            id: "TITLE.DELETE_JOB",
+          title={i({
+            id: "CONFIRMATION.TITLE.DELETE_JOB",
           })}
-          content={intl.formatMessage({
-            id: "CONFIRMATION.DELETE_JOB",
+          content={i({
+            id: "CONFIRMATION.CONTENT.DELETE_JOB",
           })}
           open={isConfirmationModalOpen}
           handleClose={closeConfirmationModal}
@@ -270,6 +278,14 @@ export default function Jobs() {
           open={isViewModalOpen}
           setOpen={setViewModalOpen}
           jobData={selectedJob}
+        />
+      )}
+      {open && (
+        <JobFilter
+          open={true}
+          id={id}
+          anchorEl={anchorEl}
+          handleClose={() => setAnchorEl(null)}
         />
       )}
     </Card>

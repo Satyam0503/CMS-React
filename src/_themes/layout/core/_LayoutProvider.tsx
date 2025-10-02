@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {FC, createContext, useContext, useState, useEffect} from 'react'
-import {DefaultConfig} from './_LayoutConfig'
+import { FC, createContext, useContext, useState, useEffect } from 'react'
+import { DefaultConfig } from './_LayoutConfig'
 import {
   setLayoutIntoLocalStorage,
   getEmptyCssClasses,
@@ -17,7 +17,7 @@ import {
   LayoutType,
   ToolbarType,
 } from './_Models'
-import {WithChildren} from '../../helpers'
+import { WithChildren } from '../../../utils/common_types'
 
 export interface LayoutContextModel {
   config: ILayout
@@ -34,9 +34,9 @@ const LayoutContext = createContext<LayoutContextModel>({
   classes: getEmptyCssClasses(),
   attributes: getEmptyHTMLAttributes(),
   cssVariables: getEmptyCSSVariables(),
-  setLayout: (_config: LayoutSetup) => {},
-  setLayoutType: (_layoutType: LayoutType) => {},
-  setToolbarType: (_toolbarType: ToolbarType) => {},
+  setLayout: (_config: LayoutSetup) => { },
+  setLayoutType: (_layoutType: LayoutType) => { },
+  setToolbarType: (_toolbarType: ToolbarType) => { },
 })
 
 const enableSplashScreen = () => {
@@ -53,7 +53,8 @@ const disableSplashScreen = () => {
   }
 }
 
-const LayoutProvider: FC<WithChildren> = ({children}) => {
+
+const LayoutProvider: FC<WithChildren> = ({ children }) => {
   const [config, setConfig] = useState(LayoutSetup.config)
   const [classes, setClasses] = useState(LayoutSetup.classes)
   const [attributes, setAttributes] = useState(LayoutSetup.attributes)
@@ -74,7 +75,7 @@ const LayoutProvider: FC<WithChildren> = ({children}) => {
   }
 
   const setToolbarType = (toolbarType: ToolbarType) => {
-    const updatedConfig = {...config}
+    const updatedConfig = { ...config }
     if (updatedConfig.app?.toolbar) {
       updatedConfig.app.toolbar.layout = toolbarType
     }
@@ -84,7 +85,7 @@ const LayoutProvider: FC<WithChildren> = ({children}) => {
   }
 
   const setLayoutType = (layoutType: LayoutType) => {
-    const updatedLayout = {...config, layoutType}
+    const updatedLayout = { ...config, layoutType }
     setLayoutIntoLocalStorage(updatedLayout)
     window.location.reload()
   }
@@ -106,7 +107,7 @@ const LayoutProvider: FC<WithChildren> = ({children}) => {
   return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>
 }
 
-export {LayoutContext, LayoutProvider}
+export { LayoutContext, LayoutProvider }
 
 export function useLayout() {
   return useContext(LayoutContext)

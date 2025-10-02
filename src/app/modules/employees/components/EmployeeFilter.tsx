@@ -1,5 +1,4 @@
 import { EmployeeFilterModel } from "../models";
-import { DepartmentModel } from "../../dashboard/model";
 import { FC, useEffect, useState } from "react";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
@@ -17,26 +16,23 @@ import {
   Typography,
 } from "@mui/material";
 
-interface PropsType {
-  id?: string;
-  open: boolean;
-  handleClose: () => void;
-  anchorEl: null | Element;
-}
 import { useIntl } from "react-intl";
 import { employeeFilterValidationSchema } from "../../../../utils/Schema/filterValidationSchema";
 import { Gender } from "../../../../utils/constant/Constant";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
+import { FilterComponentProps } from "../../../../utils/common_types";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { DepartmentResponseModel } from "../../dashboard/model";
 
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
   gender: [],
 };
 
-export const EmployeeFilter: FC<PropsType> = (props) => {
+export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
-  const [deptList, setDeptList] = useState<DepartmentModel[]>([]);
+  const [deptList, setDeptList] = useState<DepartmentResponseModel[]>([]);
   const appliedEmpFilters = useAppSelector(state => state.filters.employee);
   const { values, handleSubmit, setFieldValue } =
     useFormik({
@@ -48,6 +44,8 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
         props.handleClose();
       },
     });
+  const { currentLanguage } = useAppLang();
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
   useEffect(() => {
     const getAllDepartments = async () => {
@@ -70,7 +68,7 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
       <form onSubmit={handleSubmit}>
         <Stack>
           <Typography variant="caption">
-            {formatMessage({ id: "FILTER.DEPT_TITLE" })}
+            {formatMessage({ id: "FORM.DEPARTMENT" })}
           </Typography>
           <Autocomplete
             multiple
@@ -87,9 +85,9 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
                 selectedDept.map((dept) => dept.departmentId)
               );
             }}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.label[currentLanguage] || option.label[defaultLanguage]}
             renderInput={(params) => (
-              <TextField {...params} placeholder="Departments" />
+              <TextField {...params} placeholder={formatMessage({ id: "FORM.DEPARTMENT" })} />
             )}
             renderOption={(props, option, state) => {
               return (
@@ -99,7 +97,7 @@ export const EmployeeFilter: FC<PropsType> = (props) => {
                     checked={state.selected}
                     sx={{ mr: 1 }}
                   />
-                  <ListItemText primary={option.label} />
+                  <ListItemText primary={option.label[currentLanguage] || option.label[defaultLanguage]} />
                 </li>
               );
             }}

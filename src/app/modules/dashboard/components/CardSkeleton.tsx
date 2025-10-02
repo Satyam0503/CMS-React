@@ -4,7 +4,7 @@ const CardSkeleton = () => {
   return (
     <Card
       sx={{
-        height: "290px",
+        height: "280px",
         padding: 2,
       }}
     >
@@ -13,11 +13,11 @@ const CardSkeleton = () => {
         <Stack spacing={1}>
           {
             Array.from({ length: 4 }).map((_, index) => (
-              <Stack key={index} direction={"row"} spacing={1}>
+              <Stack key={index} className="flex-row gap-2 align-items-start">
                 <Skeleton variant="rounded" height={40} width={40} />
                 <Stack className="flex-grow-1">
                   <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                  <Skeleton variant="text" sx={{ fontSize: ".8rem" }} />
+                  <Skeleton variant="text" sx={{ fontSize: ".6rem" }} />
                 </Stack>
               </Stack>
             ))

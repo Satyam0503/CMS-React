@@ -10,7 +10,6 @@ import LeaveAllowences from "./components/LeaveAllowences";
 import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
-import { usePageData } from "../../../_themes/layout/core";
 import { useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
@@ -19,66 +18,79 @@ import { checkIsActive } from "../../../_themes/helpers";
 import clsx from "clsx";
 import { ProfileHeader } from "./about/components/ProfileHeader";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
+import { usePageData } from "../../Context/PageDataProvider";
 
-// const employeeBreadCrumbs: Array<Breadcrumb> = [
-//   {
-//     label: "PAGE.EMPLOYEES",
-//     path: "/employees",
-//     parent: "/",
-//   },
-//   {
-//     label: "PAGE.PROFILE",
-//     path: "/employees/{employeeid}",
-//     parent: "/employees",
-//   },
-// ];
+const employeeBreadCrumbs: Array<Breadcrumb> = [
+  {
+    label: "PAGE.EMPLOYEES",
+    path: "/employees",
+    parent: "/",
+  },
+  {
+    label: "EMPLOYEE.PROFILE",
+    path: "/employees/{employeeid}/*",
+    parent: "/employees",
+  },
+];
 
 const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
     to: "about",
-    title: "ABOUT",
+    title: "PROFILE.TABS.ABOUT",
     icon: <Person />,
   },
   {
     tabId: 2,
     to: "leave",
-    title: "LEAVE_TRACKER",
-    icon: <CalendarMonth />,
+    title: "PROFILE.TABS.LEAVE_TRACKER",
+    icon: <CalendarMonth />
   },
   {
     tabId: 3,
     to: "performance",
-    title: "PERFORMANCE",
+    title: "PROFILE.TABS.PERFORMANCE",
     icon: <Speed />,
   },
   {
     tabId: 4,
     to: "workhistory",
-    title: "WORK_HISTORY",
+    title: "PROFILE.TABS.WORKHISTORY",
     icon: <WorkHistory />,
   },
   {
     tabId: 5,
     to: "setting",
-    title: "SETTING",
+    title: "PROFILE.TABS.SETTING",
     icon: <Settings />,
   },
 ];
 
 const UserProfile = () => {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
+  const { setBreadcrumbs } = useBreadcrumbs();
   const { setPageTitle } = usePageData();
   const empId = useParams().employeeid;
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
+    setPageTitle(i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
+    setBreadcrumbs(employeeBreadCrumbs);
   }, []);
 
+  const filteredTabs = () => {
+    const protectedTabs = [2, 5];
+    return tabsRoutes.filter(tab => {
+      if (empId) {
+        return !protectedTabs.includes(tab.tabId);
+      } else {
+        return true;
+      }
+    })
+  }
   return (
     <UserDetailsProvider>
-      <Grid container spacing={{ xs: 2, lg: 3, xl: 4 }} className="flex-grow-1">
+      <Grid container spacing={{ xs: 2, lg: 3, xl: 2 }} className="flex-grow-1">
         <Grid
           item
           xs={12}
@@ -90,7 +102,8 @@ const UserProfile = () => {
               <ProfileCard />
             </Grid>
             <Grid item xs={12} md={6} lg={12}>
-              <LeaveAllowences />
+              {/* <LeaveAllowences /> */}
+              <ProfileHeader />
             </Grid>
           </Grid>
         </Grid>
@@ -102,14 +115,13 @@ const UserProfile = () => {
           xl={9}
           className="d-flex flex-column gap-4"
         >
-          <ProfileHeader />
-          <Stack spacing={1} className="flex-grow-1">
+          <Stack spacing={2} className="flex-grow-1">
             <Card className="tab-container d-flex flex-row">
-              {tabsRoutes.map((tab) => {
+              {filteredTabs().map((tab) => {
                 const tabTo = empId ? `employees/${empId}/${tab.to}` : `profile/${tab.to}`;
                 return (
                   <Box
-                    component={"div"}
+                    component="div"
                     key={tab.tabId}
                     className={clsx("tab-box", {
                       tab_active: checkIsActive(location.pathname, tabTo),
@@ -118,7 +130,7 @@ const UserProfile = () => {
                     sx={{ color: "text.secondary" }}
                   >
                     {tab.icon}
-                    {intl.formatMessage({ id: tab.title })}
+                    {i({ id: tab.title })}
                   </Box>
                 );
               })}

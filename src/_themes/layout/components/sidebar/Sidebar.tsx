@@ -3,6 +3,7 @@ import { Avatar, Box, Drawer, IconButton, Stack, Typography, useMediaQuery, useT
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
 import { West } from "@mui/icons-material";
+import { DEFAULT_COMPANY_LOGO, DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 
 type Props = {
   open: boolean;
@@ -46,14 +47,14 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             onClick={handleSideBarToggle}
             onMouseOver={(e) => e.stopPropagation()}
           >
-            <West className="icon-fs-20" />
+            <West className="fs-20" />
           </IconButton>
         }
-        <Stack className="align-items-center mb-6" >
+        <Stack className="align-items-center mt-4 mb-6" >
           <Avatar
             variant="square"
             alt="Company Logo"
-            src={companyLogo}
+            src={companyLogo || DEFAULT_COMPANY_LOGO}
             className="company-logo"
             sx={{
               backgroundColor: "transparent",
@@ -68,13 +69,13 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
           <Box component="div" className="user-profile-wrapper">
             <Avatar
               alt=""
-              src={profileUrl}
+              src={profileUrl || DEFAULT_USER_AVATAR}
               sx={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
                 aspectRatio: 1,
-                color: "secondary.main"
+                backgroundColor: "secondary.main",
               }}
             />
           </Box>

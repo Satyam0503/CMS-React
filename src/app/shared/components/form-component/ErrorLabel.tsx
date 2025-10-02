@@ -1,8 +1,10 @@
 import { FormHelperText } from "@mui/material";
+import { useIntl } from "react-intl";
 interface Props {
-  children: React.ReactNode;
+  errorLabel?: string;
 }
-export const ErrorLabel = ({ children }: Props) => {
+export const ErrorLabel = ({ errorLabel }: Props) => {
+  const { formatMessage: i } = useIntl();
   return (
     <FormHelperText
       sx={{
@@ -12,7 +14,7 @@ export const ErrorLabel = ({ children }: Props) => {
         marginTop: "3px",
       }}
     >
-      {children}
+      {i({ id: errorLabel })}
     </FormHelperText>
   );
 };

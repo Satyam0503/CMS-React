@@ -21,11 +21,11 @@ const Error404: FC = () => {
       <Grid item sm={10} md={6}>
         <Stack spacing={1}>
           <Typography variant="h1" fontWeight={700} fontSize="52px" >
-            {formatMessage({ id: "Error.404.OPPS" })}
+            {formatMessage({ id: "ERROR.OPPS" })}
           </Typography>
-          <Typography variant="h2" fontWeight={700}> {formatMessage({ id: "Error.404.PAGE_NOT_FOUND" })}</Typography>
+          <Typography variant="h2" fontWeight={700}> {formatMessage({ id: "ERROR.PAGE_NOT_FOUND" })}</Typography>
           <Typography variant="h6">
-            {formatMessage({ id: "Error.404.NOTE" })}
+            {formatMessage({ id: "ERROR.404" })}
           </Typography>
         </Stack>
 

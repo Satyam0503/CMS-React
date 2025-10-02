@@ -4,7 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import {
-  EmployeeModel,
+  AppLanguageProps,
   FiltersType,
   ModulePermissoinModel,
   NotificationRedirectOption,
@@ -14,21 +14,29 @@ import {
   ApplicantStatus,
   ApplicationStatus,
   CommentAction,
+  JOB_TYPE_ENUM,
+  HOLIDAY_TYPE,
   LEAVE_REQUEST_STATUS,
   LEAVE_TYPE,
   ModulesName,
   NOTICE_TYPE,
   NOTIFICATION_TYPE,
   Permission,
+  LANGUAGE,
+  Roles,
+  EMPLOYMENT,
 } from "./enums";
 import {
   APP_FILTER_KEY,
+  I18N_CONFIG_KEY,
   NoticeTypes,
   SideBarTabList,
 } from "./constant/Constant";
-import { ReactNode } from "react";
 import { NotificationModel } from "../app/modules/users/models";
 import { NavigateFunction } from "react-router-dom";
+import { EmployeeModel } from "../app/modules/employees/models";
+import { MultilingualModel } from "../app/modules/admin/models";
+import { IntlShape } from "react-intl";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -43,7 +51,7 @@ export const dateFormatter = (
 export const relativeTimeFormatter = (date: Dayjs | string) => {
   const daysDiff = dayjs().diff(date, "day");
   if (daysDiff > 3) {
-    return dayjs(date).format("DD MMM YYYY hh:mm A");
+    return dayjs(date).format("lll");
   }
   return dayjs(date).fromNow();
 };
@@ -79,6 +87,14 @@ export const applicationStatusMapper: {
   [ApplicationStatus.Rejected]: "APPLICATION.STATUS.REJECTED",
 };
 
+export const genderMapper: {
+  [index: string]: string;
+} = {
+  male: "GENDER.MALE",
+  female: "GENDER.FEMALE",
+  other: "GENDER.OTHER",
+};
+
 export const applicantStatusDecoder: {
   [index: number]: string;
 } = {
@@ -89,9 +105,26 @@ export const applicantStatusDecoder: {
 export const noticeTypeDecoder: {
   [index: number]: string;
 } = {
-  [NOTICE_TYPE.GENERAL]: "NOTICE_TYPE.GENERAL",
-  [NOTICE_TYPE.IMPORTANT]: "NOTICE_TYPE.IMPORTANT",
-  [NOTICE_TYPE.URGENT]: "NOTICE_TYPE.URGENT",
+  [NOTICE_TYPE.GENERAL]: "NOTICE.TYPES.GENERAL",
+  [NOTICE_TYPE.IMPORTANT]: "NOTICE.TYPES.IMPORTANT",
+  [NOTICE_TYPE.URGENT]: "NOTICE.TYPES.URGENT",
+};
+
+export const holidayTypeDecoder: {
+  [index: number]: string;
+} = {
+  [HOLIDAY_TYPE.CULTURAL]: "HOLIDAY.TYPES.CULTURAL",
+  [HOLIDAY_TYPE.HEALTH]: "HOLIDAY.TYPES.HEALTH",
+  [HOLIDAY_TYPE.RELIGIOUS]: "HOLIDAY.TYPES.RELIGIOUS",
+  [HOLIDAY_TYPE.NATIONAL]: "HOLIDAY.TYPES.NATIONAL",
+};
+
+export const EmploymentTypeMapper: { [key: number]: string } = {
+  [EMPLOYMENT.FULLTIME]: "EMPLOYEE.TYPE.FULLTIME",
+  [EMPLOYMENT.PARTTIME]: "EMPLOYEE.TYPE.PARTTIME",
+  [EMPLOYMENT.CONTRACTUAL]: "EMPLOYEE.TYPE.CONTRACTUAL",
+  [EMPLOYMENT.INTERNSHIP]: "EMPLOYEE.TYPE.INTERNSHIP",
+  [EMPLOYMENT.APPRENTICESHIP]: "EMPLOYEE.TYPE.APPRENTICESHIP",
 };
 
 export const commentActionEncoderForApplicationStatus = (
@@ -124,16 +157,32 @@ export const commentActionMapper: { [index: number]: string } = {
 };
 
 export const leaveRequestStatusMapper: { [index: number]: string } = {
-  [LEAVE_REQUEST_STATUS.PENDING]: "PENDING",
-  [LEAVE_REQUEST_STATUS.APPROVED]: "APPROVED",
-  [LEAVE_REQUEST_STATUS.REJECTED]: "REJECTED",
+  [LEAVE_REQUEST_STATUS.PENDING]: "LEAVE_REQUEST_STATUS.PENDING",
+  [LEAVE_REQUEST_STATUS.APPROVED]: "LEAVE_REQUEST_STATUS.APPROVED",
+  [LEAVE_REQUEST_STATUS.REJECTED]: "LEAVE_REQUEST_STATUS.REJECTED",
 };
 
 export const LeaveTypeMapper: { [index: number]: string } = {
-  [LEAVE_TYPE.SICK_LEAVE]: "SICK_LEAVE",
-  [LEAVE_TYPE.CASUAL_LEAVE]: "CASUAL_LEAVE",
-  [LEAVE_TYPE.EARNED_LEAVE]: "EARNED_LEAVE",
-  [LEAVE_TYPE.MATERNITY_LEAVE]: "MATERNITY_LEAVE",
+  [LEAVE_TYPE.SICK_LEAVE]: "LEAVE.TYPES.SICK_LEAVE",
+  [LEAVE_TYPE.CASUAL_LEAVE]: "LEAVE.TYPES.CASUAL_LEAVE",
+  [LEAVE_TYPE.EARNED_LEAVE]: "LEAVE.TYPES.EARNED_LEAVE",
+  [LEAVE_TYPE.MATERNITY_LEAVE]: "LEAVE.TYPES.MATERNITY_LEAVE",
+  [LEAVE_TYPE.PATERNITY_LEAVE]: "LEAVE.TYPES.PATERNITY_LEAVE",
+};
+
+export const JobTypeMapper: { [index: number]: string } = {
+  [JOB_TYPE_ENUM.ONSITE]: "JOBTYPE.ONSITE",
+  [JOB_TYPE_ENUM.HYBRID]: "JOBTYPE.HYBRID",
+  [JOB_TYPE_ENUM.REMOTE]: "JOBTYPE.REMOTE",
+};
+
+export const LanguageNameMapper: { [index: string]: string } = {
+  [LANGUAGE.ENGLISH]: "LANGUAGES.ENGLISH",
+  [LANGUAGE.MANDARIN]: "LANGUAGES.MANDARIN",
+  [LANGUAGE.SPANISH]: "LANGUAGES.SPANISH",
+  [LANGUAGE.JAPANESE]: "LANGUAGES.JAPANESE",
+  [LANGUAGE.GERMAN]: "LANGUAGES.GERMAN",
+  [LANGUAGE.FRENCH]: "LANGUAGES.FRENCH",
 };
 
 export const statusEncoder = (status: string) => {
@@ -162,36 +211,6 @@ export const convertMonthsToYear = (months: number) => {
   let years = Math.round(months / 12);
   let suffix = years > 1 ? "Years" : "Year";
   return years + " " + suffix;
-};
-
-export const checkPermissionForModulesFeatureAccess = (
-  requiredPermission: string,
-  userModulePermissions: string[]
-) => {
-  return userModulePermissions.findIndex((x) => x == requiredPermission) > -1;
-};
-
-export const findUserDefaultTab = (userModulePermissions: string[]) => {
-  const defaultTab = SideBarTabList.find((tab) => {
-    if (tab.hasSubTabs) {
-      const defaultSubTab = tab.subTabs?.find((subTabs) => {
-        return checkPermissionForModulesFeatureAccess(
-          `${subTabs.constant}.${Permission.View}`,
-          userModulePermissions
-        );
-      });
-      return defaultSubTab ? true : false;
-    }
-    return checkPermissionForModulesFeatureAccess(
-      `${tab.constant}.${Permission.View}`,
-      userModulePermissions
-    );
-  });
-
-  if (!defaultTab) {
-    return "/error/";
-  }
-  return defaultTab.route;
 };
 
 export const getModulePermissions = (
@@ -254,14 +273,6 @@ export const sortingDescendingOrder = <Rows>(arr: Rows[], key: keyof Rows) => {
   return arr;
 };
 
-// function handleEmployeeExport() {
-//   const mappedEmployeeData = employeesListMapperforExport(employeeList);
-//   const worksheet = XLSX.utils.json_to_sheet(mappedEmployeeData);
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
-//   XLSX.writeFile(workbook, "Employees.xlsx");
-// }
-
 export const blockInvalidCharOnNumberField = (
   event: React.KeyboardEvent<HTMLElement>
 ) => ["e", "E", "+", "-"].includes(event.key) && event.preventDefault();
@@ -276,6 +287,7 @@ export const getAppliedFilters = () => {
         jobs: null,
         processLog: null,
         employee: null,
+        holiday: null,
         noticeBoard: null,
       };
   return appliedfilters;
@@ -309,6 +321,8 @@ export const countAppliedFilter = (filter: Record<string, any> | null) => {
           count += Boolean(filter[element]) ? 1 : 0;
         } else if (typeof filter[element] === "number") {
           count += filter[element] >= 0 ? 1 : 0;
+        } else {
+          count += 1;
         }
       }
     });
@@ -361,9 +375,169 @@ export const redirectUserToTargetUrl = (
       redirectOption.data = notification.targetId;
       break;
     }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST: {
+      redirectOption.targetPath = "/leavemanagement/leaverequest";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED: {
+      redirectOption.targetPath = "/profile/leave";
+      break;
+    }
   }
   navigate(redirectOption.targetPath, {
     state: redirectOption.data,
     replace: true,
   });
+};
+
+// flatten nested translation file
+export const flattenMessages = (
+  messages: Record<string, any>,
+  prefix = ""
+): Record<string, string> => {
+  let result: Record<string, string> = {};
+
+  for (let key in messages) {
+    if (messages.hasOwnProperty(key)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (typeof messages[key] === "object" && !Array.isArray(messages[key])) {
+        result = { ...result, ...flattenMessages(messages[key], newKey) };
+      } else {
+        result[newKey] = messages[key];
+      }
+    }
+  }
+
+  return result;
+};
+
+export const getStatusCodeString = (statusCode: number) => {
+  return `STATUS_CODES.${statusCode}`;
+};
+
+const initialState: AppLanguageProps = {
+  selectedLang: LANGUAGE.ENGLISH,
+};
+export const getCurrentAppLanguage = (): LANGUAGE => {
+  const ls = localStorage.getItem(I18N_CONFIG_KEY);
+  if (ls) {
+    try {
+      return (JSON.parse(ls) as AppLanguageProps).selectedLang;
+    } catch (er) {
+      console.error(er);
+    }
+  }
+  return initialState.selectedLang;
+};
+
+export function setAppLanguage(lang: string) {
+  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
+}
+
+export const transformAttributeObjectToList = (
+  titles: Record<string, string>
+) => {
+  const itemList: MultilingualModel[] = [];
+  for (const key in titles) {
+    itemList.push({
+      label: titles[key],
+      language: key,
+    });
+  }
+  return itemList;
+};
+
+// map current language to dayjs locale files
+const mapLocal = {
+  [LANGUAGE.ENGLISH]: () => import("dayjs/locale/en"),
+  [LANGUAGE.MANDARIN]: () => import("dayjs/locale/zh"),
+  [LANGUAGE.SPANISH]: () => import("dayjs/locale/es"),
+  [LANGUAGE.JAPANESE]: () => import("dayjs/locale/ja"),
+  [LANGUAGE.GERMAN]: () => import("dayjs/locale/de"),
+  [LANGUAGE.FRENCH]: () => import("dayjs/locale/fr"),
+};
+
+export const setDayJsLocale = async () => {
+  // get the current locale of the app
+  const currentLocale = getCurrentAppLanguage();
+  // dynamically import the locale file based on the current language
+  try {
+    const data = await mapLocal[currentLocale]();
+    dayjs.locale(currentLocale);
+  } catch (error) {
+    dayjs.locale(LANGUAGE.ENGLISH);
+  }
+};
+
+export const filterSideBarTabs = (
+  userModulePermission: string[],
+  userRoleType: number
+) => {
+  const filteredTabList = SideBarTabList.map((tab) => {
+    if (tab.isDefault) return tab;
+    else if (tab.adminOnly)
+      return userRoleType === Roles.Administrator ? tab : null;
+    else if (tab.hasSubTabs) {
+      const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
+        hasModuleFeaturePermission(
+          subTab.constant,
+          Permission.View,
+          userModulePermission
+        )
+      );
+      if (subTabsWithPermission && subTabsWithPermission.length > 0) {
+        return {
+          ...tab,
+          subTabs: subTabsWithPermission,
+        };
+      }
+      return null;
+    }
+    if (
+      hasModuleFeaturePermission(
+        tab.constant,
+        Permission.View,
+        userModulePermission
+      )
+    ) {
+      return tab;
+    }
+    return null;
+  }).filter((tab) => tab !== null);
+  return filteredTabList;
+};
+
+export const getNotificationTitle = (
+  notification: NotificationModel,
+  intl: IntlShape
+) => {
+  const { formatMessage: i } = intl;
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE:
+      return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
+    case NOTIFICATION_TYPE.LEAVE_REQUEST:
+      return i(
+        { id: "NOTIFICATION.TITLES.LEAVE_REQUEST" },
+        { employeeName: notification.body }
+      );
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
+      return i(
+        { id: "NOTIFICATION.TITLES.LEAVE_REQ_APPROVED" },
+        { employeeName: notification.body }
+      );
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED:
+      return i(
+        { id: "NOTIFICATION.TITLES.LEAVE_REQ_REJECT" },
+        { employeeName: notification.body }
+      );
+    case NOTIFICATION_TYPE.BIRTHDAY:
+      return i(
+        { id: "NOTIFICATION.TITLES.TODAY_BIRTHDAY" },
+        { employeeName: notification.body }
+      );
+    default:
+      return i({ id: "NOTIFICATION.TITLES.FALLBACK" });
+  }
 };

@@ -5,6 +5,7 @@ import { Close } from "@mui/icons-material";
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import {
+  JobTypeMapper,
   sanitizeHtmlContent,
   statusDecoder,
 } from "../../../../../utils/common";
@@ -18,82 +19,70 @@ interface PropsTypes {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ViewJobDetails: FC<PropsTypes> = memo(
-  ({ open, jobData, setOpen }) => {
-    const intl = useIntl();
-    const handleClose = () => {
-      setOpen(false);
-    };
+export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) => {
+  const { formatMessage: i } = useIntl();
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-    return (
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Stack spacing={2}>
-          <Stack direction={"row"} justifyContent={"space-between"}>
-            <Typography variant="h5">{jobData.title || ""}</Typography>
-            <CustomIconButton icon={<Close />} handleClick={handleClose} />
-          </Stack>
+  return (
+    <CustomisedModal open={open} handleClose={handleClose}
+      title={jobData.title || ""}
+    >
+      <Grid container spacing={1}>
+        <Grid item xs={4} md={6}>
+          <Typography variant="body1" fontWeight={600}>
+            {i({ id: "FORM.ROLE" })}
+          </Typography>
+        </Grid>
+        <Grid item xs={8} md={6}>
+          <Typography>{jobData.title}</Typography>
+        </Grid>
+        <Grid item xs={4} md={6}>
+          <Typography variant="body1" fontWeight={600}>
+            {i({ id: "JOB.VACANCIES" })}
+          </Typography>
+        </Grid>
+        <Grid item xs={8} md={6}>
+          <Typography>{jobData.vacancies}</Typography>
+        </Grid>
+        <Grid item xs={4} md={6}>
+          <Typography variant="body1" fontWeight={600}>
+            {i({ id: "JOB.TYPE" })}
+          </Typography>
+        </Grid>
+        <Grid item xs={8} md={6}>
+          <Typography>{i({ id: JobTypeMapper[jobData.jobType] })}</Typography>
+        </Grid>
 
-          <Grid container spacing={1}>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "USER.ROLE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Typography>{jobData.title}</Typography>
-            </Grid>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "JOB.VACANCIES" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Typography>{jobData.vacancies}</Typography>
-            </Grid>
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "JOB.TYPE" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <Typography>{jobData.jobType}</Typography>
-            </Grid>
-
-            <Grid item xs={4} md={6}>
-              <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "STATUS" })}
-              </Typography>
-            </Grid>
-            <Grid item xs={8} md={6}>
-              <StyleStatus
-                label={statusDecoder(jobData.status as boolean)}
-                className={jobData.status ? "success" : "danger"}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Box
-            component="div"
-            sx={{ maxHeight: 500, overflow: "scroll" }}
-            dangerouslySetInnerHTML={{
-              __html: sanitizeHtmlContent(jobData.description),
-            }}
+        <Grid item xs={4} md={6}>
+          <Typography variant="body1" fontWeight={600}>
+            {i({ id: "STATUS" })}
+          </Typography>
+        </Grid>
+        <Grid item xs={8} md={6}>
+          <StyleStatus
+            label={statusDecoder(jobData.status as boolean)}
+            className={jobData.status ? "success" : "danger"}
           />
-          <Stack className="flex-row justify-content-end mt-4 gap-4">
-            {/* <CustomisedButton
-              variant="contained"
-              label="Submissions"
-              Icon={<FileOpenOutlined />}
-              iconPosition="start"
-            /> */}
-            <CustomisedButton
-              variant="outlined"
-              label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-              handleClick={handleClose}
-            />
-          </Stack>
-        </Stack>
-      </CustomisedModal>
-    );
-  }
+        </Grid>
+      </Grid>
+      <Divider className="my-4" />
+      <Box
+        component="div"
+        dangerouslySetInnerHTML={{
+          __html: sanitizeHtmlContent(jobData.description),
+        }}
+      />
+      <Stack className="flex-row justify-content-end mt-4 gap-4">
+        <CustomisedButton
+          variant="outlined"
+          label={i({ id: "BUTTON.CLOSE" })}
+          handleClick={handleClose}
+        />
+      </Stack>
+
+    </CustomisedModal>
+  );
+}
 );

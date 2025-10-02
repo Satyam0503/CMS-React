@@ -17,15 +17,13 @@ import {
   HourglassTop,
   WorkOff,
 } from "@mui/icons-material";
-import AddLeaves from "./components/AddLeaves";
-import LeaveAssignment from "./components/LeaveAssignment";
 import IconStat from "../../shared/components/IconStat";
 import { LeavesModel } from "../../../utils/common_types";
-import { usePageData } from "../../../_themes/layout/core";
 import { LeaveRequest } from "./components/LeaveRequest";
 import { Days } from "../../../utils/constant/Constant";
 import { LeaveManagementTabs } from "./components/LeaveManagementTabs";
-import { LeaveManagementRoutes } from "./components/LeaveManagementRoutes";
+import { LeaveManagementRoutes } from "../../routing/LeaveManagementRoutes";
+import { usePageData } from "../../Context/PageDataProvider";
 
 const LeaveManagement: FC = () => {
   const intl = useIntl();

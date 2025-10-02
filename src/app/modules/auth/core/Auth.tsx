@@ -1,32 +1,55 @@
 import { FC, useState, useEffect } from "react";
 import { LayoutSplashScreen } from "../../../../_themes/layout/core";
 import * as authHelper from "./AuthHelpers";
-import { getSignedUserDetails } from "./_requests";
-import { WithChildren } from "../../../../_themes/helpers";
+import { getSignedUserDetails, logoutUser } from "./_requests";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setAuth, logout } from "../../../Redux/Reducers/authSlice";
 import {
   resetUserSlice,
   setCurrentUser,
 } from "../../../Redux/Reducers/userSlice";
-import { resetAllFilters } from "../../../Redux/Reducers/filterSlice";
+import { useNavigate } from "react-router-dom";
+import { RefreshTokenPayload } from "./_models";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { LANGUAGE } from "../../../../utils/enums";
+import { WithChildren } from "../../../../utils/common_types";
 
 export const useLogout = () => {
   const dispatch = useAppDispatch();
-  return () => {
-    dispatch(logout());
-    dispatch(resetUserSlice());
-    dispatch(resetAllFilters());
-    authHelper.removeLocalKey();
-  };
-};
+  return async () => {
+    try {
+      const refreshToken = authHelper.getLocalKey()?.refreshToken ?? "";
+      if (!refreshToken) {
+        throw new Error();
+      }
+      const payload: RefreshTokenPayload = {
+        refreshToken,
+      };
+      const { data } = await logoutUser(payload);
+      if (data.success) {
+        dispatch(logout());
+        dispatch(resetUserSlice());
+        authHelper.removeLocalKey();
+        localStorage.clear();
+      }
+      else {
+        throw new Error();
+      }
+    } catch (error) {
+      // localStorage.clear();
+      console.log("Logout Error", error);
+    }
+  }
+}
+
 
 const AuthInit: FC<WithChildren> = ({ children }) => {
+  const { changeAppLanguage } = useAppLang();
   const { token, isUserAuthenticated } = useAppSelector((state) => state.auth);
   const currentUser = useAppSelector((state) => state.user.userData);
   const dispatch = useAppDispatch();
-  const logout = useLogout();
   const [showSplashScreen, setShowSplashScreen] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const requestUserDetails = async () => {
@@ -35,14 +58,15 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
           const { data } = await getSignedUserDetails();
           const { statusCode, success, methodResult } = data;
           if (!(success && statusCode === 200)) {
-            throw new Error("Request Failed");
+            throw new Error();
           }
           dispatch(setCurrentUser(methodResult));
           dispatch(setAuth());
+          changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         }
       } catch (error) {
         if (isUserAuthenticated) {
-          logout();
+          navigate("/logout")
         }
       } finally {
         setShowSplashScreen(false);
@@ -51,7 +75,6 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
     if (token) {
       requestUserDetails();
     } else {
-      logout();
       setShowSplashScreen(false);
     }
   }, [token]);

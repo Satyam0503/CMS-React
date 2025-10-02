@@ -2,49 +2,51 @@ import * as Yup from "yup";
 import { Regex } from "../constant/Constant";
 export const employeeSchema = Yup.object().shape({
   firstName: Yup.string()
-    .required("First name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   lastName: Yup.string()
-    .required("last name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   email: Yup.string()
-    .required("Email is required")
-    .matches(
-      Regex.Email,
-      "Email must be a valid email"
-    ),
-  employeeId: Yup.string().required("Employee Id is required"),
+    .required("VALIDATION_ERR.EMAIL_REQ")
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
+  employeeId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   address: Yup.string().notRequired(),
-  jobRole: Yup.string().required("Job role is required"),
-  gender: Yup.string().required("Gender is required"),
-  department: Yup.string().required("Department is required"),
+  jobRole: Yup.string().nullable(),
+  gender: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  department: Yup.string().required("VALIDATION_ERR.DEPARTMENT_REQ"),
   reportingManager: Yup.string().nullable(),
-  roleId: Yup.string().required("Role is required"),
+  roleId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   teamLead: Yup.string().nullable(),
+  employmentType: Yup.number().nullable(),
   phoneNumber: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Phone number is not valid"
-    )
-    .required("Phone number is required"),
+    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
+    .nullable(),
   bloodGroup: Yup.string().notRequired().nullable(),
-  status: Yup.string().required("Status is required"),
+  status: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   dateOfJoining: Yup.date()
-    .typeError("Invalid Date Format")
-    .max(new Date(), "Date of Joining cannot be in the future").nullable(),
+    .max(new Date(), "VALIDATION_ERR.FUTURE_JOINING_DATE")
+    .nullable(),
   dateOfBirth: Yup.date()
-    .typeError("Invalid Date of Birth")
-    .max(new Date(), "Date of Birth cannot be in the future").nullable(),
+    .max(new Date(), "VALIDATION_ERR.FUTURE_DOB")
+    .nullable(),
   personalEmail: Yup.string()
-    .matches(
-      Regex.Email,
-      "Email is not valid"
-    )
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
     .nullable(),
   emergencyContact: Yup.string()
-    .matches(
-      Regex.Phone,
-      "Emergency Contact is not valid"
-    )
+    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
     .nullable(),
+  bankAccountNumber: Yup.number()
+    .notRequired()
+    .test("AccountNumber", "VALIDATION_ERR.INVALID_BANK_NO", (value: any) => {
+      // validate account number
+      if (value) {
+        var accNo = value.toString() as string;
+        return Regex.BankAccountNo.test(accNo);
+      }
+      return true;
+    }),
+  panNumber: Yup.string()
+    .matches(Regex.PanCard, "VALIDATION_ERR.INVALID_PAN")
+    .notRequired(),
 });

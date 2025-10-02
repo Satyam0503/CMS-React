@@ -102,7 +102,6 @@ export default function RightDrawer() {
         handleClick={toggleDrawer(true)}
         tooltip="Customize Dashboard"
         size="large"
-        style={{ border: "none" }}
       />
 
       <Drawer open={open} onClose={toggleDrawer(false)} anchor="right">

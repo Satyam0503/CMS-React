@@ -7,15 +7,17 @@ import { JobModal } from "../../recruitment/models";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { CardSkeleton } from "./CardSkeleton";
+import { JobTypeMapper } from "../../../../utils/common";
+import { getVacancyPayload } from "../../recruitment/jobs/Jobs";
 
 export default function OpenPositions() {
   const [activeJobs, setActiveJobs] = useState<JobModal[]>([]);
   const [loading, setLoading] = useState(true);
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   useEffect(() => {
     async function getActiveJobs() {
       try {
-        const response = await getAllJobVacancies(null, true);
+        const response = await getAllJobVacancies(getVacancyPayload);
         const { success, methodResults } = response.data;
         if (success) {
           setActiveJobs(methodResults);
@@ -34,7 +36,7 @@ export default function OpenPositions() {
 
   return (
     <CustomCard
-      label={intl.formatMessage({ id: "MENU.OPEN_POSITIONS" })}
+      label={i({ id: "TITLES.OPEN_JOB_ROLE" })}
       value={activeJobs.length}
     >
       <Stack
@@ -45,11 +47,11 @@ export default function OpenPositions() {
       >
         {!activeJobs.length ? (
           <Box
-            component={"div"}
-            sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
+            component="div"
+            className="h-100 flex-grow-1 align-content-center text-center"
           >
             <Typography variant="h5">
-              {intl.formatMessage({ id: "DASHBOARD.VACANCY.NOVACANCIES" })}
+              {i({ id: "MESSAGE.NO_ACTIVE_VANCANCY" })}
             </Typography>
           </Box>
         ) : (
@@ -69,7 +71,7 @@ export default function OpenPositions() {
                     <Typography
                       variant="body2"
                     >
-                      {job.jobType}
+                      {i({ id: JobTypeMapper[job.jobType] })}
                     </Typography>
                   </Stack>
 
@@ -82,7 +84,7 @@ export default function OpenPositions() {
                 <Typography
                   sx={{ fontSize: "12px", textDecoration: "underline" }}
                 >
-                  {intl.formatMessage({ id: "SEE_MORE" })}
+                  {i({ id: "BUTTON.SEE_MORE" })}
                 </Typography>
               </Link>
             )}

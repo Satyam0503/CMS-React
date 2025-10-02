@@ -1,7 +1,9 @@
-import {  ErrorOutline } from "@mui/icons-material";
+import { ErrorOutline } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
+import { useIntl } from "react-intl";
 
 export const ResumeError = () => {
+  const { formatMessage: i } = useIntl();
   return (
     <Box
       sx={{
@@ -13,7 +15,7 @@ export const ResumeError = () => {
     >
       <Stack spacing={1} alignItems={"center"}>
         <ErrorOutline color="error" sx={{ fontSize: "3rem" }} />
-        <Typography variant="h6">Failed To Load Applicant Resume</Typography>
+        <Typography variant="h6">{i({ id: "ERROR.RESUME_LOAD_FAILED" })}</Typography>
       </Stack>
     </Box>
   );

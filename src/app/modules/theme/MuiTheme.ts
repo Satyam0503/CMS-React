@@ -1,4 +1,5 @@
 import { createTheme, PaletteMode } from "@mui/material";
+import { Localization } from "@mui/material/locale";
 
 export const colors = {
   primary: {
@@ -40,6 +41,7 @@ export const colors = {
 declare module "@mui/material/styles" {
   interface PaletteColor {
     lighter?: string;
+    darker?: string;
   }
 
   interface TypeBackground {
@@ -52,6 +54,7 @@ declare module "@mui/material/styles" {
 
   interface SimplePaletteColorOptions {
     lighter?: string;
+    darker?: string;
   }
 }
 
@@ -69,6 +72,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
       light: colors.secondary[300],
       main: colors.secondary[500],
       dark: colors.secondary[700],
+      darker: colors.secondary[900],
     },
     ...(mode === "light"
       ? {
@@ -76,7 +80,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             body: "#f5f5f5",
             header: "#ffffff",
             card: "#ffffff",
-            sidebar: "#0D0E12",
+            sidebar: "#000000",
           },
           divider: colors.neutral[300],
         }
@@ -84,15 +88,18 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           background: {
             body: "#121212",
             header: "#1e1e1e",
-            card: "#1e1e1e",
-            sidebar: "#0D0E12",
+            card: "#1E1E1E",
+            sidebar: "#000000",
           },
         }),
   },
 });
 
-export const createApplicationTheme = (mode: PaletteMode) => {
-  const theme = createTheme(getDesignTokens(mode));
+export const createApplicationTheme = (
+  mode: PaletteMode,
+  locale: Localization
+) => {
+  const theme = createTheme(getDesignTokens(mode), locale);
   const extendedTheme = createTheme(theme, {
     breakpoints: {
       values: {
@@ -387,23 +394,6 @@ export const createApplicationTheme = (mode: PaletteMode) => {
             fontWeight: "bolder",
             backgroundColor: "transparent",
             borderBottom: "2px solid" + theme.palette.grey[400],
-          },
-        },
-      },
-
-      MuiDialogContent: {
-        styleOverrides: {
-          root: {
-            padding: "16px",
-            "@media (min-width:600px)": {
-              padding: "24px",
-            },
-            "@media (min-width:900px)": {
-              padding: "28px",
-            },
-            "@media (min-width:1280px)": {
-              padding: "32px",
-            },
           },
         },
       },

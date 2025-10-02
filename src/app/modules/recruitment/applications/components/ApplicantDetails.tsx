@@ -41,7 +41,7 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
-import { usePageData } from "../../../../../_themes/layout/core";
+import { usePageData } from "../../../../Context/PageDataProvider";
 
 export const ApplicantDetails = () => {
   const { formatMessage } = useIntl();
@@ -131,9 +131,8 @@ export const ApplicantDetails = () => {
       state: applicant.state,
     };
     const response = await editApplicant(payload);
-    const { success, message } = response.data;
+    const { success } = response.data;
     if (success) {
-      toast.success(formatMessage({ id: message }));
       setRefresh(!refresh);
     }
   };
@@ -155,9 +154,9 @@ export const ApplicantDetails = () => {
           state: applicant.state,
         };
         const response = await editApplicant(payload);
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (!success) {
-          throw new Error(message);
+          throw new Error();
         }
       }
       const commentPayload = {
@@ -171,16 +170,16 @@ export const ApplicantDetails = () => {
       };
       const commentResponse = await addComment(commentPayload);
       if (!commentResponse.data.success) {
-        throw new Error(commentResponse.data.message);
+        throw new Error();
       }
-      toast.success(formatMessage({ id: commentResponse.data.message }));
+      toast.success(formatMessage({ id: "TOAST.SUCCESS.ADD_COMMENT" }));
       handleClose();
       if (status.applicationStatus !== applicant.activityType) {
         setRefresh(!refresh);
       }
       setRefreshComment(!refreshComment);
     } catch (error: any) {
-      toast.error(error.message);
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -245,18 +244,18 @@ export const ApplicantDetails = () => {
           mb={2}
         >
           <Typography variant="h5">
-            {formatMessage({ id: "APPLICANT.DETAILS" })}
+            {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
           </Typography>
 
           <Stack direction={"row"} spacing={1}>
             <CustomIconButton
               icon={<Visibility />}
-              tooltip="View CV"
+              tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
               handleClick={() => handleDownloadResume()}
             />
             <CustomIconButton
               icon={<Edit />}
-              tooltip="Edit Applicant"
+              tooltip={formatMessage({ id: "TOOLTIP.EDIT_APPLICANT" })}
               handleClick={() => {
                 navigate(
                   `/recruitment/applicant/edit/${applicant.applicantId}`
@@ -291,7 +290,7 @@ export const ApplicantDetails = () => {
           <Grid item xs={12} sm={6} lg={4}>
             <Stack direction={"row"} spacing={2}>
               <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "USER.PHONE" })} :
+                {formatMessage({ id: "FORM.PHONE" })} :
               </Typography>
 
               <Typography variant="body1">{applicant?.phone}</Typography>
@@ -310,7 +309,7 @@ export const ApplicantDetails = () => {
           <Grid item xs={12} sm={6} lg={4}>
             <Stack direction={"row"} spacing={2}>
               <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "USER.EXPERIENCE" })} :
+                {formatMessage({ id: "FORM.EXPERIENCE" })} :
               </Typography>
 
               <Typography variant="body1">
@@ -321,7 +320,7 @@ export const ApplicantDetails = () => {
           <Grid item xs={12} sm={6} lg={4}>
             <Stack direction={"row"} spacing={2}>
               <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICATION.DATE" })} :
+                {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
               </Typography>
               <Typography variant="body1">
                 {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
@@ -332,11 +331,11 @@ export const ApplicantDetails = () => {
           <Grid item xs={12} sm={6} lg={4}>
             <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
               <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICATION.STATUS" })} :
+                {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
               </Typography>
               <FormControl>
                 <InputLabel id="demo-simple-select-label">
-                  {formatMessage({ id: "APPLICATION.STATUS" })} :
+                  {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                 </InputLabel>
                 <Select
                   name="applicantStatus"
@@ -344,7 +343,7 @@ export const ApplicantDetails = () => {
                   sx={{ width: "150px" }}
                   onChange={handleStatusChange}
                   className="select"
-                  label={formatMessage({ id: "APPLICATION.STATUS" })}
+                  label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
                 >
                   {ApplicationEvaluationStatus.map((status) => (
                     <MenuItem key={status.id} value={status.value}>
@@ -358,7 +357,7 @@ export const ApplicantDetails = () => {
           <Grid item xs={12} sm={6} lg={4}>
             <Stack direction={"row"} spacing={2} alignItems={"center"}>
               <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICANT.STATUS" })}:
+                {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
               </Typography>
               <Switch
                 checked={status.applicantStatus === ApplicantStatus.Active}
@@ -383,10 +382,10 @@ export const ApplicantDetails = () => {
           alignItems={"center"}
         >
           <Typography variant="h5">
-            {formatMessage({ id: "APPLICANT.COMMENT" })}
+            {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
           </Typography>
           <CustomisedButton
-            label={formatMessage({ id: "APPLICANT.ADD_COMMENT" })}
+            label={formatMessage({ id: "COMMENT.ADD_COMMENT" })}
             Icon={<Add />}
             handleClick={() => {
               setModalOpen(true);

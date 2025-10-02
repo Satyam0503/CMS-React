@@ -52,14 +52,7 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
         }}
       >
         <Typography variant="h6">
-          {intl.formatMessage({ id: "APPLICANT.RESUME_PREVIEW" })}
-        </Typography>
-        <Typography
-          variant="body2"
-          display={{ sm: "none" }}
-          color="secondary.main"
-        >
-          {intl.formatMessage({ id: "PDF.VIEWER" })}
+          {intl.formatMessage({ id: "APPLICATION.RESUME_PREVIEW" })}
         </Typography>
       </Stack>
       <Stack

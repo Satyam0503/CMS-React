@@ -13,20 +13,16 @@ import { noticeBoardFilterSchema } from "../../../../utils/Schema/filterValidati
 import { addCurrentTimeToDate } from "../../../../utils/common";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setNoticeBoardFilter } from "../../../Redux/Reducers/filterSlice";
+import { FilterComponentProps } from "../../../../utils/common_types";
 
-interface PropsType {
-    id?: string;
-    open: boolean;
-    handleClose: () => void;
-    anchorEl: null | Element;
-}
+
 export const initialNoticeFilter: NoticeBoardFilterModel = {
     noticeType: [],
     filterFrom: null,
     filterTo: null
 }
 
-export const NoticeBoardFilter: FC<PropsType> = (props) => {
+export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
     const { formatMessage } = useIntl();
     const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
     const isTimeOptionOpen = Boolean(optionAnchorEl);
@@ -77,7 +73,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     sx={{ justifyContent: "space-between", alignItems: "flex-end" }}
                 >
                     <Typography variant="caption">
-                        {formatMessage({ id: "POSTED_DATE" })}
+                        {formatMessage({ id: "NOTICE.POSTED_DATE" })}
                     </Typography>
                     <Stack
                         direction="row"
@@ -85,7 +81,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                         onClick={handleClick}
                     >
                         <Typography variant="body2" sx={{ cursor: "pointer" }}>
-                            {formatMessage({ id: "FROM_TO_DATE" })}
+                            {formatMessage({ id: "DATETIME.FROM_TO_DATE" })}
                         </Typography>
                         {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
                     </Stack>
@@ -119,7 +115,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     </Menu>
                 </Stack>
 
-                <Stack className="flex-row gap-2" direction="row">
+                <Stack className="gap-1">
                     <CustomisedDatePicker
                         label={formatMessage({ id: "FROM" })}
                         value={Boolean(values.filterFrom) ? dayjs(values.filterFrom) : null}
@@ -144,7 +140,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
             </Stack>
             <Stack className="mt-2">
                 <Typography variant="caption">
-                    {formatMessage({ id: "NOTICE_TYPE" })}
+                    {formatMessage({ id: "NOTICE.TYPE" })}
                 </Typography>
                 <Autocomplete
                     multiple
@@ -163,7 +159,7 @@ export const NoticeBoardFilter: FC<PropsType> = (props) => {
                     }}
                     getOptionLabel={(option) => formatMessage({ id: option.label })}
                     renderInput={(params) => (
-                        <TextField {...params} placeholder={formatMessage({ id: "NOTICE_TYPE" })} />
+                        <TextField {...params} placeholder={formatMessage({ id: "NOTICE.TYPE" })} />
                     )}
                     renderOption={(props, option, state) => {
                         return (

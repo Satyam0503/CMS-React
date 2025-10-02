@@ -43,7 +43,7 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
       )}
       {openViewModal && (
         <CustomIconButton
-          style={{ border: "none" }}
+          classNames="border-0"
           handleClick={(e) => {
             e.stopPropagation();
             openViewModal(row);

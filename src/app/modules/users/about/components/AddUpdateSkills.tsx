@@ -36,7 +36,7 @@ export const AddUpdateSkills: FC<PropsType> = ({
   refresh,
   setRefresh,
 }) => {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const [loading, setLoading] = useState(false);
   const [isListOpen, setListOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -78,13 +78,13 @@ export const AddUpdateSkills: FC<PropsType> = ({
         skills: selectedSkillsId,
         userId: employeeId ?? "",
       });
-      const { message, success } = response.data;
+      const { success } = response.data;
       if (success) {
-        toast.success(message);
+        toast.success(i({ id: "TOAST.SUCCESS.UPDATE_SKILL" }));
         setRefresh(!refresh);
       }
     } catch (error) {
-      toast.error((error as AxiosError).message);
+      console.error((error as AxiosError).message);
     } finally {
       setOpen(false);
     }
@@ -125,7 +125,7 @@ export const AddUpdateSkills: FC<PropsType> = ({
       <CustomisedModal open={open} handleClose={handleClose}>
         <Stack direction={"column"} spacing={2}>
           <Typography variant="h5">
-            {intl.formatMessage({ id: "PROFILE.SKILLS" })}
+            {i({ id: "PROFILE.SKILLS.ADD" })}
           </Typography>
           <Stack>
             <Autocomplete
@@ -151,8 +151,8 @@ export const AddUpdateSkills: FC<PropsType> = ({
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  placeholder={intl.formatMessage({
-                    id: "PROFILE.SEARCH_SKILLS",
+                  placeholder={i({
+                    id: "PROFILE.SKILLS.SEARCH_SKILLS",
                   })}
                   InputProps={{
                     ...params.InputProps,
@@ -173,18 +173,18 @@ export const AddUpdateSkills: FC<PropsType> = ({
                 },
               }}
             />
-            <Typography variant="body2" className="mt-2 px-2">{intl.formatMessage({ id: "PROFILE.SEARCH_NOTE" })}</Typography>
+            <Typography variant="body2" className="mt-2 px-2">{i({ id: "PROFILE.SKILLS.SEARCH_NOTE" })}</Typography>
           </Stack>
 
           <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
             <CustomisedButton
               variant="outlined"
-              label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+              label={i({ id: "BUTTON.CLOSE" })}
               handleClick={handleClose}
             />
             <CustomisedButton
               variant="contained"
-              label={intl.formatMessage({ id: "BUTTON.ADD" })}
+              label={i({ id: "BUTTON.ADD" })}
               handleClick={handleSkillUpdate}
             />
           </Stack>

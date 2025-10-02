@@ -2,16 +2,10 @@ import { Close } from "@mui/icons-material"
 import { IconButton, Popover, Stack, Typography } from "@mui/material"
 import { FC } from "react"
 import { useIntl } from "react-intl"
+import { FilterComponentProps } from "../../../utils/common_types"
 
-type Props = {
-    open: boolean,
-    anchorEl: null | Element,
-    handleClose: () => void,
-    id?: string,
-    children: React.ReactNode
-}
 
-export const FilterComponent: FC<Props> = ({ open, anchorEl, handleClose, id, children }) => {
+export const FilterComponent: FC<FilterComponentProps> = ({ open, anchorEl, handleClose, id, children }) => {
     const { formatMessage } = useIntl();
     return (
         <Popover
@@ -41,7 +35,7 @@ export const FilterComponent: FC<Props> = ({ open, anchorEl, handleClose, id, ch
                         {formatMessage({ id: "FILTER" })}
                     </Typography>
                     <IconButton className="border-0" onClick={handleClose}>
-                        <Close className="icon-fs-20" />
+                        <Close className="fs-20" />
                     </IconButton>
                 </Stack>
                 {children}

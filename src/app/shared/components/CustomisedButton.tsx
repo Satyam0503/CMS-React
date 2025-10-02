@@ -43,11 +43,13 @@ const CustomisedButton = (props: Props) => {
           type={type}
           sx={{
             gap: .5,
+            lineHeight: 1.5,
             alignItems: "center",
             "& .MuiSvgIcon-root": {
               fontSize: 16
             }
           }}
+
         >
           {
             loading ? <span className="loader" /> :

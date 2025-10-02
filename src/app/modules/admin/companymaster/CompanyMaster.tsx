@@ -1,31 +1,42 @@
 import { useIntl } from "react-intl";
-import { usePageData } from "../../../../_themes/layout/core";
-import { useEffect } from "react";
-import {
-  Box,
-  Card,
-  Stack,
-  Theme,
-  useMediaQuery,
-} from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Stack } from "@mui/material";
 import { Departments } from "./components/Department";
-import { CorporateFare, Edit, Work } from "@mui/icons-material";
-import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { Add, CorporateFare, Work } from "@mui/icons-material";
+import {
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { checkIsActive } from "../../../../_themes/helpers";
 import clsx from "clsx";
 import { TabModel } from "../../../../utils/common_types";
+import { JobTitles } from "./components/JobTitles";
+import { CustomAttribute } from "./components/CustomAttribute";
+import { CompanyCustomAttributeModel } from "../models";
+import {
+  createNewCustomAttribute,
+  getAllCustomAttributes,
+} from "../adminservices";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { useAppSelector } from "../../../Redux/hooks";
+import { CustomAttributeWrapper } from "./components/CustomAttributeWrapper";
+import { usePageData } from "../../../Context/PageDataProvider";
 
 const tabsRoutes: TabModel[] = [
   {
     tabId: 1,
     to: "/admin/companymaster/department",
-    title: "COMPANY_MASTER.TAB.DEPARTMENT",
+    title: "COMPANY_MASTER.TAB.DEPARTMENTS",
     icon: <CorporateFare />,
   },
   {
     tabId: 2,
     to: "/admin/companymaster/jobtitle",
-    title: "COMPANY_MASTER.TAB.JOBS",
+    title: "COMPANY_MASTER.TAB.JOB_TILES",
     icon: <Work />,
   },
 ];
@@ -36,7 +47,11 @@ export const CompanyMasterTab = () => {
       <Route element={<CompanyMaster />}>
         <Route index element={<Navigate to={"department"} />} />
         <Route path="department" element={<Departments />} />
-        <Route path="jobtitle" element={<></>} />
+        <Route path="jobtitle" element={<JobTitles />} />
+        <Route
+          path="customattribute/:customAttributeId"
+          element={<CustomAttributeWrapper />}
+        />
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>
@@ -45,41 +60,122 @@ export const CompanyMasterTab = () => {
 
 const CompanyMaster = () => {
   const { setPageTitle } = usePageData();
-  const { formatMessage } = useIntl();
+  const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
-
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("sm")
+  const [companyCustomAttribute, setCompanyCustomAttribute] = useState<
+    CompanyCustomAttributeModel[]
+  >([]);
+  const { currentLanguage } = useAppLang();
+  const defaultLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage!
   );
 
+  const AddNewCustomAttribute = async () => {
+    try {
+      const { data } = await createNewCustomAttribute();
+      if (data.success) {
+        setCompanyCustomAttribute([
+          ...companyCustomAttribute,
+          data.methodResult,
+        ]);
+        navigate(
+          `/admin/companymaster/customattribute/${data.methodResult.customAttributeId}`
+        );
+      }
+    } catch (error) {
+      console.error((error as Error).message);
+    }
+  };
+
   useEffect(() => {
-    setPageTitle(formatMessage({ id: "PAGE.COMPANY_MASTER" }));
+    setPageTitle(i({ id: "PAGE.COMPANY_MASTER" }));
   }, []);
 
+  useEffect(() => {
+    // fetch company custom attributes
+    (async () => {
+      try {
+        const { data } = await getAllCustomAttributes();
+        if (data.success) {
+          setCompanyCustomAttribute(data.methodResults);
+        }
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    })();
+  }, []);
   return (
-    <Card className="d-flex flex-column flex-grow-1">
-      <Stack direction={"row"} spacing={0.5} className="tab-container">
+    <Box component="div" className="d-flex flex-column flex-grow-1 gap-4">
+      <Stack
+        direction="row"
+        spacing={0.5}
+        className="tab-container"
+        sx={{
+          backgroundColor: "background.card",
+        }}
+      >
         {tabsRoutes.map((tab) => {
           return (
             <Box
-              component={"div"}
+              component="div"
               key={tab.tabId}
-              className={clsx("tab-box", { tab_active: checkIsActive(location.pathname, tab.to) })}
+              className={clsx("tab-box", {
+                tab_active: checkIsActive(location.pathname, tab.to),
+              })}
               onClick={() => navigate(tab.to)}
               sx={{
-                color: "text.secondary"
+                color: "text.secondary",
               }}
             >
               {tab.icon}
-              {formatMessage({ id: tab.title })}
+              {i({ id: tab.title })}
             </Box>
           );
         })}
+        {/* display company custom attributes */}
+        {companyCustomAttribute.length > 0 &&
+          companyCustomAttribute.map((attribute, index: number) => (
+            <Box
+              key={attribute.customAttributeId}
+              component="div"
+              className={clsx("tab-box", {
+                tab_active: checkIsActive(
+                  location.pathname,
+                  `/admin/companymaster/customattribute/${attribute.customAttributeId}`
+                ),
+              })}
+              onClick={() => {
+                navigate(
+                  `/admin/companymaster/customattribute/${attribute.customAttributeId}`
+                );
+              }}
+              sx={{
+                color: "text.secondary",
+              }}
+            >
+              {attribute.customAttributeTitle[currentLanguage] ??
+                `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${attribute.customAttributeNumber
+                }`}
+            </Box>
+          ))}
+        <Box
+          component="div"
+          className="tab-box"
+          onClick={AddNewCustomAttribute}
+          sx={{
+            color: "text.secondary",
+          }}
+        >
+          <Add />
+          {i({
+            id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.ADD_ATTRIBUTE",
+          })}
+        </Box>
       </Stack>
-      <Box component="div" className="flex-grow-1">
+      <Box component="div" className="d-flex flex-column flex-grow-1">
         <Outlet />
       </Box>
-    </Card>
+    </Box>
   );
 };
 

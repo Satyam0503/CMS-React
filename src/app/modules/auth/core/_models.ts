@@ -1,9 +1,11 @@
+import { ResponseData } from "../../../../utils/common_types";
+
 export interface AuthModel {
   token: string;
   refreshToken?: string;
 }
 
-export interface CompanyRegisterModel{
+export interface CompanyRegisterModel {
   firstName: string;
   lastName: string;
   companyName: string;
@@ -11,7 +13,7 @@ export interface CompanyRegisterModel{
   password: string;
 }
 
-export type UserLoginModel = Pick<CompanyRegisterModel, "email" | "password" >
+export type UserLoginModel = Pick<CompanyRegisterModel, "email" | "password">;
 
 export interface UserAddressModel {
   addressLine: string;
@@ -26,22 +28,13 @@ export interface UserCommunicationModel {
   phone: boolean;
 }
 
-export interface UserEmailSettingsModel {
-  emailNotification?: boolean;
-  sendCopyToPersonalEmail?: boolean;
-  activityRelatesEmail?: {
-    youHaveNewNotifications?: boolean;
-    youAreSentADirectMessage?: boolean;
-    someoneAddsYouAsAsAConnection?: boolean;
-    uponNewOrder?: boolean;
-    newMembershipApproval?: boolean;
-    memberRegistration?: boolean;
-  };
-  updatesFromKeenthemes?: {
-    newsAboutKeenthemesProductsAndFeatureUpdates?: boolean;
-    tipsOnGettingMoreOutOfKeen?: boolean;
-    thingsYouMissedSindeYouLastLoggedIntoKeen?: boolean;
-    newsAboutStartOnPartnerProductsAndOtherServices?: boolean;
-    tipsOnStartBusinessProducts?: boolean;
-  };
-}
+export type AuthTokens = {
+  token: string;
+  refreshToken: string;
+};
+
+export type RefreshTokenPayload = {
+  refreshToken: string;
+};
+
+export type LogInResponseModel = ResponseData<AuthTokens>;

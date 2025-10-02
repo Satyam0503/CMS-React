@@ -14,8 +14,9 @@ import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { DepartmentModel, RoleModel } from "../../admin/models";
 import { postNotice, updateNotice } from "../services";
 import { toast } from "react-toastify";
-import { useLang } from "../../../../_themes/i18n/Metronici18n";
 import TextEditor from "../../../shared/components/TextEditor";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { useAppSelector } from "../../../Redux/hooks";
 
 
 interface PropsTypes {
@@ -36,8 +37,8 @@ export const AddNotice: FC<PropsTypes> = ({
   const { formatMessage } = useIntl();
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
-  const currentLanguage = useLang();
-
+  const { currentLanguage } = useAppLang();
+  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
   useEffect(() => {
     (async () => {
@@ -62,20 +63,20 @@ export const AddNotice: FC<PropsTypes> = ({
       if (isEdit) {
         const { data } = await updateNotice(value);
         if (!data.success) {
-          toast.error(formatMessage({ id: "Toast.UpdateNoticeFailed" }));
+          toast.error(formatMessage({ id: "TOAST.FAILED.NOTICE_UPDATE" }));
         }
         else {
-          toast.success(formatMessage({ id: "Toast.UpdateNoticeSuccess" }));
+          toast.success(formatMessage({ id: "TOAST.SUCCESS.NOTICE_UPDATE" }));
           handleClose();
           refresh();
         }
       } else {
         const { data } = await postNotice(value);
         if (!data.success) {
-          toast.error(formatMessage({ id: "Toast.PostNoticeFailed" }));
+          toast.error(formatMessage({ id: "TOAST.FAILED.NOTICE_POST" }));
         }
         else {
-          toast.success(formatMessage({ id: "Toast.PostNoticeSuccess" }));
+          toast.success(formatMessage({ id: "TOAST.SUCCESS.NOTICE_POST" }));
           handleClose();
           refresh();
         }
@@ -89,7 +90,12 @@ export const AddNotice: FC<PropsTypes> = ({
   }
 
   return (
-    <CustomisedModal open={open} handleClose={handleClose}>
+    <CustomisedModal open={open} handleClose={handleClose}
+
+      title={isEdit
+        ? formatMessage({ id: "NOTICE.TITLES.EDIT_NOTICE" })
+        : formatMessage({ id: "NOTICE.TITLES.POST_NOTICE" })}
+    >
       <Formik
         initialValues={initialValues}
         validationSchema={noticeValidationSchema}
@@ -99,15 +105,10 @@ export const AddNotice: FC<PropsTypes> = ({
       >
         {({ values, isValid, dirty, isSubmitting, handleSubmit, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
-            <Typography variant="h5" mb={2}>
-              {isEdit
-                ? formatMessage({ id: "EDIT_NOTICE" })
-                : formatMessage({ id: "POST_NOTICE" })}
-            </Typography>
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12} sm={6}>
                 <SelectInput
-                  label={formatMessage({ id: "NOTICE_TYPE" })}
+                  label={formatMessage({ id: "NOTICE.TYPE" })}
                   name="noticeType"
                   required={true}
                 >
@@ -118,11 +119,11 @@ export const AddNotice: FC<PropsTypes> = ({
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SelectInput
-                  label={formatMessage({ id: "ROLE" })}
+                  label={formatMessage({ id: "NOTICE.ROLE" })}
                   name="target"
                   required={true}
                 >
-                  <MenuItem value={"all"}>{formatMessage({ id: "NOTICE_TYPE.ALL" })}</MenuItem>
+                  <MenuItem value={"all"}>{formatMessage({ id: "NOTICE.TYPES.ALL" })}</MenuItem>
                   {roleList.map(role => (
                     <MenuItem key={role.rolesId} value={role.rolesId}>{role.titles}</MenuItem>
                   ))}
@@ -130,17 +131,17 @@ export const AddNotice: FC<PropsTypes> = ({
               </Grid>
               <Grid item xs={12} >
                 <SelectInput
-                  label={formatMessage({ id: "DEPARTMENT" })}
+                  label={formatMessage({ id: "NOTICE.DEPARTMENT" })}
                   name="departments"
                   required={true}
                 >
-                  <MenuItem value={"all"}>{formatMessage({ id: "NOTICE_TYPE.ALL" })}</MenuItem>
+                  <MenuItem value={"all"}>{formatMessage({ id: "NOTICE.TYPES.ALL" })}</MenuItem>
                   {departmentList.map((dep) => (
                     <MenuItem
                       key={dep.departmentId}
                       value={dep.departmentId}
                     >
-                      {dep.titles.find(title => title.language === currentLanguage)?.label ?? <FormattedMessage id={"TRANSLATION_MISSING"} />}
+                      {dep.titles[currentLanguage] || dep.titles[defaultLang] || <FormattedMessage id={"TRANSLATION_MISSING"} />}
                     </MenuItem>
                   ))}
                 </SelectInput>
@@ -149,16 +150,16 @@ export const AddNotice: FC<PropsTypes> = ({
               <Grid item xs={12}>
                 <TextInput
                   multiline={true}
-                  label={formatMessage({ id: "NOTICE_TITLE" })}
+                  label={formatMessage({ id: "NOTICE.TITLE" })}
                   name="title"
-                  placeholder={formatMessage({ id: "NOTICE_TITLE" })}
+                  placeholder={formatMessage({ id: "NOTICE.TITLE" })}
                   type="text"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextEditor value={values.message} setValue={(value: string) => {
                   setFieldValue("message", value);
-                }} placeholder="NOTICE_MESSAGE" />
+                }} placeholder="NOTICE.MESSAGE" />
               </Grid>
             </Grid>
             <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>

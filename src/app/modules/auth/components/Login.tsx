@@ -11,17 +11,18 @@ import { useAppDispatch } from "../../../Redux/hooks";
 import { setLocalKey } from "../core/AuthHelpers";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
+import { getStatusCodeString } from "../../../../utils/common";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(Regex.Email, "Email must be a valid email")
-    .required("Email is required"),
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
+    .required("VALIDATION_ERR.EMAIL_REQ"),
   password: Yup.string()
     .matches(
       Regex.Password,
-      "Use 8 or more characters with a mix of letters, numbers & symbols"
+      "VALIDATION_ERR.INVALID_PASSWORD"
     )
-    .required("Password is required"),
+    .required("VALIDATION_ERR.PASSWORD_REQ"),
 });
 
 const initialValues = {
@@ -30,7 +31,7 @@ const initialValues = {
 };
 
 export function Login() {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const dispatch = useAppDispatch();
   localStorage.removeItem("clientId");
   async function handleLogin(
@@ -39,17 +40,16 @@ export function Login() {
     setStatus: (status?: any) => void
   ) {
     try {
-      const response = await login({ ...values });
-      const data = response.data;
-      if (!data.success) {
-        throw new Error(data.message);
+      const { data } = await login({ ...values });
+      if (data.success) {
+        dispatch(setToken({ token: data.methodResult.token }));
+        setLocalKey(data.methodResult);
+        setStatus("");
+      } else {
+        setStatus(i({ id: getStatusCodeString(data.statusCode) }));
       }
-      dispatch(setToken({ token: data.message }));
-      setLocalKey(data.message);
-      setStatus("");
     } catch (error: any) {
-      console.error("Error :" + error.message);
-      setStatus(error.message);
+      console.error(error.message);
     } finally {
       setSubmitting(false);
     }
@@ -58,10 +58,7 @@ export function Login() {
     <Stack spacing={4}>
       <Stack sx={{ textAlign: "center" }} spacing={1}>
         <Typography variant="h1">
-          {intl.formatMessage({ id: "BUTTON.SIGNIN" })}
-        </Typography>
-        <Typography variant="h4">
-          {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
+          {i({ id: "AUTH.SIGNIN" })}
         </Typography>
       </Stack>
       <Formik
@@ -89,8 +86,8 @@ export function Login() {
                 <Stack>
                   <TextInput
                     type="email"
-                    label={intl.formatMessage({ id: "FORM.EMAIL" })}
-                    placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
+                    label={i({ id: "FORM.EMAIL" })}
+                    placeholder={i({ id: "FORM.EMAIL" })}
                     name="email"
                     InputProps={{
                       endAdornment: (
@@ -109,8 +106,8 @@ export function Login() {
                 <Stack>
                   <TextInput
                     type="password"
-                    label={intl.formatMessage({ id: "FORM.PASSWORD" })}
-                    placeholder={intl.formatMessage({ id: "FORM.PASSWORD" })}
+                    label={i({ id: "FORM.PASSWORD" })}
+                    placeholder={i({ id: "FORM.PASSWORD" })}
                     name="password"
                     InputProps={{
                       endAdornment: (
@@ -126,20 +123,20 @@ export function Login() {
                   />
                 </Stack>
                 <Link to="/auth/forgot-password">
-                  {intl.formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}
+                  {i({ id: "AUTH.FORGOT_PASSWORD" })}
                 </Link>
                 <Stack spacing={1}>
                   <CustomisedButton
                     type="submit"
-                    label={intl.formatMessage({ id: "BUTTON.SIGNIN" })}
+                    label={i({ id: "BUTTON.SIGNIN" })}
                     size="large"
                     loading={isSubmitting}
                     disabled={isSubmitting || !(isValid && dirty)}
                   />
                   <Typography variant="body2" align="center">
-                    {intl.formatMessage({ id: "AUTH.MEMBER.REGISTER" })}
+                    {i({ id: "AUTH.NOT_REGISTERED" })}
                     <Link to="/auth/registration">
-                      {intl.formatMessage({ id: "AUTH.REGISTER" })}
+                      {i({ id: "AUTH.REGISTER" })}
                     </Link>
                   </Typography>
                 </Stack>

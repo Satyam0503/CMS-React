@@ -1,7 +1,5 @@
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Roles } from "./permissions/Roles";
-import { ProtectedRoute } from "../users/about/components/ProtectedRoute";
-import { ModulesName } from "../../../utils/enums";
 import { AddPermission } from "./permissions/components/AddPermission";
 import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
@@ -48,43 +46,23 @@ const AdminRoutes = () => {
         <Route index element={<Navigate to={"/admin/roles"} />} />
         <Route
           path="roles"
-          element={
-            <ProtectedRoute module={ModulesName.Permissions}>
-              <Roles />
-            </ProtectedRoute>
-          }
+          element={<Roles />}
         />
         <Route
           path="roles/edit/:roleid"
-          element={
-            <ProtectedRoute module={ModulesName.Permissions}>
-              <EditPermission />
-            </ProtectedRoute>
-          }
+          element={<EditPermission /> }
         />
         <Route
           path="roles/add"
-          element={
-            <ProtectedRoute module={ModulesName.Permissions}>
-              <AddPermission />
-            </ProtectedRoute>
-          }
+          element={<AddPermission />}
         />
         <Route
           path="companymaster/*"
-          element={
-            <ProtectedRoute module={ModulesName.CompanyMaster}>
-              <CompanyMasterTab />
-            </ProtectedRoute>
-          }
+          element={<CompanyMasterTab />}
         />
         <Route
           path="companydetails/*"
-          element={
-              <ProtectedRoute module={ModulesName.CompanyDetails}>
-                <CompanyDetailsTab />
-              </ProtectedRoute>
-          }
+          element={<CompanyDetailsTab />}
         />
       </Route>
       <Route path="*" element={<Navigate to={"/error"}/>} />

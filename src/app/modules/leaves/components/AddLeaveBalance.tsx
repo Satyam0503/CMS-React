@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Autocomplete, Avatar, Grid, Input, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Autocomplete, Avatar, Grid, Input, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import { useIntl } from "react-intl"
 import { Formik } from "formik"
 import { LeaveBalanceRequestModel, LeaveType } from "../model"
@@ -12,8 +12,13 @@ import { GetAllEmployeeResponseModel } from "../../employees/models"
 import { leaveBalanceValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas"
 import { blockInvalidCharOnNumberField, LeaveTypeMapper } from "../../../../utils/common"
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel"
+import { LEAVE_TYPE } from "../../../../utils/enums"
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n"
+import { useAppSelector } from "../../../Redux/hooks"
 
 type Props = {
+    isEdit: boolean,
+    handleRefresh: () => void;
     open: boolean,
     handleClose: () => void,
     initialValues: LeaveBalanceRequestModel
@@ -23,21 +28,20 @@ export const AddLeaveBalance: FC<Props> = (props) => {
     const { formatMessage: i } = useIntl();
     const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
-
-    const handleClick = (setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void, empId: string) => {
-        setFieldValue("employeeId", empId);
-    };
+    const { currentLanguage } = useAppLang();
+    const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
     const handleLeaveBalanceSubmission = async (values: LeaveBalanceRequestModel, setSubmitting: (isSubmitting: boolean) => void) => {
         if (values.leaveTypeBalances.length === 0) {
-            toast.error(i({ id: "PLEASE_ADD_LEAVE_BALANCE" }));
+            toast.error(i({ id: "MESSAGE.PLEASE_ADD_LEAVE_BALANCE" }));
             setSubmitting(false);
         } else {
             try {
                 const { data } = await createUpdateLeaveBalance(values);
                 if (data.success) {
+                    toast.success(i({ id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED" }));
                     props.handleClose();
-                    toast.success(i({ id: "SUCCESSFULLY_CREATED" }));
+                    props.handleRefresh();
                 }
             } catch (error) {
                 console.error((error as Error).message);
@@ -63,10 +67,10 @@ export const AddLeaveBalance: FC<Props> = (props) => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await getLeaveTypes();
+                const { data } = await getLeaveTypes(true);
                 if (data.success) {
                     if (data.methodResults.length === 0) {
-                        toast.error(i({ id: "PLEASE_ADD_LEAVE_TYPES" }));
+                        toast.error(i({ id: "MESSAGE.PLEASE_ADD_LEAVE_TYPES" }));
                         props.handleClose();
                     }
                     else {
@@ -78,15 +82,36 @@ export const AddLeaveBalance: FC<Props> = (props) => {
             }
         })();
     }, [])
+
+    const initialBalance = {
+        ...props.initialValues,
+        leaveTypeBalances: props.initialValues.leaveTypeBalances.filter(item => item !== null)
+    }
+
+    const getFilteredLeaveTypes = (empId: string | undefined) => {
+        const emp = employeeList.find((e) => e.userId === empId);
+        return leaveTypes.filter((type) => {
+            if (!emp) return true;
+            return emp.gender === "male"
+                ? type.leaveType !== LEAVE_TYPE.MATERNITY_LEAVE
+                : type.leaveType !== LEAVE_TYPE.PATERNITY_LEAVE;
+        });
+    };
+
     return (
-        <CustomisedModal open={props.open} handleClose={props.handleClose}>
-            <Typography variant="h5" className="mb-4">{i({ id: "ADD_LEAVE_BALANCE" })}</Typography>
-            <Formik initialValues={props.initialValues} validationSchema={leaveBalanceValidationSchema} onSubmit={(values, { setSubmitting }) => {
+        <CustomisedModal open={props.open} handleClose={props.handleClose}
+            title={i({ id: props.isEdit ? "LEAVE.TITLES.UPDATE_LEAVE_BALANCE" : "LEAVE.TITLES.ADD_LEAVE_BALANCE" })}
+        >
+            <Formik initialValues={initialBalance} validationSchema={leaveBalanceValidationSchema} onSubmit={(values, { setSubmitting }) => {
                 handleLeaveBalanceSubmission(values, setSubmitting);
             }}>
                 {
                     ({ values, setFieldValue, setFieldTouched, handleSubmit, ...formik }) => {
                         return <form onSubmit={handleSubmit}>
+                            {
+                                Boolean(formik.status) &&
+                                <Alert severity="warning" className="mb-4" >{formik.status}</Alert>
+                            }
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <Autocomplete
@@ -103,34 +128,34 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                                 value ? value.userId : ""
                                             );
                                         }}
-
+                                        disabled={props.isEdit}
                                         renderInput={(param) => (
                                             <TextField
                                                 {...param}
                                                 label={i({
-                                                    id: "EMPLOYEE",
+                                                    id: "LEAVE.EMPLOYEE_NAME",
                                                 })}
                                             />
                                         )}
                                         getOptionLabel={(option) => option.fullName}
-                                        renderOption={(props, emp, state) => {
+                                        renderOption={(props, emp) => {
                                             return (
-                                                <ListItemButton key={emp.userId} onClick={() => handleClick(setFieldValue, emp.userId)} >
+                                                <li {...props}>
                                                     <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>
                                                         <Avatar src={emp.fullProfileUrl ?? ""} alt="Profile" sx={{ width: 32, height: 32 }} />
                                                     </ListItemAvatar>
-                                                    <ListItemText primary={emp.fullName} secondary={emp.jobRole} />
-                                                </ListItemButton>
+                                                    <ListItemText primary={emp.fullName} secondary={emp.jobRole !== null ? emp.jobRole[currentLanguage] || emp.jobRole[defaultLanguage] : ""} />
+                                                </li>
                                             );
                                         }}
                                     />
                                     {
                                         (formik.touched.employeeId && Boolean(formik.errors.employeeId)) &&
-                                        <ErrorLabel>{i({ id: "PLEASE_SELECT_EMPLOYEE" })}</ErrorLabel>
+                                        <ErrorLabel errorLabel={i({ id: "MESSAGE.PLEASE_SELECT_EMPLOYEE" })} />
                                     }
                                 </Grid>
                                 {
-                                    leaveTypes.map((type, index) => {
+                                    getFilteredLeaveTypes(values.employeeId).map((type, index) => {
                                         return <Grid item xs={12} md={6} key={index}>
                                             <TextField
                                                 fullWidth
@@ -142,20 +167,27 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                                     max: type.maxLeaveDays
                                                 }}
                                                 disabled={!values.employeeId}
-                                                value={values.leaveTypeBalances.find(item => item.leaveType === type.leaveType)?.maximumLeave ?? null}
+                                                value={values.leaveTypeBalances.find(item => item?.leaveType === type.leaveType)?.maximumLeave ?? ""}
                                                 onChange={(e) => {
-                                                    const index = values.leaveTypeBalances.findIndex(item => item.leaveType === type.leaveType);
+                                                    const balanceValue = e.target.value;
+                                                    const index = values.leaveTypeBalances.findIndex(item => item?.leaveType === type.leaveType);
                                                     const updatedLeaveBalances = [...values.leaveTypeBalances];
-                                                    if (e.target.value === "") {
+                                                    if (Number(balanceValue) > type.maxLeaveDays) {
+                                                        formik.setStatus(i({ id: "MESSAGE.LEAVE_TYPE_MAX_DAY_EXCEED_ERROR" }, { maxLeaveValue: type.maxLeaveDays, leaveType: i({ id: LeaveTypeMapper[type.leaveType] }) }))
+                                                    }
+                                                    else {
+                                                        formik.setStatus("");
+                                                    }
+                                                    if (balanceValue === "") {
                                                         if (index > -1) {
-                                                            updatedLeaveBalances.splice(index, 1);
+                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: "" as unknown as number };
                                                         }
                                                     }
                                                     else {
                                                         if (index > -1) {
-                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: Number(e.target.value) };
+                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: Number(balanceValue) };
                                                         } else {
-                                                            updatedLeaveBalances.push({ leaveType: type.leaveType, maximumLeave: Number(e.target.value) });
+                                                            updatedLeaveBalances.push({ leaveType: type.leaveType, maximumLeave: Number(balanceValue) });
                                                         }
                                                     }
                                                     setFieldValue("leaveTypeBalances", updatedLeaveBalances);
@@ -175,7 +207,7 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                                 <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={props.handleClose} />
                                 <CustomisedButton
                                     type="submit"
-                                    label={i({ id: "BUTTON.ADD" })}
+                                    label={i({ id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
                                     disabled={formik.isSubmitting || !(formik.isValid && formik.dirty)}
                                     loading={formik.isSubmitting}
                                 />
@@ -185,7 +217,6 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                     }
                 }
             </Formik>
-
         </CustomisedModal >
     )
 }

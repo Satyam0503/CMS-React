@@ -1,6 +1,10 @@
 import { PaletteMode, ThemeProvider, useMediaQuery } from "@mui/material"
 import React, { FC, useContext, useMemo, useState } from "react"
 import { createApplicationTheme } from "../modules/theme/MuiTheme"
+import { frFR, enUS, deDE, jaJP, esES, zhCN } from "@mui/material/locale"
+import { useAppLang } from "../../_themes/i18n/Metronici18n"
+import { LANGUAGE } from "../../utils/enums"
+import { APP_THEME_MODE } from "../../utils/constant/Constant"
 
 type ThemeContextType = {
     theme: PaletteMode,
@@ -10,7 +14,6 @@ type Props = {
     children: React.ReactNode,
 }
 
-const APP_THEME_MODE = 'theme-mode';
 const ThemeContext = React.createContext<ThemeContextType>({
     theme: "light",
     toggleThemeMode: () => { },
@@ -38,7 +41,27 @@ export const setCurrentThemeMode = (key: PaletteMode) => {
     }
 };
 
+export const getCurrentLocaleForMui = (lang: LANGUAGE) => {
+    switch (lang) {
+        case LANGUAGE.FRENCH:
+            return frFR;
+        case LANGUAGE.ENGLISH:
+            return enUS;
+        case LANGUAGE.GERMAN:
+            return deDE;
+        case LANGUAGE.JAPANESE:
+            return jaJP;
+        case LANGUAGE.SPANISH:
+            return esES;
+        case LANGUAGE.MANDARIN:
+            return zhCN;
+        default:
+            return enUS;
+    }
+}
+
 export const ThemeContextProvider: FC<Props> = ({ children }) => {
+    const { currentLanguage } = useAppLang();
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
     const [mode, setMode] = useState<PaletteMode>((getCurrentThemeMode() as PaletteMode) ?? (prefersDarkMode ? "dark" : "light"));
     const themeMode = useMemo(
@@ -51,8 +74,11 @@ export const ThemeContextProvider: FC<Props> = ({ children }) => {
         [mode],
     );
     const theme = React.useMemo(
-        () => createApplicationTheme(mode),
-        [mode],
+        () => {
+            const currentLocale = getCurrentLocaleForMui(currentLanguage);
+            return createApplicationTheme(mode, currentLocale);
+        },
+        [mode, currentLanguage]
     );
 
     return (

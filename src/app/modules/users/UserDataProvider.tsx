@@ -1,8 +1,8 @@
 import { createContext, FC, useContext, useEffect, useMemo, useState } from "react";
-import { EmployeeModel } from "../../../utils/common_types";
 import { getEmployeeById } from "./userservices";
 import { useParams } from "react-router-dom";
 import { EmployeeByIdResponse } from "./models";
+import { CircularLoader } from "../../shared/components/CircularLoader";
 
 type UserDataContextType = {
   userDetails: EmployeeByIdResponse;
@@ -58,7 +58,6 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         console.error(error.message);
       })
   }, [refresh, employeeId])
-
   return (
     <UserDetailsContext.Provider
       value={{

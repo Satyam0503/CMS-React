@@ -2,7 +2,6 @@
 import * as signalR from "@microsoft/signalr";
 import { BaseUrl } from "../utils/constant/Constant";
 
-// const NOTICEBOARDURL = '/notice-board'
 const NOTIFICATIONHUB = '/notificationhub';
 
 class Connector {
@@ -19,7 +18,7 @@ class Connector {
     }
 
     public startConnection = async (token: string) => {
-        if (this.connection) return; // Prevent duplicate connections
+        if (this.connection) return;
 
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(`${BaseUrl}${NOTIFICATIONHUB}`, {
@@ -38,7 +37,6 @@ class Connector {
 
         try {
             await this.connection.start();
-            console.log("SignalR connection established");
         } catch (error) {
             console.error("SignalR connection error:", error);
         }
@@ -48,7 +46,6 @@ class Connector {
         if (this.connection) {
             await this.connection.stop();
             this.connection = null;
-            console.log("SignalR connection stopped");
         }
     };
 

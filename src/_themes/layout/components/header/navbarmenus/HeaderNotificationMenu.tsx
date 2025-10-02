@@ -12,32 +12,35 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { AccessTime, Cake, CircleNotifications, NotificationsOutlined } from "@mui/icons-material";
+import { AccessTime, Cake, CalendarMonth, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
-import { redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
+import { getNotificationTitle, redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createNotifications } from "../../../../../app/modules/dashboard/components/PushNotification";
 import { toAbsoluteUrl } from "../../../../helpers";
 
 export const NotificationIconMapper: {
   [index: number]: ReactNode
 } = {
-  [NOTIFICATION_TYPE.NOTICE]: <CircleNotifications />,
-  [NOTIFICATION_TYPE.ALERT]: <Cake />,
+  [NOTIFICATION_TYPE.NOTICE]: <NotificationsActive className="fs-32" />,
+  [NOTIFICATION_TYPE.LEAVE_REQUEST]: <CalendarMonth className="fs-32" />,
+  [NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED]: <ThumbUpAlt className="fs-32" />,
+  [NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED]: <ThumbDownAlt className="fs-32" />,
+  [NOTIFICATION_TYPE.BIRTHDAY]: <Cake className="fs-36" />,
 }
-
 
 const initialPaginationValue = { pageNo: 1, records: 10 }
 
 export default function HeaderNotificationMenu() {
-  const { formatMessage } = useIntl();
+  const intl = useIntl();
+  const { formatMessage: i } = intl;
   const [notificationList, setNotificationList] = useState<NotificationModel[]>([]);
   const [notificationCount, setNotificationCount] = useState({
     totalNotification: 0,
@@ -70,9 +73,10 @@ export default function HeaderNotificationMenu() {
       pageNo: paginationValues.pageNo + 1,
     })
   }
+
   const handleNewNotification = (notification: NotificationModel) => {
     if (document.visibilityState === "hidden" && Notification.permission === "granted") {
-      createNotifications(notification);
+      createNotifications(notification, intl);
     }
     else {
       // show custom toast
@@ -99,9 +103,9 @@ export default function HeaderNotificationMenu() {
   useEffect(() => {
     const connection = Connector.getInstance().getConnection();
     if (!connection) return;
-    connection.on("noticeNofity", handleNewNotification);
+    connection.on("notification", handleNewNotification);
     return () => {
-      connection.off("noticeNofity", handleNewNotification);
+      connection.off("notification", handleNewNotification);
     };
   }, [])
 
@@ -124,12 +128,10 @@ export default function HeaderNotificationMenu() {
           });
 
           setNotificationCount({ totalNotification: data.methodResult.all, unread: data.methodResult.unread })
-        } else {
-          console.log("Failed to Fetch Notifications");
         }
       }
-      catch {
-        console.log("Failed to Fetch Notifications");
+      catch (error) {
+        console.log((error as Error).message);
       }
     })();
   }, [activeTab, paginationValues.pageNo])
@@ -171,14 +173,16 @@ export default function HeaderNotificationMenu() {
 
   return (
     <>
-      <Tooltip title="Notifications" placement="bottom">
+      <Tooltip title={i({ id: "TOOLTIP.NOTIFICATIONS" })} placement="bottom">
         <Badge badgeContent={notificationCount.unread} color="primary">
           <IconButton
             onClick={handleClick}
             aria-describedby={id}
             sx={{ border: 0, p: 0 }}
+            role="button"
+            aria-label="notification menu"
           >
-            <NotificationsOutlined className="icon-fs-32" />
+            <NotificationsActive className="fs-32" />
           </IconButton>
         </Badge>
       </Tooltip>
@@ -207,22 +211,22 @@ export default function HeaderNotificationMenu() {
       >
         <Box component="div" className="px-4 pt-4"  >
           <Stack className="flex-row justify-content-between align-items-center">
-            <Typography variant="body1" sx={{ fontWeight: "bold" }}>{formatMessage({ id: "Notifications" })}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>{i({ id: "NOTIFICATION.TITLE" })}</Typography>
             {
               notificationCount.unread > 0 &&
               <Box component="span" sx={{ color: "primary.main", cursor: "pointer" }} onClick={handleMarkAllAsRead}  >
-                {formatMessage({ id: "MARK_ALL_AS_READ" })}
+                {i({ id: "BUTTON.MARK_ALL_AS_READ" })}
               </Box>
             }
           </Stack>
 
           <Stack direction="row" spacing={2} className="notification-menu-tabList" aria-label="notifications tabs">
             <Stack onClick={() => handleTabChange(1)} className={clsx({ "active-tab": activeTab === 1 })}>
-              <span>{formatMessage({ id: "Notifications.All" })}</span>
+              <span>{i({ id: "NOTIFICATION.ALL" })}</span>
               <Chip label={notificationCount.totalNotification} size="small" color="secondary" />
             </Stack>
             <Stack onClick={() => handleTabChange(2)} className={clsx({ "active-tab": activeTab === 2 })}>
-              <span>{formatMessage({ id: "Notifications.New" })}</span>
+              <span>{i({ id: "NOTIFICATION.NEW" })}</span>
               <Chip label={notificationCount.unread} size="small" color="secondary" />
             </Stack>
           </Stack>
@@ -234,23 +238,21 @@ export default function HeaderNotificationMenu() {
                 notificationList.map(item => (
                   <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
                     <Stack sx={{ bgcolor: "secondary.light" }}>
-                      <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.dark" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
+                      <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.darker" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
                     </Stack>
-                    <ListItemText primary={
-                      <Typography >{item.title}:
-                        <Box component="span" sx={{ fontSize: 14, color: "text.secondary" }}> {item.body}</Box>
-                      </Typography>
-                    } secondary={
-                      <Box component="span" className="d-flex align-items-center gap-1">
-                        <AccessTime className="icon-fs-16" />
-                        <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
-                      </Box>} />
+                    <ListItemText
+                      primary={<Typography >{getNotificationTitle(item, intl)}</Typography>}
+                      secondary={
+                        <Box component="span" className="d-flex align-items-center gap-1">
+                          <AccessTime className="fs-16" />
+                          <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
+                        </Box>} />
                   </ListItem>
                 ))
                 :
                 <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
                   <img src={toAbsoluteUrl("media/Icons/no-notification.png")} />
-                  <Typography sx={{ color: "text.secondary" }}>{formatMessage({ id: "Notifications.None" })}</Typography>
+                  <Typography sx={{ color: "text.secondary" }}>{i({ id: "NOTIFICATION.NONE" })}</Typography>
                 </Box>
             }
           </List>
@@ -258,7 +260,7 @@ export default function HeaderNotificationMenu() {
             (activeTab == 1 ? notificationList.length < notificationCount.totalNotification :
               notificationList.length < notificationCount.unread) &&
             <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification}  >
-              {formatMessage({ id: "SEE_MORE" })}
+              {i({ id: "BUTTON.SEE_MORE" })}
             </Box>
           }
         </Stack>

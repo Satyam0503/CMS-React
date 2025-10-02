@@ -34,7 +34,7 @@ export const UserSkills = () => {
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        console.error((error as Error).message)
       });
   }, [refresh]);
 
@@ -42,7 +42,7 @@ export const UserSkills = () => {
     <Card sx={{ p: 2 }}>
       <Stack className="flex-row justify-content-between" mb={2} >
         <Typography variant="h5">
-          {intl.formatMessage({ id: "PROFILE.SKILLS" })}
+          {intl.formatMessage({ id: "PROFILE.SKILLS.TITLE" })}
         </Typography>
         {
           hasEmployeeEditPermission &&
@@ -57,7 +57,7 @@ export const UserSkills = () => {
       <Stack direction="row" gap={1} flexWrap={"wrap"}>
         {userSkills?.length === 0 ? (
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            {intl.formatMessage({ id: "ADD.SKILLS" })}
+            {intl.formatMessage({ id: "PROFILE.SKILLS.NONE" })}
           </Typography>
         ) : (
           userSkills?.map((skill, index) => (

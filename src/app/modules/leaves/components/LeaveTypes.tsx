@@ -28,8 +28,8 @@ export const LeaveTypes = () => {
     const { formatMessage: i } = useIntl();
 
     const handleLeaveTypeEdit = (row: LeaveType) => {
-        setLeaveTypeValues(row);
         setEdit(true);
+        setLeaveTypeValues(row);
         setOpen(true);
     }
 
@@ -57,12 +57,12 @@ export const LeaveTypes = () => {
     }, [refresh])
 
     return (
-        <Card className="p-4 h-100">
-            <Stack className="flex-row justify-content-between mb-4">
-                <Typography variant="h5">{i({ id: "LEAVE_TYPES" })}</Typography>
-                <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} tooltip={i({ id: "ADD_LEAVE_TYPE" })} />
+        <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
+            <Stack className="flex-row justify-content-between ">
+                <Typography variant="h5">{i({ id: "LEAVE.TITLES.LEAVE_TYPES" })}</Typography>
+                <CustomIconButton icon={<Add />} handleClick={() => setOpen(true)} tooltip={i({ id: "LEAVE.TITLES.ADD_LEAVE_TYPE" })} />
             </Stack>
-            <CustomisedTable keyName="leaveTypeId" columns={LeaveTypeColumnList} rows={leaveTypes} page={1} rowsPerPage={20} handleEdit={handleLeaveTypeEdit} />
+            <CustomisedTable keyName="leaveTypeId" columns={LeaveTypeColumnList} rows={leaveTypes} page={0} rowsPerPage={20} handleEdit={handleLeaveTypeEdit} />
             {
                 open && <AddLeaveTypes initialLeaveTypeValue={leaveTypeValues} open={true} handleClose={handleClose} isEdit={isEdit} handleRefresh={handleRefresh} />
             }

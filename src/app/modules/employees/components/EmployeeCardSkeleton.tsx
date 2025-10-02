@@ -6,8 +6,9 @@ const EmpCardSkeleton = () => {
       sx={{
         height: "270px",
         padding: 2,
+        backgroundColor: 'background.body'
       }}
-      className="shadow-sm"
+
     >
       <Stack spacing={2} className="justify-content-between align-items-center h-100">
         <Skeleton variant="circular" height={100} width={100} />

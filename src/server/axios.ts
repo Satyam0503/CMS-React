@@ -1,15 +1,51 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { AUTH_LOCAL_STORAGE_KEY } from "../app/modules/auth";
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from "axios";
+import {
+  getLocalKey,
+  RefreshTokenPayload,
+  setLocalKey,
+} from "../app/modules/auth";
 import { toast } from "react-toastify";
-import { getConfig } from "../_themes/i18n/Metronici18n";
+import { refreshTokenAsync } from "../app/modules/auth/core/_requests";
+import { getCurrentAppLanguage } from "../utils/common";
+import { ServiceUrl } from "../utils/constant/Constant";
+
+let isRefreshing = false;
+let failedRequestsQueue: Array<(token: string) => void> = [];
+
+// function to get new access token
+export const refreshToken = async () => {
+  try {
+    isRefreshing = true;
+    const refreshToken = getLocalKey()?.refreshToken;
+    if (!refreshToken) {
+      throw new Error();
+    }
+    const { data } = await refreshTokenAsync({
+      refreshToken,
+    });
+    if (data.success) {
+      setLocalKey(data.methodResult);
+      return data.methodResult.token;
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    localStorage.clear();
+    window.location.href = "/auth";
+  } finally {
+    isRefreshing = false;
+  }
+};
 
 // using interceptors to automatically set token and current Language for each request
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
-      ? localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!
-      : "";
-    config.headers["Accept-Language"] = getConfig().selectedLang;
+    const token = getLocalKey()?.token ?? "";
+    config.headers["Accept-Language"] = getCurrentAppLanguage();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
@@ -26,19 +62,46 @@ axios.interceptors.request.use(
 // response interceptor to handle response error
 axios.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (!error.response) {
-      toast.error("Something Went Wrong");
-    } else if (error.response?.status === 404) {
-      toast.error("Requested Resource Not Found");
-    } else if (error.response?.status === 401) {
-      toast.error("Token expired");
-    } else if (error.response?.status === 500) {
-      toast.error("Opps! Server is down. Try Again later");
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
+    if (error.response) {
+      if (
+        error.response.status === 401 &&
+        !originalRequest?._retry &&
+        !isRefreshing
+      ) {
+        originalRequest._retry = true;
+        const token = await refreshToken();
+        if (token) {
+          if (originalRequest.url === ServiceUrl.LOGOUT) {
+            const payload: RefreshTokenPayload = {
+              refreshToken: getLocalKey()?.refreshToken ?? "",
+            };
+            originalRequest.data = JSON.stringify(payload);
+          }
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+          failedRequestsQueue.forEach((callback) => callback(token));
+          failedRequestsQueue = [];
+          return axios.request(originalRequest);
+        } else {
+          return Promise.reject(error);
+        }
+      }
+      if (error.response.status === 401 && isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedRequestsQueue.push((token: string) => {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            resolve(axios(originalRequest));
+          });
+        });
+      }
     } else {
-      toast.error("Something Went wrong");
+      console.error("Something Went Wrong");
     }
-    return Promise.reject();
+    return Promise.reject(error);
   }
 );
 

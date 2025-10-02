@@ -1,72 +1,93 @@
 import {
   Grid,
   Stack,
-  Box,
-  Typography,
-  FormHelperText,
   MenuItem,
   TextField,
   Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 import { FC, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { bloodGroups } from "../../../../../utils/constant/Constant";
+import { bloodGroups, EmploymentType } from "../../../../../utils/constant/Constant";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { EmployeeModel } from "../../../../../utils/common_types";
 import { getAllEmployees, updateEmployee } from "../../../employees/employeeServices";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useParams } from "react-router-dom";
-import { checkPermissionForModulesFeatureAccess } from "../../../../../utils/common";
+import { getStatusCodeString, hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
-import { DepartmentModel } from "../../../admin/models";
-import { getAllDepartments } from "../../../admin/adminservices";
-import { useLang } from "../../../../../_themes/i18n/Metronici18n";
+import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel } from "../../../admin/models";
+import { getAllCustomAttributes, getAllDepartments, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
 import { GetAllEmployeeResponseModel } from "../../../employees/models";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { EditEmployeePayloadModel, EmployeeByIdResponse, EmployeeCustomAttribute } from "../../models";
+import React from "react";
 
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  userData: EmployeeModel;
+  userData: EmployeeByIdResponse;
+}
+
+const transformCustomAttributeData = (attributeListlist: EmployeeCustomAttribute[]) => {
+  const updatedAttribute: {
+    customAttributeId: string;
+    customAttributeValueId: string;
+  }[] = [];
+  if (attributeListlist.length == 0) return updatedAttribute;
+  attributeListlist.forEach(attribute => (
+    updatedAttribute.push({
+      customAttributeId: attribute.customAttributeId,
+      customAttributeValueId: attribute.customAttributeValueId
+    })
+  ))
+  return updatedAttribute;
 }
 
 export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
-  const intl = useIntl();
-  const currentLanguage = useLang();
+  const { formatMessage: i } = useIntl();
   const { updateUserDetails, setRefresh } = useUserDetails();
   const user = useAppSelector((state) => state.user.userData)!;
   const dispatch = useAppDispatch();
   const employeeId = useParams().employeeid;
+
   const userPermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-  const hasEditPermission = checkPermissionForModulesFeatureAccess(`${ModulesName.Employees}.${Permission.Edit}`, userPermissions);
+  const hasEditPermission = hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
+  const [allCustomAttributes, setAllCustomAttributes] = useState<CompanyCustomAttributeModel[]>([])
+  const { currentLanguage } = useAppLang();
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
-  const initialValues = useMemo(
+  const initialValues: EditEmployeePayloadModel = useMemo(
     () => ({
       firstName: userData?.firstName,
       lastName: userData?.lastName,
       email: userData?.email,
       phoneNumber: userData?.phoneNumber,
       address: userData?.address,
-      bloodGroup: userData?.bloodGroup,
+      bloodGroup: userData.bloodGroup ?? "",
       dateOfBirth: userData?.dateOfBirth,
       dateOfJoining: userData?.dateOfJoining,
       personalEmail: userData?.personalEmail,
       emergencyContact: userData?.emergencyContact,
       reportingManager: userData.reportingManager,
-      teamLead: userData.teamLead,
-      department: userData.department,
+      department: userData.department ?? "",
       jobRole: userData.jobRole,
+      employmentType: userData.employmentType,
+      bankAccountNumber: userData.bankAccountNumber,
+      panNumber: userData.panNumber,
+      customAttributeList: [...transformCustomAttributeData(userData.customAttributes)]
     }),
     [userData]
   );
@@ -81,7 +102,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   ) {
     try {
       const response = await updateEmployee(values, userData?.userId);
-      const { success, statusCode, methodResult, message } = response.data;
+      const { success, statusCode, methodResult } = response.data;
       if (success && statusCode === 200) {
         updateUserDetails(methodResult);
         if (!employeeId) {
@@ -94,10 +115,13 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
             })
           );
         }
-        toast.success(message);
+        toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
         handleClose();
       }
-    } catch (error: unknown) {
+      else {
+        toast.error(i({ id: getStatusCodeString(statusCode) }))
+      }
+    } catch (error) {
       console.error((error as Error).message);
     } finally {
       setSubmitting(false);
@@ -119,251 +143,416 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   }, [])
 
   useEffect(() => {
-    const getAllEmployeesList = async () => {
+    (async () => {
       try {
-        const response = await getAllEmployees();
-        const { success, statusCode, methodResults } = response.data;
-        if (!(success && statusCode === 200)) {
-          throw new Error("Failed To fetch Data");
+        const result = await Promise.allSettled([getAllEmployees(), getJobTitles(), getAllCustomAttributes()]);
+        if (result[0].status === "fulfilled") {
+          const { success, methodResults } = result[0].value.data;
+          if (success) setEmployeeList(methodResults);
         }
-        if (methodResults) {
-          setEmployeeList(methodResults);
+        if (result[1].status === "fulfilled") {
+          const { success, methodResults } = result[1].value.data;
+          if (success) setJobTitleList(methodResults);
+        }
+        if (result[2].status === "fulfilled") {
+          const { success, methodResults } = result[2].value.data;
+          if (success) setAllCustomAttributes(methodResults);
         }
       } catch (error) {
-        console.error("error :", error instanceof Error ? error.message : error
-        );
+        console.log(error);
       }
-    };
-    getAllEmployeesList();
-  }, []);
+    })();
+  }, [])
 
   return (
     <>
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Typography variant="h5" mb={2}>
-          {intl.formatMessage({ id: "PROFILE.PI" })}
-        </Typography>
-        <Box>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={userSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              handleUpdateUserDetail(values, setSubmitting);
-            }}
-          >
-            {({
-              values,
-              setFieldValue,
-              setFieldTouched,
-              isValid,
-              dirty,
-              isSubmitting,
-              handleSubmit,
-            }) => (
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                      type="text"
-                      name="firstName"
-                      placeholder={intl.formatMessage({ id: "USER.FIRST_NAME" })}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                      type="text"
-                      name="lastName"
-                      placeholder={intl.formatMessage({ id: "USER.LAST_NAME" })}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Stack>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "USER.DOB" })}
-                        name="dateOfBirth"
-                        value={values?.dateOfBirth ? dayjs(values?.dateOfBirth) : null}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("dateOfBirth", true);
-                          setFieldValue("dateOfBirth", newDate);
-                        }}
-                        maxDate={dayjs()}
-                      />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Stack>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({ id: "USER.DOJ" })}
-                        name="dateOfJoining"
-                        value={values?.dateOfJoining ? dayjs(values?.dateOfJoining) : null}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("dateOfJoining", true);
-                          setFieldValue("dateOfJoining", newDate);
-                        }}
-                        maxDate={dayjs()}
-                        disabled={!hasEditPermission}
-                      />
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "FORM.EMAIL" })}
-                      type="email"
-                      name="email"
-                      placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
-                      disabled={true}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.PHONE" })}
-                      type="text"
-                      name="phoneNumber"
-                      placeholder={intl.formatMessage({ id: "USER.PHONE" })}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <SelectInput
-                      name="bloodGroup"
-                      label={intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
-                    >
-                      {bloodGroups.map((item) => (
-                        <MenuItem key={item.id} value={item.value}>
-                          {item.label}
-                        </MenuItem>
-                      ))}
-                    </SelectInput>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
-                      type="text"
-                      name="jobRole"
-                      disabled={!hasEditPermission}
-                      required={true}
-                      placeholder={intl.formatMessage({ id: "FORM.JOB_ROLE" })}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Autocomplete
-                      id="reporting_manager"
-                      size="small"
-                      disabled={!hasEditPermission}
-                      value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
-                      options={employeeList}
-                      onChange={(event, value) => {
-                        setFieldTouched("reportingManager", true);
-                        setFieldValue(
-                          "reportingManager",
-                          value ? value.userId : null
-                        );
-                      }}
-                      renderInput={(param) => (
-                        <TextField
-                          {...param}
-                          label={intl.formatMessage({
-                            id: "USER.REPORTING_MANAGER",
-                          })}
-                        />
-                      )}
-                      getOptionLabel={(option) => option.fullName}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Autocomplete
-                      id="teamlead"
-                      size="small"
-                      disabled={!hasEditPermission}
-                      value={employeeList.find((emp) => emp.userId === values.teamLead) || null}
-                      options={employeeList}
-                      onChange={(event, value) => {
-                        setFieldTouched("teamLead", true);
-                        setFieldValue("teamLead", value ? value.userId : null);
-                      }}
-                      renderInput={(param) => (
-                        <TextField
-                          {...param}
-                          label={intl.formatMessage({
-                            id: "USER.TEAM_LEAD",
-                          })}
-                        />
-                      )}
-                      getOptionLabel={(option) => option.fullName}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <SelectInput
-                      name="department"
-                      label={intl.formatMessage({ id: "FORM.DEPARTMENT" })}
-                      disabled={!hasEditPermission}
-                    >
-                      {departments.map((dep) => (
-                        <MenuItem
-                          key={dep.departmentId}
-                          value={dep.departmentId}
-                        >
-                          {dep.titles.find(title => title.language === currentLanguage)?.label ?? <FormattedMessage id={"TRANSLATION_MISSING"} />}
-                        </MenuItem>
-                      ))}
-                    </SelectInput>
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({
-                        id: "USER.PERSONAL_EMAIL",
-                      })}
-                      type="email"
-                      name="personalEmail"
-                      placeholder={intl.formatMessage({ id: "USER.PERSONAL_EMAIL" })}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
-                      type="text"
-                      name="emergencyContact"
-                      placeholder={intl.formatMessage({ id: "USER.EMERGENCY_CONTACT" })}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "USER.ADDRESS" })}
-                      type="text"
-                      name="address"
-                      placeholder={intl.formatMessage({ id: "USER.ADDRESS" })}
-                    />
-                  </Grid>
+      <CustomisedModal open={open} handleClose={handleClose} title={i({ id: "PROFILE.PI.TITLE" })}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={userSchema}
+          onSubmit={(values, { setSubmitting }) => {
+            handleUpdateUserDetail(values, setSubmitting);
+          }}
+        >
+          {({
+            values,
+            setFieldValue,
+            setFieldTouched,
+            isValid,
+            dirty,
+            isSubmitting,
+            handleSubmit,
+            ...formik
+          }) => {
+            return <form onSubmit={handleSubmit}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "FORM.FIRST_NAME" })}
+                    type="text"
+                    name="firstName"
+                    placeholder={i({ id: "FORM.FIRST_NAME" })}
+                  />
                 </Grid>
-                <Stack
-                  direction={"row"}
-                  spacing={1}
-                  justifyContent={"flex-end"}
-                  mt={2}
-                >
-                  <CustomisedButton
-                    label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-                    handleClick={handleClose}
-                    variant="outlined"
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "FORM.LAST_NAME" })}
+                    type="text"
+                    name="lastName"
+                    placeholder={i({ id: "FORM.LAST_NAME" })}
                   />
-                  <CustomisedButton
-                    loading={isSubmitting}
-                    label={intl.formatMessage({ id: "BUTTON.SAVE" })}
-                    type="submit"
-                    disabled={!(isValid && dirty) || isSubmitting}
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    disabled
+                    label={i({ id: "FORM.EMAIL" })}
+                    type="email"
+                    name="email"
+                    placeholder={i({ id: "FORM.EMAIL" })}
                   />
-                </Stack>
-              </form>
-            )}
-          </Formik>
-        </Box>
-      </CustomisedModal>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "FORM.PHONE" })}
+                    type="text"
+                    name="phoneNumber"
+                    placeholder={i({ id: "FORM.PHONE" })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <SelectInput
+                    name="bloodGroup"
+                    label={i({ id: "FORM.BLOOD_GROUP" })}
+                  >
+                    {bloodGroups.map((item) => (
+                      <MenuItem key={item.id} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </SelectInput>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Autocomplete
+                    id="job_title"
+                    size="small"
+                    disabled={!hasEditPermission}
+                    value={jobTitleList.find(
+                      (jt) => jt.jobTitleId === values.jobRole
+                    ) || null}
+                    options={jobTitleList}
+                    onChange={(event, value) => {
+                      setFieldTouched("jobRole", true);
+                      setFieldValue(
+                        "jobRole",
+                        value ? value.jobTitleId : ""
+                      );
+                    }}
+                    renderInput={(param) => (
+                      <TextField
+                        {...param}
+                        label={i({
+                          id: "FORM.JOB_ROLE",
+                        })}
+                      />
+                    )}
+                    getOptionLabel={(option) => option.titles[currentLanguage] || option.titles[defaultLanguage] || i({ id: "TRANSLATION_MISSING" })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <SelectInput
+                    name="employmentType"
+                    label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
+                    disabled={!hasEditPermission}
+                  >
+                    {EmploymentType.map((type) => (
+                      <MenuItem
+                        key={type.id}
+                        value={type.value}
+                      >
+                        {i({ id: type.label })}
+                      </MenuItem>
+                    ))}
+                  </SelectInput>
+                </Grid>
+
+
+                <Grid item xs={12} sm={6}>
+                  <Autocomplete
+                    id="reporting_manager"
+                    size="small"
+                    disabled={!hasEditPermission}
+                    value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
+                    options={employeeList}
+                    onChange={(event, value) => {
+                      setFieldTouched("reportingManager", true);
+                      setFieldValue(
+                        "reportingManager",
+                        value ? value.userId : null
+                      );
+                    }}
+                    renderInput={(param) => (
+                      <TextField
+                        {...param}
+                        label={i({
+                          id: "USER.REPORTING_MANAGER",
+                        })}
+                      />
+                    )}
+                    getOptionLabel={(option) => option.fullName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <SelectInput
+                    name="department"
+                    label={i({ id: "FORM.DEPARTMENT" })}
+                    disabled={!hasEditPermission}
+                  >
+                    {departments.map((dep) => (
+                      <MenuItem
+                        key={dep.departmentId}
+                        value={dep.departmentId}
+                      >
+                        {dep.titles[currentLanguage] || dep.titles[defaultLanguage] || <FormattedMessage id={"TRANSLATION_MISSING"} />}
+                      </MenuItem>
+                    ))}
+                  </SelectInput>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({
+                      id: "USER.PERSONAL_EMAIL",
+                    })}
+                    type="email"
+                    name="personalEmail"
+                    placeholder={i({ id: "USER.PERSONAL_EMAIL" })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "USER.EMERGENCY_CONTACT" })}
+                    type="text"
+                    name="emergencyContact"
+                    placeholder={i({ id: "USER.EMERGENCY_CONTACT" })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "USER.ADDRESS" })}
+                    type="text"
+                    name="address"
+                    placeholder={i({ id: "USER.ADDRESS" })}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6} className="pt-2">
+                  <CustomisedDatePicker
+                    label={i({ id: "FORM.DOB" })}
+                    name="dateOfBirth"
+                    value={values?.dateOfBirth ? dayjs(values?.dateOfBirth) : null}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("dateOfBirth", true);
+                      setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
+                    }}
+                    maxDate={dayjs()}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} className="pt-2">
+                  <CustomisedDatePicker
+                    label={i({ id: "FORM.DOJ" })}
+                    name="dateOfJoining"
+                    value={values?.dateOfJoining ? dayjs(values?.dateOfJoining) : null}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("dateOfJoining", true);
+                      setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
+                    }}
+                    maxDate={dayjs()}
+                    disabled={!hasEditPermission}
+                  />
+                </Grid>
+                {
+                  hasEditPermission &&
+                  <>
+                    <Grid item xs={12} sm={6}>
+                      <TextInput
+                        label={i({ id: "USER.BANK_ACCOUNT_NO" })}
+                        type="number"
+                        name="bankAccountNumber"
+                        placeholder={i({ id: "USER.BANK_ACCOUNT_NO" })}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <TextInput
+                        label={i({ id: "USER.PAN_NUMBER" })}
+                        type="text"
+                        name="panNumber"
+                        placeholder={i({ id: "USER.PAN_NUMBER" })}
+                      />
+                    </Grid>
+                  </>
+                }
+
+              </Grid>
+              {
+                hasEditPermission &&
+
+                <Grid container spacing={2} className="mt-1">
+                  {
+                    allCustomAttributes.length > 0 &&
+                    allCustomAttributes.map(attribute => (
+                      <UserCustomAttribute key={attribute.customAttributeId} attribute={attribute} userCustomAttribute={values.customAttributeList} setFieldValue={setFieldValue} />
+                    ))
+                  }
+                </Grid>
+              }
+
+              <Stack
+                direction="row"
+                className="justify-content-end mt-4 gap-2"
+              >
+                <CustomisedButton
+                  label={i({ id: "BUTTON.CLOSE" })}
+                  handleClick={handleClose}
+                  variant="outlined"
+                />
+                <CustomisedButton
+                  loading={isSubmitting}
+                  label={i({ id: "BUTTON.SAVE" })}
+                  type="submit"
+                  disabled={!(isValid && dirty) || isSubmitting}
+                />
+              </Stack>
+            </form>
+          }}
+        </Formik>
+      </CustomisedModal >
     </>
   );
 };
+
+
+type PropsType = {
+  attribute: CompanyCustomAttributeModel,
+  userCustomAttribute: Pick<EmployeeCustomAttribute, "customAttributeId" | "customAttributeValueId">[],
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void
+}
+
+const UserCustomAttribute = (props: PropsType) => {
+  const { attribute, userCustomAttribute, setFieldValue } = props;
+  const { formatMessage: i } = useIntl();
+  const [state, setState] = useState({ open: false, loading: false });
+  const { currentLanguage } = useAppLang();
+  const [customAttributeData, setCustomAttributeData] = useState<CustomAttributeModel>({} as CustomAttributeModel);
+
+  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
+
+  const handleListOpen = async () => {
+    setState({ ...state, loading: true })
+    // fetch custom attribute data by id   
+    try {
+      const { data } = await getCustomAttributeById(attribute.customAttributeId, true);
+      if (data.success) {
+        setState({ ...state, open: true })
+        setCustomAttributeData(data.methodResult);
+      }
+    } catch (error) {
+      console.error((error as Error).message);
+    }
+    finally {
+      setState(prev => ({ ...prev, loading: false }))
+    }
+  }
+
+  const handleValueChange = (event: React.SyntheticEvent<Element, Event>, value: CustomAttributeValueModel | null) => {
+    const index = userCustomAttribute.findIndex(ca => ca.customAttributeId === attribute.customAttributeId);
+    if (value !== null) {
+      if (index !== -1) {
+        const result = userCustomAttribute.map(at => {
+          if (at.customAttributeId === attribute.customAttributeId) {
+            return {
+              customAttributeId: attribute.customAttributeId,
+              customAttributeValueId: value.customAttributeValueId
+            }
+          } else {
+            return at;
+          }
+        })
+        setFieldValue("customAttributeList", result);
+      } else {
+        setFieldValue("customAttributeList", [...userCustomAttribute, {
+          customAttributeId: attribute.customAttributeId,
+          customAttributeValueId: value.customAttributeValueId
+        }])
+      }
+    } else {
+      if (index !== -1) {
+        setFieldValue("customAttributeList", userCustomAttribute.filter(at => at.customAttributeId !== attribute.customAttributeId));
+      }
+    }
+  }
+  const handleClose = () => {
+    setState({ ...state, open: false })
+  }
+
+  const getCurrentValue = (): CustomAttributeValueModel | null => {
+    if (!customAttributeData || !Array.isArray(customAttributeData.customAttributeValues)) {
+      return null;
+    }
+
+    const data = userCustomAttribute.find(
+      ca => ca.customAttributeId === attribute.customAttributeId
+    );
+
+    if (!data) return null;
+
+    return customAttributeData.customAttributeValues.find(
+      item => item.customAttributeValueId === data.customAttributeValueId
+    ) || null;
+  };
+
+
+  return (
+    <Grid item xs={12} sm={6}>
+      <Autocomplete
+        id="custom-attribute"
+        size="small"
+        open={state.open}
+        onOpen={handleListOpen}
+        onClose={handleClose}
+        loading={state.loading}
+        value={getCurrentValue()}
+        forcePopupIcon={!state.loading}
+        isOptionEqualToValue={(option, value) =>
+          option.customAttributeValueId === value.customAttributeValueId
+        }
+        options={customAttributeData.customAttributeValues || []}
+        onChange={handleValueChange}
+        getOptionLabel={option => option.titles[currentLanguage] ?? option.titles[defaultLang] ?? ""}
+        getOptionKey={option => option.customAttributeValueId!}
+        renderInput={(param) => (
+          <TextField
+            {...param}
+            label={attribute.customAttributeTitle[currentLanguage] ?? `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${attribute.customAttributeNumber}`}
+            InputProps={{
+              ...param.InputProps,
+              endAdornment: (
+                <>
+                  {state.loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
+                  {param.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        )}
+      />
+    </Grid>
+  )
+}
+

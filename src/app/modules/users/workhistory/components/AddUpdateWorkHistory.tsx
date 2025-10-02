@@ -21,6 +21,7 @@ import { CustomIconButton } from "../../../../shared/components/CustomIconButton
 import { addUpdateWorkHistory } from "../../userservices";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 
 type Props = {
   isEdit: boolean,
@@ -42,12 +43,13 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
       }
       const { data } = await addUpdateWorkHistory(payload);
       if (data.success) {
-        toast.success(formatMessage({ id: isEdit ? "Toast.UpdateWorkHistorySuccess" : "Toast.AddWorkHistorySuccess" }));
+        toast.success(formatMessage({ id: isEdit ? "TOAST.SUCCESS.UPDATE_WORK_HISTORY" : "TOAST.SUCCESS.ADD_WORK_HISTORY" }));
         handleClose();
         refresh();
+      } else {
+        toast.success(formatMessage({ id: isEdit ? "TOAST.FAILED.UPDATE_WORK_HISTORY" : "TOAST.FAILED.ADD_WORK_HISTORY" }));
       }
     } catch (error) {
-      toast.success(formatMessage({ id: isEdit ? "Toast.UpdateWorkHistoryFailed" : "Toast.AddWorkHistoryFailed" }));
     } finally {
       setSubmitting(false);
     }
@@ -55,14 +57,13 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
 
   return (
     <>
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Typography variant="h5" mb={2}>
-          {
-            isEdit ?
-              formatMessage({ id: "WorkHistory.Update" }) :
-              formatMessage({ id: "WorkHistory.Add" })
-          }
-        </Typography>
+      <CustomisedModal open={open} handleClose={handleClose}
+        title={
+          isEdit ?
+            formatMessage({ id: "WORKHISTORY.UPDATE" }) :
+            formatMessage({ id: "WORKHISTORY.ADD" })
+        }
+      >
         <Formik
           initialValues={initialValues}
           onSubmit={(values, { setSubmitting }) => {
@@ -84,7 +85,7 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <CustomisedDatePicker
-                      label={formatMessage({ id: "START_DATE" })}
+                      label={formatMessage({ id: "FORM.START_DATE" })}
                       name="startDate"
                       value={values.startDate && dayjs(values.startDate)}
                       setValue={(newDate: Dayjs | null) => {
@@ -93,16 +94,15 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                       }}
                       maxDate={dayjs()}
                     />
-                    <FormHelperText>
-                      {touched.startDate &&
-                        errors.startDate &&
-                        errors.startDate}
-                    </FormHelperText>
+                    {touched.startDate &&
+                      errors.startDate &&
+                      <ErrorLabel errorLabel={errors.startDate} />
+                    }
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <CustomisedDatePicker
                       label={formatMessage({
-                        id: "END_DATE",
+                        id: "FORM.END_DATE",
                       })}
                       name="endDate"
                       value={values.endDate && dayjs(values.endDate)}
@@ -112,9 +112,10 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                       }}
                       minDate={dayjs(values.startDate) || dayjs()}
                     />
-                    <FormHelperText>
-                      {touched.endDate && errors.endDate && errors.endDate}
-                    </FormHelperText>
+                    {touched.endDate &&
+                      errors.endDate &&
+                      <ErrorLabel errorLabel={errors.endDate} />
+                    }
                   </Grid>
 
                   <Grid item xs={12} md={6}>

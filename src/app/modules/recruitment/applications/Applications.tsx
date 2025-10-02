@@ -7,7 +7,7 @@ import { Pagination } from "../../../shared/components/Pagination";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate } from "react-router-dom";
 import { ApplicationPreview } from "./components/ApplicationPreview";
@@ -22,7 +22,7 @@ import {
   countAppliedFilter,
   getModulePermissions,
 } from "../../../../utils/common";
-import { usePageData } from "../../../../_themes/layout/core";
+import { usePageData } from "../../../Context/PageDataProvider";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -125,10 +125,7 @@ export const Applications = () => {
         setApplicationsList(data.methodResults);
         setTotalRecords(data.totalRecords);
       } catch (error) {
-        console.error(
-          "Error fetching data:",
-          error instanceof Error ? error.message : error
-        );
+        console.error(error instanceof Error ? error.message : error);
       } finally {
         setLoading(false);
       }

@@ -5,6 +5,7 @@ export enum ApplicationStatus {
   Shortlisted = 3,
   Selected = 4,
   Rejected = 5,
+  ReApply = 6,
 }
 
 export enum ApplicantStatus {
@@ -45,11 +46,10 @@ export enum Modules {
   Jobs = 9,
   Applications = 10,
   Permissions = 11,
-  Theme = 12,
-  ProcessLog = 13,
-  CompanyMaster = 14,
-  PayRoll = 15,
-  CompanyDetails = 16,
+  ProcessLog = 12,
+  CompanyMaster = 13,
+  PayRoll = 14,
+  CompanyDetails = 15,
 }
 
 export enum ModulesName {
@@ -60,7 +60,7 @@ export enum ModulesName {
   Recruitment = "Recruitment",
   Admin = "Admin",
   Holidays = "Holidays",
-  NoticeBoard = "Notice_board",
+  NoticeBoard = "Notice_Board",
   Jobs = "Jobs",
   Applications = "Applications",
   Permissions = "Permissions",
@@ -72,28 +72,27 @@ export enum ModulesName {
 }
 
 export enum ModulesTitles {
-  Dashboard = "Modules.Dashboard",
-  Employees = "Modules.Employees",
-  Attendance = "Modules.Attendance",
-  LeaveManagement = "Modules.LeaveManagement",
-  Recruitment = "Modules.Recruitment",
-  Admin = "Modules.Admin",
-  Holidays = "Modules.Holidays",
-  NoticeBoard = "Modules.NoticeBoard",
-  Jobs = "Modules.Jobs",
-  Applications = "Modules.Applications",
-  Permissions = "Modules.Permissions",
-  Theme = "Modules.Theme",
-  ProcessLog = "Modules.ProcessLog",
-  CompanyMaster = "Modules.CompanyMaster",
-  PayRoll = "Modules.PayRoll",
-  CompanyDetails = "Modules.CompanyDetails",
+  Dashboard = "MODULES.DASHBOARD",
+  Employees = "MODULES.EMPLOYEES",
+  Attendance = "MODULES.ATTENDANCE",
+  LeaveManagement = "MODULES.LEAVE_MANAGEMENT",
+  Recruitment = "MODULES.RECRUITMENT",
+  Admin = "MODULES.ADMIN",
+  Holidays = "MODULES.HOLIDAYS",
+  NoticeBoard = "MODULES.NOTICE_BOARD",
+  Jobs = "MODULES.JOBS",
+  Applications = "MODULES.APPLICATIONS",
+  Permissions = "MODULES.PERMISSIONS",
+  ProcessLog = "MODULES.PROCESS_LOG",
+  CompanyMaster = "MODULES.COMPANY_MASTER",
+  PayRoll = "MODULES.PAYROLL",
+  CompanyDetails = "MODULES.COMPANY_DETAILS",
 }
 
 export enum Roles {
-  Administrator = "Company Administrator",
-  HRManager = "HR Manager",
-  Employee = "Employee",
+  Administrator = 1,
+  HRManager = 2,
+  Employee = 3,
 }
 
 export enum TIME_PERIOD_MAP {
@@ -122,8 +121,11 @@ export enum NOTICE_TYPE {
 
 export enum NOTIFICATION_TYPE {
   NOTICE = 1,
-  MESSAGE = 2,
-  ALERT = 3,
+  LEAVE_REQUEST = 2,
+  LEAVE_REQUEST_APPROVED = 3,
+  LEAVE_REQUEST_REJECTED = 4,
+  BIRTHDAY = 5,
+  MESSAGE = 6,
 }
 
 export enum LEAVE_TYPE {
@@ -132,11 +134,31 @@ export enum LEAVE_TYPE {
   EARNED_LEAVE = 3,
   MATERNITY_LEAVE = 4,
   PATERNITY_LEAVE = 5,
-  MARRIAGE = 6,
 }
 
 export enum LEAVE_REQUEST_STATUS {
   PENDING = 1,
   APPROVED = 2,
   REJECTED = 3,
+}
+
+export enum JOB_TYPE_ENUM {
+  ONSITE = 1,
+  HYBRID = 2,
+  REMOTE = 3,
+}
+
+export enum HOLIDAY_TYPE {
+  CULTURAL = 1,
+  HEALTH = 2,
+  RELIGIOUS = 3,
+  NATIONAL = 4,
+}
+
+export enum EMPLOYMENT {
+  FULLTIME = 1,
+  PARTTIME,
+  CONTRACTUAL,
+  INTERNSHIP,
+  APPRENTICESHIP,
 }

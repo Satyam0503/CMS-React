@@ -10,6 +10,7 @@ export interface NoticeModel {
   noticeType: NOTICE_TYPE;
   departments: string;
   createdDate?: string;
+  views?: ViewModel;
 }
 
 export interface NoticeBoardFilterModel {
@@ -21,18 +22,28 @@ export interface NoticeBoardFilterModel {
 export interface NoticeResponseModel {
   noticeId: string;
   userName: string;
-  userProfile: string;
-  userDesignation: string;
+  userProfile: string | null;
+  userDesignation: null | Record<string, string>;
   noticeMessage: string;
   noticeTitle: string;
   createdDateTime: string;
   noticeType: number;
+  viewedStatus: boolean;
 }
 export type GetAllNoticePayload = NoticeBoardFilterModel & {
   pageNo: number;
   records: number;
   postedBy: string;
 };
+
+export type ViewModel = {
+  employeeId: string;
+  employeeName: string;
+  profileUrl: string;
+  viewedAt: string;
+}[];
+
+export type MyNoticeModel = NoticeModel & {};
 
 export type GetAllNoticeResponse = ResponseData<NoticeResponseModel>;
 export type GetMyNoticesResponse = ResponseData<NoticeModel>;

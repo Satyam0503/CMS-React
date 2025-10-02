@@ -28,7 +28,7 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
                 height={"100%"}
               />
             </Box>
-            <Typography variant="h3">{formatMessage({ id: "Error.UNAUTHORIZED" })}</Typography>
+            <Typography variant="h3">{formatMessage({ id: "ERROR.UNAUTHORIZED_ACCESS" })}</Typography>
           </>
         ) : (
           <>
@@ -42,7 +42,7 @@ export const UnAuthorizedAccess: FC<PropsTypes> = ({ type }) => {
                 height={"100%"}
               />
             </Box>
-            <Typography variant="h3">{formatMessage({ id: "Error.SWR" })}</Typography>
+            <Typography variant="h3">{formatMessage({ id: "ERROR.SOMETHING_WRONG" })}</Typography>
           </>
         )}
         <CustomisedButton

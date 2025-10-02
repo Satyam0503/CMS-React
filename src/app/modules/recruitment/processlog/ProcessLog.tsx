@@ -17,7 +17,7 @@ import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { FilterList } from "@mui/icons-material";
 import { ProcessLogFilter } from "./components/ProcessLogFilter";
 import { countAppliedFilter } from "../../../../utils/common";
-import { usePageData } from "../../../../_themes/layout/core";
+import { usePageData } from "../../../Context/PageDataProvider";
 
 export const processLogInitialFilter: ProcessLogFilterModel = {
   jobRole: "",

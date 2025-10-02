@@ -40,7 +40,8 @@ import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLa
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
-import { usePageData } from "../../../../../_themes/layout/core";
+import { getVacancyPayload } from "../../jobs/Jobs";
+import { usePageData } from "../../../../Context/PageDataProvider";
 
 export const EditApplicant = () => {
   const { formatMessage } = useIntl();
@@ -82,7 +83,7 @@ export const EditApplicant = () => {
   useEffect(() => {
     const getAllVacancy = async () => {
       try {
-        const response = await getAllJobVacancies(null, true);
+        const response = await getAllJobVacancies(getVacancyPayload);
         const { success, methodResults } = response.data;
         if (success) {
           setActiveVacancyList(methodResults);
@@ -131,13 +132,12 @@ export const EditApplicant = () => {
       jobTitle: jobTitle ?? applicantDetails.vacancyName,
     };
     const response = await addComment(payload);
-    const { success, statusCode } = response.data;
-    if (!success) {
-      throw new Error("Failed To Update Applicant");
+    const { success } = response.data;
+    if (success) {
+      toast.success(formatMessage({ id: "TOAST.SUCCESS.APPLICANT_UPDATE" }));
+      handleModalClose();
+      window.history.back();
     }
-    toast.success("Applicant Updated Successfully");
-    handleModalClose();
-    window.history.back();
   };
 
   const handleFileChange = (
@@ -180,17 +180,17 @@ export const EditApplicant = () => {
       const response = await editApplicant(payload);
       const { message, success } = response.data;
       if (!success) {
-        throw new Error("Failed To Update Applicant");
+        throw new Error("TOAST.FAILED.APPLICANT_UPDATE");
       }
       if (values.resume) {
         const resumeUploadResponse = await uploadResume(values.email, formData);
         if (!resumeUploadResponse.data.success) {
-          throw new Error("Failed To Update Applicant");
+          throw new Error("TOAST.FAILED.APPLICANT_UPDATE");
         }
       }
       handleAddComment(values.activityType, vacancy?.title);
     } catch (error: any) {
-      toast.error(error.message);
+      console.error(error.message);
     } finally {
       setSubmitting(false);
     }
@@ -204,8 +204,8 @@ export const EditApplicant = () => {
   return (
     <Card sx={{ p: 2.6 }}>
       <Stack spacing={2}>
-        <Typography variant="h5">
-          {formatMessage({ id: "UPDATE.APPLICANT.INFO" })}
+        <Typography variant="h5" className="mb-2">
+          {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
         </Typography>
         <Grid container direction={"column"} gap={1}>
           <Formik
@@ -246,10 +246,10 @@ export const EditApplicant = () => {
 
                       <Grid item xs={12} sm={4}>
                         <TextInput
-                          label={formatMessage({ id: "USER.PHONE" })}
+                          label={formatMessage({ id: "FORM.PHONE" })}
                           type="text"
                           name="phone"
-                          placeholder="Phone Number"
+                          placeholder={formatMessage({ id: "FORM.PHONE" })}
                         />
                       </Grid>
 
@@ -302,26 +302,30 @@ export const EditApplicant = () => {
                             formik.setFieldValue("state", value?.value);
                           }}
                           renderInput={(param) => (
-                            <TextField {...param} label={"Select State"} />
+                            <TextField {...param} label={formatMessage({ id: "APPLICATION.SELECT_STATE" })} />
                           )}
                           getOptionLabel={(option) => option.label}
                         />
+                        {
+                          touched.state && errors.state &&
+                          <ErrorLabel errorLabel={errors.state} />
+                        }
                       </Grid>
                     </Grid>
 
                     <Stack mt={2} spacing={2}>
                       <Typography variant="h6" fontWeight={600}>
-                        {formatMessage({ id: "CUSTOMISED.EXPERIENCE" })}
+                        {formatMessage({ id: "APPLICATION.CUSTOMISE_EXPERIENCE" })}
                       </Typography>
                       <Grid container gap={2}>
                         <Grid item xs={12} sm={4} md={4}>
                           <TextInput
                             label={formatMessage({
-                              id: "USER.EXPERIENCE.YEARS",
+                              id: "DATETIME.YEARS",
                             })}
                             type="number"
                             name="experienceInYears"
-                            placeholder="Experience in Years"
+                            placeholder={formatMessage({ id: "APPLICATION.EXP_IN_YEAR" })}
                             inputProps={{
                               min: 0,
                             }}
@@ -330,7 +334,7 @@ export const EditApplicant = () => {
                         <Grid item xs={12} sm={3} md={2}>
                           <SelectInput
                             label={formatMessage({
-                              id: "USER.EXPERIENCE.MONTHS",
+                              id: "DATETIME.MONTHS",
                             })}
                             name="experienceInMonths"
                           >
@@ -346,7 +350,7 @@ export const EditApplicant = () => {
 
                     <Stack mt={2}>
                       <Typography variant="body1" mb={1} color="primary">
-                        {formatMessage({ id: "UPLOAD.RESUME" })}
+                        {formatMessage({ id: "APPLICATION.UPLOAD_RESUME" })}
                       </Typography>
                     </Stack>
 
@@ -368,56 +372,48 @@ export const EditApplicant = () => {
                         alignItems={"center"}
                       >
                         <Stack alignItems={"center"}>
-                          <Tooltip title="Upload file here" placement="top">
-                            <Box
-                              component="label"
-                              bgcolor="primary.lighter"
-                              px={2}
-                              py={0.5}
-                              borderRadius={1}
-                            >
-                              <CloudUploadOutlined
-                                fontSize="large"
-                                className="text-primary"
-                              />
 
-                              <input
-                                name="resume"
-                                type="file"
-                                accept=".pdf"
-                                onChange={(e) => {
-                                  formik.setFieldTouched("resume", true);
-                                  handleFileChange(e, formik.setFieldValue);
-                                }}
-                                hidden
-                              />
-                            </Box>
-                          </Tooltip>
-                          <Stack>
-                            <Typography
-                              variant="caption"
-                              flexWrap={"wrap"}
-                              textAlign={"center"}
-                            ></Typography>
-                            <Typography variant="caption">
-                              {values.resume ? values.resume.name : ""}
-                            </Typography>
-                          </Stack>
+                          <Box
+                            component="label"
+                            bgcolor="primary.lighter"
+                            px={2}
+                            py={0.5}
+                            borderRadius={1}
+                          >
+                            <CloudUploadOutlined
+                              fontSize="large"
+                              className="text-primary"
+                            />
+
+                            <input
+                              name="resume"
+                              type="file"
+                              accept=".pdf"
+                              onChange={(e) => {
+                                formik.setFieldTouched("resume", true);
+                                handleFileChange(e, formik.setFieldValue);
+                              }}
+                              hidden
+                            />
+                          </Box>
+                          <Typography variant="caption">
+                            {values.resume ? values.resume.name : ""}
+                          </Typography>
                         </Stack>
 
                         <Stack>
                           <Typography variant="body2">
                             {formatMessage({
-                              id: "RESUME.UPLOAD_INSTRUCTION",
+                              id: "APPLICATION.RESUME_INSTRUCTION",
                             })}
                           </Typography>
                         </Stack>
                       </Stack>
                     </Grid>
-                    <ErrorLabel>
-                      {touched.resume && errors.resume && errors.resume}
-                    </ErrorLabel>
 
+                    {touched.resume && errors.resume &&
+                      <ErrorLabel errorLabel={errors.resume} />
+                    }
                     <Grid
                       item
                       xs={12}

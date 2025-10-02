@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { NoticeModel } from "../models";
-import { usePageData } from "../../../../_themes/layout/core/PageData";
+import { MyNoticeModel, NoticeModel } from "../models";
+import { usePageData } from "../../../Context/PageDataProvider";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, NOTICE_TYPE, Permission } from "../../../../utils/enums";
 import { Card, Stack } from "@mui/material";
-import { SearchInput } from "../../../shared/components/SearchInput";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { AddNotice } from "./AddNotice";
 import { MyNoticeTableColumnList } from "../../../../utils/constant/Constant";
@@ -67,27 +66,27 @@ export const MyNotices = () => {
         });
     };
 
-    const handleNoticeEdit = (notice: NoticeModel) => {
-        setInitialNoticeValue(notice);
-        setModalOpen(true);
-        setEdit(true);
-    }
-
     const handleConfirmationOpen = (notice: NoticeModel) => {
         setSelectedNoticeId(notice.noticeId)
     }
 
+    const handleRowClick = (notice: NoticeModel) => {
+        const { views, ...updatedNotice } = notice;
+        setInitialNoticeValue(updatedNotice);
+        setModalOpen(true);
+        setEdit(true);
+    }
     const handleNoticeDelete = async (str: string) => {
         if (str === "ok" && selectedNoticeId) {
             try {
                 const { data } = await deleteMyNotice(selectedNoticeId);
                 if (data.success) {
-                    toast.success(formatMessage({ id: "Toast.Delete.Success" }));
+                    toast.success(formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
                     handleRefresh();
                     setSelectedNoticeId(null);
                 }
                 else {
-                    toast.error(formatMessage({ id: "Toast.Delete.Failed" }));
+                    toast.error(formatMessage({ id: "TOAST.FAILED.DELETE" }));
                 }
             } catch (error) {
                 console.error(error)
@@ -122,7 +121,7 @@ export const MyNotices = () => {
                     {
                         hasAddPermission &&
                         <CustomIconButton
-                            tooltip={formatMessage({ id: "POST_NOTICE" })}
+                            tooltip={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
                             icon={<Add />}
                             handleClick={() => setModalOpen(true)}
                         />
@@ -137,8 +136,8 @@ export const MyNotices = () => {
                     page={paginationValues.pageNo}
                     rowsPerPage={paginationValues.records}
                     loading={loading}
-                    handleEdit={handleNoticeEdit}
                     openConfirmationModal={handleConfirmationOpen}
+                    rowClickHandler={handleRowClick}
                 />
                 {
                     totalRecords > paginationValues.records &&
@@ -159,8 +158,8 @@ export const MyNotices = () => {
                 selectedNoticeId &&
                 <ConfirmationModal
                     open={true}
-                    title={formatMessage({ id: "Confirmation.Title.Notice" })}
-                    content={formatMessage({ id: "Confirmation.Content.Notice" })}
+                    title={formatMessage({ id: "CONFIRMATION.TITLE.DELETE_NOTICE" })}
+                    content={formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_NOTICE" })}
                     handleClose={() => setSelectedNoticeId(null)}
                     handleConfirmation={handleNoticeDelete}
                 />

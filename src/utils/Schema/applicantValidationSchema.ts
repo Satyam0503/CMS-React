@@ -5,77 +5,73 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const applicantValidationSchema = Yup.object().shape({
   firstName: Yup.string()
-    .required("First name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   lastName: Yup.string()
-    .required("Last name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   email: Yup.string()
-    .required("Email is required")
-    .matches(Regex.Email, "Email must be a valid email"),
-  state: Yup.string().required("Select your state"),
+    .required("VALIDATION_ERR.EMAIL_REQ")
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
+  state: Yup.string().required("APPLICATION.SELECT_STATE"),
   phone: Yup.string()
-    .matches(Regex.Phone, "Phone number is not valid")
-    .required("Phone number is required"),
-  experience: Yup.number().min(0).required("Experience is Required"),
-  vacancyId: Yup.string().required("Select Job"),
+    .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  experience: Yup.number().min(0).required("VALIDATION_ERR.REQUIRED_TYPE"),
+  vacancyId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   resume: Yup.mixed()
-    .required("Resume is required")
-    .test("fileFormat", "Only PDF files are allowed", (value: any) => {
+    .required("VALIDATION_ERR.RESUME_REQ")
+    .test("fileFormat", "VALIDATION_ERR.ONLY_PDF_FILE", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];
         return supportedFormats.includes(value.name.split(".").pop());
       }
       return true;
     })
-    .test(
-      "fileSize",
-      "File size is too big, File size exceeds 5MB",
-      (value: any) => {
-        if (value) {
-          return value.size <= MAX_FILE_SIZE;
-        }
-        return true;
+    .test("fileSize", "VALIDATION_ERR.PROFILE_PICTURE_SIZE", (value: any) => {
+      if (value) {
+        return value.size <= MAX_FILE_SIZE;
       }
-    ),
+      return true;
+    }),
 });
 
 export const editApplicantValidationSchema = Yup.object().shape({
   firstName: Yup.string()
-    .required("First name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
   lastName: Yup.string()
-    .required("Last name is required")
-    .matches(Regex.Name, "Invalid Name"),
+    .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
+    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
 
   email: Yup.string()
-    .required("Email is required")
-    .matches(Regex.Email, "Email must be a valid email"),
+    .required("VALIDATION_ERR.EMAIL_REQ")
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
   phone: Yup.string()
-    .matches(Regex.Phone, "Phone number is not valid")
-    .required("Phone number is required"),
-  state: Yup.string().required("Select your state"),
+    .matches(Regex.Phone, "VALIDATION_ERR.REQUIRED_TYPE")
+    .required("VALIDATION_ERR.INVALID_PHONE"),
+  state: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   experienceInMonths: Yup.number()
-    .required("Experience is Required")
-    .min(0, "Experience must be non-negative value")
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .min(0)
     .max(12),
   experienceInYears: Yup.number()
-    .min(0, "Experience must be non-negative value")
-    .required("Experience is Required"),
-  vacancyId: Yup.string().required("Select Job"),
+    .min(0, "VALIDATION_ERR.NEGATIVE_EXP")
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  vacancyId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   activityType: Yup.number()
     .oneOf([0, 1, 2, 3, 4, 5])
-    .required("Select Application Status"),
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
   resume: Yup.mixed()
     .nullable()
-    .test("fileFormat", "Only PDF files are allowed", (value: any) => {
+    .test("fileFormat", "VALIDATION_ERR.ONLY_PDF_FILE", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];
         return supportedFormats.includes(value.name.split(".").pop());
       }
       return true;
     })
-    .test("fileSize", "File size must not be more than 5MB", (value: any) => {
+    .test("fileSize", "VALIDATION_ERR.PROFILE_PICTURE_SIZE", (value: any) => {
       if (value) {
         return value.size <= MAX_FILE_SIZE;
       }

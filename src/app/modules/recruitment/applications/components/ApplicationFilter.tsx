@@ -30,13 +30,9 @@ import { applicationFilterSchema } from "../../../../../utils/Schema/filterValid
 import { addCurrentTimeToDate, blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { ApplicationFilterModel, JobModal } from "../../models";
 import { FilterComponent } from "../../../../shared/components/FilterComponent";
+import { FilterComponentProps } from "../../../../../utils/common_types";
+import { getVacancyPayload } from "../../jobs/Jobs";
 
-interface PropsType {
-  id?: string;
-  open: boolean;
-  handleClose: () => void;
-  anchorEl: null | Element;
-}
 
 export const initialFilterValues: ApplicationFilterModel = {
   filterFrom: null,
@@ -48,7 +44,7 @@ export const initialFilterValues: ApplicationFilterModel = {
   maxExperience: "",
 };
 
-export const ApplicationFilter: FC<PropsType> = (props) => {
+export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
   const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
@@ -70,7 +66,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
   useEffect(() => {
     const getActiveJobs = async () => {
       try {
-        const response = await getAllJobVacancies(null, true);
+        const response = await getAllJobVacancies(getVacancyPayload);
         const { success, methodResults } = response.data;
         if (success) {
           setJobList(methodResults);
@@ -118,7 +114,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               sx={{ justifyContent: "space-between", alignItems: "flex-end" }}
             >
               <Typography variant="caption">
-                {formatMessage({ id: "FILTER.APPLIED_DATE" })}
+                {formatMessage({ id: "APPLICATION.APPLIED_DATE" })}
               </Typography>
               <Stack
                 direction={"row"}
@@ -126,7 +122,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 onClick={handleClick}
               >
                 <Typography variant="body2" sx={{ cursor: "pointer" }}>
-                  {formatMessage({ id: "FROM_TO_DATE" })}
+                  {formatMessage({ id: "DATETIME.FROM_TO_DATE" })}
                 </Typography>
                 {isTimeOptionOpen ? <ArrowDropUp /> : <ArrowDropDown />}
               </Stack>
@@ -192,7 +188,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
 
           <Stack>
             <Typography variant="caption">
-              {formatMessage({ id: "FILTER.JOB_TITLE" })}
+              {formatMessage({ id: "JOB.JOB_TITLE" })}
             </Typography>
             <Autocomplete
               multiple
@@ -229,7 +225,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
           </Stack>
           <Stack >
             <Typography variant="caption">
-              {formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
+              {formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
             </Typography>
             <Autocomplete
               multiple
@@ -248,7 +244,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               }}
               getOptionLabel={(option) => formatMessage({ id: option.label })}
               renderInput={(params) => (
-                <TextField {...params} placeholder="Status" />
+                <TextField {...params} placeholder={formatMessage({ id: "APPLICATION.STATUS_LABEL" })} />
               )}
               renderOption={(props, option, state) => {
                 return (
@@ -266,7 +262,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
           </Stack>
           <Stack >
             <Typography variant="caption">
-              {formatMessage({ id: "STATUS" })}
+              {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}
             </Typography>
             <Autocomplete
               multiple
@@ -285,7 +281,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
               }}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => (
-                <TextField {...params} placeholder="Applicant Status" />
+                <TextField {...params} placeholder={formatMessage({ id: "APPLICANT.STATUS_LABEL" })} />
               )}
               renderOption={(props, option, state) => {
                 return (
@@ -295,7 +291,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                       checked={state.selected}
                       sx={{ mr: 1 }}
                     />
-                    <ListItemText primary={option.label} />
+                    <ListItemText primary={formatMessage({ id: option.label })} />
                   </li>
                 );
               }}
@@ -304,13 +300,13 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
 
           <Stack >
             <Typography variant="caption">
-              {formatMessage({ id: "FILTER.EXPERIENCE" })}
+              {formatMessage({ id: "FORM.EXPERIENCE" })}
             </Typography>
             <Stack spacing={1} direction={"row"} useFlexGap>
               <TextField
                 fullWidth
                 error={Boolean(errors.minExperience)}
-                placeholder={formatMessage({ id: "FILTER.MIN_EXPERIENCE" })}
+                placeholder={formatMessage({ id: "APPLICANT.MIN_EXP" })}
                 type="number"
                 {...getFieldProps("minExperience")}
                 inputProps={{
@@ -324,7 +320,7 @@ export const ApplicationFilter: FC<PropsType> = (props) => {
                 }}
               />
               <TextField
-                placeholder={formatMessage({ id: "FILTER.MAX_EXPERIENCE" })}
+                placeholder={formatMessage({ id: "APPLICANT.MAX_EXP" })}
                 fullWidth
                 type="number"
                 required={Boolean(values.minExperience)}

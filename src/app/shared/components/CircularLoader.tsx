@@ -8,7 +8,7 @@ const style = {
 };
 export const CircularLoader = () => {
   return (
-    <Box component={"div"} sx={style} className=" flex-grow-1">
+    <Box component={"div"} sx={style} className="flex-grow-1">
       <CircularProgress size={50} thickness={5} color="primary" />
     </Box>
   );

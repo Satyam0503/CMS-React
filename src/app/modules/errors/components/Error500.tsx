@@ -20,11 +20,11 @@ const Error500 = () => {
       <Grid item sm={10} md={6}>
         <Stack spacing={1}>
           <Typography variant="h1" fontWeight={700} fontSize="52px" >
-            {formatMessage({ id: "Error.500.SYSTEM_ERROR" })}
+            {formatMessage({ id: "ERROR.SYSTEM_ERROR" })}
           </Typography>
-          <Typography variant="h2" fontWeight={700}> {formatMessage({ id: "Error.404.PAGE_NOT_FOUND" })}</Typography>
+          <Typography variant="h2" fontWeight={700}> {formatMessage({ id: "ERROR.PAGE_NOT_FOUND" })}</Typography>
           <Typography variant="h6">
-            {formatMessage({ id: "Error.500.NOTE" })}
+            {formatMessage({ id: "ERROR.500" })}
           </Typography>
         </Stack>
 

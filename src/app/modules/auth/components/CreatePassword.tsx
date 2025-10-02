@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Grid, Stack, Typography } from "@mui/material";
+import { Alert, Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import * as Yup from "yup";
@@ -9,22 +9,23 @@ import { Formik } from "formik";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPassword } from "../core/_requests";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { Regex } from "../../../../utils/constant/Constant";
+import { getStatusCodeString } from "../../../../utils/common";
+import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
 const validationSchema = Yup.object().shape({
   newPassword: Yup.string()
     .matches(
       Regex.Password,
-      "Use 8 or more characters with a mix of letters, numbers & symbols"
+      "VALIDATION_ERR.INVALID_PASSWORD"
     )
-    .required("Password is required"),
+    .required("VALIDATION_ERR.PASSWORD_REQ"),
   confirmPassword: Yup.string()
-    .required("Password confirmation is required")
+    .required("VALIDATION_ERR.PASSWORD_REQ")
     .oneOf(
       [Yup.ref("newPassword")],
-      "Password and Confirm Password didn't match"
+      "VALIDATION_ERR.PASSWORD_NOT_MATCHED"
     ),
 });
 
@@ -34,13 +35,12 @@ const initialValues = {
 };
 
 export function CreatePassword() {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [queryParam] = useSearchParams();
 
   const token = queryParam.get("token") || "";
-  const uid = queryParam.get("uid") || "";
 
   async function handlePasswordChange(
     values: typeof initialValues,
@@ -50,19 +50,20 @@ export function CreatePassword() {
     const payload = {
       newPassword: values.newPassword,
       token,
-      uid,
     };
+    setLoading(true);
     try {
       const response = await createPassword(payload);
-      const { success, message } = response.data;
-      if (!success) {
-        throw new AxiosError(message);
+      const { success, statusCode } = response.data;
+      if (success) {
+        toast.success(i({ id: getStatusCodeString(statusCode) }));
+        setStatus("");
+        navigate("/auth/login");
+      } else {
+        setStatus(i({ id: getStatusCodeString(statusCode) }));
       }
-      toast.success(message);
-      setStatus("");
-      navigate("/auth/login");
     } catch (error) {
-      setStatus((error as AxiosError).message);
+      console.error((error as Error).message);
     } finally {
       setLoading(false);
       setSubmitting(false);
@@ -70,28 +71,20 @@ export function CreatePassword() {
   }
 
   useEffect(() => {
-    if (!(queryParam.size && queryParam.has("token") && queryParam.has("uid"))) {
+    if (!(queryParam.size && queryParam.has("token"))) {
       navigate("/error/404", { replace: true });
     }
   }, []);
 
-  console.log(token);
-  console.log(uid);
-
-
   return (
     <Stack spacing={{ xs: 4 }}>
-      <Stack
-        direction={"row"}
-        display={"flex"}
-        justifyContent={"space-between"}
-      >
+      <Stack className="flex-row justify-content-between" >
         <Stack spacing={1}>
           <Typography variant="h1" sx={{ color: 'primary.main' }}>
-            {intl.formatMessage({ id: "PASSWORD.CREATE" })}
+            {i({ id: "AUTH.CREATE" })}
           </Typography>
           <Typography variant="h3">
-            {intl.formatMessage({ id: "PASSWORD.CREATE_LOGIN" })}
+            {i({ id: "AUTH.CREATE_NEW_PASSWORD" })}
           </Typography>
         </Stack>
         <Stack display={{ xs: "none", md: "block" }}>
@@ -111,35 +104,42 @@ export function CreatePassword() {
         {(formik) => (
           <form onSubmit={formik.handleSubmit}>
             {formik.status && (
-              <Grid className="mb-lg-15 alert alert-danger">
-                <Grid className="alert-text font-weight-bold">
-                  {formik.status}
-                </Grid>
-              </Grid>
+              <Alert variant="standard" severity="error" className="mb-8">
+                {formik.status}
+              </Alert>
             )}
             <Stack spacing={2}>
-              <TextInput
-                type="password"
-                name="newPassword"
-                label={intl.formatMessage({ id: "FORM.NEW_PASSWORD" })}
-                placeholder={intl.formatMessage({ id: "FORM.NEW_PASSWORD" })}
-              />
+              <Stack spacing={1}>
+                <TextInput
+                  type="password"
+                  name="newPassword"
+                  label={i({ id: "FORM.NEW_PASSWORD" })}
+                  placeholder={i({ id: "FORM.NEW_PASSWORD" })}
+                />
+                <PasswordStrenghtMeter password={formik.values.newPassword} />
+              </Stack>
               <TextInput
                 type="password"
                 name="confirmPassword"
-                label={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
-                placeholder={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
+                label={i({ id: "FORM.CONFIRM_PASSWORD" })}
+                placeholder={i({ id: "FORM.CONFIRM_PASSWORD" })}
               />
             </Stack>
-            <Stack sx={{ marginBlockStart: "3rem" }}>
+            <Stack className="gap-2 mt-8">
               <CustomisedButton
                 type="submit"
-                label={intl.formatMessage({ id: "BUTTON.CREATE_PASS" })}
+                label={i({ id: "BUTTON.CREATE_PASS" })}
                 size="large"
                 loading={loading}
                 disabled={
                   formik.isSubmitting || !(formik.isValid && formik.dirty)
                 }
+              />
+              <CustomisedButton
+                variant="outlined"
+                label={i({ id: "BUTTON.CANCEL" })}
+                size="large"
+                handleClick={() => navigate("/auth")}
               />
             </Stack>
           </form>

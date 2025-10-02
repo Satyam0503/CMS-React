@@ -5,7 +5,7 @@ import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";
-import ApplyNow from "../modules/applynow/ApplyNow";
+import { Career } from "../modules/applynow/Career";
 
 const { BASE_URL } = import.meta.env;
 
@@ -16,11 +16,11 @@ const AppRoutes: FC = () => {
       <Routes>
         <Route element={<App />}>
           <Route path="error/*" element={<ErrorsPage />} />
-          <Route path="career/:id" element={<ApplyNow />} />
-          <Route path="logout" element={<Logout />} />
+          <Route path="career/:id" element={<Career />} />
 
           {isUserAuthenticated ? (
             <>
+              <Route path="/logout" element={<Logout />} />
               <Route path="/*" element={<PrivateRoutes />} />
               <Route
                 index

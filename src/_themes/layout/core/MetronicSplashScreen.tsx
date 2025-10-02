@@ -7,13 +7,13 @@ import {
   useEffect,
   useState,
 } from 'react'
-import {WithChildren} from '../../helpers'
+import { WithChildren } from '../../../utils/common_types'
 
 const SplashScreenContext = createContext<Dispatch<SetStateAction<number>> | undefined>(
   undefined
 )
 
-const SplashScreenProvider: FC<WithChildren> = ({children}) => {
+const SplashScreenProvider: FC<WithChildren> = ({ children }) => {
   const [count, setCount] = useState(0)
   const visible = count > 0
 
@@ -47,7 +47,7 @@ const SplashScreenProvider: FC<WithChildren> = ({children}) => {
   )
 }
 
-const LayoutSplashScreen: FC<{visible?: boolean}> = ({visible = true}) => {
+const LayoutSplashScreen: FC<{ visible?: boolean }> = ({ visible = true }) => {
   // Everything are ready - remove splashscreen
   const setCount = useContext(SplashScreenContext)
 
@@ -74,4 +74,4 @@ const LayoutSplashScreen: FC<{visible?: boolean}> = ({visible = true}) => {
   return null
 }
 
-export {SplashScreenProvider, LayoutSplashScreen}
+export { SplashScreenProvider, LayoutSplashScreen }

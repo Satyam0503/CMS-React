@@ -1,16 +1,16 @@
-import { Add, Check } from "@mui/icons-material";
 import {
-  FormHelperText,
+  Autocomplete,
+  CircularProgress,
   Grid,
   MenuItem,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
-import { Formik } from "formik";
+import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { UserEducationModel } from "../../../../../utils/common_types";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { userEducationSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
@@ -19,32 +19,106 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { EducationType } from "../../../../../utils/constant/Constant";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
+import React, { useEffect, useState } from "react";
+import { useDebounce } from "../../../../hooks/useDebounce";
+import { addEmployeeEducation, getCollegeList, updateEmployeeEducation } from "../../userservices";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { UserEducationModel } from "../../models";
 
 type PropTypes = {
   isEdit: boolean;
   open: boolean;
-  handleAddUpdateEducation: (
-    value: UserEducationModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => void;
+  refresh: () => void;
   initialValues: UserEducationModel;
   handleClose: () => void;
 };
 
 export default function AddUpdateEducation(props: PropTypes) {
-  const intl = useIntl();
-  const { open, initialValues, handleClose, handleAddUpdateEducation, isEdit } =
-    props;
-  return (
-    <CustomisedModal open={open} handleClose={handleClose}>
-      <Stack>
-        <Typography variant="h5" mb={2}>
-          {isEdit
-            ? intl.formatMessage({ id: "PROFILE.UPDATE_EDUCATION" })
-            : intl.formatMessage({ id: "PROFILE.EDUCATION" })}
-        </Typography>
-      </Stack>
+  const { formatMessage: i } = useIntl();
+  const { open, initialValues, handleClose, isEdit, refresh } = props;
+  const [loading, setLoading] = useState(false);
+  const [isListOpen, setListOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [colllegeList, setCollegeList] = useState<string[]>([]);
+  const [selectedCollege, setSelectedCollege] = useState<string | null>(isEdit ? initialValues.collegeName : null)
+  const debouncedValue = useDebounce(searchValue);
+  const employeeId = useParams().employeeid;
 
+  const handleAddUpdateEducation = async (
+    values: UserEducationModel,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    try {
+      if (!Boolean(values.collegeName)) {
+        toast.error(i({ id: "VALIDATION_ERR.COLLEGE_NAME_REQ" }));
+        return;
+      }
+      values.userId = employeeId ?? "";
+      if (isEdit) {
+        const response = await updateEmployeeEducation(values);
+        const { success } = response.data;
+        if (success) {
+          toast.success(i({ id: "TOAST.SUCCESS.UPDATE_EDUCATION" }));
+          handleClose();
+          refresh();
+        }
+      } else {
+        const response = await addEmployeeEducation(values);
+        const { success, message } = response.data;
+        if (success) {
+          toast.success(i({ id: "TOAST.SUCCESS.ADD_EDUCATION" }));
+          handleClose();
+          refresh();
+        }
+      }
+    } catch (error) {
+      console.error((error as AxiosError).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const handleSearchChange = async (value: string, formik: FormikProps<UserEducationModel>) => {
+    setSearchValue(value);
+    formik.setFieldValue("collegeName", value, false)
+  };
+
+  const handlePopUpClose = () => {
+    setListOpen(false);
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (debouncedValue.trim().length > 0) {
+        setLoading(true);
+        try {
+          const { data } = await getCollegeList(debouncedValue);
+          if (data.success) {
+            if (data.totalRecords > 0) {
+              setCollegeList(data.methodResults);
+              setListOpen(true);
+            }
+            else {
+              setListOpen(false);
+            }
+          }
+        } catch (error: any) {
+          console.error(error.message);
+        }
+        finally {
+          setLoading(false);
+        }
+      }
+    })();
+  }, [debouncedValue])
+
+
+  return (
+    <CustomisedModal open={open} handleClose={handleClose}
+      title={i({ id: isEdit ? "PROFILE.EDUCATION.UPDATE" : "PROFILE.EDUCATION.ADD" })}
+    >
       <Formik
         initialValues={initialValues}
         validationSchema={userEducationSchema}
@@ -52,80 +126,94 @@ export default function AddUpdateEducation(props: PropTypes) {
           handleAddUpdateEducation(values, setSubmitting);
         }}
       >
-        {({
-          touched,
-          errors,
-          values,
-          dirty,
-          isValid,
-          setFieldTouched,
-          setFieldValue,
-          isSubmitting,
-          handleSubmit,
-        }) => (
-          <form onSubmit={handleSubmit}>
+        {(formik) => {
+          console.log(formik.values);
+          return <form onSubmit={formik.handleSubmit}>
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
               <Grid item xs={12}>
                 <TextInput
-                  label={intl.formatMessage({ id: "INFO.TITLE" })}
-                  placeholder="Title"
+                  label={i({ id: "PROFILE.EDUCATION.NAME" })}
+                  placeholder={i({ id: "PROFILE.EDUCATION.NAME" })}
                   type="text"
                   name="educationTitle"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <Stack>
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({
-                      id: "START_DATE",
-                    })}
-                    name="startDate"
-                    value={values.startDate && dayjs(values.startDate)}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("startDate", true);
-                      setFieldValue("startDate", newDate);
-                    }}
-                    maxDate={dayjs()}
-                  />
-                  <FormHelperText>
-                    {touched.startDate && errors.startDate && errors.startDate}
-                  </FormHelperText>
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Stack>
-                  <CustomisedDatePicker
-                    label={intl.formatMessage({
-                      id: "END_DATE",
-                    })}
-                    name="endDate"
-                    value={values.endDate && dayjs(values.endDate)}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("endDate", true);
-                      setFieldValue("endDate", newDate);
-                    }}
-                    minDate={dayjs(values.startDate)}
-                  />
-                  <FormHelperText>
-                    {touched.endDate && errors.endDate && errors.endDate}
-                  </FormHelperText>
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextInput
-                  label={intl.formatMessage({
-                    id: "MENU.COLLEGE.NAME",
+              <Grid item xs={12} sm={6} className="pt-2">
+                <CustomisedDatePicker
+                  label={i({
+                    id: "FORM.START_DATE",
                   })}
-                  type="text"
-                  placeholder="College Name"
-                  name="collegeName"
+                  name="startDate"
+                  value={formik.values.startDate && dayjs(formik.values.startDate)}
+                  setValue={(newDate: Dayjs | null) => {
+                    formik.setFieldTouched("startDate", true);
+                    formik.setFieldValue("startDate", newDate);
+                  }}
+                  maxDate={dayjs()}
+                />
+                {formik.touched.startDate && formik.errors.startDate &&
+                  <ErrorLabel errorLabel={formik.errors.startDate} />
+                }
+              </Grid>
+
+              <Grid item xs={12} sm={6} className="pt-2">
+                <CustomisedDatePicker
+                  label={i({
+                    id: "FORM.END_DATE",
+                  })}
+                  name="endDate"
+                  value={formik.values.endDate && dayjs(formik.values.endDate)}
+                  setValue={(newDate: Dayjs | null) => {
+                    formik.setFieldTouched("endDate", true);
+                    formik.setFieldValue("endDate", newDate);
+                  }}
+                  minDate={dayjs(formik.values.startDate)}
+                />
+                {formik.touched.endDate && formik.errors.endDate &&
+                  <ErrorLabel errorLabel={formik.errors.endDate} />
+                }
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Autocomplete
+                  id="college-search"
+                  size="small"
+                  loading={loading}
+                  open={isListOpen}
+                  forcePopupIcon={!loading}
+                  options={colllegeList}
+                  getOptionLabel={(option) => option}
+                  // inputValue={searchValue}
+                  value={selectedCollege}
+                  clearOnBlur={false}
+                  clearOnEscape={false}
+                  onInputChange={(e, value) => handleSearchChange(value, formik)}
+                  onClose={handlePopUpClose}
+                  onChange={(e, values, reason, details) => {
+                    setSelectedCollege(values);
+                    formik.setFieldValue("collegeName", values, true);
+                    setSearchValue("");
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder={i({ id: "PROFILE.EDUCATION.COLLEGE_NAME" })}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {loading ? <CircularProgress size={20} className="me-2" /> : null}
+                            {params.InputProps.endAdornment}
+                          </>
+                        ),
+                      }}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <SelectInput
-                  label={intl.formatMessage({ id: "FORM.TYPE" })}
+                  label={i({ id: "FORM.TYPE" })}
                   name="type"
                 >
                   {EducationType.map((item) => (
@@ -136,23 +224,23 @@ export default function AddUpdateEducation(props: PropTypes) {
                 </SelectInput>
               </Grid>
             </Grid>
-            <Stack direction="row" spacing={1} justifyContent={"end"} mt={2}>
+            <Stack className="flex-row mt-4 justify-content-end gap-2">
               <CustomisedButton
                 variant="outlined"
                 size="medium"
-                label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
+                label={i({ id: "BUTTON.CLOSE" })}
                 handleClick={handleClose}
               />
 
               <CustomisedButton
-                loading={isSubmitting}
-                label={intl.formatMessage({ id: "BUTTON.SAVE" })}
+                loading={formik.isSubmitting}
+                label={i({ id: "BUTTON.SAVE" })}
                 type="submit"
-                disabled={!(isValid && dirty) || isSubmitting}
+                disabled={formik.isSubmitting}
               />
             </Stack>
           </form>
-        )}
+        }}
       </Formik>
     </CustomisedModal>
   );

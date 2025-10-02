@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 
@@ -95,13 +95,13 @@ export const WorkHistory = () => {
       try {
         const { data } = await deleteEmployeeWorkHistory(selectedWorkId, employeeId);
         if (!data.success) {
-          toast.success(formatMessage({ id: "Toast.Delete.Failed" }))
+          toast.success(formatMessage({ id: "TOAST.FAILED.DELETE" }))
         }
-        toast.success(formatMessage({ id: "Toast.Delete.Success" }))
+        toast.success(formatMessage({ id: "TOAST.SUCCESS.DELETE" }))
         handleRefresh();
         handleConfirmationClose();
       } catch (error) {
-        console.log(formatMessage({ id: "Toast.Delete.Success" }));
+        console.log(formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
       }
     }
   }
@@ -134,7 +134,7 @@ export const WorkHistory = () => {
           className="justify-content-between mb-4"
         >
           <Typography variant="h5">
-            {formatMessage({ id: "MENU.WORK_HISTORY" })}
+            {formatMessage({ id: "WORKHISTORY.TITLE" })}
           </Typography>
           {
             hasEditPermission &&
@@ -166,33 +166,36 @@ export const WorkHistory = () => {
                         borderRadius: 1,
                       }}
                     >
-                      <Business className="icon-fs-32" color="primary" />
+                      <Business className="fs-32" color="primary" />
                     </Stack>
 
                     <Stack>
-                      <Typography variant="body1">
-                        {item.organisationName}
-                      </Typography>
-                      <Typography variant="body2">
-                        {item.jobRole}
-                      </Typography>
+                      <Stack direction="row" alignItems={"center"} spacing={1}>
+                        <Typography variant="body1">
+                          {item.organisationName}
+                        </Typography>
+                        <Typography variant="h6">|</Typography>
+                        <Typography variant="body2">
+                          {item.jobRole}
+                        </Typography>
+                      </Stack>
 
                       <Stack
                         direction={{ xs: "column", sm: "row" }}
                         spacing={{ xs: 0.5, sm: 2 }}
                       >
                         <Stack direction="row" className="align-items-center gap-1">
-                          <LocationOn className="icon-fs-16" />
-                          <Typography variant="body2" className="fw-bold"> {item.jobLocation}</Typography>
+                          <LocationOn className="fs-12" />
+                          <Typography variant="body2"> {item.jobLocation}</Typography>
                         </Stack>
                         <Stack direction="row" className="align-items-center gap-1">
-                          <CalendarToday className="icon-fs-16" />
-                          <Typography variant="body2" sx={{ color: "text.primary" }}>
+                          <CalendarToday className="fs-12" />
+                          <Typography variant="body2" sx={{ color: "text.secondary" }}>
                             {dateFormatter(item.startDate, "MMM YYYY")}
                             {" - "}
                             {item.endDate ? dateFormatter(item.endDate, "MMM YYYY") : formatMessage({ id: "WORKING.CURRENT" })}
                             {" "}
-                            ({countTotalExperience(item.startDate, item.endDate)})
+                            ( {countTotalExperience(item.startDate, item.endDate)} )
                           </Typography>
                         </Stack>
                       </Stack>
@@ -221,7 +224,7 @@ export const WorkHistory = () => {
               )
               :
               <Box component="div" className="text-center align-content-center" sx={{ height: 200 }}>
-                <Typography variant="h6">No Working History</Typography>
+                <Typography variant="h6">{formatMessage({ id: "WORKHISTORY.NONE" })}</Typography>
               </Box>
           }
         </Stack>
@@ -233,8 +236,8 @@ export const WorkHistory = () => {
         selectedWorkId &&
         <ConfirmationModal
           open={true}
-          title={formatMessage({ id: "Confirmation.Title.WorkHistory" })}
-          content={formatMessage({ id: "Confirmation.Content.WorkHistory" })}
+          title={formatMessage({ id: "CONFIRMATION.TITLE.DELETE_WORK_HISTORY" })}
+          content={formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_WORK_HISTORY" })}
           handleClose={handleConfirmationClose}
           handleConfirmation={handleWorkHistoryDelete}
         />

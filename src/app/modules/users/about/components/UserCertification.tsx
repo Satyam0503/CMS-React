@@ -8,10 +8,8 @@ import {
 import { Card, Stack, Typography } from "@mui/material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
-import { UserCertificationModel } from "../../../../../utils/common_types";
 import { useIntl } from "react-intl";
 import {
-  checkPermissionForModulesFeatureAccess,
   dateFormatter,
   hasModuleFeaturePermission,
 } from "../../../../../utils/common";
@@ -29,6 +27,7 @@ import { ConfirmationModal } from "../../../../shared/components/ConfirmationMod
 import { useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
+import { UserCertificationModel } from "../../models";
 
 const initialValue: UserCertificationModel = {
   certificationTitle: "",
@@ -61,19 +60,17 @@ export const UserCertification = () => {
       if (isEdit) {
         const response = await updateEmployeeCertification(values);
         const { success, message } = response.data;
-        if (!success) {
-          throw new Error(message);
+        if (success) {
+          toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.UPDATE_CERTIFICATION" }));
+          setRefresh(!refresh);
         }
-        toast.success(message);
-        setRefresh(!refresh);
       } else {
         const response = await addEmployeeCertification(values);
         const { success, message } = response.data;
-        if (!success) {
-          throw new Error(message);
+        if (success) {
+          toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.ADD_CERTIFICATION" }));
+          setRefresh(!refresh);
         }
-        toast.success(message);
-        setRefresh(!refresh);
       }
     } catch (error) {
       toast.error((error as AxiosError).message);
@@ -116,7 +113,7 @@ export const UserCertification = () => {
         );
         const { success, message } = response.data;
         if (success) {
-          toast.success(message);
+          toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
           closeConfirmationModal();
           setRefresh(!refresh);
         }
@@ -145,7 +142,7 @@ export const UserCertification = () => {
     <Card sx={{ p: 2 }}>
       <Stack className="flex-row justify-content-between mb-4" >
         <Typography variant="h5" >
-          {intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
+          {intl.formatMessage({ id: "PROFILE.CERTIFICATION.TITLE" })}
         </Typography>
         {
           hasEmployeeEditPermission &&
@@ -160,7 +157,7 @@ export const UserCertification = () => {
       <Stack spacing={2}>
         {userCertifications.length === 0 ? (
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            {intl.formatMessage({ id: "ADD.CERTIFICATION" })}
+            {intl.formatMessage({ id: "PROFILE.CERTIFICATION.NONE" })}
           </Typography>
         ) : (
           userCertifications.map((certification) => (
@@ -201,7 +198,7 @@ export const UserCertification = () => {
                       {certification.organisationName},{certification.mode}
                     </Typography>
                     <Stack className="flex-row align-items-center gap-1">
-                      <CalendarToday className="icon-fs-16" />
+                      <CalendarToday className="fs-16" />
                       <Typography variant="body2">
                         {dateFormatter(certification.startDate, "MMM YYYY")}
                         {" - "}
@@ -252,8 +249,8 @@ export const UserCertification = () => {
       {
         Boolean(selectedCertificationId) && (
           <ConfirmationModal
-            title={intl.formatMessage({ id: "Confirmation.Title.Emp_Certification" })}
-            content={intl.formatMessage({ id: "Confirmation.Content.Emp_Certification" })}
+            title={intl.formatMessage({ id: "CONFIRMATION.TITLE.DELETE_CERTIFICATION" })}
+            content={intl.formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_CERTIFICATION" })}
             open={true}
             handleClose={closeConfirmationModal}
             handleConfirmation={deleteCertification}

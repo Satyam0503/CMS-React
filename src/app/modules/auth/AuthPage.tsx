@@ -13,7 +13,7 @@ const AuthPage = () => (
       <Route path="createpassword" element={<CreatePassword />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
       <Route index element={<Login />} />
-      <Route path="*" element={<Navigate to={"/auth"} /> }/>
+      <Route path="*" element={<Navigate to={"/auth"} />} />
     </Route>
   </Routes>
 );

@@ -10,7 +10,6 @@ import {
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { useLocation, useNavigate } from "react-router-dom";
-import { usePageData } from "../../../_themes/layout/core";
 import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
@@ -24,6 +23,7 @@ import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";
 import { initialNoticeFilter, NoticeBoardFilter } from "./components/NoticeBoardFilter";
 import { NoticeViewModel } from "./components/NoticeViewModel";
+import { usePageData } from "../../Context/PageDataProvider";
 
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
@@ -51,7 +51,7 @@ export const NoticeBoard = () => {
     setRefresh(!refresh);
   }
 
-  const handleNoticeView = (notice: NoticeResponseModel) => {
+  const handleRowClick = (notice: NoticeResponseModel) => {
     setSelectedNotice(notice.noticeId);
   }
 
@@ -127,8 +127,8 @@ export const NoticeBoard = () => {
           <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
             {
               hasAddPermission &&
-              <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="icon-fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
-                {formatMessage({ id: "MY_NOTICE" })}
+              <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
+                {formatMessage({ id: "NOTICE.TITLES.MY_NOTICE" })}
               </Button>
             }
             <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
@@ -137,7 +137,7 @@ export const NoticeBoard = () => {
             {
               hasAddPermission &&
               <CustomIconButton
-                tooltip={formatMessage({ id: "POST_NOTICE" })}
+                tooltip={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
               />
@@ -149,9 +149,9 @@ export const NoticeBoard = () => {
           tabName={ModulesName.NoticeBoard}
           rows={NoticeList}
           columns={NoticeBoardTableColumnList}
+          rowClickHandler={handleRowClick}
           page={paginationValues.pageNo}
           rowsPerPage={paginationValues.records}
-          openViewModal={handleNoticeView}
           loading={loading}
         />
         {

@@ -10,13 +10,12 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
   return (
     <Stack
       direction={"row"}
-      mb={2}
       spacing={2}
       sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2 }}
     >
       <Stack>
         <Typography variant="h2">
-          {intl.formatMessage({ id: "MENU.WELCOME" })} {props.fullName || ""}
+          {intl.formatMessage({ id: "MESSAGE.WELCOME" })} {props.fullName || ""}
         </Typography>
       </Stack>
 
@@ -33,24 +32,10 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
               {dateFormatter(dayjs(), "dddd")}
             </Typography>
             <Typography variant="body1">
-              {dateFormatter(dayjs(), "DD MMM YYYY")}
+              {dateFormatter(dayjs(), "ll")}
             </Typography>
           </Stack>
         </Stack>
-
-        {/* <IconButton
-          sx={{
-            bgcolor: "primary.light",
-            color: "common.white",
-            "&:hover": { bgcolor: "primary.main" },
-            width: 42,
-            height: 42,
-
-          }}
-          size="large"
-        >
-          <DashboardCustomizeOutlined />
-        </IconButton> */}
       </Stack>
     </Stack>
   );

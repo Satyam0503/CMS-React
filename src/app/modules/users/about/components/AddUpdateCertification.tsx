@@ -11,7 +11,8 @@ import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import dayjs, { Dayjs } from "dayjs";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { UserCertificationModel } from "../../../../../utils/common_types";
+import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
+import { UserCertificationModel } from "../../models";
 
 type PropTypes = {
   isEdit: boolean;
@@ -25,8 +26,7 @@ type PropTypes = {
 };
 
 export default function AddUpdateCertification(props: PropTypes) {
-  const intl = useIntl();
-
+  const { formatMessage: i } = useIntl();
   const {
     initialValues,
     handleAddUpdateCertification,
@@ -37,130 +37,114 @@ export default function AddUpdateCertification(props: PropTypes) {
 
   return (
     <>
-      <CustomisedModal open={open} handleClose={handleClose}>
-        <Stack spacing={2}>
-          <Typography variant="h5">
-            {isEdit
-              ? intl.formatMessage({ id: "PROFILE.UPDATE_CERTIFICATION" })
-              : intl.formatMessage({ id: "PROFILE.CERTIFICATION" })}
-          </Typography>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={userCertificationSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              handleAddUpdateCertification(values, setSubmitting);
-            }}
-          >
-            {({
-              touched,
-              errors,
-              values,
-              dirty,
-              isValid,
-              setFieldTouched,
-              setFieldValue,
-              isSubmitting,
-              handleSubmit,
-            }) => (
-              <form onSubmit={handleSubmit}>
-                <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
-                  <Grid item xs={12}>
-                    <TextInput
-                      label={intl.formatMessage({ id: "INFO.TITLE" })}
-                      placeholder="Certificate Title"
-                      type="text"
-                      name="certificationTitle"
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <Stack>
-                      {/* <Typography variant="body1">
-                        {intl.formatMessage({
-                          id: "START_DATE",
-                        })}
-                      </Typography> */}
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({
-                          id: "START_DATE",
-                        })}
-                        name="startDate"
-                        value={values.startDate && dayjs(values.startDate)}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("startDate", true);
-                          setFieldValue("startDate", newDate);
-                        }}
-                        maxDate={dayjs()}
-                      />
-                      <FormHelperText>
-                        {touched.startDate &&
-                          errors.startDate &&
-                          errors.startDate}
-                      </FormHelperText>
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Stack>
-                      <CustomisedDatePicker
-                        label={intl.formatMessage({
-                          id: "END_DATE",
-                        })}
-                        name="endDate"
-                        value={values.endDate && dayjs(values.endDate)}
-                        setValue={(newDate: Dayjs | null) => {
-                          setFieldTouched("endDate", true);
-                          setFieldValue("endDate", newDate);
-                        }}
-                        minDate={dayjs(values.startDate) || dayjs()}
-                      />
-                      <FormHelperText>
-                        {touched.endDate && errors.endDate && errors.endDate}
-                      </FormHelperText>
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextInput
-                      label="Organization Name"
-                      type="text"
-                      placeholder="Organization Name"
-                      name="organisationName"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <SelectInput
-                      name="mode"
-                      label={intl.formatMessage({ id: "MENU.MODE" })}
-                    >
-                      <MenuItem value="Online">Online</MenuItem>
-                      <MenuItem value="Offline">Offline</MenuItem>
-                    </SelectInput>
-                  </Grid>
+      <CustomisedModal open={open} handleClose={handleClose}
+        title={i({ id: isEdit ? "PROFILE.CERTIFICATION.UPDATE" : "PROFILE.CERTIFICATION.ADD" })}
+      >
+        <Formik
+          initialValues={initialValues}
+          validationSchema={userCertificationSchema}
+          onSubmit={(values, { setSubmitting }) => {
+            handleAddUpdateCertification(values, setSubmitting);
+          }}
+        >
+          {({
+            touched,
+            errors,
+            values,
+            dirty,
+            isValid,
+            setFieldTouched,
+            setFieldValue,
+            isSubmitting,
+            handleSubmit,
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
+                <Grid item xs={12}>
+                  <TextInput
+                    label={i({ id: "PROFILE.CERTIFICATION.NAME" })}
+                    placeholder={i({ id: "PROFILE.CERTIFICATION.NAME" })}
+                    type="text"
+                    name="certificationTitle"
+                  />
                 </Grid>
-                <Stack
-                  direction={"row"}
-                  spacing={1}
-                  justifyContent={"flex-end"}
-                  mt={2}
-                >
-                  <CustomisedButton
-                    label={intl.formatMessage({ id: "BUTTON.CLOSE" })}
-                    handleClick={handleClose}
-                    variant="outlined"
-                  />
-                  <CustomisedButton
-                    loading={isSubmitting}
-                    label={intl.formatMessage({
-                      id: isEdit ? "BUTTON.UPDATE" : "BUTTON.SAVE",
+
+                <Grid item xs={12} sm={6} className="pt-2">
+                  <CustomisedDatePicker
+                    label={i({
+                      id: "FORM.START_DATE",
                     })}
-                    type="submit"
-                    disabled={!(isValid && dirty) || isSubmitting}
+                    name="startDate"
+                    value={values.startDate && dayjs(values.startDate)}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("startDate", true);
+                      setFieldValue("startDate", newDate);
+                    }}
+                    maxDate={dayjs()}
                   />
-                </Stack>
-              </form>
-            )}
-          </Formik>
-        </Stack>
-      </CustomisedModal>
+                  {touched.startDate && errors.startDate &&
+                    <ErrorLabel errorLabel={errors.startDate} />
+                  }
+                </Grid>
+                <Grid item xs={12} sm={6} className="pt-2">
+                  <CustomisedDatePicker
+                    label={i({
+                      id: "FORM.END_DATE",
+                    })}
+                    name="endDate"
+                    value={values.endDate && dayjs(values.endDate)}
+                    setValue={(newDate: Dayjs | null) => {
+                      setFieldTouched("endDate", true);
+                      setFieldValue("endDate", newDate);
+                    }}
+                    minDate={dayjs(values.startDate) || dayjs()}
+                  />
+                  {touched.endDate && errors.endDate &&
+                    <ErrorLabel errorLabel={errors.endDate} />
+                  }
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextInput
+                    label={i({ id: "FORM.ORGANISATION" })}
+                    type="text"
+                    placeholder={i({ id: "FORM.ORGANISATION" })}
+                    name="organisationName"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <SelectInput
+                    name="mode"
+                    label={i({ id: "MENU.MODE" })}
+                  >
+                    <MenuItem value="Online">{i({ id: "ONLINE" })}</MenuItem>
+                    <MenuItem value="Offline">{i({ id: "OFFLINE" })}</MenuItem>
+                  </SelectInput>
+                </Grid>
+              </Grid>
+              <Stack
+                direction={"row"}
+                spacing={1}
+                justifyContent={"flex-end"}
+                mt={2}
+              >
+                <CustomisedButton
+                  label={i({ id: "BUTTON.CLOSE" })}
+                  handleClick={handleClose}
+                  variant="outlined"
+                />
+                <CustomisedButton
+                  loading={isSubmitting}
+                  label={i({
+                    id: isEdit ? "BUTTON.UPDATE" : "BUTTON.SAVE",
+                  })}
+                  type="submit"
+                  disabled={!(isValid && dirty) || isSubmitting}
+                />
+              </Stack>
+            </form>
+          )}
+        </Formik>
+      </CustomisedModal >
     </>
   );
 }

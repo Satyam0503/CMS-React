@@ -1,26 +1,81 @@
-import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, IconButton, Stack, Typography } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Download, Edit } from "@mui/icons-material";
 import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { getDateDiffInYears } from "../../../../utils/common";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { getDateDiffInYears, getStatusCodeString } from "../../../../utils/common";
 import { PictureUpdateModal } from "./ProfileUpdateModal";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../../Redux/hooks";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { PayslipPayload } from "../../payroll/models";
+import { generatePaySlip } from "../../payroll/services";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const { userDetails } = useUserDetails();
-  const profileImage = useAppSelector(
-    (state) => state.user.userData?.profileImage
-  );
+  const profileImage = useAppSelector((state) => state.user.userData?.profileImage) ?? DEFAULT_USER_AVATAR;
   const employeeId = useParams().employeeid;
+  const { currentLanguage } = useAppLang();
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const [date, setDate] = useState<Dayjs | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function handleClose() {
+  const handleClose = () => {
     setOpen(false);
+  }
+
+  const handleDateChange = (date: Dayjs | null) => {
+    setDate(date);
+  }
+
+  const downloadPaySlip = async () => {
+    if (!date) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload: PayslipPayload = {
+        month: date.month() + 1,
+        year: date.year(),
+      }
+      const response = await generatePaySlip(payload);
+      const contentDisposition = response.headers["content-disposition"];
+      let fileName = "paySlip.pdf";
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (match?.[1]) {
+          fileName = match[1];
+        }
+      }
+      // Create blob URL
+      const fileURL = URL.createObjectURL(response.data);
+      const a = document.createElement("a");
+      a.href = fileURL;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(fileURL);
+    } catch (error: any) {
+      const response = error.response;
+      if (response.headers["content-type"] = "application/json") {
+        const errorData = await response.data.text();
+        const errorJson = JSON.parse(errorData); // Parse JSON from the response text
+        if (errorJson.status) {
+          toast.error(i({ id: getStatusCodeString(errorJson.status) }))
+        }
+      }
+    }
+    finally {
+      setLoading(false);
+      setDate(null);
+    }
   }
 
   return (
@@ -28,14 +83,14 @@ export default function ProfileCard() {
       <Card className="profile-picture-card">
         <Box className="profile-picture">
           <Avatar
-            src={employeeId ? userDetails.fullProfileUrl : profileImage}
+            src={employeeId ? (userDetails.profileUrl || DEFAULT_USER_AVATAR) : profileImage}
             className="w-100 h-100"
           />
           {!employeeId && (
             <Stack className="profile-picture-cover" direction={"row"} gap={1}>
               <CustomIconButton
                 handleClick={() => setOpen(true)}
-                tooltip="Upload profile picture"
+                tooltip={i({ id: "PROFILE.IMAGE.UPLOAD_PICTURE" })}
                 icon={
                   <Edit
                     sx={{
@@ -51,21 +106,20 @@ export default function ProfileCard() {
           <Typography variant="h5" color="common.white">
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
-          <Box sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className="px-4 py-1 rounded-pill">
-            {userDetails.jobRole || <FormattedMessage id="NOT_AVAILABLE" />}
-          </Box>
+          <Typography variant="body1" sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className=" px-4 py-1 rounded-pill">
+            {!Boolean(userDetails?.jobRoleTitle) || userDetails.jobRoleTitle === null ? <FormattedMessage id="NOT_AVAILABLE" /> : userDetails.jobRoleTitle[currentLanguage] || userDetails.jobRoleTitle[defaultLanguage]}
+          </Typography>
         </Stack>
         <Stack
-          direction={"row"}
-          justifyContent={"space-around"}
-          textAlign={"center"}
+          direction="row"
+          className="justify-content-around text-center"
         >
           <Stack>
             <Typography variant="h2" color="common.white">
               {getDateDiffInYears(userDetails.dateOfBirth!) || "NA"}
             </Typography>
             <Typography variant="body2" color="common.white">
-              {intl.formatMessage({ id: "USER.AGE" })}
+              {i({ id: "USER.AGE" })}
             </Typography>
           </Stack>
           <Stack>
@@ -75,17 +129,51 @@ export default function ProfileCard() {
               )}
             </Typography>
             <Typography variant="body2" color="common.white">
-              {intl.formatMessage({ id: "USER.BLOOD_GROUP" })}
+              {i({ id: "USER.BLOOD_GROUP" })}
             </Typography>
           </Stack>
         </Stack>
         {!employeeId && (
-          <CustomisedButton
-            variant="outlined"
-            Icon={<Download />}
-            className="align-self-center border-1 border-white text-white"
-            label={intl.formatMessage({ id: "DOWNLOAD.SALARY_SLIP" })}
-          />
+          <Stack direction="row" className="gap-2 align-items-end justify-content-center">
+            <CustomisedDatePicker
+              label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+              views={["month", "year"]}
+              value={date}
+              maxDate={dayjs().subtract(1, "month")}
+              setValue={handleDateChange}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "common.white",
+                  },
+                  "&:hover:not(.Mui-focused)": {
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "common.white",
+                    },
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "common.white",
+                  },
+                  color: "common.white",
+                },
+                "& .MuiInputLabel-root": {
+                  color: "common.white",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "common.white",
+                },
+                "& .MuiSvgIcon-root": {
+                  color: "common.white",
+                },
+              }}
+            />
+            <IconButton className="border-1 border-white" sx={{ height: 36, width: 36, borderRadius: 1 }} onClick={downloadPaySlip} disabled={loading} >
+              {
+                loading ? <span className="loader" /> :
+                  <Download sx={{ color: "#fff" }} />
+              }
+            </IconButton>
+          </Stack>
         )}
       </Card>
       {open && <PictureUpdateModal open={open} handleClose={handleClose} />}

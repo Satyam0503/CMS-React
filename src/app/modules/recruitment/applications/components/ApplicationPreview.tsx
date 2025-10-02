@@ -3,7 +3,7 @@ import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
-import {  } from "../../../../../utils/common_types";
+import { } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusMapper,
@@ -27,16 +27,12 @@ export const ApplicationPreview: FC<PropsType> = ({
   handleClose,
   applicantData,
 }) => {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   return (
-    <CustomisedModal open={open} handleClose={handleClose}>
+    <CustomisedModal open={open} handleClose={handleClose}
+      title={applicantData.firstName + " " + applicantData.lastName}
+    >
       <Stack spacing={2}>
-        <Stack justifyContent={"space-between"} direction={"row"}>
-          <Typography variant="h5">
-            {applicantData.firstName + " " + applicantData.lastName}
-          </Typography>
-          <CustomIconButton icon={<Close />} handleClick={handleClose} />
-        </Stack>
         <Grid
           container
           display={"flex"}
@@ -47,7 +43,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           <Grid item xs={12} display={"flex"}>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "JOB.TITLE" })}
+                {i({ id: "JOB.JOB_TITLE" })}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -59,7 +55,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           <Grid item xs={12} display={"flex"}>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "PROFILE.EMPLOYMENT" })}
+                {i({ id: "APPLICATION.WORK_EXP" })}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -72,7 +68,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           <Grid item xs={12} display={"flex"}>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "USER.APPLICATION.DATE" })}
+                {i({ id: "APPLICATION.APPLIED_ON" })}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -85,7 +81,7 @@ export const ApplicationPreview: FC<PropsType> = ({
           <Grid item xs={12} display={"flex"}>
             <Grid item xs={6} fontWeight={400}>
               <Typography variant="body1" fontWeight={600}>
-                {intl.formatMessage({ id: "FILTER.APPLICATION_STATUS" })}
+                {i({ id: "APPLICATION.STATUS_LABEL" })}
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -93,17 +89,17 @@ export const ApplicationPreview: FC<PropsType> = ({
                 <StyleStatus
                   label={applicationStatusMapper[applicantData.activityType]}
                   className={clsx({
-                    info:applicantData.activityType === ApplicationStatus.New,
-                    warning: [ApplicationStatus.InProgress,ApplicationStatus.OnHold,ApplicationStatus.Shortlisted].includes(applicantData.activityType),
+                    info: applicantData.activityType === ApplicationStatus.New,
+                    warning: [ApplicationStatus.InProgress, ApplicationStatus.OnHold, ApplicationStatus.Shortlisted].includes(applicantData.activityType),
                     success: applicantData.activityType === ApplicationStatus.Selected,
-                    danger:applicantData.activityType === ApplicationStatus.Rejected
+                    danger: applicantData.activityType === ApplicationStatus.Rejected
                   })}
                 />
               </Typography>
             </Grid>
           </Grid>
         </Grid>
-        <CvPreview  pdfUrl={applicantData.fullApplicantResumePath} />
+        <CvPreview pdfUrl={applicantData.fullApplicantResumePath} />
       </Stack>
     </CustomisedModal>
   );

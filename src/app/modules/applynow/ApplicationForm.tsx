@@ -28,13 +28,13 @@ export default function ApplicationForm() {
               {intl.formatMessage({ id: "JOB.APPLICATION" })}
             </Typography>
             <Typography variant="body2">
-              {intl.formatMessage({ id: "JOB.APPLICATION_CAPTION" })}
+              {intl.formatMessage({ id: "MESSAGE.PLEASE_FILL_FORM" })}
             </Typography>
           </Grid>
 
           <Grid item xs={12}>
             <Typography variant="body1">
-              {intl.formatMessage({ id: "USER.FIRST_NAME" })}
+              {intl.formatMessage({ id: "FORM.FIRST_NAME" })}
             </Typography>
             <TextField fullWidth />
           </Grid>
@@ -46,7 +46,7 @@ export default function ApplicationForm() {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              {intl.formatMessage({ id: "USER.PHONE" })}
+              {intl.formatMessage({ id: "FORM.PHONE" })}
             </Typography>
             <TextField fullWidth type="number" />
           </Grid>
@@ -149,14 +149,12 @@ export default function ApplicationForm() {
               variant="contained"
               label="Submit"
               size="large"
-              style={{ paddingInline: "3rem" }}
             />
             <CustomisedButton
               variant="outlined"
               Icon={<Close />}
               label="Close"
               size="large"
-              style={{ paddingInline: "3rem" }}
             />
             <Typography variant="body2">
               On clicking submit button, you are accepting all terms and

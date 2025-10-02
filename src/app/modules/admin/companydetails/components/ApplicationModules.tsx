@@ -79,46 +79,47 @@ export const ApplicationModules: FC = () => {
 
   return (
     <>
-      <Stack component={Card} spacing={3} p={3}>
+      <Card className="px-8 py-6 d-flex flex-column flex-grow-1 gap-8">
         <Stack>
           <Typography variant="h5" mb={1}>
             {formatMessage({
-              id: "COMPANY_DETAILS.TAB.MODULES",
+              id: "COMPANY_DETAILS.TABS.APPLICATIONS_MODULE",
             })}
           </Typography>
           <Typography variant="body2">
             {formatMessage({
-              id: "COMPANY_DETAILS.MODULES.NOTE",
+              id: "COMPANY_DETAILS.APP_MODULE_NOTE",
             })}
           </Typography>
         </Stack>
+        <Stack spacing={3}>
+          {moduleInfo.map((module) => {
+            return (
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems={"center"}
+                key={module.moduleId}
+              >
+                <Stack>
+                  <Switch
+                    checked={module.isAccessible}
+                    onChange={(e) => handleChange(e, module.moduleId)}
+                  />
+                </Stack>
 
-        {moduleInfo.map((module) => {
-          return (
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems={"center"}
-              key={module.moduleId}
-            >
-              <Stack>
-                <Switch
-                  checked={module.isAccessible}
-                  onChange={(e) => handleChange(e, module.moduleId)}
-                />
+                <Stack>
+                  <Typography variant="body1">{module.moduleName}</Typography>
+                </Stack>
               </Stack>
-
-              <Stack>
-                <Typography variant="body1">{module.moduleName}</Typography>
-              </Stack>
-            </Stack>
-          );
-        })}
-      </Stack >
+            );
+          })}
+        </Stack>
+      </Card >
       {isConfirmModalOpen && (
         <ConfirmationModal
-          title={formatMessage({ id: "TITLE.HIDE_MODULE" })}
-          content={formatMessage({ id: "CONFIRMATION.HIDE_MODULE" })}
+          title={formatMessage({ id: "CONFIRMATION.TITLE.HIDE_MODULE" })}
+          content={formatMessage({ id: "CONFIRMATION.CONTENT.HIDE_MODULE" })}
           open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={handleModuleHiding}

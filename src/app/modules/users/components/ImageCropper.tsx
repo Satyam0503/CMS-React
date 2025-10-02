@@ -112,7 +112,7 @@ export const ImageCropper: FC<Props> = ({
     <CustomisedModal open={open} handleClose={handleClose} maxWidth="sm">
       <Stack spacing={2}>
         <Typography variant="h5">
-          {intl.formatMessage({ id: "PROFILE.CROP_IMAGE" })}
+          {intl.formatMessage({ id: "PROFILE.IMAGE.CROP_IMAGE" })}
         </Typography>
         <ReactCrop
           crop={crop}
@@ -125,13 +125,8 @@ export const ImageCropper: FC<Props> = ({
           minHeight={circularCrop ? MIN_DIMENSION : MIN_HEIGHT_RECTANGLE}
           minWidth={circularCrop ? MIN_DIMENSION : MIN_WIDTH_RECTANGLE}
           onComplete={onCropComplete}
-          className="mx-auto"
         >
           <img
-            style={{
-              maxWidth: "400px",
-              objectFit: "contain",
-            }}
             ref={imageRef}
             src={imgSrc}
             alt="profile-preview"

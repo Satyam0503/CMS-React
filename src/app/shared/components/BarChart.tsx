@@ -14,11 +14,25 @@ interface BarChartProps {
   showXAxisLabel?: boolean;
 }
 
+
+
 export const BarChart: FC<BarChartProps> = (props) => {
+
+  const barWidth = 100; // pixels per bar (tweak as needed)
+  const padding = 10; // extra space for axes, etc.
+  const minChartWidth = 380;
+
+  // Calculate required width
+  const dynamicWidth = Math.max(minChartWidth, props.labels.length * barWidth + padding);
   const { series, labels, height, legendOption, showXAxisLabel } = props;
-  const theme = useTheme();
+  const { palette } = useTheme();
   const chartOption: ApexOptions = {
     chart: {
+      toolbar: {
+        tools: {
+          download: false,
+        }
+      },
       animations: {
         enabled: true,
         speed: 800,
@@ -27,10 +41,10 @@ export const BarChart: FC<BarChartProps> = (props) => {
           speed: 800,
         },
       },
-      height: height || 160,
+      height: height || 200,
       type: "bar",
     },
-    colors: ["#9A56D3", "#FEBB68", "#A3A3A3", "#444444", "#B3743B", "#FFE2B8"],
+    colors: [palette.primary.main, palette.secondary.main, palette.grey[700], palette.primary.dark],
     fill: {
       opacity: 1,
     },
@@ -39,13 +53,12 @@ export const BarChart: FC<BarChartProps> = (props) => {
       bar: {
         borderRadius: 4,
         borderRadiusApplication: "end",
-        columnWidth: 37,
+        columnWidth: 40,
         distributed: true,
-        barHeight: 10,
       },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     legend: {
       show: legendOption?.show || true,
@@ -54,7 +67,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       fontWeight: 600,
       itemMargin: {
         horizontal: 10,
-        vertical: 0,
+        vertical: 2,
       },
       labels: {
         useSeriesColors: true
@@ -66,7 +79,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
         show: showXAxisLabel || false,
         trim: true,
         style: {
-          colors: ["#000000"],
+          colors: [palette.common.black],
           fontSize: "12px",
         },
         offsetY: -2,
@@ -88,17 +101,20 @@ export const BarChart: FC<BarChartProps> = (props) => {
     },
   };
   return (
-    <Grid item xs={12}>
-      <Chart
-        options={chartOption}
-        series={[
-          {
-            data: series,
-          },
-        ]}
-        type="bar"
-        height={height || 160}
-      />
+    <Grid item xs={12} className="overflow-x-scroll">
+      <div style={{ minWidth: `${dynamicWidth}px`, width: '100%' }}>
+        <Chart
+          options={chartOption}
+          series={[
+            {
+              data: series,
+            },
+          ]}
+          type="bar"
+          height={height || 200}
+          width="100%"
+        />
+      </div>
     </Grid>
   );
 };

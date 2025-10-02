@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { Formik } from "formik";
 import { registerCompany } from "../core/_requests";
 import { Link, useNavigate } from "react-router-dom";
-import { PasswordMeterComponent } from "../../../../_themes/assets/ts/components";
 import {
+  Alert,
   Box,
   Checkbox,
   FormHelperText,
@@ -18,6 +18,8 @@ import { Check, ErrorOutline } from "@mui/icons-material";
 import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 import { toast } from "react-toastify";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
+import { getStatusCodeString } from "../../../../utils/common";
+import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
 const initialValues = {
   firstName: "",
@@ -31,7 +33,7 @@ const initialValues = {
 
 export function Registration() {
   const navigate = useNavigate();
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
 
   async function handleRegistration(
     values: typeof initialValues,
@@ -47,30 +49,24 @@ export function Registration() {
     };
     try {
       const { data } = await registerCompany(payload);
-      if (!data.success) {
-        throw new Error(data.message);
+      if (data.success) {
+        toast.success(i({ id: "TOAST.SUCCESS.REGISTRATION" }));
+        setStatus("");
+        navigate("/auth/login", { replace: true });
+      } else {
+        setStatus(i({ id: getStatusCodeString(data.statusCode) }))
       }
-      toast.success("Successfully Registered");
-      setStatus("");
-      navigate("/auth/login", { replace: true });
     } catch (error: any) {
-      setStatus(error.message);
+      console.error(error.message);
     } finally {
       setSubmitting(false);
     }
   }
-
-  useEffect(() => {
-    PasswordMeterComponent.bootstrap();
-  }, []);
   return (
     <Stack spacing={4}>
       <Stack sx={{ alignItems: "center" }} spacing={1}>
-        <Typography variant="h1">
-          {intl.formatMessage({ id: "AUTH.REGISTER.TITLE" })}
-        </Typography>
-        <Typography variant="h4">
-          {intl.formatMessage({ id: "AUTH.REGISTER.CMS" })}
+        <Typography variant="h1" className="text-wrap-balance text-center">
+          {i({ id: "AUTH.REGISTRATION_TITLE" })}
         </Typography>
       </Stack>
       <Formik
@@ -95,183 +91,112 @@ export function Registration() {
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               {status && (
-                <Grid className="mb-lg-15 alert alert-danger">
-                  <Grid className="alert-text" fontWeight={600}>
-                    {status}
-                  </Grid>
-                </Grid>
+                <Alert severity="error" className="mb-4">
+                  {status}
+                </Alert>
               )}
-              <Stack>
-                <TextInput
-                  type="text"
-                  name="firstName"
-                  label={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
-                  placeholder={intl.formatMessage({ id: "FORM.FIRST_NAME" })}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {touched.firstName && errors.firstName ? (
-                          <ErrorOutline color="error" />
-                        ) : touched.firstName && !errors.firstName ? (
-                          <Check color="success" />
-                        ) : null}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Stack>
 
-              <Stack>
-                <TextInput
-                  type="text"
-                  name="lastName"
-                  label={intl.formatMessage({ id: "FORM.LAST_NAME" })}
-                  placeholder={intl.formatMessage({ id: "FORM.LAST_NAME" })}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {touched.lastName && errors.lastName ? (
-                          <ErrorOutline color="error" />
-                        ) : touched.lastName && !errors.lastName ? (
-                          <Check color="success" />
-                        ) : null}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Stack>
+              <TextInput
+                type="text"
+                name="firstName"
+                label={i({ id: "FORM.FIRST_NAME" })}
+                placeholder={i({ id: "FORM.FIRST_NAME" })}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {touched.firstName && errors.firstName ? (
+                        <ErrorOutline color="error" />
+                      ) : touched.firstName && !errors.firstName ? (
+                        <Check color="success" />
+                      ) : null}
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-              <Stack>
-                <TextInput
-                  type="text"
-                  name="companyName"
-                  label={intl.formatMessage({ id: "FORM.COMPANY_NAME" })}
-                  placeholder={intl.formatMessage({ id: "FORM.COMPANY_NAME" })}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {touched.companyName && errors.companyName ? (
-                          <ErrorOutline color="error" />
-                        ) : touched.companyName && !errors.companyName ? (
-                          <Check color="success" />
-                        ) : null}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Stack>
-              <Stack>
-                <TextInput
-                  type="email"
-                  name="email"
-                  label={intl.formatMessage({ id: "FORM.EMAIL" })}
-                  placeholder={intl.formatMessage({ id: "FORM.EMAIL" })}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {touched.email && errors.email ? (
-                          <ErrorOutline color="error" />
-                        ) : touched.email && !errors.email ? (
-                          <Check color="success" />
-                        ) : null}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Stack>
+              <TextInput
+                type="text"
+                name="lastName"
+                label={i({ id: "FORM.LAST_NAME" })}
+                placeholder={i({ id: "FORM.LAST_NAME" })}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {touched.lastName && errors.lastName ? (
+                        <ErrorOutline color="error" />
+                      ) : touched.lastName && !errors.lastName ? (
+                        <Check color="success" />
+                      ) : null}
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-              <Stack>
-                <Stack data-kt-password-meter="true">
-                  <TextInput
-                    type="password"
-                    name="password"
-                    label={intl.formatMessage({ id: "FORM.PASSWORD" })}
-                    placeholder={intl.formatMessage({ id: "FORM.PASSWORD" })}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {touched.password && errors.password ? (
-                            <ErrorOutline color="error" />
-                          ) : touched.password && !errors.password ? (
-                            <Check color="success" />
-                          ) : null}
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <Grid
-                    container
-                    alignItems={"center"}
-                    my={1}
-                    data-kt-password-meter-control="highlight"
-                  >
-                    <Stack
-                      flexGrow={1}
-                      bgcolor="secondary.main"
-                      className="bg-active-success"
-                      sx={{
-                        mr: 1,
-                        height: "5px",
-                        borderRadius: "8px",
-                        "&:active": {
-                          bgcolor: "success.main",
-                        },
-                      }}
-                    />
-                    <Stack
-                      flexGrow={1}
-                      bgcolor="secondary.main"
-                      className="bg-active-success"
-                      sx={{
-                        mr: 1,
-                        height: "5px",
-                        borderRadius: "8px",
-                        "&:active": {
-                          bgcolor: "success.main",
-                        },
-                      }}
-                    />
-                    <Stack
-                      flexGrow={1}
-                      bgcolor="secondary.main"
-                      className="bg-active-success"
-                      sx={{
-                        mr: 1,
-                        height: "5px",
-                        borderRadius: "8px",
-                        "&:active": {
-                          bgcolor: "success.main",
-                        },
-                      }}
-                    />
-                    <Stack
-                      flexGrow={1}
-                      bgcolor="secondary.main"
-                      className="bg-active-success"
-                      sx={{
-                        mr: 1,
-                        height: "5px",
-                        borderRadius: "8px",
-                        "&:active": {
-                          bgcolor: "success.main",
-                        },
-                      }}
-                    />
-                  </Grid>
-                </Stack>
-                <Stack>
-                  <Typography variant="body2">
-                    {intl.formatMessage({ id: "PASSWORD.LENGTH" })}
-                  </Typography>
-                </Stack>
+              <TextInput
+                type="text"
+                name="companyName"
+                label={i({ id: "FORM.COMPANY_NAME" })}
+                placeholder={i({ id: "FORM.COMPANY_NAME" })}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {touched.companyName && errors.companyName ? (
+                        <ErrorOutline color="error" />
+                      ) : touched.companyName && !errors.companyName ? (
+                        <Check color="success" />
+                      ) : null}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextInput
+                type="email"
+                name="email"
+                label={i({ id: "FORM.EMAIL" })}
+                placeholder={i({ id: "FORM.EMAIL" })}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {touched.email && errors.email ? (
+                        <ErrorOutline color="error" />
+                      ) : touched.email && !errors.email ? (
+                        <Check color="success" />
+                      ) : null}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Stack spacing={1}>
+                <Typography variant="body2" className="fs-10">
+                  {i({ id: "AUTH.PASSWORD_NOTE" })}
+                </Typography>
+                <TextInput
+                  type="password"
+                  name="password"
+                  label={i({ id: "FORM.PASSWORD" })}
+                  placeholder={i({ id: "FORM.PASSWORD" })}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {touched.password && errors.password ? (
+                          <ErrorOutline color="error" />
+                        ) : touched.password && !errors.password ? (
+                          <Check color="success" />
+                        ) : null}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <PasswordStrenghtMeter password={values.password} />
               </Stack>
 
               <Stack>
                 <TextInput
                   type="password"
                   name="changePassword"
-                  label={intl.formatMessage({ id: "FORM.CONFIRM_PASSWORD" })}
-                  placeholder={intl.formatMessage({
+                  label={i({ id: "FORM.CONFIRM_PASSWORD" })}
+                  placeholder={i({
                     id: "FORM.CONFIRM_PASSWORD",
                   })}
                   InputProps={{
@@ -293,26 +218,15 @@ export function Registration() {
                   checked={values.acceptTerms}
                   {...getFieldProps("acceptTerms")}
                 />
-                <Typography variant="body1">
-                  <Box component="span">
-                    {intl.formatMessage({ id: "TERMS.CONDITION_ACCEPT" })}
-                    <Link to="#">
-                      {intl.formatMessage({ id: "TERMS.CONDITION" })}
-                    </Link>
-                  </Box>
-                </Typography>
-
-                <FormHelperText>
-                  {touched.acceptTerms &&
-                    errors.acceptTerms &&
-                    errors.acceptTerms}
-                </FormHelperText>
+                <Link to="#">
+                  {i({ id: "AUTH.T&C" })}
+                </Link>
               </Stack>
 
               <Stack spacing={1}>
                 <CustomisedButton
                   disabled={!(dirty && isValid) || isSubmitting}
-                  label={intl.formatMessage({ id: "BUTTON.SUBMIT" })}
+                  label={i({ id: "BUTTON.SUBMIT" })}
                   size="large"
                   type="submit"
                   loading={isSubmitting}
@@ -320,14 +234,14 @@ export function Registration() {
                 <CustomisedButton
                   handleClick={() => resetForm()}
                   variant="outlined"
-                  label={intl.formatMessage({ id: "BUTTON.RESET" })}
+                  label={i({ id: "BUTTON.RESET" })}
                   size="large"
                   type="button"
                 />
                 <Typography variant="body2" align="center">
-                  {intl.formatMessage({ id: "STATUS.REGISTRATION" })}
+                  {i({ id: "AUTH.ALREADY_REGISTERED" })}
                   <Link to={"/auth/login"}>
-                    {intl.formatMessage({ id: "AUTH.LOGIN.BUTTON" })}
+                    {i({ id: "AUTH.SIGNIN" })}
                   </Link>
                 </Typography>
               </Stack>

@@ -1,8 +1,5 @@
-import { Box, Button, MenuItem, Select, Stack, Tooltip, Typography } from "@mui/material";
-import {
-  ColumnListTypes,
-  SideBarTabListProps,
-} from "../common_types";
+import { Avatar, AvatarGroup, Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import { ColumnListTypes, SideBarTabListProps } from "../common_types";
 import {
   dateFormatter,
   statusDecoder,
@@ -12,13 +9,17 @@ import {
   commentActionMapper,
   noticeTypeDecoder,
   relativeTimeFormatter,
+  holidayTypeDecoder,
   LeaveTypeMapper,
+  JobTypeMapper,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
   ApplicantStatus,
   ApplicationStatus,
   CommentAction,
+  JOB_TYPE_ENUM,
+  HOLIDAY_TYPE,
   LANGUAGE,
   LEAVE_REQUEST_STATUS,
   LEAVE_TYPE,
@@ -27,6 +28,7 @@ import {
   ModulesTitles,
   NOTICE_TYPE,
   TIME_PERIOD_MAP,
+  EMPLOYMENT,
 } from "../enums";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -39,6 +41,7 @@ import {
   Close,
   ColorLens,
   Contacts,
+  CurrencyRupee,
   Info,
   Mail,
   NoteAlt,
@@ -53,19 +56,32 @@ import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
-import { DepartmentModel, RoleModel } from "../../app/modules/admin/models";
+import { RoleModel } from "../../app/modules/admin/models";
 import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
-import { NoticeModel, NoticeResponseModel } from "../../app/modules/noticeboard/models";
-import { NoticeViewModel } from "../../app/modules/noticeboard/components/NoticeViewModel";
-import { ViewLeaveReason } from "../../app/shared/components/ViewLeaveReason";
-import { LeaveRequestModel, LeaveType } from "../../app/modules/leaves/model";
-export const BaseUrl = import.meta.env.VITE_BASEURL;
+import {
+  NoticeModel,
+  NoticeResponseModel,
+  ViewModel,
+} from "../../app/modules/noticeboard/models";
+import {
+  LeaveBalance,
+  LeaveBalanceType,
+  LeaveType,
+} from "../../app/modules/leaves/model";
+import { HolidayModel } from "../../app/modules/holidays/models";
+import { SetDepartmentName } from "../../app/modules/employees/components/SetDepartmentName";
 
+export const BaseUrl = import.meta.env.VITE_BASEURL;
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
+export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
+export const APP_THEME_MODE = "theme-mode";
+export const I18N_CONFIG_KEY = import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
+export const DEFAULT_USER_AVATAR = "/media/avatars/default-emp-imag.jpg";
+export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
 export const ServiceUrl = {
   // account
@@ -74,6 +90,9 @@ export const ServiceUrl = {
   GET_USER_DETAILS: `${BaseUrl}/api/account/getSignedUserDetails`,
   CREATE_NEW_PASSWORD: `${BaseUrl}/api/CreateNewPassword`,
   RESET_PASSWORD: `${BaseUrl}/api/account/ResetPassword`,
+  REFRESH_TOKEN: `${BaseUrl}/api/account/refresh-token`,
+  LOGOUT: `${BaseUrl}/api/account/logout`,
+
 
   // role
   GET_ALL_ROLES: `${BaseUrl}/api/Roles/GetRoles`,
@@ -85,8 +104,8 @@ export const ServiceUrl = {
   UPDATE_MODULE_ACCESS: `${BaseUrl}/api/CompanyMaster/UpdateModuleAccess`,
   GET_ALL_MODULES_INFO: `${BaseUrl}/api/CompanyMaster/GetAllModuleDetails`,
 
-
   //user
+  CHANGE_PASSWORD: `${BaseUrl}/api/User/ChangePassword`,
   UPDATE_PROFILE_PICTURE: `${BaseUrl}/api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `${BaseUrl}/api/User/EditEmployees`,
 
@@ -117,8 +136,10 @@ export const ServiceUrl = {
   GET_NOTIFICATION: `${BaseUrl}/api/User/GetAllNotifications`,
   MARK_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/Notification`,
   MARK_ALL_NOTIFICATION_AS_READ: `${BaseUrl}/api/User/MarkAllNotificationAsRead`,
+  REMOVE_PROFILE_PICTURE: `${BaseUrl}/api/User/RemoveProfileImage`,
 
   SEARCH_EMPLOYEE: `${BaseUrl}/api/User/Search`,
+  GET_COLLEGE_LIST: `${BaseUrl}/api/User/GetCollegeList`,
 
   // jobs
   ADD_JOB_VACANCY: `${BaseUrl}/api/JobVacancy/AddJobVacancy`,
@@ -145,68 +166,98 @@ export const ServiceUrl = {
   UPDATE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/UpdateDepartment`,
   DELETE_DEPARTMENT: `${BaseUrl}/api/CompanyMaster/DeleteDepartment`,
 
+  // Job Titles
+  ADD_UPDATE_JOB_TITLE: `${BaseUrl}/api/CompanyMaster/AddUpdateJobTitle`,
+  GET_JOB_TITLE: `${BaseUrl}/api/CompanyMaster/GetJobTitles`,
+  DELETE_JOB_TITLE: `${BaseUrl}/api/CompanyMaster/DeleteJobTitle`,
+
   // skills
   GET_SKILLS_LIST: `${BaseUrl}/api/User/GetSuggestedSkills`,
   ADD_SKILL: `${BaseUrl}/api/User/AddSkill`,
-  // company 
+  // company
   GET_COMPANY_DETAILS: `${BaseUrl}/api/Company/GetCompanyDetails`,
   UPDATE_COMPANY_DETAILS: `${BaseUrl}/api/Company/UpdateCompanyDetails`,
 
   // dashboard
   GET_ALL_GENDERS: `${BaseUrl}/api/Dashboard/GetAllGenderDetails`,
   GET_ALL_DEPARTMENT: `${BaseUrl}/api/Dashboard/GetAllDepartmentDetails`,
+  GET_APPLICATION_DATA: `${BaseUrl}/api/Dashboard/GetApplicationStatusData`,
+  GET_UPCOMING_HOLIDAY: `${BaseUrl}/api/Dashboard/GetUpComingHolidays`,
 
-  // notice 
+  // notice
   GET_ALL_NOTICES: `${BaseUrl}/api/NoticeBoard/GetAllNotice`,
   GET_MY_NOTICES: `${BaseUrl}/api/NoticeBoard/GetMyNotices`,
   POST_NOTICE: `${BaseUrl}/api/NoticeBoard/PostNotice`,
   UPDATE_NOTICE: `${BaseUrl}/api/NoticeBoard/UpdateMyNotice`,
+
+  // holiday
+  GET_ALL_HOLIDAYS: `${BaseUrl}/api/Holiday/GetAllHoliday`,
+  CREATE_UPDATE_HOLIDAYS: `${BaseUrl}/api/Holiday/CreateHoliday`,
+  DELETE_HOLIDAYS: `${BaseUrl}/api/Holiday/DeleteHoliday`,
   DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`,
   GET_NOTICE_BY_ID: `${BaseUrl}/api/NoticeBoard/GetNoticeById`,
 
-  // leave management 
+  // leave management
   CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
   GET_LEAVE_TYPES: `${BaseUrl}/api/LeaveManagement/GetLeaveType`,
   GET_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetLeaveBalance`,
   CREATE_UPDATE_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveBalance`,
 
+  CREATE_LEAVE_REQUEST: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeave`,
+  GET_LEAVE_REQUESTS: `${BaseUrl}/api/LeaveManagement/GetLeaveRequest`,
+  DELETE_LEAVE_REQUEST: `${BaseUrl}/api/LeaveManagement/DeleteLeaveRequest`,
+  GET_EMP_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetEmployeeLeaveBalance`,
+  UPDATE_LEAVE_REQUEST_STATUS: `${BaseUrl}/api/LeaveManagement/LeaveRequest`,
+
+  // custom attributes
+  CREATE_NEW_CUSTOM_ATTRIBUTE: `${BaseUrl}/api/CompanyMaster/CreateCustomAttribute`,
+  GET_COMPANY_CUSTOM_ATTRIBUTE: `${BaseUrl}/api/CompanyMaster/GetAllCustomAttribute`,
+  GET_CUSTOM_ATTRIBUTE_BY_ID: `${BaseUrl}/api/CompanyMaster/GetCustomAttributeById`,
+  UPDATE_CUSTOM_ATTRIBUTE: `${BaseUrl}/api/CompanyMaster/UpdateCustomAttribute`,
+  DELETE_CUSTOM_ATTRIBUTE_VALUE: `${BaseUrl}/api/CompanyMaster/DeleteCustomAttributeValue`,
+
+  // payroll
+  UPLOAD_PAYROLL: `${BaseUrl}/api/PayRoll/UploadPayloadData`,
+  GENERATE_PAY_SLIP: `${BaseUrl}/api/PayRoll/GeneratePaySlip`,
+  GET_PAYROLL_DATA: `${BaseUrl}/api/PayRoll/GetEmpPayRollData`,
+  ADD_UPDATE_EMP_PAYROLL: `${BaseUrl}/api/PayRoll/AddUpdatePayRoll`,
 };
 
 export const languages = [
   {
     id: 1,
     lang: LANGUAGE.ENGLISH,
-    name: "Language.English",
+    name: "LANGUAGES.ENGLISH",
     flag: toAbsoluteUrl("media/flags/united-states.svg"),
   },
   {
     id: 2,
     lang: LANGUAGE.MANDARIN,
-    name: "Language.Mandarin",
+    name: "LANGUAGES.MANDARIN",
     flag: toAbsoluteUrl("media/flags/china.svg"),
   },
   {
     id: 3,
     lang: LANGUAGE.SPANISH,
-    name: "Language.Spanish",
+    name: "LANGUAGES.SPANISH",
     flag: toAbsoluteUrl("media/flags/spain.svg"),
   },
   {
     id: 4,
     lang: LANGUAGE.JAPANESE,
-    name: "Language.Japanese",
+    name: "LANGUAGES.JAPANESE",
     flag: toAbsoluteUrl("media/flags/japan.svg"),
   },
   {
     id: 5,
     lang: LANGUAGE.GERMAN,
-    name: "Language.German",
+    name: "LANGUAGES.GERMAN",
     flag: toAbsoluteUrl("media/flags/germany.svg"),
   },
   {
     id: 6,
     lang: LANGUAGE.FRENCH,
-    name: "Language.French",
+    name: "LANGUAGES.FRENCH",
     flag: toAbsoluteUrl("media/flags/france.svg"),
   },
 ];
@@ -216,6 +267,8 @@ export const Regex = {
   Email: /^[a-zA-Z]+[a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
   Phone: /^[6-9]\d{9}$/,
   Password: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
+  PanCard: /[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+  BankAccountNo: /^[0-9]{9,18}$/
 };
 
 export const Gender = [
@@ -236,23 +289,52 @@ export const Gender = [
   },
 ];
 
+export const EmploymentType = [
+  {
+    id: 1,
+    label: "EMPLOYEE.TYPE.FULLTIME",
+    value: EMPLOYMENT.FULLTIME,
+  },
+  {
+    id: 2,
+    label: "EMPLOYEE.TYPE.PARTTIME",
+    value: EMPLOYMENT.PARTTIME,
+  },
+  {
+    id: 3,
+    label: "EMPLOYEE.TYPE.CONTRACTUAL",
+    value: EMPLOYMENT.CONTRACTUAL,
+  },
+  {
+    id: 4,
+    label: "EMPLOYEE.TYPE.INTERNSHIP",
+    value: EMPLOYMENT.INTERNSHIP,
+  },
+  {
+    id: 5,
+    label: "EMPLOYEE.TYPE.APPRENTICESHIP",
+    value: EMPLOYMENT.APPRENTICESHIP,
+  },
+]
+
 export const NoticeTypes = [
   {
     id: 1,
-    label: "NOTICE_TYPE.GENERAL",
+    label: "NOTICE.TYPES.GENERAL",
     value: NOTICE_TYPE.GENERAL,
   },
   {
     id: 2,
-    label: "NOTICE_TYPE.IMPORTANT",
+    label: "NOTICE.TYPES.IMPORTANT",
     value: NOTICE_TYPE.IMPORTANT,
   },
   {
     id: 3,
-    label: "NOTICE_TYPE.URGENT",
+    label: "NOTICE.TYPES.URGENT",
     value: NOTICE_TYPE.URGENT,
-  }
-]
+  },
+];
+
 
 export const EducationType = [
   {
@@ -273,8 +355,10 @@ export const EducationType = [
 ];
 
 export const HolidayTypes = [
-  { id: 1, label: "Public Holiday", value: "Public Holiday" },
-  { id: 2, label: "Custom Holiday", value: "Custom Holiday" },
+  { id: 1, label: "HOLIDAY.TYPES.CULTURAL", value: HOLIDAY_TYPE.CULTURAL },
+  { id: 2, label: "HOLIDAY.TYPES.HEALTH", value: HOLIDAY_TYPE.HEALTH },
+  { id: 3, label: "HOLIDAY.TYPES.RELIGIOUS", value: HOLIDAY_TYPE.RELIGIOUS },
+  { id: 4, label: "HOLIDAY.TYPES.NATIONAL", value: HOLIDAY_TYPE.NATIONAL },
 ];
 
 export const bloodGroups = [
@@ -310,38 +394,21 @@ export const Days = [
   },
 ];
 
-export const JobTime = [
-  {
-    id: 1,
-    label: "Full Time",
-    value: "Full Time",
-  },
-  {
-    id: 2,
-    label: "Part Time",
-    value: "Part Time",
-  },
-  {
-    id: 3,
-    label: "Internship",
-    value: "Internship",
-  },
-];
 export const JobType = [
   {
     id: 1,
-    label: <FormattedMessage id="Jobtype.Onsite" />,
-    value: "Onsite",
+    label: "JOBTYPE.ONSITE",
+    value: JOB_TYPE_ENUM.ONSITE,
   },
   {
     id: 2,
-    label: <FormattedMessage id="Jobtype.Hybrid" />,
-    value: "Hybrid",
+    label: "JOBTYPE.HYBRID",
+    value: JOB_TYPE_ENUM.HYBRID,
   },
   {
     id: 3,
-    label: <FormattedMessage id="Jobtype.Remote" />,
-    value: "Remote",
+    label: "JOBTYPE.REMOTE",
+    value: JOB_TYPE_ENUM.REMOTE,
   },
 ];
 
@@ -421,59 +488,64 @@ export const CommentActionCategory = [
 ];
 
 export const ApplicantStatusConstant = [
-  { id: 1, label: "InActive", value: ApplicantStatus.InActive },
-  { id: 2, label: "Active", value: ApplicantStatus.Active },
+  {
+    id: 1,
+    label: "APPLICANT.STATUS.INACTIVE",
+    value: ApplicantStatus.InActive,
+  },
+  { id: 2, label: "APPLICANT.STATUS.ACTIVE", value: ApplicantStatus.Active },
 ];
 
 export const LeaveRequestStatusTypes = [
   {
     id: 1,
-    label: "PENDING",
+    label: "LEAVE_REQUEST_STATUS.PENDING",
     value: LEAVE_REQUEST_STATUS.PENDING,
-  }, {
+  },
+  {
     id: 2,
-    label: "APPROVED",
+    label: "LEAVE_REQUEST_STATUS.APPROVED",
     value: LEAVE_REQUEST_STATUS.APPROVED,
-  }, {
+  },
+  {
     id: 3,
-    label: "REJECTED",
-    value: LEAVE_REQUEST_STATUS.REJECTED
-  }
-]
+    label: "LEAVE_REQUEST_STATUS.REJECTED",
+    value: LEAVE_REQUEST_STATUS.REJECTED,
+  },
+];
 
 export const LeaveTypeConstant = [
   {
     id: 1,
-    label: "SICK_LEAVE",
-    value: LEAVE_TYPE.SICK_LEAVE
+    label: "LEAVE.TYPES.SICK_LEAVE",
+    value: LEAVE_TYPE.SICK_LEAVE,
   },
   {
     id: 2,
-    label: "CASUAL_LEAVE",
-    value: LEAVE_TYPE.CASUAL_LEAVE
+    label: "LEAVE.TYPES.CASUAL_LEAVE",
+    value: LEAVE_TYPE.CASUAL_LEAVE,
   },
   {
     id: 3,
-    label: "EARNED_LEAVE",
-    value: LEAVE_TYPE.EARNED_LEAVE
+    label: "LEAVE.TYPES.EARNED_LEAVE",
+    value: LEAVE_TYPE.EARNED_LEAVE,
   },
   {
     id: 4,
-    label: "MATERNITY_LEAVE",
-    value: LEAVE_TYPE.MATERNITY_LEAVE
+    label: "LEAVE.TYPES.MATERNITY_LEAVE",
+    value: LEAVE_TYPE.MATERNITY_LEAVE,
   },
   {
     id: 5,
-    label: "PATERNITY_LEAVE",
-    value: LEAVE_TYPE.PATERNITY_LEAVE
-  }
-]
-
+    label: "LEAVE.TYPES.PATERNITY_LEAVE",
+    value: LEAVE_TYPE.PATERNITY_LEAVE,
+  },
+];
 
 export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "employeeId",
-    label: "EMPLOYEE.EMPID",
+    label: "USER.EMP_ID",
     minWidth: 60,
   },
   {
@@ -497,12 +569,18 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "phoneNumber",
     label: "FORM.PHONE",
+    format: (phone: string | null) => phone ?? <FormattedMessage id="NOT_AVAILABLE" />
   },
   {
     id: "department",
     label: "FORM.DEPARTMENT",
-    format: (value: string | null) =>
-      value ?? <FormattedMessage id="NOT_AVAILABLE" />,
+    format: (department: Record<string, string> | null) => {
+      if (department === null) {
+        return <FormattedMessage id="NOT_AVAILABLE" />;
+      } else {
+        return <SetDepartmentName department={department} />;
+      }
+    },
   },
 ];
 
@@ -514,34 +592,55 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
   },
 
   {
-    id: "title",
-    label: "FORM.TITLE",
+    id: "holidayName",
+    label: "HOLIDAY.NAME",
+    minWidth: 180,
   },
   {
-    id: "type",
-    label: "NOTICE_BOARD.TYPE",
+    id: "holidayType",
+    label: "HOLIDAY.TYPE",
+    build: (holidayType: number) => {
+      const type = holidayTypeDecoder[holidayType];
+      return (
+        <StyleStatus
+          label={type}
+          className={clsx({
+            info: holidayType === HOLIDAY_TYPE.CULTURAL,
+            success: holidayType === HOLIDAY_TYPE.HEALTH,
+            danger: holidayType === HOLIDAY_TYPE.NATIONAL,
+            warning: holidayType === HOLIDAY_TYPE.RELIGIOUS,
+          })}
+        />
+      );
+    },
   },
   {
-    id: "startDate",
-    label: "START_DATE",
+    id: "date",
+    label: "HOLIDAY.DATE",
+    minWidth: 160,
     format: (value) => dateFormatter(value, "DD MMMM YYYY"),
   },
   {
-    id: "endDate",
-    label: "START_DATE",
-    format: (value) => dateFormatter(value, "DD MMMM YYYY"),
-  },
-  {
-    id: "description",
-    label: "INFO.DESCRIPTION",
+    id: "detail",
+    label: "HOLIDAY.DESCRIPTION",
+    format: (value: string) => (
+      <Tooltip title={value}>
+        <Typography
+          sx={{ maxWidth: 250 }}
+          className="text-nowrap text-truncate"
+        >
+          {value}
+        </Typography>
+      </Tooltip>
+    ),
   },
   {
     id: "action",
-    label: "Action",
+    label: "ACTION",
     build: (
-      row: any,
-      handleHolidayEdit: (row: any) => void,
-      openConfirmationModal: (id: string) => void
+      row: HolidayModel,
+      handleHolidayEdit: (row: HolidayModel) => void,
+      openConfirmationModal: (row: HolidayModel) => void
     ) => (
       <ActionComponent
         row={row}
@@ -560,7 +659,7 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "userName",
-    label: "NOTICE_POSTED_BY",
+    label: "NOTICE.POSTED_BY",
     minWidth: 200,
     avatarCell: (notice: NoticeResponseModel) => {
       return (
@@ -574,14 +673,14 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDateTime",
-    label: "NOTICE_POSTED_DATETIME",
+    label: "NOTICE.POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_TYPE",
+    label: "NOTICE.TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -597,19 +696,24 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     },
   },
   {
-    id: "noticeMessage",
-    label: "NOTICE_MESSAGE",
-    build: (notice: NoticeResponseModel, handleNoticeView: (notice: NoticeResponseModel) => void) => {
-      return <Stack direction="row">
-        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {notice.noticeTitle}</Box>
-        <Box component="span" sx={{
-          color: 'secondary.main', mx: 2, "&:hover": {
-            color: 'secondary.dark'
-          }
+    id: "noticeTitle",
+    label: "NOTICE.MESSAGE",
+    build: (notice: NoticeResponseModel) => {
+      return <Box
+        component="span"
+        sx={{
+          textOverflow: "ellipsis",
+          maxWidth: 250,
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          display: "inline-block",
+          margin: 0,
+          textDecoration: notice.viewedStatus ? "line-through" : "none"
         }}
-          onClick={() => handleNoticeView(notice)}>{<FormattedMessage id="BUTTON.VIEW" />}...</Box>
-      </Stack>
-    }
+      >
+        {notice.noticeTitle}
+      </Box>
+    },
   },
 ];
 
@@ -621,14 +725,14 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDate",
-    label: "NOTICE_POSTED_DATETIME",
+    label: "NOTICE.POSTED_DATETIME",
     minWidth: 150,
     format: (value: string) => relativeTimeFormatter(value),
   },
 
   {
     id: "noticeType",
-    label: "NOTICE_TYPE",
+    label: "NOTICE.TYPE",
     build: (noticeType: number) => {
       const type = noticeTypeDecoder[noticeType];
       return (
@@ -645,17 +749,47 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "title",
-    label: "NOTICE_MESSAGE",
+    label: "NOTICE.MESSAGE",
     build: (message: string) => {
-      return <Stack direction="row">
-        <Box component="span" sx={{ textOverflow: "ellipsis", maxWidth: 200, overflow: "hidden", whiteSpace: "nowrap", display: "inline-block", margin: 0 }}> {message}</Box>
-        {/* <NoticeViewModel noticeMessage={message} /> */}
-      </Stack>
+      return (
+        <Stack direction="row">
+          <Box
+            component="span"
+            sx={{
+              textOverflow: "ellipsis",
+              maxWidth: 200,
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              display: "inline-block",
+              margin: 0,
+            }}
+          >
+            {message}
+          </Box>
+        </Stack>
+      );
+    },
+  },
+  {
+    id: "views",
+    label: "NOTICE.VIEWS",
+    build: (views: ViewModel) => {
+      return views.length === 0 ?
+        "_" :
+        <AvatarGroup spacing={24} className="justify-content-end" total={views.length}>
+          {
+            views.slice(0, 8).map(view => (
+              <Tooltip key={view.employeeId} title={view.employeeName}>
+                <Avatar alt={view.employeeName} src={view.profileUrl ?? DEFAULT_USER_AVATAR} />
+              </Tooltip>
+            ))
+          }
+        </AvatarGroup>
     }
   },
   {
     id: "action",
-    label: "Action",
+    label: "ACTION",
     build: (
       row: NoticeModel,
       handleNoticeEdit: (row: NoticeModel) => void,
@@ -663,11 +797,10 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     ) => (
       <ActionComponent
         row={row}
-        handleEdit={handleNoticeEdit}
         openConfirmationModal={openConfirmationModal}
       />
     ),
-  }
+  },
 ];
 export const ProcessLogTableColumnList: ColumnListTypes[] = [
   {
@@ -699,7 +832,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "activityCategory",
-    label: "Action",
+    label: "COMMENT.ACTION_CATEGORY",
     minWidth: 150,
     format: (value: number) => (
       <FormattedMessage id={commentActionMapper[value]} />
@@ -747,7 +880,6 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-
 export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
   {
     id: "name",
@@ -782,7 +914,7 @@ export const AttendanceMangementTableColumnList: ColumnListTypes[] = [
 
   {
     id: "action",
-    label: "Action",
+    label: "ACTION",
     build: (row: Applicant) => <ActionComponent row={row} />,
   },
 ];
@@ -844,12 +976,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       handleApplicationEdit: (row: Applicant) => void,
       openConfirmationModal: (row: Applicant) => void,
       openViewApplication: (row: Applicant) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        openViewModal={openViewApplication}
-      />
-    ),
+    ) => <ActionComponent row={row} openViewModal={openViewApplication} />,
   },
 ];
 
@@ -882,7 +1009,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Action",
+    label: "ACTION",
     minWidth: 180,
     build: (row: RoleModel) => (
       <Link to={`/admin/roles/edit/${row.rolesId}`}>
@@ -920,6 +1047,9 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   {
     id: "jobType",
     label: "JOB.TYPE",
+    format: (jobType: number) => (
+      <FormattedMessage id={JobTypeMapper[jobType]} />
+    ),
   },
   {
     id: "status",
@@ -935,18 +1065,13 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Action",
+    label: "ACTION",
     build: (
       row: JobModal,
       handleJobEdit: (row: JobModal) => void,
       openDeleteModal: (row: JobModal) => void,
       openViewJobDetail: (row: JobModal) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        openViewModal={openViewJobDetail}
-      />
-    ),
+    ) => <ActionComponent row={row} openViewModal={openViewJobDetail} />,
   },
 ];
 
@@ -963,7 +1088,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
   {
     id: "createdDate",
-    label: "COMMENT.DATE",
+    label: "COMMENT.COMMENT_ON",
     minWidth: 200,
     format: (value: string) => dateFormatter(value, "MMMM DD YYYY  hh:mm A"),
   },
@@ -1017,77 +1142,6 @@ export const CommentTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const LeaveRequestTableColumnList: ColumnListTypes[] = [
-  {
-    id: "serialNo",
-    label: "S_No",
-    minWidth: 60,
-  },
-  {
-    id: "employeeName",
-    label: "Name",
-    minWidth: 200,
-    avatarCell: (request: LeaveRequestModel) => {
-      return (
-        <AvatarCell
-          avatarSrc={request.profileUrl}
-          title={request.employeeName}
-          subTitle={request.jobRole}
-        />
-      );
-    },
-  },
-  {
-    id: "leaveTypeId",
-    label: "LEAVE_TYPE",
-    format: (value: number) => <FormattedMessage id={LeaveTypeMapper[value]} />
-  },
-  {
-    id: "startDate",
-    label: "FROM",
-    format: (value: string) => dateFormatter(value, "DD MMMM YYYY"),
-  },
-  {
-    id: "endDate",
-    label: "TO",
-    format: (value: number) => (value: string) => dateFormatter(value, "DD MMMM YYYY"),
-  },
-  {
-    id: "totalDays",
-    label: "Days",
-    minWidth: 100
-  },
-  {
-    id: "reason",
-    label: "REASON",
-    minWidth: 150,
-    format: (value: string) => (
-      <>
-        <Typography variant="body2" className="text-truncate d-inline-block">{value}</Typography>
-        <ViewLeaveReason reason={value} />
-      </>
-    )
-  },
-  {
-    id: "reviewedBy",
-    label: "APPROVED_BY",
-    minWidth: 150,
-  },
-  {
-    id: "status",
-    label: "STATUS",
-    minWidth: 150,
-    format: (value: number) => (
-      <Select value={value} className={clsx({ "text-secondary": value === LEAVE_REQUEST_STATUS.PENDING, "text-success": value === LEAVE_REQUEST_STATUS.APPROVED, "text-danger": LEAVE_REQUEST_STATUS.REJECTED })}>
-        {LeaveRequestStatusTypes.map(item => (
-          <MenuItem value={item.value} key={item.id}
-          ><FormattedMessage id={item.label} /></MenuItem>
-        ))}
-      </Select>
-    )
-  },
-]
-
 export const LeaveTypeColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -1095,31 +1149,37 @@ export const LeaveTypeColumnList: ColumnListTypes[] = [
     minWidth: 60,
   },
   {
-    id: "leaveTypes",
-    label: "LEAVE_TYPE",
+    id: "leaveType",
+    label: "LEAVE.LEAVE_TYPE",
     minWidth: 200,
-    format: (value: LEAVE_TYPE) => <FormattedMessage id={LeaveTypeMapper[value]} />
+    format: (value: LEAVE_TYPE) => (
+      <FormattedMessage id={LeaveTypeMapper[value]} />
+    ),
   },
   {
     id: "isHalfDay",
-    label: "HALF_DAY",
+    label: "LEAVE.HALF_DAY",
     build: (value: boolean) => {
-      return value ? <Check className="text-success icon-fs-16" /> : <Close className="text-danger icon-fs-16" />
-    }
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
   },
   {
     id: "maxLeaveDays",
-    label: "MAX_LEAVE_DAYS",
+    label: "LEAVE.MAX_LEAVE_DAYS",
   },
   {
     id: "minAdvanceNoticeDate",
-    label: "MIN_NOTICE_DAY",
+    label: "LEAVE.MIN_NOTICE_DAY",
     format: (value: number) => (
       <>
-        {value}
+        {value + " "}
         <FormattedMessage id={value > 1 ? "DAYS" : "DAY"} />
       </>
-    )
+    ),
   },
   {
     id: "isActive",
@@ -1135,18 +1195,97 @@ export const LeaveTypeColumnList: ColumnListTypes[] = [
   },
   {
     id: "action",
-    label: "Action",
-    build: (
-      row: LeaveType,
-      handleLeaveTypeEdit: (row: LeaveType) => void,
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleLeaveTypeEdit}
-      />
+    label: "ACTION",
+    build: (row: LeaveType, handleLeaveTypeEdit: (row: LeaveType) => void) => (
+      <ActionComponent row={row} handleEdit={handleLeaveTypeEdit} />
     ),
   },
-]
+];
+
+export const EmployeeLeaveBalanceColumnList: ColumnListTypes[] = [
+  {
+    id: "serialNo",
+    label: "S_No",
+    minWidth: 60,
+  },
+  {
+    id: "employeeName",
+    label: "LEAVE.EMPLOYEE_NAME",
+    minWidth: 200,
+    avatarCell: (data: LeaveBalance) => {
+      return (
+        <AvatarCell
+          avatarSrc={data.profileUrl}
+          title={data.employeeName}
+          subTitle={data.jobRole}
+        />
+      );
+    },
+  },
+  {
+    id: "sickLeave",
+    label: "LEAVE.TYPES.SICK_LEAVE",
+    format: (value: LeaveBalanceType) => {
+      return value === null ? (
+        <FormattedMessage id="NOT_AVAILABLE" />
+      ) : (
+        `${value.remainingLeave} / ${value.maximumLeave}`
+      );
+    },
+  },
+  {
+    id: "casualLeave",
+    label: "LEAVE.TYPES.CASUAL_LEAVE",
+    format: (value: LeaveBalanceType) => {
+      return value === null ? (
+        <FormattedMessage id="NOT_AVAILABLE" />
+      ) : (
+        `${value.remainingLeave} / ${value.maximumLeave}`
+      );
+    },
+  },
+  {
+    id: "earnedLeave",
+    label: "LEAVE.TYPES.EARNED_LEAVE",
+    format: (value: LeaveBalanceType) => {
+      return value === null ? (
+        <FormattedMessage id="NOT_AVAILABLE" />
+      ) : (
+        `${value.remainingLeave} / ${value.maximumLeave}`
+      );
+    },
+  },
+  {
+    id: "maternityLeave",
+    label: "LEAVE.TYPES.MATERNITY_LEAVE",
+    format: (value: LeaveBalanceType) => {
+      return value === null ? (
+        <FormattedMessage id="NOT_AVAILABLE" />
+      ) : (
+        `${value.remainingLeave} / ${value.maximumLeave}`
+      );
+    },
+  },
+  {
+    id: "paternityLeave",
+    label: "LEAVE.TYPES.PATERNITY_LEAVE",
+    format: (value: LeaveBalanceType) => {
+      return value === null ? (
+        <FormattedMessage id="NOT_AVAILABLE" />
+      ) : (
+        `${value.remainingLeave} / ${value.maximumLeave}`
+      );
+    },
+  },
+  {
+    id: "action",
+    label: "ACTION",
+    build: (
+      row: LeaveBalance,
+      handleLeaveBalanceEdit: (row: LeaveBalance) => void
+    ) => <ActionComponent row={row} handleEdit={handleLeaveBalanceEdit} />,
+  },
+];
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {
@@ -1188,6 +1327,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.Attendance,
         route: "/attendance",
         icon: <AccessTime />,
+        isDefault: false,
+      },
+      {
+        id: Modules.PayRoll,
+        title: ModulesTitles.PayRoll,
+        constant: ModulesName.PayRoll,
+        route: "/payroll",
+        icon: <CurrencyRupee />,
         isDefault: false,
       },
     ],
@@ -1235,6 +1382,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     icon: <Settings />,
     hasSubTabs: true,
     isDefault: false,
+    adminOnly: true,
     subTabs: [
       {
         id: Modules.Permissions,
@@ -1448,26 +1596,26 @@ export const monthsExperienceList = [
   },
 ];
 export const TimePeriodOptions = [
-  { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: "FILTER.LAST_WEEK" },
+  { id: TIME_PERIOD_MAP.LAST_WEEK, value: 7, name: "DATETIME.LAST_WEEK" },
   {
     id: TIME_PERIOD_MAP.LAST_TWO_WEEK,
     value: 14,
-    name: "FILTER.LAST_TWO_WEEK",
+    name: "DATETIME.LAST_TWO_WEEK",
   },
-  { id: TIME_PERIOD_MAP.LAST_MONTH, value: 30, name: "FILTER.LAST_MONTH" },
+  { id: TIME_PERIOD_MAP.LAST_MONTH, value: 30, name: "DATETIME.LAST_MONTH" },
   {
     id: TIME_PERIOD_MAP.LAST_THREE_MONTHS,
     value: 90,
-    name: "FILTER.LAST_THREE_MONTHS",
+    name: "DATETIME.LAST_THREE_MONTHS",
   },
   {
     id: TIME_PERIOD_MAP.LAST_SIX_MONTHS,
     value: 180,
-    name: "FILTER.LAST_SIX_MONTHS",
+    name: "DATETIME.LAST_SIX_MONTHS",
   },
   {
     id: TIME_PERIOD_MAP.LAST_12_MONTHS,
     value: 365,
-    name: "FILTER.LAST_12_MONTHS",
+    name: "DATETIME.LAST_12_MONTHS",
   },
 ];

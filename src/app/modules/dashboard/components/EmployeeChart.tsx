@@ -5,13 +5,13 @@ import { CustomCard } from "../../../shared/components/CustomCard";
 import DonutApexChart from "../../../shared/components/DonutApexChart";
 import { CardSkeleton } from "./CardSkeleton";
 import { getAllGenderInfo } from "../dashboardservices";
-
-// interface PropsType {
-//   employees: GetAllEmployeeResponseModel[];
-// }
+import { GenderModel } from "../model";
+import { genderMapper } from "../../../../utils/common";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
 export const EmployeeChart: FC = () => {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
+  const [empData, setEmpData] = useState<GenderModel[]>([]);
   const [chartData, setChartData] = useState<{
     labels: string[];
     series: number[];
@@ -20,70 +20,48 @@ export const EmployeeChart: FC = () => {
     series: [],
   });
   const [loading, setLoading] = useState(true);
-  const [allEmpCount, setAllEmpCount] = useState<number>(0);
+  const [totalEmployee, setTotalEmployee] = useState(0);
+  const { currentLanguage } = useAppLang();
 
-  /*  const getEmployeesGenderCount = useCallback(() => {
-    const genderCount = employees.reduce(
-      (acc: { [key: string]: number }, employee) => {
-        acc[employee.gender] = (acc[employee.gender] || 0) + 1;
-        return acc;
-      },
-      {}
-    );
-    return {
-      labels: Object.keys(genderCount),
-      series: Object.values(genderCount),
-    };
-  }, [employees]);
-*/
-
-  /*
-  useEffect(() => {
-    if (employees.length) {
-      const { labels, series } = getEmployeesGenderCount();
-      setChartData({ labels, series });
-      setLoading(false);
+  const generateChartData = useCallback(() => {
+    let totalEmployee = 0;
+    if (empData.length === 0) {
+      return {...chartData,totalEmployee};
+    } else {
+      const labels: string[] = [];
+      const series: number[] = [];
+      empData.forEach((item) => {
+        labels.push(i({ id: genderMapper[item.gender] || "GENDER.OTHER"}));
+        series.push(item.count);
+        totalEmployee +=item.count;
+      });
+      return { labels, series, totalEmployee };
     }
-  }, [employees, getEmployeesGenderCount]);
-
-  if (loading) {
-    return <CardSkeleton />;
-  }
-  */
+  }, [empData, currentLanguage]);
 
   useEffect(() => {
     const getAllGenderDetails = async () => {
       try {
-        const response = await getAllGenderInfo();
-        const { success, methodResults } = response.data;
-        if (success) {
-          var labels: string[] = [];
-          var series: number[] = [];
-          var gend: string;
-
-          methodResults.forEach((data) => {
-
-            gend = data.gender ? data.gender.toUpperCase() : "NULL"
-
-            labels.push(intl.formatMessage({ id: `GENDER.${gend}` }));
-            series.push(data.count || 0);
-          });
-          setChartData({ labels, series });
-          setAllEmpCount(
-            series.reduce((acc, value) => {
-              return acc + value;
-            }, 0)
-          );
+        const { data } = await getAllGenderInfo();
+        if (data.success) {
+          setEmpData(data.methodResults);
         }
       } catch (error) {
         console.log(error);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     };
     getAllGenderDetails();
   }, []);
+
+  useEffect(() => {
+    if (empData.length > 0) {
+      const { labels, series,totalEmployee } = generateChartData();
+      setChartData({ labels, series });
+      setTotalEmployee(totalEmployee);
+    }
+  }, [empData, currentLanguage]);
 
   if (loading) {
     return <CardSkeleton />;
@@ -91,17 +69,14 @@ export const EmployeeChart: FC = () => {
 
   return (
     <>
-      <CustomCard
-        label={intl.formatMessage({ id: "MENU.TOTAL_EMP" })}
-        value={allEmpCount}
-      >
-        {!allEmpCount ? (
+      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee}>
+        {chartData.labels.length == 0 ? (
           <Box
-            component={"div"}
-            sx={{ height: "100%", alignContent: "center", textAlign: "center" }}
+            className="flex-grow-1 align-content-center text-center"
+            component="div"
           >
             <Typography variant="h5">
-              {intl.formatMessage({ id: "DASHBOARD.EMPLOYEE.NOEMPLOYEE" })}
+              {i({ id: "MESSAGE.NO_EMPLOYEE" })}
             </Typography>
           </Box>
         ) : (

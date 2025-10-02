@@ -7,11 +7,9 @@ import {
   Edit,
   School,
 } from "@mui/icons-material";
-import { UserEducationModel } from "../../../../../utils/common_types";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import {
-  checkPermissionForModulesFeatureAccess,
   dateFormatter,
   hasModuleFeaturePermission,
 } from "../../../../../utils/common";
@@ -28,6 +26,7 @@ import { ConfirmationModal } from "../../../../shared/components/ConfirmationMod
 import { useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
+import { UserEducationModel } from "../../models";
 
 const initialValue: UserEducationModel = {
   userId: "",
@@ -62,6 +61,10 @@ export const UserEducation = () => {
     setSeletedEducationId(undefined);
   };
 
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  }
+
   function handleEducationEdit(education: UserEducationModel) {
     setEdit(true);
     setEducationInitialValues({
@@ -76,36 +79,6 @@ export const UserEducation = () => {
     setOpen(true);
   }
 
-  const handleAddUpdateEducation = async (
-    values: UserEducationModel,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => {
-    values.userId = employeeId ?? "";
-    try {
-      if (isEdit) {
-        const response = await updateEmployeeEducation(values);
-        const { success, message } = response.data;
-        if (success) {
-          toast.success(message);
-          setRefresh(!refresh);
-        }
-      } else {
-        const response = await addEmployeeEducation(values);
-        const { success, message } = response.data;
-        if (!success) {
-          throw new Error(message);
-        }
-        toast.success(message);
-        setRefresh(!refresh);
-      }
-    } catch (error) {
-      toast.error((error as AxiosError).message);
-    } finally {
-      setSubmitting(false);
-      handleClose();
-    }
-  };
-
   const handleDeleteEducation = async () => {
     if (selectedEducationId) {
       try {
@@ -115,7 +88,7 @@ export const UserEducation = () => {
         );
         const { success, message } = response.data;
         if (success) {
-          toast.success(message);
+          toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
           handleCloseConfirmation();
           setRefresh(!refresh);
         }
@@ -135,7 +108,7 @@ export const UserEducation = () => {
         setUserEducations(methodResults);
       })
       .catch((error) => {
-        toast.error(error.message);
+        console.error((error as Error).message);
       });
   }, [refresh]);
 
@@ -143,7 +116,7 @@ export const UserEducation = () => {
     <Card sx={{ p: 2 }}>
       <Stack className="flex-row justify-content-between mb-4">
         <Typography variant="h5">
-          {intl.formatMessage({ id: "PROFILE.EDUCATION" })}
+          {intl.formatMessage({ id: "PROFILE.EDUCATION.TITLE" })}
         </Typography>
         {
           hasEmployeeEditPermission &&
@@ -157,7 +130,7 @@ export const UserEducation = () => {
       <Stack spacing={2}>
         {userEducations.length === 0 ? (
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            {intl.formatMessage({ id: "ADD.EDUCATION" })}
+            {intl.formatMessage({ id: "PROFILE.EDUCATION.NONE" })}
           </Typography>
         ) : (
           userEducations.map((education) => (
@@ -197,7 +170,7 @@ export const UserEducation = () => {
                       {education.collegeName}
                     </Typography>
                     <Stack className="flex-row align-items-center gap-1">
-                      <CalendarToday className="icon-fs-16" />
+                      <CalendarToday className="fs-16" />
                       <Typography variant="body2">
                         {dateFormatter(education.startDate, "MMM YYYY")} -{" "}
                         {dateFormatter(education.endDate, "MMM YYYY")}
@@ -238,15 +211,15 @@ export const UserEducation = () => {
         <AddUpdateEducation
           isEdit={isEdit}
           initialValues={educationInitialValues}
+          refresh={handleRefresh}
           open={open}
-          handleAddUpdateEducation={handleAddUpdateEducation}
           handleClose={handleClose}
         />
       )}
       {selectedEducationId && (
         <ConfirmationModal
-          title={intl.formatMessage({ id: "Confirmation.Title.Emp_Education" })}
-          content={intl.formatMessage({ id: "Confirmation.Content.Emp_Education" })}
+          title={intl.formatMessage({ id: "CONFIRMATION.TITLE.DELETE_EDUCATION" })}
+          content={intl.formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_EDUCATION" })}
           open={true}
           handleClose={handleCloseConfirmation}
           handleConfirmation={handleDeleteEducation}

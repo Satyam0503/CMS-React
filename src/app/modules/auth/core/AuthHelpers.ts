@@ -1,7 +1,9 @@
-const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
+import { AUTH_LOCAL_STORAGE_KEY } from "../../../../utils/constant/Constant";
+import { AuthTokens } from "./_models";
+
 const clientId = "ClientId";
 
-const getLocalKey = (): string | undefined => {
+const getLocalKey = (): AuthTokens | undefined => {
   if (!localStorage) {
     return;
   }
@@ -9,16 +11,21 @@ const getLocalKey = (): string | undefined => {
   if (!lsValue) {
     return;
   }
-  return lsValue;
+  try {
+    const authKeys: AuthTokens = JSON.parse(lsValue) as AuthTokens;
+    return authKeys;
+  } catch (error) {
+    console.error("AUTH LOCAL STORAGE PARSE ERROR", error);
+  }
 };
 
-const setLocalKey = (key: string) => {
+const setLocalKey = (keys: AuthTokens) => {
   if (!localStorage) {
     return;
   }
-
   try {
-    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, key);
+    const lsValue = JSON.stringify(keys);
+    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, lsValue);
   } catch (error) {
     console.error("AUTH LOCAL STORAGE SAVE ERROR", error);
   }
@@ -35,19 +42,4 @@ const removeLocalKey = () => {
   }
 };
 
-// export function setupAxios(axios: any) {
-//   axios.defaults.headers.Accept = "application/json";
-//   axios.interceptors.request.use(
-//     (config: { headers: { Authorization: string } }) => {
-//       const auth = getAuth();
-//       if (auth && auth.token) {
-//         config.headers.Authorization = `Bearer ${auth.token}`;
-//       }
-
-//       return config;
-//     },
-//     (err: any) => Promise.reject(err)
-//   );
-// }
-
-export { getLocalKey, setLocalKey, removeLocalKey, AUTH_LOCAL_STORAGE_KEY };
+export { getLocalKey, setLocalKey, removeLocalKey };

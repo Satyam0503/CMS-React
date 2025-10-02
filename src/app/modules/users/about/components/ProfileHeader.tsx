@@ -18,14 +18,14 @@ export const ProfileHeader = () => {
   const { formatMessage } = useIntl();
   const theme = useTheme();
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} direction="column">
       <Grid item xs={12} sm={4}>
         <IconStat
           iconBg={theme.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
           iconColor="secondary.dark"
           number={14}
-          title={formatMessage({ id: "PROFILE.EXP" })}
+          title={formatMessage({ id: "PROFILE.PI.EOX" })}
         />
       </Grid>
       <Grid item xs={12} sm={4}>
@@ -35,7 +35,7 @@ export const ProfileHeader = () => {
           iconColor="primary.main"
           number={getDateDiffInYears(userDetails.dateOfJoining!)}
           title={formatMessage(
-            { id: "PROFILE.EXP_CURRENT" },
+            { id: "PROFILE.PI.TOTAL_YEAR" },
             { companyName }
           )}
         />
@@ -46,7 +46,7 @@ export const ProfileHeader = () => {
           icon={<Build fontSize="large" />}
           iconColor="secondary.dark"
           number={totalSkills}
-          title={formatMessage({ id: "PROFILE.SKILLS_HOLDER" })}
+          title={formatMessage({ id: "PROFILE.SKILLS.TOTAL_SKILLS" })}
         />
       </Grid>
     </Grid>

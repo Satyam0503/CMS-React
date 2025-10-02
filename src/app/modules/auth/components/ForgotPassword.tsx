@@ -9,6 +9,8 @@ import { useIntl } from "react-intl";
 import { Regex } from "../../../../utils/constant/Constant";
 import { resetPassword } from "../core/_requests";
 import { toast } from "react-toastify";
+import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
+import { getStatusCodeString } from "../../../../utils/common";
 
 const initialValues = {
   email: "",
@@ -16,25 +18,25 @@ const initialValues = {
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
-    .matches(Regex.Email, "Email must be a valid email")
-    .required("Email is required"),
+    .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
+    .required("VALIDATION_ERR.EMAIL_REQ"),
 });
 
 export function ForgotPassword() {
   const navigate = useNavigate();
-  const { formatMessage } = useIntl();
+  const { formatMessage: i } = useIntl();
   const formik = useFormik({
     initialValues,
     validationSchema: forgotPasswordSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        const response = await resetPassword(values.email);
-        if (response.data.success) {
-          toast.success(response.data.message);
+        const { data } = await resetPassword(values.email);
+        if (data.success) {
+          toast.success(i({ id: getStatusCodeString(data.statusCode) }));
           formik.resetForm();
         }
         else {
-          toast.error("Request Failed");
+          toast.error(i({ id: getStatusCodeString(data.statusCode) }));
         }
       } catch (error) {
         console.log(error);
@@ -51,33 +53,33 @@ export function ForgotPassword() {
       onSubmit={formik.handleSubmit}
     >
       <Stack className="text-center mb-10">
-        <Typography variant="h1">{formatMessage({ id: "AUTH.INPUT.FORGOT_PASSWORD" })}</Typography>
-        <Typography variant="body1">{formatMessage({ id: "AUTH.FORGOT_PASSWORD.NOTE" })}</Typography>
+        <Typography variant="h1">{i({ id: "AUTH.FORGOT_PASSWORD" })}</Typography>
+        <Typography variant="body1">{i({ id: "AUTH.FORGOT_PASSWORD.NOTE" })}</Typography>
       </Stack>
 
       <Stack sx={{ mb: 2 }}>
         <TextField
           fullWidth
           type="email"
-          helperText={formik.touched.email && formik.errors.email}
-          label={formatMessage({ id: "FORM.EMAIL" })}
+          label={i({ id: "FORM.EMAIL" })}
           error={formik.touched.email && Boolean(formik.errors.email)}
-          placeholder={formatMessage({ id: "FORM.EMAIL" })}
+          placeholder={i({ id: "FORM.EMAIL" })}
           autoComplete="off"
           {...formik.getFieldProps("email")}
         />
+        {formik.touched.email && formik.errors.email && <ErrorLabel errorLabel={formik.errors.email} />}
       </Stack>
-      <Stack direction={"row"} sx={{ justifyContent: "center", gap: 2 }}>
-        <CustomisedButton
-          variant="outlined"
-          label={formatMessage({ id: "BUTTON.CANCEL" })}
-          handleClick={() => navigate('/auth')}
-        />
+      <Stack className="gap-2 mt-6" >
         <CustomisedButton
           type="submit"
-          label={formatMessage({ id: "BUTTON.SUBMIT" })}
+          label={i({ id: "BUTTON.SUBMIT" })}
           loading={formik.isSubmitting}
           disabled={formik.isSubmitting || !formik.isValid}
+        />
+        <CustomisedButton
+          variant="outlined"
+          label={i({ id: "BUTTON.CANCEL" })}
+          handleClick={() => navigate('/auth')}
         />
       </Stack>
     </form>

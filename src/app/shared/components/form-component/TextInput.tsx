@@ -6,8 +6,9 @@ import {
 import { useField } from "formik";
 import { FC } from "react";
 import { blockInvalidCharOnNumberField } from "../../../../utils/common";
+import { useIntl } from "react-intl";
 
-interface PropsTypes {
+export interface InputFieldProps {
   label: string;
   name: string;
   type: React.InputHTMLAttributes<unknown>['type'];
@@ -19,7 +20,8 @@ interface PropsTypes {
   InputProps?: Partial<OutlinedInputProps>;
 }
 
-export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
+export const TextInput: FC<InputFieldProps> = ({ label, ...props }) => {
+  const { formatMessage: i } = useIntl();
   const [fields, meta] = useField(props);
   return (
     <TextField
@@ -27,7 +29,7 @@ export const TextInput: FC<PropsTypes> = ({ label, ...props }) => {
       label={label}
       variant="outlined"
       error={meta.touched && Boolean(meta.error)}
-      helperText={meta.touched && meta.error && meta.error}
+      helperText={meta.touched && meta.error && i({ id: meta.error })}
       {...fields}
       {...props}
       onKeyDown={(e) => {

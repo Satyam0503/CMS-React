@@ -1,42 +1,34 @@
-import { FC, createContext, useContext } from 'react'
+import { FC, createContext, useContext, useState } from 'react'
 import { WithChildren } from '../../utils/common_types'
 import { LANGUAGE } from '../../utils/enums'
+import { getCurrentAppLanguage, setAppLanguage } from '../../utils/common'
 
-const I18N_CONFIG_KEY = import.meta.env.VITE_APP_I18N_CONFIG_KEY || 'i18nConfig'
-
-type Props = {
-  selectedLang: 'de' | 'en' | 'es' | 'fr' | 'ja' | 'zh'
-}
-const initialState: Props = {
-  selectedLang: LANGUAGE.ENGLISH,
+type LanguageProps = {
+  currentLanguage: LANGUAGE
+  changeAppLanguage?: (lang: LANGUAGE) => void
 }
 
-export function getConfig(): Props {
-  const ls = localStorage.getItem(I18N_CONFIG_KEY)
-  if (ls) {
-    try {
-      return JSON.parse(ls) as Props
-    } catch (er) {
-      console.error(er)
-    }
-  }
-  return initialState
+const initialState: LanguageProps = {
+  currentLanguage: LANGUAGE.ENGLISH
 }
 
-export function setLanguage(lang: string) {
-  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }))
-  window.location.reload()
-}
 
-const I18nContext = createContext<Props>(initialState)
+const I18nContext = createContext<LanguageProps>(initialState)
 
-const useLang = () => {
-  return useContext(I18nContext).selectedLang
+const useAppLang = () => {
+  return useContext(I18nContext);
 }
 
 const I18nProvider: FC<WithChildren> = ({ children }) => {
-  const lang = getConfig()
-  return <I18nContext.Provider value={lang}>{children}</I18nContext.Provider>
+  const [lang, setLang] = useState<LANGUAGE>(getCurrentAppLanguage());
+  const changeAppLanguage = (newLang: LANGUAGE) => {
+    setLang(newLang);
+    setAppLanguage(newLang);
+  }
+  return <I18nContext.Provider value={{
+    currentLanguage: lang,
+    changeAppLanguage
+  }}>{children}</I18nContext.Provider>
 }
 
-export { I18nProvider, useLang }
+export { I18nProvider, useAppLang }

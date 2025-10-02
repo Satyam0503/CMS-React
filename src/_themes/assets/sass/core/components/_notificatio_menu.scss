@@ -39,7 +39,7 @@
     margin-block: 0.5rem;
 
     & > .MuiListItem-root {
-      padding: 0.25rem 1rem;
+      padding: 0.25rem 0.5rem;
       margin-block-end: 0.25rem;
       gap: 0.5rem;
       align-items: center;
@@ -53,22 +53,19 @@
         border-radius: 0.5rem;
       }
       & > .MuiStack-root {
-        width: 42px;
-        height: 42px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         aspect-ratio: 1;
         justify-content: center;
         align-items: center;
         & .MuiSvgIcon-root {
-          font-size: 2.5rem;
+          font-size: 2.5rem !important;
         }
       }
       & > .MuiListItemText-root .MuiTypography-root {
         max-width: 300px;
         min-width: 200px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
       }
     }
 

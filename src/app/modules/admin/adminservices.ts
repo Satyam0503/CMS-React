@@ -3,6 +3,7 @@ import {
   getRequest,
   patchRequest,
   postRequest,
+  putRequest,
 } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
@@ -16,10 +17,21 @@ import {
   GetAllModulesInfoResponseModel,
   UpdateModuleAccessResponse,
   GetCompanyDetailsResponse,
+  DepartmentRequestModel,
+  JobTitleRequestModel,
+  GetJobTitleResponse,
+  GetCompanyCustomAttribute,
+  GetCustomAttributeByIdResponse,
+  CreateNewCustomAttributeResponse,
+  UpdateCustomAttributePayload,
 } from "./models";
 
 export const getAllRoles = async (excludeAdmin: boolean = false) => {
-  return getRequest<GetAllRolesResponseData>(excludeAdmin ? `${ServiceUrl.GET_ALL_ROLES}?excludeAdmin=${true}` : ServiceUrl.GET_ALL_ROLES);
+  return getRequest<GetAllRolesResponseData>(
+    excludeAdmin
+      ? `${ServiceUrl.GET_ALL_ROLES}?excludeAdmin=${true}`
+      : ServiceUrl.GET_ALL_ROLES
+  );
 };
 export const getAllModulePermission = async () => {
   return getRequest<GetAllModulePermissionData>(
@@ -58,19 +70,17 @@ export const changeAppAccess = async (
 
 // departments
 export const getAllDepartments = async (isActive: boolean = false) => {
-  return getRequest<GetDepartmentResponseModel>(isActive ? `${ServiceUrl.GET_DEPARTMENTLIST}?isActive=${isActive}` : ServiceUrl.GET_DEPARTMENTLIST);
-};
-
-export const updateDepartment = async (payload: DepartmentModel[]) => {
-  return postRequest<DepartmentModel[], ApiResponse>(
-    ServiceUrl.UPDATE_DEPARTMENT,
-    payload
+  return getRequest<GetDepartmentResponseModel>(
+    isActive
+      ? `${ServiceUrl.GET_DEPARTMENTLIST}?isActive=${isActive}`
+      : ServiceUrl.GET_DEPARTMENTLIST
   );
 };
 
-export const deleteDepartment = async (departmentId: string) => {
-  return deleteRequest<ApiResponse>(
-    `${ServiceUrl.DELETE_DEPARTMENT}/${departmentId}`
+export const updateDepartment = async (payload: DepartmentRequestModel[]) => {
+  return postRequest<DepartmentRequestModel[], ApiResponse>(
+    ServiceUrl.UPDATE_DEPARTMENT,
+    payload
   );
 };
 
@@ -99,5 +109,60 @@ export const updateCompanyDetails = async (payload: FormData) => {
     payload,
     {},
     true
+  );
+};
+
+// company jobTitles
+
+export const getJobTitles = async (isActive: boolean = false) => {
+  return getRequest<GetJobTitleResponse>(
+    isActive
+      ? `${ServiceUrl.GET_JOB_TITLE}?isActive=${isActive}`
+      : ServiceUrl.GET_JOB_TITLE
+  );
+};
+
+export const addUpdateJobTitles = async (payload: JobTitleRequestModel[]) => {
+  return postRequest<JobTitleRequestModel[], ApiResponse>(
+    ServiceUrl.ADD_UPDATE_JOB_TITLE,
+    payload
+  );
+};
+
+export const deleteAttributeItem = async (url: string, itemId: string) => {
+  return deleteRequest<ApiResponse>(`${url}/${itemId}`);
+};
+
+// custom attributes
+export const getAllCustomAttributes = async () => {
+  return getRequest<GetCompanyCustomAttribute>(
+    ServiceUrl.GET_COMPANY_CUSTOM_ATTRIBUTE
+  );
+};
+
+export const getCustomAttributeById = async (
+  customAttributeId: string,
+  active: boolean = false
+) => {
+  return getRequest<GetCustomAttributeByIdResponse>(
+    active
+      ? `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}?active=${active}`
+      : `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}`
+  );
+};
+
+export const createNewCustomAttribute = async () => {
+  return postRequest<any, CreateNewCustomAttributeResponse>(
+    ServiceUrl.CREATE_NEW_CUSTOM_ATTRIBUTE,
+    {}
+  );
+};
+
+export const updateCustomAttribute = (
+  payload: UpdateCustomAttributePayload
+) => {
+  return putRequest<UpdateCustomAttributePayload, ApiResponse>(
+    ServiceUrl.UPDATE_CUSTOM_ATTRIBUTE,
+    payload
   );
 };

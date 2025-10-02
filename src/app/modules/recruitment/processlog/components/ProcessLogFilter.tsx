@@ -24,15 +24,11 @@ import { CommentActionCategory } from "../../../../../utils/constant/Constant";
 import { JobModal } from "../../models";
 import { getAllJobVacancies } from "../../services";
 import { FilterComponent } from "../../../../shared/components/FilterComponent";
+import { FilterComponentProps } from "../../../../../utils/common_types";
+import { getVacancyPayload } from "../../jobs/Jobs";
 
-interface Props {
-  open: boolean;
-  anchorEl: HTMLButtonElement | null;
-  handleClose: () => void;
-}
-
-const ProcessLogFilter: FC<Props> = (props) => {
-  const intl = useIntl();
+const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
+  const { formatMessage: i } = useIntl();
   const processLogFilters = useAppSelector((state) => state.filters.processLog);
   const dispatch = useAppDispatch();
   const [jobList, setJobList] = useState<JobModal[]>([]);
@@ -49,7 +45,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
   useEffect(() => {
     const getActiveJobs = async () => {
       try {
-        const response = await getAllJobVacancies(null);
+        const response = await getAllJobVacancies({ ...getVacancyPayload, status: null });
         const { success, methodResults } = response.data;
         if (success) {
           setJobList(methodResults);
@@ -67,12 +63,12 @@ const ProcessLogFilter: FC<Props> = (props) => {
         <Stack spacing={1}>
           <Stack>
             <Typography variant="caption">
-              {intl.formatMessage({ id: "FILTER.APPLIED_DATE" })}
+              {i({ id: "APPLICATION.APPLIED_DATE" })}
             </Typography>
 
             <Stack spacing={2} direction={"row"}>
               <CustomisedDatePicker
-                label={intl.formatMessage({ id: "FROM" })}
+                label={i({ id: "FROM" })}
                 value={
                   Boolean(values.filterFrom)
                     ? dayjs(values.filterFrom)
@@ -87,7 +83,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
                 }}
               />
               <CustomisedDatePicker
-                label={intl.formatMessage({ id: "TO" })}
+                label={i({ id: "TO" })}
                 value={
                   Boolean(values.filterTo) ? dayjs(values.filterTo) : null
                 }
@@ -105,7 +101,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
 
           <Stack>
             <Typography variant="caption">
-              {intl.formatMessage({ id: "FILTER.JOB_TITLE" })}
+              {i({ id: "JOB.JOB_TITLE" })}
             </Typography>
             <Autocomplete
               size="small"
@@ -117,14 +113,14 @@ const ProcessLogFilter: FC<Props> = (props) => {
               }}
               getOptionLabel={(option) => option.title}
               renderInput={(params) => (
-                <TextField {...params} placeholder="Jobs" />
+                <TextField {...params} placeholder={i({ id: "JOB.JOB_TITLE" })} />
               )}
             />
           </Stack>
 
           <Stack>
             <Typography variant="caption">
-              {intl.formatMessage({ id: "FILTER.ACTION_CATEGORY" })}
+              {i({ id: "COMMENT.ACTION_CATEGORY" })}
             </Typography>
             <Autocomplete
               multiple
@@ -141,12 +137,12 @@ const ProcessLogFilter: FC<Props> = (props) => {
                   value.map((item) => item.value)
                 );
               }}
-              getOptionLabel={(option) => option.label}
+              getOptionLabel={(option) => i({ id: option.label })}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  placeholder={intl.formatMessage({
-                    id: "FILTER.CATEGORY",
+                  placeholder={i({
+                    id: "COMMENT.ACTION_CATEGORY",
                   })}
                 />
               )}
@@ -158,7 +154,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
                       checked={state.selected}
                       sx={{ mr: 1 }}
                     />
-                    <ListItemText primary={option.label} />
+                    <ListItemText primary={i({ id: option.label })} />
                   </li>
                 );
               }}
@@ -171,7 +167,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
           sx={{ justifyContent: "flex-end", marginBlockStart: 2 }}
         >
           <CustomisedButton
-            label={intl.formatMessage({ id: "BUTTON.RESET" })}
+            label={i({ id: "BUTTON.RESET" })}
             variant="outlined"
             handleClick={() => {
               dispatch(resetFilter({ page: "processLog" }));
@@ -180,7 +176,7 @@ const ProcessLogFilter: FC<Props> = (props) => {
           />
           <CustomisedButton
             type="submit"
-            label={intl.formatMessage({ id: "BUTTON.APPLY" })}
+            label={i({ id: "BUTTON.APPLY" })}
           />
         </Stack>
       </form>

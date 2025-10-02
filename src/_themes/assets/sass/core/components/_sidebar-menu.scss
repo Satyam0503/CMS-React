@@ -14,7 +14,7 @@
     height: 32px;
     right: 0;
     transform: translate(50%);
-    top: 20%;
+    top: 30%;
     z-index: 20;
     pointer-events: auto;
 
@@ -28,7 +28,7 @@
     max-width: $app-sidebar-user-profile-size;
     max-height: $app-sidebar-user-profile-size;
     aspect-ratio: 1;
-    margin-block-start: 1.25rem;
+    margin-block-start: 2.5rem;
   }
 
   & .sidebar-menu-main {

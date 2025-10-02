@@ -7,8 +7,11 @@ import { CustomCard } from "../../../shared/components/CustomCard";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllEmployees } from "../../employees/employeeServices";
 import { CardSkeleton } from "./CardSkeleton";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { useAppSelector } from "../../../Redux/hooks";
+import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 
-const isSameDate = (date: Dayjs) => {
+export const isSameDate = (date: Dayjs) => {
   const currentDateofMonth = dayjs().date();
   const currentMonth = dayjs().month();
   if (currentDateofMonth === date.date() && currentMonth === date.month()) {
@@ -37,9 +40,11 @@ const getUpcomingBirthDays = (empList: GetAllEmployeeResponseModel[]) => {
 }
 
 export default function UpcomingBirthday() {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
   const [isLoading, setLoading] = useState(true);
+  const { currentLanguage } = useAppLang();
+  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
   useEffect(() => {
     (async () => {
@@ -63,16 +68,16 @@ export default function UpcomingBirthday() {
 
   return (
     <>
-      <CustomCard label={intl.formatMessage({ id: "MENU.BIRTHDAY" })}>
+      <CustomCard label={i({ id: "TITLES.UPCOMING_BIRTHDAY" })}>
         <Stack className="flex-grow-1 justify-content-between mt-4" >
           {!employees.length ? (
             <Box component="div" className="flex-grow-1 align-content-center text-center"
             >
-              <Typography variant="h5">No Employees</Typography>
+              <Typography variant="h5"> {i({ id: "MESSAGE.NO_EMPLOYEE" })}</Typography>
             </Box>
           ) : (
-            <Stack spacing={1}>
-              {getUpcomingBirthDays(employees).slice(0, 4).map((emp) => {
+            <Stack className="gap-3">
+              {getUpcomingBirthDays(employees).slice(0, 3).map((emp) => {
                 return (
                   <Stack
                     key={emp.userId}
@@ -80,8 +85,8 @@ export default function UpcomingBirthday() {
                   >
                     <Stack className="justify-content-between flex-row gap-2  align-items-center" >
                       <Avatar
-                        alt="User Profile"
-                        src={emp.fullProfileUrl ?? ""}
+                        alt={emp.fullName}
+                        src={emp.fullProfileUrl ?? DEFAULT_USER_AVATAR}
                         sx={{
                           width: 45,
                           height: 45,
@@ -90,23 +95,23 @@ export default function UpcomingBirthday() {
                       />
                       <Stack>
                         <Typography variant="body1">{emp.fullName}</Typography>
-                        <Typography variant="body2">{emp.jobRole}</Typography>
+                        <Typography variant="body2">
+                          {
+                            emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
+                          }
+                        </Typography>
                       </Stack>
                     </Stack>
-
                     <Typography variant="subtitle2">
                       {!isSameDate(dayjs(emp.dateOfBirth))
                         ? dateFormatter(emp.birthDayThisYear, "DD MMM YYYY")
-                        : intl.formatMessage({ id: "Date.Today" })}
+                        : i({ id: "DATETIME.TODAY" })}
                     </Typography>
                   </Stack>
                 );
               })}
             </Stack>
           )}
-          <Link href="employeeperformance" underline="always" color="primary.main">
-            {intl.formatMessage({ id: "SEE_MORE" })}
-          </Link>
         </Stack>
       </CustomCard >
     </>
