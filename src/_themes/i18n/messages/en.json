@@ -46,7 +46,9 @@
     "FILTER_HOLIDAY": "Filter Holidays",
     "SEARCH_EMPLOYEE": "Search Employee",
     "SWITCH_THEME": "Light/Dark Mode",
-    "CHATS": "Chat"
+    "CHATS": "Chat",
+    "NEXT": "Next",
+    "PREVIOUS": "Previous"
   },
 
   "PAGE": {

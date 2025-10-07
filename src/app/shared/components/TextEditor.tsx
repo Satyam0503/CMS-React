@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -6,6 +6,7 @@ import { removeUnwantedString, sanitizeHtmlContent } from "../../../utils/common
 import { useIntl } from "react-intl";
 import { useTheme } from "@mui/material";
 import clsx from "clsx";
+// import "../../../_themes/assets/sass/core/components/_text_editor.scss";
 
 type PropsType = {
   value: string;
@@ -19,6 +20,9 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
   const { formatMessage: i } = useIntl();
   const themeMode = useTheme().palette.mode;
 
+  // Create a ref to hold the ReactQuill instance
+  const quillRef = useRef<ReactQuill | null>(null);
+
 
   useEffect(() => {
     const sanitizedString = sanitizeHtmlContent(removeUnwantedString(debouncedValue));
@@ -26,7 +30,6 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
       setValue(sanitizedString);
     }
   }, [debouncedValue]);
-
 
   const modules = {
     toolbar: {
@@ -66,6 +69,7 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
 
   return (
     <ReactQuill
+      ref={quillRef}
       theme="snow"
       value={textValue}
       onChange={setTextValue}
@@ -73,6 +77,8 @@ const TextEditor: FC<PropsType> = memo(({ value, setValue, placeholder = "PLACEH
       modules={modules}
       placeholder={i({ id: placeholder })}
       className={clsx("text-editor", { dark: themeMode === "dark", light: themeMode === "light" })}
+
+    // className={clsx("text-editor", { dark: themeMode === "dark", light: themeMode === "light" })}
     />
   );
 });

@@ -3,7 +3,6 @@ import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { Delete, Edit } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useIntl } from "react-intl";
-import { deleteAttributeItem } from "../../adminservices";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { LanguageNameMapper } from "../../../../../utils/common";
