@@ -119,6 +119,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       setNewItemIds([]);
     } else {
       var id = uuidv4();
+      setItemsList([]);
       setNewItemIds([id]);
     }
   }, [attributeData]);

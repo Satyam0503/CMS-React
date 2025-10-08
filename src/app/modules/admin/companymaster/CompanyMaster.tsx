@@ -16,7 +16,7 @@ import clsx from "clsx";
 import { TabModel } from "../../../../utils/common_types";
 import { JobTitles } from "./components/JobTitles";
 import { CustomAttribute } from "./components/CustomAttribute";
-import { CompanyCustomAttributeModel } from "../models";
+import { CompanyCustomAttributeModel, OutletContextType } from "../models";
 import {
   createNewCustomAttribute,
   getAllCustomAttributes,
@@ -58,6 +58,7 @@ export const CompanyMasterTab = () => {
   );
 };
 
+
 const CompanyMaster = () => {
   const { setPageTitle } = usePageData();
   const { formatMessage: i } = useIntl();
@@ -78,14 +79,24 @@ const CompanyMaster = () => {
           ...companyCustomAttribute,
           data.methodResult,
         ]);
-        navigate(
-          `/admin/companymaster/customattribute/${data.methodResult.customAttributeId}`
-        );
+        navigate(`/admin/companymaster/customattribute/${data.methodResult.customAttributeId}`);
       }
     } catch (error) {
       console.error((error as Error).message);
     }
   };
+
+  const UpdateCustomAttributeValue = (customAttribute: CompanyCustomAttributeModel) => {
+    setCompanyCustomAttribute(companyCustomAttribute.map(attribute => {
+      if (attribute.customAttributeId === customAttribute.customAttributeId) {
+        return {
+          ...attribute,
+          customAttributeTitle: customAttribute.customAttributeTitle
+        }
+      }
+      return attribute;
+    }));
+  }
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.COMPANY_MASTER" }));
@@ -104,6 +115,7 @@ const CompanyMaster = () => {
       }
     })();
   }, []);
+
   return (
     <Box component="div" className="d-flex flex-column flex-grow-1 gap-4">
       <Stack
@@ -173,7 +185,7 @@ const CompanyMaster = () => {
         </Box>
       </Stack>
       <Box component="div" className="d-flex flex-column flex-grow-1">
-        <Outlet />
+        <Outlet context={{ updateAttribute: UpdateCustomAttributeValue } satisfies OutletContextType} />
       </Box>
     </Box>
   );

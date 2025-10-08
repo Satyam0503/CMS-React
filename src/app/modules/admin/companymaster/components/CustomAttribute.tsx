@@ -5,9 +5,10 @@ import { AttributeTable } from "./AttributeTable";
 import {
   CustomAttributeModel,
   CustomAttributeValueModel,
+  OutletContextType,
   UpdateCustomAttributePayload,
 } from "../../models";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useOutletContext, useParams } from "react-router-dom";
 import {
   deleteAttributeItem,
   getCustomAttributeById,
@@ -19,6 +20,7 @@ import { toast } from "react-toastify";
 import { ServiceUrl } from "../../../../../utils/constant/Constant";
 
 export const CustomAttribute = () => {
+  const { updateAttribute } = useOutletContext<OutletContextType>();
   const { formatMessage: i } = useIntl();
   const [customAttributeData, setCustomAttributeData] =
     useState<CustomAttributeModel>({} as CustomAttributeModel);
@@ -28,8 +30,7 @@ export const CustomAttribute = () => {
   const customAttributeId = param?.customAttributeId;
   const customAttributeName =
     customAttributeData?.customAttributeTitle?.[currentLanguage] ??
-    `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} - ${
-      customAttributeData.customAttributeNumber
+    `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} - ${customAttributeData.customAttributeNumber
     }`;
 
   const handleCustomAttributeUpdate = async (
@@ -54,6 +55,11 @@ export const CustomAttribute = () => {
       const { data } = await updateCustomAttribute(payload);
       if (data.success) {
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
+        updateAttribute({
+          customAttributeId: customAttributeData.customAttributeId,
+          customAttributeNumber: customAttributeData.customAttributeNumber,
+          customAttributeTitle: attributeTitle!
+        })
         setRefresh(!refresh);
       }
     } catch (error) {
