@@ -13,10 +13,11 @@ import {
   GetLeaveTypeResponse,
   LeaveBalanceRequestModel,
   LeaveType,
-  LeaveRequestsFilter,
-  GetLeaveRequestesResponse,
+  GetLeaveRequestsResponse,
   GetEmployeeLeaveBalanceResponse,
   RequestLeaveModel,
+  GetLeaveRequestPayLoad,
+  GetMyLeaveRequestsResponse,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -56,9 +57,16 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
   );
 };
 
-export const getAllLeaveRequest = (payload: LeaveRequestsFilter) => {
-  return postRequest<LeaveRequestsFilter, GetLeaveRequestesResponse>(
+export const getAllLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetLeaveRequestsResponse>(
     ServiceUrl.GET_LEAVE_REQUESTS,
+    payload
+  );
+};
+
+export const getMyLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetMyLeaveRequestsResponse>(
+    ServiceUrl.GET_MY_LEAVE_REQUEST,
     payload
   );
 };

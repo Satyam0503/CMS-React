@@ -1,6 +1,6 @@
 import { Dayjs } from "dayjs";
 import { LEAVE_REQUEST_STATUS, LEAVE_TYPE } from "../../../utils/enums";
-import { ResponseData } from "../../../utils/common_types";
+import { PaginationModel, ResponseData } from "../../../utils/common_types";
 
 export interface LeaveType {
   leaveTypeId?: string;
@@ -21,7 +21,6 @@ export interface RequestLeaveModel {
   reason: string;
   reviewedBy?: string;
   status?: number;
-  employeeId: string;
 }
 
 export type LeaveRequestModel = RequestLeaveModel & {
@@ -30,15 +29,15 @@ export type LeaveRequestModel = RequestLeaveModel & {
   jobRole: null | Record<string, string>;
 };
 
-export type LeaveRequestsFilter = {
-  employeeId?: string;
-  startDate?: Dayjs | string | null;
-  endDate?: Dayjs | string | null;
-  leaveType?: LEAVE_TYPE[];
-  status?: LEAVE_REQUEST_STATUS[];
-  pageNo: number;
-  pageSize: number;
+export type LeaveRequestsFilterModel = {
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  leaveType: LEAVE_TYPE | null;
+  status: LEAVE_REQUEST_STATUS | null;
 };
+export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel & PaginationModel;
+
+export type MyLeaveRequestModel = Required<RequestLeaveModel>;
 
 export type LeaveBalanceFilter = {
   employeeName?: string;
@@ -84,6 +83,8 @@ export type EmployeeLeaveTypeBalance = {
 
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;
 export type GetLeaveBalanceResponse = ResponseData<LeaveBalance>;
-export type GetLeaveRequestesResponse = ResponseData<LeaveRequestModel>;
+export type GetLeaveRequestsResponse = ResponseData<LeaveRequestModel>;
+export type GetMyLeaveRequestsResponse = ResponseData<MyLeaveRequestModel>;
+
 export type GetEmployeeLeaveBalanceResponse =
   ResponseData<EmployeeLeaveTypeBalance>;

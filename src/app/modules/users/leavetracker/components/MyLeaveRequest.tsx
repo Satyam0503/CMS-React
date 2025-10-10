@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../../../Redux/hooks"
-import { EmployeeLeaveTypeBalance, LeaveRequestModel, LeaveRequestsFilter } from "../../../leaves/model";
-import { deleteLeaveRequest, getAllLeaveRequest } from "../../../leaves/leaveServices";
+import { EmployeeLeaveTypeBalance, GetLeaveRequestPayLoad, MyLeaveRequestModel } from "../../../leaves/model";
+import { deleteLeaveRequest, getMyLeaveRequest } from "../../../leaves/leaveServices";
 import { Card, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { dateFormatter, leaveRequestStatusMapper, LeaveTypeMapper } from "../../../../../utils/common";
@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import TableSkeleton from "../../../../shared/components/TableSkeleton";
 import { LeaveApplication } from "./LeaveApplication";
 import dayjs from "dayjs";
+import { initialLeaveRequestFilter } from "../../../leaves/components/LeaveRequestFilter";
 
 interface PropsType {
     leaveBalance: EmployeeLeaveTypeBalance[],
@@ -24,13 +25,12 @@ interface PropsType {
 
 export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
     const { formatMessage: i } = useIntl();
-    const currentUserId = useAppSelector(state => state.user.userData?.userId)!
     const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
-    const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
+    const [leaveRequest, setLeaveRequest] = useState<MyLeaveRequestModel[]>([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [refresh, setRefresh] = useState(false);
     const [selectedLeaveRequestId, setSelectedLeaveRequestId] = useState<string | null>();
-    const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<LeaveRequestModel | null>(null);
+    const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<MyLeaveRequestModel | null>(null);
     const [loading, setLoading] = useState(true);
 
     const handlePageChange = (page: number) => {
@@ -75,13 +75,13 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
     useEffect(() => {
         setLoading(true);
         const fetchLeaveRequest = async () => {
-            const payload: LeaveRequestsFilter = {
-                employeeId: currentUserId,
+            const payload: GetLeaveRequestPayLoad = {
+                ...initialLeaveRequestFilter,
                 pageNo: paginationValues.pageNo + 1,
                 pageSize: paginationValues.records,
             }
             try {
-                const { data } = await getAllLeaveRequest(payload);
+                const { data } = await getMyLeaveRequest(payload);
                 if (data.success) {
                     setLeaveRequest(data.methodResults);
                     setTotalRecords(data.totalRecords);
@@ -102,14 +102,15 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
             <Card className="p-4">
                 <Typography variant="h5" className="mb-2">{i({ id: "LEAVE.APPLIED_LEAVE" })}</Typography>
                 <TableContainer className="mb-2">
-                    <Table sx={{ minWidth: 800 }} >
+                    <Table sx={{ minWidth: 960 }} >
                         <TableHead>
                             <TableRow>
                                 <TableCell>{i({ id: "LEAVE.DATE" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.TOTAL_DAYS" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
-                                <TableCell>{i({ id: "LEAVE.STATUS" })}</TableCell>
+                                <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
+                                <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
                                 <TableCell>{i({ id: "ACTION" })}</TableCell>
                             </TableRow>
                         </TableHead>
@@ -150,12 +151,13 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
                                                             danger: row.status === LEAVE_REQUEST_STATUS.REJECTED,
                                                         })} />
                                                     </TableCell>
+                                                    <TableCell>{row.reviewedBy}</TableCell>
                                                     <TableCell>
                                                         {row.status === LEAVE_REQUEST_STATUS.PENDING ?
-                                                            <>
+                                                            <Stack direction="row" >
                                                                 <CustomIconButton icon={<Edit />} classNames="me-2" tooltip={i({ id: "TOOLTIP.EDIT_LEAVE_REQUEST" })} handleClick={() => setSelectedLeaveRequest(row)} />
                                                                 <CustomIconButton icon={<Delete color="error" />} tooltip={i({ id: "TOOLTIP.DELETE_LEAVE_REQUEST" })} handleClick={() => setSelectedLeaveRequestId(row.leaveRequestId)} />
-                                                            </> : "-"
+                                                            </Stack> : "-"
                                                         }
                                                     </TableCell>
                                                 </TableRow>
@@ -194,7 +196,6 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
                     handleRefresh={handleRefresh}
                     initialValues={{
                         leaveRequestId: selectedLeaveRequest.leaveRequestId,
-                        employeeId: selectedLeaveRequest.employeeId,
                         leaveType: selectedLeaveRequest.leaveType,
                         totalDays: selectedLeaveRequest.totalDays,
                         isHalfDay: selectedLeaveRequest.isHalfDay,

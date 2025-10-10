@@ -208,6 +208,7 @@ export const ServiceUrl = {
   DELETE_LEAVE_REQUEST: `${BaseUrl}/api/LeaveManagement/DeleteLeaveRequest`,
   GET_EMP_LEAVE_BALANCE: `${BaseUrl}/api/LeaveManagement/GetEmployeeLeaveBalance`,
   UPDATE_LEAVE_REQUEST_STATUS: `${BaseUrl}/api/LeaveManagement/LeaveRequest`,
+  GET_MY_LEAVE_REQUEST: `${BaseUrl}/api/LeaveManagement/GetMyLeaveRequests`,
 
   // custom attributes
   CREATE_NEW_CUSTOM_ATTRIBUTE: `${BaseUrl}/api/CompanyMaster/CreateCustomAttribute`,
@@ -776,11 +777,21 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     build: (views: ViewModel) => {
       return views.length === 0 ?
         "_" :
-        <AvatarGroup spacing={24} className="justify-content-end" total={views.length}>
+        <AvatarGroup spacing={20} className="justify-content-end" total={views.length} slotProps={{
+          additionalAvatar: {
+            sx: {
+              width: 32,
+              height: 32,
+              left: 10,
+            }
+          }
+        }}
+          renderSurplus={(surplus) => <span>+{surplus.toString()[0]}</span>}
+        >
           {
             views.slice(0, 8).map(view => (
               <Tooltip key={view.employeeId} title={view.employeeName}>
-                <Avatar alt={view.employeeName} src={view.profileUrl ?? DEFAULT_USER_AVATAR} />
+                <Avatar alt={view.employeeName} src={view.profileUrl ?? DEFAULT_USER_AVATAR} sx={{ width: 32, height: 32 }} />
               </Tooltip>
             ))
           }

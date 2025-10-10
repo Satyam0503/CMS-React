@@ -282,14 +282,15 @@ export const getAppliedFilters = () => {
   const savedFilters = localStorage.getItem(APP_FILTER_KEY);
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
-    : {
+    : ({
         application: null,
         jobs: null,
         processLog: null,
         employee: null,
         holiday: null,
         noticeBoard: null,
-      };
+        leaveRequest: null,
+      } satisfies FiltersType);
   return appliedfilters;
 };
 

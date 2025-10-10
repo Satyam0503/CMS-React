@@ -156,7 +156,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               </Menu>
             </Stack>
 
-            <Stack spacing={1} direction="row">
+            <Stack direction="row" spacing={1} >
               <CustomisedDatePicker
                 label={formatMessage({ id: "FROM" })}
                 value={
@@ -340,19 +340,19 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
           </Stack>
         </Stack>
         <Stack
-          direction={"row"}
+          direction="row"
           spacing={2}
           sx={{ justifyContent: "flex-end", marginBlockStart: 2 }}
         >
           <CustomisedButton
-            label="Reset"
+            label={formatMessage({ id: "BUTTON.RESET" })}
             variant="outlined"
             handleClick={() => {
               dispatch(setApplicationFilter(initialFilterValues));
               props.handleClose();
             }}
           />
-          <CustomisedButton type="submit" label="Apply" />
+          <CustomisedButton type="submit" label={formatMessage({ id: "BUTTON.APPLY" })} />
         </Stack>
       </form>
     </FilterComponent>

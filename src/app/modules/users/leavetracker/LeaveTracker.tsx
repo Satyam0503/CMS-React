@@ -14,10 +14,8 @@ import { EmployeeLeaveTypeBalance, RequestLeaveModel } from "../../leaves/model"
 import { useAppSelector } from "../../../Redux/hooks";
 import { getEmployeeLeaveBalance } from "../../leaves/leaveServices";
 import { toast } from "react-toastify";
-import { CircularLoader } from "../../../shared/components/CircularLoader";
 
 const initialLeaveRequestValue: RequestLeaveModel = {
-  employeeId: "",
   leaveType: LEAVE_TYPE.SICK_LEAVE,
   isHalfDay: false,
   startDate: null,
@@ -31,7 +29,6 @@ export const LeaveTracker: FC = () => {
   const [empLeaveTypeBalance, setEmployeeLeaveTypeBalance] = useState<EmployeeLeaveTypeBalance[]>([]);
   const [open, setOpen] = useState(false);
   const employeeId = useParams().employeeid;
-  const navigate = useNavigate();
   const currentUserId = useAppSelector(state => state.user.userData?.userId)!;
   const [loading, setLoading] = useState(true);
 

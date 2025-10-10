@@ -1,9 +1,9 @@
-import { Card, MenuItem, Select, SelectChangeEvent, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Card, Divider, IconButton, MenuItem, Select, SelectChangeEvent, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl"
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { LeaveRequestStatusTypes } from "../../../../utils/constant/Constant";
-import { LeaveRequestModel, LeaveRequestsFilter } from "../model";
+import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../model";
 import { Pagination } from "../../../shared/components/Pagination";
 import { getAllLeaveRequest, updateLeaveRequestStatus } from "../leaveServices";
 import clsx from "clsx";
@@ -13,11 +13,12 @@ import { ViewLeaveReason } from "../../../shared/components/ViewLeaveReason";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { toast } from "react-toastify";
-
-const initialLeaveRequestFilter = {
-    leaveType: [],
-    status: []
-}
+import { initialLeaveRequestFilter, LeaveRequestFilter } from "./LeaveRequestFilter";
+import { useAppSelector } from "../../../Redux/hooks";
+import { StyleStatus } from "../../../shared/components/StyledStatus";
+import { Edit } from "@mui/icons-material";
+import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../shared/components/CustomisedButton";
 
 export const LeaveRequest = () => {
     const { formatMessage: i } = useIntl();
@@ -28,14 +29,15 @@ export const LeaveRequest = () => {
     const [isOpen, setOpen] = useState(false);
     const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<string | null>(null);
     const [status, setStatus] = useState<number | null>(null);
+    const appliedLeaveRequestFilter = useAppSelector(state => state.filters.leaveRequest) ?? initialLeaveRequestFilter;
 
     useEffect(() => {
         setLoading(true);
         const fetchLeaveRequest = async () => {
-            const payload: LeaveRequestsFilter = {
+            const payload: GetLeaveRequestPayLoad = {
                 pageNo: paginationValues.pageNo + 1,
                 pageSize: paginationValues.records,
-                ...initialLeaveRequestFilter
+                ...appliedLeaveRequestFilter
             }
             try {
                 const { data } = await getAllLeaveRequest(payload);
@@ -51,7 +53,7 @@ export const LeaveRequest = () => {
             }
         }
         fetchLeaveRequest();
-    }, [paginationValues]);
+    }, [paginationValues, appliedLeaveRequestFilter]);
 
     const handlePageChange = (page: number) => {
         setPaginationValues({
@@ -108,6 +110,8 @@ export const LeaveRequest = () => {
     return (
         <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
             <Typography variant="h5">{i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}</Typography>
+            <LeaveRequestFilter />
+            <Divider className="mt-2" />
             <TableContainer className="mb-2 h-100">
                 <Table sx={{ minWidth: 1200 }} >
                     <TableHead>
@@ -115,10 +119,11 @@ export const LeaveRequest = () => {
                             <TableCell>{i({ id: "LEAVE.EMPLOYEE_NAME" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.LEAVE_PERIOD" })}</TableCell>
-                            <TableCell>{i({ id: "LEAVE.TOTAL_DAYS" })}</TableCell>
+                            <TableCell>{i({ id: "LEAVE.DURATION" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
-                            <TableCell>{i({ id: "STATUS" })}</TableCell>
+                            <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
+                            <TableCell>{i({ id: "ACTION" })}</TableCell>
                         </TableRow>
                     </TableHead>
                     {
@@ -160,28 +165,19 @@ export const LeaveRequest = () => {
                                                 </TableCell>
                                                 <TableCell>{row.reviewedBy}</TableCell>
                                                 <TableCell >
-                                                    <Select
-                                                        id="demo-select-small"
-                                                        value={row.status}
-                                                        size="small"
-                                                        sx={{
-                                                            "& .MuiOutlinedInput-input": {
-                                                                paddingBlock: .6,
-                                                            }
-                                                        }}
+                                                    <StyleStatus
                                                         className={clsx({
-                                                            "text-success": row.status === LEAVE_REQUEST_STATUS.APPROVED,
-                                                            "text-warning": row.status === LEAVE_REQUEST_STATUS.PENDING,
-                                                            "text-danger": row.status === LEAVE_REQUEST_STATUS.REJECTED,
+                                                            "success": row.status === LEAVE_REQUEST_STATUS.APPROVED,
+                                                            "warning": row.status === LEAVE_REQUEST_STATUS.PENDING,
+                                                            "danger": row.status === LEAVE_REQUEST_STATUS.REJECTED,
                                                         })}
-                                                        onChange={(e) => handleChange(e, row.status!, row.leaveRequestId!)}
-                                                    >
-                                                        {
-                                                            LeaveRequestStatusTypes.map(item => (
-                                                                <MenuItem value={item.value} key={item.id} disabled={row.status !== LEAVE_REQUEST_STATUS.PENDING && item.value === LEAVE_REQUEST_STATUS.PENDING} ><FormattedMessage id={item.label} /></MenuItem>
-                                                            ))
-                                                        }
-                                                    </Select>
+                                                        label={LeaveRequestStatusTypes.find(type => type.value === row.status)?.label ?? ""}
+                                                    />
+                                                </TableCell>
+                                                <TableCell>
+                                                    <IconButton onClick={() => setSelectedLeaveRequest(row.leaveRequestId)}>
+                                                        <Edit className="fs-20" />
+                                                    </IconButton>
                                                 </TableCell>
                                             </TableRow>
                                         ))
@@ -211,6 +207,27 @@ export const LeaveRequest = () => {
                     ok_btn={true}
                 />
             }
+            {
+                selectedLeaveRequest && <LeaveApprovalModal open={true} handleClose={() => setSelectedLeaveRequest(null)} />
+            }
         </Card >
+    )
+}
+
+
+type PropsType = {
+    open: boolean;
+    handleClose: () => void;
+}
+export const LeaveApprovalModal = ({ open, handleClose }: PropsType) => {
+    const { formatMessage: i } = useIntl();
+    return (
+        <CustomisedModal open={open} handleClose={handleClose}>
+            <Stack>
+                <CustomisedButton
+                    label={i({ id: "BUTTON.UPDATE" })}
+                />
+            </Stack>
+        </CustomisedModal>
     )
 }

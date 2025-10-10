@@ -122,14 +122,6 @@ export const createApplicationTheme = (
         },
       },
 
-      MuiSelect: {
-        styleOverrides: {
-          // iconOutlined: {
-          //   color: colors.neutral[400],
-          // },
-        },
-      },
-
       MuiOutlinedInput: {
         styleOverrides: {
           input: {
