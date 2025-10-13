@@ -23,7 +23,7 @@ export interface RequestLeaveModel {
   status?: number;
 }
 
-export type LeaveRequestModel = RequestLeaveModel & {
+export type LeaveRequestModel = Required<RequestLeaveModel> & {
   employeeName: string;
   profileUrl: string | null;
   jobRole: null | Record<string, string>;
@@ -37,7 +37,9 @@ export type LeaveRequestsFilterModel = {
 };
 export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel & PaginationModel;
 
-export type MyLeaveRequestModel = Required<RequestLeaveModel>;
+export type MyLeaveRequestModel = Required<RequestLeaveModel> & {
+  comment: string;
+};
 
 export type LeaveBalanceFilter = {
   employeeName?: string;
@@ -79,6 +81,11 @@ export type EmployeeLeaveTypeBalance = {
   minAdvanceNoticeDate: number;
   maximumLeave: number;
   remainingLeave: number;
+};
+
+export type LeaveRequestApprovalPayload = {
+  status: LEAVE_REQUEST_STATUS;
+  comment: string;
 };
 
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;

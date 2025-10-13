@@ -27,7 +27,6 @@ export const LeaveRequestFilter = () => {
             enableReinitialize: true,
             validationSchema: leaveRequestFilterValidationSchema,
             onSubmit: (values) => {
-                console.log(values);
                 dispatch(setLeaveRequestFilter(values));
             },
         });

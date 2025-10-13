@@ -18,6 +18,7 @@ import {
   RequestLeaveModel,
   GetLeaveRequestPayLoad,
   GetMyLeaveRequestsResponse,
+  LeaveRequestApprovalPayload,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -85,10 +86,10 @@ export const getEmployeeLeaveBalance = (employeeId: string) => {
 
 export const updateLeaveRequestStatus = (
   leaveRequestId: string,
-  status: LEAVE_REQUEST_STATUS
+  payload: LeaveRequestApprovalPayload
 ) => {
-  return patchRequest<LEAVE_REQUEST_STATUS, ApiResponse>(
+  return patchRequest<LeaveRequestApprovalPayload, ApiResponse>(
     `${ServiceUrl.UPDATE_LEAVE_REQUEST_STATUS}/${leaveRequestId}/Status`,
-    status
+    payload
   );
 };

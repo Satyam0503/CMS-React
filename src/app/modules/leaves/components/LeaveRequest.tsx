@@ -1,9 +1,9 @@
-import { Card, Divider, IconButton, MenuItem, Select, SelectChangeEvent, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Card, Divider, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl"
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { LeaveRequestStatusTypes } from "../../../../utils/constant/Constant";
-import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../model";
+import { GetLeaveRequestPayLoad, LeaveRequestApprovalPayload, LeaveRequestModel } from "../model";
 import { Pagination } from "../../../shared/components/Pagination";
 import { getAllLeaveRequest, updateLeaveRequestStatus } from "../leaveServices";
 import clsx from "clsx";
@@ -11,7 +11,6 @@ import { dateFormatter, LeaveTypeMapper } from "../../../../utils/common";
 import TableSkeleton from "../../../shared/components/TableSkeleton";
 import { ViewLeaveReason } from "../../../shared/components/ViewLeaveReason";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { toast } from "react-toastify";
 import { initialLeaveRequestFilter, LeaveRequestFilter } from "./LeaveRequestFilter";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -26,9 +25,8 @@ export const LeaveRequest = () => {
     const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
     const [totalRecords, setTotalRecords] = useState(0);
     const [isLoading, setLoading] = useState(true);
-    const [isOpen, setOpen] = useState(false);
-    const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<string | null>(null);
-    const [status, setStatus] = useState<number | null>(null);
+    const [refresh, setRefresh] = useState(false);
+    const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<LeaveRequestModel | null>(null);
     const appliedLeaveRequestFilter = useAppSelector(state => state.filters.leaveRequest) ?? initialLeaveRequestFilter;
 
     useEffect(() => {
@@ -53,7 +51,7 @@ export const LeaveRequest = () => {
             }
         }
         fetchLeaveRequest();
-    }, [paginationValues, appliedLeaveRequestFilter]);
+    }, [paginationValues, appliedLeaveRequestFilter, refresh]);
 
     const handlePageChange = (page: number) => {
         setPaginationValues({
@@ -70,43 +68,9 @@ export const LeaveRequest = () => {
         });
     };
 
-    const handleLeaveStatusChange = async (str: string) => {
-        if (str !== "ok" || !selectedLeaveRequest || !status) {
-            return;
-        }
-        try {
-            const { data } = await updateLeaveRequestStatus(selectedLeaveRequest, status);
-            if (data.success) {
-                toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
-                setLeaveRequest(leaveRequest.map(request => {
-                    if (request.leaveRequestId !== selectedLeaveRequest) {
-                        return request;
-                    }
-                    return {
-                        ...request,
-                        status: status
-                    }
-                }))
-                handleConfirmationClose();
-            }
-        } catch (error) {
-            console.error((error as Error).message);
-        }
+    const handleRefresh = () => {
+        setRefresh(!refresh);
     }
-    const handleConfirmationClose = () => {
-        setOpen(false);
-        setSelectedLeaveRequest(null);
-        setStatus(null);
-    }
-
-    const handleChange = (e: SelectChangeEvent<number>, currentStatus: LEAVE_REQUEST_STATUS, leaveRequestId: string) => {
-        if (currentStatus !== e.target.value) {
-            setSelectedLeaveRequest(leaveRequestId);
-            setStatus(e.target.value as number);
-            setOpen(true);
-        }
-    }
-
     return (
         <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
             <Typography variant="h5">{i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}</Typography>
@@ -175,7 +139,7 @@ export const LeaveRequest = () => {
                                                     />
                                                 </TableCell>
                                                 <TableCell>
-                                                    <IconButton onClick={() => setSelectedLeaveRequest(row.leaveRequestId)}>
+                                                    <IconButton onClick={() => setSelectedLeaveRequest(row)}>
                                                         <Edit className="fs-20" />
                                                     </IconButton>
                                                 </TableCell>
@@ -198,17 +162,7 @@ export const LeaveRequest = () => {
                 )
             }
             {
-                isOpen && <ConfirmationModal
-                    open={true}
-                    title={i({ id: "CONFIRMATION.TITLE.LEAVE_STATUS_CHANGE" })}
-                    content={i({ id: "CONFIRMATION.CONTENT.LEAVE_STATUS_CHANGE" })}
-                    handleClose={handleConfirmationClose}
-                    handleConfirmation={handleLeaveStatusChange}
-                    ok_btn={true}
-                />
-            }
-            {
-                selectedLeaveRequest && <LeaveApprovalModal open={true} handleClose={() => setSelectedLeaveRequest(null)} />
+                selectedLeaveRequest && <LeaveApprovalModal open={true} handleClose={() => setSelectedLeaveRequest(null)} leaveRequest={selectedLeaveRequest} refresh={handleRefresh} />
             }
         </Card >
     )
@@ -218,15 +172,86 @@ export const LeaveRequest = () => {
 type PropsType = {
     open: boolean;
     handleClose: () => void;
+    leaveRequest: LeaveRequestModel;
+    refresh: () => void;
 }
-export const LeaveApprovalModal = ({ open, handleClose }: PropsType) => {
+export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }: PropsType) => {
     const { formatMessage: i } = useIntl();
+    const [leaveData, setLeaveData] = useState({
+        status: leaveRequest.status,
+        comment: ""
+    });
+
+
+    const handleLeaveStatusUpdate = async () => {
+        try {
+            const payload: LeaveRequestApprovalPayload = {
+                ...leaveData
+            }
+            const { data } = await updateLeaveRequestStatus(leaveRequest.leaveRequestId, payload);
+            if (data.success) {
+                toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
+                refresh();
+                handleClose();
+            }
+        } catch (error) {
+            console.error((error as Error).message);
+        }
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<number>) => {
+        const { name, value } = e.target;
+        setLeaveData({
+            ...leaveData,
+            [name]: value
+        })
+    }
     return (
-        <CustomisedModal open={open} handleClose={handleClose}>
-            <Stack>
-                <CustomisedButton
-                    label={i({ id: "BUTTON.UPDATE" })}
+        <CustomisedModal open={open} handleClose={handleClose} title={i({ id: "LEAVE.TITLES.UPDATE_LEAVE_STATUS" })}>
+            <Stack spacing={2}>
+                <FormControl className="mt-2" fullWidth>
+                    <InputLabel id="leave-request-status">{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
+                    <Select
+                        labelId="leave-request-status"
+                        label={i({ id: "LEAVE.APPROVAL_STATUS" })}
+                        size="small"
+                        name="status"
+                        value={leaveData.status}
+                        onChange={handleChange}
+                    >
+                        {
+                            LeaveRequestStatusTypes.map(item => (
+                                <MenuItem value={item.value} key={item.id} disabled={leaveRequest.status !== LEAVE_REQUEST_STATUS.PENDING && item.value === LEAVE_REQUEST_STATUS.PENDING} >{i({ id: item.label })}</MenuItem>
+                            ))
+                        }
+                    </Select>
+                </FormControl>
+
+                <TextField
+                    fullWidth
+                    multiline
+                    type="text"
+                    name="comment"
+                    label={i({ id: "LEAVE.COMMENT" })}
+                    rows={3}
+                    placeholder={i({ id: "LEAVE.COMMENT" })}
+                    value={leaveData.comment}
+                    onChange={handleChange}
                 />
+
+
+                <Stack className="flex-row gap-2 justify-content-end">
+                    <CustomisedButton
+                        variant="outlined"
+                        label={i({ id: "BUTTON.CLOSE" })}
+                        handleClick={handleClose}
+                    />
+                    <CustomisedButton
+                        label={i({ id: "BUTTON.UPDATE" })}
+                        disabled={leaveRequest.status === leaveData.status}
+                        handleClick={handleLeaveStatusUpdate}
+                    />
+                </Stack>
             </Stack>
         </CustomisedModal>
     )

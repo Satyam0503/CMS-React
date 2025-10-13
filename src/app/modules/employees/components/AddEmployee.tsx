@@ -241,7 +241,7 @@ export const AddEmployee = (props: PropsTypes) => {
                       value={values.dateOfBirth}
                       setValue={(newDate: Dayjs | null) => {
                         setFieldTouched("dateOfBirth", true);
-                        setFieldValue("dateOfBirth", newDate);
+                        setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
                       }}
                       maxDate={dayjs()}
                     />
@@ -257,7 +257,7 @@ export const AddEmployee = (props: PropsTypes) => {
                       value={values.dateOfJoining}
                       setValue={(newDate: Dayjs | null) => {
                         setFieldTouched("dateOfJoining", true);
-                        setFieldValue("dateOfJoining", newDate);
+                        setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
                       }}
                       maxDate={dayjs()}
                     />

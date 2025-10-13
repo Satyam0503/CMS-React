@@ -44,7 +44,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       height: height || 200,
       type: "bar",
     },
-    colors: [palette.primary.main, palette.secondary.main, palette.grey[700], palette.primary.dark],
+    colors: ["#9b56c6", "#873351", "#6a5b17", "#508a9b", "#FEBB68", "#cc5e5d", "#5dcc6a", "#32176a"],
     fill: {
       opacity: 1,
     },

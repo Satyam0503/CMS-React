@@ -189,7 +189,8 @@
     "SEE_MORE": "See More",
     "MARK_ALL_AS_READ": "mark all as read",
     "UPLOAD": "Upload",
-    "REMOVE": "Remove"
+    "REMOVE": "Remove",
+    "CLEAR": "Clear"
   },
 
   "TITLES": {
@@ -327,6 +328,7 @@
   },
 
   "LEAVE": {
+    "TITLE": "Leave",
     "EMPLOYEE_NAME": "Employee Name",
     "TOTAL_DAYS": "Total Days",
     "REASON": "Reason",
@@ -337,12 +339,14 @@
     "APPLY_FOR_LEAVE": "Apply for leave",
     "LEAVE_PERIOD": "Leave Period",
     "MIN_NOTICE_DAY": "Advance Notice Days",
-    "STATUS": "Status",
+    "APPROVAL_STATUS": "Approval Status",
     "APPROVED_BY": "Approved By",
-    "APPLIED_LEAVE": "Applied Leave",
+    "COMMENT": "Comment",
     "REMAINING": "Remaining",
+    "LEAVE_HISTORY": "Leave History",
     "LEAVE_APPLICATION": "Leave Application",
     "TAKEN": "Taken",
+    "DURATION": "Duration",
     "TITLES": {
       "LEAVE_BALANCE": "Leave Balance",
       "ADD_LEAVE_BALANCE": "Add Leave Balance",
@@ -351,7 +355,8 @@
       "LEAVE_REQUESTS": "Leave Requests",
       "LEAVE_REQUEST": "Leave Request",
       "LEAVE_TYPES": "Leave Types",
-      "EDIT_LEAVE_TYPE": "Edit Leave Type"
+      "EDIT_LEAVE_TYPE": "Edit Leave Type",
+      "UPDATE_LEAVE_STATUS": "Update Leave Status"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Casual Leave",
@@ -831,15 +836,20 @@
     "14": "Employee doesn't exist",
     "15": "Skill already exist",
     "16": "Applicant already exist",
-    "17": "Leave Balance doesn't exist for employee",
+    "17": "Leave balance record does not exist",
     "18": "Leave must be applied in advance",
     "19": "You have pending leave already",
     "20": "Insuficient leave balance",
     "21": "Insufficient leave balance for current month",
-    "22": "Leave type doesn't exists",
+    "22": "Leave type does not exist",
     "23": "Leave type already exist",
     "24": "Payslip data not found for the current month",
-    "25": "Payroll for the month already exist"
+    "25": "Payroll for the month already exist",
+    "26": "Maximum allowed leave days exceeded for the selected leave type",
+    "27": "Maximum leave cannot be negative",
+    "28": "Leave Balance For Current Employee Already Exists",
+    "29": "Selected leave type balance does not exist for the employee",
+    "30": "Leave request failed: overlapping with previously approved leave"
   },
   "CHAT": {
     "TITLE": "Chats",

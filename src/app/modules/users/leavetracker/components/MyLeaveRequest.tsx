@@ -100,7 +100,7 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
     return (
         <>
             <Card className="p-4">
-                <Typography variant="h5" className="mb-2">{i({ id: "LEAVE.APPLIED_LEAVE" })}</Typography>
+                <Typography variant="h5" className="mb-2">{i({ id: "LEAVE.LEAVE_HISTORY" })}</Typography>
                 <TableContainer className="mb-2">
                     <Table sx={{ minWidth: 960 }} >
                         <TableHead>
@@ -108,9 +108,9 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
                                 <TableCell>{i({ id: "LEAVE.DATE" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.TOTAL_DAYS" })}</TableCell>
-                                <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
                                 <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
+                                <TableCell>{i({ id: "LEAVE.COMMENT" })}</TableCell>
                                 <TableCell>{i({ id: "ACTION" })}</TableCell>
                             </TableRow>
                         </TableHead>
@@ -139,12 +139,6 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
                                                     <TableCell>{i({ id: LeaveTypeMapper[row.leaveType] })}</TableCell>
                                                     <TableCell>{`${row.totalDays} ${i({ id: row.totalDays > 1 ? "DAYS" : "DAY" })}`}</TableCell>
                                                     <TableCell>
-                                                        <Stack direction="row" sx={{ maxWidth: 200, alignItems: "center" }}>
-                                                            <Typography variant="caption" className="text-truncate " >{row.reason}</Typography>
-                                                            <ViewLeaveReason reason={row.reason} />
-                                                        </Stack>
-                                                    </TableCell>
-                                                    <TableCell>
                                                         <StyleStatus label={leaveRequestStatusMapper[row.status!]} className={clsx({
                                                             success: row.status === LEAVE_REQUEST_STATUS.APPROVED,
                                                             warning: row.status === LEAVE_REQUEST_STATUS.PENDING,
@@ -152,6 +146,16 @@ export const MyLeaveRequests = ({ leaveBalance }: PropsType) => {
                                                         })} />
                                                     </TableCell>
                                                     <TableCell>{row.reviewedBy}</TableCell>
+                                                    <TableCell>
+                                                        {
+                                                            row.comment?.trim().length > 0 ?
+                                                                <Stack direction="row" sx={{ maxWidth: 200, alignItems: "center" }}>
+                                                                    <Typography variant="caption" className="text-truncate " >{row.comment}</Typography>
+                                                                    <ViewLeaveReason reason={row.comment} />
+                                                                </Stack> :
+                                                                "_"
+                                                        }
+                                                    </TableCell>
                                                     <TableCell>
                                                         {row.status === LEAVE_REQUEST_STATUS.PENDING ?
                                                             <Stack direction="row" >

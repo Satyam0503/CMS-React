@@ -1,5 +1,7 @@
 import {
+  Card,
   Stack,
+  Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
@@ -62,11 +64,14 @@ export const LeaveTracker: FC = () => {
   }, [currentUserId]);
 
   return (
-    <Stack className="gap-6">
-      {
-        !employeeId &&
-        <CustomisedButton className="align-self-end" Icon={<Add />} label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })} handleClick={handleOpen} />
-      }
+    <Stack className="gap-2">
+      <Card className="p-4 d-flex justify-content-between">
+        <Typography className="fs-20" variant="h6">{i({ id: "LEAVE.TITLE" })}</Typography>
+        {
+          !employeeId &&
+          <CustomisedButton className="align-self-end" Icon={<Add />} label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })} handleClick={handleOpen} />
+        }
+      </Card>
       {open && <LeaveApplication initialValues={initialLeaveRequestValue} leaveTypeBalance={empLeaveTypeBalance} edit={false} open={true} handleClose={handleClose} />}
       <EmployeeLeaveTypesCharts isLoading={loading} leaveBalance={empLeaveTypeBalance} />
       {
