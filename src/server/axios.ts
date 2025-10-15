@@ -8,13 +8,20 @@ import {
   RefreshTokenPayload,
   setLocalKey,
 } from "../app/modules/auth";
-import { toast } from "react-toastify";
+
 import { refreshTokenAsync } from "../app/modules/auth/core/_requests";
 import { getCurrentAppLanguage } from "../utils/common";
-import { ServiceUrl } from "../utils/constant/Constant";
+import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 
 let isRefreshing = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
+
+const timeout = 10000;
+
+const instance = axios.create({
+  baseURL: BaseUrl,
+  timeout: timeout,
+});
 
 // function to get new access token
 export const refreshToken = async () => {
@@ -42,7 +49,7 @@ export const refreshToken = async () => {
 };
 
 // using interceptors to automatically set token and current Language for each request
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   (config) => {
     const token = getLocalKey()?.token ?? "";
     config.headers["Accept-Language"] = getCurrentAppLanguage();
@@ -60,7 +67,7 @@ axios.interceptors.request.use(
 );
 
 // response interceptor to handle response error
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
@@ -82,10 +89,10 @@ axios.interceptors.response.use(
             originalRequest.data = JSON.stringify(payload);
           }
           originalRequest.headers.Authorization = `Bearer ${token}`;
-          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+          instance.defaults.headers.common.Authorization = `Bearer ${token}`;
           failedRequestsQueue.forEach((callback) => callback(token));
           failedRequestsQueue = [];
-          return axios.request(originalRequest);
+          return instance.request(originalRequest);
         } else {
           return Promise.reject(error);
         }
@@ -94,7 +101,7 @@ axios.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedRequestsQueue.push((token: string) => {
             originalRequest.headers["Authorization"] = `Bearer ${token}`;
-            resolve(axios(originalRequest));
+            resolve(instance(originalRequest));
           });
         });
       }
@@ -109,7 +116,7 @@ export const getRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
-  return axios.get<ResponseData>(path, {
+  return instance.get<ResponseData>(path, {
     ...config,
     headers: {
       "Cache-Control": "max-age=3600",
@@ -123,7 +130,7 @@ export const postRequest = <RequestData, ResponseData>(
   config?: AxiosRequestConfig,
   isformData: boolean = false
 ) => {
-  return axios.post<ResponseData>(path, data, {
+  return instance.post<ResponseData>(path, data, {
     ...config,
     headers: {
       "Content-Type": isformData ? "multipart/form-data" : "application/json",
@@ -137,7 +144,7 @@ export const patchRequest = <Data, ResponseData>(
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return axios.patch<ResponseData>(path, data, {
+  return instance.patch<ResponseData>(path, data, {
     ...config,
     headers: {
       "Content-Type": "application/json",
@@ -149,7 +156,7 @@ export const deleteRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
-  return axios.delete<ResponseData>(path, config);
+  return instance.delete<ResponseData>(path, config);
 };
 
 export const putRequest = <Data, ResponseData>(
@@ -157,7 +164,7 @@ export const putRequest = <Data, ResponseData>(
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return axios.put<ResponseData>(path, data, {
+  return instance.put<ResponseData>(path, data, {
     ...config,
     headers: {
       "Content-Type": "application/json",

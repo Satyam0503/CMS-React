@@ -16,7 +16,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.16.13",
-    "@mui/x-charts": "^7.22.3",
+    "@mui/x-charts": "^8.14.0",
     "@mui/x-date-pickers": "^7.23.1",
     "@popperjs/core": "^2.11.6",
     "@reduxjs/toolkit": "^2.5.0",

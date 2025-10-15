@@ -41,7 +41,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
           speed: 800,
         },
       },
-      height: height || 200,
+      height: height || 220,
       type: "bar",
     },
     colors: ["#9b56c6", "#873351", "#6a5b17", "#508a9b", "#FEBB68", "#cc5e5d", "#5dcc6a", "#32176a"],
@@ -111,7 +111,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
             },
           ]}
           type="bar"
-          height={height || 200}
+          height={height || 220}
           width="100%"
         />
       </div>

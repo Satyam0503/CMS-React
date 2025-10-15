@@ -24,6 +24,7 @@ import { Days } from "../../../utils/constant/Constant";
 import { LeaveManagementTabs } from "./components/LeaveManagementTabs";
 import { LeaveManagementRoutes } from "../../routing/LeaveManagementRoutes";
 import { usePageData } from "../../Context/PageDataProvider";
+import { LeaveRequestSummaryChart } from "./components/LeaveRequestSummaryChart";
 
 const LeaveManagement: FC = () => {
   const intl = useIntl();
@@ -49,7 +50,10 @@ const LeaveManagement: FC = () => {
   return (
     <Stack className="gap-4 flex-grow-1 ">
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} lg={3}>
+        <Grid item xs={12} sm={6} md={5} >
+          <LeaveRequestSummaryChart />
+        </Grid>
+        {/* <Grid item xs={12} sm={6} lg={3}>
           <IconStat
             iconBg={theme.palette.secondary.lighter}
             icon={<HourglassBottom fontSize="large" />}
@@ -58,7 +62,6 @@ const LeaveManagement: FC = () => {
             title="First Half"
           />
         </Grid>
-
         <Grid item xs={12} sm={6} lg={3}>
           <IconStat
             iconBg={theme.palette.primary.lighter}
@@ -85,7 +88,7 @@ const LeaveManagement: FC = () => {
             number={"7"}
             title="Absent"
           />
-        </Grid>
+        </Grid> */}
       </Grid>
       <Stack className="flex-grow-1">
         <LeaveManagementRoutes />

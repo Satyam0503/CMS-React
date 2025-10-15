@@ -91,7 +91,7 @@ export const ApplicationsChart = () => {
 
   return (
     <Card
-      sx={{ minHeight: "280px" }}
+      sx={{ minHeight: "310px" }}
       className="p-4 d-flex flex-column"
     >
       <Stack direction="row" className="mb-4 justify-content-between flex-wrap">

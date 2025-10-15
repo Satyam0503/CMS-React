@@ -88,10 +88,20 @@ export type LeaveRequestApprovalPayload = {
   comment: string;
 };
 
+export type LeaveRequestSummary = {
+  totalRequests: number;
+  leaveStatusSummary: Record<number, number>;
+  leaveTypeSummary: {
+    leaveType: LEAVE_TYPE;
+    statusValues: Record<number, number>;
+  }[];
+};
+
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;
 export type GetLeaveBalanceResponse = ResponseData<LeaveBalance>;
 export type GetLeaveRequestsResponse = ResponseData<LeaveRequestModel>;
 export type GetMyLeaveRequestsResponse = ResponseData<MyLeaveRequestModel>;
+export type GetLeaveRequestsSummary = ResponseData<LeaveRequestSummary>;
 
 export type GetEmployeeLeaveBalanceResponse =
   ResponseData<EmployeeLeaveTypeBalance>;

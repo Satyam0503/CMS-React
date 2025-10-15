@@ -19,6 +19,7 @@ import {
   GetLeaveRequestPayLoad,
   GetMyLeaveRequestsResponse,
   LeaveRequestApprovalPayload,
+  GetLeaveRequestsSummary,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -91,5 +92,11 @@ export const updateLeaveRequestStatus = (
   return patchRequest<LeaveRequestApprovalPayload, ApiResponse>(
     `${ServiceUrl.UPDATE_LEAVE_REQUEST_STATUS}/${leaveRequestId}/Status`,
     payload
+  );
+};
+
+export const getLeaveRequestSummary = () => {
+  return getRequest<GetLeaveRequestsSummary>(
+    ServiceUrl.GET_LEAVE_REQUEST_SUMMARY
   );
 };
