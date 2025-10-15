@@ -773,7 +773,13 @@
       "HEALTH": "Health",
       "RELIGIOUS": "Religious",
       "NATIONAL": "National"
-    }
+    },
+    "UPCOMING_HOLIDAYS" : "Upcoming Holidays",
+    "HOLIDAY_TEXT": "Holiday",
+    "NO_HOLIDAYS_FOUND": "No Holidays Found This Month",
+    "NO_HOLIDAYS_ON_DAY": "No Holidays",
+    "HOLIDAYS_ON_DATE": "Date Holidays",
+    "ADD_NEW_HOLIDAY": "Add New Holiday"
   },
   "MONTHS": {
     "JANUARY": "January",

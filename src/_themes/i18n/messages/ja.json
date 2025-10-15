@@ -747,7 +747,13 @@
       "HEALTH": "健康",
       "RELIGIOUS": "宗教",
       "NATIONAL": "国民"
-    }
+    },
+    "UPCOMING_HOLIDAYS" : "もうすぐの休日",
+    "HOLIDAY_TEXT": "休日",
+    "NO_HOLIDAYS_FOUND": "今月は休日が見つかりませんでした",
+    "NO_HOLIDAYS_ON_DAY": "祝日なし",
+    "HOLIDAYS_ON_DATE": "日付の祝日",
+    "ADD_NEW_HOLIDAY": "休日を追加"
   },
   "MONTHS": {
     "JANUARY": "1月",

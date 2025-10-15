@@ -10,6 +10,9 @@ import {
   IconButton,
   TextField,
   FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Check, CloudUploadOutlined } from "@mui/icons-material";
@@ -46,7 +49,6 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
       formik.setFieldValue("holidayImage", selectedFile, true)
     }
   }
-
 
   const handleAddUpdateHoliday = async (values: HolidayModel, setSubmitting: (isSubmitting: boolean) => void) => {
     try {
@@ -100,7 +102,7 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <SelectInput
+                {/* <SelectInput
                   label={i({ id: "HOLIDAY.TYPE" })}
                   name="holidayType"
                 >
@@ -111,7 +113,17 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                       </MenuItem>
                     )
                   })}
-                </SelectInput>
+                </SelectInput> */}
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  defaultValue="1"
+                  // name="holidayType"
+                  {...formik.getFieldProps('holidayType')}
+                >
+                  <FormControlLabel value="1" control={<Radio />} label="Holiday" />
+                  <FormControlLabel value="2" control={<Radio />} label="Event" />
+                </RadioGroup>
               </Grid>
 
               <Grid item xs={12} >

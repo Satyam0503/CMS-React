@@ -754,7 +754,13 @@
       "HEALTH": "健康",
       "RELIGIOUS": "宗教",
       "NATIONAL": "国家"
-    }
+    },
+    "UPCOMING_HOLIDAYS" : "即將到來的假期",
+    "HOLIDAY_TEXT": "假期",
+    "NO_HOLIDAYS_FOUND": "本月没有找到假期",
+    "NO_HOLIDAYS_ON_DAY": "没有假期",
+    "HOLIDAYS_ON_DATE": "日期节假日",
+    "ADD_NEW_HOLIDAY": "添加假日"
   },
   "MONTHS": {
     "JANUARY": "一月",

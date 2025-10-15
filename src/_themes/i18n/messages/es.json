@@ -736,7 +736,13 @@
       "HEALTH": "Salud",
       "RELIGIOUS": "Religioso",
       "NATIONAL": "Nacional"
-    }
+    },
+    "UPCOMING_HOLIDAYS" : "Próximas Festividades",
+    "HOLIDAY_TEXT": "Vacaciones",
+    "NO_HOLIDAYS_FOUND": "No se encontraron vacaciones este mes",
+    "NO_HOLIDAYS_ON_DAY": "No hay feriados",
+    "HOLIDAYS_ON_DATE": "Día de Festivos",
+    "ADD_NEW_HOLIDAY": "Agregar día libre"
   },
   "MONTHS": {
     "JANUARY": "Enero",

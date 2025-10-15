@@ -411,7 +411,44 @@ button:hover .ql-fill,
     }
   }
 }
+.reset-padding{
+  .MuiStack-root{
+    padding-top: 0 !important;
+    
+    .MuiFormControl-root{
+      .MuiInputBase-root{
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
+        .MuiInputBase-input{
+          padding: 0;
+          font-size: 24px;
+          font-weight: 600;
+          color: $app-primary-500;
+          padding-left: 15px;
+          width: 100%;
+
+          @media (min-width: 600) {
+            width: 250px;
+          }
+        }
+
+        fieldset{
+          // border: none;
+          border-color: $app-primary-500;
+        }
+        
+        .MuiInputAdornment-root{
+          button{
+            color: $app-primary-500;
+          }
+        }
+      }
+    }
+  }
+
+}
 .tab-container {
   overflow-x: scroll !important ;
   scrollbar-width: none;
@@ -542,6 +579,171 @@ button:hover .ql-fill,
 .hover-secondary {
   &:hover {
     background-color: $app-notification-hover;
+  }
+}
+
+
+// Main Holiday Calendar
+.main-holiday-calendar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  @media (min-width: 960px) {
+    flex-direction: row;
+  }
+
+  .calendar-sidebar{
+    width: 100%;
+    height: inherit;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    
+    @media (min-width: 960px) {
+      width: 300px;
+      min-width: 250px;
+      gap: 20px;
+      align-items: center;
+      justify-content: start;
+      align-items: start;
+    }
+
+    .calendar-sidebar-upcoming{
+      width: 100%;
+    }
+
+    .calendar-sidear-holidays-holder{
+      display: grid;
+      grid-template-columns: 1fr;
+
+      @media (min-width: 600px) {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @media (min-width: 960px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .holiday-card{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+    }
+  }
+
+  
+  .calendar-header{
+    display: flex;
+    padding: 20px;
+    gap: 15px;
+    flex-direction: column;
+
+    @media (min-width: 960px) {
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+    }
+    
+    @media (min-width: 1200px) {
+      padding: 20px;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .calendar-controls{
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    
+    }
+  }
+
+  .calendar-days {
+    .calendar-day{
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgb(219, 219, 219);
+      gap: 2px;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      padding: .5rem;
+      
+
+      @media (min-width: 960px) {
+        height: 120px;
+      }
+
+      .calendar-day-holiday{
+        width: 100%;
+        padding: 1px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+        color: white;
+      }
+      
+      .holiday{
+        background-color: $app-primary-500;
+      }
+
+      .event{
+        background-color: $app-secondary-300;
+      }
+
+      .calendar-day-holiday-dot{
+        position: absolute;
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        top: 10px;
+        left: 10px;
+      }
+
+      .holiday-dot{
+        background-color: $app-primary-500;
+        box-shadow: 1px 1px 5px 1px $app-primary-500;
+      }
+
+      .event-dot{
+        background-color: $app-secondary-300;
+        box-shadow: 1px 1px 5px 1px $app-secondary-300;
+      }
+    }
+
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: start;
+      justify-content: start;
+      gap: 0;
+      grid-auto-rows: min-content;
+    }
+    
+
+    .hover-theme-color {
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+      &:hover {
+        background-color: $app-primary-100;
+      }
+    }
+    
+    .today{
+      background-color: $app-primary-100;
+    }
+    
+    .selected-day{
+      border-bottom: 5px solid $app-primary-500;
+      
+    }
   }
 }
 

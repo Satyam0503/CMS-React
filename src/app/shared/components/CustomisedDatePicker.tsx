@@ -15,12 +15,13 @@ interface PropsTypes {
   name?: string;
   className?: string;
   disabled?: boolean;
-  views?: DateView[]
+  views?: DateView[];
+  format?:string;
   sx?: SxProps<Theme>;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx } = props;
+  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx ,format} = props;
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -37,6 +38,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
             minDate={minDate}
             disabled={disabled}
             views={views}
+            format={format}
             slotProps={{
               textField: {
                 className: "w-100",

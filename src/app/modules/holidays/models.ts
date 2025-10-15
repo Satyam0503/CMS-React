@@ -10,6 +10,8 @@ export interface HolidayModel {
   holidayType: number;
   holidayImage?: File | null;
 }
+
+
 export type HolidayResponseModel = Omit<HolidayModel, "holidayImage"> & {
   holidayImageUrl?: string | null;
   holidayCoverImageUrl?: string | null;
@@ -20,6 +22,7 @@ export interface GetHolidayPayloadModel {
   holidayType: HOLIDAY_TYPE[];
   date: string | null;
 }
+
 export interface HolidayFilterModel {
   holidayType: HOLIDAY_TYPE[];
   date: string | null;
