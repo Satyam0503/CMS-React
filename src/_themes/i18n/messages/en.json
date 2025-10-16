@@ -196,13 +196,17 @@
   "TITLES": {
     "EMP_ON_LEAVE": "Employee On Leave",
     "UPCOMING_BIRTHDAY": "Upcoming Birthdays",
+    "UPCOMING_WORK_ANNIVERSARY": "Upcoming Work Anniversaries",
     "TOTAL_EMP": "Total Employees",
     "OPEN_JOB_ROLE": "Open Job Roles",
     "TOTAL_APPLICATIONS": "Total Applications",
     "OPEN_POSITIONS": "Open Positions",
     "APPLY_HERE": "Apply Here",
     "DEPARTMENT": "Departments",
-    "UPCOMING_HOLIDAYS": "Upcoming Holidays"
+    "UPCOMING_HOLIDAYS": "Upcoming Holidays",
+    "UPCOMING_EVENTS": "Upcoming Events",
+    "NO_EVENT_HOLIDAY": "No upcoming holidays or events at the moment",
+    "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now"
   },
 
   "FORM": {

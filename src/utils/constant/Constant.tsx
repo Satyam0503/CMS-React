@@ -182,7 +182,8 @@ export const ServiceUrl = {
   GET_ALL_GENDERS: `api/Dashboard/GetAllGenderDetails`,
   GET_ALL_DEPARTMENT: `api/Dashboard/GetAllDepartmentDetails`,
   GET_APPLICATION_DATA: `api/Dashboard/GetApplicationStatusData`,
-  GET_UPCOMING_HOLIDAY: `api/Dashboard/GetUpComingHolidays`,
+  GET_UPCOMING_HOLIDAY_AND_EVENT: "api/Dashboard/GetUpComingHolidayAndEvents",
+  GET_UPCOMING_CELEBRATIONS: "api/Dashboard/GetUpComingCelebrations",
 
   // notice
   GET_ALL_NOTICES: `api/NoticeBoard/GetAllNotice`,

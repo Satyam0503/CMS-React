@@ -15,9 +15,9 @@ import Help from "./components/Help";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
-import UpcomingBirthday from "./components/UpcomingBirthday";
+import { UpComingCelebration } from "./components/UpcomingCelebration";
 import { PushNotification } from "./components/PushNotification";
-import { UpComingHolidays } from "./components/UpComingHolidays";
+import { UpComingHolidayAndEvents } from "./components/UpComingHolidayAndEvent";
 import { usePageData } from "../../Context/PageDataProvider";
 
 // Main Dashboard Component
@@ -87,8 +87,8 @@ export default function Dashboard() {
             <PushNotification />
           }
           <EmpOnLeave />
-          <UpComingHolidays />
-          <UpcomingBirthday />
+          <UpComingHolidayAndEvents />
+          <UpComingCelebration />
           {/* <Punctual />
           <EmpOfMonth /> */}
           <Help />
