@@ -71,7 +71,7 @@ export const UpComingHolidayAndEvents = () => {
                                                         </Avatar>
                                                 }
                                                 <Stack className="">
-                                                    <Typography variant="body1" sx={{ color: "text.primary" }}>{item.name}</Typography>
+                                                    <Typography className="fw-bold">{item.name}</Typography>
                                                     <Typography variant="subtitle2">
                                                         {!isSameDate(dayjs(item.date))
                                                             ? dateFormatter(item.date, "DD MMM YYYY")

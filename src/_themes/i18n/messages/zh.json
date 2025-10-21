@@ -206,15 +206,21 @@
     "CLEAR": "清除"
   },
   "TITLES": {
+    "BIRTHDAY": "生日",
+    "WORK_ANNIVERSARY": "工作周年纪念日",
     "EMP_ON_LEAVE": "请假员工",
     "UPCOMING_BIRTHDAY": "即将到来的生日",
-    "TOTAL_EMP": "总员工数",
+    "UPCOMING_WORK_ANNIVERSARY": "即将到来的入职周年纪念",
+    "TOTAL_EMP": "员工总数",
     "OPEN_JOB_ROLE": "开放职位",
-    "TOTAL_APPLICATIONS": "总申请数",
-    "OPEN_POSITIONS": "开放职位",
+    "TOTAL_APPLICATIONS": "申请总数",
+    "OPEN_POSITIONS": "空缺职位",
     "APPLY_HERE": "在此申请",
     "DEPARTMENT": "部门",
-    "UPCOMING_HOLIDAYS": "即将到来的假期"
+    "UPCOMING_HOLIDAYS": "即将到来的假期",
+    "UPCOMING_EVENTS": "即将到来的活动",
+    "NO_EVENT_HOLIDAY": "目前没有即将到来的假期或活动",
+    "NO_UPCOMING_CELEBRATION": "目前没有即将到来的庆祝活动"
   },
   "FORM": {
     "FIRST_NAME": "名",

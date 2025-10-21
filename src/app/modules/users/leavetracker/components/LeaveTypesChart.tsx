@@ -4,8 +4,11 @@ import { useIntl } from "react-intl"
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
 import { CustomCard } from "../../../../shared/components/CustomCard";
 import { LeaveTypeMapper } from "../../../../../utils/common";
-import DonutApexChart from "../../../../shared/components/DonutApexChart";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
+import { defaultPieChartSeries, DonutChart } from "../../../../shared/components/DonutChart";
+import { PieSeries, PieValueType } from "@mui/x-charts";
+import { MakeOptional } from "@mui/x-date-pickers/internals";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 interface PropsType {
     leaveBalance: EmployeeLeaveTypeBalance[],
@@ -14,12 +17,20 @@ interface PropsType {
 
 export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType) => {
     const { formatMessage: i } = useIntl();
+    const { currentLanguage } = useAppLang();
     const getLabelAndDataForLeaveType = useCallback((leaveType: EmployeeLeaveTypeBalance) => {
-        return {
-            [i({ id: "LEAVE.REMAINING" })]: leaveType.remainingLeave,
-            [i({ id: "LEAVE.TAKEN" })]: leaveType.maximumLeave - leaveType.remainingLeave
-        };
-    }, []);
+        const chartData: MakeOptional<PieValueType, "id">[] = [
+            {
+                label: i({ id: "LEAVE.REMAINING" }),
+                value: leaveType.remainingLeave,
+            },
+            {
+                label: i({ id: "LEAVE.TAKEN" }),
+                value: leaveType.maximumLeave - leaveType.remainingLeave,
+            }
+        ];
+        return chartData;
+    }, [currentLanguage]);
 
     if (isLoading) {
         return <Card
@@ -47,10 +58,15 @@ export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType)
     return (
         <Grid container spacing={2}>
             {leaveBalance.map(type => {
-                const leaveBalanceObj = getLabelAndDataForLeaveType(type);
+                const series = [
+                    {
+                        ...defaultPieChartSeries,
+                        data: getLabelAndDataForLeaveType(type)
+                    }
+                ] satisfies PieSeries[]
                 return <Grid key={type.leaveType} item xs={12} sm={6}>
-                    <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave}  >
-                        <DonutApexChart labels={Object.keys(leaveBalanceObj)} series={Object.values(leaveBalanceObj)} />
+                    <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave} applyMinHeight={false}>
+                        <DonutChart loading={isLoading} series={series} centerLabel={type.maximumLeave} />
                     </CustomCard>
                 </Grid>
             })

@@ -186,15 +186,21 @@
     "CLEAR": "クリア"
   },
   "TITLES": {
+    "BIRTHDAY": "誕生日",
+    "WORK_ANNIVERSARY": "勤続記念日",
     "EMP_ON_LEAVE": "休暇中の従業員",
     "UPCOMING_BIRTHDAY": "今後の誕生日",
-    "TOTAL_EMP": "総従業員数",
-    "OPEN_JOB_ROLE": "オープン求人",
-    "TOTAL_APPLICATIONS": "総応募数",
-    "OPEN_POSITIONS": "オープンポジション",
+    "UPCOMING_WORK_ANNIVERSARY": "今後の勤続記念日",
+    "TOTAL_EMP": "従業員総数",
+    "OPEN_JOB_ROLE": "募集中の職種",
+    "TOTAL_APPLICATIONS": "応募総数",
+    "OPEN_POSITIONS": "募集ポジション",
     "APPLY_HERE": "ここから応募",
     "DEPARTMENT": "部署",
-    "UPCOMING_HOLIDAYS": "今後の祝日"
+    "UPCOMING_HOLIDAYS": "今後の休日",
+    "UPCOMING_EVENTS": "今後のイベント",
+    "NO_EVENT_HOLIDAY": "現在、予定されている休日やイベントはありません",
+    "NO_UPCOMING_CELEBRATION": "現在、予定されているお祝いはありません"
   },
   "FORM": {
     "FIRST_NAME": "名",

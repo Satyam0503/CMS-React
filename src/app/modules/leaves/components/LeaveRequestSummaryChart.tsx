@@ -9,6 +9,8 @@ import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { labelClasses, PieValueType, useDrawingArea } from "@mui/x-charts";
 import { leaveRequestStatusMapper } from "../../../../utils/common";
 import dayjs from "dayjs";
+import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
 type CreateChartDataType = (data: LeaveRequestSummary, view: "type" | "status", intl: IntlShape) => MakeOptional<PieValueType, "id">[];
 
@@ -16,7 +18,6 @@ const createChartData: CreateChartDataType = (data, view, intl) => {
     const { formatMessage: i } = intl;
     const chartData: MakeOptional<PieValueType, "id">[] = [];
     if (view === "status") {
-
         for (const key in data.leaveStatusSummary) {
             // if (!Object.hasOwnProperty(data.leaveStatusSummary, key)) continue;
             chartData.push({
@@ -33,20 +34,15 @@ export const LeaveRequestSummaryChart = () => {
     const { formatMessage: i } = intl;
     const [loading, setLoading] = useState(true);
     const [leaveRequestSummary, setLeaveRequestSummary] = useState<LeaveRequestSummary>()
+    const { currentLanguage } = useAppLang();
     const series: PieSeries[] = useMemo(() => {
         return [
             {
-                innerRadius: '60%',
-                outerRadius: '100%',
-                paddingAngle: 3,
-                startAngle: -50,
-                highlightScope: { fade: 'global', highlight: 'item' },
-                highlighted: { additionalRadius: 2 },
-                cornerRadius: 4,
+                ...defaultPieChartSeries,
                 data: Boolean(leaveRequestSummary) ? createChartData(leaveRequestSummary!, "status", intl) : [],
             }
         ];
-    }, [leaveRequestSummary])
+    }, [leaveRequestSummary, currentLanguage])
 
     useEffect(() => {
         (async () => {
@@ -65,48 +61,7 @@ export const LeaveRequestSummaryChart = () => {
     }, [])
     return (
         <CustomCard label={i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })} value={dayjs().format("MMM YYYY")}>
-            <PieChart
-                series={series}
-                loading={loading}
-                hideLegend={false}
-                height={200}
-                slotProps={{
-                    legend: {
-                        direction: 'horizontal',
-                        position: {
-                            vertical: 'bottom',
-                            horizontal: 'center'
-                        },
-                        sx: {
-                            gap: '10px',
-                            marginTop: 2,
-                            ['.MuiChartsLegend-series']: {
-                                gap: '5px',
-                            },
-                        },
-                    }
-                }}
-            >
-                <PieCenterLabel>{leaveRequestSummary?.totalRequests}</PieCenterLabel>
-            </PieChart>
+            <DonutChart loading={loading} series={series} centerLabel={leaveRequestSummary?.totalRequests} />
         </CustomCard>
     )
-}
-
-const StyledText = styled('text')(({ theme }) => ({
-    fill: theme.palette.text.primary,
-    textAnchor: 'middle',
-    dominantBaseline: 'central',
-    textAlign: "center",
-    fontSize: 28,
-
-}));
-
-function PieCenterLabel({ children }: { children: React.ReactNode }) {
-    const { width, height, left, top } = useDrawingArea();
-    return (
-        <StyledText x={left + width / 2} y={top + height / 2}>
-            {children}
-        </StyledText>
-    );
 }

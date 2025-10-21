@@ -186,15 +186,21 @@
     "CLEAR": "Löschen"
   },
   "TITLES": {
+    "BIRTHDAY": "Geburtstag",
+    "WORK_ANNIVERSARY": "Arbeitsjubiläum",
     "EMP_ON_LEAVE": "Mitarbeiter im Urlaub",
     "UPCOMING_BIRTHDAY": "Bevorstehende Geburtstage",
+    "UPCOMING_WORK_ANNIVERSARY": "Bevorstehende Arbeitsjubiläen",
     "TOTAL_EMP": "Gesamtzahl der Mitarbeiter",
     "OPEN_JOB_ROLE": "Offene Stellen",
-    "TOTAL_APPLICATIONS": "Gesamtzahl der Bewerbungen",
+    "TOTAL_APPLICATIONS": "Gesamtanzahl der Bewerbungen",
     "OPEN_POSITIONS": "Offene Positionen",
     "APPLY_HERE": "Hier bewerben",
     "DEPARTMENT": "Abteilungen",
-    "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage"
+    "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage",
+    "UPCOMING_EVENTS": "Bevorstehende Veranstaltungen",
+    "NO_EVENT_HOLIDAY": "Derzeit keine bevorstehenden Feiertage oder Veranstaltungen",
+    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten"
   },
   "FORM": {
     "FIRST_NAME": "Vorname",

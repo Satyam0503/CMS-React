@@ -42,6 +42,7 @@ type CelebrationModule = {
   profileUrl: string | null;
   jobRole: Record<string, string>;
   date: Dayjs;
+  ordinal: number;
 };
 
 export type GetAllGenderDetailsResponseData = ResponseData<GenderModel>;

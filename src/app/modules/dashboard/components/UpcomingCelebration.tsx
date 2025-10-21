@@ -1,8 +1,8 @@
 import { Stack, Typography, Avatar, Box, Link, Card } from "@mui/material";
-import { useIntl } from "react-intl";
+import { FormattedNumber, useIntl } from "react-intl";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { dateFormatter } from "../../../../utils/common";
+import { dateFormatter, getOrdinalSuffix } from "../../../../utils/common";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { getAllEmployees } from "../../employees/employeeServices";
@@ -12,6 +12,7 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { UpcomingCelebration } from "../model";
 import { getUpcomingCelebration } from "../dashboardservices";
+import { StyleStatus } from "../../../shared/components/StyledStatus";
 
 export const isSameDate = (date: Dayjs) => {
   const currentDateofMonth = dayjs().date();
@@ -23,23 +24,6 @@ export const isSameDate = (date: Dayjs) => {
   }
 };
 
-const getUpcomingBirthDays = (empList: GetAllEmployeeResponseModel[]) => {
-  const sortedEmployee = empList.filter(emp => emp.dateOfBirth != null)
-    .map((emp) => {
-      let birthDayThisYear = dayjs(emp.dateOfBirth).set("year", dayjs().get("year"));
-      if (birthDayThisYear.isBefore(dayjs(), "day")) {
-        birthDayThisYear = birthDayThisYear.add(1, "year");
-      }
-      return {
-        ...emp,
-        birthDayThisYear,
-      };
-    })
-    .sort((emp1, emp2) => {
-      return emp1?.birthDayThisYear.diff(emp2?.birthDayThisYear);
-    });
-  return sortedEmployee
-}
 
 export const UpComingCelebration = () => {
   const { formatMessage: i } = useIntl();
@@ -88,22 +72,25 @@ export const UpComingCelebration = () => {
                         key={emp.employeeId}
                         className="justify-content-between flex-row align-items-center p-2 rounded hover-secondary"
                       >
-                        <Stack className="justify-content-between flex-row gap-2  align-items-center" >
+                        <Stack className="justify-content-between flex-row gap-2" >
                           <Avatar
                             alt={emp.employeeName}
                             src={emp.profileUrl ?? DEFAULT_USER_AVATAR}
                             sx={{
-                              width: 45,
-                              height: 45,
+                              width: 48,
+                              height: 48,
                               fontSize: "1rem",
                             }}
                           />
-                          <Stack>
-                            <Typography variant="body1">{emp.employeeName}</Typography>
-                            <Typography variant="body2">
+                          <Stack spacing={.2} sx={{ justifyContent: "space-evenly" }}>
+                            <Typography className="fw-bold">{emp.employeeName}</Typography>
+                            {/* <Typography variant="body2">
                               {
                                 emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
                               }
+                            </Typography> */}
+                            <Typography className="info rounded fw-bold text-center px-2 fs-12" sx={{ paddingBlock: "1px" }}>
+                              {getOrdinalSuffix(emp.ordinal) + " " + i({ id: "TITLES.BIRTHDAY" })}
                             </Typography>
                           </Stack>
                         </Stack>
@@ -129,22 +116,25 @@ export const UpComingCelebration = () => {
                         key={emp.employeeId}
                         className="justify-content-between flex-row align-items-center p-2 rounded hover-secondary"
                       >
-                        <Stack className="justify-content-between flex-row gap-2  align-items-center" >
+                        <Stack className="justify-content-between flex-row gap-2 " >
                           <Avatar
                             alt={emp.employeeName}
                             src={emp.profileUrl ?? DEFAULT_USER_AVATAR}
                             sx={{
-                              width: 45,
-                              height: 45,
+                              width: 48,
+                              height: 48,
                               fontSize: "1rem",
                             }}
                           />
-                          <Stack>
-                            <Typography variant="body1">{emp.employeeName}</Typography>
-                            <Typography variant="body2">
+                          <Stack spacing={.2} sx={{ justifyContent: "space-evenly" }}>
+                            <Typography className="fw-bold">{emp.employeeName}</Typography>
+                            {/* <Typography variant="body2">
                               {
                                 emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
                               }
+                            </Typography> */}
+                            <Typography className="success rounded fw-bold text-center px-2 fs-12" sx={{ paddingBlock: "1px" }}>
+                              {getOrdinalSuffix(emp.ordinal) + " " + i({ id: "TITLES.WORK_ANNIVERSARY" })}
                             </Typography>
                           </Stack>
                         </Stack>

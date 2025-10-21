@@ -194,6 +194,8 @@
   },
 
   "TITLES": {
+    "BIRTHDAY": "Birthday",
+    "WORK_ANNIVERSARY": "Work Anniversary",
     "EMP_ON_LEAVE": "Employee On Leave",
     "UPCOMING_BIRTHDAY": "Upcoming Birthdays",
     "UPCOMING_WORK_ANNIVERSARY": "Upcoming Work Anniversaries",

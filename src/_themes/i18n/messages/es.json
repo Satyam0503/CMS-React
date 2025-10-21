@@ -187,15 +187,21 @@
     "CLEAR": "Borrar"
   },
   "TITLES": {
-    "EMP_ON_LEAVE": "Empleado en permiso",
+    "BIRTHDAY": "Cumpleaños",
+    "WORK_ANNIVERSARY": "Aniversario laboral",
+    "EMP_ON_LEAVE": "Empleados de permiso",
     "UPCOMING_BIRTHDAY": "Próximos cumpleaños",
+    "UPCOMING_WORK_ANNIVERSARY": "Próximos aniversarios laborales",
     "TOTAL_EMP": "Total de empleados",
-    "OPEN_JOB_ROLE": "Roles de trabajo abiertos",
-    "TOTAL_APPLICATIONS": "Total de aplicaciones",
+    "OPEN_JOB_ROLE": "Puestos de trabajo abiertos",
+    "TOTAL_APPLICATIONS": "Total de solicitudes",
     "OPEN_POSITIONS": "Posiciones abiertas",
     "APPLY_HERE": "Aplica aquí",
     "DEPARTMENT": "Departamentos",
-    "UPCOMING_HOLIDAYS": "Próximos días festivos"
+    "UPCOMING_HOLIDAYS": "Próximos feriados",
+    "UPCOMING_EVENTS": "Próximos eventos",
+    "NO_EVENT_HOLIDAY": "No hay feriados ni eventos próximos en este momento",
+    "NO_UPCOMING_CELEBRATION": "No hay celebraciones próximas por ahora"
   },
   "FORM": {
     "FIRST_NAME": "Nombre",

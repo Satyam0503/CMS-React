@@ -6,9 +6,10 @@ import { CardSkeleton } from "./CardSkeleton";
 import { getAllGenderInfo } from "../dashboardservices";
 import { GenderModel } from "../model";
 import { genderMapper } from "../../../../utils/common";
-import { PieChart } from "@mui/x-charts/PieChart";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { PieSeries, PieValueType } from "@mui/x-charts";
+import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
 
 const createChartData = (data: GenderModel[], intl: IntlShape) => {
@@ -36,21 +37,16 @@ export const EmployeeChart: FC = () => {
   const [empData, setEmpData] = useState<GenderModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEmployee, setTotalEmployee] = useState(0);
+  const { currentLanguage } = useAppLang();
 
   const series: PieSeries[] = useMemo(() => {
     return [
       {
-        innerRadius: '60%',
-        outerRadius: '100%',
-        paddingAngle: 2,
-        startAngle: -90,
-        highlightScope: { fade: 'global', highlight: 'item' },
-        highlighted: { additionalRadius: 2 },
-        cornerRadius: 4,
+        ...defaultPieChartSeries,
         data: empData.length > 0 ? createChartData(empData, intl) : [],
       }
     ];
-  }, [empData])
+  }, [empData, currentLanguage])
 
 
   useEffect(() => {
@@ -87,28 +83,7 @@ export const EmployeeChart: FC = () => {
             </Typography>
           </Box>
         ) : (
-          <PieChart
-            series={series}
-            loading={loading}
-            hideLegend={false}
-            height={200}
-            slotProps={{
-              legend: {
-                direction: 'horizontal',
-                position: {
-                  vertical: 'bottom',
-                  horizontal: 'center'
-                },
-                sx: {
-                  gap: '10px',
-                  marginTop: 2,
-                  ['.MuiChartsLegend-series']: {
-                    gap: '5px',
-                  },
-                },
-              }
-            }}
-          />
+          <DonutChart loading={loading} series={series} />
         )}
       </CustomCard>
     </>

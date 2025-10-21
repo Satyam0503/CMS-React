@@ -5,12 +5,14 @@ interface Props {
   label: string;
   children: React.ReactNode;
   value?: any;
+  applyMinHeight?: boolean;
 }
 
 export const CustomCard: FC<Props> = (props) => {
+  const { label, children, value, applyMinHeight = true } = props;
   return (
     <Card
-      sx={{ minHeight: "310px" }}
+      sx={{ minHeight: applyMinHeight ? "310px" : "auto" }}
       className="p-4 d-flex flex-column"
     >
       <Stack spacing={1} className="flex-grow-1 ">
