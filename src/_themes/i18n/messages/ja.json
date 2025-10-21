@@ -727,6 +727,7 @@
       "LEAVE_REQ_REJECT": "残念ながら、あなたの休暇申請は {employeeName} によって拒否されました",
       "NEW_MESSAGE": "新しいメッセージを受信しました",
       "TODAY_BIRTHDAY": "🎉今日は {employeeName} の誕生日です — ぜひお祝いの言葉をかけてください",
+      "TODAY_WORK_ANNIVERSARY": "🎉今日は {employeeName} の勤続記念日です — ぜひお祝いの言葉をかけてください",
       "FALLBACK": "新しい通知があります"
     }
   },

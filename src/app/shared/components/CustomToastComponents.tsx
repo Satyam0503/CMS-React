@@ -19,6 +19,7 @@ export const showCustomToast = (notification: NotificationModel) => {
         case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
         case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED:
         case NOTIFICATION_TYPE.BIRTHDAY:
+        case NOTIFICATION_TYPE.WORK_ANNIVERSARY:
             toast(<CustomNotificationWithAction notificationData={notification} />, {
                 autoClose: 2000,
                 closeButton: false,

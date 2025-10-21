@@ -718,6 +718,7 @@
       "LEAVE_REQ_REJECT": "Lamentablemente, su solicitud de vacaciones ha sido rechazada por {employeeName}",
       "NEW_MESSAGE": "Nuevo mensaje recibido",
       "TODAY_BIRTHDAY": "🎉Hoy es el cumpleaños de {employeeName} — tómese un momento para felicitarlo",
+      "TODAY_WORK_ANNIVERSARY": "🎉Hoy es el aniversario laboral de {employeeName} — felicítalo por su dedicación y compromiso",
       "FALLBACK": "Tienes una nueva notificación"
     }
   },

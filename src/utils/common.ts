@@ -538,6 +538,11 @@ export const getNotificationTitle = (
         { id: "NOTIFICATION.TITLES.TODAY_BIRTHDAY" },
         { employeeName: notification.body }
       );
+    case NOTIFICATION_TYPE.WORK_ANNIVERSARY:
+      return i(
+        { id: "NOTIFICATION.TITLES.TODAY_WORK_ANNIVERSARY" },
+        { employeeName: notification.body }
+      );
     default:
       return i({ id: "NOTIFICATION.TITLES.FALLBACK" });
   }
