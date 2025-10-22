@@ -734,7 +734,7 @@
       "LEAVE_REQ_APPROVED": "Votre demande de congé a été approuvée avec succès par {employeeName}",
       "LEAVE_REQ_REJECT": "Malheureusement, votre demande de congé a été refusée par {employeeName}",
       "NEW_MESSAGE": "Nouveau message reçu",
-      "TODAY_BIRTHDAY": "🎉Aujourd'hui, c'est l'anniversaire de {employeeName} — prenez un moment pour lui souhaiter",
+      "TODAY_BIRTHDAY": "🎂 Aujourd'hui, c'est l'anniversaire de {employeeName} — prenez un moment pour lui souhaiter",
       "TODAY_WORK_ANNIVERSARY": "🎉Aujourd'hui, c'est l'anniversaire de travail de {employeeName} — félicitez-le pour cette étape importante !",
       "FALLBACK": "Vous avez une nouvelle notification"
     }

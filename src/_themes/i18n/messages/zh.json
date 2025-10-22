@@ -733,7 +733,7 @@
       "LEAVE_REQ_APPROVED": "您的请假申请已被 {employeeName} 成功批准",
       "LEAVE_REQ_REJECT": "很遗憾，您的请假申请被 {employeeName} 拒绝",
       "NEW_MESSAGE": "收到新消息",
-      "TODAY_BIRTHDAY": "🎉今天是 {employeeName} 的生日 — 记得送上祝福",
+      "TODAY_BIRTHDAY": "🎂 今天是 {employeeName} 的生日 — 记得送上祝福",
       "TODAY_WORK_ANNIVERSARY": "🎉今天是 {employeeName} 的工作周年纪念日 — 记得庆祝一下",
       "FALLBACK": "您有一条新通知"
     }

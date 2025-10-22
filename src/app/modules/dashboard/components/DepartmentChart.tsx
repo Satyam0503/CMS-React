@@ -8,11 +8,12 @@ import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { DepartmentResponseModel } from "../model";
+import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { PieSeries, PieValueType } from "@mui/x-charts";
 
 
 export const DepartmentChart: FC = () => {
   const { formatMessage: i } = useIntl();
-  const [chartData, setChartData] = useState<{ labels: string[]; series: number[]; }>({ labels: [], series: [] });
   const [departmentList, setDepartmentList] = useState<DepartmentResponseModel[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentLanguage } = useAppLang();
@@ -35,26 +36,19 @@ export const DepartmentChart: FC = () => {
     };
     getAllDepartmentDetails();
   }, [])
-  
-  useEffect(() => {
-    if (departmentList.length > 0) {
-      setChartData(getDepartmentChartData())
-    }
-  }, [departmentList, currentLanguage]);
 
-  const getDepartmentChartData = () => {
-    if (departmentList.length === 0) {
-      return chartData;
-    } else {
-      const labels: string[] = [];
-      const series: number[] = [];
-      departmentList.forEach(dep => {
-        labels.push(dep.label[currentLanguage] || dep.label[defaultLanguage] || i({ id: "TRANSLATION_MISSING" }));
-        series.push(dep.employeeCount);
-      });
-      return { labels, series };
+  const chartSeries = [
+    {
+      ...defaultPieChartSeries,
+      data: departmentList.map((dep) => ({
+        label: dep.label[currentLanguage] || dep.label[defaultLanguage] || i({ id: "TRANSLATION_MISSING" }),
+        value: dep.employeeCount,
+      })),
+      valueFormatter: (v, { dataIndex }) => {
+        return `${v.value} ${i({ id: "MODULES.EMPLOYEES" })}`;
+      },
     }
-  }
+  ] satisfies PieSeries[];
 
   if (loading) {
     return <CardSkeleton />
@@ -70,11 +64,7 @@ export const DepartmentChart: FC = () => {
           <Typography variant="h5">{i({ id: "MESSAGE.NO_DEPARTMENTS" })}</Typography>
         </Box>
       ) : (
-        <BarChart
-          labels={chartData.labels}
-          series={chartData.series}
-          legendOption={{ show: true }}
-        />
+        <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.length} />
       )
       }
     </CustomCard >

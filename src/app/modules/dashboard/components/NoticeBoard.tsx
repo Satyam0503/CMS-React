@@ -1,4 +1,4 @@
-import { Typography, Stack, Avatar, Box } from "@mui/material";
+import { Typography, Stack, Avatar, Box, useTheme } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Link } from "react-router-dom";
@@ -17,6 +17,7 @@ export default function NoticeBoard() {
   const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([]);
   const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>(null);
   const { formatMessage } = useIntl();
+  const { typography } = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -65,19 +66,19 @@ export default function NoticeBoard() {
                     <Box
                       component="div"
                       key={item.noticeId}
-                      className="d-flex flex-row align-items-center gap-2"
+                      className="d-flex flex-row align-items-start gap-2"
                     >
                       <Avatar
                         src={item.userProfile || DEFAULT_USER_AVATAR}
                         alt={item.userName}
                         sx={{
-                          width: 45,
-                          height: 45,
+                          width: 52,
+                          height: 52,
                           bgcolor: "secondary.main",
                         }}
                       />
                       <Stack>
-                        <Typography variant="body1">{item.userName}</Typography>
+                        <Typography >{item.userName}</Typography>
                         <Typography
                           variant="body2"
                           className={clsx("truncate-multi-line", { "text-decoration-line-through": item.viewedStatus })}

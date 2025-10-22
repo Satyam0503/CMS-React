@@ -752,7 +752,7 @@
       "LEAVE_REQ_APPROVED": "Your leave request has been successfully approved by {employeeName} ",
       "LEAVE_REQ_REJECT": "Unfortunately, your leave request has been rejected by {employeeName}",
       "NEW_MESSAGE": "New message reveived",
-      "TODAY_BIRTHDAY": "🎉Today is {employeeName}’s birthday — take a moment to wish them well",
+      "TODAY_BIRTHDAY": "🎂 Today is {employeeName}’s birthday — take a moment to wish them well",
       "TODAY_WORK_ANNIVERSARY": "🎉Today marks {employeeName}’s work anniversary — congratulate them on this milestone!",
       "FALLBACK": "You have new notification"
     }

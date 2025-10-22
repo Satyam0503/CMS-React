@@ -152,7 +152,6 @@ export const AddEmployee = (props: PropsTypes) => {
             errors,
             handleSubmit,
           }) => {
-            console.log(values);
             return (
               <form onSubmit={handleSubmit}>
                 <Grid

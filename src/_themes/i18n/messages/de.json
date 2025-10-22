@@ -715,7 +715,7 @@
       "LEAVE_REQ_APPROVED": "Ihr Urlaubsantrag wurde erfolgreich von {employeeName} genehmigt",
       "LEAVE_REQ_REJECT": "Leider wurde Ihr Urlaubsantrag von {employeeName} abgelehnt",
       "NEW_MESSAGE": "Neue Nachricht erhalten",
-      "TODAY_BIRTHDAY": "🎉Heute hat {employeeName} Geburtstag — nehmen Sie sich einen Moment, um ihm zu gratulieren",
+      "TODAY_BIRTHDAY": "🎂 Heute hat {employeeName} Geburtstag — nehmen Sie sich einen Moment, um ihm zu gratulieren",
       "TODAY_WORK_ANNIVERSARY": "🎉Heute feiert {employeeName} sein Arbeitsjubiläum — gratulieren Sie ihm zu diesem Meilenstein!",
       "FALLBACK": "Sie haben eine neue Benachrichtigung"
     }

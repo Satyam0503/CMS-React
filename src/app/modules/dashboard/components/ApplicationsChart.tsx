@@ -91,11 +91,11 @@ export const ApplicationsChart = () => {
 
   return (
     <Card
-      sx={{ minHeight: "310px" }}
+      sx={{ minHeight: "100%" }}
       className="p-4 d-flex flex-column"
     >
       <Stack direction="row" className="mb-4 justify-content-between flex-wrap">
-        <Typography variant="h4" sx={{ fontSize: 16 }}>{i({ id: "TITLES.TOTAL_APPLICATIONS" })}</Typography>
+        <Typography className="fw-bold fs-16">{i({ id: "TITLES.TOTAL_APPLICATIONS" })}</Typography>
         <Select
           id="vacancy-dropdown"
           value={selectedVacancy}

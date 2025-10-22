@@ -42,6 +42,7 @@ export const DonutChart = (props: DonutChartProps) => {
                         horizontal: 'center'
                     },
                     sx: {
+                        justifyContent: "center",
                         gap: '10px',
                         marginTop: 2,
                         ['.MuiChartsLegend-series']: {
