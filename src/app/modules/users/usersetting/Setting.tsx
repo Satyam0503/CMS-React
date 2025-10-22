@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import NotificationSetting from "./NotificationSetting";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { PasswordResetModel } from "./components/PasswordResetModal";
+import { NotificationSetting } from "./components/NotificationSetting";
 
 export default function Setting() {
   const intl = useIntl();
@@ -25,42 +25,28 @@ export default function Setting() {
     setModalOpen(true);
   };
   return (
-    <>
-      <Grid container gap={2}>
-        <Card sx={{ width: "100%", p: 2.25 }}>
-          <Typography variant="h5">
-            {intl.formatMessage({ id: "SETTING.NOTIFICATIONS" })}
-          </Typography>
-          <NotificationSetting />
-        </Card>
+    <Stack>
+      <Card sx={{ width: "100%", p: 2.25 }}>
+        <Typography variant="h5">
+          {intl.formatMessage({ id: "SETTING.NOTIFICATIONS" })}
+        </Typography>
+        <NotificationSetting />
+      </Card>
 
-        <Card
-          sx={{
-            width: "100%",
-            p: 2.25,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Stack className="w-100 flex-wrap justify-content-between flex-row align-items-center gap-4">
-            <Typography variant="h5">
-              {intl.formatMessage({ id: "AUTH.RESET_PROFILE_PASSWORD" })}
-            </Typography>
-            <CustomisedButton
-              label={intl.formatMessage({ id: "AUTH.PASSWORD_RESET" })}
-              Icon={<KeyOutlined />}
-              handleClick={handleOpenModal}
-            />
-          </Stack>
-        </Card>
-      </Grid>
+      <Card className="p-4 d-flex justify-content-between flex-wrap gap-2 mt-2">
+        <Typography variant="h5">
+          {intl.formatMessage({ id: "AUTH.RESET_PROFILE_PASSWORD" })}
+        </Typography>
+        <CustomisedButton
+          label={intl.formatMessage({ id: "AUTH.PASSWORD_RESET" })}
+          Icon={<KeyOutlined />}
+          handleClick={handleOpenModal}
+        />
+      </Card>
       {
         isModalOpen && <PasswordResetModel open={isModalOpen} handleClose={handleCloseModal} />
       }
-
-
-    </>
+    </Stack>
   );
 }
 

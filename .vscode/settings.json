@@ -1,3 +1,7 @@
 {
-  "postman.settings.dotenv-detection-notification-visibility": false
+  "postman.settings.dotenv-detection-notification-visibility": false,
+  "editor.mouseWheelZoom": false,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": false,
+  "scm.compactFolders": true,
+  "explorer.compactFolders": false
 }

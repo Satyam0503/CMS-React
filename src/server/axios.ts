@@ -16,7 +16,7 @@ import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 let isRefreshing = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
 
-const timeout = 10000;
+const timeout = 30000;
 
 const instance = axios.create({
   baseURL: BaseUrl,

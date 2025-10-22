@@ -518,8 +518,9 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
 
-  "SETTING.NOTIFICATION": "Notification",
-  "SETTING.NOTIFICATIONS": "Notification Settings",
+  "SETTING": {
+    "NOTIFICATIONS": "Notification Settings"
+  },
 
   "VACANCY.TEXT1": " Thank you for exploring our website!",
   "VACANCY.TEXT2": " Our available positions are being refreshed at the moment. Stay tuned and visit us again soon for updated job openings.We truly appreciate your interest and look forward to the possibility of working together!",
