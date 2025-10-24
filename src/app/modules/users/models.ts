@@ -132,6 +132,7 @@ export type NotificationPreferences = {
   LeaveStatusUpdate: boolean;
   Notice: boolean;
   HolidayReminder: boolean;
+  MessageNotification: boolean;
 };
 
 export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;

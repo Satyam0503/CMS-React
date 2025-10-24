@@ -138,6 +138,7 @@ export const ServiceUrl = {
   MARK_ALL_NOTIFICATION_AS_READ: `api/User/MarkAllNotificationAsRead`,
   REMOVE_PROFILE_PICTURE: `api/User/RemoveProfileImage`,
   GET_NOTIFICATION_PREFERENCES: 'api/User/GetNotificationPreferences',
+  UPDATE_NOTIFICATION_PREFERENCES: 'api/User/UpdateNotificationPreferences',
 
   SEARCH_EMPLOYEE: `api/User/Search`,
   GET_COLLEGE_LIST: `api/User/GetCollegeList`,

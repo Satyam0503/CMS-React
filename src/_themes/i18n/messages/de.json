@@ -844,5 +844,25 @@
       "TOTAL_DEDUCTION": "Gesamtabzug",
       "NET_PAY": "Nettogehalt"
     }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Benachrichtigungseinstellungen",
+    "NOTE": "Verwalten Sie Ihre Benachrichtigungseinstellungen, um über wichtige Updates und Ereignisse informiert zu bleiben",
+    "TYPE": {
+      "BirthdayNotification": "Geburtstagsbenachrichtigungen",
+      "WorkAnniversaries": "Arbeitsjubiläumsbenachrichtigungen",
+      "LeaveStatusUpdate": "Benachrichtigungen zum Urlaubsstatus",
+      "Notice": "Hinweisbenachrichtigungen",
+      "HolidayReminder": "Feiertagserinnerungen",
+      "MessageNotification": "Nachrichtenbenachrichtigungen"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Erhalten Sie Benachrichtigungen über bevorstehende Geburtstage von Mitarbeitern, um den Anlass zu würdigen",
+      "WorkAnniversaries": "Erhalten Sie Benachrichtigungen, wenn Mitarbeiter wichtige Arbeitsjubiläen im Unternehmen erreichen",
+      "LeaveStatusUpdate": "Bleiben Sie über den Status Ihrer Urlaubsanträge auf dem Laufenden",
+      "Notice": "Erhalten Sie Benachrichtigungen über neue Mitteilungen in der Anwendung",
+      "HolidayReminder": "Erhalten Sie rechtzeitige Erinnerungen an bevorstehende Feiertage und firmeninterne Ruhetage",
+      "MessageNotification": "Erhalten Sie Benachrichtigungen, wenn neue Nachrichten über die Plattform gesendet werden"
+    }
   }
 }

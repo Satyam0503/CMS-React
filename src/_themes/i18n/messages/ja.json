@@ -854,5 +854,25 @@
       "TOTAL_DEDUCTION": "控除合計",
       "NET_PAY": "差引支給額"
     }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "通知設定",
+    "NOTE": "重要な更新やイベントに関する通知設定を管理します",
+    "TYPE": {
+      "BirthdayNotification": "誕生日通知",
+      "WorkAnniversaries": "勤続記念通知",
+      "LeaveStatusUpdate": "休暇状況の更新",
+      "Notice": "お知らせ通知",
+      "HolidayReminder": "休日リマインダー",
+      "MessageNotification": "メッセージ通知"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "従業員の誕生日に関する通知を受け取り、お祝いしましょう",
+      "WorkAnniversaries": "従業員が勤続記念日を迎える際に通知を受け取ります",
+      "LeaveStatusUpdate": "自分の休暇申請状況を常に把握できます",
+      "Notice": "アプリに新しいお知らせが投稿されたときに通知を受け取ります",
+      "HolidayReminder": "今後の休日や会社の休業日に関するリマインダーを受け取ります",
+      "MessageNotification": "プラットフォームを通じて新しいメッセージが届いた際に通知を受け取ります"
+    }
   }
 }

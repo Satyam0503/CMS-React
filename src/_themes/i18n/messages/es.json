@@ -846,5 +846,25 @@
       "TOTAL_DEDUCTION": "Deducción total",
       "NET_PAY": "Salario neto"
     }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Preferencias de notificación",
+    "NOTE": "Administra tus preferencias de notificación para mantenerte informado sobre actualizaciones y eventos importantes",
+    "TYPE": {
+      "BirthdayNotification": "Notificaciones de cumpleaños",
+      "WorkAnniversaries": "Notificaciones de aniversario laboral",
+      "LeaveStatusUpdate": "Actualizaciones del estado de licencia",
+      "Notice": "Alertas de avisos",
+      "HolidayReminder": "Recordatorios de feriados",
+      "MessageNotification": "Notificaciones de mensajes"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Recibe notificaciones sobre los próximos cumpleaños de los empleados para celebrarlos",
+      "WorkAnniversaries": "Recibe alertas cuando los empleados cumplan aniversarios laborales importantes en la organización",
+      "LeaveStatusUpdate": "Mantente actualizado sobre el estado de tus solicitudes de licencia",
+      "Notice": "Recibe alertas cuando se publiquen nuevos avisos en la aplicación",
+      "HolidayReminder": "Obtén recordatorios oportunos sobre próximos feriados y días libres declarados por la empresa",
+      "MessageNotification": "Recibe notificaciones cuando te envíen nuevos mensajes a través de la plataforma"
+    }
   }
 }

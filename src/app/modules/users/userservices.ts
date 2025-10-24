@@ -265,3 +265,12 @@ export const getNotificationPreferences = () => {
     ServiceUrl.GET_NOTIFICATION_PREFERENCES
   );
 };
+
+export const updateNotificationPreferences = (
+  payload: NotificationPreferences
+) => {
+  return postRequest<
+    NotificationPreferences,
+    ResponseData<NotificationPreferences>
+  >(ServiceUrl.UPDATE_NOTIFICATION_PREFERENCES, payload);
+};

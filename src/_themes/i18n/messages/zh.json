@@ -862,5 +862,25 @@
       "TOTAL_DEDUCTION": "总扣除",
       "NET_PAY": "实发工资"
     }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "通知偏好设置",
+    "NOTE": "管理您的通知偏好，以便及时了解重要更新和事件",
+    "TYPE": {
+      "BirthdayNotification": "生日通知",
+      "WorkAnniversaries": "工作周年通知",
+      "LeaveStatusUpdate": "请假状态更新",
+      "Notice": "公告提醒",
+      "HolidayReminder": "节假日提醒",
+      "MessageNotification": "消息通知"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "接收关于即将到来的员工生日的通知，以便祝贺和庆祝",
+      "WorkAnniversaries": "当员工达到重要工作周年纪念时接收提醒",
+      "LeaveStatusUpdate": "随时了解您的请假申请状态",
+      "Notice": "接收有关应用程序中新公告的提醒",
+      "HolidayReminder": "及时接收公司或公共假期的提醒",
+      "MessageNotification": "当您在平台上收到新消息时接收通知"
+    }
   }
 }

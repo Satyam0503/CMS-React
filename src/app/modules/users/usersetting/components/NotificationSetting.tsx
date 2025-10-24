@@ -1,32 +1,15 @@
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import CommentIcon from "@mui/icons-material/Comment";
-import { Stack } from "@mui/material";
+import { Card, Checkbox, FormControlLabel, FormGroup, Stack, Typography } from "@mui/material";
 import { NotificationPreferences } from "../../models";
 import { useEffect, useState } from "react";
-import { getNotificationPreferences } from "../../userservices";
+import { getNotificationPreferences, updateNotificationPreferences } from "../../userservices";
+import { useIntl } from "react-intl";
+import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { toast } from "react-toastify";
 
 export const NotificationSetting = () => {
-  const [notificatioPreferences, setNotificationPreferences] = useState<NotificationPreferences>({} as NotificationPreferences);
-  const [checked, setChecked] = useState([0]);
+  const { formatMessage: i } = useIntl();
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({} as NotificationPreferences);
 
-  const handleToggle = (value: any) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
   useEffect(() => {
     (async () => {
       try {
@@ -40,41 +23,70 @@ export const NotificationSetting = () => {
     })();
   }, [])
 
-  console.log(notificatioPreferences);
+
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    setNotificationPreferences({
+      ...notificationPreferences,
+      [event.target.name]: event.target.checked,
+    });
+  }
+
+  const handleUpdateNotificationPreferences = async () => {
+    try {
+      const { data } = await updateNotificationPreferences(notificationPreferences);
+      if (data.success) {
+        toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
+        setNotificationPreferences(data.methodResult);
+      }
+    } catch (error) {
+      console.error("Error updating notification preferences:", error);
+    }
+  }
 
   return (
-    // <List>
-    //   {[
-    //     "Birthday Notification",
-    //     "New employee joined",
-    //     "Leave status",
-    //     "Low leave balance",
-    //     "Announcements",
-    //     "Work Anniversaries",
-    //     "Holiday reminder",
-    //     "Off Boardings",
-    //   ].map((value: any) => {
-    //     const labelId = `checkbox-list-label-${value}`;
+    <Card className="p-4 d-flex flex-column">
+      <Stack>
+        <Typography variant="h5">
+          {i({ id: "NOTIFCATION_PREFERENCE.TITLE" })}
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          {i({ id: "NOTIFCATION_PREFERENCE.NOTE" })}
+        </Typography>
+      </Stack>
+      <FormGroup className="ms-2 mt-4" >
+        {
+          Object.keys(notificationPreferences).map((key, index) => (
+            <FormControlLabel
+              className="hover-secondary rounded"
+              key={index}
+              control={
+                <Checkbox
+                  name={key}
+                  checked={notificationPreferences[key as keyof NotificationPreferences]}
+                  onChange={handleToggle}
+                  sx={{ '& .MuiSvgIcon-root': { fontSize: 36 } }}
+                />
+              }
+              label={
+                <>
+                  <Typography>{i({ id: `NOTIFCATION_PREFERENCE.TYPE.${key}` })}</Typography>
+                  <Typography variant="body2">{i({ id: `NOTIFCATION_PREFERENCE.TYPE_NOTE.${key}` })}</Typography>
+                </>
+              }
+              sx={{
+                marginRight: 0,
+                paddingBlock: 1,
+              }}
+            />
+          ))
+        }
+      </FormGroup>
+      <CustomisedButton
+        className="mt-4 align-self-end"
+        label={i({ id: "BUTTON.UPDATE" })}
+        handleClick={handleUpdateNotificationPreferences}
+      />
+    </Card >
 
-    //     return (
-    //       <Stack spacing={1}>
-    //         <ListItemIcon>
-    //           <Checkbox
-    //             edge="start"
-    //             checked={checked.includes(value)}
-    //             tabIndex={-1}
-    //             disableRipple
-    //             onClick={handleToggle(value)}
-    //             inputProps={{ "aria-labelledby": labelId }}
-    //           />
-    //         </ListItemIcon>
-    //         <ListItemText id={labelId} primary={`${value}`} />
-    //       </Stack>
-    //     );
-    //   })}
-    // </List>
-    <Stack spacing={1}>
-
-    </Stack>
   );
 }

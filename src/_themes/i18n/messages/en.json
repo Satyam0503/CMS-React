@@ -518,10 +518,6 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
 
-  "SETTING": {
-    "NOTIFICATIONS": "Notification Settings"
-  },
-
   "VACANCY.TEXT1": " Thank you for exploring our website!",
   "VACANCY.TEXT2": " Our available positions are being refreshed at the moment. Stay tuned and visit us again soon for updated job openings.We truly appreciate your interest and look forward to the possibility of working together!",
   "VACANCY.TEXT3": " Please note that we accept applications only on working days, between 9:00 AM and 6:00 PM IST.",
@@ -890,6 +886,26 @@
       "GROSS_PAY": "Gross Pay",
       "TOTAL_DEDUCTION": "Total Deduction",
       "NET_PAY": "Net Pay"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Notification Preferences",
+    "NOTE": "Manage your notification preferences to stay informed about important updates and events",
+    "TYPE": {
+      "BirthdayNotification": "Birthday Notifications",
+      "WorkAnniversaries": "Work Anniversary Notifications",
+      "LeaveStatusUpdate": "Leave Status Updates",
+      "Notice": "Notice Alerts",
+      "HolidayReminder": "Holiday Reminders",
+      "MessageNotification": "Message Notifications"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Receive notifications regarding upcoming employee birthdays to acknowledge and celebrate the occasion",
+      "WorkAnniversaries": "Get alerts when employees reach significant work anniversaries within the organization.",
+      "LeaveStatusUpdate": "Stay updated on the status of your leave requests",
+      "Notice": "Receive alerts for new notices posted in the application",
+      "HolidayReminder": "Get timely reminders about upcoming public holidays and company-declared days off",
+      "MessageNotification": "Receive notifications when new messages or communications are sent to you through the platform"
     }
   }
 }

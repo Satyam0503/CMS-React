@@ -863,5 +863,25 @@
       "TOTAL_DEDUCTION": "Déduction totale",
       "NET_PAY": "Salaire net"
     }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Préférences de notification",
+    "NOTE": "Gérez vos préférences de notification pour rester informé des mises à jour et événements importants",
+    "TYPE": {
+      "BirthdayNotification": "Notifications d'anniversaire",
+      "WorkAnniversaries": "Notifications d'anniversaire de travail",
+      "LeaveStatusUpdate": "Mises à jour du statut de congé",
+      "Notice": "Alertes de notification",
+      "HolidayReminder": "Rappels de jours fériés",
+      "MessageNotification": "Notifications de message"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Recevez des notifications concernant les anniversaires à venir des employés afin de les célébrer",
+      "WorkAnniversaries": "Recevez des alertes lorsque les employés atteignent des anniversaires de travail importants au sein de l’organisation",
+      "LeaveStatusUpdate": "Restez informé du statut de vos demandes de congé",
+      "Notice": "Recevez des alertes pour les nouveaux avis publiés dans l’application",
+      "HolidayReminder": "Recevez des rappels en temps opportun concernant les jours fériés et les congés de l’entreprise",
+      "MessageNotification": "Recevez des notifications lorsque de nouveaux messages ou communications vous sont envoyés via la plateforme"
+    }
   }
 }

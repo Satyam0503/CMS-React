@@ -26,13 +26,8 @@ export default function Setting() {
   };
   return (
     <Stack>
-      <Card sx={{ width: "100%", p: 2.25 }}>
-        <Typography variant="h5">
-          {intl.formatMessage({ id: "SETTING.NOTIFICATIONS" })}
-        </Typography>
-        <NotificationSetting />
-      </Card>
 
+      <NotificationSetting />
       <Card className="p-4 d-flex justify-content-between flex-wrap gap-2 mt-2">
         <Typography variant="h5">
           {intl.formatMessage({ id: "AUTH.RESET_PROFILE_PASSWORD" })}
