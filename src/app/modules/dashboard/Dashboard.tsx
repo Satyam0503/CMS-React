@@ -8,8 +8,6 @@ import { ApplicationsChart } from "./components/ApplicationsChart";
 import { DepartmentChart } from "./components/DepartmentChart";
 import EmployeePerformance from "./components/EmployeePerformance";
 import EmpOnLeave from "./components/EmpOnLeave";
-import Punctual from "./components/Punctual";
-import EmpOfMonth from "./components/EmpOfMonth";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
 import { hasModuleFeaturePermission } from "../../../utils/common";

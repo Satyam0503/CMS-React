@@ -94,7 +94,7 @@ export const UpComingCelebration = () => {
                             </Typography>
                           </Stack>
                         </Stack>
-                        <Typography variant="subtitle2">
+                        <Typography variant="subtitle2" >
                           {!isSameDate(dayjs(emp.date))
                             ? dateFormatter(emp.date, "DD MMM YYYY")
                             : i({ id: "DATETIME.TODAY" })}
@@ -114,7 +114,7 @@ export const UpComingCelebration = () => {
                     return (
                       <Stack
                         key={emp.employeeId}
-                        className="justify-content-between flex-row align-items-center p-2 rounded hover-secondary"
+                        className="justify-content-between flex-row align-items-center p-2 rounded hover-secondary gap-2"
                       >
                         <Stack className="justify-content-between flex-row gap-2 " >
                           <Avatar
@@ -133,12 +133,12 @@ export const UpComingCelebration = () => {
                                 emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
                               }
                             </Typography> */}
-                            <Typography className="success rounded fw-bold text-center px-2 fs-12" sx={{ paddingBlock: "1px" }}>
+                            <Typography className="success rounded fw-bold text-center px-2 fs-12 text-nowrap" sx={{ paddingBlock: "1px" }}>
                               {getOrdinalSuffix(emp.ordinal) + " " + i({ id: "TITLES.WORK_ANNIVERSARY" })}
                             </Typography>
                           </Stack>
                         </Stack>
-                        <Typography variant="subtitle2">
+                        <Typography variant="subtitle2" >
                           {!isSameDate(dayjs(emp.date))
                             ? dateFormatter(emp.date, "DD MMM YYYY")
                             : i({ id: "DATETIME.TODAY" })}

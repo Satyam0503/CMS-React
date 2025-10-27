@@ -3,6 +3,7 @@ import { useDrawingArea } from "@mui/x-charts/hooks";
 import { PieChart, PieSeries } from "@mui/x-charts/PieChart"
 import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
 import { useThemeContext } from "../../Context/ThemeContext";
+import { chartColorpalette } from "../../modules/theme/MuiTheme";
 
 export const defaultPieChartSeries: PieSeries = {
     innerRadius: '60%',
@@ -33,7 +34,7 @@ export const DonutChart = (props: DonutChartProps) => {
             loading={loading}
             hideLegend={hideLegend}
             height={height}
-            colors={rainbowSurgePalette(theme)}
+            colors={chartColorpalette[theme]}
             slotProps={{
                 legend: {
                     direction: 'horizontal',

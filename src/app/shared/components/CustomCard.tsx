@@ -1,4 +1,5 @@
 import { Card, Stack, Typography } from "@mui/material";
+import clsx from "clsx";
 import { FC } from "react";
 
 interface Props {
@@ -13,7 +14,9 @@ export const CustomCard: FC<Props> = (props) => {
   return (
     <Card
       sx={{ minHeight: applyMinHeight ? "310px" : "auto" }}
-      className="p-4 d-flex flex-column"
+      className={clsx("p-4 d-flex flex-column", {
+        "h-100": !applyMinHeight,
+      })}
     >
       <Stack spacing={1} className="flex-grow-1 ">
         <Stack direction="row" className="justify-content-between mb-1">

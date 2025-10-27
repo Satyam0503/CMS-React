@@ -4,7 +4,7 @@ import {
   patchRequest,
   postRequest,
 } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { LEAVE_REQUEST_STATUS } from "../../../utils/enums";
 import {
@@ -20,6 +20,7 @@ import {
   GetMyLeaveRequestsResponse,
   LeaveRequestApprovalPayload,
   GetLeaveRequestsSummary,
+  MonthlyLeaveTakenSummary,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -98,5 +99,11 @@ export const updateLeaveRequestStatus = (
 export const getLeaveRequestSummary = () => {
   return getRequest<GetLeaveRequestsSummary>(
     ServiceUrl.GET_LEAVE_REQUEST_SUMMARY
+  );
+};
+
+export const getMonthlyLeaveTakenSummary = (year: number) => {
+  return getRequest<ResponseData<MonthlyLeaveTakenSummary>>(
+    `${ServiceUrl.GET_MONTHLY_LEAVE_TAKEN_SUMMARY}/${year}`
   );
 };

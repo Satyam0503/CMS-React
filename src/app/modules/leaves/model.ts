@@ -96,6 +96,10 @@ export type LeaveRequestSummary = {
     statusValues: Record<number, number>;
   }[];
 };
+export type MonthlyLeaveTakenSummary = {
+  month: number;
+  totalLeavesTaken: number;
+};
 
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;
 export type GetLeaveBalanceResponse = ResponseData<LeaveBalance>;

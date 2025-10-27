@@ -62,9 +62,9 @@ export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType)
                     {
                         ...defaultPieChartSeries,
                         data: getLabelAndDataForLeaveType(type)
-                    }
+                    },
                 ] satisfies PieSeries[]
-                return <Grid key={type.leaveType} item xs={12} sm={6}>
+                return <Grid key={type.leaveType} item xs={12} sm={6} md={4} >
                     <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave} applyMinHeight={false}>
                         <DonutChart loading={isLoading} series={series} centerLabel={type.maximumLeave} />
                     </CustomCard>

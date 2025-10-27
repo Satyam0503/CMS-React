@@ -213,6 +213,7 @@ export const ServiceUrl = {
   UPDATE_LEAVE_REQUEST_STATUS: `api/LeaveManagement/LeaveRequest`,
   GET_MY_LEAVE_REQUEST: `api/LeaveManagement/GetMyLeaveRequests`,
   GET_LEAVE_REQUEST_SUMMARY: "api/LeaveManagement/GetLeaveRequestSummary",
+  GET_MONTHLY_LEAVE_TAKEN_SUMMARY: "api/LeaveManagement/GetMonthlyTakenLeaveSummary",
 
   // custom attributes
   CREATE_NEW_CUSTOM_ATTRIBUTE: `api/CompanyMaster/CreateCustomAttribute`,

@@ -362,7 +362,9 @@
       "LEAVE_REQUEST": "Leave Request",
       "LEAVE_TYPES": "Leave Types",
       "EDIT_LEAVE_TYPE": "Edit Leave Type",
-      "UPDATE_LEAVE_STATUS": "Update Leave Status"
+      "UPDATE_LEAVE_STATUS": "Update Leave Status",
+      "MONTHLY_LEAVE_SUMMARY": "Monthly Leave Summary",
+      "LEAVE_TAKEN": "Leave Taken"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Casual Leave",

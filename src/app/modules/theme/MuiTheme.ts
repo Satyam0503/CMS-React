@@ -1,5 +1,6 @@
 import { createTheme, PaletteMode } from "@mui/material";
 import { Localization } from "@mui/material/locale";
+import { rainbowSurgePalette } from "@mui/x-charts/colorPalettes";
 
 export const colors = {
   primary: {
@@ -36,6 +37,26 @@ export const colors = {
     100: "#F5F5F5",
   },
   white: "#ffffff",
+};
+
+export const chartColorpalette: { [key: string]: string[] } = {
+  light: [
+    "#9A56D3", // purple
+    "#FFA52F", // orange
+    "#6d6d6dff",
+    "#E0468F", // magenta
+    "#F45D48", // coral
+    "#FFC107", // amber
+    "#3949AB", // deep blue
+  ],
+  dark: [
+    "#9A56D3", // purple
+    "#FFA52F", // orange
+    "#E0468F", // magenta
+    "#F45D48", // coral
+    "#FFC107", // amber
+    "#3949AB", // deep blue
+  ],
 };
 
 declare module "@mui/material/styles" {

@@ -4,6 +4,7 @@ import { FC } from "react";
 import Chart from "react-apexcharts";
 import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
 import { useThemeContext } from "../../Context/ThemeContext";
+import { chartColorpalette } from "../../modules/theme/MuiTheme";
 
 
 interface BarChartProps {
@@ -48,7 +49,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       height: height || 220,
       type: "bar",
     },
-    colors: rainbowSurgePalette(theme),
+    colors: chartColorpalette[theme],
     fill: {
       opacity: 1,
     },
