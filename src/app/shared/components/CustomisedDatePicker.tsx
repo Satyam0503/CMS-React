@@ -5,7 +5,7 @@ import { DatePicker, DateView, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { SxProps, Theme } from "@mui/material";
-import { Download } from "@mui/icons-material";
+
 interface PropsTypes {
   value: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
@@ -22,45 +22,46 @@ interface PropsTypes {
 const CustomisedDatePicker = (props: PropsTypes) => {
   const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx } = props;
   return (
-    <>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DemoContainer components={["DatePicker"]}>
-          <DatePicker
-            className="datepicker"
-            name={name}
-            label={label}
-            value={value}
-            onChange={(newDate) => {
-              setValue(newDate);
-            }}
-            maxDate={maxDate}
-            minDate={minDate}
-            disabled={disabled}
-            views={views}
-            slotProps={{
-              textField: {
-                className: "w-100",
-                inputProps: {
-                  readOnly: true,
-                  onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
-                  onScroll: (e) => e.preventDefault(),
-                },
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={["DatePicker"]}>
+        <DatePicker
+          className="datepicker"
+          name={name}
+          label={label}
+          value={value}
+          onChange={(newDate) => {
+            setValue(newDate);
+          }}
+          maxDate={maxDate}
+          minDate={minDate}
+          disabled={disabled}
+          views={views}
+          slotProps={{
+            textField: {
+              inputProps: {
+                readOnly: true,
+                onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
+                onScroll: (e) => e.preventDefault(),
               },
-              inputAdornment: {
-                sx: {
-                  "& .MuiIconButton-root": {
-                    border: 0,
-                    padding: 0
-                  }
+            },
+            inputAdornment: {
+              sx: {
+                "& .MuiIconButton-root": {
+                  border: 0,
+                  padding: 0
                 }
               }
+            }
 
-            }}
-            sx={sx}
-          />
-        </DemoContainer>
-      </LocalizationProvider>
-    </>
+          }}
+          sx={{
+            ...sx,
+            minWidth: "unset !important",
+            width: 1
+          }}
+        />
+      </DemoContainer>
+    </LocalizationProvider>
   );
 };
 

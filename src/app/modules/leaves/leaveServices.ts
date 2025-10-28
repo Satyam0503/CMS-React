@@ -4,7 +4,7 @@ import {
   patchRequest,
   postRequest,
 } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import { LEAVE_REQUEST_STATUS } from "../../../utils/enums";
 import {
@@ -13,10 +13,14 @@ import {
   GetLeaveTypeResponse,
   LeaveBalanceRequestModel,
   LeaveType,
-  LeaveRequestsFilter,
-  GetLeaveRequestesResponse,
+  GetLeaveRequestsResponse,
   GetEmployeeLeaveBalanceResponse,
   RequestLeaveModel,
+  GetLeaveRequestPayLoad,
+  GetMyLeaveRequestsResponse,
+  LeaveRequestApprovalPayload,
+  GetLeaveRequestsSummary,
+  MonthlyLeaveTakenSummary,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -56,9 +60,16 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
   );
 };
 
-export const getAllLeaveRequest = (payload: LeaveRequestsFilter) => {
-  return postRequest<LeaveRequestsFilter, GetLeaveRequestesResponse>(
+export const getAllLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetLeaveRequestsResponse>(
     ServiceUrl.GET_LEAVE_REQUESTS,
+    payload
+  );
+};
+
+export const getMyLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetMyLeaveRequestsResponse>(
+    ServiceUrl.GET_MY_LEAVE_REQUEST,
     payload
   );
 };
@@ -77,10 +88,22 @@ export const getEmployeeLeaveBalance = (employeeId: string) => {
 
 export const updateLeaveRequestStatus = (
   leaveRequestId: string,
-  status: LEAVE_REQUEST_STATUS
+  payload: LeaveRequestApprovalPayload
 ) => {
-  return patchRequest<LEAVE_REQUEST_STATUS, ApiResponse>(
+  return patchRequest<LeaveRequestApprovalPayload, ApiResponse>(
     `${ServiceUrl.UPDATE_LEAVE_REQUEST_STATUS}/${leaveRequestId}/Status`,
-    status
+    payload
+  );
+};
+
+export const getLeaveRequestSummary = () => {
+  return getRequest<GetLeaveRequestsSummary>(
+    ServiceUrl.GET_LEAVE_REQUEST_SUMMARY
+  );
+};
+
+export const getMonthlyLeaveTakenSummary = (year: number) => {
+  return getRequest<ResponseData<MonthlyLeaveTakenSummary>>(
+    `${ServiceUrl.GET_MONTHLY_LEAVE_TAKEN_SUMMARY}/${year}`
   );
 };

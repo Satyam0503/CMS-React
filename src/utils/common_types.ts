@@ -9,6 +9,7 @@ import {
 import { EmployeeFilterModel } from "../app/modules/employees/models";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 import { HolidayFilterModel } from "../app/modules/holidays/models";
+import { LeaveRequestsFilterModel } from "../app/modules/leaves/model";
 
 export interface ApiResponse {
   success: boolean;
@@ -130,6 +131,7 @@ export interface FiltersType {
   employee: EmployeeFilterModel | null;
   holiday: HolidayFilterModel | null;
   noticeBoard: NoticeBoardFilterModel | null;
+  leaveRequest: LeaveRequestsFilterModel | null;
 }
 
 export type WithChildren = {
@@ -166,6 +168,11 @@ export type FilterComponentProps = {
   handleClose: () => void;
   anchorEl: null | Element;
   children?: React.ReactNode;
+};
+
+export type PaginationModel = {
+  pageNo: number;
+  pageSize: number;
 };
 
 // nullable utility type

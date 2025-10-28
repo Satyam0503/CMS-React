@@ -182,18 +182,25 @@
     "SEE_MORE": "Mehr anzeigen",
     "MARK_ALL_AS_READ": "Alles als gelesen markieren",
     "UPLOAD": "Hochladen",
-    "REMOVE": "Entfernen"
+    "REMOVE": "Entfernen",
+    "CLEAR": "Löschen"
   },
   "TITLES": {
+    "BIRTHDAY": "Geburtstag",
+    "WORK_ANNIVERSARY": "Arbeitsjubiläum",
     "EMP_ON_LEAVE": "Mitarbeiter im Urlaub",
     "UPCOMING_BIRTHDAY": "Bevorstehende Geburtstage",
+    "UPCOMING_WORK_ANNIVERSARY": "Bevorstehende Arbeitsjubiläen",
     "TOTAL_EMP": "Gesamtzahl der Mitarbeiter",
     "OPEN_JOB_ROLE": "Offene Stellen",
-    "TOTAL_APPLICATIONS": "Gesamtzahl der Bewerbungen",
+    "TOTAL_APPLICATIONS": "Gesamtanzahl der Bewerbungen",
     "OPEN_POSITIONS": "Offene Positionen",
     "APPLY_HERE": "Hier bewerben",
     "DEPARTMENT": "Abteilungen",
-    "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage"
+    "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage",
+    "UPCOMING_EVENTS": "Bevorstehende Veranstaltungen",
+    "NO_EVENT_HOLIDAY": "Derzeit keine bevorstehenden Feiertage oder Veranstaltungen",
+    "NO_UPCOMING_CELEBRATION": "Derzeit keine bevorstehenden Feierlichkeiten"
   },
   "FORM": {
     "FIRST_NAME": "Vorname",
@@ -311,37 +318,44 @@
       "INACTIVE": "Inaktiv"
     }
   },
+
   "LEAVE": {
+    "TITLE": "Urlaub",
     "EMPLOYEE_NAME": "Name des Mitarbeiters",
     "TOTAL_DAYS": "Gesamttage",
     "REASON": "Grund",
     "DATE": "Datum",
     "HALF_DAY": "Halber Tag",
-    "MAX_LEAVE_DAYS": "Maximale Urlaubstage/Jahr",
-    "LEAVE_TYPE": "Urlaubstyp",
+    "MAX_LEAVE_DAYS": "Maximale Urlaubstage pro Jahr",
+    "LEAVE_TYPE": "Urlaubsart",
     "APPLY_FOR_LEAVE": "Urlaub beantragen",
     "LEAVE_PERIOD": "Urlaubszeitraum",
-    "MIN_NOTICE_DAY": "Tage Vorankündigung",
-    "STATUS": "Status",
+    "MIN_NOTICE_DAY": "Vorankündigungstage",
+    "APPROVAL_STATUS": "Genehmigungsstatus",
     "APPROVED_BY": "Genehmigt von",
-    "APPLIED_LEAVE": "Beantragter Urlaub",
-    "REMAINING": "Resturlaub",
+    "COMMENT": "Kommentar",
+    "REMAINING": "Verbleibend",
+    "LEAVE_HISTORY": "Urlaubshistorie",
     "LEAVE_APPLICATION": "Urlaubsantrag",
     "TAKEN": "Genommen",
+    "DURATION": "Dauer",
     "TITLES": {
       "LEAVE_BALANCE": "Urlaubssaldo",
       "ADD_LEAVE_BALANCE": "Urlaubssaldo hinzufügen",
       "UPDATE_LEAVE_BALANCE": "Urlaubssaldo aktualisieren",
-      "ADD_LEAVE_TYPE": "Neuen Urlaubstyp hinzufügen",
-      "LEAVE_REQUESTS": "Urlaubsanfragen",
-      "LEAVE_REQUEST": "Urlaubsanfrage",
-      "LEAVE_TYPES": "Urlaubstypen",
-      "EDIT_LEAVE_TYPE": "Urlaubstyp bearbeiten"
+      "ADD_LEAVE_TYPE": "Neue Urlaubsart hinzufügen",
+      "LEAVE_REQUESTS": "Urlaubsanträge",
+      "LEAVE_REQUEST": "Urlaubsantrag",
+      "LEAVE_TYPES": "Urlaubsarten",
+      "EDIT_LEAVE_TYPE": "Urlaubsart bearbeiten",
+      "UPDATE_LEAVE_STATUS": "Urlaubsstatus aktualisieren",
+      "MONTHLY_LEAVE_SUMMARY": "Monatliche Urlaubsübersicht",
+      "LEAVE_TAKEN": "Genommene Urlaubstage"
     },
     "TYPES": {
-      "CASUAL_LEAVE": "Gelegentlicher Urlaub",
-      "SICK_LEAVE": "Krankheitsurlaub",
-      "EARNED_LEAVE": "Verdienter Urlaub",
+      "CASUAL_LEAVE": "Gelegenheitsurlaub",
+      "SICK_LEAVE": "Krankenurlaub",
+      "EARNED_LEAVE": "Erholungsurlaub",
       "MATERNITY_LEAVE": "Mutterschaftsurlaub",
       "PATERNITY_LEAVE": "Vaterschaftsurlaub"
     }
@@ -482,8 +496,6 @@
   "PERMISSION.VIEW": "Ansehen",
   "PERMISSION.EDIT": "Bearbeiten",
   "PERMISSION.DELETE": "Löschen",
-  "SETTING.NOTIFICATION": "Benachrichtigung",
-  "SETTING.NOTIFICATIONS": "Benachrichtigungseinstellungen",
 
   "VACANCY.TEXT1": "Vielen Dank für Ihren Besuch auf unserer Website!",
   "VACANCY.TEXT2": "Unsere Stellenangebote werden gerade aktualisiert. Bitte besuchen Sie uns bald wieder, um die neuesten Stellenangebote einzusehen. Vielen Dank für Ihr Interesse!",
@@ -703,7 +715,8 @@
       "LEAVE_REQ_APPROVED": "Ihr Urlaubsantrag wurde erfolgreich von {employeeName} genehmigt",
       "LEAVE_REQ_REJECT": "Leider wurde Ihr Urlaubsantrag von {employeeName} abgelehnt",
       "NEW_MESSAGE": "Neue Nachricht erhalten",
-      "TODAY_BIRTHDAY": "🎉Heute hat {employeeName} Geburtstag — nehmen Sie sich einen Moment, um ihm zu gratulieren",
+      "TODAY_BIRTHDAY": "🎂 Heute hat {employeeName} Geburtstag — nehmen Sie sich einen Moment, um ihm zu gratulieren",
+      "TODAY_WORK_ANNIVERSARY": "🎉Heute feiert {employeeName} sein Arbeitsjubiläum — gratulieren Sie ihm zu diesem Meilenstein!",
       "FALLBACK": "Sie haben eine neue Benachrichtigung"
     }
   },
@@ -774,31 +787,36 @@
     "ADD_LANGUAGE_TITLE": "Bitte geben Sie einen Titel für {language} ein"
   },
   "STATUS_CODES": {
-    "1": "Das Unternehmen existiert bereits",
+    "1": "Unternehmen existiert bereits",
     "2": "Ungültige Anmeldedaten",
-    "3": "Bitte überprüfen Sie Ihre E-Mail",
+    "3": "Bitte bestätigen Sie Ihre E-Mail",
     "4": "Sie haben keinen Zugriff auf die App",
     "5": "Ungültiges Aktualisierungstoken",
-    "6": "Das Aktualisierungstoken wurde widerrufen",
-    "7": "Das Aktualisierungstoken ist abgelaufen",
+    "6": "Aktualisierungstoken wurde widerrufen",
+    "7": "Aktualisierungstoken ist abgelaufen",
     "8": "Ungültiges oder abgelaufenes Token",
-    "9": "Dieser Passwort-Reset-Link ist abgelaufen. Bitte fordern Sie einen neuen an",
-    "10": "Das Passwort wurde zurückgesetzt",
-    "11": "Der Passwort-Reset-Link wurde gesendet. Bitte überprüfen Sie Ihre E-Mails",
-    "12": "Der Mitarbeiter existiert bereits",
-    "13": "Die Mitarbeiter-ID existiert bereits",
-    "14": "Der Mitarbeiter existiert nicht",
-    "15": "Die Fertigkeit existiert bereits",
-    "16": "Der Bewerber existiert bereits",
-    "17": "Es gibt kein Urlaubs-Guthaben für den Mitarbeiter",
+    "9": "Dieser Link zum Zurücksetzen des Passworts ist abgelaufen. Bitte fordern Sie einen neuen an",
+    "10": "Passwort wurde zurückgesetzt",
+    "11": "Link zum Zurücksetzen des Passworts wurde gesendet. Bitte prüfen Sie Ihre E-Mails",
+    "12": "Mitarbeiter existiert bereits",
+    "13": "Mitarbeiter-ID existiert bereits",
+    "14": "Mitarbeiter existiert nicht",
+    "15": "Fähigkeit existiert bereits",
+    "16": "Bewerber existiert bereits",
+    "17": "Urlaubssaldo-Datensatz existiert nicht",
     "18": "Urlaub muss im Voraus beantragt werden",
-    "19": "Sie haben bereits einen offenen Urlaubsantrag",
-    "20": "Unzureichendes Urlaubsguthaben",
-    "21": "Unzureichendes Urlaubsguthaben für den aktuellen Monat",
-    "22": "Urlaubsart existiert nicht",
-    "23": "Urlaubsart existiert bereits",
-    "24": "Keine Gehaltsabrechnungsdaten für den aktuellen Monat gefunden",
-    "25": "Die Rolle existiert bereits"
+    "19": "Sie haben bereits einen ausstehenden Urlaubsantrag",
+    "20": "Unzureichender Urlaubssaldo",
+    "21": "Unzureichender Urlaubssaldo für den aktuellen Monat",
+    "22": "Urlaubstyp existiert nicht",
+    "23": "Urlaubstyp existiert bereits",
+    "24": "Gehaltsdaten für den aktuellen Monat nicht gefunden",
+    "25": "Gehaltsabrechnung für diesen Monat existiert bereits",
+    "26": "Maximal erlaubte Urlaubstage für den gewählten Typ überschritten",
+    "27": "Maximaler Urlaub darf nicht negativ sein",
+    "28": "Urlaubssaldo für diesen Mitarbeiter existiert bereits",
+    "29": "Urlaubssaldo für den ausgewählten Typ existiert für diesen Mitarbeiter nicht",
+    "30": "Urlaubsantrag fehlgeschlagen: Überschneidung mit bereits genehmigtem Urlaub"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -827,6 +845,26 @@
       "GROSS_PAY": "Bruttogehalt",
       "TOTAL_DEDUCTION": "Gesamtabzug",
       "NET_PAY": "Nettogehalt"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Benachrichtigungseinstellungen",
+    "NOTE": "Verwalten Sie Ihre Benachrichtigungseinstellungen, um über wichtige Updates und Ereignisse informiert zu bleiben",
+    "TYPE": {
+      "BirthdayNotification": "Geburtstagsbenachrichtigungen",
+      "WorkAnniversaries": "Arbeitsjubiläumsbenachrichtigungen",
+      "LeaveStatusUpdate": "Benachrichtigungen zum Urlaubsstatus",
+      "Notice": "Hinweisbenachrichtigungen",
+      "HolidayReminder": "Feiertagserinnerungen",
+      "MessageNotification": "Nachrichtenbenachrichtigungen"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Erhalten Sie Benachrichtigungen über bevorstehende Geburtstage von Mitarbeitern, um den Anlass zu würdigen",
+      "WorkAnniversaries": "Erhalten Sie Benachrichtigungen, wenn Mitarbeiter wichtige Arbeitsjubiläen im Unternehmen erreichen",
+      "LeaveStatusUpdate": "Bleiben Sie über den Status Ihrer Urlaubsanträge auf dem Laufenden",
+      "Notice": "Erhalten Sie Benachrichtigungen über neue Mitteilungen in der Anwendung",
+      "HolidayReminder": "Erhalten Sie rechtzeitige Erinnerungen an bevorstehende Feiertage und firmeninterne Ruhetage",
+      "MessageNotification": "Erhalten Sie Benachrichtigungen, wenn neue Nachrichten über die Plattform gesendet werden"
     }
   }
 }

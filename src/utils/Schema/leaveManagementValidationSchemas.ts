@@ -45,3 +45,12 @@ export const leaveRequestValidationSchema = Yup.object().shape({
   totalDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
   reason: Yup.string().trim().min(3).required("VALIDATION_ERR.REQUIRED_TYPE"),
 });
+
+export const leaveRequestFilterValidationSchema = Yup.object().shape({
+  leaveType: Yup.number()
+    .oneOf([1, 2, 3, 4, 5], "INVALID_LEAVE_TYPE")
+    .notRequired(),
+  startDate: Yup.date().notRequired(),
+  endDate: Yup.date().min(Yup.ref("startDate")).notRequired(),
+  status: Yup.number().oneOf([1, 2, 3]).notRequired(),
+});

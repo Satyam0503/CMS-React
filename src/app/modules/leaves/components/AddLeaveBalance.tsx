@@ -10,7 +10,7 @@ import CustomisedButton from "../../../shared/components/CustomisedButton"
 import { getAllEmployees } from "../../employees/employeeServices"
 import { GetAllEmployeeResponseModel } from "../../employees/models"
 import { leaveBalanceValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas"
-import { blockInvalidCharOnNumberField, LeaveTypeMapper } from "../../../../utils/common"
+import { blockInvalidCharOnNumberField, getStatusCodeString, LeaveTypeMapper } from "../../../../utils/common"
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel"
 import { LEAVE_TYPE } from "../../../../utils/enums"
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n"
@@ -42,6 +42,9 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                     toast.success(i({ id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED" }));
                     props.handleClose();
                     props.handleRefresh();
+                }
+                else {
+                    toast.error(i({ id: getStatusCodeString(data.statusCode), defaultMessage: "ERROR.SOMETHING_WRONG" }))
                 }
             } catch (error) {
                 console.error((error as Error).message);

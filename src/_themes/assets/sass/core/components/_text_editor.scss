@@ -1,0 +1,103 @@
+// // text editor styling
+// .text-editor {
+//   & > .ql-container {
+//     border-radius: 0 0 0.25rem 0.25rem;
+//     overflow: hidden;
+//   }
+
+//   & > .ql-toolbar {
+//     border-radius: 0.25rem 0.25rem 0 0;
+//   }
+//   &.dark {
+//     & .ql-toolbar .ql-picker-label,
+//     .ql-toolbar button {
+//       color: $app-white;
+//     }
+//   }
+// }
+.text-editor {
+  font-size: 14px;
+
+  & > .ql-toolbar {
+    border: 1px solid $neutral-500;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background-color: $neutral-100;
+
+    .ql-picker,
+    button {
+      .ql-fill,
+      .ql-stroke {
+        stroke: $neutral-600;
+      }
+
+      .ql-fill {
+        fill: $neutral-500;
+      }
+
+      &.ql-expanded,
+      &.ql-active,
+      &:focus,
+      &:hover {
+        .ql-fill,
+        .ql-stroke {
+          stroke: $app-primary-500;
+        }
+
+        .ql-fill {
+          fill: $app-primary-500;
+        }
+      }
+    }
+  }
+  & > .ql-container {
+    border: 1px solid $neutral-500;
+    border-radius: 0 0 0.25rem 0.25rem;
+
+    & > .ql-editor.ql-blank::before {
+      font-size: 14px;
+      font-style: normal;
+      color: $neutral-400;
+    }
+
+    .ql-tooltip {
+      border: 0;
+      padding: 0.5rem 1rem;
+      box-shadow: 0px 0px 5px 0px $neutral-400;
+      border-radius: 0.25rem;
+      left: 2% !important;
+
+      input[type="text"] {
+        border: 1px solid $neutral-400;
+        color: $neutral-400;
+        outline: none !important;
+        border-radius: 0.25rem;
+
+        &:active,
+        &:focus {
+          border-color: $neutral-500 !important;
+        }
+      }
+
+      .ql-preview {
+        color: $neutral-600;
+      }
+
+      .ql-action {
+        transition: color 0.3s ease;
+        color: $app-primary-500;
+
+        &:hover {
+          transition: color 0.3s ease;
+          color: $app-primary-500;
+        }
+      }
+
+      // Tooltip adjustment in modal
+      .modal & {
+        &.ql-editing {
+          left: 20px !important;
+        }
+      }
+    }
+  }
+}

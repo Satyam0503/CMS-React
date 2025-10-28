@@ -2,7 +2,7 @@ import { Stack, Typography, Link, Box, Avatar } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { useEffect, useState } from "react";
-import { LeaveRequestModel, LeaveRequestsFilter } from "../../leaves/model";
+import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
 import dayjs from "dayjs";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { getAllLeaveRequest } from "../../leaves/leaveServices";
@@ -21,11 +21,13 @@ export default function EmpOnLeave() {
 
   useEffect(() => {
     const fetchLeaveRequest = async () => {
-      const payload: LeaveRequestsFilter = {
+      const payload: GetLeaveRequestPayLoad = {
         pageNo: 1,
         pageSize: 20,
         startDate: dayjs().startOf("day"),
-        status: [LEAVE_REQUEST_STATUS.APPROVED]
+        status: LEAVE_REQUEST_STATUS.APPROVED,
+        endDate: null,
+        leaveType: null
       }
       try {
         const { data } = await getAllLeaveRequest(payload);

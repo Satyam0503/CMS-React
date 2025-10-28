@@ -5,7 +5,7 @@ import {
   patchRequest,
   postRequest,
 } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import {
   CertificationResponseData,
   ChangePasswordPayload,
@@ -13,6 +13,7 @@ import {
   EmployeeSearchResponseModel,
   GetCollegeListResponseModel,
   GetSkillListResponseModel,
+  NotificationPreferences,
   NotificationRequestPayload,
   NotificationResponseModel,
   UploadProfileResponseModel,
@@ -255,4 +256,21 @@ export const changePassword = (payload: ChangePasswordPayload) => {
     ServiceUrl.CHANGE_PASSWORD,
     payload
   );
+};
+
+// notification preferences service methods
+
+export const getNotificationPreferences = () => {
+  return getRequest<ResponseData<NotificationPreferences>>(
+    ServiceUrl.GET_NOTIFICATION_PREFERENCES
+  );
+};
+
+export const updateNotificationPreferences = (
+  payload: NotificationPreferences
+) => {
+  return postRequest<
+    NotificationPreferences,
+    ResponseData<NotificationPreferences>
+  >(ServiceUrl.UPDATE_NOTIFICATION_PREFERENCES, payload);
 };

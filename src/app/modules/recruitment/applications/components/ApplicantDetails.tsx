@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Card,
   FormControl,
@@ -12,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Edit, Visibility } from "@mui/icons-material";
+import { Add, Close, Edit, Visibility } from "@mui/icons-material";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -42,6 +43,7 @@ import { ApplicantStatus } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
+import { CvPreview } from "./CvPreview";
 
 export const ApplicantDetails = () => {
   const { formatMessage } = useIntl();
@@ -61,6 +63,7 @@ export const ApplicantDetails = () => {
     pageNo: 0,
     pageSize: 10,
   });
+  const [CvPreviewMode, setCVPreviewMode] = useState(false);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -198,27 +201,6 @@ export const ApplicantDetails = () => {
     }
   };
 
-  const handleDownloadResume = async () => {
-    try {
-      const response = await fetch(applicant.fullApplicantResumePath, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/pdf",
-        },
-      });
-      const fileObj = await response.blob();
-      const urlObj = window.URL.createObjectURL(fileObj);
-      const link = document.createElement("a");
-      link.href = urlObj;
-      // link.setAttribute("download", `${applicant.firstName}_Resume.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handlePageChange = (page: number) => {
     setPaginationValues({
       ...paginationValues,
@@ -235,23 +217,17 @@ export const ApplicantDetails = () => {
   };
   return (
     <Stack spacing={2} sx={{ flexGrow: 1 }}>
-      <Card sx={{ p: 2 }}>
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          flexWrap={"wrap"}
-          spacing={2}
-          mb={2}
-        >
+      <Card className="p-6 h-auto">
+        <Stack className="flex-row mb-4 gap-2 flex-wrap justify-content-between">
           <Typography variant="h5">
             {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
           </Typography>
 
-          <Stack direction={"row"} spacing={1}>
+          <Stack direction="row" spacing={1}>
             <CustomIconButton
-              icon={<Visibility />}
+              icon={CvPreviewMode ? <Close /> : <Visibility />}
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
-              handleClick={() => handleDownloadResume()}
+              handleClick={() => setCVPreviewMode(!CvPreviewMode)}
             />
             <CustomIconButton
               icon={<Edit />}
@@ -264,160 +240,161 @@ export const ApplicantDetails = () => {
             />
           </Stack>
         </Stack>
+        {
+          CvPreviewMode ?
+            <CvPreview pdfUrl={applicant.fullApplicantResumePath} /> :
+            <Grid container spacing={2.5}>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "FORM.FULL_NAME" })} :
+                  </Typography>{" "}
+                  <Typography variant="body1">
+                    {applicant?.firstName + " " + applicant?.lastName}
+                  </Typography>
+                </Stack>
+              </Grid>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "FORM.FULL_NAME" })} :
-              </Typography>{" "}
-              <Typography variant="body1">
-                {applicant?.firstName + " " + applicant?.lastName}
-              </Typography>
-            </Stack>
-          </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "FORM.EMAIL" })} :
+                  </Typography>
 
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "FORM.EMAIL" })} :
-              </Typography>
+                  <Typography variant="body1">{applicant?.email}</Typography>
+                </Stack>
+              </Grid>
 
-              <Typography variant="body1">{applicant?.email}</Typography>
-            </Stack>
-          </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "FORM.PHONE" })} :
+                  </Typography>
 
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "FORM.PHONE" })} :
-              </Typography>
+                  <Typography variant="body1">{applicant?.phone}</Typography>
+                </Stack>
+              </Grid>
 
-              <Typography variant="body1">{applicant?.phone}</Typography>
-            </Stack>
-          </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "JOB.POSITION" })} :
+                  </Typography>
 
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "JOB.POSITION" })} :
-              </Typography>
+                  <Typography variant="body1">{applicant?.vacancyName}</Typography>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "FORM.EXPERIENCE" })} :
+                  </Typography>
 
-              <Typography variant="body1">{applicant?.vacancyName}</Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "FORM.EXPERIENCE" })} :
-              </Typography>
+                  <Typography variant="body1">
+                    {convertMonthsToYear(applicant.experience)}
+                  </Typography>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
+                  </Typography>
+                  <Typography variant="body1">
+                    {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
+                  </Typography>
+                </Stack>
+              </Grid>
 
-              <Typography variant="body1">
-                {convertMonthsToYear(applicant.experience)}
-              </Typography>
-            </Stack>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
-              </Typography>
-              <Typography variant="body1">
-                {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
-              </Typography>
-            </Stack>
-          </Grid>
-
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2} sx={{ alignItems: "center" }}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
-              </Typography>
-              <FormControl>
-                <InputLabel id="demo-simple-select-label">
-                  {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
-                </InputLabel>
-                <Select
-                  name="applicantStatus"
-                  value={status.applicationStatus}
-                  sx={{ width: "150px" }}
-                  onChange={handleStatusChange}
-                  className="select"
-                  label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
-                >
-                  {ApplicationEvaluationStatus.map((status) => (
-                    <MenuItem key={status.id} value={status.value}>
-                      {formatMessage({ id: status.label })}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={4}>
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
-              <Typography variant="body1" fontWeight={600}>
-                {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
-              </Typography>
-              <Switch
-                checked={status.applicantStatus === ApplicantStatus.Active}
-                onChange={(event) => {
-                  handleEditApplicant(
-                    event.target.checked
-                      ? ApplicantStatus.Active
-                      : ApplicantStatus.InActive
-                  );
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            </Stack>
-          </Grid>
-        </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
+                  </Typography>
+                  <FormControl>
+                    <InputLabel id="demo-simple-select-label">
+                      {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
+                    </InputLabel>
+                    <Select
+                      name="applicantStatus"
+                      value={status.applicationStatus}
+                      sx={{ width: "150px" }}
+                      onChange={handleStatusChange}
+                      className="select"
+                      label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
+                    >
+                      {ApplicationEvaluationStatus.map((status) => (
+                        <MenuItem key={status.id} value={status.value}>
+                          {formatMessage({ id: status.label })}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={4}>
+                <Stack direction="row" spacing={2} alignItems={"center"}>
+                  <Typography className="fw-bold">
+                    {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
+                  </Typography>
+                  <Switch
+                    checked={status.applicantStatus === ApplicantStatus.Active}
+                    onChange={(event) => {
+                      handleEditApplicant(
+                        event.target.checked
+                          ? ApplicantStatus.Active
+                          : ApplicantStatus.InActive
+                      );
+                    }}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </Stack>
+              </Grid>
+            </Grid>
+        }
       </Card>
-      <Card sx={{ p: 2, flexGrow: 1, gap: 2 }} className="d-flex flex-column">
-        <Stack
-          direction={"row"}
-          spacing={1}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <Typography variant="h5">
-            {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
-          </Typography>
-          <CustomisedButton
-            label={formatMessage({ id: "COMMENT.ADD_COMMENT" })}
-            Icon={<Add />}
-            handleClick={() => {
-              setModalOpen(true);
-            }}
-          />
-        </Stack>
+      {
+        !CvPreviewMode &&
+        <Card className="p-4 flex-grow-1 gap-4 d-flex flex-column">
+          <Stack className="gap-4 flex-row justify-content-between align-items-center flex-wrap">
+            <Typography variant="h5">
+              {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
+            </Typography>
+            <CustomisedButton
+              label={formatMessage({ id: "COMMENT.ADD_COMMENT" })}
+              Icon={<Add />}
+              handleClick={() => {
+                setModalOpen(true);
+              }}
+            />
+          </Stack>
 
-        <CustomisedTable
-          keyName="id"
-          rows={commentList}
-          columns={CommentTableColumnList}
-          page={0}
-          rowsPerPage={0}
-        />
-        <Pagination
-          page={paginationValues.pageNo}
-          rowsPerPage={paginationValues.pageSize}
-          setPage={handlePageChange}
-          setRowPerPage={handleRowPerPageChange}
-          totalRecords={totalRecords}
-        />
-        {isModalOpen && (
-          <AddComment
-            loading={loading}
-            open={isModalOpen}
-            comment={comment}
-            handleCommentChange={handleCommentChange}
-            handleClose={handleClose}
-            handleAddComment={handleAddComment}
+          <CustomisedTable
+            keyName="id"
+            rows={commentList}
+            columns={CommentTableColumnList}
+            page={0}
+            rowsPerPage={0}
           />
-        )}
-      </Card>
-    </Stack>
+          <Pagination
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.pageSize}
+            setPage={handlePageChange}
+            setRowPerPage={handleRowPerPageChange}
+            totalRecords={totalRecords}
+          />
+          {isModalOpen && (
+            <AddComment
+              loading={loading}
+              open={isModalOpen}
+              comment={comment}
+              handleCommentChange={handleCommentChange}
+              handleClose={handleClose}
+              handleAddComment={handleAddComment}
+            />
+          )}
+        </Card>
+      }
+    </Stack >
   );
 };

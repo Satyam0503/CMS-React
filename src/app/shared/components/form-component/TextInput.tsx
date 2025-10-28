@@ -29,7 +29,7 @@ export const TextInput: FC<InputFieldProps> = ({ label, ...props }) => {
       label={label}
       variant="outlined"
       error={meta.touched && Boolean(meta.error)}
-      helperText={meta.touched && meta.error && i({ id: meta.error })}
+      helperText={meta.touched && meta.error && i({ id: meta.error, defaultMessage: " " })}
       {...fields}
       {...props}
       onKeyDown={(e) => {

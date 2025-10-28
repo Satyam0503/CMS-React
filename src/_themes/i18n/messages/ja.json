@@ -182,18 +182,25 @@
     "SEE_MORE": "もっと見る",
     "MARK_ALL_AS_READ": "すべてを既読にする",
     "UPLOAD": "アップロード",
-    "REMOVE": "削除"
+    "REMOVE": "削除",
+    "CLEAR": "クリア"
   },
   "TITLES": {
+    "BIRTHDAY": "誕生日",
+    "WORK_ANNIVERSARY": "勤続記念日",
     "EMP_ON_LEAVE": "休暇中の従業員",
     "UPCOMING_BIRTHDAY": "今後の誕生日",
-    "TOTAL_EMP": "総従業員数",
-    "OPEN_JOB_ROLE": "オープン求人",
-    "TOTAL_APPLICATIONS": "総応募数",
-    "OPEN_POSITIONS": "オープンポジション",
+    "UPCOMING_WORK_ANNIVERSARY": "今後の勤続記念日",
+    "TOTAL_EMP": "従業員総数",
+    "OPEN_JOB_ROLE": "募集中の職種",
+    "TOTAL_APPLICATIONS": "応募総数",
+    "OPEN_POSITIONS": "募集ポジション",
     "APPLY_HERE": "ここから応募",
     "DEPARTMENT": "部署",
-    "UPCOMING_HOLIDAYS": "今後の祝日"
+    "UPCOMING_HOLIDAYS": "今後の休日",
+    "UPCOMING_EVENTS": "今後のイベント",
+    "NO_EVENT_HOLIDAY": "現在、予定されている休日やイベントはありません",
+    "NO_UPCOMING_CELEBRATION": "現在、予定されているお祝いはありません"
   },
   "FORM": {
     "FIRST_NAME": "名",
@@ -312,38 +319,44 @@
     }
   },
   "LEAVE": {
+    "TITLE": "休暇",
     "EMPLOYEE_NAME": "従業員名",
-    "TOTAL_DAYS": "総日数",
+    "TOTAL_DAYS": "合計日数",
     "REASON": "理由",
     "DATE": "日付",
     "HALF_DAY": "半日",
     "MAX_LEAVE_DAYS": "年間最大休暇日数",
-    "LEAVE_TYPE": "休暇タイプ",
-    "APPLY_FOR_LEAVE": "休暇を申請",
+    "LEAVE_TYPE": "休暇の種類",
+    "APPLY_FOR_LEAVE": "休暇を申請する",
     "LEAVE_PERIOD": "休暇期間",
     "MIN_NOTICE_DAY": "事前通知日数",
-    "STATUS": "状態",
+    "APPROVAL_STATUS": "承認状況",
     "APPROVED_BY": "承認者",
-    "APPLIED_LEAVE": "申請された休暇",
+    "COMMENT": "コメント",
     "REMAINING": "残り",
+    "LEAVE_HISTORY": "休暇履歴",
     "LEAVE_APPLICATION": "休暇申請",
     "TAKEN": "取得済み",
+    "DURATION": "期間",
     "TITLES": {
       "LEAVE_BALANCE": "休暇残高",
       "ADD_LEAVE_BALANCE": "休暇残高を追加",
       "UPDATE_LEAVE_BALANCE": "休暇残高を更新",
       "ADD_LEAVE_TYPE": "新しい休暇タイプを追加",
-      "LEAVE_REQUESTS": "休暇申請",
+      "LEAVE_REQUESTS": "休暇申請一覧",
       "LEAVE_REQUEST": "休暇申請",
       "LEAVE_TYPES": "休暇タイプ",
-      "EDIT_LEAVE_TYPE": "休暇タイプを編集"
+      "EDIT_LEAVE_TYPE": "休暇タイプを編集",
+      "UPDATE_LEAVE_STATUS": "休暇ステータスを更新",
+      "MONTHLY_LEAVE_SUMMARY": "月間休暇概要",
+      "LEAVE_TAKEN": "取得した休暇"
     },
     "TYPES": {
-      "CASUAL_LEAVE": "カジュアル休暇",
+      "CASUAL_LEAVE": "私用休暇",
       "SICK_LEAVE": "病気休暇",
-      "EARNED_LEAVE": "取得休暇",
+      "EARNED_LEAVE": "有給休暇",
       "MATERNITY_LEAVE": "産休",
-      "PATERNITY_LEAVE": "育児休暇"
+      "PATERNITY_LEAVE": "育休（父親）"
     }
   },
 
@@ -490,9 +503,6 @@
   "PERMISSION.VIEW": "表示",
   "PERMISSION.EDIT": "編集",
   "PERMISSION.DELETE": "削除",
-
-  "SETTING.NOTIFICATION": "通知",
-  "SETTING.NOTIFICATIONS": "通知設定",
 
   "VACANCY.TEXT1": "ウェブサイトのご覧いただきありがとうございます！",
   "VACANCY.TEXT2": "現在、利用可能なポジションは更新中です。最新の求人情報を再度チェックしてください。ご興味いただきありがとうございます。今後の機会にお会いできることを楽しみにしています。",
@@ -715,7 +725,8 @@
       "LEAVE_REQ_APPROVED": "あなたの休暇申請は {employeeName} によって承認されました",
       "LEAVE_REQ_REJECT": "残念ながら、あなたの休暇申請は {employeeName} によって拒否されました",
       "NEW_MESSAGE": "新しいメッセージを受信しました",
-      "TODAY_BIRTHDAY": "🎉今日は {employeeName} の誕生日です — ぜひお祝いの言葉をかけてください",
+      "TODAY_BIRTHDAY": "🎂 今日は {employeeName} の誕生日です — ぜひお祝いの言葉をかけてください",
+      "TODAY_WORK_ANNIVERSARY": "🎉今日は {employeeName} の勤続記念日です — ぜひお祝いの言葉をかけてください",
       "FALLBACK": "新しい通知があります"
     }
   },
@@ -787,30 +798,35 @@
   },
   "STATUS_CODES": {
     "1": "会社はすでに存在します",
-    "2": "無効な認証情報",
+    "2": "無効な認証情報です",
     "3": "メールを確認してください",
     "4": "アプリへのアクセス権がありません",
-    "5": "無効なリフレッシュトークン",
-    "6": "リフレッシュトークンは取り消されました",
-    "7": "リフレッシュトークンが期限切れです",
-    "8": "無効または期限切れのトークン",
+    "5": "無効なリフレッシュトークンです",
+    "6": "リフレッシュトークンが取り消されました",
+    "7": "リフレッシュトークンの有効期限が切れています",
+    "8": "無効または期限切れのトークンです",
     "9": "このパスワードリセットリンクは期限切れです。新しいリンクをリクエストしてください",
     "10": "パスワードがリセットされました",
     "11": "パスワードリセットリンクが送信されました。メールを確認してください",
-    "12": "従業員はすでに存在します",
-    "13": "従業員IDはすでに存在します",
-    "14": "従業員は存在しません",
+    "12": "社員はすでに存在します",
+    "13": "社員IDはすでに存在します",
+    "14": "社員が存在しません",
     "15": "スキルはすでに存在します",
     "16": "応募者はすでに存在します",
-    "17": "従業員の有給休暇残高がありません",
+    "17": "休暇残高の記録が存在しません",
     "18": "休暇は事前に申請する必要があります",
-    "19": "すでに保留中の休暇があります",
+    "19": "すでに保留中の休暇申請があります",
     "20": "休暇残高が不足しています",
     "21": "今月の休暇残高が不足しています",
-    "22": "休暇タイプは存在しません",
+    "22": "休暇タイプが存在しません",
     "23": "休暇タイプはすでに存在します",
-    "24": "今月の給与明細データが見つかりません",
-    "25": "給与明細データが見つかりません"
+    "24": "今月の給与データが見つかりません",
+    "25": "今月の給与はすでに存在します",
+    "26": "選択された休暇タイプの最大許可日数を超えています",
+    "27": "最大休暇日数を負の値にはできません",
+    "28": "この従業員の休暇残高はすでに存在します",
+    "29": "選択された休暇タイプの残高はこの従業員に存在しません",
+    "30": "休暇申請に失敗しました：すでに承認された休暇と重複しています"
   },
   "CHAT": {
     "TITLE": "チャット",
@@ -839,6 +855,26 @@
       "GROSS_PAY": "総支給額",
       "TOTAL_DEDUCTION": "控除合計",
       "NET_PAY": "差引支給額"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "通知設定",
+    "NOTE": "重要な更新やイベントに関する通知設定を管理します",
+    "TYPE": {
+      "BirthdayNotification": "誕生日通知",
+      "WorkAnniversaries": "勤続記念通知",
+      "LeaveStatusUpdate": "休暇状況の更新",
+      "Notice": "お知らせ通知",
+      "HolidayReminder": "休日リマインダー",
+      "MessageNotification": "メッセージ通知"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "従業員の誕生日に関する通知を受け取り、お祝いしましょう",
+      "WorkAnniversaries": "従業員が勤続記念日を迎える際に通知を受け取ります",
+      "LeaveStatusUpdate": "自分の休暇申請状況を常に把握できます",
+      "Notice": "アプリに新しいお知らせが投稿されたときに通知を受け取ります",
+      "HolidayReminder": "今後の休日や会社の休業日に関するリマインダーを受け取ります",
+      "MessageNotification": "プラットフォームを通じて新しいメッセージが届いた際に通知を受け取ります"
     }
   }
 }

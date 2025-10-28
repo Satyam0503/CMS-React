@@ -1,4 +1,4 @@
-import { Typography, Stack, Avatar, Box } from "@mui/material";
+import { Typography, Stack, Avatar, Box, useTheme } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 export default function NoticeBoard() {
   const [isLoading, setLoading] = useState(true);
   const [noticeList, setNoticeList] = useState<NoticeResponseModel[]>([]);
-  const [selectedNoticeId, setSelectedNoticeId] = useState<string | null>(null);
+  const [selectedNotice, setSelectedNotice] = useState<NoticeResponseModel | null>(null);
   const { formatMessage } = useIntl();
 
   useEffect(() => {
@@ -38,6 +38,20 @@ export default function NoticeBoard() {
     })();
   }, []);
 
+  const updateNoticeViewedStatus = (noticeId: string) => {
+    setNoticeList(noticeList.map(notice => {
+      if (notice.noticeId === noticeId) {
+        return {
+          ...notice,
+          viewedStatus: true
+        }
+      }
+      else {
+        return notice;
+      }
+    }))
+  }
+
   if (isLoading) {
     return <CardSkeleton />;
   }
@@ -56,11 +70,11 @@ export default function NoticeBoard() {
             </Typography>
           ) : (
             <>
-              <Stack spacing={0.5} className="flex-grow-1">
+              <Stack spacing={0.8} className="flex-grow-1">
                 {noticeList.map((item) => (
                   <Stack
                     key={item.noticeId}
-                    className="flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary"
+                    className={clsx("flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary", { "unread-notice": !item.viewedStatus })}
                   >
                     <Box
                       component="div"
@@ -71,16 +85,16 @@ export default function NoticeBoard() {
                         src={item.userProfile || DEFAULT_USER_AVATAR}
                         alt={item.userName}
                         sx={{
-                          width: 45,
-                          height: 45,
+                          width: 52,
+                          height: 52,
                           bgcolor: "secondary.main",
                         }}
                       />
                       <Stack>
-                        <Typography variant="body1">{item.userName}</Typography>
+                        <Typography >{item.userName}</Typography>
                         <Typography
                           variant="body2"
-                          className={clsx("truncate-multi-line", { "text-decoration-line-through": item.viewedStatus })}
+                          className={clsx("truncate-multi-line")}
                           sx={{ fontSize: 14 }}
                         >
                           {item.noticeTitle}
@@ -103,7 +117,7 @@ export default function NoticeBoard() {
                         },
                         cursor: "pointer",
                       }}
-                      onClick={() => setSelectedNoticeId(item.noticeId)}
+                      onClick={() => setSelectedNotice(item)}
                     >
                       {formatMessage({ id: "BUTTON.VIEW" })}
                     </Box>
@@ -117,11 +131,12 @@ export default function NoticeBoard() {
           )}
         </Stack>
       </CustomCard>
-      {selectedNoticeId && (
+      {selectedNotice && (
         <NoticeViewModel
-          noticeId={selectedNoticeId}
+          noticeId={selectedNotice.noticeId}
           open={true}
-          handleClose={() => setSelectedNoticeId(null)}
+          handleClose={() => setSelectedNotice(null)}
+          updateNoticeViewedStatus={selectedNotice.viewedStatus ? undefined : updateNoticeViewedStatus}
         />
       )}
     </>

@@ -282,14 +282,15 @@ export const getAppliedFilters = () => {
   const savedFilters = localStorage.getItem(APP_FILTER_KEY);
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
-    : {
+    : ({
         application: null,
         jobs: null,
         processLog: null,
         employee: null,
         holiday: null,
         noticeBoard: null,
-      };
+        leaveRequest: null,
+      } satisfies FiltersType);
   return appliedfilters;
 };
 
@@ -537,7 +538,33 @@ export const getNotificationTitle = (
         { id: "NOTIFICATION.TITLES.TODAY_BIRTHDAY" },
         { employeeName: notification.body }
       );
+    case NOTIFICATION_TYPE.WORK_ANNIVERSARY:
+      return i(
+        { id: "NOTIFICATION.TITLES.TODAY_WORK_ANNIVERSARY" },
+        { employeeName: notification.body }
+      );
     default:
       return i({ id: "NOTIFICATION.TITLES.FALLBACK" });
   }
+};
+
+export const getOrdinalSuffix = (num: number) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = num % 100;
+  return num + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
+export const monthMapper: { [key: number]: string } = {
+  1: "MONTHS.JANUARY",
+  2: "MONTHS.FEBRUARY",
+  3: "MONTHS.MARCH",
+  4: "MONTHS.APRIL",
+  5: "MONTHS.MAY",
+  6: "MONTHS.JUNE",
+  7: "MONTHS.JULY",
+  8: "MONTHS.AUGUST",
+  9: "MONTHS.SEPTEMBER",
+  10: "MONTHS.OCTOBER",
+  11: "MONTHS.NOVEMBER",
+  12: "MONTHS.DECEMBER",
 };

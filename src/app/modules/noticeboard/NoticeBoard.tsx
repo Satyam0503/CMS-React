@@ -85,6 +85,20 @@ export const NoticeBoard = () => {
     window.history.replaceState(null, document.title, window.location.href);
   }
 
+  const updateNoticeViewedStatus = (noticeId: string) => {
+    setNoticeList(NoticeList.map(notice => {
+      if (notice.noticeId === noticeId) {
+        return {
+          ...notice,
+          viewedStatus: true
+        }
+      }
+      else {
+        return notice;
+      }
+    }))
+  }
+
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.NOTICE_BOARD" }));
   }, []);
@@ -178,7 +192,7 @@ export const NoticeBoard = () => {
         />
       }
       {
-        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={handleNoticeViewClose} />
+        selectedNotice && <NoticeViewModel open={true} noticeId={selectedNotice} handleClose={handleNoticeViewClose} updateNoticeViewedStatus={NoticeList.find(notice => notice.noticeId === selectedNotice)?.viewedStatus ? undefined : updateNoticeViewedStatus} />
       }
     </>
   );

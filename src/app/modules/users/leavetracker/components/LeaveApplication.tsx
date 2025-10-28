@@ -60,7 +60,6 @@ export const LeaveApplication = (props: Props) => {
       setStatus("");
       const payload: RequestLeaveModel = {
         ...values,
-        employeeId: currentUserId,
       }
       try {
         const { data } = await createLeaveRequest(payload);
