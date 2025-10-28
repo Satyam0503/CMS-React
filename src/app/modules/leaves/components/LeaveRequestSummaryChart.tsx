@@ -1,16 +1,16 @@
-import { Box, Card, Stack, styled, Typography } from "@mui/material"
-import { PieChart, PieChartProps, PieSeries } from '@mui/x-charts/PieChart';
+import { PieSeries } from '@mui/x-charts/PieChart';
 import { useEffect, useMemo, useState } from "react";
 import { LeaveRequestSummary } from "../model";
 import { getLeaveRequestSummary } from "../leaveServices";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { IntlShape, useIntl } from "react-intl";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
-import { labelClasses, PieValueType, useDrawingArea } from "@mui/x-charts";
+import { PieValueType } from "@mui/x-charts";
 import { leaveRequestStatusMapper } from "../../../../utils/common";
 import dayjs from "dayjs";
 import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { Box, Card, Stack, Typography } from '@mui/material';
 
 type CreateChartDataType = (data: LeaveRequestSummary, view: "type" | "status", intl: IntlShape) => MakeOptional<PieValueType, "id">[];
 
@@ -60,8 +60,12 @@ export const LeaveRequestSummaryChart = () => {
         })();
     }, [])
     return (
-        <CustomCard label={i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })} value={dayjs().format("MMM YYYY")}>
+        <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
+            <Stack className="mb-2 flex-row justify-content-between">
+                <Typography className="fw-bold fs-16">{i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}</Typography>
+                <Typography className="fw-bold fs-16">{dayjs().format("MMM YYYY")}</Typography>
+            </Stack>
             <DonutChart loading={loading} series={series} centerLabel={leaveRequestSummary?.totalRequests} />
-        </CustomCard>
+        </Card>
     )
 }

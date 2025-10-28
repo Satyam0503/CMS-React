@@ -349,7 +349,9 @@
       "LEAVE_REQUEST": "Solicitud de permiso",
       "LEAVE_TYPES": "Tipos de permiso",
       "EDIT_LEAVE_TYPE": "Editar tipo de permiso",
-      "UPDATE_LEAVE_STATUS": "Actualizar estado del permiso"
+      "UPDATE_LEAVE_STATUS": "Actualizar estado del permiso",
+      "MONTHLY_LEAVE_SUMMARY": "Resumen mensual de licencias",
+      "LEAVE_TAKEN": "Licencias tomadas"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Permiso ocasional",

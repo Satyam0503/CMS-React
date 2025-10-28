@@ -34,6 +34,8 @@ export const DonutChart = (props: DonutChartProps) => {
             loading={loading}
             hideLegend={hideLegend}
             height={height}
+            style={{ width: "100%", height: "100%", display: "block" }}
+
             colors={chartColorpalette[theme]}
             slotProps={{
                 legend: {

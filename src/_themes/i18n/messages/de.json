@@ -348,7 +348,9 @@
       "LEAVE_REQUEST": "Urlaubsantrag",
       "LEAVE_TYPES": "Urlaubsarten",
       "EDIT_LEAVE_TYPE": "Urlaubsart bearbeiten",
-      "UPDATE_LEAVE_STATUS": "Urlaubsstatus aktualisieren"
+      "UPDATE_LEAVE_STATUS": "Urlaubsstatus aktualisieren",
+      "MONTHLY_LEAVE_SUMMARY": "Monatliche Urlaubsübersicht",
+      "LEAVE_TAKEN": "Genommene Urlaubstage"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Gelegenheitsurlaub",

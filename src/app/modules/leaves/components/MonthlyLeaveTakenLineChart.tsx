@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Box, Card, Stack, Typography } from "@mui/material";
 import { areaElementClasses, BarChart, LineChart, lineElementClasses } from "@mui/x-charts";
 import { useIntl } from "react-intl";
 import { chartColorpalette } from "../../theme/MuiTheme";
@@ -8,16 +8,6 @@ import { getMonthlyLeaveTakenSummary } from "../leaveServices";
 import { MonthlyLeaveTakenSummary } from "../model";
 import { monthMapper } from "../../../../utils/common";
 
-const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-const xLabels = [
-    'Page A',
-    'Page B',
-    'Page C',
-    'Page D',
-    'Page E',
-    'Page F',
-    'Page G',
-];
 export const MonthlyLeaveTakenLineChart = () => {
     const { formatMessage: i } = useIntl();
     const { theme } = useThemeContext();
@@ -39,33 +29,34 @@ export const MonthlyLeaveTakenLineChart = () => {
             }
         })();
     }, []);
-    const xAxisLabels = chartData.map(item => i({ id: monthMapper[item.month] }));
     return (
-        <Card className="p-4 flex-grow-1">
-            <Stack>
+        <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
+            <Stack className="mb-2">
                 <Typography className="fw-bold fs-16">{i({ id: "LEAVE.TITLES.MONTHLY_LEAVE_SUMMARY" })}</Typography>
             </Stack>
-            <BarChart
-                series={[{
-                    data: chartData.map(item => item.totalLeavesTaken),
-                    minBarSize: 2,
-                    label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" })
-                }]}
-                xAxis={
-                    [{ scaleType: 'band', data: xAxisLabels }]
-                }
-                yAxis={[{ width: 50, label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" }) }]}
-                slotProps={{
-                    legend: {
-                        direction: 'horizontal',
-                        position: { vertical: 'bottom', horizontal: 'center' },
+            <Box sx={{ flex: 1, minHeight: 0 }}>
+                <BarChart
+                    series={[{
+                        data: chartData.map(item => item.totalLeavesTaken),
+                        label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" })
+                    }]}
+                    xAxis={
+                        [{ scaleType: 'band', data: chartData.map(item => i({ id: monthMapper[item.month] }).slice(0, 3)), tickPlacement: "middle", tickLabelPlacement: "middle" }]
                     }
-                }}
-                colors={chartColorpalette[theme]}
-                borderRadius={4}
-                height={200}
-                loading={loading}
-            />
-        </Card>
+                    yAxis={[{ width: 50, label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" }) }]}
+                    slotProps={{
+                        legend: {
+                            direction: 'horizontal',
+                            position: { vertical: 'bottom', horizontal: 'center' },
+                        }
+                    }}
+                    colors={chartColorpalette[theme]}
+                    borderRadius={4}
+                    margin={{ top: 5, bottom: 0, left: 0, right: 10 }}
+                    loading={loading}
+                    style={{ width: "100%", height: "100%", display: "block" }}
+                />
+            </Box>
+        </Card >
     );
 };

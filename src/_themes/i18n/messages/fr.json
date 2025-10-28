@@ -368,7 +368,9 @@
       "LEAVE_REQUEST": "Demande de congé",
       "LEAVE_TYPES": "Types de congé",
       "EDIT_LEAVE_TYPE": "Modifier le type de congé",
-      "UPDATE_LEAVE_STATUS": "Mettre à jour le statut du congé"
+      "UPDATE_LEAVE_STATUS": "Mettre à jour le statut du congé",
+      "MONTHLY_LEAVE_SUMMARY": "Résumé mensuel des congés",
+      "LEAVE_TAKEN": "Congés pris"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Congé occasionnel",

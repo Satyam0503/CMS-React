@@ -347,7 +347,9 @@
       "LEAVE_REQUEST": "休暇申請",
       "LEAVE_TYPES": "休暇タイプ",
       "EDIT_LEAVE_TYPE": "休暇タイプを編集",
-      "UPDATE_LEAVE_STATUS": "休暇ステータスを更新"
+      "UPDATE_LEAVE_STATUS": "休暇ステータスを更新",
+      "MONTHLY_LEAVE_SUMMARY": "月間休暇概要",
+      "LEAVE_TAKEN": "取得した休暇"
     },
     "TYPES": {
       "CASUAL_LEAVE": "私用休暇",

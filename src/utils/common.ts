@@ -555,16 +555,16 @@ export const getOrdinalSuffix = (num: number) => {
 };
 
 export const monthMapper: { [key: number]: string } = {
-  1: "MONTH.JANUARY",
-  2: "MONTH.FEBRUARY",
-  3: "MONTH.MARCH",
-  4: "MONTH.APRIL",
-  5: "MONTH.MAY",
-  6: "MONTH.JUNE",
-  7: "MONTH.JULY",
-  8: "MONTH.AUGUST",
-  9: "MONTH.SEPTEMBER",
-  10: "MONTH.OCTOBER",
-  11: "MONTH.NOVEMBER",
-  12: "MONTH.DECEMBER",
+  1: "MONTHS.JANUARY",
+  2: "MONTHS.FEBRUARY",
+  3: "MONTHS.MARCH",
+  4: "MONTHS.APRIL",
+  5: "MONTHS.MAY",
+  6: "MONTHS.JUNE",
+  7: "MONTHS.JULY",
+  8: "MONTHS.AUGUST",
+  9: "MONTHS.SEPTEMBER",
+  10: "MONTHS.OCTOBER",
+  11: "MONTHS.NOVEMBER",
+  12: "MONTHS.DECEMBER",
 };

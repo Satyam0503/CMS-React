@@ -367,7 +367,9 @@
       "LEAVE_REQUEST": "请假申请",
       "LEAVE_TYPES": "请假类型",
       "EDIT_LEAVE_TYPE": "编辑请假类型",
-      "UPDATE_LEAVE_STATUS": "更新请假状态"
+      "UPDATE_LEAVE_STATUS": "更新请假状态",
+      "MONTHLY_LEAVE_SUMMARY": "每月请假汇总",
+      "LEAVE_TAKEN": "已休假"
     },
     "TYPES": {
       "CASUAL_LEAVE": "事假",
