@@ -714,7 +714,8 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
           whiteSpace: "nowrap",
           display: "inline-block",
           margin: 0,
-          textDecoration: notice.viewedStatus ? "line-through" : "none"
+          fontSize: 14,
+          color: notice.viewedStatus ? "text.secondary" : "text.primary"
         }}
       >
         {notice.noticeTitle}

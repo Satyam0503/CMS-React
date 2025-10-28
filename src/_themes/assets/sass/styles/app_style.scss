@@ -527,6 +527,9 @@ button:hover .ql-fill,
     background-color: $app-notification-hover;
   }
 }
+.unread-notice {
+  background-color: $app-notification-hover;
+}
 
 .holiday_container {
   column-width: 350px;
