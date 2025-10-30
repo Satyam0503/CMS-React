@@ -155,11 +155,14 @@ function UpcomingHolidayCard(props: Props) {
                             textOverflow: 'ellipsis',
                     }}  
                 >
-                    <Typography variant="body1">{props.occasion.name}</Typography>
+                    <Typography variant="body1">{props.occasion.name.length > 20
+                            ? props.occasion.name.slice(0, 19).concat("...")
+                            : props.occasion.name}
+                    </Typography>
                     <Typography variant="body2">
-                    {props.occasion.description.length > 30
-                        ? props.occasion.description.slice(0, 23).concat("...")
-                        : props.occasion.description}
+                        {props.occasion.description.length > 20
+                            ? props.occasion.description.slice(0, 19).concat("...")
+                            : props.occasion.description}
                     </Typography>
                 </Box>
             </Box>

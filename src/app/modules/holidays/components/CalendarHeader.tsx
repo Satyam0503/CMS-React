@@ -71,20 +71,20 @@ export default function CalendarHeader(props: Props) {
             >
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">{i({ id: "OCCASION.TYPES.CATEGORY" })}</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={props.category}
-                        label={i({ id: "OCCASION.TYPES.CATEGORY" })}
-                        onChange={props.handleChange}
-                        size='small'
-                    >
-                        <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
-                        <MenuItem value={1}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>
-                        <MenuItem value={2}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
-                        <MenuItem value={3}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
-                        <MenuItem value={4}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem>
-                    </Select>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={props.category}
+                            label={i({ id: "OCCASION.TYPES.CATEGORY" })}
+                            onChange={props.handleChange}
+                            size='small'
+                        >
+                            <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
+                            <MenuItem value={1}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>
+                            <MenuItem value={2}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
+                            <MenuItem value={3}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
+                            <MenuItem value={4}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem>
+                        </Select>
                 </FormControl>
             </Box>
         </Card>

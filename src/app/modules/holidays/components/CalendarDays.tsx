@@ -2,6 +2,8 @@ import {
     Avatar,
     Box,
     Card,
+    Divider,
+    Popover,
     Tooltip,
     Typography,
 } from "@mui/material";
@@ -29,6 +31,8 @@ export default function CalendarDays(props: Props) {
     const [thisMonthsHolidays, setthisMonthsHolidays] = useState<Array<CalendarItem>>([]);
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const [isTodayMonthYear, setIsTodayMonthYear] = useState<boolean>(true);
+    const [smlScreenAnchr, setSmlScreenAnchr] = React.useState<HTMLElement | null>(null);
+    const [selectedDateOccasions, setSelectedDateOccasions] = useState<Array<CalendarItem>>([])
 
     const popoverOpen = Boolean(anchorEl);
     const screenWidth: number = screen.width;
@@ -58,6 +62,8 @@ export default function CalendarDays(props: Props) {
     const todayMonth = String(date.getMonth());
     const todayYear = String(date.getFullYear());
     const { theme } = useThemeContext();
+
+    const open = Boolean(smlScreenAnchr);
 
     let days: Array<string> = [];
 
@@ -147,6 +153,35 @@ export default function CalendarDays(props: Props) {
         setAnchorEl(null);
     }
 
+    //Sets the anchor element only if there is an occasion on the selected date
+    function checkForOccasionForDate(day: String, event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+        let dateCheck:boolean = false
+        const dateOccasions: Array<CalendarItem> = []
+        thisMonthsHolidays.length > 0 &&
+            thisMonthsHolidays.map((holiday, index) => {
+                    const holidayDate = dayjs(holiday.date).format("DD");
+                        if (holidayDate == day) {
+                            dateCheck = true
+                            dateOccasions.push(holiday)
+                        }
+                    }
+                )
+
+        if(dateCheck) {
+            setSelectedDateOccasions(dateOccasions)
+            showDayOccassion(event)
+        }
+    }
+
+    //Sets Anchor For Small Screen
+    function showDayOccassion(event: React.MouseEvent<HTMLDivElement, MouseEvent>){
+        setSmlScreenAnchr(event.currentTarget);
+    }
+
+    function handleCloseSmlPopover(){
+        setSmlScreenAnchr(null)
+    }
+
     useEffect(() => {
         checkIsCurrentMonthYear();
         getDaysInCurrentMonth(props.selectedMonth, props.selectedYear);
@@ -161,13 +196,13 @@ export default function CalendarDays(props: Props) {
     return (
         <Box
         component={"div"}
-        className="d-flex flex-column gap-4 calendar-days"
+        className="gap-4 calendar-days"
         sx={{
             height: "100%",
         }}
         >
         <Card
-            className="gap-4 calendar-days-header calendar-days-grid"
+            className="gap-4 calendar-days-grid"
             sx={{
                 height: "100px",
                 padding: "0 20px",
@@ -232,8 +267,11 @@ export default function CalendarDays(props: Props) {
                     component={"div"}
                     onClick={(e) => {
                         props.handleSelectDate(String(day));
+                        if (screenWidth < 850) {
+                            checkForOccasionForDate(String(day),e)
+                        }
                     }}
-                    className={`hover-theme-color calendar-day position-relative ${props.selectedDate == day && "selected-day"} ${theme === 'light' ? 'hover-theme-light' : 'hover-theme-dark'}`}
+                    className={`hover-theme-color calendar-day ${props.selectedDate == day && "selected-day"} ${theme === 'light' ? 'hover-theme-light' : 'hover-theme-dark'}`}
                 >
                     <Typography variant="h6" className={clsx({"today":isTodayMonthYear && day == todayDate})}
                         sx={{
@@ -252,7 +290,8 @@ export default function CalendarDays(props: Props) {
                             {day}
                     </Typography>
                     <Box component={'div'}
-                        className="d-flex flex-column w-100"
+                        className=
+                        'd-flex w-100 flex-column'
                         sx={{
                             maxHeight: '65px',
                             overflowY: 'auto',
@@ -284,19 +323,13 @@ export default function CalendarDays(props: Props) {
                                         }}
                                         title={<ToolTipPopOver holiday={holiday} />}
                                     >
-                                        {(screenWidth < 1350 && screenWidth > 960) || screenWidth > 850 ? 
+                                        {screenWidth > 850 ? 
                                             <Box
                                                 key={index}
                                                 className={`calendar-day-holiday ${holiday.type == 1 ? 'primary' :
                                                                                     holiday.type == 2 ?'secondary' :
                                                                                     holiday.type == 3 ? 'success' :
                                                                                     holiday.type == 4 ? 'info' : ''}`}
-                                                sx={{
-                                                    padding: "0px 5px",
-                                                    whiteSpace: "nowrap",
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",   
-                                                }}
                                                 aria-owns={popoverOpen ? String(index) : undefined}
                                                 aria-haspopup="true"
                                                 onMouseEnter={handlePopoverOpen}
@@ -318,10 +351,7 @@ export default function CalendarDays(props: Props) {
                                             </Box>
                                             : <Box
                                                 key={index}
-                                                className={`calendar-day-holiday-dot ${holiday.type == 1 ? 'primary' : 
-                                                                                    holiday.type == 2 ? 'secondary' :
-                                                                                    holiday.type == 3 ? 'success' :
-                                                                                    holiday.type == 4 ? 'info' : ''}
+                                                className={`calendar-day-holiday-dot holiday-dot-color
                                                 }`}
                                                 aria-owns={popoverOpen ? String(index) : undefined}
                                                 aria-haspopup="true"
@@ -341,6 +371,70 @@ export default function CalendarDays(props: Props) {
                 );
             })}
         </Card>
+            <Popover
+                open={open}
+                anchorEl={smlScreenAnchr}
+                onClose={handleCloseSmlPopover}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+            >
+                <Box component={'div'}
+                    className="d-flex flex-column gap-2 p-2"
+                >
+                    {selectedDateOccasions.map((occ,index)=>{
+                        return (<Box 
+                                    component={"div"}
+                                    className={`d-flex gap-4 align-items-center p-2 rounded ${occ.type == 1 ? 'primary' :
+                                                                                    occ.type == 2 ?'secondary' :
+                                                                                    occ.type == 3 ? 'success' :
+                                                                                    occ.type == 4 ? 'info' : ''}`}
+                                    key={index}>
+                            {occ.imageUrl ? (
+                                <Avatar
+                                sx={{
+                                    width: 40,
+                                    height: 40,
+                                    boxShadow: 2,
+                                    bgcolor: "secondary.main",
+                                }}
+                                src={String(occ.imageUrl)}
+                                variant="rounded"
+                                />
+                            ) : (
+                                <Avatar
+                                variant="rounded"
+                                sx={{
+                                    width: 40,
+                                    height: 40,
+                                    bgcolor: "secondary.main",
+                                }}
+                                >
+                                <CalendarToday className="fs-32" />
+                                </Avatar>
+                            )}
+                            <Box component={"div"} className="d-flex flex-column ">
+                                <Typography variant="body1"
+                                    sx={{
+                                        fontWeight: '600'
+                                    }}
+                                >{occ.name}</Typography>
+                                <Typography variant="body1"
+                                    sx={{
+                                        fontWeight: '400'
+                                    }}
+                                >{occ.description}
+                                </Typography>
+                            </Box>
+                        </Box>)
+                    })}
+                </Box>
+            </Popover>
         </Box>
     );
 }
@@ -351,7 +445,7 @@ type PropType = {
 
 const ToolTipPopOver = ({ holiday }: PropType) => {
     return (
-        <Box component={"div"} className="d-flex gap-4 align-items-center">
+        <Box component={"div"} className="d-flex gap-4 align-items-center ">
             {holiday.imageUrl ? (
                 <Avatar
                 sx={{

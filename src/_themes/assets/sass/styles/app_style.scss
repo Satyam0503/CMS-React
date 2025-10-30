@@ -605,12 +605,17 @@ button:hover .ql-fill,
     }
 
     .calendar-sidebar-upcoming{
+      display: flex;
+      flex-direction: column;
+      align-items: start;
       width: 100%;
     }
 
     .calendar-sidear-holidays-holder{
       display: grid;
+      align-items: center;
       grid-template-columns: 1fr;
+      width: 100%;
 
       @media (min-width: 600px) {
         grid-template-columns: 1fr 1fr;
@@ -721,8 +726,10 @@ button:hover .ql-fill,
   }
 
   .calendar-days {
+    display: flex;
+    flex-direction: column;
+
     .calendar-day{
-      overflow-y: hidden;
       display: flex;
       flex-direction: column;
       border: 1px solid rgb(219, 219, 219);
@@ -730,32 +737,46 @@ button:hover .ql-fill,
       align-items: center;
       justify-content: end;
       aspect-ratio: 1;
+      position: relative;
       
       
       @media (min-width: 600px) {
         justify-content: center;
       }
 
+      @media (min-width: 850px) {
+        overflow: auto;
+      }
+
       .calendar-day-holiday{
         width: 100%;
-        padding: 1px 0;
+        padding: 0 5px;
         display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         
         p{
           font-weight: 600;
         }
       }
 
+      .holiday-dot-color{
+        background-color: $app-primary-600;
+      }
+      
       .calendar-day-holiday-dot{
+        top: 5px;
+        left: 5px;
         position: absolute;
+        display: flex;
         height: 5px;
         width: 5px;
         border-radius: 50%;
-        top: 5px;
-        left: 5px;
+        display: flex;
         
         @media (min-width: 600px) {
           top: 10px;

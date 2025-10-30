@@ -13,6 +13,9 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EventIcon from '@mui/icons-material/Event';
 import CakeIcon from '@mui/icons-material/Cake';
 import CelebrationIcon from '@mui/icons-material/Celebration';
+import { useThemeContext } from "../../../Context/ThemeContext";
+import clsx from 'clsx';
+import { count } from 'console';
 
 
 type Props= {
@@ -49,8 +52,32 @@ export default function CalendarSidebar(props: Props) {
     const [anniversariesMonth, setAnniversariesMonth] = useState<number>(0)
 
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-    
+    const { theme } = useThemeContext();
     const hasAddPermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Create, modulePermission);
+
+    const OccasionsItems = [
+        {
+            name: 'HOLIDAY',
+            theme: 'primary',
+            colors: 'holiday-colors',
+            count: holidaysMonth,
+        },{
+            name: 'EVENT',
+            theme: 'secondary',
+            colors: 'event-colors',
+            count: eventsMonth,
+        },{
+            name: 'BIRTHDAY',
+            theme: 'success',
+            colors: 'bithdays-colors',
+            count: birthdaysMonth,
+        },{
+            name: 'ANNIVERSARY',
+            theme: 'info',
+            colors: 'anivaesary-colors',
+            count: anniversariesMonth,
+        },
+    ]
 
     function handleClose(){
         setOpen(false);
@@ -170,39 +197,41 @@ export default function CalendarSidebar(props: Props) {
             }
 
             {/* Upcoming Occasions For Current Month */}
-            <Box component={'div'}
-                className='d-flex flex-column gap-3 calendar-sidebar-upcoming'
-            >
-                <Typography variant='body1'
-                    sx={{ 
-                        fontWeight: '600',
-                        fontSize:16
-                    }}
-                >
-                    {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
-                </Typography>
+            {upcomingHolidays.length > 0 &&
                 <Box component={'div'}
-                    className='gap-4 align-items-center calendar-sidear-holidays-holder'
+                    className='gap-3 calendar-sidebar-upcoming'
                 >
-                    {upcomingHolidays.length > 0 && upcomingHolidays.map((hol,index)=>{
-                        return <UpcomingHolidayCard 
-                                    key={String(index)}
-                                    occasion={hol}
-                                    occasions={props.occasions}
-                                    handleRefresh={props.handleRefresh}
-                                />
-                    })
-                }
+                    <Typography variant='body1'
+                        sx={{ 
+                            fontWeight: '600',
+                            fontSize:16
+                        }}
+                    >
+                        {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
+                    </Typography>
+                    <Box component={'div'}
+                        className='gap-4 calendar-sidear-holidays-holder'
+                    >
+                        {upcomingHolidays.length > 0 && upcomingHolidays.map((hol,index)=>{
+                            return <UpcomingHolidayCard 
+                                        key={String(index)}
+                                        occasion={hol}
+                                        occasions={props.occasions}
+                                        handleRefresh={props.handleRefresh}
+                                    />
+                        })
+                    }
+                    </Box>
+                <Divider sx={{
+                    borderColor: 'black'
+                }}/>
                 </Box>
-            <Divider sx={{
-                borderColor: 'black'
-            }}/>
-            </Box>
+            }
 
 
             {/* Occasions For Selected Month */}
             <Box component={'div'}
-                className='d-flex flex-column gap-3 calendar-sidebar-upcoming'
+                className='gap-3 calendar-sidebar-upcoming'
             >
                 <Typography variant='body1'
                     sx={{ 
@@ -213,44 +242,19 @@ export default function CalendarSidebar(props: Props) {
                     {i({ id: "OCCASION.MONTH_OVERVIEW" })}
                 </Typography>
                 <Box component={'div'}
-                    className='gap-4 align-items-center calendar-sidear-holidays-holder'
+                    className='gap-4 calendar-sidear-holidays-holder'
                 >
-                    <Box component={'div'} className='occasion-type primary'>
-                        <Box component={'div'} className="icon-container primary">
-                            <CalendarMonthIcon />
-                        </Box>
-                        <Typography variant="h6" className='primary'>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</Typography>
-                        <Box component={'div'} className="count-div holiday-colors">
-                            <Typography variant="body1">{holidaysMonth}</Typography>
-                        </Box>
-                    </Box>
-                    <Box component={'div'} className='occasion-type secondary'>
-                        <Box component={'div'} className="icon-container secondary">
-                            <EventIcon />
-                        </Box>
-                        <Typography variant="h6"  className='secondary'>{i({ id: "OCCASION.TYPES.EVENT" })}</Typography>
-                        <Box component={'div'} className="count-div event-colors">
-                            <Typography variant="body1">{eventsMonth}</Typography>
-                        </Box>
-                    </Box>
-                    <Box component={'div'} className='occasion-type success'>
-                        <Box component={'div'} className="icon-container success">
-                            <CakeIcon />
-                        </Box>
-                        <Typography variant="h6"  className='success'>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</Typography>
-                        <Box component={'div'} className="count-div bithdays-colors">
-                            <Typography variant="body1">{birthdaysMonth}</Typography>
-                        </Box>
-                    </Box>
-                    <Box component={'div'} className='occasion-type info'>
-                        <Box component={'div'} className="icon-container info">
-                            <CelebrationIcon />
-                        </Box>
-                        <Typography variant="h6" className='info'>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</Typography>
-                        <Box component={'div'} className="count-div anivaesary-colors">
-                            <Typography variant="body1" >{anniversariesMonth}</Typography>
-                        </Box>
-                    </Box>
+                    {OccasionsItems.map((occItm, index)=>{
+                        return (<Box component={'div'} className={`occasion-type ${occItm.theme}`} key={index}>
+                                    <Box component={'div'} className={`icon-container ${occItm.theme}`}>
+                                        <CalendarMonthIcon />
+                                    </Box>
+                                    <Typography variant="h6" className={`${occItm.theme}`}>{i({ id: `OCCASION.TYPES.${occItm.name}` })}</Typography>
+                                    <Box component={'div'} className={`count-div ${occItm.colors}`}>
+                                        <Typography variant="body1">{occItm.count}</Typography>
+                                    </Box>
+                                </Box>)
+                    })}
                 </Box>
                 <Divider sx={{
                     borderColor: 'black'
@@ -260,19 +264,20 @@ export default function CalendarSidebar(props: Props) {
             
             {/* Occasions For Selected Day */}
             <Box component={'div'}
-            className='d-flex flex-column gap-3 calendar-sidebar-upcoming align-items-start'
+            className='gap-3 calendar-sidebar-upcoming'
             >
-                {daysHolidays.length > 0 && <>
+                {daysHolidays.length > 0 && 
+                <>
                     <Typography variant='body1'
-                    sx={{ 
-                        fontWeight: '600',
-                        fontSize:16
-                    }}
-                >
+                        sx={{ 
+                            fontWeight: '600',
+                            fontSize:16
+                        }}
+                    >
                         {i({ id: "OCCASION.OCCASIONS_ON_DATE" })}
                     </Typography>
                     <Box component={'div'}
-                        className='gap-4 align-items-center calendar-sidear-holidays-holder w-100'
+                        className='gap-4 calendar-sidear-holidays-holder'
                     >
                         {daysHolidays.map((hol,index)=>{
                             return <UpcomingHolidayCard 
