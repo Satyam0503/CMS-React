@@ -1,43 +1,53 @@
-import { useIntl } from "react-intl";
-import { FC, useCallback, useEffect, useState } from "react";
+import { IntlShape, useIntl } from "react-intl";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import DonutApexChart from "../../../shared/components/DonutApexChart";
 import { CardSkeleton } from "./CardSkeleton";
 import { getAllGenderInfo } from "../dashboardservices";
 import { GenderModel } from "../model";
 import { genderMapper } from "../../../../utils/common";
+import { MakeOptional } from "@mui/x-date-pickers/internals";
+import { PieSeries, PieValueType } from "@mui/x-charts";
+import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
-export const EmployeeChart: FC = () => {
-  const { formatMessage: i } = useIntl();
-  const [empData, setEmpData] = useState<GenderModel[]>([]);
-  const [chartData, setChartData] = useState<{
-    labels: string[];
-    series: number[];
-  }>({
-    labels: [],
-    series: [],
+
+const createChartData = (data: GenderModel[], intl: IntlShape) => {
+  const { formatMessage: i } = intl;
+  const chartData: MakeOptional<PieValueType, "id">[] = [];
+
+  data.forEach(item => {
+    chartData.push({
+      label: i({ id: genderMapper[item.gender] || "GENDER.OTHER" }),
+      value: item.count,
+    })
   });
+  return chartData;
+}
+const countTotalEmployee = (empData: GenderModel[]) => {
+  let totalEmployee = empData.reduce((pv, cv) => {
+    return pv += cv.count;
+  }, 0);
+  return totalEmployee;
+}
+
+export const EmployeeChart: FC = () => {
+  const intl = useIntl();
+  const { formatMessage: i } = intl;
+  const [empData, setEmpData] = useState<GenderModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEmployee, setTotalEmployee] = useState(0);
   const { currentLanguage } = useAppLang();
 
-  const generateChartData = useCallback(() => {
-    let totalEmployee = 0;
-    if (empData.length === 0) {
-      return {...chartData,totalEmployee};
-    } else {
-      const labels: string[] = [];
-      const series: number[] = [];
-      empData.forEach((item) => {
-        labels.push(i({ id: genderMapper[item.gender] || "GENDER.OTHER"}));
-        series.push(item.count);
-        totalEmployee +=item.count;
-      });
-      return { labels, series, totalEmployee };
-    }
-  }, [empData, currentLanguage]);
+  const series: PieSeries[] = useMemo(() => {
+    return [
+      {
+        ...defaultPieChartSeries,
+        data: empData.length > 0 ? createChartData(empData, intl) : [],
+      }
+    ];
+  }, [empData, currentLanguage])
+
 
   useEffect(() => {
     const getAllGenderDetails = async () => {
@@ -45,6 +55,7 @@ export const EmployeeChart: FC = () => {
         const { data } = await getAllGenderInfo();
         if (data.success) {
           setEmpData(data.methodResults);
+          setTotalEmployee(countTotalEmployee(data.methodResults));
         }
       } catch (error) {
         console.log(error);
@@ -55,22 +66,14 @@ export const EmployeeChart: FC = () => {
     getAllGenderDetails();
   }, []);
 
-  useEffect(() => {
-    if (empData.length > 0) {
-      const { labels, series,totalEmployee } = generateChartData();
-      setChartData({ labels, series });
-      setTotalEmployee(totalEmployee);
-    }
-  }, [empData, currentLanguage]);
-
   if (loading) {
     return <CardSkeleton />;
   }
 
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee}>
-        {chartData.labels.length == 0 ? (
+      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee} applyMinHeight={true}>
+        {empData.length == 0 ? (
           <Box
             className="flex-grow-1 align-content-center text-center"
             component="div"
@@ -80,7 +83,7 @@ export const EmployeeChart: FC = () => {
             </Typography>
           </Box>
         ) : (
-          <DonutApexChart series={chartData.series} labels={chartData.labels} />
+          <DonutChart loading={loading} series={series} />
         )}
       </CustomCard>
     </>

@@ -25,17 +25,12 @@ const AddNewAttributeItem = <T extends ReqProps>({
     titles: {},
   } as T);
   const { formatMessage: i } = useIntl();
-  const currentLang = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
+  const currentLang = useAppSelector((state) => state.user.userData?.defaultLanguage!);
   const [error, setError] = useState(false);
-  const translationLanguageTitle =
-    newAttributeValue.titles[translationLang] ?? "";
+  const translationLanguageTitle = newAttributeValue.titles[translationLang] ?? "";
   const currentLanguageTitle = newAttributeValue.titles[currentLang] ?? "";
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const titles = newAttributeValue.titles;
     const { value, name } = e.target;
     if (value.length === 0) {

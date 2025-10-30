@@ -202,18 +202,25 @@
     "SEE_MORE": "查看更多",
     "MARK_ALL_AS_READ": "标记所有为已读",
     "UPLOAD": "上传",
-    "REMOVE": "移除"
+    "REMOVE": "移除",
+    "CLEAR": "清除"
   },
   "TITLES": {
+    "BIRTHDAY": "生日",
+    "WORK_ANNIVERSARY": "工作周年纪念日",
     "EMP_ON_LEAVE": "请假员工",
     "UPCOMING_BIRTHDAY": "即将到来的生日",
-    "TOTAL_EMP": "总员工数",
+    "UPCOMING_WORK_ANNIVERSARY": "即将到来的入职周年纪念",
+    "TOTAL_EMP": "员工总数",
     "OPEN_JOB_ROLE": "开放职位",
-    "TOTAL_APPLICATIONS": "总申请数",
-    "OPEN_POSITIONS": "开放职位",
+    "TOTAL_APPLICATIONS": "申请总数",
+    "OPEN_POSITIONS": "空缺职位",
     "APPLY_HERE": "在此申请",
     "DEPARTMENT": "部门",
-    "UPCOMING_HOLIDAYS": "即将到来的假期"
+    "UPCOMING_HOLIDAYS": "即将到来的假期",
+    "UPCOMING_EVENTS": "即将到来的活动",
+    "NO_EVENT_HOLIDAY": "目前没有即将到来的假期或活动",
+    "NO_UPCOMING_CELEBRATION": "目前没有即将到来的庆祝活动"
   },
   "FORM": {
     "FIRST_NAME": "名",
@@ -332,6 +339,7 @@
     }
   },
   "LEAVE": {
+    "TITLE": "请假",
     "EMPLOYEE_NAME": "员工姓名",
     "TOTAL_DAYS": "总天数",
     "REASON": "原因",
@@ -342,26 +350,31 @@
     "APPLY_FOR_LEAVE": "申请请假",
     "LEAVE_PERIOD": "请假期间",
     "MIN_NOTICE_DAY": "提前通知天数",
-    "STATUS": "状态",
+    "APPROVAL_STATUS": "审批状态",
     "APPROVED_BY": "批准人",
-    "APPLIED_LEAVE": "申请的假期",
+    "COMMENT": "备注",
     "REMAINING": "剩余",
+    "LEAVE_HISTORY": "请假记录",
     "LEAVE_APPLICATION": "请假申请",
-    "TAKEN": "已请假",
+    "TAKEN": "已用",
+    "DURATION": "持续时间",
     "TITLES": {
-      "LEAVE_BALANCE": "剩余假期",
-      "ADD_LEAVE_BALANCE": "添加假期余额",
-      "UPDATE_LEAVE_BALANCE": "更新假期余额",
-      "ADD_LEAVE_TYPE": "添加新假期类型",
-      "LEAVE_REQUESTS": "请假请求",
-      "LEAVE_REQUEST": "请假请求",
-      "LEAVE_TYPES": "假期类型",
-      "EDIT_LEAVE_TYPE": "编辑假期类型"
+      "LEAVE_BALANCE": "请假余额",
+      "ADD_LEAVE_BALANCE": "添加请假余额",
+      "UPDATE_LEAVE_BALANCE": "更新请假余额",
+      "ADD_LEAVE_TYPE": "添加新的请假类型",
+      "LEAVE_REQUESTS": "请假申请列表",
+      "LEAVE_REQUEST": "请假申请",
+      "LEAVE_TYPES": "请假类型",
+      "EDIT_LEAVE_TYPE": "编辑请假类型",
+      "UPDATE_LEAVE_STATUS": "更新请假状态",
+      "MONTHLY_LEAVE_SUMMARY": "每月请假汇总",
+      "LEAVE_TAKEN": "已休假"
     },
     "TYPES": {
       "CASUAL_LEAVE": "事假",
       "SICK_LEAVE": "病假",
-      "EARNED_LEAVE": "带薪假",
+      "EARNED_LEAVE": "年假",
       "MATERNITY_LEAVE": "产假",
       "PATERNITY_LEAVE": "陪产假"
     }
@@ -501,8 +514,6 @@
   "PERMISSION.VIEW": "查看",
   "PERMISSION.EDIT": "编辑",
   "PERMISSION.DELETE": "删除",
-  "SETTING.NOTIFICATION": "通知",
-  "SETTING.NOTIFICATIONS": "通知设置",
 
   "VACANCY.TEXT1": "感谢你浏览我们的网站！",
   "VACANCY.TEXT2": "我们的职位正在更新中，请稍后访问我们的网站查看最新招聘信息。我们真诚感谢你的关注，期待未来合作的可能！",
@@ -722,7 +733,8 @@
       "LEAVE_REQ_APPROVED": "您的请假申请已被 {employeeName} 成功批准",
       "LEAVE_REQ_REJECT": "很遗憾，您的请假申请被 {employeeName} 拒绝",
       "NEW_MESSAGE": "收到新消息",
-      "TODAY_BIRTHDAY": "🎉今天是 {employeeName} 的生日 — 记得送上祝福",
+      "TODAY_BIRTHDAY": "🎂 今天是 {employeeName} 的生日 — 记得送上祝福",
+      "TODAY_WORK_ANNIVERSARY": "🎉今天是 {employeeName} 的工作周年纪念日 — 记得庆祝一下",
       "FALLBACK": "您有一条新通知"
     }
   },
@@ -807,30 +819,35 @@
   },
   "STATUS_CODES": {
     "1": "公司已存在",
-    "2": "无效的凭证",
+    "2": "凭证无效",
     "3": "请验证您的电子邮件",
     "4": "您没有应用访问权限",
-    "5": "无效的刷新令牌",
+    "5": "刷新令牌无效",
     "6": "刷新令牌已被撤销",
     "7": "刷新令牌已过期",
-    "8": "无效或过期的令牌",
-    "9": "此密码重置链接已过期。请请求一个新的链接",
+    "8": "令牌无效或已过期",
+    "9": "此密码重置链接已过期，请重新请求新的链接",
     "10": "密码已重置",
-    "11": "密码重置链接已发送。请检查您的邮件",
+    "11": "密码重置链接已发送，请检查您的邮箱",
     "12": "员工已存在",
-    "13": "员工ID已存在",
+    "13": "员工编号已存在",
     "14": "员工不存在",
     "15": "技能已存在",
     "16": "申请人已存在",
-    "17": "员工没有请假余额",
+    "17": "请假余额记录不存在",
     "18": "请假必须提前申请",
-    "19": "您已有待处理的请假",
+    "19": "您已有待处理的请假申请",
     "20": "请假余额不足",
     "21": "本月请假余额不足",
     "22": "请假类型不存在",
     "23": "请假类型已存在",
-    "24": "当前月的工资单数据未找到",
-    "25": "工资单数据已存在"
+    "24": "未找到本月的工资单数据",
+    "25": "本月工资记录已存在",
+    "26": "超过所选假期类型允许的最大小假天数",
+    "27": "最大假期天数不能为负",
+    "28": "当前员工的假期余额已存在",
+    "29": "所选假期类型的余额不存在",
+    "30": "请假申请失败：与已批准的假期重叠"
   },
   "CHAT": {
     "TITLE": "聊天",
@@ -859,6 +876,26 @@
       "GROSS_PAY": "工资总额",
       "TOTAL_DEDUCTION": "总扣除",
       "NET_PAY": "实发工资"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "通知偏好设置",
+    "NOTE": "管理您的通知偏好，以便及时了解重要更新和事件",
+    "TYPE": {
+      "BirthdayNotification": "生日通知",
+      "WorkAnniversaries": "工作周年通知",
+      "LeaveStatusUpdate": "请假状态更新",
+      "Notice": "公告提醒",
+      "HolidayReminder": "节假日提醒",
+      "MessageNotification": "消息通知"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "接收关于即将到来的员工生日的通知，以便祝贺和庆祝",
+      "WorkAnniversaries": "当员工达到重要工作周年纪念时接收提醒",
+      "LeaveStatusUpdate": "随时了解您的请假申请状态",
+      "Notice": "接收有关应用程序中新公告的提醒",
+      "HolidayReminder": "及时接收公司或公共假期的提醒",
+      "MessageNotification": "当您在平台上收到新消息时接收通知"
     }
   }
 }

@@ -126,6 +126,14 @@ export type ChangePasswordPayload = {
   newPassword: string;
   confirmPassword?: string;
 };
+export type NotificationPreferences = {
+  BirthdayNotification: boolean;
+  WorkAnniversaries: boolean;
+  LeaveStatusUpdate: boolean;
+  Notice: boolean;
+  HolidayReminder: boolean;
+  MessageNotification: boolean;
+};
 
 export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 export type GetSkillListResponseModel = ResponseData<SkillModel>;

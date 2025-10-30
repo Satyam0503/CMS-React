@@ -177,8 +177,6 @@ export default function Holidays() {
       year: null
     }
       
-      )
-    };
     const fetchedHolidayData = async () => {
       try {
         const response = await getAllCalendarItem(payload);

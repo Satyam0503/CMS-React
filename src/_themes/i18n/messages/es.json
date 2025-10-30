@@ -183,18 +183,25 @@
     "SEE_MORE": "Ver más",
     "MARK_ALL_AS_READ": "Marcar todo como leído",
     "UPLOAD": "Subir",
-    "REMOVE": "Eliminar"
+    "REMOVE": "Eliminar",
+    "CLEAR": "Borrar"
   },
   "TITLES": {
-    "EMP_ON_LEAVE": "Empleado en permiso",
+    "BIRTHDAY": "Cumpleaños",
+    "WORK_ANNIVERSARY": "Aniversario laboral",
+    "EMP_ON_LEAVE": "Empleados de permiso",
     "UPCOMING_BIRTHDAY": "Próximos cumpleaños",
+    "UPCOMING_WORK_ANNIVERSARY": "Próximos aniversarios laborales",
     "TOTAL_EMP": "Total de empleados",
-    "OPEN_JOB_ROLE": "Roles de trabajo abiertos",
-    "TOTAL_APPLICATIONS": "Total de aplicaciones",
+    "OPEN_JOB_ROLE": "Puestos de trabajo abiertos",
+    "TOTAL_APPLICATIONS": "Total de solicitudes",
     "OPEN_POSITIONS": "Posiciones abiertas",
     "APPLY_HERE": "Aplica aquí",
     "DEPARTMENT": "Departamentos",
-    "UPCOMING_HOLIDAYS": "Próximos días festivos"
+    "UPCOMING_HOLIDAYS": "Próximos feriados",
+    "UPCOMING_EVENTS": "Próximos eventos",
+    "NO_EVENT_HOLIDAY": "No hay feriados ni eventos próximos en este momento",
+    "NO_UPCOMING_CELEBRATION": "No hay celebraciones próximas por ahora"
   },
   "FORM": {
     "FIRST_NAME": "Nombre",
@@ -312,23 +319,27 @@
       "INACTIVE": "Inactivo"
     }
   },
+
   "LEAVE": {
+    "TITLE": "Permiso",
     "EMPLOYEE_NAME": "Nombre del empleado",
     "TOTAL_DAYS": "Días totales",
     "REASON": "Motivo",
     "DATE": "Fecha",
     "HALF_DAY": "Medio día",
-    "MAX_LEAVE_DAYS": "Días máximos de permiso/año",
+    "MAX_LEAVE_DAYS": "Máx. días de permiso por año",
     "LEAVE_TYPE": "Tipo de permiso",
     "APPLY_FOR_LEAVE": "Solicitar permiso",
-    "LEAVE_PERIOD": "Periodo de permiso",
+    "LEAVE_PERIOD": "Período de permiso",
     "MIN_NOTICE_DAY": "Días de aviso previo",
-    "STATUS": "Estado",
+    "APPROVAL_STATUS": "Estado de aprobación",
     "APPROVED_BY": "Aprobado por",
-    "APPLIED_LEAVE": "Permiso solicitado",
+    "COMMENT": "Comentario",
     "REMAINING": "Restante",
+    "LEAVE_HISTORY": "Historial de permisos",
     "LEAVE_APPLICATION": "Solicitud de permiso",
     "TAKEN": "Tomado",
+    "DURATION": "Duración",
     "TITLES": {
       "LEAVE_BALANCE": "Saldo de permisos",
       "ADD_LEAVE_BALANCE": "Agregar saldo de permisos",
@@ -337,16 +348,20 @@
       "LEAVE_REQUESTS": "Solicitudes de permiso",
       "LEAVE_REQUEST": "Solicitud de permiso",
       "LEAVE_TYPES": "Tipos de permiso",
-      "EDIT_LEAVE_TYPE": "Editar tipo de permiso"
+      "EDIT_LEAVE_TYPE": "Editar tipo de permiso",
+      "UPDATE_LEAVE_STATUS": "Actualizar estado del permiso",
+      "MONTHLY_LEAVE_SUMMARY": "Resumen mensual de licencias",
+      "LEAVE_TAKEN": "Licencias tomadas"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Permiso ocasional",
       "SICK_LEAVE": "Permiso por enfermedad",
-      "EARNED_LEAVE": "Permiso remunerado",
+      "EARNED_LEAVE": "Permiso ganado",
       "MATERNITY_LEAVE": "Permiso de maternidad",
       "PATERNITY_LEAVE": "Permiso de paternidad"
     }
   },
+
   "PROFILE": {
     "TABS": {
       "ABOUT": "Acerca de",
@@ -483,8 +498,6 @@
   "PERMISSION.VIEW": "Ver",
   "PERMISSION.EDIT": "Editar",
   "PERMISSION.DELETE": "Eliminar",
-  "SETTING.NOTIFICATION": "Notificación",
-  "SETTING.NOTIFICATIONS": "Configuración de notificaciones",
 
   "VACANCY.TEXT1": "¡Gracias por visitar nuestro sitio web!",
   "VACANCY.TEXT2": "Nuestras vacantes están siendo actualizadas. Vuelve pronto para conocer las nuevas ofertas. ¡Agradecemos tu interés!",
@@ -704,7 +717,8 @@
       "LEAVE_REQ_APPROVED": "Su solicitud de vacaciones ha sido aprobada con éxito por {employeeName}",
       "LEAVE_REQ_REJECT": "Lamentablemente, su solicitud de vacaciones ha sido rechazada por {employeeName}",
       "NEW_MESSAGE": "Nuevo mensaje recibido",
-      "TODAY_BIRTHDAY": "🎉Hoy es el cumpleaños de {employeeName} — tómese un momento para felicitarlo",
+      "TODAY_BIRTHDAY": "🎂 Hoy es el cumpleaños de {employeeName} — tómese un momento para felicitarlo",
+      "TODAY_WORK_ANNIVERSARY": "🎉Hoy es el aniversario laboral de {employeeName} — felicítalo por su dedicación y compromiso",
       "FALLBACK": "Tienes una nueva notificación"
     }
   },
@@ -790,29 +804,34 @@
   "STATUS_CODES": {
     "1": "La empresa ya existe",
     "2": "Credenciales inválidas",
-    "3": "Por favor, verifica tu correo electrónico",
+    "3": "Por favor verifique su correo electrónico",
     "4": "No tienes acceso a la aplicación",
     "5": "Token de actualización inválido",
     "6": "El token de actualización ha sido revocado",
-    "7": "El token de actualización ha caducado",
-    "8": "Token inválido o caducado",
-    "9": "Este enlace de restablecimiento de contraseña ha caducado. Por favor, solicita uno nuevo",
+    "7": "El token de actualización ha expirado",
+    "8": "Token inválido o expirado",
+    "9": "Este enlace de restablecimiento de contraseña ha expirado. Solicite uno nuevo",
     "10": "La contraseña ha sido restablecida",
-    "11": "El enlace de restablecimiento de contraseña ha sido enviado. Por favor, revisa tu correo",
+    "11": "El enlace para restablecer la contraseña ha sido enviado. Por favor revise su correo",
     "12": "El empleado ya existe",
     "13": "El ID del empleado ya existe",
     "14": "El empleado no existe",
     "15": "La habilidad ya existe",
     "16": "El solicitante ya existe",
-    "17": "No existe saldo de licencia para el empleado",
-    "18": "La licencia debe solicitarse con anticipación",
-    "19": "Ya tienes una licencia pendiente",
-    "20": "Saldo de licencia insuficiente",
-    "21": "Saldo de licencia insuficiente para el mes actual",
-    "22": "El tipo de licencia no existe",
-    "23": "El tipo de licencia ya existe",
-    "24": "No se encontraron datos de recibo de salario para el mes actual",
-    "25": "El departamento ya existe"
+    "17": "El registro del saldo de vacaciones no existe",
+    "18": "Las vacaciones deben solicitarse con antelación",
+    "19": "Ya tienes una solicitud de vacaciones pendiente",
+    "20": "Saldo de vacaciones insuficiente",
+    "21": "Saldo de vacaciones insuficiente para el mes actual",
+    "22": "El tipo de vacaciones no existe",
+    "23": "El tipo de vacaciones ya existe",
+    "24": "No se encontraron datos de nómina para el mes actual",
+    "25": "La nómina de este mes ya existe",
+    "26": "Se ha superado el número máximo de días de vacaciones permitidos para el tipo seleccionado",
+    "27": "El máximo de vacaciones no puede ser negativo",
+    "28": "El saldo de vacaciones para este empleado ya existe",
+    "29": "El saldo del tipo de vacaciones seleccionado no existe para este empleado",
+    "30": "Error en la solicitud de vacaciones: se superpone con una aprobación anterior"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -841,6 +860,26 @@
       "GROSS_PAY": "Salario bruto",
       "TOTAL_DEDUCTION": "Deducción total",
       "NET_PAY": "Salario neto"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Preferencias de notificación",
+    "NOTE": "Administra tus preferencias de notificación para mantenerte informado sobre actualizaciones y eventos importantes",
+    "TYPE": {
+      "BirthdayNotification": "Notificaciones de cumpleaños",
+      "WorkAnniversaries": "Notificaciones de aniversario laboral",
+      "LeaveStatusUpdate": "Actualizaciones del estado de licencia",
+      "Notice": "Alertas de avisos",
+      "HolidayReminder": "Recordatorios de feriados",
+      "MessageNotification": "Notificaciones de mensajes"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Recibe notificaciones sobre los próximos cumpleaños de los empleados para celebrarlos",
+      "WorkAnniversaries": "Recibe alertas cuando los empleados cumplan aniversarios laborales importantes en la organización",
+      "LeaveStatusUpdate": "Mantente actualizado sobre el estado de tus solicitudes de licencia",
+      "Notice": "Recibe alertas cuando se publiquen nuevos avisos en la aplicación",
+      "HolidayReminder": "Obtén recordatorios oportunos sobre próximos feriados y días libres declarados por la empresa",
+      "MessageNotification": "Recibe notificaciones cuando te envíen nuevos mensajes a través de la plataforma"
     }
   }
 }

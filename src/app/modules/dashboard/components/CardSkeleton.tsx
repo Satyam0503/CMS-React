@@ -4,7 +4,7 @@ const CardSkeleton = () => {
   return (
     <Card
       sx={{
-        height: "280px",
+        height: "310px",
         padding: 2,
       }}
     >

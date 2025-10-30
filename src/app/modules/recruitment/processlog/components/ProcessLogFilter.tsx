@@ -66,7 +66,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               {i({ id: "APPLICATION.APPLIED_DATE" })}
             </Typography>
 
-            <Stack spacing={2} direction={"row"}>
+            <Stack direction="row" spacing={1}>
               <CustomisedDatePicker
                 label={i({ id: "FROM" })}
                 value={

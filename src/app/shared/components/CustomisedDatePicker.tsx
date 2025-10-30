@@ -5,7 +5,7 @@ import { DatePicker, DateView, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { SxProps, Theme } from "@mui/material";
-import { Download } from "@mui/icons-material";
+
 interface PropsTypes {
   value: Dayjs | null;
   setValue: (newDate: Dayjs | null) => void;
@@ -23,7 +23,7 @@ interface PropsTypes {
 const CustomisedDatePicker = (props: PropsTypes) => {
   const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx ,format} = props;
   return (
-    <>
+    
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>
           <DatePicker
@@ -57,12 +57,15 @@ const CustomisedDatePicker = (props: PropsTypes) => {
                 }
               }
 
-            }}
-            sx={sx}
-          />
-        </DemoContainer>
-      </LocalizationProvider>
-    </>
+          }}
+          sx={{
+            ...sx,
+            minWidth: "unset !important",
+            width: 1
+          }}
+        />
+      </DemoContainer>
+    </LocalizationProvider>
   );
 };
 

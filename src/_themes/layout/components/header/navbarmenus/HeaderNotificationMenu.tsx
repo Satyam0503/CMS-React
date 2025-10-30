@@ -12,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { AccessTime, Cake, CalendarMonth, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
+import { AccessTime, Cake, CalendarMonth, Celebration, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
@@ -34,6 +34,7 @@ export const NotificationIconMapper: {
   [NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED]: <ThumbUpAlt className="fs-32" />,
   [NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED]: <ThumbDownAlt className="fs-32" />,
   [NOTIFICATION_TYPE.BIRTHDAY]: <Cake className="fs-36" />,
+  [NOTIFICATION_TYPE.WORK_ANNIVERSARY]: <Celebration className="fs-36" />,
 }
 
 const initialPaginationValue = { pageNo: 1, records: 10 }

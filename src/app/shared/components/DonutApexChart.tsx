@@ -92,7 +92,7 @@ function DonutApexChart(props: DonutApexChartProps) {
         },
       },
     },
-    colors: [palette.primary.main, palette.secondary.main, palette.grey[700], palette.primary.dark],
+    colors: ["#9b56c6", "#FEBB68", "#508a9b", "#6a5b17", "#873351", "#cc5e5d", "#5dcc6a",],
     dataLabels: {
       enabled: showDataLabels || false,
       formatter: function (value: number, opts) {

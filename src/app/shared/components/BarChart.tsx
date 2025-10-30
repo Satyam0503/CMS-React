@@ -2,6 +2,10 @@ import { Grid, useTheme } from "@mui/material";
 import { ApexOptions } from "apexcharts";
 import { FC } from "react";
 import Chart from "react-apexcharts";
+import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
+import { useThemeContext } from "../../Context/ThemeContext";
+import { chartColorpalette } from "../../modules/theme/MuiTheme";
+
 
 interface BarChartProps {
   series: Array<number>;
@@ -26,6 +30,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
   const dynamicWidth = Math.max(minChartWidth, props.labels.length * barWidth + padding);
   const { series, labels, height, legendOption, showXAxisLabel } = props;
   const { palette } = useTheme();
+  const { theme } = useThemeContext();
   const chartOption: ApexOptions = {
     chart: {
       toolbar: {
@@ -41,10 +46,10 @@ export const BarChart: FC<BarChartProps> = (props) => {
           speed: 800,
         },
       },
-      height: height || 200,
+      height: height || 220,
       type: "bar",
     },
-    colors: [palette.primary.main, palette.secondary.main, palette.grey[700], palette.primary.dark],
+    colors: chartColorpalette[theme],
     fill: {
       opacity: 1,
     },
@@ -111,7 +116,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
             },
           ]}
           type="bar"
-          height={height || 200}
+          height={height || 220}
           width="100%"
         />
       </div>

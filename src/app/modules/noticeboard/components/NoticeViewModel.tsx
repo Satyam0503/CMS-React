@@ -25,6 +25,7 @@ type Props = {
     open: boolean;
     noticeId: string;
     handleClose: () => void;
+    updateNoticeViewedStatus?: (noticeId: string) => void;
 };
 
 export const NoticeViewModel: FC<Props> = (props) => {
@@ -42,6 +43,7 @@ export const NoticeViewModel: FC<Props> = (props) => {
                 const { data } = await getNoticeById(props.noticeId);
                 if (data.success) {
                     setNotice(data.methodResult);
+                    props.updateNoticeViewedStatus?.(props.noticeId);
                 } else {
                     props.handleClose();
                 }

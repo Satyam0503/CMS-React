@@ -21,10 +21,10 @@ interface Props {
 }
 
 export const CvPreview: FC<Props> = ({ pdfUrl }) => {
+  const { formatMessage: i } = useIntl();
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const intl = useIntl();
 
   function handleDocumentLoadSuccess(pdfjs: DocumentCallback) {
     if (pdfjs.numPages > 1) {
@@ -40,26 +40,26 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
   return (
     <Stack
       sx={{
-        border: `1px solid grey`,
-        borderRadius: ".5rem",
+        borderWidth: 1,
+        borderColor: 'text.secondary',
+        borderStyle: "solid",
+        borderRadius: 1,
       }}
     >
       <Stack
-        direction={"column"}
+        direction="column"
         sx={{
-          padding: "1rem !important",
-          borderBottom: `1px solid grey`,
+          padding: 2,
+          borderBottomColor: "text.secondary",
+          borderBottomStyle: "solid",
+          borderBottomWidth: 1
         }}
       >
         <Typography variant="h6">
-          {intl.formatMessage({ id: "APPLICATION.RESUME_PREVIEW" })}
+          {i({ id: "APPLICATION.RESUME_PREVIEW" })}
         </Typography>
       </Stack>
-      <Stack
-        sx={{
-          position: "relative",
-        }}
-      >
+      <Stack sx={{ position: "relative" }}>
         <Document
           file={pdfUrl}
           onLoadSuccess={handleDocumentLoadSuccess}
@@ -75,7 +75,7 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
             spacing={2}
             sx={{
               width: "100%",
-              backgroundColor: "common.white",
+              backgroundColor: "background.header",
               position: "absolute",
               zIndex: 10,
               left: "0",
@@ -87,13 +87,13 @@ export const CvPreview: FC<Props> = ({ pdfUrl }) => {
           >
             <CustomIconButton
               icon={<NavigateBefore />}
-              tooltip="Previous"
+              tooltip={i({ id: "TOOLTIP.PREVIOUS" })}
               disabled={currentPage === 1}
               handleClick={() => handlePageChange(-1)}
             />
             <CustomIconButton
               icon={<NavigateNext />}
-              tooltip="Next"
+              tooltip={i({ id: "TOOLTIP.NEXT" })}
               disabled={currentPage === totalPages}
               handleClick={() => handlePageChange(1)}
             />

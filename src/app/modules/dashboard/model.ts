@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { ResponseData } from "../../../utils/common_types";
 
 export interface GenderModel {
@@ -18,15 +19,36 @@ export interface ApplicationStatusModel {
   }[];
 }
 
-export type UpComingHolidayModel = {
-  holidayId: string;
-  holidayName: string;
+export type UpComingHolidayAndEventModel = {
+  holiday: CalendarModel[];
+  event: CalendarModel[];
+};
+export type CalendarModel = {
+  id: string;
+  name: string;
   date: string;
-  holidayCoverImageUrl: string | null;
+  description: string;
+  type: number;
+  imageUrl: string | null;
+};
+export type UpcomingCelebration = {
+  birthday: CelebrationModule[];
+  workAnniversary: CelebrationModule[];
+};
+
+type CelebrationModule = {
+  employeeId: string;
+  employeeName: string;
+  profileUrl: string | null;
+  jobRole: Record<string, string>;
+  date: Dayjs;
+  ordinal: number;
 };
 
 export type GetAllGenderDetailsResponseData = ResponseData<GenderModel>;
 export type GetAllDepartmentDetailsResponseData =
   ResponseData<DepartmentResponseModel>;
 export type GetAllApplicationStatusData = ResponseData<ApplicationStatusModel>;
-export type GetUpComingHolidayResponseData = ResponseData<UpComingHolidayModel>;
+export type GetUpComingHolidayEvent =
+  ResponseData<UpComingHolidayAndEventModel>;
+export type GetUpComingCelebration = ResponseData<UpcomingCelebration>;

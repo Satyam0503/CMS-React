@@ -1,16 +1,11 @@
-import {
-  deleteRequest,
-  getRequest,
-  patchRequest,
-  postRequest,
-} from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { getRequest } from "../../../server/axios";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
   GetAllGenderDetailsResponseData,
   GetAllDepartmentDetailsResponseData,
   GetAllApplicationStatusData,
-  GetUpComingHolidayResponseData,
+  GetUpComingHolidayEvent,
+  GetUpComingCelebration,
 } from "./model";
 
 // Gender
@@ -36,8 +31,14 @@ export const getAllApplicationStatus = async (vacancyId?: string) => {
   );
 };
 
-export const getUpcomingHolidays = async () => {
-  return getRequest<GetUpComingHolidayResponseData>(
-    ServiceUrl.GET_UPCOMING_HOLIDAY
+export const getUpcomingHolidayAndEvents = async () => {
+  return getRequest<GetUpComingHolidayEvent>(
+    ServiceUrl.GET_UPCOMING_HOLIDAY_AND_EVENT
+  );
+};
+
+export const getUpcomingCelebration = () => {
+  return getRequest<GetUpComingCelebration>(
+    ServiceUrl.GET_UPCOMING_CELEBRATIONS
   );
 };

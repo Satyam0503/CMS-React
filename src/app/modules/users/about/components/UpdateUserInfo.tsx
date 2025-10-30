@@ -360,7 +360,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       setFieldTouched("dateOfBirth", true);
                       setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
                     }}
-                    maxDate={dayjs()}
+                    maxDate={dayjs().subtract(18, 'year')}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6} className="pt-2">

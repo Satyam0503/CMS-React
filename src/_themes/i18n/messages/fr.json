@@ -203,18 +203,25 @@
     "SEE_MORE": "Voir plus",
     "MARK_ALL_AS_READ": "Marquer tout comme lu",
     "UPLOAD": "Télécharger",
-    "REMOVE": "Retirer"
+    "REMOVE": "Retirer",
+    "CLEAR": "Effacer"
   },
   "TITLES": {
-    "EMP_ON_LEAVE": "Employé en congé",
+    "BIRTHDAY": "Anniversaire",
+    "WORK_ANNIVERSARY": "Anniversaire de travail",
+    "EMP_ON_LEAVE": "Employés en congé",
     "UPCOMING_BIRTHDAY": "Anniversaires à venir",
-    "TOTAL_EMP": "Total des employés",
-    "OPEN_JOB_ROLE": "Rôles de travail ouverts",
-    "TOTAL_APPLICATIONS": "Total des candidatures",
+    "UPCOMING_WORK_ANNIVERSARY": "Anniversaires de travail à venir",
+    "TOTAL_EMP": "Nombre total d'employés",
+    "OPEN_JOB_ROLE": "Postes vacants",
+    "TOTAL_APPLICATIONS": "Nombre total de candidatures",
     "OPEN_POSITIONS": "Postes ouverts",
-    "APPLY_HERE": "Postuler ici",
+    "APPLY_HERE": "Postulez ici",
     "DEPARTMENT": "Départements",
-    "UPCOMING_HOLIDAYS": "Prochains jours fériés"
+    "UPCOMING_HOLIDAYS": "Jours fériés à venir",
+    "UPCOMING_EVENTS": "Événements à venir",
+    "NO_EVENT_HOLIDAY": "Aucun jour férié ou événement à venir pour le moment",
+    "NO_UPCOMING_CELEBRATION": "Aucune célébration à venir pour le moment"
   },
   "FORM": {
     "FIRST_NAME": "Prénom",
@@ -333,36 +340,42 @@
     }
   },
   "LEAVE": {
+    "TITLE": "Congé",
     "EMPLOYEE_NAME": "Nom de l'employé",
     "TOTAL_DAYS": "Nombre total de jours",
     "REASON": "Raison",
     "DATE": "Date",
     "HALF_DAY": "Demi-journée",
-    "MAX_LEAVE_DAYS": "Jours de congé max/an",
+    "MAX_LEAVE_DAYS": "Jours de congé maximum par an",
     "LEAVE_TYPE": "Type de congé",
     "APPLY_FOR_LEAVE": "Demander un congé",
     "LEAVE_PERIOD": "Période de congé",
     "MIN_NOTICE_DAY": "Jours de préavis",
-    "STATUS": "Statut",
+    "APPROVAL_STATUS": "Statut d'approbation",
     "APPROVED_BY": "Approuvé par",
-    "APPLIED_LEAVE": "Congé demandé",
+    "COMMENT": "Commentaire",
     "REMAINING": "Restant",
+    "LEAVE_HISTORY": "Historique des congés",
     "LEAVE_APPLICATION": "Demande de congé",
     "TAKEN": "Pris",
+    "DURATION": "Durée",
     "TITLES": {
-      "LEAVE_BALANCE": "Solde de congés",
-      "ADD_LEAVE_BALANCE": "Ajouter un solde de congés",
-      "UPDATE_LEAVE_BALANCE": "Mettre à jour le solde",
-      "ADD_LEAVE_TYPE": "Ajouter un type de congé",
+      "LEAVE_BALANCE": "Solde de congé",
+      "ADD_LEAVE_BALANCE": "Ajouter un solde de congé",
+      "UPDATE_LEAVE_BALANCE": "Mettre à jour le solde de congé",
+      "ADD_LEAVE_TYPE": "Ajouter un nouveau type de congé",
       "LEAVE_REQUESTS": "Demandes de congé",
       "LEAVE_REQUEST": "Demande de congé",
       "LEAVE_TYPES": "Types de congé",
-      "EDIT_LEAVE_TYPE": "Modifier le type de congé"
+      "EDIT_LEAVE_TYPE": "Modifier le type de congé",
+      "UPDATE_LEAVE_STATUS": "Mettre à jour le statut du congé",
+      "MONTHLY_LEAVE_SUMMARY": "Résumé mensuel des congés",
+      "LEAVE_TAKEN": "Congés pris"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Congé occasionnel",
       "SICK_LEAVE": "Congé maladie",
-      "EARNED_LEAVE": "Congé payé",
+      "EARNED_LEAVE": "Congé acquis",
       "MATERNITY_LEAVE": "Congé maternité",
       "PATERNITY_LEAVE": "Congé paternité"
     }
@@ -502,8 +515,6 @@
   "PERMISSION.VIEW": "Voir",
   "PERMISSION.EDIT": "Modifier",
   "PERMISSION.DELETE": "Supprimer",
-  "SETTING.NOTIFICATION": "Notification",
-  "SETTING.NOTIFICATIONS": "Paramètres de notification",
 
   "VACANCY.TEXT1": " Merci de visiter notre site web !",
   "VACANCY.TEXT2": " Nos offres sont actuellement en cours de mise à jour. Revenez bientôt pour voir les nouveaux postes disponibles. Merci de votre intérêt !",
@@ -723,7 +734,8 @@
       "LEAVE_REQ_APPROVED": "Votre demande de congé a été approuvée avec succès par {employeeName}",
       "LEAVE_REQ_REJECT": "Malheureusement, votre demande de congé a été refusée par {employeeName}",
       "NEW_MESSAGE": "Nouveau message reçu",
-      "TODAY_BIRTHDAY": "🎉Aujourd'hui, c'est l'anniversaire de {employeeName} — prenez un moment pour lui souhaiter",
+      "TODAY_BIRTHDAY": "🎂 Aujourd'hui, c'est l'anniversaire de {employeeName} — prenez un moment pour lui souhaiter",
+      "TODAY_WORK_ANNIVERSARY": "🎉Aujourd'hui, c'est l'anniversaire de travail de {employeeName} — félicitez-le pour cette étape importante !",
       "FALLBACK": "Vous avez une nouvelle notification"
     }
   },
@@ -815,23 +827,28 @@
     "6": "Le jeton d'actualisation a été révoqué",
     "7": "Le jeton d'actualisation a expiré",
     "8": "Jeton invalide ou expiré",
-    "9": "Le lien de réinitialisation du mot de passe a expiré. Veuillez en demander un nouveau",
+    "9": "Ce lien de réinitialisation du mot de passe a expiré. Veuillez en demander un nouveau",
     "10": "Le mot de passe a été réinitialisé",
-    "11": "Le lien de réinitialisation du mot de passe a été envoyé. Veuillez vérifier votre boîte mail",
+    "11": "Le lien de réinitialisation du mot de passe a été envoyé. Veuillez vérifier votre courrier",
     "12": "L'employé existe déjà",
-    "13": "L'ID de l'employé existe déjà",
+    "13": "L'identifiant employé existe déjà",
     "14": "L'employé n'existe pas",
     "15": "La compétence existe déjà",
     "16": "Le candidat existe déjà",
-    "17": "Le solde de congé n'existe pas pour l'employé",
-    "18": "Les congés doivent être demandés à l'avance",
+    "17": "L'enregistrement du solde de congés n'existe pas",
+    "18": "Le congé doit être demandé à l'avance",
     "19": "Vous avez déjà un congé en attente",
-    "20": "Solde de congé insuffisant",
-    "21": "Solde de congé insuffisant pour le mois en cours",
+    "20": "Solde de congés insuffisant",
+    "21": "Solde de congés insuffisant pour le mois en cours",
     "22": "Le type de congé n'existe pas",
     "23": "Le type de congé existe déjà",
-    "24": "Les données de bulletin de salaire pour le mois en cours sont introuvables",
-    "25": "Le rôle existe déjà"
+    "24": "Données de fiche de paie introuvables pour le mois en cours",
+    "25": "La paie pour ce mois existe déjà",
+    "26": "Nombre maximal de jours de congé autorisés dépassé pour le type sélectionné",
+    "27": "Le congé maximal ne peut pas être négatif",
+    "28": "Le solde de congé pour cet employé existe déjà",
+    "29": "Le solde du type de congé sélectionné n'existe pas pour cet employé",
+    "30": "Échec de la demande de congé : chevauchement avec un congé déjà approuvé"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -860,6 +877,26 @@
       "GROSS_PAY": "Salaire brut",
       "TOTAL_DEDUCTION": "Déduction totale",
       "NET_PAY": "Salaire net"
+    }
+  },
+  "NOTIFCATION_PREFERENCE": {
+    "TITLE": "Préférences de notification",
+    "NOTE": "Gérez vos préférences de notification pour rester informé des mises à jour et événements importants",
+    "TYPE": {
+      "BirthdayNotification": "Notifications d'anniversaire",
+      "WorkAnniversaries": "Notifications d'anniversaire de travail",
+      "LeaveStatusUpdate": "Mises à jour du statut de congé",
+      "Notice": "Alertes de notification",
+      "HolidayReminder": "Rappels de jours fériés",
+      "MessageNotification": "Notifications de message"
+    },
+    "TYPE_NOTE": {
+      "BirthdayNotification": "Recevez des notifications concernant les anniversaires à venir des employés afin de les célébrer",
+      "WorkAnniversaries": "Recevez des alertes lorsque les employés atteignent des anniversaires de travail importants au sein de l’organisation",
+      "LeaveStatusUpdate": "Restez informé du statut de vos demandes de congé",
+      "Notice": "Recevez des alertes pour les nouveaux avis publiés dans l’application",
+      "HolidayReminder": "Recevez des rappels en temps opportun concernant les jours fériés et les congés de l’entreprise",
+      "MessageNotification": "Recevez des notifications lorsque de nouveaux messages ou communications vous sont envoyés via la plateforme"
     }
   }
 }

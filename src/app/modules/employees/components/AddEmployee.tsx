@@ -238,12 +238,12 @@ export const AddEmployee = (props: PropsTypes) => {
                     <CustomisedDatePicker
                       label={i({ id: "FORM.DOB" })}
                       name={"dateOfBirth"}
-                      value={values.dateOfBirth}
+                      value={values.dateOfBirth ? dayjs(values.dateOfBirth) : null}
                       setValue={(newDate: Dayjs | null) => {
                         setFieldTouched("dateOfBirth", true);
-                        setFieldValue("dateOfBirth", newDate);
+                        setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
                       }}
-                      maxDate={dayjs()}
+                      maxDate={dayjs().subtract(18, 'year')}
                     />
                     {
                       touched.dateOfBirth &&
@@ -254,10 +254,10 @@ export const AddEmployee = (props: PropsTypes) => {
                   <Grid item xs={12} sm={6} className="pt-2">
                     <CustomisedDatePicker
                       label={i({ id: "FORM.DOJ" })}
-                      value={values.dateOfJoining}
+                      value={values.dateOfJoining ? dayjs(values.dateOfJoining) : null}
                       setValue={(newDate: Dayjs | null) => {
                         setFieldTouched("dateOfJoining", true);
-                        setFieldValue("dateOfJoining", newDate);
+                        setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
                       }}
                       maxDate={dayjs()}
                     />

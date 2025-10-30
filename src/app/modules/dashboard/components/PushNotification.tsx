@@ -42,6 +42,12 @@ export const getNotificationOption = (type: number) => {
                 fullUrl: `${hostName}`
             })
             break;
+        case NOTIFICATION_TYPE.WORK_ANNIVERSARY: (
+            option = {
+                icon: `${toAbsoluteUrl("media/Icons/birthday_cake.png")}`,
+                fullUrl: `${hostName}`
+            })
+            break;
         default:
             option = {
                 icon: `${toAbsoluteUrl("media/Icons/notification.png")}`,

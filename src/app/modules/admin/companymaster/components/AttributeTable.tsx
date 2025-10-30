@@ -2,7 +2,6 @@ import {
   Box,
   Card,
   FormControl,
-  FormLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -18,9 +17,8 @@ import { languages } from "../../../../../utils/constant/Constant";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { Add } from "@mui/icons-material";
-import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
-import { LanguageNameMapper } from "../../../../../utils/common";
 import { AttributeTitleRow } from "./AttributeTitleRow";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props<T> {
   isDefaultAttribute?: boolean;
@@ -34,8 +32,6 @@ interface Props<T> {
   ) => Promise<void>;
   handleDeleteAttribute: (id: string) => Promise<void>;
 }
-
-const initialItemsId = ["1", "2", "3", "4", "5"];
 
 export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   const {
@@ -66,9 +62,9 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   const initialAttributeTitle = useRef<Record<string, string>>({});
 
   const handleReset = () => {
-    if (newItemsList.length) {
-      setNewItemIds([]);
-    }
+    // if (newItemsList.length) {
+    setNewItemIds([]);
+    // }
     setNewItemsList([]);
     setItemsList(structuredClone(initialAttributeValue));
     if (!isDefaultAttribute) {
@@ -96,18 +92,21 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   };
 
   const handleUpdate = async () => {
-    const allItems = newItemsList.concat(itemsList);
-    for (const element of allItems) {
-      delete element.newItemKey;
-    }
-    if (!allItems.length) return;
-    if (!isDefaultAttribute) {
-      await handleAttributeUpdate(allItems, title);
-    } else {
-      await handleAttributeUpdate(allItems);
+    const allItems = [...newItemsList, ...itemsList];
+    allItems.forEach(item => delete item.newItemKey);
+
+    const shouldUpdate = allItems.length > 0 || Object.keys(title).length > 0;
+
+    if (shouldUpdate) {
+      if (isDefaultAttribute) {
+        await handleAttributeUpdate(allItems);
+      } else {
+        await handleAttributeUpdate(allItems, title);
+      }
     }
     handleReset();
   };
+
 
   const updateAttributeTitle = (updatedTitle: Record<string, string>) => {
     setTitle({ ...updatedTitle });
@@ -119,7 +118,9 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       setInitialAttributeValue(structuredClone(attributeData));
       setNewItemIds([]);
     } else {
-      setNewItemIds(initialItemsId);
+      var id = uuidv4();
+      setItemsList([]);
+      setNewItemIds([id]);
     }
   }, [attributeData]);
 
@@ -129,6 +130,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       initialAttributeTitle.current = structuredClone(attributeTitle);
     }
   }, [attributeTitle]);
+
   return (
     <Stack spacing={1} className="flex-grow-1">
       <Card className="p-6 p-lg-10 py-8 d-flex flex-row gap-6 align-items-center">
@@ -238,11 +240,11 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
           <span
             role="button"
             className="fw-bolder d-flex align-items-center align-self-start mt-6"
-            onClick={() =>
-              setNewItemIds([...newItemIds, Date.now().toString()])
-            }
+            onClick={() => {
+              var uuid = uuidv4();
+              setNewItemIds([...newItemIds, uuid]);
+            }}
           >
-            {" "}
             <Add /> {i({ id: "COMPANY_MASTER.ADD_NEW" })}{" "}
           </span>
           <Stack

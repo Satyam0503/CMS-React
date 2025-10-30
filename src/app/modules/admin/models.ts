@@ -100,6 +100,10 @@ export type UpdateCustomAttributePayload = {
 
 export type CompanyInfoModel = BaseModel & CompanyModel;
 
+export type OutletContextType = {
+  updateAttribute: (attribute: CompanyCustomAttributeModel) => void;
+};
+
 export type GetAllRolesResponseData = ResponseData<RoleModel>;
 export type GetAllModulePermissionData = ResponseData<ModulePermissoinModel>;
 export type AddEditRoleResponseData = ResponseData<AddEditRoleModel>;
