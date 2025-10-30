@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react'
 import CalendarSidebar from './components/CalendarSidebar'
 import CalendarHeader from './components/CalendarHeader'
 import CalendarDays from './components/CalendarDays'
-import { Box } from '@mui/material'
+import { Box, SelectChangeEvent } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { usePageData } from '../../Context/PageDataProvider'
 import { useIntl } from 'react-intl'
-import { initialFilterValues } from './components/HolidayFilter'
-import { getAllHolidays } from './holidayServices'
-import { GetHolidayPayloadModel, HolidayModel, HolidayResponseModel } from './models'
+import { CalendarItem, CalendarItemType, GetCalendarItemPayload, OccasionResponseModel } from './models'
 import { useAppSelector } from '../../Redux/hooks'
+import { getAllCalendarItem } from './holidayServices'
+
+
 
 export default function MainHolidayCalenday() {
     const { formatMessage: i } = useIntl();
@@ -18,53 +19,29 @@ export default function MainHolidayCalenday() {
     const [selectedDate,setSelectedDate] = useState<string>()
     const [selectedMonth,setSelectedMonth] = useState<string>()
     const [selectedYear,setSelectedYear] = useState<string>()
-    const [searchValue, setSearchValue] = useState("");
     const [isLoading, setLoading] = useState(false);
-    const [holidayList, setHolidayList] = useState<HolidayResponseModel[]>([]);
-    const [isRefresh, setRefresh] = useState(false);
+    const [occasionsList, setOccasionsList] = useState<CalendarItem[]>([]);
+    const [isRefresh, setRefresh] = useState<boolean>(false);
+    const [category, setCategory] = useState<null |CalendarItemType>(0);
+    const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
 
-    const holidayFilters = useAppSelector((state) => state.filters.holiday);
+    const handleChange = (event: SelectChangeEvent<unknown>) => {
+        setCategory(event.target.value as number as CalendarItemType);
+    };
 
-    const eventsList: Array<HolidayResponseModel> = [{
-        holidayId: "1",
-        holidayName: "Demo",
-        holidayType: 2,
-        date: '10-15-2025',
-        holidayImageUrl: 'https://placehold.net/400x400.png',
-        detail: 'This will be a test'
-    },{
-        holidayId: "2",
-        holidayName: "Demo",
-        holidayType: 2,
-        date: '11-15-2025',
-        holidayImageUrl: 'https://placehold.net/400x400.png',
-        detail: 'This will be a test'
-    },{
-        holidayId: "3",
-        holidayName: "Demo",
-        holidayType: 2,
-        date: '12-19-2025',
-        holidayImageUrl: 'https://placehold.net/400x400.png',
-        detail: 'This will be a test'
-    },{
-        holidayId: "4",
-        holidayName: "Demo",
-        holidayType: 2,
-        date: '01-15-2026',
-        holidayImageUrl: 'https://placehold.net/400x400.png',
-        detail: 'This will be a test'
-    }]
-
+    //Selects the date
     function handleSelectDate(date: string){
         if(parseInt(date) > 0){
             setSelectedDate(date)
         }
     }
 
+    //Used to refresh after changes made
     function handleRefresh(){
         setRefresh(!isRefresh)
     }
 
+    //Handles the selection of full date
     function handleSetCurrentYear(date: Dayjs| null){
         if(date){
             setSelectedYear(String(date?.year()))
@@ -73,6 +50,7 @@ export default function MainHolidayCalenday() {
         }
     }
 
+    //Increases the month counter by 1
     function addMonth(){
         if(selectedMonth){
             if(parseInt(selectedMonth) === 11){
@@ -88,6 +66,7 @@ export default function MainHolidayCalenday() {
         }
     }
 
+    //Descreases the month counter by 1
     function decreaseMonth(){
         if(selectedMonth){
             if(parseInt(selectedMonth) === 0){
@@ -105,19 +84,15 @@ export default function MainHolidayCalenday() {
 
     useEffect(() => {
             setLoading(true);
-            const payload: GetHolidayPayloadModel = {
-            holidayName: searchValue,
-            ...(
-                holidayFilters ?? initialFilterValues
-            )
+            const payload: GetCalendarItemPayload = {
+                type:category == 0 ? null : category,
+                year:Number(selectedYear)
             };
             const fetchedHolidayData = async () => {
             try {
-                const response = await getAllHolidays(payload);
+                const response = await getAllCalendarItem(payload);
                 const { success, methodResults, } = response.data;
-                if (success) {
-                setHolidayList(methodResults);
-                }
+                if (success) setOccasionsList(methodResults);
             } catch (error) {
                 console.error((error as Error).message);
             } finally {
@@ -126,7 +101,30 @@ export default function MainHolidayCalenday() {
         }
     
         fetchedHolidayData()
-    }, [searchValue, holidayFilters, isRefresh]);
+    }, [selectedYear, isRefresh, category]);
+
+    useEffect(() => {
+            setLoading(true);
+            const payload: GetCalendarItemPayload = {
+                type:null,
+                year:Number(selectedYear)
+            };
+            const fetchedHolidayData = async () => {
+            try {
+                const response = await getAllCalendarItem(payload);
+                const { success, methodResults, } = response.data;
+                // console.log(methodResults);
+                
+                if (success) setAllOccasionsForYear(methodResults);
+            } catch (error) {
+                console.error((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        }
+    
+        fetchedHolidayData()
+    }, [selectedYear, isRefresh]);
 
     useEffect(()=>{
         const date = new Date;
@@ -136,21 +134,19 @@ export default function MainHolidayCalenday() {
         setPageTitle(i({ id: "PAGE.HOLIDAYS" }))
     },[])
 
-    // console.log(holidayList);
-    
-
     return (
         <>
             <Box component={'div'}
-            className='main-holiday-calendar gap-8'
+            className='main-holiday-calendar gap-4'
             >
                 <CalendarSidebar 
-                    holidays={holidayList}
+                    occasions={occasionsList}
                     selectedDate={selectedDate} 
                     selectedMonth={selectedMonth} 
                     selectedYear={selectedYear}
                     handleRefresh={handleRefresh}
                     isRefresh={isRefresh}
+                    allOccasionsForYear={allOccasionsForYear}
                     />
                 <Box component={'div'}
                 className='gap-4'
@@ -167,13 +163,15 @@ export default function MainHolidayCalenday() {
                         addMonth={addMonth} 
                         decreaseMonth={decreaseMonth}
                         handleSetCurrentYear={handleSetCurrentYear}
+                        handleChange={handleChange}
+                        category={category}
                     />
                     <CalendarDays
                         selectedDate={selectedDate} 
                         selectedMonth={selectedMonth} 
                         selectedYear={selectedYear}
                         handleSelectDate={handleSelectDate}
-                        holidays={holidayList}
+                        occasions={occasionsList}
                         handleRefresh={handleRefresh}
                     />
                 </Box>

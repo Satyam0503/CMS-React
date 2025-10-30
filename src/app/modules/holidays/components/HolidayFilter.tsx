@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { GetHolidayPayloadModel, HolidayFilterModel } from "../models";
+import { HolidayFilterModel } from "../models";
 import { useIntl } from "react-intl";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { useFormik } from "formik";
@@ -21,7 +21,7 @@ interface PropsType {
 }
 
 export const initialFilterValues: HolidayFilterModel = {
-    holidayType: [],
+    occasionType: [],
     date: null,
 }
 
@@ -54,7 +54,7 @@ export const HolidayFilter: FC<PropsType> = (props) => {
                         options={HolidayTypes}
                         disableCloseOnSelect
                         value={HolidayTypes.filter((hol) =>
-                            values.holidayType.includes(hol.id)
+                            values.occasionType.includes(hol.id)
                         )}
                         onChange={(_, selectedHolidayType) => {
                             setFieldValue(

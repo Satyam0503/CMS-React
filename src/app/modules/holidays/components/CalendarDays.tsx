@@ -2,39 +2,35 @@ import {
     Avatar,
     Box,
     Card,
-    Grid,
-    Paper,
-    Popover,
     Tooltip,
     Typography,
 } from "@mui/material";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { HolidayModel, HolidayResponseModel } from "../models";
+import { CalendarItem } from "../models";
 import dayjs from "dayjs";
-import UpcomingHolidayCard from "./UpcomingHolidayCard";
 import { CalendarToday } from "@mui/icons-material";
 import { useThemeContext } from "../../../Context/ThemeContext";
+import clsx from "clsx";
+
+import { useContext } from 'react';
+import { ThemeContext } from "@emotion/react";
 
 type Props = {
     selectedDate: string | undefined;
     selectedMonth: string | undefined;
     selectedYear: string | undefined;
     handleSelectDate: (date: string) => void;
-    holidays: Array<HolidayModel>;
+    occasions: Array<CalendarItem>;
     handleRefresh: () => void;
 };
 
 export default function CalendarDays(props: Props) {
-    const { formatMessage: i } = useIntl();
-    const [thisMonthsHolidays, setthisMonthsHolidays] = useState<
-        Array<HolidayResponseModel>
-    >([]);
-    // const [popoverOpen, setPopoverOpen] = useState<boolean>(false)
+    const [thisMonthsHolidays, setthisMonthsHolidays] = useState<Array<CalendarItem>>([]);
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const [isTodayMonthYear, setIsTodayMonthYear] = useState<boolean>(true);
 
+    const popoverOpen = Boolean(anchorEl);
     const screenWidth: number = screen.width;
 
     const weekDays: Array<string> = [
@@ -67,6 +63,7 @@ export default function CalendarDays(props: Props) {
 
     getDaysInCurrentMonth(props.selectedMonth, props.selectedYear);
 
+    //Gets number of days in any month
     function getDaysInCurrentMonth(
         month: string | undefined,
         year: string | undefined
@@ -105,6 +102,7 @@ export default function CalendarDays(props: Props) {
         }
     }
 
+    // Checks If It Is Current Month And Year To Set Today Date
     function checkIsCurrentMonthYear() {
         const { selectedDate, selectedMonth, selectedYear } = props;
 
@@ -117,76 +115,48 @@ export default function CalendarDays(props: Props) {
         }
     }
 
-    function findHolidayForMonth() {
-        let thisMonthHolidaysFinder: Array<HolidayModel> = [];
+    //Find Occasions For Selected Month
+    function findOccasionsForMonth() {
+        let thisMonthHolidaysFinder: Array<CalendarItem> = [];
 
-        props.holidays.forEach((hol) => {
-        if (hol.date) {
-            const month = dayjs(hol.date).format("MM");
-            const year = dayjs(hol.date).format("YYYY");
+        props.occasions.forEach((occ) => {
+        if (occ.date) {
+            const month = dayjs(occ.date).format("MM")
 
-            const selecMonth = String(
-            parseInt(
-                dayjs(`${props.selectedYear}-${props.selectedMonth}-01`).format(
-                "MM"
-                )
-            ) + 1
-            );
-            const selecYear = dayjs(
-            `${props.selectedYear}-${props.selectedMonth}-01`
-            ).format("YYYY");
+            let selecMonth = String(
+            parseInt(dayjs(`${props.selectedYear}-${props.selectedMonth}-01`).format("MM")) + 1)
+            .padStart(2,"0");
+            if(selecMonth === '13') selecMonth = '01'
+            
 
-            if (props.selectedMonth && props.selectedYear) {
-            if (month == selecMonth && year == selecYear) {
-                thisMonthHolidaysFinder.push(hol);
-            }
+            if (month == selecMonth) {
+                thisMonthHolidaysFinder.push(occ);
             }
         }
         setthisMonthsHolidays(thisMonthHolidaysFinder);
         });
     }
 
-    function checkHolidaysDateThisMonth() {
-        const holidayDatesArray: Array<[name: string, date: string]> = [];
-        thisMonthsHolidays.forEach((hol) => {
-        if (hol.date) {
-            const date = String(hol.date);
-            const name = hol.holidayName;
-            holidayDatesArray.push([name, date]);
-        }
-        });
-
-        // setHolidayDates(holidayDatesArray)
-    }
-
+    //Sets anchor to popover
     function handlePopoverOpen(event: React.MouseEvent<HTMLElement>) {
         setAnchorEl(event.currentTarget);
     }
 
+    //Removes anchor
     function handlePopoverClose() {
         setAnchorEl(null);
     }
 
-    const popoverOpen = Boolean(anchorEl);
-
     useEffect(() => {
         checkIsCurrentMonthYear();
         getDaysInCurrentMonth(props.selectedMonth, props.selectedYear);
-        findHolidayForMonth();
+        findOccasionsForMonth();
     }, [
         props.selectedDate,
         props.selectedMonth,
         props.selectedYear,
-        props.holidays,
+        props.occasions,
     ]);
-
-    useEffect(() => {
-        checkHolidaysDateThisMonth();
-    }, [thisMonthsHolidays]);
-
-    useEffect(() => {
-        findHolidayForMonth();
-    }, [props.selectedMonth, props.selectedYear]);
 
     return (
         <Box
@@ -199,9 +169,9 @@ export default function CalendarDays(props: Props) {
         <Card
             className="gap-4 calendar-days-header calendar-days-grid"
             sx={{
-            height: "100px",
-            padding: "0 20px",
-            width: "100%",
+                height: "100px",
+                padding: "0 20px",
+                width: "100%",
             }}
         >
             {screenWidth > 600
@@ -259,86 +229,116 @@ export default function CalendarDays(props: Props) {
             {days.map((day, index) => {
             return (
                 <Box key={index}
-                component={"div"}
-                onClick={(e) => {
-                    props.handleSelectDate(String(day));
-                }}
-                className={`hover-theme-color calendar-day position-relative ${
-                    isTodayMonthYear && day == todayDate && "today"
-                } ${props.selectedDate == day && "selected-day"}`}
+                    component={"div"}
+                    onClick={(e) => {
+                        props.handleSelectDate(String(day));
+                    }}
+                    className={`hover-theme-color calendar-day position-relative ${props.selectedDate == day && "selected-day"} ${theme === 'light' ? 'hover-theme-light' : 'hover-theme-dark'}`}
                 >
-                <Typography variant="h6">{day}</Typography>
-                {thisMonthsHolidays.length > 0 &&
-                    thisMonthsHolidays.map((holiday, index) => {
-                    const holidayDate = dayjs(holiday.date).format("DD");
-
-                    if (holidayDate == day) {
-                        return (
-                        <Tooltip key={index}
-                            slotProps={{
-                            tooltip: {
-                                sx: {
-                                    backgroundColor:theme ==="dark" ? "background.card":"background.body",
-                                    color: theme === "light" ? 'black':"white",
-                                },
+                    <Typography variant="h6" className={clsx({"today":isTodayMonthYear && day == todayDate})}
+                        sx={{
+                            fontSize: '28px',
+                            '@media (max-width: 1200px)': {
+                                fontSize: '20px'
                             },
-                            arrow:{
-                                sx:{
-                                    color:theme ==="dark" ? "background.card":"background.body"
-                                }
+                            '@media (max-width: 960px)': {
+                                fontSize: '18px'
+                            },
+                            '@media (max-width: 600px)': {
+                                fontSize: '16px'
                             }
-                            }}
-                            title={<ToolTipPopOver holiday={holiday} />}
+                        }}
                         >
-                            {screenWidth > 850 ? 
-                                <Box
-                                    key={index}
-                                    className={`calendar-day-holiday ${holiday.holidayType == 1 ? 'holiday' : 'event'}`}
-                                    sx={{
-                                        padding: "0px 5px",
-                                        whiteSpace: "nowrap",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",   
-                                    }}
-                                    aria-owns={popoverOpen ? String(index) : undefined}
-                                    aria-haspopup="true"
-                                    onMouseEnter={handlePopoverOpen}
-                                    onMouseLeave={handlePopoverClose}
-                                    >
-                                    <Typography
-                                        sx={{
-                                            padding: '0 4px',
-                                            overflow: 'hidden'
+                            {day}
+                    </Typography>
+                    <Box component={'div'}
+                        className="d-flex flex-column w-100"
+                        sx={{
+                            maxHeight: '65px',
+                            overflowY: 'auto',
+                            padding : '5px',
+                        }}
+                    >
+                        <Box component={'div'}
+                        className="d-flex flex-column gap-2 w-100 "
+                        >
+                            {thisMonthsHolidays.length > 0 &&
+                                thisMonthsHolidays.map((holiday, index) => {
+                                const holidayDate = dayjs(holiday.date).format("DD");
+
+                                if (holidayDate == day) {
+                                    return (
+                                    <Tooltip key={index}
+                                        slotProps={{
+                                        tooltip: {
+                                            sx: {
+                                                backgroundColor:theme ==="dark" ? "background.card":"background.body",
+                                                color: theme === "light" ? 'black':"white",
+                                            },
+                                        },
+                                        arrow:{
+                                            sx:{
+                                                color:theme ==="dark" ? "background.card":"background.body"
+                                            }
+                                        }
                                         }}
+                                        title={<ToolTipPopOver holiday={holiday} />}
                                     >
-                                        {holiday.holidayName.length > 10
-                                        ? holiday.holidayName
-                                            .split("")
-                                            .splice(0, 10)
-                                            .join("") + "..."
-                                        : holiday.holidayName}
-                                    </Typography>
-                                </Box>
-                                : <Box
-                                    key={index}
-                                    className={`calendar-day-holiday-dot ${holiday.holidayType == 1 ? 'holiday-dot' : 'event-dot'}`}
-                                        sx={{
-                                            
-                                        }}
-                                    aria-owns={popoverOpen ? String(index) : undefined}
-                                    aria-haspopup="true"
-                                    onMouseEnter={handlePopoverOpen}
-                                    onMouseLeave={handlePopoverClose}
-                                    >
-                                </Box>
+                                        {(screenWidth < 1350 && screenWidth > 960) || screenWidth > 850 ? 
+                                            <Box
+                                                key={index}
+                                                className={`calendar-day-holiday ${holiday.type == 1 ? 'primary' :
+                                                                                    holiday.type == 2 ?'secondary' :
+                                                                                    holiday.type == 3 ? 'success' :
+                                                                                    holiday.type == 4 ? 'info' : ''}`}
+                                                sx={{
+                                                    padding: "0px 5px",
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",   
+                                                }}
+                                                aria-owns={popoverOpen ? String(index) : undefined}
+                                                aria-haspopup="true"
+                                                onMouseEnter={handlePopoverOpen}
+                                                onMouseLeave={handlePopoverClose}
+                                                >
+                                                <Typography
+                                                    sx={{
+                                                        padding: '0 4px',
+                                                        overflow: 'hidden'
+                                                    }}
+                                                >
+                                                    {holiday.name.length > 10
+                                                    ? holiday.name
+                                                        .split("")
+                                                        .splice(0, 9)
+                                                        .join("") + "..."
+                                                    : holiday.name}
+                                                </Typography>
+                                            </Box>
+                                            : <Box
+                                                key={index}
+                                                className={`calendar-day-holiday-dot ${holiday.type == 1 ? 'primary' : 
+                                                                                    holiday.type == 2 ? 'secondary' :
+                                                                                    holiday.type == 3 ? 'success' :
+                                                                                    holiday.type == 4 ? 'info' : ''}
+                                                }`}
+                                                aria-owns={popoverOpen ? String(index) : undefined}
+                                                aria-haspopup="true"
+                                                onMouseEnter={handlePopoverOpen}
+                                                onMouseLeave={handlePopoverClose}
+                                                >
+                                            </Box>
+                                            }
+                                        
+                                    </Tooltip>
+                                    );
                                 }
-                            
-                        </Tooltip>
-                        );
-                    }
-                    })}
+                            })}
+                        </Box>
+                    </Box>
                 </Box>
-            );
+                );
             })}
         </Card>
         </Box>
@@ -346,43 +346,41 @@ export default function CalendarDays(props: Props) {
 }
 
 type PropType = {
-    holiday: HolidayResponseModel;
+    holiday: CalendarItem;
 };
 
 const ToolTipPopOver = ({ holiday }: PropType) => {
     return (
         <Box component={"div"} className="d-flex gap-4 align-items-center">
-        {holiday.holidayImageUrl ? (
-            <Avatar
-            sx={{
-                width: 40,
-                height: 40,
-                boxShadow: 2,
-                bgcolor: "secondary.main",
-            }}
-            src={String(holiday.holidayCoverImageUrl)}
-            variant="rounded"
-            />
-        ) : (
-            <Avatar
-            variant="rounded"
-            sx={{
-                width: 40,
-                height: 40,
-                bgcolor: "secondary.main",
-            }}
-            >
-            <CalendarToday className="fs-32" />
-            </Avatar>
-        )}
-        <Box component={"div"} className="d-flex flex-column ">
-            <Typography variant="body1">{holiday.holidayName}</Typography>
-            <Typography variant="body2">
-            {holiday.detail.length > 30
-                ? holiday.detail.slice(0, 23).concat("...")
-                : holiday.detail}
-            </Typography>
-        </Box>
+            {holiday.imageUrl ? (
+                <Avatar
+                sx={{
+                    width: 40,
+                    height: 40,
+                    boxShadow: 2,
+                    bgcolor: "secondary.main",
+                }}
+                src={String(holiday.imageUrl)}
+                variant="rounded"
+                />
+            ) : (
+                <Avatar
+                variant="rounded"
+                sx={{
+                    width: 40,
+                    height: 40,
+                    bgcolor: "secondary.main",
+                }}
+                >
+                <CalendarToday className="fs-32" />
+                </Avatar>
+            )}
+            <Box component={"div"} className="d-flex flex-column ">
+                <Typography variant="body1">{holiday.name}</Typography>
+                <Typography variant="body2">
+                {holiday.description}
+                </Typography>
+            </Box>
         </Box>
     );
 };

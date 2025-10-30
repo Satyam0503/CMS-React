@@ -2,29 +2,28 @@ import { deleteRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
-  GetAllHolidayResponseData,
-  GetHolidayPayloadModel,
-  HolidayModel,
+  GetAllCalendarItemData,
+  GetCalendarItemPayload,
 } from "./models";
 
-export const getAllHolidays = async (payload?: GetHolidayPayloadModel) => {
-  return postRequest<GetHolidayPayloadModel | null, GetAllHolidayResponseData>(
-    ServiceUrl.GET_ALL_HOLIDAYS,
+export const getAllCalendarItem = async (payload: GetCalendarItemPayload) => {
+  return postRequest<GetCalendarItemPayload , GetAllCalendarItemData>(
+    ServiceUrl.GET_ALL_CALENDAR_ITEMS,
     payload
   );
 };
 
-export const addEditHoliday = async (payload: FormData) => {
+export const addEditCalendarItem = async (payload: FormData) => {
   return postRequest<FormData, ApiResponse>(
-    ServiceUrl.CREATE_UPDATE_HOLIDAYS,
+    ServiceUrl.ADD_AND_UPDATE_CALENDAR_ITEMS,
     payload,
     {},
     true
   );
 };
 
-export const deleteHoliday = async (holidayId: string) => {
+export const deleteCalendarItem = async (holidayId: string) => {
   return deleteRequest<ApiResponse>(
-    `${ServiceUrl.DELETE_HOLIDAYS}/${holidayId}`
+    `${ServiceUrl.DELETE_CALENDAR_ITEM}/${holidayId}`
   );
 };

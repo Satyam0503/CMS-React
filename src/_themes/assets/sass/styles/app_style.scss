@@ -143,6 +143,15 @@ input:-webkit-autofill {
   background-color: $info-300;
   color: $info-800;
 }
+.secondary {
+  background-color: $app-secondary-200;
+  color: $app-secondary-700;
+}
+.primary {
+  background-color: $app-primary-300;
+  color: $app-primary-700;
+}
+
 
 // .pdf_viewer {
 //   max-width: 100% !important;
@@ -589,18 +598,18 @@ button:hover .ql-fill,
   flex-direction: column;
   height: 100%;
 
-  @media (min-width: 960px) {
+  @media (min-width: 1280px) {
     flex-direction: row;
   }
 
   .calendar-sidebar{
     width: 100%;
     height: inherit;
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     
-    @media (min-width: 960px) {
+    @media (min-width: 1280px) {
       width: 300px;
       min-width: 250px;
       gap: 20px;
@@ -620,9 +629,50 @@ button:hover .ql-fill,
       @media (min-width: 600px) {
         grid-template-columns: 1fr 1fr;
       }
-
-      @media (min-width: 960px) {
+      
+      @media (min-width: 1280px) {
         grid-template-columns: 1fr;
+      }
+
+      .MuiPaper-root{
+        button{
+          border: none;
+        }
+      }
+
+      .occasion-type{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 600;
+
+        .count-div{
+          height: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 4px;
+          aspect-ratio: 1;
+          color: white;
+        }
+        
+        .holiday-colors{
+          background-color: $app-primary-700;
+        }
+
+        .event-colors{
+          background-color: $app-secondary-700;
+        }
+
+        .bithdays-colors{
+          background-color: $success-700;
+        }
+
+        .anivaesary-colors{
+          background-color: $info-800;
+        }
       }
     }
 
@@ -634,32 +684,53 @@ button:hover .ql-fill,
     }
   }
 
-  
+
   .calendar-header{
     display: flex;
     padding: 20px;
     gap: 15px;
     flex-direction: column;
+    justify-content: center;
+
+    @media (min-width: 600px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: auto;
+    }
 
     @media (min-width: 960px) {
-      flex-direction: column;
-      justify-content: center;
-      align-items: start;
+      flex-direction: row;
+      justify-content:space-between;
+      align-items: c;
     }
     
     @media (min-width: 1200px) {
-      padding: 20px;
       flex-direction: row;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       width: 100%;
+      height: auto;
     }
 
     .calendar-controls{
       display: flex;
       align-items: center;
-      gap: 15px;
-    
+      gap: .5rem ;
+      height: 100%;
+    }
+
+    .calendar-filters{
+      .MuiFormControl-root{
+        .MuiInputBase-root{
+          .MuiSelect-select{
+            display: flex;
+            font-size: 16px;
+            justify-content: start;
+            align-items: center;
+          }
+        }
+      }
     }
   }
 
@@ -671,13 +742,12 @@ button:hover .ql-fill,
       border: 1px solid rgb(219, 219, 219);
       gap: 2px;
       align-items: center;
-      justify-content: center;
-      height: 80px;
-      padding: .5rem;
+      justify-content: end;
+      aspect-ratio: 1;
       
-
-      @media (min-width: 960px) {
-        height: 120px;
+      
+      @media (min-width: 600px) {
+        justify-content: center;
       }
 
       .calendar-day-holiday{
@@ -687,34 +757,26 @@ button:hover .ql-fill,
         justify-content: center;
         align-items: center;
         border-radius: 4px;
-        color: white;
-      }
-      
-      .holiday{
-        background-color: $app-primary-500;
-      }
-
-      .event{
-        background-color: $app-secondary-300;
+        
+        p{
+          font-weight: 600;
+        }
       }
 
       .calendar-day-holiday-dot{
         position: absolute;
-        height: 8px;
-        width: 8px;
+        height: 5px;
+        width: 5px;
         border-radius: 50%;
-        top: 10px;
-        left: 10px;
-      }
-
-      .holiday-dot{
-        background-color: $app-primary-500;
-        box-shadow: 1px 1px 5px 1px $app-primary-500;
-      }
-
-      .event-dot{
-        background-color: $app-secondary-300;
-        box-shadow: 1px 1px 5px 1px $app-secondary-300;
+        top: 5px;
+        left: 5px;
+        
+        @media (min-width: 600px) {
+          top: 10px;
+          left: 10px;
+          height: 8px;
+          width: 8px;
+        }
       }
     }
 
@@ -731,18 +793,55 @@ button:hover .ql-fill,
     .hover-theme-color {
       cursor: pointer;
       transition: 0.2s ease-in-out;
+    }
+    
+    .hover-theme-light{
       &:hover {
         background-color: $app-primary-100;
       }
     }
+
+    .hover-theme-dark{
+      &:hover {
+        background-color: $app-primary-600;
+      }
+    }
     
     .today{
-      background-color: $app-primary-100;
+      color: $app-primary-600 !important;
     }
     
     .selected-day{
-      border-bottom: 5px solid $app-primary-500;
+      border-bottom: 3px solid $app-primary-500;
       
+      @media (min-width: 600px) {
+        border-bottom: 5px solid $app-primary-500;
+      }
+    }
+  }
+}
+
+//Popover List Styles
+
+.popover-list{
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  gap: 4px 6px;
+
+  li{
+    border-bottom: 0;
+    .MuiListItemButton-gutters {
+      display: flex;
+      align-items: center;
+      padding: 0;
+      padding-left: 8px;
+      width: 120px;
+      
+      .MuiListItemText-root{
+        display: flex;
+        align-items: center;
+      }
     }
   }
 }
@@ -777,7 +876,6 @@ button:hover .ql-fill,
         right: 0;
         top: 50%;
         transform: translate(-50%, -50%);
-        border: none;
       }
     }
   }

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Avatar, Box, Card, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Typography } from "@mui/material";
+import { Avatar, Box, Card, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Typography } from "@mui/material";
 import { CalendarToday, Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
-import { HolidayModel, HolidayResponseModel } from "../models";
+import { CalendarItem } from "../models";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -11,23 +11,25 @@ import dayjs from "dayjs";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import HolidayForm from "./HolidayForm";
 import { toast } from "react-toastify";
-import { deleteHoliday } from "../holidayServices";
+import { deleteCalendarItem } from "../holidayServices";
 
 import { useContext } from "react";
 import { ThemeContext } from "@emotion/react";
 
-const initialValues: HolidayModel = {
-    holidayId: "",
-    holidayName: "",
-    holidayType: 1,
+const initialValues: CalendarItem = {
+    id: "",
+    name: "",
+    type: 1,
     date: dayjs(Date.now()),
-    detail: "",
+    description: "",
+    recurring: false,
+    imageUrl: null
 };
 
 interface Props{
     key: string
-    holiday: HolidayResponseModel,
-    holidayList: Array<HolidayModel>,
+    occasion: CalendarItem,
+    occasions: Array<CalendarItem>,
     handleRefresh: () => void
 }
 
@@ -59,20 +61,23 @@ function UpcomingHolidayCard(props: Props) {
 
     const handleHolidayDeleteClick = () => {
         if (selectedHolidayId) {
-        setDeleteModalOpen(true);
+            setDeleteModalOpen(true);
         }
     }
 
     const handleHolidayEdit = () => {
             if (selectedHolidayId) {
-            const holiday = props.holidayList.find(item => item.holidayId === selectedHolidayId);
+            const holiday = props.occasions.find(item => item.id === selectedHolidayId);
+            
             if (holiday) {
                 setInitialHolidayValues({
-                holidayId: holiday.holidayId,
-                holidayName: holiday.holidayName,
-                holidayType: holiday.holidayType,
+                id: holiday.id,
+                name: holiday.name,
+                type: holiday.type,
                 date: dayjs(holiday.date),
-                detail: holiday.detail
+                description: holiday.description,
+                imageUrl: holiday.imageUrl,
+                recurring: holiday.recurring
                 });
                 setEdit(true);
                 setModalOpen(true);
@@ -99,7 +104,7 @@ function UpcomingHolidayCard(props: Props) {
             handleDeleteModalClose();
             } else {
             try {
-                const { data } = await deleteHoliday(selectedHolidayId);
+                const { data } = await deleteCalendarItem(selectedHolidayId);
                 if (data.success) {
                 props.handleRefresh();
                 toast.success(i({ id: "TOAST.SUCCESS.DELETE" }));
@@ -114,12 +119,12 @@ function UpcomingHolidayCard(props: Props) {
     };
 
     return (
-        <Card
+        <Stack
         component={"div"}
-        className="gap-2 holiday-card hover-secondary w-100"
+        className="gap-2 holiday-card flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary"
         >
             <Box component={'div'} className="d-flex gap-4 align-items-center">
-                {props.holiday.holidayImageUrl ? (
+                {props.occasion.imageUrl ? (
                     <Avatar
                     sx={{
                         width: 40,
@@ -127,7 +132,7 @@ function UpcomingHolidayCard(props: Props) {
                         boxShadow: 2,
                         bgcolor: "secondary.main",
                     }}
-                    src={String(props.holiday.holidayCoverImageUrl)}
+                    src={String(props.occasion.imageUrl)}
                     variant="rounded"
                     />
                 ) : (
@@ -142,24 +147,34 @@ function UpcomingHolidayCard(props: Props) {
                     <CalendarToday className="fs-32" />
                     </Avatar>
                 )}
-                <Box component={"div"} className="d-flex flex-column gap-1">
-                    <Typography variant="body1">{props.holiday.holidayName}</Typography>
+                <Box component={"div"} className="d-flex flex-column gap-1"
+                    sx={{
+                            whiteSpace: 'nowrap',
+                            width: '115px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                    }}  
+                >
+                    <Typography variant="body1">{props.occasion.name}</Typography>
                     <Typography variant="body2">
-                    {props.holiday.detail.length > 30
-                        ? props.holiday.detail.slice(0, 23).concat("...")
-                        : props.holiday.detail}
+                    {props.occasion.description.length > 30
+                        ? props.occasion.description.slice(0, 23).concat("...")
+                        : props.occasion.description}
                     </Typography>
                 </Box>
             </Box>
 
-            {(hasEditPermission || hasDeletePermission) && (
+            {((hasEditPermission || hasDeletePermission) && (props.occasion.type!= 3 && props.occasion.type != 4) ) && (
                 <IconButton
-                className="holiday-card-action-button"
-                id="holiday-action-button"
-                onClick={(e) => {
-                    handleActionButtonClick(e, props.holiday.holidayId);
-                }}
-                >
+                    className="holiday-card-action-button"
+                    sx={{
+                        border: 'none'
+                    }}
+                    id="holiday-action-button"
+                    onClick={(e) => {
+                        handleActionButtonClick(e, props.occasion.id);
+                    }}
+                    >
                     <MoreVertOutlined />
                 </IconButton>
             )}
@@ -186,30 +201,36 @@ function UpcomingHolidayCard(props: Props) {
                     }
                 }}
                 >
-                    <List disablePadding>
+                    <List disablePadding className="popover-list">
                         {
                         hasEditPermission &&
                         <ListItem disablePadding divider onClick={handleHolidayEdit}>
                             <ListItemButton >
-                            <ListItemText primary={
-                                <Typography>
-                                <Edit className="fs-16 me-2" />
-                                {i({ id: "BUTTON.EDIT" })}
-                                </Typography>
-                            } />
+                                <ListItemText 
+                                primary={
+                                    <Typography>
+                                        <Edit className="fs-16 me-2" />
+                                        {i({ id: "BUTTON.EDIT" })}
+                                    </Typography>
+                                } />
                             </ListItemButton>
                         </ListItem>
                         }
+                        <Divider 
+                            sx={{
+                                borderColor: 'black'
+                            }}
+                        />
                         {
                         hasDeletePermission &&
                         <ListItem disablePadding onClick={handleHolidayDeleteClick}>
                             <ListItemButton>
-                            <ListItemText primary={
-                                <Typography className="text-center">
-                                <Delete color="error" className="fs-16 me-2" />
-                                {i({ id: "BUTTON.DELETE" })}
-                                </Typography>
-                            } />
+                                <ListItemText primary={
+                                    <Typography className="text-center">
+                                        <Delete color="error" className="fs-16 me-2" />
+                                        {i({ id: "BUTTON.DELETE" })}
+                                    </Typography>
+                                } />
                             </ListItemButton>
                         </ListItem>
                         }
@@ -238,7 +259,7 @@ function UpcomingHolidayCard(props: Props) {
                         />
                     )
                 }
-        </Card>
+        </Stack>
     );
 }
 

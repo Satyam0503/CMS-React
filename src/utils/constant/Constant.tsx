@@ -71,7 +71,7 @@ import {
   LeaveBalanceType,
   LeaveType,
 } from "../../app/modules/leaves/model";
-import { HolidayModel } from "../../app/modules/holidays/models";
+import { CalendarItem } from "../../app/modules/holidays/models";
 import { SetDepartmentName } from "../../app/modules/employees/components/SetDepartmentName";
 
 export const BaseUrl = import.meta.env.VITE_BASEURL;
@@ -196,6 +196,11 @@ export const ServiceUrl = {
   DELETE_HOLIDAYS: `${BaseUrl}/api/Holiday/DeleteHoliday`,
   DELETE_NOTICE: `${BaseUrl}/api/NoticeBoard/DeleteNotice`,
   GET_NOTICE_BY_ID: `${BaseUrl}/api/NoticeBoard/GetNoticeById`,
+
+  //Calendar
+  GET_ALL_CALENDAR_ITEMS: `${BaseUrl}/api/Calendar/GetAllCalendarItems`,
+  ADD_AND_UPDATE_CALENDAR_ITEMS: `${BaseUrl}/api/Calendar/AddUpdateCalendarItem`,
+  DELETE_CALENDAR_ITEM: `${BaseUrl}/api/Calendar//DeleteCalendarItem`,
 
   // leave management
   CREATE_UPDATE_LEAVE_TYPE: `${BaseUrl}/api/LeaveManagement/CreateUpdateLeaveType`,
@@ -638,9 +643,9 @@ export const HolidayTabTableColumnList: ColumnListTypes[] = [
     id: "action",
     label: "ACTION",
     build: (
-      row: HolidayModel,
-      handleHolidayEdit: (row: HolidayModel) => void,
-      openConfirmationModal: (row: HolidayModel) => void
+      row: CalendarItem,
+      handleHolidayEdit: (row: CalendarItem) => void,
+      openConfirmationModal: (row: CalendarItem) => void
     ) => (
       <ActionComponent
         row={row}
