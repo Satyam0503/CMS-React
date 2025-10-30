@@ -1,4 +1,4 @@
-import { lazy, FC, Suspense, ReactNode } from "react";
+import { lazy, Suspense, ReactNode } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";

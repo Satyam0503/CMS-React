@@ -59,6 +59,7 @@ export type EmployeeByIdResponse = EmployeeModel & {
   customAttributes: EmployeeCustomAttribute[];
   panNumber: string | null;
   bankAccountNumber: number | null;
+  totalWorkExperience: number;
 };
 
 export type NotificationModel = {

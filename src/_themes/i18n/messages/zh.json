@@ -388,10 +388,11 @@
       "SETTING": "设置"
     },
     "PI": {
-      "EOX": "工作经验年数",
-      "TOTAL_YEAR": "在 {companyName} 的年数",
+      "EOX": "工作经验",
+      "TOTAL_YEAR": "在 {companyName} 的年限",
       "TITLE": "个人信息",
-      "DOWNLOAD_PAY_SLIP": "下载工资单"
+      "DOWNLOAD_PAY_SLIP": "下载工资单",
+      "EXPERIENCE_TEXT": "{years} 年 {months} 个月"
     },
     "SKILLS": {
       "TITLE": "技能",
@@ -884,5 +885,10 @@
       "HolidayReminder": "及时接收公司或公共假期的提醒",
       "MessageNotification": "当您在平台上收到新消息时接收通知"
     }
+  },
+  "PLURAL": {
+    "YR": "{years} 年",
+    "YEAR": "{years} 年",
+    "MONTHS": "{months} 个月"
   }
 }

@@ -29,7 +29,6 @@ import {
 import {
   APP_FILTER_KEY,
   I18N_CONFIG_KEY,
-  NoticeTypes,
   SideBarTabList,
 } from "./constant/Constant";
 import { NotificationModel } from "../app/modules/users/models";
@@ -207,12 +206,6 @@ export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
   return dayjs(to).diff(from, "years");
 };
 
-export const convertMonthsToYear = (months: number) => {
-  let years = Math.round(months / 12);
-  let suffix = years > 1 ? "Years" : "Year";
-  return years + " " + suffix;
-};
-
 export const getModulePermissions = (
   moduleName: ModulesName,
   modulesPermissions: string[]
@@ -317,9 +310,9 @@ export const countAppliedFilter = (filter: Record<string, any> | null) => {
     Object.keys(filter).forEach((element) => {
       if (filter[element] !== null) {
         if (Array.isArray(filter[element])) {
-          count += Boolean(filter[element].length) ? 1 : 0;
+          count += filter[element].length ? 1 : 0;
         } else if (typeof filter[element] === "string") {
-          count += Boolean(filter[element]) ? 1 : 0;
+          count += filter[element] ? 1 : 0;
         } else if (typeof filter[element] === "number") {
           count += filter[element] >= 0 ? 1 : 0;
         } else {
@@ -400,8 +393,8 @@ export const flattenMessages = (
 ): Record<string, string> => {
   let result: Record<string, string> = {};
 
-  for (let key in messages) {
-    if (messages.hasOwnProperty(key)) {
+  for (const key in messages) {
+    if (Object.prototype.hasOwnProperty.call(messages, key)) {
       const newKey = prefix ? `${prefix}.${key}` : key;
       if (typeof messages[key] === "object" && !Array.isArray(messages[key])) {
         result = { ...result, ...flattenMessages(messages[key], newKey) };
@@ -465,7 +458,7 @@ export const setDayJsLocale = async () => {
   const currentLocale = getCurrentAppLanguage();
   // dynamically import the locale file based on the current language
   try {
-    const data = await mapLocal[currentLocale]();
+    await mapLocal[currentLocale]();
     dayjs.locale(currentLocale);
   } catch (error) {
     dayjs.locale(LANGUAGE.ENGLISH);

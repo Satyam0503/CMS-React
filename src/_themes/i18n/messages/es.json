@@ -371,10 +371,11 @@
       "SETTING": "Configuración"
     },
     "PI": {
-      "EOX": "Años de experiencia",
+      "EOX": "de experiencia",
       "TOTAL_YEAR": "Años en {companyName}",
       "TITLE": "Información personal",
-      "DOWNLOAD_PAY_SLIP": "Descargar recibo de sueldo"
+      "DOWNLOAD_PAY_SLIP": "Descargar recibo de pago",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# año} other {# años}} {months, plural, =0 {} one {# mes} other {# meses}}"
     },
     "SKILLS": {
       "TITLE": "Habilidades",
@@ -868,5 +869,10 @@
       "HolidayReminder": "Obtén recordatorios oportunos sobre próximos feriados y días libres declarados por la empresa",
       "MessageNotification": "Recibe notificaciones cuando te envíen nuevos mensajes a través de la plataforma"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 año} one {# año} other {# años}}",
+    "YEAR": "{years, plural, =0 {0 año} one {# año} other {# años}}",
+    "MONTHS": "{months, plural, =0 {0 mes} one {# mes} other {# meses}}"
   }
 }

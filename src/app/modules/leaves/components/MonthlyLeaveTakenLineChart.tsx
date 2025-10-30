@@ -1,5 +1,5 @@
 import { Box, Card, Stack, Typography } from "@mui/material";
-import { areaElementClasses, BarChart, LineChart, lineElementClasses } from "@mui/x-charts";
+import { BarChart, } from "@mui/x-charts";
 import { useIntl } from "react-intl";
 import { chartColorpalette } from "../../theme/MuiTheme";
 import { useThemeContext } from "../../../Context/ThemeContext";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getMonthlyLeaveTakenSummary } from "../leaveServices";
 import { MonthlyLeaveTakenSummary } from "../model";
 import { monthMapper } from "../../../../utils/common";
+import dayjs from "dayjs";
 
 export const MonthlyLeaveTakenLineChart = () => {
     const { formatMessage: i } = useIntl();
@@ -31,8 +32,9 @@ export const MonthlyLeaveTakenLineChart = () => {
     }, []);
     return (
         <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
-            <Stack className="mb-2">
+            <Stack className="mb-2 flex-row justify-content-between">
                 <Typography className="fw-bold fs-16">{i({ id: "LEAVE.TITLES.MONTHLY_LEAVE_SUMMARY" })}</Typography>
+                <Typography className="fw-bold fs-16">{dayjs().format("YYYY")}</Typography>
             </Stack>
             <Box sx={{ flex: 1, minHeight: 0 }}>
                 <BarChart

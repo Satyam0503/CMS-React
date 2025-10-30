@@ -3,7 +3,7 @@ import {
   CorporateFareOutlined,
   Build,
 } from "@mui/icons-material";
-import { Stack, Grid, Box, CardContent, useTheme } from "@mui/material";
+import { Grid, useTheme } from "@mui/material";
 import IconStat from "../../../../shared/components/IconStat";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useUserDetails } from "../../UserDataProvider";
@@ -17,6 +17,10 @@ export const ProfileHeader = () => {
   const { userDetails, totalSkills } = useUserDetails();
   const { formatMessage } = useIntl();
   const theme = useTheme();
+
+  const years = Math.floor(userDetails.totalWorkExperience / 12);
+  const months = userDetails.totalWorkExperience % 12;
+
   return (
     <Grid container spacing={2} direction="column">
       <Grid item xs={12} sm={4}>
@@ -24,7 +28,7 @@ export const ProfileHeader = () => {
           iconBg={theme.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
           iconColor="secondary.dark"
-          number={14}
+          number={formatMessage({ id: (years || months) ? "PROFILE.PI.EXPERIENCE_TEXT" : "PLURAL.YEAR" }, { years, months })}
           title={formatMessage({ id: "PROFILE.PI.EOX" })}
         />
       </Grid>

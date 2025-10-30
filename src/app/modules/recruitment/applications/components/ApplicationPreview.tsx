@@ -1,13 +1,10 @@
-import { Close } from "@mui/icons-material";
 import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusMapper,
-  convertMonthsToYear,
   dateFormatter,
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
@@ -28,6 +25,8 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const { formatMessage: i } = useIntl();
+  const experience = (applicantData.experience / 12).toFixed(1);
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}
       title={applicantData.firstName + " " + applicantData.lastName}
@@ -60,7 +59,7 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
             <Grid item xs={6}>
               <Typography variant="body1" fontWeight={400}>
-                {convertMonthsToYear(applicantData.experience)}
+                {i({ id: "PLURAL.YEAR" }, { years: experience })}
               </Typography>
             </Grid>
           </Grid>

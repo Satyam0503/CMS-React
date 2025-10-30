@@ -369,10 +369,11 @@
       "SETTING": "設定"
     },
     "PI": {
-      "EOX": "経験年数",
+      "EOX": "の経験",
       "TOTAL_YEAR": "{companyName}での勤務年数",
       "TITLE": "個人情報",
-      "DOWNLOAD_PAY_SLIP": "給与明細をダウンロード"
+      "DOWNLOAD_PAY_SLIP": "給与明細をダウンロード",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# 年} other {# 年}} {months, plural, =0 {} one {# か月} other {# か月}}"
     },
     "SKILLS": {
       "TITLE": "スキル",
@@ -876,5 +877,10 @@
       "HolidayReminder": "今後の休日や会社の休業日に関するリマインダーを受け取ります",
       "MessageNotification": "プラットフォームを通じて新しいメッセージが届いた際に通知を受け取ります"
     }
+  },
+  "PLURAL": {
+    "YR": "{years} 年",
+    "YEAR": "{years} 年",
+    "MONTHS": "{months} か月"
   }
 }

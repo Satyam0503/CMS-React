@@ -4,7 +4,6 @@ import {
   dateFormatter,
   statusDecoder,
   applicantStatusDecoder,
-  convertMonthsToYear,
   sanitizeHtmlContent,
   commentActionMapper,
   noticeTypeDecoder,
@@ -39,7 +38,6 @@ import {
   CalendarMonth,
   Check,
   Close,
-  ColorLens,
   Contacts,
   CurrencyRupee,
   Info,
@@ -975,8 +973,9 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     align: "center",
     sorting: true,
     format: (value: number) => {
-      return convertMonthsToYear(value);
-    },
+      const experience = (value / 12).toFixed(1);
+      return <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
+    }
   },
   {
     id: "applyDate",

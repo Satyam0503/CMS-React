@@ -369,10 +369,11 @@
       "SETTING": "Einstellungen"
     },
     "PI": {
-      "EOX": "Berufserfahrung (Jahre)",
+      "EOX": "Berufserfahrung",
       "TOTAL_YEAR": "Jahre bei {companyName}",
       "TITLE": "Persönliche Informationen",
-      "DOWNLOAD_PAY_SLIP": "Gehaltsabrechnung herunterladen"
+      "DOWNLOAD_PAY_SLIP": "Gehaltsabrechnung herunterladen",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# Jahr} other {# Jahre}} {months, plural, =0 {} one {# Monat} other {# Monate}}"
     },
     "SKILLS": {
       "TITLE": "Fähigkeiten",
@@ -866,5 +867,10 @@
       "HolidayReminder": "Erhalten Sie rechtzeitige Erinnerungen an bevorstehende Feiertage und firmeninterne Ruhetage",
       "MessageNotification": "Erhalten Sie Benachrichtigungen, wenn neue Nachrichten über die Plattform gesendet werden"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 J.} one {# Jahr} other {# Jahre}}",
+    "YEAR": "{years, plural, =0 {0 Jahr} one {# Jahr} other {# Jahre}}",
+    "MONTHS": "{months, plural, =0 {0 Monat} one {# Monat} other {# Monate}}"
   }
 }

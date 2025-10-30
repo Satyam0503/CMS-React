@@ -384,10 +384,11 @@
       "SETTING": "Setting"
     },
     "PI": {
-      "EOX": "Years of experience",
+      "EOX": "of experience",
       "TOTAL_YEAR": "Years in {companyName}",
       "TITLE": "Personal Information",
-      "DOWNLOAD_PAY_SLIP": "Download Pay Slip"
+      "DOWNLOAD_PAY_SLIP": "Download Pay Slip",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# yr} other {# yrs}} {months, plural, =0 {} one {# mos} other {# mos}}"
     },
     "SKILLS": {
       "TITLE": "Skills",
@@ -909,5 +910,10 @@
       "HolidayReminder": "Get timely reminders about upcoming public holidays and company-declared days off",
       "MessageNotification": "Receive notifications when new messages or communications are sent to you through the platform"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 yr} one {# yr} other {# yrs}}",
+    "YEAR": "{years, plural, =0 {0 year} one {# year} other {# years}}",
+    "MONTHS": "{months, plural, =0 {0 month} one {# month} other {# months}}"
   }
 }

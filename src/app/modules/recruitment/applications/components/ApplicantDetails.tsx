@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Card,
   FormControl,
   Grid,
@@ -26,7 +24,6 @@ import {
 
 import {
   commentActionEncoderForApplicationStatus,
-  convertMonthsToYear,
   dateFormatter,
 } from "../../../../../utils/common";
 import {
@@ -103,8 +100,8 @@ export const ApplicantDetails = () => {
           setCommentList(methodResults);
           setTotalRecords(totalRecords);
         }
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error) {
+        console.error((error as Error).message);
       }
     };
     getAllComments();
@@ -181,8 +178,8 @@ export const ApplicantDetails = () => {
         setRefresh(!refresh);
       }
       setRefreshComment(!refreshComment);
-    } catch (error: any) {
-      console.error(error.message);
+    } catch (error) {
+      console.error((error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -291,7 +288,7 @@ export const ApplicantDetails = () => {
                   </Typography>
 
                   <Typography variant="body1">
-                    {convertMonthsToYear(applicant.experience)}
+                    {formatMessage({ id: "PLURAL.YEAR" }, { years: (applicant.experience / 12).toFixed(1) })}
                   </Typography>
                 </Stack>
               </Grid>
