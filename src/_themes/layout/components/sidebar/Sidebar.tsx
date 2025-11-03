@@ -32,10 +32,13 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
   }
 
   return (
-    <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open} PaperProps={{
-      sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
-      className: 'sidebar-paper',
-    }}
+    <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open}
+      slotProps={{
+        paper: {
+          sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
+          className: 'sidebar-paper',
+        }
+      }}
       onClose={handleClose}
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}

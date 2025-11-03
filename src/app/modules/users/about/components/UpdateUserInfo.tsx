@@ -184,252 +184,320 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
             handleSubmit,
             ...formik
           }) => {
-            return <form onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({ id: "FORM.FIRST_NAME" })}
-                    type="text"
-                    name="firstName"
-                    placeholder={i({ id: "FORM.FIRST_NAME" })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({ id: "FORM.LAST_NAME" })}
-                    type="text"
-                    name="lastName"
-                    placeholder={i({ id: "FORM.LAST_NAME" })}
-                  />
-                </Grid>
+            return (
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={2}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "FORM.FIRST_NAME" })}
+                      type="text"
+                      name="firstName"
+                      placeholder={i({ id: "FORM.FIRST_NAME" })}
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "FORM.LAST_NAME" })}
+                      type="text"
+                      name="lastName"
+                      placeholder={i({ id: "FORM.LAST_NAME" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    disabled
-                    label={i({ id: "FORM.EMAIL" })}
-                    type="email"
-                    name="email"
-                    placeholder={i({ id: "FORM.EMAIL" })}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({ id: "FORM.PHONE" })}
-                    type="text"
-                    name="phoneNumber"
-                    placeholder={i({ id: "FORM.PHONE" })}
-                  />
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      disabled
+                      label={i({ id: "FORM.EMAIL" })}
+                      type="email"
+                      name="email"
+                      placeholder={i({ id: "FORM.EMAIL" })}
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "FORM.PHONE" })}
+                      type="text"
+                      name="phoneNumber"
+                      placeholder={i({ id: "FORM.PHONE" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <SelectInput
-                    name="bloodGroup"
-                    label={i({ id: "FORM.BLOOD_GROUP" })}
-                  >
-                    {bloodGroups.map((item) => (
-                      <MenuItem key={item.id} value={item.value}>
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </SelectInput>
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <SelectInput
+                      name="bloodGroup"
+                      label={i({ id: "FORM.BLOOD_GROUP" })}
+                    >
+                      {bloodGroups.map((item) => (
+                        <MenuItem key={item.id} value={item.value}>
+                          {item.label}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <Autocomplete
-                    id="job_title"
-                    size="small"
-                    disabled={!hasEditPermission}
-                    value={jobTitleList.find(
-                      (jt) => jt.jobTitleId === values.jobRole
-                    ) || null}
-                    options={jobTitleList}
-                    onChange={(event, value) => {
-                      setFieldTouched("jobRole", true);
-                      setFieldValue(
-                        "jobRole",
-                        value ? value.jobTitleId : ""
-                      );
-                    }}
-                    renderInput={(param) => (
-                      <TextField
-                        {...param}
-                        label={i({
-                          id: "FORM.JOB_ROLE",
-                        })}
-                      />
-                    )}
-                    getOptionLabel={(option) => option.titles[currentLanguage] || option.titles[defaultLanguage] || i({ id: "TRANSLATION_MISSING" })}
-                  />
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Autocomplete
+                      id="job_title"
+                      size="small"
+                      disabled={!hasEditPermission}
+                      value={jobTitleList.find(
+                        (jt) => jt.jobTitleId === values.jobRole
+                      ) || null}
+                      options={jobTitleList}
+                      onChange={(event, value) => {
+                        setFieldTouched("jobRole", true);
+                        setFieldValue(
+                          "jobRole",
+                          value ? value.jobTitleId : ""
+                        );
+                      }}
+                      renderInput={(param) => (
+                        <TextField
+                          {...param}
+                          label={i({
+                            id: "FORM.JOB_ROLE",
+                          })}
+                        />
+                      )}
+                      getOptionLabel={(option) => option.titles[currentLanguage] || option.titles[defaultLanguage] || i({ id: "TRANSLATION_MISSING" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <SelectInput
-                    name="employmentType"
-                    label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
-                    disabled={!hasEditPermission}
-                  >
-                    {EmploymentType.map((type) => (
-                      <MenuItem
-                        key={type.id}
-                        value={type.value}
-                      >
-                        {i({ id: type.label })}
-                      </MenuItem>
-                    ))}
-                  </SelectInput>
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <SelectInput
+                      name="employmentType"
+                      label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
+                      disabled={!hasEditPermission}
+                    >
+                      {EmploymentType.map((type) => (
+                        <MenuItem
+                          key={type.id}
+                          value={type.value}
+                        >
+                          {i({ id: type.label })}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
+                  </Grid>
 
 
-                <Grid item xs={12} sm={6}>
-                  <Autocomplete
-                    id="reporting_manager"
-                    size="small"
-                    disabled={!hasEditPermission}
-                    value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
-                    options={employeeList}
-                    onChange={(event, value) => {
-                      setFieldTouched("reportingManager", true);
-                      setFieldValue(
-                        "reportingManager",
-                        value ? value.userId : null
-                      );
-                    }}
-                    renderInput={(param) => (
-                      <TextField
-                        {...param}
-                        label={i({
-                          id: "USER.REPORTING_MANAGER",
-                        })}
-                      />
-                    )}
-                    getOptionLabel={(option) => option.fullName}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <SelectInput
-                    name="department"
-                    label={i({ id: "FORM.DEPARTMENT" })}
-                    disabled={!hasEditPermission}
-                  >
-                    {departments.map((dep) => (
-                      <MenuItem
-                        key={dep.departmentId}
-                        value={dep.departmentId}
-                      >
-                        {dep.titles[currentLanguage] || dep.titles[defaultLanguage] || <FormattedMessage id={"TRANSLATION_MISSING"} />}
-                      </MenuItem>
-                    ))}
-                  </SelectInput>
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <Autocomplete
+                      id="reporting_manager"
+                      size="small"
+                      disabled={!hasEditPermission}
+                      value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
+                      options={employeeList}
+                      onChange={(event, value) => {
+                        setFieldTouched("reportingManager", true);
+                        setFieldValue(
+                          "reportingManager",
+                          value ? value.userId : null
+                        );
+                      }}
+                      renderInput={(param) => (
+                        <TextField
+                          {...param}
+                          label={i({
+                            id: "USER.REPORTING_MANAGER",
+                          })}
+                        />
+                      )}
+                      getOptionLabel={(option) => option.fullName}
+                    />
+                  </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <SelectInput
+                      name="department"
+                      label={i({ id: "FORM.DEPARTMENT" })}
+                      disabled={!hasEditPermission}
+                    >
+                      {departments.map((dep) => (
+                        <MenuItem
+                          key={dep.departmentId}
+                          value={dep.departmentId}
+                        >
+                          {dep.titles[currentLanguage] || dep.titles[defaultLanguage] || <FormattedMessage id={"TRANSLATION_MISSING"} />}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({
-                      id: "USER.PERSONAL_EMAIL",
-                    })}
-                    type="email"
-                    name="personalEmail"
-                    placeholder={i({ id: "USER.PERSONAL_EMAIL" })}
-                  />
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({
+                        id: "USER.PERSONAL_EMAIL",
+                      })}
+                      type="email"
+                      name="personalEmail"
+                      placeholder={i({ id: "USER.PERSONAL_EMAIL" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({ id: "USER.EMERGENCY_CONTACT" })}
-                    type="text"
-                    name="emergencyContact"
-                    placeholder={i({ id: "USER.EMERGENCY_CONTACT" })}
-                  />
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "USER.EMERGENCY_CONTACT" })}
+                      type="text"
+                      name="emergencyContact"
+                      placeholder={i({ id: "USER.EMERGENCY_CONTACT" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextInput
-                    label={i({ id: "USER.ADDRESS" })}
-                    type="text"
-                    name="address"
-                    placeholder={i({ id: "USER.ADDRESS" })}
-                  />
-                </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <TextInput
+                      label={i({ id: "USER.ADDRESS" })}
+                      type="text"
+                      name="address"
+                      placeholder={i({ id: "USER.ADDRESS" })}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} sm={6} className="pt-2">
-                  <CustomisedDatePicker
-                    label={i({ id: "FORM.DOB" })}
-                    name="dateOfBirth"
-                    value={values?.dateOfBirth ? dayjs(values?.dateOfBirth) : null}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("dateOfBirth", true);
-                      setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
-                    }}
-                    maxDate={dayjs().subtract(18, 'year')}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} className="pt-2">
-                  <CustomisedDatePicker
-                    label={i({ id: "FORM.DOJ" })}
-                    name="dateOfJoining"
-                    value={values?.dateOfJoining ? dayjs(values?.dateOfJoining) : null}
-                    setValue={(newDate: Dayjs | null) => {
-                      setFieldTouched("dateOfJoining", true);
-                      setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
-                    }}
-                    maxDate={dayjs()}
-                    disabled={!hasEditPermission}
-                  />
+                  <Grid
+                    className="pt-2"
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <CustomisedDatePicker
+                      label={i({ id: "FORM.DOB" })}
+                      name="dateOfBirth"
+                      value={values?.dateOfBirth ? dayjs(values?.dateOfBirth) : null}
+                      setValue={(newDate: Dayjs | null) => {
+                        setFieldTouched("dateOfBirth", true);
+                        setFieldValue("dateOfBirth", newDate?.format('YYYY-MM-DD'));
+                      }}
+                      maxDate={dayjs().subtract(18, 'year')}
+                    />
+                  </Grid>
+                  <Grid
+                    className="pt-2"
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <CustomisedDatePicker
+                      label={i({ id: "FORM.DOJ" })}
+                      name="dateOfJoining"
+                      value={values?.dateOfJoining ? dayjs(values?.dateOfJoining) : null}
+                      setValue={(newDate: Dayjs | null) => {
+                        setFieldTouched("dateOfJoining", true);
+                        setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
+                      }}
+                      maxDate={dayjs()}
+                      disabled={!hasEditPermission}
+                    />
+                  </Grid>
+                  {
+                    hasEditPermission &&
+                    <>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 6
+                        }}>
+                        <TextInput
+                          label={i({ id: "USER.BANK_ACCOUNT_NO" })}
+                          type="number"
+                          name="bankAccountNumber"
+                          placeholder={i({ id: "USER.BANK_ACCOUNT_NO" })}
+                        />
+                      </Grid>
+
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 6
+                        }}>
+                        <TextInput
+                          label={i({ id: "USER.PAN_NUMBER" })}
+                          type="text"
+                          name="panNumber"
+                          placeholder={i({ id: "USER.PAN_NUMBER" })}
+                        />
+                      </Grid>
+                    </>
+                  }
+
                 </Grid>
                 {
                   hasEditPermission &&
-                  <>
-                    <Grid item xs={12} sm={6}>
-                      <TextInput
-                        label={i({ id: "USER.BANK_ACCOUNT_NO" })}
-                        type="number"
-                        name="bankAccountNumber"
-                        placeholder={i({ id: "USER.BANK_ACCOUNT_NO" })}
-                      />
-                    </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                      <TextInput
-                        label={i({ id: "USER.PAN_NUMBER" })}
-                        type="text"
-                        name="panNumber"
-                        placeholder={i({ id: "USER.PAN_NUMBER" })}
-                      />
-                    </Grid>
-                  </>
+                  <Grid container spacing={2} className="mt-1">
+                    {
+                      allCustomAttributes.length > 0 &&
+                      allCustomAttributes.map(attribute => (
+                        <UserCustomAttribute key={attribute.customAttributeId} attribute={attribute} userCustomAttribute={values.customAttributeList} setFieldValue={setFieldValue} />
+                      ))
+                    }
+                  </Grid>
                 }
 
-              </Grid>
-              {
-                hasEditPermission &&
-
-                <Grid container spacing={2} className="mt-1">
-                  {
-                    allCustomAttributes.length > 0 &&
-                    allCustomAttributes.map(attribute => (
-                      <UserCustomAttribute key={attribute.customAttributeId} attribute={attribute} userCustomAttribute={values.customAttributeList} setFieldValue={setFieldValue} />
-                    ))
-                  }
-                </Grid>
-              }
-
-              <Stack
-                direction="row"
-                className="justify-content-end mt-4 gap-2"
-              >
-                <CustomisedButton
-                  label={i({ id: "BUTTON.CLOSE" })}
-                  handleClick={handleClose}
-                  variant="outlined"
-                />
-                <CustomisedButton
-                  loading={isSubmitting}
-                  label={i({ id: "BUTTON.SAVE" })}
-                  type="submit"
-                  disabled={!(isValid && dirty) || isSubmitting}
-                />
-              </Stack>
-            </form>
+                <Stack
+                  direction="row"
+                  className="justify-content-end mt-4 gap-2"
+                >
+                  <CustomisedButton
+                    label={i({ id: "BUTTON.CLOSE" })}
+                    handleClick={handleClose}
+                    variant="outlined"
+                  />
+                  <CustomisedButton
+                    loading={isSubmitting}
+                    label={i({ id: "BUTTON.SAVE" })}
+                    type="submit"
+                    disabled={!(isValid && dirty) || isSubmitting}
+                  />
+                </Stack>
+              </form>
+            );
           }}
         </Formik>
       </CustomisedModal >
@@ -519,7 +587,11 @@ const UserCustomAttribute = (props: PropsType) => {
 
 
   return (
-    <Grid item xs={12} sm={6}>
+    <Grid
+      size={{
+        xs: 12,
+        sm: 6
+      }}>
       <Autocomplete
         id="custom-attribute"
         size="small"
@@ -540,19 +612,21 @@ const UserCustomAttribute = (props: PropsType) => {
           <TextField
             {...param}
             label={attribute.customAttributeTitle[currentLanguage] ?? `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${attribute.customAttributeNumber}`}
-            InputProps={{
-              ...param.InputProps,
-              endAdornment: (
-                <>
-                  {state.loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
-                  {param.InputProps.endAdornment}
-                </>
-              ),
+            slotProps={{
+              input: {
+                ...param.InputProps,
+                endAdornment: (
+                  <>
+                    {state.loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
+                    {param.InputProps.endAdornment}
+                  </>
+                ),
+              }
             }}
           />
         )}
       />
     </Grid>
-  )
+  );
 }
 

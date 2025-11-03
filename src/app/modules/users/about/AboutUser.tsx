@@ -8,22 +8,27 @@ import { UserSkills } from "./components/UserSkills";
 export default function AboutUser() {
   return (
     <>
-      <Grid container display={"flex"} gap={2}>
-        <Grid item xs={12}>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          gap: 2
+        }}>
+        <Grid size={12}>
           <UserSummary />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <PersonalDetails />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <UserSkills />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={12}>
           <UserEducation />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={12}>
           <UserCertification />
         </Grid>
       </Grid>

@@ -1,7 +1,6 @@
 import { Dayjs } from "dayjs";
 import { EmployeeSearchModel, ResponseData } from "../../../utils/common_types";
 import { EmployeeModel } from "../employees/models";
-import { MultilingualModel } from "../admin/models";
 
 export type UploadProfileResponseModel = ResponseData<string>;
 

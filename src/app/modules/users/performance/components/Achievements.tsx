@@ -29,7 +29,9 @@ export default function Achievements() {
           }}
         >
           <Stack>
-            <Typography variant="h5" mb={1}>
+            <Typography variant="h5" sx={{
+              mb: 1
+            }}>
               {intl.formatMessage({ id: "PERFORMANCE.ACHIEVEMENTS" })}
             </Typography>
           </Stack>
@@ -37,9 +39,10 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5" }}
-            alignItems={"center"}
-          >
+            sx={{
+              alignItems: "center",
+              opacity: ".5"
+            }}>
             <Stack
               sx={{
                 minWidth: 48,
@@ -50,7 +53,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Whatshot />
               </Stack>
             </Stack>
@@ -77,9 +82,10 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5" }}
-            alignItems={"center"}
-          >
+            sx={{
+              alignItems: "center",
+              opacity: ".5"
+            }}>
             <Stack
               sx={{
                 minWidth: 48,
@@ -90,7 +96,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Celebration />
               </Stack>
             </Stack>
@@ -116,9 +124,10 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5" }}
-            alignItems={"center"}
-          >
+            sx={{
+              alignItems: "center",
+              opacity: ".5"
+            }}>
             <Stack
               sx={{
                 width: 48,
@@ -129,7 +138,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <LocalFlorist />
               </Stack>
             </Stack>
@@ -155,9 +166,10 @@ export default function Achievements() {
           <Stack
             direction="row"
             spacing={2}
-            sx={{ opacity: ".5" }}
-            alignItems={"center"}
-          >
+            sx={{
+              alignItems: "center",
+              opacity: ".5"
+            }}>
             <Stack
               sx={{
                 width: 48,
@@ -168,7 +180,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Stars />
               </Stack>
             </Stack>
@@ -191,7 +205,9 @@ export default function Achievements() {
               </Stack>
             </Stack>
           </Stack>
-          <Stack direction="row" spacing={2} alignItems={"center"}>
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Stack
               sx={{
                 width: 48,
@@ -202,7 +218,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <LocalCafe />
               </Stack>
             </Stack>
@@ -225,7 +243,9 @@ export default function Achievements() {
               </Stack>
             </Stack>
           </Stack>
-          <Stack direction="row" spacing={2} alignItems={"center"}>
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Stack
               sx={{
                 width: 48,
@@ -236,7 +256,9 @@ export default function Achievements() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Work />
               </Stack>
             </Stack>

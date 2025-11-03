@@ -146,7 +146,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                     rowSpacing={2}
                     columnSpacing={{ xs: 1, sm: 2 }}
                   >
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextInput
                         label={i({ id: "FORM.FIRST_NAME" })}
                         type="text"
@@ -156,7 +160,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                         name="firstName"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextInput
                         label={i({ id: "FORM.LAST_NAME" })}
                         type="text"
@@ -166,7 +174,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                         name="lastName"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextInput
                         label={i({ id: "FORM.EMAIL" })}
                         type="email"
@@ -174,7 +186,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                         name="email"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <TextInput
                         label={i({ id: "FORM.PHONE" })}
                         type="text"
@@ -182,7 +198,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                         name="phone"
                       />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <SelectInput
                         name="experience"
                         label={i({ id: "FORM.EXPERIENCE" })}
@@ -197,7 +217,11 @@ export const AddApplicant: FC<PropsTypes> = ({
                         ))}
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid
+                      size={{
+                        xs: 12,
+                        sm: 6
+                      }}>
                       <SelectInput
                         name="vacancyId"
                         label={i({ id: "FORM.DESIGNATION" })}
@@ -209,7 +233,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                         ))}
                       </SelectInput>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <Autocomplete
                         id="state-dropdown"
                         size="small"
@@ -259,12 +283,10 @@ export const AddApplicant: FC<PropsTypes> = ({
                       {i({ id: "APPLICATION.RESUME_INSTRUCTION", })}
                     </Typography>
                   </Stack>
-
                   {formik.touched.resume &&
                     formik.errors.resume &&
                     <ErrorLabel errorLabel={formik.errors.resume} />
                   }
-
                   <Stack className="flex-row justify-content-end mt-4 gap-2">
                     <CustomisedButton
                       variant="outlined"

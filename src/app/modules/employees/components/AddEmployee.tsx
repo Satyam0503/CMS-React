@@ -159,7 +159,11 @@ export const AddEmployee = (props: PropsTypes) => {
                   rowSpacing={2}
                   columnSpacing={{ xs: 1, sm: 2 }}
                 >
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "FORM.FIRST_NAME" })}
                       type="text"
@@ -170,7 +174,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "FORM.LAST_NAME" })}
                       type="text"
@@ -182,7 +190,11 @@ export const AddEmployee = (props: PropsTypes) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="gender"
                       label={i({ id: "FORM.GENDER" })}
@@ -195,7 +207,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       ))}
                     </SelectInput>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "FORM.EMPID" })}
                       type="text"
@@ -207,7 +223,11 @@ export const AddEmployee = (props: PropsTypes) => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "FORM.EMAIL" })}
                       type="email"
@@ -218,7 +238,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="roleId"
                       label={i({ id: "FORM.ROLE" })}
@@ -234,7 +258,12 @@ export const AddEmployee = (props: PropsTypes) => {
                     </SelectInput>
                   </Grid>
 
-                  <Grid item xs={12} sm={6} className="pt-2">
+                  <Grid
+                    className="pt-2"
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <CustomisedDatePicker
                       label={i({ id: "FORM.DOB" })}
                       name={"dateOfBirth"}
@@ -251,7 +280,12 @@ export const AddEmployee = (props: PropsTypes) => {
                       <ErrorLabel errorLabel={errors.dateOfBirth} />
                     }
                   </Grid>
-                  <Grid item xs={12} sm={6} className="pt-2">
+                  <Grid
+                    className="pt-2"
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <CustomisedDatePicker
                       label={i({ id: "FORM.DOJ" })}
                       value={values.dateOfJoining ? dayjs(values.dateOfJoining) : null}
@@ -267,7 +301,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       <ErrorLabel errorLabel={errors.dateOfJoining} />
                     }
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="employmentType"
                       label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
@@ -281,7 +319,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       })}
                     </SelectInput>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <Autocomplete
                       id="job_title"
                       size="small"
@@ -307,7 +349,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       getOptionLabel={(option) => option.titles[currentLanguage] || option.titles[defaultLang] || i({ id: "TRANSLATION_MISSING" })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="department"
                       label={i({ id: "FORM.DEPARTMENT" })}
@@ -323,7 +369,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       ))}
                     </SelectInput>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <Autocomplete
                       id="reporting_manager"
                       size="small"
@@ -349,7 +399,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       getOptionLabel={(option) => option.fullName}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "FORM.PHONE" })}
                       type="text"
@@ -357,7 +411,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       placeholder={i({ id: "FORM.PHONE" })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="bloodGroup"
                       label={i({ id: "FORM.BLOOD_GROUP" })}
@@ -369,7 +427,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       ))}
                     </SelectInput>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({
                         id: "USER.PERSONAL_EMAIL",
@@ -381,7 +443,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({
                         id: "USER.EMERGENCY_CONTACT",
@@ -393,7 +459,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <SelectInput
                       name="status"
                       label={i({ id: "STATUS" })}
@@ -407,7 +477,11 @@ export const AddEmployee = (props: PropsTypes) => {
                     </SelectInput>
                   </Grid>
 
-                  <Grid item xs={12} sm={6} >
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "USER.ADDRESS" })}
                       type="text"
@@ -415,7 +489,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       placeholder={i({ id: "USER.ADDRESS" })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} >
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "USER.BANK_ACCOUNT_NO" })}
                       type="number"
@@ -423,7 +501,11 @@ export const AddEmployee = (props: PropsTypes) => {
                       placeholder={i({ id: "USER.BANK_ACCOUNT_NO" })}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6} >
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <TextInput
                       label={i({ id: "USER.PAN_NUMBER" })}
                       type="text"

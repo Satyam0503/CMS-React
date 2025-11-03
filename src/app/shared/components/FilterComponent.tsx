@@ -23,7 +23,7 @@ export const FilterComponent: FC<FilterComponentProps> = ({ open, anchorEl, hand
                         width: 350,
                         p: 2.5
                     }
-                }
+                },
             }}
         >
             <Stack spacing={1} >

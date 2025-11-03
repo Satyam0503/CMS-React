@@ -10,9 +10,16 @@ export const UserPerformance: FC = () => {
   const intl = useIntl();
   return (
     <>
-      <Grid container display={"flex"} gap={2.25}>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          gap: 2.25
+        }}>
         <Card sx={{ p: 2.25, width: "100%" }}>
-          <Stack mb={1}>
+          <Stack sx={{
+            mb: 1
+          }}>
             <Typography variant="h5">
               {intl.formatMessage({ id: "MENU.PERFORMANCE" })}
             </Typography>

@@ -1,6 +1,5 @@
 import { createTheme, PaletteMode } from "@mui/material";
 import { Localization } from "@mui/material/locale";
-import { rainbowSurgePalette } from "@mui/x-charts/colorPalettes";
 
 export const colors = {
   primary: {

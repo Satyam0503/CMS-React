@@ -15,7 +15,7 @@ import { useAppLang } from "../_themes/i18n/Metronici18n";
 
 const App = () => {
   const { currentLanguage } = useAppLang();
-  const [dayjsLocaleReady, setDayjsLocaleReady] = useState(false);
+  const [, setDayjsLocaleReady] = useState(false);
   const { isUserAuthenticated } = useAppSelector((state) => state.auth);
   const token = getLocalKey()?.token ?? "";
   const instance = Connector.getInstance();

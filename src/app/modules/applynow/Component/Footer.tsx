@@ -33,7 +33,11 @@ export default function Footer() {
             color: "common.white",
           }}
         >
-          <Grid item xs={12} md={3}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 3
+            }}>
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h3">
@@ -44,17 +48,19 @@ export default function Footer() {
               </Stack>
               <Stack
                 divider={<Divider orientation="horizontal" />}
-                bgcolor="seconday.main"
-                borderRadius={2}
-                height={"5px"}
-                width={"25%"}
-              />
+                sx={{
+                  bgcolor: "seconday.main",
+                  borderRadius: 2,
+                  height: "5px",
+                  width: "25%"
+                }} />
               <Stack>
                 <Typography
                   variant="body1"
-                  flexWrap={"wrap"}
-                  maxWidth={"450px"}
-                >
+                  sx={{
+                    flexWrap: "wrap",
+                    maxWidth: "450px"
+                  }}>
                   {intl.formatMessage({
                     id: "COMPANY.DESCRIPTION",
                   })}
@@ -63,7 +69,11 @@ export default function Footer() {
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={1.5}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 1.5
+            }}>
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h3">
@@ -74,13 +84,16 @@ export default function Footer() {
               </Stack>
               <Stack
                 divider={<Divider orientation="horizontal" />}
-                bgcolor="secondary.main"
-                borderRadius={2}
-                height={"5px"}
-                width={"25%"}
-              />
+                sx={{
+                  bgcolor: "secondary.main",
+                  borderRadius: 2,
+                  height: "5px",
+                  width: "25%"
+                }} />
 
-              <Stack gap={1}>
+              <Stack sx={{
+                gap: 1
+              }}>
                 <Link href="https://codeji.in/" color="common.white">
                   <Typography>Home</Typography>
                 </Link>
@@ -107,19 +120,26 @@ export default function Footer() {
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={2.5}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 2.5
+            }}>
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h3">Address</Typography>
               </Stack>
               <Stack
                 divider={<Divider orientation="horizontal" />}
-                bgcolor="secondary.main"
-                borderRadius={2}
-                height={"5px"}
-                width={"25%"}
-              />
-              <Stack textAlign={"justify"}>
+                sx={{
+                  bgcolor: "secondary.main",
+                  borderRadius: 2,
+                  height: "5px",
+                  width: "25%"
+                }} />
+              <Stack sx={{
+                textAlign: "justify"
+              }}>
                 <List sx={{ p: 0 }}>
                   <ListItem sx={{ p: 0, gap: 1 }}>
                     <ListItemIcon>
@@ -147,19 +167,26 @@ export default function Footer() {
               </Stack>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={2}>
+          <Grid
+            size={{
+              xs: 12,
+              md: 2
+            }}>
             <Stack spacing={1}>
               <Stack>
                 <Typography variant="h3">Follow Us</Typography>
               </Stack>
               <Stack
                 divider={<Divider orientation="horizontal" />}
-                bgcolor="secondary.main"
-                borderRadius={2}
-                height={"5px"}
-                width={"25%"}
-              />
-              <Stack direction={"row"} gap={1}>
+                sx={{
+                  bgcolor: "secondary.main",
+                  borderRadius: 2,
+                  height: "5px",
+                  width: "25%"
+                }} />
+              <Stack direction={"row"} sx={{
+                gap: 1
+              }}>
                 <Link
                   href="https://www.facebook.com/codejiinfotech"
                   color="common.white"
@@ -187,7 +214,12 @@ export default function Footer() {
           </Grid>
         </Container>
       </Grid>
-      <Grid item textAlign={"center"} bgcolor={" #35126c"} p={1}>
+      <Grid
+        sx={{
+          textAlign: "center",
+          bgcolor: " #35126c",
+          p: 1
+        }}>
         <Typography variant="body2">
           {intl.formatMessage({ id: "APPLICATION.COPYRIGHT" })}
         </Typography>

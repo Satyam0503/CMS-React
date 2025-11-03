@@ -18,16 +18,21 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
           {intl.formatMessage({ id: "MESSAGE.WELCOME" })} {props.fullName || ""}
         </Typography>
       </Stack>
-
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Stack direction="row" alignItems="start" spacing={1}>
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center"
+      }}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "start"
+        }}>
           <Stack sx={{ width: "40px" }}>
             <img
               src={toAbsoluteUrl("media/Icons/Sun_behind_clouds.png")}
               alt="clouds"
             />
           </Stack>
-          <Stack alignItems={"end"}>
+          <Stack sx={{
+            alignItems: "end"
+          }}>
             <Typography variant="h3">
               {dateFormatter(dayjs(), "dddd")}
             </Typography>

@@ -1,7 +1,6 @@
 import { FC, memo } from "react";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { Close } from "@mui/icons-material";
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import {
@@ -10,7 +9,6 @@ import {
   statusDecoder,
 } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { JobModal } from "../../models";
 
 interface PropsTypes {
@@ -30,37 +28,77 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
       title={jobData.title || ""}
     >
       <Grid container spacing={1}>
-        <Grid item xs={4} md={6}>
-          <Typography variant="body1" fontWeight={600}>
+        <Grid
+          size={{
+            xs: 4,
+            md: 6
+          }}>
+          <Typography variant="body1" sx={{
+            fontWeight: 600
+          }}>
             {i({ id: "FORM.ROLE" })}
           </Typography>
         </Grid>
-        <Grid item xs={8} md={6}>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
           <Typography>{jobData.title}</Typography>
         </Grid>
-        <Grid item xs={4} md={6}>
-          <Typography variant="body1" fontWeight={600}>
+        <Grid
+          size={{
+            xs: 4,
+            md: 6
+          }}>
+          <Typography variant="body1" sx={{
+            fontWeight: 600
+          }}>
             {i({ id: "JOB.VACANCIES" })}
           </Typography>
         </Grid>
-        <Grid item xs={8} md={6}>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
           <Typography>{jobData.vacancies}</Typography>
         </Grid>
-        <Grid item xs={4} md={6}>
-          <Typography variant="body1" fontWeight={600}>
+        <Grid
+          size={{
+            xs: 4,
+            md: 6
+          }}>
+          <Typography variant="body1" sx={{
+            fontWeight: 600
+          }}>
             {i({ id: "JOB.TYPE" })}
           </Typography>
         </Grid>
-        <Grid item xs={8} md={6}>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
           <Typography>{i({ id: JobTypeMapper[jobData.jobType] })}</Typography>
         </Grid>
 
-        <Grid item xs={4} md={6}>
-          <Typography variant="body1" fontWeight={600}>
+        <Grid
+          size={{
+            xs: 4,
+            md: 6
+          }}>
+          <Typography variant="body1" sx={{
+            fontWeight: 600
+          }}>
             {i({ id: "STATUS" })}
           </Typography>
         </Grid>
-        <Grid item xs={8} md={6}>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
           <StyleStatus
             label={statusDecoder(jobData.status as boolean)}
             className={jobData.status ? "success" : "danger"}
@@ -81,7 +119,6 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
           handleClick={handleClose}
         />
       </Stack>
-
     </CustomisedModal>
   );
 }

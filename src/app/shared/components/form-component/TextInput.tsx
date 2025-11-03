@@ -20,7 +20,7 @@ export interface InputFieldProps {
   InputProps?: Partial<OutlinedInputProps>;
 }
 
-export const TextInput: FC<InputFieldProps> = ({ label, ...props }) => {
+export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, ...props }) => {
   const { formatMessage: i } = useIntl();
   const [fields, meta] = useField(props);
   return (
@@ -30,18 +30,22 @@ export const TextInput: FC<InputFieldProps> = ({ label, ...props }) => {
       variant="outlined"
       error={meta.touched && Boolean(meta.error)}
       helperText={meta.touched && meta.error && i({ id: meta.error, defaultMessage: " " })}
-      {...fields}
-      {...props}
       onKeyDown={(e) => {
         if (props.type === "number") {
           blockInvalidCharOnNumberField(e)
         }
+      }}
+      slotProps={{
+        htmlInput: inputProps,
+        input: InputProps
       }}
       onWheel={(e) => {
         if (props.type === "number") {
           (e.target as HTMLInputElement).blur();
         }
       }}
+      {...fields}
+      {...props}
     />
   );
 };

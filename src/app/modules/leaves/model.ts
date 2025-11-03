@@ -12,6 +12,7 @@ export interface LeaveType {
 }
 
 export interface RequestLeaveModel {
+  userId?: string;
   leaveRequestId?: string;
   leaveType: LEAVE_TYPE;
   isHalfDay: boolean;

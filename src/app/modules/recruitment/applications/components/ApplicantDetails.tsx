@@ -241,7 +241,12 @@ export const ApplicantDetails = () => {
           CvPreviewMode ?
             <CvPreview pdfUrl={applicant.fullApplicantResumePath} /> :
             <Grid container spacing={2.5}>
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.FULL_NAME" })} :
@@ -252,7 +257,12 @@ export const ApplicantDetails = () => {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.EMAIL" })} :
@@ -262,7 +272,12 @@ export const ApplicantDetails = () => {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.PHONE" })} :
@@ -272,7 +287,12 @@ export const ApplicantDetails = () => {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "JOB.POSITION" })} :
@@ -281,7 +301,12 @@ export const ApplicantDetails = () => {
                   <Typography variant="body1">{applicant?.vacancyName}</Typography>
                 </Stack>
               </Grid>
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.EXPERIENCE" })} :
@@ -292,7 +317,12 @@ export const ApplicantDetails = () => {
                   </Typography>
                 </Stack>
               </Grid>
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
@@ -303,7 +333,12 @@ export const ApplicantDetails = () => {
                 </Stack>
               </Grid>
 
-              <Grid item xs={12} sm={6} lg={4}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
                 <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
@@ -329,8 +364,15 @@ export const ApplicantDetails = () => {
                   </FormControl>
                 </Stack>
               </Grid>
-              <Grid item xs={12} sm={6} lg={4}>
-                <Stack direction="row" spacing={2} alignItems={"center"}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  lg: 4
+                }}>
+                <Stack direction="row" spacing={2} sx={{
+                  alignItems: "center"
+                }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
                   </Typography>

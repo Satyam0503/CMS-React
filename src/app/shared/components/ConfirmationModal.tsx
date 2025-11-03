@@ -19,7 +19,9 @@ export const ConfirmationModal = (props: PropsTypes) => {
       <Stack spacing={1.5}>
         <Typography variant="h5">{title}</Typography>
         <Typography>{content}</Typography>
-        <Stack direction="row" spacing={1} justifyContent={"flex-end"}>
+        <Stack direction="row" spacing={1} sx={{
+          justifyContent: "flex-end"
+        }}>
           <CustomisedButton
             label={i({ id: "BUTTON.CANCEL" })}
             handleClick={handleClose}

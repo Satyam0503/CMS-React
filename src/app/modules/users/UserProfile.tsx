@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, Grid, Stack } from "@mui/material";
 import {
   CalendarMonth,
   Person,
@@ -6,7 +6,6 @@ import {
   Speed,
   WorkHistory,
 } from "@mui/icons-material";
-import LeaveAllowences from "./components/LeaveAllowences";
 import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
@@ -19,6 +18,9 @@ import clsx from "clsx";
 import { ProfileHeader } from "./about/components/ProfileHeader";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { usePageData } from "../../Context/PageDataProvider";
+import { useAppSelector } from "../../Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../utils/common";
+import { ModulesName, Permission } from "../../../utils/enums";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -66,6 +68,8 @@ const tabsRoutes: TabModel[] = [
   },
 ];
 
+
+
 const UserProfile = () => {
   const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
@@ -73,51 +77,62 @@ const UserProfile = () => {
   const { setPageTitle } = usePageData();
   const empId = useParams().employeeid;
 
+  const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? []
+
   useEffect(() => {
     setPageTitle(i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
     setBreadcrumbs(employeeBreadCrumbs);
   }, []);
 
-  const filteredTabs = () => {
-    const protectedTabs = [2, 5];
-    return tabsRoutes.filter(tab => {
-      if (empId) {
-        return !protectedTabs.includes(tab.tabId);
-      } else {
-        return true;
-      }
-    })
-  }
+  const filteredTabs = tabsRoutes.filter(tab => {
+    if (tab.to === "leave") {
+      return (!empId || hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermission));
+    }
+    if (tab.to === "setting") {
+      return !empId;
+    }
+    return true;
+  });
+
   return (
     <UserDetailsProvider>
       <Grid container spacing={{ xs: 2, lg: 3, xl: 2 }} className="flex-grow-1">
         <Grid
-          item
-          xs={12}
-          lg={4}
-          xl={3}
-        >
+          size={{
+            xs: 12,
+            lg: 4,
+            xl: 3
+          }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6} lg={12} >
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 12
+              }}>
               <ProfileCard />
             </Grid>
-            <Grid item xs={12} md={6} lg={12}>
-              {/* <LeaveAllowences /> */}
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+                lg: 12
+              }}>
               <ProfileHeader />
             </Grid>
           </Grid>
         </Grid>
         <Grid
-          item
-          xs={12}
-          md={12}
-          lg={8}
-          xl={9}
           className="d-flex flex-column gap-4"
-        >
+          size={{
+            xs: 12,
+            md: 12,
+            lg: 8,
+            xl: 9
+          }}>
           <Stack spacing={2} className="flex-grow-1">
             <Card className="tab-container d-flex flex-row">
-              {filteredTabs().map((tab) => {
+              {filteredTabs.map((tab) => {
                 const tabTo = empId ? `employees/${empId}/${tab.to}` : `profile/${tab.to}`;
                 return (
                   <Box

@@ -51,27 +51,48 @@ export default function Dashboard() {
         spacing={2}
         className="d-flex justify-content-between"
       >
-        <Grid item xs={12} lg={8}>
+        <Grid
+          size={{
+            xs: 12,
+            lg: 8
+          }}>
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
-              <Grid item xs={12} sm={6} className="h-100">
+              <Grid
+                className="h-100"
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <EmployeeChart />
               </Grid>
             )}
             {hasAccessToJob && (
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <OpenPositions />
               </Grid>
             )}
             {hasAccessToJob && (
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <ApplicationsChart />
               </Grid>
             )}
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <DepartmentChart />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Stack spacing={3}>
                 <NoticeBoard />
                 <EmployeePerformance />
@@ -79,7 +100,12 @@ export default function Dashboard() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} lg={4} className="d-flex flex-column gap-4">
+        <Grid
+          className="d-flex flex-column gap-4"
+          size={{
+            xs: 12,
+            lg: 4
+          }}>
           {
             Notification.permission == "default" &&
             <PushNotification />

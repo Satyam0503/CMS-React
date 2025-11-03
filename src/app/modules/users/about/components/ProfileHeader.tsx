@@ -7,50 +7,44 @@ import { Grid, useTheme } from "@mui/material";
 import IconStat from "../../../../shared/components/IconStat";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useUserDetails } from "../../UserDataProvider";
-import { getDateDiffInYears } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
+import dayjs from "dayjs";
 
 export const ProfileHeader = () => {
-  const companyName = useAppSelector(
-    (state) => state.user.userData?.companyName
-  );
+  const companyName = useAppSelector((state) => state.user.userData?.companyName);
   const { userDetails, totalSkills } = useUserDetails();
-  const { formatMessage } = useIntl();
+  const { formatMessage: i } = useIntl();
   const theme = useTheme();
-
-  const years = Math.floor(userDetails.totalWorkExperience / 12);
-  const months = userDetails.totalWorkExperience % 12;
+  const experience = userDetails.totalWorkExperience ? (userDetails.totalWorkExperience / 12).toFixed(1) : 0;
+  const totalYearAtCurrentCompany = dayjs().diff(userDetails.dateOfJoining, "years");
 
   return (
     <Grid container spacing={2} direction="column">
-      <Grid item xs={12} sm={4}>
+      <Grid size="grow">
         <IconStat
           iconBg={theme.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
           iconColor="secondary.dark"
-          number={formatMessage({ id: (years || months) ? "PROFILE.PI.EXPERIENCE_TEXT" : "PLURAL.YEAR" }, { years, months })}
-          title={formatMessage({ id: "PROFILE.PI.EOX" })}
+          number={experience}
+          title={i({ id: "PROFILE.PI.YOE" }, { years: experience })}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid size="grow">
         <IconStat
           iconBg={theme.palette.primary.lighter}
           icon={<CorporateFareOutlined fontSize="large" />}
           iconColor="primary.main"
-          number={getDateDiffInYears(userDetails.dateOfJoining!)}
-          title={formatMessage(
-            { id: "PROFILE.PI.TOTAL_YEAR" },
-            { companyName }
-          )}
+          number={totalYearAtCurrentCompany}
+          title={i({ id: "PROFILE.PI.TOTAL_YEAR" }, { years: totalYearAtCurrentCompany, companyName })}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid size="grow">
         <IconStat
           iconBg={theme.palette.secondary.lighter}
           icon={<Build fontSize="large" />}
           iconColor="secondary.dark"
           number={totalSkills}
-          title={formatMessage({ id: "PROFILE.SKILLS.TOTAL_SKILLS" })}
+          title={i({ id: "PROFILE.SKILLS.TOTAL_SKILLS" })}
         />
       </Grid>
     </Grid>

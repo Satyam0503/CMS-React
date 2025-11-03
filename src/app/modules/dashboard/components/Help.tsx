@@ -10,15 +10,17 @@ export default function Help() {
   return (
     <>
       <CustomCard label={intl.formatMessage({ id: "MENU.HELP" })}>
-        <Stack position="relative">
+        <Stack sx={{
+          position: "relative"
+        }}>
           <Grid
-            item
-            xs={7}
-            zIndex={1}
-            display={"flex"}
-            flexDirection={"column"}
-            gap={3}
-          >
+            size={7}
+            sx={{
+              zIndex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 3
+            }}>
             <Stack>
               <Typography variant="body2">
                 {intl.formatMessage({ id: "MENU.HELP_INFO" })}
@@ -27,9 +29,10 @@ export default function Help() {
 
             <Stack
               direction={"row"}
-              display={"flex"}
-              justifyContent={"flex-start"}
-            >
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start"
+              }}>
               <CustomisedButton
                 variant="contained"
                 label="Contact"
@@ -39,14 +42,15 @@ export default function Help() {
           </Grid>
 
           <Stack
-            height={"200px"}
             direction={"row"}
-            display={"flex"}
-            justifyContent={"flex-end"}
-            position={"absolute"}
-            zIndex={0}
-            right={0}
-          >
+            sx={{
+              height: "200px",
+              display: "flex",
+              justifyContent: "flex-end",
+              position: "absolute",
+              zIndex: 0,
+              right: 0
+            }}>
             <img
               src={toAbsoluteUrl("media/auth/need_help.svg")}
               width={"100%"}

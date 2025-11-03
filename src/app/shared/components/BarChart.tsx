@@ -2,7 +2,6 @@ import { Grid, useTheme } from "@mui/material";
 import { ApexOptions } from "apexcharts";
 import { FC } from "react";
 import Chart from "react-apexcharts";
-import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
 import { useThemeContext } from "../../Context/ThemeContext";
 import { chartColorpalette } from "../../modules/theme/MuiTheme";
 
@@ -106,7 +105,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
     },
   };
   return (
-    <Grid item xs={12} className="overflow-x-scroll">
+    <Grid size="grow" className="overflow-x-scroll">
       <div style={{ minWidth: `${dynamicWidth}px`, width: '100%' }}>
         <Chart
           options={chartOption}

@@ -36,6 +36,8 @@ import { NavigateFunction } from "react-router-dom";
 import { EmployeeModel } from "../app/modules/employees/models";
 import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
+import { useAppSelector } from "../app/Redux/hooks";
+import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -53,26 +55,6 @@ export const relativeTimeFormatter = (date: Dayjs | string) => {
     return dayjs(date).format("lll");
   }
   return dayjs(date).fromNow();
-};
-
-export const employeesListMapperforExport = (
-  employeesList: EmployeeModel[]
-) => {
-  const mappedData = employeesList.map((employee) => {
-    return {
-      Id: employee.userId,
-      "First Name": employee.firstName,
-      "Last Name": employee.lastName,
-      Email: employee.email,
-      "Phone Number": employee.phoneNumber,
-      Gender: employee.gender,
-      "Date of Birth": dateFormatter(employee.dateOfBirth, "DD MMMM YYYY"),
-      "Date of Joining": dateFormatter(employee.dateOfJoining, "DD MMMM YYYY"),
-      Department: employee.department,
-      Address: employee.address,
-    };
-  });
-  return mappedData;
 };
 
 export const applicationStatusMapper: {
@@ -355,37 +337,6 @@ export const flatRolePermissionList = (
   return updatedRolePermission;
 };
 
-export const redirectUserToTargetUrl = (
-  notification: NotificationModel,
-  navigate: NavigateFunction
-) => {
-  const redirectOption: NotificationRedirectOption = {
-    targetPath: "",
-    data: null,
-  };
-  switch (notification.notificationTypes) {
-    case NOTIFICATION_TYPE.NOTICE: {
-      redirectOption.targetPath = "/noticeboard/notices";
-      redirectOption.data = notification.targetId;
-      break;
-    }
-    case NOTIFICATION_TYPE.LEAVE_REQUEST: {
-      redirectOption.targetPath = "/leavemanagement/leaverequest";
-      redirectOption.data = notification.targetId;
-      break;
-    }
-    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
-    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED: {
-      redirectOption.targetPath = "/profile/leave";
-      break;
-    }
-  }
-  navigate(redirectOption.targetPath, {
-    state: redirectOption.data,
-    replace: true,
-  });
-};
-
 // flatten nested translation file
 export const flattenMessages = (
   messages: Record<string, any>,
@@ -541,6 +492,37 @@ export const getNotificationTitle = (
   }
 };
 
+export const redirectUserToTargetUrl = (
+  notification: NotificationModel,
+  navigate: NavigateFunction
+) => {
+  const redirectOption: NotificationRedirectOption = {
+    targetPath: "",
+    data: null,
+  };
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE: {
+      redirectOption.targetPath = "/noticeboard/notices";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST: {
+      redirectOption.targetPath = "/leavemanagement/leaverequest";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED: {
+      redirectOption.targetPath = "/profile/leave";
+      break;
+    }
+  }
+  navigate(redirectOption.targetPath, {
+    state: redirectOption.data,
+    replace: true,
+  });
+};
+
 export const getOrdinalSuffix = (num: number) => {
   const s = ["th", "st", "nd", "rd"];
   const v = num % 100;
@@ -560,4 +542,12 @@ export const monthMapper: { [key: number]: string } = {
   10: "MONTHS.OCTOBER",
   11: "MONTHS.NOVEMBER",
   12: "MONTHS.DECEMBER",
+};
+
+// initial Filter values
+
+export const initialNoticeFilter: NoticeBoardFilterModel = {
+  noticeType: [],
+  filterFrom: null,
+  filterTo: null,
 };

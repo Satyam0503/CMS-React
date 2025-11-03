@@ -10,11 +10,12 @@ export default function Punctual() {
       <CustomCard label={intl.formatMessage({ id: "MENU.TOP_PUNCTUAL" })}>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img
@@ -36,11 +37,12 @@ export default function Punctual() {
         </Stack>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img
@@ -62,11 +64,12 @@ export default function Punctual() {
         </Stack>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img

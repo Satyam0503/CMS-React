@@ -14,10 +14,11 @@ export const CareerHeader = () => {
   return (
     <Grid
       container
-      color="secondary.main"
-      bgcolor={"#35126c"}
       className="d-flex justify-content-between align-items-center p-4 position-sticky top-0 z-1"
-    >
+      sx={{
+        color: "secondary.main",
+        bgcolor: "#35126c"
+      }}>
       <Link href="https://codeji.in/" sx={{ maxWidth: "200px" }}>
         <img
           alt="Logo"
@@ -25,7 +26,9 @@ export const CareerHeader = () => {
           className="w-100 h-100"
         />
       </Link>
-      <Stack display={{ xs: "none", sm: "block" }}>
+      <Stack sx={{
+        display: { xs: "none", sm: "block" }
+      }}>
         <List
           sx={{
             display: "flex",

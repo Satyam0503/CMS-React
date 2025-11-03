@@ -40,7 +40,9 @@ export const UserSkills = () => {
 
   return (
     <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between" mb={2} >
+      <Stack className="flex-row justify-content-between" sx={{
+        mb: 2
+      }} >
         <Typography variant="h5">
           {intl.formatMessage({ id: "PROFILE.SKILLS.TITLE" })}
         </Typography>
@@ -53,8 +55,12 @@ export const UserSkills = () => {
           />
         }
       </Stack>
-
-      <Stack direction="row" gap={1} flexWrap={"wrap"}>
+      <Stack
+        direction="row"
+        sx={{
+          gap: 1,
+          flexWrap: "wrap"
+        }}>
         {userSkills?.length === 0 ? (
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
             {intl.formatMessage({ id: "PROFILE.SKILLS.NONE" })}
@@ -65,7 +71,6 @@ export const UserSkills = () => {
           ))
         )}
       </Stack>
-
       {open && (
         <AddUpdateSkills
           open={open}

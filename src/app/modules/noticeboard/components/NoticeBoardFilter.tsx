@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { FilterComponent } from "../../../shared/components/FilterComponent"
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useIntl } from "react-intl";
-import { Autocomplete, Checkbox, Chip, ListItemText, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Checkbox, ListItemText, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { NoticeTypes, TimePeriodOptions } from "../../../../utils/constant/Constant";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
@@ -10,17 +10,11 @@ import dayjs, { Dayjs } from "dayjs";
 import { NoticeBoardFilterModel } from "../models";
 import { useFormik } from "formik";
 import { noticeBoardFilterSchema } from "../../../../utils/Schema/filterValidationSchema";
-import { addCurrentTimeToDate } from "../../../../utils/common";
+import { addCurrentTimeToDate, initialNoticeFilter } from "../../../../utils/common";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { setNoticeBoardFilter } from "../../../Redux/Reducers/filterSlice";
 import { FilterComponentProps } from "../../../../utils/common_types";
 
-
-export const initialNoticeFilter: NoticeBoardFilterModel = {
-    noticeType: [],
-    filterFrom: null,
-    filterTo: null
-}
 
 export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
     const { formatMessage } = useIntl();
@@ -29,7 +23,7 @@ export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
     const noticeBoardFilter = useAppSelector(state => state.filters.noticeBoard);
     const dispatch = useAppDispatch();
 
-    const { values, errors, handleSubmit, setFieldValue } =
+    const { values, handleSubmit, setFieldValue } =
         useFormik({
             initialValues: noticeBoardFilter ?? initialNoticeFilter,
             enableReinitialize: true,
@@ -90,8 +84,10 @@ export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
                         anchorEl={optionAnchorEl}
                         open={isTimeOptionOpen}
                         onClose={handleTimeOptionMenuClose}
-                        MenuListProps={{
-                            "aria-labelledby": "basic-button",
+                        slotProps={{
+                            list: {
+                                "aria-labelledby": "basic-button",
+                            }
                         }}
                         anchorOrigin={{
                             vertical: "bottom",
@@ -118,7 +114,7 @@ export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
                 <Stack className="gap-1">
                     <CustomisedDatePicker
                         label={formatMessage({ id: "FROM" })}
-                        value={Boolean(values.filterFrom) ? dayjs(values.filterFrom) : null}
+                        value={values.filterFrom ? dayjs(values.filterFrom) : null}
                         maxDate={dayjs()}
                         setValue={(date: Dayjs | null) => {
                             setFieldValue(
@@ -129,7 +125,7 @@ export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
                     />
                     <CustomisedDatePicker
                         label={formatMessage({ id: "TO" })}
-                        value={Boolean(values.filterTo) ? dayjs(values.filterTo) : null}
+                        value={values.filterTo ? dayjs(values.filterTo) : null}
                         minDate={dayjs(values.filterFrom)}
                         maxDate={dayjs()}
                         setValue={(date: Dayjs | null) => {

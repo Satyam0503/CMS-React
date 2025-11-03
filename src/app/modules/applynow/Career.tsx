@@ -62,8 +62,7 @@ export const Career = () => {
   const [activeJobPositionsList, setActiveJobPositionsList] = useState<JobModal[]>([]);
   const [selectedJobPosition, setSelectedJobPosition] = useState<JobModal | undefined>();
   const [formValues, setFromValues] = useState(initialValues);
-  const captchaRef = useRef<ReCAPTCHA>(null);
-  const captachaKey = import.meta.env.VITE_CAPTCHA_SITE_KEY;
+
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -136,19 +135,20 @@ export const Career = () => {
     getActiveVacancy();
   }, []);
 
-  const handleCaptchaValueChange = (token: string | null) => {
-    console.log(token);
-  };
-
   if (loading) {
     return <CircularLoader />;
   }
 
   return (
     <>
-      <Grid container display={"flex"} justifyContent={"space-between"}>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          justifyContent: "space-between"
+        }}>
         <CareerHeader />
-        <Grid item xs={12}>
+        <Grid size={12}>
           <SingleBanner title="Apply " titleorange={"Now"} />
         </Grid>
         <Container>
@@ -156,21 +156,21 @@ export const Career = () => {
             {intl.formatMessage({ id: "ALERT.HIRING" })}
           </Typography>
           <Grid
-            item
-            xs={12}
-            lg={10}
-            xl={8}
             className="p-6 rounded-1 mx-auto gap-4 d-flex flex-column"
             sx={{
               boxShadow: "4px 5px 28px -6px #b4a7c9",
               marginBottom: "1.25rem",
             }}
-          >
+            size={{
+              xs: 12,
+              lg: 10,
+              xl: 8
+            }}>
             {error || activeJobPositionsList.length === 0 ? (
               <NoVacancy />
             ) : (
               <>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Typography variant="h4" className="mb-4">
                     {intl.formatMessage({ id: "TITLES.OPEN_POSITIONS" })}
                   </Typography>
@@ -210,9 +210,11 @@ export const Career = () => {
                         {selectedJobPosition ? (
                           <Typography
                             variant="body1"
-                            fontWeight={400}
                             dangerouslySetInnerHTML={{
                               __html: selectedJobPosition.description,
+                            }}
+                            sx={{
+                              fontWeight: 400
                             }}
                           />
                         ) : (
@@ -246,12 +248,11 @@ export const Career = () => {
                     setFieldTouched,
                     handleSubmit,
                     getFieldProps,
-                    ...formik
                   }) => {
                     return (
                       <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
-                          <Grid item xs={12}>
+                          <Grid size={12}>
                             <Typography variant="h5">
                               {intl.formatMessage({ id: "TITLES.APPLY_HERE" })}
                             </Typography>
@@ -262,7 +263,11 @@ export const Career = () => {
                             </Typography>
                           </Grid>
 
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <TextField
                               fullWidth
                               label={intl.formatMessage({
@@ -275,7 +280,11 @@ export const Career = () => {
                               {...getFieldProps("firstName")}
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <TextField
                               fullWidth
                               label={intl.formatMessage({
@@ -288,7 +297,11 @@ export const Career = () => {
                               {...getFieldProps("lastName")}
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <TextField
                               fullWidth
                               label={intl.formatMessage({ id: "FORM.PHONE" })}
@@ -297,7 +310,11 @@ export const Career = () => {
                               {...getFieldProps("phone")}
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <TextField
                               fullWidth
                               label={intl.formatMessage({
@@ -309,7 +326,11 @@ export const Career = () => {
                             />
                           </Grid>
 
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <FormControl fullWidth>
                               <InputLabel id="demo-simple-select-label">
                                 {intl.formatMessage({ id: "JOB.POSITION" })}
@@ -356,7 +377,11 @@ export const Career = () => {
                               <ErrorLabel errorLabel={errors.vacancyId} />
                             }
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid
+                            size={{
+                              xs: 12,
+                              sm: 6
+                            }}>
                             <SelectInput
                               name={"experience"}
                               label={intl.formatMessage({
@@ -373,7 +398,7 @@ export const Career = () => {
                               ))}
                             </SelectInput>
                           </Grid>
-                          <Grid item xs={12}>
+                          <Grid size={12}>
                             <Autocomplete
                               id="state-dropdown"
                               size="small"
@@ -396,37 +421,43 @@ export const Career = () => {
                             }
                           </Grid>
                         </Grid>
-                        <Stack mt={2}>
-                          <Typography variant="body1" mb={1}>
+                        <Stack sx={{
+                          mt: 2
+                        }}>
+                          <Typography variant="body1" sx={{
+                            mb: 1
+                          }}>
                             {intl.formatMessage({ id: "APPLICATION.UPLOAD_RESUME" })}
                           </Typography>
                         </Stack>
-
                         <Grid
                           container
                           direction={"column"}
-                          p={3}
                           sx={{
+                            p: 3,
                             border: "1px dashed grey",
                             cursor: "pointer",
-                            borderRadius: 0.5,
-                          }}
-                        >
+                            borderRadius: 0.5
+                          }}>
                           <Stack
                             spacing={2}
                             direction={"row"}
-                            display={"flex"}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                          >
-                            <Stack alignItems={"center"}>
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center"
+                            }}>
+                            <Stack sx={{
+                              alignItems: "center"
+                            }}>
                               <Tooltip title="" placement="top">
                                 <Box
                                   component="label"
-                                  px={2}
-                                  py={0.5}
-                                  borderRadius={1}
-                                >
+                                  sx={{
+                                    px: 2,
+                                    py: 0.5,
+                                    borderRadius: 1
+                                  }}>
                                   <CloudUploadOutlined
                                     fontSize="large"
                                     className="text-primary"
@@ -447,9 +478,10 @@ export const Career = () => {
                               <Stack>
                                 <Typography
                                   variant="caption"
-                                  flexWrap={"wrap"}
-                                  textAlign={"center"}
-                                >
+                                  sx={{
+                                    flexWrap: "wrap",
+                                    textAlign: "center"
+                                  }}>
                                   {values.resume ? values.resume.name : ""}
                                 </Typography>
                               </Stack>
@@ -467,7 +499,6 @@ export const Career = () => {
                         {touched.resume && errors.resume &&
                           <ErrorLabel errorLabel={errors.resume} />
                         }
-
                         {/* adding captacha */}
                         {/* <Stack sx={{ marginBlock: 2 }}>
                           <ReCAPTCHA
@@ -476,8 +507,12 @@ export const Career = () => {
                             onChange={handleCaptchaValueChange}
                           />
                         </Stack> */}
-
-                        <Grid item xs={12} textAlign={"center"} mt={2}>
+                        <Grid
+                          size={12}
+                          sx={{
+                            textAlign: "center",
+                            mt: 2
+                          }}>
                           <CustomisedButton
                             type="submit"
                             variant="contained"
@@ -494,7 +529,9 @@ export const Career = () => {
             )}
           </Grid>
         </Container >
-        <Grid item xs={12} width={"100%"}>
+        <Grid size={12} sx={{
+          width: "100%"
+        }}>
           <Footer />
         </Grid>
       </Grid >

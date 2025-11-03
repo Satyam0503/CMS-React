@@ -140,7 +140,9 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
               onChange={handleFileChange}
               hidden
             />
-            <Typography variant="body1" flexWrap="wrap">
+            <Typography variant="body1" sx={{
+              flexWrap: "wrap"
+            }}>
               {i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })}:
               {selectedImage?.name}
             </Typography>
@@ -148,7 +150,9 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
             {
               fileError ? <ErrorLabel errorLabel={fileError} />
                 :
-                <Typography variant="body2" flexWrap="wrap">
+                <Typography variant="body2" sx={{
+                  flexWrap: "wrap"
+                }}>
                   {i({ id: "PROFILE.IMAGE.INSTRUCTION" })}
                 </Typography>
             }
@@ -184,7 +188,6 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
           </Stack>
         </Stack>
       </CustomisedModal>
-
       {isCropperOpen && (
         <ImageCropper
           open={isCropperOpen}

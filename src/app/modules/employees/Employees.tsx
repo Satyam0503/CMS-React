@@ -28,6 +28,7 @@ import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
 import { countAppliedFilter } from "../../../utils/common"
 import { usePageData } from "../../Context/PageDataProvider";
+import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
 
 type ViewMode = "table" | "grid";
 
@@ -169,8 +170,10 @@ const Employees = () => {
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack
           direction="row"
-          gap={2}
           className="justify-content-between flex-wrap-reverse align-items-center"
+          sx={{
+            gap: 2
+          }}
         >
           <SearchInput search={search} setSearch={handleSearchChange} />
 
@@ -206,12 +209,13 @@ const Employees = () => {
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
-                <CustomIconButton
-                  icon={<Add />}
-                  handleClick={() => setModalOpen(true)}
-                  tooltip={intl.formatMessage({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                  ariaLabel="Add employee"
-                />
+                // <CustomIconButton
+                //   icon={<Add />}
+                //   handleClick={() => setModalOpen(true)}
+                //   tooltip={intl.formatMessage({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                //   ariaLabel="Add employee"
+                // />
+                (<AddEmployeeStepper />)
               )}
           </Stack>
           {open && (
@@ -249,7 +253,6 @@ const Employees = () => {
           />
         )}
       </Card>
-
       {isModalOpen && (
         <AddEmployee
           open={isModalOpen}
@@ -258,7 +261,6 @@ const Employees = () => {
           setRefresh={setRefresh}
         />
       )}
-
       {isConfirmModalOpen && (
         <ConfirmationModal
           title={intl.formatMessage({ id: "CONFIRMATION.TITLE.DELETE_EMP" })}

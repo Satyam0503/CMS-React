@@ -8,14 +8,15 @@ import { useIntl } from "react-intl";
 import { LeaveApplication } from "./components/LeaveApplication";
 import { Add } from "@mui/icons-material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { EmployeeLeaveTypesCharts } from "./components/LeaveTypesChart";
 import { MyLeaveRequests } from "./components/MyLeaveRequest";
-import { LEAVE_TYPE } from "../../../../utils/enums";
+import { LEAVE_TYPE, ModulesName, Permission } from "../../../../utils/enums";
 import { EmployeeLeaveTypeBalance, RequestLeaveModel } from "../../leaves/model";
 import { useAppSelector } from "../../../Redux/hooks";
 import { getEmployeeLeaveBalance } from "../../leaves/leaveServices";
 import { toast } from "react-toastify";
+import { hasModuleFeaturePermission } from "../../../../utils/common";
 
 const initialLeaveRequestValue: RequestLeaveModel = {
   leaveType: LEAVE_TYPE.SICK_LEAVE,
@@ -33,6 +34,7 @@ export const LeaveTracker: FC = () => {
   const employeeId = useParams().employeeid;
   const currentUserId = useAppSelector(state => state.user.userData?.userId)!;
   const [loading, setLoading] = useState(true);
+  const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
 
   const handleClose = () => {
     setOpen(false);
@@ -49,7 +51,7 @@ export const LeaveTracker: FC = () => {
   useEffect(() => {
     const fetchEmployeeLeaveTypeBalance = async () => {
       try {
-        const { data } = await getEmployeeLeaveBalance(currentUserId);
+        const { data } = await getEmployeeLeaveBalance(employeeId ?? currentUserId);
         if (data.success && data.totalRecords > 0) {
           setEmployeeLeaveTypeBalance(data.methodResults);
         }
@@ -68,7 +70,7 @@ export const LeaveTracker: FC = () => {
       <Card className="p-4 d-flex justify-content-between">
         <Typography className="fs-20" variant="h6">{i({ id: "LEAVE.TITLE" })}</Typography>
         {
-          !employeeId &&
+          (!employeeId || hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Create, modulePermission)) &&
           <CustomisedButton className="align-self-end" Icon={<Add />} label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })} handleClick={handleOpen} />
         }
       </Card>

@@ -34,17 +34,20 @@ const AuthLayout = () => {
       </Stack>
       <Grid
         container
-        py={2}
-        gap={4}
         className="flex-grow-1 justify-content-evenly align-items-center"
-      >
+        sx={{
+          py: 2,
+          gap: 4
+        }}>
         <Grid
-          item
-          xs={12}
-          sm={5}
-          order={{ xs: "2", sm: "inherit" }}
-          sx={{ justifyContent: "center" }}
-        >
+          size={{
+            xs: 12,
+            sm: 5
+          }}
+          sx={{
+            order: { xs: "2", sm: "inherit" },
+            justifyContent: "center"
+          }}>
           <Stack>
             <Outlet />
           </Stack>
@@ -52,16 +55,24 @@ const AuthLayout = () => {
           <Stack
             direction={"row"}
             spacing={2}
-            justifyContent={"space-evenly"}
-            sx={{ marginBlock: "2rem" }}
-          >
+            sx={{
+              justifyContent: "space-evenly",
+              marginBlock: "2rem"
+            }}>
             <Link to={"/"}>{formatMessage({ id: "LINK.TERM" })} </Link>
             <Link to={"/"}> {formatMessage({ id: "LINK.PLAN" })} </Link>
             <Link to={"/"}>{formatMessage({ id: "LINK.CONTACTUS" })} </Link>
           </Stack>
         </Grid>
 
-        <Grid item xs={12} sm={5} textAlign={"center"}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 5
+          }}
+          sx={{
+            textAlign: "center"
+          }}>
           <Stack spacing={2}>
             <Box component={"div"}>
               <img

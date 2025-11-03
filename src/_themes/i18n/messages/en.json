@@ -384,8 +384,8 @@
       "SETTING": "Setting"
     },
     "PI": {
-      "EOX": "of experience",
-      "TOTAL_YEAR": "Years in {companyName}",
+      "YOE": "{years, plural, =0 {Year} one {Year} other {Years} } Of Experience",
+      "TOTAL_YEAR": "{years , plural, =0 {Year} one {Year} other {Years} } At {companyName}",
       "TITLE": "Personal Information",
       "DOWNLOAD_PAY_SLIP": "Download Pay Slip",
       "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# yr} other {# yrs}} {months, plural, =0 {} one {# mos} other {# mos}}"
@@ -431,6 +431,10 @@
     "STATUS": {
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "Create User Account",
+      "EDIT_DATA": "Edit User Data"
     },
     "TYPE": {
       "FULLTIME": "Full Time",

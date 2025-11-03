@@ -8,15 +8,27 @@ export default function NoVacancy() {
 
   return (
     <>
-      <Grid container display={"flex"} gap={1.5}>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          gap: 1.5
+        }}>
         <Stack spacing={1}>
-          <Typography variant="h4" color="primary.main">
+          <Typography variant="h4" sx={{
+            color: "primary.main"
+          }}>
             {intl.formatMessage({
               id: "VACANCY.TEXT1",
             })}
           </Typography>
 
-          <Typography variant="h6" textAlign={"justify"} fontWeight={400}>
+          <Typography
+            variant="h6"
+            sx={{
+              textAlign: "justify",
+              fontWeight: 400
+            }}>
             {intl.formatMessage({
               id: "VACANCY.TEXT2",
             })}
@@ -31,8 +43,14 @@ export default function NoVacancy() {
           />
         </Stack>
 
-        <Stack m={auto} textAlign={"justify"}>
-          <Typography variant="body1" fontWeight={400}>
+        <Stack
+          sx={{
+            m: auto,
+            textAlign: "justify"
+          }}>
+          <Typography variant="body1" sx={{
+            fontWeight: 400
+          }}>
             {intl.formatMessage({
               id: "VACANCY.TEXT3",
             })}

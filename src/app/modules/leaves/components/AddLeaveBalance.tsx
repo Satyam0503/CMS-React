@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
-import { Alert, Autocomplete, Avatar, Grid, Input, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Autocomplete, Avatar, Grid, ListItemAvatar, ListItemText, Stack, TextField } from "@mui/material"
 import { useIntl } from "react-intl"
 import { Formik } from "formik"
 import { LeaveBalanceRequestModel, LeaveType } from "../model"
@@ -80,8 +80,8 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                         setLeaveTypes(data.methodResults);
                     }
                 }
-            } catch (error: any) {
-                console.error(error.message);
+            } catch (error) {
+                console.error((error as Error).message);
             }
         })();
     }, [])
@@ -110,116 +110,127 @@ export const AddLeaveBalance: FC<Props> = (props) => {
             }}>
                 {
                     ({ values, setFieldValue, setFieldTouched, handleSubmit, ...formik }) => {
-                        return <form onSubmit={handleSubmit}>
-                            {
-                                Boolean(formik.status) &&
-                                <Alert severity="warning" className="mb-4" >{formik.status}</Alert>
-                            }
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Autocomplete
-                                        id="employee_id"
-                                        size="small"
-                                        value={employeeList.find(
-                                            (emp) => emp.userId === values.employeeId
-                                        ) || null}
-                                        options={employeeList}
-                                        onChange={(event, value) => {
-                                            setFieldTouched("employeeId", true);
-                                            setFieldValue(
-                                                "employeeId",
-                                                value ? value.userId : ""
-                                            );
-                                        }}
-                                        disabled={props.isEdit}
-                                        renderInput={(param) => (
-                                            <TextField
-                                                {...param}
-                                                label={i({
-                                                    id: "LEAVE.EMPLOYEE_NAME",
-                                                })}
-                                            />
-                                        )}
-                                        getOptionLabel={(option) => option.fullName}
-                                        renderOption={(props, emp) => {
-                                            return (
-                                                <li {...props}>
-                                                    <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>
-                                                        <Avatar src={emp.fullProfileUrl ?? ""} alt="Profile" sx={{ width: 32, height: 32 }} />
-                                                    </ListItemAvatar>
-                                                    <ListItemText primary={emp.fullName} secondary={emp.jobRole !== null ? emp.jobRole[currentLanguage] || emp.jobRole[defaultLanguage] : ""} />
-                                                </li>
-                                            );
-                                        }}
-                                    />
+                        return (
+                            <form onSubmit={handleSubmit}>
+                                {
+                                    Boolean(formik.status) &&
+                                    <Alert severity="warning" className="mb-4" >{formik.status}</Alert>
+                                }
+                                <Grid container spacing={2}>
+                                    <Grid size={12}>
+                                        <Autocomplete
+                                            id="employee_id"
+                                            size="small"
+                                            value={employeeList.find(
+                                                (emp) => emp.userId === values.employeeId
+                                            ) || null}
+                                            options={employeeList}
+                                            onChange={(event, value) => {
+                                                setFieldTouched("employeeId", true);
+                                                setFieldValue(
+                                                    "employeeId",
+                                                    value ? value.userId : ""
+                                                );
+                                            }}
+                                            disabled={props.isEdit}
+                                            renderInput={(param) => (
+                                                <TextField
+                                                    {...param}
+                                                    label={i({
+                                                        id: "LEAVE.EMPLOYEE_NAME",
+                                                    })}
+                                                />
+                                            )}
+                                            getOptionLabel={(option) => option.fullName}
+                                            renderOption={(props, emp) => {
+                                                return (
+                                                    <li {...props}>
+                                                        <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>
+                                                            <Avatar src={emp.fullProfileUrl ?? ""} alt="Profile" sx={{ width: 32, height: 32 }} />
+                                                        </ListItemAvatar>
+                                                        <ListItemText primary={emp.fullName} secondary={emp.jobRole !== null ? emp.jobRole[currentLanguage] || emp.jobRole[defaultLanguage] : ""} />
+                                                    </li>
+                                                );
+                                            }}
+                                        />
+                                        {
+                                            (formik.touched.employeeId && Boolean(formik.errors.employeeId)) &&
+                                            <ErrorLabel errorLabel={i({ id: "MESSAGE.PLEASE_SELECT_EMPLOYEE" })} />
+                                        }
+                                    </Grid>
                                     {
-                                        (formik.touched.employeeId && Boolean(formik.errors.employeeId)) &&
-                                        <ErrorLabel errorLabel={i({ id: "MESSAGE.PLEASE_SELECT_EMPLOYEE" })} />
+                                        getFilteredLeaveTypes(values.employeeId).map((type, index) => {
+                                            return (
+                                                <Grid
+                                                    key={index}
+                                                    size={{
+                                                        xs: 12,
+                                                        md: 6
+                                                    }}>
+                                                    <TextField
+                                                        fullWidth
+                                                        label={i({ id: LeaveTypeMapper[type.leaveType] })}
+                                                        type="number"
+                                                        name="leaveTypeBalances"
+                                                        disabled={!values.employeeId}
+                                                        value={values.leaveTypeBalances.find(item => item?.leaveType === type.leaveType)?.maximumLeave ?? ""}
+                                                        onChange={(e) => {
+                                                            const balanceValue = e.target.value;
+                                                            const index = values.leaveTypeBalances.findIndex(item => item?.leaveType === type.leaveType);
+                                                            const updatedLeaveBalances = [...values.leaveTypeBalances];
+                                                            if (Number(balanceValue) > type.maxLeaveDays) {
+                                                                formik.setStatus(i({ id: "MESSAGE.LEAVE_TYPE_MAX_DAY_EXCEED_ERROR" }, { maxLeaveValue: type.maxLeaveDays, leaveType: i({ id: LeaveTypeMapper[type.leaveType] }) }))
+                                                            }
+                                                            else {
+                                                                formik.setStatus("");
+                                                            }
+                                                            if (balanceValue === "") {
+                                                                if (index > -1) {
+                                                                    updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: "" as unknown as number };
+                                                                }
+                                                            }
+                                                            else {
+                                                                if (index > -1) {
+                                                                    updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: Number(balanceValue) };
+                                                                } else {
+                                                                    updatedLeaveBalances.push({ leaveType: type.leaveType, maximumLeave: Number(balanceValue) });
+                                                                }
+                                                            }
+                                                            setFieldValue("leaveTypeBalances", updatedLeaveBalances);
+                                                        }}
+                                                        onKeyDown={(e) => {
+                                                            blockInvalidCharOnNumberField(e)
+                                                        }}
+                                                        onWheel={(e) => {
+                                                            (e.target as HTMLInputElement).blur();
+                                                        }}
+                                                        slotProps={{
+                                                            htmlInput: {
+                                                                min: 1,
+                                                                max: type.maxLeaveDays
+                                                            }
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            );
+                                        })
                                     }
                                 </Grid>
-                                {
-                                    getFilteredLeaveTypes(values.employeeId).map((type, index) => {
-                                        return <Grid item xs={12} md={6} key={index}>
-                                            <TextField
-                                                fullWidth
-                                                label={i({ id: LeaveTypeMapper[type.leaveType] })}
-                                                type="number"
-                                                name="leaveTypeBalances"
-                                                inputProps={{
-                                                    min: 1,
-                                                    max: type.maxLeaveDays
-                                                }}
-                                                disabled={!values.employeeId}
-                                                value={values.leaveTypeBalances.find(item => item?.leaveType === type.leaveType)?.maximumLeave ?? ""}
-                                                onChange={(e) => {
-                                                    const balanceValue = e.target.value;
-                                                    const index = values.leaveTypeBalances.findIndex(item => item?.leaveType === type.leaveType);
-                                                    const updatedLeaveBalances = [...values.leaveTypeBalances];
-                                                    if (Number(balanceValue) > type.maxLeaveDays) {
-                                                        formik.setStatus(i({ id: "MESSAGE.LEAVE_TYPE_MAX_DAY_EXCEED_ERROR" }, { maxLeaveValue: type.maxLeaveDays, leaveType: i({ id: LeaveTypeMapper[type.leaveType] }) }))
-                                                    }
-                                                    else {
-                                                        formik.setStatus("");
-                                                    }
-                                                    if (balanceValue === "") {
-                                                        if (index > -1) {
-                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: "" as unknown as number };
-                                                        }
-                                                    }
-                                                    else {
-                                                        if (index > -1) {
-                                                            updatedLeaveBalances[index] = { leaveType: type.leaveType, maximumLeave: Number(balanceValue) };
-                                                        } else {
-                                                            updatedLeaveBalances.push({ leaveType: type.leaveType, maximumLeave: Number(balanceValue) });
-                                                        }
-                                                    }
-                                                    setFieldValue("leaveTypeBalances", updatedLeaveBalances);
-                                                }}
-                                                onKeyDown={(e) => {
-                                                    blockInvalidCharOnNumberField(e)
-                                                }}
-                                                onWheel={(e) => {
-                                                    (e.target as HTMLInputElement).blur();
-                                                }}
-                                            />
-                                        </Grid>
-                                    })
-                                }
-                            </Grid>
-                            <Stack className="flex-row gap-2 justify-content-end mt-4">
-                                <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={props.handleClose} />
-                                <CustomisedButton
-                                    type="submit"
-                                    label={i({ id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
-                                    disabled={formik.isSubmitting || !(formik.isValid && formik.dirty)}
-                                    loading={formik.isSubmitting}
-                                />
+                                <Stack className="flex-row gap-2 justify-content-end mt-4">
+                                    <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={props.handleClose} />
+                                    <CustomisedButton
+                                        type="submit"
+                                        label={i({ id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
+                                        disabled={formik.isSubmitting || !(formik.isValid && formik.dirty)}
+                                        loading={formik.isSubmitting}
+                                    />
 
-                            </Stack>
-                        </form>
+                                </Stack>
+                            </form>
+                        );
                     }
                 }
             </Formik>
         </CustomisedModal >
-    )
+    );
 }

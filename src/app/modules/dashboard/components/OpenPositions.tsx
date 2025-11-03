@@ -61,12 +61,16 @@ export default function OpenPositions() {
                 <Stack
                   key={job.jobId}
                   direction={"row"}
-                  alignItems={"center"}
                   spacing={1}
+                  sx={{
+                    alignItems: "center"
+                  }}
                 >
                   <Avatar variant="rounded" sx={{ bgcolor: "secondary.main" }}>{job.title.charAt(0)}</Avatar>
 
-                  <Stack flexGrow={1}>
+                  <Stack sx={{
+                    flexGrow: 1
+                  }}>
                     <Typography variant="body1">{job.title}</Typography>
                     <Typography
                       variant="body2"
