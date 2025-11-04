@@ -7,8 +7,9 @@ import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { DepartmentResponseModel } from "../model";
-import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { DonutChart } from "../../../shared/components/DonutChart";
 import { PieSeries, PieValueType } from "@mui/x-charts";
+import { defaultPieChartSeries } from "../../../../utils/common";
 
 
 export const DepartmentChart: FC = () => {

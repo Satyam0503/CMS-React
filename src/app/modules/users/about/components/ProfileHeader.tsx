@@ -22,7 +22,7 @@ export const ProfileHeader = () => {
     <Grid container spacing={2} direction="column">
       <Grid size="grow">
         <IconStat
-          iconBg={theme.palette.secondary.lighter}
+          iconBg={theme.vars?.palette.secondary.light}
           icon={<CalendarMonth fontSize="large" />}
           iconColor="secondary.dark"
           number={experience}
@@ -31,7 +31,7 @@ export const ProfileHeader = () => {
       </Grid>
       <Grid size="grow">
         <IconStat
-          iconBg={theme.palette.primary.lighter}
+          iconBg={theme.vars?.palette.primary.light}
           icon={<CorporateFareOutlined fontSize="large" />}
           iconColor="primary.main"
           number={totalYearAtCurrentCompany}
@@ -40,7 +40,7 @@ export const ProfileHeader = () => {
       </Grid>
       <Grid size="grow">
         <IconStat
-          iconBg={theme.palette.secondary.lighter}
+          iconBg={theme.vars?.palette.secondary.light}
           icon={<Build fontSize="large" />}
           iconColor="secondary.dark"
           number={totalSkills}

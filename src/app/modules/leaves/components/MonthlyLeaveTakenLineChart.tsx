@@ -1,8 +1,6 @@
 import { Box, Card, Stack, Typography } from "@mui/material";
 import { BarChart, } from "@mui/x-charts";
 import { useIntl } from "react-intl";
-import { chartColorpalette } from "../../theme/MuiTheme";
-import { useThemeContext } from "../../../Context/ThemeContext";
 import { useEffect, useState } from "react";
 import { getMonthlyLeaveTakenSummary } from "../leaveServices";
 import { MonthlyLeaveTakenSummary } from "../model";
@@ -11,7 +9,6 @@ import dayjs from "dayjs";
 
 export const MonthlyLeaveTakenLineChart = () => {
     const { formatMessage: i } = useIntl();
-    const { theme } = useThemeContext();
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<MonthlyLeaveTakenSummary[]>([]);
     useEffect(() => {
@@ -52,7 +49,7 @@ export const MonthlyLeaveTakenLineChart = () => {
                             position: { vertical: 'bottom', horizontal: 'center' },
                         }
                     }}
-                    colors={chartColorpalette[theme]}
+                    // colors={chartColorpalette[theme]}
                     borderRadius={4}
                     margin={{ top: 5, bottom: 0, left: 0, right: 10 }}
                     loading={loading}

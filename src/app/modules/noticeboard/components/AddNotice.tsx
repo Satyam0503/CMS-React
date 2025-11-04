@@ -1,5 +1,5 @@
 import { Send } from "@mui/icons-material";
-import { Grid, MenuItem, Stack, Typography } from "@mui/material";
+import { Grid, MenuItem, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
@@ -155,8 +155,9 @@ export const AddNotice: FC<PropsTypes> = ({
                 </SelectInput>
               </Grid>
 
-              <Grid size={12}>
+              <Grid size="grow">
                 <TextInput
+
                   multiline={true}
                   label={formatMessage({ id: "NOTICE.TITLE" })}
                   name="title"

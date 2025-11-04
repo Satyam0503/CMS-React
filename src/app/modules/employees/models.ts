@@ -52,6 +52,11 @@ export interface EmployeeModel {
   birthDayThisYear?: Dayjs | string;
 }
 
+export type InviteNewEmployeeModel = Pick<
+  EmployeeModel,
+  "employeeId" | "firstName" | "lastName" | "email" | "roleId"
+>;
+
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
 export type GetAllEmployeeResponseData =

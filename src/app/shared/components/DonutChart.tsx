@@ -1,20 +1,7 @@
-import { styled } from "@mui/material";
+import { styled, useColorScheme } from "@mui/material";
 import { useDrawingArea } from "@mui/x-charts/hooks";
 import { PieChart, PieSeries } from "@mui/x-charts/PieChart"
-import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
-import { useThemeContext } from "../../Context/ThemeContext";
-import { chartColorpalette } from "../../modules/theme/MuiTheme";
-
-export const defaultPieChartSeries: PieSeries = {
-    innerRadius: '60%',
-    outerRadius: '100%',
-    paddingAngle: 2,
-    startAngle: -90,
-    highlightScope: { fade: 'global', highlight: 'item' },
-    highlighted: { additionalRadius: 2 },
-    cornerRadius: 4,
-    data: [],
-}
+import { getChartPalette } from "../../modules/theme/themePalettes";
 
 interface DonutChartProps {
     loading: boolean,
@@ -27,7 +14,7 @@ interface DonutChartProps {
 
 export const DonutChart = (props: DonutChartProps) => {
     const { loading, series, hideLegend = false, height = 200, centerLabel } = props;
-    const { theme } = useThemeContext();
+    const { mode, systemMode } = useColorScheme();
     return (
         <PieChart
             series={series}
@@ -36,7 +23,7 @@ export const DonutChart = (props: DonutChartProps) => {
             height={height}
             style={{ width: "100%", height: "100%", display: "block" }}
 
-            colors={chartColorpalette[theme]}
+            colors={getChartPalette(mode, systemMode)}
             slotProps={{
                 legend: {
                     direction: 'horizontal',

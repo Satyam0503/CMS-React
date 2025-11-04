@@ -33,11 +33,10 @@ import {
 } from "./constant/Constant";
 import { NotificationModel } from "../app/modules/users/models";
 import { NavigateFunction } from "react-router-dom";
-import { EmployeeModel } from "../app/modules/employees/models";
 import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
-import { useAppSelector } from "../app/Redux/hooks";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
+import { PieSeries } from "@mui/x-charts";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -550,4 +549,16 @@ export const initialNoticeFilter: NoticeBoardFilterModel = {
   noticeType: [],
   filterFrom: null,
   filterTo: null,
+};
+
+// common pie chart series
+export const defaultPieChartSeries: PieSeries = {
+  innerRadius: "60%",
+  outerRadius: "100%",
+  paddingAngle: 2,
+  startAngle: -90,
+  highlightScope: { fade: "global", highlight: "item" },
+  highlighted: { additionalRadius: 2 },
+  cornerRadius: 4,
+  data: [],
 };

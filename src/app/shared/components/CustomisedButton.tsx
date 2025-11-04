@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "@mui/material";
+import { Button, CircularProgress, Tooltip } from "@mui/material";
 import React from "react";
 
 type Props = {
@@ -41,6 +41,7 @@ const CustomisedButton = (props: Props) => {
           size={size}
           className={className}
           type={type}
+          loading={loading}
           sx={{
             gap: .5,
             lineHeight: 1.5,
@@ -49,15 +50,10 @@ const CustomisedButton = (props: Props) => {
               fontSize: 16
             }
           }}
-
+          endIcon={Icon}
+          loadingIndicator={<CircularProgress sx={{ color: "common.white" }} size={20} thickness={5} />}
         >
-          {
-            loading ? <span className="loader" /> :
-              <>
-                {label}
-                {Icon}
-              </>
-          }
+          {label}
         </Button >
       )}
     </>

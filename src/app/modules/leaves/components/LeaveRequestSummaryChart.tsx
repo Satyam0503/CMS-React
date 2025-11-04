@@ -2,15 +2,14 @@ import { PieSeries } from '@mui/x-charts/PieChart';
 import { useEffect, useMemo, useState } from "react";
 import { LeaveRequestSummary } from "../model";
 import { getLeaveRequestSummary } from "../leaveServices";
-import { CustomCard } from "../../../shared/components/CustomCard";
 import { IntlShape, useIntl } from "react-intl";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { PieValueType } from "@mui/x-charts";
-import { leaveRequestStatusMapper } from "../../../../utils/common";
+import { defaultPieChartSeries, leaveRequestStatusMapper } from "../../../../utils/common";
 import dayjs from "dayjs";
-import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { DonutChart } from "../../../shared/components/DonutChart";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
-import { Box, Card, Stack, Typography } from '@mui/material';
+import { Card, Stack, Typography } from '@mui/material';
 
 type CreateChartDataType = (data: LeaveRequestSummary, view: "type" | "status", intl: IntlShape) => MakeOptional<PieValueType, "id">[];
 

@@ -1,10 +1,9 @@
-import { IconButton, Stack, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { FC, useState } from "react";
+import { IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { FC, } from "react";
 import { Navbar } from "./Navbar";
-import { MenuOutlined, Search } from "@mui/icons-material";
+import { MenuOutlined, } from "@mui/icons-material";
 
 import { EmployeeSearchInput } from "./EmployeeSearchInput";
-import { useIntl } from "react-intl";
 
 type Props = {
   openSideBar: () => void;

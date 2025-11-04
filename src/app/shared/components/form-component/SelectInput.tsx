@@ -1,5 +1,4 @@
 import { FormControl, FormHelperText, InputLabel, Select } from "@mui/material";
-import { error } from "console";
 import { useField } from "formik";
 import { FC, ReactNode } from "react";
 import { useIntl } from "react-intl";
