@@ -115,6 +115,7 @@ export const ServiceUrl = {
   GET_EMPLOYEE_SKILLS: `api/User/GetEmployeeSkills`,
 
   ADD_EMPLOYEE: `api/User/AddEmployees`,
+  INVITE_NEW_EMPLOYEE: "api/User/InviteNewEmployee",
   ADD_EMPLOYEE_EDUCATION: `api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `api/User/AddEmployeeCertification`,
 
@@ -225,7 +226,7 @@ export const ServiceUrl = {
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
-};
+} as const;
 
 export const languages = [
   {

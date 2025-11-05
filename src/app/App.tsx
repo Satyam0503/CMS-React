@@ -43,6 +43,7 @@ const App = () => {
   } else {
     instance.stopConnection();
   }
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>

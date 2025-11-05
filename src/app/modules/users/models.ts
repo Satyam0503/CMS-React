@@ -36,6 +36,8 @@ export type EditEmployeePayloadModel = Pick<
   | "jobRole"
   | "employmentType"
 > & {
+  roleId?: string;
+  gender?: string;
   panNumber: string | null;
   bankAccountNumber: number | null;
   customAttributeList: {

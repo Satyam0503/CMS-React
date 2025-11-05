@@ -141,7 +141,8 @@
       "PASSWORD_UPDATED": "Password successfully updated",
       "DATA_UPLOADED": "Success! data has been uploaded successfully",
       "PAYROLL_UPDATED": "Payroll details successfully updated",
-      "PAYROLL_ADDED": "Payroll details successfully added"
+      "PAYROLL_ADDED": "Payroll details successfully added",
+      "INVITE_EMPLOYEE": "Invitation successfully sent"
     },
     "FAILED": {
       "UPDATE": "Failed to update",
@@ -160,7 +161,8 @@
       "NO_VACANCY": "No active vacancies present",
       "UPDATE_ROLE": "Failed to update role permission",
       "PAY_SLIP_GENERATE": "Error generating payslip",
-      "SELECT_PAY_MONTH": "Please select pay month"
+      "SELECT_PAY_MONTH": "Please select pay month",
+      "INVITE_EMPLOYEE": "Failed to invite employee"
     }
   },
 
@@ -190,7 +192,8 @@
     "MARK_ALL_AS_READ": "mark all as read",
     "UPLOAD": "Upload",
     "REMOVE": "Remove",
-    "CLEAR": "Clear"
+    "CLEAR": "Clear",
+    "INVITE": "INVITE"
   },
 
   "TITLES": {
@@ -439,6 +442,12 @@
     "INVITE_EMP": {
       "HEADING": "",
       "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email address. Once the user accepts the invitation, they will be added to your organization on the platform"
+    },
+    "UPDATE": {
+      "BASIC_INFO": "Basic Information",
+      "WORK_INFO": "Work Information",
+      "PERSONAL_INFO": "Personal Information",
+      "OHTER_INFO": "Other Information"
     },
     "TYPE": {
       "FULLTIME": "Full Time",

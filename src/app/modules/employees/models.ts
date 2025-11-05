@@ -54,8 +54,12 @@ export interface EmployeeModel {
 
 export type InviteNewEmployeeModel = Pick<
   EmployeeModel,
-  "employeeId" | "firstName" | "lastName" | "email" | "roleId"
+  "employeeId" | "firstName" | "lastName" | "email"
 >;
+
+export type InviteEmployeeResponse = InviteNewEmployeeModel & {
+  userId: string;
+};
 
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 

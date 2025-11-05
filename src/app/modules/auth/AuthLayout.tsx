@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import { Container, Grid, Typography, Stack, Box } from "@mui/material";
@@ -8,21 +7,10 @@ import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus
 
 const AuthLayout = () => {
   const { formatMessage } = useIntl();
-  useEffect(() => {
-    const root = document.getElementById("root");
-    if (root) {
-      root.style.height = "100%";
-    }
-    return () => {
-      if (root) {
-        root.style.height = "auto";
-      }
-    };
-  }, []);
 
   return (
     <Container
-      sx={{ height: "100vh", alignContent: "center" }}
+      sx={{ height: "100vh", alignContent: "center", backgroundColor: "background.body" }}
       className="d-flex flex-column gap-4"
     >
       <Stack direction="row" spacing={2} sx={{

@@ -67,6 +67,7 @@ export const createApplicationTheme = (locale: Localization) => {
       MuiInputLabel: {
         styleOverrides: {
           root: {
+            color: theme.vars?.palette.text.secondary,
             fontSize: 14,
           },
         },
@@ -445,6 +446,7 @@ export const createApplicationTheme = (locale: Localization) => {
       },
       body1: {
         fontSize: 14,
+        color: theme.vars?.palette.text.primary,
       },
       body2: {
         fontSize: 12,

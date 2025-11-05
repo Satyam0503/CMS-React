@@ -58,8 +58,11 @@
         transition: all 0.4s linear;
       }
       &.Mui-selected {
-        background-color: $app-white;
-        color: $app-primary-500;
+        background-color: var(--mui-palette-common-white);
+        color: var(--mui-palette-primary-main) !important;
+        & .MuiTypography-root {
+          color: var(--mui-palette-primary-main) !important;
+        }
       }
     }
   }

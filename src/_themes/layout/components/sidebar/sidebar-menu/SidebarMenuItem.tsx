@@ -23,7 +23,7 @@ const SidebarMenuItem: FC<Props> = ({
       <ListItemIcon sx={{ color: "common.white" }}>
         {icon}
       </ListItemIcon>
-      <ListItemText primary={title} />
+      <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
     </ListItemButton>
   );
 };

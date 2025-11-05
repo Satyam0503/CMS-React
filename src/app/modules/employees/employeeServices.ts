@@ -1,11 +1,13 @@
 import { deleteRequest, postRequest } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
   EditEmployeeResponseData,
   EmployeeModel,
   GetAllEmployeePayloadModel,
   GetAllEmployeeResponseData,
+  InviteEmployeeResponse,
+  InviteNewEmployeeModel,
 } from "./models";
 import { EditEmployeePayloadModel } from "../users/models";
 
@@ -39,4 +41,11 @@ export const getAllEmployees = async (
     GetAllEmployeePayloadModel | null,
     GetAllEmployeeResponseData
   >(ServiceUrl.GET_ALL_EMPLOYEE, payload);
+};
+
+export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
+  return postRequest<
+    InviteNewEmployeeModel,
+    ResponseData<InviteEmployeeResponse>
+  >(ServiceUrl.INVITE_NEW_EMPLOYEE, payload);
 };

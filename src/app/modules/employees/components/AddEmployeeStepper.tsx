@@ -1,20 +1,38 @@
 import { EditDocument, PersonAdd } from "@mui/icons-material";
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, InputLabel, Slide, Stack, Step, StepLabel, Stepper } from "@mui/material"
+import { Box, Button, Dialog, DialogContent, DialogTitle, Slide, Stack, Step, StepLabel, Stepper } from "@mui/material"
 import React, { useState } from "react";
 import { useIntl } from "react-intl";
-import { TextInput } from "../../../shared/components/form-component/TextInput";
-import { Formik } from "formik";
-import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
-import { InviteNewEmployeeModel } from "../models";
+import { InviteNewEmployee } from "./InviteNewEmployee";
+import { UpdateEmployeeData } from "./UpdateEmployeeData";
+import { InviteEmployeeResponse } from "../models";
+
+
+
 
 export const AddEmployeeStepper = () => {
     const { formatMessage: i } = useIntl();
     const [open, setOpen] = useState(false);
     const [activeStep, setActiveSteps] = useState(0);
+    const [newEmployeeData, setNewEmployeeData] = useState<InviteEmployeeResponse>()
 
     const handleDialogClose = () => {
         setOpen(false);
     }
+
+    const handleInviteUser = (isInvited: boolean, employeeData: InviteEmployeeResponse) => {
+        if (isInvited) {
+            setActiveSteps((step) => step + 1);
+            setNewEmployeeData(employeeData);
+        }
+    }
+    const handleUserUpdate = (success: boolean) => {
+        if (success) {
+            setActiveSteps((step) => step + 1);
+        }
+    }
+
+    console.log(activeStep);
+
 
     const steps = [{ label: "EMPLOYEE.STEPPER.CREATE_ACCOUNT", optional: false, icon: <PersonAdd /> }, { label: "EMPLOYEE.STEPPER.EDIT_DATA", optional: false, icon: <EditDocument /> }]
     return (
@@ -22,7 +40,7 @@ export const AddEmployeeStepper = () => {
             <Button variant="contained" onClick={() => setOpen(true)}>{i({ id: "EMPLOYEE.ADD_NEW_EMP" })}</Button>
             <Dialog
                 fullWidth={true}
-                maxWidth="lg"
+                maxWidth="xl"
                 open={open}
                 onClose={handleDialogClose}
             >
@@ -31,82 +49,52 @@ export const AddEmployeeStepper = () => {
                     <Box component="div" className="mb-2">
                         <Stepper activeStep={activeStep}  >
                             {
-                                steps.map((step, index) => {
+                                steps.map((step) => {
                                     return (
-                                        <Step key={step.label} disabled >
-                                            <StepLabel> {i({ id: step.label })} </StepLabel>
+                                        <Step key={step.label} >
+                                            <StepLabel slotProps={{
+                                                stepIcon: {
+                                                    fontSize: "large",
+                                                }
+                                            }} > {i({ id: step.label })} </StepLabel>
                                         </Step>
                                     );
                                 })
                             }
                         </Stepper>
                     </Box>
-                    {/* <Slide direction="right" in mountOnEnter unmountOnExit> */}
-                    <InviteNewEmployee />
-                    {/* </Slide> */}
+                    {
+                        activeStep === 0 &&
+                        <Slide direction="left" in={open && activeStep === 0} mountOnEnter unmountOnExit>
+                            <div>
+                                <InviteNewEmployee handleInviteUser={handleInviteUser} />
+                            </div>
+                        </Slide>
+                    }
+                    {
+                        (activeStep === 1 && newEmployeeData) &&
+                        <Slide direction="left" in={open && activeStep === 1} mountOnEnter unmountOnExit>
+                            <div>
+                                <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={handleUserUpdate} />
+                            </div>
+                        </Slide>
+                    }
                     <Stack direction="row">
-                        <Button>
-
-                        </Button>
                     </Stack>
                 </DialogContent>
 
-                <DialogActions>
+                {/* <DialogActions sx={{ px: 4, py: 3, justifyContent: "space-between" }}>
+                    
                     <Button onClick={handleDialogClose}>{i({ id: "BUTTON.CLOSE" })}</Button>
                     <Button>{i({ id: "BUTTON.NEXT" })}</Button>
-                </DialogActions>
+                </DialogActions> */}
             </Dialog>
         </React.Fragment >
     )
 }
 
 
-const initialEmployeeDetails: InviteNewEmployeeModel = {
-    employeeId: "",
-    email: "",
-    firstName: "",
-    lastName: "",
-    roleId: ""
-}
-const InviteNewEmployee = () => {
-    const { formatMessage: i } = useIntl();
 
-    const InviteNewEmployee = (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
-        console.log((values));
-    }
-    return (
-        <Box component="div" className="p-2 mt">
-            <Alert color="warning" severity="warning" icon={<PersonAdd />}>
-                {i({ id: "EMPLOYEE.INVITE_EMP.INVITE_NOTE" })}
-            </Alert>
-            <Formik
-                initialValues={initialEmployeeDetails}
-                validationSchema={employeeSchema}
-                onSubmit={(values, { setSubmitting }) => {
-                    InviteNewEmployee(values, setSubmitting);
-                }}
-            >
-                {
-                    (formik) => {
-                        return <form onSubmit={formik.handleSubmit}>
-                            <TextInput
-                                labelVarient="seperate"
-                                label={i({ id: "FORM.EMPID" })}
-                                type="text"
-                                name="employeeId"
-                            />
-                        </form>
-                    }
-                }
-            </Formik>
-            <Grid container>
-                <Grid size="grow">
-
-                </Grid>
-            </Grid>
-        </Box>
-    )
-}
 
 // const EditEmployeeData = () => {
 //     return (

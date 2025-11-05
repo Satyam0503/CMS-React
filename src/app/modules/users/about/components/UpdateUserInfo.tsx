@@ -182,7 +182,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
             dirty,
             isSubmitting,
             handleSubmit,
-            ...formik
           }) => {
             return (
               <form onSubmit={handleSubmit}>
