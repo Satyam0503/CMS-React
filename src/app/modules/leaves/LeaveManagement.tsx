@@ -31,11 +31,8 @@ const LeaveManagement: FC = () => {
         </Grid>
         <Grid
           sx={{ display: "flex" }}
-          size={{
-            xs: 12,
-            sm: 12,
-            md: 7
-          }}>
+          size="grow"
+        >
           <MonthlyLeaveTakenLineChart />
         </Grid>
       </Grid>

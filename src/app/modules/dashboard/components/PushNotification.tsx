@@ -86,10 +86,10 @@ const PushNotification = () => {
             return;
         }
         if (isAuthenticated && Notification.permission === "default") {
-            const permission = await Notification.requestPermission();
+            await Notification.requestPermission();
         }
     }
-    return <Card className="push-notification-card flex-shrink-0">
+    return <Card className="push-notification-card">
         <Typography variant="h6">{formatMessage({ id: "MESSAGE.PUSH_NOTIFICATION_TITLE" })}</Typography>
         <Typography variant="body1">{formatMessage({ id: "MESSAGE.PUSH_NOTIFICATION_MESSAGE" })}</Typography>
         <CustomisedButton

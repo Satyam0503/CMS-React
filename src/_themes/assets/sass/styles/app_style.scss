@@ -1,3 +1,8 @@
+.dark .css-ptbmw8-MuiInputBase-input-MuiOutlinedInput-input:-webkit-autofill {
+  -webkit-box-shadow: unset;
+  -webkit-text-fill-color: unset;
+  caret-color: #fff;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 0.25rem !important;
@@ -5,13 +10,13 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background-color: $neutral-200;
+  background-color: var(--mui-palette-grey-200);
   border-radius: 0.5rem;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: $neutral-400 !important;
+  background: var(--mui-palette-grey-500) !important;
   border-radius: 0.5rem !important;
   border: none !important;
   box-shadow: none !important;
@@ -26,16 +31,7 @@
   text-wrap: balance;
 }
 
-.dark-mode {
-  background-color: $app-dark;
-}
-
-.light-mode {
-  background-color: $neutral-100;
-}
-
 // symbols
-
 .symbol {
   width: 45px;
   height: 45px;
@@ -52,7 +48,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: $app-primary-500;
+  background-color: var(--mui-palette-primary-main);
   gap: 1rem;
   padding: 1rem;
   & > .profile-picture {
@@ -342,7 +338,11 @@ button:hover .ql-fill,
     height: 100%;
     top: 0;
     left: 0;
-    background: linear-gradient(to top, $app-black, transparent);
+    background: linear-gradient(
+      to top,
+      var(--mui-palette-grey-700),
+      transparent
+    );
   }
 
   & > .employee-card-content {
@@ -419,7 +419,7 @@ button:hover .ql-fill,
     flex-grow: 1;
   }
   & .tab-box {
-    border-bottom: 2px solid $neutral-300;
+    border-bottom: 2px solid var(--mui-palette-grey-500);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -431,8 +431,8 @@ button:hover .ql-fill,
     white-space: nowrap;
     &:hover {
       transition: background-color 0.2s ease-out;
-      background-color: $app-primary-100;
-      color: $app-primary-500;
+      background-color: var(--mui-palette-primary-light);
+      color: var(--mui-palette-primary-dark);
     }
 
     & > svg {
@@ -444,8 +444,8 @@ button:hover .ql-fill,
 }
 
 .tab_active {
-  border-bottom: 2px solid $app-primary-500 !important;
-  color: $app-primary-500 !important;
+  border-bottom: 2px solid var(--mui-palette-primary-main) !important;
+  color: var(--mui-palette-primary-main) !important;
   // background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
 }
 
@@ -490,7 +490,7 @@ button:hover .ql-fill,
 }
 
 .logo-preview-container {
-  border: 1px solid black;
+  border: 1px solid var(--mui-palette-grey-900);
   width: 200px;
   height: auto;
   object-fit: contain;
@@ -498,10 +498,11 @@ button:hover .ql-fill,
 
 .push-notification-card {
   padding: 1rem;
-  background-color: $app-primary-200;
-  color: $neutral-900;
+  background-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-grey-900);
+  flex-shrink: 0;
   & > h6 {
-    color: $neutral-700;
+    color: var(--mui-palette-grey-700);
   }
   & > button {
     margin-block-start: 1rem;
@@ -516,7 +517,7 @@ button:hover .ql-fill,
     max-width: 300px;
     width: 100%;
     height: auto;
-    border: 1px solid $neutral-300;
+    border: 1px solid var(--mui-palette-grey-300);
     display: block;
     border-radius: 0.25rem;
   }
@@ -629,7 +630,7 @@ button:hover .ql-fill,
   td,
   th {
     border-collapse: collapse;
-    border: 1px solid $app-black;
+    border: 1px solid var(--mui-palette-grey-900);
     padding: 0.25rem 0.5rem;
     text-align: center;
   }
@@ -645,17 +646,16 @@ button:hover .ql-fill,
   gap: 0.25rem;
   & > * {
     flex-grow: 1;
-    background-color: $app-secondary-200;
+    background-color: var(--mui-palette-secondary-light);
     height: 0.35rem;
     border-radius: 0.25rem;
   }
   & > [data-active-block="true"] {
-    background-color: $success-400;
+    background-color: var(--mui-palette-success-light);
   }
 }
 
 // leave request filter
-
 .leave-request-filter {
   display: flex;
   flex-direction: row;

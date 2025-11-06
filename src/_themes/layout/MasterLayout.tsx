@@ -29,7 +29,6 @@ const MasterLayout = () => {
         <PageDataProvider>
           <Stack
             className="flex-column flex-shrink-0 flex-grow-1"
-            sx={{ backgroundColor: "background.body" }}
           >
             <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack

@@ -48,7 +48,7 @@ export const DonutChart = (props: DonutChartProps) => {
 }
 
 const StyledText = styled('text')(({ theme }) => ({
-    fill: theme.palette.text.primary,
+    fill: theme.vars?.palette.text.primary,
     textAnchor: 'middle',
     dominantBaseline: 'central',
     textAlign: "center",

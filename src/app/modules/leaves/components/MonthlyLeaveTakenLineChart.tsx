@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Box, Card, Stack, Typography, useTheme } from "@mui/material";
 import { BarChart, } from "@mui/x-charts";
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ export const MonthlyLeaveTakenLineChart = () => {
     const { formatMessage: i } = useIntl();
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<MonthlyLeaveTakenSummary[]>([]);
+    const theme = useTheme();
     useEffect(() => {
         (async () => {
             try {
@@ -37,7 +38,8 @@ export const MonthlyLeaveTakenLineChart = () => {
                 <BarChart
                     series={[{
                         data: chartData.map(item => item.totalLeavesTaken),
-                        label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" })
+                        label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" }),
+                        color: theme.vars?.palette.primary.main
                     }]}
                     xAxis={
                         [{ scaleType: 'band', data: chartData.map(item => i({ id: monthMapper[item.month] }).slice(0, 3)), tickPlacement: "middle", tickLabelPlacement: "middle" }]

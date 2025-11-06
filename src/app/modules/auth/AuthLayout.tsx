@@ -10,7 +10,7 @@ const AuthLayout = () => {
 
   return (
     <Container
-      sx={{ height: "100vh", alignContent: "center", backgroundColor: "background.body" }}
+      sx={{ height: "100vh", alignContent: "center" }}
       className="d-flex flex-column gap-4"
     >
       <Stack direction="row" spacing={2} sx={{
