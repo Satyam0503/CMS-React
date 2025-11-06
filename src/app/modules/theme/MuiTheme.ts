@@ -15,7 +15,6 @@ export const createApplicationTheme = (locale: Localization) => {
     },
     locale
   );
-  console.log(theme);
 
   const extendedTheme = createTheme(theme, {
     breakpoints: {
@@ -281,7 +280,7 @@ export const createApplicationTheme = (locale: Localization) => {
             fontSize: 12,
             fontWeight: "bolder",
             backgroundColor: "transparent",
-            borderBottom: "2px solid" + theme.vars?.palette.grey[400],
+            borderBottom: `2px solid ${theme.vars?.palette.grey[400]}`,
           },
         },
       },

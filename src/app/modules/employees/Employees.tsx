@@ -8,7 +8,7 @@ import {
 import { useIntl } from "react-intl";
 import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { deleteEmployee, getAllEmployees } from "./employeeServices";
 import { toast } from "react-toastify";
 import { CustomisedTable } from "../../shared/components/CustomisedTable";
@@ -24,7 +24,6 @@ import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
-import { AddEmployee } from "./components/AddEmployee";
 import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
 import { countAppliedFilter } from "../../../utils/common"
 import { usePageData } from "../../Context/PageDataProvider";
@@ -33,10 +32,10 @@ import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
 type ViewMode = "table" | "grid";
 
 const Employees = () => {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
-  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [showAddEmployeeStepper, setShowAddEmployeeStepper] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | undefined>();
   const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
@@ -84,7 +83,7 @@ const Employees = () => {
           setRefresh(!isRefresh);
         }
       } catch (error) {
-        toast.error(intl.formatMessage({ id: "ERROR.SOMETHING_WRONG" }));
+        toast.error(i({ id: "ERROR.SOMETHING_WRONG" }));
         console.error(
           "Error :",
           error instanceof Error ? error.message : error
@@ -135,6 +134,10 @@ const Employees = () => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleReresh = () => {
+    setRefresh(!isRefresh);
+  }
+
   useEffect(() => {
     setLoading(true);
     const getAllEmployeesList = async () => {
@@ -162,7 +165,7 @@ const Employees = () => {
   }, [paginationValues, employeeFilters, isRefresh, search]);
 
   useEffect(() => {
-    setPageTitle(intl.formatMessage({ id: "PAGE.EMPLOYEES" }));
+    setPageTitle(i({ id: "PAGE.EMPLOYEES" }));
   }, []);
 
   return (
@@ -209,13 +212,12 @@ const Employees = () => {
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
-                // <CustomIconButton
-                //   icon={<Add />}
-                //   handleClick={() => setModalOpen(true)}
-                //   tooltip={intl.formatMessage({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                //   ariaLabel="Add employee"
-                // />
-                (<AddEmployeeStepper />)
+                <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setShowAddEmployeeStepper(true)}
+                  tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                  ariaLabel="Add employee"
+                />
               )}
           </Stack>
           {open && (
@@ -253,18 +255,13 @@ const Employees = () => {
           />
         )}
       </Card>
-      {isModalOpen && (
-        <AddEmployee
-          open={isModalOpen}
-          handleClose={() => setModalOpen(false)}
-          refresh={isRefresh}
-          setRefresh={setRefresh}
-        />
+      {showAddEmployeeStepper && (
+        <AddEmployeeStepper open={showAddEmployeeStepper} handleReresh={handleReresh} handleClose={() => setShowAddEmployeeStepper(false)} />
       )}
       {isConfirmModalOpen && (
         <ConfirmationModal
-          title={intl.formatMessage({ id: "CONFIRMATION.TITLE.DELETE_EMP" })}
-          content={intl.formatMessage({ id: "CONFIRMATION.CONTENT.DELETE_EMP" })}
+          title={i({ id: "CONFIRMATION.TITLE.DELETE_EMP" })}
+          content={i({ id: "CONFIRMATION.CONTENT.DELETE_EMP" })}
           open={isConfirmModalOpen}
           handleClose={closeConfirmationModal}
           handleConfirmation={handleEmployeeDeletion}

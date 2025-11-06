@@ -55,7 +55,7 @@ const transformCustomAttributeData = (attributeListlist: EmployeeCustomAttribute
 
 export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const { formatMessage: i } = useIntl();
-  const { updateUserDetails, setRefresh } = useUserDetails();
+  const { updateUserDetails } = useUserDetails();
   const user = useAppSelector((state) => state.user.userData)!;
   const dispatch = useAppDispatch();
   const employeeId = useParams().employeeid;
@@ -87,6 +87,8 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
       employmentType: userData.employmentType,
       bankAccountNumber: userData.bankAccountNumber,
       panNumber: userData.panNumber,
+      roleId: userData.roleId,
+      gender: userData.gender,
       customAttributeList: [...transformCustomAttributeData(userData.customAttributes)]
     }),
     [userData]
@@ -469,7 +471,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                 {
                   hasEditPermission &&
 
-                  <Grid container spacing={2} className="mt-1">
+                  <Grid container spacing={2} sx={{ mt: 2 }}>
                     {
                       allCustomAttributes.length > 0 &&
                       allCustomAttributes.map(attribute => (

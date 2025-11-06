@@ -7,13 +7,12 @@ import {
     TextField,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { Formik } from "formik";
+import { Formik, FormikProps } from "formik";
 import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmploymentType, Gender, bloodGroups } from "../../../../utils/constant/Constant";
 import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
@@ -52,10 +51,11 @@ const employeeInitialValue: EditEmployeePayloadModel = {
 interface PropsTypes {
     employeeData: InviteNewEmployeeModel & { userId: string };
     onUserUpdate: (success: boolean) => void;
+    formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>
 }
 
 export const UpdateEmployeeData = (props: PropsTypes) => {
-    const { employeeData, onUserUpdate } = props;
+    const { employeeData, onUserUpdate, formRef } = props;
     const [roles, setRoles] = useState<RoleModel[]>([]);
     const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
@@ -127,16 +127,16 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     }, [])
 
     return (
-        <Stack spacing={2} sx={{ p: 1, marginBlockStart: 2 }}>
+        <Stack spacing={2} sx={{ p: 1, }}>
             <Formik
                 initialValues={{ ...employeeInitialValue, ...employeeData }}
                 validationSchema={employeeSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     UpdateEmployeeDetails(values, setSubmitting);
                 }}
+                innerRef={formRef}
             >
                 {({
-                    isSubmitting,
                     values,
                     setFieldTouched,
                     setFieldValue,
@@ -436,7 +436,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 })}
                                             />
                                         </Grid>
-                                        <Grid
+                                        {/* <Grid
                                             size={{
                                                 xs: 12,
                                                 sm: 6
@@ -452,12 +452,11 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                     {i({ id: "EMPLOYEE.STATUS.INACTIVE" })}
                                                 </MenuItem>
                                             </SelectInput>
-                                        </Grid>
+                                        </Grid> */}
 
                                         <Grid
                                             size={{
                                                 xs: 12,
-                                                sm: 6
                                             }}>
                                             <TextInput
                                                 label={i({ id: "USER.ADDRESS" })}
@@ -499,19 +498,6 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                         </Grid>
                                     </Grid>
                                 </Grid>
-                            </Stack>
-                            <Stack className="flex-row justify-content-end mt-4 gap-2">
-                                {/* <CustomisedButton
-                                    variant="outlined"
-                                    label={i({ id: "BUTTON.CLOSE" })}
-                                    handleClick={handleClose}
-                                /> */}
-                                <CustomisedButton
-                                    loading={isSubmitting}
-                                    label={i({ id: "BUTTON.UPDATE" })}
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                />
                             </Stack>
                         </form>
                     );

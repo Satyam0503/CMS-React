@@ -114,7 +114,6 @@ export const ServiceUrl = {
   GET_EMPLOYEE_SUMMARY: `api/User/GetEmployeeSummary`,
   GET_EMPLOYEE_SKILLS: `api/User/GetEmployeeSkills`,
 
-  ADD_EMPLOYEE: `api/User/AddEmployees`,
   INVITE_NEW_EMPLOYEE: "api/User/InviteNewEmployee",
   ADD_EMPLOYEE_EDUCATION: `api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `api/User/AddEmployeeCertification`,

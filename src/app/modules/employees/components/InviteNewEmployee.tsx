@@ -2,15 +2,16 @@ import { useIntl } from "react-intl";
 import { InviteEmployeeResponse, InviteNewEmployeeModel } from "../models";
 import { InputFieldProps, TextInput } from "../../../shared/components/form-component/TextInput";
 import { PersonAdd } from "@mui/icons-material";
-import { Alert, Button, Stack } from "@mui/material";
-import { Formik } from "formik";
+import { Alert, Stack } from "@mui/material";
+import { Formik, FormikProps } from "formik";
 import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
 import { inviteNewEmployee } from "../employeeServices";
 import { toast } from "react-toastify";
 import { getStatusCodeString } from "../../../../utils/common";
 
 interface PropsTypes {
-    handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void
+    handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void,
+    formRef: React.MutableRefObject<FormikProps<InviteNewEmployeeModel> | null>
 }
 
 const initialEmployeeDetails: InviteNewEmployeeModel = {
@@ -28,7 +29,7 @@ const inviteEmployeeFormFields: InputFieldProps[] = [
 ] as const;
 
 export const InviteNewEmployee = (props: PropsTypes) => {
-    const { handleInviteUser } = props
+    const { handleInviteUser, formRef } = props
     const { formatMessage: i } = useIntl();
 
     const InviteNewEmployee = async (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
@@ -46,11 +47,10 @@ export const InviteNewEmployee = (props: PropsTypes) => {
         } finally {
             setSubmitting(false);
         }
-
     }
     return (
-        <Stack spacing={2} sx={{ p: 1, marginBlockStart: 2 }}>
-            <Alert color="warning" severity="warning" icon={<PersonAdd />}>
+        <Stack spacing={2} sx={{ p: 1 }}>
+            <Alert severity="warning" icon={<PersonAdd />}>
                 {i({ id: "EMPLOYEE.INVITE_EMP.INVITE_NOTE" })}
             </Alert>
             <Formik
@@ -59,6 +59,7 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                 onSubmit={(values, { setSubmitting }) => {
                     InviteNewEmployee(values, setSubmitting);
                 }}
+                innerRef={formRef}
             >
                 {
                     (formik) => {
@@ -76,15 +77,9 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                     />
                                 ))
                             }
-                            <Stack sx={{ mt: 4 }}>
-                                <Button variant="contained" type="submit" className="align-self-start" loading={formik.isSubmitting}>
-                                    {i({ id: "BUTTON.INVITE" })}
-                                </Button>
-                            </Stack>
                         </form>
                     }
                 }
-
             </Formik>
         </Stack >
     )

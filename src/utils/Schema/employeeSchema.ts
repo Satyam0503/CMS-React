@@ -24,7 +24,6 @@ export const employeeSchema = Yup.object().shape({
     .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
     .nullable(),
   bloodGroup: Yup.string().notRequired().nullable(),
-  status: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   dateOfJoining: Yup.date()
     .max(new Date(), "VALIDATION_ERR.FUTURE_JOINING_DATE")
     .nullable(),

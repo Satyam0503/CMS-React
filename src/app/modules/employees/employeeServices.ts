@@ -3,20 +3,12 @@ import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
   EditEmployeeResponseData,
-  EmployeeModel,
   GetAllEmployeePayloadModel,
   GetAllEmployeeResponseData,
   InviteEmployeeResponse,
   InviteNewEmployeeModel,
 } from "./models";
 import { EditEmployeePayloadModel } from "../users/models";
-
-export const addEmployee = async (payload: EmployeeModel) => {
-  return postRequest<EmployeeModel, ApiResponse>(
-    ServiceUrl.ADD_EMPLOYEE,
-    payload
-  );
-};
 
 export const updateEmployee = async (
   payload: EditEmployeePayloadModel,
