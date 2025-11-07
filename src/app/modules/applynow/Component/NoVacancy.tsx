@@ -1,4 +1,4 @@
-import { Typography, Grid, Stack } from "@mui/material";
+import { Typography, Grid, Stack, Box } from "@mui/material";
 import { useIntl } from "react-intl";
 import { auto } from "@popperjs/core";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
@@ -8,9 +8,9 @@ export default function NoVacancy() {
 
   return (
     <>
-      <Grid container display={"flex"} gap={1.5}>
-        <Stack spacing={1}>
-          <Typography variant="h4" color="primary.main">
+      <Grid container display={"flex"} gap={1.5} justifyContent={'center'}>
+        <Stack spacing={1} display={"flex"} gap={1.5} className="no-vaccancies-header">
+          <Typography variant="h4" color="primary.main" fontWeight={'600'}>
             {intl.formatMessage({
               id: "VACANCY.TEXT1",
             })}
@@ -23,16 +23,16 @@ export default function NoVacancy() {
           </Typography>
         </Stack>
 
-        <Stack>
+        <Box component={'div'} display={'flex'} justifyContent={'center'} alignContent={'center'}>
           <img
             src={toAbsoluteUrl("media/auth/work_in_progress.svg")}
-            width={"100%"}
-            height={"100%"}
+            width={"60%"}
+            height={"90%"}
           />
-        </Stack>
+        </Box>
 
         <Stack m={auto} textAlign={"justify"}>
-          <Typography variant="body1" fontWeight={400}>
+          <Typography variant="body1" fontWeight={400} fontSize={'14px'}>
             {intl.formatMessage({
               id: "VACANCY.TEXT3",
             })}
