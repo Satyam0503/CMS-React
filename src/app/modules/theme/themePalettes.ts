@@ -93,10 +93,11 @@ export const darkPalette: ColorSystemOptions = {
 export const lightPalette: ColorSystemOptions = {
   palette: {
     primary: {
-      // lighter: colors.primary[200],
+      lighter: colors.primary[200],
       light: colors.primary[300],
       main: colors.primary[500],
-      dark: colors.primary[600],
+      dark: colors.primary[700],
+      darker: colors.primary[900],
     },
     secondary: {
       lighter: colors.secondary[200],

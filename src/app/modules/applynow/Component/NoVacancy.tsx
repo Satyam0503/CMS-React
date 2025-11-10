@@ -8,9 +8,26 @@ export default function NoVacancy() {
 
   return (
     <>
-      <Grid container display={"flex"} gap={1.5} justifyContent={'center'}>
-        <Stack spacing={1} display={"flex"} gap={1.5} className="no-vaccancies-header">
-          <Typography variant="h4" color="primary.main" fontWeight={'600'}>
+      <Grid
+        container
+        sx={{
+          display: "flex",
+          gap: 1.5,
+          justifyContent: 'center'
+        }}>
+        <Stack
+          spacing={1}
+          className="no-vaccancies-header"
+          sx={{
+            display: "flex",
+            gap: 1.5
+          }}>
+          <Typography
+            variant="h4"
+            sx={{
+              color: "primary.main",
+              fontWeight: '600'
+            }}>
             {intl.formatMessage({
               id: "VACANCY.TEXT1",
             })}
@@ -28,7 +45,13 @@ export default function NoVacancy() {
           </Typography>
         </Stack>
 
-        <Box component={'div'} display={'flex'} justifyContent={'center'} alignContent={'center'}>
+        <Box
+          component={'div'}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center'
+          }}>
           <img
             src={toAbsoluteUrl("media/auth/work_in_progress.svg")}
             width={"60%"}
@@ -36,8 +59,17 @@ export default function NoVacancy() {
           />
         </Box>
 
-        <Stack m={auto} textAlign={"justify"}>
-          <Typography variant="body1" fontWeight={400} fontSize={'14px'}>
+        <Stack
+          sx={{
+            m: auto,
+            textAlign: "justify"
+          }}>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 400,
+              fontSize: '14px'
+            }}>
             {intl.formatMessage({
               id: "VACANCY.TEXT3",
             })}

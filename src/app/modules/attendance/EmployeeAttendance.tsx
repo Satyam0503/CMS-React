@@ -157,7 +157,9 @@ const EmployeeAttendance: FC = () => {
       </Grid>
       <Grid size={12}>
         <Card sx={{ p: "2rem" }}>
-          <Typography variant="h6" mb={3}>
+          <Typography variant="h6" sx={{
+            mb: 3
+          }}>
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
           <Stack
