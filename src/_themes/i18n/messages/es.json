@@ -734,24 +734,37 @@
     "SEARCH_EMP": "Buscar por nombre ...",
     "TYPE_HERE": "Escribe aquí ..."
   },
-  "HOLIDAY": {
-    "NAME": "Nombre del feriado",
-    "TYPE": "Tipo de feriado",
+  "OCASION": {
+    "NAME": "Nombre de la ocasión",
+    "TYPE": "Tipo de ocasión",
     "DATE": "Fecha",
     "END_DATE": "Fecha de finalización",
     "DESCRIPTION": "Descripción",
     "CREATED_BY": "Creado por",
-    "EDIT_HOLIDAYS": "Editar feriado",
-    "ADD_HOLIDAYS": "Agregar feriado",
-    "NO_HOLIDAY_MONTH": "No hay feriados este mes",
-    "NO_HOLIDAYS": "No hay feriados",
-    "HOLIDAY_IMAGE": "Imagen de portada",
+    "EDIT_OCASIONS": "Editar ocasión",
+    "ADD_OCASIONS": "Agregar ocasión",
+    "NO_OCASION_MONTH": "No hay ocasiones este mes",
+    "NO_OCASIONS": "No hay ocasiones",
+    "OCASION_IMAGE": "Imagen de portada",
     "TYPES": {
-      "CULTURAL": "Cultural",
-      "HEALTH": "Salud",
-      "RELIGIOUS": "Religioso",
-      "NATIONAL": "Nacional"
-    }
+      "ALL": "Todos",
+      "CATEGORY": "Categoría",
+      "HOLIDAY": "Festivos",
+      "EVENT": "Eventos",
+      "BIRTHDAY": "Cumpleaños",
+      "ANNIVERSARY": "Aniversarios"
+    },
+    "UPCOMING_OCASIONS": "Próximas Ocasiones",
+    "OCASION_TEXT": "Ocasión",
+    "MONTH_OVERVIEW": "Resumen del mes",
+    "NO_OCASIONS_FOUND": "No se encontraron ocasiones este mes",
+    "NO_OCASIONS_ON_DAY": "No hay ocasiones",
+    "OCASIONS_ON_DATE": "Resumen del día",
+    "ADD_NEW_OCASION": "Agregar nueva ocasión",
+    "ALL_OCCASIONS": "Todas",
+    "HOLIDAY_OCCASIONS": "Festivos",
+    "EVENT_OCCASIONS": "Eventos",
+    "RECURRING": "Recurrente"
   },
   "MONTHS": {
     "JANUARY": "Enero",

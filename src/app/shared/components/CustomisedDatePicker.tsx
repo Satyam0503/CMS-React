@@ -15,43 +15,47 @@ interface PropsTypes {
   name?: string;
   className?: string;
   disabled?: boolean;
-  views?: DateView[]
+  views?: DateView[];
+  format?:string;
   sx?: SxProps<Theme>;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx } = props;
+  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx ,format} = props;
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={["DatePicker"]}>
-        <DatePicker
-          className="datepicker"
-          name={name}
-          label={label}
-          value={value}
-          onChange={(newDate) => {
-            setValue(newDate);
-          }}
-          maxDate={maxDate}
-          minDate={minDate}
-          disabled={disabled}
-          views={views}
-          slotProps={{
-            textField: {
-              inputProps: {
-                readOnly: true,
-                onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
-                onScroll: (e) => e.preventDefault(),
+    
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={["DatePicker"]}>
+          <DatePicker
+            className="datepicker"
+            name={name}
+            label={label}
+            value={value}
+            onChange={(newDate) => {
+              setValue(newDate);
+            }}
+            maxDate={maxDate}
+            minDate={minDate}
+            disabled={disabled}
+            views={views}
+            format={format}
+            slotProps={{
+              textField: {
+                className: "w-100",
+                inputProps: {
+                  readOnly: true,
+                  onKeyDown: (e) => e.preventDefault(), // Disable arrow key navigation
+                  onScroll: (e) => e.preventDefault(),
+                },
               },
-            },
-            inputAdornment: {
-              sx: {
-                "& .MuiIconButton-root": {
-                  border: 0,
-                  padding: 0
+              inputAdornment: {
+                sx: {
+                  "& .MuiIconButton-root": {
+                    border: 0,
+                    padding: 0
+                  }
                 }
               }
-            }
 
           }}
           sx={{

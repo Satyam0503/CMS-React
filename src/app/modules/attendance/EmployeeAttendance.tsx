@@ -73,7 +73,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg={theme.palette.primary.lighter}
+                iconBg={'#d9e5f5'}
                 iconColor="info.dark"
                 icon={<EventAvailable fontSize="large" />}
                 number={"175"}
@@ -92,7 +92,7 @@ const EmployeeAttendance: FC = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg={theme.palette.primary.lighter}
+                iconBg={'#d9f5df'}
                 icon={<TimerOffOutlined fontSize="large" />}
                 iconColor={"success.light"}
                 number={"16"}
@@ -157,10 +157,8 @@ const EmployeeAttendance: FC = () => {
       </Grid>
       <Grid size={12}>
         <Card sx={{ p: "2rem" }}>
-          <Typography variant="h6" sx={{
-            mb: 3
-          }}>
-            {intl.formatMessage({ id: "Modules.Attendance" })}
+          <Typography variant="h6" mb={3}>
+            {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
           <Stack
             direction="row"

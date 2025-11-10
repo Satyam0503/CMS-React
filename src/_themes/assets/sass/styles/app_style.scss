@@ -139,6 +139,15 @@ input:-webkit-autofill {
   background-color: $info-300;
   color: $info-800;
 }
+.secondary {
+  background-color: $app-secondary-200;
+  color: $app-secondary-700;
+}
+.primary {
+  background-color: $app-primary-300;
+  color: $app-primary-700;
+}
+
 
 // .pdf_viewer {
 //   max-width: 100% !important;
@@ -191,11 +200,62 @@ canvas {
 .footer {
   position: relative;
   bottom: 0;
-  background-image: linear-gradient(
-    180deg,
-    $app-primary-wave 0%,
-    $app-primary-footer 100%
-  );
+  margin-top: 40px;
+  border-top: 2px solid rgb(233, 233, 233);
+  box-shadow: 0px -1px 15px 2px rgba(201, 201, 201, 0.52);
+
+  .footer-company-logo{
+    width: 80%;
+    display: flex;
+    align-items: center;
+
+    @media (min-width: 900px) {
+      width: 40%;
+    }
+
+    .footer-company-logo-container{
+      object-fit: contain;
+  
+      img{
+        // height: 50%;
+        width: 40%;
+      }
+    }
+    .footer-company-socials{
+      // width: 20px;
+      svg{
+        font-size: 26px;
+      }
+    }
+  }
+
+  .footer-company-links{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+
+    @media (min-width: 600px) {
+      flex-direction: row;
+    }
+
+    @media (min-width: 900px) {
+      width: 30%;
+    }
+
+    .footer-company-links-nav{
+      width: 50%;
+      gap: 10px;
+    }
+
+    .footer-address-text{
+      span{
+
+        font-size: 12px;
+      }
+    }
+  }
+
 }
 
 .linear-text-gradient {
@@ -411,7 +471,44 @@ button:hover .ql-fill,
     }
   }
 }
+.reset-padding{
+  .MuiStack-root{
+    padding-top: 0 !important;
+    
+    .MuiFormControl-root{
+      .MuiInputBase-root{
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
+        .MuiInputBase-input{
+          padding: 0;
+          font-size: 24px;
+          font-weight: 600;
+          color: $app-primary-500;
+          padding-left: 15px;
+          width: 100%;
+
+          @media (min-width: 600) {
+            width: 250px;
+          }
+        }
+
+        fieldset{
+          // border: none;
+          border-color: $app-primary-500;
+        }
+        
+        .MuiInputAdornment-root{
+          button{
+            color: $app-primary-500;
+          }
+        }
+      }
+    }
+  }
+
+}
 .tab-container {
   overflow-x: scroll !important ;
   scrollbar-width: none;
@@ -532,6 +629,282 @@ button:hover .ql-fill,
   background-color: $app-notification-hover;
 }
 
+
+// Main Holiday Calendar
+.main-holiday-calendar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  @media (min-width: 1280px) {
+    flex-direction: row;
+  }
+
+  .calendar-sidebar{
+    width: 100%;
+    height: inherit;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    
+    @media (min-width: 1280px) {
+      width: 300px;
+      min-width: 250px;
+      gap: 20px;
+      align-items: center;
+      justify-content: start;
+      align-items: start;
+    }
+
+    .calendar-sidebar-upcoming{
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      width: 100%;
+    }
+
+    .calendar-sidear-holidays-holder{
+      display: grid;
+      align-items: center;
+      grid-template-columns: 1fr;
+      width: 100%;
+
+      @media (min-width: 600px) {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      @media (min-width: 1280px) {
+        grid-template-columns: 1fr;
+      }
+
+      .MuiPaper-root{
+        button{
+          border: none;
+        }
+      }
+
+      .occasion-type{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: 600;
+
+        .count-div{
+          height: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 4px;
+          aspect-ratio: 1;
+          color: white;
+        }
+        
+        .holiday-colors{
+          background-color: $app-primary-700;
+        }
+
+        .event-colors{
+          background-color: $app-secondary-700;
+        }
+
+        .bithdays-colors{
+          background-color: $success-700;
+        }
+
+        .anivaesary-colors{
+          background-color: $info-800;
+        }
+      }
+    }
+
+    .holiday-card{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+    }
+  }
+
+
+  .calendar-header{
+    display: flex;
+    padding: 20px;
+    gap: 15px;
+    flex-direction: column;
+    justify-content: center;
+
+    @media (min-width: 600px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: auto;
+    }
+
+    @media (min-width: 960px) {
+      flex-direction: row;
+      justify-content:space-between;
+      align-items: c;
+    }
+    
+    @media (min-width: 1200px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: auto;
+    }
+
+    .calendar-controls{
+      display: flex;
+      align-items: center;
+      gap: .5rem ;
+      height: 100%;
+    }
+
+    .calendar-filters{
+      .MuiFormControl-root{
+        .MuiInputBase-root{
+          .MuiSelect-select{
+            display: flex;
+            font-size: 16px;
+            justify-content: start;
+            align-items: center;
+          }
+        }
+      }
+    }
+  }
+
+  .calendar-days {
+    display: flex;
+    flex-direction: column;
+
+    .calendar-day{
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgb(219, 219, 219);
+      gap: 2px;
+      align-items: center;
+      justify-content: end;
+      aspect-ratio: 1;
+      position: relative;
+      
+      
+      @media (min-width: 600px) {
+        justify-content: center;
+      }
+
+      @media (min-width: 850px) {
+        overflow: auto;
+      }
+
+      .calendar-day-holiday{
+        width: 100%;
+        padding: 0 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        p{
+          font-weight: 600;
+        }
+      }
+
+      .holiday-dot-color{
+        background-color: $app-primary-600;
+      }
+      
+      .calendar-day-holiday-dot{
+        top: 5px;
+        left: 5px;
+        position: absolute;
+        display: flex;
+        height: 5px;
+        width: 5px;
+        border-radius: 50%;
+        display: flex;
+        
+        @media (min-width: 600px) {
+          top: 10px;
+          left: 10px;
+          height: 8px;
+          width: 8px;
+        }
+      }
+    }
+
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: start;
+      justify-content: start;
+      gap: 0;
+      grid-auto-rows: min-content;
+    }
+    
+
+    .hover-theme-color {
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+    }
+    
+    .hover-theme-light{
+      &:hover {
+        background-color: $app-primary-100;
+      }
+    }
+
+    .hover-theme-dark{
+      &:hover {
+        background-color: $app-primary-600;
+      }
+    }
+    
+    .today{
+      color: $app-primary-600 !important;
+    }
+    
+    .selected-day{
+      border-bottom: 3px solid $app-primary-500;
+      
+      @media (min-width: 600px) {
+        border-bottom: 5px solid $app-primary-500;
+      }
+    }
+  }
+}
+
+//Popover List Styles
+
+.popover-list{
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  gap: 4px 6px;
+
+  li{
+    border-bottom: 0;
+    .MuiListItemButton-gutters {
+      display: flex;
+      align-items: center;
+      padding: 0;
+      padding-left: 8px;
+      width: 120px;
+      
+      .MuiListItemText-root{
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}
+
 .holiday_container {
   column-width: 350px;
   column-gap: 2rem;
@@ -562,7 +935,6 @@ button:hover .ql-fill,
         right: 0;
         top: 50%;
         transform: translate(-50%, -50%);
-        border: none;
       }
     }
   }

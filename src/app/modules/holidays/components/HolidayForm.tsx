@@ -3,64 +3,63 @@ import {
   Typography,
   Grid,
   FormHelperText,
-  MenuItem,
   Stack,
-  Select,
   Box,
   IconButton,
-  TextField,
   FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Checkbox,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Check, CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-
-import holidaySchema from "../../../../utils/Schema/holidaySchema";
-import { HolidayTypes } from "../../../../utils/constant/Constant";
+import holidaySchema from "../../../../utils/Schema/calendarSchema";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { HolidayModel } from "../models";
-import { SelectInput } from "../../../shared/components/form-component/SelectInput";
-import { addEditHoliday } from "../holidayServices";
+import { CalendarItem } from "../models";
+import { addEditCalendarItem } from "../holidayServices";
 import { toast } from "react-toastify";
 
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
-  initialValues: HolidayModel;
+  initialValues: CalendarItem;
   isEdit: boolean;
   handleRefresh: () => void;
 };
 
 const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, isEdit, handleRefresh }) => {
+
   const { formatMessage: i } = useIntl();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, formik: FormikProps<HolidayModel>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, formik: FormikProps<CalendarItem>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const selectedFile = files[0];
-      formik.setFieldTouched("holidayImage", true, true)
-      formik.setFieldValue("holidayImage", selectedFile, true)
+      formik.setFieldTouched("image", true, true)
+      formik.setFieldValue("image", selectedFile, true)
     }
   }
 
-
-  const handleAddUpdateHoliday = async (values: HolidayModel, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleAddUpdateHoliday = async (values: CalendarItem, setSubmitting: (isSubmitting: boolean) => void) => {
     try {
       const formData = new FormData();
       if (isEdit) {
-        formData.append("HolidayId", values.holidayId!);
+        formData.append("id", values.id!);
       }
-      formData.append("HolidayName", values.holidayName);
-      formData.append("HolidayType", values.holidayType.toString());
-      formData.append("Date", dayjs(values.date).toISOString());
-      formData.append("HolidayImage", values.holidayImage!);
-      formData.append("Detail", values.detail);
+      formData.append("name", values.name);
+      formData.append("type", values.type.toString());
+      formData.append("date", dayjs(values.date).toISOString());
+      formData.append("image", values.image!);
+      formData.append("description", values.description);
+      formData.append("recurring", String(values.recurring));
 
-      const { data } = await addEditHoliday(formData);
+      const { data } = await addEditCalendarItem(formData);
       if (data.success) {
         toast.success(i({ id: isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.HOLIDAY_CREATE" }))
         handleRefresh();
@@ -76,9 +75,13 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
     }
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+
+  }
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}
-      title={isEdit ? i({ id: "HOLIDAY.EDIT_HOLIDAYS" }) : i({ id: "HOLIDAY.ADD_HOLIDAYS" })}
+      title={isEdit ? i({ id: "OCCASION.EDIT_OCCASION" }) : i({ id: "OCCASION.ADD_OCCASION" })}
     >
       <Formik
         initialValues={initialValues}
@@ -88,119 +91,121 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
         }}
       >
         {(formik) => {
-          return (
-            <form onSubmit={formik.handleSubmit} >
-              <Grid container spacing={2}>
-                <Grid
-                  size={{
-                    xs: 12,
-                    md: 6
-                  }}>
-                  <TextInput
-                    required={true}
-                    label={i({ id: "HOLIDAY.NAME" })}
-                    type="text"
-                    name="holidayName"
-                    placeholder="Holiday Name"
-                  />
-                </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    md: 6
-                  }}>
-                  <SelectInput
-                    label={i({ id: "HOLIDAY.TYPE" })}
-                    name="holidayType"
-                  >
-                    {HolidayTypes.map(({ id, label }) => {
-                      return (
-                        <MenuItem key={id} value={id}>
-                          {i({ id: label })}
-                        </MenuItem>
-                      )
-                    })}
-                  </SelectInput>
-                </Grid>
+          console.log(formik.errors);
+          console.log(formik.values);
+          const selectedFileName = formik.values.imageUrl
 
-                <Grid size={12}>
-                  <CustomisedDatePicker
-                    label={i({ id: "HOLIDAY.DATE" })}
-                    value={formik.values.date ? dayjs(formik.values.date) : null}
-                    setValue={(newDate: Dayjs | null) => {
-                      formik.setFieldTouched("date", true);
-                      formik.setFieldValue("date", newDate);
-                    }}
-                    name="date"
-                  />
-                  <FormHelperText>
-                    {formik.touched.date && formik.errors.date && formik.errors.date}
-                  </FormHelperText>
-                </Grid>
-
-                <Grid size={12}>
-                  <TextInput
-                    label={i({
-                      id: "HOLIDAY.DESCRIPTION",
-                    })}
-                    placeholder={i({
-                      id: "HOLIDAY.DESCRIPTION",
-                    })}
-                    name="detail"
-                    multiline={true}
-                    type="text"
-                  />
-                </Grid>
+          return <form onSubmit={formik.handleSubmit} >
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <TextInput
+                  required={true}
+                  label={i({ id: "OCCASION.NAME" })}
+                  type="text"
+                  name="name"
+                  placeholder={i({ id: "OCCASION.NAME" })}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  // defaultValue="1"
+                  {...formik.getFieldProps('type')}
+                >
+                  <FormControlLabel value="1" control={<Radio />} label={i({ id: "OCCASION.TYPES.HOLIDAY" })} />
+                  <FormControlLabel value="2" control={<Radio />} label={i({ id: "OCCASION.TYPES.EVENT" })} />
+                </RadioGroup>
               </Grid>
 
-              <Stack className="mt-4">
-                <FormLabel>
-                  {i({ id: "HOLIDAY.HOLIDAY_IMAGE" })}
-                </FormLabel>
-                <Box component="div"
-                  sx={{
-                    border: 1,
-                    borderRadius: 1,
-                    borderColor: 'text.disabled'
+              <Grid item xs={12} md={6}>
+                <CustomisedDatePicker
+                  label={i({ id: "OCCASION.DATE" })}
+                  value={formik.values.date ? dayjs(formik.values.date) : null}
+                  setValue={(newDate: Dayjs | null) => {
+                    formik.setFieldTouched("date", true);
+                    formik.setFieldValue("date", newDate);
                   }}
-                  className="d-flex flex-column align-items-center text-center p-4 "
-                >
-                  <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: formik.touched.holidayImage && Boolean(formik.errors.holidayImage) ? 'error.main' : 'primary.main' }}>
-                    <CloudUploadOutlined className="fs-36" />
-                    <input
-                      name="companyLogo"
-                      type="file"
-                      accept=".jpg,.png,.webp"
-                      onChange={(e) => handleFileChange(e, formik)}
-                      hidden
-                    />
-                  </IconButton>
-                  <Stack>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}> {i({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: formik.values.holidayImage?.name })}</Typography>
-                    {
-                      (formik.touched.holidayImage && formik.errors.holidayImage) ?
-                        <Typography variant="body2" sx={{ color: 'error.main' }}>{i({ id: formik.errors.holidayImage })}</Typography>
-                        :
-                        <Typography variant="body2">{i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}</Typography>
-                    }
-                  </Stack>
-                </Box>
-              </Stack>
+                  name="date"
+                />
+                <FormHelperText>
+                  {formik.touched.date && formik.errors.date && formik.errors.date}
+                </FormHelperText>
+              </Grid>
 
-              <Stack className="flex-row justify-content-end gap-2 mt-4">
-                <CustomisedButton
-                  variant="outlined"
-                  label={i({ id: "BUTTON.CANCEL" })}
-                  handleClick={handleClose}
+              <Grid item xs={12} md={6}>
+                <FormControlLabel
+                  control={<Checkbox defaultChecked value={formik.values.recurring} onChange={(e, checked) => {
+                    formik.setFieldValue("recurring", checked)
+                  }} />}
+                  label={i({ id: "OCCASION.RECURRING", })}
+                // name="recurring"
                 />
-                <CustomisedButton
-                  type="submit"
-                  disabled={!formik.isValid || formik.isSubmitting}
-                  variant="contained"
-                  label={i({ id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextInput
+                  label={i({
+                    id: "OCCASION.DESCRIPTION",
+                  })}
+                  placeholder={i({
+                    id: "OCCASION.DESCRIPTION",
+                  })}
+                  name="description"
+                  multiline={true}
+                  type="text"
                 />
-              </Stack>
-            </form>
+              </Grid>
+            </Grid>
+
+            <Stack className="mt-4">
+              <FormLabel>
+                {i({ id: "OCCASION.OCCASION_IMAGE" })}
+              </FormLabel>
+              <Box component="div"
+                sx={{
+                  border: 1,
+                  borderRadius: 1,
+                  borderColor: 'text.disabled'
+                }}
+                className="d-flex flex-column align-items-center text-center p-4 "
+              >
+                <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: formik.touched.imageUrl && Boolean(formik.errors.imageUrl) ? 'error.main' : 'primary.main' }}>
+                  <CloudUploadOutlined className="fs-36" />
+                  <input
+                    name="image"
+                    type="file"
+                    accept=".jpg,.png,.webp"
+                    onChange={(e) => handleFileChange(e, formik)}
+                    hidden
+                  />
+                </IconButton>
+                <Stack>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}> {i({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: formik.values.image?.name ?? "" })}</Typography>
+                  {
+                    (formik.touched.imageUrl && formik.errors.imageUrl) ?
+                      <Typography variant="body2" sx={{ color: 'error.main' }}>{i({ id: formik.errors.imageUrl })}</Typography>
+                      :
+                      <Typography variant="body2">{i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}</Typography>
+                  }
+                </Stack>
+              </Box>
+            </Stack>
+
+            <Stack className="flex-row justify-content-end gap-2 mt-4">
+              <CustomisedButton
+                variant="outlined"
+                label={i({ id: "BUTTON.CANCEL" })}
+                handleClick={handleClose}
+              />
+              <CustomisedButton
+                type="submit"
+                disabled={!formik.isValid || formik.isSubmitting}
+                variant="contained"
+                label={i({ id: isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
+              />
+            </Stack>
+          </form>
           );
         }}
       </Formik>

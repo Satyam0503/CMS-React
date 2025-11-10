@@ -30,8 +30,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import HolidayForm from "./components/HolidayForm";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
-import { addEditHoliday, deleteHoliday, getAllHolidays } from "./holidayServices";
-import { GetHolidayPayloadModel, HolidayModel, HolidayResponseModel } from "./models";
+import { addEditCalendarItem, deleteCalendarItem, getAllCalendarItem } from "./holidayServices";
+import { GetCalendarItemPayload, CalendarItem } from "./models";
 import { toast } from "react-toastify";
 import { HolidayFilter, initialFilterValues } from "./components/HolidayFilter";
 import { useAppSelector } from "../../Redux/hooks";
@@ -63,12 +63,14 @@ const holidayMonth = [
   { id: 12, name: "MONTHS.DECEMBER" }
 ];
 
-const initialValues: HolidayModel = {
-  holidayId: "",
-  holidayName: "",
-  holidayType: 1,
+const initialValues: CalendarItem = {
+  id: "",
+  name: "",
+  type: 1,
   date: dayjs(Date.now()),
-  detail: "",
+  description: "",
+  imageUrl: null,
+  recurring: false
 };
 export default function Holidays() {
   const { setPageTitle } = usePageData();
@@ -76,7 +78,7 @@ export default function Holidays() {
   const [searchValue, setSearchValue] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [holidayList, setHolidayList] = useState<HolidayResponseModel[]>([]);
+  const [holidayList, setHolidayList] = useState<CalendarItem[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [isEdit, setEdit] = useState(false);
@@ -105,14 +107,16 @@ export default function Holidays() {
 
   const handleHolidayEdit = () => {
     if (selectedHolidayId) {
-      const holiday = holidayList.find(item => item.holidayId === selectedHolidayId);
+      const holiday = holidayList.find(item => item.id === selectedHolidayId);
       if (holiday) {
         setInitialHolidayValues({
-          holidayId: holiday.holidayId,
-          holidayName: holiday.holidayName,
-          holidayType: holiday.holidayType,
+          id: holiday.id,
+          name: holiday.name,
+          type: holiday.type,
           date: dayjs(holiday.date),
-          detail: holiday.detail
+          description: holiday.description,
+          imageUrl: holiday.imageUrl,
+          recurring: holiday.recurring
         });
         setEdit(true);
         setModalOpen(true);
@@ -126,7 +130,7 @@ export default function Holidays() {
       handleDeleteModalClose();
     } else {
       try {
-        const { data } = await deleteHoliday(selectedHolidayId);
+        const { data } = await deleteCalendarItem(selectedHolidayId);
         if (data.success) {
           handleRefresh();
           toast.success(i({ id: "TOAST.SUCCESS.DELETE" }));
@@ -168,15 +172,14 @@ export default function Holidays() {
 
   useEffect(() => {
     setLoading(true);
-    const payload: GetHolidayPayloadModel = {
-      holidayName: searchValue,
-      ...(
-        holidayFilters ?? initialFilterValues
-      )
-    };
+    const payload: GetCalendarItemPayload = {
+      type: null,
+      year: null
+    }
+      
     const fetchedHolidayData = async () => {
       try {
-        const response = await getAllHolidays(payload);
+        const response = await getAllCalendarItem(payload);
         const { success, methodResults, } = response.data;
         if (success) {
           setHolidayList(methodResults);
@@ -245,16 +248,16 @@ export default function Holidays() {
                       </>
                       :
                       currentMonthHolidays.map(holiday => (
-                        <React.Fragment key={holiday.holidayId}>
+                        <React.Fragment key={holiday.id}>
                           <Stack className="holiday-card">
                             {
-                              holiday.holidayCoverImageUrl ?
+                              holiday.imageUrl ?
                                 <Avatar sx={{
                                   width: 72,
                                   height: 72,
                                   boxShadow: 2,
                                   bgcolor: "secondary.main"
-                                }} src={holiday.holidayCoverImageUrl} variant="rounded" />
+                                }} src={holiday.imageUrl} variant="rounded" />
                                 : <Avatar variant="rounded" sx={{
                                   width: 72,
                                   height: 72,
@@ -262,7 +265,7 @@ export default function Holidays() {
                                 }}><CalendarToday className="fs-32" /></Avatar>
                             }
                             <Stack className="">
-                              <Typography className="fs-20">{holiday.holidayName}</Typography>
+                              <Typography className="fs-20">{holiday.name}</Typography>
                               <Typography variant="body1">{dateFormatter(holiday.date, "MMM D, YYYY")}</Typography>
                             </Stack>
                             {
@@ -271,7 +274,7 @@ export default function Holidays() {
                                 className="holiday-card-action-button"
                                 id="holiday-action-button"
                                 onClick={(e) => {
-                                  handleActionButtonClick(e, holiday.holidayId);
+                                  handleActionButtonClick(e, holiday.id);
                                 }}
                               >
                                 <MoreVertOutlined />
