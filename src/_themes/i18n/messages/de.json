@@ -731,24 +731,37 @@
     "SEARCH_EMP": "Nach Namen suchen ...",
     "TYPE_HERE": "Hier eingeben ..."
   },
-  "HOLIDAY": {
-    "NAME": "Name des Feiertags",
-    "TYPE": "Feiertagstyp",
+  "OCCASION": {
+    "NAME": "Name des Anlasses",
+    "TYPE": "Anlasstyp",
     "DATE": "Datum",
     "END_DATE": "Enddatum",
     "DESCRIPTION": "Beschreibung",
     "CREATED_BY": "Erstellt von",
-    "EDIT_HOLIDAYS": "Feiertag bearbeiten",
-    "ADD_HOLIDAYS": "Feiertag hinzufügen",
-    "NO_HOLIDAY_MONTH": "Keine Feiertage in diesem Monat",
-    "NO_HOLIDAYS": "Keine Feiertage",
-    "HOLIDAY_IMAGE": "Titelbild",
+    "EDIT_OCCASION": "Anlass bearbeiten",
+    "ADD_OCCASION": "Anlass hinzufügen",
+    "NO_OCCASION_MONTH": "Keine Anlässe in diesem Monat",
+    "NO_OCCASIONS": "Keine Anlässe",
+    "OCCASION_IMAGE": "Titelbild",
     "TYPES": {
-      "CULTURAL": "Kulturell",
-      "HEALTH": "Gesundheit",
-      "RELIGIOUS": "Religiös",
-      "NATIONAL": "National"
-    }
+      "ALL": "Alle",
+      "CATEGORY": "Kategorie",
+      "HOLIDAY": "Feiertage",
+      "EVENT": "Veranstaltungen",
+      "BIRTHDAY": "Geburtstage",
+      "ANNIVERSARY": "Jahrestage"
+    },
+    "UPCOMING_OCCASIONS": "Kommende Anlässe",
+    "OCCASION_TEXT": "Anlass",
+    "MONTH_OVERVIEW": "Monatsübersicht",
+    "NO_OCCASIONS_FOUND": "Keine Anlässe in diesem Monat gefunden",
+    "NO_OCCASIONS_ON_DAY": "Keine Anlässe",
+    "OCCASIONS_ON_DATE": "Tagesübersicht",
+    "ADD_NEW_OCCASION": "Neuen Anlass hinzufügen",
+    "ALL_OCCASIONS": "Alle",
+    "HOLIDAY_OCCASIONS": "Feiertage",
+    "EVENT_OCCASIONS": "Veranstaltungen",
+    "RECURRING": "Wiederkehrend"
   },
   "MONTHS": {
     "JANUARY": "Januar",

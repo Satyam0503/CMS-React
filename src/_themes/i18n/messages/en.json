@@ -769,24 +769,37 @@
     "TYPE_HERE": "Type here ..."
   },
 
-  "HOLIDAY": {
-    "NAME": "Holiday Name",
-    "TYPE": "Holiday Type",
+  "OCCASION": {
+    "NAME": "Occasion Name",
+    "TYPE": "Occasion Type",
     "DATE": "Date",
     "END_DATE": "End Date",
     "DESCRIPTION": "Description",
     "CREATED_BY": "Created By",
-    "EDIT_HOLIDAYS": "Edit Holiday",
-    "ADD_HOLIDAYS": "Add Holiday",
-    "NO_HOLIDAY_MONTH": " No holidays this month",
-    "NO_HOLIDAYS": "No Holidays",
-    "HOLIDAY_IMAGE": "Cover image",
+    "EDIT_OCCASION": "Edit Occasion",
+    "ADD_OCCASION": "Add Occasion",
+    "NO_OCCASION_MONTH": "No occasions this month",
+    "NO_OCCASIONS": "No Occasions",
+    "OCCASION_IMAGE": "Cover image",
     "TYPES": {
-      "CULTURAL": "Cultural",
-      "HEALTH": "Health",
-      "RELIGIOUS": "Religious",
-      "NATIONAL": "National"
-    }
+      "ALL": "All",
+      "CATEGORY": "Category",
+      "HOLIDAY": "Holidays",
+      "EVENT": "Events",
+      "BIRTHDAY": "Birthdays",
+      "ANNIVERSARY": "Anniversaries"
+    },
+    "UPCOMING_OCCASIONS": "Upcoming Occasions",
+    "OCCASION_TEXT": "Occasion",
+    "MONTH_OVERVIEW": "Month Overview",
+    "NO_OCCASIONS_FOUND": "No Occasions Found This Month",
+    "NO_OCCASIONS_ON_DAY": "No Occasions",
+    "OCCASIONS_ON_DATE": "Day Overview",
+    "ADD_NEW_OCCASION": "Add New Occasion",
+    "ALL_OCCASIONS": "All",
+    "HOLIDAY_OCCASIONS": "Holidays",
+    "EVENT_OCCASIONS": "Events",
+    "RECURRING": "Recurring"
   },
   "MONTHS": {
     "JANUARY": "January",

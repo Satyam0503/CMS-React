@@ -741,24 +741,37 @@
     "SEARCH_EMP": "名前で検索 …",
     "TYPE_HERE": "ここに入力 …"
   },
-  "HOLIDAY": {
-    "NAME": "祝日名",
-    "TYPE": "祝日の種類",
+  "OCCASION": {
+    "NAME": "行事名",
+    "TYPE": "行事の種類",
     "DATE": "日付",
     "END_DATE": "終了日",
     "DESCRIPTION": "説明",
     "CREATED_BY": "作成者",
-    "EDIT_HOLIDAYS": "祝日を編集",
-    "ADD_HOLIDAYS": "祝日を追加",
-    "NO_HOLIDAY_MONTH": "今月は祝日がありません",
-    "NO_HOLIDAYS": "祝日なし",
-    "HOLIDAY_IMAGE": "カバー画像",
+    "EDIT_OCCASION": "行事を編集",
+    "ADD_OCCASION": "行事を追加",
+    "NO_OCCASION_MONTH": "今月は行事がありません",
+    "NO_OCCASIONS": "行事なし",
+    "OCCASION_IMAGE": "カバー画像",
     "TYPES": {
-      "CULTURAL": "文化",
-      "HEALTH": "健康",
-      "RELIGIOUS": "宗教",
-      "NATIONAL": "国民"
-    }
+      "ALL": "すべて",
+      "CATEGORY": "カテゴリ",
+      "HOLIDAY": "祝日",
+      "EVENT": "イベント",
+      "BIRTHDAY": "誕生日",
+      "ANNIVERSARY": "記念日"
+    },
+    "UPCOMING_OCCASIONS": "もうすぐの行事",
+    "OCCASION_TEXT": "行事",
+    "MONTH_OVERVIEW": "月間概要",
+    "NO_OCCASIONS_FOUND": "今月は行事が見つかりませんでした",
+    "NO_OCCASIONS_ON_DAY": "行事なし",
+    "OCCASIONS_ON_DATE": "日の概要 ",
+    "ADD_NEW_OCCASION": "新しい行事を追加",
+    "ALL_OCCASIONS": "すべて",
+    "HOLIDAY_OCCASIONS": "祝日",
+    "EVENT_OCCASIONS": "イベント",
+    "RECURRING": "繰り返しの"
   },
   "MONTHS": {
     "JANUARY": "1月",

@@ -2,28 +2,43 @@ import dayjs, { Dayjs } from "dayjs";
 import { ResponseData } from "../../../utils/common_types";
 import { HOLIDAY_TYPE } from "../../../utils/enums";
 
-export interface HolidayModel {
-  holidayId?: string;
-  holidayName: string;
+export interface OccasionModel {
+  occasionId?: string;
+  occasionName: string;
   date: Dayjs | null | string;
   detail: string;
-  holidayType: number;
-  holidayImage?: File | null;
+  occasionType: number;
+  occasionImage?: File | null;
+  recurring: boolean
 }
-export type HolidayResponseModel = Omit<HolidayModel, "holidayImage"> & {
-  holidayImageUrl?: string | null;
-  holidayCoverImageUrl?: string | null;
+
+export type OccasionResponseModel = Omit<OccasionModel, "occasionImage"> & {
+  occasionImageUrl?: string | null;
+  occasionCoverImageUrl?: string | null;
 };
 
-export interface GetHolidayPayloadModel {
-  holidayName: string;
-  holidayType: HOLIDAY_TYPE[];
-  date: string | null;
+export type CalendarItemType = 0|1|2|3|4;
+
+export interface GetCalendarItemPayload {
+  type: null | CalendarItemType,
+  year: null | number
 }
+
+export type CalendarItem =  {
+      id: string,
+      name: string,
+      date: Dayjs | null | string,
+      description: string,
+      type: CalendarItemType,
+      imageUrl: string | null,
+      recurring: boolean,
+      image?:File | null
+    }
+
 export interface HolidayFilterModel {
-  holidayType: HOLIDAY_TYPE[];
+  occasionType: HOLIDAY_TYPE[];
   date: string | null;
 }
 
-export type GetAllHolidayResponseData = ResponseData<HolidayResponseModel>;
-export type AddHolidayResponseData = ResponseData<HolidayModel>;
+export type GetAllCalendarItemData = ResponseData<CalendarItem>;
+export type AddHolidayResponseData = ResponseData<OccasionModel>;

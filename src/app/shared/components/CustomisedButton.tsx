@@ -49,7 +49,6 @@ const CustomisedButton = (props: Props) => {
               fontSize: 16
             }
           }}
-
         >
           {
             loading ? <span className="loader" /> :

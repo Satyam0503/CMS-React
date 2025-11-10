@@ -3,64 +3,63 @@ import {
   Typography,
   Grid,
   FormHelperText,
-  MenuItem,
   Stack,
-  Select,
   Box,
   IconButton,
-  TextField,
   FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Checkbox,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Check, CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-
-import holidaySchema from "../../../../utils/Schema/holidaySchema";
-import { HolidayTypes } from "../../../../utils/constant/Constant";
+import holidaySchema from "../../../../utils/Schema/calendarSchema";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { HolidayModel } from "../models";
-import { SelectInput } from "../../../shared/components/form-component/SelectInput";
-import { addEditHoliday } from "../holidayServices";
+import { CalendarItem } from "../models";
+import { addEditCalendarItem } from "../holidayServices";
 import { toast } from "react-toastify";
 
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
-  initialValues: HolidayModel;
+  initialValues: CalendarItem;
   isEdit: boolean;
   handleRefresh: () => void;
 };
 
 const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, isEdit, handleRefresh }) => {
+  
   const { formatMessage: i } = useIntl();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, formik: FormikProps<HolidayModel>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, formik: FormikProps<CalendarItem>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const selectedFile = files[0];
-      formik.setFieldTouched("holidayImage", true, true)
-      formik.setFieldValue("holidayImage", selectedFile, true)
+      formik.setFieldTouched("image", true, true)
+      formik.setFieldValue("image", selectedFile, true)
     }
   }
 
-
-  const handleAddUpdateHoliday = async (values: HolidayModel, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleAddUpdateHoliday = async (values: CalendarItem, setSubmitting: (isSubmitting: boolean) => void) => {
     try {
       const formData = new FormData();
       if (isEdit) {
-        formData.append("HolidayId", values.holidayId!);
+        formData.append("id", values.id!);
       }
-      formData.append("HolidayName", values.holidayName);
-      formData.append("HolidayType", values.holidayType.toString());
-      formData.append("Date", dayjs(values.date).toISOString());
-      formData.append("HolidayImage", values.holidayImage!);
-      formData.append("Detail", values.detail);
+      formData.append("name", values.name);
+      formData.append("type", values.type.toString());
+      formData.append("date", dayjs(values.date).toISOString());
+      formData.append("image", values.image!);
+      formData.append("description", values.description);
+      formData.append("recurring", String(values.recurring));
 
-      const { data } = await addEditHoliday(formData);
+      const { data } = await addEditCalendarItem(formData);
       if (data.success) {
         toast.success(i({ id: isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.HOLIDAY_CREATE" }))
         handleRefresh();
@@ -76,9 +75,13 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
     }
   };
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) =>{
+
+  }
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}
-      title={isEdit ? i({ id: "HOLIDAY.EDIT_HOLIDAYS" }) : i({ id: "HOLIDAY.ADD_HOLIDAYS" })}
+      title={isEdit ? i({ id: "OCCASION.EDIT_OCCASION" }) : i({ id: "OCCASION.ADD_OCCASION" })}
     >
       <Formik
         initialValues={initialValues}
@@ -88,35 +91,36 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
         }}
       >
         {(formik) => {
+          console.log(formik.errors);
+          console.log(formik.values);
+          const selectedFileName = formik.values.imageUrl
+          
           return <form onSubmit={formik.handleSubmit} >
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <TextInput
                   required={true}
-                  label={i({ id: "HOLIDAY.NAME" })}
+                  label={i({ id: "OCCASION.NAME" })}
                   type="text"
-                  name="holidayName"
-                  placeholder="Holiday Name"
+                  name="name"
+                  placeholder={i({ id: "OCCASION.NAME" })}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <SelectInput
-                  label={i({ id: "HOLIDAY.TYPE" })}
-                  name="holidayType"
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  // defaultValue="1"
+                  {...formik.getFieldProps('type')}
                 >
-                  {HolidayTypes.map(({ id, label }) => {
-                    return (
-                      <MenuItem key={id} value={id}>
-                        {i({ id: label })}
-                      </MenuItem>
-                    )
-                  })}
-                </SelectInput>
+                  <FormControlLabel value="1" control={<Radio />} label={i({id: "OCCASION.TYPES.HOLIDAY"})} />
+                  <FormControlLabel value="2" control={<Radio />} label={i({id: "OCCASION.TYPES.EVENT"})} />
+                </RadioGroup>
               </Grid>
 
-              <Grid item xs={12} >
+              <Grid item xs={12} md={6}>
                 <CustomisedDatePicker
-                  label={i({ id: "HOLIDAY.DATE" })}
+                  label={i({ id: "OCCASION.DATE" })}
                   value={formik.values.date ? dayjs(formik.values.date) : null}
                   setValue={(newDate: Dayjs | null) => {
                     formik.setFieldTouched("date", true);
@@ -129,15 +133,25 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                 </FormHelperText>
               </Grid>
 
+              <Grid item xs={12} md={6}>
+                <FormControlLabel 
+                  control={<Checkbox defaultChecked  value={formik.values.recurring} onChange={(e,checked)=>{
+                    formik.setFieldValue("recurring",checked)
+                  }} />}
+                  label={i({id: "OCCASION.RECURRING",})}
+                  // name="recurring"
+                />
+              </Grid>
+
               <Grid item xs={12}>
                 <TextInput
                   label={i({
-                    id: "HOLIDAY.DESCRIPTION",
+                    id: "OCCASION.DESCRIPTION",
                   })}
                   placeholder={i({
-                    id: "HOLIDAY.DESCRIPTION",
+                    id: "OCCASION.DESCRIPTION",
                   })}
-                  name="detail"
+                  name="description"
                   multiline={true}
                   type="text"
                 />
@@ -146,7 +160,7 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
 
             <Stack className="mt-4">
               <FormLabel>
-                {i({ id: "HOLIDAY.HOLIDAY_IMAGE" })}
+                {i({ id: "OCCASION.OCCASION_IMAGE" })}
               </FormLabel>
               <Box component="div"
                 sx={{
@@ -156,10 +170,10 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                 }}
                 className="d-flex flex-column align-items-center text-center p-4 "
               >
-                <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: formik.touched.holidayImage && Boolean(formik.errors.holidayImage) ? 'error.main' : 'primary.main' }}>
+                <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: formik.touched.imageUrl && Boolean(formik.errors.imageUrl) ? 'error.main' : 'primary.main' }}>
                   <CloudUploadOutlined className="fs-36" />
                   <input
-                    name="companyLogo"
+                    name="image"
                     type="file"
                     accept=".jpg,.png,.webp"
                     onChange={(e) => handleFileChange(e, formik)}
@@ -167,10 +181,10 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                   />
                 </IconButton>
                 <Stack>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}> {i({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: formik.values.holidayImage?.name })}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}> {i({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: formik.values.image?.name ?? ""  })}</Typography>
                   {
-                    (formik.touched.holidayImage && formik.errors.holidayImage) ?
-                      <Typography variant="body2" sx={{ color: 'error.main' }}>{i({ id: formik.errors.holidayImage })}</Typography>
+                    (formik.touched.imageUrl && formik.errors.imageUrl) ?
+                      <Typography variant="body2" sx={{ color: 'error.main' }}>{i({ id: formik.errors.imageUrl })}</Typography>
                       :
                       <Typography variant="body2">{i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}</Typography>
                   }
