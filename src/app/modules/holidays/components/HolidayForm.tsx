@@ -54,7 +54,7 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
       }
       formData.append("name", values.name);
       formData.append("type", values.type.toString());
-      formData.append("date", dayjs(values.date).toISOString());
+      formData.append("date", dayjs(values.date).startOf("day").toISOString());
       formData.append("image", values.image!);
       formData.append("description", values.description);
       formData.append("recurring", String(values.recurring));
@@ -95,7 +95,8 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                   size={{
                     xs: 12,
                     md: 6
-                  }}>
+                  }}
+                  className="pt-2">
                   <TextInput
                     required={true}
                     label={i({ id: "OCCASION.NAME" })}
@@ -104,22 +105,6 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                     placeholder={i({ id: "OCCASION.NAME" })}
                   />
                 </Grid>
-                <Grid
-                  size={{
-                    xs: 12,
-                    md: 6
-                  }}>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    // defaultValue="1"
-                    {...formik.getFieldProps('type')}
-                  >
-                    <FormControlLabel value="1" control={<Radio />} label={i({ id: "OCCASION.TYPES.HOLIDAY" })} />
-                    <FormControlLabel value="2" control={<Radio />} label={i({ id: "OCCASION.TYPES.EVENT" })} />
-                  </RadioGroup>
-                </Grid>
-
                 <Grid
                   size={{
                     xs: 12,
@@ -137,6 +122,22 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                   <FormHelperText>
                     {formik.touched.date && formik.errors.date && formik.errors.date}
                   </FormHelperText>
+                </Grid>
+                <Grid
+                  size={{
+                    xs: 12,
+                    md: 6
+                  }} className="d-flex align-items-center gap-2">
+                  <Typography >{i({ id: "OCCASION.TYPE" })} :</Typography>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    // defaultValue="1"
+                    {...formik.getFieldProps('type')}
+                  >
+                    <FormControlLabel value="1" control={<Radio />} label={i({ id: "OCCASION.TYPES.HOLIDAY" })} />
+                    <FormControlLabel value="2" control={<Radio />} label={i({ id: "OCCASION.TYPES.EVENT" })} />
+                  </RadioGroup>
                 </Grid>
 
                 <Grid

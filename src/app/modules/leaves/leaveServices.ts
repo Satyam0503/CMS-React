@@ -6,7 +6,6 @@ import {
 } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { LEAVE_REQUEST_STATUS } from "../../../utils/enums";
 import {
   LeaveBalanceFilter,
   GetLeaveBalanceResponse,

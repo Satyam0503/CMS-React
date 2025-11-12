@@ -789,7 +789,7 @@
 
   "OCCASION": {
     "NAME": "Occasion Name",
-    "TYPE": "Occasion Type",
+    "TYPE": "Type",
     "DATE": "Date",
     "END_DATE": "End Date",
     "DESCRIPTION": "Description",
