@@ -163,3 +163,9 @@ export enum EMPLOYMENT {
   INTERNSHIP,
   APPRENTICESHIP,
 }
+
+export enum ACCURAL_PERIOD {
+  MONTHLY = 1,
+  YEARLY = 2,
+  NONE = 3,
+}

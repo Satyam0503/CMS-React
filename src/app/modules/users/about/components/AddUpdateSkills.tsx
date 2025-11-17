@@ -3,9 +3,7 @@ import {
   Autocomplete,
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
-  Chip,
   CircularProgress,
-  InputAdornment,
   Stack,
   TextField,
 } from "@mui/material";

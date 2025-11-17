@@ -193,7 +193,8 @@
     "UPLOAD": "Upload",
     "REMOVE": "Remove",
     "CLEAR": "Clear",
-    "INVITE": "Invite"
+    "INVITE": "Invite",
+    "SKIP": "Skip"
   },
 
   "TITLES": {
@@ -375,6 +376,11 @@
       "EARNED_LEAVE": "Earned Leave",
       "MATERNITY_LEAVE": "Maternity Leave",
       "PATERNITY_LEAVE": "Paternity Leave"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly",
+      "NONE": "None"
     }
   },
 
@@ -437,7 +443,8 @@
     },
     "STEPPER": {
       "CREATE_ACCOUNT": "Create User Account",
-      "EDIT_DATA": "Edit User Data"
+      "EDIT_DATA": "Edit User Data",
+      "ALLOCATE_LEAVE": "Allocate Employee leave"
     },
     "INVITE_EMP": {
       "HEADING": "",
@@ -448,6 +455,18 @@
       "WORK_INFO": "Work Information",
       "PERSONAL_INFO": "Personal Information",
       "OHTER_INFO": "Other Information"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "Set Up Employee Leave Allocation",
+      "NOTE": "Select the leave types you want to assign to this employee. You can modify leave balances later from the employee profile",
+      "CODE": "Code",
+      "MAX_BALANCE": "Max leave balance",
+      "ACCRUAL_PERIOD": "Accrual",
+      "ACCRUAL_AMOUNT": "Accrual Amount",
+      "NO_POLICY": "No leave policies available. Please create a leave policy before adding an employee"
+    },
+    "FINAL": {
+      "NOTE": "You've successfully created the employee account and assigned all required details"
     },
     "TYPE": {
       "FULLTIME": "Full Time",
@@ -890,7 +909,8 @@
     "31": "Leave policy with name already exist",
     "32": "Accrual amount is required accrual is selected",
     "33": "carry overlimit required amount is required accrual is selected",
-    "34": "Leave policy with same name and code already exist"
+    "34": "Leave policy with same name and code already exist",
+    "35": "Leave balance limit exceeded"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -948,6 +968,10 @@
   "PLURAL": {
     "YR": "{years, plural, =0 {0 yr} one {# yr} other {# yrs}}",
     "YEAR": "{years, plural, =0 {0 year} one {# year} other {# years}}",
-    "MONTHS": "{months, plural, =0 {0 month} one {# month} other {# months}}"
+    "MONTHS": "{months, plural, =0 {0 month} one {# month} other {# months}}",
+    "DAY": "{days, plural, =0 {0 day} one {# day} other {# days}}"
+  },
+  "COMMON": {
+    "CONGRATULATION": "Congratulation"
   }
 }

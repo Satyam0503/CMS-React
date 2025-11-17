@@ -1,5 +1,5 @@
-import { EditDocument, PersonAdd, } from "@mui/icons-material";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, Stack, Step, StepConnector, stepConnectorClasses, StepIconProps, StepLabel, Stepper, styled } from "@mui/material"
+import { CalendarMonth, EditDocument, PersonAdd, } from "@mui/icons-material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Slide, Step, StepConnector, stepConnectorClasses, StepIconProps, StepLabel, Stepper, styled, Typography } from "@mui/material"
 import React, { useRef, useState } from "react";
 import { useIntl } from "react-intl";
 import { InviteNewEmployee } from "./InviteNewEmployee";
@@ -7,6 +7,13 @@ import { UpdateEmployeeData } from "./UpdateEmployeeData";
 import { InviteEmployeeResponse, InviteNewEmployeeModel } from "../models";
 import { FormikProps } from "formik";
 import { EditEmployeePayloadModel } from "../../users/models";
+import { LeaveAllocateForm } from "./LeaveAllocateForm";
+
+enum AddEmployeeSteps {
+    CREATE_ACCOUNT,
+    UPDATE_DATA,
+    ALLOCATE_LEAVE,
+}
 
 interface PropsTypes {
     open: boolean;
@@ -15,10 +22,10 @@ interface PropsTypes {
 }
 
 const steps = [
-    { label: "EMPLOYEE.STEPPER.CREATE_ACCOUNT", optional: false, icon: <PersonAdd /> },
-    { label: "EMPLOYEE.STEPPER.EDIT_DATA", optional: false, icon: <EditDocument /> }
+    { id: AddEmployeeSteps.CREATE_ACCOUNT, label: "EMPLOYEE.STEPPER.CREATE_ACCOUNT", optional: false, icon: <PersonAdd /> },
+    { id: AddEmployeeSteps.UPDATE_DATA, label: "EMPLOYEE.STEPPER.EDIT_DATA", optional: false, icon: <EditDocument /> },
+    { id: AddEmployeeSteps.ALLOCATE_LEAVE, label: "EMPLOYEE.STEPPER.ALLOCATE_LEAVE", optional: true, icon: <CalendarMonth /> },
 ]
-
 export const AddEmployeeStepper = (props: PropsTypes) => {
     const { open, handleReresh, handleClose } = props;
     const { formatMessage: i } = useIntl();
@@ -26,6 +33,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     const [newEmployeeData, setNewEmployeeData] = useState<InviteEmployeeResponse>()
     const inviteFormRef = useRef<FormikProps<InviteNewEmployeeModel> | null>(null);
     const updateFormRef = useRef<FormikProps<EditEmployeePayloadModel> | null>(null);
+    const leaveAllocateFormRef = useRef<FormikProps<{ selectedPolicies: string[] }> | null>(null);
 
     const handleInviteUser = (isInvited: boolean, employeeData: InviteEmployeeResponse) => {
         if (isInvited) {
@@ -36,18 +44,29 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     const handleUserUpdate = (success: boolean) => {
         if (success) {
             setActiveSteps((step) => step + 1);
-            handleClose();
             handleReresh();
         }
     }
 
+    const handleLeaveAllocation = () => {
+        setActiveSteps(step => step + 1);
+    }
+
+    const handleSkip = () => {
+        // step skip 
+        setActiveSteps(step => step + 1);
+    }
+
 
     const handleClick = () => {
-        if (activeStep === 0 && inviteFormRef.current) {
+        if (activeStep === AddEmployeeSteps.CREATE_ACCOUNT && inviteFormRef.current) {
             inviteFormRef.current.submitForm();
         }
-        else if (activeStep === 1 && updateFormRef.current) {
+        else if (activeStep === AddEmployeeSteps.UPDATE_DATA && updateFormRef.current) {
             updateFormRef.current.submitForm();
+        }
+        else if (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && leaveAllocateFormRef.current) {
+            leaveAllocateFormRef.current.submitForm();
         }
         else {
             handleClose();
@@ -56,7 +75,6 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
 
     return (
         <React.Fragment>
-
             <Dialog
                 fullWidth={true}
                 maxWidth="xl"
@@ -69,50 +87,75 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                 }}
             >
                 <DialogTitle className="fs-20">{i({ id: "EMPLOYEE.ADD_NEW_EMP" })}</DialogTitle>
-                <Box component="div" sx={{ paddingBlockEnd: 1, px: 2, position: "sticky", top: 0, width: "100%", zIndex: 10 }}>
-                    <Stepper activeStep={activeStep} connector={<ColorlibConnector />} >
-                        {
-                            steps.map((step) => {
-                                return (
-                                    <Step key={step.label} >
-                                        <StepLabel slots={{
-                                            stepIcon: (props) => <ColorlibStepIcon {...props} iconComponent={step.icon} />
-                                        }}> {i({ id: step.label })} </StepLabel>
-                                    </Step>
-                                );
-                            })
-                        }
-                    </Stepper>
-                </Box>
+                {
+                    activeStep !== steps.length &&
+
+                    <Box component="div" sx={{ paddingBlockEnd: 1, px: 2, position: "sticky", top: 0, width: "100%", zIndex: 10 }}>
+                        <Stepper activeStep={activeStep} connector={<ColorlibConnector />} >
+                            {
+                                steps.map((step) => {
+                                    return (
+                                        <Step key={step.label} >
+                                            <StepLabel slots={{
+                                                stepIcon: (props) => <ColorlibStepIcon {...props} iconComponent={step.icon} />
+                                            }}> {i({ id: step.label })} </StepLabel>
+                                        </Step>
+                                    );
+                                })
+                            }
+                        </Stepper>
+                    </Box>
+                }
                 <DialogContent>
                     {
-                        activeStep === 0 &&
-                        <Slide direction="left" in={open && activeStep === 0} mountOnEnter unmountOnExit>
+                        activeStep === AddEmployeeSteps.CREATE_ACCOUNT &&
+                        <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
                                 <InviteNewEmployee handleInviteUser={handleInviteUser} formRef={inviteFormRef} />
                             </div>
                         </Slide>
                     }
                     {
-                        (activeStep === 1 && newEmployeeData) &&
-                        <Slide direction="left" in={open && activeStep === 1} mountOnEnter unmountOnExit>
+                        (activeStep === AddEmployeeSteps.UPDATE_DATA && newEmployeeData) &&
+                        <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
                                 <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={handleUserUpdate} formRef={updateFormRef} />
                             </div>
                         </Slide>
                     }
-                    <Stack direction="row">
-                    </Stack>
+                    {
+                        activeStep === AddEmployeeSteps.ALLOCATE_LEAVE &&
+                        <Slide direction="left" in={open} mountOnEnter unmountOnExit>
+                            <div>
+                                <LeaveAllocateForm formRef={leaveAllocateFormRef} employeeId={newEmployeeData?.userId} handleLeaveAllocation={handleLeaveAllocation} />
+                            </div>
+                        </Slide>
+
+                    }
+                    {activeStep === steps.length && (
+                        <Box component="div" className="d-flex p-4 justify-content-between align-items-center flex-column gap-2">
+                            <Typography sx={{ fontSize: 58 }}>
+                                🎊
+                            </Typography>
+                            <Typography className="fs-24 fw-bold">{i({ id: "COMMON.CONGRATULATION" })}</Typography>
+                            <Typography className="fs-16" sx={{ mb: 3 }}>{i({ id: "EMPLOYEE.FINAL.NOTE" })} </Typography>
+                        </Box>
+                    )}
                 </DialogContent>
 
                 <DialogActions sx={{ px: 4, paddingBlockEnd: 3, justifyContent: "flex-end" }}>
                     {
-                        activeStep === 0 &&
+                        activeStep === AddEmployeeSteps.CREATE_ACCOUNT &&
                         <Button variant="contained" onClick={handleClose}>{i({ id: "BUTTON.CLOSE" })}</Button>
                     }
+                    {
+                        activeStep === AddEmployeeSteps.ALLOCATE_LEAVE &&
+                        <Button variant="outlined" onClick={handleSkip}>{i({ id: "BUTTON.SKIP" })}</Button>
+                    }
+
                     <Button variant="contained" onClick={handleClick} >
                         {
-                            i({ id: activeStep === 0 ? "BUTTON.INVITE" : (activeStep === 1) ? "BUTTON.UPDATE" : "BUTTON.CLOSE" })
+                            i({ id: activeStep === AddEmployeeSteps.CREATE_ACCOUNT ? "BUTTON.INVITE" : (activeStep === AddEmployeeSteps.UPDATE_DATA) ? "BUTTON.UPDATE" : (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE) ? "BUTTON.ADD" : "BUTTON.CLOSE" })
                         }
                     </Button>
                 </DialogActions>
@@ -171,7 +214,7 @@ const ColorlibStepIconRoot = styled('div')<{
             props: ({ ownerState }) => ownerState.active,
             style: {
                 backgroundImage:
-                    'linear-gradient( 136deg, #dab7f7ff 0%, #9A56D3 50%, #6a02bfff 100%)',
+                    'linear-gradient( 136deg, #d4bce6ff 0%, #bc89e6ff 50%, #b56bf2ff 100%)',
                 boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
             },
         },

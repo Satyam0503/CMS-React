@@ -61,6 +61,13 @@ export type InviteEmployeeResponse = InviteNewEmployeeModel & {
   userId: string;
 };
 
+export type EmployeeLeaveBalance = Array<{
+  leaveBalanceId?: string;
+  employeeId: string;
+  leavePolicyId: string;
+  balance: number;
+}>;
+
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
 export type GetAllEmployeeResponseData =

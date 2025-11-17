@@ -1021,3 +1021,32 @@ button:hover .ql-fill,
     }
   }
 }
+
+//
+.leave-policy-item-wrapper {
+  .leave-policy-item {
+    padding: 1rem;
+    border: 2px solid var(--mui-palette-grey-300);
+    border-radius: 0.25rem;
+    gap: 0.5rem;
+
+    &[data-policy-checked="true"] {
+      border-color: var(--mui-palette-primary-main);
+      box-shadow: inset 0px 0px 12px 0px var(--mui-palette-primary-lighter);
+    }
+  }
+  .no-leave-policy {
+    padding: 1rem;
+    border: 1px solid var(--mui-palette-grey-200);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    & > h6 {
+      text-align: center;
+      text-wrap: balance;
+    }
+  }
+}

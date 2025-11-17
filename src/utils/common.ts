@@ -25,6 +25,7 @@ import {
   LANGUAGE,
   Roles,
   EMPLOYMENT,
+  ACCURAL_PERIOD,
 } from "./enums";
 import {
   APP_FILTER_KEY,
@@ -163,6 +164,12 @@ export const LanguageNameMapper: { [index: string]: string } = {
   [LANGUAGE.JAPANESE]: "LANGUAGES.JAPANESE",
   [LANGUAGE.GERMAN]: "LANGUAGES.GERMAN",
   [LANGUAGE.FRENCH]: "LANGUAGES.FRENCH",
+};
+
+export const AccrualPeriodMapper: { [index: number]: string } = {
+  [ACCURAL_PERIOD.MONTHLY]: "LEAVE.ACCRUAL_PERIOD.MONTHLY",
+  [ACCURAL_PERIOD.YEARLY]: "LEAVE.ACCRUAL_PERIOD.YEARLY",
+  [ACCURAL_PERIOD.NONE]: "LEAVE.ACCRUAL_PERIOD.NONE",
 };
 
 export const statusEncoder = (status: string) => {

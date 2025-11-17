@@ -55,8 +55,8 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
         if (success) {
           setDeptList(methodResults);
         }
-      } catch (error: any) {
-        console.log(error.message);
+      } catch (error) {
+        console.log((error as Error).message);
       }
     };
     getAllDepartments();
@@ -138,11 +138,19 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
                 </li>
               );
             }}
-            renderTags={(value, getTagProps) => (
-              value.map((option, index: number) => {
-                const { key, ...tagProps } = getTagProps({ index });
+            // renderTags={(value, getTagProps) => (
+            //   value.map((option, index: number) => {
+            //     const { key, ...tagProps } = getTagProps({ index });
+            //     return (
+            //       <Chip label={formatMessage({ id: option.label })} size="small" key={key} {...tagProps} />
+            //     );
+            //   })
+            // )}
+            renderValue={(value, getItemsProps) => (
+              value.map((option, index) => {
+                const { key, ...itemProps } = getItemsProps({ index })
                 return (
-                  <Chip label={formatMessage({ id: option.label })} size="small" key={key} {...tagProps} />
+                  <Chip label={formatMessage({ id: option.label })} size="small" key={key} {...itemProps} />
                 );
               })
             )}

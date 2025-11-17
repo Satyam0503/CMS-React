@@ -24,7 +24,7 @@ export const NotificationSetting = () => {
   }, [])
 
 
-  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNotificationPreferences({
       ...notificationPreferences,
       [event.target.name]: event.target.checked,

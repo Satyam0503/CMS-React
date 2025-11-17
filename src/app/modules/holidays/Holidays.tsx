@@ -26,23 +26,19 @@ import {
   MoreVertOutlined,
 } from "@mui/icons-material";
 import dayjs from "dayjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import HolidayForm from "./components/HolidayForm";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
-import { addEditCalendarItem, deleteCalendarItem, getAllCalendarItem } from "./holidayServices";
+import { deleteCalendarItem, getAllCalendarItem } from "./holidayServices";
 import { GetCalendarItemPayload, CalendarItem } from "./models";
 import { toast } from "react-toastify";
-import { HolidayFilter, initialFilterValues } from "./components/HolidayFilter";
+import { HolidayFilter } from "./components/HolidayFilter";
 import { useAppSelector } from "../../Redux/hooks";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { countAppliedFilter, dateFormatter, hasModuleFeaturePermission } from "../../../utils/common";
 import { usePageData } from "../../Context/PageDataProvider";
 
-const monthMap = {
-  JANUARY: 1, FEBRUARY: 2, MARCH: 3, APRIL: 4, MAY: 5, JUNE: 6,
-  JULY: 7, AUGUST: 8, SEPTEMBER: 9, OCTOBER: 10, NOVEMBER: 11, DECEMBER: 12,
-} as const;
 
 // const holidayMonth: (keyof typeof monthMap)[] = [
 //   "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -176,7 +172,7 @@ export default function Holidays() {
       type: null,
       year: null
     }
-      
+
     const fetchedHolidayData = async () => {
       try {
         const response = await getAllCalendarItem(payload);
