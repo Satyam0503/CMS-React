@@ -1,7 +1,6 @@
 import { Grid, Stack } from "@mui/material";
-import { useIntl } from "react-intl";
 import { useAppSelector } from "../../Redux/hooks";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { EmployeeChart } from "./components/EmployeeChart";
 import OpenPositions from "./components/OpenPositions";
 import { ApplicationsChart } from "./components/ApplicationsChart";
@@ -22,10 +21,8 @@ import { usePageData } from "../../Context/PageDataProvider";
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
-  const intl = useIntl();
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const hasAccessToEmpModule = useMemo(
     () =>
@@ -59,7 +56,6 @@ export default function Dashboard() {
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
               <Grid
-                className="h-100"
                 size={{
                   xs: 12,
                   sm: 6
@@ -67,6 +63,13 @@ export default function Dashboard() {
                 <EmployeeChart />
               </Grid>
             )}
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
+              <DepartmentChart />
+            </Grid>
             {hasAccessToJob && (
               <Grid
                 size={{
@@ -78,20 +81,16 @@ export default function Dashboard() {
             )}
             {hasAccessToJob && (
               <Grid
+                sx={{ height: 310 }}
                 size={{
                   xs: 12,
                   sm: 6
                 }}>
+
                 <ApplicationsChart />
               </Grid>
             )}
-            <Grid
-              size={{
-                xs: 12,
-                sm: 6
-              }}>
-              <DepartmentChart />
-            </Grid>
+
             <Grid size={12}>
               <Stack spacing={3}>
                 <NoticeBoard />

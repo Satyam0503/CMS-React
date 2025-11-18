@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { hasModuleFeaturePermission } from '../../../../utils/common';
 import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
 
 
 
@@ -33,45 +33,51 @@ const initialValues: CalendarItem = {
     imageUrl: null
 };
 
+const CalendarItems = [
+    {
+        key: "holidays",
+        name: 'HOLIDAY',
+        theme: 'primary',
+        colors: 'holiday-colors',
+        icon: <CalendarMonth />
+    }, {
+        key: "events",
+        name: 'EVENT',
+        theme: 'secondary',
+        colors: 'event-colors',
+        icon: <Event />
+    }, {
+        key: "birthdays",
+        name: 'BIRTHDAY',
+        theme: 'success',
+        colors: 'bithdays-colors',
+        icon: <Cake />
+    }, {
+        key: "anniversaries",
+        name: 'ANNIVERSARY',
+        theme: 'info',
+        colors: 'anivaesary-colors',
+        icon: <Celebration />
+    },
+]
+
 export default function CalendarSidebar(props: Props) {
     const { formatMessage: i } = useIntl();
-
     const [upcomingHolidays, setUpcomingHolidays] = useState<Array<CalendarItem>>([])
     const [daysHolidays, seDaysHolidays] = useState<Array<CalendarItem>>([])
     const [open, setOpen] = useState<boolean>(false)
     const [isEdit, setIsEdit] = useState<boolean>(false)
     const [initialHolidayValues, setInitialHolidayValues] = useState(initialValues);
-    const [holidaysMonth, setHolidysMonth] = useState<number>(0)
-    const [eventsMonth, setEventsMonth] = useState<number>(0)
-    const [birthdaysMonth, setBirthdaysMonth] = useState<number>(0)
-    const [anniversariesMonth, setAnniversariesMonth] = useState<number>(0)
 
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-    const hasAddPermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Create, modulePermission);
+    const hasAddPermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, modulePermission);
 
-    const OccasionsItems = [
-        {
-            name: 'HOLIDAY',
-            theme: 'primary',
-            colors: 'holiday-colors',
-            count: holidaysMonth,
-        }, {
-            name: 'EVENT',
-            theme: 'secondary',
-            colors: 'event-colors',
-            count: eventsMonth,
-        }, {
-            name: 'BIRTHDAY',
-            theme: 'success',
-            colors: 'bithdays-colors',
-            count: birthdaysMonth,
-        }, {
-            name: 'ANNIVERSARY',
-            theme: 'info',
-            colors: 'anivaesary-colors',
-            count: anniversariesMonth,
-        },
-    ]
+    const [monthSummary, setMonthSummary] = useState({
+        holidays: 0,
+        events: 0,
+        birthdays: 0,
+        anniversaries: 0
+    } satisfies Record<string, number>);
 
     function handleClose() {
         setOpen(false);
@@ -135,10 +141,12 @@ export default function CalendarSidebar(props: Props) {
             } else return
         })
 
-        setHolidysMonth(holidayCounter)
-        setEventsMonth(eventCounter)
-        setBirthdaysMonth(birthdayCounter)
-        setAnniversariesMonth(anniversaryCounter)
+        setMonthSummary({
+            holidays: holidayCounter,
+            events: eventCounter,
+            birthdays: birthdayCounter,
+            anniversaries: anniversaryCounter
+        })
     }
 
     //Finds Occasions For Selected Day
@@ -192,12 +200,7 @@ export default function CalendarSidebar(props: Props) {
                 <Box component='div'
                     className='gap-3 calendar-sidebar-upcoming'
                 >
-                    <Typography variant='body1'
-                        sx={{
-                            fontWeight: '600',
-                            fontSize: 16
-                        }}
-                    >
+                    <Typography variant='body1' className='fs-16 fw-bold' >
                         {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
                     </Typography>
                     <Box component={'div'}
@@ -224,27 +227,24 @@ export default function CalendarSidebar(props: Props) {
             <Box component={'div'}
                 className='gap-3 calendar-sidebar-upcoming'
             >
-                <Typography variant='body1'
-                    sx={{
-                        fontWeight: '600',
-                        fontSize: 16
-                    }}
-                >
+                <Typography variant='body1' className='fs-16 fw-bold' >
                     {i({ id: "OCCASION.MONTH_OVERVIEW" })}
                 </Typography>
                 <Box component={'div'}
                     className='gap-4 calendar-sidear-holidays-holder'
                 >
-                    {OccasionsItems.map((occItm, index) => {
-                        return (<Box component={'div'} className={`occasion-type ${occItm.theme}`} key={index}>
-                            <Box component={'div'} className={`icon-container ${occItm.theme}`}>
-                                <CalendarMonthIcon />
+                    {CalendarItems.map((item, index) => {
+                        return (
+                            <Box component='div' className={`occasion-type ${item.theme}`} key={index}>
+                                <Box component='div' className={`icon-container ${item.theme}`}>
+                                    {item.icon}
+                                </Box>
+                                <Typography variant="h6" className={`${item.theme}`}>{i({ id: `OCCASION.TYPES.${item.name}` })}</Typography>
+                                <Box component='div' className={`count-div ${item.colors}`}>
+                                    {monthSummary[item.key as keyof typeof monthSummary]}
+                                </Box>
                             </Box>
-                            <Typography variant="h6" className={`${occItm.theme}`}>{i({ id: `OCCASION.TYPES.${occItm.name}` })}</Typography>
-                            <Box component='div' className={`count-div ${occItm.colors}`}>
-                                {occItm.count}
-                            </Box>
-                        </Box>)
+                        )
                     })}
                 </Box>
                 <Divider sx={{
@@ -259,12 +259,7 @@ export default function CalendarSidebar(props: Props) {
             >
                 {daysHolidays.length > 0 &&
                     <>
-                        <Typography variant='body1'
-                            sx={{
-                                fontWeight: '600',
-                                fontSize: 16
-                            }}
-                        >
+                        <Typography variant='body1' className='fs-16 fw-bold' >
                             {i({ id: "OCCASION.OCCASIONS_ON_DATE" })}
                         </Typography>
                         <Box component={'div'}

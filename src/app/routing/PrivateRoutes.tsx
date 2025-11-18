@@ -13,8 +13,7 @@ const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
 const Employees = lazy(() => import("../modules/employees/Employees.tsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
 const Profile = lazy(() => import("./ProfileRoutes.tsx"));
-const Holidays = lazy(() => import("../modules/holidays/Holidays.tsx"));
-const MainHolidayCalenday = lazy(()=> import("../modules/holidays/MainHolidayCalenday.tsx"))
+const Calendar = lazy(() => import("../modules/holidays/Calendar.tsx"))
 const NoticeBoard = lazy(() => import("./NoticeBoardRoutes.tsx"));
 const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
 const LeaveManagement = lazy(() => import("../modules/leaves/LeaveManagement.tsx"));
@@ -57,11 +56,11 @@ const PrivateRoutes = () => {
         />
 
         <Route
-          path="holidays"
+          path="calendar"
           element={
             <SuspensedView>
-              <ProtectedRoute module={ModulesName.Holidays}>
-                <MainHolidayCalenday />
+              <ProtectedRoute module={ModulesName.Calendar}>
+                <Calendar />
               </ProtectedRoute>
             </SuspensedView>
           }

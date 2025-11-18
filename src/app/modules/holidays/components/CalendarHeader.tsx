@@ -23,7 +23,7 @@ export default function CalendarHeader(props: Props) {
         <Card
             className='calendar-header'
         >
-            <Box component={'div'}
+            <Box component='div'
                 className='calendar-controls'
             >
                 {props.selectedYear && props.selectedMonth && props.selectedDate &&
@@ -49,16 +49,12 @@ export default function CalendarHeader(props: Props) {
                     <KeyboardArrowRightIcon />
                 </IconButton>
             </Box>
-            <Box component={'div'} className='calendar-filters'
-                sx={{
-                    width: '150px'
-                }}
-            >
+            <Box component='div' sx={{ width: '150px' }} >
                 <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">{i({ id: "OCCASION.TYPES.CATEGORY" })}</InputLabel>
+                    <InputLabel id="calendar-item-type">{i({ id: "OCCASION.TYPES.CATEGORY" })}</InputLabel>
                     <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
+                        labelId="calendar-item-type"
+                        id="item-dropdown"
                         value={props.category}
                         label={i({ id: "OCCASION.TYPES.CATEGORY" })}
                         onChange={props.handleChange}

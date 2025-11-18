@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { checkIsActive } from "../../../../helpers";
-import { ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
 type Props = {
   to: string;

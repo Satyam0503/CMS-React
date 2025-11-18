@@ -1,8 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
 import DOMPurify from "dompurify";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
-
 import {
   AppLanguageProps,
   FiltersType,
@@ -38,7 +35,6 @@ import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 import { PieSeries } from "@mui/x-charts";
-import { number } from "yup";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,

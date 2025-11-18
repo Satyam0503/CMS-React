@@ -743,18 +743,6 @@ button:hover .ql-fill,
       gap: 0.5rem;
       height: 100%;
     }
-
-    .calendar-filters {
-      .MuiFormControl-root {
-        .MuiInputBase-root {
-          .MuiSelect-select {
-            display: flex;
-            justify-content: start;
-            align-items: center;
-          }
-        }
-      }
-    }
   }
 
   .calendar-days {

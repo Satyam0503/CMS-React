@@ -1,50 +1,24 @@
 import { useIntl } from "react-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AxiosError } from "axios";
-import { Box, Card, MenuItem, Select, Stack, Typography } from "@mui/material";
+import { Box, Card, MenuItem, Select, Stack, Typography, useTheme } from "@mui/material";
 import { applicationStatusMapper } from "../../../../utils/common";
-import { CustomCard } from "../../../shared/components/CustomCard";
-import { BarChart } from "../../../shared/components/BarChart";
 import { CardSkeleton } from "./CardSkeleton";
 import { ApplicationStatusModel } from "../model";
 import { getAllApplicationStatus } from "../dashboardservices";
 import { getAllJobVacancies } from "../../recruitment/services";
 import { getVacancyPayload } from "../../recruitment/jobs/Jobs";
 import { JobModal } from "../../recruitment/models";
-import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { BarChart } from "@mui/x-charts/BarChart";
 
 
 export const ApplicationsChart = () => {
   const { formatMessage: i } = useIntl();
   const [applicationData, setApplicationData] = useState<ApplicationStatusModel | null>(null);
-  const [chartData, setChartData] = useState<{
-    labels: string[];
-    series: number[];
-  }>({
-    labels: [],
-    series: [],
-  });
   const [vacancyList, setVacancyList] = useState<JobModal[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVacancy, setSelectedVacancy] = useState<string>("all");
-  const { currentLanguage } = useAppLang();
-
-  const getCountOfApplicationStatus = useCallback(() => {
-    if (applicationData === null) {
-      return chartData;
-    }
-    const applicationStatusCount = applicationData.applicationStatusData.reduce(
-      (status: Record<string, number>, application) => {
-        status[i({ id: applicationStatusMapper[application.activityType] })] = application.count;
-        return status;
-      },
-      {}
-    );
-    return {
-      labels: Object.keys(applicationStatusCount),
-      series: Object.values(applicationStatusCount),
-    };
-  }, [applicationData, currentLanguage]);
+  const theme = useTheme();
 
   useEffect(() => {
     async function getActiveJobs() {
@@ -77,12 +51,6 @@ export const ApplicationsChart = () => {
     getAllApplicationsData();
   }, [selectedVacancy]);
 
-  useEffect(() => {
-    if (applicationData && applicationData.totalApplications !== 0) {
-      const { labels, series } = getCountOfApplicationStatus();
-      setChartData({ labels, series });
-    }
-  }, [applicationData, currentLanguage]);
 
   if (loading) {
     return <CardSkeleton />
@@ -91,8 +59,8 @@ export const ApplicationsChart = () => {
 
   return (
     <Card
-      sx={{ minHeight: "100%" }}
-      className="p-4 d-flex flex-column"
+      // sx={{ : "100%", }}
+      className="p-4 d-flex flex-column h-100"
     >
       <Stack direction="row" className="mb-4 justify-content-between flex-wrap">
         <Typography className="fw-bold fs-16">{i({ id: "TITLES.TOTAL_APPLICATIONS" })}</Typography>
@@ -136,9 +104,27 @@ export const ApplicationsChart = () => {
           </Box>
         ) : (
           <BarChart
-            labels={chartData.labels}
-            series={chartData.series}
-            legendOption={{ show: true }}
+            series={[{
+              data: applicationData.applicationStatusData.map(item => item.count),
+              label: i({ id: "PAGE.APPLICATIONS" }),
+              color: theme.vars?.palette.primary.main
+            }]}
+            hideLegend={true}
+            xAxis={
+              [{
+                scaleType: 'band', data: applicationData.applicationStatusData.map(item => i({ id: applicationStatusMapper[item.activityType] })), tickPlacement: "middle", tickLabelPlacement: "middle", categoryGapRatio: 0.3,
+                barGapRatio: 0.5,
+              }]
+            }
+            slotProps={{
+              legend: {
+                direction: 'horizontal',
+                position: { vertical: 'bottom', horizontal: 'center' },
+              }
+            }}
+            borderRadius={4}
+            margin={{ top: 5, bottom: 0, left: -25, right: 0 }}
+            loading={loading}
           />
         )
       }

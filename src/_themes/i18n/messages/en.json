@@ -23,7 +23,8 @@
     "PROCESS_LOG": "Process Log",
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
-    "PAYROLL": "PayRoll"
+    "PAYROLL": "PayRoll",
+    "CALENDAR": "Calendar"
   },
   "GENDER": {
     "MALE": "Male",
@@ -71,7 +72,8 @@
     "ADD_ROLE": "Add Role",
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
-    "PAYROLL": "PayRoll"
+    "PAYROLL": "PayRoll",
+    "CALENDAR": "Calendar"
   },
 
   "LEAVE_REQUEST_STATUS": {
