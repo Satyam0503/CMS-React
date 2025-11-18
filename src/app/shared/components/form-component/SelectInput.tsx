@@ -26,6 +26,7 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         error={meta.touched && Boolean(meta.error)}
         {...field}
         {...props}
+        value={field.value ?? ""}
       >
         {children}
       </Select>

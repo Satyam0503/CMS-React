@@ -7,11 +7,12 @@ import { Formik, FormikProps } from "formik";
 import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
 import { inviteNewEmployee } from "../employeeServices";
 import { toast } from "react-toastify";
-import { getStatusCodeString } from "../../../../utils/common";
+import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 
 interface PropsTypes {
     handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void,
-    formRef: React.MutableRefObject<FormikProps<InviteNewEmployeeModel> | null>
+    formRef: React.MutableRefObject<FormikProps<InviteNewEmployeeModel> | null>,
+    handleButtonLoading: () => void;
 }
 
 const initialEmployeeDetails: InviteNewEmployeeModel = {
@@ -29,23 +30,25 @@ const inviteEmployeeFormFields: InputFieldProps[] = [
 ] as const;
 
 export const InviteNewEmployee = (props: PropsTypes) => {
-    const { handleInviteUser, formRef } = props
+    const { handleInviteUser, formRef, handleButtonLoading } = props
     const { formatMessage: i } = useIntl();
 
     const InviteNewEmployee = async (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
         try {
             const { data } = await inviteNewEmployee(values);
             if (data.success) {
-                toast.success(i({ id: "TOAST.SUCCESS.INVITE_EMPLOYEE" }))
-                handleInviteUser(data.success, data.methodResult);
+                toast.success(i({ id: "TOAST.SUCCESS.INVITE_EMPLOYEE" }));
+                setTimeout(() => {
+                    handleInviteUser(data.success, data.methodResult);
+                }, 0);
             } else {
-                toast.error(i({ id: getStatusCodeString(data.statusCode) }))
+                toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }))
             }
         } catch (error) {
-            console.log((error as Error).message);
             toast.error(i({ id: "TOAST.FAILED.INVITE_EMPLOYEE" }))
         } finally {
             setSubmitting(false);
+            handleButtonLoading();
         }
     }
     return (

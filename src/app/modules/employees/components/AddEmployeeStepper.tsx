@@ -26,6 +26,7 @@ const steps = [
     { id: AddEmployeeSteps.UPDATE_DATA, label: "EMPLOYEE.STEPPER.EDIT_DATA", optional: false, icon: <EditDocument /> },
     { id: AddEmployeeSteps.ALLOCATE_LEAVE, label: "EMPLOYEE.STEPPER.ALLOCATE_LEAVE", optional: true, icon: <CalendarMonth /> },
 ]
+
 export const AddEmployeeStepper = (props: PropsTypes) => {
     const { open, handleReresh, handleClose } = props;
     const { formatMessage: i } = useIntl();
@@ -34,31 +35,29 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     const inviteFormRef = useRef<FormikProps<InviteNewEmployeeModel> | null>(null);
     const updateFormRef = useRef<FormikProps<EditEmployeePayloadModel> | null>(null);
     const leaveAllocateFormRef = useRef<FormikProps<{ selectedPolicies: string[] }> | null>(null);
+    const [buttonLoading, setButtonLoading] = useState(false);
+
+    const incrementStep = () => {
+        setActiveSteps(step => step + 1);
+    }
 
     const handleInviteUser = (isInvited: boolean, employeeData: InviteEmployeeResponse) => {
         if (isInvited) {
-            setActiveSteps((step) => step + 1);
+            incrementStep();
             setNewEmployeeData(employeeData);
         }
     }
-    const handleUserUpdate = (success: boolean) => {
-        if (success) {
-            setActiveSteps((step) => step + 1);
-            handleReresh();
-        }
-    }
-
-    const handleLeaveAllocation = () => {
-        setActiveSteps(step => step + 1);
-    }
 
     const handleSkip = () => {
-        // step skip 
         setActiveSteps(step => step + 1);
     }
 
+    const handleStopButtonLoading = () => {
+        setButtonLoading(false);
+    };
 
     const handleClick = () => {
+        setButtonLoading(true);
         if (activeStep === AddEmployeeSteps.CREATE_ACCOUNT && inviteFormRef.current) {
             inviteFormRef.current.submitForm();
         }
@@ -70,6 +69,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
         }
         else {
             handleClose();
+            handleReresh();
         }
     }
 
@@ -80,7 +80,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                 maxWidth="xl"
                 open={open}
                 onClose={() => {
-                    if (activeStep === 1) {
+                    if (activeStep > 0) {
                         return;
                     }
                     handleClose();
@@ -111,7 +111,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         activeStep === AddEmployeeSteps.CREATE_ACCOUNT &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <InviteNewEmployee handleInviteUser={handleInviteUser} formRef={inviteFormRef} />
+                                <InviteNewEmployee handleInviteUser={handleInviteUser} formRef={inviteFormRef} handleButtonLoading={handleStopButtonLoading} />
                             </div>
                         </Slide>
                     }
@@ -119,15 +119,15 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         (activeStep === AddEmployeeSteps.UPDATE_DATA && newEmployeeData) &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={handleUserUpdate} formRef={updateFormRef} />
+                                <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={incrementStep} formRef={updateFormRef} handleButtonLoading={handleStopButtonLoading} />
                             </div>
                         </Slide>
                     }
                     {
-                        activeStep === AddEmployeeSteps.ALLOCATE_LEAVE &&
+                        (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && newEmployeeData) &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <LeaveAllocateForm formRef={leaveAllocateFormRef} employeeId={newEmployeeData?.userId} handleLeaveAllocation={handleLeaveAllocation} />
+                                <LeaveAllocateForm formRef={leaveAllocateFormRef} employeeId={newEmployeeData.userId} handleLeaveAllocation={incrementStep} handleButtonLoading={handleStopButtonLoading} />
                             </div>
                         </Slide>
 
@@ -153,9 +153,9 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         <Button variant="outlined" onClick={handleSkip}>{i({ id: "BUTTON.SKIP" })}</Button>
                     }
 
-                    <Button variant="contained" onClick={handleClick} >
+                    <Button variant="contained" onClick={handleClick} loading={buttonLoading}>
                         {
-                            i({ id: activeStep === AddEmployeeSteps.CREATE_ACCOUNT ? "BUTTON.INVITE" : (activeStep === AddEmployeeSteps.UPDATE_DATA) ? "BUTTON.UPDATE" : (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE) ? "BUTTON.ADD" : "BUTTON.CLOSE" })
+                            i({ id: activeStep === AddEmployeeSteps.CREATE_ACCOUNT ? "BUTTON.INVITE" : (activeStep === AddEmployeeSteps.UPDATE_DATA) ? "BUTTON.UPDATE" : (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE) ? "BUTTON.ASSIGN" : "BUTTON.CLOSE" })
                         }
                     </Button>
                 </DialogActions>
@@ -229,9 +229,7 @@ const ColorlibStepIconRoot = styled('div')<{
 }));
 
 function ColorlibStepIcon(props: StepIconProps & { iconComponent: React.ReactElement }) {
-
     const { active, completed, className, iconComponent } = props;
-
     return (
         <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
             {iconComponent}

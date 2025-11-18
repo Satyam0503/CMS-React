@@ -20,7 +20,7 @@ import { SelectInput } from "../../../shared/components/form-component/SelectInp
 import { DepartmentModel, JobTitleResponseModel, RoleModel } from "../../admin/models";
 import { getAllDepartments, getAllRoles, getJobTitles } from "../../admin/adminservices";
 import { GetAllEmployeeResponseModel, InviteNewEmployeeModel } from "../models";
-import { getStatusCodeString } from "../../../../utils/common";
+import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { getAllEmployees, updateEmployee } from "../employeeServices";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -51,11 +51,12 @@ const employeeInitialValue: EditEmployeePayloadModel = {
 interface PropsTypes {
     employeeData: InviteNewEmployeeModel & { userId: string };
     onUserUpdate: (success: boolean) => void;
-    formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>
+    formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>,
+    handleButtonLoading: () => void;
 }
 
 export const UpdateEmployeeData = (props: PropsTypes) => {
-    const { employeeData, onUserUpdate, formRef } = props;
+    const { employeeData, onUserUpdate, formRef, handleButtonLoading } = props;
     const [roles, setRoles] = useState<RoleModel[]>([]);
     const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
@@ -70,24 +71,21 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     ) {
         const payload = {
             ...values,
-            // status: statusEncoder(values.status as string),
         };
         try {
             const response = await updateEmployee(payload, employeeData.userId);
             const { success, statusCode } = response.data;
             if (success) {
-                toast.success(i({ id: "TOAST.SUCCESS.ADD_EMPLOYEE" }));
                 setSubmitting(false);
                 onUserUpdate(success);
-                // handleClose();
-                // setRefresh(!refresh);
             } else {
-                toast.error(i({ id: getStatusCodeString(statusCode) }));
+                toast.error(i({ id: getCustomStatusCodesErrorMessage(statusCode) }));
             }
         } catch (error) {
             console.error((error as Error).message);
         } finally {
             setSubmitting(false);
+            handleButtonLoading();
         }
     }
 
@@ -97,7 +95,6 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                 setRoles(res[0].data.methodResults);
                 if (res[1].data.totalRecords === 0) {
                     toast.error(i({ id: "MESSAGE.NO_DEPARTMENTS" }));
-                    // handleClose();
                 }
                 else {
                     setDepartmentList(res[1].data.methodResults);

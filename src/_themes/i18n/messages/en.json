@@ -194,7 +194,8 @@
     "REMOVE": "Remove",
     "CLEAR": "Clear",
     "INVITE": "Invite",
-    "SKIP": "Skip"
+    "SKIP": "Skip",
+    "ASSIGN": "Assign"
   },
 
   "TITLES": {
@@ -448,7 +449,7 @@
     },
     "INVITE_EMP": {
       "HEADING": "",
-      "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email address. Once the user accepts the invitation, they will be added to your organization on the platform"
+      "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email. Once the user generate their credentials, they will be able to access the platform"
     },
     "UPDATE": {
       "BASIC_INFO": "Basic Information",

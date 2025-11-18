@@ -11,16 +11,18 @@ import {
 import { useEffect, useState } from "react";
 import { LeavePolicy } from "../../leaves/model";
 import { getLeavePolicies, updateEmployeeLeaveBalance } from "../../leaves/leaveServices";
-import { AccrualPeriodMapper } from "../../../../utils/common";
+import { AccrualPeriodMapper, getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { EmployeeLeaveBalance } from "../models";
+import { toast } from "react-toastify";
 
 interface PropsTypes {
     formRef: React.MutableRefObject<FormikProps<{ selectedPolicies: string[] }> | null>,
     employeeId: string,
     handleLeaveAllocation: () => void;
+    handleButtonLoading: () => void;
 }
 
-export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation }: PropsTypes) => {
+export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, handleButtonLoading }: PropsTypes) => {
     const { formatMessage: i } = useIntl();
     const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>([]);
 
@@ -38,10 +40,11 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation }
     }, []);
 
     const AllocateEmployeeLeaveBalance = async (values: { selectedPolicies: string[] }, setSubmitting: (isSubmitting: boolean) => void) => {
-        console.log(values.selectedPolicies);
         if (values.selectedPolicies.length == 0) {
+            handleButtonLoading();
+            setSubmitting(false);
             handleLeaveAllocation();
-            return setSubmitting(false);
+            return;
         } else {
             const payload: EmployeeLeaveBalance = values.selectedPolicies.map(item => ({
                 employeeId: employeeId,
@@ -54,10 +57,14 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation }
                 if (data.success) {
                     handleLeaveAllocation();
                 }
+                else {
+                    toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
+                }
             } catch (error) {
                 console.error((error as Error).message);
             } finally {
                 setSubmitting(false);
+                handleButtonLoading();
             }
         }
     }

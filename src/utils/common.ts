@@ -38,6 +38,7 @@ import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 import { PieSeries } from "@mui/x-charts";
+import { number } from "yup";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -366,6 +367,17 @@ export const flattenMessages = (
 
 export const getStatusCodeString = (statusCode: number) => {
   return `STATUS_CODES.${statusCode}`;
+};
+
+export const getCustomStatusCodesErrorMessage = (
+  status: number,
+  defaultMessage?: string
+) => {
+  if (status < 200 || status > 600) {
+    return `STATUS_CODES.${status}`;
+  } else {
+    return defaultMessage ?? `ERROR.SOMETHING_WRONG`;
+  }
 };
 
 const initialState: AppLanguageProps = {
