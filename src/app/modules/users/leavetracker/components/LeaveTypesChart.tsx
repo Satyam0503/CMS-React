@@ -22,11 +22,11 @@ export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType)
         const chartData: MakeOptional<PieValueType, "id">[] = [
             {
                 label: i({ id: "LEAVE.REMAINING" }),
-                value: leaveType.remainingLeave,
+                value: leaveType.balance,
             },
             {
                 label: i({ id: "LEAVE.TAKEN" }),
-                value: leaveType.maximumLeave - leaveType.remainingLeave,
+                value: leaveType.usedBalance,
             }
         ];
         return chartData;
@@ -64,9 +64,9 @@ export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType)
                         data: getLabelAndDataForLeaveType(type)
                     },
                 ] satisfies PieSeries[]
-                return <Grid key={type.leaveType} item xs={12} sm={6} md={4} >
-                    <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave} applyMinHeight={false}>
-                        <DonutChart loading={isLoading} series={series} centerLabel={type.maximumLeave} />
+                return <Grid key={type.leavePolicyId} item xs={12} sm={6} md={4} >
+                    <CustomCard label={type.name} applyMinHeight={false}>
+                        <DonutChart loading={isLoading} series={series} centerLabel={type.balance} />
                     </CustomCard>
                 </Grid>
             })

@@ -73,7 +73,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "保留中",
     "APPROVED": "承認済み",
-    "REJECTED": "却下"
+    "REJECTED": "却下",
+    "WITHDRAWN": "取り下げられた"
   },
   "CONFIRMATION": {
     "TITLE": {
@@ -349,14 +350,39 @@
       "EDIT_LEAVE_TYPE": "休暇タイプを編集",
       "UPDATE_LEAVE_STATUS": "休暇ステータスを更新",
       "MONTHLY_LEAVE_SUMMARY": "月間休暇概要",
-      "LEAVE_TAKEN": "取得した休暇"
+      "LEAVE_TAKEN": "取得した休暇",
+      "LEAVE_POLICIES": "休暇ポリシー",
+      "ADD_LEAVE_POLICIES": "休暇ポリシーを追加",
+      "LEAVE_WEEKEND": "週末",
+      "LEAVE_FULL_DAY": "終日",
+      "LEAVE_HALF_DAY": "半日",
+      "LEAVE_HOLIDAY": "祝日"
     },
     "TYPES": {
       "CASUAL_LEAVE": "私用休暇",
       "SICK_LEAVE": "病気休暇",
       "EARNED_LEAVE": "有給休暇",
       "MATERNITY_LEAVE": "産休",
-      "PATERNITY_LEAVE": "育休（父親）"
+      "PATERNITY_LEAVE": "育休（父親）",
+      "POLICY_NAME": "名前",
+      "POLICY_DESCRIPTION": "説明",
+      "POLICY_PAID": "有給",
+      "POLICY_ACCURAL_PERIOD": "発生期間",
+      "POLICY_ACCURAL_AMOUNT": "発生金額",
+      "POLICY_CARRY_OVER_ALLOWED": "繰越許可",
+      "POLICY_MIN_NOTICE_DAYS": "最小通知日数",
+      "POLICY_HALF_DAYS_ALLOWED": "半日休暇許可",
+      "POLICY_STATUS": "ステータス",
+      "POLICY_CODE": "コード",
+      "POLICY_MAX_BALANCE": "最大残高",
+      "POLICY_CARRY_LIMIT": "繰越制限",
+      "POLICY_HOLIDAY_INCLUSIVE": "祝日を含む",
+      "POLICY_WEEKEND_INCLUSIVE": "週末を含む",
+      "POLICY_APPLICABLE_TO": "適用対象",
+      "POLICY_ACCRUAL_DEFINATION": "累積期間：従業員が休暇を取得する間隔（例：毎月または支払い期間ごと）。",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "累積量： 従業員が各累積期間中に得る休暇の日数。",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "週末を含む： 休暇日数を計算するときに週末も含まれます。",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "祝日を含む： 休暇日数を計算するときに祝日も含まれます。"
     }
   },
 
@@ -807,7 +833,8 @@
     "PLEASE_SELECT_EMPLOYEE": "従業員を選択してください",
     "NO_RESULT": "結果がありません",
     "NO_DEPARTMENTS": "部署を追加してください",
-    "ADD_LANGUAGE_TITLE": "{language} のタイトルを入力してください"
+    "ADD_LANGUAGE_TITLE": "{language} のタイトルを入力してください",
+    "LEAVE_DAYS_CANT_BE_ZERO": "休暇日数を0にすることはできません"
   },
   "STATUS_CODES": {
     "1": "会社はすでに存在します",

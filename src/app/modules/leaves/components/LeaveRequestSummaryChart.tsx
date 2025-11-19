@@ -12,12 +12,12 @@ import { defaultPieChartSeries, DonutChart } from "../../../shared/components/Do
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { Box, Card, Stack, Typography } from '@mui/material';
 
-type CreateChartDataType = (data: LeaveRequestSummary, view: "type" | "status", intl: IntlShape) => MakeOptional<PieValueType, "id">[];
+type CreateChartDataType = (data: LeaveRequestSummary, view: "type" | "statusValues", intl: IntlShape) => MakeOptional<PieValueType, "id">[];
 
 const createChartData: CreateChartDataType = (data, view, intl) => {
     const { formatMessage: i } = intl;
     const chartData: MakeOptional<PieValueType, "id">[] = [];
-    if (view === "status") {
+    if (view === "statusValues") {
         for (const key in data.leaveStatusSummary) {
             // if (!Object.hasOwnProperty(data.leaveStatusSummary, key)) continue;
             chartData.push({
@@ -39,7 +39,7 @@ export const LeaveRequestSummaryChart = () => {
         return [
             {
                 ...defaultPieChartSeries,
-                data: Boolean(leaveRequestSummary) ? createChartData(leaveRequestSummary!, "status", intl) : [],
+                data: Boolean(leaveRequestSummary) ? createChartData(leaveRequestSummary!, "statusValues", intl) : [],
             }
         ];
     }, [leaveRequestSummary, currentLanguage])
@@ -49,6 +49,7 @@ export const LeaveRequestSummaryChart = () => {
             try {
                 const { data } = await getLeaveRequestSummary();
                 if (data.success) {
+                    // console.log(data.methodResult);
                     setLeaveRequestSummary(data.methodResult);
                 }
             } catch (error) {

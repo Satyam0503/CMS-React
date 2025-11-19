@@ -211,8 +211,14 @@ export const ServiceUrl = {
   GET_LEAVE_BALANCE: `api/LeaveManagement/GetLeaveBalance`,
   CREATE_UPDATE_LEAVE_BALANCE: `api/LeaveManagement/CreateUpdateLeaveBalance`,
 
-  CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateUpdateLeave`,
-  GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequest`,
+  GET_ALL_LEAVE_POLICIES: `api/LeaveManagement/GetAllLeavePolicies`,
+
+  CREATE_NEW_LEAVE_POLICY: `api/LeaveManagement/CreateLeavePolicy`,
+  UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,
+
+  CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateLeaveRequest`,
+  UPDATE_LEAVE_REQUEST: `api/LeaveManagement/UpdateLeaveRequest`,
+  GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequests`,
   DELETE_LEAVE_REQUEST: `api/LeaveManagement/DeleteLeaveRequest`,
   GET_EMP_LEAVE_BALANCE: `api/LeaveManagement/GetEmployeeLeaveBalance`,
   UPDATE_LEAVE_REQUEST_STATUS: `api/LeaveManagement/LeaveRequest`,
@@ -522,6 +528,10 @@ export const LeaveRequestStatusTypes = [
     id: 3,
     label: "LEAVE_REQUEST_STATUS.REJECTED",
     value: LEAVE_REQUEST_STATUS.REJECTED,
+  },{
+    id: 4,
+    label: "LEAVE_REQUEST_STATUS.WITHDRAWN",
+    value: LEAVE_REQUEST_STATUS.WITHDRAWN,
   },
 ];
 
@@ -1308,6 +1318,80 @@ export const EmployeeLeaveBalanceColumnList: ColumnListTypes[] = [
     ) => <ActionComponent row={row} handleEdit={handleLeaveBalanceEdit} />,
   },
 ];
+
+export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
+  {
+    id: "name",
+    label: "LEAVE.TYPES.POLICY_NAME",
+  },{
+    id: 'code',
+    label: "LEAVE.TYPES.POLICY_CODE"
+  },
+  {
+    id: "paid",
+    label: "LEAVE.TYPES.POLICY_PAID",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },
+  {
+    id: "accrualPeriod",
+    label: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD",
+    build: (value: number) => {
+      return value && (
+        value === 1 ? <Typography>Monthly</Typography> :
+        value === 2 ? <Typography>Yearly</Typography> : 
+        <Typography>None</Typography>
+        
+      );
+    },
+  },{
+    id: "carryOverAllowed",
+    label: "LEAVE.TYPES.POLICY_CARRY_OVER_ALLOWED",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },{
+    id: "minNoticeDays",
+    label: "LEAVE.TYPES.POLICY_MIN_NOTICE_DAYS",
+  },
+  {
+    id: "halfDayAllowed",
+    label: "LEAVE.TYPES.POLICY_HALF_DAYS_ALLOWED",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },{
+    id: "status",
+    label: "LEAVE.TYPES.POLICY_STATUS",
+    build: (status: boolean) => {
+      return (
+        <StyleStatus
+          label={statusDecoder(status)}
+          className={clsx({ success: status, danger: !status })}
+        />
+      );
+    },
+  },{
+    id: "action",
+    label: "ACTION",
+    build: (row: LeaveType, handleLeaveTypeEdit: (row: LeaveType) => void) => (
+      <ActionComponent row={row} handleEdit={handleLeaveTypeEdit} />
+    ),
+  },
+]
 
 export const SideBarTabList: SideBarTabListProps[] = [
   {

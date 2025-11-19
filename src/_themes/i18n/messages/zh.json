@@ -93,7 +93,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "待处理",
     "APPROVED": "已批准",
-    "REJECTED": "已拒绝"
+    "REJECTED": "已拒绝",
+    "WITHDRAWN": "撤回了"
   },
   "CONFIRMATION": {
     "TITLE": {
@@ -369,14 +370,39 @@
       "EDIT_LEAVE_TYPE": "编辑请假类型",
       "UPDATE_LEAVE_STATUS": "更新请假状态",
       "MONTHLY_LEAVE_SUMMARY": "每月请假汇总",
-      "LEAVE_TAKEN": "已休假"
+      "LEAVE_TAKEN": "已休假",
+      "LEAVE_POLICIES": "请假政策",
+      "ADD_LEAVE_POLICIES": "添加请假政策",
+      "LEAVE_WEEKEND": "周末",
+      "LEAVE_FULL_DAY": "全天",
+      "LEAVE_HALF_DAY": "半天",
+      "LEAVE_HOLIDAY": "假日"
     },
     "TYPES": {
       "CASUAL_LEAVE": "事假",
       "SICK_LEAVE": "病假",
       "EARNED_LEAVE": "年假",
       "MATERNITY_LEAVE": "产假",
-      "PATERNITY_LEAVE": "陪产假"
+      "PATERNITY_LEAVE": "陪产假",
+      "POLICY_NAME": "名称",
+      "POLICY_DESCRIPTION": "描述",
+      "POLICY_PAID": "带薪",
+      "POLICY_ACCURAL_PERIOD": "累计周期",
+      "POLICY_ACCURAL_AMOUNT": "应计金额",
+      "POLICY_CARRY_OVER_ALLOWED": "允许结转",
+      "POLICY_MIN_NOTICE_DAYS": "最少通知天数",
+      "POLICY_HALF_DAYS_ALLOWED": "允许半天休假",
+      "POLICY_STATUS": "状态",
+      "POLICY_CODE": "代码",
+      "POLICY_MAX_BALANCE": "最大余额",
+      "POLICY_CARRY_LIMIT": "结转上限",
+      "POLICY_HOLIDAY_INCLUSIVE": "包含节假日",
+      "POLICY_WEEKEND_INCLUSIVE": "包含周末",
+      "POLICY_APPLICABLE_TO": "适用于",
+      "POLICY_ACCRUAL_DEFINATION": "累积周期：员工获得休假的时间间隔（例如，每月或每个发薪周期）。",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "累积额度： 员工在每个累积周期中获得的休假天数。",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "包含周末： 在计算总休假天数时包括周末。",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "包含节假日： 在计算总休假天数时包括节假日。"
     }
   },
   "PROFILE": {
@@ -815,7 +841,8 @@
     "PLEASE_SELECT_EMPLOYEE": "请选择员工",
     "NO_RESULT": "无结果",
     "NO_DEPARTMENTS": "请添加部门",
-    "ADD_LANGUAGE_TITLE": "请输入 {language} 的标题"
+    "ADD_LANGUAGE_TITLE": "请输入 {language} 的标题",
+    "LEAVE_DAYS_CANT_BE_ZERO": "请假天数不能为0"
   },
   "STATUS_CODES": {
     "1": "公司已存在",

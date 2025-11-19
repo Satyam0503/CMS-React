@@ -18,10 +18,11 @@ interface PropsTypes {
   views?: DateView[];
   format?:string;
   sx?: SxProps<Theme>;
+  shouldDisableDate? : (newDate: Dayjs ) => boolean;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
-  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx ,format} = props;
+  const { label, value, setValue, maxDate, name, minDate, disabled = false, views, sx ,format, shouldDisableDate} = props;
   return (
     
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -34,6 +35,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
             onChange={(newDate) => {
               setValue(newDate);
             }}
+            shouldDisableDate={shouldDisableDate}
             maxDate={maxDate}
             minDate={minDate}
             disabled={disabled}

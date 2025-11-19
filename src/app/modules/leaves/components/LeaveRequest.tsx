@@ -23,7 +23,7 @@ export const LeaveRequest = () => {
     const { formatMessage: i } = useIntl();
     const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
     const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
-    const [totalRecords, setTotalRecords] = useState(0);
+    const [totalRecords, setTotalRecords] = useState<number>(0);
     const [isLoading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
     const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<LeaveRequestModel | null>(null);
@@ -39,7 +39,9 @@ export const LeaveRequest = () => {
             }
             try {
                 const { data } = await getAllLeaveRequest(payload);
+                
                 if (data.success) {
+                    // console.log(data.methodResults);
                     setLeaveRequest(data.methodResults);
                     setTotalRecords(data.totalRecords);
                 }
@@ -81,7 +83,7 @@ export const LeaveRequest = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>{i({ id: "LEAVE.EMPLOYEE_NAME" })}</TableCell>
-                            <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell>
+                            {/* <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell> */}
                             <TableCell>{i({ id: "LEAVE.LEAVE_PERIOD" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.DURATION" })}</TableCell>
                             <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
@@ -118,7 +120,7 @@ export const LeaveRequest = () => {
                                                         subTitle={row.jobRole}
                                                     />
                                                 </TableCell>
-                                                <TableCell>{i({ id: LeaveTypeMapper[row.leaveType] })}</TableCell>
+                                                {/* <TableCell>{i({ id: LeaveTypeMapper[row.leaveType] })}</TableCell> */}
                                                 <TableCell>{`${dateFormatter(row.startDate, "DD MMM YY")} - ${dateFormatter(row.endDate, "DD MMM YY")}`}</TableCell>
                                                 <TableCell>{`${row.totalDays} ${i({ id: row.totalDays > 1 ? "DAYS" : "DAY" })}`}</TableCell>
                                                 <TableCell>
@@ -134,12 +136,13 @@ export const LeaveRequest = () => {
                                                             "success": row.status === LEAVE_REQUEST_STATUS.APPROVED,
                                                             "warning": row.status === LEAVE_REQUEST_STATUS.PENDING,
                                                             "danger": row.status === LEAVE_REQUEST_STATUS.REJECTED,
+                                                            'info': row.status === LEAVE_REQUEST_STATUS.WITHDRAWN,
                                                         })}
                                                         label={LeaveRequestStatusTypes.find(type => type.value === row.status)?.label ?? ""}
                                                     />
                                                 </TableCell>
                                                 <TableCell>
-                                                    <IconButton onClick={() => setSelectedLeaveRequest(row)}>
+                                                    <IconButton onClick={() => setSelectedLeaveRequest(row)} disabled={row.status === 4}>
                                                         <Edit className="fs-20" />
                                                     </IconButton>
                                                 </TableCell>
@@ -179,8 +182,11 @@ export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }:
     const { formatMessage: i } = useIntl();
     const [leaveData, setLeaveData] = useState({
         status: leaveRequest.status,
-        comment: ""
+        comment: leaveRequest.comment
     });
+
+    console.log(leaveData);
+    
 
 
     const handleLeaveStatusUpdate = async () => {
@@ -188,6 +194,7 @@ export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }:
             const payload: LeaveRequestApprovalPayload = {
                 ...leaveData
             }
+            
             const { data } = await updateLeaveRequestStatus(leaveRequest.leaveRequestId, payload);
             if (data.success) {
                 toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
@@ -205,6 +212,8 @@ export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }:
             ...leaveData,
             [name]: value
         })
+        console.log(leaveData);
+        
     }
     return (
         <CustomisedModal open={open} handleClose={handleClose} title={i({ id: "LEAVE.TITLES.UPDATE_LEAVE_STATUS" })}>
@@ -221,7 +230,7 @@ export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }:
                     >
                         {
                             LeaveRequestStatusTypes.map(item => (
-                                <MenuItem value={item.value} key={item.id} disabled={leaveRequest.status !== LEAVE_REQUEST_STATUS.PENDING && item.value === LEAVE_REQUEST_STATUS.PENDING} >{i({ id: item.label })}</MenuItem>
+                                <MenuItem value={item.value} key={item.id} disabled={leaveRequest.status !== LEAVE_REQUEST_STATUS.PENDING && item.value === LEAVE_REQUEST_STATUS.WITHDRAWN} >{i({ id: item.label })}</MenuItem>
                             ))
                         }
                     </Select>
@@ -230,7 +239,7 @@ export const LeaveApprovalModal = ({ open, handleClose, leaveRequest, refresh }:
                 <TextField
                     fullWidth
                     multiline
-                    type="text"
+                    type="text" 
                     name="comment"
                     label={i({ id: "LEAVE.COMMENT" })}
                     rows={3}

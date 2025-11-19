@@ -12,18 +12,25 @@ export interface LeaveType {
 }
 
 export interface RequestLeaveModel {
-  leaveRequestId?: string;
-  leaveType: LEAVE_TYPE;
-  isHalfDay: boolean;
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
-  totalDays: number;
-  reason: string;
-  reviewedBy?: string;
-  status?: number;
+  userId: string,
+  leavePolicyId: string,
+  startDate: Dayjs | null,
+  endDate: Dayjs | null,
+  isHalfDay: boolean,
+  reason: string
 }
 
-export type LeaveRequestModel = Required<RequestLeaveModel> & {
+export type MyLeaveRequestModel = Required<RequestLeaveModel> & {
+  leaveRequestId: string,
+  totalDays: number,
+  reviewedBy: string,
+  comment: string,
+  status: number,
+  leavePolicyName: string,
+  code: string
+};
+
+export type LeaveRequestModel = Required<MyLeaveRequestModel> & {
   employeeName: string;
   profileUrl: string | null;
   jobRole: null | Record<string, string>;
@@ -32,14 +39,12 @@ export type LeaveRequestModel = Required<RequestLeaveModel> & {
 export type LeaveRequestsFilterModel = {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
-  leaveType: LEAVE_TYPE | null;
   status: LEAVE_REQUEST_STATUS | null;
 };
+
 export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel & PaginationModel;
 
-export type MyLeaveRequestModel = Required<RequestLeaveModel> & {
-  comment: string;
-};
+
 
 export type LeaveBalanceFilter = {
   employeeName?: string;
@@ -76,11 +81,18 @@ export type LeaveBalanceRequestModel = {
 };
 
 export type EmployeeLeaveTypeBalance = {
-  leaveType: number;
-  isHalfDay: boolean;
-  minAdvanceNoticeDate: number;
-  maximumLeave: number;
-  remainingLeave: number;
+  leaveBalanceId : string,
+  leavePolicyId : string,
+  balance: number,
+  usedBalance: number,
+  name: string,
+  code: string,
+  description: string,
+  paid: boolean,
+  minNoticeDays: 0,
+  halfDayAllowed: true,
+  weekendInclusive: true,
+  holidayInclusive: true
 };
 
 export type LeaveRequestApprovalPayload = {
@@ -92,20 +104,52 @@ export type LeaveRequestSummary = {
   totalRequests: number;
   leaveStatusSummary: Record<number, number>;
   leaveTypeSummary: {
-    leaveType: LEAVE_TYPE;
-    statusValues: Record<number, number>;
+    leaveTypeCode: string,
+    leaveTypeName: string,
+    statusValues:  Record<number, number>
   }[];
 };
+
 export type MonthlyLeaveTakenSummary = {
   month: number;
   totalLeavesTaken: number;
 };
+
+export type LeavePolicyModel = {
+  id: string | null,
+  name: string,
+  code: string,
+  description: string | null,
+  status: boolean,
+  paid: boolean,
+  accrualPeriod: number,
+  accrualAmount: number,
+  maxBalance: number,
+  carryOverAllowed: boolean,
+  carryOverLimit: number,
+  minNoticeDays: number,
+  halfDayAllowed: boolean,
+  weekendInclusive: boolean,
+  holidayInclusive: boolean,
+  applicableTo: Array<string> | null,
+}
+
+
+// export type LeavePolicyData = {
+//   message : string,
+//   methodResult : null,
+//   methodResults: Array<LeavePolicyUpdateModel>,
+//   statusCode : number,
+//   success : boolean,
+//   totalRecords : number
+// }
 
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;
 export type GetLeaveBalanceResponse = ResponseData<LeaveBalance>;
 export type GetLeaveRequestsResponse = ResponseData<LeaveRequestModel>;
 export type GetMyLeaveRequestsResponse = ResponseData<MyLeaveRequestModel>;
 export type GetLeaveRequestsSummary = ResponseData<LeaveRequestSummary>;
+export type GetLeavePolicyData = ResponseData<LeavePolicyModel>
 
 export type GetEmployeeLeaveBalanceResponse =
   ResponseData<EmployeeLeaveTypeBalance>;

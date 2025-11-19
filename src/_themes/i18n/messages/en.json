@@ -77,7 +77,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Pending",
     "APPROVED": "Approved",
-    "REJECTED": "Rejected"
+    "REJECTED": "Rejected",
+    "WITHDRAWN": "Withdrawn"
   },
 
   "CONFIRMATION": {
@@ -364,14 +365,39 @@
       "EDIT_LEAVE_TYPE": "Edit Leave Type",
       "UPDATE_LEAVE_STATUS": "Update Leave Status",
       "MONTHLY_LEAVE_SUMMARY": "Monthly Leave Summary",
-      "LEAVE_TAKEN": "Leave Taken"
+      "LEAVE_TAKEN": "Leave Taken",
+      "LEAVE_POLICIES": "Leave Policies",
+      "ADD_LEAVE_POLICIES": "Add Leave Policy",
+      "LEAVE_WEEKEND": "Weekend",
+      "LEAVE_FULL_DAY": "Full Day",
+      "LEAVE_HALF_DAY": "Half Day",
+      "LEAVE_HOLIDAY": "Holiday"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Casual Leave",
       "SICK_LEAVE": "Sick Leave",
       "EARNED_LEAVE": "Earned Leave",
       "MATERNITY_LEAVE": "Maternity Leave",
-      "PATERNITY_LEAVE": "Paternity Leave"
+      "PATERNITY_LEAVE": "Paternity Leave",
+      "POLICY_NAME": "Name",
+      "POLICY_DESCRIPTION": "Description",
+      "POLICY_PAID": "Paid",
+      "POLICY_ACCURAL_PERIOD": "Accrual Period",
+      "POLICY_ACCURAL_AMOUNT": "Accrual Amount",
+      "POLICY_CARRY_OVER_ALLOWED": "Carry Over Allowed",
+      "POLICY_MIN_NOTICE_DAYS": "Minimum Notice Days",
+      "POLICY_HALF_DAYS_ALLOWED": "Half Days Allowed",
+      "POLICY_STATUS": "Status",
+      "POLICY_CODE": "Code",
+      "POLICY_MAX_BALANCE": "Max Balance",
+      "POLICY_CARRY_LIMIT": "Carry Over Limit",
+      "POLICY_HOLIDAY_INCLUSIVE": "Holiday Inclusive",
+      "POLICY_WEEKEND_INCLUSIVE": "Weekend Inclusive",
+      "POLICY_APPLICABLE_TO": "Applicable To",
+      "POLICY_ACCRUAL_DEFINATION": "Accrual Period: The time interval at which employees earn leave (for example, every month or every pay period).",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "Accrual Amount: The amount of leave an employee earns during each accrual period.",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "Weekend Inclusive: Leave days include weekends when calculating total time off.",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "Holiday Inclusive: Leave days include public holidays when calculating total time off."
     }
   },
 
@@ -836,7 +862,8 @@
     "PLEASE_SELECT_EMPLOYEE": "Please select employee",
     "NO_RESULT": "No Result",
     "NO_DEPARTMENTS": "Please add departments",
-    "ADD_LANGUAGE_TITLE": "Please enter a title for {language}"
+    "ADD_LANGUAGE_TITLE": "Please enter a title for {language}",
+    "LEAVE_DAYS_CANT_BE_ZERO": "Leave days cannot be 0"
   },
   "STATUS_CODES": {
     "1": "Company already exist",

@@ -81,7 +81,7 @@ export const EmployeesLeaveBalance = () => {
     }
 
     useEffect(() => {
-        (async () => {
+        const getLeaveBalanceFunc = async () => {
             setLoading(true);
             const payload: LeaveBalanceFilter = { pageNo: paginationValues.pageNo + 1, pageSize: paginationValues.records };
             try {
@@ -89,6 +89,8 @@ export const EmployeesLeaveBalance = () => {
                 if (data.success) {
                     setLeaveBalance(data.methodResults);
                     setTotalRecords(data.totalRecords);
+                    // console.log(data);
+                    
                 }
             } catch (error) {
                 console.error((error as Error).message);
@@ -96,7 +98,9 @@ export const EmployeesLeaveBalance = () => {
             finally {
                 setLoading(false);
             }
-        })();
+        };
+
+        getLeaveBalanceFunc()
     }, [refresh, paginationValues])
 
     return (

@@ -152,12 +152,6 @@ input:-webkit-autofill {
   color: $app-primary-700;
 }
 
-
-// .pdf_viewer {
-//   max-width: 100% !important;
-//   width: 100% !important;
-// }
-
 canvas {
   width: 100% !important;
   height: auto !important;
@@ -1044,4 +1038,16 @@ button:hover .ql-fill,
       width: 100%;
     }
   }
+}
+
+.applicable-employees-select{
+  .MuiFormControl-root{
+    .MuiInputBase-root{
+      padding: 0;
+    }
+  }
+}
+
+.leave-policy-checkbox{
+  margin-left: 0;
 }

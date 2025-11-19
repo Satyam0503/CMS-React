@@ -21,6 +21,8 @@ import {
   LeaveRequestApprovalPayload,
   GetLeaveRequestsSummary,
   MonthlyLeaveTakenSummary,
+  LeavePolicyModel,
+  GetLeavePolicyData,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -30,6 +32,10 @@ export const createUpdateLeaveType = (payload: LeaveType) => {
   );
 };
 
+export const getAllLeavePolicies = ()=>{
+  return postRequest<[],GetLeavePolicyData>(ServiceUrl.GET_ALL_LEAVE_POLICIES)
+}
+
 export const getLeaveTypes = (isActive?: boolean) => {
   if (isActive) {
     return getRequest<GetLeaveTypeResponse>(ServiceUrl.GET_LEAVE_TYPES, {
@@ -38,6 +44,14 @@ export const getLeaveTypes = (isActive?: boolean) => {
   }
   return getRequest<GetLeaveTypeResponse>(ServiceUrl.GET_LEAVE_TYPES);
 };
+
+export const createLeavePolicy = (payload: LeavePolicyModel)=>{
+  return postRequest<LeavePolicyModel, ApiResponse>(ServiceUrl.CREATE_NEW_LEAVE_POLICY, payload)
+}
+
+export const updateLeavePolicy = (payload: LeavePolicyModel)=>{
+  return postRequest<LeavePolicyModel, ApiResponse>(ServiceUrl.UPDATE_LEAVE_POLICY, payload)
+}
 
 export const createUpdateLeaveBalance = (payload: LeaveBalanceRequestModel) => {
   return postRequest<LeaveBalanceRequestModel, ApiResponse>(
@@ -59,6 +73,13 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
     payload
   );
 };
+
+export const updateLeaveRequest = (payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    ServiceUrl.UPDATE_LEAVE_REQUEST,
+    payload
+  );
+}
 
 export const getAllLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
   return postRequest<GetLeaveRequestPayLoad, GetLeaveRequestsResponse>(

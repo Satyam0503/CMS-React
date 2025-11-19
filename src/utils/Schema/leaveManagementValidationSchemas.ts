@@ -15,6 +15,24 @@ export const leaveTypeValidationSchma = Yup.object().shape({
   isActive: Yup.bool().required(),
 });
 
+export const LeavePolicyValidationSchema = Yup.object().shape({
+  name: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  code: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  description: Yup.string(),
+  status: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  paid: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  accrualPeriod: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  accrualAmount: Yup.number().required().min(1),
+  maxBalance: Yup.number().moreThan(Yup.ref('accrualAmount')).required("VALIDATION_ERR.REQUIRED_TYPE"),
+  carryOverAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  carryOverLimit: Yup.number().nullable(),
+  minNoticeDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  halfDayAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  weekendInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  holidayInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  applicableTo: Yup.array().of(Yup.string()).nullable()
+})
+
 export const leaveBalanceValidationSchema = Yup.object().shape({
   employeeId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   leaveTypeBalances: Yup.array()
@@ -32,9 +50,8 @@ export const leaveBalanceValidationSchema = Yup.object().shape({
 });
 
 export const leaveRequestValidationSchema = Yup.object().shape({
-  leaveType: Yup.number()
-    .oneOf([1, 2, 3, 4, 5], "INVALID_LEAVE_TYPE")
-    .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  leaveRequestId: Yup.string(),
+  leavePolicyId: Yup.string().required("VALIDATION_ERR.INVALID_LEAVE_POLICY"),
   isHalfDay: Yup.bool().required("VALIDATION_ERR.INVALID_LEAVE_TYPE"),
   startDate: Yup.date()
     .min(dayjs().startOf("day"))
@@ -42,15 +59,12 @@ export const leaveRequestValidationSchema = Yup.object().shape({
   endDate: Yup.date()
     .min(Yup.ref("startDate"), "VALIDATION_ERR.END_DATE_EARLIER_ERROR")
     .required("VALIDATION_ERR.REQUIRED_TYPE"),
-  totalDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  // totalDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
   reason: Yup.string().trim().min(3).required("VALIDATION_ERR.REQUIRED_TYPE"),
 });
 
 export const leaveRequestFilterValidationSchema = Yup.object().shape({
-  leaveType: Yup.number()
-    .oneOf([1, 2, 3, 4, 5], "INVALID_LEAVE_TYPE")
-    .notRequired(),
   startDate: Yup.date().notRequired(),
   endDate: Yup.date().min(Yup.ref("startDate")).notRequired(),
-  status: Yup.number().oneOf([1, 2, 3]).notRequired(),
+  status: Yup.number().oneOf([1, 2, 3, 4]).notRequired(),
 });

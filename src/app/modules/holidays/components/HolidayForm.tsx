@@ -45,6 +45,8 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
       formik.setFieldValue("image", selectedFile, true)
     }
   }
+  // console.log(formik.values.recurring);
+  
 
   const handleAddUpdateHoliday = async (values: CalendarItem, setSubmitting: (isSubmitting: boolean) => void) => {
     try {
@@ -135,7 +137,9 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
 
               <Grid item xs={12} md={6}>
                 <FormControlLabel 
-                  control={<Checkbox defaultChecked  value={formik.values.recurring} onChange={(e,checked)=>{
+                  control={<Checkbox  checked={formik.values.recurring} onChange={(e,checked)=>{
+                    console.log(formik.values);
+                    
                     formik.setFieldValue("recurring",checked)
                   }} />}
                   label={i({id: "OCCASION.RECURRING",})}

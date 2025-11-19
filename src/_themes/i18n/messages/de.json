@@ -73,7 +73,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Ausstehend",
     "APPROVED": "Genehmigt",
-    "REJECTED": "Abgelehnt"
+    "REJECTED": "Abgelehnt",
+    "WITHDRAWN": "Zurückgezogen"
   },
   "CONFIRMATION": {
     "TITLE": {
@@ -350,14 +351,39 @@
       "EDIT_LEAVE_TYPE": "Urlaubsart bearbeiten",
       "UPDATE_LEAVE_STATUS": "Urlaubsstatus aktualisieren",
       "MONTHLY_LEAVE_SUMMARY": "Monatliche Urlaubsübersicht",
-      "LEAVE_TAKEN": "Genommene Urlaubstage"
+      "LEAVE_TAKEN": "Genommene Urlaubstage",
+      "LEAVE_POLICIES": "Urlaubsrichtlinien",
+      "ADD_LEAVE_POLICIES": "Urlaubsrichtlinie hinzufügen",
+      "LEAVE_WEEKEND": "Wochenende",
+      "LEAVE_FULL_DAY": "Ganzer Tag",
+      "LEAVE_HALF_DAY": "Halber Tag",
+      "LEAVE_HOLIDAY": "Feiertag"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Gelegenheitsurlaub",
       "SICK_LEAVE": "Krankenurlaub",
       "EARNED_LEAVE": "Erholungsurlaub",
       "MATERNITY_LEAVE": "Mutterschaftsurlaub",
-      "PATERNITY_LEAVE": "Vaterschaftsurlaub"
+      "PATERNITY_LEAVE": "Vaterschaftsurlaub",
+      "POLICY_NAME": "Name",
+      "POLICY_DESCRIPTION": "Beschreibung",
+      "POLICY_PAID": "Bezahlt",
+      "POLICY_ACCURAL_PERIOD": "Abgrenzungszeitraum",
+      "POLICY_ACCURAL_AMOUNT": "Rückstellungsbetrag",
+      "POLICY_CARRY_OVER_ALLOWED": "Übertrag erlaubt",
+      "POLICY_MIN_NOTICE_DAYS": "Mindestkündigungsfrist (Tage)",
+      "POLICY_HALF_DAYS_ALLOWED": "Halbe Tage erlaubt",
+      "POLICY_STATUS": "Status",
+      "POLICY_CODE": "Code",
+      "POLICY_MAX_BALANCE": "Maximalguthaben",
+      "POLICY_CARRY_LIMIT": "Übertragslimit",
+      "POLICY_HOLIDAY_INCLUSIVE": "Feiertage inbegriffen",
+      "POLICY_WEEKEND_INCLUSIVE": "Wochenenden inbegriffen",
+      "POLICY_APPLICABLE_TO": "Gilt für",
+      "POLICY_ACCRUAL_DEFINATION": "Ansammelzeitraum: Der Zeitraum, in dem Mitarbeitende Urlaub ansammeln (zum Beispiel jeden Monat oder jede Gehaltsperiode).",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "Monto de acumulación: La cantidad de días de permiso que un empleado gana durante cada período de acumulación.",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "Fin de semana incluido: Los días de permiso incluyen los fines de semana al calcular el total de días libres.",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "Festivos incluidos: Los días de permiso incluyen los días festivos al calcular el total de días libres."
     }
   },
   "PROFILE": {
@@ -797,7 +823,8 @@
     "PLEASE_SELECT_EMPLOYEE": "Bitte wählen Sie einen Mitarbeiter aus",
     "NO_RESULT": "Kein Ergebnis",
     "NO_DEPARTMENTS": "Bitte fügen Sie Abteilungen hinzu",
-    "ADD_LANGUAGE_TITLE": "Bitte geben Sie einen Titel für {language} ein"
+    "ADD_LANGUAGE_TITLE": "Bitte geben Sie einen Titel für {language} ein",
+    "LEAVE_DAYS_CANT_BE_ZERO": "Urlaubstage dürfen nicht 0 sein"
   },
   "STATUS_CODES": {
     "1": "Unternehmen existiert bereits",
