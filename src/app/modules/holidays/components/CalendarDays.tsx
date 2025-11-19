@@ -6,31 +6,34 @@ import {
     Tooltip,
     Typography,
     useColorScheme,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CalendarItem } from "../models";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { CalendarToday } from "@mui/icons-material";
 import clsx from "clsx";
 
 type Props = {
-    selectedDate: string | undefined;
-    selectedMonth: string | undefined;
-    selectedYear: string | undefined;
-    handleSelectDate: (date: string) => void;
+    selectedDate: Dayjs | null;
+    handleSelectedDateChange: (updatedDate: dayjs.Dayjs | null) => void;
     occasions: Array<CalendarItem>;
     handleRefresh: () => void;
 };
 
 export default function CalendarDays(props: Props) {
+    const { selectedDate, handleSelectedDateChange, occasions } = props;
     const [thisMonthsHolidays, setthisMonthsHolidays] = useState<Array<CalendarItem>>([]);
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-    const [isTodayMonthYear, setIsTodayMonthYear] = useState<boolean>(true);
     const [smlScreenAnchr, setSmlScreenAnchr] = React.useState<HTMLElement | null>(null);
     const [selectedDateOccasions, setSelectedDateOccasions] = useState<Array<CalendarItem>>([])
+    const { mode: theme } = useColorScheme();
+    const [monthDays, setMonthDays] = useState<Array<number | string>>([]);
+    const muiTheme = useTheme();
 
     const popoverOpen = Boolean(anchorEl);
-    const screenWidth: number = screen.width;
+    const isSmallScreen = useMediaQuery(muiTheme.breakpoints.down("sm"));
 
     const weekDays: Array<string> = [
         "Sun",
@@ -41,99 +44,39 @@ export default function CalendarDays(props: Props) {
         "Fri",
         "Sat",
     ];
-
-    const weekDaysSmlScreen: Array<string> = [
-        "S",
-        "M",
-        "T",
-        "W",
-        "T",
-        "F",
-        "S"
-    ];
-
-    const date = new Date();
-    const todayDate = String(date.getDate()).padStart(2, "0");
-    const todayMonth = String(date.getMonth());
-    const todayYear = String(date.getFullYear());
-    const { mode: theme } = useColorScheme();
-
     const open = Boolean(smlScreenAnchr);
 
-    const days: Array<string> = [];
-
-    getDaysInCurrentMonth(props.selectedMonth, props.selectedYear);
-
     //Gets number of days in any month
-    function getDaysInCurrentMonth(
-        month: string | undefined,
-        year: string | undefined
-    ) {
-        days.length = 0;
+    function getDaysInCurrentMonth() {
+        const days: Array<number | string> = [];
+        const firstDateOfMonth = dayjs(selectedDate).startOf("month").day();
+        const daysInCurrentMonth = dayjs(selectedDate).daysInMonth();
 
-        function getDaysInMonth(year: number, month: number) {
-            return new Date(year, month + 1, 0).getDate();
+        for (let i: number = 0; i < firstDateOfMonth; i++) {
+            days.push(" ");
         }
 
-        function getFirstDayOfMonth(year: string, month: string) {
-            const date = new Date(parseInt(year), parseInt(month), 1);
-            const day = date.getDay();
-
-            return day === 0 ? 7 : day;
+        for (let i: number = 1; i <= daysInCurrentMonth; i++) {
+            days.push(i);
         }
-
-        if (month && year) {
-            const firstDateOfMonth = getFirstDayOfMonth(year, month);
-            const daysInCurrentMonth = getDaysInMonth(
-                parseInt(month),
-                parseInt(month)
-            );
-
-            for (let i: number = 0; i < firstDateOfMonth; i++) {
-                if (firstDateOfMonth === 7) {
-                    break;
-                }
-                days.push(" ");
-            }
-
-            for (let i: number = 1; i <= daysInCurrentMonth; i++) {
-                days.push(String(i).padStart(2, "0"));
-            }
-        }
+        return days;
     }
 
     // Checks If It Is Current Month And Year To Set Today Date
-    function checkIsCurrentMonthYear() {
-        const { selectedDate, selectedMonth, selectedYear } = props;
-
-        if (selectedDate && selectedMonth && selectedYear) {
-            const isSameMonthYear =
-                Number(selectedMonth) === Number(todayMonth) &&
-                Number(selectedYear) === Number(todayYear);
-
-            setIsTodayMonthYear(isSameMonthYear);
+    function checkIsSameDay(dayofMonth: number) {
+        if (typeof dayofMonth === "number") {
+            const isSameMonthYear = selectedDate?.isSame(dayjs(), "day") && (selectedDate.date() === dayofMonth);
+            return isSameMonthYear
         }
+        return false;
     }
 
     //Find Occasions For Selected Month
     function findOccasionsForMonth() {
-        const thisMonthHolidaysFinder: Array<CalendarItem> = [];
-        props.occasions.forEach((occ) => {
-            if (occ.date) {
-                const month = dayjs(occ.date).format("MM")
-
-                let selecMonth = String(
-                    parseInt(dayjs(`${props.selectedYear}-${props.selectedMonth}-01`).format("MM")) + 1)
-                    .padStart(2, "0");
-                if (selecMonth === '13') selecMonth = '01'
-
-
-                if (month == selecMonth) {
-                    thisMonthHolidaysFinder.push(occ);
-                }
-            }
-            setthisMonthsHolidays(thisMonthHolidaysFinder);
-        });
+        setthisMonthsHolidays(structuredClone(occasions).filter(occ => {
+            const occassionMonth = dayjs(occ.date).month();
+            return selectedDate?.month() === occassionMonth;
+        }))
     }
 
     //Sets anchor to popover
@@ -147,12 +90,12 @@ export default function CalendarDays(props: Props) {
     }
 
     //Sets the anchor element only if there is an occasion on the selected date
-    function checkForOccasionForDate(day: string, event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function checkForOccasionForDate(day: number, event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         let dateCheck: boolean = false
         const dateOccasions: Array<CalendarItem> = []
         thisMonthsHolidays.length > 0 &&
             thisMonthsHolidays.map((holiday) => {
-                const holidayDate = dayjs(holiday.date).format("DD");
+                const holidayDate = dayjs(holiday.date).date();
                 if (holidayDate == day) {
                     dateCheck = true
                     dateOccasions.push(holiday)
@@ -176,15 +119,12 @@ export default function CalendarDays(props: Props) {
     }
 
     useEffect(() => {
-        checkIsCurrentMonthYear();
-        getDaysInCurrentMonth(props.selectedMonth, props.selectedYear);
         findOccasionsForMonth();
-    }, [
-        props.selectedDate,
-        props.selectedMonth,
-        props.selectedYear,
-        props.occasions,
-    ]);
+    }, [selectedDate, occasions]);
+
+    useEffect(() => {
+        setMonthDays(getDaysInCurrentMonth())
+    }, [selectedDate])
 
     return (
         <Box
@@ -194,19 +134,12 @@ export default function CalendarDays(props: Props) {
                 height: "100%",
             }}
         >
-            <Card
-                className="gap-4 calendar-days-grid"
-                sx={{
-                    height: "100px",
-                    padding: "0 20px",
-                    width: "100%",
-                }}
-            >
-                {screenWidth > 600
-                    ? weekDays.map((weekDay, index) => {
+            <Card className="calendar-days-grid" >
+                {
+                    weekDays.map((weekDay, index) => {
                         return (
                             <Box
-                                component={"div"}
+                                component="div"
                                 key={index}
                                 className="d-flex justify-content-center align-items-center"
                                 sx={{
@@ -220,53 +153,29 @@ export default function CalendarDays(props: Props) {
                                         fontWeight: "600",
                                     }}
                                 >
-                                    {weekDay}
-                                </Typography>
-                            </Box>
-                        );
-                    })
-                    : weekDaysSmlScreen.map((weekDay, index) => {
-                        return (
-                            <Box
-                                component={"div"}
-                                key={index}
-                                className="d-flex justify-content-center align-items-center"
-                                sx={{
-                                    width: "100%",
-                                    height: "80px",
-                                }}
-                            >
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontWeight: "600",
-                                    }}
-                                >
-                                    {weekDay}
+                                    {isSmallScreen ? weekDay.at(0) : weekDay}
                                 </Typography>
                             </Box>
                         );
                     })}
             </Card>
-            <Card
-                className="calendar-days-grid"
-                sx={{
-                    height: "100%",
-                }}
-            >
-                {days.map((day, index) => {
+            <Box className="calendar-days-grid" >
+                {monthDays.map((day, index) => {
                     return (
                         <Box key={index}
-                            component={"div"}
+                            component="div"
                             onClick={(e) => {
-                                props.handleSelectDate(String(day));
-                                if (screenWidth < 850) {
-                                    checkForOccasionForDate(String(day), e)
+                                if (typeof day === "number") {
+                                    const updatedDate = dayjs(selectedDate).set("date", day);
+                                    handleSelectedDateChange(updatedDate)
+                                }
+                                if (isSmallScreen && typeof day === "number") {
+                                    checkForOccasionForDate(day, e)
                                 }
                             }}
-                            className={`hover-theme-color calendar-day ${props.selectedDate == day && "selected-day"} ${theme === 'light' ? 'hover-theme-light' : 'hover-theme-dark'}`}
+                            className={clsx("hover-theme-color calendar-day", { "hover-theme-light": theme === "light", "hover-theme-dark": theme === "dark", "selected-day": selectedDate?.date() === day })}
                         >
-                            <Typography variant="h6" className={clsx({ "today": isTodayMonthYear && day == todayDate })}
+                            <Typography variant="h6" className={clsx({ "today": checkIsSameDay(day as number) })}
                                 sx={{
                                     fontSize: '28px',
                                     '@media (max-width: 1200px)': {
@@ -280,7 +189,7 @@ export default function CalendarDays(props: Props) {
                                     }
                                 }}
                             >
-                                {day}
+                                {typeof day === "number" ? day.toString().padStart(2, "0") : day}
                             </Typography>
                             <Box component={'div'}
                                 className=
@@ -316,7 +225,7 @@ export default function CalendarDays(props: Props) {
                                                         }}
                                                         title={<ToolTipPopOver holiday={holiday} />}
                                                     >
-                                                        {screenWidth > 850 ?
+                                                        {!isSmallScreen ?
                                                             <Box
                                                                 key={index}
                                                                 className={`calendar-day-holiday ${holiday.type == 1 ? 'primary' :
@@ -328,19 +237,13 @@ export default function CalendarDays(props: Props) {
                                                                 onMouseEnter={handlePopoverOpen}
                                                                 onMouseLeave={handlePopoverClose}
                                                             >
-                                                                {/* <Typography
-                                                                    sx={{
-                                                                        padding: '0 4px',
-                                                                        overflow: 'hidden'
-                                                                    }}
-                                                                > */}
+
                                                                 {holiday.name.length > 10
                                                                     ? holiday.name
                                                                         .split("")
                                                                         .splice(0, 9)
                                                                         .join("") + "..."
                                                                     : holiday.name}
-                                                                {/* </Typography> */}
                                                             </Box>
                                                             : <Box
                                                                 key={index}
@@ -363,7 +266,7 @@ export default function CalendarDays(props: Props) {
                         </Box>
                     );
                 })}
-            </Card>
+            </Box>
             <Popover
                 open={open}
                 anchorEl={smlScreenAnchr}
@@ -377,24 +280,17 @@ export default function CalendarDays(props: Props) {
                     horizontal: 'center',
                 }}
             >
-                <Box component={'div'}
-                    className="d-flex flex-column gap-2 p-2"
-                >
+                <Box component='div' className="d-flex flex-column gap-1 p-2">
                     {selectedDateOccasions.map((occ, index) => {
                         return (<Box
-                            component={"div"}
-                            className={`d-flex gap-4 align-items-center p-2 rounded ${occ.type == 1 ? 'primary' :
-                                occ.type == 2 ? 'secondary' :
-                                    occ.type == 3 ? 'success' :
-                                        occ.type == 4 ? 'info' : ''}`}
+                            component="div"
+                            className={clsx("d-flex gap-2 align-items-center p-2 rounded", { "primary": occ.type === 1, "secondary": occ.type === 2, "success": occ.type === 3, "info": occ.type === 4 })}
                             key={index}>
                             {occ.imageUrl ? (
                                 <Avatar
                                     sx={{
                                         width: 40,
                                         height: 40,
-                                        boxShadow: 2,
-                                        bgcolor: "secondary.main",
                                     }}
                                     src={String(occ.imageUrl)}
                                     variant="rounded"
@@ -405,7 +301,6 @@ export default function CalendarDays(props: Props) {
                                     sx={{
                                         width: 40,
                                         height: 40,
-                                        bgcolor: "secondary.main",
                                     }}
                                 >
                                     <CalendarToday className="fs-32" />
@@ -414,12 +309,14 @@ export default function CalendarDays(props: Props) {
                             <Box component={"div"} className="d-flex flex-column ">
                                 <Typography variant="body1"
                                     sx={{
-                                        fontWeight: '600'
+                                        fontWeight: '600',
+                                        color: "inherit"
                                     }}
                                 >{occ.name}</Typography>
                                 <Typography variant="body1"
                                     sx={{
-                                        fontWeight: '400'
+                                        fontWeight: '400',
+                                        color: "inherit"
                                     }}
                                 >{occ.description}
                                 </Typography>
@@ -438,7 +335,7 @@ type PropType = {
 
 const ToolTipPopOver = ({ holiday }: PropType) => {
     return (
-        <Box component={"div"} className="d-flex gap-2 align-items-center ">
+        <Box component="div" className="d-flex gap-2 align-items-center ">
             {holiday.imageUrl ? (
                 <Avatar
                     sx={{
@@ -463,8 +360,8 @@ const ToolTipPopOver = ({ holiday }: PropType) => {
                 </Avatar>
             )}
             <Box component={"div"} className="d-flex flex-column ">
-                <Typography variant="body1">{holiday.name}</Typography>
-                <Typography variant="body2">
+                <Typography variant="body1" sx={{ wordBreak: "break-all" }}>{holiday.name}</Typography>
+                <Typography variant="body2" sx={{ wordBreak: "break-all" }}>
                     {holiday.description}
                 </Typography>
             </Box>

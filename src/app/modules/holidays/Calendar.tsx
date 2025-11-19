@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import CalendarSidebar from './components/CalendarSidebar'
 import CalendarHeader from './components/CalendarHeader'
 import CalendarDays from './components/CalendarDays'
-import { Box, SelectChangeEvent } from '@mui/material'
-import { Dayjs } from 'dayjs'
+import { Box } from '@mui/material'
+import dayjs, { Dayjs } from 'dayjs'
 import { usePageData } from '../../Context/PageDataProvider'
 import { useIntl } from 'react-intl'
 import { CalendarItem, CalendarItemType, GetCalendarItemPayload } from './models'
@@ -15,69 +15,22 @@ export default function Calendar() {
     const { formatMessage: i } = useIntl();
     const { setPageTitle } = usePageData();
     const [calendarItems, setCalendarItems] = useState<CalendarItem[]>([]);
-    const [category, setCategory] = useState<null | CalendarItemType>(0);
-    const [selectedDate, setSelectedDate] = useState<string>()
-    const [selectedMonth, setSelectedMonth] = useState<string>()
-    const [selectedYear, setSelectedYear] = useState<string>()
-    const [isLoading, setLoading] = useState(false);
+    const [category, setCategory] = useState<CalendarItemType>(0);
+    const [, setLoading] = useState(false);
     const [isRefresh, setRefresh] = useState<boolean>(false);
-    // const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
+    const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
+    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
 
-    const handleChange = (event: SelectChangeEvent<unknown>) => {
-        setCategory(event.target.value as CalendarItemType);
+    const handleCategoryChange = (category: CalendarItemType) => {
+        setCategory(category);
     };
 
-    //Selects the date
-    function handleSelectDate(date: string) {
-        if (parseInt(date) > 0) {
-            setSelectedDate(date)
-        }
-    }
-
-    //Used to refresh after changes made
     function handleRefresh() {
         setRefresh(!isRefresh)
     }
 
-    //Handles the selection of full date
-    function handleSetCurrentYear(date: Dayjs | null) {
-        if (date) {
-            setSelectedYear(String(date?.year()))
-            setSelectedMonth(String(date?.month()))
-            setSelectedDate(String(date?.date()))
-        }
-    }
-
-    //Increases the month counter by 1
-    function addMonth() {
-        if (selectedMonth) {
-            if (parseInt(selectedMonth) === 11) {
-                if (selectedYear) {
-                    const newYear = parseInt(selectedYear) + 1
-                    setSelectedYear(String(newYear))
-                    setSelectedMonth("00")
-                }
-            } else {
-                const newMonth = parseInt(selectedMonth) + 1
-                setSelectedMonth(String(String(newMonth)))
-            }
-        }
-    }
-
-    //Descreases the month counter by 1
-    function decreaseMonth() {
-        if (selectedMonth) {
-            if (parseInt(selectedMonth) === 0) {
-                if (selectedYear) {
-                    const newYear = parseInt(selectedYear) - 1
-                    setSelectedYear(String(newYear))
-                    setSelectedMonth("11")
-                }
-            } else {
-                const newMonth = parseInt(selectedMonth) - 1
-                setSelectedMonth(String(newMonth))
-            }
-        }
+    const handleSelectedDateChange = (updatedDate: Dayjs | null) => {
+        setSelectedDate(updatedDate);
     }
 
     // fetch all the items for selected year
@@ -85,7 +38,7 @@ export default function Calendar() {
         setLoading(true);
         const payload: GetCalendarItemPayload = {
             type: category == 0 ? null : category,
-            year: Number(selectedYear)
+            year: selectedDate ? selectedDate.year() : dayjs().year()
         };
         const fetchedHolidayData = async () => {
             try {
@@ -99,36 +52,32 @@ export default function Calendar() {
         }
 
         fetchedHolidayData()
-    }, [selectedYear, isRefresh, category]);
-
-    // useEffect(() => {
-    //     setLoading(true);
-    //     const payload: GetCalendarItemPayload = {
-    //         type: null,
-    //         year: Number(selectedYear)
-    //     };
-    //     const fetchedHolidayData = async () => {
-    //         try {
-    //             const response = await getAllCalendarItem(payload);
-    //             const { success, methodResults, } = response.data;
-    //             // console.log(methodResults);
-
-    //             if (success) setAllOccasionsForYear(methodResults);
-    //         } catch (error) {
-    //             console.error((error as Error).message);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-
-    //     fetchedHolidayData()
-    // }, [selectedYear, isRefresh]);
+    }, [selectedDate?.year(), isRefresh, category]);
 
     useEffect(() => {
-        const date = new Date;
-        setSelectedDate(String(date.getDate()).padStart(2, '0'))
-        setSelectedMonth(String(date.getMonth()))
-        setSelectedYear(String(date.getFullYear()))
+        setLoading(true);
+        const payload: GetCalendarItemPayload = {
+            type: category == 0 ? null : category,
+            year: selectedDate ? selectedDate.year() : dayjs().year()
+        };
+        const fetchedHolidayData = async () => {
+            try {
+                const response = await getAllCalendarItem(payload);
+                const { success, methodResults, } = response.data;
+                // console.log(methodResults);
+
+                if (success) setAllOccasionsForYear(methodResults);
+            } catch (error) {
+                console.error((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchedHolidayData()
+    }, [isRefresh]);
+
+    useEffect(() => {
         setPageTitle(i({ id: "PAGE.CALENDAR" }))
     }, [])
 
@@ -140,11 +89,9 @@ export default function Calendar() {
                 <CalendarSidebar
                     occasions={calendarItems}
                     selectedDate={selectedDate}
-                    selectedMonth={selectedMonth}
-                    selectedYear={selectedYear}
                     handleRefresh={handleRefresh}
                     isRefresh={isRefresh}
-                    allOccasionsForYear={calendarItems}
+                    allOccasionsForYear={allOccasionsForYear}
                 />
                 <Box component='div'
                     className='gap-4'
@@ -156,19 +103,13 @@ export default function Calendar() {
                     }}>
                     <CalendarHeader
                         selectedDate={selectedDate}
-                        selectedMonth={selectedMonth}
-                        selectedYear={selectedYear}
-                        addMonth={addMonth}
-                        decreaseMonth={decreaseMonth}
-                        handleSetCurrentYear={handleSetCurrentYear}
-                        handleChange={handleChange}
+                        handleSelectedDateChange={handleSelectedDateChange}
+                        handleCategoryChange={handleCategoryChange}
                         category={category}
                     />
                     <CalendarDays
                         selectedDate={selectedDate}
-                        selectedMonth={selectedMonth}
-                        selectedYear={selectedYear}
-                        handleSelectDate={handleSelectDate}
+                        handleSelectedDateChange={handleSelectedDateChange}
                         occasions={calendarItems}
                         handleRefresh={handleRefresh}
                     />

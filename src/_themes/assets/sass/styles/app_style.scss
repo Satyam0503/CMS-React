@@ -409,51 +409,51 @@ button:hover .ql-fill,
   }
 }
 
-.holiday-grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
-  justify-content: space-evenly;
-  gap: 4rem 2rem;
-  margin-block: 5rem !important;
-  // flex-grow: 1;
+// .holiday-grid-container {
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
+//   justify-content: space-evenly;
+//   gap: 4rem 2rem;
+//   margin-block: 5rem !important;
+//   // flex-grow: 1;
 
-  .holiday-card {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    border-radius: 0.75rem;
-    overflow: visible;
-    height: 300px;
-    padding: 0.75rem;
-    background-color: $neutral-200;
-    z-index: 1;
-    color: $app-black;
+//   .holiday-card {
+//     display: flex;
+//     flex-direction: column;
+//     position: relative;
+//     border-radius: 0.75rem;
+//     overflow: visible;
+//     height: 300px;
+//     padding: 0.75rem;
+//     background-color: $neutral-200;
+//     z-index: 1;
+//     color: $app-black;
 
-    & > .board-holder {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      height: 4rem;
-      width: 4rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: $app-black;
-      font-weight: bold;
-      background-color: $app-secondary-300;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-    }
-    & > .holiday-card-content {
-      flex-grow: 1;
-      font-style: italic;
-      color: $app-black;
-      padding-block: 1rem;
-      margin-block-start: 1rem;
-    }
-  }
-}
+//     & > .board-holder {
+//       position: absolute;
+//       top: 0;
+//       left: 50%;
+//       height: 4rem;
+//       width: 4rem;
+//       border-radius: 50%;
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       color: $app-black;
+//       font-weight: bold;
+//       background-color: $app-secondary-300;
+//       transform: translate(-50%, -50%);
+//       z-index: -1;
+//     }
+//     & > .holiday-card-content {
+//       flex-grow: 1;
+//       font-style: italic;
+//       color: $app-black;
+//       padding-block: 1rem;
+//       margin-block-start: 1rem;
+//     }
+//   }
+// }
 .reset-padding {
   .MuiStack-root {
     padding-top: 0 !important;
@@ -701,12 +701,6 @@ button:hover .ql-fill,
         }
       }
     }
-
-    .holiday-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
   }
 
   .calendar-header {
@@ -749,15 +743,28 @@ button:hover .ql-fill,
     display: flex;
     flex-direction: column;
 
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: stretch;
+      justify-content: start;
+      gap: 0;
+      grid-auto-rows: min-content;
+      background-color: var(--mui-palette-background-card);
+      overflow-x: scroll;
+      scrollbar-width: none;
+    }
+
     .calendar-day {
       display: flex;
       flex-direction: column;
-      border: 1px solid rgb(219, 219, 219);
+      border: 1px solid var(--mui-palette-grey-300);
       gap: 2px;
       align-items: center;
       justify-content: end;
       aspect-ratio: 1;
       position: relative;
+      border-radius: 0.25rem;
 
       @media (min-width: 600px) {
         justify-content: center;
@@ -804,15 +811,6 @@ button:hover .ql-fill,
       }
     }
 
-    .calendar-days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      align-items: start;
-      justify-content: start;
-      gap: 0;
-      grid-auto-rows: min-content;
-    }
-
     .hover-theme-color {
       cursor: pointer;
       transition: 0.2s ease-in-out;
@@ -820,22 +818,22 @@ button:hover .ql-fill,
 
     .hover-theme-light {
       &:hover {
-        background-color: $app-primary-100;
+        background-color: var(--mui-palette-primary-lighter);
       }
     }
 
     .hover-theme-dark {
       &:hover {
-        background-color: $app-primary-600;
+        background-color: var(--mui-palette-primary-dark);
       }
     }
 
     .today {
-      color: $app-primary-600 !important;
+      color: var(--mui-palette-text-primary);
     }
 
     .selected-day {
-      border-bottom: 3px solid $app-primary-500;
+      border-bottom: 3px solid var(--mui-palette-primary-main);
 
       @media (min-width: 600px) {
         border-bottom: 5px solid $app-primary-500;
@@ -884,7 +882,7 @@ button:hover .ql-fill,
       font-size: 18px;
     }
     & .holiday-card {
-      padding: 0.5rem;
+      padding: 0.75rem;
       min-width: 350px;
       flex-direction: row;
       align-items: center;

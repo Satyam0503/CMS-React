@@ -1,50 +1,49 @@
-import { Box, Card, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material'
-import React from 'react'
+import { Box, Card, FormControl, IconButton, InputLabel, MenuItem, Select } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import CustomisedDatePicker from '../../../shared/components/CustomisedDatePicker';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { useIntl } from 'react-intl';
+import { CalendarItemType } from '../models';
 
 type Props = {
-    category: unknown;
-    selectedDate: string | undefined,
-    selectedMonth: string | undefined,
-    selectedYear: string | undefined,
-    decreaseMonth: () => void,
-    addMonth: () => void,
-    handleSetCurrentYear: (year: Dayjs | null) => void,
-    handleChange: (event: SelectChangeEvent<unknown>) => void
+    selectedDate: Dayjs | null,
+    handleSelectedDateChange: (date: Dayjs | null) => void
+    category: CalendarItemType;
+    handleCategoryChange: (category: CalendarItemType) => void
 }
 
 export default function CalendarHeader(props: Props) {
     const { formatMessage: i } = useIntl();
+
+    const increaseMonth = () => {
+        if (props.selectedDate)
+            props.handleSelectedDateChange(props.selectedDate.add(1, "month"));
+    }
+    const decreaseMonth = () => {
+        if (props.selectedDate)
+            props.handleSelectedDateChange(props.selectedDate.subtract(1, "month"));
+    }
     return (
-        <Card
-            className='calendar-header'
-        >
-            <Box component='div'
-                className='calendar-controls'
-            >
-                {props.selectedYear && props.selectedMonth && props.selectedDate &&
-                    <Box component="div" className="reset-padding">
-                        <CustomisedDatePicker
-                            value={dayjs(new Date(parseInt(props.selectedYear), parseInt(props.selectedMonth), parseInt(props.selectedDate)))}
-                            views={['year', 'month', 'day']}
-                            setValue={props.handleSetCurrentYear}
-                            className='calendar-input'
-                            format="DD MMMM YYYY"
-                        />
-                    </Box>
-                }
+        <Card className='calendar-header'>
+            <Box component='div' className='calendar-controls'>
+                <Box component="div" className="reset-padding">
+                    <CustomisedDatePicker
+                        value={props.selectedDate}
+                        views={['year', 'month', 'day']}
+                        setValue={props.handleSelectedDateChange}
+                        className='calendar-input'
+                        format="DD MMMM YYYY"
+                    />
+                </Box>
                 <IconButton
-                    onClick={props.decreaseMonth}
+                    onClick={decreaseMonth}
                 >
                     <KeyboardArrowLeftIcon />
                 </IconButton>
 
                 <IconButton
-                    onClick={props.addMonth}
+                    onClick={increaseMonth}
                 >
                     <KeyboardArrowRightIcon />
                 </IconButton>
@@ -57,7 +56,7 @@ export default function CalendarHeader(props: Props) {
                         id="item-dropdown"
                         value={props.category}
                         label={i({ id: "OCCASION.TYPES.CATEGORY" })}
-                        onChange={props.handleChange}
+                        onChange={(e) => props.handleCategoryChange(e.target.value)}
                         size='small'
                     >
                         <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
@@ -68,6 +67,6 @@ export default function CalendarHeader(props: Props) {
                     </Select>
                 </FormControl>
             </Box>
-        </Card>
+        </Card >
     )
 }

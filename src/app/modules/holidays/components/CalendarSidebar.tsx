@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import UpcomingHolidayCard from './UpcomingHolidayCard';
 import HolidayForm from './HolidayForm';
 import { CalendarItem } from '../models';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { hasModuleFeaturePermission } from '../../../../utils/common';
 import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
@@ -15,9 +15,9 @@ import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
 
 type Props = {
     occasions: Array<CalendarItem>,
-    selectedDate: string | undefined,
-    selectedMonth: string | undefined,
-    selectedYear: string | undefined,
+    selectedDate: Dayjs | null,
+    // selectedMonth: string | undefined,
+    // selectedYear: string | undefined,
     handleRefresh: () => void,
     isRefresh: boolean,
     allOccasionsForYear: Array<CalendarItem>,
@@ -64,7 +64,7 @@ const CalendarItems = [
 export default function CalendarSidebar(props: Props) {
     const { formatMessage: i } = useIntl();
     const [upcomingHolidays, setUpcomingHolidays] = useState<Array<CalendarItem>>([])
-    const [daysHolidays, seDaysHolidays] = useState<Array<CalendarItem>>([])
+    const [daysHolidays, setDaysHolidays] = useState<Array<CalendarItem>>([])
     const [open, setOpen] = useState<boolean>(false)
     const [isEdit, setIsEdit] = useState<boolean>(false)
     const [initialHolidayValues, setInitialHolidayValues] = useState(initialValues);
@@ -93,12 +93,12 @@ export default function CalendarSidebar(props: Props) {
         const todayDate = dayjs().format('DD');
         const todayMonth = dayjs().format('MM')
 
-        props.occasions.forEach((occ) => {
+        props.allOccasionsForYear.forEach((occ) => {
             if (occ.date) {
                 const holidayDate = dayjs(occ.date).format('DD');
                 const holidayMonth = dayjs(occ.date).format('MM');
 
-                if (props.selectedMonth && props.selectedYear && props.selectedDate) {
+                if (props.selectedDate) {
                     if (holidayMonth == todayMonth && holidayDate > todayDate) {
                         thisMonthHolidaysFinder.push(occ)
                     }
@@ -109,27 +109,18 @@ export default function CalendarSidebar(props: Props) {
         )
     }
 
-    //Finds All Occasions For Selected Month
-    function findAllOccasionsForMonth() {
-        const thisMonthHolidaysFinder: Array<CalendarItem> = []
 
-        props.allOccasionsForYear.forEach((occ) => {
-            const holidayMonth: string = String(Number(dayjs(occ.date).format('MM')) - 1);
-
-            if (props.selectedMonth) {
-                if (holidayMonth == props.selectedMonth) {
-                    thisMonthHolidaysFinder.push(occ)
-                }
-            }
-        }
-        )
-
+    // get month summary
+    function getMonthSummary() {
         let holidayCounter = 0
         let eventCounter = 0
         let birthdayCounter = 0
         let anniversaryCounter = 0
 
-        thisMonthHolidaysFinder.forEach((occ) => {
+        props.allOccasionsForYear.filter(occ => {
+            const holidayMonth = dayjs(occ.date).month();
+            return holidayMonth === props.selectedDate?.month();
+        }).forEach((occ) => {
             if (occ.type === 1) {
                 holidayCounter++
             } else if (occ.type === 2) {
@@ -140,7 +131,6 @@ export default function CalendarSidebar(props: Props) {
                 anniversaryCounter++
             } else return
         })
-
         setMonthSummary({
             holidays: holidayCounter,
             events: eventCounter,
@@ -151,18 +141,10 @@ export default function CalendarSidebar(props: Props) {
 
     //Finds Occasions For Selected Day
     function findHolidaysForDay() {
-        if (props.selectedDate && props.selectedMonth && props.selectedYear && props.occasions) {
-            const holidayArray: Array<CalendarItem> = []
-            props.occasions.forEach((occ) => {
-                const holDate = dayjs(occ.date).format('DD')
-                const holMonth = dayjs(occ.date).format('MM')
-
-                if (holDate == props.selectedDate && holMonth == String(parseInt(String(props.selectedMonth)) + 1).padStart(2, '0')) {
-                    holidayArray.push(occ)
-                }
-            })
-            seDaysHolidays(holidayArray)
-        }
+        setDaysHolidays(props.occasions.filter(occ => {
+            const occassionDate = dayjs(occ.date);
+            return occassionDate.date() === props.selectedDate?.date() && occassionDate.month() === props.selectedDate.month();
+        }))
     }
 
     useEffect(() => {
@@ -171,8 +153,8 @@ export default function CalendarSidebar(props: Props) {
 
     useEffect(() => {
         findHolidaysForDay()
-        findAllOccasionsForMonth()
-    }, [props.selectedDate, props.selectedMonth, props.selectedYear, props.occasions]);
+        getMonthSummary()
+    }, [props.selectedDate, props.occasions]);
 
     return (
         <Stack

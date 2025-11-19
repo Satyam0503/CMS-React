@@ -41,8 +41,8 @@ function UpcomingHolidayCard(props: Props) {
     const [edit, setEdit] = useState<boolean>(false)
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const hasEditPermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Edit, modulePermission);
-    const hasDeletePermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Delete, modulePermission);
+    const hasEditPermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Edit, modulePermission);
+    const hasDeletePermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Delete, modulePermission);
 
     const handleActionButtonClick = (event: React.MouseEvent<HTMLElement>, holidayId?: string) => {
         setActionBtnAnchor(event.currentTarget);
@@ -123,8 +123,8 @@ function UpcomingHolidayCard(props: Props) {
                 {props.occasion.imageUrl ? (
                     <Avatar
                         sx={{
-                            width: 40,
-                            height: 40,
+                            width: 44,
+                            height: 44,
                             boxShadow: 2,
                             bgcolor: "secondary.main",
                         }}
@@ -135,8 +135,8 @@ function UpcomingHolidayCard(props: Props) {
                     <Avatar
                         variant="rounded"
                         sx={{
-                            width: 40,
-                            height: 40,
+                            width: 44,
+                            height: 44,
                             bgcolor: "secondary.main",
                         }}
                     >
