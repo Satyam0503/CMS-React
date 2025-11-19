@@ -12,9 +12,7 @@ import {
   RadioGroup,
   Select,
   TextField,
-  Typography,
 } from "@mui/material";
-import { FC, useEffect, useState } from "react";
 
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
@@ -291,7 +289,7 @@ export const LeaveApplication = (props: Props) => {
                 </Alert>
               )}
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FormControl fullWidth>
                     <InputLabel id="leave-policy-label">
                       {i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
@@ -318,7 +316,7 @@ export const LeaveApplication = (props: Props) => {
                   </FormControl>
                 </Grid>
                 {
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <FormControl
                       fullWidth
                       className="d-flex flex-row align-items-center gap-4"
@@ -364,7 +362,11 @@ export const LeaveApplication = (props: Props) => {
                     </FormControl>
                   </Grid>
                 }
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
                     value={values.startDate}
@@ -387,7 +389,11 @@ export const LeaveApplication = (props: Props) => {
                     <ErrorLabel errorLabel={formik.errors.startDate} />
                   )}
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
                     value={values.isHalfDay ? values.startDate : values.endDate}
@@ -409,8 +415,6 @@ export const LeaveApplication = (props: Props) => {
                 </Grid>
                 {values.startDate && values.endDate && (
                   <Grid
-                    item
-                    xs={12}
                     sx={{
                       display: "flex",
                       flexDirection: "column",
@@ -419,7 +423,7 @@ export const LeaveApplication = (props: Props) => {
                       marginTop: "10px",
                       paddingRight: "10px",
                     }}
-                  >
+                    size={12}>
                     <>
                       {!values.isHalfDay ? (
                         getDatesBetween(values?.startDate, values?.endDate).map(
@@ -489,7 +493,7 @@ export const LeaveApplication = (props: Props) => {
                 )}
 
                 {values.startDate && values.endDate && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Box
                       component={"div"}
                       sx={{
@@ -517,7 +521,7 @@ export const LeaveApplication = (props: Props) => {
                     </Box>
                   </Grid>
                 )}
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextInput
                     multiline={true}
                     type="text"
@@ -526,10 +530,7 @@ export const LeaveApplication = (props: Props) => {
                   />
                 </Grid>
               </Grid>
-              <Grid
-                item
-                className="d-flex gap-2 flex-row justify-content-end mt-4"
-              >
+              <Grid className="d-flex gap-2 flex-row justify-content-end mt-4">
                 <CustomisedButton
                   variant="outlined"
                   label={i({ id: "BUTTON.CANCEL" })}

@@ -1,5 +1,5 @@
 import { Box, Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
-import  { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ApplicantStatus, ApplicationStatus } from '../../../../utils/enums';
 import { ApplicantModel, JobModal } from '../../recruitment/models';
 import { useParams } from "react-router-dom";
@@ -23,7 +23,7 @@ type Props = {
     activeJobPositionsList: Array<JobModal>
 }
 
-export default function JobsSection(props:Props) {
+export default function JobsSection(props: Props) {
     const theme = useTheme();
 
     const [formValues, setFromValues] = useState(initialValues);
@@ -33,12 +33,12 @@ export default function JobsSection(props:Props) {
     const { id } = useParams();
     if (id) localStorage.setItem("clientId", id);
 
-    function handleChangePostion(job: JobModal| undefined){
+    function handleChangePostion(job: JobModal | undefined) {
         setSelectedJobPosition(job)
     }
 
     useEffect(() => {
-        if(!smallScreen){
+        if (!smallScreen) {
             const selectedJob = props.activeJobPositionsList.find((job) => job.status === true);
             if (selectedJob) {
                 setSelectedJobPosition(selectedJob);
@@ -55,32 +55,39 @@ export default function JobsSection(props:Props) {
             <Stack direction={'row'} spacing={4}>
                 <Box component={'div'} className='recent-jobs-section'>
                     <Stack className='recent-jobs-section-container' spacing={2}>
-                        {props.activeJobPositionsList.map((job, index)=>{ 
+                        {props.activeJobPositionsList.map((job, index) => {
                             const isSelectedJob = job.jobId === selectedJobPosition?.jobId
-                                
-                            return <Stack spacing={.3} key={index} className={`${clsx('recent-job',{'selected-job':isSelectedJob})}`} onClick={()=>setSelectedJobPosition(job)}>
-                                        <Typography fontWeight={'600'} fontSize={'18px'} color="initial">{job.title}</Typography>
-                                        <Stack direction={'row'} spacing={1} sx={{marginTop: '0'}}>
-                                            <Typography variant='h6'>Vaccancies</Typography>
-                                            <Typography variant='h6'>{job.vacancies}</Typography>
-                                        </Stack>
-                                        <Box component={'div'} className='job-footer-container' >
-                                            <Box component={'div'} className='job-skill'>{job.jobType === 1 ? 'On- Site' : job.jobType === 2 ? 'Hybrid' : 'Remote'}</Box>
-                                            {/* <Box component={'div'} className='job-skill'>{job.vacancies}</Box> */}
-                                        </Box>
-                                        {selectedJobPosition?.jobId === job.jobId && smallScreen &&
-                                            <JobInfo selectedJob={selectedJobPosition} activeJobPositionsList={props.activeJobPositionsList} handleChangePostion={handleChangePostion}/>
-                                        }
+
+                            return (
+                                <Stack key={index} className={`${clsx('recent-job', { 'selected-job': isSelectedJob })}`} onClick={() => setSelectedJobPosition(job)}>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '600',
+                                            fontSize: '16px'
+                                        }}>{job.title}</Typography>
+                                    <Stack direction={'row'} spacing={1} sx={{ fontSize: "14px", marginBlock: .5, fontWeight: "600" }}>
+                                        <Typography className='fw-bold'>Vaccancies :</Typography>
+                                        <Typography className='fw-bold' >{job.vacancies}</Typography>
                                     </Stack>
-                                }
-                            )
+                                    <Box component={'div'} className='job-footer-container' >
+                                        <Box component={'div'} className='job-skill'>{job.jobType === 1 ? 'On- Site' : job.jobType === 2 ? 'Hybrid' : 'Remote'}</Box>
+                                    </Box>
+                                    {selectedJobPosition?.jobId === job.jobId && smallScreen &&
+                                        <JobInfo selectedJob={selectedJobPosition} activeJobPositionsList={props.activeJobPositionsList} handleChangePostion={handleChangePostion} />
+                                    }
+                                </Stack>
+                            );
+                        }
+                        )
                         }
                     </Stack>
                 </Box>
-                <Box width={'60%'} component={'div'} className='selected-job-section'>
-                    <JobInfo selectedJob={selectedJobPosition} activeJobPositionsList={props.activeJobPositionsList} handleChangePostion={handleChangePostion}/>
+                <Box component={'div'} className='selected-job-section' sx={{
+                    width: '60%'
+                }}>
+                    <JobInfo selectedJob={selectedJobPosition} activeJobPositionsList={props.activeJobPositionsList} handleChangePostion={handleChangePostion} />
                 </Box>
             </Stack>
         </Box>
-    )
+    );
 }

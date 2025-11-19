@@ -2,7 +2,9 @@ import { Card, Skeleton, Stack, Typography } from "@mui/material"
 
 export const CompanyInfoSkeleton = () => {
     return (
-        <Stack spacing={2} marginBlock={1}>
+        <Stack spacing={2} sx={{
+            marginBlock: 1
+        }}>
             {
                 Array.from({ length: 3 }).map((_, index) =>
                 (
@@ -44,5 +46,5 @@ export const CompanyInfoSkeleton = () => {
                 )
             }
         </Stack>
-    )
+    );
 }

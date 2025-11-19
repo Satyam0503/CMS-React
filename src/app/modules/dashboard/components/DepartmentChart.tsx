@@ -2,14 +2,14 @@ import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import { BarChart } from "../../../shared/components/BarChart";
 import { getAllDepartmentInfo } from '../dashboardservices';
 import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { DepartmentResponseModel } from "../model";
-import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
-import { PieSeries, PieValueType } from "@mui/x-charts";
+import { DonutChart } from "../../../shared/components/DonutChart";
+import { PieSeries } from "@mui/x-charts";
+import { defaultPieChartSeries } from "../../../../utils/common";
 
 
 export const DepartmentChart: FC = () => {
@@ -44,7 +44,7 @@ export const DepartmentChart: FC = () => {
         label: dep.label[currentLanguage] || dep.label[defaultLanguage] || i({ id: "TRANSLATION_MISSING" }),
         value: dep.employeeCount,
       })),
-      valueFormatter: (v, { dataIndex }) => {
+      valueFormatter: (v) => {
         return `${v.value} ${i({ id: "MODULES.EMPLOYEES" })}`;
       },
     }

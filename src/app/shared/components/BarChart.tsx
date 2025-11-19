@@ -1,10 +1,8 @@
-import { Grid, useTheme } from "@mui/material";
+import { Grid, useColorScheme, useTheme } from "@mui/material";
 import { ApexOptions } from "apexcharts";
 import { FC } from "react";
 import Chart from "react-apexcharts";
-import { rainbowSurgePalette } from '@mui/x-charts/colorPalettes';
-import { useThemeContext } from "../../Context/ThemeContext";
-import { chartColorpalette } from "../../modules/theme/MuiTheme";
+import { getChartPalette } from "../../modules/theme/themePalettes";
 
 
 interface BarChartProps {
@@ -18,8 +16,6 @@ interface BarChartProps {
   showXAxisLabel?: boolean;
 }
 
-
-
 export const BarChart: FC<BarChartProps> = (props) => {
 
   const barWidth = 100; // pixels per bar (tweak as needed)
@@ -30,7 +26,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
   const dynamicWidth = Math.max(minChartWidth, props.labels.length * barWidth + padding);
   const { series, labels, height, legendOption, showXAxisLabel } = props;
   const { palette } = useTheme();
-  const { theme } = useThemeContext();
+  const { mode, systemMode } = useColorScheme();
   const chartOption: ApexOptions = {
     chart: {
       toolbar: {
@@ -49,7 +45,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
       height: height || 220,
       type: "bar",
     },
-    colors: chartColorpalette[theme],
+    colors: getChartPalette(mode, systemMode),
     fill: {
       opacity: 1,
     },
@@ -106,7 +102,7 @@ export const BarChart: FC<BarChartProps> = (props) => {
     },
   };
   return (
-    <Grid item xs={12} className="overflow-x-scroll">
+    <Grid size="grow" className="overflow-x-scroll">
       <div style={{ minWidth: `${dynamicWidth}px`, width: '100%' }}>
         <Chart
           options={chartOption}

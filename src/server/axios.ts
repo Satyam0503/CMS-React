@@ -98,7 +98,7 @@ instance.interceptors.response.use(
         }
       }
       if (error.response.status === 401 && isRefreshing) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           failedRequestsQueue.push((token: string) => {
             originalRequest.headers["Authorization"] = `Bearer ${token}`;
             resolve(instance(originalRequest));

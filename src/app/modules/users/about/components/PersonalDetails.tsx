@@ -51,18 +51,26 @@ export const PersonalDetails = () => {
         )}
       </Stack>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
+        <Grid size={12}>
           <Typography variant="body2">{i({ id: "USER.ADDRESS" })}</Typography>
           <Typography variant="body1">
             {userDetails?.address || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "FORM.EMAIL" })}</Typography>
           <Typography variant="body1">{userDetails?.email}</Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "FORM.PHONE" })}</Typography>
           <Typography variant="body1">
             {userDetails?.phoneNumber || (
@@ -71,19 +79,31 @@ export const PersonalDetails = () => {
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "FORM.DOB" })}</Typography>
           <Typography variant="body1">
             {dateFormatter(userDetails?.dateOfBirth!, "DD MMMM YYYY") ||
               i({ id: "NOT_AVAILABLE" })}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "USER.GENDER" })}</Typography>
           <Typography variant="body1">{userDetails?.gender}</Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "FORM.DOJ" })}</Typography>
           <Typography variant="body1">
             {dateFormatter(userDetails?.dateOfJoining!, "DD MMMM YYYY") || (
@@ -92,13 +112,21 @@ export const PersonalDetails = () => {
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">{i({ id: "USER.EMP_ID" })}</Typography>
           <Typography variant="body1">
             {userDetails?.employeeId || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "FORM.DEPARTMENT" })}
           </Typography>
@@ -113,7 +141,11 @@ export const PersonalDetails = () => {
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "USER.REPORTING_MANAGER" })}
           </Typography>
@@ -123,7 +155,11 @@ export const PersonalDetails = () => {
             )}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "USER.PERSONAL_EMAIL" })}
           </Typography>
@@ -133,7 +169,11 @@ export const PersonalDetails = () => {
             )}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "USER.EMERGENCY_CONTACT" })}
           </Typography>
@@ -144,7 +184,11 @@ export const PersonalDetails = () => {
           </Typography>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "USER.BLOOD_GROUP" })}
           </Typography>
@@ -152,7 +196,11 @@ export const PersonalDetails = () => {
             {userDetails?.bloodGroup || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Typography variant="body2">
             {i({ id: "FORM.EMPLOYEMENT_TYPE" })}
           </Typography>
@@ -163,7 +211,11 @@ export const PersonalDetails = () => {
         {
           hasEmployeeEditPermission &&
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2">
                 {i({ id: "USER.PAN_NUMBER" })}
               </Typography>
@@ -171,7 +223,11 @@ export const PersonalDetails = () => {
                 {userDetails.panNumber || <FormattedMessage id="NOT_AVAILABLE" />}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2">
                 {i({ id: "USER.BANK_ACCOUNT_NO" })}
               </Typography>
@@ -185,7 +241,12 @@ export const PersonalDetails = () => {
         {/* Render user custom Attribute value */}
         {userDetails?.customAttributes?.length > 0 &&
           userDetails.customAttributes.map((attribute, index) => (
-            <Grid item xs={12} sm={6} key={attribute.customAttributeId}>
+            <Grid
+              key={attribute.customAttributeId}
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Typography variant="body2">{attribute.customAttributeTitle?.[currentLanguage] ?? `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${index + 1}`}</Typography>
               <Typography variant="body1">{attribute.customAttributeValueTitle?.[currentLanguage] ?? attribute.customAttributeValueTitle?.[defaultLanguage]}</Typography>
             </Grid>

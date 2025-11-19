@@ -6,7 +6,7 @@ import {
 } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
-import { LEAVE_REQUEST_STATUS } from "../../../utils/enums";
+import { EmployeeLeaveBalance } from "../employees/models";
 import {
   LeaveBalanceFilter,
   GetLeaveBalanceResponse,
@@ -23,6 +23,7 @@ import {
   MonthlyLeaveTakenSummary,
   LeavePolicyModel,
   GetLeavePolicyData,
+  LeavePolicy,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -126,5 +127,19 @@ export const getLeaveRequestSummary = () => {
 export const getMonthlyLeaveTakenSummary = (year: number) => {
   return getRequest<ResponseData<MonthlyLeaveTakenSummary>>(
     `${ServiceUrl.GET_MONTHLY_LEAVE_TAKEN_SUMMARY}/${year}`
+  );
+};
+export const updateEmployeeLeaveBalance = (payload: EmployeeLeaveBalance) => {
+  return postRequest<EmployeeLeaveBalance, ApiResponse>(
+    ServiceUrl.UPDATE_EMPLOYEE_LEAVE_BALANCE,
+    payload
+  );
+};
+
+export const getLeavePolicies = (status?: boolean) => {
+  return postRequest<unknown, ResponseData<LeavePolicy>>(
+    ServiceUrl.GET_LEAVE_POLICIES,
+    {},
+    { params: { status: status } }
   );
 };

@@ -144,6 +144,23 @@ export type LeavePolicyModel = {
 //   totalRecords : number
 // }
 
+export type LeavePolicy = {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  status: boolean;
+  paid: boolean;
+  accrualPeriod: number;
+  accrualAmount: number;
+  maxBalance: number;
+  carryOverAllowed: boolean;
+  carryOverLimit: boolean;
+  minNoticeDays: number;
+  halfDayAllowed: boolean;
+  weekendInclusive: boolean;
+  holidayInclusive: boolean;
+};
 export type GetLeaveTypeResponse = ResponseData<LeaveType>;
 export type GetLeaveBalanceResponse = ResponseData<LeaveBalance>;
 export type GetLeaveRequestsResponse = ResponseData<LeaveRequestModel>;

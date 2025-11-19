@@ -1,7 +1,6 @@
 import {
   Badge,
   Box,
-  Button,
   Chip,
   IconButton,
   List,
@@ -96,8 +95,8 @@ export default function HeaderNotificationMenu() {
         setNotificationCount(prev => ({ ...prev, unread: 0 }));
         setNotificationList(prev => prev.map(n => ({ ...n, isRead: true })));
       }
-    } catch (error: any) {
-      console.error(error.message);
+    } catch (error) {
+      console.error((error as Error).message);
     }
   }
 
@@ -158,8 +157,8 @@ export default function HeaderNotificationMenu() {
         }
         setNotificationCount({ ...notificationCount, unread: notificationCount.unread - 1 });
       }
-    } catch (error: any) {
-      console.error(error.message);
+    } catch (error) {
+      console.error((error as Error).message);
     }
   }
 

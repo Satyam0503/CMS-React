@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
 import { useAppSelector } from "../../Redux/hooks";
-import { countAppliedFilter, hasModuleFeaturePermission } from "../../../utils/common";
+import { countAppliedFilter, hasModuleFeaturePermission, initialNoticeFilter } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { GetAllNoticePayload, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
@@ -21,7 +21,7 @@ import { CustomisedTable } from "../../shared/components/CustomisedTable";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";
-import { initialNoticeFilter, NoticeBoardFilter } from "./components/NoticeBoardFilter";
+import { NoticeBoardFilter } from "./components/NoticeBoardFilter";
 import { NoticeViewModel } from "./components/NoticeViewModel";
 import { usePageData } from "../../Context/PageDataProvider";
 
@@ -138,7 +138,12 @@ export const NoticeBoard = () => {
       <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
         <Stack className="flex-row justify-content-between gap-4 flex-wrap" >
           <SearchInput search={searchValue} setSearch={handleSearchChange} />
-          <Stack direction={"row"} flexWrap={"wrap"} gap={1}>
+          <Stack
+            direction={"row"}
+            sx={{
+              flexWrap: "wrap",
+              gap: 1
+            }}>
             {
               hasAddPermission &&
               <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>

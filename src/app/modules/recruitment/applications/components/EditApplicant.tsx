@@ -207,7 +207,9 @@ export const EditApplicant = () => {
         <Typography variant="h5" className="mb-2">
           {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
         </Typography>
-        <Grid container direction={"column"} gap={1}>
+        <Grid container direction={"column"} sx={{
+          gap: 1
+        }}>
           <Formik
             initialValues={initialValues}
             validationSchema={editApplicantValidationSchema}
@@ -220,7 +222,11 @@ export const EditApplicant = () => {
                 <>
                   <form onSubmit={formik.handleSubmit}>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <TextInput
                           label={formatMessage({
                             id: "FORM.FIRST_NAME",
@@ -233,7 +239,11 @@ export const EditApplicant = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <TextInput
                           label={formatMessage({ id: "FORM.LAST_NAME" })}
                           type="text"
@@ -244,7 +254,11 @@ export const EditApplicant = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <TextInput
                           label={formatMessage({ id: "FORM.PHONE" })}
                           type="text"
@@ -253,7 +267,11 @@ export const EditApplicant = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <TextInput
                           label={formatMessage({
                             id: "FORM.EMAIL",
@@ -266,7 +284,11 @@ export const EditApplicant = () => {
                           disabled={true}
                         />
                       </Grid>
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <SelectInput
                           label={formatMessage({ id: "JOB.POSITION" })}
                           name="vacancyId"
@@ -278,7 +300,11 @@ export const EditApplicant = () => {
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <SelectInput
                           label={formatMessage({ id: "STATUS" })}
                           name="activityType"
@@ -290,7 +316,11 @@ export const EditApplicant = () => {
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid item xs={12} sm={4}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          sm: 4
+                        }}>
                         <Autocomplete
                           id="state-dropdown"
                           size="small"
@@ -313,12 +343,23 @@ export const EditApplicant = () => {
                       </Grid>
                     </Grid>
 
-                    <Stack mt={2} spacing={2}>
-                      <Typography variant="h6" fontWeight={600}>
+                    <Stack spacing={2} sx={{
+                      mt: 2
+                    }}>
+                      <Typography variant="h6" sx={{
+                        fontWeight: 600
+                      }}>
                         {formatMessage({ id: "APPLICATION.CUSTOMISE_EXPERIENCE" })}
                       </Typography>
-                      <Grid container gap={2}>
-                        <Grid item xs={12} sm={4} md={4}>
+                      <Grid container sx={{
+                        gap: 2
+                      }}>
+                        <Grid
+                          size={{
+                            xs: 12,
+                            sm: 4,
+                            md: 4
+                          }}>
                           <TextInput
                             label={formatMessage({
                               id: "DATETIME.YEARS",
@@ -331,7 +372,12 @@ export const EditApplicant = () => {
                             }}
                           />
                         </Grid>
-                        <Grid item xs={12} sm={3} md={2}>
+                        <Grid
+                          size={{
+                            xs: 12,
+                            sm: 3,
+                            md: 2
+                          }}>
                           <SelectInput
                             label={formatMessage({
                               id: "DATETIME.MONTHS",
@@ -348,8 +394,12 @@ export const EditApplicant = () => {
                       </Grid>
                     </Stack>
 
-                    <Stack mt={2}>
-                      <Typography variant="body1" mb={1} color="primary">
+                    <Stack sx={{
+                      mt: 2
+                    }}>
+                      <Typography variant="body1" color="primary" sx={{
+                        mb: 1
+                      }}>
                         {formatMessage({ id: "APPLICATION.UPLOAD_RESUME" })}
                       </Typography>
                     </Stack>
@@ -357,29 +407,32 @@ export const EditApplicant = () => {
                     <Grid
                       container
                       direction={"column"}
-                      p={3}
                       sx={{
+                        p: 3,
                         border: "1px dashed grey",
                         cursor: "pointer",
-                        borderRadius: 0.5,
-                      }}
-                    >
+                        borderRadius: 0.5
+                      }}>
                       <Stack
                         spacing={2}
                         direction={"row"}
-                        display={"flex"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <Stack alignItems={"center"}>
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center"
+                        }}>
+                        <Stack sx={{
+                          alignItems: "center"
+                        }}>
 
                           <Box
                             component="label"
-                            bgcolor="primary.lighter"
-                            px={2}
-                            py={0.5}
-                            borderRadius={1}
-                          >
+                            sx={{
+                              bgcolor: "primary.lighter",
+                              px: 2,
+                              py: 0.5,
+                              borderRadius: 1
+                            }}>
                             <CloudUploadOutlined
                               fontSize="large"
                               className="text-primary"
@@ -415,13 +468,13 @@ export const EditApplicant = () => {
                       <ErrorLabel errorLabel={errors.resume} />
                     }
                     <Grid
-                      item
-                      xs={12}
-                      display={"flex"}
-                      justifyContent={"flex-end"}
-                      mt={1}
-                      gap={1}
-                    >
+                      size={12}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        mt: 1,
+                        gap: 1
+                      }}>
                       <CustomisedButton
                         variant="outlined"
                         size="medium"
@@ -438,7 +491,6 @@ export const EditApplicant = () => {
                       />
                     </Grid>
                   </form>
-
                   {isCommentModalOpen && (
                     <AddComment
                       loading={formik.isSubmitting}

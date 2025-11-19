@@ -41,7 +41,7 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
         <ListItemIcon>
           {icon}
         </ListItemIcon>
-        <ListItemText primary={title} />
+        <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
         {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
       </ListItemButton>
       <Collapse in={isOpen} timeout="auto" unmountOnExit >

@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
 import { LeaveType } from "../model"
-import { FormControl, FormControlLabel, FormLabel, Grid, IconButton, MenuItem, Radio, RadioGroup, Stack, Switch, Typography } from "@mui/material"
+import { FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Stack, Switch } from "@mui/material"
 import { useIntl } from "react-intl"
 import { Formik } from "formik"
 import { SelectInput } from "../../../shared/components/form-component/SelectInput"
@@ -56,7 +56,7 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                     ({ values, handleSubmit, setFieldValue, ...formik }) => (
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
+                                <Grid size={12}>
                                     <SelectInput
                                         label={i({ id: "LEAVE.LEAVE_TYPE" })}
                                         name="leaveType"
@@ -66,7 +66,11 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         ))}
                                     </SelectInput>
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid
+                                    size={{
+                                        xs: 12,
+                                        md: 6
+                                    }}>
                                     <TextInput
                                         type="number"
                                         name="minAdvanceNoticeDate"
@@ -76,7 +80,11 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6}>
+                                <Grid
+                                    size={{
+                                        xs: 12,
+                                        md: 6
+                                    }}>
                                     <TextInput
                                         type="number"
                                         name="maxLeaveDays"
@@ -86,7 +94,11 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid
+                                    size={{
+                                        xs: 12,
+                                        sm: 6
+                                    }}>
                                     <FormControl fullWidth className="d-flex flex-row align-items-center gap-4" >
                                         <FormLabel id="half-day" sx={{ color: "text.primary" }}  >{i({ id: "LEAVE.HALF_DAY" })} :</FormLabel>
                                         <RadioGroup
@@ -108,7 +120,12 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         </RadioGroup>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={12} sm={6} className="align-self-center">
+                                <Grid
+                                    className="align-self-center"
+                                    size={{
+                                        xs: 12,
+                                        sm: 6
+                                    }}>
                                     <FormLabel sx={{ color: "text.primary" }}>{i({ id: "STATUS" })}</FormLabel>
                                     <Switch
                                         className="mx-4"
@@ -116,7 +133,11 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         onChange={(event) => {
                                             setFieldValue("isActive", event.target.checked);
                                         }}
-                                        inputProps={{ "aria-label": "controlled" }}
+                                        slotProps={{
+                                            input: {
+                                                "aria-label": "controlled"
+                                            }
+                                        }}
                                     />
                                 </Grid>
                             </Grid>
@@ -129,5 +150,5 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                 }
             </Formik>
         </CustomisedModal >
-    )
+    );
 }

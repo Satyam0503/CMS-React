@@ -1,4 +1,4 @@
-import { Typography, Stack, Avatar, Box, useTheme } from "@mui/material";
+import { Typography, Stack, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { Link } from "react-router-dom";
@@ -6,9 +6,8 @@ import { useEffect, useState } from "react";
 import { NoticeResponseModel } from "../../noticeboard/models";
 import { getAllNotices } from "../../noticeboard/services";
 import clsx from "clsx";
-import { relativeTimeFormatter } from "../../../../utils/common";
+import { initialNoticeFilter, relativeTimeFormatter } from "../../../../utils/common";
 import { CardSkeleton } from "./CardSkeleton";
-import { initialNoticeFilter } from "../../noticeboard/components/NoticeBoardFilter";
 import { NoticeViewModel } from "../../noticeboard/components/NoticeViewModel";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 

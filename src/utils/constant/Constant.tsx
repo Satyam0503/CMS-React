@@ -4,7 +4,6 @@ import {
   dateFormatter,
   statusDecoder,
   applicantStatusDecoder,
-  convertMonthsToYear,
   sanitizeHtmlContent,
   commentActionMapper,
   noticeTypeDecoder,
@@ -39,7 +38,6 @@ import {
   CalendarMonth,
   Check,
   Close,
-  ColorLens,
   Contacts,
   CurrencyRupee,
   Info,
@@ -116,7 +114,7 @@ export const ServiceUrl = {
   GET_EMPLOYEE_SUMMARY: `api/User/GetEmployeeSummary`,
   GET_EMPLOYEE_SKILLS: `api/User/GetEmployeeSkills`,
 
-  ADD_EMPLOYEE: `api/User/AddEmployees`,
+  INVITE_NEW_EMPLOYEE: "api/User/InviteNewEmployee",
   ADD_EMPLOYEE_EDUCATION: `api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `api/User/AddEmployeeCertification`,
 
@@ -210,6 +208,8 @@ export const ServiceUrl = {
   GET_LEAVE_TYPES: `api/LeaveManagement/GetLeaveType`,
   GET_LEAVE_BALANCE: `api/LeaveManagement/GetLeaveBalance`,
   CREATE_UPDATE_LEAVE_BALANCE: `api/LeaveManagement/CreateUpdateLeaveBalance`,
+  UPDATE_EMPLOYEE_LEAVE_BALANCE: "api/LeaveManagement/UpdateEmployeeLeaveBalance",
+  GET_LEAVE_POLICIES: "api/LeaveManagement/GetAllLeavePolicies",
 
   GET_ALL_LEAVE_POLICIES: `api/LeaveManagement/GetAllLeavePolicies`,
 
@@ -238,7 +238,7 @@ export const ServiceUrl = {
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
-};
+} as const;
 
 export const languages = [
   {
@@ -990,8 +990,9 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     align: "center",
     sorting: true,
     format: (value: number) => {
-      return convertMonthsToYear(value);
-    },
+      const experience = (value / 12).toFixed(1);
+      return <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
+    }
   },
   {
     id: "applyDate",
@@ -1517,10 +1518,10 @@ export const SideBarTabList: SideBarTabListProps[] = [
     ],
   },
   {
-    id: Modules.Holidays,
-    title: ModulesTitles.Holidays,
-    constant: ModulesName.Holidays,
-    route: "/holidays",
+    id: Modules.Calendar,
+    title: ModulesTitles.Calendar,
+    constant: ModulesName.Calendar,
+    route: "/calendar",
     icon: <CalendarMonth />,
     isDefault: false,
   },

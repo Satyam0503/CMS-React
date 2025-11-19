@@ -1,8 +1,6 @@
 import { AUTH_LOCAL_STORAGE_KEY } from "../../../../utils/constant/Constant";
 import { AuthTokens } from "./_models";
 
-const clientId = "ClientId";
-
 const getLocalKey = (): AuthTokens | undefined => {
   if (!localStorage) {
     return;

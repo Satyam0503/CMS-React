@@ -1,21 +1,53 @@
 import { useEffect, useState } from "react";
-import { useLogout } from "./core/Auth";
 import { CircularLoader } from "../../shared/components/CircularLoader";
 import { Navigate } from "react-router-dom";
+import { useAppDispatch } from "../../Redux/hooks";
+import Connector from "../../../server/SignalR";
+import { getLocalKey } from "./core/AuthHelpers";
+import { RefreshTokenPayload } from "./core/_models";
+import { logoutUser } from "./core/_requests";
+import { logout } from "../../Redux/Reducers/authSlice";
+import { resetUserSlice } from "../../Redux/Reducers/userSlice";
 
-export function Logout() {
-  const logout = useLogout();
+export const Logout = () => {
+  const dispatch = useAppDispatch();
+  const signalRInstance = Connector.getInstance();
   const [redirect, setRedirect] = useState(false);
+
   useEffect(() => {
     const logOutUser = async () => {
-      await logout();
-      setRedirect(true);
+      try {
+        const refreshToken = getLocalKey()?.refreshToken ?? "";
+        if (!refreshToken) {
+          throw new Error();
+        }
+        const payload: RefreshTokenPayload = {
+          refreshToken,
+        };
+        const { data } = await logoutUser(payload);
+        if (!data.success) {
+          throw new Error();
+        }
+        dispatch(logout());
+        dispatch(resetUserSlice());
+        localStorage.clear();
+        signalRInstance.stopConnection();
+        setRedirect(true);
+      } catch (error) {
+        // navigate("/auth");
+        // localStorage.clear();
+        console.log("Logout Error", error);
+      }
+      finally {
+        setRedirect(true);
+      }
     }
     logOutUser();
-  }, [logout]);
+  }, []);
 
   if (redirect) {
     return <Navigate to="/auth/login" />
   }
   return <CircularLoader />
 }
+

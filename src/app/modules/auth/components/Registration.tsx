@@ -213,7 +213,9 @@ export function Registration() {
                 />
               </Stack>
 
-              <Stack direction={"row"} alignItems={"center"} className="ms-n2">
+              <Stack direction={"row"} className="ms-n2" sx={{
+                alignItems: "center"
+              }}>
                 <Checkbox
                   checked={values.acceptTerms}
                   {...getFieldProps("acceptTerms")}

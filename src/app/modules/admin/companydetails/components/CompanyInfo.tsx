@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
@@ -216,7 +216,12 @@ export const CompanyInfo = () => {
         <Divider sx={{ my: 2 }} />
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-6">
           <Grid container sx={{ gap: 3 }}>
-            <Grid item xs={12} sm={4} md={5}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+                md: 5
+              }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.LANGUAGES",
@@ -226,7 +231,13 @@ export const CompanyInfo = () => {
                 {formatMessage({ id: "COMPANY_DETAILS.LANGUAGES_NOTE" })}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={7} md={6} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <Grid
+              sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+              size={{
+                xs: 12,
+                sm: 7,
+                md: 6
+              }}>
               <Stack spacing={1}>
                 <Typography variant="body1" id="defaultLanguage">
                   {formatMessage({ id: "COMPANY_DETAILS.DEFAULT_LANG" })}
@@ -278,7 +289,7 @@ export const CompanyInfo = () => {
                       renderInput={(params) => (
                         <TextField {...params} />
                       )}
-                      renderTags={(value, getTagProps) => (
+                      renderValue={(value, getTagProps) => (
                         value.map((option, index: number) => {
                           const { key, ...tagProps } = getTagProps({ index });
                           return (
@@ -286,7 +297,7 @@ export const CompanyInfo = () => {
                           );
                         })
                       )}
-                      renderOption={(props, option, state) => {
+                      renderOption={(props, option,) => {
                         return (
                           <li {...props} key={option.id}>
                             <ListItemText primary={formatMessage({ id: option.name })} />
@@ -302,7 +313,13 @@ export const CompanyInfo = () => {
           </Grid>
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }} >
-            <Grid item xs={12} sm={4} md={5} className="d-flex flex-column gap-1">
+            <Grid
+              className="d-flex flex-column gap-1"
+              size={{
+                xs: 12,
+                sm: 4,
+                md: 5
+              }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.COMPANY_NAME",
@@ -312,7 +329,12 @@ export const CompanyInfo = () => {
                 {formatMessage({ id: "COMPANY_DETAILS.NAME_NOTE" })}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={7} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 7,
+                md: 6
+              }}>
               {
                 isEdit ?
                   <TextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
@@ -323,7 +345,13 @@ export const CompanyInfo = () => {
           </Grid>
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }} >
-            <Grid item xs={12} sm={4} md={5} className="d-flex flex-column gap-1">
+            <Grid
+              className="d-flex flex-column gap-1"
+              size={{
+                xs: 12,
+                sm: 4,
+                md: 5
+              }}>
               <Typography variant="h6">
                 {formatMessage({
                   id: "COMPANY_DETAILS.ADDRESS",
@@ -333,7 +361,12 @@ export const CompanyInfo = () => {
                 {formatMessage({ id: "COMPANY_DETAILS.ADDRESS_NOTE" })}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={7} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 7,
+                md: 6
+              }}>
               {
                 isEdit ?
                   <TextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
@@ -344,13 +377,23 @@ export const CompanyInfo = () => {
           </Grid>
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }}>
-            <Grid item xs={12} sm={4} md={5}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 4,
+                md: 5
+              }}>
               <Typography variant="h6">{formatMessage({ id: "COMPANY_DETAILS.LOGO" })}</Typography>
               <Typography variant="body2" sx={{ fontSize: 12 }}>
                 {formatMessage({ id: "COMPANY_DETAILS.LOGO_NOTE" })}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} className="company-logo-wrapper">
+            <Grid
+              className="company-logo-wrapper"
+              size={{
+                xs: 12,
+                sm: 6
+              }}>
               <Stack spacing={1}>
                 <Avatar
                   variant="square"

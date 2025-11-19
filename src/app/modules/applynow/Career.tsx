@@ -19,19 +19,21 @@ export const Career = () => {
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   return (
-      <Stack sx={{marginTop: '70px'}}>
-        <CareerHeader />
-        <Container className="p-0">
-          <CalendarHero />
-          <Stack sx={{padding:{xs:'0 16px', sm: '0 20px ',md:'0 40px'}, marginBottom: '40px'}} spacing={8}>
-            <WhyJoin />
-            <FindJobsHeader />
-            <JobSearchCareer />
-          </Stack>
-        </Container >
-        <Grid item xs={12} width={"100%"}>
-          <Footer />
-        </Grid>
-      </Stack >
+    <Stack sx={{ marginTop: '70px' }}>
+      <CareerHeader />
+      <Container className="p-0">
+        <CalendarHero />
+        <Stack sx={{ padding: { xs: '0 16px', sm: '0 20px ', md: '0 40px' }, marginBottom: '40px' }} spacing={8}>
+          <WhyJoin />
+          <FindJobsHeader />
+          <JobSearchCareer />
+        </Stack>
+      </Container >
+      <Grid size={12} sx={{
+        width: "100%"
+      }}>
+        <Footer />
+      </Grid>
+    </Stack >
   );
 }

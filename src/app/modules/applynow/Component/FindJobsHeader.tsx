@@ -9,10 +9,12 @@ export default function FindJobsHeader() {
                     </Typography>
                 </Typography>
             </Box>
-            <Typography className='find-jobs-header-sub' width={{sm:'100%',md:'70%'}}>
+            <Typography className='find-jobs-header-sub' sx={{
+                width: {sm:'100%',md:'70%'}
+            }}>
                 Find your place among talented people who value creativity, curiosity, and collaboration. Together,
                 we're building an inclusive environment where everyone can learn, grow, and do their best work.
             </Typography>
         </Stack>
-    )
+    );
 }

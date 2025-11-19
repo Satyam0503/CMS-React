@@ -87,7 +87,9 @@ export function CreatePassword() {
             {i({ id: "AUTH.CREATE_NEW_PASSWORD" })}
           </Typography>
         </Stack>
-        <Stack display={{ xs: "none", md: "block" }}>
+        <Stack sx={{
+          display: { xs: "none", md: "block" }
+        }}>
           <img
             src={toAbsoluteUrl("media/auth/authentication.svg")}
             style={{ maxWidth: "250px" }}

@@ -23,7 +23,8 @@
     "PROCESS_LOG": "プロセスログ",
     "COMPANY_MASTER": "会社マスター",
     "COMPANY_DETAILS": "会社詳細",
-    "PAYROLL": "給与管理"
+    "PAYROLL": "給与管理",
+    "CALENDAR": "カレンダー"
   },
   "GENDER": {
     "MALE": "男性",
@@ -46,7 +47,9 @@
     "FILTER_HOLIDAY": "休暇のフィルター",
     "SEARCH_EMPLOYEE": "従業員を検索",
     "SWITCH_THEME": "ライト/ダークモード",
-    "CHATS": "チャット"
+    "CHATS": "チャット",
+    "NEXT": "次へ",
+    "PREVIOUS": "前へ"
   },
   "PAGE": {
     "JOBS": "求人情報",
@@ -68,7 +71,8 @@
     "ADD_ROLE": "役割の追加",
     "COMPANY_MASTER": "会社マスター",
     "COMPANY_DETAILS": "会社詳細",
-    "PAYROLL": "給与"
+    "PAYROLL": "給与",
+    "CALENDAR": "カレンダー"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "保留中",
@@ -136,7 +140,8 @@
       "PASSWORD_UPDATED": "パスワードが正常に更新されました",
       "DATA_UPLOADED": "成功！データが正常にアップロードされました",
       "PAYROLL_UPDATED": "給与の詳細が正常に更新されました",
-      "PAYROLL_ADDED": "給与の詳細が正常に追加されました"
+      "PAYROLL_ADDED": "給与の詳細が正常に追加されました",
+      "INVITE_EMPLOYEE": "招待が正常に送信されました"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "新しい休日の追加に失敗しました",
@@ -155,7 +160,8 @@
       "NO_VACANCY": "現在有効な求人はありません",
       "UPDATE_ROLE": "ロール権限の更新に失敗しました",
       "PAY_SLIP_GENERATE": "給与明細の生成エラー",
-      "SELECT_PAY_MONTH": "支払月を選択してください"
+      "SELECT_PAY_MONTH": "支払月を選択してください",
+      "INVITE_EMPLOYEE": "従業員を招待できませんでした"
     }
   },
   "BUTTON": {
@@ -184,7 +190,10 @@
     "MARK_ALL_AS_READ": "すべてを既読にする",
     "UPLOAD": "アップロード",
     "REMOVE": "削除",
-    "CLEAR": "クリア"
+    "CLEAR": "クリア",
+    "INVITE": "招待する",
+    "SKIP": "スキップ",
+    "ASSIGN": "割り当てる"
   },
   "TITLES": {
     "BIRTHDAY": "誕生日",
@@ -356,7 +365,8 @@
       "LEAVE_WEEKEND": "週末",
       "LEAVE_FULL_DAY": "終日",
       "LEAVE_HALF_DAY": "半日",
-      "LEAVE_HOLIDAY": "祝日"
+      "LEAVE_HOLIDAY": "祝日",
+      "MANAGE_LEAVE_ALLOCATION": "休暇配分を管理する"
     },
     "TYPES": {
       "CASUAL_LEAVE": "私用休暇",
@@ -383,6 +393,11 @@
       "POLICY_ACCRUAL_AMOUNT_DEFINATION": "累積量： 従業員が各累積期間中に得る休暇の日数。",
       "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "週末を含む： 休暇日数を計算するときに週末も含まれます。",
       "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "祝日を含む： 休暇日数を計算するときに祝日も含まれます。"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "毎月",
+      "YEARLY": "毎年",
+      "NONE": "なし"
     }
   },
 
@@ -395,10 +410,11 @@
       "SETTING": "設定"
     },
     "PI": {
-      "EOX": "経験年数",
+      "EOX": "の経験",
       "TOTAL_YEAR": "{companyName}での勤務年数",
       "TITLE": "個人情報",
-      "DOWNLOAD_PAY_SLIP": "給与明細をダウンロード"
+      "DOWNLOAD_PAY_SLIP": "給与明細をダウンロード",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# 年} other {# 年}} {months, plural, =0 {} one {# か月} other {# か月}}"
     },
     "SKILLS": {
       "TITLE": "スキル",
@@ -442,12 +458,39 @@
       "ACTIVE": "アクティブ",
       "INACTIVE": "非アクティブ"
     },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "ユーザーアカウントを作成",
+      "EDIT_DATA": "ユーザーデータを編集",
+      "ALLOCATE_LEAVE": "従業員の休暇を割り当てる"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "必要事項をすべて入力し、「招待」をクリックしてください。指定されたメールアドレスに招待メールが送信されます。ユーザーが認証情報を作成すると、プラットフォームにアクセスできるようになります。"
+    },
+    "UPDATE": {
+      "BASIC_INFO": "基本情報",
+      "WORK_INFO": "勤務情報",
+      "PERSONAL_INFO": "個人情報",
+      "OHTER_INFO": "その他の情報"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "従業員の休暇割り当てを設定",
+      "NOTE": "この従業員に割り当てたい休暇タイプを選択してください。休暇残高は後で従業員プロフィールから変更できます。",
+      "CODE": "コード",
+      "MAX_BALANCE": "最大残高",
+      "ACCRUAL_PERIOD": "発生期間",
+      "ACCRUAL_AMOUNT": "発生量",
+      "NO_POLICY": "利用可能な休暇ポリシーがありません。従業員を追加する前に休暇ポリシーを作成してください。"
+    },
+    "FINAL": {
+      "NOTE": "従業員アカウントが正常に作成され、必要な情報がすべて割り当てられました。"
+    },
     "TYPE": {
       "FULLTIME": "フルタイム",
       "PARTTIME": "パートタイム",
-      "CONTRACTUAL": "契約社員",
+      "CONTRACTUAL": "契約",
       "INTERNSHIP": "インターンシップ",
-      "APPRENTICESHIP": "徒弟制度"
+      "APPRENTICESHIP": "見習い"
     }
   },
   "STATUS": "状態",
@@ -603,6 +646,7 @@
     "TITLE": "タイトル",
     "TYPE": "通知タイプ",
     "ROLE": "役割",
+    "VIEWS": "ビュー",
     "DEPARTMENT": "部署",
     "POSTED_DATETIME": "投稿日／時刻",
     "POSTED_BY": "投稿者",
@@ -866,7 +910,12 @@
     "27": "最大休暇日数を負の値にはできません",
     "28": "この従業員の休暇残高はすでに存在します",
     "29": "選択された休暇タイプの残高はこの従業員に存在しません",
-    "30": "休暇申請に失敗しました：すでに承認された休暇と重複しています"
+    "30": "休暇申請に失敗しました：すでに承認された休暇と重複しています",
+    "31": "同じ名前の休暇ポリシーが既に存在します",
+    "32": "累積が選択されている場合、累積額は必須です",
+    "33": "累積が選択されている場合、繰越上限額は必須です",
+    "34": "同じ名前とコードの休暇ポリシーが既に存在します",
+    "35": "休暇残高の上限を超えています"
   },
   "CHAT": {
     "TITLE": "チャット",
@@ -916,5 +965,14 @@
       "HolidayReminder": "今後の休日や会社の休業日に関するリマインダーを受け取ります",
       "MessageNotification": "プラットフォームを通じて新しいメッセージが届いた際に通知を受け取ります"
     }
+  },
+  "PLURAL": {
+    "YR": "{years}年",
+    "YEAR": "{years}年",
+    "MONTHS": "{months}か月",
+    "DAY": "{days}日"
+  },
+  "COMMON": {
+    "CONGRATULATION": "おめでとうございます"
   }
 }

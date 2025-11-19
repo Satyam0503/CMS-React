@@ -1,5 +1,5 @@
 import { Send } from "@mui/icons-material";
-import { Grid, MenuItem, Stack, Typography } from "@mui/material";
+import { Grid, MenuItem, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
@@ -106,7 +106,11 @@ export const AddNotice: FC<PropsTypes> = ({
         {({ values, isValid, dirty, isSubmitting, handleSubmit, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <SelectInput
                   label={formatMessage({ id: "NOTICE.TYPE" })}
                   name="noticeType"
@@ -117,7 +121,11 @@ export const AddNotice: FC<PropsTypes> = ({
                   ))}
                 </SelectInput>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6
+                }}>
                 <SelectInput
                   label={formatMessage({ id: "NOTICE.ROLE" })}
                   name="target"
@@ -129,7 +137,7 @@ export const AddNotice: FC<PropsTypes> = ({
                   ))}
                 </SelectInput>
               </Grid>
-              <Grid item xs={12} >
+              <Grid size={12}>
                 <SelectInput
                   label={formatMessage({ id: "NOTICE.DEPARTMENT" })}
                   name="departments"
@@ -147,8 +155,9 @@ export const AddNotice: FC<PropsTypes> = ({
                 </SelectInput>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size="grow">
                 <TextInput
+
                   multiline={true}
                   label={formatMessage({ id: "NOTICE.TITLE" })}
                   name="title"
@@ -156,13 +165,19 @@ export const AddNotice: FC<PropsTypes> = ({
                   type="text"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <TextEditor value={values.message} setValue={(value: string) => {
                   setFieldValue("message", value);
                 }} placeholder="NOTICE.MESSAGE" />
               </Grid>
             </Grid>
-            <Stack direction={"row"} spacing={1} justifyContent={"end"} mt={2}>
+            <Stack
+              direction={"row"}
+              spacing={1}
+              sx={{
+                justifyContent: "end",
+                mt: 2
+              }}>
               <CustomisedButton
                 label={formatMessage({ id: "BUTTON.CANCEL" })}
                 handleClick={handleClose}

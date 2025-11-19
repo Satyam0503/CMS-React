@@ -1,8 +1,7 @@
-import { FormControl, FormHelperText, InputLabel, Select } from "@mui/material";
-import { error } from "console";
+import { FormControl, InputLabel, Select } from "@mui/material";
 import { useField } from "formik";
 import { FC, ReactNode } from "react";
-import { useIntl } from "react-intl";
+// import { useIntl } from "react-intl";
 
 interface PropsTypes {
   label: string;
@@ -14,11 +13,11 @@ interface PropsTypes {
 
 export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
   const [field, meta] = useField(props);
-  const { formatMessage: i } = useIntl()
+  // const { formatMessage: i } = useIntl()
 
   return (
     <FormControl fullWidth>
-      <InputLabel id="select-label">{label}</InputLabel>
+      <InputLabel id="select-label" required={props.required}>{label}</InputLabel>
       <Select
         fullWidth
         variant="outlined"
@@ -27,10 +26,11 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         error={meta.touched && Boolean(meta.error)}
         {...field}
         {...props}
+        value={field.value ?? ""}
       >
         {children}
       </Select>
-      {meta.touched && meta.error && (
+      {/* {meta.touched && meta.error && (
         <FormHelperText
           sx={{
             fontSize: 10,
@@ -41,7 +41,7 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         >
           {i({ id: meta.error })}
         </FormHelperText>
-      )}
+      )} */}
     </FormControl>
   );
 };

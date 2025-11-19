@@ -20,10 +20,19 @@ const LeaveManagement: FC = () => {
   return (
     <Stack className="gap-4 flex-grow-1">
       <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
-        <Grid item xs={12} sm={12} md={5} sx={{ display: "flex" }}>
+        <Grid
+          sx={{ display: "flex" }}
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 5
+          }}>
           <LeaveRequestSummaryChart />
         </Grid>
-        <Grid item xs={12} sm={12} md={7} sx={{ display: "flex" }}>
+        <Grid
+          sx={{ display: "flex" }}
+          size="grow"
+        >
           <MonthlyLeaveTakenLineChart />
         </Grid>
       </Grid>

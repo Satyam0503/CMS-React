@@ -5,7 +5,7 @@ import { FC } from "react";
 interface Props {
   label: string;
   children: React.ReactNode;
-  value?: any;
+  value?: number | string;
   applyMinHeight?: boolean;
 }
 
@@ -20,14 +20,14 @@ export const CustomCard: FC<Props> = (props) => {
     >
       <Stack spacing={1} className="flex-grow-1 ">
         <Stack direction="row" className="justify-content-between mb-1">
-          <Typography className="fw-bold fs-16">{props.label}</Typography>
-          {props.value ? (
-            <Typography className="fs-16 fw-bold">{props.value}</Typography>
+          <Typography className="fw-bold fs-16">{label}</Typography>
+          {value ? (
+            <Typography className="fs-16 fw-bold">{value}</Typography>
           ) : (
             ""
           )}
         </Stack>
-        {props.children}
+        {children}
       </Stack>
     </Card>
   );

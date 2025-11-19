@@ -41,7 +41,7 @@ export enum Modules {
   LeaveManagement = 4,
   Recruitment = 5,
   Admin = 6,
-  Holidays = 7,
+  Calendar = 7,
   NoticeBoard = 8,
   Jobs = 9,
   Applications = 10,
@@ -59,7 +59,7 @@ export enum ModulesName {
   LeaveManagement = "Leave_Management",
   Recruitment = "Recruitment",
   Admin = "Admin",
-  Holidays = "Holidays",
+  Calendar = "Calendar",
   NoticeBoard = "Notice_Board",
   Jobs = "Jobs",
   Applications = "Applications",
@@ -78,7 +78,7 @@ export enum ModulesTitles {
   LeaveManagement = "MODULES.LEAVE_MANAGEMENT",
   Recruitment = "MODULES.RECRUITMENT",
   Admin = "MODULES.ADMIN",
-  Holidays = "MODULES.HOLIDAYS",
+  Calendar = "MODULES.CALENDAR",
   NoticeBoard = "MODULES.NOTICE_BOARD",
   Jobs = "MODULES.JOBS",
   Applications = "MODULES.APPLICATIONS",
@@ -165,8 +165,8 @@ export enum EMPLOYMENT {
   APPRENTICESHIP,
 }
 
-export enum ACCURAL_PERIOD{
+export enum ACCURAL_PERIOD {
   MONTHLY = 1,
   YEARLY = 2,
-  NONE = 3
+  NONE = 3,
 }

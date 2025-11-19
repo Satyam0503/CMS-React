@@ -3,9 +3,7 @@ import {
   Autocomplete,
   AutocompleteChangeDetails,
   AutocompleteChangeReason,
-  Chip,
   CircularProgress,
-  InputAdornment,
   Stack,
   TextField,
 } from "@mui/material";
@@ -154,16 +152,18 @@ export const AddUpdateSkills: FC<PropsType> = ({
                   placeholder={i({
                     id: "PROFILE.SKILLS.SEARCH_SKILLS",
                   })}
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      endAdornment: (
+                        <React.Fragment>
+                          {loading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </React.Fragment>
+                      ),
+                    }
                   }}
                 />
               )}
@@ -176,7 +176,9 @@ export const AddUpdateSkills: FC<PropsType> = ({
             <Typography variant="body2" className="mt-2 px-2">{i({ id: "PROFILE.SKILLS.SEARCH_NOTE" })}</Typography>
           </Stack>
 
-          <Stack direction={"row"} spacing={1} justifyContent={"flex-end"}>
+          <Stack direction={"row"} spacing={1} sx={{
+            justifyContent: "flex-end"
+          }}>
             <CustomisedButton
               variant="outlined"
               label={i({ id: "BUTTON.CLOSE" })}
