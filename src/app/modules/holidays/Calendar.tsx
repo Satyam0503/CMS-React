@@ -18,7 +18,6 @@ export default function Calendar() {
     const [category, setCategory] = useState<CalendarItemType>(0);
     const [, setLoading] = useState(false);
     const [isRefresh, setRefresh] = useState<boolean>(false);
-    const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
 
     const handleCategoryChange = (category: CalendarItemType) => {
@@ -55,29 +54,6 @@ export default function Calendar() {
     }, [selectedDate?.year(), isRefresh, category]);
 
     useEffect(() => {
-        setLoading(true);
-        const payload: GetCalendarItemPayload = {
-            type: category == 0 ? null : category,
-            year: selectedDate ? selectedDate.year() : dayjs().year()
-        };
-        const fetchedHolidayData = async () => {
-            try {
-                const response = await getAllCalendarItem(payload);
-                const { success, methodResults, } = response.data;
-                // console.log(methodResults);
-
-                if (success) setAllOccasionsForYear(methodResults);
-            } catch (error) {
-                console.error((error as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchedHolidayData()
-    }, [isRefresh]);
-
-    useEffect(() => {
         setPageTitle(i({ id: "PAGE.CALENDAR" }))
     }, [])
 
@@ -91,7 +67,6 @@ export default function Calendar() {
                     selectedDate={selectedDate}
                     handleRefresh={handleRefresh}
                     isRefresh={isRefresh}
-                    allOccasionsForYear={allOccasionsForYear}
                 />
                 <Box component='div'
                     className='gap-4'

@@ -1,26 +1,24 @@
-import { Box, Button, Divider, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl';
 import AddIcon from '@mui/icons-material/Add';
 import UpcomingHolidayCard from './UpcomingHolidayCard';
 import HolidayForm from './HolidayForm';
-import { CalendarItem } from '../models';
+import { CalendarItem, GetCalendarItemPayload } from '../models';
 import dayjs, { Dayjs } from 'dayjs';
 import { hasModuleFeaturePermission } from '../../../../utils/common';
 import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
 import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
+import { getAllCalendarItem } from '../holidayServices';
 
 
 
 type Props = {
     occasions: Array<CalendarItem>,
     selectedDate: Dayjs | null,
-    // selectedMonth: string | undefined,
-    // selectedYear: string | undefined,
     handleRefresh: () => void,
     isRefresh: boolean,
-    allOccasionsForYear: Array<CalendarItem>,
 }
 
 const initialValues: CalendarItem = {
@@ -63,7 +61,6 @@ const CalendarItems = [
 
 export default function CalendarSidebar(props: Props) {
     const { formatMessage: i } = useIntl();
-    const [upcomingHolidays, setUpcomingHolidays] = useState<Array<CalendarItem>>([])
     const [daysHolidays, setDaysHolidays] = useState<Array<CalendarItem>>([])
     const [open, setOpen] = useState<boolean>(false)
     const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -71,6 +68,7 @@ export default function CalendarSidebar(props: Props) {
 
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
     const hasAddPermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, modulePermission);
+    const [allOccasionsForYear, setAllOccasionsForYear] = useState<CalendarItem[]>([])
 
     const [monthSummary, setMonthSummary] = useState({
         holidays: 0,
@@ -78,6 +76,24 @@ export default function CalendarSidebar(props: Props) {
         birthdays: 0,
         anniversaries: 0
     } satisfies Record<string, number>);
+
+    useEffect(() => {
+        const payload: GetCalendarItemPayload = {
+            type: null,
+            year: dayjs().year()
+        };
+        const fetchedHolidayData = async () => {
+            try {
+                const response = await getAllCalendarItem(payload);
+                const { success, methodResults, } = response.data;
+                if (success) setAllOccasionsForYear(methodResults);
+            } catch (error) {
+                console.error((error as Error).message);
+            }
+        }
+
+        fetchedHolidayData()
+    }, []);
 
     function handleClose() {
         setOpen(false);
@@ -87,28 +103,17 @@ export default function CalendarSidebar(props: Props) {
     }
 
     //Finds Selected Occasions For Selected Month
-    function findOccasionsForMonth() {
-        const thisMonthHolidaysFinder: Array<CalendarItem> = []
+    function findUpComingOccassions() {
+        const today = dayjs();
+        if (allOccasionsForYear.length === 0) return [];
+        const thisMonthHolidaysFinder = allOccasionsForYear.filter((occ) => {
+            if (!occ.date) return false;
+            return dayjs(occ.date).isAfter(today);
+        }).sort((a, b) => dayjs(a.date).diff(dayjs(b.date))).slice(0, 4);
 
-        const todayDate = dayjs().format('DD');
-        const todayMonth = dayjs().format('MM')
-
-        props.allOccasionsForYear.forEach((occ) => {
-            if (occ.date) {
-                const holidayDate = dayjs(occ.date).format('DD');
-                const holidayMonth = dayjs(occ.date).format('MM');
-
-                if (props.selectedDate) {
-                    if (holidayMonth == todayMonth && holidayDate > todayDate) {
-                        thisMonthHolidaysFinder.push(occ)
-                    }
-                }
-            }
-            setUpcomingHolidays(thisMonthHolidaysFinder)
-        }
-        )
+        // Update state with the filtered holidays
+        return thisMonthHolidaysFinder;
     }
-
 
     // get month summary
     function getMonthSummary() {
@@ -117,7 +122,7 @@ export default function CalendarSidebar(props: Props) {
         let birthdayCounter = 0
         let anniversaryCounter = 0
 
-        props.allOccasionsForYear.filter(occ => {
+        props.occasions.filter(occ => {
             const holidayMonth = dayjs(occ.date).month();
             return holidayMonth === props.selectedDate?.month();
         }).forEach((occ) => {
@@ -148,10 +153,6 @@ export default function CalendarSidebar(props: Props) {
     }
 
     useEffect(() => {
-        findOccasionsForMonth()
-    }, [props.occasions, props.isRefresh]);
-
-    useEffect(() => {
         findHolidaysForDay()
         getMonthSummary()
     }, [props.selectedDate, props.occasions]);
@@ -172,23 +173,23 @@ export default function CalendarSidebar(props: Props) {
                     }}
                     onClick={() => setOpen(true)}
                 >
-                    {i({ id: "OCCASION.ADD_OCCASION" })}
+                    {i({ id: "BUTTON.ADD" })}
                     <AddIcon />
                 </Button>
             }
 
             {/* Upcoming Occasions For Current Month */}
-            {upcomingHolidays.length > 0 &&
+            {findUpComingOccassions().length > 0 &&
                 <Box component='div'
                     className='gap-3 calendar-sidebar-upcoming'
                 >
                     <Typography variant='body1' className='fs-16 fw-bold' >
                         {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
                     </Typography>
-                    <Box component={'div'}
-                        className='gap-4 calendar-sidear-holidays-holder'
+                    <Box component='div'
+                        className='gap-1 calendar-sidear-holidays-holder'
                     >
-                        {upcomingHolidays.length > 0 && upcomingHolidays.map((hol, index) => {
+                        {findUpComingOccassions().map((hol, index) => {
                             return <UpcomingHolidayCard
                                 key={String(index)}
                                 occasion={hol}
@@ -198,12 +199,9 @@ export default function CalendarSidebar(props: Props) {
                         })
                         }
                     </Box>
-                    <Divider sx={{
-                        borderColor: 'black'
-                    }} />
+
                 </Box>
             }
-
 
             {/* Occasions For Selected Month */}
             <Box component={'div'}
@@ -229,9 +227,6 @@ export default function CalendarSidebar(props: Props) {
                         )
                     })}
                 </Box>
-                <Divider sx={{
-                    borderColor: 'black'
-                }} />
             </Box>
 
 
@@ -245,7 +240,7 @@ export default function CalendarSidebar(props: Props) {
                             {i({ id: "OCCASION.OCCASIONS_ON_DATE" })}
                         </Typography>
                         <Box component={'div'}
-                            className='gap-4 calendar-sidear-holidays-holder'
+                            className='gap-1 calendar-sidear-holidays-holder'
                         >
                             {daysHolidays.map((hol, index) => {
                                 return <UpcomingHolidayCard

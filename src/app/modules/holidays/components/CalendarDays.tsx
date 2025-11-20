@@ -65,8 +65,8 @@ export default function CalendarDays(props: Props) {
     // Checks If It Is Current Month And Year To Set Today Date
     function checkIsSameDay(dayofMonth: number) {
         if (typeof dayofMonth === "number") {
-            const isSameMonthYear = selectedDate?.isSame(dayjs(), "day") && (selectedDate.date() === dayofMonth);
-            return isSameMonthYear
+            const today = selectedDate?.set("date", dayofMonth);
+            return dayjs().isSame(today, 'day');
         }
         return false;
     }

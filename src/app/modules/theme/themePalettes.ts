@@ -6,8 +6,8 @@ export const colors = {
   primary: {
     100: "#E6D9F5",
     200: "#E6D9F5",
-    300: "#C0A4EB",
-    400: "#AC89E6",
+    300: "#c0a4ebff",
+    400: "#ad5ef2ff",
     500: "#9A56D3",
     600: "#8B4CBB",
     700: "#7C41A3",
@@ -70,7 +70,7 @@ export const darkPalette: ColorSystemOptions = {
     primary: {
       // lighter: colors.primary[200],
       light: colors.primary[300],
-      main: colors.primary[500],
+      main: colors.primary[400],
       dark: colors.primary[600],
     },
     secondary: {

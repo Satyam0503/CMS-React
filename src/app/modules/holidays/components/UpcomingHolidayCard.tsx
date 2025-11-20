@@ -117,9 +117,9 @@ function UpcomingHolidayCard(props: Props) {
     return (
         <Stack
             component="div"
-            className="gap-2 holiday-card flex-row justify-content-between align-items-center p-1 rounded hover-secondary "
+            className="gap-1 flex-row justify-content-between align-items-center p-2 rounded hover-secondary "
         >
-            <Box component={'div'} className="d-flex gap-2 align-items-center">
+            <Box component='div' className="d-flex gap-2 align-items-center">
                 {props.occasion.imageUrl ? (
                     <Avatar
                         sx={{
@@ -143,7 +143,7 @@ function UpcomingHolidayCard(props: Props) {
                         <CalendarToday className="fs-32" />
                     </Avatar>
                 )}
-                <Box component={"div"} className="d-flex flex-column gap-1"
+                <Box component="div" className="d-flex flex-column gap-1"
                     sx={{
                         whiteSpace: 'nowrap',
                         width: '115px',
