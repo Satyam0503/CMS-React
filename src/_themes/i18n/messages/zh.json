@@ -23,7 +23,8 @@
     "PROCESS_LOG": "流程日志",
     "COMPANY_MASTER": "公司主档",
     "COMPANY_DETAILS": "公司详情",
-    "PAYROLL": "工资单"
+    "PAYROLL": "工资单",
+    "CALENDAR": "日历"
   },
   "GENDER": {
     "MALE": "男性",
@@ -46,7 +47,9 @@
     "FILTER_HOLIDAY": "过滤假期",
     "SEARCH_EMPLOYEE": "搜索员工",
     "SWITCH_THEME": "浅色/深色模式",
-    "CHATS": "聊天"
+    "CHATS": "聊天",
+    "NEXT": "下一步",
+    "PREVIOUS": "上一步"
   },
   "Modules": {
     "Dashboard": "仪表盘",
@@ -88,7 +91,8 @@
     "ADD_ROLE": "添加角色",
     "COMPANY_MASTER": "公司主数据",
     "COMPANY_DETAILS": "公司详情",
-    "PAYROLL": "工资单"
+    "PAYROLL": "工资单",
+    "CALENDAR": "日历"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "待处理",
@@ -155,7 +159,8 @@
       "PASSWORD_UPDATED": "密码已成功更新",
       "DATA_UPLOADED": "成功！数据已成功上传",
       "PAYROLL_UPDATED": "工资详情更新成功",
-      "PAYROLL_ADDED": "工资详情添加成功"
+      "PAYROLL_ADDED": "工资详情添加成功",
+      "INVITE_EMPLOYEE": "邀请已成功发送"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "添加新假期失败",
@@ -174,7 +179,8 @@
       "NO_VACANCY": "当前没有有效的职位空缺",
       "UPDATE_ROLE": "更新角色权限失败",
       "PAY_SLIP_GENERATE": "生成工资单时出错",
-      "SELECT_PAY_MONTH": "请选择支付月份"
+      "SELECT_PAY_MONTH": "请选择支付月份",
+      "INVITE_EMPLOYEE": "邀请员工失败"
     }
   },
   "BUTTON": {
@@ -203,7 +209,10 @@
     "MARK_ALL_AS_READ": "标记所有为已读",
     "UPLOAD": "上传",
     "REMOVE": "移除",
-    "CLEAR": "清除"
+    "CLEAR": "清除",
+    "INVITE": "邀请",
+    "SKIP": "跳过",
+    "ASSIGN": "分配"
   },
   "TITLES": {
     "BIRTHDAY": "生日",
@@ -377,6 +386,11 @@
       "EARNED_LEAVE": "年假",
       "MATERNITY_LEAVE": "产假",
       "PATERNITY_LEAVE": "陪产假"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "每月",
+      "YEARLY": "每年",
+      "NONE": "无"
     }
   },
   "PROFILE": {
@@ -388,10 +402,11 @@
       "SETTING": "设置"
     },
     "PI": {
-      "EOX": "工作经验年数",
-      "TOTAL_YEAR": "在 {companyName} 的年数",
+      "EOX": "工作经验",
+      "TOTAL_YEAR": "在 {companyName} 的年限",
       "TITLE": "个人信息",
-      "DOWNLOAD_PAY_SLIP": "下载工资单"
+      "DOWNLOAD_PAY_SLIP": "下载工资单",
+      "EXPERIENCE_TEXT": "{years} 年 {months} 个月"
     },
     "SKILLS": {
       "TITLE": "技能",
@@ -429,16 +444,43 @@
   },
   "EMPLOYEE": {
     "ADD_NEW_EMP": "添加新员工",
-    "PROFILE": "个人资料",
+    "PROFILE": "资料",
     "STATUS": {
-      "ACTIVE": "在职",
-      "INACTIVE": "离职"
+      "ACTIVE": "启用",
+      "INACTIVE": "停用"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "创建用户账号",
+      "EDIT_DATA": "编辑用户数据",
+      "ALLOCATE_LEAVE": "分配员工假期"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "请填写所有必填信息并点击“邀请”。系统会向提供的邮箱发送邀请邮件。用户创建账号后即可访问平台。"
+    },
+    "UPDATE": {
+      "BASIC_INFO": "基本信息",
+      "WORK_INFO": "工作信息",
+      "PERSONAL_INFO": "个人信息",
+      "OHTER_INFO": "其他信息"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "设置员工休假分配",
+      "NOTE": "请选择要为该员工分配的假期类型。您之后可以在员工资料中修改休假余额。",
+      "CODE": "代码",
+      "MAX_BALANCE": "最大假期余额",
+      "ACCRUAL_PERIOD": "累积周期",
+      "ACCRUAL_AMOUNT": "累积额度",
+      "NO_POLICY": "暂无可用的假期政策。请在添加员工前创建假期政策。"
+    },
+    "FINAL": {
+      "NOTE": "您已成功创建员工账号并完成所有必要的信息分配。"
     },
     "TYPE": {
       "FULLTIME": "全职",
       "PARTTIME": "兼职",
       "CONTRACTUAL": "合同工",
-      "INTERNSHIP": "实习",
+      "INTERNSHIP": "实习生",
       "APPRENTICESHIP": "学徒"
     }
   },
@@ -449,6 +491,7 @@
   "NO": "否",
   "DAY": "天",
   "DAYS": "天",
+
   "APPLICATION.COPYRIGHT": "版权 © CodejiInfotech 2022 Codeji InfoTech Pvt Ltd | 软件开发公司 | 设在德拉敦",
   "ATTENDANCE.PRESENT": "出勤",
   "ATTENDANCE.ABSENT": "缺勤",
@@ -511,6 +554,7 @@
   "PROMOTION.SR_DEVELOPER": "晋升为高级开发",
   "POSITION.SR_DEVELOPER": "高级开发",
   "PROMOTION.JOINED": "加入 Codeji",
+
   "PERMISSION.VIEW": "查看",
   "PERMISSION.EDIT": "编辑",
   "PERMISSION.DELETE": "删除",
@@ -518,10 +562,12 @@
   "VACANCY.TEXT1": "感谢你浏览我们的网站！",
   "VACANCY.TEXT2": "我们的职位正在更新中，请稍后访问我们的网站查看最新招聘信息。我们真诚感谢你的关注，期待未来合作的可能！",
   "VACANCY.TEXT3": "请注意，我们仅在工作日 9:00 AM‑6:00 PM IST 接收申请。",
+
   "MESSAGE.APPLICANT.ADD_SUCCESS": "申请提交成功",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "你已提交过申请。请在等待期限后重新申请",
   "MESSAGE.APPLICANT.UPDATED": "申请更新成功",
   "MESSAGE.APPLICATION.ACCESS_DENIED": "你没有访问权限",
+
   "NOT_AVAILABLE": "不适用",
   "TRANSLATION_MISSING": "翻译缺失",
   "UNDO": "撤销",
@@ -531,6 +577,7 @@
   "TO": "至",
   "ONLINE": "在线",
   "OFFLINE": "离线",
+
   "USER": {
     "BLOOD_GROUP": "血型",
     "GROUP": "组别",
@@ -586,6 +633,7 @@
     "TYPE": "通知类型",
     "ROLE": "角色",
     "DEPARTMENT": "部门",
+    "VIEWS": "视图",
     "POSTED_DATETIME": "发布日期/时间",
     "POSTED_BY": "发布者",
     "POSTED_DATE": "发布日期",
@@ -847,7 +895,12 @@
     "27": "最大假期天数不能为负",
     "28": "当前员工的假期余额已存在",
     "29": "所选假期类型的余额不存在",
-    "30": "请假申请失败：与已批准的假期重叠"
+    "30": "请假申请失败：与已批准的假期重叠",
+    "31": "同名的休假政策已存在",
+    "32": "选择累积时必须填写累积金额",
+    "33": "选择累积时必须填写结转上限金额",
+    "34": "具有相同名称和代码的休假政策已存在",
+    "35": "超出休假余额上限"
   },
   "CHAT": {
     "TITLE": "聊天",
@@ -897,5 +950,14 @@
       "HolidayReminder": "及时接收公司或公共假期的提醒",
       "MessageNotification": "当您在平台上收到新消息时接收通知"
     }
+  },
+  "PLURAL": {
+    "YR": "{years}年",
+    "YEAR": "{years}年",
+    "MONTHS": "{months}个月",
+    "DAY": "{days}天"
+  },
+  "COMMON": {
+    "CONGRATULATION": "祝贺"
   }
 }

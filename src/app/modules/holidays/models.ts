@@ -1,4 +1,4 @@
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { ResponseData } from "../../../utils/common_types";
 import { HOLIDAY_TYPE } from "../../../utils/enums";
 
@@ -9,7 +9,7 @@ export interface OccasionModel {
   detail: string;
   occasionType: number;
   occasionImage?: File | null;
-  recurring: boolean
+  recurring: boolean;
 }
 
 export type OccasionResponseModel = Omit<OccasionModel, "occasionImage"> & {
@@ -17,23 +17,23 @@ export type OccasionResponseModel = Omit<OccasionModel, "occasionImage"> & {
   occasionCoverImageUrl?: string | null;
 };
 
-export type CalendarItemType = 0|1|2|3|4;
+export type CalendarItemType = 0 | 1 | 2 | 3 | 4;
 
 export interface GetCalendarItemPayload {
-  type: null | CalendarItemType,
-  year: null | number
+  type: null | CalendarItemType;
+  year: null | number;
 }
 
-export type CalendarItem =  {
-      id: string,
-      name: string,
-      date: Dayjs | null | string,
-      description: string,
-      type: CalendarItemType,
-      imageUrl: string | null,
-      recurring: boolean,
-      image?:File | null
-    }
+export type CalendarItem = {
+  id: string;
+  name: string;
+  date: Dayjs | null | string;
+  description: string;
+  type: CalendarItemType;
+  imageUrl: string | null;
+  recurring: boolean;
+  image?: File | null;
+};
 
 export interface HolidayFilterModel {
   occasionType: HOLIDAY_TYPE[];

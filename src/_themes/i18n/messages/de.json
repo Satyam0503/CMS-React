@@ -23,7 +23,8 @@
     "PROCESS_LOG": "Protokoll",
     "COMPANY_MASTER": "Unternehmensübersicht",
     "COMPANY_DETAILS": "Unternehmensdetails",
-    "PAYROLL": "Lohnabrechnung"
+    "PAYROLL": "Lohnabrechnung",
+    "CALENDAR": "Kalender"
   },
   "GENDER": {
     "MALE": "Männlich",
@@ -46,7 +47,9 @@
     "FILTER_HOLIDAY": "Feiertage filtern",
     "SEARCH_EMPLOYEE": "Mitarbeiter suchen",
     "SWITCH_THEME": "Hell/Dunkel Modus",
-    "CHATS": "Chat"
+    "CHATS": "Chat",
+    "NEXT": "Weiter",
+    "PREVIOUS": "Zurück"
   },
   "PAGE": {
     "JOBS": "Stellenanforderungen",
@@ -68,7 +71,8 @@
     "ADD_ROLE": "Rolle hinzufügen",
     "COMPANY_MASTER": "Unternehmensstammdaten",
     "COMPANY_DETAILS": "Unternehmensdetails",
-    "PAYROLL": "Gehaltsabrechnung"
+    "PAYROLL": "Gehaltsabrechnung",
+    "CALENDAR": "Kalender"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Ausstehend",
@@ -135,7 +139,8 @@
       "PASSWORD_UPDATED": "Passwort erfolgreich aktualisiert",
       "DATA_UPLOADED": "Erfolg! Daten wurden erfolgreich hochgeladen",
       "PAYROLL_UPDATED": "Gehaltsabrechnungsdetails erfolgreich aktualisiert",
-      "PAYROLL_ADDED": "Gehaltsabrechnungsdetails erfolgreich hinzugefügt"
+      "PAYROLL_ADDED": "Gehaltsabrechnungsdetails erfolgreich hinzugefügt",
+      "INVITE_EMPLOYEE": "Einladung erfolgreich gesendet"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Fehler beim Hinzufügen des neuen Feiertags",
@@ -154,7 +159,8 @@
       "NO_VACANCY": "Keine aktiven Stellen vorhanden",
       "UPDATE_ROLE": "Aktualisierung der Rollenberechtigung fehlgeschlagen",
       "PAY_SLIP_GENERATE": "Fehler beim Erstellen der Gehaltsabrechnung",
-      "SELECT_PAY_MONTH": "Bitte wählen Sie den Zahlmonat aus"
+      "SELECT_PAY_MONTH": "Bitte wählen Sie den Zahlmonat aus",
+      "INVITE_EMPLOYEE": "Mitarbeiter konnte nicht eingeladen werden"
     }
   },
   "BUTTON": {
@@ -183,7 +189,10 @@
     "MARK_ALL_AS_READ": "Alles als gelesen markieren",
     "UPLOAD": "Hochladen",
     "REMOVE": "Entfernen",
-    "CLEAR": "Löschen"
+    "CLEAR": "Löschen",
+    "INVITE": "Einladen",
+    "SKIP": "Überspringen",
+    "ASSIGN": "Zuweisen"
   },
   "TITLES": {
     "BIRTHDAY": "Geburtstag",
@@ -358,6 +367,11 @@
       "EARNED_LEAVE": "Erholungsurlaub",
       "MATERNITY_LEAVE": "Mutterschaftsurlaub",
       "PATERNITY_LEAVE": "Vaterschaftsurlaub"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "Monatlich",
+      "YEARLY": "Jährlich",
+      "NONE": "Keine"
     }
   },
   "PROFILE": {
@@ -369,10 +383,11 @@
       "SETTING": "Einstellungen"
     },
     "PI": {
-      "EOX": "Berufserfahrung (Jahre)",
+      "EOX": "Berufserfahrung",
       "TOTAL_YEAR": "Jahre bei {companyName}",
       "TITLE": "Persönliche Informationen",
-      "DOWNLOAD_PAY_SLIP": "Gehaltsabrechnung herunterladen"
+      "DOWNLOAD_PAY_SLIP": "Gehaltsabrechnung herunterladen",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# Jahr} other {# Jahre}} {months, plural, =0 {} one {# Monat} other {# Monate}}"
     },
     "SKILLS": {
       "TITLE": "Fähigkeiten",
@@ -409,11 +424,38 @@
     }
   },
   "EMPLOYEE": {
-    "ADD_NEW_EMP": "Neuen Mitarbeiter hinzufügen",
+    "ADD_NEW_EMP": "Mitarbeiter hinzufügen",
     "PROFILE": "Profil",
     "STATUS": {
       "ACTIVE": "Aktiv",
       "INACTIVE": "Inaktiv"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "Benutzerkonto erstellen",
+      "EDIT_DATA": "Benutzerdaten bearbeiten",
+      "ALLOCATE_LEAVE": "Urlaub für Mitarbeiter zuweisen"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "Füllen Sie alle erforderlichen Angaben aus und klicken Sie auf „Einladen“. Eine E-Mail-Einladung wird an die angegebene Adresse gesendet. Sobald der Benutzer seine Zugangsdaten erstellt hat, kann er auf die Plattform zugreifen."
+    },
+    "UPDATE": {
+      "BASIC_INFO": "Grundlegende Informationen",
+      "WORK_INFO": "Arbeitsinformationen",
+      "PERSONAL_INFO": "Persönliche Informationen",
+      "OHTER_INFO": "Weitere Informationen"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "Urlaubszuweisung für Mitarbeiter einrichten",
+      "NOTE": "Wählen Sie die Urlaubsarten aus, die Sie diesem Mitarbeiter zuweisen möchten. Sie können die Urlaubsstände später im Mitarbeiterprofil ändern.",
+      "CODE": "Code",
+      "MAX_BALANCE": "Maximales Urlaubsguthaben",
+      "ACCRUAL_PERIOD": "Ansammlungszeitraum",
+      "ACCRUAL_AMOUNT": "Ansammlungsbetrag",
+      "NO_POLICY": "Keine Urlaubsrichtlinien verfügbar. Bitte erstellen Sie eine Urlaubsrichtlinie, bevor Sie einen Mitarbeiter hinzufügen."
+    },
+    "FINAL": {
+      "NOTE": "Sie haben das Mitarbeiterkonto erfolgreich erstellt und alle erforderlichen Informationen zugewiesen."
     },
     "TYPE": {
       "FULLTIME": "Vollzeit",
@@ -513,6 +555,7 @@
   "TO": "Bis",
   "ONLINE": "Online",
   "OFFLINE": "Offline",
+
   "USER": {
     "BLOOD_GROUP": "Blutgruppe",
     "GROUP": "Gruppe",
@@ -568,6 +611,7 @@
     "TYPE": "Hinweistyp",
     "ROLE": "Rolle",
     "DEPARTMENT": "Abteilung",
+    "VIEWS": "Ansichten",
     "POSTED_DATETIME": "Veröffentlichungsdatum/-zeit",
     "POSTED_BY": "Veröffentlicht von",
     "POSTED_DATE": "Veröffentlichungsdatum",
@@ -829,7 +873,12 @@
     "27": "Maximaler Urlaub darf nicht negativ sein",
     "28": "Urlaubssaldo für diesen Mitarbeiter existiert bereits",
     "29": "Urlaubssaldo für den ausgewählten Typ existiert für diesen Mitarbeiter nicht",
-    "30": "Urlaubsantrag fehlgeschlagen: Überschneidung mit bereits genehmigtem Urlaub"
+    "30": "Urlaubsantrag fehlgeschlagen: Überschneidung mit bereits genehmigtem Urlaub",
+    "31": "Eine Urlaubsrichtlinie mit diesem Namen existiert bereits",
+    "32": "Der Ansammlungsbetrag ist erforderlich, wenn eine Ansammlung ausgewählt ist",
+    "33": "Der Übertragsgrenzwert ist erforderlich, wenn eine Ansammlung ausgewählt ist",
+    "34": "Eine Urlaubsrichtlinie mit demselben Namen und Code existiert bereits",
+    "35": "Urlaubsguthabenlimit überschritten"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -879,5 +928,14 @@
       "HolidayReminder": "Erhalten Sie rechtzeitige Erinnerungen an bevorstehende Feiertage und firmeninterne Ruhetage",
       "MessageNotification": "Erhalten Sie Benachrichtigungen, wenn neue Nachrichten über die Plattform gesendet werden"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 J} one {# J} other {# J}}",
+    "YEAR": "{years, plural, =0 {0 Jahr} one {# Jahr} other {# Jahre}}",
+    "MONTHS": "{months, plural, =0 {0 Monat} one {# Monat} other {# Monate}}",
+    "DAY": "{days, plural, =0 {0 Tag} one {# Tag} other {# Tage}}"
+  },
+  "COMMON": {
+    "CONGRATULATION": "Herzlichen Glückwunsch"
   }
 }

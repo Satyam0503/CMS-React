@@ -81,7 +81,9 @@ export const ApplicationModules: FC = () => {
     <>
       <Card className="px-8 py-6 d-flex flex-column flex-grow-1 gap-8">
         <Stack>
-          <Typography variant="h5" mb={1}>
+          <Typography variant="h5" sx={{
+            mb: 1
+          }}>
             {formatMessage({
               id: "COMPANY_DETAILS.TABS.APPLICATIONS_MODULE",
             })}
@@ -98,8 +100,10 @@ export const ApplicationModules: FC = () => {
               <Stack
                 direction="row"
                 spacing={1}
-                alignItems={"center"}
                 key={module.moduleId}
+                sx={{
+                  alignItems: "center"
+                }}
               >
                 <Stack>
                   <Switch
@@ -107,7 +111,6 @@ export const ApplicationModules: FC = () => {
                     onChange={(e) => handleChange(e, module.moduleId)}
                   />
                 </Stack>
-
                 <Stack>
                   <Typography variant="body1">{module.moduleName}</Typography>
                 </Stack>
@@ -128,5 +131,5 @@ export const ApplicationModules: FC = () => {
       )
       }
     </>
-  )
+  );
 }

@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { Breakpoint, Dialog, DialogContent, DialogTitle, IconButton, SxProps, Zoom } from "@mui/material";
+import { Breakpoint, Dialog, DialogContent, DialogTitle, IconButton, Zoom } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import clsx from "clsx";
 import React from "react";
@@ -23,7 +23,11 @@ const Transition = React.forwardRef(function Transition(
 export const CustomisedModal = (props: PropsTypes) => {
   const { open, handleClose, children, title, maxWidth = "md" } = props;
   return (
-    <Dialog role="dialog" aria-modal={true} scroll="paper" open={open} onClose={handleClose} maxWidth={maxWidth} TransitionComponent={Transition} transitionDuration={500}>
+    <Dialog role="dialog" aria-modal={true} scroll="paper" open={open} onClose={handleClose} maxWidth={maxWidth} transitionDuration={500}
+      slots={{
+        transition: Transition
+      }}
+    >
       {
         title &&
         <DialogTitle className="d-flex justify-content-between align-items-center" variant="h5">

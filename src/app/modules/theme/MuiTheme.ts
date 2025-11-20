@@ -1,126 +1,21 @@
-import { createTheme, PaletteMode } from "@mui/material";
+import { createTheme } from "@mui/material";
 import { Localization } from "@mui/material/locale";
-import { rainbowSurgePalette } from "@mui/x-charts/colorPalettes";
+import { darkPalette, lightPalette } from "./themePalettes";
 
-export const colors = {
-  primary: {
-    200: "#E6D9F5",
-    300: "#C0A4EB",
-    400: "#AC89E6",
-    500: "#9A56D3",
-    600: "#8B4CBB",
-    700: "#7C41A3",
-    800: "#6D378B",
-    900: "#5E2D73",
-    100: "#E6D9F5",
-  },
-  secondary: {
-    200: "#FFE2B8",
-    300: "#FFD090",
-    400: "#FFBE78",
-    500: "#FEBB68",
-    600: "#E5A359",
-    700: "#CC8C4A",
-    800: "#B3743B",
-    900: "#995D2D",
-    100: "#FFF3E0",
-  },
-  neutral: {
-    200: "#E5E5E5",
-    300: "#D4D4D4",
-    400: "#A3A3A3",
-    500: "#737373",
-    600: "#525252",
-    700: "#404040",
-    800: "#262626",
-    900: "#171717",
-    100: "#F5F5F5",
-  },
-  white: "#ffffff",
-};
-
-export const chartColorpalette: { [key: string]: string[] } = {
-  light: [
-    "#9A56D3", // purple
-    "#FFA52F", // orange
-    "#6d6d6dff",
-    "#E0468F", // magenta
-    "#F45D48", // coral
-    "#FFC107", // amber
-    "#3949AB", // deep blue
-  ],
-  dark: [
-    "#9A56D3", // purple
-    "#FFA52F", // orange
-    "#E0468F", // magenta
-    "#F45D48", // coral
-    "#FFC107", // amber
-    "#3949AB", // deep blue
-  ],
-};
-
-declare module "@mui/material/styles" {
-  interface PaletteColor {
-    lighter?: string;
-    darker?: string;
-  }
-
-  interface TypeBackground {
-    header?: string;
-    body?: string;
-    card?: string;
-    box?: string;
-    sidebar?: string;
-  }
-
-  interface SimplePaletteColorOptions {
-    lighter?: string;
-    darker?: string;
-  }
-}
-
-export const getDesignTokens = (mode: PaletteMode) => ({
-  palette: {
-    mode,
-    primary: {
-      lighter: colors.primary[200],
-      light: colors.primary[300],
-      main: colors.primary[500],
-      dark: colors.primary[600],
+export const createApplicationTheme = (locale: Localization) => {
+  const theme = createTheme(
+    {
+      cssVariables: {
+        colorSchemeSelector: "class",
+      },
+      colorSchemes: {
+        dark: darkPalette,
+        light: lightPalette,
+      },
     },
-    secondary: {
-      lighter: colors.secondary[200],
-      light: colors.secondary[300],
-      main: colors.secondary[500],
-      dark: colors.secondary[700],
-      darker: colors.secondary[900],
-    },
-    ...(mode === "light"
-      ? {
-          background: {
-            body: "#f5f5f5",
-            header: "#ffffff",
-            card: "#ffffff",
-            sidebar: "#000000",
-          },
-          divider: colors.neutral[300],
-        }
-      : {
-          background: {
-            body: "#121212",
-            header: "#1e1e1e",
-            card: "#1E1E1E",
-            sidebar: "#000000",
-          },
-        }),
-  },
-});
+    locale
+  );
 
-export const createApplicationTheme = (
-  mode: PaletteMode,
-  locale: Localization
-) => {
-  const theme = createTheme(getDesignTokens(mode), locale);
   const extendedTheme = createTheme(theme, {
     breakpoints: {
       values: {
@@ -154,15 +49,15 @@ export const createApplicationTheme = (
             "& input:-webkit-autofill": {
               backgroundColor: "transparent", // Removes autofill background
               WebkitBoxShadow: "0 0 0 1000px transparent inset", // Ensures no background shadow
-              WebkitTextFillColor: theme.palette.text.secondary, // Optionally set text color
+              WebkitTextFillColor: theme.vars?.palette.text.secondary, // Optionally set text color
             },
             "&:hover:not(.Mui-focused)": {
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.text.secondary,
+                borderColor: theme.vars?.palette.text.secondary,
               },
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.text.disabled,
+              borderColor: theme.vars?.palette.text.disabled,
             },
           },
         },
@@ -171,6 +66,7 @@ export const createApplicationTheme = (
       MuiInputLabel: {
         styleOverrides: {
           root: {
+            color: theme.vars?.palette.text.secondary,
             fontSize: 14,
           },
         },
@@ -179,21 +75,8 @@ export const createApplicationTheme = (
       MuiInputAdornment: {
         styleOverrides: {
           root: {
-            color: theme.palette.text.primary,
+            color: theme.vars?.palette.text.primary,
             padding: "5px",
-          },
-        },
-      },
-
-      MuiCardHeader: {
-        styleOverrides: {
-          action: {
-            marginTop: -5,
-            marginBottom: -5,
-            paddingTop: 15,
-          },
-          title: {
-            fontSize: 15,
           },
         },
       },
@@ -201,7 +84,6 @@ export const createApplicationTheme = (
       MuiCard: {
         styleOverrides: {
           root: {
-            backgroundColor: theme.palette.background.card,
             fontSize: "12px",
             boxShadow:
               "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
@@ -221,23 +103,14 @@ export const createApplicationTheme = (
         },
       },
 
-      MuiAvatar: {
-        styleOverrides: {
-          root: {
-            fontSize: 14,
-            fontWeight: "bold",
-          },
-        },
-      },
-
       MuiButton: {
         styleOverrides: {
           root: {
             fontSize: 12,
             textTransform: "capitalize",
             "&.Mui-disabled": {
-              color: theme.palette.common.white,
-              backgroundColor: theme.palette.primary.light,
+              color: theme.vars?.palette.common.white,
+              backgroundColor: theme.vars?.palette.primary.light,
             },
           },
         },
@@ -252,9 +125,10 @@ export const createApplicationTheme = (
             borderRadius: 8,
             padding: 4,
             marginInline: 0,
-            border: "1px solid " + theme.palette.grey[500],
+            border: "1px solid " + theme.vars?.palette.grey[500],
             "&:hover": {
-              color: theme.palette.primary.dark,
+              color: theme.vars?.palette.primary.main,
+              borderColor: theme.vars?.palette.primary.main,
             },
           },
           sizeSmall: {
@@ -272,12 +146,12 @@ export const createApplicationTheme = (
           root: {
             transition: "all .2s",
             "&.Mui-selected, &.Mui-selected:hover": {
-              color: theme.palette.common.white,
-              background: theme.palette.primary.main,
+              color: theme.vars?.palette.common.white,
+              background: theme.vars?.palette.primary.main,
             },
             "&:hover": {
-              color: theme.palette.common.white,
-              backgroundColor: theme.palette.primary.main,
+              color: theme.vars?.palette.common.white,
+              backgroundColor: theme.vars?.palette.primary.main,
             },
           },
         },
@@ -285,7 +159,7 @@ export const createApplicationTheme = (
       MuiLink: {
         styleOverrides: {
           root: {
-            color: theme.palette.primary.main,
+            color: theme.vars?.palette.primary.main,
           },
         },
       },
@@ -406,7 +280,7 @@ export const createApplicationTheme = (
             fontSize: 12,
             fontWeight: "bolder",
             backgroundColor: "transparent",
-            borderBottom: "2px solid" + theme.palette.grey[400],
+            borderBottom: `2px solid ${theme.vars?.palette.grey[400]}`,
           },
         },
       },
@@ -437,10 +311,10 @@ export const createApplicationTheme = (
           tooltip: {
             padding: ".5rem 1rem",
             fontSize: 10,
-            backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.vars?.palette.primary.main,
           },
           arrow: {
-            color: theme.palette.primary.main,
+            color: theme.vars?.palette.primary.main,
           },
         },
       },
@@ -473,9 +347,9 @@ export const createApplicationTheme = (
               transitionDuration: "300ms",
               "&.Mui-checked": {
                 transform: "translateX(16px)",
-                color: theme.palette.common.white,
+                color: theme.vars?.palette.common.white,
                 "& + .MuiSwitch-track": {
-                  backgroundColor: theme.palette.primary.main,
+                  backgroundColor: theme.vars?.palette.primary.main,
                   opacity: 1,
                   border: 0,
                 },
@@ -484,12 +358,12 @@ export const createApplicationTheme = (
                 },
               },
               "&.Mui-focusVisible .MuiSwitch-thumb": {
-                color: theme.palette.common.white,
-                border: "6px solid" + theme.palette.common.white,
+                color: theme.vars?.palette.common.white,
+                border: "6px solid" + theme.vars?.palette.common.white,
               },
               "&.Mui-disabled .MuiSwitch-thumb": {
-                color: theme.palette.common.white,
-                backgroundColor: theme.palette.common.white,
+                color: theme.vars?.palette.common.white,
+                backgroundColor: theme.vars?.palette.common.white,
               },
               "&.Mui-disabled + .MuiSwitch-track": {
                 opacity: 0.7,
@@ -499,12 +373,12 @@ export const createApplicationTheme = (
               boxSizing: "border-box",
               width: 22,
               height: 22,
-              border: "1px solid " + theme.palette.common.white,
-              color: theme.palette.common.white,
+              border: "1px solid " + theme.vars?.palette.common.white,
+              color: theme.vars?.palette.common.white,
             },
             "& .MuiSwitch-track": {
               borderRadius: 26 / 2,
-              backgroundColor: theme.palette.grey[400],
+              backgroundColor: theme.vars?.palette.grey[400],
               opacity: 1,
             },
           },
@@ -518,7 +392,7 @@ export const createApplicationTheme = (
         styleOverrides: {
           root: {
             "&.Mui-disabled": {
-              color: theme.palette.grey[500],
+              color: theme.vars?.palette.grey[500],
             },
             "& .MuiSvgIcon-root": { fontSize: 20 },
           },
@@ -541,49 +415,50 @@ export const createApplicationTheme = (
       h1: {
         fontWeight: 600,
         fontSize: 40,
-        color: theme.palette.text.primary,
+        color: theme.vars?.palette.text.primary,
       },
       h2: {
         fontWeight: 500,
         fontSize: 32,
-        color: theme.palette.text.primary,
+        color: theme.vars?.palette.text.primary,
       },
       h3: {
         fontWeight: 600,
         fontSize: 28,
         lineHeight: 1.4,
-        color: theme.palette.text.secondary,
+        color: theme.vars?.palette.text.secondary,
       },
       h4: {
         fontWeight: 500,
         fontSize: 24,
-        color: theme.palette.text.primary,
+        color: theme.vars?.palette.text.primary,
       },
       h5: {
         fontWeight: 500,
         fontSize: 20,
-        color: theme.palette.primary.main,
+        color: theme.vars?.palette.primary.main,
       },
       h6: {
         fontSize: 16,
         fontWeight: 600,
-        color: theme.palette.text.secondary,
+        color: theme.vars?.palette.text.secondary,
       },
       body1: {
         fontSize: 14,
+        color: theme.vars?.palette.text.primary,
       },
       body2: {
         fontSize: 12,
-        color: theme.palette.text.secondary,
+        color: theme.vars?.palette.text.secondary,
       },
       button: {
         fontWeight: 600,
       },
       subtitle1: {
-        color: theme.palette.text.primary,
+        color: theme.vars?.palette.text.primary,
       },
       subtitle2: {
-        color: theme.palette.primary.main,
+        color: theme.vars?.palette.primary.main,
       },
     },
   });

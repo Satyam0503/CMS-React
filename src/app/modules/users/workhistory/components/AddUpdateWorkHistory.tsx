@@ -1,7 +1,4 @@
-import Typography from "@mui/material/Typography";
 import {
-  Box,
-  FormHelperText,
   Grid,
   Stack,
 } from "@mui/material";
@@ -10,14 +7,13 @@ import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { WorkHistoryModel } from "../../models";
-import { Formik, FormikState } from "formik";
+import { Formik } from "formik";
 import { workHistoryValidationSchema } from "../../../../../utils/Schema/workHistoryValidationSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { Add, Check, Edit } from "@mui/icons-material";
-import { FC, useState } from "react";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { Check } from "@mui/icons-material";
+import { FC } from "react";
 import { addUpdateWorkHistory } from "../../userservices";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -50,6 +46,7 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
         toast.success(formatMessage({ id: isEdit ? "TOAST.FAILED.UPDATE_WORK_HISTORY" : "TOAST.FAILED.ADD_WORK_HISTORY" }));
       }
     } catch (error) {
+      console.error("Failed to fetch employee work history")
     } finally {
       setSubmitting(false);
     }
@@ -72,10 +69,10 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
           validationSchema={workHistoryValidationSchema}
         >
           {
-            ({ values, errors, handleSubmit, resetForm, touched, setFieldValue, setFieldTouched, ...formik }) => (
+            ({ values, errors, handleSubmit, touched, setFieldValue, setFieldTouched, ...formik }) => (
               <form onSubmit={handleSubmit}>
                 <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <TextInput
                       label={formatMessage({ id: "FORM.JOB_ROLE" })}
                       placeholder={formatMessage({ id: "FORM.JOB_ROLE" })}
@@ -83,7 +80,11 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                       name="jobRole"
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <CustomisedDatePicker
                       label={formatMessage({ id: "FORM.START_DATE" })}
                       name="startDate"
@@ -99,7 +100,11 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                       <ErrorLabel errorLabel={errors.startDate} />
                     }
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
                     <CustomisedDatePicker
                       label={formatMessage({
                         id: "FORM.END_DATE",
@@ -111,6 +116,7 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                         setFieldValue("endDate", newDate);
                       }}
                       minDate={dayjs(values.startDate) || dayjs()}
+                      maxDate={dayjs()}
                     />
                     {touched.endDate &&
                       errors.endDate &&
@@ -118,7 +124,11 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                     }
                   </Grid>
 
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 6
+                    }}>
                     <TextInput
                       label={formatMessage({ id: "FORM.ORGANISATION" })}
                       placeholder={formatMessage({ id: "FORM.ORGANISATION" })}
@@ -126,7 +136,11 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                       name="organisationName"
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      md: 6
+                    }}>
                     <TextInput
                       label={formatMessage({ id: "FORM.LOCATION" })}
                       placeholder={formatMessage({ id: "FORM.LOCATION" })}
@@ -138,9 +152,10 @@ export const AddUpdateWorkHistory: FC<Props> = ({ isEdit, initialValues, open, h
                 <Stack
                   direction={"row"}
                   spacing={1}
-                  justifyContent={"flex-end"}
-                  mt={2}
-                >
+                  sx={{
+                    justifyContent: "flex-end",
+                    mt: 2
+                  }}>
                   <CustomisedButton
                     label={formatMessage({ id: "BUTTON.CANCEL" })}
                     handleClick={handleClose}

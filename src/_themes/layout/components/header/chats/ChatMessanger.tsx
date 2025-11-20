@@ -5,7 +5,6 @@ import {
   Divider,
   Drawer,
   IconButton,
-  Link,
   Stack,
   Tooltip,
   Typography,
@@ -13,8 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 
-import { Chat, Close, Search } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { Chat, Close } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import React, { useState } from "react";
 import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
@@ -22,7 +20,6 @@ import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 export const ChatMessenger = () => {
   const theme = useTheme();
   const { formatMessage: i } = useIntl();
-  const navigate = useNavigate();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -42,8 +39,10 @@ export const ChatMessenger = () => {
         </IconButton>
       </Tooltip>
       <Drawer open={isDrawerOpen} onClose={handleDrawerClose} anchor="right" hideBackdrop
-        PaperProps={{
-          className: isSmallScreen ? "w-100" : "w-auto"
+        slotProps={{
+          paper: {
+            className: isSmallScreen ? "w-100" : "w-auto"
+          }
         }}
         className="chat-container"
       >

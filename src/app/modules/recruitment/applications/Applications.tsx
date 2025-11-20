@@ -144,7 +144,9 @@ export const Applications = () => {
         <Stack
           direction="row"
           className="justify-content-between align-items-center flex-wrap-reverse"
-          gap={2}
+          sx={{
+            gap: 2
+          }}
         >
           <SearchInput search={search} setSearch={handleSearchChange} />
 
@@ -207,7 +209,6 @@ export const Applications = () => {
           />
         )}
       </Card>
-
       {isAddModalOpen && (
         <AddApplicant
           open={isAddModalOpen}
@@ -216,7 +217,6 @@ export const Applications = () => {
           setRefresh={setRefresh}
         />
       )}
-
       {viewApplicant && selectedApplicant && (
         <ApplicationPreview
           open={viewApplicant}

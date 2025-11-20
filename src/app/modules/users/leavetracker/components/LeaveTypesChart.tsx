@@ -1,11 +1,11 @@
-import { Grid, Card, Stack, Typography, Avatar, Skeleton } from "@mui/material"
+import { Grid, Card, Stack, Typography, Skeleton } from "@mui/material"
 import { useCallback } from "react";
 import { useIntl } from "react-intl"
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
 import { CustomCard } from "../../../../shared/components/CustomCard";
-import { LeaveTypeMapper } from "../../../../../utils/common";
+import { defaultPieChartSeries, LeaveTypeMapper } from "../../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
-import { defaultPieChartSeries, DonutChart } from "../../../../shared/components/DonutChart";
+import { DonutChart } from "../../../../shared/components/DonutChart";
 import { PieSeries, PieValueType } from "@mui/x-charts";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
@@ -64,13 +64,21 @@ export const EmployeeLeaveTypesCharts = ({ leaveBalance, isLoading }: PropsType)
                         data: getLabelAndDataForLeaveType(type)
                     },
                 ] satisfies PieSeries[]
-                return <Grid key={type.leaveType} item xs={12} sm={6} md={4} >
-                    <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave} applyMinHeight={false}>
-                        <DonutChart loading={isLoading} series={series} centerLabel={type.maximumLeave} />
-                    </CustomCard>
-                </Grid>
+                return (
+                    <Grid
+                        key={type.leaveType}
+                        size={{
+                            xs: 12,
+                            sm: 6,
+                            md: 4
+                        }}>
+                        <CustomCard label={i({ id: LeaveTypeMapper[type.leaveType] })} value={type.maximumLeave} applyMinHeight={false}>
+                            <DonutChart loading={isLoading} series={series} centerLabel={type.maximumLeave} />
+                        </CustomCard>
+                    </Grid>
+                );
             })
             }
         </Grid >
-    )
+    );
 }

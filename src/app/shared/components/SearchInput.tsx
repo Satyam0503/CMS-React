@@ -30,24 +30,26 @@ export const SearchInput: FC<PropsType> = memo(
       <>
         <TextField
           variant="outlined"
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  sx={{
-                    border: "none",
-                    p: 0,
-                  }}
-                  onClick={handleClearSearch}
-                >
-                  {value ? <Close className="fs-20" /> : <Search color="disabled" className="fs-20" />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={i({ id: placeholder })}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    sx={{
+                      border: "none",
+                      p: 0,
+                    }}
+                    onClick={handleClearSearch}
+                  >
+                    {value ? <Close className="fs-20" /> : <Search color="disabled" className="fs-20" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
+          }}
         />
       </>
     );

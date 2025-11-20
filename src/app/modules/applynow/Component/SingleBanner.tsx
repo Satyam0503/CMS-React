@@ -13,13 +13,24 @@ export function SingleBanner({ title, titleorange, path }: Props) {
       <Stack
         className="single_banner"
         direction={"row"}
-        justifyContent={"center"}
-        gap={1}
-      >
-        <Typography variant="h2" color="common.white" my={2}>
+        sx={{
+          justifyContent: "center",
+          gap: 1
+        }}>
+        <Typography
+          variant="h2"
+          sx={{
+            color: "common.white",
+            my: 2
+          }}>
           Apply
         </Typography>
-        <Typography variant="h2" color="secondary.main" my={2}>
+        <Typography
+          variant="h2"
+          sx={{
+            color: "secondary.main",
+            my: 2
+          }}>
           Now
         </Typography>
       </Stack>

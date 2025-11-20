@@ -1,20 +1,17 @@
-import { ArrowDropDown, ArrowDropUp, Close } from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import {
   Autocomplete,
-  Box,
   Checkbox,
-  IconButton,
   ListItemText,
   Menu,
   MenuItem,
-  Popover,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { getAllJobVacancies } from "../../services";
@@ -71,8 +68,8 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
         if (success) {
           setJobList(methodResults);
         }
-      } catch (error: any) {
-        console.log(error.message);
+      } catch (error) {
+        console.log((error as Error).message);
       }
     };
     getActiveJobs();
@@ -88,7 +85,6 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
   const handleTimePeriodChange = (
     index: number,
     filters: ApplicationFilterModel,
-    setFieldValue: (field: string, value: any) => void
   ) => {
     const currentFilters = Object.assign({}, filters);
     const selectedTimePeriod = TimePeriodOptions[index];
@@ -131,9 +127,12 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                 anchorEl={optionAnchorEl}
                 open={isTimeOptionOpen}
                 onClose={handleTimeOptionMenuClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
+                slotProps={{
+                  list: {
+                    "aria-labelledby": "basic-button",
+                  }
                 }}
+
                 anchorOrigin={{
                   vertical: "bottom",
                   horizontal: "right",
@@ -147,7 +146,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                   <MenuItem
                     key={option.id}
                     onClick={() => {
-                      handleTimePeriodChange(index, values, setFieldValue);
+                      handleTimePeriodChange(index, values);
                     }}
                   >
                     {formatMessage({ id: option.name })}
@@ -160,7 +159,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={formatMessage({ id: "FROM" })}
                 value={
-                  Boolean(values.filterFrom)
+                  values.filterFrom
                     ? dayjs(values.filterFrom)
                     : null
                 }
@@ -175,7 +174,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={formatMessage({ id: "TO" })}
                 value={
-                  Boolean(values.filterTo) ? dayjs(values.filterTo) : null
+                  values.filterTo ? dayjs(values.filterTo) : null
                 }
                 minDate={dayjs(values.filterFrom)}
                 maxDate={dayjs()}
@@ -309,14 +308,16 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                 placeholder={formatMessage({ id: "APPLICANT.MIN_EXP" })}
                 type="number"
                 {...getFieldProps("minExperience")}
-                inputProps={{
-                  min: 0,
-                }}
                 onKeyDown={(e) => {
                   blockInvalidCharOnNumberField(e);
                 }}
                 onWheel={(e) => {
                   (e.target as HTMLInputElement).blur();
+                }}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                  }
                 }}
               />
               <TextField
@@ -326,14 +327,16 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                 required={Boolean(values.minExperience)}
                 error={Boolean(errors.maxExperience)}
                 {...getFieldProps("maxExperience")}
-                inputProps={{
-                  min: values.minExperience || 0,
-                }}
                 onKeyDown={(e) => {
                   blockInvalidCharOnNumberField(e);
                 }}
                 onWheel={(e) => {
                   (e.target as HTMLInputElement).blur();
+                }}
+                slotProps={{
+                  htmlInput: {
+                    min: values.minExperience || 0,
+                  }
                 }}
               />
             </Stack>

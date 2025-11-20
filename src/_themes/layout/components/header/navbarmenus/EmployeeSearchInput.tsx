@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { EmployeeSearchModel } from "../../../../../utils/common_types";
-import { Autocomplete, AutocompleteInputChangeReason, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Autocomplete, AutocompleteInputChangeReason, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField } from "@mui/material";
 import { ClearSharp, Search } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -10,7 +10,6 @@ import { useDebounce } from "../../../../../app/hooks/useDebounce";
 import { searchEmployee } from "../../../../../app/modules/users/userservices";
 
 export const EmployeeSearchInput = () => {
-    const theme = useTheme();
     const { formatMessage } = useIntl();
     const [loading, setLoading] = useState(false);
     const [employeeList, setEmployeeList] = useState<EmployeeSearchModel[]>([]);
@@ -70,18 +69,20 @@ export const EmployeeSearchInput = () => {
                 <TextField
                     {...params}
                     placeholder={formatMessage({ id: "PLACEHOLDER.SEARCH_EMP" })}
-                    InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                            <>
-                                {loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                            </>
-                        ),
+                    slotProps={{
+                        input: {
+                            ...params.InputProps,
+                            endAdornment: (
+                                <>
+                                    {loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
+                                    {params.InputProps.endAdornment}
+                                </>
+                            ),
+                        }
                     }}
                 />
             )}
-            renderOption={(props, emp, state) => {
+            renderOption={(props, emp,) => {
                 return (
                     <ListItemButton key={emp.userId} onClick={() => handleClick(emp.userId)} >
                         <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>

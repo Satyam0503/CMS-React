@@ -15,15 +15,24 @@ export default function Feedback() {
         <Card sx={{ p: 2, width: "100%" }}>
           <Stack
             direction={"row"}
-            display={"flex"}
-            justifyContent={"space-between"}
-          >
-            <Typography variant="h5" mb={2}>
+            sx={{
+              display: "flex",
+              justifyContent: "space-between"
+            }}>
+            <Typography variant="h5" sx={{
+              mb: 2
+            }}>
               {intl.formatMessage({ id: "PERFORMANCE.FEEDBACK" })}
             </Typography>
           </Stack>
 
-          <Stack direction="row" spacing={2} mb={2} alignItems={"center"}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              mb: 2,
+              alignItems: "center"
+            }}>
             <Stack
               sx={{
                 minWidth: 48,
@@ -34,7 +43,9 @@ export default function Feedback() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Announcement />
               </Stack>
             </Stack>
@@ -51,7 +62,9 @@ export default function Feedback() {
                   direction={"row"}
                   className="text-muted"
                   spacing={0.5}
-                  alignItems={"center"}
+                  sx={{
+                    alignItems: "center"
+                  }}
                 >
                   <CalendarToday sx={{ fontSize: "14px" }} />
                   <Typography variant="body2">2 June 2024</Typography>
@@ -60,7 +73,13 @@ export default function Feedback() {
               </Stack>
             </Stack>
           </Stack>
-          <Stack direction="row" spacing={2} mb={2} alignItems={"center"}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              mb: 2,
+              alignItems: "center"
+            }}>
             <Stack
               sx={{
                 minWidth: 48,
@@ -71,7 +90,9 @@ export default function Feedback() {
                 borderRadius: 1,
               }}
             >
-              <Stack color="primary.main">
+              <Stack sx={{
+                color: "primary.main"
+              }}>
                 <Announcement />
               </Stack>
             </Stack>
@@ -88,7 +109,9 @@ export default function Feedback() {
                   direction={"row"}
                   className="text-muted"
                   spacing={0.5}
-                  alignItems={"center"}
+                  sx={{
+                    alignItems: "center"
+                  }}
                 >
                   <CalendarToday sx={{ fontSize: "14px" }} />
                   <Typography variant="body2">2 June 2024</Typography>

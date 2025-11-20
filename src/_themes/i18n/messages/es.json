@@ -23,7 +23,8 @@
     "PROCESS_LOG": "Registro de Procesos",
     "COMPANY_MASTER": "Maestro de la Empresa",
     "COMPANY_DETAILS": "Detalles de la Empresa",
-    "PAYROLL": "Nómina"
+    "PAYROLL": "Nómina",
+    "CALENDAR": "Calendario"
   },
 
   "GENDER": {
@@ -47,7 +48,9 @@
     "FILTER_HOLIDAY": "Filtrar vacaciones",
     "SEARCH_EMPLOYEE": "Buscar empleado",
     "SWITCH_THEME": "Modo claro/oscuro",
-    "CHATS": "Chat"
+    "CHATS": "Chat",
+    "NEXT": "Siguiente",
+    "PREVIOUS": "Anterior"
   },
   "PAGE": {
     "JOBS": "Requisitos de trabajo",
@@ -69,7 +72,8 @@
     "ADD_ROLE": "Añadir rol",
     "COMPANY_MASTER": "Maestro de empresa",
     "COMPANY_DETAILS": "Detalles de la empresa",
-    "PAYROLL": "Nómina"
+    "PAYROLL": "Nómina",
+    "CALENDAR": "Calendario"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Pendiente",
@@ -136,7 +140,8 @@
       "PASSWORD_UPDATED": "Contraseña actualizada con éxito",
       "DATA_UPLOADED": "¡Éxito! los datos se han subido correctamente",
       "PAYROLL_UPDATED": "Detalles de la nómina actualizados correctamente",
-      "PAYROLL_ADDED": "Detalles de la nómina añadidos correctamente"
+      "PAYROLL_ADDED": "Detalles de la nómina añadidos correctamente",
+      "INVITE_EMPLOYEE": "Invitación enviada correctamente"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Error al añadir el nuevo día festivo",
@@ -155,7 +160,8 @@
       "NO_VACANCY": "No hay vacantes activas disponibles",
       "UPDATE_ROLE": "Error al actualizar el permiso de rol",
       "PAY_SLIP_GENERATE": "Error al generar el recibo de sueldo",
-      "SELECT_PAY_MONTH": "Por favor, seleccione el mes de pago"
+      "SELECT_PAY_MONTH": "Por favor, seleccione el mes de pago",
+      "INVITE_EMPLOYEE": "Error al invitar al empleado"
     }
   },
   "BUTTON": {
@@ -184,7 +190,10 @@
     "MARK_ALL_AS_READ": "Marcar todo como leído",
     "UPLOAD": "Subir",
     "REMOVE": "Eliminar",
-    "CLEAR": "Borrar"
+    "CLEAR": "Borrar",
+    "INVITE": "Invitar",
+    "SKIP": "Saltar",
+    "ASSIGN": "Asignar"
   },
   "TITLES": {
     "BIRTHDAY": "Cumpleaños",
@@ -359,6 +368,11 @@
       "EARNED_LEAVE": "Permiso ganado",
       "MATERNITY_LEAVE": "Permiso de maternidad",
       "PATERNITY_LEAVE": "Permiso de paternidad"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "Mensual",
+      "YEARLY": "Anual",
+      "NONE": "Ninguno"
     }
   },
 
@@ -371,10 +385,11 @@
       "SETTING": "Configuración"
     },
     "PI": {
-      "EOX": "Años de experiencia",
+      "EOX": "de experiencia",
       "TOTAL_YEAR": "Años en {companyName}",
       "TITLE": "Información personal",
-      "DOWNLOAD_PAY_SLIP": "Descargar recibo de sueldo"
+      "DOWNLOAD_PAY_SLIP": "Descargar recibo de pago",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# año} other {# años}} {months, plural, =0 {} one {# mes} other {# meses}}"
     },
     "SKILLS": {
       "TITLE": "Habilidades",
@@ -416,6 +431,33 @@
     "STATUS": {
       "ACTIVE": "Activo",
       "INACTIVE": "Inactivo"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "Crear cuenta de usuario",
+      "EDIT_DATA": "Editar datos del usuario",
+      "ALLOCATE_LEAVE": "Asignar permisos al empleado"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "Complete todos los datos requeridos y haga clic en 'Invitar'. Se enviará una invitación por correo al email proporcionado. Una vez que el usuario genere sus credenciales, podrá acceder a la plataforma."
+    },
+    "UPDATE": {
+      "BASIC_INFO": "Información básica",
+      "WORK_INFO": "Información laboral",
+      "PERSONAL_INFO": "Información personal",
+      "OHTER_INFO": "Otra información"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "Configurar asignación de permisos del empleado",
+      "NOTE": "Seleccione los tipos de permisos que desea asignar a este empleado. Puede modificar los saldos más adelante desde el perfil del empleado.",
+      "CODE": "Código",
+      "MAX_BALANCE": "Balance máximo",
+      "ACCRUAL_PERIOD": "Período de acumulación",
+      "ACCRUAL_AMOUNT": "Monto de acumulación",
+      "NO_POLICY": "No hay políticas de permisos disponibles. Cree una antes de agregar un empleado."
+    },
+    "FINAL": {
+      "NOTE": "Ha creado correctamente la cuenta del empleado y asignado toda la información requerida."
     },
     "TYPE": {
       "FULLTIME": "Tiempo completo",
@@ -570,6 +612,7 @@
     "TYPE": "Tipo de aviso",
     "ROLE": "Rol",
     "DEPARTMENT": "Departamento",
+    "VIEWS": "Vistas",
     "POSTED_DATETIME": "Fecha/Hora de publicación",
     "POSTED_BY": "Publicado por",
     "POSTED_DATE": "Fecha de publicación",
@@ -831,7 +874,12 @@
     "27": "El máximo de vacaciones no puede ser negativo",
     "28": "El saldo de vacaciones para este empleado ya existe",
     "29": "El saldo del tipo de vacaciones seleccionado no existe para este empleado",
-    "30": "Error en la solicitud de vacaciones: se superpone con una aprobación anterior"
+    "30": "Error en la solicitud de vacaciones: se superpone con una aprobación anterior",
+    "31": "Ya existe una política de permisos con este nombre",
+    "32": "El monto de acumulación es obligatorio cuando se selecciona acumulación",
+    "33": "El límite de acarreo es obligatorio cuando se selecciona acumulación",
+    "34": "Ya existe una política de permisos con el mismo nombre y código",
+    "35": "Se ha excedido el límite del saldo de permisos"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -881,5 +929,14 @@
       "HolidayReminder": "Obtén recordatorios oportunos sobre próximos feriados y días libres declarados por la empresa",
       "MessageNotification": "Recibe notificaciones cuando te envíen nuevos mensajes a través de la plataforma"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 a} one {# a} other {# años}}",
+    "YEAR": "{years, plural, =0 {0 año} one {# año} other {# años}}",
+    "MONTHS": "{months, plural, =0 {0 mes} one {# mes} other {# meses}}",
+    "DAY": "{days, plural, =0 {0 día} one {# día} other {# días}}"
+  },
+  "COMMON": {
+    "CONGRATULATION": "Felicidades"
   }
 }

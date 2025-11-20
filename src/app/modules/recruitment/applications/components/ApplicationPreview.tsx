@@ -1,13 +1,10 @@
-import { Close } from "@mui/icons-material";
 import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {
   applicationStatusMapper,
-  convertMonthsToYear,
   dateFormatter,
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
@@ -28,6 +25,8 @@ export const ApplicationPreview: FC<PropsType> = ({
   applicantData,
 }) => {
   const { formatMessage: i } = useIntl();
+  const experience = (applicantData.experience / 12).toFixed(1);
+
   return (
     <CustomisedModal open={open} handleClose={handleClose}
       title={applicantData.firstName + " " + applicantData.lastName}
@@ -35,57 +34,84 @@ export const ApplicationPreview: FC<PropsType> = ({
       <Stack spacing={2}>
         <Grid
           container
-          display={"flex"}
           direction={"column"}
-          gap={1}
-          flexWrap={"inherit"}
-        >
-          <Grid item xs={12} display={"flex"}>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={600}>
+          sx={{
+            display: "flex",
+            gap: 1,
+            flexWrap: "inherit"
+          }}>
+          <Grid size={12} sx={{
+            display: "flex"
+          }}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 600
+              }}>
                 {i({ id: "JOB.JOB_TITLE" })}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={400}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 400
+              }}>
                 {applicantData.vacancyName || "NA"}
               </Typography>
             </Grid>
           </Grid>
-          <Grid item xs={12} display={"flex"}>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={600}>
+          <Grid size={12} sx={{
+            display: "flex"
+          }}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 600
+              }}>
                 {i({ id: "APPLICATION.WORK_EXP" })}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={400}>
-                {convertMonthsToYear(applicantData.experience)}
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 400
+              }}>
+                {i({ id: "PLURAL.YEAR" }, { years: experience })}
               </Typography>
             </Grid>
           </Grid>
 
-          <Grid item xs={12} display={"flex"}>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={600}>
+          <Grid size={12} sx={{
+            display: "flex"
+          }}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 600
+              }}>
                 {i({ id: "APPLICATION.APPLIED_ON" })}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={400}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 400
+              }}>
                 {dateFormatter(applicantData.applyDate, "DD MMM YYYY hh:mm A")}
               </Typography>
             </Grid>
           </Grid>
 
-          <Grid item xs={12} display={"flex"}>
-            <Grid item xs={6} fontWeight={400}>
-              <Typography variant="body1" fontWeight={600}>
+          <Grid size={12} sx={{
+            display: "flex"
+          }}>
+            <Grid size={6} sx={{
+              fontWeight: 400
+            }}>
+              <Typography variant="body1" sx={{
+                fontWeight: 600
+              }}>
                 {i({ id: "APPLICATION.STATUS_LABEL" })}
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body1" fontWeight={400}>
+            <Grid size={6}>
+              <Typography variant="body1" sx={{
+                fontWeight: 400
+              }}>
                 <StyleStatus
                   label={applicationStatusMapper[applicantData.activityType]}
                   className={clsx({

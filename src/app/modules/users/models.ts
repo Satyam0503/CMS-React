@@ -1,7 +1,6 @@
 import { Dayjs } from "dayjs";
 import { EmployeeSearchModel, ResponseData } from "../../../utils/common_types";
 import { EmployeeModel } from "../employees/models";
-import { MultilingualModel } from "../admin/models";
 
 export type UploadProfileResponseModel = ResponseData<string>;
 
@@ -37,6 +36,8 @@ export type EditEmployeePayloadModel = Pick<
   | "jobRole"
   | "employmentType"
 > & {
+  roleId?: string;
+  gender?: string;
   panNumber: string | null;
   bankAccountNumber: number | null;
   customAttributeList: {
@@ -59,6 +60,7 @@ export type EmployeeByIdResponse = EmployeeModel & {
   customAttributes: EmployeeCustomAttribute[];
   panNumber: string | null;
   bankAccountNumber: number | null;
+  totalWorkExperience: number;
 };
 
 export type NotificationModel = {

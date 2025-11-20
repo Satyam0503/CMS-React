@@ -23,7 +23,7 @@ export default function ApplicationForm() {
     <>
       <form>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="h5">
               {intl.formatMessage({ id: "JOB.APPLICATION" })}
             </Typography>
@@ -32,25 +32,25 @@ export default function ApplicationForm() {
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "FORM.FIRST_NAME" })}
             </Typography>
             <TextField fullWidth />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "USER.LAST_NAME" })}
             </Typography>
             <TextField fullWidth type="text" />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "FORM.PHONE" })}
             </Typography>
             <TextField fullWidth type="number" />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
             </Typography>
@@ -64,7 +64,11 @@ export default function ApplicationForm() {
             />
           </Grid>
 
-          <Grid item xs={12} lg={6}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 6
+            }}>
             <FormControl fullWidth>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "JOB.POSITION" })}
@@ -75,7 +79,11 @@ export default function ApplicationForm() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} lg={6}>
+          <Grid
+            size={{
+              xs: 12,
+              lg: 6
+            }}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "USER.EXPERIENCE" })}
             </Typography>
@@ -89,7 +97,7 @@ export default function ApplicationForm() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Box
               sx={{
                 border: "1px dashed grey",
@@ -106,7 +114,14 @@ export default function ApplicationForm() {
                   alignItems: "center",
                 }}
               >
-                <Grid item xs={6} md={6} textAlign={"center"}>
+                <Grid
+                  size={{
+                    xs: 6,
+                    md: 6
+                  }}
+                  sx={{
+                    textAlign: "center"
+                  }}>
                   <CloudUploadOutlined
                     fontSize="large"
                     sx={{ margin: "auto" }}
@@ -117,13 +132,20 @@ export default function ApplicationForm() {
                     //   onChange={handleFileChange}
                     hidden
                   />
-                  <Typography variant="body1" flexWrap={"wrap"}>
+                  <Typography variant="body1" sx={{
+                    flexWrap: "wrap"
+                  }}>
                     {intl.formatMessage({ id: "FILE.SELECTED" })}:
                     {/* {seletedFile?.name} */}
                   </Typography>
                 </Grid>
-                <Grid item xs={6} md={6}>
-                  <Typography variant="body2" flexWrap={"wrap"}>
+                <Grid
+                  size={{
+                    xs: 6
+                  }}>
+                  <Typography variant="body2" sx={{
+                    flexWrap: "wrap"
+                  }}>
                     {intl.formatMessage({
                       id: "FILE.UPLOAD_INSTRUCTION",
                     })}
@@ -133,7 +155,7 @@ export default function ApplicationForm() {
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={12}>
             {/* <ReCAPTCHA
                             sitekey={String(CAPTCHA_SITE_KEY)}
                             onChange={handleRecaptchaChange}
@@ -144,7 +166,13 @@ export default function ApplicationForm() {
                             </Typography>
                           )} */}
           </Grid>
-          <Grid item xs={12} display={"flex"} alignItems={"center"} gap={1}>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1
+            }}>
             <CustomisedButton
               variant="contained"
               label="Submit"

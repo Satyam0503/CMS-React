@@ -28,7 +28,7 @@ export default function HeaderUserMenu() {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const profileImageUrl = useAppSelector((state) => state.user.userData?.profileImage)  ?? DEFAULT_USER_AVATAR;
+  const profileImageUrl = useAppSelector((state) => state.user.userData?.profileImage) ?? DEFAULT_USER_AVATAR;
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -50,8 +50,8 @@ export default function HeaderUserMenu() {
         id="account-menu"
         open={open}
         onClose={handleClose}
-        MenuListProps={{
-          autoFocusItem: false
+        slotProps={{
+          list: { autoFocus: false }
         }}
       >
         <MenuItem className="pe-none px-2 gap-2">

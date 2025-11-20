@@ -84,37 +84,51 @@ export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValue
                                 {
                                     formField.map((field) => {
                                         if (field.type == "dateTime") {
-                                            return <Grid item xs={12} sm={6} key={field.id} className="pt-2">
-                                                <CustomisedDatePicker
-                                                    name={field.name}
-                                                    value={initialValues.payMonth}
-                                                    label={i({ id: field.label })}
-                                                    views={['year', 'month']}
-                                                    setValue={(date: Dayjs | null) => {
-                                                        setFieldTouched("payMonth", true);
-                                                        setFieldValue("payMonth", date);
-                                                    }}
-                                                    maxDate={dayjs().subtract(1, "month")}
-                                                />
-                                                {
-                                                    formik.touched.payMonth &&
-                                                    formik.errors.payMonth &&
-                                                    <ErrorLabel errorLabel={formik.errors.payMonth as string} />
-                                                }
-                                            </Grid>
+                                            return (
+                                                <Grid
+                                                    key={field.id}
+                                                    className="pt-2"
+                                                    size={{
+                                                        xs: 12,
+                                                        sm: 6
+                                                    }}>
+                                                    <CustomisedDatePicker
+                                                        name={field.name}
+                                                        value={initialValues.payMonth}
+                                                        label={i({ id: field.label })}
+                                                        views={['year', 'month']}
+                                                        setValue={(date: Dayjs | null) => {
+                                                            setFieldTouched("payMonth", true);
+                                                            setFieldValue("payMonth", date);
+                                                        }}
+                                                        maxDate={dayjs().subtract(1, "month")}
+                                                    />
+                                                    {
+                                                        formik.touched.payMonth &&
+                                                        formik.errors.payMonth &&
+                                                        <ErrorLabel errorLabel={formik.errors.payMonth as string} />
+                                                    }
+                                                </Grid>
+                                            );
                                         }
-                                        return <Grid item xs={12} sm={6}>
-                                            <TextInput
-                                                name={field.name}
-                                                type={field.type}
-                                                label={i({ id: field.label })}
-                                                inputProps={{
-                                                    min: field.min,
-                                                    max: field.max,
-                                                    step: "0.0001"
-                                                }}
-                                            />
-                                        </Grid>
+                                        return (
+                                            <Grid
+                                                size={{
+                                                    xs: 12,
+                                                    sm: 6
+                                                }}>
+                                                <TextInput
+                                                    name={field.name}
+                                                    type={field.type}
+                                                    label={i({ id: field.label })}
+                                                    inputProps={{
+                                                        min: field.min,
+                                                        max: field.max,
+                                                        step: "0.0001"
+                                                    }}
+                                                />
+                                            </Grid>
+                                        );
                                     })
                                 }
                             </Grid>
@@ -127,5 +141,5 @@ export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValue
                 }
             </Formik>
         </CustomisedModal>
-    )
+    );
 }

@@ -41,7 +41,7 @@ export const refreshTokenAsync = async (payload: RefreshTokenPayload) => {
 };
 
 export const getSignedUserDetails = async () => {
-  return postRequest<{}, GetUserDetailsResponseData>(
+  return postRequest<object, GetUserDetailsResponseData>(
     ServiceUrl.GET_USER_DETAILS
   );
 };

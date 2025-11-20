@@ -153,7 +153,6 @@ export const UserCertification = () => {
           />
         }
       </Stack>
-
       <Stack spacing={2}>
         {userCertifications.length === 0 ? (
           <Typography variant="body1" sx={{ color: 'text.secondary' }}>
@@ -171,7 +170,9 @@ export const UserCertification = () => {
                 },
               }}
             >
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <Stack
                   className="flex-shrink-0 align-items-center justify-content-center"
                   sx={{

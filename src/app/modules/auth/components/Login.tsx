@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login } from "../core/_requests";
-import { Alert, Grid, InputAdornment, Stack, Typography } from "@mui/material";
+import { Alert, InputAdornment, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { Check, ErrorOutline } from "@mui/icons-material";
@@ -48,8 +48,8 @@ export function Login() {
       } else {
         setStatus(i({ id: getStatusCodeString(data.statusCode) }));
       }
-    } catch (error: any) {
-      console.error(error.message);
+    } catch (error) {
+      console.error((error as Error).message);
     } finally {
       setSubmitting(false);
     }

@@ -60,7 +60,7 @@ export default function AddUpdateCertification(props: PropTypes) {
           }) => (
             <form onSubmit={handleSubmit}>
               <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2 }}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextInput
                     label={i({ id: "PROFILE.CERTIFICATION.NAME" })}
                     placeholder={i({ id: "PROFILE.CERTIFICATION.NAME" })}
@@ -69,7 +69,12 @@ export default function AddUpdateCertification(props: PropTypes) {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6} className="pt-2">
+                <Grid
+                  className="pt-2"
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <CustomisedDatePicker
                     label={i({
                       id: "FORM.START_DATE",
@@ -86,7 +91,12 @@ export default function AddUpdateCertification(props: PropTypes) {
                     <ErrorLabel errorLabel={errors.startDate} />
                   }
                 </Grid>
-                <Grid item xs={12} sm={6} className="pt-2">
+                <Grid
+                  className="pt-2"
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <CustomisedDatePicker
                     label={i({
                       id: "FORM.END_DATE",
@@ -103,7 +113,11 @@ export default function AddUpdateCertification(props: PropTypes) {
                     <ErrorLabel errorLabel={errors.endDate} />
                   }
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <TextInput
                     label={i({ id: "FORM.ORGANISATION" })}
                     type="text"
@@ -111,7 +125,11 @@ export default function AddUpdateCertification(props: PropTypes) {
                     name="organisationName"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid
+                  size={{
+                    xs: 12,
+                    sm: 6
+                  }}>
                   <SelectInput
                     name="mode"
                     label={i({ id: "MENU.MODE" })}
@@ -124,9 +142,10 @@ export default function AddUpdateCertification(props: PropTypes) {
               <Stack
                 direction={"row"}
                 spacing={1}
-                justifyContent={"flex-end"}
-                mt={2}
-              >
+                sx={{
+                  justifyContent: "flex-end",
+                  mt: 2
+                }}>
                 <CustomisedButton
                   label={i({ id: "BUTTON.CLOSE" })}
                   handleClick={handleClose}

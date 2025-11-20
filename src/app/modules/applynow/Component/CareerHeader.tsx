@@ -1,43 +1,22 @@
 /** @format */
 
-import { PhoneAndroidOutlined } from "@mui/icons-material";
-import { EmailRounded } from "@mui/icons-material";
 import {
   Box,
-  Container,
-  Divider,
-  Grid,
   Link,
   Stack,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
-import EmailIcon from "@mui/icons-material/Email";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
 import clsx from "clsx";
-import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { useState } from "react";
 
 export const CareerHeader = () => {
   const theme = useTheme();
-  const intl = useIntl();
   const [openNav, setOpenNav] = useState<boolean>(false);
   const isSmallScreen = useMediaQuery(
     theme.breakpoints.down(theme.breakpoints.values.md)
@@ -95,14 +74,14 @@ export const CareerHeader = () => {
                   underline="none"
                   color="common.black"
                   className="fs-16"
-                  fontWeight={'600'}
                   key={index}
                   sx={{
+                    fontWeight: '600',
+
                     "&:hover": {
                       color: "primary.main",
-                    },
-                  }}
-                >
+                    }
+                  }}>
                   {link.name}
                 </Link>
               );

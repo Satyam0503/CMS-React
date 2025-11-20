@@ -1,18 +1,17 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
-import { areaElementClasses, BarChart, LineChart, lineElementClasses } from "@mui/x-charts";
+import { Box, Card, Stack, Typography, useTheme } from "@mui/material";
+import { BarChart, } from "@mui/x-charts";
 import { useIntl } from "react-intl";
-import { chartColorpalette } from "../../theme/MuiTheme";
-import { useThemeContext } from "../../../Context/ThemeContext";
 import { useEffect, useState } from "react";
 import { getMonthlyLeaveTakenSummary } from "../leaveServices";
 import { MonthlyLeaveTakenSummary } from "../model";
 import { monthMapper } from "../../../../utils/common";
+import dayjs from "dayjs";
 
 export const MonthlyLeaveTakenLineChart = () => {
     const { formatMessage: i } = useIntl();
-    const { theme } = useThemeContext();
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<MonthlyLeaveTakenSummary[]>([]);
+    const theme = useTheme();
     useEffect(() => {
         (async () => {
             try {
@@ -31,14 +30,16 @@ export const MonthlyLeaveTakenLineChart = () => {
     }, []);
     return (
         <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
-            <Stack className="mb-2">
+            <Stack className="mb-2 flex-row justify-content-between">
                 <Typography className="fw-bold fs-16">{i({ id: "LEAVE.TITLES.MONTHLY_LEAVE_SUMMARY" })}</Typography>
+                <Typography className="fw-bold fs-16">{dayjs().format("YYYY")}</Typography>
             </Stack>
             <Box sx={{ flex: 1, minHeight: 0 }}>
                 <BarChart
                     series={[{
                         data: chartData.map(item => item.totalLeavesTaken),
-                        label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" })
+                        label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" }),
+                        color: theme.vars?.palette.primary.main
                     }]}
                     xAxis={
                         [{ scaleType: 'band', data: chartData.map(item => i({ id: monthMapper[item.month] }).slice(0, 3)), tickPlacement: "middle", tickLabelPlacement: "middle" }]
@@ -50,7 +51,7 @@ export const MonthlyLeaveTakenLineChart = () => {
                             position: { vertical: 'bottom', horizontal: 'center' },
                         }
                     }}
-                    colors={chartColorpalette[theme]}
+                    // colors={chartColorpalette[theme]}
                     borderRadius={4}
                     margin={{ top: 5, bottom: 0, left: 0, right: 10 }}
                     loading={loading}

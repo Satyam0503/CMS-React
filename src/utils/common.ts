@@ -1,8 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
 import DOMPurify from "dompurify";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
-
 import {
   AppLanguageProps,
   FiltersType,
@@ -25,18 +22,19 @@ import {
   LANGUAGE,
   Roles,
   EMPLOYMENT,
+  ACCURAL_PERIOD,
 } from "./enums";
 import {
   APP_FILTER_KEY,
   I18N_CONFIG_KEY,
-  NoticeTypes,
   SideBarTabList,
 } from "./constant/Constant";
 import { NotificationModel } from "../app/modules/users/models";
 import { NavigateFunction } from "react-router-dom";
-import { EmployeeModel } from "../app/modules/employees/models";
 import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
+import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
+import { PieSeries } from "@mui/x-charts";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -54,26 +52,6 @@ export const relativeTimeFormatter = (date: Dayjs | string) => {
     return dayjs(date).format("lll");
   }
   return dayjs(date).fromNow();
-};
-
-export const employeesListMapperforExport = (
-  employeesList: EmployeeModel[]
-) => {
-  const mappedData = employeesList.map((employee) => {
-    return {
-      Id: employee.userId,
-      "First Name": employee.firstName,
-      "Last Name": employee.lastName,
-      Email: employee.email,
-      "Phone Number": employee.phoneNumber,
-      Gender: employee.gender,
-      "Date of Birth": dateFormatter(employee.dateOfBirth, "DD MMMM YYYY"),
-      "Date of Joining": dateFormatter(employee.dateOfJoining, "DD MMMM YYYY"),
-      Department: employee.department,
-      Address: employee.address,
-    };
-  });
-  return mappedData;
 };
 
 export const applicationStatusMapper: {
@@ -185,6 +163,12 @@ export const LanguageNameMapper: { [index: string]: string } = {
   [LANGUAGE.FRENCH]: "LANGUAGES.FRENCH",
 };
 
+export const AccrualPeriodMapper: { [index: number]: string } = {
+  [ACCURAL_PERIOD.MONTHLY]: "LEAVE.ACCRUAL_PERIOD.MONTHLY",
+  [ACCURAL_PERIOD.YEARLY]: "LEAVE.ACCRUAL_PERIOD.YEARLY",
+  [ACCURAL_PERIOD.NONE]: "LEAVE.ACCRUAL_PERIOD.NONE",
+};
+
 export const statusEncoder = (status: string) => {
   switch (status) {
     case "Active":
@@ -205,12 +189,6 @@ export const statusDecoder = (status: boolean) => {
 
 export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
   return dayjs(to).diff(from, "years");
-};
-
-export const convertMonthsToYear = (months: number) => {
-  let years = Math.round(months / 12);
-  let suffix = years > 1 ? "Years" : "Year";
-  return years + " " + suffix;
 };
 
 export const getModulePermissions = (
@@ -317,9 +295,9 @@ export const countAppliedFilter = (filter: Record<string, any> | null) => {
     Object.keys(filter).forEach((element) => {
       if (filter[element] !== null) {
         if (Array.isArray(filter[element])) {
-          count += Boolean(filter[element].length) ? 1 : 0;
+          count += filter[element].length ? 1 : 0;
         } else if (typeof filter[element] === "string") {
-          count += Boolean(filter[element]) ? 1 : 0;
+          count += filter[element] ? 1 : 0;
         } else if (typeof filter[element] === "number") {
           count += filter[element] >= 0 ? 1 : 0;
         } else {
@@ -362,37 +340,6 @@ export const flatRolePermissionList = (
   return updatedRolePermission;
 };
 
-export const redirectUserToTargetUrl = (
-  notification: NotificationModel,
-  navigate: NavigateFunction
-) => {
-  const redirectOption: NotificationRedirectOption = {
-    targetPath: "",
-    data: null,
-  };
-  switch (notification.notificationTypes) {
-    case NOTIFICATION_TYPE.NOTICE: {
-      redirectOption.targetPath = "/noticeboard/notices";
-      redirectOption.data = notification.targetId;
-      break;
-    }
-    case NOTIFICATION_TYPE.LEAVE_REQUEST: {
-      redirectOption.targetPath = "/leavemanagement/leaverequest";
-      redirectOption.data = notification.targetId;
-      break;
-    }
-    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
-    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED: {
-      redirectOption.targetPath = "/profile/leave";
-      break;
-    }
-  }
-  navigate(redirectOption.targetPath, {
-    state: redirectOption.data,
-    replace: true,
-  });
-};
-
 // flatten nested translation file
 export const flattenMessages = (
   messages: Record<string, any>,
@@ -400,8 +347,8 @@ export const flattenMessages = (
 ): Record<string, string> => {
   let result: Record<string, string> = {};
 
-  for (let key in messages) {
-    if (messages.hasOwnProperty(key)) {
+  for (const key in messages) {
+    if (Object.prototype.hasOwnProperty.call(messages, key)) {
       const newKey = prefix ? `${prefix}.${key}` : key;
       if (typeof messages[key] === "object" && !Array.isArray(messages[key])) {
         result = { ...result, ...flattenMessages(messages[key], newKey) };
@@ -416,6 +363,17 @@ export const flattenMessages = (
 
 export const getStatusCodeString = (statusCode: number) => {
   return `STATUS_CODES.${statusCode}`;
+};
+
+export const getCustomStatusCodesErrorMessage = (
+  status: number,
+  defaultMessage?: string
+) => {
+  if (status < 200 || status > 600) {
+    return `STATUS_CODES.${status}`;
+  } else {
+    return defaultMessage ?? `ERROR.SOMETHING_WRONG`;
+  }
 };
 
 const initialState: AppLanguageProps = {
@@ -465,7 +423,7 @@ export const setDayJsLocale = async () => {
   const currentLocale = getCurrentAppLanguage();
   // dynamically import the locale file based on the current language
   try {
-    const data = await mapLocal[currentLocale]();
+    await mapLocal[currentLocale]();
     dayjs.locale(currentLocale);
   } catch (error) {
     dayjs.locale(LANGUAGE.ENGLISH);
@@ -548,6 +506,37 @@ export const getNotificationTitle = (
   }
 };
 
+export const redirectUserToTargetUrl = (
+  notification: NotificationModel,
+  navigate: NavigateFunction
+) => {
+  const redirectOption: NotificationRedirectOption = {
+    targetPath: "",
+    data: null,
+  };
+  switch (notification.notificationTypes) {
+    case NOTIFICATION_TYPE.NOTICE: {
+      redirectOption.targetPath = "/noticeboard/notices";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST: {
+      redirectOption.targetPath = "/leavemanagement/leaverequest";
+      redirectOption.data = notification.targetId;
+      break;
+    }
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_APPROVED:
+    case NOTIFICATION_TYPE.LEAVE_REQUEST_REJECTED: {
+      redirectOption.targetPath = "/profile/leave";
+      break;
+    }
+  }
+  navigate(redirectOption.targetPath, {
+    state: redirectOption.data,
+    replace: true,
+  });
+};
+
 export const getOrdinalSuffix = (num: number) => {
   const s = ["th", "st", "nd", "rd"];
   const v = num % 100;
@@ -567,4 +556,24 @@ export const monthMapper: { [key: number]: string } = {
   10: "MONTHS.OCTOBER",
   11: "MONTHS.NOVEMBER",
   12: "MONTHS.DECEMBER",
+};
+
+// initial Filter values
+
+export const initialNoticeFilter: NoticeBoardFilterModel = {
+  noticeType: [],
+  filterFrom: null,
+  filterTo: null,
+};
+
+// common pie chart series
+export const defaultPieChartSeries: PieSeries = {
+  innerRadius: "60%",
+  outerRadius: "100%",
+  paddingAngle: 2,
+  startAngle: -90,
+  highlightScope: { fade: "global", highlight: "item" },
+  highlighted: { additionalRadius: 2 },
+  cornerRadius: 4,
+  data: [],
 };

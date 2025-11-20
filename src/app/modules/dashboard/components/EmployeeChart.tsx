@@ -1,14 +1,14 @@
 import { IntlShape, useIntl } from "react-intl";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { CardSkeleton } from "./CardSkeleton";
 import { getAllGenderInfo } from "../dashboardservices";
 import { GenderModel } from "../model";
-import { genderMapper } from "../../../../utils/common";
+import { defaultPieChartSeries, genderMapper } from "../../../../utils/common";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { PieSeries, PieValueType } from "@mui/x-charts";
-import { defaultPieChartSeries, DonutChart } from "../../../shared/components/DonutChart";
+import { DonutChart } from "../../../shared/components/DonutChart";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
 
@@ -25,7 +25,7 @@ const createChartData = (data: GenderModel[], intl: IntlShape) => {
   return chartData;
 }
 const countTotalEmployee = (empData: GenderModel[]) => {
-  let totalEmployee = empData.reduce((pv, cv) => {
+  const totalEmployee = empData.reduce((pv, cv) => {
     return pv += cv.count;
   }, 0);
   return totalEmployee;
@@ -72,7 +72,7 @@ export const EmployeeChart: FC = () => {
 
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee} applyMinHeight={true}>
+      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee} applyMinHeight={false}>
         {empData.length == 0 ? (
           <Box
             className="flex-grow-1 align-content-center text-center"

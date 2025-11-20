@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { getLocalKey } from "../../modules/auth";
+import { AuthTokens } from "../../modules/auth";
+import { AUTH_LOCAL_STORAGE_KEY } from "../../../utils/constant/Constant";
 
 interface AuthenticationState {
   isUserAuthenticated: boolean;
@@ -9,7 +10,10 @@ interface AuthenticationState {
 
 const initialState: AuthenticationState = {
   isUserAuthenticated: false,
-  token: getLocalKey()?.token ?? null,
+  token: localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
+    ? (JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!) as AuthTokens)
+        .refreshToken
+    : null,
 };
 const authSlice = createSlice({
   name: "auth",

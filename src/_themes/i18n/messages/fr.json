@@ -23,7 +23,8 @@
     "PROCESS_LOG": "Journal des processus",
     "COMPANY_MASTER": "Fiche entreprise",
     "COMPANY_DETAILS": "Détails de l'entreprise",
-    "PAYROLL": "Paie"
+    "PAYROLL": "Paie",
+    "CALENDAR": "Calendrier"
   },
 
   "GENDER": {
@@ -47,27 +48,9 @@
     "FILTER_HOLIDAY": "Filtrer les jours fériés",
     "SEARCH_EMPLOYEE": "Rechercher un employé",
     "SWITCH_THEME": "Mode clair/sombre",
-    "CHATS": "Discussion"
-  },
-  "Modules": {
-    "Dashboard": "Tableau de bord",
-    "Employees": "Employés",
-    "Attendance": "Présences",
-    "LeaveManagement": "Gestion des congés",
-    "MyProfile": "Mon profil",
-    "Recruitment": "Recrutement",
-    "Admin": "Administration",
-    "Holidays": "Jours fériés",
-    "NoticeBoard": "Tableau d'affichage",
-    "Jobs": "Offres d'emploi",
-    "Applications": "Candidatures",
-    "Permissions": "Rôles et Permissions",
-    "Theme": "Thème",
-    "ProcessLog": "Journal des processus",
-    "CompanyMaster": "Master de l'entreprise",
-    "CompanyDetails": "Détails de l'entreprise",
-    "PayRoll": "Paie",
-    "CompanyDeatails": "Détails de l'entreprise"
+    "CHATS": "Discussion",
+    "NEXT": "Suivant",
+    "PREVIOUS": "Précédent"
   },
   "PAGE": {
     "JOBS": "Exigences de l'emploi",
@@ -89,7 +72,8 @@
     "ADD_ROLE": "Ajouter un rôle",
     "COMPANY_MASTER": "Master de l'entreprise",
     "COMPANY_DETAILS": "Détails de l'entreprise",
-    "PAYROLL": "Paie"
+    "PAYROLL": "Paie",
+    "CALENDAR": "Calendrier"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "En attente",
@@ -156,7 +140,8 @@
       "PASSWORD_UPDATED": "Mot de passe mis à jour avec succès",
       "DATA_UPLOADED": "Succès ! les données ont été téléchargées avec succès",
       "PAYROLL_UPDATED": "Détails de la paie mis à jour avec succès",
-      "PAYROLL_ADDED": "Détails de la paie ajoutés avec succès"
+      "PAYROLL_ADDED": "Détails de la paie ajoutés avec succès",
+      "INVITE_EMPLOYEE": "Invitation envoyée avec succès"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Échec de l'ajout du nouveau jour férié",
@@ -175,7 +160,8 @@
       "NO_VACANCY": "Aucune offre d'emploi active disponible",
       "UPDATE_ROLE": "Échec de la mise à jour des autorisations du rôle",
       "PAY_SLIP_GENERATE": "Erreur lors de la génération de la fiche de paie",
-      "SELECT_PAY_MONTH": "Veuillez sélectionner le mois de paiement"
+      "SELECT_PAY_MONTH": "Veuillez sélectionner le mois de paiement",
+      "INVITE_EMPLOYEE": "Échec de l’invitation de l’employé"
     }
   },
   "BUTTON": {
@@ -204,7 +190,10 @@
     "MARK_ALL_AS_READ": "Marquer tout comme lu",
     "UPLOAD": "Télécharger",
     "REMOVE": "Retirer",
-    "CLEAR": "Effacer"
+    "CLEAR": "Effacer",
+    "INVITE": "Inviter",
+    "SKIP": "Passer",
+    "ASSIGN": "Attribuer"
   },
   "TITLES": {
     "BIRTHDAY": "Anniversaire",
@@ -378,6 +367,11 @@
       "EARNED_LEAVE": "Congé acquis",
       "MATERNITY_LEAVE": "Congé maternité",
       "PATERNITY_LEAVE": "Congé paternité"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "Mensuel",
+      "YEARLY": "Annuel",
+      "NONE": "Aucun"
     }
   },
   "PROFILE": {
@@ -389,10 +383,11 @@
       "SETTING": "Paramètres"
     },
     "PI": {
-      "EOX": "Années d'expérience",
+      "EOX": "d'expérience",
       "TOTAL_YEAR": "Années chez {companyName}",
       "TITLE": "Informations personnelles",
-      "DOWNLOAD_PAY_SLIP": "Télécharger la fiche de paie"
+      "DOWNLOAD_PAY_SLIP": "Télécharger le bulletin de paie",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# an} other {# ans}} {months, plural, =0 {} one {# mois} other {# mois}}"
     },
     "SKILLS": {
       "TITLE": "Compétences",
@@ -429,11 +424,38 @@
     }
   },
   "EMPLOYEE": {
-    "ADD_NEW_EMP": "Ajouter un nouvel employé",
+    "ADD_NEW_EMP": "Ajouter un employé",
     "PROFILE": "Profil",
     "STATUS": {
       "ACTIVE": "Actif",
       "INACTIVE": "Inactif"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "Créer un compte utilisateur",
+      "EDIT_DATA": "Modifier les données utilisateur",
+      "ALLOCATE_LEAVE": "Attribuer les congés de l’employé"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "Remplissez toutes les informations requises et cliquez sur « Inviter ». Une invitation sera envoyée à l’adresse indiquée. Une fois les identifiants créés, l’utilisateur pourra accéder à la plateforme."
+    },
+    "UPDATE": {
+      "BASIC_INFO": "Informations de base",
+      "WORK_INFO": "Informations professionnelles",
+      "PERSONAL_INFO": "Informations personnelles",
+      "OHTER_INFO": "Autres informations"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "Configurer l’allocation de congés de l’employé",
+      "NOTE": "Sélectionnez les types de congés que vous souhaitez attribuer à cet employé. Vous pourrez modifier les soldes plus tard dans le profil de l’employé.",
+      "CODE": "Code",
+      "MAX_BALANCE": "Solde maximum",
+      "ACCRUAL_PERIOD": "Période d’acquisition",
+      "ACCRUAL_AMOUNT": "Montant d’acquisition",
+      "NO_POLICY": "Aucune politique de congés disponible. Veuillez créer une politique avant d’ajouter un employé."
+    },
+    "FINAL": {
+      "NOTE": "Vous avez créé le compte employé et attribué toutes les informations requises avec succès."
     },
     "TYPE": {
       "FULLTIME": "Temps plein",
@@ -585,6 +607,7 @@
     "MESSAGE": "Message",
     "TITLE": "Titre",
     "TYPE": "Type d’annonce",
+    "VIEWS": "Vues",
     "ROLE": "Rôle",
     "DEPARTMENT": "Département",
     "POSTED_DATETIME": "Date/heure de publication",
@@ -848,7 +871,12 @@
     "27": "Le congé maximal ne peut pas être négatif",
     "28": "Le solde de congé pour cet employé existe déjà",
     "29": "Le solde du type de congé sélectionné n'existe pas pour cet employé",
-    "30": "Échec de la demande de congé : chevauchement avec un congé déjà approuvé"
+    "30": "Échec de la demande de congé : chevauchement avec un congé déjà approuvé",
+    "31": "Une politique de congés portant ce nom existe déjà",
+    "32": "Le montant d’acquisition est requis lorsque l’acquisition est sélectionnée",
+    "33": "La limite de report est requise lorsque l’acquisition est sélectionnée",
+    "34": "Une politique de congés avec le même nom et code existe déjà",
+    "35": "Limite de solde de congés dépassée"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -898,5 +926,14 @@
       "HolidayReminder": "Recevez des rappels en temps opportun concernant les jours fériés et les congés de l’entreprise",
       "MessageNotification": "Recevez des notifications lorsque de nouveaux messages ou communications vous sont envoyés via la plateforme"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 an} one {# an} other {# ans}}",
+    "YEAR": "{years, plural, =0 {0 an} one {# an} other {# ans}}",
+    "MONTHS": "{months, plural, =0 {0 mois} one {# mois} other {# mois}}",
+    "DAY": "{days, plural, =0 {0 jour} one {# jour} other {# jours}}"
+  },
+  "COMMON": {
+    "CONGRATULATION": "Félicitations"
   }
 }

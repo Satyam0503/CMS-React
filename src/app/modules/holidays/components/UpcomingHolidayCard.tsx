@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-import { Avatar, Box, Card, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Typography } from "@mui/material";
 import { CalendarToday, Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import { CalendarItem } from "../models";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
@@ -13,9 +12,6 @@ import HolidayForm from "./HolidayForm";
 import { toast } from "react-toastify";
 import { deleteCalendarItem } from "../holidayServices";
 
-import { useContext } from "react";
-import { ThemeContext } from "@emotion/react";
-
 const initialValues: CalendarItem = {
     id: "",
     name: "",
@@ -26,7 +22,7 @@ const initialValues: CalendarItem = {
     imageUrl: null
 };
 
-interface Props{
+interface Props {
     key: string
     occasion: CalendarItem,
     occasions: Array<CalendarItem>,
@@ -45,8 +41,8 @@ function UpcomingHolidayCard(props: Props) {
     const [edit, setEdit] = useState<boolean>(false)
     const [isModalOpen, setModalOpen] = useState(false);
 
-    const hasEditPermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Edit, modulePermission);
-    const hasDeletePermission = hasModuleFeaturePermission(ModulesName.Holidays, Permission.Delete, modulePermission);
+    const hasEditPermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Edit, modulePermission);
+    const hasDeletePermission = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Delete, modulePermission);
 
     const handleActionButtonClick = (event: React.MouseEvent<HTMLElement>, holidayId?: string) => {
         setActionBtnAnchor(event.currentTarget);
@@ -66,18 +62,18 @@ function UpcomingHolidayCard(props: Props) {
     }
 
     const handleHolidayEdit = () => {
-            if (selectedHolidayId) {
+        if (selectedHolidayId) {
             const holiday = props.occasions.find(item => item.id === selectedHolidayId);
-            
+
             if (holiday) {
                 setInitialHolidayValues({
-                id: holiday.id,
-                name: holiday.name,
-                type: holiday.type,
-                date: dayjs(holiday.date),
-                description: holiday.description,
-                imageUrl: holiday.imageUrl,
-                recurring: holiday.recurring
+                    id: holiday.id,
+                    name: holiday.name,
+                    type: holiday.type,
+                    date: dayjs(holiday.date),
+                    description: holiday.description,
+                    imageUrl: holiday.imageUrl,
+                    recurring: holiday.recurring
                 });
                 setEdit(true);
                 setModalOpen(true);
@@ -102,15 +98,15 @@ function UpcomingHolidayCard(props: Props) {
     const handleHolidayDeletion = async (res: string) => {
         if (res !== "ok" || !selectedHolidayId) {
             handleDeleteModalClose();
-            } else {
+        } else {
             try {
                 const { data } = await deleteCalendarItem(selectedHolidayId);
                 if (data.success) {
-                props.handleRefresh();
-                toast.success(i({ id: "TOAST.SUCCESS.DELETE" }));
-                handleDeleteModalClose();
+                    props.handleRefresh();
+                    toast.success(i({ id: "TOAST.SUCCESS.DELETE" }));
+                    handleDeleteModalClose();
                 } else {
-                toast.error(i({ id: "TOAST.FAILED.DELETE" }))
+                    toast.error(i({ id: "TOAST.FAILED.DELETE" }))
                 }
             } catch (error) {
                 console.error(error instanceof Error ? error.message : error)
@@ -120,44 +116,44 @@ function UpcomingHolidayCard(props: Props) {
 
     return (
         <Stack
-        component={"div"}
-        className="gap-2 holiday-card flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary"
+            component="div"
+            className="gap-1 flex-row justify-content-between align-items-center p-2 rounded hover-secondary "
         >
-            <Box component={'div'} className="d-flex gap-4 align-items-center">
+            <Box component='div' className="d-flex gap-2 align-items-center">
                 {props.occasion.imageUrl ? (
                     <Avatar
-                    sx={{
-                        width: 40,
-                        height: 40,
-                        boxShadow: 2,
-                        bgcolor: "secondary.main",
-                    }}
-                    src={String(props.occasion.imageUrl)}
-                    variant="rounded"
+                        sx={{
+                            width: 44,
+                            height: 44,
+                            boxShadow: 2,
+                            bgcolor: "secondary.main",
+                        }}
+                        src={String(props.occasion.imageUrl)}
+                        variant="rounded"
                     />
                 ) : (
                     <Avatar
-                    variant="rounded"
-                    sx={{
-                        width: 40,
-                        height: 40,
-                        bgcolor: "secondary.main",
-                    }}
+                        variant="rounded"
+                        sx={{
+                            width: 44,
+                            height: 44,
+                            bgcolor: "secondary.main",
+                        }}
                     >
-                    <CalendarToday className="fs-32" />
+                        <CalendarToday className="fs-32" />
                     </Avatar>
                 )}
-                <Box component={"div"} className="d-flex flex-column gap-1"
+                <Box component="div" className="d-flex flex-column gap-1"
                     sx={{
-                            whiteSpace: 'nowrap',
-                            width: '115px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                    }}  
+                        whiteSpace: 'nowrap',
+                        width: '115px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
                 >
                     <Typography variant="body1">{props.occasion.name.length > 20
-                            ? props.occasion.name.slice(0, 19).concat("...")
-                            : props.occasion.name}
+                        ? props.occasion.name.slice(0, 19).concat("...")
+                        : props.occasion.name}
                     </Typography>
                     <Typography variant="body2">
                         {props.occasion.description.length > 20
@@ -167,7 +163,7 @@ function UpcomingHolidayCard(props: Props) {
                 </Box>
             </Box>
 
-            {((hasEditPermission || hasDeletePermission) && (props.occasion.type!= 3 && props.occasion.type != 4) ) && (
+            {((hasEditPermission || hasDeletePermission) && (props.occasion.type != 3 && props.occasion.type != 4)) && (
                 <IconButton
                     className="holiday-card-action-button"
                     sx={{
@@ -177,65 +173,65 @@ function UpcomingHolidayCard(props: Props) {
                     onClick={(e) => {
                         handleActionButtonClick(e, props.occasion.id);
                     }}
-                    >
+                >
                     <MoreVertOutlined />
                 </IconButton>
             )}
             {
                 Boolean(actionBtnAnchor) &&
                 <Popover
-                id="holiday-action-menu"
-                open={true}
-                anchorEl={actionBtnAnchor}
-                onClose={handleActionMenuClose}
-                anchorOrigin={{
-                    horizontal: "right",
-                    vertical: "bottom",
-                }}
-                transformOrigin={{
-                    horizontal: "left",
-                    vertical: "top",
-                }}
-                slotProps={{
-                    paper: {
-                    sx: {
-                        boxShadow: 1
-                    }
-                    }
-                }}
+                    id="holiday-action-menu"
+                    open={true}
+                    anchorEl={actionBtnAnchor}
+                    onClose={handleActionMenuClose}
+                    anchorOrigin={{
+                        horizontal: "right",
+                        vertical: "bottom",
+                    }}
+                    transformOrigin={{
+                        horizontal: "left",
+                        vertical: "top",
+                    }}
+                    slotProps={{
+                        paper: {
+                            sx: {
+                                boxShadow: 2
+                            }
+                        }
+                    }}
                 >
                     <List disablePadding className="popover-list">
                         {
-                        hasEditPermission &&
-                        <ListItem disablePadding divider onClick={handleHolidayEdit}>
-                            <ListItemButton >
-                                <ListItemText 
-                                primary={
-                                    <Typography>
-                                        <Edit className="fs-16 me-2" />
-                                        {i({ id: "BUTTON.EDIT" })}
-                                    </Typography>
-                                } />
-                            </ListItemButton>
-                        </ListItem>
+                            hasEditPermission &&
+                            <ListItem disablePadding divider onClick={handleHolidayEdit}>
+                                <ListItemButton >
+                                    <ListItemText
+                                        primary={
+                                            <Typography>
+                                                <Edit className="fs-16 me-2" />
+                                                {i({ id: "BUTTON.EDIT" })}
+                                            </Typography>
+                                        } />
+                                </ListItemButton>
+                            </ListItem>
                         }
-                        <Divider 
+                        <Divider
                             sx={{
                                 borderColor: 'black'
                             }}
                         />
                         {
-                        hasDeletePermission &&
-                        <ListItem disablePadding onClick={handleHolidayDeleteClick}>
-                            <ListItemButton>
-                                <ListItemText primary={
-                                    <Typography className="text-center">
-                                        <Delete color="error" className="fs-16 me-2" />
-                                        {i({ id: "BUTTON.DELETE" })}
-                                    </Typography>
-                                } />
-                            </ListItemButton>
-                        </ListItem>
+                            hasDeletePermission &&
+                            <ListItem disablePadding onClick={handleHolidayDeleteClick}>
+                                <ListItemButton>
+                                    <ListItemText primary={
+                                        <Typography className="text-center">
+                                            <Delete color="error" className="fs-16 me-2" />
+                                            {i({ id: "BUTTON.DELETE" })}
+                                        </Typography>
+                                    } />
+                                </ListItemButton>
+                            </ListItem>
                         }
                     </List>
                 </Popover>
@@ -250,18 +246,18 @@ function UpcomingHolidayCard(props: Props) {
                         isEdit={edit}
                     />
                 )
-                }
-                {
-                    isDeleteModalOpen && (
-                        <ConfirmationModal
+            }
+            {
+                isDeleteModalOpen && (
+                    <ConfirmationModal
                         title={i({ id: "CONFIRMATION.TITLE.DELETE_HOLIDAY" })}
                         content={i({ id: "CONFIRMATION.CONTENT.DELETE_HOLIDAY" })}
                         open={true}
                         handleClose={handleDeleteModalClose}
                         handleConfirmation={handleHolidayDeletion}
-                        />
-                    )
-                }
+                    />
+                )
+            }
         </Stack>
     );
 }

@@ -10,12 +10,13 @@ export default function LeaveAllowences() {
   return (
     <Card sx={{ p: 2 }} className="h-100">
       <Stack
-        mb={5}
-        display={"flex"}
-        justifyContent={"space-between"}
-        flexDirection={"row"}
-        alignItems={"center"}
-      >
+        sx={{
+          mb: 5,
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "row",
+          alignItems: "center"
+        }}>
         <Typography variant="h4" sx={{ fontSize: 16 }}>
           {intl.formatMessage({ id: "MENU.LEAVE_ALLOWANCE" })}
         </Typography>

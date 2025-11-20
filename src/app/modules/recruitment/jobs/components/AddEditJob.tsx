@@ -74,14 +74,29 @@ export const AddEditJob: FC<PropsTypes> = ({
         : i({ id: "JOB.DESCRIPTION" })}
     >
       <form onSubmit={handleSubmit}>
-        <Grid container direction={"column"} gap={1}>
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
+        <Grid container direction={"column"} sx={{
+          gap: 1
+        }}>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              gap: 1
+            }}>
+            <Grid
+              size={{
+                xs: 4,
+                md: 6
+              }}>
               <Typography variant="body1">
                 {i({ id: "JOB.JOB_TITLE" })}
               </Typography>
             </Grid>
-            <Grid item xs={8} md={6}>
+            <Grid
+              size={{
+                xs: 8,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 placeholder={i({ id: "JOB.JOB_TITLE" })}
@@ -94,21 +109,31 @@ export const AddEditJob: FC<PropsTypes> = ({
             </Grid>
           </Grid>
 
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              gap: 1
+            }}>
+            <Grid
+              size={{
+                xs: 4,
+                md: 6
+              }}>
               <Typography variant="body1">
                 {i({ id: "JOB.VACANCIES" })}
               </Typography>
             </Grid>
-            <Grid item xs={8} md={6}>
+            <Grid
+              size={{
+                xs: 8,
+                md: 6
+              }}>
               <TextField
                 fullWidth
                 placeholder={i({ id: "JOB.VACANCIES" })}
                 variant="outlined"
                 type="number"
-                inputProps={{
-                  min: 1,
-                }}
                 error={touched.vacancies && Boolean(errors.vacancies)}
                 {...getFieldProps("vacancies")}
                 onKeyDown={(e) => {
@@ -117,18 +142,35 @@ export const AddEditJob: FC<PropsTypes> = ({
                 onWheel={(e) => {
                   (e.target as HTMLInputElement).blur();
                 }}
-              />
+                slotProps={{
+                  htmlInput: {
+                    min: 1,
+                  }
+                }} />
               {touched.vacancies && errors.vacancies && <ErrorLabel errorLabel={errors.vacancies} />}
             </Grid>
           </Grid>
 
-          <Grid item xs={12} display={"flex"} gap={1}>
-            <Grid item xs={4} md={6}>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              gap: 1
+            }}>
+            <Grid
+              size={{
+                xs: 4,
+                md: 6
+              }}>
               <Typography variant="body1">
                 {i({ id: "JOB.TYPE" })}
               </Typography>
             </Grid>
-            <Grid item xs={8} md={6}>
+            <Grid
+              size={{
+                xs: 8,
+                md: 6
+              }}>
               <Select
                 fullWidth
                 error={touched.jobType && Boolean(errors.jobType)}
@@ -146,14 +188,30 @@ export const AddEditJob: FC<PropsTypes> = ({
             </Grid>
           </Grid>
 
-          <Grid item xs={12} display={"flex"} alignItems={"center"}>
-            <Grid item xs={4} md={6}>
+          <Grid
+            size={12}
+            sx={{
+              display: "flex",
+              alignItems: "center"
+            }}>
+            <Grid
+              size={{
+                xs: 4,
+                md: 6
+              }}>
               <Typography variant="body1">
                 {i({ id: "STATUS" })}
               </Typography>
             </Grid>
 
-            <Grid item xs={8} md={6} pl={0.8}>
+            <Grid
+              size={{
+                xs: 8,
+                md: 6
+              }}
+              sx={{
+                pl: 0.8
+              }}>
               <Switch
                 checked={values.status}
                 onChange={(event) => {
@@ -176,10 +234,11 @@ export const AddEditJob: FC<PropsTypes> = ({
         </Stack>
         <Stack
           direction={{ xs: "column", sm: "row" }}
-          justifyContent={"flex-end"}
-          mt={2}
-          gap={1}
-        >
+          sx={{
+            justifyContent: "flex-end",
+            mt: 2,
+            gap: 1
+          }}>
           <CustomisedButton
             variant="outlined"
             label={i({ id: "BUTTON.CLOSE" })}

@@ -21,7 +21,7 @@ const IconStat = ({ icon, number, title, iconBg, iconColor }: Props) => {
       >
         {icon}
       </Avatar>
-      <Stack>
+      <Stack className="justify-content-end">
         <Typography variant="h2">{number}</Typography>
         <Typography variant="body1" sx={{ color: "text.secondary" }}>
           {title}

@@ -64,7 +64,12 @@ const EmployeeAttendance: FC = () => {
       }}
     >
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <IconStat
@@ -78,7 +83,12 @@ const EmployeeAttendance: FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <IconStat
@@ -91,7 +101,12 @@ const EmployeeAttendance: FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <IconStat
@@ -104,7 +119,12 @@ const EmployeeAttendance: FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 3
+          }}>
           <Card>
             <CardContent>
               <IconStat
@@ -118,8 +138,7 @@ const EmployeeAttendance: FC = () => {
           </Card>
         </Grid>
       </Grid>
-
-      <Grid item xs={12} className="d-flex justify-content-between">
+      <Grid className="d-flex justify-content-between" size={12}>
         <Select
           name="days"
           onChange={handleChange}
@@ -136,20 +155,22 @@ const EmployeeAttendance: FC = () => {
           ))}
         </Select>
       </Grid>
-
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Card sx={{ p: "2rem" }}>
-          <Typography variant="h6" mb={3}>
+          <Typography variant="h6" sx={{
+            mb: 3
+          }}>
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
           <Stack
             direction="row"
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-            flexWrap={"wrap-reverse"}
-            gap={2}
-          >
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap-reverse",
+              gap: 2
+            }}>
             <SearchInput search={searchValue} setSearch={handleSearchChange} />
 
             <Stack direction="row" spacing={1}>
@@ -168,7 +189,7 @@ const EmployeeAttendance: FC = () => {
           />
         </Card>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
 
       </Grid>
     </Grid>

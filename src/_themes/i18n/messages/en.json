@@ -23,7 +23,8 @@
     "PROCESS_LOG": "Process Log",
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
-    "PAYROLL": "PayRoll"
+    "PAYROLL": "PayRoll",
+    "CALENDAR": "Calendar"
   },
   "GENDER": {
     "MALE": "Male",
@@ -71,7 +72,8 @@
     "ADD_ROLE": "Add Role",
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
-    "PAYROLL": "PayRoll"
+    "PAYROLL": "PayRoll",
+    "CALENDAR": "Calendar"
   },
 
   "LEAVE_REQUEST_STATUS": {
@@ -141,7 +143,8 @@
       "PASSWORD_UPDATED": "Password successfully updated",
       "DATA_UPLOADED": "Success! data has been uploaded successfully",
       "PAYROLL_UPDATED": "Payroll details successfully updated",
-      "PAYROLL_ADDED": "Payroll details successfully added"
+      "PAYROLL_ADDED": "Payroll details successfully added",
+      "INVITE_EMPLOYEE": "Invitation successfully sent"
     },
     "FAILED": {
       "UPDATE": "Failed to update",
@@ -160,7 +163,8 @@
       "NO_VACANCY": "No active vacancies present",
       "UPDATE_ROLE": "Failed to update role permission",
       "PAY_SLIP_GENERATE": "Error generating payslip",
-      "SELECT_PAY_MONTH": "Please select pay month"
+      "SELECT_PAY_MONTH": "Please select pay month",
+      "INVITE_EMPLOYEE": "Failed to invite employee"
     }
   },
 
@@ -190,7 +194,10 @@
     "MARK_ALL_AS_READ": "mark all as read",
     "UPLOAD": "Upload",
     "REMOVE": "Remove",
-    "CLEAR": "Clear"
+    "CLEAR": "Clear",
+    "INVITE": "Invite",
+    "SKIP": "Skip",
+    "ASSIGN": "Assign"
   },
 
   "TITLES": {
@@ -372,6 +379,11 @@
       "EARNED_LEAVE": "Earned Leave",
       "MATERNITY_LEAVE": "Maternity Leave",
       "PATERNITY_LEAVE": "Paternity Leave"
+    },
+    "ACCRUAL_PERIOD": {
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly",
+      "NONE": "None"
     }
   },
 
@@ -384,10 +396,11 @@
       "SETTING": "Setting"
     },
     "PI": {
-      "EOX": "Years of experience",
-      "TOTAL_YEAR": "Years in {companyName}",
+      "YOE": "{years, plural, =0 {Year} one {Year} other {Years} } Of Experience",
+      "TOTAL_YEAR": "{years , plural, =0 {Year} one {Year} other {Years} } At {companyName}",
       "TITLE": "Personal Information",
-      "DOWNLOAD_PAY_SLIP": "Download Pay Slip"
+      "DOWNLOAD_PAY_SLIP": "Download Pay Slip",
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# yr} other {# yrs}} {months, plural, =0 {} one {# mos} other {# mos}}"
     },
     "SKILLS": {
       "TITLE": "Skills",
@@ -430,6 +443,33 @@
     "STATUS": {
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
+    },
+    "STEPPER": {
+      "CREATE_ACCOUNT": "Create User Account",
+      "EDIT_DATA": "Edit User Data",
+      "ALLOCATE_LEAVE": "Allocate Employee leave"
+    },
+    "INVITE_EMP": {
+      "HEADING": "",
+      "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email. Once the user generate their credentials, they will be able to access the platform"
+    },
+    "UPDATE": {
+      "BASIC_INFO": "Basic Information",
+      "WORK_INFO": "Work Information",
+      "PERSONAL_INFO": "Personal Information",
+      "OHTER_INFO": "Other Information"
+    },
+    "LEAVE": {
+      "ASSIGN_LEAVE": "Set Up Employee Leave Allocation",
+      "NOTE": "Select the leave types you want to assign to this employee. You can modify leave balances later from the employee profile",
+      "CODE": "Code",
+      "MAX_BALANCE": "Max leave balance",
+      "ACCRUAL_PERIOD": "Accrual",
+      "ACCRUAL_AMOUNT": "Accrual Amount",
+      "NO_POLICY": "No leave policies available. Please create a leave policy before adding an employee"
+    },
+    "FINAL": {
+      "NOTE": "You've successfully created the employee account and assigned all required details"
     },
     "TYPE": {
       "FULLTIME": "Full Time",
@@ -771,7 +811,7 @@
 
   "OCCASION": {
     "NAME": "Occasion Name",
-    "TYPE": "Occasion Type",
+    "TYPE": "Type",
     "DATE": "Date",
     "END_DATE": "End Date",
     "DESCRIPTION": "Description",
@@ -868,7 +908,12 @@
     "27": "Maximum leave cannot be negative",
     "28": "Leave Balance For Current Employee Already Exists",
     "29": "Selected leave type balance does not exist for the employee",
-    "30": "Leave request failed: overlapping with previously approved leave"
+    "30": "Leave request failed: overlapping with previously approved leave",
+    "31": "Leave policy with name already exist",
+    "32": "Accrual amount is required accrual is selected",
+    "33": "carry overlimit required amount is required accrual is selected",
+    "34": "Leave policy with same name and code already exist",
+    "35": "Leave balance limit exceeded"
   },
   "CHAT": {
     "TITLE": "Chats",
@@ -922,5 +967,14 @@
       "HolidayReminder": "Get timely reminders about upcoming public holidays and company-declared days off",
       "MessageNotification": "Receive notifications when new messages or communications are sent to you through the platform"
     }
+  },
+  "PLURAL": {
+    "YR": "{years, plural, =0 {0 yr} one {# yr} other {# yrs}}",
+    "YEAR": "{years, plural, =0 {0 year} one {# year} other {# years}}",
+    "MONTHS": "{months, plural, =0 {0 month} one {# month} other {# months}}",
+    "DAY": "{days, plural, =0 {0 day} one {# day} other {# days}}"
+  },
+  "COMMON": {
+    "CONGRATULATION": "Congratulation"
   }
 }

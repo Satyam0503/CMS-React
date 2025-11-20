@@ -14,9 +14,9 @@
 
       &.active-tab {
         color: $app-primary-500;
-        border-bottom: 2px solid $app-primary-500;
+        border-bottom: 2px solid var(--mui-palette-primary-main);
         & > .MuiChip-root {
-          background-color: $app-primary-500;
+          background-color: var(--mui-palette-primary-main);
           color: $app-white;
         }
       }

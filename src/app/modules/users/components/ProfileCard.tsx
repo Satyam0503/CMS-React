@@ -87,7 +87,9 @@ export default function ProfileCard() {
             className="w-100 h-100"
           />
           {!employeeId && (
-            <Stack className="profile-picture-cover" direction={"row"} gap={1}>
+            <Stack className="profile-picture-cover" direction={"row"} sx={{
+              gap: 1
+            }}>
               <CustomIconButton
                 handleClick={() => setOpen(true)}
                 tooltip={i({ id: "PROFILE.IMAGE.UPLOAD_PICTURE" })}
@@ -103,7 +105,9 @@ export default function ProfileCard() {
           )}
         </Box>
         <Stack className="text-center align-items-center" spacing={1}>
-          <Typography variant="h5" color="common.white">
+          <Typography variant="h5" sx={{
+            color: "common.white"
+          }}>
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
           <Typography variant="body1" sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className=" px-4 py-1 rounded-pill">
@@ -115,20 +119,28 @@ export default function ProfileCard() {
           className="justify-content-around text-center"
         >
           <Stack>
-            <Typography variant="h2" color="common.white">
+            <Typography variant="h2" sx={{
+              color: "common.white"
+            }}>
               {getDateDiffInYears(userDetails.dateOfBirth!) || "NA"}
             </Typography>
-            <Typography variant="body2" color="common.white">
+            <Typography variant="body2" sx={{
+              color: "common.white"
+            }}>
               {i({ id: "USER.AGE" })}
             </Typography>
           </Stack>
           <Stack>
-            <Typography variant="h2" color="common.white">
+            <Typography variant="h2" sx={{
+              color: "common.white"
+            }}>
               {userDetails.bloodGroup || (
                 <FormattedMessage id="NOT_AVAILABLE" />
               )}
             </Typography>
-            <Typography variant="body2" color="common.white">
+            <Typography variant="body2" sx={{
+              color: "common.white"
+            }}>
               {i({ id: "USER.BLOOD_GROUP" })}
             </Typography>
           </Stack>

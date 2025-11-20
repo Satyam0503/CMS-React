@@ -19,7 +19,7 @@ body {
 body {
   display: flex;
   flex-direction: column;
-
+  background-color: var(--mui-palette-background-body);
   a:hover,
   a:active,
   a:focus {

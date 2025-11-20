@@ -10,11 +10,12 @@ export default function EmpOfMonth() {
       <CustomCard label={intl.formatMessage({ id: "MENU.EMP_OF_MONTH" })}>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img
@@ -36,11 +37,12 @@ export default function EmpOfMonth() {
         </Stack>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          mb={1}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img
@@ -62,10 +64,11 @@ export default function EmpOfMonth() {
         </Stack>
         <Stack
           direction="row"
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Stack direction="row">
             <Stack className=" symbol symbol-45px" sx={{ mr: 1 }}>
               <img

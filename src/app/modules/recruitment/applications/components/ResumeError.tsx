@@ -13,7 +13,9 @@ export const ResumeError = () => {
         alignItems: "center",
       }}
     >
-      <Stack spacing={1} alignItems={"center"}>
+      <Stack spacing={1} sx={{
+        alignItems: "center"
+      }}>
         <ErrorOutline color="error" sx={{ fontSize: "3rem" }} />
         <Typography variant="h6">{i({ id: "ERROR.RESUME_LOAD_FAILED" })}</Typography>
       </Stack>

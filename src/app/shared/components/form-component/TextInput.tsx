@@ -1,4 +1,6 @@
 import {
+  FormControl,
+  FormLabel,
   InputBaseProps,
   OutlinedInputProps,
   TextField,
@@ -18,30 +20,42 @@ export interface InputFieldProps {
   multiline?: boolean;
   inputProps?: InputBaseProps["inputProps"];
   InputProps?: Partial<OutlinedInputProps>;
+  labelVarient?: "notched" | "seperate",
+  showErrorLabel?: boolean,
 }
 
-export const TextInput: FC<InputFieldProps> = ({ label, ...props }) => {
+export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, labelVarient = "notched", showErrorLabel = true, ...props }) => {
   const { formatMessage: i } = useIntl();
   const [fields, meta] = useField(props);
   return (
-    <TextField
-      fullWidth
-      label={label}
-      variant="outlined"
-      error={meta.touched && Boolean(meta.error)}
-      helperText={meta.touched && meta.error && i({ id: meta.error, defaultMessage: " " })}
-      {...fields}
-      {...props}
-      onKeyDown={(e) => {
-        if (props.type === "number") {
-          blockInvalidCharOnNumberField(e)
-        }
-      }}
-      onWheel={(e) => {
-        if (props.type === "number") {
-          (e.target as HTMLInputElement).blur();
-        }
-      }}
-    />
+    <FormControl fullWidth>
+      {
+        labelVarient === "seperate" &&
+        <FormLabel required sx={{ fontSize: 12, marginBlockEnd: .25 }}>{label} </FormLabel>
+      }
+      <TextField
+        fullWidth
+        label={labelVarient === "notched" ? label : ""}
+        variant="outlined"
+        error={meta.touched && Boolean(meta.error)}
+        helperText={showErrorLabel ? meta.touched && meta.error && i({ id: meta.error, defaultMessage: " " }) : ""}
+        onKeyDown={(e) => {
+          if (props.type === "number") {
+            blockInvalidCharOnNumberField(e)
+          }
+        }}
+        slotProps={{
+          htmlInput: inputProps,
+          input: InputProps
+        }}
+        onWheel={(e) => {
+          if (props.type === "number") {
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        {...fields}
+        {...props}
+      />
+    </FormControl>
   );
 };
