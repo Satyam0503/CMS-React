@@ -12,10 +12,7 @@ import {
 } from "../../modules/recruitment/models";
 import { EmployeeFilterModel } from "../../modules/employees/models";
 import { NoticeBoardFilterModel } from "../../modules/noticeboard/models";
-import {
-  GetHolidayPayloadModel,
-  HolidayFilterModel,
-} from "../../modules/holidays/models";
+import { HolidayFilterModel } from "../../modules/holidays/models";
 import { LeaveRequestsFilterModel } from "../../modules/leaves/model";
 
 const filterSlice = createSlice({

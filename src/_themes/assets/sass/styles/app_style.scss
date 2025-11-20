@@ -178,19 +178,6 @@ canvas {
 }
 
 //banner
-.banner-wave {
-  margin-top: -1px;
-  .single_banner {
-    padding: 30px 0px 5px;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-color: $app-primary-wave;
-  }
-  .wave_banner {
-    transform: rotate(180deg);
-    margin-top: -8px;
-  }
-}
 
 .flex_equal > * {
   flex-grow: 1;
@@ -256,16 +243,6 @@ canvas {
   }
 }
 
-.linear-text-gradient {
-  background: linear-gradient(180deg, $app-primary-wave, $app-primary-footer);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-align: center;
-  padding-bottom: 20px;
-  font-weight: 500 !important;
-}
-
 //CSS for Text editor-quill
 button:hover .ql-stroke,
 .ql-picker-label:hover .ql-stroke {
@@ -317,9 +294,9 @@ button:hover .ql-fill,
 }
 
 .breadcrumb-link {
-  color: $neutral-500;
+  color: var(--mui-palette-grey-400);
   &:hover {
-    color: $app-primary-500;
+    color: var(--mui-palette-primary-main);
   }
 }
 
@@ -490,11 +467,6 @@ button:hover .ql-fill,
   -webkit-line-clamp: 2;
   text-overflow: ellipsis;
 }
-.shadow-md {
-  box-shadow: 0 0.1px 5px 0px $app-primary-100 !important;
-}
-
-// sidebar
 
 // company details
 
@@ -743,7 +715,7 @@ button:hover .ql-fill,
       }
 
       .holiday-dot-color {
-        background-color: $app-primary-600;
+        background-color: var(--mui-palette-primary-main);
       }
 
       .calendar-day-holiday-dot {
@@ -790,7 +762,7 @@ button:hover .ql-fill,
       border-bottom: 3px solid var(--mui-palette-primary-main);
 
       @media (min-width: 600px) {
-        border-bottom: 5px solid $app-primary-500;
+        border-bottom: 5px solid var(--mui-palette-primary-main);
       }
     }
   }

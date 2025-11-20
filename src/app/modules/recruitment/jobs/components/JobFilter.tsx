@@ -44,7 +44,7 @@ export const JobFilter: FC<FilterComponentProps> = (props) => {
                                 {i({ id: "STATUS" })}
                             </Typography>
                         </Stack>
-                        <Select value={values.status ?? ""} placeholder={i({ id: "STATUS" })} onChange={(e) => {
+                        <Select value={values.status ?? ""} onChange={(e) => {
                             const value = Number(e.target.value);
                             setFieldValue("status", value);
                         }}>

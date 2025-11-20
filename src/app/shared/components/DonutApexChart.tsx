@@ -1,8 +1,6 @@
-import { Grid, useTheme } from "@mui/material";
+import { Grid, } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { colors } from "../../modules/theme/MuiTheme";
-import { useIntl } from "react-intl";
 
 interface DonutApexChartProps {
   series: Array<number>;
@@ -19,7 +17,6 @@ interface DonutApexChartProps {
 }
 
 function DonutApexChart(props: DonutApexChartProps) {
-  const { palette } = useTheme();
   const {
     series,
     labels,
