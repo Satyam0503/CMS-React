@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import {
+  ButtonBase,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -35,16 +36,14 @@ export default function HeaderUserMenu() {
   const navigate = useNavigate();
   return (
     <>
-      <Avatar
-        onClick={handleClick}
-        aria-controls={open ? "account-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        src={profileImageUrl}
-        variant="rounded"
-        className="pe-auto"
-        sx={{ width: 40, height: 40, boxShadow: 2, cursor: "pointer", bgcolor: "secondary.main" }}
-      />
+      <ButtonBase onClick={handleClick} role="button">
+        <Avatar
+          variant="rounded"
+          alt="profile-avatar"
+          src={profileImageUrl}
+          sx={{ width: 40, height: 40, boxShadow: 2, }}
+        />
+      </ButtonBase>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"

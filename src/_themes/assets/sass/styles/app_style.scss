@@ -24,6 +24,12 @@
   outline: none !important;
 }
 
+// focus styles
+:focus-visible {
+  outline: 2px solid var(--mui-palette-primary-main);
+  outline-offset: 2px;
+}
+
 .country-flag {
   width: 1rem;
   height: 1rem;
@@ -294,7 +300,7 @@ button:hover .ql-fill,
 }
 
 .breadcrumb-link {
-  color: var(--mui-palette-grey-400);
+  color: var(--mui-palette-grey-600);
   &:hover {
     color: var(--mui-palette-primary-main);
   }

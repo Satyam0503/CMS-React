@@ -146,7 +146,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                 <DialogActions sx={{ px: 4, paddingBlockEnd: 3, justifyContent: "flex-end" }}>
                     {
                         activeStep === AddEmployeeSteps.CREATE_ACCOUNT &&
-                        <Button variant="contained" onClick={handleClose}>{i({ id: "BUTTON.CLOSE" })}</Button>
+                        <Button variant="outlined" onClick={handleClose}>{i({ id: "BUTTON.CLOSE" })}</Button>
                     }
                     {
                         activeStep === AddEmployeeSteps.ALLOCATE_LEAVE &&

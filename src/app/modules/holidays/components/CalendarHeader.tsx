@@ -62,8 +62,8 @@ export default function CalendarHeader(props: Props) {
                         <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
                         <MenuItem value={1}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>
                         <MenuItem value={2}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
-                        <MenuItem value={3}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
-                        <MenuItem value={4}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem>
+                        {/* <MenuItem value={3}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
+                        <MenuItem value={4}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem> */}
                     </Select>
                 </FormControl>
             </Box>

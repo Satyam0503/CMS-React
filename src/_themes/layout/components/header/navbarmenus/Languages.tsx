@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 
 import {
   IconButton,
@@ -45,7 +45,7 @@ const Languages = () => {
 
   return (
     <>
-      <Stack direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} >
+      <Stack role="button" direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} >
         <Typography variant="body1">{formatMessage({ id: LanguageNameMapper[currentLanguage] })}</Typography>
         <img
           className="rounded-circle country-flag"
