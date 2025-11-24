@@ -22,8 +22,6 @@ import {
   GetLeaveRequestsSummary,
   MonthlyLeaveTakenSummary,
   LeavePolicyModel,
-  GetLeavePolicyData,
-  LeavePolicy,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -32,10 +30,13 @@ export const createUpdateLeaveType = (payload: LeaveType) => {
     payload
   );
 };
-
-export const getAllLeavePolicies = ()=>{
-  return postRequest<[],GetLeavePolicyData>(ServiceUrl.GET_ALL_LEAVE_POLICIES)
-}
+export const getLeavePolicies = (status?: boolean) => {
+  return postRequest<unknown, ResponseData<Omit<LeavePolicyModel, "applicableTo">>>(
+    ServiceUrl.GET_LEAVE_POLICIES,
+    {},
+    { params: { status: status } }
+  );
+};
 
 export const getLeaveTypes = (isActive?: boolean) => {
   if (isActive) {
@@ -136,10 +137,3 @@ export const updateEmployeeLeaveBalance = (payload: EmployeeLeaveBalance) => {
   );
 };
 
-export const getLeavePolicies = (status?: boolean) => {
-  return postRequest<unknown, ResponseData<LeavePolicy>>(
-    ServiceUrl.GET_LEAVE_POLICIES,
-    {},
-    { params: { status: status } }
-  );
-};

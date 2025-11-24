@@ -15,11 +15,12 @@ import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { leaveBalanceValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas";
-import { getAllLeavePolicies } from "../leaveServices";
 import { LeavePolicyModel } from "../model";
 import { CheckBox } from "@mui/icons-material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { ACCURAL_PERIOD } from "../../../../utils/enums";
+import { getLeavePolicies } from "../leaveServices";
+import { AccrualPeriodMapper } from "../../../../utils/common";
 export default function EditEmployeePoliciesForm() {
   const { formatMessage: i } = useIntl();
   const [isLoading, setLoading] = useState(true);
@@ -31,7 +32,7 @@ export default function EditEmployeePoliciesForm() {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await getAllLeavePolicies();
+        const { data } = await  getLeavePolicies(true);
         if (data) {
           setLeavePolicies(data.methodResults);
         }
@@ -80,7 +81,7 @@ export default function EditEmployeePoliciesForm() {
                               label={}
                               size="small"
                             /> */}
-                          {ACCURAL_PERIOD[leave.accrualPeriod]}
+                          {AccrualPeriodMapper[leave.accrualPeriod]}
                         </Typography>
                       </Box>
                     }

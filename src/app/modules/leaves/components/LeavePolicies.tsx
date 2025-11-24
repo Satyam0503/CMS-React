@@ -6,8 +6,8 @@ import { useIntl } from "react-intl";
 import AddLeavePolicy from "./AddLeavePolicy";
 import { LeaveBalanceFilter, LeavePolicyModel } from "../model";
 import {
-  getAllLeavePolicies,
   getLeaveBalance,
+  getLeavePolicies,
   getLeaveTypes,
 } from "../leaveServices";
 import {
@@ -66,7 +66,7 @@ function LeavePolicies() {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await getAllLeavePolicies();
+        const { data } = await getLeavePolicies();
         if (data) {
           setLeavePolicies(data.methodResults);
         }

@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { LeavePolicy } from "../../leaves/model";
+import { LeavePolicyModel } from "../../leaves/model";
 import { getLeavePolicies, updateEmployeeLeaveBalance } from "../../leaves/leaveServices";
 import { AccrualPeriodMapper, getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { EmployeeLeaveBalance } from "../models";
@@ -24,7 +24,7 @@ interface PropsTypes {
 
 export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, handleButtonLoading }: PropsTypes) => {
     const { formatMessage: i } = useIntl();
-    const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>([]);
+    const [leavePolicies, setLeavePolicies] = useState<Array<Omit<LeavePolicyModel, "applicableTo">>>([]);
 
     useEffect(() => {
         (async () => {
@@ -121,12 +121,12 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
                                             className="leave-policy-item"
                                             control={
                                                 <Checkbox
-                                                    checked={values.selectedPolicies.includes(item.id)}
-                                                    onChange={() => handleCheck(item.id)}
+                                                    checked={values.selectedPolicies.includes(item.id!)}
+                                                    onChange={() => handleCheck(item.id!)}
                                                     sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
                                                 />
                                             }
-                                            data-policy-checked={values.selectedPolicies.includes(item.id)}
+                                            data-policy-checked={values.selectedPolicies.includes(item.id!)}
                                             label={
                                                 <>
                                                     <Typography variant="h6">{item.name}</Typography>

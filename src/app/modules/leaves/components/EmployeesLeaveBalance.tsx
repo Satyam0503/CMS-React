@@ -140,12 +140,14 @@ export const EmployeesLeaveBalance = () => {
               variant="outlined"
               className="search-employees-name-leave-policies"
               fullWidth
-              InputProps={{
-                startAdornment: (
+              slotProps={{
+                input:{
+                  startAdornment:(
                   <InputAdornment position="start" sx={{ marginRight: "0" }}>
                     <SearchIcon sx={{ color: "gray" }} />
                   </InputAdornment>
                 ),
+                }
               }}
             />
           </Box>

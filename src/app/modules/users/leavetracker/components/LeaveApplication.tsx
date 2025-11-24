@@ -12,6 +12,7 @@ import {
   RadioGroup,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 
 import { useIntl } from "react-intl";
@@ -37,11 +38,10 @@ import {
 } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import { error } from "console";
 import { useParams } from "react-router-dom";
-import { boolean } from "yup";
 import { getAllCalendarItem } from "../../../holidays/holidayServices";
 import { CalendarItem, GetCalendarItemPayload } from "../../../holidays/models";
+import { useEffect, useState } from "react";
 
 type Props = {
   edit: boolean;
@@ -193,7 +193,7 @@ export const LeaveApplication = (props: Props) => {
         values.endDate,
         values.leavePolicyId,
         values.isHalfDay
-      )
+      )! > 0
     ) {
       setStatus(i({ id: "MESSAGE.LEAVE_DAYS_CANT_BE_ZERO" }));
       setSubmitting(false);

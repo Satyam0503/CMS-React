@@ -47,7 +47,7 @@ export const LeaveRequestSummaryChart = () => {
       {
         ...defaultPieChartSeries,
         data: leaveRequestSummary
-          ? createChartData(leaveRequestSummary!, "status", intl)
+          ? createChartData(leaveRequestSummary!, "statusValues", intl)
           : [],
       },
     ];
