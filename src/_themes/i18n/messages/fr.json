@@ -367,7 +367,8 @@
       "LEAVE_FULL_DAY": "Journée complète",
       "LEAVE_HALF_DAY": "Demi-journée",
       "LEAVE_HOLIDAY": "Jour férié",
-      "MANAGE_LEAVE_ALLOCATION": "Gérer l’allocation des congés"
+      "MANAGE_LEAVE_ALLOCATION": "Gérer l’allocation des congés",
+      "LEAVE_POLICY": "Politique de congés"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Congé occasionnel",
@@ -758,7 +759,8 @@
     "INVALID_PAID_DAYS": "Les jours payés doivent être non négatifs et ne peuvent pas dépasser le nombre total de jours dans le mois",
     "EMP_ID_REQ": "L'identifiant employé est requis",
     "INVALID_PAN": "Numéro PAN invalide",
-    "INVALID_BANK_NO": "Numéro de compte bancaire invalide"
+    "INVALID_BANK_NO": "Numéro de compte bancaire invalide",
+    "CARRY_OVER_TOO_LOW": "La valeur reportée doit être supérieure à la valeur d’accumulation."
   },
   "DATETIME": {
     "TODAY": "Aujourd’hui",

@@ -24,8 +24,11 @@ import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
 import { GetAllEmployeeResponseModel } from "./models";
-import { EmployeeFilter, initialFilterValues } from "./components/EmployeeFilter";
-import { countAppliedFilter } from "../../../utils/common"
+import {
+  EmployeeFilter,
+  initialFilterValues,
+} from "./components/EmployeeFilter";
+import { countAppliedFilter } from "../../../utils/common";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
 
@@ -36,9 +39,16 @@ const Employees = () => {
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [showAddEmployeeStepper, setShowAddEmployeeStepper] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | undefined>();
-  const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10 });
-  const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<
+    GetAllEmployeeResponseModel | undefined
+  >();
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
+  const [employeeList, setEmployeeList] = useState<
+    GetAllEmployeeResponseModel[]
+  >([]);
   const [isLoading, setLoading] = useState(true);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -49,7 +59,8 @@ const Employees = () => {
   const open = Boolean(anchorEl);
   const id = open ? "employee-filter" : undefined;
 
-  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
@@ -61,7 +72,6 @@ const Employees = () => {
 
   const employeeFilters = useAppSelector((state) => state.filters.employee);
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
-
 
   const handleSearchChange = (value: string) => {
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
@@ -126,7 +136,10 @@ const Employees = () => {
       : navigate(`/employees/${empId}`);
   };
 
-  const handleViewChange = (event: React.MouseEvent<HTMLElement>, nextView: ViewMode) => {
+  const handleViewChange = (
+    event: React.MouseEvent<HTMLElement>,
+    nextView: ViewMode
+  ) => {
     setViewMode(nextView);
   };
 
@@ -136,20 +149,18 @@ const Employees = () => {
 
   const handleReresh = () => {
     setRefresh(!isRefresh);
-  }
+  };
 
   useEffect(() => {
     setLoading(true);
     const getAllEmployeesList = async () => {
       try {
-        const response = await getAllEmployees(
-          {
-            pageNo: paginationValues.pageNo + 1,
-            records: paginationValues.records,
-            name: search,
-            ...(employeeFilters ?? initialFilterValues)
-          }
-        );
+        const response = await getAllEmployees({
+          pageNo: paginationValues.pageNo + 1,
+          records: paginationValues.records,
+          name: search,
+          ...(employeeFilters ?? initialFilterValues),
+        });
         const { success, methodResults, totalRecords } = response.data;
         if (success) {
           setEmployeeList(methodResults);
@@ -175,7 +186,7 @@ const Employees = () => {
           direction="row"
           className="justify-content-between flex-wrap-reverse align-items-center"
           sx={{
-            gap: 2
+            gap: 2,
           }}
         >
           <SearchInput search={search} setSearch={handleSearchChange} />
@@ -212,13 +223,13 @@ const Employees = () => {
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
-                <CustomIconButton
-                  icon={<Add />}
-                  handleClick={() => setShowAddEmployeeStepper(true)}
-                  tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                  ariaLabel="Add employee"
-                />
-              )}
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setShowAddEmployeeStepper(true)}
+                tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                ariaLabel="Add employee"
+              />
+            )}
           </Stack>
           {open && (
             <EmployeeFilter
@@ -256,7 +267,11 @@ const Employees = () => {
         )}
       </Card>
       {showAddEmployeeStepper && (
-        <AddEmployeeStepper open={showAddEmployeeStepper} handleReresh={handleReresh} handleClose={() => setShowAddEmployeeStepper(false)} />
+        <AddEmployeeStepper
+          open={showAddEmployeeStepper}
+          handleReresh={handleReresh}
+          handleClose={() => setShowAddEmployeeStepper(false)}
+        />
       )}
       {isConfirmModalOpen && (
         <ConfirmationModal

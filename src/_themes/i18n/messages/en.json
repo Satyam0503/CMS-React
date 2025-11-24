@@ -379,7 +379,8 @@
       "LEAVE_FULL_DAY": "Full Day",
       "LEAVE_HALF_DAY": "Half Day",
       "LEAVE_HOLIDAY": "Holiday",
-      "MANAGE_LEAVE_ALLOCATION": "Manage Leave Allocation"
+      "MANAGE_LEAVE_ALLOCATION": "Manage Leave Allocation",
+      "LEAVE_POLICY": "Leave Policy"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Casual Leave",
@@ -790,7 +791,8 @@
     "INVALID_PAID_DAYS": "Paid days must be non-negative and cannot exceed total days in month",
     "EMP_ID_REQ": "Employee ID is required",
     "INVALID_PAN": "Invalid Pan number",
-    "INVALID_BANK_NO": "Invalid bank account number"
+    "INVALID_BANK_NO": "Invalid bank account number",
+    "CARRY_OVER_TOO_LOW": "Carry over value should be more than accrual value"
   },
 
   "DATETIME": {

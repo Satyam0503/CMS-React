@@ -22,6 +22,8 @@ import {
   GetLeaveRequestsSummary,
   MonthlyLeaveTakenSummary,
   LeavePolicyModel,
+  EmployeeLeaveBalanceFilter,
+  EmployeeLeaveBalanceData,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
@@ -137,3 +139,6 @@ export const updateEmployeeLeaveBalance = (payload: EmployeeLeaveBalance) => {
   );
 };
 
+export const getAllEmployeeLeaveBalance = (payload: EmployeeLeaveBalanceFilter)=>{
+  return postRequest<EmployeeLeaveBalanceFilter, ResponseData<EmployeeLeaveBalanceData>>(ServiceUrl.GET_ALL_EMPLOYEE_LEAVE_BALANCE, payload)
+}

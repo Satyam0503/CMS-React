@@ -219,6 +219,8 @@ export const ServiceUrl = {
   UPDATE_EMPLOYEE_LEAVE_BALANCE:
     "api/LeaveManagement/UpdateEmployeeLeaveBalance",
   GET_LEAVE_POLICIES: "api/LeaveManagement/GetAllLeavePolicies",
+  GET_ALL_EMPLOYEE_LEAVE_BALANCE:
+    "api/LeaveManagement/GetAllEmployeeLeaveBalances",
 
   CREATE_NEW_LEAVE_POLICY: `api/LeaveManagement/CreateLeavePolicy`,
   UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,

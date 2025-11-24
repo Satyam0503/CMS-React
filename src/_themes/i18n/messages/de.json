@@ -367,7 +367,8 @@
       "LEAVE_FULL_DAY": "Ganzer Tag",
       "LEAVE_HALF_DAY": "Halber Tag",
       "LEAVE_HOLIDAY": "Feiertag",
-      "MANAGE_LEAVE_ALLOCATION": "Verwaltung der Urlaubszuweisung"
+      "MANAGE_LEAVE_ALLOCATION": "Verwaltung der Urlaubszuweisung",
+      "LEAVE_POLICY": "Urlaubsrichtlinie"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Gelegenheitsurlaub",
@@ -760,7 +761,8 @@
     "INVALID_PAID_DAYS": "Die bezahlten Tage müssen nicht negativ sein und dürfen die Gesamtzahl der Tage im Monat nicht überschreiten",
     "EMP_ID_REQ": "Mitarbeiter-ID ist erforderlich",
     "INVALID_PAN": "Ungültige PAN-Nummer",
-    "INVALID_BANK_NO": "Ungültige Bankkontonummer"
+    "INVALID_BANK_NO": "Ungültige Bankkontonummer",
+    "CARRY_OVER_TOO_LOW": "Der Übertragswert sollte höher sein als der Rückstellungswert"
   },
   "DATETIME": {
     "TODAY": "Heute",

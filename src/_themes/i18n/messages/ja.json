@@ -366,7 +366,8 @@
       "LEAVE_FULL_DAY": "終日",
       "LEAVE_HALF_DAY": "半日",
       "LEAVE_HOLIDAY": "祝日",
-      "MANAGE_LEAVE_ALLOCATION": "休暇配分を管理する"
+      "MANAGE_LEAVE_ALLOCATION": "休暇配分を管理する",
+      "LEAVE_POLICY": "休暇ポリシー"
     },
     "TYPES": {
       "CASUAL_LEAVE": "私用休暇",
@@ -769,7 +770,8 @@
     "INVALID_PAID_DAYS": "支払日数は負ではなく、かつ月の日数を超えてはいけません",
     "EMP_ID_REQ": "社員IDは必須です",
     "INVALID_PAN": "無効なPAN番号",
-    "INVALID_BANK_NO": "無効な銀行口座番号"
+    "INVALID_BANK_NO": "無効な銀行口座番号",
+    "CARRY_OVER_TOO_LOW": "繰越額は累積額より大きくなければなりません。"
   },
   "DATETIME": {
     "TODAY": "今日",

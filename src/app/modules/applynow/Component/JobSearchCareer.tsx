@@ -66,42 +66,44 @@ export default function JobSearchCareer() {
         component={"div"}
         className="recent-jobs"
         >
-        <Box component={"div"} className="job-search-bar">
-            <TextField
-            name="searchTitle"
-            label="Job Position"
-            className="job-search-section"
-            InputProps={{
-                endAdornment: <Search className="me-2" />,
-            }}
-            onChange={(e)=>{
-                handleChange(e)
-            }}
-            />
-            <FormControl className="job-search-section">
-                <InputLabel id="job-type-select-label">Job Type</InputLabel>
-                <Select
-                    name="jobTypes"
-                    labelId="job-type-select-label"
-                    id="job-type-select"
-                    label="Job Type"
-                    onChange={handleChange}
-                    defaultValue="0"
-                >
-                    <MenuItem value={0}>All</MenuItem>
-                    <MenuItem value={1}>On Site</MenuItem>
-                    <MenuItem value={2}>Hybrid</MenuItem>
-                    <MenuItem value={3}>Remote</MenuItem>
-                </Select>
-            </FormControl>
-        </Box>
-        {activeJobPositionsList.length > 0 ?
-            <>
-                <Typography color="initial" sx={{fontWeight: '600', fontSize: '20px', marginBottom: '15px'}}>Recent Openings:</Typography>
-                <JobsSection activeJobPositionsList={activeJobPositionsList} />
-            </>
-            : <NoVacancy />
-        }
-    </Stack>
+            <Box component={"div"} className="job-search-bar">
+                <TextField
+                name="searchTitle"
+                label="Job Position"
+                className="job-search-section"
+                onChange={(e)=>{
+                    handleChange(e)
+                }}
+                slotProps={{
+                    input: {
+                        endAdornment: <Search className="me-2" />,
+                    }
+                }}
+                />
+                <FormControl className="job-search-section">
+                    <InputLabel id="job-type-select-label">Job Type</InputLabel>
+                    <Select
+                        name="jobTypes"
+                        labelId="job-type-select-label"
+                        id="job-type-select"
+                        label="Job Type"
+                        onChange={handleChange}
+                        defaultValue="0"
+                    >
+                        <MenuItem value={0}>All</MenuItem>
+                        <MenuItem value={1}>On Site</MenuItem>
+                        <MenuItem value={2}>Hybrid</MenuItem>
+                        <MenuItem value={3}>Remote</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+            {activeJobPositionsList.length > 0 ?
+                <>
+                    <Typography color="initial" sx={{fontWeight: '600', fontSize: '20px', marginBottom: '15px'}}>Recent Openings:</Typography>
+                    <JobsSection activeJobPositionsList={activeJobPositionsList} />
+                </>
+                : <NoVacancy />
+            }
+        </Stack>
     );
 }

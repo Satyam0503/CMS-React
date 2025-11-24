@@ -2,7 +2,7 @@ import {
   Alert,
   Grid,
   Autocomplete,
-  TextField,
+  // TextInput,
   ListItemAvatar,
   Avatar,
   ListItemText,
@@ -20,6 +20,7 @@ import {
   Box,
   Chip,
   Tooltip,
+  TextField,
 } from "@mui/material";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -39,6 +40,8 @@ import {
   updateLeavePolicy,
 } from "../leaveServices";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { error } from "console";
+import { TextInput } from "../../../shared/components/form-component/TextInput";
 
 type Props = {
   open: boolean;
@@ -193,6 +196,9 @@ export default function AddLeavePolicy(props: Props) {
           }) => {
             // console.log(formik.errors);
             // console.log(values);
+            // console.log(formik.dirty);
+            // console.log(formik.errors);
+            // console.log(formik.isValid);
 
             return (
               <form onSubmit={handleSubmit}>
@@ -205,69 +211,58 @@ export default function AddLeavePolicy(props: Props) {
                   {
                     <>
                       <Grid size={12}>
-                        <TextField
+                        <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_NAME" })}
                           name="name"
-                          onChange={(e) => {
-                            setFieldValue("name", e.target.value);
-                          }}
-                          value={values.name}
-                          className="w-100"
+                          type="text"
+                          showErrorLabel={false}
                         />
                       </Grid>
 
                       <Grid size={12}>
-                        <TextField
+                        <TextInput
                           multiline
                           label={i({ id: "LEAVE.TYPES.POLICY_DESCRIPTION" })}
                           name="description"
-                          className="w-100"
-                          value={values.description}
-                          onChange={(e) => {
-                            setFieldValue("description", e.target.value);
-                          }}
+                          type="text"
+                          showErrorLabel={false}
                         />
                       </Grid>
 
                       <Grid
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
-                        <TextField
+                          md: 6,
+                        }}
+                      >
+                        <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_CODE" })}
                           name="code"
-                          className="w-100"
-                          value={values.code}
-                          onChange={(e) => {
-                            setFieldValue("code", e.target.value);
-                          }}
+                          type="text"
                         />
                       </Grid>
 
                       <Grid
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
-                        <TextField
+                          md: 6,
+                        }}
+                      >
+                        <TextInput
                           label={i({
                             id: "LEAVE.TYPES.POLICY_MIN_NOTICE_DAYS",
                           })}
                           name="minNoticeDays"
-                          className="w-100"
-                          value={values.minNoticeDays}
-                          onChange={(e) => {
-                            setFieldValue("minNoticeDays", e.target.value);
-                          }}
+                          type="number"
                         />
                       </Grid>
 
                       <Grid
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControl fullWidth>
                           <InputLabel id="accrual-period-select-label">
                             {i({ id: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD" })}
@@ -311,21 +306,17 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
-                        <TextField
+                          md: 6,
+                        }}
+                      >
+                        <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_ACCURAL_AMOUNT" })}
                           name="accrualAmount"
-                          className="w-100"
-                          value={values.accrualAmount}
-                          // disabled={values.accrualPeriod === 3 ? true : false}
-                          onChange={(e) => {
-                            setFieldValue("accrualAmount", e.target.value);
-                          }}
+                          type="number"
                         />
                         <Tooltip
                           title={i({
@@ -348,12 +339,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -365,7 +357,7 @@ export default function AddLeavePolicy(props: Props) {
                           })}:`}
                           name="carryOverAllowed"
                           labelPlacement="start"
-                          checked={values.paid}
+                          checked={values.carryOverAllowed}
                           onChange={(e, value) => {
                             setFieldValue("carryOverAllowed", value);
                           }}
@@ -377,21 +369,18 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
-                        <TextField
+                          md: 6,
+                        }}
+                      >
+                        <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_CARRY_LIMIT" })}
                           name="carryOverLimit"
-                          className="w-100"
                           disabled={!values.carryOverAllowed && true}
-                          onChange={(e) => {
-                            setFieldValue("carryOverLimit", e.target.value);
-                          }}
-                          value={values.carryOverLimit}
+                          type="number"
                         />
                       </Grid>
 
@@ -399,12 +388,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -414,7 +404,7 @@ export default function AddLeavePolicy(props: Props) {
                           label={`${i({ id: "LEAVE.HALF_DAY" })}: `}
                           name="isHalfDay"
                           labelPlacement="start"
-                          checked={values.paid}
+                          checked={values.halfDayAllowed}
                           onChange={(e, value) => {
                             setFieldValue("halfDayAllowed", value);
                           }}
@@ -426,20 +416,18 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
-                        <TextField
+                          md: 6,
+                        }}
+                      >
+                        <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_MAX_BALANCE" })}
                           name="maxBalance"
-                          value={values.maxBalance}
-                          className="w-100"
-                          onChange={(e) => {
-                            setFieldValue("maxBalance", e.target.value);
-                          }}
+                          type="number"
+                          showErrorLabel={true}
                         />
                       </Grid>
 
@@ -447,12 +435,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -474,12 +463,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           display: "flex",
                           alignItems: "center",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormLabel sx={{ color: "text.primary" }}>
                           {i({ id: "STATUS" })}
                         </FormLabel>
@@ -490,7 +480,6 @@ export default function AddLeavePolicy(props: Props) {
                           }}
                           name="status"
                           checked={values.status}
-                          inputProps={{ "aria-label": "controlled" }}
                         />
                       </Grid>
 
@@ -498,12 +487,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControlLabel
                           labelPlacement="start"
                           control={
@@ -545,12 +535,13 @@ export default function AddLeavePolicy(props: Props) {
                         sx={{
                           alignItems: "center",
                           display: "flex",
-                          gap: "15px"
+                          gap: "15px",
                         }}
                         size={{
                           xs: 12,
-                          md: 6
-                        }}>
+                          md: 6,
+                        }}
+                      >
                         <FormControlLabel
                           control={
                             <Checkbox
@@ -595,9 +586,10 @@ export default function AddLeavePolicy(props: Props) {
                             display: "flex",
                             gap: "15px",
                             flexDirection: "column",
-                            justifyContent: "center"
+                            justifyContent: "center",
                           }}
-                          size={12}>
+                          size={12}
+                        >
                           {/* <Autocomplete /> */}
                           <FormLabel
                             sx={{ color: "text.primary", textWrap: "nowrap" }}
@@ -619,7 +611,7 @@ export default function AddLeavePolicy(props: Props) {
                                 {option.fullName}
                               </li>
                             )}
-                            renderTags={(value, getTagProps) => {
+                            renderValue={(value, getTagProps) => {
                               if (
                                 value.some(
                                   (emp) => emp.userId === empOptions[1].userId

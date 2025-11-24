@@ -236,10 +236,6 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                         label={i({ id: LeaveTypeMapper[type.leaveType] })}
                         type="number"
                         name="leaveTypeBalances"
-                        inputProps={{
-                          min: 1,
-                          max: type.maxLeaveDays,
-                        }}
                         disabled={!values.employeeId}
                         value={
                           values.leaveTypeBalances.find(
@@ -301,6 +297,12 @@ export const AddLeaveBalance: FC<Props> = (props) => {
                         }}
                         onWheel={(e) => {
                           (e.target as HTMLInputElement).blur();
+                        }}
+                        slotProps={{
+                          htmlInput: {
+                            min: 1,
+                            max: type.maxLeaveDays,
+                          }
                         }}
                       />
                     </Grid>

@@ -386,7 +386,8 @@
       "LEAVE_FULL_DAY": "全天",
       "LEAVE_HALF_DAY": "半天",
       "LEAVE_HOLIDAY": "假日",
-      "MANAGE_LEAVE_ALLOCATION": "管理休假分配"
+      "MANAGE_LEAVE_ALLOCATION": "管理休假分配",
+      "LEAVE_POLICY": "休假政策"
     },
     "TYPES": {
       "CASUAL_LEAVE": "事假",
@@ -782,7 +783,8 @@
     "INVALID_PAID_DAYS": "支付天数必须为非负数，且不能超过当月总天数",
     "EMP_ID_REQ": "员工编号是必填项",
     "INVALID_PAN": "无效的PAN号码",
-    "INVALID_BANK_NO": "无效的银行账户号码"
+    "INVALID_BANK_NO": "无效的银行账户号码",
+    "CARRY_OVER_TOO_LOW": "结转值应大于应计值。"
   },
   "DATETIME": {
     "TODAY": "今天",

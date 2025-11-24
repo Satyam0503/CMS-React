@@ -6,24 +6,18 @@ import {
   InputAdornment,
   Stack,
   TextField,
-  Tooltip,
   Typography,
   IconButton,
-  Popover,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { Add } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { AddLeaveBalance } from "./AddLeaveBalance";
 import {
+  EmployeeLeaveBalanceData,
+  EmployeeLeaveBalanceFilter,
   LeaveBalance,
-  LeaveBalanceFilter,
   LeaveBalanceRequestModel,
 } from "../model";
-import { getLeaveBalance } from "../leaveServices";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
-import { EmployeeLeaveBalanceColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../../shared/components/Pagination";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
@@ -31,10 +25,11 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import { initialFilterValues } from "../../employees/components/EmployeeFilter";
-import { getAllEmployees } from "../../employees/employeeServices";
+import { getAllEmployeeLeaveBalance } from "../leaveServices";
 import EditEmployeePoliciesForm from "./EditEmployeePoliciesForm";
+import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
+import { useDebounce } from "../../../hooks/useDebounce";
+import FilterPolicySearch from "./FilterPolicySearch";
 
 const initialLeavBalanceValue: LeaveBalanceRequestModel = {
   employeeId: "",
@@ -43,27 +38,39 @@ const initialLeavBalanceValue: LeaveBalanceRequestModel = {
 
 export const EmployeesLeaveBalance = () => {
   const { formatMessage: i } = useIntl();
+  const { currentLanguage } = useAppLang();
+  const defaultLang = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage!
+  );
+
   const [isOpen, setOpen] = useState(false);
   const [isEdit, setEdit] = useState(false);
   const [leaveBalance, setLeaveBalance] = useState<LeaveBalance[]>([]);
-  const [refresh, setRefresh] = useState(false);
   const [initialBalance, setInitialBalance] = useState(initialLeavBalanceValue);
   const [totalRecords, setTotalRecords] = useState(0);
   const navigate = useNavigate();
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [isLoading, setLoading] = useState(true);
-
-  const [search, setSearch] = useState<String>("");
-
+  const [search, setSearch] = useState<string>("");
+  const debouncedValue = useDebounce(search);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
     setAnchorEl(event.currentTarget);
   };
+  const [pageNo, setPageNo] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [employeeBalance, setEmployeeBalance] = useState<
+    EmployeeLeaveBalanceData[]
+  >([]);
+  const [selectedEmployeeBalance, setSelectedEmployeeBalance] =
+    useState<EmployeeLeaveBalanceData>();
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [policies, setPolicies] = useState<Array<string>>([]);
 
-  function handleClickOptions(event: React.MouseEvent<HTMLButtonElement>) {
+  function handleClickOptions(emp: EmployeeLeaveBalanceData) {
+    setSelectedEmployeeBalance(emp);
     setOpenOptions(true);
   }
 
@@ -71,86 +78,81 @@ export const EmployeesLeaveBalance = () => {
     setOpen(false);
     setAnchorEl(null);
     setOpenOptions(false);
-    false;
   };
 
-  const handleLeaveBalanceEdit = (leaveBalance: LeaveBalance) => {
-    setEdit(true);
-    const leaveBalanceObj: LeaveBalanceRequestModel = {
-      id: leaveBalance.id,
-      employeeId: leaveBalance.employeeId,
-      leaveTypeBalances: [
-        leaveBalance.sickLeave,
-        leaveBalance.casualLeave,
-        leaveBalance.earnedLeave,
-        leaveBalance.maternityLeave,
-        leaveBalance.paternityLeave,
-      ],
-    };
-    setOpen(true);
-    setInitialBalance(leaveBalanceObj);
-  };
-  // const handleRowClick = (row: LeaveBalance) => {
-  //     if (row.employeeId === currentUserId) {
-  //         navigate("/profile/leave")
-  //     } else {
-  //         navigate(`/employees/${row.employeeId}/leave`)
-  //     }
-  // }
+  function setRowPerPage(rowPerPage: number) {
+    setPageSize(rowPerPage);
+  }
 
-  const handleRefresh = () => {
+  function setPage(pageValue: number) {
+    setPageNo(pageValue);
+  }
+
+  function handleRefresh() {
     setRefresh(!refresh);
-  };
+  }
 
-  // useEffect(() => {
-  //   const getLeaveBalanceFunc = async () => {
-  //     setLoading(true);
-  //     const payload: LeaveBalanceFilter = {
-  //       pageNo: paginationValues.pageNo + 1,
-  //       pageSize: paginationValues.records,
-  //     };
-  //     try {
-  //       const { data } = await getLeaveBalance(payload);
-  //       if (data.success) {
-  //         setLeaveBalance(data.methodResults);
-  //         setTotalRecords(data.totalRecords);
-  //         // console.log(data);
-  //       }
-  //     } catch (error) {
-  //       console.error((error as Error).message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  function handleSelectingPolicies(policyIds: Array<string>) {
+    setPolicies(policyIds);
+  }
 
-  //   getLeaveBalanceFunc();
-  // }, [refresh, paginationValues]);
+  useEffect(() => {
+    const getLeaveBalanceFunc = async () => {
+      setLoading(true);
+      const payload: EmployeeLeaveBalanceFilter = {
+        pageNo: pageNo + 1,
+        pageSize: pageSize,
+        employeeName: debouncedValue.trim(),
+        leavePolicies: policies,
+      };
+      try {
+        const { data } = await getAllEmployeeLeaveBalance(payload);
+        if (data.success) {
+          setEmployeeBalance(data.methodResults);
+          setTotalRecords(data.totalRecords);
+          // console.log(data);
+        }
+      } catch (error) {
+        console.error((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getLeaveBalanceFunc();
+  }, [refresh, pageSize, debouncedValue, policies]);
 
   return (
     <>
       <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
-        <Typography variant="h5">
-          {i({ id: "LEAVE.TITLES.LEAVE_BALANCE" })}
-        </Typography>
-        <Stack className="flex-row justify-content-between">
-          <Box component={"div"} sx={{ width: "400px" }}>
-            <TextField
-              id="outlined-search"
-              label="Search Employee"
-              variant="outlined"
-              className="search-employees-name-leave-policies"
-              fullWidth
-              slotProps={{
-                input:{
-                  startAdornment:(
+        <Stack
+          direction={"row"}
+          sx={{ width: "100%", justifyContent: "space-between", gap: "15px" }}
+        >
+          <TextField
+            id="outlined-search"
+            variant="outlined"
+            placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
+            size="small"
+            onChange={(e) => {
+              // console.log(e.target.value);
+              setSearch(e.target.value);
+            }}
+            slotProps={{
+              htmlInput: {
+                sx: {
+                  paddingInline: 0,
+                },
+              },
+              input: {
+                startAdornment: (
                   <InputAdornment position="start" sx={{ marginRight: "0" }}>
                     <SearchIcon sx={{ color: "gray" }} />
                   </InputAdornment>
                 ),
-                }
-              }}
-            />
-          </Box>
+              },
+            }}
+          />
           <CustomIconButton
             icon={<FilterAltIcon />}
             handleClick={(e) => handleClick(e)}
@@ -158,85 +160,132 @@ export const EmployeesLeaveBalance = () => {
           />
         </Stack>
         <Grid container spacing={2}>
-          <Grid
-            size={{
-              xs: 12,
-              sm: 6,
-              md: 4
-            }}>
-            <Card>
-              <Stack spacing={3} sx={{ padding: "7px 10px" }}>
-                <Box
-                  component={"div"}
-                  sx={{
-                    backgroundColor: "#d3d3d336",
-                    padding: "10px 15px",
-                    borderRadius: "4px",
-                    position: "relative",
-                  }}
-                >
-                  <Stack>
-                    <Avatar
+          {employeeBalance.map((emp) => {
+            return (
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                  md: 6,
+                  lg: 3,
+                }}
+                key={emp.employeeId}
+              >
+                <Card>
+                  <Stack spacing={1} sx={{ padding: "7px 10px" }}>
+                    <Box
+                      component={"div"}
                       sx={{
-                        height: "70px",
-                        width: "70px",
-                        marginBottom: "5px",
-                      }}
-                    />
-                    <Typography variant="h6" color="initial">
-                      Name
-                    </Typography>
-                    <Typography
-                      variant="h6"
-                      color="initial"
-                      sx={{
-                        fontWeight: "400",
-                        color: "text.disabled",
-                        marginTop: "6px"
-                      }}>
-                      Position
-                    </Typography>
-                  </Stack>
-                  <Box component={"div"}>
-                    <IconButton
-                      aria-label=""
-                      onClick={(e) => handleClickOptions(e)}
-                      sx={{
-                        position: "absolute",
-                        top: "10px",
-                        right: "15px",
-                        border: "none",
+                        backgroundColor: "#d3d3d336",
+                        padding: "10px 15px",
+                        borderRadius: "4px",
+                        position: "relative",
                       }}
                     >
-                      <MoreHorizIcon />
-                    </IconButton>
-                    <CustomisedModal
-                      // id={id}
-                      open={openOptions}
-                      handleClose={handleClose}
-                    >
-                      <EditEmployeePoliciesForm />
-                    </CustomisedModal>
-                  </Box>
-                </Box>
+                      <Stack>
+                        <Avatar
+                          src={emp.profilePicture!}
+                          alt="Profile Pic"
+                          sx={{
+                            height: "70px",
+                            width: "70px",
+                            marginBottom: "5px",
+                          }}
+                        />
+                        <Typography variant="h6" color="initial">
+                          {emp.employeeName}
+                        </Typography>
+                        <Typography
+                          variant="h6"
+                          color="initial"
+                          sx={{
+                            fontWeight: "400",
+                            color: "text.disabled",
+                            // marginTop: "6px",
+                          }}
+                        >
+                          {emp.designation
+                            ? emp.designation![currentLanguage] ||
+                              emp.designation![defaultLang]
+                            : i({ id: "NOT_AVAILABLE" })}
+                        </Typography>
+                      </Stack>
+                      <Box component={"div"}>
+                        <IconButton
+                          aria-label=""
+                          onClick={() => handleClickOptions(emp)}
+                          sx={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "15px",
+                            border: "none",
+                          }}
+                        >
+                          <MoreHorizIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
 
-                <Box component={"div"}>
-                  <Grid container>
-                    <Grid size={{
-                      lg: 4
-                    }}>Leave Policy</Grid>
-                    <Grid size={{
-                      lg: 4
-                    }}>Remaining</Grid>
-                    <Grid size={{
-                      lg: 4
-                    }}>Used</Grid>
-                  </Grid>
-                </Box>
-              </Stack>
-            </Card>
-          </Grid>
+                    <Box component={"div"}>
+                      <Grid container>
+                        <Grid size={5}>
+                          <Typography variant="body1" fontWeight={"700"}>
+                            {i({ id: "LEAVE.TITLES.LEAVE_POLICY" })}
+                          </Typography>
+                        </Grid>
+                        <Grid size={4}>
+                          <Typography variant="body1" fontWeight={"700"}>
+                            {i({ id: "LEAVE.REMAINING" })}
+                          </Typography>
+                        </Grid>
+                        <Grid size={3}>
+                          <Typography variant="body1" fontWeight={"700"}>
+                            {i({ id: "LEAVE.TAKEN" })}
+                          </Typography>
+                        </Grid>
+                        <Grid
+                          container
+                          spacing={0.5}
+                          sx={{
+                            height: "100px",
+                            overflow: "auto",
+                            marginTop: "8px",
+                            width: "100%",
+                          }}
+                        >
+                          {emp.leaveBalances.map((leave) => {
+                            return (
+                              <Box
+                                component={"div"}
+                                sx={{
+                                  display: "flex",
+                                  width: "100%",
+                                  height: "20px",
+                                }}
+                                key={leave.leaveBalanceId}
+                              >
+                                <Grid size={5}>{leave.leavePolicyName}</Grid>
+                                <Grid size={4}>{leave.remaining}</Grid>
+                                <Grid size={3}>{leave.usedLeave}</Grid>
+                              </Box>
+                            );
+                          })}
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Stack>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
+        <Pagination
+          page={pageNo}
+          rowsPerPage={pageSize}
+          setRowPerPage={setRowPerPage}
+          setPage={setPage}
+          totalRecords={totalRecords}
+        />
       </Card>
       {
         <FilterComponent
@@ -244,8 +293,22 @@ export const EmployeesLeaveBalance = () => {
           handleClose={handleClose}
           anchorEl={anchorEl}
           open={isOpen}
-        />
+        >
+          <FilterPolicySearch
+            selectedPolicies={policies}
+            handleSelectingPolicies={handleSelectingPolicies}
+            handleRefresh={handleRefresh}
+          />
+        </FilterComponent>
       }
+      {openOptions && selectedEmployeeBalance && (
+        <EditEmployeePoliciesForm
+          openOptions={openOptions}
+          handleClose={handleClose}
+          handleRefresh={handleRefresh}
+          selectedEmployee={selectedEmployeeBalance}
+        />
+      )}
     </>
   );
 };

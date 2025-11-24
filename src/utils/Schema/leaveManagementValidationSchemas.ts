@@ -23,7 +23,7 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
   paid: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   accrualPeriod: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
   accrualAmount: Yup.number().required().min(1),
-  maxBalance: Yup.number().moreThan(Yup.ref('accrualAmount')).required("VALIDATION_ERR.REQUIRED_TYPE"),
+  maxBalance: Yup.number().moreThan(Yup.ref('accrualAmount'),"VALIDATION_ERR.CARRY_OVER_TOO_LOW" ).required("VALIDATION_ERR.REQUIRED_TYPE"),
   carryOverAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   carryOverLimit: Yup.number().nullable(),
   minNoticeDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),

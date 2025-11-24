@@ -134,6 +134,31 @@ export type LeavePolicyModel = {
   applicableTo?: Array<string> | null,
 }
 
+export type EmployeeLeaveBalanceFilter = {
+  employeeName: string,
+  pageNo: number,
+  pageSize: number,
+  leavePolicies: Array<string>
+  
+}
+
+export type EmployeeLeaveInfo = {
+  leaveBalanceId: string,
+  leavePolicyId: string,
+  leavePolicyName: string,
+  leavePolicyCode: string,
+  remaining: number,
+  usedLeave: number
+}
+
+export type EmployeeLeaveBalanceData = {
+  employeeId: string,
+  employeeName: string,
+  employeeCode: string | null,
+  designation: Record<string, string>,
+  profilePicture: string | null,
+  leaveBalances: Array<EmployeeLeaveInfo>
+}
 
 // export type LeavePolicyData = {
 //   message : string,

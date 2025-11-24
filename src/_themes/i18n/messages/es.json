@@ -368,7 +368,8 @@
       "LEAVE_FULL_DAY": "Día completo",
       "LEAVE_HALF_DAY": "Medio día",
       "LEAVE_HOLIDAY": "Feriado",
-      "MANAGE_LEAVE_ALLOCATION": "Gestionar la Asignación de Permisos"
+      "MANAGE_LEAVE_ALLOCATION": "Gestionar la Asignación de Permisos",
+      "LEAVE_POLICY": "Política de licencias"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Permiso ocasional",
@@ -761,7 +762,8 @@
     "INVALID_PAID_DAYS": "Los días pagados deben ser no negativos y no pueden exceder el número total de días en el mes",
     "EMP_ID_REQ": "Se requiere la identificación del empleado",
     "INVALID_PAN": "Número PAN no válido",
-    "INVALID_BANK_NO": "Número de cuenta bancaria no válido"
+    "INVALID_BANK_NO": "Número de cuenta bancaria no válido",
+    "CARRY_OVER_TOO_LOW": "El valor trasladado debe ser mayor que el valor acumulado."
   },
   "DATETIME": {
     "TODAY": "Hoy",
