@@ -52,7 +52,7 @@ interface PropsTypes {
     employeeData: InviteNewEmployeeModel & { userId: string };
     onUserUpdate: (success: boolean) => void;
     formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>,
-    handleButtonLoading: () => void;
+    handleButtonLoading: (loading: boolean) => void;
 }
 
 export const UpdateEmployeeData = (props: PropsTypes) => {
@@ -85,7 +85,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
             console.error((error as Error).message);
         } finally {
             setSubmitting(false);
-            handleButtonLoading();
+            handleButtonLoading(false);
         }
     }
 

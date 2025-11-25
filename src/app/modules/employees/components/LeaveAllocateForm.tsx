@@ -19,7 +19,7 @@ interface PropsTypes {
     formRef: React.MutableRefObject<FormikProps<{ selectedPolicies: string[] }> | null>,
     employeeId: string,
     handleLeaveAllocation: () => void;
-    handleButtonLoading: () => void;
+    handleButtonLoading: (loading: boolean) => void;
 }
 
 export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, handleButtonLoading }: PropsTypes) => {
@@ -41,7 +41,7 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
 
     const AllocateEmployeeLeaveBalance = async (values: { selectedPolicies: string[] }, setSubmitting: (isSubmitting: boolean) => void) => {
         if (values.selectedPolicies.length == 0) {
-            handleButtonLoading();
+            handleButtonLoading(false);
             setSubmitting(false);
             handleLeaveAllocation();
             return;
@@ -64,7 +64,7 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
                 console.error((error as Error).message);
             } finally {
                 setSubmitting(false);
-                handleButtonLoading();
+                handleButtonLoading(false);
             }
         }
     }

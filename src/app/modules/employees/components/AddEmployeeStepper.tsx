@@ -52,20 +52,29 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
         setActiveSteps(step => step + 1);
     }
 
-    const handleStopButtonLoading = () => {
-        setButtonLoading(false);
+    const handleButtonLoading = (loading: boolean) => {
+        setButtonLoading(loading);
     };
 
+
     const handleClick = () => {
-        setButtonLoading(true);
         if (activeStep === AddEmployeeSteps.CREATE_ACCOUNT && inviteFormRef.current) {
             inviteFormRef.current.submitForm();
+            if (inviteFormRef.current.isValid && inviteFormRef.current.dirty) {
+                setButtonLoading(true);
+            }
         }
         else if (activeStep === AddEmployeeSteps.UPDATE_DATA && updateFormRef.current) {
             updateFormRef.current.submitForm();
+            if (updateFormRef.current.isValid && updateFormRef.current.dirty) {
+                setButtonLoading(true);
+            }
         }
         else if (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && leaveAllocateFormRef.current) {
             leaveAllocateFormRef.current.submitForm();
+            if (leaveAllocateFormRef.current.isValid && leaveAllocateFormRef.current.dirty) {
+                setButtonLoading(true);
+            }
         }
         else {
             handleClose();
@@ -111,7 +120,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         activeStep === AddEmployeeSteps.CREATE_ACCOUNT &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <InviteNewEmployee handleInviteUser={handleInviteUser} formRef={inviteFormRef} handleButtonLoading={handleStopButtonLoading} />
+                                <InviteNewEmployee handleInviteUser={handleInviteUser} formRef={inviteFormRef} handleButtonLoading={handleButtonLoading} />
                             </div>
                         </Slide>
                     }
@@ -119,7 +128,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         (activeStep === AddEmployeeSteps.UPDATE_DATA && newEmployeeData) &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={incrementStep} formRef={updateFormRef} handleButtonLoading={handleStopButtonLoading} />
+                                <UpdateEmployeeData employeeData={newEmployeeData} onUserUpdate={incrementStep} formRef={updateFormRef} handleButtonLoading={handleButtonLoading} />
                             </div>
                         </Slide>
                     }
@@ -127,19 +136,21 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         (activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && newEmployeeData) &&
                         <Slide direction="left" in={open} mountOnEnter unmountOnExit>
                             <div>
-                                <LeaveAllocateForm formRef={leaveAllocateFormRef} employeeId={newEmployeeData.userId} handleLeaveAllocation={incrementStep} handleButtonLoading={handleStopButtonLoading} />
+                                <LeaveAllocateForm formRef={leaveAllocateFormRef} employeeId={newEmployeeData.userId} handleLeaveAllocation={incrementStep} handleButtonLoading={handleButtonLoading} />
                             </div>
                         </Slide>
 
                     }
                     {activeStep === steps.length && (
-                        <Box component="div" className="d-flex p-4 justify-content-between align-items-center flex-column gap-2">
-                            <Typography sx={{ fontSize: 58 }}>
-                                🎊
-                            </Typography>
-                            <Typography className="fs-24 fw-bold">{i({ id: "COMMON.CONGRATULATION" })}</Typography>
-                            <Typography className="fs-16" sx={{ mb: 3 }}>{i({ id: "EMPLOYEE.FINAL.NOTE" })} </Typography>
-                        </Box>
+                        <Slide direction="left" in={open} mountOnEnter unmountOnExit>
+                            <Box component="div" className="d-flex p-4 justify-content-between align-items-center flex-column gap-2">
+                                <Typography sx={{ fontSize: 58 }}>
+                                    🎊
+                                </Typography>
+                                <Typography className="fs-24 fw-bold">{i({ id: "COMMON.CONGRATULATION" })}</Typography>
+                                <Typography className="fs-16" sx={{ mb: 3 }}>{i({ id: "EMPLOYEE.FINAL.NOTE" })} </Typography>
+                            </Box>
+                        </Slide>
                     )}
                 </DialogContent>
 

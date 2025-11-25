@@ -12,7 +12,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 interface PropsTypes {
     handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void,
     formRef: React.MutableRefObject<FormikProps<InviteNewEmployeeModel> | null>,
-    handleButtonLoading: () => void;
+    handleButtonLoading: (loading: boolean) => void;
 }
 
 const initialEmployeeDetails: InviteNewEmployeeModel = {
@@ -48,7 +48,7 @@ export const InviteNewEmployee = (props: PropsTypes) => {
             toast.error(i({ id: "TOAST.FAILED.INVITE_EMPLOYEE" }))
         } finally {
             setSubmitting(false);
-            handleButtonLoading();
+            handleButtonLoading(false);
         }
     }
     return (
