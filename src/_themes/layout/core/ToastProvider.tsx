@@ -2,7 +2,8 @@ import { useColorScheme } from "@mui/material";
 import { ToastContainer } from "react-toastify";
 
 export const ToastProvider = () => {
-  const { mode } = useColorScheme();
+  const { mode, systemMode } = useColorScheme();
+  const currentTheme = mode === "system" ? systemMode : mode;
   return (
     <ToastContainer
       position="top-right"
@@ -13,7 +14,7 @@ export const ToastProvider = () => {
       pauseOnFocusLoss
       pauseOnHover
       stacked={true}
-      theme={mode}
+      theme={currentTheme}
     />
   );
 };

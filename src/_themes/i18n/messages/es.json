@@ -909,7 +909,8 @@
     "32": "El monto de acumulación es obligatorio cuando se selecciona acumulación",
     "33": "El límite de acarreo es obligatorio cuando se selecciona acumulación",
     "34": "Ya existe una política de permisos con el mismo nombre y código",
-    "35": "Se ha excedido el límite del saldo de permisos"
+    "35": "Se ha excedido el límite del saldo de permisos",
+    "36": "El valor trasladado debe ser mayor que el valor acumulado"
   },
   "CHAT": {
     "TITLE": "Chats",

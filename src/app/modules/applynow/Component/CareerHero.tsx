@@ -1,6 +1,4 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import CareerHeroIcon from '../../../../../public/media/Icons/CareerHeroIcon.png'
-import careerSvg from '../../../../../public/media/flags/careerSvg1.svg'
 
 
 function CareerHero() {
@@ -12,7 +10,7 @@ function CareerHero() {
             sx={{
                 height: '600px',
                 marginBottom: '40px',
-                backgroundImage: `url(${careerSvg})`,
+                backgroundImage: `url(/media/Icons/careerSvg1.svg)`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "contain",
                 backgroundPosition: "top right"
@@ -42,12 +40,8 @@ function CareerHero() {
                     zIndex: '1'
                 }}
             >
-                <img src={CareerHeroIcon} alt="" className='h-100 w-100' />
+                <img src="/media/Icons/CareerHeroIcon.png" alt="" className='h-100 w-100' />
             </Box>
-            {/* <img src={careerSvg} alt="" className='position-absolute top-0 end-0 border-none h-100'
-            sx={{
-                    zIndex: '-1',
-                }}/> */}
         </Stack>
     );
 }

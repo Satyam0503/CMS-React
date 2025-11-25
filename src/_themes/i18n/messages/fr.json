@@ -906,7 +906,8 @@
     "32": "Le montant d’acquisition est requis lorsque l’acquisition est sélectionnée",
     "33": "La limite de report est requise lorsque l’acquisition est sélectionnée",
     "34": "Une politique de congés avec le même nom et code existe déjà",
-    "35": "Limite de solde de congés dépassée"
+    "35": "Limite de solde de congés dépassée",
+    "36": "Le solde de congé ne peut pas être négatif après l'acquisition"
   },
   "CHAT": {
     "TITLE": "Chats",

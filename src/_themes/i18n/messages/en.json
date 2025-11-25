@@ -943,7 +943,8 @@
     "32": "Accrual amount is required accrual is selected",
     "33": "carry overlimit required amount is required accrual is selected",
     "34": "Leave policy with same name and code already exist",
-    "35": "Leave balance limit exceeded"
+    "35": "Leave balance limit exceeded",
+    "36": "Password reset request already sent. Please check your email"
   },
   "CHAT": {
     "TITLE": "Chats",

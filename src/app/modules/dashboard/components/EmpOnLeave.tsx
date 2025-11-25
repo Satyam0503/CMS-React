@@ -1,4 +1,4 @@
-import { Stack, Typography, Link, Box, Avatar } from "@mui/material";
+import { Stack, Typography, Box, Avatar } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { useEffect, useState } from "react";
@@ -27,7 +27,6 @@ export default function EmpOnLeave() {
         startDate: dayjs().startOf("day"),
         status: LEAVE_REQUEST_STATUS.APPROVED,
         endDate: null,
-        leaveType: null
       }
       try {
         const { data } = await getAllLeaveRequest(payload);

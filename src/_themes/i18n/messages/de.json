@@ -908,7 +908,8 @@
     "32": "Der Ansammlungsbetrag ist erforderlich, wenn eine Ansammlung ausgewählt ist",
     "33": "Der Übertragsgrenzwert ist erforderlich, wenn eine Ansammlung ausgewählt ist",
     "34": "Eine Urlaubsrichtlinie mit demselben Namen und Code existiert bereits",
-    "35": "Urlaubsguthabenlimit überschritten"
+    "35": "Urlaubsguthabenlimit überschritten",
+    "36": "Ungültiger Dateityp. Bitte laden Sie eine Excel-Datei hoch"
   },
   "CHAT": {
     "TITLE": "Chats",
