@@ -78,7 +78,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Pendiente",
     "APPROVED": "Aprobado",
-    "REJECTED": "Rechazado"
+    "REJECTED": "Rechazado",
+    "WITHDRAWN": "Retirada"
   },
   "CONFIRMATION": {
     "TITLE": {
@@ -360,14 +361,41 @@
       "EDIT_LEAVE_TYPE": "Editar tipo de permiso",
       "UPDATE_LEAVE_STATUS": "Actualizar estado del permiso",
       "MONTHLY_LEAVE_SUMMARY": "Resumen mensual de licencias",
-      "LEAVE_TAKEN": "Licencias tomadas"
+      "LEAVE_TAKEN": "Licencias tomadas",
+      "LEAVE_POLICIES": "Políticas de permisos",
+      "ADD_LEAVE_POLICIES": "Agregar política de permisos",
+      "LEAVE_WEEKEND": "Fin de semana",
+      "LEAVE_FULL_DAY": "Día completo",
+      "LEAVE_HALF_DAY": "Medio día",
+      "LEAVE_HOLIDAY": "Feriado",
+      "MANAGE_LEAVE_ALLOCATION": "Gestionar la Asignación de Permisos",
+      "LEAVE_POLICY": "Política de licencias"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Permiso ocasional",
       "SICK_LEAVE": "Permiso por enfermedad",
       "EARNED_LEAVE": "Permiso ganado",
       "MATERNITY_LEAVE": "Permiso de maternidad",
-      "PATERNITY_LEAVE": "Permiso de paternidad"
+      "PATERNITY_LEAVE": "Permiso de paternidad",
+      "POLICY_NAME": "Nombre",
+      "POLICY_DESCRIPTION": "Descripción",
+      "POLICY_PAID": "Pagado",
+      "POLICY_ACCURAL_PERIOD": "Período de acumulación",
+      "POLICY_ACCURAL_AMOUNT": "Importe devengado",
+      "POLICY_CARRY_OVER_ALLOWED": "Acumulación permitida",
+      "POLICY_MIN_NOTICE_DAYS": "Días mínimos de aviso",
+      "POLICY_HALF_DAYS_ALLOWED": "Medios días permitidos",
+      "POLICY_STATUS": "Estado",
+      "POLICY_CODE": "Código",
+      "POLICY_MAX_BALANCE": "Saldo máximo",
+      "POLICY_CARRY_LIMIT": "Límite de traspaso",
+      "POLICY_HOLIDAY_INCLUSIVE": "Incluye festivos",
+      "POLICY_WEEKEND_INCLUSIVE": "Incluye fines de semana",
+      "POLICY_APPLICABLE_TO": "Aplicable a",
+      "POLICY_ACCRUAL_DEFINATION": "Período de acumulación: El intervalo de tiempo en el que los empleados ganan días de permiso (por ejemplo, cada mes o cada período de pago).",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "Ansammelbetrag: Die Anzahl der Urlaubstage, die ein Mitarbeiter in jedem Ansammelzeitraum erhält.",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "Wochenenden eingeschlossen: Wochenenden werden bei der Berechnung der gesamten freien Tage mitgezählt.",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "Feiertage eingeschlossen: Feiertage werden bei der Berechnung der gesamten freien Tage mitgezählt."
     },
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Mensual",
@@ -734,7 +762,8 @@
     "INVALID_PAID_DAYS": "Los días pagados deben ser no negativos y no pueden exceder el número total de días en el mes",
     "EMP_ID_REQ": "Se requiere la identificación del empleado",
     "INVALID_PAN": "Número PAN no válido",
-    "INVALID_BANK_NO": "Número de cuenta bancaria no válido"
+    "INVALID_BANK_NO": "Número de cuenta bancaria no válido",
+    "CARRY_OVER_TOO_LOW": "El valor trasladado debe ser mayor que el valor acumulado."
   },
   "DATETIME": {
     "TODAY": "Hoy",
@@ -842,7 +871,8 @@
     "PLEASE_SELECT_EMPLOYEE": "Por favor selecciona un empleado",
     "NO_RESULT": "Sin resultados",
     "NO_DEPARTMENTS": "Por favor agrega departamentos",
-    "ADD_LANGUAGE_TITLE": "Por favor ingrese un título para {language}"
+    "ADD_LANGUAGE_TITLE": "Por favor ingrese un título para {language}",
+    "LEAVE_DAYS_CANT_BE_ZERO": "Los días de licencia no pueden ser 0"
   },
   "STATUS_CODES": {
     "1": "La empresa ya existe",

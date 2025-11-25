@@ -1,4 +1,12 @@
-import { Avatar, AvatarGroup, Box, Button, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { ColumnListTypes, SideBarTabListProps } from "../common_types";
 import {
   dateFormatter,
@@ -77,7 +85,8 @@ export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
-export const I18N_CONFIG_KEY = import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
+export const I18N_CONFIG_KEY =
+  import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
 export const DEFAULT_USER_AVATAR = "/media/avatars/default-emp-imag.jpg";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
@@ -90,7 +99,6 @@ export const ServiceUrl = {
   RESET_PASSWORD: `api/account/ResetPassword`,
   REFRESH_TOKEN: `api/account/refresh-token`,
   LOGOUT: `api/account/logout`,
-
 
   // role
   GET_ALL_ROLES: `api/Roles/GetRoles`,
@@ -135,8 +143,8 @@ export const ServiceUrl = {
   MARK_NOTIFICATION_AS_READ: `api/User/Notification`,
   MARK_ALL_NOTIFICATION_AS_READ: `api/User/MarkAllNotificationAsRead`,
   REMOVE_PROFILE_PICTURE: `api/User/RemoveProfileImage`,
-  GET_NOTIFICATION_PREFERENCES: 'api/User/GetNotificationPreferences',
-  UPDATE_NOTIFICATION_PREFERENCES: 'api/User/UpdateNotificationPreferences',
+  GET_NOTIFICATION_PREFERENCES: "api/User/GetNotificationPreferences",
+  UPDATE_NOTIFICATION_PREFERENCES: "api/User/UpdateNotificationPreferences",
 
   SEARCH_EMPLOYEE: `api/User/Search`,
   GET_COLLEGE_LIST: `api/User/GetCollegeList`,
@@ -208,17 +216,25 @@ export const ServiceUrl = {
   GET_LEAVE_TYPES: `api/LeaveManagement/GetLeaveType`,
   GET_LEAVE_BALANCE: `api/LeaveManagement/GetLeaveBalance`,
   CREATE_UPDATE_LEAVE_BALANCE: `api/LeaveManagement/CreateUpdateLeaveBalance`,
-  UPDATE_EMPLOYEE_LEAVE_BALANCE: "api/LeaveManagement/UpdateEmployeeLeaveBalance",
+  UPDATE_EMPLOYEE_LEAVE_BALANCE:
+    "api/LeaveManagement/UpdateEmployeeLeaveBalance",
   GET_LEAVE_POLICIES: "api/LeaveManagement/GetAllLeavePolicies",
+  GET_ALL_EMPLOYEE_LEAVE_BALANCE:
+    "api/LeaveManagement/GetAllEmployeeLeaveBalances",
 
-  CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateUpdateLeave`,
-  GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequest`,
+  CREATE_NEW_LEAVE_POLICY: `api/LeaveManagement/CreateLeavePolicy`,
+  UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,
+
+  CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateLeaveRequest`,
+  UPDATE_LEAVE_REQUEST: `api/LeaveManagement/UpdateLeaveRequest`,
+  GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequests`,
   DELETE_LEAVE_REQUEST: `api/LeaveManagement/DeleteLeaveRequest`,
   GET_EMP_LEAVE_BALANCE: `api/LeaveManagement/GetEmployeeLeaveBalance`,
   UPDATE_LEAVE_REQUEST_STATUS: `api/LeaveManagement/LeaveRequest`,
   GET_MY_LEAVE_REQUEST: `api/LeaveManagement/GetMyLeaveRequests`,
   GET_LEAVE_REQUEST_SUMMARY: "api/LeaveManagement/GetLeaveRequestSummary",
-  GET_MONTHLY_LEAVE_TAKEN_SUMMARY: "api/LeaveManagement/GetMonthlyTakenLeaveSummary",
+  GET_MONTHLY_LEAVE_TAKEN_SUMMARY:
+    "api/LeaveManagement/GetMonthlyTakenLeaveSummary",
 
   // custom attributes
   CREATE_NEW_CUSTOM_ATTRIBUTE: `api/CompanyMaster/CreateCustomAttribute`,
@@ -279,7 +295,7 @@ export const Regex = {
   Phone: /^[6-9]\d{9}$/,
   Password: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
   PanCard: /[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-  BankAccountNo: /^[0-9]{9,18}$/
+  BankAccountNo: /^[0-9]{9,18}$/,
 };
 
 export const Gender = [
@@ -326,7 +342,7 @@ export const EmploymentType = [
     label: "EMPLOYEE.TYPE.APPRENTICESHIP",
     value: EMPLOYMENT.APPRENTICESHIP,
   },
-]
+];
 
 export const NoticeTypes = [
   {
@@ -345,7 +361,6 @@ export const NoticeTypes = [
     value: NOTICE_TYPE.URGENT,
   },
 ];
-
 
 export const EducationType = [
   {
@@ -523,6 +538,11 @@ export const LeaveRequestStatusTypes = [
     label: "LEAVE_REQUEST_STATUS.REJECTED",
     value: LEAVE_REQUEST_STATUS.REJECTED,
   },
+  {
+    id: 4,
+    label: "LEAVE_REQUEST_STATUS.WITHDRAWN",
+    value: LEAVE_REQUEST_STATUS.WITHDRAWN,
+  },
 ];
 
 export const LeaveTypeConstant = [
@@ -580,7 +600,8 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   {
     id: "phoneNumber",
     label: "FORM.PHONE",
-    format: (phone: string | null) => phone ?? <FormattedMessage id="NOT_AVAILABLE" />
+    format: (phone: string | null) =>
+      phone ?? <FormattedMessage id="NOT_AVAILABLE" />,
   },
   {
     id: "department",
@@ -710,21 +731,23 @@ export const NoticeBoardTableColumnList: ColumnListTypes[] = [
     id: "noticeTitle",
     label: "NOTICE.MESSAGE",
     build: (notice: NoticeResponseModel) => {
-      return <Box
-        component="span"
-        sx={{
-          textOverflow: "ellipsis",
-          maxWidth: 250,
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          display: "inline-block",
-          margin: 0,
-          fontSize: 14,
-          color: notice.viewedStatus ? "text.secondary" : "text.primary"
-        }}
-      >
-        {notice.noticeTitle}
-      </Box>
+      return (
+        <Box
+          component="span"
+          sx={{
+            textOverflow: "ellipsis",
+            maxWidth: 250,
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            margin: 0,
+            fontSize: 14,
+            color: notice.viewedStatus ? "text.secondary" : "text.primary",
+          }}
+        >
+          {notice.noticeTitle}
+        </Box>
+      );
     },
   },
 ];
@@ -786,28 +809,36 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     id: "views",
     label: "NOTICE.VIEWS",
     build: (views: ViewModel) => {
-      return views.length === 0 ?
-        "_" :
-        <AvatarGroup spacing={20} className="justify-content-end" total={views.length} slotProps={{
-          additionalAvatar: {
-            sx: {
-              width: 32,
-              height: 32,
-              left: 10,
-            }
-          }
-        }}
+      return views.length === 0 ? (
+        "_"
+      ) : (
+        <AvatarGroup
+          spacing={20}
+          className="justify-content-end"
+          total={views.length}
+          slotProps={{
+            additionalAvatar: {
+              sx: {
+                width: 32,
+                height: 32,
+                left: 10,
+              },
+            },
+          }}
           renderSurplus={(surplus) => <span>+{surplus.toString()[0]}</span>}
         >
-          {
-            views.slice(0, 8).map(view => (
-              <Tooltip key={view.employeeId} title={view.employeeName}>
-                <Avatar alt={view.employeeName} src={view.profileUrl ?? DEFAULT_USER_AVATAR} sx={{ width: 32, height: 32 }} />
-              </Tooltip>
-            ))
-          }
+          {views.slice(0, 8).map((view) => (
+            <Tooltip key={view.employeeId} title={view.employeeName}>
+              <Avatar
+                alt={view.employeeName}
+                src={view.profileUrl ?? DEFAULT_USER_AVATAR}
+                sx={{ width: 32, height: 32 }}
+              />
+            </Tooltip>
+          ))}
         </AvatarGroup>
-    }
+      );
+    },
   },
   {
     id: "action",
@@ -981,8 +1012,10 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
     sorting: true,
     format: (value: number) => {
       const experience = (value / 12).toFixed(1);
-      return <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
-    }
+      return (
+        <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
+      );
+    },
   },
   {
     id: "applyDate",
@@ -1307,6 +1340,89 @@ export const EmployeeLeaveBalanceColumnList: ColumnListTypes[] = [
       row: LeaveBalance,
       handleLeaveBalanceEdit: (row: LeaveBalance) => void
     ) => <ActionComponent row={row} handleEdit={handleLeaveBalanceEdit} />,
+  },
+];
+
+export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
+  {
+    id: "name",
+    label: "LEAVE.TYPES.POLICY_NAME",
+  },
+  {
+    id: "code",
+    label: "LEAVE.TYPES.POLICY_CODE",
+  },
+  {
+    id: "paid",
+    label: "LEAVE.TYPES.POLICY_PAID",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },
+  {
+    id: "accrualPeriod",
+    label: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD",
+    build: (value: number) => {
+      return (
+        value &&
+        (value === 1 ? (
+          <Typography>Monthly</Typography>
+        ) : value === 2 ? (
+          <Typography>Yearly</Typography>
+        ) : (
+          <Typography>None</Typography>
+        ))
+      );
+    },
+  },
+  {
+    id: "carryOverAllowed",
+    label: "LEAVE.TYPES.POLICY_CARRY_OVER_ALLOWED",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },
+  {
+    id: "minNoticeDays",
+    label: "LEAVE.TYPES.POLICY_MIN_NOTICE_DAYS",
+  },
+  {
+    id: "halfDayAllowed",
+    label: "LEAVE.TYPES.POLICY_HALF_DAYS_ALLOWED",
+    build: (value: boolean) => {
+      return value ? (
+        <Check className="text-success fs-20" />
+      ) : (
+        <Close className="text-danger fs-20" />
+      );
+    },
+  },
+  {
+    id: "status",
+    label: "LEAVE.TYPES.POLICY_STATUS",
+    build: (status: boolean) => {
+      return (
+        <StyleStatus
+          label={statusDecoder(status)}
+          className={clsx({ success: status, danger: !status })}
+        />
+      );
+    },
+  },
+  {
+    id: "action",
+    label: "ACTION",
+    build: (row: LeaveType, handleLeaveTypeEdit: (row: LeaveType) => void) => (
+      <ActionComponent row={row} handleEdit={handleLeaveTypeEdit} />
+    ),
   },
 ];
 

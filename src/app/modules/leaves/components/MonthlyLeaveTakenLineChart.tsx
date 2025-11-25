@@ -17,6 +17,8 @@ export const MonthlyLeaveTakenLineChart = () => {
             try {
                 const { data } = await getMonthlyLeaveTakenSummary(new Date().getFullYear());
                 if (data.success) {
+                    // console.log(data.methodResults);
+                    
                     setChartData(data.methodResults);
                 }
             }

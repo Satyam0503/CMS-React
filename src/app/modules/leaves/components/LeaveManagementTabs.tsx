@@ -4,6 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom"
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
 import { checkIsActive } from "../../../../_themes/helpers";
+import PolicyIcon from '@mui/icons-material/Policy';
 import { useIntl } from "react-intl";
 
 const tabsRoutes: TabModel[] = [
@@ -19,11 +20,17 @@ const tabsRoutes: TabModel[] = [
         title: "LEAVE.TITLES.LEAVE_BALANCE",
         icon: <AccountBalanceWallet />,
     },
+    // {
+    //     tabId: 3,
+    //     to: "leavetypes",
+    //     title: "LEAVE.TITLES.LEAVE_TYPES",
+    //     icon: <DynamicFeed />,
+    // },
     {
-        tabId: 3,
-        to: "leavetypes",
-        title: "LEAVE.TITLES.LEAVE_TYPES",
-        icon: <DynamicFeed />,
+        tabId: 4,
+        to: "leavepolicies",
+        title: "LEAVE.TITLES.LEAVE_POLICIES",
+        icon: <PolicyIcon />,
     },
 ];
 

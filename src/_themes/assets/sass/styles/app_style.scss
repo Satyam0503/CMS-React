@@ -155,11 +155,6 @@ input:-webkit-autofill {
   color: var(--mui-palette-primary-darker);
 }
 
-// .pdf_viewer {
-//   max-width: 100% !important;
-//   width: 100% !important;
-// }
-
 canvas {
   width: 100% !important;
   height: auto !important;
@@ -392,6 +387,51 @@ button:hover .ql-fill,
   }
 }
 
+.holiday-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
+  justify-content: space-evenly;
+  gap: 4rem 2rem;
+  margin-block: 5rem !important;
+  // flex-grow: 1;
+
+  .holiday-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: visible;
+    height: 300px;
+    padding: 0.75rem;
+    background-color: $neutral-200;
+    z-index: 1;
+    color: $app-black;
+
+    & > .board-holder {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 4rem;
+      width: 4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $app-black;
+      font-weight: bold;
+      background-color: $app-secondary-300;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+    & > .holiday-card-content {
+      flex-grow: 1;
+      font-style: italic;
+      color: $app-black;
+      padding-block: 1rem;
+      margin-block-start: 1rem;
+    }
+  }
+}
 .reset-padding {
   .MuiStack-root {
     padding-top: 0 !important;
@@ -607,7 +647,7 @@ button:hover .ql-fill,
         font-weight: 600;
 
         .count-div {
-          height: 24px;
+          height: 20px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -632,6 +672,13 @@ button:hover .ql-fill,
           background-color: $info-800;
         }
       }
+    }
+
+    .holiday-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
     }
   }
 
@@ -668,6 +715,19 @@ button:hover .ql-fill,
       align-items: center;
       gap: 0.5rem;
       height: 100%;
+    }
+
+    .calendar-filters {
+      .MuiFormControl-root {
+        .MuiInputBase-root {
+          .MuiSelect-select {
+            display: flex;
+            font-size: 16px;
+            justify-content: start;
+            align-items: center;
+          }
+        }
+      }
     }
   }
 
@@ -718,6 +778,10 @@ button:hover .ql-fill,
         text-overflow: ellipsis;
         font-weight: 600;
         font-size: 14px;
+
+        p {
+          font-weight: 600;
+        }
       }
 
       .holiday-dot-color {
@@ -741,6 +805,15 @@ button:hover .ql-fill,
           width: 8px;
         }
       }
+    }
+
+    .calendar-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: start;
+      justify-content: start;
+      gap: 0;
+      grid-auto-rows: min-content;
     }
 
     .hover-theme-color {
@@ -932,4 +1005,16 @@ button:hover .ql-fill,
       text-wrap: balance;
     }
   }
+}
+
+.applicable-employees-select {
+  .MuiFormControl-root {
+    .MuiInputBase-root {
+      padding: 0;
+    }
+  }
+}
+
+.leave-policy-checkbox {
+  margin-left: 0;
 }

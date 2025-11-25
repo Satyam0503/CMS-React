@@ -14,7 +14,6 @@ export const initialLeaveRequestFilter: LeaveRequestsFilterModel = {
     startDate: null,
     endDate: null,
     status: null,
-    leaveType: null,
 }
 
 export const LeaveRequestFilter = () => {
@@ -27,6 +26,8 @@ export const LeaveRequestFilter = () => {
             enableReinitialize: true,
             validationSchema: leaveRequestFilterValidationSchema,
             onSubmit: (values) => {
+                // console.log(values);
+                
                 dispatch(setLeaveRequestFilter(values));
             },
         });
@@ -39,25 +40,12 @@ export const LeaveRequestFilter = () => {
             page: "leaveRequest"
         }));
     }
+
+    // console.log(errors);
+    
     return (
         <form onSubmit={handleSubmit} className="leave-request-filter">
             <Box component="div" className="filter-fields">
-                <FormControl className="mt-2" fullWidth>
-                    <InputLabel id="leave-type">{i({ id: "LEAVE.LEAVE_TYPE" })}</InputLabel>
-                    <Select
-                        labelId="leave-type"
-                        label={i({ id: "LEAVE.LEAVE_TYPE" })}
-                        size="small"
-                        {...getFieldProps("leaveType")}
-                        value={values.leaveType ?? ""}
-                    >
-                        {
-                            LeaveTypeConstant.map(type => {
-                                return <MenuItem value={type.value} key={type.id}>{i({ id: type.label })}</MenuItem>
-                            })
-                        }
-                    </Select>
-                </FormControl>
                 <FormControl className="mt-2" fullWidth>
                     <InputLabel id="leave-request-status" >{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
                     <Select

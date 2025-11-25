@@ -21,13 +21,22 @@ import {
   LeaveRequestApprovalPayload,
   GetLeaveRequestsSummary,
   MonthlyLeaveTakenSummary,
-  LeavePolicy,
+  LeavePolicyModel,
+  EmployeeLeaveBalanceFilter,
+  EmployeeLeaveBalanceData,
 } from "./model";
 
 export const createUpdateLeaveType = (payload: LeaveType) => {
   return postRequest<LeaveType, ApiResponse>(
     ServiceUrl.CREATE_UPDATE_LEAVE_TYPE,
     payload
+  );
+};
+export const getLeavePolicies = (status?: boolean) => {
+  return postRequest<unknown, ResponseData<Omit<LeavePolicyModel, "applicableTo">>>(
+    ServiceUrl.GET_LEAVE_POLICIES,
+    {},
+    { params: { status: status } }
   );
 };
 
@@ -39,6 +48,14 @@ export const getLeaveTypes = (isActive?: boolean) => {
   }
   return getRequest<GetLeaveTypeResponse>(ServiceUrl.GET_LEAVE_TYPES);
 };
+
+export const createLeavePolicy = (payload: LeavePolicyModel)=>{
+  return postRequest<LeavePolicyModel, ApiResponse>(ServiceUrl.CREATE_NEW_LEAVE_POLICY, payload)
+}
+
+export const updateLeavePolicy = (payload: LeavePolicyModel)=>{
+  return postRequest<LeavePolicyModel, ApiResponse>(ServiceUrl.UPDATE_LEAVE_POLICY, payload)
+}
 
 export const createUpdateLeaveBalance = (payload: LeaveBalanceRequestModel) => {
   return postRequest<LeaveBalanceRequestModel, ApiResponse>(
@@ -60,6 +77,13 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
     payload
   );
 };
+
+export const updateLeaveRequest = (payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    ServiceUrl.UPDATE_LEAVE_REQUEST,
+    payload
+  );
+}
 
 export const getAllLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
   return postRequest<GetLeaveRequestPayLoad, GetLeaveRequestsResponse>(
@@ -115,10 +139,6 @@ export const updateEmployeeLeaveBalance = (payload: EmployeeLeaveBalance) => {
   );
 };
 
-export const getLeavePolicies = (status?: boolean) => {
-  return postRequest<unknown, ResponseData<LeavePolicy>>(
-    ServiceUrl.GET_LEAVE_POLICIES,
-    {},
-    { params: { status: status } }
-  );
-};
+export const getAllEmployeeLeaveBalance = (payload: EmployeeLeaveBalanceFilter)=>{
+  return postRequest<EmployeeLeaveBalanceFilter, ResponseData<EmployeeLeaveBalanceData>>(ServiceUrl.GET_ALL_EMPLOYEE_LEAVE_BALANCE, payload)
+}

@@ -33,20 +33,32 @@ type PropsTypes = {
   handleRefresh: () => void;
 };
 
-const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, isEdit, handleRefresh }) => {
-
+const HolidayForm: React.FC<PropsTypes> = ({
+  open,
+  handleClose,
+  initialValues,
+  isEdit,
+  handleRefresh,
+}) => {
   const { formatMessage: i } = useIntl();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, formik: FormikProps<CalendarItem>) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    formik: FormikProps<CalendarItem>
+  ) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const selectedFile = files[0];
-      formik.setFieldTouched("image", true, true)
-      formik.setFieldValue("image", selectedFile, true)
+      formik.setFieldTouched("image", true, true);
+      formik.setFieldValue("image", selectedFile, true);
     }
-  }
+  };
+  // console.log(formik.values.recurring);
 
-  const handleAddUpdateHoliday = async (values: CalendarItem, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleAddUpdateHoliday = async (
+    values: CalendarItem,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
     try {
       const formData = new FormData();
       if (isEdit) {
@@ -61,12 +73,21 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
 
       const { data } = await addEditCalendarItem(formData);
       if (data.success) {
-        toast.success(i({ id: isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.HOLIDAY_CREATE" }))
+        toast.success(
+          i({
+            id: isEdit
+              ? "TOAST.SUCCESS.UPDATE"
+              : "TOAST.SUCCESS.HOLIDAY_CREATE",
+          })
+        );
         handleRefresh();
         handleClose();
-      }
-      else {
-        toast.error(i({ id: isEdit ? "TOAST.FAILED.UPDATE" : "TOAST.FAILED.HOLIDAY_CREATE" }))
+      } else {
+        toast.error(
+          i({
+            id: isEdit ? "TOAST.FAILED.UPDATE" : "TOAST.FAILED.HOLIDAY_CREATE",
+          })
+        );
       }
     } catch (error) {
       console.error(error);
@@ -75,10 +96,15 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
     }
   };
 
-
   return (
-    <CustomisedModal open={open} handleClose={handleClose}
-      title={isEdit ? i({ id: "OCCASION.EDIT_OCCASION" }) : i({ id: "OCCASION.ADD_OCCASION" })}
+    <CustomisedModal
+      open={open}
+      handleClose={handleClose}
+      title={
+        isEdit
+          ? i({ id: "OCCASION.EDIT_OCCASION" })
+          : i({ id: "OCCASION.ADD_OCCASION" })
+      }
     >
       <Formik
         initialValues={initialValues}
@@ -89,14 +115,15 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
       >
         {(formik) => {
           return (
-            <form onSubmit={formik.handleSubmit} >
+            <form onSubmit={formik.handleSubmit}>
               <Grid container spacing={2}>
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6
+                    md: 6,
                   }}
-                  className="pt-2">
+                  className="pt-2"
+                >
                   <TextInput
                     required={true}
                     label={i({ id: "OCCASION.NAME" })}
@@ -108,11 +135,14 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6
-                  }}>
+                    md: 6,
+                  }}
+                >
                   <CustomisedDatePicker
                     label={i({ id: "OCCASION.DATE" })}
-                    value={formik.values.date ? dayjs(formik.values.date) : null}
+                    value={
+                      formik.values.date ? dayjs(formik.values.date) : null
+                    }
                     setValue={(newDate: Dayjs | null) => {
                       formik.setFieldTouched("date", true);
                       formik.setFieldValue("date", newDate);
@@ -120,37 +150,56 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                     name="date"
                   />
                   <FormHelperText>
-                    {formik.touched.date && formik.errors.date && formik.errors.date}
+                    {formik.touched.date &&
+                      formik.errors.date &&
+                      formik.errors.date}
                   </FormHelperText>
                 </Grid>
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6
-                  }} className="d-flex align-items-center gap-2">
-                  <Typography >{i({ id: "OCCASION.TYPE" })} :</Typography>
+                    md: 6,
+                  }}
+                  className="d-flex align-items-center gap-2"
+                >
+                  <Typography>{i({ id: "OCCASION.TYPE" })} :</Typography>
                   <RadioGroup
                     row
                     aria-labelledby="demo-radio-buttons-group-label"
                     // defaultValue="1"
-                    {...formik.getFieldProps('type')}
+                    {...formik.getFieldProps("type")}
                   >
-                    <FormControlLabel value="1" control={<Radio />} label={i({ id: "OCCASION.TYPES.HOLIDAY" })} />
-                    <FormControlLabel value="2" control={<Radio />} label={i({ id: "OCCASION.TYPES.EVENT" })} />
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio />}
+                      label={i({ id: "OCCASION.TYPES.HOLIDAY" })}
+                    />
+                    <FormControlLabel
+                      value="2"
+                      control={<Radio />}
+                      label={i({ id: "OCCASION.TYPES.EVENT" })}
+                    />
                   </RadioGroup>
                 </Grid>
 
                 <Grid
                   size={{
                     xs: 12,
-                    md: 6
-                  }}>
+                    md: 6,
+                  }}
+                >
                   <FormControlLabel
-                    control={<Checkbox defaultChecked value={formik.values.recurring} onChange={(e, checked) => {
-                      formik.setFieldValue("recurring", checked)
-                    }} />}
-                    label={i({ id: "OCCASION.RECURRING", })}
-                  // name="recurring"
+                    control={
+                      <Checkbox
+                        defaultChecked
+                        value={formik.values.recurring}
+                        onChange={(e, checked) => {
+                          formik.setFieldValue("recurring", checked);
+                        }}
+                      />
+                    }
+                    label={i({ id: "OCCASION.RECURRING" })}
+                    // name="recurring"
                   />
                 </Grid>
 
@@ -170,18 +219,29 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
               </Grid>
 
               <Stack className="mt-4">
-                <FormLabel>
-                  {i({ id: "OCCASION.OCCASION_IMAGE" })}
-                </FormLabel>
-                <Box component="div"
+                <FormLabel>{i({ id: "OCCASION.OCCASION_IMAGE" })}</FormLabel>
+                <Box
+                  component="div"
                   sx={{
                     border: 1,
                     borderRadius: 1,
-                    borderColor: 'text.disabled'
+                    borderColor: "text.disabled",
                   }}
                   className="d-flex flex-column align-items-center text-center p-4 "
                 >
-                  <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: formik.touched.imageUrl && Boolean(formik.errors.imageUrl) ? 'error.main' : 'primary.main' }}>
+                  <IconButton
+                    component="label"
+                    role="button"
+                    aria-label="select logo"
+                    sx={{
+                      border: 0,
+                      color:
+                        formik.touched.imageUrl &&
+                        Boolean(formik.errors.imageUrl)
+                          ? "error.main"
+                          : "primary.main",
+                    }}
+                  >
                     <CloudUploadOutlined className="fs-36" />
                     <input
                       name="image"
@@ -192,13 +252,22 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
                     />
                   </IconButton>
                   <Stack>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}> {i({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: formik.values.image?.name ?? "" })}</Typography>
-                    {
-                      (formik.touched.imageUrl && formik.errors.imageUrl) ?
-                        <Typography variant="body2" sx={{ color: 'error.main' }}>{i({ id: formik.errors.imageUrl })}</Typography>
-                        :
-                        <Typography variant="body2">{i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}</Typography>
-                    }
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {" "}
+                      {i(
+                        { id: "COMPANY_DETAILS.SELECTED_LOGO" },
+                        { image: formik.values.image?.name ?? "" }
+                      )}
+                    </Typography>
+                    {formik.touched.imageUrl && formik.errors.imageUrl ? (
+                      <Typography variant="body2" sx={{ color: "error.main" }}>
+                        {i({ id: formik.errors.imageUrl })}
+                      </Typography>
+                    ) : (
+                      <Typography variant="body2">
+                        {i({ id: "VALIDATION_ERR.PICTURE_FORMAT" })}
+                      </Typography>
+                    )}
                   </Stack>
                 </Box>
               </Stack>
@@ -220,7 +289,7 @@ const HolidayForm: React.FC<PropsTypes> = ({ open, handleClose, initialValues, i
           );
         }}
       </Formik>
-    </CustomisedModal >
+    </CustomisedModal>
   );
 };
 

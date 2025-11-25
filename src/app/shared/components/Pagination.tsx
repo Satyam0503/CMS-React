@@ -3,13 +3,13 @@ import { Stack, TablePagination } from "@mui/material";
 type PropsTypes = {
   page: number;
   rowsPerPage: number;
-  setRowPerPage: (rowPerPage:number)=>void;
-  setPage:(pageValue:number)=>void;
+  setRowPerPage: (rowPerPage: number) => void;
+  setPage: (pageValue: number) => void;
   totalRecords: number;
 };
 
 export const Pagination = (props: PropsTypes) => {
-  const { page, rowsPerPage, setPage,setRowPerPage, totalRecords } = props;
+  const { page, rowsPerPage, setPage, setRowPerPage, totalRecords } = props;
 
   const handlePageChange = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -27,7 +27,7 @@ export const Pagination = (props: PropsTypes) => {
   return (
     <Stack direction={"column"} spacing={2}>
       <TablePagination
-        count={totalRecords }
+        count={totalRecords}
         component="div"
         page={page}
         onPageChange={handlePageChange}

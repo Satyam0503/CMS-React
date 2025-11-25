@@ -61,19 +61,21 @@ const EmployeeAttendance: FC = () => {
       sx={{
         display: "flex",
         gap: 2,
+        // width: "100%",
       }}
     >
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ width: "100%" }}>
         <Grid
           size={{
             xs: 12,
             sm: 6,
-            md: 3
-          }}>
+            md: 3,
+          }}
+        >
           <Card>
             <CardContent>
               <IconStat
-                iconBg={'#d9e5f5'}
+                iconBg={"#d9e5f5"}
                 iconColor="info.dark"
                 icon={<EventAvailable fontSize="large" />}
                 number={"175"}
@@ -87,12 +89,13 @@ const EmployeeAttendance: FC = () => {
           size={{
             xs: 12,
             sm: 6,
-            md: 3
-          }}>
+            md: 3,
+          }}
+        >
           <Card>
             <CardContent>
               <IconStat
-                iconBg={'#d9f5df'}
+                iconBg={"#d9f5df"}
                 icon={<TimerOffOutlined fontSize="large" />}
                 iconColor={"success.light"}
                 number={"16"}
@@ -105,8 +108,9 @@ const EmployeeAttendance: FC = () => {
           size={{
             xs: 12,
             sm: 6,
-            md: 3
-          }}>
+            md: 3,
+          }}
+        >
           <Card>
             <CardContent>
               <IconStat
@@ -123,8 +127,9 @@ const EmployeeAttendance: FC = () => {
           size={{
             xs: 12,
             sm: 6,
-            md: 3
-          }}>
+            md: 3,
+          }}
+        >
           <Card>
             <CardContent>
               <IconStat
@@ -157,9 +162,12 @@ const EmployeeAttendance: FC = () => {
       </Grid>
       <Grid size={12}>
         <Card sx={{ p: "2rem" }}>
-          <Typography variant="h6" sx={{
-            mb: 3
-          }}>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 3,
+            }}
+          >
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
           <Stack
@@ -169,8 +177,9 @@ const EmployeeAttendance: FC = () => {
               justifyContent: "space-between",
               alignItems: "center",
               flexWrap: "wrap-reverse",
-              gap: 2
-            }}>
+              gap: 2,
+            }}
+          >
             <SearchInput search={searchValue} setSearch={handleSearchChange} />
 
             <Stack direction="row" spacing={1}>
@@ -189,9 +198,7 @@ const EmployeeAttendance: FC = () => {
           />
         </Card>
       </Grid>
-      <Grid size={12}>
-
-      </Grid>
+      <Grid size={12}></Grid>
     </Grid>
   );
 };

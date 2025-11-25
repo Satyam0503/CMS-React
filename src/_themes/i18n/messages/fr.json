@@ -78,7 +78,8 @@
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "En attente",
     "APPROVED": "Approuvé",
-    "REJECTED": "Rejeté"
+    "REJECTED": "Rejeté",
+    "WITHDRAWN": "Retirée"
   },
   "CONFIRMATION": {
     "TITLE": {
@@ -359,14 +360,41 @@
       "EDIT_LEAVE_TYPE": "Modifier le type de congé",
       "UPDATE_LEAVE_STATUS": "Mettre à jour le statut du congé",
       "MONTHLY_LEAVE_SUMMARY": "Résumé mensuel des congés",
-      "LEAVE_TAKEN": "Congés pris"
+      "LEAVE_TAKEN": "Congés pris",
+      "LEAVE_POLICIES": "Politiques de congé",
+      "ADD_LEAVE_POLICIES": "Ajouter une politique de congé",
+      "LEAVE_WEEKEND": "Week-end",
+      "LEAVE_FULL_DAY": "Journée complète",
+      "LEAVE_HALF_DAY": "Demi-journée",
+      "LEAVE_HOLIDAY": "Jour férié",
+      "MANAGE_LEAVE_ALLOCATION": "Gérer l’allocation des congés",
+      "LEAVE_POLICY": "Politique de congés"
     },
     "TYPES": {
       "CASUAL_LEAVE": "Congé occasionnel",
       "SICK_LEAVE": "Congé maladie",
       "EARNED_LEAVE": "Congé acquis",
       "MATERNITY_LEAVE": "Congé maternité",
-      "PATERNITY_LEAVE": "Congé paternité"
+      "PATERNITY_LEAVE": "Congé paternité",
+      "POLICY_NAME": "Nom",
+      "POLICY_DESCRIPTION": "Description",
+      "POLICY_PAID": "Payé",
+      "POLICY_ACCURAL_PERIOD": "Période d’acquisition",
+      "POLICY_ACCURAL_AMOUNT": "Montant accumulé",
+      "POLICY_CARRY_OVER_ALLOWED": "Report autorisé",
+      "POLICY_MIN_NOTICE_DAYS": "Délai de préavis minimum (jours)",
+      "POLICY_HALF_DAYS_ALLOWED": "Demi-journées autorisées",
+      "POLICY_STATUS": "Statut",
+      "POLICY_CODE": "Code",
+      "POLICY_MAX_BALANCE": "Solde maximal",
+      "POLICY_CARRY_LIMIT": "Limite de report",
+      "POLICY_HOLIDAY_INCLUSIVE": "Jours fériés inclus",
+      "POLICY_WEEKEND_INCLUSIVE": "Week-ends inclus",
+      "POLICY_APPLICABLE_TO": "Applicable à",
+      "POLICY_ACCRUAL_DEFINATION": "Période d’acquisition : L’intervalle de temps pendant lequel les employés accumulent des congés (par exemple, chaque mois ou chaque période de paie).",
+      "POLICY_ACCRUAL_AMOUNT_DEFINATION": "Montant d’acquisition : Le nombre de jours de congé qu’un employé gagne pendant chaque période d’acquisition.",
+      "POLICY_WEEKEND_INCLUSIVE_DEFINATION": "Week-end inclus : Les week-ends sont comptés dans le total des jours de congé.",
+      "POLICY_HOLIDAY_INCLUSIVE_DEFINATION": "Jours fériés inclus : Les jours fériés sont comptés dans le total des jours de congé."
     },
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Mensuel",
@@ -731,7 +759,8 @@
     "INVALID_PAID_DAYS": "Les jours payés doivent être non négatifs et ne peuvent pas dépasser le nombre total de jours dans le mois",
     "EMP_ID_REQ": "L'identifiant employé est requis",
     "INVALID_PAN": "Numéro PAN invalide",
-    "INVALID_BANK_NO": "Numéro de compte bancaire invalide"
+    "INVALID_BANK_NO": "Numéro de compte bancaire invalide",
+    "CARRY_OVER_TOO_LOW": "La valeur reportée doit être supérieure à la valeur d’accumulation."
   },
   "DATETIME": {
     "TODAY": "Aujourd’hui",
@@ -839,7 +868,8 @@
     "PLEASE_SELECT_EMPLOYEE": "Veuillez sélectionner un employé",
     "NO_RESULT": "Aucun résultat",
     "NO_DEPARTMENTS": "Veuillez ajouter des départements",
-    "ADD_LANGUAGE_TITLE": "Veuillez saisir un titre pour {language}"
+    "ADD_LANGUAGE_TITLE": "Veuillez saisir un titre pour {language}",
+    "LEAVE_DAYS_CANT_BE_ZERO": "Les jours de congé ne peuvent pas être 0"
   },
   "STATUS_CODES": {
     "1": "L'entreprise existe déjà",

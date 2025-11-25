@@ -141,6 +141,7 @@ export enum LEAVE_REQUEST_STATUS {
   PENDING = 1,
   APPROVED = 2,
   REJECTED = 3,
+  WITHDRAWN = 4,
 }
 
 export enum JOB_TYPE_ENUM {
