@@ -187,29 +187,23 @@ export const LeaveApplication = (props: Props) => {
       return;
     }
 
-    if (
-      countHolidayDays(
-        values.startDate,
-        values.endDate,
-        values.leavePolicyId,
-        values.isHalfDay
-      )! > 0
-    ) {
-      setStatus(i({ id: "MESSAGE.LEAVE_DAYS_CANT_BE_ZERO" }));
-      setSubmitting(false);
-      return;
-    }
     const totalDays = countHolidayDays(
       values.startDate,
       values.endDate,
       values.leavePolicyId,
       values.isHalfDay
     );
+
+    if (totalDays && totalDays <= 0) {
+      setStatus(i({ id: "MESSAGE.LEAVE_DAYS_CANT_BE_ZERO" }));
+      setSubmitting(false);
+      return;
+    }
     const remainingLeaveForTypes =
       leaveTypeBalance.find(
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.balance ?? 0;
-    console.log(remainingLeaveForTypes);
+    // console.log(remainingLeaveForTypes);
 
     if (totalDays && totalDays > remainingLeaveForTypes) {
       setStatus(
@@ -365,8 +359,9 @@ export const LeaveApplication = (props: Props) => {
                 <Grid
                   size={{
                     xs: 12,
-                    sm: 6
-                  }}>
+                    sm: 6,
+                  }}
+                >
                   <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
                     value={values.startDate}
@@ -392,8 +387,9 @@ export const LeaveApplication = (props: Props) => {
                 <Grid
                   size={{
                     xs: 12,
-                    sm: 6
-                  }}>
+                    sm: 6,
+                  }}
+                >
                   <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
                     value={values.isHalfDay ? values.startDate : values.endDate}
@@ -423,7 +419,8 @@ export const LeaveApplication = (props: Props) => {
                       marginTop: "10px",
                       paddingRight: "10px",
                     }}
-                    size={12}>
+                    size={12}
+                  >
                     <>
                       {!values.isHalfDay ? (
                         getDatesBetween(values?.startDate, values?.endDate).map(
