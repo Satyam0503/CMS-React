@@ -244,7 +244,7 @@ export const LeaveApprovalModal = ({
     comment: leaveRequest.comment,
   });
 
-  console.log(leaveData);
+  // console.log(leaveData);
 
   const handleLeaveStatusUpdate = async () => {
     try {
@@ -302,7 +302,8 @@ export const LeaveApprovalModal = ({
                 value={item.value}
                 key={item.id}
                 disabled={
-                  leaveRequest.status !== LEAVE_REQUEST_STATUS.PENDING &&
+                  (leaveRequest.status !== LEAVE_REQUEST_STATUS.PENDING &&
+                    item.value === LEAVE_REQUEST_STATUS.PENDING) ||
                   item.value === LEAVE_REQUEST_STATUS.WITHDRAWN
                 }
               >
