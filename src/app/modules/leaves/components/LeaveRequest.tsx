@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { LeaveRequestStatusTypes } from "../../../../utils/constant/Constant";
 import {
@@ -29,7 +29,7 @@ import {
 import { Pagination } from "../../../shared/components/Pagination";
 import { getAllLeaveRequest, updateLeaveRequestStatus } from "../leaveServices";
 import clsx from "clsx";
-import { dateFormatter, LeaveTypeMapper } from "../../../../utils/common";
+import { dateFormatter } from "../../../../utils/common";
 import TableSkeleton from "../../../shared/components/TableSkeleton";
 import { ViewLeaveReason } from "../../../shared/components/ViewLeaveReason";
 import { AvatarCell } from "../../../shared/components/AvatarCell";

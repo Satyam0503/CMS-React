@@ -807,15 +807,6 @@ button:hover .ql-fill,
       }
     }
 
-    .calendar-days-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      align-items: start;
-      justify-content: start;
-      gap: 0;
-      grid-auto-rows: min-content;
-    }
-
     .hover-theme-color {
       cursor: pointer;
       transition: 0.2s ease-in-out;

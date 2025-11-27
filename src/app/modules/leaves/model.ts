@@ -1,6 +1,10 @@
 import { Dayjs } from "dayjs";
 import { LEAVE_REQUEST_STATUS, LEAVE_TYPE } from "../../../utils/enums";
-import { PaginationModel, ResponseData } from "../../../utils/common_types";
+import {
+  Nullable,
+  PaginationModel,
+  ResponseData,
+} from "../../../utils/common_types";
 
 export interface LeaveType {
   leaveTypeId?: string;
@@ -44,7 +48,7 @@ export type LeaveRequestsFilterModel = {
 };
 
 export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel &
-  PaginationModel & {
+  Nullable<PaginationModel> & {
     employeeId?: string;
   };
 

@@ -213,13 +213,15 @@ export default function CalendarDays(props: Props) {
                                                         slotProps={{
                                                             tooltip: {
                                                                 sx: {
-                                                                    backgroundColor: theme === "dark" ? "background.card" : "background.body",
+                                                                    padding: 1,
+                                                                    backgroundColor: theme === "dark" ? "common.black" : "common.white",
                                                                     color: theme === "light" ? 'black' : "white",
+                                                                    boxShadow: 10
                                                                 },
                                                             },
                                                             arrow: {
                                                                 sx: {
-                                                                    color: theme === "dark" ? "background.card" : "background.body"
+                                                                    color: theme === "dark" ? "common.black" : "common.white"
                                                                 }
                                                             }
                                                         }}
