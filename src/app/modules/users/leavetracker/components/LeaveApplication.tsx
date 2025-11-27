@@ -11,7 +11,7 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField,
+  Stack,
   Typography,
 } from "@mui/material";
 
@@ -25,22 +25,16 @@ import {
 } from "../../../leaves/model";
 import { Formik } from "formik";
 import { leaveRequestValidationSchema } from "../../../../../utils/Schema/leaveManagementValidationSchemas";
-import {
-  getStatusCodeString,
-  LeaveTypeMapper,
-} from "../../../../../utils/common";
+import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  createLeaveRequest,
-  updateLeaveRequest,
-} from "../../../leaves/leaveServices";
+import { createLeaveRequest, updateLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
-import { getAllCalendarItem } from "../../../holidays/holidayServices";
-import { CalendarItem, GetCalendarItemPayload } from "../../../holidays/models";
+import { getHolidays } from "../../../holidays/calendarServices";
+import { HolidayModel, HolidayPayload } from "../../../holidays/models";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -64,17 +58,16 @@ export const LeaveApplication = (props: Props) => {
   const { formatMessage: i } = useIntl();
   const employeeId = useParams().employeeid;
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
-  const [holidayList, setHolidayList] = useState<CalendarItem[]>([]);
+  const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
+  const [filter, setFilter] = useState<HolidayPayload>({
+    fromDate: null,
+    toDate: null,
+  })
 
   useEffect(() => {
-    const payload: GetCalendarItemPayload = {
-      type: 1,
-      year: null,
-    };
-
     const fetchedHolidayData = async () => {
       try {
-        const response = await getAllCalendarItem(payload);
+        const response = await getHolidays(filter);
         const { success, methodResults } = response.data;
         if (success) {
           // console.log(methodResults);
@@ -85,9 +78,10 @@ export const LeaveApplication = (props: Props) => {
         console.error((error as Error).message);
       }
     };
-
-    fetchedHolidayData();
-  }, []);
+    if (filter.fromDate && filter.toDate) {
+      fetchedHolidayData();
+    }
+  }, [filter]);
 
   //Gets the dates between two dates
   const getDatesBetween = (startDate: Dayjs, endDate: Dayjs) => {
@@ -104,73 +98,69 @@ export const LeaveApplication = (props: Props) => {
   };
 
   //Checks if there is a oliday on a given date
-  function checkIfHoliday(date: Dayjs) {
-    return holidayList.some((hol) => {
-      const holidayDate = dayjs(hol.date);
-
-      const sameMonthDay =
-        date.date() === holidayDate.date() &&
-        date.month() === holidayDate.month();
-
-      if (hol.recurring) {
-        return sameMonthDay;
-      }
-
-      return sameMonthDay && date.year() === holidayDate.year();
-    });
-  }
+  const checkIfHoliday = (date: Dayjs) => {
+    return holidayList.some((hol) => date.isSame(dayjs(hol.date), "day"));
+  };
 
   //Checks if it is a weekend on a date
   function checkIfWeekend(date: Dayjs) {
-    if (date.day() === 0 || date.day() === 6) return true;
+    return date.day() === 0 || date.day() === 6;
   }
 
   //Checks how many days an employee will get holidays
+
   function countHolidayDays(
     startDate: Dayjs | null,
     endDate: Dayjs | null,
     leaveTypeId: string | null,
     halfDay: boolean | null
   ) {
-    if (startDate && endDate && leaveTypeId) {
-      const selectedLeave = leaveTypeBalance.find(
-        (leave) => leave.leavePolicyId === leaveTypeId
-      );
-      const selectedDates = getDatesBetween(startDate, endDate);
-      let totalDays = 0;
-      selectedDates.forEach((date) => {
-        const isWeekend = checkIfWeekend(date);
-        const isHoliday = checkIfHoliday(date);
+    if (!startDate || !endDate || !leaveTypeId) return 0;
 
-        if (
-          (!selectedLeave?.weekendInclusive && isWeekend) ||
-          (!selectedLeave?.holidayInclusive && isHoliday)
-        ) {
-          return;
-        } else totalDays += 1;
-      });
+    const selectedLeave = leaveTypeBalance.find(
+      (leave) => leave.leavePolicyId === leaveTypeId
+    );
+    if (!selectedLeave) return 0;
 
-      if (selectedLeave?.halfDayAllowed && halfDay) {
-        return 0.5;
+    // FIX: half-day logic must respect holiday and weekend rules
+    if (halfDay) {
+      const weekend = checkIfWeekend(startDate);
+      const holiday = checkIfHoliday(startDate);
+
+      if ((!selectedLeave.weekendInclusive && weekend) ||
+        (!selectedLeave.holidayInclusive && holiday)) {
+        return 0;
       }
-
-      return totalDays;
+      return 0.5;
     }
+
+    let total = 0;
+    const days = getDatesBetween(startDate, endDate);
+
+    days.forEach((d) => {
+      const weekend = checkIfWeekend(d);
+      const holiday = checkIfHoliday(d);
+
+      if ((!selectedLeave.weekendInclusive && weekend) ||
+        (!selectedLeave.holidayInclusive && holiday)) {
+        return;
+      }
+      total += 1;
+    });
+
+    return total;
   }
 
   const handleLeaveRequestSubmission = async (
     values: RequestLeaveModel,
     setSubmitting: (isSubmitting: boolean) => void,
-    setStatus: (status?: any) => void
+    setStatus: (status?: unknown) => void
   ) => {
     const minAdvanceNoticeDate =
       leaveTypeBalance.find(
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.minNoticeDays ?? 0;
-    const currentNoticeDays = dayjs(values.startDate).diff(
-      dayjs().startOf("day"),
-      "days"
-    );
+    const currentNoticeDays = dayjs(values.startDate).diff(dayjs().startOf("day"), "days");
     if (currentNoticeDays < minAdvanceNoticeDate) {
       setStatus(
         i(
@@ -181,37 +171,23 @@ export const LeaveApplication = (props: Props) => {
             )?.name,
             days: minAdvanceNoticeDate,
           }
-        )
+        ) as string
       );
       setSubmitting(false);
       return;
     }
-
-    if (
-      countHolidayDays(
-        values.startDate,
-        values.endDate,
-        values.leavePolicyId,
-        values.isHalfDay
-      )! > 0
-    ) {
-      setStatus(i({ id: "MESSAGE.LEAVE_DAYS_CANT_BE_ZERO" }));
+    const totalHolidayDays = countHolidayDays(values.startDate, values.endDate, values.leavePolicyId, values.isHalfDay);
+    if (totalHolidayDays === 0) {
+      setStatus(i({ id: "MESSAGE.LEAVE_DAYS_CANT_BE_ZERO" }) as string);
       setSubmitting(false);
       return;
     }
-    const totalDays = countHolidayDays(
-      values.startDate,
-      values.endDate,
-      values.leavePolicyId,
-      values.isHalfDay
-    );
     const remainingLeaveForTypes =
       leaveTypeBalance.find(
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.balance ?? 0;
-    console.log(remainingLeaveForTypes);
 
-    if (totalDays && totalDays > remainingLeaveForTypes) {
+    if (totalHolidayDays > remainingLeaveForTypes) {
       setStatus(
         i(
           { id: "MESSAGE.INSUFFICIENT_LEAVE_ERROR" },
@@ -248,10 +224,10 @@ export const LeaveApplication = (props: Props) => {
             handleRefresh?.();
           }
         } else {
-          toast.error(i({ id: getStatusCodeString(data.statusCode) }));
+          throw new Error(data.statusCode.toString());
         }
       } catch (error) {
-        console.error((error as Error).message);
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as Error).message) }));
       } finally {
         setSubmitting(false);
         setStatus("");
@@ -281,10 +257,20 @@ export const LeaveApplication = (props: Props) => {
           setFieldTouched,
           ...formik
         }) => {
+
+          const updateHolidayFilter = (start: Dayjs | null, end: Dayjs | null) => {
+            if (start && end) {
+              setFilter({
+                fromDate: start,
+                toDate: end,
+              });
+            }
+          };
+
           return (
             <form onSubmit={handleSubmit}>
               {status && (
-                <Alert severity="error" sx={{ my: 2 }} className="mb-5">
+                <Alert severity="error" sx={{ mb: 2 }}>
                   {status}
                 </Alert>
               )}
@@ -309,7 +295,7 @@ export const LeaveApplication = (props: Props) => {
                           key={type.leaveBalanceId}
                           value={type.leavePolicyId}
                         >
-                          {type.name}{" "}
+                          {type.name}
                         </MenuItem>
                       ))}
                     </Select>
@@ -321,11 +307,7 @@ export const LeaveApplication = (props: Props) => {
                       fullWidth
                       className="d-flex flex-row align-items-center gap-4"
                       disabled={
-                        leaveTypeBalance.find(
-                          (type) =>
-                            type.leavePolicyId === values.leavePolicyId &&
-                            !type.halfDayAllowed
-                        )
+                        leaveTypeBalance.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
                           ? true
                           : false
                       }
@@ -339,12 +321,14 @@ export const LeaveApplication = (props: Props) => {
                         row={true}
                         value={values.isHalfDay}
                         onChange={(e, value) => {
-                          if (value == "true") {
+                          const half = value === "true";
+                          setFieldValue("isHalfDay", half);
+
+                          if (half && values.startDate) {
                             setFieldValue("endDate", values.startDate);
-                            setFieldValue("isHalfDay", true);
+                            updateHolidayFilter(values.startDate, values.startDate);
                           } else {
                             setFieldValue("endDate", null);
-                            setFieldValue("isHalfDay", false);
                           }
                         }}
                       >
@@ -371,12 +355,9 @@ export const LeaveApplication = (props: Props) => {
                     label={i({ id: "FORM.START_DATE" })}
                     value={values.startDate}
                     setValue={(newDate: Dayjs | null) => {
+                      // setFieldTouched("startDate", true);
                       if (values.isHalfDay) {
-                        setFieldValue(
-                          "startDate",
-                          newDate?.startOf("day"),
-                          true
-                        );
+                        setFieldValue("startDate", newDate?.startOf("day"), true);
                         setFieldValue("endDate", newDate?.startOf("day"), true);
                       }
                       setFieldTouched("startDate", true);
@@ -397,9 +378,10 @@ export const LeaveApplication = (props: Props) => {
                   <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
                     value={values.isHalfDay ? values.startDate : values.endDate}
-                    setValue={(newDate: Dayjs | null) => {
+                    setValue={(date: Dayjs | null) => {
                       setFieldTouched("endDate", true);
-                      setFieldValue("endDate", newDate?.startOf("day"));
+                      setFieldValue("endDate", date?.startOf("day"));
+                      updateHolidayFilter(values.startDate, date);
                     }}
                     name="endDate"
                     disabled={values.isHalfDay}
@@ -414,29 +396,30 @@ export const LeaveApplication = (props: Props) => {
                   )}
                 </Grid>
                 {values.startDate && values.endDate && (
-                  <Grid
+                  <Stack
+                    direction="column"
                     sx={{
-                      display: "flex",
-                      flexDirection: "column",
+                      width: "100%",
                       overflow: "auto",
                       maxHeight: "150px",
-                      marginTop: "10px",
-                      paddingRight: "10px",
+                      paddingRight: "8px",
+                      marginBlock: "8px"
                     }}
-                    size={12}>
+                  >
                     <>
                       {!values.isHalfDay ? (
                         getDatesBetween(values?.startDate, values?.endDate).map(
                           (leave, index) => {
                             const isWeekend = checkIfWeekend(leave);
                             const isHoliday = checkIfHoliday(leave);
+                            const selectedPolicy = leaveTypeBalance.find(lb => lb.leavePolicyId === values.leavePolicyId);
+
+                            const label = (!selectedPolicy?.weekendInclusive && isWeekend) ? "LEAVE.TITLES.LEAVE_WEEKEND" : (!selectedPolicy?.holidayInclusive && isHoliday) ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY";
                             return (
-                              <Box
-                                component={"div"}
+                              <Stack
+                                direction="row"
                                 key={index}
                                 sx={{
-                                  display: "flex",
-                                  width: "100%",
                                   justifyContent: "space-between",
                                   alignItems: "center",
                                   padding: "8px 12px",
@@ -445,80 +428,61 @@ export const LeaveApplication = (props: Props) => {
                                 }}
                               >
                                 {dayjs(leave).format("DD-MM-YYYY")}
-                                <Box component={"div"}>
+                                <Box component="div">
                                   <Chip
                                     size="small"
                                     variant="outlined"
+                                    // label={
+                                    //   i({ id: isWeekend ? "LEAVE.TITLES.LEAVE_WEEKEND" : isHoliday ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY" })
+                                    // }
                                     label={
-                                      isWeekend
-                                        ? i({
-                                            id: "LEAVE.TITLES.LEAVE_WEEKEND",
-                                          })
-                                        : isHoliday
-                                        ? i({
-                                            id: "LEAVE.TITLES.LEAVE_HOLIDAY",
-                                          })
-                                        : i({
-                                            id: "LEAVE.TITLES.LEAVE_FULL_DAY",
-                                          })
+                                      i({ id: label })
                                     }
                                     sx={{ width: "80px" }}
                                   />
                                 </Box>
-                              </Box>
+                              </Stack>
                             );
                           }
                         )
                       ) : (
-                        <Box
-                          component={"div"}
+                        <Stack
+                          direction="row"
                           sx={{
-                            display: "flex",
-                            width: "100%",
+                            paddingInlineStart: 1,
                             justifyContent: "space-between",
                             alignItems: "center",
                           }}
                         >
                           {dayjs(values.startDate).format("DD-MM-YYYY")}
-                          <Box component={"div"}>
-                            <Chip
-                              label={i({ id: "LEAVE.TITLES.LEAVE_HALF_DAY" })}
-                              sx={{ width: "80px" }}
-                            />
-                          </Box>
-                        </Box>
+                          <Chip
+                            variant="outlined"
+                            label={i({ id: "LEAVE.TITLES.LEAVE_HALF_DAY" })}
+                          />
+                        </Stack>
                       )}
                     </>
-                  </Grid>
+                  </Stack>
                 )}
 
                 {values.startDate && values.endDate && (
-                  <Grid size={12}>
-                    <Box
-                      component={"div"}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        backgroundColor: "rgb(159 159 159 / 38%)",
-                        padding: "5px 8px",
-                        borderRadius: "3px",
-                      }}
-                    >
-                      <Typography variant="body1" color="initial">
-                        {i({ id: "ATTENDANCE.TOTAL" })} {i({ id: "DAYS" })}
-                      </Typography>
-                      <Box sx={{ display: "flex", gap: "5px" }}>
-                        <Typography variant="body1" color="initial">
-                          {countHolidayDays(
-                            values.startDate,
-                            values.endDate,
-                            values.leavePolicyId,
-                            values.isHalfDay
-                          )}
-                        </Typography>
-                        <Typography>{i({ id: "DAYS" })}</Typography>
-                      </Box>
-                    </Box>
+                  <Grid size={12} sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    backgroundColor: "background.body",
+                    padding: "4px 8px",
+                  }}>
+                    <Typography variant="body1">
+                      {i({ id: "ATTENDANCE.TOTAL" })} {i({ id: "DAYS" })}
+                    </Typography>
+                    <Typography>{i({ id: "PLURAL.DAY" }, {
+                      days: countHolidayDays(
+                        values.startDate,
+                        values.endDate,
+                        values.leavePolicyId,
+                        values.isHalfDay
+                      )
+                    })}</Typography>
                   </Grid>
                 )}
                 <Grid size={12}>

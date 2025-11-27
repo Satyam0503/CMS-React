@@ -12,22 +12,23 @@ export interface LeaveType {
 }
 
 export interface RequestLeaveModel {
-  userId: string,
-  leavePolicyId: string,
-  startDate: Dayjs | null,
-  endDate: Dayjs | null,
-  isHalfDay: boolean,
-  reason: string
+  leaveRequestId?: string;
+  userId: string;
+  leavePolicyId: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  isHalfDay: boolean;
+  reason: string;
 }
 
 export type MyLeaveRequestModel = Required<RequestLeaveModel> & {
-  leaveRequestId: string,
-  totalDays: number,
-  reviewedBy: string,
-  comment: string,
-  status: number,
-  leavePolicyName: string,
-  code: string
+  leaveRequestId: string;
+  totalDays: number;
+  reviewedBy: string;
+  comment: string;
+  status: number;
+  leavePolicyName: string;
+  code: string;
 };
 
 export type LeaveRequestModel = Required<MyLeaveRequestModel> & {
@@ -42,9 +43,10 @@ export type LeaveRequestsFilterModel = {
   status: LEAVE_REQUEST_STATUS | null;
 };
 
-export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel & PaginationModel;
-
-
+export type GetLeaveRequestPayLoad = LeaveRequestsFilterModel &
+  PaginationModel & {
+    employeeId?: string;
+  };
 
 export type LeaveBalanceFilter = {
   employeeName?: string;
@@ -74,25 +76,19 @@ export type LeaveBalance = {
   paternityLeave: LeaveBalanceType;
 };
 
-export type LeaveBalanceRequestModel = {
-  id?: string;
-  employeeId: string;
-  leaveTypeBalances: (LeaveTypeBalance | null)[];
-};
-
 export type EmployeeLeaveTypeBalance = {
-  leaveBalanceId : string,
-  leavePolicyId : string,
-  balance: number,
-  usedBalance: number,
-  name: string,
-  code: string,
-  description: string,
-  paid: boolean,
-  minNoticeDays: 0,
-  halfDayAllowed: true,
-  weekendInclusive: true,
-  holidayInclusive: true
+  leaveBalanceId: string;
+  leavePolicyId: string;
+  balance: number;
+  usedBalance: number;
+  name: string;
+  code: string;
+  description: string;
+  paid: boolean;
+  minNoticeDays: number;
+  halfDayAllowed: boolean;
+  weekendInclusive: boolean;
+  holidayInclusive: boolean;
 };
 
 export type LeaveRequestApprovalPayload = {
@@ -104,9 +100,9 @@ export type LeaveRequestSummary = {
   totalRequests: number;
   leaveStatusSummary: Record<number, number>;
   leaveTypeSummary: {
-    leaveTypeCode: string,
-    leaveTypeName: string,
-    statusValues:  Record<number, number>
+    leaveTypeCode: string;
+    leaveTypeName: string;
+    statusValues: Record<number, number>;
   }[];
 };
 
@@ -116,49 +112,48 @@ export type MonthlyLeaveTakenSummary = {
 };
 
 export type LeavePolicyModel = {
-  id: string | null,
-  name: string,
-  code: string,
-  description: string | null,
-  status: boolean,
-  paid: boolean,
-  accrualPeriod: number,
-  accrualAmount: number,
-  maxBalance: number,
-  carryOverAllowed: boolean,
-  carryOverLimit: number,
-  minNoticeDays: number,
-  halfDayAllowed: boolean,
-  weekendInclusive: boolean,
-  holidayInclusive: boolean,
-  applicableTo?: Array<string> | null,
-}
+  id: string | null;
+  name: string;
+  code: string;
+  description: string | null;
+  status: boolean;
+  paid: boolean;
+  accrualPeriod: number;
+  accrualAmount: number;
+  maxBalance: number;
+  carryOverAllowed: boolean;
+  carryOverLimit: number;
+  minNoticeDays: number;
+  halfDayAllowed: boolean;
+  weekendInclusive: boolean;
+  holidayInclusive: boolean;
+  applicableTo?: Array<string> | null;
+};
 
 export type EmployeeLeaveBalanceFilter = {
-  employeeName: string,
-  pageNo: number,
-  pageSize: number,
-  leavePolicies: Array<string>
-  
-}
+  employeeName: string;
+  pageNo: number;
+  pageSize: number;
+  leavePolicies: Array<string>;
+};
 
 export type EmployeeLeaveInfo = {
-  leaveBalanceId: string,
-  leavePolicyId: string,
-  leavePolicyName: string,
-  leavePolicyCode: string,
-  remaining: number,
-  usedLeave: number
-}
+  leaveBalanceId: string;
+  leavePolicyId: string;
+  leavePolicyName: string;
+  leavePolicyCode: string;
+  remaining: number;
+  usedLeave: number;
+};
 
 export type EmployeeLeaveBalanceData = {
-  employeeId: string,
-  employeeName: string,
-  employeeCode: string | null,
-  designation: Record<string, string>,
-  profilePicture: string | null,
-  leaveBalances: Array<EmployeeLeaveInfo>
-}
+  employeeId: string;
+  employeeName: string;
+  employeeCode: string | null;
+  designation: Record<string, string>;
+  profilePicture: string | null;
+  leaveBalances: Array<EmployeeLeaveInfo>;
+};
 
 // export type LeavePolicyData = {
 //   message : string,

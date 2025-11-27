@@ -22,7 +22,7 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CalendarItem } from "../models";
-import { addEditCalendarItem } from "../holidayServices";
+import { addEditCalendarItem } from "../calendarServices";
 import { toast } from "react-toastify";
 
 type PropsTypes = {
@@ -199,7 +199,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       />
                     }
                     label={i({ id: "OCCASION.RECURRING" })}
-                    // name="recurring"
+                  // name="recurring"
                   />
                 </Grid>
 
@@ -237,7 +237,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       border: 0,
                       color:
                         formik.touched.imageUrl &&
-                        Boolean(formik.errors.imageUrl)
+                          Boolean(formik.errors.imageUrl)
                           ? "error.main"
                           : "primary.main",
                     }}

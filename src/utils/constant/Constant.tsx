@@ -115,6 +115,7 @@ export const ServiceUrl = {
   UPDATE_PROFILE_PICTURE: `api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `api/User/EditEmployees`,
 
+  GET_LAST_EMPLOYEE_ID: "api/User/GetLastEmployeeId",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,
   GET_EMPLOYEE_DETAILS: `api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `api/User/GetEmployeeCertificationDetails`,
@@ -207,9 +208,10 @@ export const ServiceUrl = {
   GET_NOTICE_BY_ID: `api/NoticeBoard/GetNoticeById`,
 
   //Calendar
-  GET_ALL_CALENDAR_ITEMS: `${BaseUrl}/api/Calendar/GetAllCalendarItems`,
-  ADD_AND_UPDATE_CALENDAR_ITEMS: `${BaseUrl}/api/Calendar/AddUpdateCalendarItem`,
-  DELETE_CALENDAR_ITEM: `${BaseUrl}/api/Calendar//DeleteCalendarItem`,
+  GET_ALL_CALENDAR_ITEMS: `api/Calendar/GetAllCalendarItems`,
+  ADD_AND_UPDATE_CALENDAR_ITEMS: `api/Calendar/AddUpdateCalendarItem`,
+  DELETE_CALENDAR_ITEM: `api/Calendar/DeleteCalendarItem`,
+  GET_HOLIDAYS: "api/Calendar/GetHolidays",
 
   // leave management
   CREATE_UPDATE_LEAVE_TYPE: `api/LeaveManagement/CreateUpdateLeaveType`,

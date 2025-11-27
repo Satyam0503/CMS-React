@@ -11,7 +11,6 @@ import {
 } from "../../../leaves/leaveServices";
 import {
   Card,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -25,7 +24,6 @@ import { useIntl } from "react-intl";
 import {
   dateFormatter,
   leaveRequestStatusMapper,
-  LeaveTypeMapper,
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import clsx from "clsx";
@@ -40,6 +38,7 @@ import TableSkeleton from "../../../../shared/components/TableSkeleton";
 import { LeaveApplication } from "./LeaveApplication";
 import dayjs from "dayjs";
 import { initialLeaveRequestFilter } from "../../../leaves/components/LeaveRequestFilter";
+import { useParams } from "react-router-dom";
 
 interface PropsType {
   leaveBalance: EmployeeLeaveTypeBalance[];
@@ -60,13 +59,12 @@ export const MyLeaveRequests = ({
   const [leaveRequest, setLeaveRequest] = useState<MyLeaveRequestModel[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [selectedLeaveRequestId, setSelectedLeaveRequestId] = useState<
-    string | null
-  >();
-  const [selectedLeaveRequest, setSelectedLeaveRequest] =
-    useState<MyLeaveRequestModel | null>(null);
+  const [selectedLeaveRequestId, setSelectedLeaveRequestId] = useState<string | null>();
+  const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<MyLeaveRequestModel | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
+  const employeeId = useParams().employeeid;
+
 
   const handlePageChange = (page: number) => {
     setPaginationValues({
@@ -112,6 +110,7 @@ export const MyLeaveRequests = ({
         ...initialLeaveRequestFilter,
         pageNo: paginationValues.pageNo + 1,
         pageSize: paginationValues.records,
+        employeeId: employeeId
       };
       try {
         const { data } = await getMyLeaveRequest(payload);
@@ -263,7 +262,7 @@ export const MyLeaveRequests = ({
           handleClose={handleClose}
           handleRefresh={handleRefresh}
           initialValues={{
-            // leaveType: selectedLeaveRequest.leaveType,
+            leaveRequestId: selectedLeaveRequest.leaveRequestId,
             userId: selectedLeaveRequest.userId,
             leavePolicyId: selectedLeaveRequest.leavePolicyId,
             isHalfDay: selectedLeaveRequest.isHalfDay,

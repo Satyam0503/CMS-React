@@ -465,7 +465,8 @@
     },
     "INVITE_EMP": {
       "HEADING": "",
-      "INVITE_NOTE": "Füllen Sie alle erforderlichen Angaben aus und klicken Sie auf „Einladen“. Eine E-Mail-Einladung wird an die angegebene Adresse gesendet. Sobald der Benutzer seine Zugangsdaten erstellt hat, kann er auf die Plattform zugreifen."
+      "INVITE_NOTE": "Füllen Sie alle erforderlichen Angaben aus und klicken Sie auf „Einladen“. Eine E-Mail-Einladung wird an die angegebene Adresse gesendet. Sobald der Benutzer seine Zugangsdaten erstellt hat, kann er auf die Plattform zugreifen.",
+      "LAST_EMP_ID": "Letzte Mitarbeiter-ID : <strong>{empId}</strong>"
     },
     "UPDATE": {
       "BASIC_INFO": "Grundlegende Informationen",

@@ -9,7 +9,6 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { PhoneAndroidOutlined } from "@mui/icons-material";
 import { EmailRounded } from "@mui/icons-material";
 import { Box, Container, Divider, Grid, Link, Stack } from "@mui/material";
-import companyLogo from '../../../../../public/media/logos/favicon.png'
 
 import {
   List,
@@ -34,10 +33,10 @@ export default function Footer() {
             color: "common.black",
           }}
         >
-          <Box component={'div'} className="footer-company-logo">
+          <Box component='div' className="footer-company-logo">
             <Stack spacing={1}>
-              <Box component={'div'} className="footer-company-logo-container">
-                <img src={companyLogo} alt="" />
+              <Box component='div' className="footer-company-logo-container">
+                <img src={"/media/logos/favicon.png"} alt="" />
               </Box>
               <Stack
                 divider={<Divider orientation="horizontal" />}

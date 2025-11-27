@@ -479,7 +479,8 @@
     },
     "INVITE_EMP": {
       "HEADING": "",
-      "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email. Once the user generate their credentials, they will be able to access the platform"
+      "INVITE_NOTE": "Fill in all the required details and click 'Invite'. An email invitation will be sent to the provided email. Once the user generate their credentials, they will be able to access the platform",
+      "LAST_EMP_ID": "Last Employee ID : <strong>{empId}</strong>"
     },
     "UPDATE": {
       "BASIC_INFO": "Basic Information",
@@ -588,9 +589,9 @@
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
 
-  "VACANCY.TEXT1": " Thank you for exploring our website!",
-  "VACANCY.TEXT2": " Our available positions are being refreshed at the moment. Stay tuned and visit us again soon for updated job openings.We truly appreciate your interest and look forward to the possibility of working together!",
-  "VACANCY.TEXT3": " Please note that we accept applications only on working days, between 9:00 AM and 6:00 PM IST.",
+  "VACANCY.TEXT1": "Thank you for your interest in joining our team!",
+  "VACANCY.TEXT2": "At the moment, we don’t have any open positions available. We’re currently updating our listings, and new opportunities will be posted soon.",
+  "VACANCY.TEXT3": "Please check back again later. We appreciate your time and look forward to the possibility of working together in the future!",
 
   "MESSAGE.APPLICANT.ADD_SUCCESS": "Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "Application has already been submitted. Please reapply after the waiting period",
@@ -792,7 +793,7 @@
     "EMP_ID_REQ": "Employee ID is required",
     "INVALID_PAN": "Invalid Pan number",
     "INVALID_BANK_NO": "Invalid bank account number",
-    "CARRY_OVER_TOO_LOW": "Carry over value should be more than accrual value"
+    "CARRY_OVER_TOO_LOW": "max balance should be more than accrual value"
   },
 
   "DATETIME": {

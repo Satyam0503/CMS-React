@@ -1,4 +1,4 @@
-import { useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { InviteEmployeeResponse, InviteNewEmployeeModel } from "../models";
 import { InputFieldProps, TextInput } from "../../../shared/components/form-component/TextInput";
 import { PersonAdd } from "@mui/icons-material";
@@ -8,6 +8,9 @@ import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
 import { inviteNewEmployee } from "../employeeServices";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
+import { useEffect, useState } from "react";
+import { getLastAddedEmployeeId } from "../../users/userservices";
+import React from "react";
 
 interface PropsTypes {
     handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void,
@@ -32,6 +35,7 @@ const inviteEmployeeFormFields: InputFieldProps[] = [
 export const InviteNewEmployee = (props: PropsTypes) => {
     const { handleInviteUser, formRef, handleButtonLoading } = props
     const { formatMessage: i } = useIntl();
+    const [lastEmployeeId, setLastEmployeeId] = useState<string>("");
 
     const InviteNewEmployee = async (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
         try {
@@ -51,6 +55,21 @@ export const InviteNewEmployee = (props: PropsTypes) => {
             handleButtonLoading(false);
         }
     }
+
+    useEffect(() => {
+        const fetchLastEmployeeId = async () => {
+            try {
+                const { data } = await getLastAddedEmployeeId();
+                if (data.success) {
+                    setLastEmployeeId(data.message);
+                }
+            } catch (error) {
+                console.error("Error fetching last employee ID:", error);
+            }
+        };
+        fetchLastEmployeeId();
+    }, []);
+
     return (
         <Stack spacing={2} sx={{ p: 1 }}>
             <Alert severity="warning" icon={<PersonAdd />}>
@@ -69,15 +88,26 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                         return <form onSubmit={formik.handleSubmit} className="d-flex flex-column gap-3">
                             {
                                 inviteEmployeeFormFields.map(field => (
-                                    <TextInput
-                                        key={field.name}
-                                        labelVarient="seperate"
-                                        label={i({ id: field.label })}
-                                        placeholder={i({ id: field.placeholder })}
-                                        type={field.type}
-                                        name={field.name}
-                                        showErrorLabel={false}
-                                    />
+                                    <React.Fragment key={field.name}>
+                                        <TextInput
+                                            key={field.name}
+                                            labelVarient="seperate"
+                                            label={i({ id: field.label })}
+                                            placeholder={i({ id: field.placeholder })}
+                                            type={field.type}
+                                            name={field.name}
+                                            showErrorLabel={false}
+                                        />
+                                        {
+                                            field.name === "employeeId" && lastEmployeeId &&
+                                            <Alert severity="info" className="my-1">
+                                                <FormattedMessage id="EMPLOYEE.INVITE_EMP.LAST_EMP_ID" values={{
+                                                    empId: lastEmployeeId,
+                                                    strong: (chunks) => <strong>{chunks}</strong>
+                                                }} />
+                                            </Alert>
+                                        }
+                                    </React.Fragment>
                                 ))
                             }
                         </form>

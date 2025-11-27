@@ -1,4 +1,4 @@
-import { Badge, Card, Stack, Typography } from "@mui/material";
+import { Badge, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Download, FilterList } from "@mui/icons-material";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";

@@ -78,10 +78,6 @@ export const getEmployeeSkills = async (userId?: string) => {
   return getRequest<UserSkillsResponseData>(ServiceUrl.GET_EMPLOYEE_SKILLS);
 };
 
-export const updateEmployeeDetails = async (payload: any) => {
-  return postRequest(ServiceUrl.UPDATE_EMPLOYEE, payload);
-};
-
 export const udpateEmployeeSkills = async (payload: {
   skills: Array<string>;
   userId: string;
@@ -273,4 +269,10 @@ export const updateNotificationPreferences = (
     NotificationPreferences,
     ResponseData<NotificationPreferences>
   >(ServiceUrl.UPDATE_NOTIFICATION_PREFERENCES, payload);
+};
+
+//  get last employee id
+
+export const getLastAddedEmployeeId = () => {
+  return getRequest<ApiResponse>(ServiceUrl.GET_LAST_EMPLOYEE_ID);
 };

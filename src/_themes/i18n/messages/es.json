@@ -467,7 +467,8 @@
     },
     "INVITE_EMP": {
       "HEADING": "",
-      "INVITE_NOTE": "Complete todos los datos requeridos y haga clic en 'Invitar'. Se enviará una invitación por correo al email proporcionado. Una vez que el usuario genere sus credenciales, podrá acceder a la plataforma."
+      "INVITE_NOTE": "Complete todos los datos requeridos y haga clic en 'Invitar'. Se enviará una invitación por correo al email proporcionado. Una vez que el usuario genere sus credenciales, podrá acceder a la plataforma.",
+      "LAST_EMP_ID": "Último ID de empleado : <strong>{empId}</strong>"
     },
     "UPDATE": {
       "BASIC_INFO": "Información básica",

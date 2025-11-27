@@ -1,40 +1,34 @@
 import {
-  FormControlLabel,
-  Typography,
   Checkbox,
   TextField,
   Autocomplete,
   ListItemText,
 } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import { Stack } from "@mui/system";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import {
-  AccrualPeriodMapper,
-  blockInvalidCharOnNumberField,
-} from "../../../../utils/common";
+
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { getLeavePolicies } from "../leaveServices";
 import { useIntl } from "react-intl";
 import { LeavePolicyModel } from "../model";
-import { JobType } from "../../../../utils/constant/Constant";
+import { FilterComponent } from "../../../shared/components/FilterComponent";
+import { FilterComponentProps } from "../../../../utils/common_types";
 
 type Props = {
   selectedPolicies: Array<string>;
   handleSelectingPolicies: (policyIds: Array<string>) => void;
   handleRefresh: () => void;
-};
+} & FilterComponentProps;
 
 export default function FilterPolicySearch(props: Props) {
   const { formatMessage: i } = useIntl();
-  const [isLoading, setLoading] = useState(true);
   const [leavePolicies, setLeavePolicies] = useState<Array<LeavePolicyModel>>(
     []
   );
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
       try {
         const { data } = await getLeavePolicies(true);
         if (data) {
@@ -42,14 +36,12 @@ export default function FilterPolicySearch(props: Props) {
         }
       } catch (error) {
         console.error((error as Error).message);
-      } finally {
-        setLoading(false);
       }
     })();
   }, []);
 
   return (
-    <Box component={"div"}>
+    <FilterComponent open={props.open} handleClose={props.handleClose} anchorEl={props.anchorEl}>
       <Formik
         enableReinitialize={true}
         initialValues={{
@@ -59,67 +51,16 @@ export default function FilterPolicySearch(props: Props) {
           props.handleSelectingPolicies(values.selectedPolicies);
           setSubmitting(false);
           props.handleRefresh();
-          // console.log(values.selectedPolicies);
+          props.handleClose();
         }}
       >
         {({
           values,
           setFieldValue,
-          setFieldTouched,
           handleSubmit,
-          setValues,
           ...formik
         }) => (
           <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-            {/* {leavePolicies.map((policy) => {
-              const isChecked = values.selectedPolicies.includes(policy.id!);
-              console.log(values);
-
-              // console.log(lb);
-
-              const handleLeavePolicyChange = (id: string) => {
-                if (isChecked) {
-                  setFieldValue(
-                    "selectedPolicies",
-                    values.selectedPolicies.filter((p) => p !== id)
-                  );
-                } else {
-                  setFieldValue("selectedPolicies", [
-                    ...values.selectedPolicies,
-                    id,
-                  ]);
-                }
-              };
-
-              return (
-                <Stack direction="row" key={policy.id}>
-                  <FormControlLabel
-                    key={policy.id}
-                    label={
-                      <Typography variant="body1" color="initial">
-                        {policy.name}
-                      </Typography>
-                    }
-                    labelPlacement="start"
-                    sx={{
-                      width: "100%",
-                      justifyContent: "space-between",
-                    }}
-                    control={
-                      <Checkbox
-                        value={policy.id}
-                        checked={isChecked}
-                        name={policy.id!}
-                        className="check-leave-selected"
-                        onChange={() => handleLeavePolicyChange(policy.id!)}
-                        color="primary"
-                      />
-                    }
-                  />
-                </Stack>
-              );
-            })} */}
-
             <Autocomplete
               multiple
               size="small"
@@ -158,14 +99,16 @@ export default function FilterPolicySearch(props: Props) {
               }}
             />
 
-            <Stack direction={"row"} spacing={2}>
+            <Stack direction="row" spacing={2} sx={{ justifyContent: 'flex-end' }}>
               <CustomisedButton
                 label={i({
                   id: "BUTTON.CLEAR",
                 })}
+                variant="outlined"
                 handleClick={() => {
                   props.handleSelectingPolicies([]);
                   props.handleRefresh();
+                  props.handleClose();
                 }}
               />
               <CustomisedButton
@@ -182,6 +125,6 @@ export default function FilterPolicySearch(props: Props) {
           </form>
         )}
       </Formik>
-    </Box>
+    </FilterComponent>
   );
 }

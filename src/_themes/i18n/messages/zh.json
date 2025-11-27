@@ -484,7 +484,8 @@
     },
     "INVITE_EMP": {
       "HEADING": "",
-      "INVITE_NOTE": "请填写所有必填信息并点击“邀请”。系统会向提供的邮箱发送邀请邮件。用户创建账号后即可访问平台。"
+      "INVITE_NOTE": "请填写所有必填信息并点击“邀请”。系统会向提供的邮箱发送邀请邮件。用户创建账号后即可访问平台。",
+      "LAST_EMP_ID": "最新的员工编号：<strong>{empId}</strong>"
     },
     "UPDATE": {
       "BASIC_INFO": "基本信息",

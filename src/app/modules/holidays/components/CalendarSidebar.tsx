@@ -10,7 +10,7 @@ import { hasModuleFeaturePermission } from '../../../../utils/common';
 import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
 import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
-import { getAllCalendarItem } from '../holidayServices';
+import { getAllCalendarItem } from '../calendarServices';
 
 
 

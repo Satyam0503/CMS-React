@@ -16,7 +16,7 @@ import JobSearchCareer from "./Component/JobSearchCareer.js";
 export const Career = () => {
   const { id } = useParams();
   if (id) localStorage.setItem("clientId", id);
-  const captchaRef = useRef<ReCAPTCHA>(null);
+  // const captchaRef = useRef<ReCAPTCHA>(null);
 
   return (
     <Stack sx={{ marginTop: '70px' }}>

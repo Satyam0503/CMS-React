@@ -1,17 +1,14 @@
 import { Add } from "@mui/icons-material";
-import { Card, Pagination, Stack, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Card, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { useIntl } from "react-intl";
 import AddLeavePolicy from "./AddLeavePolicy";
-import { LeaveBalanceFilter, LeavePolicyModel } from "../model";
+import { LeavePolicyModel } from "../model";
 import {
-  getLeaveBalance,
   getLeavePolicies,
-  getLeaveTypes,
 } from "../leaveServices";
 import {
-  EmployeeLeaveBalanceColumnList,
   EmployeeLeavePoliciesColumnList,
 } from "../../../../utils/constant/Constant";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";

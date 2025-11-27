@@ -7,7 +7,7 @@ import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useParams } from "react-router-dom";
 import { EmployeeLeaveTypesCharts } from "./components/LeaveTypesChart";
 import { MyLeaveRequests } from "./components/MyLeaveRequest";
-import { LEAVE_TYPE, ModulesName, Permission } from "../../../../utils/enums";
+import { ModulesName, Permission } from "../../../../utils/enums";
 import {
   EmployeeLeaveTypeBalance,
   RequestLeaveModel,
@@ -75,8 +75,6 @@ export const LeaveTracker: FC = () => {
     fetchEmployeeLeaveTypeBalance();
   }, [currentUserId]);
 
-  // console.log(currentUserId);
-
   return (
     <Stack className="gap-2">
       <Card className="p-4 d-flex justify-content-between">
@@ -89,13 +87,13 @@ export const LeaveTracker: FC = () => {
             Permission.Create,
             modulePermission
           )) && (
-          <CustomisedButton
-            className="align-self-end"
-            Icon={<Add />}
-            label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })}
-            handleClick={handleOpen}
-          />
-        )}
+            <CustomisedButton
+              className="align-self-end"
+              Icon={<Add />}
+              label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })}
+              handleClick={handleOpen}
+            />
+          )}
       </Card>
       {open && (
         <LeaveApplication
@@ -111,13 +109,17 @@ export const LeaveTracker: FC = () => {
         isLoading={loading}
         leaveBalance={empLeaveTypeBalance}
       />
-      {!employeeId && (
-        <MyLeaveRequests
-          leaveBalance={empLeaveTypeBalance}
-          refresh={refresh}
-          handleRefresh={handleRefresh}
-        />
-      )}
+      {(!employeeId || hasModuleFeaturePermission(
+        ModulesName.LeaveManagement,
+        Permission.View,
+        modulePermission
+      )) && (
+          <MyLeaveRequests
+            leaveBalance={empLeaveTypeBalance}
+            refresh={refresh}
+            handleRefresh={handleRefresh}
+          />
+        )}
     </Stack>
   );
 };

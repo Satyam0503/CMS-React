@@ -35,12 +35,9 @@ import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { toast } from "react-toastify";
 import {
   createLeavePolicy,
-  createUpdateLeaveBalance,
-  createUpdateLeaveType,
   updateLeavePolicy,
 } from "../leaveServices";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import { error } from "console";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 
 type Props = {
@@ -57,8 +54,6 @@ export default function AddLeavePolicy(props: Props) {
   const [employeeList, setEmployeeList] = useState<
     Array<GetAllEmployeeResponseModel>
   >([]);
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
 
   let empOptions: Array<GetAllEmployeeResponseModel> = [
     {
@@ -662,8 +657,8 @@ export default function AddLeavePolicy(props: Props) {
                             }}
                             getOptionDisabled={
                               values.applicableTo &&
-                              (values.applicableTo.includes("1") ||
-                                values.applicableTo.includes("0"))
+                                (values.applicableTo.includes("1") ||
+                                  values.applicableTo.includes("0"))
                                 ? (option) => true
                                 : (option) => false
                             }

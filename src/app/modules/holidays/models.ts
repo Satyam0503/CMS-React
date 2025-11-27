@@ -40,5 +40,17 @@ export interface HolidayFilterModel {
   date: string | null;
 }
 
+export type HolidayPayload = {
+  fromDate: Dayjs | null;
+  toDate: Dayjs | null;
+};
+
+export type HolidayModel = {
+  id: string;
+  name: string;
+  date: string;
+  description: string;
+};
+
 export type GetAllCalendarItemData = ResponseData<CalendarItem>;
 export type AddHolidayResponseData = ResponseData<OccasionModel>;

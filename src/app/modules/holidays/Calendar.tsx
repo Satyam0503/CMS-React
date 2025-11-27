@@ -7,7 +7,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { usePageData } from '../../Context/PageDataProvider'
 import { useIntl } from 'react-intl'
 import { CalendarItem, CalendarItemType, GetCalendarItemPayload } from './models'
-import { getAllCalendarItem } from './holidayServices'
+import { getAllCalendarItem } from './calendarServices'
 
 
 

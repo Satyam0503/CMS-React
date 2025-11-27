@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import HolidayForm from "./HolidayForm";
 import { toast } from "react-toastify";
-import { deleteCalendarItem } from "../holidayServices";
+import { deleteCalendarItem } from "../calendarServices";
 
 const initialValues: CalendarItem = {
     id: "",

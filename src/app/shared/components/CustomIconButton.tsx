@@ -1,5 +1,5 @@
 import { IconButton, Tooltip } from "@mui/material";
-import React, { CSSProperties } from "react";
+import React from "react";
 
 type Props = {
   handleClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;

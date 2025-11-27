@@ -14,15 +14,11 @@ import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
 import {
   EmployeeLeaveBalanceData,
-  EmployeeLeaveBalanceFilter,
-  LeaveBalance,
-  LeaveBalanceRequestModel,
+  EmployeeLeaveBalanceFilter
 } from "../model";
 import { Pagination } from "../../../shared/components/Pagination";
 import { useAppSelector } from "../../../Redux/hooks";
-import { useNavigate } from "react-router-dom";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import { FilterComponent } from "../../../shared/components/FilterComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { getAllEmployeeLeaveBalance } from "../leaveServices";
@@ -30,35 +26,18 @@ import EditEmployeePoliciesForm from "./EditEmployeePoliciesForm";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useDebounce } from "../../../hooks/useDebounce";
 import FilterPolicySearch from "./FilterPolicySearch";
-
-const initialLeavBalanceValue: LeaveBalanceRequestModel = {
-  employeeId: "",
-  leaveTypeBalances: [],
-};
+import { CircularLoader } from "../../../shared/components/CircularLoader";
 
 export const EmployeesLeaveBalance = () => {
   const { formatMessage: i } = useIntl();
   const { currentLanguage } = useAppLang();
-  const defaultLang = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
-
-  const [isOpen, setOpen] = useState(false);
-  const [isEdit, setEdit] = useState(false);
-  const [leaveBalance, setLeaveBalance] = useState<LeaveBalance[]>([]);
-  const [initialBalance, setInitialBalance] = useState(initialLeavBalanceValue);
+  const defaultLang = useAppSelector((state) => state.user.userData?.defaultLanguage!);
   const [totalRecords, setTotalRecords] = useState(0);
-  const navigate = useNavigate();
-  const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [isLoading, setLoading] = useState(true);
   const [search, setSearch] = useState<string>("");
   const debouncedValue = useDebounce(search);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpen(true);
-    setAnchorEl(event.currentTarget);
-  };
   const [pageNo, setPageNo] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
   const [employeeBalance, setEmployeeBalance] = useState<
@@ -69,13 +48,18 @@ export const EmployeesLeaveBalance = () => {
   const [refresh, setRefresh] = useState<boolean>(false);
   const [policies, setPolicies] = useState<Array<string>>([]);
 
+  const open = Boolean(anchorEl);
+
   function handleClickOptions(emp: EmployeeLeaveBalanceData) {
     setSelectedEmployeeBalance(emp);
     setOpenOptions(true);
   }
 
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
-    setOpen(false);
     setAnchorEl(null);
     setOpenOptions(false);
   };
@@ -110,7 +94,6 @@ export const EmployeesLeaveBalance = () => {
         if (data.success) {
           setEmployeeBalance(data.methodResults);
           setTotalRecords(data.totalRecords);
-          // console.log(data);
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -121,6 +104,12 @@ export const EmployeesLeaveBalance = () => {
 
     getLeaveBalanceFunc();
   }, [refresh, pageSize, debouncedValue, policies]);
+
+  if (isLoading) {
+    return <Card sx={{ height: '400px' }}>
+      <CircularLoader />
+    </Card>
+  }
 
   return (
     <>
@@ -135,7 +124,6 @@ export const EmployeesLeaveBalance = () => {
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
             size="small"
             onChange={(e) => {
-              // console.log(e.target.value);
               setSearch(e.target.value);
             }}
             slotProps={{
@@ -155,7 +143,7 @@ export const EmployeesLeaveBalance = () => {
           />
           <CustomIconButton
             icon={<FilterAltIcon />}
-            handleClick={(e) => handleClick(e)}
+            handleClick={handleFilterClick}
             tooltip={i({ id: "LEAVE.TITLES.ADD_LEAVE_BALANCE" })}
           />
         </Stack>
@@ -167,17 +155,18 @@ export const EmployeesLeaveBalance = () => {
                   xs: 12,
                   sm: 6,
                   md: 6,
-                  lg: 3,
+                  lg: 4,
+                  xl: 3
                 }}
                 key={emp.employeeId}
               >
-                <Card>
-                  <Stack spacing={1} sx={{ padding: "7px 10px" }}>
+                <Card sx={{ backgroundColor: "background.body" }}>
+                  <Stack spacing={1} sx={{ padding: 1.5 }}>
                     <Box
-                      component={"div"}
+                      component="div"
                       sx={{
-                        backgroundColor: "#d3d3d336",
-                        padding: "10px 15px",
+                        backgroundColor: "background.header",
+                        padding: "8px 12px",
                         borderRadius: "4px",
                         position: "relative",
                       }}
@@ -201,32 +190,29 @@ export const EmployeesLeaveBalance = () => {
                           sx={{
                             fontWeight: "400",
                             color: "text.disabled",
-                            // marginTop: "6px",
                           }}
                         >
                           {emp.designation
                             ? emp.designation![currentLanguage] ||
-                              emp.designation![defaultLang]
+                            emp.designation![defaultLang]
                             : i({ id: "NOT_AVAILABLE" })}
                         </Typography>
                       </Stack>
-                      <Box component={"div"}>
-                        <IconButton
-                          aria-label=""
-                          onClick={() => handleClickOptions(emp)}
-                          sx={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "15px",
-                            border: "none",
-                          }}
-                        >
-                          <MoreHorizIcon />
-                        </IconButton>
-                      </Box>
+                      <IconButton
+                        aria-label=""
+                        onClick={() => handleClickOptions(emp)}
+                        sx={{
+                          position: "absolute",
+                          top: "10px",
+                          right: "15px",
+                          border: "none",
+                        }}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
                     </Box>
 
-                    <Box component={"div"}>
+                    <Box component="div" sx={{ padding: "0px 8px", }}>
                       <Grid container>
                         <Grid size={5}>
                           <Typography variant="body1" fontWeight={"700"}>
@@ -243,35 +229,36 @@ export const EmployeesLeaveBalance = () => {
                             {i({ id: "LEAVE.TAKEN" })}
                           </Typography>
                         </Grid>
-                        <Grid
-                          container
-                          spacing={0.5}
-                          sx={{
-                            height: "100px",
-                            overflow: "auto",
-                            marginTop: "8px",
-                            width: "100%",
-                          }}
-                        >
-                          {emp.leaveBalances.map((leave) => {
-                            return (
-                              <Box
-                                component={"div"}
-                                sx={{
-                                  display: "flex",
-                                  width: "100%",
-                                  height: "20px",
-                                }}
-                                key={leave.leaveBalanceId}
-                              >
-                                <Grid size={5}>{leave.leavePolicyName}</Grid>
-                                <Grid size={4}>{leave.remaining}</Grid>
-                                <Grid size={3}>{leave.usedLeave}</Grid>
-                              </Box>
-                            );
-                          })}
-                        </Grid>
                       </Grid>
+                      <Stack
+                        // container
+                        spacing={0.5}
+                        sx={{
+                          flexDirection: "column", height: "100px",
+                          overflow: "auto",
+                          marginTop: "8px",
+                          width: "100%",
+                        }}
+                      >
+                        {emp.leaveBalances.map((leave) => {
+                          return (
+                            <Grid
+                              container
+                              // component="div"
+                              sx={{
+                                display: "flex",
+                                width: "100%",
+                                height: "24px",
+                              }}
+                              key={leave.leaveBalanceId}
+                            >
+                              <Grid size={5}>{leave.leavePolicyName}</Grid>
+                              <Grid size={4}>{leave.remaining}</Grid>
+                              <Grid size={3}>{leave.usedLeave}</Grid>
+                            </Grid>
+                          );
+                        })}
+                      </Stack>
                     </Box>
                   </Stack>
                 </Card>
@@ -288,18 +275,15 @@ export const EmployeesLeaveBalance = () => {
         />
       </Card>
       {
-        <FilterComponent
-          // open={true}
-          handleClose={handleClose}
+        open &&
+        <FilterPolicySearch
+          open={open}
           anchorEl={anchorEl}
-          open={isOpen}
-        >
-          <FilterPolicySearch
-            selectedPolicies={policies}
-            handleSelectingPolicies={handleSelectingPolicies}
-            handleRefresh={handleRefresh}
-          />
-        </FilterComponent>
+          handleClose={() => setAnchorEl(null)}
+          selectedPolicies={policies}
+          handleSelectingPolicies={handleSelectingPolicies}
+          handleRefresh={handleRefresh}
+        />
       }
       {openOptions && selectedEmployeeBalance && (
         <EditEmployeePoliciesForm

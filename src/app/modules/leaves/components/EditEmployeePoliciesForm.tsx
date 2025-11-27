@@ -4,7 +4,6 @@ import {
   FormControlLabel,
   Checkbox,
   TextField,
-  Chip,
   Stack,
 } from "@mui/material";
 import { Formik } from "formik";
@@ -16,6 +15,7 @@ import { getLeavePolicies, updateEmployeeLeaveBalance } from "../leaveServices";
 import {
   AccrualPeriodMapper,
   blockInvalidCharOnNumberField,
+  getCustomStatusCodesErrorMessage,
 } from "../../../../utils/common";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { toast } from "react-toastify";
@@ -26,25 +26,25 @@ type Props = {
   handleRefresh: () => void;
   selectedEmployee: EmployeeLeaveBalanceData;
 };
+
 type InitialValueType = {
   leaveBalanceId?: string;
   employeeId: string;
   leavePolicyId: string;
   balance: number;
 }[];
+
 type GetLeaveBalanceValue = () => InitialValueType;
 
 export default function EditEmployeePoliciesForm(props: Props) {
   const { selectedEmployee } = props;
   const { formatMessage: i } = useIntl();
-  const [isLoading, setLoading] = useState(true);
   const [leavePolicies, setLeavePolicies] = useState<Array<LeavePolicyModel>>(
     []
   );
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
       try {
         const { data } = await getLeavePolicies(true);
         if (data) {
@@ -52,8 +52,6 @@ export default function EditEmployeePoliciesForm(props: Props) {
         }
       } catch (error) {
         console.error((error as Error).message);
-      } finally {
-        setLoading(false);
       }
     })();
   }, []);
@@ -72,14 +70,6 @@ export default function EditEmployeePoliciesForm(props: Props) {
       return [];
     }
   };
-  const initialValues = {
-    employeeLeaveBalance: {
-      leaveBalanceId: "string",
-      employeeId: "string",
-      leavePolicyId: "string",
-      balance: 0,
-    },
-  };
 
   async function handleLeaveBalanceSubmission(
     values: InitialValueType,
@@ -87,22 +77,23 @@ export default function EditEmployeePoliciesForm(props: Props) {
   ) {
     try {
       const payload: InitialValueType = values;
-
       const { data } = await updateEmployeeLeaveBalance(payload);
       if (data.success) {
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
         props.handleRefresh();
         props.handleClose();
+      } else {
+        throw new Error(data.statusCode.toString());
       }
     } catch (error) {
-      toast.error(i({ id: "TOAST.FAILED.UPDATE" }));
-      console.error((error as Error).message);
+      toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as Error).message) }));
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
     <CustomisedModal
-      // id={id}
       open={props.openOptions}
       handleClose={props.handleClose}
       title={i({ id: "LEAVE.TITLES.MANAGE_LEAVE_ALLOCATION" })}
@@ -113,14 +104,10 @@ export default function EditEmployeePoliciesForm(props: Props) {
           initialValues={getInitialValues()}
           onSubmit={(values, { setSubmitting }) => {
             handleLeaveBalanceSubmission(values, setSubmitting);
-            console.log(values);
-            props.handleClose();
           }}
         >
           {({
             values,
-            setFieldValue,
-            setFieldTouched,
             handleSubmit,
             setValues,
             ...formik
@@ -173,7 +160,7 @@ export default function EditEmployeePoliciesForm(props: Props) {
                 };
 
                 return (
-                  <Stack direction="row" key={leave.id}>
+                  <Stack direction="row" key={leave.id} sx={{ alignItems: "center" }}>
                     <FormControlLabel
                       key={leave.id}
                       label={
@@ -230,12 +217,10 @@ export default function EditEmployeePoliciesForm(props: Props) {
                       name={`${leave.id}balance`}
                       value={selectedLeave?.balance ?? ""}
                       onChange={(e) => {
-                        // if (Number(e.target.value)) {
                         handleLeaveBalanceChange(
                           leave.id as string,
                           Number(e.target.value)
                         );
-                        // }
                       }}
                       onKeyDown={(e) => {
                         blockInvalidCharOnNumberField(e);
