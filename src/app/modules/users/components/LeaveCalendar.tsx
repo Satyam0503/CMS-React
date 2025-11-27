@@ -17,6 +17,7 @@ import { useParams } from "react-router-dom";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // ES 2015
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"; // ES 2015
+import { useIntl } from "react-intl";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -27,6 +28,8 @@ function LeaveCalendar() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
   const empId = useParams().employeeid;
+
+  const { formatMessage: i } = useIntl();
 
   const checkLeaveDay = (day: Dayjs) => {
     if (!leaveRequest.length) return false;
@@ -117,7 +120,7 @@ function LeaveCalendar() {
           }}
         />
       </LocalizationProvider>
-      <Chip label="Leave" sx={{ borderRadius: "16px" }} />
+      <Chip label={i({ id: "LEAVE.TITLE" })} sx={{ borderRadius: "16px" }} />
     </Card>
   );
 }
