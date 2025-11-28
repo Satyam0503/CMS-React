@@ -2,7 +2,6 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl';
 import AddIcon from '@mui/icons-material/Add';
-import UpcomingHolidayCard from './UpcomingHolidayCard';
 import HolidayForm from './HolidayForm';
 import { CalendarItem, GetCalendarItemPayload } from '../models';
 import dayjs, { Dayjs } from 'dayjs';
@@ -11,6 +10,7 @@ import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
 import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
 import { getAllCalendarItem } from '../calendarServices';
+import { UpcomingHolidayCard } from './UpcomingHolidayCard';
 
 
 

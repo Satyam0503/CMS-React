@@ -2,7 +2,7 @@ import * as Yup from "yup";
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 const caledarSchema = Yup.object().shape({
-  name: Yup.string().required("VALIDATION_ERR.HOLIDAY_NAME"),
+  name: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   date: Yup.date().required("VALIDATION_ERR.HOLIDAY_DATE"),
   description: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   type: Yup.number().required("VALIDATION_ERR.HOLIDAY_TYPE"),
@@ -21,7 +21,7 @@ const caledarSchema = Yup.object().shape({
       }
       return true;
     }),
-    recurring:Yup.bool().required("VALIDATION_ERR.REQUIRED_TYPE")
+  recurring: Yup.bool().required("VALIDATION_ERR.REQUIRED_TYPE"),
 });
 
 export default caledarSchema;

@@ -9,7 +9,7 @@ import {
 import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 import { TabModel } from "../../../utils/common_types";
@@ -21,22 +21,6 @@ import { usePageData } from "../../Context/PageDataProvider";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import dayjs, { Dayjs } from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  getEmployeeLeaveBalance,
-  getMyLeaveRequest,
-} from "../leaves/leaveServices";
-import {
-  EmployeeLeaveTypeBalance,
-  GetLeaveRequestPayLoad,
-  MyLeaveRequestModel,
-} from "../leaves/model";
-import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
-import { initialLeaveRequestFilter } from "../leaves/components/LeaveRequestFilter";
-import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import LeaveCalendar from "./components/LeaveCalendar";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
@@ -159,15 +143,6 @@ const UserProfile = () => {
                 <LeaveCalendar />
               </Grid>
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                // md: 6,
-                // lg: 12,
-              }}
-            >
-              <ProfileHeader />
-            </Grid>
           </Grid>
         </Grid>
         <Grid
@@ -179,6 +154,7 @@ const UserProfile = () => {
             xl: 9,
           }}
         >
+          <ProfileHeader />
           <Stack spacing={2} className="flex-grow-1">
             <Card className="tab-container d-flex flex-row">
               {filteredTabs.map((tab) => {

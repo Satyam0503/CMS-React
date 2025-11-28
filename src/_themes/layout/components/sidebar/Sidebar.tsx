@@ -80,6 +80,11 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
                 aspectRatio: 1,
                 backgroundColor: "secondary.main",
               }}
+              slotProps={{
+                img: {
+                  fetchPriority: "high",
+                }
+              }}
             />
           </Box>
           <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name mt-4">

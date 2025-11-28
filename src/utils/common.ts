@@ -23,6 +23,7 @@ import {
   Roles,
   EMPLOYMENT,
   ACCURAL_PERIOD,
+  CALENDAR_ITEM,
 } from "./enums";
 import {
   APP_FILTER_KEY,
@@ -577,4 +578,11 @@ export const defaultPieChartSeries: PieSeries = {
   highlighted: { additionalRadius: 2 },
   cornerRadius: 4,
   data: [],
+};
+
+export const calendarItemStyleMapper: { [index: number]: string } = {
+  [CALENDAR_ITEM.HOLIDAY]: "primary",
+  [CALENDAR_ITEM.EVENT]: "secondary",
+  [CALENDAR_ITEM.BIRTHDAY]: "success",
+  [CALENDAR_ITEM.ANNIVERSARY]: "info",
 };

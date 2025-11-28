@@ -53,6 +53,7 @@
 
 .profile-picture-card {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: var(--mui-palette-primary-main);
@@ -151,7 +152,7 @@ input:-webkit-autofill {
   color: var(--mui-palette-secondary-darker);
 }
 .primary {
-  background-color: $app-primary-300;
+  background-color: var(--mui-palette-primary-light);
   color: var(--mui-palette-primary-darker);
 }
 
@@ -679,6 +680,28 @@ button:hover .ql-fill,
       align-items: center;
       justify-content: space-between;
       padding: 10px;
+    }
+
+    .date-box {
+      width: 44px;
+      aspect-ratio: 1;
+      border-radius: 0.24rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--mui-palette-primary-lighter);
+      color: var(--mui-palette-primary-darker);
+      line-height: 1;
+      & span:first-child {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      & span:last-child {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
     }
   }
 

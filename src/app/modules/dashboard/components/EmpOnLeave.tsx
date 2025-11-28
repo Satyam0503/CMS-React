@@ -70,7 +70,8 @@ export default function EmpOnLeave() {
                         sx={{
                           width: 45,
                           height: 45,
-                          fontSize: "1rem",
+                          fontSize: 20,
+                          backgroundColor: "secondary.main",
                         }}
                       />
                       <Stack>

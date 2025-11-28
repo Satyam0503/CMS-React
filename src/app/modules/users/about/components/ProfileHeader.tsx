@@ -19,28 +19,28 @@ export const ProfileHeader = () => {
   const totalYearAtCurrentCompany = dayjs().diff(userDetails.dateOfJoining, "years");
 
   return (
-    <Grid container spacing={2} direction="column">
-      <Grid size="grow">
+    <Grid container spacing={1}>
+      <Grid size={{ xs: 12, sm: 4 }}>
         <IconStat
-          iconBg={theme.vars?.palette.secondary.light}
+          iconBg={theme.vars?.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
           iconColor="secondary.dark"
           number={experience}
           title={i({ id: "PROFILE.PI.YOE" }, { years: experience })}
         />
       </Grid>
-      <Grid size="grow">
+      <Grid size={{ xs: 12, sm: 4 }}>
         <IconStat
-          iconBg={theme.vars?.palette.primary.light}
+          iconBg={theme.vars?.palette.primary.lighter}
           icon={<CorporateFareOutlined fontSize="large" />}
           iconColor="primary.main"
           number={totalYearAtCurrentCompany}
           title={i({ id: "PROFILE.PI.TOTAL_YEAR" }, { years: totalYearAtCurrentCompany, companyName })}
         />
       </Grid>
-      <Grid size="grow">
+      <Grid size={{ xs: 12, sm: 4 }}>
         <IconStat
-          iconBg={theme.vars?.palette.secondary.light}
+          iconBg={theme.vars?.palette.secondary.lighter}
           icon={<Build fontSize="large" />}
           iconColor="secondary.dark"
           number={totalSkills}

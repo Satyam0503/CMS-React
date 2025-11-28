@@ -16,7 +16,7 @@ import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import holidaySchema from "../../../../utils/Schema/calendarSchema";
+import calendarItemSchema from "../../../../utils/Schema/calendarSchema";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
@@ -108,7 +108,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
     >
       <Formik
         initialValues={initialValues}
-        validationSchema={holidaySchema}
+        validationSchema={calendarItemSchema}
         onSubmit={(values, { setSubmitting }) => {
           handleAddUpdateHoliday(values, setSubmitting);
         }}

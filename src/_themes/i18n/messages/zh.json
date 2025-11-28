@@ -430,11 +430,11 @@
       "SETTING": "设置"
     },
     "PI": {
-      "EOX": "工作经验",
-      "TOTAL_YEAR": "在 {companyName} 的年限",
+      "YOE": "{years, plural, =0 {年} one {年} other {年}} 工作经验",
+      "TOTAL_YEAR": "{years, plural, =0 {年} one {年} other {年}} 于 {companyName}",
       "TITLE": "个人信息",
       "DOWNLOAD_PAY_SLIP": "下载工资单",
-      "EXPERIENCE_TEXT": "{years} 年 {months} 个月"
+      "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# 年} other {# 年}} {months, plural, =0 {} one {# 个月} other {# 个月}}"
     },
     "SKILLS": {
       "TITLE": "技能",

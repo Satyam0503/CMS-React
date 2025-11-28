@@ -413,10 +413,10 @@
       "SETTING": "Configuración"
     },
     "PI": {
-      "EOX": "de experiencia",
-      "TOTAL_YEAR": "Años en {companyName}",
-      "TITLE": "Información personal",
-      "DOWNLOAD_PAY_SLIP": "Descargar recibo de pago",
+      "YOE": "{years, plural, =0 {Año} one {Año} other {Años}} de Experiencia",
+      "TOTAL_YEAR": "{years, plural, =0 {Año} one {Año} other {Años}} en {companyName}",
+      "TITLE": "Información Personal",
+      "DOWNLOAD_PAY_SLIP": "Descargar Recibo de Pago",
       "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# año} other {# años}} {months, plural, =0 {} one {# mes} other {# meses}}"
     },
     "SKILLS": {

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Avatar, Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Typography } from "@mui/material";
-import { CalendarToday, Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
+import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import { CalendarItem } from "../models";
-import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { dateFormatter, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useIntl } from "react-intl";
@@ -29,7 +29,7 @@ interface Props {
     handleRefresh: () => void
 }
 
-function UpcomingHolidayCard(props: Props) {
+export const UpcomingHolidayCard = (props: Props) => {
 
     const { formatMessage: i } = useIntl();
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
@@ -114,54 +114,44 @@ function UpcomingHolidayCard(props: Props) {
         }
     };
 
+    const date = dayjs(props.occasion.date);
+
     return (
+
         <Stack
             component="div"
             className="gap-1 flex-row justify-content-between align-items-center p-2 rounded hover-secondary "
         >
-            <Box component='div' className="d-flex gap-2 align-items-center">
-                {props.occasion.imageUrl ? (
-                    <Avatar
-                        sx={{
-                            width: 44,
-                            height: 44,
-                            boxShadow: 2,
-                            bgcolor: "secondary.main",
-                        }}
-                        src={String(props.occasion.imageUrl)}
-                        variant="rounded"
-                    />
-                ) : (
-                    <Avatar
-                        variant="rounded"
-                        sx={{
-                            width: 44,
-                            height: 44,
-                            bgcolor: "secondary.main",
-                        }}
-                    >
-                        <CalendarToday className="fs-32" />
-                    </Avatar>
-                )}
-                <Box component="div" className="d-flex flex-column gap-1"
-                    sx={{
-                        whiteSpace: 'nowrap',
-                        width: '115px',
+            <Tooltip title={
+                <>
+                    <span>{props.occasion.name}</span> <br />
+                    <span>{props.occasion.description}</span>
+                </>
+            }
+                slotProps={{
+                    tooltip: {
+                        sx: {
+                            padding: 1,
+                        }
+                    }
+                }}
+                arrow
+            >
+                <Box component='div' className="d-flex gap-2 align-items-center" sx={{ flexGrow: 1, }}>
+                    <Box className="date-box" >
+                        <span>{getOrdinalSuffix(date.date())}</span>
+                        <span>{dateFormatter(date, "MMM")}</span>
+                    </Box>
+                    <Box component="div" sx={{
+                        width: "120px",
+                        flexGrow: 1,
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                    }}
-                >
-                    <Typography variant="body1">{props.occasion.name.length > 20
-                        ? props.occasion.name.slice(0, 19).concat("...")
-                        : props.occasion.name}
-                    </Typography>
-                    <Typography variant="body2">
-                        {props.occasion.description.length > 20
-                            ? props.occasion.description.slice(0, 19).concat("...")
-                            : props.occasion.description}
-                    </Typography>
+                    }}>
+                        <Typography variant="body1" className="text-truncate">{props.occasion.name} </Typography>
+                        <Typography variant="body2" className="text-truncate">{props.occasion.description}</Typography>
+                    </Box>
                 </Box>
-            </Box>
+            </Tooltip >
 
             {((hasEditPermission || hasDeletePermission) && (props.occasion.type != 3 && props.occasion.type != 4)) && (
                 <IconButton
@@ -215,11 +205,6 @@ function UpcomingHolidayCard(props: Props) {
                                 </ListItemButton>
                             </ListItem>
                         }
-                        <Divider
-                            sx={{
-                                borderColor: 'black'
-                            }}
-                        />
                         {
                             hasDeletePermission &&
                             <ListItem disablePadding onClick={handleHolidayDeleteClick}>
@@ -259,9 +244,6 @@ function UpcomingHolidayCard(props: Props) {
                 )
             }
         </Stack>
+
     );
 }
-
-UpcomingHolidayCard.propTypes = {};
-
-export default UpcomingHolidayCard;

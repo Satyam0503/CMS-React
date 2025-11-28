@@ -86,9 +86,9 @@ export const EmployeeSearchInput = () => {
                 return (
                     <ListItemButton key={emp.userId} onClick={() => handleClick(emp.userId)} >
                         <ListItemAvatar sx={{ minWidth: "auto", mr: 1 }}>
-                            <Avatar src={emp.fullProfileUrl || DEFAULT_USER_AVATAR} alt={emp.firstName} sx={{ width: 32, height: 32 }} />
+                            <Avatar src={emp.fullProfileUrl || DEFAULT_USER_AVATAR} alt={emp.firstName} sx={{ width: 36, height: 36, backgroundColor: "secondary.main" }} />
                         </ListItemAvatar>
-                        <ListItemText primary={emp.firstName + " " + emp.lastName} secondary={emp.jobRole?.[currentLanguage] ?? formatMessage({ id: "NOT_AVAILABLE" })} />
+                        <ListItemText primary={`${emp.firstName + " " + emp.lastName}  ${emp.empId ? (" - " + emp.empId) : ""}`} secondary={emp.jobRole?.[currentLanguage] ?? formatMessage({ id: "NOT_AVAILABLE" })} />
                     </ListItemButton>
                 );
             }}

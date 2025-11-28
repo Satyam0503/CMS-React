@@ -170,3 +170,9 @@ export enum ACCURAL_PERIOD {
   YEARLY = 2,
   NONE = 3,
 }
+export enum CALENDAR_ITEM {
+  HOLIDAY = 1,
+  EVENT = 2,
+  BIRTHDAY = 3,
+  ANNIVERSARY = 4,
+}

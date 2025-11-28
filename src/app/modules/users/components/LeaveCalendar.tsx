@@ -25,8 +25,6 @@ dayjs.extend(isSameOrBefore);
 function LeaveCalendar() {
   const [year, setYear] = useState(dayjs().year());
   const [leaveRequest, setLeaveRequest] = useState<MyLeaveRequestModel[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [loading, setLoading] = useState(true);
   const empId = useParams().employeeid;
 
   const { formatMessage: i } = useIntl();
@@ -41,7 +39,6 @@ function LeaveCalendar() {
     );
   };
   useEffect(() => {
-    setLoading(true);
     const fetchLeaveRequest = async () => {
       const payload: GetLeaveRequestPayLoad = {
         ...initialLeaveRequestFilter,
@@ -60,8 +57,6 @@ function LeaveCalendar() {
         }
       } catch (error) {
         console.error((error as Error).message);
-      } finally {
-        setLoading(false);
       }
     };
     fetchLeaveRequest();
@@ -100,10 +95,7 @@ function LeaveCalendar() {
           }}
           slots={{
             day: (day) => {
-              console.log(day);
-
               const isSelected = checkLeaveDay(day.day);
-
               return (
                 <PickersDay
                   {...day}

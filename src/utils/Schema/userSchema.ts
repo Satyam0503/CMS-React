@@ -38,7 +38,7 @@ export const userSchema = Yup.object().shape({
     .test("AccountNumber", "VALIDATION_ERR.INVALID_BANK_NO", (value: any) => {
       // validate account number
       if (value) {
-        var accNo = value.toString() as string;
+        const accNo = value.toString() as string;
         return Regex.BankAccountNo.test(accNo);
       }
       return true;

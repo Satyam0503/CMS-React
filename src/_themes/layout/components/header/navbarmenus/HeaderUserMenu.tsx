@@ -39,9 +39,9 @@ export default function HeaderUserMenu() {
       <ButtonBase onClick={handleClick} role="button">
         <Avatar
           variant="rounded"
-          alt="profile-avatar"
+          alt=""
           src={profileImageUrl}
-          sx={{ width: 40, height: 40, boxShadow: 2, }}
+          sx={{ width: 40, height: 40, boxShadow: 2, backgroundColor: "secondary.main" }}
         />
       </ButtonBase>
       <Menu

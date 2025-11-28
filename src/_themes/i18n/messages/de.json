@@ -411,8 +411,8 @@
       "SETTING": "Einstellungen"
     },
     "PI": {
-      "EOX": "Berufserfahrung",
-      "TOTAL_YEAR": "Jahre bei {companyName}",
+      "YOE": "{years, plural, =0 {Jahr} one {Jahr} other {Jahre}} Berufserfahrung",
+      "TOTAL_YEAR": "{years, plural, =0 {Jahr} one {Jahr} other {Jahre}} bei {companyName}",
       "TITLE": "Persönliche Informationen",
       "DOWNLOAD_PAY_SLIP": "Gehaltsabrechnung herunterladen",
       "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# Jahr} other {# Jahre}} {months, plural, =0 {} one {# Monat} other {# Monate}}"

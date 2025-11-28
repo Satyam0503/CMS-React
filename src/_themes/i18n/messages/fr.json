@@ -411,10 +411,10 @@
       "SETTING": "Paramètres"
     },
     "PI": {
-      "EOX": "d'expérience",
-      "TOTAL_YEAR": "Années chez {companyName}",
-      "TITLE": "Informations personnelles",
-      "DOWNLOAD_PAY_SLIP": "Télécharger le bulletin de paie",
+      "YOE": "{years, plural, =0 {An} one {An} other {Ans}} d’Expérience",
+      "TOTAL_YEAR": "{years, plural, =0 {An} one {An} other {Ans}} chez {companyName}",
+      "TITLE": "Informations Personnelles",
+      "DOWNLOAD_PAY_SLIP": "Télécharger le Bulletin de Paie",
       "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# an} other {# ans}} {months, plural, =0 {} one {# mois} other {# mois}}"
     },
     "SKILLS": {

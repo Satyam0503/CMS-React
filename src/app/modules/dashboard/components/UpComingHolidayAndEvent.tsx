@@ -3,7 +3,7 @@ import { CardSkeleton } from "./CardSkeleton";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
 import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
-import { dateFormatter, holidayTypeDecoder } from "../../../../utils/common";
+import { dateFormatter } from "../../../../utils/common";
 import { isSameDate } from "./UpcomingCelebration";
 import React from "react";
 import { CalendarToday, Celebration } from "@mui/icons-material";
@@ -65,9 +65,9 @@ export const UpComingHolidayAndEvents = () => {
                                                         : <Avatar variant="rounded" sx={{
                                                             width: 48,
                                                             height: 48,
-                                                            bgcolor: "secondary.main"
+                                                            bgcolor: "secondary.main",
                                                         }}>
-                                                            <CalendarToday />
+                                                            <CalendarToday className="fs-32" />
                                                         </Avatar>
                                                 }
                                                 <Stack className="">
@@ -110,7 +110,7 @@ export const UpComingHolidayAndEvents = () => {
                                                             height: 48,
                                                             bgcolor: "secondary.main"
                                                         }}>
-                                                            <Celebration />
+                                                            <Celebration className="fw-32" />
                                                         </Avatar>
                                                 }
                                                 <Stack className="">

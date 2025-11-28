@@ -94,7 +94,7 @@ export default function Dashboard() {
             <Grid size={12}>
               <Stack spacing={3}>
                 <NoticeBoard />
-                <EmployeePerformance />
+                {/* <EmployeePerformance /> */}
               </Stack>
             </Grid>
           </Grid>

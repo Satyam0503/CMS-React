@@ -12,10 +12,10 @@ import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { PayslipPayload } from "../../payroll/models";
 import { generatePaySlip } from "../../payroll/services";
+import { AxiosError } from "axios";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -62,9 +62,9 @@ export default function ProfileCard() {
       a.download = fileName;
       a.click();
       URL.revokeObjectURL(fileURL);
-    } catch (error: any) {
-      const response = error.response;
-      if (response.headers["content-type"] = "application/json") {
+    } catch (error) {
+      const response = (error as AxiosError).response;
+      if ((response?.headers["content-type"] as string).includes("application/json")) {
         const errorData = await response.data.text();
         const errorJson = JSON.parse(errorData); // Parse JSON from the response text
         if (errorJson.status) {

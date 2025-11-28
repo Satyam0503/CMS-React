@@ -14,6 +14,8 @@ import { CalendarItem } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarToday } from "@mui/icons-material";
 import clsx from "clsx";
+import { calendarItemStyleMapper } from "../../../../utils/common";
+
 
 type Props = {
     selectedDate: Dayjs | null;
@@ -230,10 +232,7 @@ export default function CalendarDays(props: Props) {
                                                         {!isSmallScreen ?
                                                             <Box
                                                                 key={index}
-                                                                className={`calendar-day-holiday ${holiday.type == 1 ? 'primary' :
-                                                                    holiday.type == 2 ? 'secondary' :
-                                                                        holiday.type == 3 ? 'success' :
-                                                                            holiday.type == 4 ? 'info' : ''}`}
+                                                                className={`calendar-day-holiday ${calendarItemStyleMapper[holiday.type]} `}
                                                                 aria-owns={popoverOpen ? String(index) : undefined}
                                                                 aria-haspopup="true"
                                                                 onMouseEnter={handlePopoverOpen}
@@ -249,8 +248,7 @@ export default function CalendarDays(props: Props) {
                                                             </Box>
                                                             : <Box
                                                                 key={index}
-                                                                className={`calendar-day-holiday-dot holiday-dot-color
-                                                }`}
+                                                                className={`calendar-day-holiday-dot holiday-dot-color`}
                                                                 aria-owns={popoverOpen ? String(index) : undefined}
                                                                 aria-haspopup="true"
                                                                 onMouseEnter={handlePopoverOpen}
@@ -286,7 +284,7 @@ export default function CalendarDays(props: Props) {
                     {selectedDateOccasions.map((occ, index) => {
                         return (<Box
                             component="div"
-                            className={clsx("d-flex gap-2 align-items-center p-2 rounded", { "primary": occ.type === 1, "secondary": occ.type === 2, "success": occ.type === 3, "info": occ.type === 4 })}
+                            className={`d-flex gap-2 align-items-center p-2 rounded ${calendarItemStyleMapper[occ.type]}`}
                             key={index}>
                             {occ.imageUrl ? (
                                 <Avatar

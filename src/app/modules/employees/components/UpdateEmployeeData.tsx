@@ -33,7 +33,7 @@ const employeeInitialValue: EditEmployeePayloadModel = {
     gender: "",
     email: "",
     dateOfBirth: null,
-    department: "",
+    department: null,
     reportingManager: null,
     phoneNumber: null,
     bloodGroup: null,
