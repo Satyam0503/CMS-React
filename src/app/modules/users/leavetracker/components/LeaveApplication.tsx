@@ -349,8 +349,9 @@ export const LeaveApplication = (props: Props) => {
                 <Grid
                   size={{
                     xs: 12,
-                    sm: 6
-                  }}>
+                    sm: 6,
+                  }}
+                >
                   <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
                     value={values.startDate}
@@ -373,8 +374,9 @@ export const LeaveApplication = (props: Props) => {
                 <Grid
                   size={{
                     xs: 12,
-                    sm: 6
-                  }}>
+                    sm: 6,
+                  }}
+                >
                   <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
                     value={values.isHalfDay ? values.startDate : values.endDate}
