@@ -67,8 +67,9 @@ export default function ApplicationForm() {
           <Grid
             size={{
               xs: 12,
-              lg: 6
-            }}>
+              lg: 6,
+            }}
+          >
             <FormControl fullWidth>
               <Typography variant="body1">
                 {intl.formatMessage({ id: "JOB.POSITION" })}
@@ -82,8 +83,9 @@ export default function ApplicationForm() {
           <Grid
             size={{
               xs: 12,
-              lg: 6
-            }}>
+              lg: 6,
+            }}
+          >
             <Typography variant="body1">
               {intl.formatMessage({ id: "USER.EXPERIENCE" })}
             </Typography>
@@ -117,11 +119,12 @@ export default function ApplicationForm() {
                 <Grid
                   size={{
                     xs: 6,
-                    md: 6
+                    md: 6,
                   }}
                   sx={{
-                    textAlign: "center"
-                  }}>
+                    textAlign: "center",
+                  }}
+                >
                   <CloudUploadOutlined
                     fontSize="large"
                     sx={{ margin: "auto" }}
@@ -132,20 +135,27 @@ export default function ApplicationForm() {
                     //   onChange={handleFileChange}
                     hidden
                   />
-                  <Typography variant="body1" sx={{
-                    flexWrap: "wrap"
-                  }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      flexWrap: "wrap",
+                    }}
+                  >
                     {intl.formatMessage({ id: "FILE.SELECTED" })}:
                     {/* {seletedFile?.name} */}
                   </Typography>
                 </Grid>
                 <Grid
                   size={{
-                    xs: 6
-                  }}>
-                  <Typography variant="body2" sx={{
-                    flexWrap: "wrap"
-                  }}>
+                    xs: 6,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      flexWrap: "wrap",
+                    }}
+                  >
                     {intl.formatMessage({
                       id: "FILE.UPLOAD_INSTRUCTION",
                     })}
@@ -171,13 +181,10 @@ export default function ApplicationForm() {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1
-            }}>
-            <CustomisedButton
-              variant="contained"
-              label="Submit"
-              size="large"
-            />
+              gap: 1,
+            }}
+          >
+            <CustomisedButton variant="contained" label="Submit" size="large" />
             <CustomisedButton
               variant="outlined"
               Icon={<Close />}
