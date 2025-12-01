@@ -13,6 +13,7 @@ import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicke
 import { Dayjs } from "dayjs";
 import { useIntl } from "react-intl";
 import { CalendarItemType } from "../models";
+import { CALENDAR_ITEM } from "../../../../utils/enums";
 
 type Props = {
   selectedDate: Dayjs | null;
@@ -66,10 +67,10 @@ export default function CalendarHeader(props: Props) {
             size='small'
           >
             <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
-            <MenuItem value={1}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>
-            <MenuItem value={2}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
-            {/* <MenuItem value={3}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
-                        <MenuItem value={4}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem> */}
+            <MenuItem value={CALENDAR_ITEM.HOLIDAY}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>
+            <MenuItem value={CALENDAR_ITEM.EVENT}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
+            <MenuItem value={CALENDAR_ITEM.BIRTHDAY}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
+            <MenuItem value={CALENDAR_ITEM.ANNIVERSARY}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem>
           </Select>
         </FormControl>
       </Box>

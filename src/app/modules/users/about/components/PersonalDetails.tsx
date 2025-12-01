@@ -10,7 +10,7 @@ import { useState } from "react";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
@@ -86,7 +86,7 @@ export const PersonalDetails = () => {
           }}>
           <Typography variant="body2">{i({ id: "FORM.DOB" })}</Typography>
           <Typography variant="body1">
-            {dateFormatter(userDetails?.dateOfBirth!, "DD MMMM YYYY") ||
+            {dateFormatter(userDetails?.dateOfBirth, "DD MMMM YYYY") ||
               i({ id: "NOT_AVAILABLE" })}
           </Typography>
         </Grid>
@@ -106,7 +106,7 @@ export const PersonalDetails = () => {
           }}>
           <Typography variant="body2">{i({ id: "FORM.DOJ" })}</Typography>
           <Typography variant="body1">
-            {dateFormatter(userDetails?.dateOfJoining!, "DD MMMM YYYY") || (
+            {dateFormatter(userDetails?.dateOfJoining, "DD MMMM YYYY") || (
               <FormattedMessage id="NOT_AVAILABLE" />
             )}
           </Typography>
@@ -131,7 +131,7 @@ export const PersonalDetails = () => {
             {i({ id: "FORM.DEPARTMENT" })}
           </Typography>
           <Typography variant="body1">
-            {!Boolean(userDetails?.departmentTitle) ||
+            {!userDetails?.departmentTitle ||
               userDetails.departmentTitle == null ? (
               <FormattedMessage id="NOT_AVAILABLE" />
             ) : (
@@ -150,9 +150,10 @@ export const PersonalDetails = () => {
             {i({ id: "USER.REPORTING_MANAGER" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.reportingManagerName || (
-              <FormattedMessage id="NOT_AVAILABLE" />
-            )}
+            {userDetails?.reportingManager ?
+              <Link to={`/employees/${userDetails.reportingManager}`}> {userDetails.reportingManagerName} </Link>
+              : <FormattedMessage id="NOT_AVAILABLE" />
+            }
           </Typography>
         </Grid>
         <Grid

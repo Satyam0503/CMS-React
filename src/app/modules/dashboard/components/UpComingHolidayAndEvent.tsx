@@ -4,11 +4,11 @@ import { useIntl } from "react-intl";
 import dayjs from "dayjs";
 import { Avatar, Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { dateFormatter } from "../../../../utils/common";
-import { isSameDate } from "./UpcomingCelebration";
 import React from "react";
 import { CalendarToday, Celebration } from "@mui/icons-material";
 import { UpComingHolidayAndEventModel } from "../model";
 import { getUpcomingHolidayAndEvents } from "../dashboardservices";
+import { Link } from "react-router-dom";
 
 export const UpComingHolidayAndEvents = () => {
     const { formatMessage: i } = useIntl();
@@ -73,9 +73,9 @@ export const UpComingHolidayAndEvents = () => {
                                                 <Stack className="">
                                                     <Typography className="fw-bold">{item.name}</Typography>
                                                     <Typography variant="subtitle2">
-                                                        {!isSameDate(dayjs(item.date))
-                                                            ? dateFormatter(item.date, "DD MMM YYYY")
-                                                            : i({ id: "DATETIME.TODAY" })}
+                                                        {dayjs().isSame(dayjs(item.date), "day")
+                                                            ? i({ id: "DATETIME.TODAY" })
+                                                            : dateFormatter(item.date, "DD MMM YYYY")}
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
@@ -116,9 +116,9 @@ export const UpComingHolidayAndEvents = () => {
                                                 <Stack className="">
                                                     <Typography className="fw-bold">{item.name}</Typography>
                                                     <Typography variant="subtitle2">
-                                                        {!isSameDate(dayjs(item.date))
-                                                            ? dateFormatter(item.date, "DD MMM YYYY")
-                                                            : i({ id: "DATETIME.TODAY" })}
+                                                        {dayjs().isSame(dayjs(item.date), "day")
+                                                            ? i({ id: "DATETIME.TODAY" })
+                                                            : dateFormatter(item.date, "DD MMM YYYY")}
                                                     </Typography>
                                                 </Stack>
                                             </Stack>
@@ -131,6 +131,12 @@ export const UpComingHolidayAndEvents = () => {
 
                     }
                 </Stack>
+            }
+            {
+                (holidayandEvent.event.length > 0 || holidayandEvent.holiday.length > 0) &&
+                <Link to="/calendar">
+                    {i({ id: "BUTTON.SEE_MORE" })}
+                </Link>
             }
         </Card >
     )

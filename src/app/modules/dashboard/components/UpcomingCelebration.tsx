@@ -1,36 +1,17 @@
-import { Stack, Typography, Avatar, Box, Link, Card } from "@mui/material";
-import { FormattedNumber, useIntl } from "react-intl";
-import dayjs, { Dayjs } from "dayjs";
+import { Stack, Typography, Avatar, Box, Card } from "@mui/material";
+import { useIntl } from "react-intl";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { dateFormatter, getOrdinalSuffix } from "../../../../utils/common";
-import { CustomCard } from "../../../shared/components/CustomCard";
-import { GetAllEmployeeResponseModel } from "../../employees/models";
-import { getAllEmployees } from "../../employees/employeeServices";
 import { CardSkeleton } from "./CardSkeleton";
-import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
-import { useAppSelector } from "../../../Redux/hooks";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { UpcomingCelebration } from "../model";
 import { getUpcomingCelebration } from "../dashboardservices";
-import { StyleStatus } from "../../../shared/components/StyledStatus";
-
-export const isSameDate = (date: Dayjs) => {
-  const currentDateofMonth = dayjs().date();
-  const currentMonth = dayjs().month();
-  if (currentDateofMonth === date.date() && currentMonth === date.month()) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
 
 export const UpComingCelebration = () => {
   const { formatMessage: i } = useIntl();
   const [data, setData] = useState<UpcomingCelebration>({ birthday: [], workAnniversary: [] });
   const [isLoading, setLoading] = useState(true);
-  const { currentLanguage } = useAppLang();
-  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
 
   useEffect(() => {
     (async () => {
@@ -84,20 +65,17 @@ export const UpComingCelebration = () => {
                           />
                           <Stack spacing={.2} sx={{ justifyContent: "space-evenly" }}>
                             <Typography className="fw-bold">{emp.employeeName}</Typography>
-                            {/* <Typography variant="body2">
-                              {
-                                emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
-                              }
-                            </Typography> */}
                             <Typography className="info rounded fw-bold text-center px-2 fs-12" sx={{ paddingBlock: "1px" }}>
                               {getOrdinalSuffix(emp.ordinal) + " " + i({ id: "TITLES.BIRTHDAY" })}
                             </Typography>
                           </Stack>
                         </Stack>
                         <Typography variant="subtitle2" >
-                          {!isSameDate(dayjs(emp.date))
-                            ? dateFormatter(emp.date, "DD MMM YYYY")
-                            : i({ id: "DATETIME.TODAY" })}
+                          {
+                            dayjs().isSame(dayjs(emp.date), "day")
+                              ? i({ id: "DATETIME.TODAY" })
+                              : dateFormatter(emp.date, "DD MMM YYYY")
+                          }
                         </Typography>
                       </Stack>
                     );
@@ -128,20 +106,15 @@ export const UpComingCelebration = () => {
                           />
                           <Stack spacing={.2} sx={{ justifyContent: "space-evenly" }}>
                             <Typography className="fw-bold">{emp.employeeName}</Typography>
-                            {/* <Typography variant="body2">
-                              {
-                                emp.jobRole == null ? i({ id: "NOT_AVAILABLE" }) : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
-                              }
-                            </Typography> */}
                             <Typography className="success rounded fw-bold text-center px-2 fs-12 text-nowrap" sx={{ paddingBlock: "1px" }}>
                               {getOrdinalSuffix(emp.ordinal) + " " + i({ id: "TITLES.WORK_ANNIVERSARY" })}
                             </Typography>
                           </Stack>
                         </Stack>
                         <Typography variant="subtitle2" >
-                          {!isSameDate(dayjs(emp.date))
-                            ? dateFormatter(emp.date, "DD MMM YYYY")
-                            : i({ id: "DATETIME.TODAY" })}
+                          {dayjs().isSame(dayjs(emp.date), "day")
+                            ? i({ id: "DATETIME.TODAY" })
+                            : dateFormatter(emp.date, "DD MMM YYYY")}
                         </Typography>
                       </Stack>
                     );
