@@ -53,7 +53,6 @@ const HolidayForm: React.FC<PropsTypes> = ({
       formik.setFieldValue("image", selectedFile, true);
     }
   };
-  // console.log(formik.values.recurring);
 
   const handleAddUpdateHoliday = async (
     values: CalendarItem,
@@ -191,7 +190,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   <FormControlLabel
                     control={
                       <Checkbox
-                        defaultChecked
+                        // defaultChecked
                         value={formik.values.recurring}
                         onChange={(e, checked) => {
                           formik.setFieldValue("recurring", checked);
@@ -199,7 +198,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       />
                     }
                     label={i({ id: "OCCASION.RECURRING" })}
-                  // name="recurring"
+                    // name="recurring"
                   />
                 </Grid>
 
@@ -237,7 +236,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       border: 0,
                       color:
                         formik.touched.imageUrl &&
-                          Boolean(formik.errors.imageUrl)
+                        Boolean(formik.errors.imageUrl)
                           ? "error.main"
                           : "primary.main",
                     }}
