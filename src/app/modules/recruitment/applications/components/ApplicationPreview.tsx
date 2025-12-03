@@ -125,7 +125,7 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
           </Grid>
         </Grid>
-        <CvPreview pdfUrl={applicantData.fullApplicantResumePath} />
+        <CvPreview pdfUrl={applicantData.fullApplicantResumePath ?? ""} />
       </Stack>
     </CustomisedModal>
   );

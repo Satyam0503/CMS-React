@@ -11,15 +11,16 @@ import { ResumeError } from "./ResumeError";
 import { ResumeLoader } from "./ResumeLoader";
 import { useIntl } from "react-intl";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "pdfjs-dist/build/pdf.worker.min.mjs",
+//   import.meta.url
+// ).toString();
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface Props {
   pdfUrl: string;
 }
-
 export const CvPreview: FC<Props> = ({ pdfUrl }) => {
   const { formatMessage: i } = useIntl();
   const [showButton, setShowButton] = useState(false);

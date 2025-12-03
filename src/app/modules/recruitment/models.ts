@@ -22,13 +22,9 @@ export type EditApplicantModel = Omit<ApplicantModel, "experience"> & {
 
 export type Applicant = Omit<ApplicantModel, "resume"> & {
   vacancyName: string;
-  statusName: string;
   status: number;
-  activityTypeName: string;
   applyDate: string;
-  updateDate: string;
-  resumeUrl: string;
-  fullApplicantResumePath: string;
+  fullApplicantResumePath: string | null;
 };
 export interface GetApplicationPayloadModel {
   name: string;

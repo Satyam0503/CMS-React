@@ -239,7 +239,7 @@ export const ApplicantDetails = () => {
         </Stack>
         {
           CvPreviewMode ?
-            <CvPreview pdfUrl={applicant.fullApplicantResumePath} /> :
+            <CvPreview pdfUrl={applicant.fullApplicantResumePath ?? ""} /> :
             <Grid container spacing={2.5}>
               <Grid
                 size={{

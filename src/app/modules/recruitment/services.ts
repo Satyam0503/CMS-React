@@ -1,4 +1,3 @@
-import { get } from "http";
 import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import { ApiResponse } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
