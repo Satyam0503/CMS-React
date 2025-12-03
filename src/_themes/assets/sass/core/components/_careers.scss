@@ -163,7 +163,7 @@
     transition: 0.2s;
 
     &:hover {
-      border-color: $app-primary-500;
+      border-color: var(--mui-palette-primary-main);
     }
 
     .job-footer-container {
@@ -188,7 +188,7 @@
   }
 
   .selected-job {
-    border-color: $app-primary-500;
+    border-color: var(--mui-palette-primary-main);
   }
 }
 

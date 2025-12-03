@@ -178,31 +178,6 @@ export default function CalendarSidebar(props: Props) {
                 </Button>
             }
 
-            {/* Upcoming Occasions For Current Month */}
-            {findUpComingOccassions().length > 0 &&
-                <Box component='div'
-                    className='gap-3 calendar-sidebar-upcoming'
-                >
-                    <Typography variant='body1' className='fs-16 fw-bold' >
-                        {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
-                    </Typography>
-                    <Box component='div'
-                        className='gap-1 calendar-sidear-holidays-holder'
-                    >
-                        {findUpComingOccassions().map((hol, index) => {
-                            return <UpcomingHolidayCard
-                                key={String(index)}
-                                occasion={hol}
-                                occasions={props.occasions}
-                                handleRefresh={props.handleRefresh}
-                            />
-                        })
-                        }
-                    </Box>
-
-                </Box>
-            }
-
             {/* Occasions For Selected Month */}
             <Box component={'div'}
                 className='gap-3 calendar-sidebar-upcoming'
@@ -228,6 +203,31 @@ export default function CalendarSidebar(props: Props) {
                     })}
                 </Box>
             </Box>
+
+            {/* Upcoming Occasions For Current Month */}
+            {findUpComingOccassions().length > 0 &&
+                <Box component='div'
+                    className='gap-3 calendar-sidebar-upcoming'
+                >
+                    <Typography variant='body1' className='fs-16 fw-bold' >
+                        {i({ id: "OCCASION.UPCOMING_OCCASIONS" })}
+                    </Typography>
+                    <Box component='div'
+                        className='gap-1 calendar-sidear-holidays-holder'
+                    >
+                        {findUpComingOccassions().map((hol, index) => {
+                            return <UpcomingHolidayCard
+                                key={String(index)}
+                                occasion={hol}
+                                occasions={props.occasions}
+                                handleRefresh={props.handleRefresh}
+                            />
+                        })
+                        }
+                    </Box>
+
+                </Box>
+            }
 
 
             {/* Occasions For Selected Day */}

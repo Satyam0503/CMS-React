@@ -49,7 +49,6 @@ function LeaveCalendar() {
         endDate: dayjs().endOf("year").set("year", year),
         status: LEAVE_REQUEST_STATUS.APPROVED,
       };
-
       try {
         const { data } = await getMyLeaveRequest(payload);
         if (data.success) {
@@ -60,7 +59,7 @@ function LeaveCalendar() {
       }
     };
     fetchLeaveRequest();
-  }, [year]);
+  }, [year, empId]);
 
   return (
     <Card sx={{ height: 1, paddingInline: "16px", paddingBlockEnd: "16px" }}>

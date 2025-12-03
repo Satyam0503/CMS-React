@@ -68,10 +68,11 @@ export const getCurrentLocaleForMui = (lang: LANGUAGE) => {
 export const darkPalette: ColorSystemOptions = {
   palette: {
     primary: {
-      // lighter: colors.primary[200],
+      lighter: colors.primary[200],
       light: colors.primary[300],
       main: colors.primary[400],
       dark: colors.primary[600],
+      darker: colors.primary[800],
     },
     secondary: {
       lighter: colors.secondary[200],

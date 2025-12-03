@@ -1,6 +1,6 @@
 .notification-menu {
   .notification-menu-tabList {
-    box-shadow: inset 0 -2px $neutral-300;
+    box-shadow: inset 0 -2px var(--mui-palette-grey-300);
     & > div {
       min-width: $app-notification-tab-width;
       flex-direction: row;
@@ -13,11 +13,11 @@
       cursor: pointer;
 
       &.active-tab {
-        color: $app-primary-500;
+        color: var(--mui-palette-primary-main);
         border-bottom: 2px solid var(--mui-palette-primary-main);
         & > .MuiChip-root {
           background-color: var(--mui-palette-primary-main);
-          color: $app-white;
+          color: var(--mui-palette-common-white);
         }
       }
 

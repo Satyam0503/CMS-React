@@ -14,7 +14,7 @@ import { CalendarItem } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarToday } from "@mui/icons-material";
 import clsx from "clsx";
-import { calendarItemStyleMapper } from "../../../../utils/common";
+import { calendarItemStyleMapper, dateFormatter, getOrdinalSuffix } from "../../../../utils/common";
 
 
 type Props = {
@@ -175,7 +175,7 @@ export default function CalendarDays(props: Props) {
                                     checkForOccasionForDate(day, e)
                                 }
                             }}
-                            className={clsx("hover-theme-color calendar-day", { "hover-theme-light": theme === "light", "hover-theme-dark": theme === "dark", "selected-day": selectedDate?.date() === day })}
+                            className={clsx("hover-theme-color calendar-day hover-secondary ", { "selected-day": selectedDate?.date() === day })}
                         >
                             <Typography variant="h6" className={clsx({ "today": checkIsSameDay(day as number) })}
                                 sx={{
@@ -280,11 +280,12 @@ export default function CalendarDays(props: Props) {
                     horizontal: 'center',
                 }}
             >
-                <Box component='div' className="d-flex flex-column gap-1 p-2">
+                <Box component='div' className="d-flex flex-column gap-2 p-2">
                     {selectedDateOccasions.map((occ, index) => {
+                        const date = dayjs(occ.date);
                         return (<Box
                             component="div"
-                            className={`d-flex gap-2 align-items-center p-2 rounded ${calendarItemStyleMapper[occ.type]}`}
+                            className={`d-flex gap-2 align-items-center rounded `}
                             key={index}>
                             {occ.imageUrl ? (
                                 <Avatar
@@ -296,17 +297,12 @@ export default function CalendarDays(props: Props) {
                                     variant="rounded"
                                 />
                             ) : (
-                                <Avatar
-                                    variant="rounded"
-                                    sx={{
-                                        width: 40,
-                                        height: 40,
-                                    }}
-                                >
-                                    <CalendarToday className="fs-32" />
-                                </Avatar>
+                                <Box className={`date-box ${calendarItemStyleMapper[occ.type]}`}>
+                                    <span>{getOrdinalSuffix(date.date())}</span>
+                                    <span>{dateFormatter(date, "MMM")}</span>
+                                </Box>
                             )}
-                            <Box component={"div"} className="d-flex flex-column ">
+                            <Box component="div" className="d-flex flex-column ">
                                 <Typography variant="body1"
                                     sx={{
                                         fontWeight: '600',
@@ -315,8 +311,8 @@ export default function CalendarDays(props: Props) {
                                 >{occ.name}</Typography>
                                 <Typography variant="body1"
                                     sx={{
-                                        fontWeight: '400',
-                                        color: "inherit"
+                                        color: "inherit",
+                                        wordBreak: "break-word"
                                     }}
                                 >{occ.description}
                                 </Typography>

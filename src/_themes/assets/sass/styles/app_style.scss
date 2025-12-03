@@ -67,7 +67,7 @@
     height: 150px;
     width: 150px;
     aspect-ratio: 1;
-    border: 3px solid $app-white;
+    border: 3px solid var(--mui-palette-common-white);
     border-radius: 50%;
     position: relative;
     transition: "transform 0.8s ease-in-out";
@@ -101,7 +101,7 @@ input:-webkit-autofill {
 .loader {
   width: 1.4rem;
   height: 1.4rem;
-  border: 3px solid $app-white;
+  border: 3px solid var(--mui-palette-common-white);
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;
@@ -119,14 +119,14 @@ input:-webkit-autofill {
 }
 
 .vacancy_deselect {
-  background-color: $app-primary-100 !important;
-  color: $app-primary-500 !important;
+  background-color: var(--mui-palette-primary-lighter) !important;
+  color: var(--mui-palette-primary-main) !important;
   padding: 0.8rem !important;
   font-size: 12px !important;
 }
 .vacancyselect {
-  background-color: $app-primary-500 !important;
-  color: $app-white !important;
+  background-color: var(--mui-palette-primary-main) !important;
+  color: var(--mui-palette-common-white) !important;
   padding: 0.8rem !important;
   font-size: 14px !important;
 }
@@ -148,11 +148,11 @@ input:-webkit-autofill {
   color: $info-800;
 }
 .secondary {
-  background-color: $app-secondary-200;
+  background-color: var(--mui-palette-secondary-lighter);
   color: var(--mui-palette-secondary-darker);
 }
 .primary {
-  background-color: var(--mui-palette-primary-light);
+  background-color: var(--mui-palette-primary-lighter);
   color: var(--mui-palette-primary-darker);
 }
 
@@ -249,22 +249,22 @@ canvas {
 button:hover .ql-stroke,
 .ql-picker-label:hover .ql-stroke {
   fill: none;
-  stroke: $app-primary-500 !important;
+  stroke: var(--mui-palette-primary-main) !important;
 }
 
 .ql-active .ql-stroke {
   fill: none;
-  stroke: $app-primary-500 !important;
+  stroke: var(--mui-palette-primary-main) !important;
 }
 
 button:hover .ql-fill,
 .ql-picker-label:hover .ql-fill {
-  fill: $app-primary-500 !important;
+  fill: var(--mui-palette-primary-main) !important;
   stroke: none;
 }
 
 .ql-active .ql-fill {
-  fill: $app-primary-500 !important;
+  fill: var(--mui-palette-primary-main) !important;
   stroke: none;
 }
 //close
@@ -273,7 +273,7 @@ button:hover .ql-fill,
 
 .chart_tooltip {
   position: relative;
-  color: $app-white !important;
+  color: var(--mui-palette-common-white) !important;
   padding: 0.5rem 1rem;
   border: none;
 }
@@ -287,7 +287,7 @@ button:hover .ql-fill,
 }
 .top-collapse {
   top: 5.5rem !important;
-  border: 1px solid $app-primary-100 !important;
+  border: 1px solid var(--mui-palette-primary-lighter) !important;
 }
 
 .transform-90 {
@@ -388,51 +388,6 @@ button:hover .ql-fill,
   }
 }
 
-.holiday-grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
-  justify-content: space-evenly;
-  gap: 4rem 2rem;
-  margin-block: 5rem !important;
-  // flex-grow: 1;
-
-  .holiday-card {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    border-radius: 0.75rem;
-    overflow: visible;
-    height: 300px;
-    padding: 0.75rem;
-    background-color: $neutral-200;
-    z-index: 1;
-    color: $app-black;
-
-    & > .board-holder {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      height: 4rem;
-      width: 4rem;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: $app-black;
-      font-weight: bold;
-      background-color: $app-secondary-300;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-    }
-    & > .holiday-card-content {
-      flex-grow: 1;
-      font-style: italic;
-      color: $app-black;
-      padding-block: 1rem;
-      margin-block-start: 1rem;
-    }
-  }
-}
 .reset-padding {
   .MuiStack-root {
     padding-top: 0 !important;
@@ -503,7 +458,6 @@ button:hover .ql-fill,
 .tab_active {
   border-bottom: 2px solid var(--mui-palette-primary-main) !important;
   color: var(--mui-palette-primary-main) !important;
-  // background-color: color-mix(in oklab, $app-primary-400 30%, $app-white 70%);
 }
 
 .truncate-multi-line {
@@ -658,11 +612,11 @@ button:hover .ql-fill,
         }
 
         .holiday-colors {
-          background-color: $app-primary-700;
+          background-color: var(--mui-palette-primary-dark);
         }
 
         .event-colors {
-          background-color: $app-secondary-700;
+          background-color: var(--mui-palette-secondary-dark);
         }
 
         .bithdays-colors {
@@ -680,28 +634,6 @@ button:hover .ql-fill,
       align-items: center;
       justify-content: space-between;
       padding: 10px;
-    }
-
-    .date-box {
-      width: 44px;
-      aspect-ratio: 1;
-      border-radius: 0.24rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--mui-palette-primary-lighter);
-      color: var(--mui-palette-primary-darker);
-      line-height: 1;
-      & span:first-child {
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
-      & span:last-child {
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
     }
   }
 
@@ -834,30 +766,37 @@ button:hover .ql-fill,
       cursor: pointer;
       transition: 0.2s ease-in-out;
     }
-
-    .hover-theme-light {
-      &:hover {
-        background-color: var(--mui-palette-primary-lighter);
-      }
-    }
-
-    .hover-theme-dark {
-      &:hover {
-        background-color: var(--mui-palette-primary-dark);
-      }
-    }
-
     .today {
       color: var(--mui-palette-text-primary);
     }
 
     .selected-day {
       border-bottom: 3px solid var(--mui-palette-primary-main);
-
       @media (min-width: 600px) {
         border-bottom: 5px solid var(--mui-palette-primary-main);
       }
     }
+  }
+}
+.date-box {
+  width: 44px;
+  aspect-ratio: 1;
+  border-radius: 0.24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+  // background-color: var(--mui-palette-primary-lighter);
+  // color: var(--mui-palette-primary-darker);
+  line-height: 1;
+  & span:first-child {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  & span:last-child {
+    font-size: 0.875rem;
+    font-weight: 600;
   }
 }
 
@@ -902,13 +841,13 @@ button:hover .ql-fill,
   width: 55px;
   height: 55px;
   border-radius: 50%;
-  background-color: $app-primary-500;
+  background-color: var(--mui-palette-primary-main);
   position: fixed;
   right: 2%;
   bottom: 3%;
   z-index: 2;
   & svg {
-    fill: $app-white;
+    fill: var(--mui-palette-common-white);
   }
 }
 

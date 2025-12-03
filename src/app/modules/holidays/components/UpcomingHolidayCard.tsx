@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Tooltip, Typography } from "@mui/material";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import { CalendarItem } from "../models";
-import { dateFormatter, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
+import { calendarItemStyleMapper, dateFormatter, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useIntl } from "react-intl";
@@ -138,7 +138,7 @@ export const UpcomingHolidayCard = (props: Props) => {
                 arrow
             >
                 <Box component='div' className="d-flex gap-2 align-items-center" sx={{ flexGrow: 1, }}>
-                    <Box className="date-box" >
+                    <Box className={`date-box ${calendarItemStyleMapper[props.occasion.type]}`}>
                         <span>{getOrdinalSuffix(date.date())}</span>
                         <span>{dateFormatter(date, "MMM")}</span>
                     </Box>
