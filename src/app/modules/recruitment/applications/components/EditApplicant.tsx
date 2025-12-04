@@ -34,7 +34,7 @@ import {
   indianStates,
   monthsExperienceList,
 } from "../../../../../utils/constant/Constant";
-import { commentActionEncoderForApplicationStatus } from "../../../../../utils/common";
+import { commentActionEncoderForApplicationStatus, getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { AddComment } from "./AddComment";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
@@ -42,6 +42,7 @@ import { Applicant, EditApplicantModel, JobModal } from "../../models";
 import { CommentAction } from "../../../../../utils/enums";
 import { getVacancyPayload } from "../../jobs/Jobs";
 import { usePageData } from "../../../../Context/PageDataProvider";
+import { AxiosError } from "axios";
 
 export const EditApplicant = () => {
   const { formatMessage } = useIntl();
@@ -177,20 +178,17 @@ export const EditApplicant = () => {
       experience: totalExperienceInMonths,
     };
     try {
-      const response = await editApplicant(payload);
-      const { message, success } = response.data;
-      if (!success) {
-        throw new Error("TOAST.FAILED.APPLICANT_UPDATE");
-      }
+      const { data } = await editApplicant(payload);
+      if (!data.success) throw new Error(String(data.statusCode));
       if (values.resume) {
         const resumeUploadResponse = await uploadResume(values.email, formData);
         if (!resumeUploadResponse.data.success) {
-          throw new Error("TOAST.FAILED.APPLICANT_UPDATE");
+          throw new Error(String(resumeUploadResponse.data.statusCode));
         }
       }
       handleAddComment(values.activityType, vacancy?.title);
-    } catch (error: any) {
-      console.error(error.message);
+    } catch (error) {
+      toast.error(formatMessage({ id: getCustomStatusCodesErrorMessage(+(error as AxiosError).message) }))
     } finally {
       setSubmitting(false);
     }

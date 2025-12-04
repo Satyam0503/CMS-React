@@ -145,7 +145,8 @@
       "DATA_UPLOADED": "Success! data has been uploaded successfully",
       "PAYROLL_UPDATED": "Payroll details successfully updated",
       "PAYROLL_ADDED": "Payroll details successfully added",
-      "INVITE_EMPLOYEE": "Invitation successfully sent"
+      "INVITE_EMPLOYEE": "Invitation successfully sent",
+      "APPLICATION_SUBMITTED": "Application successfully submitted"
     },
     "FAILED": {
       "UPDATE": "Failed to update",
@@ -871,20 +872,6 @@
     "EVENT_OCCASIONS": "Events",
     "RECURRING": "Recurring"
   },
-  "MONTHS": {
-    "JANUARY": "January",
-    "FEBRUARY": "February",
-    "MARCH": "March",
-    "APRIL": "April",
-    "MAY": "May",
-    "JUNE": "June",
-    "JULY": "July",
-    "AUGUST": "August",
-    "SEPTEMBER": "September",
-    "OCTOBER": "October",
-    "NOVEMBER": "November",
-    "DECEMBER": "December"
-  },
 
   "MESSAGE": {
     "WELCOME": "Welcome",
@@ -945,7 +932,10 @@
     "33": "carry overlimit required amount is required accrual is selected",
     "34": "Leave policy with same name and code already exist",
     "35": "Leave balance limit exceeded",
-    "36": "Password reset request already sent. Please check your email"
+    "36": "Password reset request already sent. Please check your email",
+    "37": "You can apply again after the required waiting period has passed",
+    "38": "The uploaded file format is not supported. Please upload a valid document",
+    "39": "The uploaded file exceeds the maximum allowed size"
   },
   "CHAT": {
     "TITLE": "Chats",

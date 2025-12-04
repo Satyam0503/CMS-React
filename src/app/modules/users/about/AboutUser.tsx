@@ -4,8 +4,10 @@ import { UserEducation } from "./components/UserEducation";
 import { UserCertification } from "./components/UserCertification";
 import { UserSummary } from "./components/UserSummary";
 import { UserSkills } from "./components/UserSkills";
+import dayjs from "dayjs";
 
 export default function AboutUser() {
+  console.log(dayjs.locale());
   return (
     <>
       <Grid

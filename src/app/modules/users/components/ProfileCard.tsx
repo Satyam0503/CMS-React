@@ -65,7 +65,7 @@ export default function ProfileCard() {
     } catch (error) {
       const response = (error as AxiosError).response;
       if ((response?.headers["content-type"] as string).includes("application/json")) {
-        const errorData = await response.data.text();
+        const errorData = await (response?.data as Blob).text();
         const errorJson = JSON.parse(errorData); // Parse JSON from the response text
         if (errorJson.status) {
           toast.error(i({ id: getStatusCodeString(errorJson.status) }))
@@ -111,7 +111,7 @@ export default function ProfileCard() {
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
           <Typography variant="body1" sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className=" px-4 py-1 rounded-pill">
-            {!Boolean(userDetails?.jobRoleTitle) || userDetails.jobRoleTitle === null ? <FormattedMessage id="NOT_AVAILABLE" /> : userDetails.jobRoleTitle[currentLanguage] || userDetails.jobRoleTitle[defaultLanguage]}
+            {!userDetails?.jobRoleTitle || userDetails.jobRoleTitle === null ? <FormattedMessage id="NOT_AVAILABLE" /> : userDetails.jobRoleTitle[currentLanguage] || userDetails.jobRoleTitle[defaultLanguage]}
           </Typography>
         </Stack>
         <Stack

@@ -89,15 +89,6 @@ export const noticeTypeDecoder: {
   [NOTICE_TYPE.URGENT]: "NOTICE.TYPES.URGENT",
 };
 
-export const holidayTypeDecoder: {
-  [index: number]: string;
-} = {
-  [HOLIDAY_TYPE.CULTURAL]: "HOLIDAY.TYPES.CULTURAL",
-  [HOLIDAY_TYPE.HEALTH]: "HOLIDAY.TYPES.HEALTH",
-  [HOLIDAY_TYPE.RELIGIOUS]: "HOLIDAY.TYPES.RELIGIOUS",
-  [HOLIDAY_TYPE.NATIONAL]: "HOLIDAY.TYPES.NATIONAL",
-};
-
 export const EmploymentTypeMapper: { [key: number]: string } = {
   [EMPLOYMENT.FULLTIME]: "EMPLOYEE.TYPE.FULLTIME",
   [EMPLOYMENT.PARTTIME]: "EMPLOYEE.TYPE.PARTTIME",
@@ -142,14 +133,6 @@ export const leaveRequestStatusMapper: { [index: number]: string } = {
   [LEAVE_REQUEST_STATUS.WITHDRAWN]: "LEAVE_REQUEST_STATUS.WITHDRAWN",
 };
 
-export const LeaveTypeMapper: { [index: number]: string } = {
-  [LEAVE_TYPE.SICK_LEAVE]: "LEAVE.TYPES.SICK_LEAVE",
-  [LEAVE_TYPE.CASUAL_LEAVE]: "LEAVE.TYPES.CASUAL_LEAVE",
-  [LEAVE_TYPE.EARNED_LEAVE]: "LEAVE.TYPES.EARNED_LEAVE",
-  [LEAVE_TYPE.MATERNITY_LEAVE]: "LEAVE.TYPES.MATERNITY_LEAVE",
-  [LEAVE_TYPE.PATERNITY_LEAVE]: "LEAVE.TYPES.PATERNITY_LEAVE",
-};
-
 export const JobTypeMapper: { [index: number]: string } = {
   [JOB_TYPE_ENUM.ONSITE]: "JOBTYPE.ONSITE",
   [JOB_TYPE_ENUM.HYBRID]: "JOBTYPE.HYBRID",
@@ -171,22 +154,9 @@ export const AccrualPeriodMapper: { [index: number]: string } = {
   [ACCURAL_PERIOD.NONE]: "LEAVE.ACCRUAL_PERIOD.NONE",
 };
 
-export const statusEncoder = (status: string) => {
-  switch (status) {
-    case "Active":
-      return true;
-    case "Inactive":
-      return false;
-    default:
-      return false;
-  }
-};
-export const statusDecoder = (status: boolean) => {
-  if (status) {
-    return "ACTIVE";
-  } else {
-    return "INACTIVE";
-  }
+export const jobStatusMapper: { [index: number]: string } = {
+  0: "INACTIVE",
+  1: "ACTIVE",
 };
 
 export const getDateDiffInYears = (from: Dayjs, to: Dayjs = dayjs()) => {
@@ -545,23 +515,7 @@ export const getOrdinalSuffix = (num: number) => {
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 
-export const monthMapper: { [key: number]: string } = {
-  1: "MONTHS.JANUARY",
-  2: "MONTHS.FEBRUARY",
-  3: "MONTHS.MARCH",
-  4: "MONTHS.APRIL",
-  5: "MONTHS.MAY",
-  6: "MONTHS.JUNE",
-  7: "MONTHS.JULY",
-  8: "MONTHS.AUGUST",
-  9: "MONTHS.SEPTEMBER",
-  10: "MONTHS.OCTOBER",
-  11: "MONTHS.NOVEMBER",
-  12: "MONTHS.DECEMBER",
-};
-
 // initial Filter values
-
 export const initialNoticeFilter: NoticeBoardFilterModel = {
   noticeType: [],
   filterFrom: null,

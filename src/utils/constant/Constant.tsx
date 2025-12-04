@@ -10,15 +10,13 @@ import {
 import { ColumnListTypes, SideBarTabListProps } from "../common_types";
 import {
   dateFormatter,
-  statusDecoder,
   applicantStatusDecoder,
   sanitizeHtmlContent,
   commentActionMapper,
   noticeTypeDecoder,
   relativeTimeFormatter,
-  holidayTypeDecoder,
-  LeaveTypeMapper,
   JobTypeMapper,
+  jobStatusMapper,
 } from "../common";
 import { Link } from "react-router-dom";
 import {
@@ -618,73 +616,6 @@ export const EmployeeTabTableColumnList: ColumnListTypes[] = [
   },
 ];
 
-export const HolidayTabTableColumnList: ColumnListTypes[] = [
-  {
-    id: "serialNo",
-    label: "S_No",
-    minWidth: 30,
-  },
-
-  {
-    id: "holidayName",
-    label: "HOLIDAY.NAME",
-    minWidth: 180,
-  },
-  {
-    id: "holidayType",
-    label: "HOLIDAY.TYPE",
-    build: (holidayType: number) => {
-      const type = holidayTypeDecoder[holidayType];
-      return (
-        <StyleStatus
-          label={type}
-          className={clsx({
-            info: holidayType === HOLIDAY_TYPE.CULTURAL,
-            success: holidayType === HOLIDAY_TYPE.HEALTH,
-            danger: holidayType === HOLIDAY_TYPE.NATIONAL,
-            warning: holidayType === HOLIDAY_TYPE.RELIGIOUS,
-          })}
-        />
-      );
-    },
-  },
-  {
-    id: "date",
-    label: "HOLIDAY.DATE",
-    minWidth: 160,
-    format: (value) => dateFormatter(value, "DD MMMM YYYY"),
-  },
-  {
-    id: "detail",
-    label: "HOLIDAY.DESCRIPTION",
-    format: (value: string) => (
-      <Tooltip title={value}>
-        <Typography
-          sx={{ maxWidth: 250 }}
-          className="text-nowrap text-truncate"
-        >
-          {value}
-        </Typography>
-      </Tooltip>
-    ),
-  },
-  {
-    id: "action",
-    label: "ACTION",
-    build: (
-      row: CalendarItem,
-      handleHolidayEdit: (row: CalendarItem) => void,
-      openConfirmationModal: (row: CalendarItem) => void
-    ) => (
-      <ActionComponent
-        row={row}
-        handleEdit={handleHolidayEdit}
-        openConfirmationModal={openConfirmationModal}
-      />
-    ),
-  },
-];
-
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -1115,7 +1046,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
     build: (status: boolean) => {
       return (
         <StyleStatus
-          label={statusDecoder(status)}
+          label={jobStatusMapper[Number(status)]}
           className={clsx({ success: status, danger: !status })}
         />
       );
@@ -1196,66 +1127,6 @@ export const CommentTableColumnList: ColumnListTypes[] = [
           }}
         />
       </Tooltip>
-    ),
-  },
-];
-
-export const LeaveTypeColumnList: ColumnListTypes[] = [
-  {
-    id: "serialNo",
-    label: "S_No",
-    minWidth: 60,
-  },
-  {
-    id: "leaveType",
-    label: "LEAVE.LEAVE_TYPE",
-    minWidth: 200,
-    format: (value: LEAVE_TYPE) => (
-      <FormattedMessage id={LeaveTypeMapper[value]} />
-    ),
-  },
-  {
-    id: "isHalfDay",
-    label: "LEAVE.HALF_DAY",
-    build: (value: boolean) => {
-      return value ? (
-        <Check className="text-success fs-20" />
-      ) : (
-        <Close className="text-danger fs-20" />
-      );
-    },
-  },
-  {
-    id: "maxLeaveDays",
-    label: "LEAVE.MAX_LEAVE_DAYS",
-  },
-  {
-    id: "minAdvanceNoticeDate",
-    label: "LEAVE.MIN_NOTICE_DAY",
-    format: (value: number) => (
-      <>
-        {value + " "}
-        <FormattedMessage id={value > 1 ? "DAYS" : "DAY"} />
-      </>
-    ),
-  },
-  {
-    id: "isActive",
-    label: "STATUS",
-    build: (status: boolean) => {
-      return (
-        <StyleStatus
-          label={statusDecoder(status)}
-          className={clsx({ success: status, danger: !status })}
-        />
-      );
-    },
-  },
-  {
-    id: "action",
-    label: "ACTION",
-    build: (row: LeaveType, handleLeaveTypeEdit: (row: LeaveType) => void) => (
-      <ActionComponent row={row} handleEdit={handleLeaveTypeEdit} />
     ),
   },
 ];
@@ -1413,7 +1284,7 @@ export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
     build: (status: boolean) => {
       return (
         <StyleStatus
-          label={statusDecoder(status)}
+          label={jobStatusMapper[Number(status)]}
           className={clsx({ success: status, danger: !status })}
         />
       );

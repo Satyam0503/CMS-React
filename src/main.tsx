@@ -8,9 +8,11 @@ import { ErrorBoundary } from "./app/shared/components/ErrorBoundary";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from "dayjs/plugin/relativeTime";
+import localeData from "dayjs/plugin/localeData";
 
 dayjs.extend(relativeTime);
 dayjs.extend(localizedFormat);
+dayjs.extend(localeData)
 
 const container = document.getElementById("root");
 if (container) {

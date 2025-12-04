@@ -4,7 +4,6 @@ import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { getMonthlyLeaveTakenSummary } from "../leaveServices";
 import { MonthlyLeaveTakenSummary } from "../model";
-import { monthMapper } from "../../../../utils/common";
 import dayjs from "dayjs";
 
 export const MonthlyLeaveTakenLineChart = () => {
@@ -12,13 +11,15 @@ export const MonthlyLeaveTakenLineChart = () => {
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<MonthlyLeaveTakenSummary[]>([]);
     const theme = useTheme();
+    const monthShort = dayjs.monthsShort();
+
     useEffect(() => {
         (async () => {
             try {
                 const { data } = await getMonthlyLeaveTakenSummary(new Date().getFullYear());
                 if (data.success) {
                     // console.log(data.methodResults);
-                    
+
                     setChartData(data.methodResults);
                 }
             }
@@ -30,6 +31,7 @@ export const MonthlyLeaveTakenLineChart = () => {
             }
         })();
     }, []);
+
     return (
         <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
             <Stack className="mb-2 flex-row justify-content-between">
@@ -44,7 +46,7 @@ export const MonthlyLeaveTakenLineChart = () => {
                         color: theme.vars?.palette.primary.main
                     }]}
                     xAxis={
-                        [{ scaleType: 'band', data: chartData.map(item => i({ id: monthMapper[item.month] }).slice(0, 3)), tickPlacement: "middle", tickLabelPlacement: "middle" }]
+                        [{ scaleType: 'band', data: chartData.map(item => monthShort[item.month - 1]), tickPlacement: "middle", tickLabelPlacement: "middle" }]
                     }
                     yAxis={[{ width: 50, label: i({ id: "LEAVE.TITLES.LEAVE_TAKEN" }) }]}
                     slotProps={{

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Badge, Card, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Download, FilterList } from "@mui/icons-material";
+import { Add, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
@@ -14,7 +14,7 @@ import {
   getAllJobVacancies,
 } from "../services";
 import { toast } from "react-toastify";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { GetAllVacancyPayload, JobModal } from "../models";
@@ -28,6 +28,7 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { initialJobFilter, JobFilter, jobStatusDecoder } from "./components/JobFilter";
 import { usePageData } from "../../../Context/PageDataProvider";
+import { AxiosError } from "axios";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -132,7 +133,7 @@ export default function Jobs() {
       const jobId = values.jobId;
       try {
         const response = await editJobVacancy(payload, jobId);
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (!success) {
           toast.error(i({ id: "TOAST.FAILED.UPDATED" }));
         } else {
@@ -140,8 +141,8 @@ export default function Jobs() {
           setRefresh(!isRefresh);
           handleClose();
         }
-      } catch (error: any) {
-        console.error(error.message);
+      } catch (error) {
+        console.error((error as AxiosError).message);
       } finally {
         setSubmitting(false);
       }
@@ -196,8 +197,8 @@ export default function Jobs() {
           setJobList(methodResults);
           setTotalRecords(totalRecords);
         }
-      } catch (error: any) {
-        toast.error(error.message);
+      } catch (error) {
+        console.error((error as AxiosError).message);
       } finally {
         setLoading(false);
       }

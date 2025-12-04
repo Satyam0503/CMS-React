@@ -837,20 +837,6 @@
     "EVENT_OCCASIONS": "Veranstaltungen",
     "RECURRING": "Wiederkehrend"
   },
-  "MONTHS": {
-    "JANUARY": "Januar",
-    "FEBRUARY": "Februar",
-    "MARCH": "März",
-    "APRIL": "April",
-    "MAY": "Mai",
-    "JUNE": "Juni",
-    "JULY": "Juli",
-    "AUGUST": "August",
-    "SEPTEMBER": "September",
-    "OCTOBER": "Oktober",
-    "NOVEMBER": "November",
-    "DECEMBER": "Dezember"
-  },
   "MESSAGE": {
     "WELCOME": "Willkommen",
     "NO_EMPLOYEE": "Keine Mitarbeiter",
@@ -910,7 +896,10 @@
     "33": "Der Übertragsgrenzwert ist erforderlich, wenn eine Ansammlung ausgewählt ist",
     "34": "Eine Urlaubsrichtlinie mit demselben Namen und Code existiert bereits",
     "35": "Urlaubsguthabenlimit überschritten",
-    "36": "Ungültiger Dateityp. Bitte laden Sie eine Excel-Datei hoch"
+    "36": "Ungültiger Dateityp. Bitte laden Sie eine Excel-Datei hoch",
+    "37": "Sie können sich erneut bewerben, sobald die erforderliche Wartezeit verstrichen ist",
+    "38": "Das hochgeladene Dateiformat wird nicht unterstützt. Bitte laden Sie ein gültiges Dokument hoch",
+    "39": "Die hochgeladene Datei überschreitet die zulässige Maximalgröße"
   },
   "CHAT": {
     "TITLE": "Chats",

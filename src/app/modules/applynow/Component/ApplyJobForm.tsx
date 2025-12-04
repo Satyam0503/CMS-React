@@ -1,6 +1,6 @@
 import React from "react";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import { CloudUploadOutlined } from "@mui/icons-material";
+import { CloudUpload } from "@mui/icons-material";
 import {
   Typography,
   TextField,
@@ -9,9 +9,10 @@ import {
   Select,
   MenuItem,
   Autocomplete,
+  Button,
 } from "@mui/material";
-import { Grid, Stack, Box } from "@mui/system";
-import { Formik, FormikState } from "formik";
+import { Grid, Stack } from "@mui/system";
+import { Formik } from "formik";
 import {
   experienceCategoryList,
   indianStates,
@@ -26,7 +27,9 @@ import { uploadResume } from "../../recruitment/services";
 import { applyNow } from "../services";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { useIntl } from "react-intl";
-import Tooltip from "@mui/material/Tooltip";
+import { VisuallyHiddenInput } from "../../../shared/components/form-component/VisuallyHiddenInput";
+import { AxiosError } from "axios";
+import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -38,7 +41,7 @@ const initialValues: ApplicantModel = {
   experience: 1,
   resume: null,
   vacancyId: "",
-  status: ApplicantStatus.InActive,
+  status: ApplicantStatus.Active,
   activityType: ApplicationStatus.New,
 };
 
@@ -51,7 +54,7 @@ type Props = {
 };
 
 export default function ApplyJobForm(props: Props) {
-  const intl = useIntl();
+  const { formatMessage: i } = useIntl();
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -67,9 +70,6 @@ export default function ApplyJobForm(props: Props) {
   const handleApplicationSubmission = async (
     values: ApplicantModel,
     setSubmitting: (isSubmitting: boolean) => void,
-    resetForm: (
-      nextState?: Partial<FormikState<ApplicantModel>> | undefined
-    ) => void
   ) => {
     const formData = new FormData();
     formData.append("File", values.resume as File);
@@ -79,14 +79,14 @@ export default function ApplyJobForm(props: Props) {
     };
     try {
       const { data } = await applyNow(payload);
-      if (!data.success) throw new Error(data.message);
+      if (!data.success) throw new Error(String(data.statusCode));
       const uploadResumeResponse = await uploadResume(values.email, formData);
       const responseData = uploadResumeResponse.data;
-      if (!responseData.success) throw new Error(responseData.message);
-      toast.success(data.message);
-      resetForm();
-    } catch (error: any) {
-      toast.error(error.message);
+      if (!responseData.success) throw new Error(String(responseData.statusCode));
+      toast.success(i({ id: "TOAST.SUCCESS.APPLICATION_SUBMITTED" }));
+      props.handleClose();
+    } catch (error) {
+      toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as AxiosError).message) }));
     } finally {
       setSubmitting(false);
     }
@@ -95,7 +95,7 @@ export default function ApplyJobForm(props: Props) {
     <CustomisedModal
       open={props.open}
       handleClose={props.handleClose}
-      title={intl.formatMessage({ id: "TITLES.APPLY_HERE" })}
+      title={i({ id: "TITLES.APPLY_HERE" })}
     >
       <Formik
         enableReinitialize
@@ -104,30 +104,27 @@ export default function ApplyJobForm(props: Props) {
           vacancyId: props.selectedJob!.jobId,
         }}
         validationSchema={applicantValidationSchema}
-        onSubmit={(value, { setSubmitting, resetForm }) => {
-          handleApplicationSubmission(value, setSubmitting, resetForm);
+        onSubmit={(value, { setSubmitting }) => {
+          handleApplicationSubmission(value, setSubmitting);
         }}
       >
         {({
-          status,
           values,
           touched,
           errors,
-          isValid,
           dirty,
           isSubmitting,
           setFieldValue,
           setFieldTouched,
           handleSubmit,
           getFieldProps,
-          ...formik
         }) => {
           return (
             <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid size={12}>
                   <Typography variant="body2">
-                    {intl.formatMessage({
+                    {i({
                       id: "MESSAGE.PLEASE_FILL_FORM",
                     })}
                   </Typography>
@@ -141,7 +138,7 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <TextField
                     fullWidth
-                    label={intl.formatMessage({
+                    label={i({
                       id: "FORM.FIRST_NAME",
                     })}
                     type="text"
@@ -157,7 +154,7 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <TextField
                     fullWidth
-                    label={intl.formatMessage({
+                    label={i({
                       id: "FORM.LAST_NAME",
                     })}
                     error={touched.lastName && Boolean(errors.lastName)}
@@ -173,7 +170,7 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <TextField
                     fullWidth
-                    label={intl.formatMessage({ id: "FORM.PHONE" })}
+                    label={i({ id: "FORM.PHONE" })}
                     error={touched.phone && Boolean(errors.phone)}
                     type="text"
                     {...getFieldProps("phone")}
@@ -187,7 +184,7 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <TextField
                     fullWidth
-                    label={intl.formatMessage({
+                    label={i({
                       id: "FORM.EMAIL",
                     })}
                     error={touched.email && Boolean(errors.email)}
@@ -204,11 +201,11 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
-                      {intl.formatMessage({ id: "JOB.POSITION" })}
+                      {i({ id: "JOB.POSITION" })}
                     </InputLabel>
 
                     <Select
-                      label={intl.formatMessage({
+                      label={i({
                         id: "JOB.POSITION",
                       })}
                       fullWidth
@@ -249,7 +246,7 @@ export default function ApplyJobForm(props: Props) {
                 >
                   <SelectInput
                     name={"experience"}
-                    label={intl.formatMessage({
+                    label={i({
                       id: "USER.EXPERIENCE",
                     })}
                   >
@@ -282,112 +279,56 @@ export default function ApplyJobForm(props: Props) {
                   )}
                 </Grid>
               </Grid>
-              <Stack
-                sx={{
-                  mt: 2,
-                }}
-              >
-                <Typography
-                  variant="body1"
-                  sx={{
-                    mb: 1,
-                  }}
+
+              <Typography sx={{ mt: 2 }} >
+                {i({ id: "APPLICATION.UPLOAD_RESUME" })}
+              </Typography>
+
+              <Stack className="p-6  align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUpload />}
                 >
-                  {intl.formatMessage({
-                    id: "APPLICATION.UPLOAD_RESUME",
-                  })}
+                  {i({ id: "APPLICATION.UPLOAD_RESUME" })}
+                  <VisuallyHiddenInput
+                    name="resume"
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      setFieldTouched("resume", true);
+                      handleFileChange(e, setFieldValue);
+                    }}
+                  />
+                </Button>
+
+                <Typography variant="caption">
+                  {`${i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })} : ${values.resume?.name ?? ""}`}
+                </Typography>
+                <Typography variant="body2" className="text-center ">
+                  {i({ id: "APPLICATION.RESUME_INSTRUCTION", })}
                 </Typography>
               </Stack>
-              <Grid
-                container
-                direction={"column"}
-                sx={{
-                  p: 3,
-                  border: "1px dashed grey",
-                  cursor: "pointer",
-                  borderRadius: 0.5,
-                }}
-              >
-                <Stack
-                  spacing={2}
-                  direction={"row"}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Stack
-                    sx={{
-                      alignItems: "center",
-                    }}
-                  >
-                    <Tooltip title="" placement="top">
-                      <Box
-                        component="label"
-                        sx={{
-                          px: 2,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        <CloudUploadOutlined
-                          fontSize="large"
-                          className="text-primary"
-                        />
-                        <input
-                          name="resume"
-                          type="file"
-                          accept=".pdf,"
-                          onChange={(e) => {
-                            setFieldTouched("resume", true);
-                            handleFileChange(e, setFieldValue);
-                          }}
-                          // onBlur={() => setFieldTouched("resume", true)}
-                          hidden
-                        />
-                      </Box>
-                    </Tooltip>
-                    <Stack>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          flexWrap: "wrap",
-                          textAlign: "center",
-                        }}
-                      >
-                        {values.resume ? values.resume.name : ""}
-                      </Typography>
-                    </Stack>
-                  </Stack>
 
-                  <Stack>
-                    <Typography variant="body2">
-                      {intl.formatMessage({
-                        id: "APPLICATION.RESUME_INSTRUCTION",
-                      })}
-                    </Typography>
-                  </Stack>
-                </Stack>
-              </Grid>
               {touched.resume && errors.resume && (
                 <ErrorLabel errorLabel={errors.resume} />
               )}
-              <Grid
-                size={12}
-                sx={{
-                  textAlign: "center",
-                  mt: 2,
-                }}
-              >
+
+              <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end", mt: 2 }}>
+                <CustomisedButton
+                  variant="outlined"
+                  label={i({ id: "BUTTON.CLOSE" })}
+                  handleClick={props.handleClose}
+                />
                 <CustomisedButton
                   type="submit"
                   variant="contained"
-                  label="Submit"
-                  size="medium"
+                  label={i({ id: "BUTTON.SUBMIT" })}
                   disabled={isSubmitting || !dirty}
                 />
-              </Grid>
+              </Stack>
             </form>
           );
         }}

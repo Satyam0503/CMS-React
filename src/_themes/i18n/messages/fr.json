@@ -835,20 +835,7 @@
     "EVENT_OCCASIONS": "Événements",
     "RECURRING": "Récurrent"
   },
-  "MONTHS": {
-    "JANUARY": "Janvier",
-    "FEBRUARY": "Février",
-    "MARCH": "Mars",
-    "APRIL": "Avril",
-    "MAY": "Mai",
-    "JUNE": "Juin",
-    "JULY": "Juillet",
-    "AUGUST": "Août",
-    "SEPTEMBER": "Septembre",
-    "OCTOBER": "Octobre",
-    "NOVEMBER": "Novembre",
-    "DECEMBER": "Décembre"
-  },
+
   "MESSAGE": {
     "WELCOME": "Bienvenue",
     "NO_EMPLOYEE": "Aucun employé",
@@ -908,7 +895,10 @@
     "33": "La limite de report est requise lorsque l’acquisition est sélectionnée",
     "34": "Une politique de congés avec le même nom et code existe déjà",
     "35": "Limite de solde de congés dépassée",
-    "36": "Le solde de congé ne peut pas être négatif après l'acquisition"
+    "36": "Le solde de congé ne peut pas être négatif après l'acquisition",
+    "37": "Vous pourrez postuler de nouveau une fois la période d’attente requise écoulée",
+    "38": "Le format du fichier téléversé n’est pas pris en charge. Veuillez téléverser un document valide",
+    "39": "Le fichier téléversé dépasse la taille maximale autorisée"
   },
   "CHAT": {
     "TITLE": "Chats",

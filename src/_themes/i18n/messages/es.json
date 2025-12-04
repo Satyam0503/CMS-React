@@ -838,20 +838,7 @@
     "EVENT_OCCASIONS": "Eventos",
     "RECURRING": "Recurrente"
   },
-  "MONTHS": {
-    "JANUARY": "Enero",
-    "FEBRUARY": "Febrero",
-    "MARCH": "Marzo",
-    "APRIL": "Abril",
-    "MAY": "Mayo",
-    "JUNE": "Junio",
-    "JULY": "Julio",
-    "AUGUST": "Agosto",
-    "SEPTEMBER": "Septiembre",
-    "OCTOBER": "Octubre",
-    "NOVEMBER": "Noviembre",
-    "DECEMBER": "Diciembre"
-  },
+
   "MESSAGE": {
     "WELCOME": "Bienvenido",
     "NO_EMPLOYEE": "Sin empleados",
@@ -911,7 +898,10 @@
     "33": "El límite de acarreo es obligatorio cuando se selecciona acumulación",
     "34": "Ya existe una política de permisos con el mismo nombre y código",
     "35": "Se ha excedido el límite del saldo de permisos",
-    "36": "El valor trasladado debe ser mayor que el valor acumulado"
+    "36": "El valor trasladado debe ser mayor que el valor acumulado",
+    "37": "Puede volver a postular después de que haya pasado el período de espera requerido",
+    "38": "El formato del archivo cargado no es compatible. Por favor, suba un documento válido",
+    "39": "El archivo cargado supera el tamaño máximo permitido"
   },
   "CHAT": {
     "TITLE": "Chats",

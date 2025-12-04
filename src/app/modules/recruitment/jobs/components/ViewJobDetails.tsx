@@ -4,9 +4,9 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import {
+  jobStatusMapper,
   JobTypeMapper,
   sanitizeHtmlContent,
-  statusDecoder,
 } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { JobModal } from "../../models";
@@ -100,7 +100,7 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
             md: 6
           }}>
           <StyleStatus
-            label={statusDecoder(jobData.status as boolean)}
+            label={jobStatusMapper[Number(jobData.status)]}
             className={jobData.status ? "success" : "danger"}
           />
         </Grid>

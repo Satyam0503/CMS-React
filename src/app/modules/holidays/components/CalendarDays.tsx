@@ -36,16 +36,7 @@ export default function CalendarDays(props: Props) {
 
     const popoverOpen = Boolean(anchorEl);
     const isSmallScreen = useMediaQuery(muiTheme.breakpoints.down("sm"));
-
-    const weekDays: Array<string> = [
-        "Sun",
-        "Mon",
-        "Tue",
-        "Wed",
-        "Thu",
-        "Fri",
-        "Sat",
-    ];
+    const weekDayShort = dayjs.weekdaysShort();
     const open = Boolean(smlScreenAnchr);
 
     //Gets number of days in any month
@@ -138,7 +129,7 @@ export default function CalendarDays(props: Props) {
         >
             <Card className="calendar-days-grid" >
                 {
-                    weekDays.map((weekDay, index) => {
+                    weekDayShort.map((weekDay, index) => {
                         return (
                             <Box
                                 component="div"

@@ -1,12 +1,10 @@
 import {
   Autocomplete,
-  Box,
   Button,
   Grid,
   MenuItem,
   Stack,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
@@ -28,8 +26,9 @@ import {
   indianStates,
 } from "../../../../../utils/constant/Constant";
 import { getVacancyPayload } from "../../jobs/Jobs";
-import { getStatusCodeString } from "../../../../../utils/common";
+import { getCustomStatusCodesErrorMessage, getStatusCodeString } from "../../../../../utils/common";
 import { VisuallyHiddenInput } from "../../../../shared/components/form-component/VisuallyHiddenInput";
+import { AxiosError } from "axios";
 
 const initialValues: ApplicantModel = {
   applicantId: "",
@@ -87,21 +86,15 @@ export const AddApplicant: FC<PropsTypes> = ({
     };
     try {
       const { data } = await addApplicant(payload);
-      if (data.success) {
-        const uploadResumeResponse = await uploadResume(values.email, formData);
-        const responseData = uploadResumeResponse.data;
-        if (responseData.success) {
-          toast.success(
-            i({ id: "TOAST.SUCCESS.ADD_APPLICANT" })
-          );
-          setRefresh(!refresh);
-          handleClose();
-        }
-      } else {
-        toast.error(i({ id: getStatusCodeString(data.statusCode) }));
-      }
-    } catch (error: any) {
-      console.error(error.message);
+      if (!data.success) throw new Error(String(data.statusCode));
+      const uploadResumeResponse = await uploadResume(values.email, formData);
+      const responseData = uploadResumeResponse.data;
+      if (!responseData.success) throw new Error(String(data.statusCode));
+      toast.success(i({ id: "TOAST.SUCCESS.ADD_APPLICANT" }));
+      setRefresh(!refresh);
+      handleClose();
+    } catch (error) {
+      toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as AxiosError).message) }));
     } finally {
       setSubmitting(false);
     }

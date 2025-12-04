@@ -11,11 +11,11 @@ type Props = {
 };
 
 export default function JobInfo(props: Props) {
-  const intl = useIntl();
-  const [open, setOpen] = useState<boolean>(false);
+  const { formatMessage: i } = useIntl();
+  const [isApplyFormOpen, setApplyFormOpen] = useState<boolean>(false);
 
   function handleClose() {
-    setOpen(false);
+    setApplyFormOpen(false);
   }
 
   return (
@@ -34,7 +34,7 @@ export default function JobInfo(props: Props) {
             fontWeight: "600",
           }}
         >
-          {intl.formatMessage({ id: "JOB.DESCRIPTION" })}
+          {i({ id: "JOB.DESCRIPTION" })}
         </Typography>
         <Button
           variant="contained"
@@ -45,9 +45,9 @@ export default function JobInfo(props: Props) {
               sm: "flex",
             },
           }}
-          onClick={() => setOpen(true)}
+          onClick={() => setApplyFormOpen(true)}
         >
-          {intl.formatMessage({ id: "BUTTON.APPLY" })}
+          {i({ id: "BUTTON.APPLY" })}
         </Button>
       </Box>
 
@@ -64,7 +64,7 @@ export default function JobInfo(props: Props) {
               }}
             />
             <Box
-              component={"div"}
+              component="div"
               sx={{ display: "flex", justifyContent: "center" }}
             >
               <Button
@@ -76,18 +76,21 @@ export default function JobInfo(props: Props) {
                     sm: "none",
                   },
                 }}
-                onClick={() => setOpen(true)}
+                onClick={() => setApplyFormOpen(true)}
               >
-                Apply
+                {i({ id: "BUTTON.APPLY" })}
               </Button>
             </Box>
-            <ApplyJobForm
-              selectedJob={props.selectedJob}
-              handleChangePostion={props.handleChangePostion}
-              activeJobPositionsList={props.activeJobPositionsList}
-              open={open}
-              handleClose={handleClose}
-            />
+            {
+              isApplyFormOpen &&
+              <ApplyJobForm
+                selectedJob={props.selectedJob}
+                handleChangePostion={props.handleChangePostion}
+                activeJobPositionsList={props.activeJobPositionsList}
+                open={isApplyFormOpen}
+                handleClose={handleClose}
+              />
+            }
           </Stack>
         )}
       </Stack>

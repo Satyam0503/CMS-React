@@ -19,6 +19,7 @@ import { Search } from "@mui/icons-material";
 import { useDebounce } from "../../../hooks/useDebounce";
 import NoVacancy from "./NoVacancy";
 import { CircularLoader } from "../../../shared/components/CircularLoader";
+import { useIntl } from "react-intl";
 
 type FilterProps = {
     jobTypes: number;
@@ -26,6 +27,7 @@ type FilterProps = {
 }
 
 export default function JobSearchCareer() {
+    const { formatMessage: i } = useIntl();
     const [activeJobPositionsList, setActiveJobPositionsList] = useState<JobModal[]>([]);
     const [filters, setFilters] = useState<FilterProps>({ jobTypes: 0, searchTitle: "", });
     const debouncedValue = useDebounce(filters.searchTitle);
@@ -74,7 +76,7 @@ export default function JobSearchCareer() {
             <Box component={"div"} className="job-search-bar">
                 <TextField
                     name="searchTitle"
-                    label="Job Position"
+                    label={i({ id: "PLACEHOLDER.SEARCH" })}
                     className="job-search-section"
                     value={filters.searchTitle}
                     slotProps={{
@@ -85,7 +87,7 @@ export default function JobSearchCareer() {
                     onChange={handleInputChange}
                 />
                 <FormControl className="job-search-section">
-                    <InputLabel id="job-type-select-label">Job Type</InputLabel>
+                    <InputLabel id="job-type-select-label">{i({ id: "JOB.TYPE" })}</InputLabel>
                     <Select
                         name="jobTypes"
                         labelId="job-type-select-label"

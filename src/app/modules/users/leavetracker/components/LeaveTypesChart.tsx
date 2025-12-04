@@ -5,7 +5,6 @@ import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
 import { CustomCard } from "../../../../shared/components/CustomCard";
 import {
   defaultPieChartSeries,
-  LeaveTypeMapper,
 } from "../../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { DonutChart } from "../../../../shared/components/DonutChart";

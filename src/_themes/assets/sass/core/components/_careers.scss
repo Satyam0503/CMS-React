@@ -166,24 +166,17 @@
       border-color: var(--mui-palette-primary-main);
     }
 
-    .job-footer-container {
+    .job-type-card {
+      align-self: flex-start;
+      font-size: 14px;
+      background-color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-common-white);
+      padding: 0.15rem 0.5rem;
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-
-      .job-skill {
-        border: none;
-        height: 25px;
-        font-size: 14px;
-        background-color: var(--mui-palette-primary-main);
-        color: var(--mui-palette-common-white);
-        padding: 0.25rem 0.5rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 0.25rem;
-        font-weight: 600;
-      }
+      justify-content: center;
+      align-items: center;
+      border-radius: 0.25rem;
+      font-weight: bold;
     }
   }
 
