@@ -39,6 +39,7 @@ export type LeaveRequestModel = Required<MyLeaveRequestModel> & {
   employeeName: string;
   profileUrl: string | null;
   jobRole: null | Record<string, string>;
+  employeeId: string;
 };
 
 export type LeaveRequestsFilterModel = {

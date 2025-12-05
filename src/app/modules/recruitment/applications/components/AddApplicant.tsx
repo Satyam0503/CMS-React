@@ -26,7 +26,7 @@ import {
   indianStates,
 } from "../../../../../utils/constant/Constant";
 import { getVacancyPayload } from "../../jobs/Jobs";
-import { getCustomStatusCodesErrorMessage, getStatusCodeString } from "../../../../../utils/common";
+import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { VisuallyHiddenInput } from "../../../../shared/components/form-component/VisuallyHiddenInput";
 import { AxiosError } from "axios";
 

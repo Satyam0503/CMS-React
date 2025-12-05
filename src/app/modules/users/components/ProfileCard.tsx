@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { PayslipPayload } from "../../payroll/models";
 import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
+import { LANGUAGE } from "../../../../utils/enums";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function ProfileCard() {
   const profileImage = useAppSelector((state) => state.user.userData?.profileImage) ?? DEFAULT_USER_AVATAR;
   const employeeId = useParams().employeeid;
   const { currentLanguage } = useAppLang();
-  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -110,7 +111,7 @@ export default function ProfileCard() {
           }}>
             {userDetails?.firstName + " " + userDetails?.lastName}
           </Typography>
-          <Typography variant="body1" sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className=" px-4 py-1 rounded-pill">
+          <Typography variant="body1" sx={{ bgcolor: "common.white", color: 'primary.main', fontWeight: 600 }} className="px-4 py-1 rounded-pill">
             {!userDetails?.jobRoleTitle || userDetails.jobRoleTitle === null ? <FormattedMessage id="NOT_AVAILABLE" /> : userDetails.jobRoleTitle[currentLanguage] || userDetails.jobRoleTitle[defaultLanguage]}
           </Typography>
         </Stack>

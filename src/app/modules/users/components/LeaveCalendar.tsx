@@ -41,7 +41,6 @@ function LeaveCalendar() {
   useEffect(() => {
     const fetchLeaveRequest = async () => {
       const payload: GetLeaveRequestPayLoad = {
-        ...initialLeaveRequestFilter,
         pageNo: null,
         pageSize: null,
         employeeId: empId,
@@ -73,8 +72,6 @@ function LeaveCalendar() {
           sx={{
             width: "auto",
             button: { border: "none" },
-            // paddingLeft: "24px",
-            // ".MuiDayCalendar-root": { paddingInline: "24px" },
             ".MuiDayCalendar-header": {
               justifyContent: "space-between",
             },
@@ -99,9 +96,8 @@ function LeaveCalendar() {
                 <PickersDay
                   {...day}
                   sx={{
-                    // pointerEvents: "none",
                     ...(isSelected && {
-                      backgroundColor: "#9a56d3",
+                      backgroundColor: "primary.main",
                       color: "white",
                     }),
                   }}

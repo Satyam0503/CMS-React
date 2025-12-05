@@ -13,7 +13,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setCurrentUser: (state, action: PayloadAction<UserModel | undefined>) => {
+    setCurrentUser: (state, action: PayloadAction<UserModel>) => {
       state.userData = action.payload;
     },
     resetUserSlice: (state) => {

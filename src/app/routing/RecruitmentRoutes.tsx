@@ -2,7 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { ApplicantDetails } from "../modules/recruitment/applications/components/ApplicantDetails";
 import { EditApplicant } from "../modules/recruitment/applications/components/EditApplicant";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute";
-import { ModulesName } from "../../utils/enums";
+import { ModulesName, Permission } from "../../utils/enums";
 import Jobs from "../modules/recruitment/jobs/Jobs";
 import { Applications } from "../modules/recruitment/applications/Applications";
 import ProcessLogs from "../modules/recruitment/processlog/ProcessLog";
@@ -75,7 +75,7 @@ const RecruitmentRoutes = () => {
         <Route
           path="applicant/edit/:applicantid"
           element={
-            <ProtectedRoute module={ModulesName.Applications}>
+            <ProtectedRoute module={ModulesName.Applications} permission={Permission.Edit}>
               <EditApplicant />
             </ProtectedRoute>
           }

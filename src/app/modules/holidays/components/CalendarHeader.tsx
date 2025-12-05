@@ -42,7 +42,7 @@ export default function CalendarHeader(props: Props) {
             views={["year", "month", "day"]}
             setValue={props.handleSelectedDateChange}
             className="calendar-input"
-          // format="DD MMMM YYYY"
+            format="DD MMMM YYYY"
           />
         </Box>
         <IconButton onClick={decreaseMonth}>

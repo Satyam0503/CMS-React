@@ -8,6 +8,7 @@ import { CardMessage } from "../../../shared/CardMessage";
 import { GetAllEmployeeResponseModel } from "../models";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { LANGUAGE } from "../../../../utils/enums";
 
 interface Props {
   employeeList: GetAllEmployeeResponseModel[];
@@ -18,7 +19,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId) ?? "";
   const navigate = useNavigate();
   const { currentLanguage } = useAppLang();
-  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
 
   const handleClick = (employeeId: string) => {
     employeeId === currentEmpId
@@ -33,7 +34,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
   return (
     <Box component="div" className="employee-grid-container">
       {isLoading
-        ? Array(1, 2, 3, 4, 5, 6).map((ele) => {
+        ? [1, 2, 3, 4, 5, 6].map((ele) => {
           return <EmpCardSkeleton key={ele} />;
         })
         : employeeList.length > 0 &&

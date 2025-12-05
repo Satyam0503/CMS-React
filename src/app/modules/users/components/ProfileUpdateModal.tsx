@@ -1,6 +1,6 @@
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import { Box, Container, Grid, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   AttachFile,
@@ -158,7 +158,6 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
             }
 
           </Box>
-          {/* {fileError && } */}
 
           <Stack className="justify-content-end flex-row gap-2" >
             {

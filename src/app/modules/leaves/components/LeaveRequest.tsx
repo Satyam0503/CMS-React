@@ -115,6 +115,7 @@ export const LeaveRequest = () => {
           <TableHead>
             <TableRow>
               <TableCell>{i({ id: "LEAVE.EMPLOYEE_NAME" })}</TableCell>
+              <TableCell>{i({ id: "LEAVE.LEAVE_TYPE" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.LEAVE_PERIOD" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.DURATION" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
@@ -149,7 +150,7 @@ export const LeaveRequest = () => {
                         subTitle={row.jobRole}
                       />
                     </TableCell>
-                    {/* <TableCell>{i({ id: LeaveTypeMapper[row.leaveType] })}</TableCell> */}
+                    <TableCell>{`${row.leavePolicyName} (${row.code})`}</TableCell>
                     <TableCell>{`${dateFormatter(
                       row.startDate,
                       "DD MMM YY"

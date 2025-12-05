@@ -25,6 +25,7 @@ import {
 import {
   commentActionEncoderForApplicationStatus,
   dateFormatter,
+  hasModuleFeaturePermission,
 } from "../../../../../utils/common";
 import {
   ApplicationEvaluationStatus,
@@ -36,7 +37,7 @@ import { AddComment } from "./AddComment";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { ApplicantStatus } from "../../../../../utils/enums";
+import { ApplicantStatus, ModulesName, Permission } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
@@ -66,6 +67,9 @@ export const ApplicantDetails = () => {
     applicationStatus: 0,
     applicantStatus: 0,
   });
+
+  const userPermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+  const canEditApplicant = hasModuleFeaturePermission(ModulesName.Applications, Permission.Edit, userPermissions);
 
   useEffect(() => {
     getApplicantById(applicantId)
@@ -226,15 +230,18 @@ export const ApplicantDetails = () => {
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
               handleClick={() => setCVPreviewMode(!CvPreviewMode)}
             />
-            <CustomIconButton
-              icon={<Edit />}
-              tooltip={formatMessage({ id: "TOOLTIP.EDIT_APPLICANT" })}
-              handleClick={() => {
-                navigate(
-                  `/recruitment/applicant/edit/${applicant.applicantId}`
-                );
-              }}
-            />
+            {
+              canEditApplicant &&
+              <CustomIconButton
+                icon={<Edit />}
+                tooltip={formatMessage({ id: "TOOLTIP.EDIT_APPLICANT" })}
+                handleClick={() => {
+                  navigate(
+                    `/recruitment/applicant/edit/${applicant.applicantId}`
+                  );
+                }}
+              />
+            }
           </Stack>
         </Stack>
         {

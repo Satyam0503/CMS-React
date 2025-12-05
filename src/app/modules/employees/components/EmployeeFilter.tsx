@@ -23,6 +23,7 @@ import { FilterComponent } from "../../../shared/components/FilterComponent";
 import { FilterComponentProps } from "../../../../utils/common_types";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DepartmentResponseModel } from "../../dashboard/model";
+import { LANGUAGE } from "../../../../utils/enums";
 
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
@@ -45,7 +46,7 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
       },
     });
   const { currentLanguage } = useAppLang();
-  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
 
   useEffect(() => {
     const getAllDepartments = async () => {
