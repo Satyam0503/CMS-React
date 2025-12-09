@@ -9,7 +9,6 @@ import {
   defaultPieChartSeries,
   leaveRequestStatusMapper,
 } from "../../../../utils/common";
-import dayjs from "dayjs";
 import { DonutChart } from "../../../shared/components/DonutChart";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { Card, Stack, Typography } from "@mui/material";
@@ -78,12 +77,13 @@ export const LeaveRequestSummaryChart = () => {
         p: 2,
       }}
     >
-      <Stack className="mb-2 flex-row justify-content-between">
+      <Stack className="mb-2 gap-2 flex-row align-items-center">
         <Typography className="fw-bold fs-16">
           {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
         </Typography>
-        <Typography className="fw-bold fs-16">
-          {dayjs().format("MMM YYYY")}
+
+        <Typography variant="body2">
+          ({i({ id: "LEAVE.LAST_30_DAYS" })})
         </Typography>
       </Stack>
       <DonutChart

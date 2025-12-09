@@ -349,6 +349,7 @@
     "LEAVE_APPLICATION": "Urlaubsantrag",
     "TAKEN": "Genommen",
     "DURATION": "Dauer",
+    "LAST_30_DAYS": "die letzten 30 Tage",
     "TITLES": {
       "LEAVE_BALANCE": "Urlaubssaldo",
       "ADD_LEAVE_BALANCE": "Urlaubssaldo hinzufügen",
@@ -899,7 +900,8 @@
     "36": "Ungültiger Dateityp. Bitte laden Sie eine Excel-Datei hoch",
     "37": "Sie können sich erneut bewerben, sobald die erforderliche Wartezeit verstrichen ist",
     "38": "Das hochgeladene Dateiformat wird nicht unterstützt. Bitte laden Sie ein gültiges Dokument hoch",
-    "39": "Die hochgeladene Datei überschreitet die zulässige Maximalgröße"
+    "39": "Die hochgeladene Datei überschreitet die zulässige Maximalgröße",
+    "40": "Die E-Mail des Mitarbeiters wurde bereits verifiziert"
   },
   "CHAT": {
     "TITLE": "Chats",

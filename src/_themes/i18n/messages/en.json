@@ -362,6 +362,7 @@
     "LEAVE_APPLICATION": "Leave Application",
     "TAKEN": "Taken",
     "DURATION": "Duration",
+    "LAST_30_DAYS": "last 30 Days",
     "TITLES": {
       "LEAVE_BALANCE": "Leave Balance",
       "ADD_LEAVE_BALANCE": "Add Leave Balance",
@@ -935,7 +936,8 @@
     "36": "Password reset request already sent. Please check your email",
     "37": "You can apply again after the required waiting period has passed",
     "38": "The uploaded file format is not supported. Please upload a valid document",
-    "39": "The uploaded file exceeds the maximum allowed size"
+    "39": "The uploaded file exceeds the maximum allowed size",
+    "40": "The employee's email is already verified"
   },
   "CHAT": {
     "TITLE": "Chats",

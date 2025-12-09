@@ -349,6 +349,7 @@
     "LEAVE_APPLICATION": "Demande de congé",
     "TAKEN": "Pris",
     "DURATION": "Durée",
+    "LAST_30_DAYS": "les 30 derniers jours",
     "TITLES": {
       "LEAVE_BALANCE": "Solde de congé",
       "ADD_LEAVE_BALANCE": "Ajouter un solde de congé",
@@ -898,7 +899,8 @@
     "36": "Le solde de congé ne peut pas être négatif après l'acquisition",
     "37": "Vous pourrez postuler de nouveau une fois la période d’attente requise écoulée",
     "38": "Le format du fichier téléversé n’est pas pris en charge. Veuillez téléverser un document valide",
-    "39": "Le fichier téléversé dépasse la taille maximale autorisée"
+    "39": "Le fichier téléversé dépasse la taille maximale autorisée",
+    "40": "L'e-mail de l'employé est déjà vérifié"
   },
   "CHAT": {
     "TITLE": "Chats",

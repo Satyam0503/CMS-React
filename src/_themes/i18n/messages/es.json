@@ -350,6 +350,7 @@
     "LEAVE_APPLICATION": "Solicitud de permiso",
     "TAKEN": "Tomado",
     "DURATION": "Duración",
+    "LAST_30_DAYS": "los últimos 30 días",
     "TITLES": {
       "LEAVE_BALANCE": "Saldo de permisos",
       "ADD_LEAVE_BALANCE": "Agregar saldo de permisos",
@@ -901,7 +902,8 @@
     "36": "El valor trasladado debe ser mayor que el valor acumulado",
     "37": "Puede volver a postular después de que haya pasado el período de espera requerido",
     "38": "El formato del archivo cargado no es compatible. Por favor, suba un documento válido",
-    "39": "El archivo cargado supera el tamaño máximo permitido"
+    "39": "El archivo cargado supera el tamaño máximo permitido",
+    "40": "El correo electrónico del empleado ya está verificado"
   },
   "CHAT": {
     "TITLE": "Chats",
