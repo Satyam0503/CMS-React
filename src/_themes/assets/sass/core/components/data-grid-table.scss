@@ -1,0 +1,18 @@
+.data-grid-parent-container {
+  & .MuiDataGrid-columnHeaderTitle {
+    color: var(--mui-palette-text-primary);
+    font-weight: bold;
+  }
+  & .MuiDataGrid-columnHeader:focus {
+    outline: none;
+  }
+  & .MuiDataGrid-columnHeader:focus-within {
+    outline: none;
+  }
+  & .MuiDataGrid-cell:focus {
+    outline: none;
+  }
+  & .MuiDataGrid-cell:focus-within {
+    outline: none;
+  }
+}

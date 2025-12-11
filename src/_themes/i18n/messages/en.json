@@ -49,7 +49,8 @@
     "SWITCH_THEME": "Light/Dark Mode",
     "CHATS": "Chat",
     "NEXT": "Next",
-    "PREVIOUS": "Previous"
+    "PREVIOUS": "Previous",
+    "SEND_INVITATION_LINK": "send invitation email"
   },
 
   "PAGE": {
@@ -247,7 +248,8 @@
     "BLOOD_GROUP": "Blood Group",
     "START_DATE": "Start Date",
     "END_DATE": "End Date",
-    "EMPLOYEMENT_TYPE": "Employment Type"
+    "EMPLOYEMENT_TYPE": "Employment Type",
+    "VERIFICATION": "Verification Status"
   },
 
   "AUTH": {
@@ -999,6 +1001,7 @@
     "DAY": "{days, plural, =0 {0 day} one {# day} other {# days}}"
   },
   "COMMON": {
-    "CONGRATULATION": "Congratulation"
+    "CONGRATULATION": "Congratulation",
+    "VERIFIED": "Verified"
   }
 }

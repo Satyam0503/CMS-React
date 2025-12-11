@@ -4,21 +4,20 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Badge,
+  IconButton,
+  Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, FilterList, GridView, ViewList } from "@mui/icons-material";
+import { Add, Drafts, FilterList, GridView, ViewList } from "@mui/icons-material";
 
 import { useEffect, useMemo, useState } from "react";
-import { deleteEmployee, getAllEmployees } from "./employeeServices";
+import { getAllEmployees, resendInvitationLink } from "./employeeServices";
 import { toast } from "react-toastify";
-import { CustomisedTable } from "../../shared/components/CustomisedTable";
-import { EmployeeTabTableColumnList } from "../../../utils/constant/Constant";
 
-import { getModulePermissions } from "../../../utils/common";
+import { getCustomStatusCodesErrorMessage, getModulePermissions, hasModuleFeaturePermission } from "../../../utils/common";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
-import { Pagination } from "../../shared/components/Pagination";
-import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
@@ -31,17 +30,131 @@ import {
 import { countAppliedFilter } from "../../../utils/common";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
+import { GridColDef, GridPaginationModel, GridRowParams } from "@mui/x-data-grid";
+import { AvatarCell } from "../../shared/components/AvatarCell";
+import { CustomDataGrid } from "../../shared/components/CustomDataGrid";
+import { SetDepartmentName } from "./components/SetDepartmentName";
+import { StyleStatus } from "../../shared/components/StyledStatus";
 
 type ViewMode = "table" | "grid";
+
+const useEmployeeTableColumnList = (): GridColDef<GetAllEmployeeResponseModel>[] => {
+  const { formatMessage: i } = useIntl();
+  const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+  const canInviteEmployee = hasModuleFeaturePermission(ModulesName.Employees, Permission.Create, modulePermission);
+  return [
+    {
+      field: "employeeId",
+      headerName: i({ id: "USER.EMP_ID" }),
+      description: i({ id: "USER.EMP_ID" }),
+      minWidth: 100,
+      hideable: false,
+      sortable: true,
+      resizable: false,
+      flex: 0.5,
+    },
+    {
+      field: "name",
+      headerName: i({ id: "FORM.FULL_NAME" }),
+      description: i({ id: "FORM.FULL_NAME" }),
+      minWidth: 200,
+      hideable: false,
+      sortable: false,
+      resizable: true,
+      display: "flex",
+      flex: 1,
+      renderCell: (param) => (
+        <AvatarCell
+          avatarSrc={param.row.fullProfileUrl}
+          title={param.row.fullName}
+          subTitle={param.row.jobRole}
+        />
+      )
+    },
+    {
+      field: "email",
+      headerName: i({ id: "FORM.EMAIL" }),
+      description: i({ id: "FORM.EMAIL" }),
+      minWidth: 200,
+      hideable: false,
+      sortable: true,
+      resizable: false,
+      flex: 1,
+    },
+    {
+      field: "phoneNumber",
+      headerName: i({ id: "FORM.PHONE" }),
+      description: i({ id: "FORM.PHONE" }),
+      minWidth: 150,
+      sortable: false,
+      resizable: false,
+      flex: 1
+    },
+    {
+      field: "department",
+      headerName: i({ id: "FORM.DEPARTMENT" }),
+      description: i({ id: "FORM.DEPARTMENT" }),
+      minWidth: 180,
+      sortable: false,
+      resizable: false,
+      renderCell: (param) => <SetDepartmentName department={param.row.department} />,
+      flex: 1
+    },
+    ...(canInviteEmployee ? [{
+      field: "isVerified",
+      headerName: i({ id: "FORM.VERIFICATION" }),
+      description: i({ id: "FORM.VERIFICATION" }),
+      minWidth: 200,
+      sortable: true,
+      resizable: false,
+      display: "flex",
+      renderCell: (param) => {
+        return param.row.isVerified ? <StyleStatus className="success" label="COMMON.VERIFIED" /> : <InvitationMailButton userId={param.row.userId} />
+      },
+      flex: 1
+    } satisfies GridColDef<GetAllEmployeeResponseModel>] : [])
+  ]
+}
+
+const InvitationMailButton = (props: { userId: string }) => {
+  const { formatMessage: i } = useIntl();
+  const [loading, setLoading] = useState(false);
+  const sentInvitationMail = async () => {
+    setLoading(true);
+    try {
+      const { data } = await resendInvitationLink(props.userId);
+      if (!data.success) throw new Error(String(data.statusCode));
+      toast.success(i({ id: "TOAST.SUCCESS.INVITE_EMPLOYEE" }));
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(+error.message, "TOAST.FAILED.INVITE_EMPLOYEE") }));
+        return;
+      }
+      console.error("failed to send invitation link");
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+  return (
+    loading ? <CircularProgress enableTrackSlot size="28px" thickness={4} /> :
+      <Tooltip title={i({ id: "TOOLTIP.SEND_INVITATION_LINK" })}>
+        <IconButton sx={{ padding: 0, border: 0 }} onClick={(e => {
+          sentInvitationMail();
+          e.stopPropagation();
+        })}>
+          <Drafts />
+        </IconButton>
+      </Tooltip>
+  )
+}
+
 
 const Employees = () => {
   const { formatMessage: i } = useIntl();
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [showAddEmployeeStepper, setShowAddEmployeeStepper] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<
-    GetAllEmployeeResponseModel | undefined
-  >();
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
@@ -54,13 +167,11 @@ const Employees = () => {
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
 
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "employee-filter" : undefined;
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
@@ -72,6 +183,7 @@ const Employees = () => {
 
   const employeeFilters = useAppSelector((state) => state.filters.employee);
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
+  const columns = useEmployeeTableColumnList();
 
   const handleSearchChange = (value: string) => {
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
@@ -80,57 +192,15 @@ const Employees = () => {
     setSearch(value.trim());
   };
 
-  const handleEmployeeDeletion = async (res: string) => {
-    if (res !== "ok" || selectedEmployee === undefined) {
-      closeConfirmationModal();
-    } else {
-      try {
-        const response = await deleteEmployee(selectedEmployee.userId);
-        const { success, message } = response.data;
-        if (success) {
-          toast.success(message);
-          closeConfirmationModal();
-          setRefresh(!isRefresh);
-        }
-      } catch (error) {
-        toast.error(i({ id: "ERROR.SOMETHING_WRONG" }));
-        console.error(
-          "Error :",
-          error instanceof Error ? error.message : error
-        );
-      } finally {
-        closeConfirmationModal();
-      }
-    }
-  };
-
-  const openConfirmationModal = (employee: GetAllEmployeeResponseModel) => {
-    setConfirmModalOpen(true);
-    setSelectedEmployee(employee);
-  };
-
-  function closeConfirmationModal() {
-    setConfirmModalOpen(false);
-    setSelectedEmployee(undefined);
+  const handlePaginationModelChange = (model: GridPaginationModel) => {
+    setPaginationValues({
+      pageNo: model.page,
+      records: model.pageSize
+    })
   }
 
-  const handlePageChange = (page: number) => {
-    setPaginationValues({
-      ...paginationValues,
-      pageNo: page,
-    });
-  };
-
-  const handleRowPerPageChange = (rowPerPage: number) => {
-    setPaginationValues({
-      ...paginationValues,
-      records: rowPerPage,
-      pageNo: 0,
-    });
-  };
-
-  const rowClickHandler = (employee: GetAllEmployeeResponseModel) => {
-    const empId = employee.userId;
+  const rowClickHandler = (param: GridRowParams<GetAllEmployeeResponseModel>) => {
+    const empId = param.row.userId;
     empId === currentEmpId
       ? navigate("/profile")
       : navigate(`/employees/${empId}`);
@@ -223,13 +293,13 @@ const Employees = () => {
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`
             ) && (
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setShowAddEmployeeStepper(true)}
-                tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                ariaLabel="Add employee"
-              />
-            )}
+                <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setShowAddEmployeeStepper(true)}
+                  tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                  ariaLabel="Add employee"
+                />
+              )}
           </Stack>
           {open && (
             <EmployeeFilter
@@ -241,29 +311,18 @@ const Employees = () => {
           )}
         </Stack>
         {viewMode === "table" ? (
-          <CustomisedTable
-            tabName={ModulesName.Employees}
+          <CustomDataGrid
+            columns={columns}
+            row={employeeList}
             keyName="userId"
             loading={isLoading}
-            rows={employeeList}
-            columns={EmployeeTabTableColumnList}
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            openConfirmationModal={openConfirmationModal}
             rowClickHandler={rowClickHandler}
+            rowCount={totalRecords}
+            paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
+            handlePaginationModelChange={handlePaginationModelChange}
           />
         ) : (
           <EmployeeGridView employeeList={employeeList} isLoading={isLoading} />
-        )}
-
-        {totalRecords > 0 && (
-          <Pagination
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.records}
-            setPage={handlePageChange}
-            setRowPerPage={handleRowPerPageChange}
-            totalRecords={totalRecords}
-          />
         )}
       </Card>
       {showAddEmployeeStepper && (
@@ -271,15 +330,6 @@ const Employees = () => {
           open={showAddEmployeeStepper}
           handleReresh={handleReresh}
           handleClose={() => setShowAddEmployeeStepper(false)}
-        />
-      )}
-      {isConfirmModalOpen && (
-        <ConfirmationModal
-          title={i({ id: "CONFIRMATION.TITLE.DELETE_EMP" })}
-          content={i({ id: "CONFIRMATION.CONTENT.DELETE_EMP" })}
-          open={isConfirmModalOpen}
-          handleClose={closeConfirmationModal}
-          handleConfirmation={handleEmployeeDeletion}
         />
       )}
     </>

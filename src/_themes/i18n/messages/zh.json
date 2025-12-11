@@ -49,7 +49,8 @@
     "SWITCH_THEME": "浅色/深色模式",
     "CHATS": "聊天",
     "NEXT": "下一步",
-    "PREVIOUS": "上一步"
+    "PREVIOUS": "上一步",
+    "SEND_INVITATION_LINK": "发送邀请邮件"
   },
   "Modules": {
     "Dashboard": "仪表盘",
@@ -259,7 +260,8 @@
     "BLOOD_GROUP": "血型",
     "START_DATE": "开始日期",
     "END_DATE": "结束日期",
-    "EMPLOYEMENT_TYPE": "雇佣类型"
+    "EMPLOYEMENT_TYPE": "雇佣类型",
+    "VERIFICATION": "验证状态"
   },
   "AUTH": {
     "REGISTRATION_TITLE": "注册您的公司",

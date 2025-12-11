@@ -61,7 +61,7 @@ import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
 import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
@@ -77,6 +77,7 @@ import {
 } from "../../app/modules/leaves/model";
 import { CalendarItem } from "../../app/modules/holidays/models";
 import { SetDepartmentName } from "../../app/modules/employees/components/SetDepartmentName";
+import { GridColDef } from "@mui/x-data-grid";
 
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
@@ -147,6 +148,7 @@ export const ServiceUrl = {
 
   SEARCH_EMPLOYEE: `api/User/Search`,
   GET_COLLEGE_LIST: `api/User/GetCollegeList`,
+  RESEND_INVITE_LINK: `api/User/ResendInvite`,
 
   // jobs
   ADD_JOB_VACANCY: `api/JobVacancy/AddJobVacancy`,
@@ -573,48 +575,6 @@ export const LeaveTypeConstant = [
   },
 ];
 
-export const EmployeeTabTableColumnList: ColumnListTypes[] = [
-  {
-    id: "employeeId",
-    label: "USER.EMP_ID",
-    minWidth: 60,
-  },
-  {
-    id: "name",
-    label: "FORM.FULL_NAME",
-    minWidth: 200,
-    avatarCell: (emp: GetAllEmployeeResponseModel) => {
-      return (
-        <AvatarCell
-          avatarSrc={emp.fullProfileUrl}
-          title={emp.fullName}
-          subTitle={emp.jobRole}
-        />
-      );
-    },
-  },
-  {
-    id: "email",
-    label: "FORM.EMAIL",
-  },
-  {
-    id: "phoneNumber",
-    label: "FORM.PHONE",
-    format: (phone: string | null) =>
-      phone ?? <FormattedMessage id="NOT_AVAILABLE" />,
-  },
-  {
-    id: "department",
-    label: "FORM.DEPARTMENT",
-    format: (department: Record<string, string> | null) => {
-      if (department === null) {
-        return <FormattedMessage id="NOT_AVAILABLE" />;
-      } else {
-        return <SetDepartmentName department={department} />;
-      }
-    },
-  },
-];
 
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {

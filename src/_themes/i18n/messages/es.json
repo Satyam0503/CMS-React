@@ -50,7 +50,8 @@
     "SWITCH_THEME": "Modo claro/oscuro",
     "CHATS": "Chat",
     "NEXT": "Siguiente",
-    "PREVIOUS": "Anterior"
+    "PREVIOUS": "Anterior",
+    "SEND_INVITATION_LINK": "enviar correo de invitación"
   },
   "PAGE": {
     "JOBS": "Requisitos de trabajo",
@@ -240,7 +241,8 @@
     "BLOOD_GROUP": "Grupo sanguíneo",
     "START_DATE": "Fecha de inicio",
     "END_DATE": "Fecha de finalización",
-    "EMPLOYEMENT_TYPE": "Tipo de empleo"
+    "EMPLOYEMENT_TYPE": "Tipo de empleo",
+    "VERIFICATION": "Estado de verificación"
   },
   "AUTH": {
     "REGISTRATION_TITLE": "Registrar su empresa",

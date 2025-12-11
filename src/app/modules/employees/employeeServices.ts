@@ -41,3 +41,9 @@ export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
     ResponseData<InviteEmployeeResponse>
   >(ServiceUrl.INVITE_NEW_EMPLOYEE, payload);
 };
+
+export const resendInvitationLink = (userId: string) => {
+  return postRequest<undefined, ApiResponse>(
+    `${ServiceUrl.RESEND_INVITE_LINK}/${userId}`
+  );
+};

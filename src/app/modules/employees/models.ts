@@ -13,6 +13,7 @@ export interface GetAllEmployeeResponseModel {
   phoneNumber: string | null;
   fullProfileUrl: string | null;
   dateOfBirth: string | null;
+  isVerified: boolean;
 }
 
 export interface EmployeeFilterModel {

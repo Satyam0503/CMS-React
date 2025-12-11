@@ -49,7 +49,8 @@
     "SWITCH_THEME": "ライト/ダークモード",
     "CHATS": "チャット",
     "NEXT": "次へ",
-    "PREVIOUS": "前へ"
+    "PREVIOUS": "前へ",
+    "SEND_INVITATION_LINK": "招待メールを送信する"
   },
   "PAGE": {
     "JOBS": "求人情報",
@@ -239,7 +240,8 @@
     "BLOOD_GROUP": "血液型",
     "START_DATE": "開始日",
     "END_DATE": "終了日",
-    "EMPLOYEMENT_TYPE": "雇用形態"
+    "EMPLOYEMENT_TYPE": "雇用形態",
+    "VERIFICATION": "確認ステータス"
   },
   "AUTH": {
     "REGISTRATION_TITLE": "会社を登録",
