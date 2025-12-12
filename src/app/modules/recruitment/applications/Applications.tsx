@@ -1,9 +1,6 @@
-import { Badge, Card, Stack } from "@mui/material";
-import { useIntl } from "react-intl";
-import { Add, Download, FilterList } from "@mui/icons-material";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
-import { ApplicationTabTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../../shared/components/Pagination";
+import { Badge, Card, Stack, Tooltip } from "@mui/material";
+import { FormattedMessage, useIntl } from "react-intl";
+import { Add, AssignmentOutlined, Delete, Download, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -17,12 +14,19 @@ import {
 } from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 import { Applicant } from "../models";
-import { ModulesName, Permission } from "../../../../utils/enums";
+import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../utils/enums";
 import {
+  applicantStatusDecoder,
+  applicationStatusMapper,
   countAppliedFilter,
+  dateFormatter,
   getModulePermissions,
 } from "../../../../utils/common";
 import { usePageData } from "../../../Context/PageDataProvider";
+import { GridActionsCell, GridActionsCellItem, GridColDef, GridPaginationModel, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
+import { StyleStatus } from "../../../shared/components/StyledStatus";
+import clsx from "clsx";
+import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
 
 const initialFilter = {
   ...initialFilterValues,
@@ -31,9 +35,159 @@ const initialFilter = {
   name: "",
 };
 
+
+const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
+  const { formatMessage: i } = useIntl();
+  return [
+    {
+      field: "name",
+      headerName: i({ id: "FORM.FULL_NAME", }),
+      description: i({ id: "FORM.FULL_NAME", }),
+      minWidth: 150,
+      hideable: false,
+      flex: 1,
+      valueGetter: (value, row) => {
+        return `${row.firstName || ''} ${row.lastName || ''}`;
+      }
+    },
+    {
+      field: "email",
+      headerName: i({ id: "FORM.EMAIL", }),
+      description: i({ id: "FORM.EMAIL", }),
+      minWidth: 150,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "vacancyName",
+      headerName: i({ id: "JOB.JOB_TITLE", }),
+      description: i({ id: "JOB.JOB_TITLE", }),
+      minWidth: 180,
+      hideable: false,
+      flex: 1,
+    },
+    {
+      field: "status",
+      headerName: i({ id: "STATUS", }),
+      description: i({ id: "STATUS", }),
+      minWidth: 100,
+      hideable: false,
+      flex: 1,
+      renderCell: (param) => {
+        const values = applicantStatusDecoder[param.row.status];
+        return (
+          <StyleStatus
+            label={values}
+            className={clsx({
+              success: param.row.status === ApplicantStatus.Active,
+              danger: param.row.status === ApplicantStatus.InActive,
+            })}
+          />
+        );
+      }
+    },
+    {
+      field: "applicationStatus",
+      headerName: i({ id: "APPLICATION.STATUS_LABEL" }),
+      description: i({ id: "APPLICATION.STATUS_LABEL" }),
+      minWidth: 100,
+      hideable: true,
+      sortable: false,
+      filterable: false,
+      renderCell: (param) => (
+        <StyleStatus
+          label={applicationStatusMapper[param.row.activityType]}
+          className={clsx({
+            info: param.row.activityType === ApplicationStatus.New,
+            warning: [ApplicationStatus.InProgress, ApplicationStatus.OnHold, ApplicationStatus.Shortlisted].includes(param.row.activityType),
+            success: param.row.activityType === ApplicationStatus.Selected,
+            danger: param.row.activityType === ApplicationStatus.Rejected
+          })}
+        />
+      )
+
+    },
+    {
+      field: "experience",
+      headerName: i({ id: "FORM.EXPERIENCE" }),
+      description: i({ id: "FORM.EXPERIENCE" }),
+      minWidth: 100,
+      flex: 1,
+      renderCell: (param) => {
+        const experience = (param.row.experience / 12).toFixed(1);
+        return (
+          <FormattedMessage id={"PLURAL.YEAR"} values={{ years: experience }} />
+        );
+      }
+    },
+    {
+      field: "applyDate",
+      headerName: i({ id: "APPLICATION.APPLIED_DATE", }),
+      description: i({ id: "APPLICATION.APPLIED_DATE", }),
+      minWidth: 200,
+      flex: 1,
+      valueFormatter: (value) => (
+        dateFormatter(value, "DD MMM YYYY hh:mm A")
+      )
+    },
+    {
+      field: "action",
+      headerName: i({ id: "ACTION", }),
+      description: i({ id: "ACTION", }),
+      minWidth: 100,
+      resizable: false,
+      sortable: false,
+      flex: 1,
+      filterable: false,
+      renderCell: (param) => (<ActionsCell {...param} />)
+    }
+  ]
+}
+
+function ActionsCell(props: GridRenderCellParams) {
+  const { formatMessage: i } = useIntl();
+  const [view, setView] = useState(false);
+  const closePreview = () => {
+    setView(false);
+  }
+  return (
+    <>
+      <GridActionsCell {...props}>
+        <GridActionsCellItem
+          icon={
+            <Tooltip title={i({ id: "TOOLTIP.VIEW_CV" })}>
+              <AssignmentOutlined />
+            </Tooltip>
+          }
+          label={i({ id: "TOOLTIP.VIEW_CV" })}
+          onClick={(e) => {
+            setView(true)
+            e.stopPropagation();
+          }}
+        />
+        <GridActionsCellItem
+          icon={<Delete />}
+          label="Delete Application"
+          showInMenu
+        />
+      </GridActionsCell>
+      {
+        view &&
+        <ApplicationPreview
+          open={view}
+          handleClose={closePreview}
+          applicantData={props.row}
+        />
+      }
+    </>
+  );
+}
+
+
 export const Applications = () => {
   const { setPageTitle } = usePageData();
   const intl = useIntl();
+  const columnList = useApplicantTableColumnList();
   const navigate = useNavigate();
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
@@ -42,10 +196,6 @@ export const Applications = () => {
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
-  const [viewApplicant, setViewApplicant] = useState(false);
-  const [selectedApplicant, setSelectedApplicant] = useState<
-    Applicant | undefined
-  >();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -73,34 +223,16 @@ export const Applications = () => {
     setSearch(value.trim());
   };
 
-  const rowClickHandler = (applicant: Applicant) => {
-    navigate(`/recruitment/applicant/${applicant.applicantId}`);
+  const rowClickHandler = (param: GridRowParams<Applicant>) => {
+    navigate(`/recruitment/applicant/${param.row.applicantId}`);
   };
 
-  const handleOpenPreview = (applicant: Applicant) => {
-    setViewApplicant(true);
-    setSelectedApplicant(applicant);
-  };
-
-  const closePreview = () => {
-    setViewApplicant(false);
-    setSelectedApplicant(undefined);
-  };
-
-  const handlePageChange = (page: number) => {
+  const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
-      ...paginationValues,
-      pageNo: page,
-    });
-  };
-
-  const handleRowPerPageChange = (rowPerPage: number) => {
-    setPaginationValues({
-      ...paginationValues,
-      records: rowPerPage,
-      pageNo: 0,
-    });
-  };
+      pageNo: model.page,
+      records: model.pageSize
+    })
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -187,27 +319,17 @@ export const Applications = () => {
           )}
         </Stack>
 
-        <CustomisedTable
-          loading={loading}
-          tabName={ModulesName.Applications}
+        <CustomDataGrid
           keyName="applicantId"
-          rows={applicationsList}
-          columns={ApplicationTabTableColumnList}
-          page={paginationValues.pageNo}
-          rowsPerPage={paginationValues.records}
-          openViewModal={handleOpenPreview}
+          loading={loading}
+          columns={columnList}
+          row={applicationsList}
           rowClickHandler={rowClickHandler}
+          rowCount={totalRecords}
+          paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
+          handlePaginationModelChange={handlePaginationModelChange}
         />
 
-        {totalRecords > 0 && (
-          <Pagination
-            page={paginationValues.pageNo}
-            setPage={handlePageChange}
-            rowsPerPage={paginationValues.records}
-            setRowPerPage={handleRowPerPageChange}
-            totalRecords={totalRecords}
-          />
-        )}
       </Card>
       {isAddModalOpen && (
         <AddApplicant
@@ -217,13 +339,9 @@ export const Applications = () => {
           setRefresh={setRefresh}
         />
       )}
-      {viewApplicant && selectedApplicant && (
-        <ApplicationPreview
-          open={viewApplicant}
-          handleClose={closePreview}
-          applicantData={selectedApplicant}
-        />
-      )}
     </>
   );
 };
+
+
+

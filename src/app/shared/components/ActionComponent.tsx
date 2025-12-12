@@ -1,11 +1,9 @@
 import { Stack } from "@mui/material";
 import { CustomIconButton } from "./CustomIconButton";
 import {
-  Assignment,
   AssignmentOutlined,
   DeleteOutlineOutlined,
   Edit,
-  Visibility,
 } from "@mui/icons-material";
 
 interface ActionComponentProps<Row> {

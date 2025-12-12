@@ -61,10 +61,9 @@ import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { toAbsoluteUrl } from "../../_themes/helpers";
 import clsx from "clsx";
-import { GetAllEmployeeResponseModel } from "../../app/modules/employees/models";
 import {
   NoticeModel,
   NoticeResponseModel,
@@ -75,10 +74,6 @@ import {
   LeaveBalanceType,
   LeaveType,
 } from "../../app/modules/leaves/model";
-import { CalendarItem } from "../../app/modules/holidays/models";
-import { SetDepartmentName } from "../../app/modules/employees/components/SetDepartmentName";
-import { GridColDef } from "@mui/x-data-grid";
-
 export const BaseUrl = import.meta.env.VITE_BASEURL;
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";

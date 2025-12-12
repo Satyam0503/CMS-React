@@ -1,5 +1,5 @@
 import { Stack } from "@mui/system"
-import { DataGrid, GridColDef, GridPaginationModel, GridRowParams, GridValidRowModel } from '@mui/x-data-grid';
+import { DataGrid, gridClasses, GridColDef, GridPaginationModel, GridRowParams, GridValidRowModel } from '@mui/x-data-grid';
 
 
 interface Props<R extends GridValidRowModel> {
@@ -55,7 +55,14 @@ export const CustomDataGrid = <R extends GridValidRowModel,>(props: Props<R>) =>
                 hideFooterPagination={props.hidePagination ?? false}
                 sx={{
                     borderInline: 0,
-                    backgroundColor: "transparent"
+                    backgroundColor: "transparent",
+                    [`& .${gridClasses.cell}:focus, & .${gridClasses.cell}:focus-within`]: {
+                        outline: 'none',
+                    },
+                    [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]:
+                    {
+                        outline: 'none',
+                    },
                 }}
 
             />

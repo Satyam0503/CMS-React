@@ -54,7 +54,7 @@ const useEmployeeTableColumnList = (): GridColDef<GetAllEmployeeResponseModel>[]
       flex: 0.5,
     },
     {
-      field: "name",
+      field: "fullName",
       headerName: i({ id: "FORM.FULL_NAME" }),
       description: i({ id: "FORM.FULL_NAME" }),
       minWidth: 200,
