@@ -10,7 +10,6 @@ import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
   AddEditRoleModel,
   AddEditRoleResponseData,
-  DepartmentModel,
   GetAllModulePermissionData,
   GetAllRolesResponseData,
   GetDepartmentResponseModel,

@@ -1,4 +1,4 @@
-import { Box, Card, Stack, TextField, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { AttributeTable } from "./AttributeTable";

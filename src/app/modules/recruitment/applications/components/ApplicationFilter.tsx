@@ -37,8 +37,8 @@ export const initialFilterValues: ApplicationFilterModel = {
   vacancyIds: [],
   activityTypes: [],
   status: [],
-  minExperience: "",
-  maxExperience: "",
+  minExperience: null,
+  maxExperience: null,
 };
 
 export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
@@ -69,7 +69,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
           setJobList(methodResults);
         }
       } catch (error) {
-        console.log((error as Error).message);
+        console.error((error as Error).message);
       }
     };
     getActiveJobs();

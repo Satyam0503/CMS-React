@@ -2,10 +2,6 @@ import {
   Alert,
   Grid,
   Autocomplete,
-  // TextInput,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
   Stack,
   MenuItem,
   FormControl,
@@ -14,17 +10,15 @@ import {
   Switch,
   FormControlLabel,
   Checkbox,
-  RadioGroup,
   FormLabel,
-  Radio,
-  Box,
   Chip,
   Tooltip,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { Formik } from "formik";
-import { useEffect, useState } from "react";
-import { getStatusCodeString } from "../../../../utils/common";
+import { useState } from "react";
+import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { LeavePolicyValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
@@ -50,109 +44,104 @@ type Props = {
 
 export default function AddLeavePolicy(props: Props) {
   const { formatMessage: i } = useIntl();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [employeeList, setEmployeeList] = useState<
-    Array<GetAllEmployeeResponseModel>
-  >([]);
+  const [employeeList, setEmployeeList] = useState<Array<GetAllEmployeeResponseModel>>([]);
+  const [state, setState] = useState({ open: false, loading: false });
 
-  let empOptions: Array<GetAllEmployeeResponseModel> = [
+  const empOptions: Array<GetAllEmployeeResponseModel> = [
     {
-      userId: "1",
+      userId: "allEmployees",
       fullName: "All Employees",
-      email: "all@gmail.com",
-      gender: "none",
-      employeeId: "checkId",
+      email: "",
+      gender: "",
+      employeeId: "",
       jobRole: null,
       department: null,
       phoneNumber: null,
       fullProfileUrl: null,
       dateOfBirth: null,
+      isVerified: false
     },
     {
-      userId: "0",
+      userId: "noEmployee",
       fullName: "None",
-      email: "all@gmail.com",
-      gender: "none",
-      employeeId: "checkId",
+      email: "",
+      gender: "",
+      employeeId: "",
       jobRole: null,
       department: null,
       phoneNumber: null,
       fullProfileUrl: null,
       dateOfBirth: null,
+      isVerified: false
     },
   ];
-
-  useEffect(() => {
-    setLoading(true);
-    const getAllEmployeesList = async () => {
-      try {
-        const response = await getAllEmployees();
-        const { success, methodResults } = response.data;
-        if (success) {
-          const allEmpOptions = empOptions;
-          methodResults.forEach((emp) => {
-            allEmpOptions.push(emp);
-          });
-          setEmployeeList(allEmpOptions);
-        }
-      } catch (error) {
-        console.error((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getAllEmployeesList();
-  }, []);
 
   const handleCreateNewPolicy = async (
     values: LeavePolicyModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    const { data } = await createLeavePolicy(values);
-
-    if (data.success) {
-      toast.success(
-        i({
-          id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED",
-        })
-      );
-      props.handleClose();
-      props.handleRefresh();
-    } else {
-      toast.error(
-        i({
-          id: getStatusCodeString(data.statusCode),
-          defaultMessage: "ERROR.SOMETHING_WRONG",
-        })
-      );
+    try {
+      const { data } = await createLeavePolicy(values);
+      if (data.success) {
+        toast.success(
+          i({
+            id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED",
+          })
+        );
+        props.handleClose();
+        props.handleRefresh();
+      } else {
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) })
+        );
+      }
+    } catch (error) {
+      toast.error(i({ id: "ERROR.SOMETHING_WRONG " }));
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleUpdateLeavePolicy = async (
     values: LeavePolicyModel,
     setSubmitting: (isSubmitting: boolean) => void
   ) => {
-    const { data } = await updateLeavePolicy(values);
-    if (data.success) {
-      toast.success(
-        i({
-          id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED",
-        })
-      );
-      props.handleClose();
-      props.handleRefresh();
-    } else {
-      toast.error(
-        i({
-          id: getStatusCodeString(data.statusCode),
-          defaultMessage: "ERROR.SOMETHING_WRONG",
-        })
-      );
+
+    try {
+      const { data } = await updateLeavePolicy(values);
+      if (data.success) {
+        toast.success(i({ id: props.isEdit ? "TOAST.SUCCESS.UPDATE" : "TOAST.SUCCESS.CREATED", }));
+        props.handleClose();
+        props.handleRefresh();
+      } else {
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
+      }
+    } catch (error) {
+      toast.error(i({ id: "ERROR.SOMETHING_WRONG" }));
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
+  const handleListOpen = () => {
+    setState({ ...state, loading: true });
+    const getAllEmployeesList = async () => {
+      try {
+        const { data } = await getAllEmployees();
+        if (data.success) {
+          setState({ ...state, open: true })
+          setEmployeeList(empOptions.concat(data.methodResults));
+        }
+      } catch (error) {
+        console.error((error as Error).message);
+      } finally {
+        setState(prev => ({ ...prev, loading: false }))
+      }
+    };
+    getAllEmployeesList();
+  }
+  const handleClose = () => {
+    setState({ ...state, open: false })
+  }
   return (
     <CustomisedModal
       open={props.open}
@@ -170,11 +159,8 @@ export default function AddLeavePolicy(props: Props) {
           onSubmit={(values, { setSubmitting }) => {
             if (!props.isEdit) {
               if (values.applicableTo) {
-                if (values.applicableTo.includes("1")) {
-                  values.applicableTo = [];
-                } else if (values.applicableTo.includes("0")) {
-                  values.applicableTo = null;
-                }
+                const applicableValue = values.applicableTo;
+                values.applicableTo = applicableValue.includes("allEmployees") ? [] : applicableValue.includes("noEmployee") ? null : applicableValue;
                 handleCreateNewPolicy(values, setSubmitting);
               }
             } else {
@@ -185,16 +171,9 @@ export default function AddLeavePolicy(props: Props) {
           {({
             values,
             setFieldValue,
-            setFieldTouched,
             handleSubmit,
             ...formik
           }) => {
-            // console.log(formik.errors);
-            // console.log(values);
-            // console.log(formik.dirty);
-            // console.log(formik.errors);
-            // console.log(formik.isValid);
-
             return (
               <form onSubmit={handleSubmit}>
                 {Boolean(formik.status) && (
@@ -273,21 +252,13 @@ export default function AddLeavePolicy(props: Props) {
                             onChange={(e) => {
                               setFieldValue("accrualPeriod", e.target.value);
                             }}
-                            sx={{ position: "relative" }}
                             endAdornment={
                               <Tooltip
                                 title={i({
                                   id: "LEAVE.TYPES.POLICY_ACCRUAL_DEFINATION",
                                 })}
                               >
-                                <HelpOutlineIcon
-                                  sx={{
-                                    color: "gray",
-                                    position: "absolute",
-                                    right: "30px",
-                                    height: "18px",
-                                  }}
-                                />
+                                <HelpOutlineIcon sx={{ color: "text.secondary", fontSize: 18, mr: 3 }} />
                               </Tooltip>
                             }
                           >
@@ -298,11 +269,6 @@ export default function AddLeavePolicy(props: Props) {
                         </FormControl>
                       </Grid>
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -312,30 +278,20 @@ export default function AddLeavePolicy(props: Props) {
                           label={i({ id: "LEAVE.TYPES.POLICY_ACCURAL_AMOUNT" })}
                           name="accrualAmount"
                           type="number"
+                          showErrorLabel={false}
+                          InputProps={{
+                            endAdornment: <Tooltip
+                              title={i({
+                                id: "LEAVE.TYPES.POLICY_ACCRUAL_AMOUNT_DEFINATION",
+                              })}
+                            >
+                              <HelpOutlineIcon sx={{ color: "text.secondary", fontSize: 18, mr: 1 }} />
+                            </Tooltip>
+                          }}
                         />
-                        <Tooltip
-                          title={i({
-                            id: "LEAVE.TYPES.POLICY_ACCRUAL_AMOUNT_DEFINATION",
-                          })}
-                          sx={{}}
-                        >
-                          <HelpOutlineIcon
-                            sx={{
-                              position: "absolute",
-                              right: "30px",
-                              color: "gray",
-                              height: "18px",
-                            }}
-                          />
-                        </Tooltip>
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -361,11 +317,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -380,11 +331,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -408,11 +354,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -427,11 +368,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -455,11 +391,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -479,11 +410,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -527,11 +453,6 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
 
                       <Grid
-                        sx={{
-                          alignItems: "center",
-                          display: "flex",
-                          gap: "15px",
-                        }}
                         size={{
                           xs: 12,
                           md: 6,
@@ -573,104 +494,81 @@ export default function AddLeavePolicy(props: Props) {
                           className="leave-policy-checkbox"
                         />
                       </Grid>
+
                       {!props.isEdit && (
                         <Grid
                           className="w-full"
                           sx={{
+                            gap: 1,
                             alignItems: "start",
                             display: "flex",
-                            gap: "15px",
                             flexDirection: "column",
-                            justifyContent: "center",
                           }}
                           size={12}
                         >
-                          {/* <Autocomplete /> */}
                           <FormLabel
-                            sx={{ color: "text.primary", textWrap: "nowrap" }}
+                            sx={{ textWrap: "nowrap" }}
                           >
                             {i({ id: "LEAVE.TYPES.POLICY_APPLICABLE_TO" })}:
                           </FormLabel>
                           <Autocomplete
-                            noOptionsText={i({ id: "MESSAGE.NO_RESULT" })}
-                            className="applicable-employees-select"
                             fullWidth
+                            disableCloseOnSelect
+                            multiple
                             id="applicable-emps"
-                            limitTags={3}
-                            sx={{ padding: "0" }}
+                            limitTags={4}
+                            open={state.open}
+                            size="medium"
+                            loading={state.loading}
+                            forcePopupIcon={!state.loading}
+                            value={employeeList.filter(e => values.applicableTo?.includes(e.userId))}
+                            onOpen={handleListOpen}
+                            onClose={handleClose}
                             options={employeeList}
                             getOptionLabel={(option) => option.fullName}
-                            multiple
-                            renderOption={({ key, ...props }, option) => (
-                              <li key={key} {...props}>
-                                {option.fullName}
-                              </li>
+                            getOptionKey={option => option.userId}
+                            renderValue={(value, getTagProps) => (
+                              value.map((option, index) => (
+                                <Chip
+                                  {...getTagProps({ index })}
+                                  key={option.userId}
+                                  label={option.fullName}
+                                  size="small"
+                                />
+                              ))
                             )}
-                            renderValue={(value, getTagProps) => {
-                              if (
-                                value.some(
-                                  (emp) => emp.userId === empOptions[1].userId
-                                )
-                              ) {
-                                return (
-                                  <Chip
-                                    label="None"
-                                    sx={{ margin: "5px" }}
-                                    key={"1"}
-                                  />
-                                );
-                              } else if (
-                                value.some(
-                                  (emp) => emp.userId === empOptions[0].userId
-                                )
-                              ) {
-                                return (
-                                  <Chip
-                                    label="All Employees"
-                                    sx={{ margin: "5px" }}
-                                    key={0}
-                                  />
-                                );
-                              } else
-                                return value.map((option, index) => (
-                                  <Chip
-                                    {...getTagProps({ index })}
-                                    key={option.userId}
-                                    label={option.fullName}
-                                    sx={{ margin: "5px" }}
-                                  />
-                                ));
-                            }}
-                            // open={open}
                             onChange={(e, value) => {
+                              const selectedOptionId = value.map(v => v.userId);
+                              const optionValues = selectedOptionId.includes("allEmployees") ? ["allEmployees"] : selectedOptionId.includes("noEmployee") ? ["noEmployee"] : selectedOptionId;
                               setFieldValue(
                                 "applicableTo",
-                                value.map((emp) => emp.userId)
+                                optionValues
                               );
-                              if (values.applicableTo) {
-                                if (values.applicableTo.includes("1")) {
-                                  values.applicableTo = ["1"];
-                                } else if (values.applicableTo.includes("0")) {
-                                  values.applicableTo = ["0"];
-                                }
-                              }
                             }}
-                            getOptionDisabled={
-                              values.applicableTo &&
-                                (values.applicableTo.includes("1") ||
-                                  values.applicableTo.includes("0"))
-                                ? (option) => true
-                                : (option) => false
-                            }
-                            // open={values.applicableTo.includes('1') || values.applicableTo.includes('0') ? false : undefined}
-                            // disabled={values.applicableTo.includes('1') || values.applicableTo.includes('0')}
-                            disablePortal
                             renderInput={(params) => (
                               <TextField
                                 {...params}
                                 label={i({ id: "PAGE.EMPLOYEES" })}
+                                slotProps={{
+                                  input: {
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                      <>
+                                        {state.loading ? <CircularProgress sx={{ mr: 1 }} size={20} /> : null}
+                                        {params.InputProps.endAdornment}
+                                      </>
+                                    ),
+                                  }
+                                }}
                               />
                             )}
+                            getOptionDisabled={
+                              () => {
+                                return values.applicableTo?.includes("allEmployees") || values.applicableTo?.includes("noEmployee") ? true : false
+                              }
+                            }
+                            noOptionsText={i({ id: "MESSAGE.NO_RESULT" })}
+                            className="applicable-employees-select"
                           />
                         </Grid>
                       )}
@@ -698,7 +596,8 @@ export default function AddLeavePolicy(props: Props) {
             );
           }}
         </Formik>
-      )}
-    </CustomisedModal>
+      )
+      }
+    </CustomisedModal >
   );
 }

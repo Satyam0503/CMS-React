@@ -1,6 +1,4 @@
 import React, { ReactNode } from "react";
-import { useLocation } from "react-router";
-import { checkIsActive } from "../../../../helpers";
 import { Collapse, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
@@ -16,15 +14,12 @@ type Props = {
 
 const SidebarMenuItemWithSub: React.FC<Props> = ({
   children,
-  to,
   title,
   icon,
   index,
   isOpen,
   setCurrentMenuIndex
 }) => {
-  const { pathname } = useLocation();
-  const isActive = checkIsActive(pathname, to);
 
   const handleMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { EmployeeSearchModel } from "../../../../../utils/common_types";
-import { Autocomplete, AutocompleteInputChangeReason, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField } from "@mui/material";
+import { Autocomplete, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField } from "@mui/material";
 import { ClearSharp, Search } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -18,7 +18,7 @@ export const EmployeeSearchInput = () => {
     const [search, setSearch] = useState("");
     const debouncedValue = useDebounce(search);
     const navigate = useNavigate();
-    const handleSearchChange = async (event: React.SyntheticEvent, value: string, reason: AutocompleteInputChangeReason) => {
+    const handleSearchChange = async (event: React.SyntheticEvent, value: string) => {
         setSearch(value)
     };
     const handleClick = (empId: string) => {
@@ -37,8 +37,8 @@ export const EmployeeSearchInput = () => {
                         setEmployeeList(data.methodResults);
                         setOpen(true);
                     }
-                } catch (error: any) {
-                    console.error(error.message);
+                } catch (error) {
+                    console.error((error instanceof Error) ? error.message : error);
                 }
                 finally {
                     setLoading(false);

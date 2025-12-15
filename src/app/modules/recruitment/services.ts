@@ -1,34 +1,33 @@
 import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
+  Applicant,
   ApplicantModel,
-  ApplicantsResponseData,
   CommentModel,
-  CommentResponseData,
+  CommentResponseModel,
   GetAllVacancyPayload,
-  GetApplicationPayloadModel,
+  ApplicationPayload,
   GetCommentPayloadModel,
   JobModal,
-  JobsResponseData,
   ProcessLogPayoadModel,
 } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
-  return postRequest<JobModal, JobsResponseData>(
+  return postRequest<JobModal, ResponseData<JobModal>>(
     ServiceUrl.ADD_JOB_VACANCY,
     payload
   );
 };
 export const editJobVacancy = async (payload: JobModal, jobId: string) => {
-  return postRequest<JobModal, JobsResponseData>(
+  return postRequest<JobModal, ResponseData<JobModal>>(
     `${ServiceUrl.EDIT_JOB_VACANCY}?jobId=${jobId}`,
     payload
   );
 };
 
 export const getAllJobVacancies = async (payload: GetAllVacancyPayload) => {
-  return postRequest<GetAllVacancyPayload, JobsResponseData>(
+  return postRequest<GetAllVacancyPayload, ResponseData<JobModal>>(
     ServiceUrl.GET_ALL_VACANCIES,
     payload
   );
@@ -42,9 +41,9 @@ export const deleteJobVacancy = (vacancyId: string) => {
 
 // applicant services
 export const getAllApplicantList = async (
-  filters: GetApplicationPayloadModel | null
+  filters: ApplicationPayload | null
 ) => {
-  return postRequest<GetApplicationPayloadModel | null, ApplicantsResponseData>(
+  return postRequest<ApplicationPayload | null, ResponseData<Applicant>>(
     ServiceUrl.GET_ALL_APPLICANTS,
     filters
   );
@@ -65,7 +64,7 @@ export const editApplicant = async (payload: ApplicantModel) => {
 };
 
 export const getApplicantById = async (applicantId: string) => {
-  return getRequest<ApplicantsResponseData>(
+  return getRequest<ResponseData<Applicant>>(
     `${ServiceUrl.GET_APPLICANT_BY_ID}?id=${applicantId}`
   );
 };
@@ -80,7 +79,7 @@ export const uploadResume = async (email: string, payload: FormData) => {
 };
 
 export const getProcessLogData = async (payload: ProcessLogPayoadModel) => {
-  return postRequest<ProcessLogPayoadModel, CommentResponseData>(
+  return postRequest<ProcessLogPayoadModel, ResponseData<CommentResponseModel>>(
     ServiceUrl.GET_PROCESS_LOG,
     payload
   );
@@ -94,7 +93,7 @@ export const addComment = async (payload: CommentModel) => {
 };
 
 export const getApplicantComments = async (payload: GetCommentPayloadModel) => {
-  return getRequest<CommentResponseData>(
+  return getRequest<ResponseData<CommentResponseModel>>(
     `${ServiceUrl.GET_APPLICANT_COMMENTS}/${payload.applicantId}?pageNo=${payload.pageNo}&pageSize=${payload.pageSize}`
   );
 };

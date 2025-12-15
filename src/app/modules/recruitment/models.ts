@@ -1,5 +1,8 @@
-import { Dayjs } from "dayjs";
-import { BaseModel, ResponseData } from "../../../utils/common_types";
+import {
+  BaseModel,
+  DateRangeFilter,
+  PaginationModel,
+} from "../../../utils/common_types";
 
 export interface ApplicantModel {
   applicantId: string;
@@ -24,36 +27,24 @@ export type Applicant = Omit<ApplicantModel, "resume"> & {
   vacancyName: string;
   status: number;
   applyDate: string;
-  fullApplicantResumePath: string | null;
+  resumeUrl: string | null;
 };
-export interface GetApplicationPayloadModel {
-  name: string;
-  filterFrom?: null | Dayjs | string;
-  filterTo?: null | Dayjs | string;
-  activityTypes?: number[];
-  vacancyIds?: string[];
-  status?: number[];
-  minExperience?: number | string | null;
-  maxExperience?: number | string | null;
-  pageNo: number;
-  records: number;
-}
 
-export interface ApplicationFilterModel {
-  filterFrom: null | Dayjs | string;
-  filterTo: null | Dayjs | string;
+export interface ApplicationFilterModel extends DateRangeFilter {
   activityTypes: number[];
   vacancyIds: string[];
   status: number[];
-  minExperience: number | string;
-  maxExperience: number | string;
+  minExperience: number | null;
+  maxExperience: number | null;
 }
 
-export interface ProcessLogFilterModel {
+export interface ApplicationPayload extends ApplicationFilterModel, PaginationModel {
+  name: string;
+}
+
+export interface ProcessLogFilterModel extends DateRangeFilter {
   jobRole: string;
   activityCategory: number[];
-  filterFrom: null | Dayjs | string;
-  filterTo: null | Dayjs | string;
 }
 
 export interface JobsFilterModel {
@@ -80,16 +71,12 @@ export interface CommentModel {
   jobTitle: string;
 }
 
-export type ProcessLogPayoadModel = ProcessLogFilterModel & {
-  pageNo: number;
-  pageSize: number;
+export interface ProcessLogPayoadModel extends ProcessLogFilterModel, PaginationModel {
   applicantName: string;
-};
-export type GetCommentPayloadModel = {
-  pageNo: number;
-  pageSize: number;
+}
+export interface GetCommentPayloadModel extends PaginationModel {
   applicantId: string;
-};
+}
 
 export type GetAllVacancyPayload = {
   pageNo?: number;
@@ -104,7 +91,3 @@ export type CommentResponseModel = CommentModel &
     id: string;
     userName: string;
   };
-
-export type JobsResponseData = ResponseData<JobModal>;
-export type ApplicantsResponseData = ResponseData<Applicant>;
-export type CommentResponseData = ResponseData<CommentResponseModel>;

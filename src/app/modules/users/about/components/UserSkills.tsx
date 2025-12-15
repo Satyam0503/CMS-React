@@ -5,7 +5,6 @@ import { AddUpdateSkills } from "./AddUpdateSkills";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { Add } from "@mui/icons-material";
 import { getEmployeeSkills } from "../../userservices";
-import { toast } from "react-toastify";
 import { useUserDetails } from "../../UserDataProvider";
 import { useParams } from "react-router-dom";
 import { hasModuleFeaturePermission } from "../../../../../utils/common";
@@ -36,7 +35,7 @@ export const UserSkills = () => {
       .catch((error) => {
         console.error((error as Error).message)
       });
-  }, [refresh]);
+  }, [refresh, employeeId]);
 
   return (
     <Card sx={{ p: 2 }}>

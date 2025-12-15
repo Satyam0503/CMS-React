@@ -9,6 +9,7 @@ import { EmployeeFilterModel } from "../app/modules/employees/models";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
 import { HolidayFilterModel } from "../app/modules/holidays/models";
 import { LeaveRequestsFilterModel } from "../app/modules/leaves/model";
+import { Dayjs } from "dayjs";
 
 export interface ApiResponse {
   success: boolean;
@@ -169,10 +170,15 @@ export type FilterComponentProps = {
   children?: React.ReactNode;
 };
 
-export type PaginationModel = {
+export interface PaginationModel {
   pageNo: number;
   pageSize: number;
-};
+}
+
+export interface DateRangeFilter {
+  filterFrom: null | Dayjs | string;
+  filterTo: null | Dayjs | string;
+}
 
 // nullable utility type
 export type Nullable<T> = { [K in keyof T]: T[K] | null };

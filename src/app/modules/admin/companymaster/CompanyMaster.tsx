@@ -9,20 +9,17 @@ import {
   Route,
   Routes,
   useNavigate,
-  useParams,
 } from "react-router-dom";
 import { checkIsActive } from "../../../../_themes/helpers";
 import clsx from "clsx";
 import { TabModel } from "../../../../utils/common_types";
 import { JobTitles } from "./components/JobTitles";
-import { CustomAttribute } from "./components/CustomAttribute";
 import { CompanyCustomAttributeModel, OutletContextType } from "../models";
 import {
   createNewCustomAttribute,
   getAllCustomAttributes,
 } from "../adminservices";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
-import { useAppSelector } from "../../../Redux/hooks";
 import { CustomAttributeWrapper } from "./components/CustomAttributeWrapper";
 import { usePageData } from "../../../Context/PageDataProvider";
 
@@ -67,9 +64,6 @@ const CompanyMaster = () => {
     CompanyCustomAttributeModel[]
   >([]);
   const { currentLanguage } = useAppLang();
-  const defaultLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
 
   const AddNewCustomAttribute = async () => {
     try {
@@ -146,7 +140,7 @@ const CompanyMaster = () => {
         })}
         {/* display company custom attributes */}
         {companyCustomAttribute.length > 0 &&
-          companyCustomAttribute.map((attribute, index: number) => (
+          companyCustomAttribute.map((attribute) => (
             <Box
               key={attribute.customAttributeId}
               component="div"

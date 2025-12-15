@@ -12,9 +12,7 @@ import {
   ApplicationStatus,
   CommentAction,
   JOB_TYPE_ENUM,
-  HOLIDAY_TYPE,
   LEAVE_REQUEST_STATUS,
-  LEAVE_TYPE,
   ModulesName,
   NOTICE_TYPE,
   NOTIFICATION_TYPE,
@@ -233,14 +231,14 @@ export const getAppliedFilters = () => {
   const appliedfilters: FiltersType = savedFilters
     ? JSON.parse(savedFilters)
     : ({
-        application: null,
-        jobs: null,
-        processLog: null,
-        employee: null,
-        holiday: null,
-        noticeBoard: null,
-        leaveRequest: null,
-      } satisfies FiltersType);
+      application: null,
+      jobs: null,
+      processLog: null,
+      employee: null,
+      holiday: null,
+      noticeBoard: null,
+      leaveRequest: null,
+    } satisfies FiltersType);
   return appliedfilters;
 };
 
@@ -341,7 +339,7 @@ export const getCustomStatusCodesErrorMessage = (
   status: number,
   defaultMessage?: string
 ) => {
-  if (status < 200 || status > 600) {
+  if (status < 100 || status > 600) {
     return `STATUS_CODES.${status}`;
   } else {
     return defaultMessage ?? `ERROR.SOMETHING_WRONG`;

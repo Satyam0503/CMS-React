@@ -7,7 +7,7 @@ export interface PageDataContextModel {
 }
 
 const PageDataContext = createContext<PageDataContextModel>({
-  setPageTitle: (_title: string) => { },
+  setPageTitle: () => { },
 });
 
 const PageDataProvider: FC<WithChildren> = ({ children }) => {

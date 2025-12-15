@@ -1,6 +1,6 @@
 import { Badge, Card, Stack, Tooltip } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Add, AssignmentOutlined, Delete, Download, FilterList } from "@mui/icons-material";
+import { Add, AssignmentOutlined, Delete, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -13,7 +13,7 @@ import {
   initialFilterValues,
 } from "./components/ApplicationFilter";
 import { useAppSelector } from "../../../Redux/hooks";
-import { Applicant } from "../models";
+import { Applicant, ApplicationPayload } from "../models";
 import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../utils/enums";
 import {
   applicantStatusDecoder,
@@ -27,14 +27,7 @@ import { GridActionsCell, GridActionsCellItem, GridColDef, GridPaginationModel, 
 import { StyleStatus } from "../../../shared/components/StyledStatus";
 import clsx from "clsx";
 import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
-
-const initialFilter = {
-  ...initialFilterValues,
-  minExperience: null,
-  maxExperience: null,
-  name: "",
-};
-
+import { PaginationModel } from "../../../../utils/common_types";
 
 const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
   const { formatMessage: i } = useIntl();
@@ -139,6 +132,7 @@ const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
       sortable: false,
       flex: 1,
       filterable: false,
+      display: "flex",
       renderCell: (param) => (<ActionsCell {...param} />)
     }
   ]
@@ -189,9 +183,9 @@ export const Applications = () => {
   const intl = useIntl();
   const columnList = useApplicantTableColumnList();
   const navigate = useNavigate();
-  const [paginationValues, setPaginationValues] = useState({
+  const [paginationValues, setPaginationValues] = useState<PaginationModel>({
     pageNo: 0,
-    records: 10,
+    pageSize: 10,
   });
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -230,30 +224,27 @@ export const Applications = () => {
   const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
       pageNo: model.page,
-      records: model.pageSize
+      pageSize: model.pageSize
     })
   }
 
   useEffect(() => {
     setLoading(true);
     const payload = {
-      ...applicationFilters,
+      ...(applicationFilters ? {
+        ...applicationFilters,
+        minExperience: applicationFilters.minExperience ? (applicationFilters.minExperience! * 12) : null,
+        maxExperience: applicationFilters.maxExperience ? (applicationFilters.maxExperience! * 12) : null,
+      } :
+        { ...initialFilterValues }
+      ),
       name: search,
-      minExperience:
-        typeof applicationFilters?.minExperience === "string"
-          ? null
-          : applicationFilters?.minExperience! * 12,
-      maxExperience:
-        typeof applicationFilters?.maxExperience === "string"
-          ? null
-          : applicationFilters?.maxExperience! * 12,
       pageNo: paginationValues.pageNo + 1,
-      records: paginationValues.records
-    };
-
-    const timeoutId = setTimeout(async () => {
+      pageSize: paginationValues.pageSize
+    } satisfies ApplicationPayload;
+    const getApplicantList = async () => {
       try {
-        const { data } = await getAllApplicantList(applicationFilters != null ? payload : { ...initialFilter, name: search, pageNo: paginationValues.pageNo + 1, records: paginationValues.records });
+        const { data } = await getAllApplicantList(payload);
         setApplicationsList(data.methodResults);
         setTotalRecords(data.totalRecords);
       } catch (error) {
@@ -261,8 +252,8 @@ export const Applications = () => {
       } finally {
         setLoading(false);
       }
-    }, 1000);
-    return () => clearTimeout(timeoutId);
+    }
+    getApplicantList();
   }, [refresh, applicationFilters, search, paginationValues]);
 
   useEffect(() => {
@@ -300,14 +291,6 @@ export const Applications = () => {
                 handleClick={() => setAddModalOpen(true)}
               />
             )}
-
-            <CustomIconButton
-              icon={<Download />}
-              tooltip={intl.formatMessage({
-                id: "IMPORT.EXCEL",
-              })}
-              ariaLabel="import excel"
-            />
           </Stack>
           {open && (
             <ApplicationFilter
@@ -326,7 +309,7 @@ export const Applications = () => {
           row={applicationsList}
           rowClickHandler={rowClickHandler}
           rowCount={totalRecords}
-          paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
+          paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.pageSize }}
           handlePaginationModelChange={handlePaginationModelChange}
         />
 

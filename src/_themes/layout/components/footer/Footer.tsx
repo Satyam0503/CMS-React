@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { ILayout, useLayout } from "../../core";
-import { Container, Grid, Link, List, Stack, Typography } from "@mui/material";
+import { useLayout } from "../../core";
+import { Grid, Link, Stack, Typography } from "@mui/material";
 
 const Footer = () => {
   const { config } = useLayout();
