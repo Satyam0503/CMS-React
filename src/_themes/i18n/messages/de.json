@@ -276,7 +276,8 @@
     "NO_OF_VACANCIES": "Anzahl der Stellenangebote",
     "APPLICATION": "Bewerbung",
     "APPLICATION_CAPTION": "Bitte füllen Sie das untenstehende Formular aus, um sich zu bewerben:",
-    "JOB_TYPES": "Job-Typen"
+    "JOB_TYPES": "Job-Typen",
+    "TOTAL_SUBMISSION": "Gesamtanzahl der Einreichungen"
   },
   "APPLICATION": {
     "UPDATE_APPLICANT": "Bewerberdetails aktualisieren",
@@ -958,7 +959,8 @@
     "YR": "{years, plural, =0 {0 J} one {# J} other {# J}}",
     "YEAR": "{years, plural, =0 {0 Jahr} one {# Jahr} other {# Jahre}}",
     "MONTHS": "{months, plural, =0 {0 Monat} one {# Monat} other {# Monate}}",
-    "DAY": "{days, plural, =0 {0 Tag} one {# Tag} other {# Tage}}"
+    "DAY": "{days, plural, =0 {0 Tag} one {# Tag} other {# Tage}}",
+    "APPLICANTS": "{applicants, plural, =0 {0 Bewerber} one {# Bewerber} other {# Bewerber}}"
   },
   "COMMON": {
     "CONGRATULATION": "Herzlichen Glückwunsch"

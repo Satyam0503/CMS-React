@@ -5,11 +5,12 @@ import { getNotificationPreferences, updateNotificationPreferences } from "../..
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { toast } from "react-toastify";
+import { ListSkeleton } from "../../about/components/ListSkeleton";
 
 export const NotificationSetting = () => {
   const { formatMessage: i } = useIntl();
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({} as NotificationPreferences);
-
+  const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
       try {
@@ -19,6 +20,8 @@ export const NotificationSetting = () => {
         }
       } catch (error) {
         console.error("Error fetching notification preferences:", error);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [])
@@ -42,7 +45,9 @@ export const NotificationSetting = () => {
       console.error("Error updating notification preferences:", error);
     }
   }
-
+  if (isLoading) {
+    return <ListSkeleton />
+  }
   return (
     <Card className="p-4 d-flex flex-column">
       <Stack>

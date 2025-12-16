@@ -137,11 +137,6 @@ export type NotificationPreferences = {
   MessageNotification: boolean;
 };
 
-export type EmployeeResponseData = ResponseData<EmployeeByIdResponse>;
-export type GetSkillListResponseModel = ResponseData<SkillModel>;
-export type NotificationResponseModel =
-  ResponseData<GetNotificationResponseModel>;
-export type UserSkillsResponseData = ResponseData<UserSkillsModel>;
 export type WorkHistoryResponseModel = ResponseData<WorkHistoryModel>;
 export type GetCollegeListResponseModel = ResponseData<string>;
 

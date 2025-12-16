@@ -1,11 +1,7 @@
-import { Close } from "@mui/icons-material";
 import {
   Autocomplete,
-  Box,
   Checkbox,
-  IconButton,
   ListItemText,
-  Popover,
   Stack,
   TextField,
   Typography,
@@ -32,7 +28,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
   const processLogFilters = useAppSelector((state) => state.filters.processLog);
   const dispatch = useAppDispatch();
   const [jobList, setJobList] = useState<JobModal[]>([]);
-  const { values, handleSubmit, setFieldValue, initialValues } = useFormik({
+  const { values, handleSubmit, setFieldValue } = useFormik({
     initialValues: processLogFilters ?? processLogInitialFilter,
     enableReinitialize: true,
     validationSchema: processLogFilterSchema,
@@ -50,8 +46,8 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
         if (success) {
           setJobList(methodResults);
         }
-      } catch (error: any) {
-        console.log(error.message);
+      } catch (error) {
+        console.error((error instanceof Error) ? error.message : error);
       }
     };
     getActiveJobs();

@@ -1,18 +1,18 @@
 import { Badge, Card, Stack, Tooltip } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Add, AssignmentOutlined, Delete, FilterList } from "@mui/icons-material";
+import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApplicationPreview } from "./components/ApplicationPreview";
 import {
   ApplicationFilter,
   initialFilterValues,
 } from "./components/ApplicationFilter";
-import { useAppSelector } from "../../../Redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { Applicant, ApplicationPayload } from "../models";
 import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../utils/enums";
 import {
@@ -28,6 +28,7 @@ import { StyleStatus } from "../../../shared/components/StyledStatus";
 import clsx from "clsx";
 import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
 import { PaginationModel } from "../../../../utils/common_types";
+import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
 
 const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
   const { formatMessage: i } = useIntl();
@@ -159,11 +160,11 @@ function ActionsCell(props: GridRenderCellParams) {
             e.stopPropagation();
           }}
         />
-        <GridActionsCellItem
+        {/* <GridActionsCellItem
           icon={<Delete />}
           label="Delete Application"
           showInMenu
-        />
+        /> */}
       </GridActionsCell>
       {
         view &&
@@ -180,13 +181,12 @@ function ActionsCell(props: GridRenderCellParams) {
 
 export const Applications = () => {
   const { setPageTitle } = usePageData();
+  const [searchParam] = useSearchParams();
+  const dispatch = useAppDispatch();
   const intl = useIntl();
   const columnList = useApplicantTableColumnList();
   const navigate = useNavigate();
-  const [paginationValues, setPaginationValues] = useState<PaginationModel>({
-    pageNo: 0,
-    pageSize: 10,
-  });
+  const [paginationValues, setPaginationValues] = useState<PaginationModel>({ pageNo: 0, pageSize: 10, });
   const [search, setSearch] = useState("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [applicationsList, setApplicationsList] = useState<Applicant[]>([]);
@@ -200,6 +200,7 @@ export const Applications = () => {
   const totalAppliedFilter = countAppliedFilter(applicationFilters);
 
   const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const jobId = searchParam.get("jobId");
 
   const userPermissionsForModule = useMemo(
     () => getModulePermissions(ModulesName.Applications, userModulesPermissions),
@@ -242,6 +243,7 @@ export const Applications = () => {
       pageNo: paginationValues.pageNo + 1,
       pageSize: paginationValues.pageSize
     } satisfies ApplicationPayload;
+
     const getApplicantList = async () => {
       try {
         const { data } = await getAllApplicantList(payload);
@@ -257,8 +259,13 @@ export const Applications = () => {
   }, [refresh, applicationFilters, search, paginationValues]);
 
   useEffect(() => {
+    if (jobId) {
+      dispatch(setApplicationFilter(applicationFilters ? {
+        ...applicationFilters, vacancyIds: [jobId]
+      } : { ...initialFilterValues, vacancyIds: [jobId] }))
+    }
     setPageTitle(intl.formatMessage({ id: "PAGE.APPLICATIONS" }));
-  }, []);
+  }, [jobId]);
 
 
   return (
@@ -325,6 +332,4 @@ export const Applications = () => {
     </>
   );
 };
-
-
 

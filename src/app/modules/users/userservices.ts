@@ -9,18 +9,18 @@ import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import {
   CertificationResponseData,
   ChangePasswordPayload,
-  EmployeeResponseData,
+  EmployeeByIdResponse,
   EmployeeSearchResponseModel,
   GetCollegeListResponseModel,
-  GetSkillListResponseModel,
+  GetNotificationResponseModel,
   NotificationPreferences,
   NotificationRequestPayload,
-  NotificationResponseModel,
+  SkillModel,
   UploadProfileResponseModel,
   UserCertificationModel,
   UserEducationModel,
   UserEducationResponseData,
-  UserSkillsResponseData,
+  UserSkillsModel,
   UserSummaryModel,
   UserSummaryResponseData,
   WorkHistoryModel,
@@ -29,11 +29,11 @@ import {
 
 export const getEmployeeById = async (userId?: string) => {
   if (userId) {
-    return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS, {
+    return getRequest<ResponseData<EmployeeByIdResponse>>(ServiceUrl.GET_EMPLOYEE_DETAILS, {
       params: { userId },
     });
   }
-  return getRequest<EmployeeResponseData>(ServiceUrl.GET_EMPLOYEE_DETAILS);
+  return getRequest<ResponseData<EmployeeByIdResponse>>(ServiceUrl.GET_EMPLOYEE_DETAILS);
 };
 
 export const getEmployeeCertifications = async (userId?: string) => {
@@ -71,11 +71,11 @@ export const getEmployeeSummary = async (userId?: string) => {
 
 export const getEmployeeSkills = async (userId?: string) => {
   if (userId) {
-    return getRequest<UserSkillsResponseData>(ServiceUrl.GET_EMPLOYEE_SKILLS, {
+    return getRequest<ResponseData<UserSkillsModel>>(ServiceUrl.GET_EMPLOYEE_SKILLS, {
       params: { userId },
     });
   }
-  return getRequest<UserSkillsResponseData>(ServiceUrl.GET_EMPLOYEE_SKILLS);
+  return getRequest<ResponseData<UserSkillsModel>>(ServiceUrl.GET_EMPLOYEE_SKILLS);
 };
 
 export const udpateEmployeeSkills = async (payload: {
@@ -172,7 +172,7 @@ export const deleteEmployeeCertification = async (
 // skills
 
 export const getSkillsList = async (skill: string) => {
-  return getRequest<GetSkillListResponseModel>(
+  return getRequest<ResponseData<SkillModel>>(
     `${ServiceUrl.GET_SKILLS_LIST}?query=${encodeURIComponent(skill)}`
   );
 };
@@ -183,7 +183,7 @@ export const addSkill = async (skill: string) => {
 
 // notifications
 export const getNotifications = async (payload: NotificationRequestPayload) => {
-  return getRequest<NotificationResponseModel>(ServiceUrl.GET_NOTIFICATION, {
+  return getRequest<ResponseData<GetNotificationResponseModel>>(ServiceUrl.GET_NOTIFICATION, {
     params: {
       type: payload.type,
       pageNo: payload.pageNo,

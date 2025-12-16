@@ -296,7 +296,8 @@
     "NO_OF_VACANCIES": "空缺数量",
     "APPLICATION": "职位申请",
     "APPLICATION_CAPTION": "请填写以下表单进行申请：",
-    "JOB_TYPES": "职位类型"
+    "JOB_TYPES": "职位类型",
+    "TOTAL_SUBMISSION": "提交总数"
   },
   "APPLICATION": {
     "UPDATE_APPLICANT": "更新申请人信息",
@@ -980,7 +981,8 @@
     "YR": "{years}年",
     "YEAR": "{years}年",
     "MONTHS": "{months}个月",
-    "DAY": "{days}天"
+    "DAY": "{days}天",
+    "APPLICANTS": "{applicants, plural, =0 {0 位申请人} other {# 位申请人}}"
   },
   "COMMON": {
     "CONGRATULATION": "祝贺"

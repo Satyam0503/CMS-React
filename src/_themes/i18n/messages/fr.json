@@ -277,7 +277,8 @@
     "NO_OF_VACANCIES": "Nombre de postes vacants",
     "APPLICATION": "Candidature",
     "APPLICATION_CAPTION": "Veuillez remplir le formulaire ci-dessous pour postuler :",
-    "JOB_TYPES": "Types de postes"
+    "JOB_TYPES": "Types de postes",
+    "TOTAL_SUBMISSION": "Total des soumissions"
   },
   "APPLICATION": {
     "UPDATE_APPLICANT": "Mettre à jour les détails du candidat",
@@ -957,7 +958,8 @@
     "YR": "{years, plural, =0 {0 an} one {# an} other {# ans}}",
     "YEAR": "{years, plural, =0 {0 an} one {# an} other {# ans}}",
     "MONTHS": "{months, plural, =0 {0 mois} one {# mois} other {# mois}}",
-    "DAY": "{days, plural, =0 {0 jour} one {# jour} other {# jours}}"
+    "DAY": "{days, plural, =0 {0 jour} one {# jour} other {# jours}}",
+    "APPLICANTS": "{applicants, plural, =0 {0 candidat} one {# candidat} other {# candidats}}"
   },
   "COMMON": {
     "CONGRATULATION": "Félicitations"

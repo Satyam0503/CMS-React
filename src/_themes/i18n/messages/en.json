@@ -286,7 +286,8 @@
     "NO_OF_VACANCIES": "No. Of Vacancies",
     "APPLICATION": "Job Application",
     "APPLICATION_CAPTION": "Please fill the form below to apply:",
-    "JOB_TYPES": "Job Types"
+    "JOB_TYPES": "Job Types",
+    "TOTAL_SUBMISSION": "Total Submissions"
   },
 
   "APPLICATION": {
@@ -998,7 +999,8 @@
     "YR": "{years, plural, =0 {0 yr} one {# yr} other {# yrs}}",
     "YEAR": "{years, plural, =0 {0 year} one {# year} other {# years}}",
     "MONTHS": "{months, plural, =0 {0 month} one {# month} other {# months}}",
-    "DAY": "{days, plural, =0 {0 day} one {# day} other {# days}}"
+    "DAY": "{days, plural, =0 {0 day} one {# day} other {# days}}",
+    "APPLICANTS": "{applicants, plural, =0 {0 Applicant} one {# Applicant} other {# Applicants}}"
   },
   "COMMON": {
     "CONGRATULATION": "Congratulation",

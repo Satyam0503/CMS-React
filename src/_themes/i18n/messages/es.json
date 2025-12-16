@@ -277,7 +277,8 @@
     "NO_OF_VACANCIES": "Número de vacantes",
     "APPLICATION": "Solicitud de trabajo",
     "APPLICATION_CAPTION": "Por favor, rellene el siguiente formulario para aplicar:",
-    "JOB_TYPES": "Tipos de trabajo"
+    "JOB_TYPES": "Tipos de trabajo",
+    "TOTAL_SUBMISSION": "Total de envíos"
   },
   "APPLICATION": {
     "UPDATE_APPLICANT": "Actualizar detalles del solicitante",
@@ -960,7 +961,8 @@
     "YR": "{years, plural, =0 {0 a} one {# a} other {# años}}",
     "YEAR": "{years, plural, =0 {0 año} one {# año} other {# años}}",
     "MONTHS": "{months, plural, =0 {0 mes} one {# mes} other {# meses}}",
-    "DAY": "{days, plural, =0 {0 día} one {# día} other {# días}}"
+    "DAY": "{days, plural, =0 {0 día} one {# día} other {# días}}",
+    "APPLICANTS": "{applicants, plural, =0 {0 solicitantes} one {# solicitante} other {# solicitantes}}"
   },
   "COMMON": {
     "CONGRATULATION": "Felicidades"

@@ -10,6 +10,7 @@ import {
 } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { JobModal } from "../../models";
+import { Link } from "react-router-dom";
 
 interface PropsTypes {
   jobData: JobModal;
@@ -103,6 +104,26 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
             label={jobStatusMapper[Number(jobData.status)]}
             className={jobData.status ? "success" : "danger"}
           />
+        </Grid>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>{i({ id: "JOB.TOTAL_SUBMISSION" })}</Typography>
+        </Grid>
+        <Grid
+          size={{
+            xs: 8,
+            md: 6
+          }}>
+          <Link to={{
+            pathname: "/recruitment/applications",
+            search: `?jobId=${jobData.jobId}`
+          }}>
+            {i({ id: "PLURAL.APPLICANTS" }, { applicants: jobData.totalApplication })}
+          </Link>
+          <Typography variant="body1"></Typography>
         </Grid>
       </Grid>
       <Divider className="my-4" />

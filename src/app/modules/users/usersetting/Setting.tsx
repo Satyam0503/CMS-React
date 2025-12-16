@@ -3,7 +3,6 @@ import {
 } from "@mui/icons-material";
 import {
   Card,
-  Grid,
   Stack,
   Typography,
 } from "@mui/material";
@@ -16,7 +15,6 @@ import { NotificationSetting } from "./components/NotificationSetting";
 export default function Setting() {
   const intl = useIntl();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -26,7 +24,6 @@ export default function Setting() {
   };
   return (
     <Stack>
-
       <NotificationSetting />
       <Card className="p-4 d-flex justify-content-between flex-wrap gap-2 mt-2">
         <Typography variant="h5">
@@ -44,5 +41,4 @@ export default function Setting() {
     </Stack>
   );
 }
-
 

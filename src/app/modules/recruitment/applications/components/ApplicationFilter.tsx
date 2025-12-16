@@ -278,7 +278,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                   value.map((item) => item.value)
                 );
               }}
-              getOptionLabel={(option) => option.label}
+              getOptionLabel={(option) => formatMessage({ id: option.label })}
               renderInput={(params) => (
                 <TextField {...params} placeholder={formatMessage({ id: "APPLICANT.STATUS_LABEL" })} />
               )}

@@ -60,7 +60,7 @@ export interface JobModal {
   jobType: number;
   status: boolean;
   description: string;
-  totalSubmissions?: number;
+  totalApplication?: number;
 }
 
 export interface CommentModel {
