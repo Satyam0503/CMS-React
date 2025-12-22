@@ -3,9 +3,7 @@ import { useCallback } from "react";
 import { useIntl } from "react-intl";
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
 import { CustomCard } from "../../../../shared/components/CustomCard";
-import {
-  defaultPieChartSeries,
-} from "../../../../../utils/common";
+import { defaultPieChartSeries } from "../../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { DonutChart } from "../../../../shared/components/DonutChart";
 import { PieSeries, PieValueType } from "@mui/x-charts";
@@ -71,29 +69,32 @@ export const EmployeeLeaveTypesCharts = ({
   return (
     <Grid container spacing={2}>
       {leaveBalance.map((type) => {
-        const series = [
-          {
-            ...defaultPieChartSeries,
-            data: getLabelAndDataForLeaveType(type),
-          },
-        ] satisfies PieSeries[];
-        return (
-          <Grid
-            key={type.leavePolicyId}
-            size={{
-              xs: 12,
-              sm: 6,
-              md: 4
-            }}>
-            <CustomCard label={type.name} applyMinHeight={false}>
-              <DonutChart
-                loading={isLoading}
-                series={series}
-                centerLabel={type.balance}
-              />
-            </CustomCard>
-          </Grid>
-        );
+        if (type.balance > 0 || type.usedBalance > 0) {
+          const series = [
+            {
+              ...defaultPieChartSeries,
+              data: getLabelAndDataForLeaveType(type),
+            },
+          ] satisfies PieSeries[];
+          return (
+            <Grid
+              key={type.leavePolicyId}
+              size={{
+                xs: 12,
+                sm: 6,
+                md: 4,
+              }}
+            >
+              <CustomCard label={type.name} applyMinHeight={false}>
+                <DonutChart
+                  loading={isLoading}
+                  series={series}
+                  centerLabel={type.balance || "0"}
+                />
+              </CustomCard>
+            </Grid>
+          );
+        }
       })}
     </Grid>
   );

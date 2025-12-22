@@ -1,12 +1,9 @@
 import * as React from "react";
-import { Badge, Card, Stack } from "@mui/material";
+import { Badge, Card, Stack, Tooltip } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, FilterList } from "@mui/icons-material";
+import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import { SearchInput } from "../../../shared/components/SearchInput";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
-import { JobRequirementTableColumnList } from "../../../../utils/constant/Constant";
-import { Pagination } from "../../../shared/components/Pagination";
 import {
   addJobVacancy,
   deleteJobVacancy,
@@ -21,14 +18,32 @@ import { GetAllVacancyPayload, JobModal } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
 import {
   countAppliedFilter,
+  dateFormatter,
   hasModuleFeaturePermission,
+  jobTypeDecoder,
   removeUnwantedString,
 } from "../../../../utils/common";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";
-import { initialJobFilter, JobFilter, jobStatusDecoder } from "./components/JobFilter";
+import {
+  initialJobFilter,
+  JobFilter,
+  jobStatusDecoder,
+} from "./components/JobFilter";
 import { usePageData } from "../../../Context/PageDataProvider";
 import { AxiosError } from "axios";
+import {
+  GridActionsCell,
+  GridActionsCellItem,
+  GridColDef,
+  GridPaginationModel,
+  GridRenderCellParams,
+  GridRowParams,
+} from "@mui/x-data-grid";
+import clsx from "clsx";
+import { StyleStatus } from "../../../shared/components/StyledStatus";
+import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
+import { Box } from "@mui/system";
 
 const initialValues: JobModal = {
   jobId: "",
@@ -39,11 +54,133 @@ const initialValues: JobModal = {
   status: true,
 };
 
-export const getVacancyPayload: GetAllVacancyPayload = { ...initialJobFilter, status: true, search: "" }
+const useJobTableColumnList = (): GridColDef<JobModal>[] => {
+  const { formatMessage: i } = useIntl();
+
+  return [
+    {
+      field: "title",
+      headerName: i({ id: "JOB.JOB_TITLE" }),
+      description: i({ id: "JOB.JOB_TITLE" }),
+      minWidth: 240,
+      hideable: false,
+      flex: 1,
+      renderCell: (params: any) => {
+        return <Box component={"p"}>{params.row.title}</Box>;
+      },
+    },
+    {
+      field: "vacancies",
+      headerName: i({ id: "JOB.NO_OF_VACANCIES" }),
+      description: i({ id: "JOB.NO_OF_VACANCIES" }),
+      minWidth: 180,
+      hideable: false,
+      flex: 1,
+      renderCell: (params: any) => {
+        return <Box component={"p"}>{params.row.vacancies}</Box>;
+      },
+    },
+    {
+      field: "jobType",
+      headerName: i({ id: "JOB.TYPE" }),
+      description: i({ id: "JOB.TYPE" }),
+      minWidth: 180,
+      hideable: false,
+      flex: 1,
+      renderCell: (params: any) => {
+        const values = jobTypeDecoder[params.row.jobType];
+        return <Box component={"p"}>{i({ id: values })}</Box>;
+      },
+    },
+    {
+      field: "status",
+      headerName: i({ id: "STATUS" }),
+      description: i({ id: "STATUS" }),
+      minWidth: 100,
+      hideable: false,
+      flex: 1,
+      renderCell: (param: any) => {
+        return (
+          <StyleStatus
+            label={param.row.status === true ? "ACTIVE" : "INACTIVE"}
+            className={clsx({
+              success: param.row.status === true,
+              danger: param.row.status === false,
+            })}
+          />
+        );
+      },
+    },
+    {
+      field: "action",
+      headerName: i({ id: "ACTION" }),
+      description: i({ id: "ACTION" }),
+      minWidth: 100,
+      resizable: false,
+      sortable: false,
+      flex: 1,
+      filterable: false,
+      renderCell: (param) => <ActionsCell {...param} />,
+    },
+  ];
+};
+
+function ActionsCell(props: GridRenderCellParams) {
+  const { formatMessage: i } = useIntl();
+  const [view, setView] = useState(false);
+  const [isViewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobModal | undefined>();
+  const closePreview = () => {
+    setView(false);
+  };
+
+  const handleJobDetailView = (job: JobModal) => {
+    setSelectedJob(job);
+    setViewModalOpen(true);
+  };
+
+  return (
+    <>
+      <GridActionsCell {...props}>
+        <GridActionsCellItem
+          icon={
+            <Tooltip title={i({ id: "TOOLTIP.VIEW_CV" })}>
+              <AssignmentOutlined />
+            </Tooltip>
+          }
+          label={i({ id: "TOOLTIP.VIEW_CV" })}
+          onClick={(e) => {
+            console.log(props);
+
+            setView(true);
+            handleJobDetailView(props.row);
+            e.stopPropagation();
+          }}
+        />
+      </GridActionsCell>
+      {isViewModalOpen && selectedJob && (
+        <ViewJobDetails
+          open={isViewModalOpen}
+          setOpen={setViewModalOpen}
+          jobData={selectedJob}
+        />
+      )}
+    </>
+  );
+}
+
+export const getVacancyPayload: GetAllVacancyPayload = {
+  ...initialJobFilter,
+  status: true,
+  search: "",
+};
 
 export default function Jobs() {
   const { formatMessage: i } = useIntl();
-  const [paginationValues, setPaginationValues] = useState({ pageNo: 0, records: 10, });
+  const [paginationValues, setPaginationValues] = useState({
+    pageNo: 0,
+    records: 10,
+  });
   const [jobInitialValues, setJobInitialValues] = useState(initialValues);
   const [openModal, setOpenModal] = useState(false);
   const [search, setSearch] = useState("");
@@ -54,16 +191,25 @@ export default function Jobs() {
   const [isEdit, setEdit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
-  const [isViewModalOpen, setViewModalOpen] = useState(false);
   const { setPageTitle } = usePageData();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "job-filter" : undefined;
-  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
-  const jobFilters = useAppSelector(state => state.filters.jobs);
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const jobFilters = useAppSelector((state) => state.filters.jobs);
+  const columnList = useJobTableColumnList();
 
-  const hasAddPermission = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Create, userModulesPermissions);
-  const hasEditPermission = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Edit, userModulesPermissions);
+  const hasAddPermission = hasModuleFeaturePermission(
+    ModulesName.Jobs,
+    Permission.Create,
+    userModulesPermissions
+  );
+  const hasEditPermission = hasModuleFeaturePermission(
+    ModulesName.Jobs,
+    Permission.Edit,
+    userModulesPermissions
+  );
 
   const handleSearchChange = (value: string) => {
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
@@ -78,10 +224,10 @@ export default function Jobs() {
     setJobInitialValues(initialValues);
   };
 
-  const handleEditJob = (job: JobModal) => {
+  const handleEditJob = (param: GridRowParams<JobModal>) => {
     if (hasEditPermission) {
       setJobInitialValues({
-        ...job,
+        ...param.row,
       });
       setOpenModal(true);
       setEdit(true);
@@ -91,11 +237,6 @@ export default function Jobs() {
   const closeConfirmationModal = () => {
     setSelectedJob(undefined);
     setConfirmModalOpen(false);
-  };
-
-  const handleJobDetailView = (job: JobModal) => {
-    setSelectedJob(job);
-    setViewModalOpen(true);
   };
 
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -151,7 +292,7 @@ export default function Jobs() {
         const response = await addJobVacancy(payload);
         const { success } = response.data;
         if (!success) {
-          toast.error(i({ id: "TOAST.FAILED.JOB_POST" }))
+          toast.error(i({ id: "TOAST.FAILED.JOB_POST" }));
         } else {
           toast.success(i({ id: "TOAST.SUCCESS.JOB_POST" }));
           setRefresh(!isRefresh);
@@ -165,18 +306,10 @@ export default function Jobs() {
     }
   };
 
-  const handlePageChange = (page: number) => {
+  const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
-      ...paginationValues,
-      pageNo: page,
-    });
-  };
-
-  const handleRowPerPageChange = (rowPerPage: number) => {
-    setPaginationValues({
-      ...paginationValues,
-      records: rowPerPage,
-      pageNo: 0,
+      pageNo: model.page,
+      records: model.pageSize,
     });
   };
 
@@ -187,7 +320,11 @@ export default function Jobs() {
       pageNo: paginationValues.pageNo + 1,
       records: paginationValues.records,
       ...(jobFilters ? jobFilters : initialJobFilter),
-      status: jobFilters ? jobFilters.status == null ? null : jobStatusDecoder[jobFilters.status] : null,
+      status: jobFilters
+        ? jobFilters.status == null
+          ? null
+          : jobStatusDecoder[jobFilters.status]
+        : null,
     };
     (async () => {
       try {
@@ -211,47 +348,44 @@ export default function Jobs() {
 
   return (
     <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-      <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse" >
+      <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse">
         <SearchInput search={search} setSearch={handleSearchChange} />
         <Stack direction="row" spacing={1}>
-          <Badge anchorOrigin={{
-            horizontal: "left",
-            vertical: "top"
-          }} color="primary" badgeContent={countAppliedFilter(jobFilters)} >
+          <Badge
+            anchorOrigin={{
+              horizontal: "left",
+              vertical: "top",
+            }}
+            color="primary"
+            badgeContent={countAppliedFilter(jobFilters)}
+          >
             <CustomIconButton
               icon={<FilterList />}
               ariaLabel="job filter"
               handleClick={handleFilterClick}
             />
           </Badge>
-          {
-            hasAddPermission &&
+          {hasAddPermission && (
             <CustomIconButton
               icon={<Add />}
               handleClick={() => setOpenModal(true)}
             />
-          }
+          )}
         </Stack>
       </Stack>
-      <CustomisedTable
+      <CustomDataGrid
         keyName="jobId"
-        columns={JobRequirementTableColumnList}
-        rows={jobList}
-        page={paginationValues.pageNo}
-        rowsPerPage={paginationValues.records}
-        openViewModal={handleJobDetailView}
         loading={loading}
+        columns={columnList}
+        row={jobList}
         rowClickHandler={handleEditJob}
+        rowCount={totalRecords}
+        paginationModel={{
+          page: paginationValues.pageNo,
+          pageSize: paginationValues.records,
+        }}
+        handlePaginationModelChange={handlePaginationModelChange}
       />
-      {totalRecords > 0 && (
-        <Pagination
-          page={paginationValues.pageNo}
-          setPage={handlePageChange}
-          setRowPerPage={handleRowPerPageChange}
-          rowsPerPage={paginationValues.records}
-          totalRecords={totalRecords}
-        />
-      )}
       {isConfirmationModalOpen && selectedJob && (
         <ConfirmationModal
           title={i({
@@ -272,13 +406,6 @@ export default function Jobs() {
           open={openModal}
           handleClose={handleClose}
           handleAddEditJob={handleAddEditJob}
-        />
-      )}
-      {isViewModalOpen && selectedJob && (
-        <ViewJobDetails
-          open={isViewModalOpen}
-          setOpen={setViewModalOpen}
-          jobData={selectedJob}
         />
       )}
       {open && (
