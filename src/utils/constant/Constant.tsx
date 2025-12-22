@@ -245,6 +245,11 @@ export const ServiceUrl = {
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
+
+  // signalR endpoints
+
+  NOTIFICATION_HUB: '/notificationhub',
+  CHAT_HUB: '/chathub',
 } as const;
 
 export const languages = [

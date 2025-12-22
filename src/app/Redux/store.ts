@@ -2,12 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import { userReducer } from "./Reducers/userSlice";
 import { authReducer } from "./Reducers/authSlice";
 import { filterReducers } from "./Reducers/filterSlice";
+import { onlineUsersReducer } from "./Reducers/onlineUsersSlice";
+
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     auth: authReducer,
-    filters:filterReducers,
+    filters: filterReducers,
+    onlineUsers: onlineUsersReducer,
   },
 });
 

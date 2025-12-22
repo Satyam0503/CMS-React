@@ -207,8 +207,7 @@ export default function CalendarDays(props: Props) {
                                                             tooltip: {
                                                                 sx: {
                                                                     padding: 1,
-                                                                    backgroundColor: theme === "dark" ? "common.black" : "common.white",
-                                                                    color: theme === "light" ? 'black' : "white",
+                                                                    backgroundColor: "background.body",
                                                                     boxShadow: 10
                                                                 },
                                                             },

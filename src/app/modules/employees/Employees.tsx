@@ -42,6 +42,7 @@ const useEmployeeTableColumnList = (): GridColDef<GetAllEmployeeResponseModel>[]
   const { formatMessage: i } = useIntl();
   const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
   const canInviteEmployee = hasModuleFeaturePermission(ModulesName.Employees, Permission.Create, modulePermission);
+  const onlineUsers = useAppSelector(state => state.onlineUsers.onlineUsers);
   return [
     {
       field: "employeeId",
@@ -68,6 +69,7 @@ const useEmployeeTableColumnList = (): GridColDef<GetAllEmployeeResponseModel>[]
           avatarSrc={param.row.fullProfileUrl}
           title={param.row.fullName}
           subTitle={param.row.jobRole}
+          hasBadge={onlineUsers.includes(param.row.userId)}
         />
       )
     },

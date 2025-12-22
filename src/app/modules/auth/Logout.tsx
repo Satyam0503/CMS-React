@@ -8,10 +8,13 @@ import { RefreshTokenPayload } from "./core/_models";
 import { logoutUser } from "./core/_requests";
 import { logout } from "../../Redux/Reducers/authSlice";
 import { resetUserSlice } from "../../Redux/Reducers/userSlice";
+import ChatHub from "../../../server/ChatHub";
+import { resetOnlineUsers } from "../../Redux/Reducers/onlineUsersSlice";
 
 export const Logout = () => {
   const dispatch = useAppDispatch();
   const signalRInstance = Connector.getInstance();
+  const chatHubInstance = ChatHub.getInstance();
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
@@ -30,8 +33,10 @@ export const Logout = () => {
         }
         dispatch(logout());
         dispatch(resetUserSlice());
+        dispatch(resetOnlineUsers());
         localStorage.clear();
         signalRInstance.stopConnection();
+        chatHubInstance.stopConnection();
         setRedirect(true);
       } catch (error) {
         // navigate("/auth");

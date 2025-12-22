@@ -1,8 +1,6 @@
 // this hook connect to signalR hub
 import * as signalR from "@microsoft/signalr";
-import { BaseUrl } from "../utils/constant/Constant";
-
-const NOTIFICATIONHUB = '/notificationhub';
+import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 
 class Connector {
     private static instance: Connector | null = null;
@@ -21,7 +19,7 @@ class Connector {
         if (this.connection) return;
 
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${BaseUrl}${NOTIFICATIONHUB}`, {
+            .withUrl(`${BaseUrl}${ServiceUrl.NOTIFICATION_HUB}`, {
                 accessTokenFactory: () => token,
             })
             .withAutomaticReconnect()
