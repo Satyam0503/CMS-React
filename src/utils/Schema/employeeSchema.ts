@@ -14,7 +14,7 @@ export const employeeSchema = Yup.object().shape({
   employeeId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   address: Yup.string().notRequired(),
   jobRole: Yup.string().nullable(),
-  gender: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
+  gender: Yup.string().nullable(),
   department: Yup.string().nullable(),
   reportingManager: Yup.string().nullable(),
   roleId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),

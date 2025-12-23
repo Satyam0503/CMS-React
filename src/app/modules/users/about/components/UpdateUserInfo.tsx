@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { bloodGroups, EmploymentType } from "../../../../../utils/constant/Constant";
+import { bloodGroups, EmploymentType, Gender } from "../../../../../utils/constant/Constant";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
@@ -255,6 +255,23 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       ))}
                     </SelectInput>
                   </Grid>
+                  <Grid
+                    size={{
+                      xs: 12,
+                      sm: 6
+                    }}>
+                    <SelectInput
+                      name="gender"
+                      label={i({ id: "FORM.GENDER" })}
+                      required={true}
+                    >
+                      {Gender.map((item) => (
+                        <MenuItem key={item.id} value={item.value}>
+                          {i({ id: item.label })}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
+                  </Grid>
 
                   <Grid
                     size={{
@@ -391,7 +408,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   <Grid
                     size={{
                       xs: 12,
-                      sm: 6
                     }}>
                     <TextInput
                       label={i({ id: "USER.ADDRESS" })}
@@ -402,7 +418,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                   </Grid>
 
                   <Grid
-                    className="pt-2"
                     size={{
                       xs: 12,
                       sm: 6
@@ -419,7 +434,6 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     />
                   </Grid>
                   <Grid
-                    className="pt-2"
                     size={{
                       xs: 12,
                       sm: 6

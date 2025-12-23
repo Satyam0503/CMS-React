@@ -96,7 +96,7 @@ export const PersonalDetails = () => {
             sm: 6
           }}>
           <Typography variant="body2">{i({ id: "USER.GENDER" })}</Typography>
-          <Typography variant="body1">{userDetails?.gender}</Typography>
+          <Typography variant="body1">{userDetails?.gender ?? <FormattedMessage id="NOT_AVAILABLE" />}</Typography>
         </Grid>
 
         <Grid

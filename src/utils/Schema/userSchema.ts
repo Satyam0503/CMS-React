@@ -11,6 +11,7 @@ export const userSchema = Yup.object().shape({
   email: Yup.string()
     .required("VALIDATION_ERR.EMAIL_REQ")
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
+  gender: Yup.string().nullable(),
   address: Yup.string().notRequired().nullable(),
   phoneNumber: Yup.string()
     .matches(Regex.Phone, "VALIDATION_ERR.INVALID_PHONE")
