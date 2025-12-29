@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import ChatHub from "../../../../server/ChatHub";
-import { resetOnlineUsers, setOnlineUsers } from "../../../Redux/Reducers/onlineUsersSlice";
+import { removeOnlineUser, resetOnlineUsers, setOnlineUsers } from "../../../Redux/Reducers/onlineUsersSlice";
 import { useAppDispatch } from "../../../Redux/hooks";
 
 export const OnlineUsersListener = () => {
@@ -8,32 +8,37 @@ export const OnlineUsersListener = () => {
     const chatHub = ChatHub.getInstance();
 
     useEffect(() => {
+        let cleanupListeners: (() => void) | undefined;
         const setupListener = () => {
             const chatHubConnection = chatHub.getConnection();
             if (!chatHubConnection) return;
 
-            const handleUserOnlineStatus = (userIds: string[]) => {
-                dispatch(setOnlineUsers(userIds));
+            const handleUserOnlineStatus = (data: { userIds: string[] }) => {
+                dispatch(setOnlineUsers(data.userIds));
             };
+            const handleUserOfflineStatus = (data: { userId: string }) => {
+                dispatch(removeOnlineUser(data.userId));
+            }
 
-            chatHubConnection.on("employeeOnlineStatus", handleUserOnlineStatus);
-            // Invoke to get initial online users list
-            chatHubConnection.invoke("NotifyOnlineUserPresence").catch(() => { });
+            chatHubConnection.on("employeeOnline", handleUserOnlineStatus);
+            chatHubConnection.on("employeeOffline", handleUserOfflineStatus);
 
-            return () => {
-                chatHubConnection.off("employeeOnlineStatus", handleUserOnlineStatus);
+            cleanupListeners = () => {
+                chatHubConnection.off("employeeOnline", handleUserOnlineStatus);
+                chatHubConnection.off("employeeOffline", handleUserOfflineStatus);
             };
         };
 
         // Subscribe when connection is ready
         chatHub.onReady(() => {
+            cleanupListeners?.();
             setupListener();
         });
 
         return () => {
             dispatch(resetOnlineUsers());
         };
-    }, [chatHub, dispatch]);
+    }, []);
 
     return null;
 };

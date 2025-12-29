@@ -15,6 +15,9 @@ export const onlineUsersSlice = createSlice({
         setOnlineUsers: (state, action: PayloadAction<string[]>) => {
             state.onlineUsers = action.payload;
         },
+        removeOnlineUser: (state, action: PayloadAction<string>) => {
+            state.onlineUsers = state.onlineUsers.filter(userId => userId !== action.payload);
+        },
         resetOnlineUsers: (state) => {
             state.onlineUsers = [];
         },
@@ -22,4 +25,4 @@ export const onlineUsersSlice = createSlice({
 });
 
 export const onlineUsersReducer = onlineUsersSlice.reducer;
-export const { setOnlineUsers, resetOnlineUsers } = onlineUsersSlice.actions;
+export const { setOnlineUsers, resetOnlineUsers, removeOnlineUser } = onlineUsersSlice.actions;

@@ -16,7 +16,6 @@ import React from "react";
 import { getCurrentLocaleForMui } from "./modules/theme/themePalettes";
 import { createApplicationTheme } from "./modules/theme/MuiTheme";
 import ChatHub from "../server/ChatHub";
-import { OnlineUsersListener } from "./modules/employees/components/OnlineUsersListener";
 
 const App = () => {
   const { currentLanguage } = useAppLang();
@@ -65,7 +64,6 @@ const App = () => {
         <Suspense fallback={<LayoutSplashScreen />}>
           <I18nProvider>
             <AuthInit>
-              <OnlineUsersListener />
               <Outlet />
               <ToastProvider />
             </AuthInit>

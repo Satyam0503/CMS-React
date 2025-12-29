@@ -99,15 +99,15 @@ export default function HeaderNotificationMenu() {
       console.error((error as Error).message);
     }
   }
+  const connection = Connector.getInstance().getConnection();
 
   useEffect(() => {
-    const connection = Connector.getInstance().getConnection();
     if (!connection) return;
     connection.on("notification", handleNewNotification);
     return () => {
       connection.off("notification", handleNewNotification);
     };
-  }, [])
+  }, [connection])
 
   useEffect(() => {
     (async () => {

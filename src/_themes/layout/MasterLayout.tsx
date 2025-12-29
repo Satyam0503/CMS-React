@@ -7,6 +7,7 @@ import { BreadcrumbProvider } from "react-breadcrumble";
 import { PageData } from "../../app/shared/components/PageData";
 import { ChatMessenger } from "./components/header/chats/ChatMessanger";
 import { PageDataProvider } from "../../app/Context/PageDataProvider";
+import { OnlineUsersListener } from "../../app/modules/employees/components/OnlineUsersListener";
 
 const MasterLayout = () => {
   const theme = useTheme();
@@ -25,6 +26,7 @@ const MasterLayout = () => {
 
   return (
     <>
+      <OnlineUsersListener />
       <BreadcrumbProvider>
         <PageDataProvider>
           <Stack

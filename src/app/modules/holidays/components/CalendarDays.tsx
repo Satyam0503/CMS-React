@@ -280,8 +280,8 @@ export default function CalendarDays(props: Props) {
                             {occ.imageUrl ? (
                                 <Avatar
                                     sx={{
-                                        width: 40,
-                                        height: 40,
+                                        width: 44,
+                                        height: 44,
                                     }}
                                     src={String(occ.imageUrl)}
                                     variant="rounded"
@@ -299,7 +299,7 @@ export default function CalendarDays(props: Props) {
                                         color: "inherit"
                                     }}
                                 >{occ.name}</Typography>
-                                <Typography variant="body1"
+                                <Typography variant="body2"
                                     sx={{
                                         color: "inherit",
                                         wordBreak: "break-word"
