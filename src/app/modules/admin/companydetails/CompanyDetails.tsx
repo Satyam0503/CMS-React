@@ -1,7 +1,7 @@
 import { useIntl } from "react-intl";
 import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import { Box, Stack, } from "@mui/material";
-import { CorporateFare, Edit, Work } from "@mui/icons-material";
+import { CorporateFare, Work } from "@mui/icons-material";
 import { useEffect } from "react";
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";

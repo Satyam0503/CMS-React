@@ -906,7 +906,10 @@
     "37": "Puede volver a postular después de que haya pasado el período de espera requerido",
     "38": "El formato del archivo cargado no es compatible. Por favor, suba un documento válido",
     "39": "El archivo cargado supera el tamaño máximo permitido",
-    "40": "El correo electrónico del empleado ya está verificado"
+    "40": "El correo electrónico del empleado ya está verificado",
+    "41": "La carga del archivo falló. Por favor, inténtelo de nuevo",
+    "42": "El nombre de la política ya existe",
+    "43": "Una política debe tener al menos una versión vigente. Por favor, seleccione otra versión como vigente."
   },
   "CHAT": {
     "TITLE": "Chats",

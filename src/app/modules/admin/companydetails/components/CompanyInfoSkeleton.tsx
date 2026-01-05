@@ -1,4 +1,4 @@
-import { Card, Skeleton, Stack, Typography } from "@mui/material"
+import { Card, Skeleton, Stack } from "@mui/material"
 
 export const CompanyInfoSkeleton = () => {
     return (

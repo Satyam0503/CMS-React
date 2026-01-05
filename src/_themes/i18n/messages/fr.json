@@ -903,7 +903,10 @@
     "37": "Vous pourrez postuler de nouveau une fois la période d’attente requise écoulée",
     "38": "Le format du fichier téléversé n’est pas pris en charge. Veuillez téléverser un document valide",
     "39": "Le fichier téléversé dépasse la taille maximale autorisée",
-    "40": "L'e-mail de l'employé est déjà vérifié"
+    "40": "L'e-mail de l'employé est déjà vérifié",
+    "41": "Le téléchargement du fichier a échoué. Veuillez réessayer",
+    "42": "Le nom de la politique existe déjà",
+    "43": "Une politique doit avoir au moins une version actuelle. Veuillez sélectionner une autre version comme version actuelle."
   },
   "CHAT": {
     "TITLE": "Chats",

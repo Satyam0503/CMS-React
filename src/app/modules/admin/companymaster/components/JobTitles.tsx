@@ -1,8 +1,6 @@
-import { Box, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { JobTitleRequestModel, JobTitleResponseModel } from "../../models";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { transformAttributeObjectToList } from "../../../../../utils/common";
 import {
   addUpdateJobTitles,
@@ -17,9 +15,6 @@ export const JobTitles = () => {
   const { formatMessage: i } = useIntl();
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
 
   const handleRefresh = () => {
     setRefresh(!refresh);

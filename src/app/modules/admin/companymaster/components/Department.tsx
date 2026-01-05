@@ -1,4 +1,3 @@
-import { Box, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import {
@@ -8,7 +7,6 @@ import {
 } from "../../adminservices";
 import { DepartmentModel, DepartmentRequestModel } from "../../models";
 
-import { useAppSelector } from "../../../../Redux/hooks";
 import { AttributeTable } from "./AttributeTable";
 import { transformAttributeObjectToList } from "../../../../../utils/common";
 import { toast } from "react-toastify";
@@ -18,10 +16,6 @@ const Departments = () => {
   const { formatMessage: i } = useIntl();
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
   const [refresh, setRefresh] = useState(false);
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
-
   const handleRefresh = () => {
     setRefresh(!refresh);
   };

@@ -904,7 +904,10 @@
     "37": "Sie können sich erneut bewerben, sobald die erforderliche Wartezeit verstrichen ist",
     "38": "Das hochgeladene Dateiformat wird nicht unterstützt. Bitte laden Sie ein gültiges Dokument hoch",
     "39": "Die hochgeladene Datei überschreitet die zulässige Maximalgröße",
-    "40": "Die E-Mail des Mitarbeiters wurde bereits verifiziert"
+    "40": "Die E-Mail des Mitarbeiters wurde bereits verifiziert",
+    "41": "Das Hochladen der Datei ist fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "42": "Der Richtlinienname existiert bereits",
+    "43": "Eine Richtlinie muss mindestens eine aktuelle Version haben. Bitte wählen Sie eine andere Version als aktuelle Version aus."
   },
   "CHAT": {
     "TITLE": "Chats",

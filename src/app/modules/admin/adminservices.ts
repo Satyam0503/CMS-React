@@ -85,7 +85,7 @@ export const updateDepartment = async (payload: DepartmentRequestModel[]) => {
 
 // application modules
 export const updateModuleAccess = async (moduleId: string) => {
-  return patchRequest<{}, UpdateModuleAccessResponse>(
+  return patchRequest<object, UpdateModuleAccessResponse>(
     `${ServiceUrl.UPDATE_MODULE_ACCESS}/${moduleId}`
   );
 };
@@ -151,7 +151,7 @@ export const getCustomAttributeById = async (
 };
 
 export const createNewCustomAttribute = async () => {
-  return postRequest<any, CreateNewCustomAttributeResponse>(
+  return postRequest<Record<string, never>, CreateNewCustomAttributeResponse>(
     ServiceUrl.CREATE_NEW_CUSTOM_ATTRIBUTE,
     {}
   );

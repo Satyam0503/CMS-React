@@ -940,7 +940,10 @@
     "37": "You can apply again after the required waiting period has passed",
     "38": "The uploaded file format is not supported. Please upload a valid document",
     "39": "The uploaded file exceeds the maximum allowed size",
-    "40": "The employee's email is already verified"
+    "40": "The employee's email is already verified",
+    "41": "file upload failed. please try again",
+    "42": "Policy name already exists",
+    "43": "A policy must have at least one current version. Please select another version as current"
   },
   "CHAT": {
     "TITLE": "Chats",

@@ -37,9 +37,7 @@ export const AttributeTitleRow = ({
     setTitle({ ...updatedTitle });
   };
 
-  const validateAndUpdateNewItemData = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
-  ) => {
+  const validateAndUpdateNewItemData = () => {
     // check if default language title is present and not empty
     const hasDefaultLangTitle = Boolean(title[defaultLanguage]?.trim().length);
     if (!hasDefaultLangTitle) {
@@ -83,7 +81,7 @@ export const AttributeTitleRow = ({
           </FormLabel>
           <TextField
             variant="standard"
-            disabled={!Boolean(translationLang)}
+            disabled={!translationLang}
             value={translationLanguageTitle}
             onChange={handleChange}
             name={translationLang}

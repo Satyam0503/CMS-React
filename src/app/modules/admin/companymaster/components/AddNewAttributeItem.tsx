@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { Box, Switch, TextField } from "@mui/material";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { ReqProps } from "./AttributeItemRow";
@@ -41,9 +41,7 @@ const AddNewAttributeItem = <T extends ReqProps>({
     setNewAttributeValue({ ...newAttributeValue, titles: titles });
   };
 
-  const validateAndUpdateNewItemData = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
-  ) => {
+  const validateAndUpdateNewItemData = () => {
     const index = newItemsList.findIndex(
       (item) => newAttributeValue?.newItemKey === item?.newItemKey
     );
@@ -124,7 +122,7 @@ const AddNewAttributeItem = <T extends ReqProps>({
         error={Boolean(error)}
       />
       <TextField
-        disabled={!Boolean(translationLang)}
+        disabled={!translationLang}
         value={translationLanguageTitle}
         onChange={handleChange}
         name={translationLang}

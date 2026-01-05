@@ -45,7 +45,7 @@ const SupportedImageFormat = ["jpg", "jpeg", "png", "webp"];
 const MAX_FILE_SIZE = 5;
 
 export const CompanyInfo = () => {
-  const { currentLanguage, changeAppLanguage } = useAppLang();
+  const { changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
   const [isEdit, setEdit] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ export const CompanyInfo = () => {
     enableReinitialize: true,
     initialValues: editedInfo,
     validationSchema: companyValidationSchema,
-    onSubmit(values) {
+    onSubmit() {
       handleUpdateCompanyDetails();
     }
   })

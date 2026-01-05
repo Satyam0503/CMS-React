@@ -1,7 +1,6 @@
 import * as Yup from "yup";
 import { Regex } from "../constant/Constant";
 
-const MAX_FILE_SIZE = 5; // 5MB
 
 export const companyValidationSchema = Yup.object().shape({
   companyName: Yup.string()

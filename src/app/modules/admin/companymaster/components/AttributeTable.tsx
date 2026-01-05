@@ -118,7 +118,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       setInitialAttributeValue(structuredClone(attributeData));
       setNewItemIds([]);
     } else {
-      var id = uuidv4();
+      const id = uuidv4();
       setItemsList([]);
       setNewItemIds([id]);
     }
@@ -241,7 +241,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
             role="button"
             className="fw-bolder d-flex align-items-center align-self-start mt-6"
             onClick={() => {
-              var uuid = uuidv4();
+              const uuid = uuidv4();
               setNewItemIds([...newItemIds, uuid]);
             }}
           >
