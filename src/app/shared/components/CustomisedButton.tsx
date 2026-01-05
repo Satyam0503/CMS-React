@@ -12,7 +12,7 @@ type Props = {
   disabled?: boolean;
   permission?: boolean;
   loading?: boolean;
-  color?: 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning',
+  color?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
 };
 
 const CustomisedButton = (props: Props) => {
@@ -27,7 +27,7 @@ const CustomisedButton = (props: Props) => {
     permission = true,
     type = "button",
     loading = false,
-    color = "primary"
+    color = "primary",
   } = props;
 
   return (
@@ -43,10 +43,16 @@ const CustomisedButton = (props: Props) => {
           type={type}
           loading={loading}
           endIcon={Icon}
-          loadingIndicator={<CircularProgress sx={{ color: "common.white" }} size={20} thickness={5} />}
+          loadingIndicator={
+            <CircularProgress
+              sx={{ color: "common.white" }}
+              size={20}
+              thickness={5}
+            />
+          }
         >
           {label}
-        </Button >
+        </Button>
       )}
     </>
   );

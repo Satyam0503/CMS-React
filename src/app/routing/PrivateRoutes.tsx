@@ -6,27 +6,31 @@ import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
-
+import SelectedPolicy from "../modules/policies/components/SelectedPolicy.tsx";
 
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
 const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
 const Employees = lazy(() => import("../modules/employees/Employees.tsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/Dashboard.tsx"));
 const Profile = lazy(() => import("./ProfileRoutes.tsx"));
-const Calendar = lazy(() => import("../modules/holidays/Calendar.tsx"))
+const Calendar = lazy(() => import("../modules/holidays/Calendar.tsx"));
 const NoticeBoard = lazy(() => import("./NoticeBoardRoutes.tsx"));
-const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
-const LeaveManagement = lazy(() => import("../modules/leaves/LeaveManagement.tsx"));
-const PayRollManagement = lazy(() => import("../modules/payroll/PayRollManagement.tsx"));
+const Policies = lazy(() => import("../modules/policies/Policies.tsx"));
+const Attendance = lazy(
+  () => import("../modules/attendance/EmployeeAttendance.tsx")
+);
+const LeaveManagement = lazy(
+  () => import("../modules/leaves/LeaveManagement.tsx")
+);
+const PayRollManagement = lazy(
+  () => import("../modules/payroll/PayRollManagement.tsx")
+);
 
 const PrivateRoutes = () => {
   return (
     <Routes>
       <Route element={<MasterLayout />}>
-        <Route
-          path="auth/*"
-          element={<Navigate to={'/dashboard'} />}
-        />
+        <Route path="auth/*" element={<Navigate to={"/dashboard"} />} />
 
         <Route
           path="dashboard"
@@ -82,7 +86,7 @@ const PrivateRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.Employees}>
               <SuspensedView>
-                < Profile />
+                <Profile />
               </SuspensedView>
             </ProtectedRoute>
           }
@@ -92,7 +96,7 @@ const PrivateRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.Attendance}>
               <SuspensedView>
-                < Attendance />
+                <Attendance />
               </SuspensedView>
             </ProtectedRoute>
           }
@@ -135,6 +139,27 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="policies"
+          element={
+            <ProtectedRoute module={ModulesName.Policy}>
+              <SuspensedView>
+                <Policies />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="policies/:policyId"
+          element={
+            <ProtectedRoute module={ModulesName.Policy}>
+              <SuspensedView>
+                <SelectedPolicy />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/unauthorize"
@@ -148,8 +173,8 @@ const PrivateRoutes = () => {
 };
 
 type PropsType = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 
 const SuspensedView = ({ children }: PropsType) => {
   const theme = useTheme();

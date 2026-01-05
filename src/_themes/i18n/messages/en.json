@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
     "PAYROLL": "PayRoll",
-    "CALENDAR": "Calendar"
+    "CALENDAR": "Calendar",
+    "POLICIES": "Policies"
   },
   "GENDER": {
     "MALE": "Male",
@@ -74,7 +75,9 @@
     "COMPANY_MASTER": "Company Master",
     "COMPANY_DETAILS": "Company Details",
     "PAYROLL": "PayRoll",
-    "CALENDAR": "Calendar"
+    "CALENDAR": "Calendar",
+    "POLICIES": "Policies"
+
   },
 
   "LEAVE_REQUEST_STATUS": {
@@ -97,7 +100,9 @@
       "DELETE_HOLIDAY": "Delete Holiday",
       "LEAVE_STATUS_CHANGE": "Confirm Status Change",
       "DELETE_DEPARTMENT": "Delete Department",
-      "DELETE_ATR_ITEM": "Delete Attribute Item"
+      "DELETE_ATR_ITEM": "Delete Attribute Item",
+      "DELETE_POLICY": "Delete Policy",
+      "DELETE_POLICY_VERSION":  "Delete Policy Version"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "Are you sure you want to delete this work history?",
@@ -111,7 +116,9 @@
       "DELETE_HOLIDAY": "Are you sure you want to delete holiday",
       "LEAVE_STATUS_CHANGE": "Changing the status will update the request and notify the employee",
       "DELETE_DEPARTMENT": "Are you sure?",
-      "DELETE_ATR_ITEM": "Are you sure you want to delete this item?"
+      "DELETE_ATR_ITEM": "Are you sure you want to delete this item?",
+      "DELETE_POLICY": "Are you sure you want to delete this policy?",
+      "DELETE_POLICY_VERSION":  "Are you sure you want to delete this policy version?"
     }
   },
 
@@ -147,7 +154,9 @@
       "PAYROLL_UPDATED": "Payroll details successfully updated",
       "PAYROLL_ADDED": "Payroll details successfully added",
       "INVITE_EMPLOYEE": "Invitation successfully sent",
-      "APPLICATION_SUBMITTED": "Application successfully submitted"
+      "APPLICATION_SUBMITTED": "Application successfully submitted",
+      "POLICY_DELETED": "Policy deleted Successfully.",
+      "POLICY_VERSION_DELETED": "Policy Version deleted Successfully."
     },
     "FAILED": {
       "UPDATE": "Failed to update",
@@ -167,7 +176,9 @@
       "UPDATE_ROLE": "Failed to update role permission",
       "PAY_SLIP_GENERATE": "Error generating payslip",
       "SELECT_PAY_MONTH": "Please select pay month",
-      "INVITE_EMPLOYEE": "Failed to invite employee"
+      "INVITE_EMPLOYEE": "Failed to invite employee",
+      "POLICY_DELETE_FAILED": "Failed to delete policy.",
+      "POLICY_VERSION_DELETE_FAILED": "Failed to delete policy version."
     }
   },
 
@@ -215,6 +226,7 @@
     "OPEN_POSITIONS": "Open Positions",
     "APPLY_HERE": "Apply Here",
     "DEPARTMENT": "Departments",
+    "ROLES": "Roles",
     "UPCOMING_HOLIDAYS": "Upcoming Holidays",
     "UPCOMING_EVENTS": "Upcoming Events",
     "NO_EVENT_HOLIDAY": "No upcoming holidays or events at the moment",
@@ -797,7 +809,8 @@
     "EMP_ID_REQ": "Employee ID is required",
     "INVALID_PAN": "Invalid Pan number",
     "INVALID_BANK_NO": "Invalid bank account number",
-    "CARRY_OVER_TOO_LOW": "max balance should be more than accrual value"
+    "CARRY_OVER_TOO_LOW": "max balance should be more than accrual value",
+    "DOCUMENT_FORMAT": "Only .pdf, .doc and .docx documents are allowed"
   },
 
   "DATETIME": {
@@ -973,6 +986,19 @@
       "TOTAL_DEDUCTION": "Total Deduction",
       "NET_PAY": "Net Pay"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "Create Folder",
+    "ADD_POLICY": "Add Policy",
+    "IMPORT_DOCUMENT": "Import Document",
+    "NO_POLICIES_FOUND": "No Policies found",
+    "POLICY_NAME": "Policy Name",
+    "POLICY_DESCRIPTION": "Policy Description",
+    "VERSION":{
+      "ADD_VERSION": "Add Version",
+      "VERSION_NAME": "Version Name"
+    },
+    "SELECTED_DOCUMENT": "Selected file: {document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Notification Preferences",

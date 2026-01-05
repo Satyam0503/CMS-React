@@ -1,4 +1,3 @@
-import { Box, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import {

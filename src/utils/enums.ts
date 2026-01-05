@@ -50,6 +50,7 @@ export enum Modules {
   CompanyMaster = 13,
   PayRoll = 14,
   CompanyDetails = 15,
+  Policies = 16
 }
 
 export enum ModulesName {
@@ -69,6 +70,7 @@ export enum ModulesName {
   CompanyMaster = "Company_Master",
   PayRoll = "PayRoll",
   CompanyDetails = "Company_Details",
+  Policy = "Policy"
 }
 
 export enum ModulesTitles {
@@ -87,6 +89,7 @@ export enum ModulesTitles {
   CompanyMaster = "MODULES.COMPANY_MASTER",
   PayRoll = "MODULES.PAYROLL",
   CompanyDetails = "MODULES.COMPANY_DETAILS",
+  Policies = "MODULES.POLICIES"
 }
 
 export enum Roles {

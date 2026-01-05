@@ -33,10 +33,7 @@ import { LeavePolicyModel } from "../model";
 import { getAllEmployees } from "../../employees/employeeServices";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { toast } from "react-toastify";
-import {
-  createLeavePolicy,
-  updateLeavePolicy,
-} from "../leaveServices";
+import { createLeavePolicy, updateLeavePolicy } from "../leaveServices";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 
@@ -67,6 +64,7 @@ export default function AddLeavePolicy(props: Props) {
       phoneNumber: null,
       fullProfileUrl: null,
       dateOfBirth: null,
+      isVerified: false,
     },
     {
       userId: "0",
@@ -79,6 +77,7 @@ export default function AddLeavePolicy(props: Props) {
       phoneNumber: null,
       fullProfileUrl: null,
       dateOfBirth: null,
+      isVerified: false,
     },
   ];
 
@@ -307,6 +306,7 @@ export default function AddLeavePolicy(props: Props) {
                           xs: 12,
                           md: 6,
                         }}
+                        className="accural-amount-container"
                       >
                         <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_ACCURAL_AMOUNT" })}
@@ -317,7 +317,6 @@ export default function AddLeavePolicy(props: Props) {
                           title={i({
                             id: "LEAVE.TYPES.POLICY_ACCRUAL_AMOUNT_DEFINATION",
                           })}
-                          sx={{}}
                         >
                           <HelpOutlineIcon
                             sx={{
@@ -657,8 +656,8 @@ export default function AddLeavePolicy(props: Props) {
                             }}
                             getOptionDisabled={
                               values.applicableTo &&
-                                (values.applicableTo.includes("1") ||
-                                  values.applicableTo.includes("0"))
+                              (values.applicableTo.includes("1") ||
+                                values.applicableTo.includes("0"))
                                 ? (option) => true
                                 : (option) => false
                             }

@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "公司主档",
     "COMPANY_DETAILS": "公司详情",
     "PAYROLL": "工资单",
-    "CALENDAR": "日历"
+    "CALENDAR": "日历",
+    "POLICIES": "政策"
   },
   "GENDER": {
     "MALE": "男性",
@@ -93,7 +94,8 @@
     "COMPANY_MASTER": "公司主数据",
     "COMPANY_DETAILS": "公司详情",
     "PAYROLL": "工资单",
-    "CALENDAR": "日历"
+    "CALENDAR": "日历",
+    "POLICIES": "政策"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "待处理",
@@ -114,7 +116,9 @@
       "DELETE_HOLIDAY": "删除假期",
       "LEAVE_STATUS_CHANGE": "确认状态更改",
       "DELETE_DEPARTMENT": "删除部门",
-      "DELETE_ATR_ITEM": "删除属性项"
+      "DELETE_ATR_ITEM": "删除属性项",
+      "DELETE_POLICY": "删除策略",
+      "DELETE_POLICY_VERSION":  "删除策略版本"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "确定要删除此工作历史吗？",
@@ -128,7 +132,9 @@
       "DELETE_HOLIDAY": "确定要删除此假期吗？",
       "LEAVE_STATUS_CHANGE": "更改状态将更新请求并通知员工",
       "DELETE_DEPARTMENT": "您确定吗？",
-      "DELETE_ATR_ITEM": "确定要删除此项吗？"
+      "DELETE_ATR_ITEM": "确定要删除此项吗？",
+      "DELETE_POLICY": "您确定要删除此策略吗？",
+      "DELETE_POLICY_VERSION":  "您确定要删除此策略版本吗？"
     }
   },
   "TOAST": {
@@ -162,7 +168,9 @@
       "DATA_UPLOADED": "成功！数据已成功上传",
       "PAYROLL_UPDATED": "工资详情更新成功",
       "PAYROLL_ADDED": "工资详情添加成功",
-      "INVITE_EMPLOYEE": "邀请已成功发送"
+      "INVITE_EMPLOYEE": "邀请已成功发送",
+      "POLICY_DELETED": "策略已成功删除。",
+      "POLICY_VERSION_DELETED": "策略版本已成功删除。"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "添加新假期失败",
@@ -182,7 +190,9 @@
       "UPDATE_ROLE": "更新角色权限失败",
       "PAY_SLIP_GENERATE": "生成工资单时出错",
       "SELECT_PAY_MONTH": "请选择支付月份",
-      "INVITE_EMPLOYEE": "邀请员工失败"
+      "INVITE_EMPLOYEE": "邀请员工失败",
+      "POLICY_DELETE_FAILED": "删除策略失败。",
+      "POLICY_VERSION_DELETE_FAILED": "删除策略版本失败。"
     }
   },
   "BUTTON": {
@@ -228,6 +238,7 @@
     "OPEN_POSITIONS": "空缺职位",
     "APPLY_HERE": "在此申请",
     "DEPARTMENT": "部门",
+    "ROLES": "角色",
     "UPCOMING_HOLIDAYS": "即将到来的假期",
     "UPCOMING_EVENTS": "即将到来的活动",
     "NO_EVENT_HOLIDAY": "目前没有即将到来的假期或活动",
@@ -788,7 +799,8 @@
     "EMP_ID_REQ": "员工编号是必填项",
     "INVALID_PAN": "无效的PAN号码",
     "INVALID_BANK_NO": "无效的银行账户号码",
-    "CARRY_OVER_TOO_LOW": "结转值应大于应计值。"
+    "CARRY_OVER_TOO_LOW": "结转值应大于应计值。",
+    "DOCUMENT_FORMAT": "仅允许 .pdf .doc 和 .docx 文档"
   },
   "DATETIME": {
     "TODAY": "今天",
@@ -955,6 +967,19 @@
       "TOTAL_DEDUCTION": "总扣除",
       "NET_PAY": "实发工资"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "创建文件夹",
+    "ADD_POLICY": "添加策略",
+    "IMPORT_DOCUMENT": "导入文档",
+    "NO_POLICIES_FOUND_ZH": "未找到任何策略",
+    "POLICY_NAME": "政策名称",
+    "POLICY_DESCRIPTION": "政策描述",
+    "VERSION": {
+      "ADD_VERSION": "添加版本",
+      "VERSION_NAME": "版本名称"
+    },
+    "SELECTED_DOCUMENT": "已选择的文件：{document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "通知偏好设置",

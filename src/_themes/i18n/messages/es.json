@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "Maestro de la Empresa",
     "COMPANY_DETAILS": "Detalles de la Empresa",
     "PAYROLL": "Nómina",
-    "CALENDAR": "Calendario"
+    "CALENDAR": "Calendario",
+    "POLICIES": "Políticas"
   },
 
   "GENDER": {
@@ -74,7 +75,8 @@
     "COMPANY_MASTER": "Maestro de empresa",
     "COMPANY_DETAILS": "Detalles de la empresa",
     "PAYROLL": "Nómina",
-    "CALENDAR": "Calendario"
+    "CALENDAR": "Calendario",
+    "POLICIES": "Políticas"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Pendiente",
@@ -95,7 +97,9 @@
       "DELETE_HOLIDAY": "Eliminar vacaciones",
       "LEAVE_STATUS_CHANGE": "Confirmar cambio de estado",
       "DELETE_DEPARTMENT": "Eliminar departamento",
-      "DELETE_ATR_ITEM": "Eliminar elemento de atributo"
+      "DELETE_ATR_ITEM": "Eliminar elemento de atributo",
+      "DELETE_POLICY": "Eliminar política",
+      "DELETE_POLICY_VERSION":  "Eliminar versión de la política"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "¿Está seguro de que desea eliminar este historial de trabajo?",
@@ -109,7 +113,9 @@
       "DELETE_HOLIDAY": "¿Está seguro de que desea eliminar este día festivo?",
       "LEAVE_STATUS_CHANGE": "Cambiar el estado actualizará la solicitud y notificará al empleado",
       "DELETE_DEPARTMENT": "¿Está seguro?",
-      "DELETE_ATR_ITEM": "¿Está seguro de que desea eliminar este elemento?"
+      "DELETE_ATR_ITEM": "¿Está seguro de que desea eliminar este elemento?",
+      "DELETE_POLICY": "¿Está seguro de que desea eliminar esta política?",
+      "DELETE_POLICY_VERSION":  "¿Está seguro de que desea eliminar esta versión de la política?"
     }
   },
   "TOAST": {
@@ -143,7 +149,9 @@
       "DATA_UPLOADED": "¡Éxito! los datos se han subido correctamente",
       "PAYROLL_UPDATED": "Detalles de la nómina actualizados correctamente",
       "PAYROLL_ADDED": "Detalles de la nómina añadidos correctamente",
-      "INVITE_EMPLOYEE": "Invitación enviada correctamente"
+      "INVITE_EMPLOYEE": "Invitación enviada correctamente",
+      "POLICY_DELETED": "Política eliminada correctamente.",
+      "POLICY_VERSION_DELETED": "Versión de la política eliminada correctamente."
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Error al añadir el nuevo día festivo",
@@ -163,7 +171,8 @@
       "UPDATE_ROLE": "Error al actualizar el permiso de rol",
       "PAY_SLIP_GENERATE": "Error al generar el recibo de sueldo",
       "SELECT_PAY_MONTH": "Por favor, seleccione el mes de pago",
-      "INVITE_EMPLOYEE": "Error al invitar al empleado"
+      "INVITE_EMPLOYEE": "Error al invitar al empleado",
+      "POLICY_DELETE_FAILED": "Error al eliminar la política."
     }
   },
   "BUTTON": {
@@ -209,6 +218,7 @@
     "OPEN_POSITIONS": "Posiciones abiertas",
     "APPLY_HERE": "Aplica aquí",
     "DEPARTMENT": "Departamentos",
+    "ROLES": "Roles",
     "UPCOMING_HOLIDAYS": "Próximos feriados",
     "UPCOMING_EVENTS": "Próximos eventos",
     "NO_EVENT_HOLIDAY": "No hay feriados ni eventos próximos en este momento",
@@ -767,7 +777,8 @@
     "EMP_ID_REQ": "Se requiere la identificación del empleado",
     "INVALID_PAN": "Número PAN no válido",
     "INVALID_BANK_NO": "Número de cuenta bancaria no válido",
-    "CARRY_OVER_TOO_LOW": "El valor trasladado debe ser mayor que el valor acumulado."
+    "CARRY_OVER_TOO_LOW": "El valor trasladado debe ser mayor que el valor acumulado.",
+    "DOCUMENT_FORMAT": "Solo se permiten documentos .pdf, .doc y .docx."
   },
   "DATETIME": {
     "TODAY": "Hoy",
@@ -935,6 +946,19 @@
       "TOTAL_DEDUCTION": "Deducción total",
       "NET_PAY": "Salario neto"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "Crear carpeta",
+    "ADD_POLICY": "Agregar política",
+    "IMPORT_DOCUMENT": "Importar documento",
+    "NO_POLICIES_FOUND_ES": "No se encontraron políticas",
+    "POLICY_NAME": "Nombre de la política",
+    "POLICY_DESCRIPTION": "Descripción de la política",
+    "VERSION": {
+      "ADD_VERSION": "Agregar versión",
+      "VERSION_NAME": "Nombre de la versión"
+    },
+    "SELECTED_DOCUMENT": "Archivo seleccionado: {document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Preferencias de notificación",

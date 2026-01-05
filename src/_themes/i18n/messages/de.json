@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "Unternehmensübersicht",
     "COMPANY_DETAILS": "Unternehmensdetails",
     "PAYROLL": "Lohnabrechnung",
-    "CALENDAR": "Kalender"
+    "CALENDAR": "Kalender",
+    "POLICIES": "Richtlinien"
   },
   "GENDER": {
     "MALE": "Männlich",
@@ -73,7 +74,8 @@
     "COMPANY_MASTER": "Unternehmensstammdaten",
     "COMPANY_DETAILS": "Unternehmensdetails",
     "PAYROLL": "Gehaltsabrechnung",
-    "CALENDAR": "Kalender"
+    "CALENDAR": "Kalender",
+    "POLICIES": "Richtlinien"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Ausstehend",
@@ -94,7 +96,9 @@
       "DELETE_HOLIDAY": "Feiertag löschen",
       "LEAVE_STATUS_CHANGE": "Statusänderung bestätigen",
       "DELETE_DEPARTMENT": "Abteilung löschen",
-      "DELETE_ATR_ITEM": "Attribut löschen"
+      "DELETE_ATR_ITEM": "Attribut löschen",
+      "DELETE_POLICY": "Richtlinie löschen",
+      "DELETE_POLICY_VERSION":  "Richtlinienversion löschen"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "Sind Sie sicher, dass Sie diesen Arbeitsverlauf löschen möchten?",
@@ -108,7 +112,9 @@
       "DELETE_HOLIDAY": "Sind Sie sicher, dass Sie diesen Feiertag löschen möchten?",
       "LEAVE_STATUS_CHANGE": "Durch die Statusänderung wird die Anfrage aktualisiert und der Mitarbeiter benachrichtigt",
       "DELETE_DEPARTMENT": "Sind Sie sicher?",
-      "DELETE_ATR_ITEM": "Sind Sie sicher, dass Sie dieses Element löschen möchten?"
+      "DELETE_ATR_ITEM": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
+      "DELETE_POLICY": "Möchten Sie diese Richtlinie wirklich löschen?",
+      "DELETE_POLICY_VERSION":  "Möchten Sie diese Richtlinienversion wirklich löschen?"
     }
   },
   "TOAST": {
@@ -142,7 +148,9 @@
       "DATA_UPLOADED": "Erfolg! Daten wurden erfolgreich hochgeladen",
       "PAYROLL_UPDATED": "Gehaltsabrechnungsdetails erfolgreich aktualisiert",
       "PAYROLL_ADDED": "Gehaltsabrechnungsdetails erfolgreich hinzugefügt",
-      "INVITE_EMPLOYEE": "Einladung erfolgreich gesendet"
+      "INVITE_EMPLOYEE": "Einladung erfolgreich gesendet",
+      "POLICY_DELETED": "Richtlinie erfolgreich gelöscht.",
+      "POLICY_VERSION_DELETED": "Richtlinienversion erfolgreich gelöscht."
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Fehler beim Hinzufügen des neuen Feiertags",
@@ -162,7 +170,9 @@
       "UPDATE_ROLE": "Aktualisierung der Rollenberechtigung fehlgeschlagen",
       "PAY_SLIP_GENERATE": "Fehler beim Erstellen der Gehaltsabrechnung",
       "SELECT_PAY_MONTH": "Bitte wählen Sie den Zahlmonat aus",
-      "INVITE_EMPLOYEE": "Mitarbeiter konnte nicht eingeladen werden"
+      "INVITE_EMPLOYEE": "Mitarbeiter konnte nicht eingeladen werden",
+      "POLICY_DELETE_FAILED": "Löschen der Richtlinie fehlgeschlagen.",
+      "POLICY_VERSION_DELETE_FAILED": "Löschen der Richtlinienversion fehlgeschlagen."
     }
   },
   "BUTTON": {
@@ -208,6 +218,7 @@
     "OPEN_POSITIONS": "Offene Positionen",
     "APPLY_HERE": "Hier bewerben",
     "DEPARTMENT": "Abteilungen",
+    "ROLES": "Rollen",
     "UPCOMING_HOLIDAYS": "Bevorstehende Feiertage",
     "UPCOMING_EVENTS": "Bevorstehende Veranstaltungen",
     "NO_EVENT_HOLIDAY": "Derzeit keine bevorstehenden Feiertage oder Veranstaltungen",
@@ -766,7 +777,8 @@
     "EMP_ID_REQ": "Mitarbeiter-ID ist erforderlich",
     "INVALID_PAN": "Ungültige PAN-Nummer",
     "INVALID_BANK_NO": "Ungültige Bankkontonummer",
-    "CARRY_OVER_TOO_LOW": "Der Übertragswert sollte höher sein als der Rückstellungswert"
+    "CARRY_OVER_TOO_LOW": "Der Übertragswert sollte höher sein als der Rückstellungswert",
+    "DOCUMENT_FORMAT": "Nur .pdf-, .doc- und .docx -Dokumente sind erlaubt."
   },
   "DATETIME": {
     "TODAY": "Heute",
@@ -933,6 +945,19 @@
       "TOTAL_DEDUCTION": "Gesamtabzug",
       "NET_PAY": "Nettogehalt"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "Ordner erstellen",
+    "ADD_POLICY": "Richtlinie hinzufügen",
+    "IMPORT_DOCUMENT": "Dokument importieren",
+    "NO_POLICIES_FOUND_DE": "Keine Richtlinien gefunden",
+    "POLICY_NAME": "Richtlinienname",
+    "POLICY_DESCRIPTION": "Richtlinienbeschreibung",
+    "VERSION": {
+      "ADD_VERSION": "Version hinzufügen",
+      "VERSION_NAME": "Versionsname"
+    },
+    "SELECTED_DOCUMENT": "Ausgewählte Datei: {document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Benachrichtigungseinstellungen",
