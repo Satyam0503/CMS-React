@@ -56,6 +56,7 @@ import {
   ToggleOn,
   Work,
 } from "@mui/icons-material";
+import PolicyIcon from "@mui/icons-material/Policy";
 import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
@@ -250,6 +251,16 @@ export const ServiceUrl = {
 
   NOTIFICATION_HUB: '/notificationhub',
   CHAT_HUB: '/chathub',
+
+  // policies
+  GET_POLICIES: "api/company/GetAllPolicies",
+  ADD_POLICY: "api/Company/AddPolicy",
+  EDIT_POLICY: "api/Company/UpdatePolicy",
+  CREATE_POLICY_VERSION: "api/Company/CreatePolicyVersion",
+  EDIT_POLICY_VERSION: "api/Company/EditPolicyVersion",
+  GET_ALL_POLICY_VERSION: "api/Company/GetAllPolicyVersion",
+  DELETE_POLICY: "api/Company/DeletePolicy",
+  DELETE_POLICY_VERSION: "api/Company/DeletePolicyVersion",
 } as const;
 
 export const languages = [
@@ -574,7 +585,6 @@ export const LeaveTypeConstant = [
     value: LEAVE_TYPE.PATERNITY_LEAVE,
   },
 ];
-
 
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
@@ -1396,6 +1406,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
     title: ModulesTitles.NoticeBoard,
     route: "/noticeboard",
     icon: <NoteAlt />,
+    isDefault: false,
+  },
+  {
+    id: Modules.Policies,
+    constant: ModulesName.Policy,
+    title: ModulesTitles.Policies,
+    route: "/policies",
+    icon: <PolicyIcon />,
     isDefault: false,
   },
 ];

@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "会社マスター",
     "COMPANY_DETAILS": "会社詳細",
     "PAYROLL": "給与管理",
-    "CALENDAR": "カレンダー"
+    "CALENDAR": "カレンダー",
+    "POLICIES": "せいさく"
   },
   "GENDER": {
     "MALE": "男性",
@@ -73,7 +74,8 @@
     "COMPANY_MASTER": "会社マスター",
     "COMPANY_DETAILS": "会社詳細",
     "PAYROLL": "給与",
-    "CALENDAR": "カレンダー"
+    "CALENDAR": "カレンダー",
+    "POLICIES": "せいさく"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "保留中",
@@ -94,7 +96,9 @@
       "DELETE_HOLIDAY": "休暇の削除",
       "LEAVE_STATUS_CHANGE": "ステータス変更の確認",
       "DELETE_DEPARTMENT": "部署の削除",
-      "DELETE_ATR_ITEM": "属性アイテムの削除"
+      "DELETE_ATR_ITEM": "属性アイテムの削除",
+      "DELETE_POLICY": "ポリシーを削除",
+      "DELETE_POLICY_VERSION":  "ポリシーバージョンの削除"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "この職歴を削除してもよろしいですか？",
@@ -108,7 +112,9 @@
       "DELETE_HOLIDAY": "この休暇を削除してもよろしいですか？",
       "LEAVE_STATUS_CHANGE": "ステータスを変更すると、申請が更新され、従業員に通知されます。",
       "DELETE_DEPARTMENT": "本当に削除しますか？",
-      "DELETE_ATR_ITEM": "このアイテムを削除してもよろしいですか？"
+      "DELETE_ATR_ITEM": "このアイテムを削除してもよろしいですか？",
+      "DELETE_POLICY": "このポリシーを削除してもよろしいですか？",
+      "DELETE_POLICY_VERSION":  "このポリシーバージョンを削除してもよろしいですか？"
     }
   },
   "TOAST": {
@@ -142,7 +148,9 @@
       "DATA_UPLOADED": "成功！データが正常にアップロードされました",
       "PAYROLL_UPDATED": "給与の詳細が正常に更新されました",
       "PAYROLL_ADDED": "給与の詳細が正常に追加されました",
-      "INVITE_EMPLOYEE": "招待が正常に送信されました"
+      "INVITE_EMPLOYEE": "招待が正常に送信されました",
+      "POLICY_DELETED": "ポリシーが正常に削除されました。",
+      "POLICY_VERSION_DELETED": "ポリシーバージョンが正常に削除されました。"
     },
     "FAILED": {
       "HOLIDAY_CREATE": "新しい休日の追加に失敗しました",
@@ -162,7 +170,9 @@
       "UPDATE_ROLE": "ロール権限の更新に失敗しました",
       "PAY_SLIP_GENERATE": "給与明細の生成エラー",
       "SELECT_PAY_MONTH": "支払月を選択してください",
-      "INVITE_EMPLOYEE": "従業員を招待できませんでした"
+      "INVITE_EMPLOYEE": "従業員を招待できませんでした",
+      "POLICY_DELETE_FAILED": "ポリシーの削除に失敗しました。",
+      "POLICY_VERSION_DELETE_FAILED": "ポリシーバージョンの削除に失敗しました。"
     }
   },
   "BUTTON": {
@@ -208,6 +218,7 @@
     "OPEN_POSITIONS": "募集ポジション",
     "APPLY_HERE": "ここから応募",
     "DEPARTMENT": "部署",
+    "ROLES": "役割",
     "UPCOMING_HOLIDAYS": "今後の休日",
     "UPCOMING_EVENTS": "今後のイベント",
     "NO_EVENT_HOLIDAY": "現在、予定されている休日やイベントはありません",
@@ -776,7 +787,8 @@
     "EMP_ID_REQ": "社員IDは必須です",
     "INVALID_PAN": "無効なPAN番号",
     "INVALID_BANK_NO": "無効な銀行口座番号",
-    "CARRY_OVER_TOO_LOW": "繰越額は累積額より大きくなければなりません。"
+    "CARRY_OVER_TOO_LOW": "繰越額は累積額より大きくなければなりません。",
+    "DOCUMENT_FORMAT": ".pdf、.doc、.docx のドキュメントのみが許可されています"
   },
   "DATETIME": {
     "TODAY": "今日",
@@ -950,6 +962,19 @@
       "TOTAL_DEDUCTION": "控除合計",
       "NET_PAY": "差引支給額"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "フォルダーを作成",
+    "ADD_POLICY": "ポリシーを追加",
+    "IMPORT_DOCUMENT": "ドキュメントをインポート",
+    "NO_POLICIES_FOUND_JA": "ポリシーが見つかりません",
+    "POLICY_NAME": "ポリシー名",
+    "POLICY_DESCRIPTION": "ポリシーの説明",
+    "VERSION": {
+      "ADD_VERSION": "バージョンを追加",
+      "VERSION_NAME": "バージョン名"
+    },
+    "SELECTED_DOCUMENT": "選択されたファイル: {document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "通知設定",

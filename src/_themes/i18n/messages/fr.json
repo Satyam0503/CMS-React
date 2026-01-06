@@ -24,7 +24,8 @@
     "COMPANY_MASTER": "Fiche entreprise",
     "COMPANY_DETAILS": "Détails de l'entreprise",
     "PAYROLL": "Paie",
-    "CALENDAR": "Calendrier"
+    "CALENDAR": "Calendrier",
+    "POLICIES": "Politiques"
   },
 
   "GENDER": {
@@ -74,7 +75,8 @@
     "COMPANY_MASTER": "Master de l'entreprise",
     "COMPANY_DETAILS": "Détails de l'entreprise",
     "PAYROLL": "Paie",
-    "CALENDAR": "Calendrier"
+    "CALENDAR": "Calendrier",
+    "POLICIES": "Politiques"
   },
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "En attente",
@@ -95,7 +97,9 @@
       "DELETE_HOLIDAY": "Supprimer le jour férié",
       "LEAVE_STATUS_CHANGE": "Confirmer le changement de statut",
       "DELETE_DEPARTMENT": "Êtes-vous sûr de vouloir supprimer ce département ?",
-      "DELETE_ATR_ITEM": "Supprimer l'élément d'attribut"
+      "DELETE_ATR_ITEM": "Supprimer l'élément d'attribut",
+      "DELETE_POLICY": "Supprimer la politique",
+      "DELETE_POLICY_VERSION":  "Supprimer la version de la politique"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "Êtes-vous sûr de vouloir supprimer cet historique de travail ?",
@@ -109,7 +113,9 @@
       "DELETE_HOLIDAY": "Êtes-vous sûr de vouloir supprimer ce jour férié ?",
       "LEAVE_STATUS_CHANGE": "Le changement de statut mettra à jour la demande et notifie l'employé",
       "DELETE_DEPARTMENT": "Êtes-vous sûr ?",
-      "DELETE_ATR_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ?"
+      "DELETE_ATR_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      "DELETE_POLICY": "Êtes-vous sûr de vouloir supprimer cette politique ?",
+      "DELETE_POLICY_VERSION":  "Êtes-vous sûr de vouloir supprimer cette version de la politique ?"
     }
   },
   "TOAST": {
@@ -143,7 +149,9 @@
       "DATA_UPLOADED": "Succès ! les données ont été téléchargées avec succès",
       "PAYROLL_UPDATED": "Détails de la paie mis à jour avec succès",
       "PAYROLL_ADDED": "Détails de la paie ajoutés avec succès",
-      "INVITE_EMPLOYEE": "Invitation envoyée avec succès"
+      "INVITE_EMPLOYEE": "Invitation envoyée avec succès",
+      "POLICY_DELETED": "Politique supprimée avec succès.",
+      "POLICY_VERSION_DELETED": "Version de la politique supprimée avec succès."
     },
     "FAILED": {
       "HOLIDAY_CREATE": "Échec de l'ajout du nouveau jour férié",
@@ -163,7 +171,9 @@
       "UPDATE_ROLE": "Échec de la mise à jour des autorisations du rôle",
       "PAY_SLIP_GENERATE": "Erreur lors de la génération de la fiche de paie",
       "SELECT_PAY_MONTH": "Veuillez sélectionner le mois de paiement",
-      "INVITE_EMPLOYEE": "Échec de l’invitation de l’employé"
+      "INVITE_EMPLOYEE": "Échec de l’invitation de l’employé",
+      "POLICY_DELETE_FAILED": "Échec de la suppression de la politique.",
+      "POLICY_VERSION_DELETE_FAILED": "Échec de la suppression de la version de la politique."
     }
   },
   "BUTTON": {
@@ -209,6 +219,7 @@
     "OPEN_POSITIONS": "Postes ouverts",
     "APPLY_HERE": "Postulez ici",
     "DEPARTMENT": "Départements",
+    "ROLES": "Rôles",
     "UPCOMING_HOLIDAYS": "Jours fériés à venir",
     "UPCOMING_EVENTS": "Événements à venir",
     "NO_EVENT_HOLIDAY": "Aucun jour férié ou événement à venir pour le moment",
@@ -765,7 +776,8 @@
     "EMP_ID_REQ": "L'identifiant employé est requis",
     "INVALID_PAN": "Numéro PAN invalide",
     "INVALID_BANK_NO": "Numéro de compte bancaire invalide",
-    "CARRY_OVER_TOO_LOW": "La valeur reportée doit être supérieure à la valeur d’accumulation."
+    "CARRY_OVER_TOO_LOW": "La valeur reportée doit être supérieure à la valeur d’accumulation.",
+    "DOCUMENT_FORMAT": "Seuls les documents .pdf, .doc et .docx sont autorisés."
   },
   "DATETIME": {
     "TODAY": "Aujourd’hui",
@@ -940,6 +952,19 @@
       "TOTAL_DEDUCTION": "Déduction totale",
       "NET_PAY": "Salaire net"
     }
+  },
+  "POLICIES":{
+    "CREATE_FOLDER": "Créer un dossier",
+    "ADD_POLICY": "Ajouter une politique",
+    "IMPORT_DOCUMENT": "Importer un document",
+    "NO_POLICIES_FOUND_FR": "Aucune politique trouvée",
+    "POLICY_NAME": "Nom de la politique",
+    "POLICY_DESCRIPTION": "Description de la politique",
+    "VERSION": {
+      "ADD_VERSION": "Ajouter une version",
+      "VERSION_NAME": "Nom de la version"
+    },
+    "SELECTED_DOCUMENT": "Fichier sélectionné : {document}"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Préférences de notification",

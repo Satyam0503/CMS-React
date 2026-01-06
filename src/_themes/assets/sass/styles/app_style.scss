@@ -652,17 +652,11 @@ button:hover .ql-fill,
     }
 
     @media (min-width: 960px) {
-      flex-direction: row;
       justify-content: space-between;
-      align-items: c;
     }
 
     @media (min-width: 1200px) {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
       width: 100%;
-      height: auto;
     }
 
     .calendar-controls {
@@ -970,4 +964,38 @@ button:hover .ql-fill,
 
 .leave-policy-checkbox {
   margin-left: 0;
+}
+
+//Policies Page Styles
+.policy-folder {
+  border: 1px solid var(--mui-palette-grey-300);
+  border-radius: 12px;
+  height: 170px;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+  position: relative;
+}
+
+.all-policies-folder {
+  cursor: pointer;
+  &:hover {
+    background-color: var(--mui-palette-grey-200);
+  }
+}
+
+.policy-file {
+  border: 2px solid var(--mui-palette-grey-300);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  height: 50px;
+  padding: 0 10px;
+  cursor: pointer;
+  // gap: 15px;
+
+  &:hover {
+    background-color: var(--mui-palette-grey-100);
+  }
 }

@@ -79,6 +79,14 @@ export const applicantStatusDecoder: {
   [ApplicantStatus.InActive]: "APPLICANT.STATUS.INACTIVE",
 };
 
+export const jobTypeDecoder: {
+  [index: number]: string;
+} = {
+  [JOB_TYPE_ENUM.ONSITE]: "JOBTYPE.ONSITE",
+  [JOB_TYPE_ENUM.HYBRID]: "JOBTYPE.HYBRID",
+  [JOB_TYPE_ENUM.REMOTE]: "JOBTYPE.REMOTE",
+};
+
 export const noticeTypeDecoder: {
   [index: number]: string;
 } = {
@@ -433,6 +441,9 @@ export const filterSideBarTabs = (
     ) {
       return tab;
     }
+    // if(tab.id === 16) return tab
+    // console.log(tab.id);
+    
     return null;
   }).filter((tab) => tab !== null);
   return filteredTabList;

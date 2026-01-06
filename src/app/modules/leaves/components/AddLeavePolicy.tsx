@@ -27,10 +27,7 @@ import { LeavePolicyModel } from "../model";
 import { getAllEmployees } from "../../employees/employeeServices";
 import { GetAllEmployeeResponseModel } from "../../employees/models";
 import { toast } from "react-toastify";
-import {
-  createLeavePolicy,
-  updateLeavePolicy,
-} from "../leaveServices";
+import { createLeavePolicy, updateLeavePolicy } from "../leaveServices";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 
@@ -273,6 +270,7 @@ export default function AddLeavePolicy(props: Props) {
                           xs: 12,
                           md: 6,
                         }}
+                        className="accural-amount-container"
                       >
                         <TextInput
                           label={i({ id: "LEAVE.TYPES.POLICY_ACCURAL_AMOUNT" })}
