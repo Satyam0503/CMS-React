@@ -943,7 +943,11 @@
     "40": "The employee's email is already verified",
     "41": "file upload failed. please try again",
     "42": "Policy name already exists",
-    "43": "A policy must have at least one current version. Please select another version as current"
+    "43": "A policy must have at least one current version. Please select another version as current",
+    "44": "Cannot delete a policy with an active current version",
+    "45": "Policy not found",
+    "46": "Can not delete current active policy version",
+    "47": "Policy version not found"
   },
   "CHAT": {
     "TITLE": "Chats",

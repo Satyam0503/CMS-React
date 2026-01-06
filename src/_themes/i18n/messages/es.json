@@ -909,7 +909,11 @@
     "40": "El correo electrónico del empleado ya está verificado",
     "41": "La carga del archivo falló. Por favor, inténtelo de nuevo",
     "42": "El nombre de la política ya existe",
-    "43": "Una política debe tener al menos una versión vigente. Por favor, seleccione otra versión como vigente."
+    "43": "Una política debe tener al menos una versión vigente. Por favor, seleccione otra versión como vigente",
+    "44": "No se puede eliminar una política con una versión actual activa",
+    "45": "Política no encontrada",
+    "46": "No se puede eliminar la versión de política actualmente activa",
+    "47": "Versión de la política no encontrada"
   },
   "CHAT": {
     "TITLE": "Chats",

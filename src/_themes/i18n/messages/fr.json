@@ -906,7 +906,11 @@
     "40": "L'e-mail de l'employé est déjà vérifié",
     "41": "Le téléchargement du fichier a échoué. Veuillez réessayer",
     "42": "Le nom de la politique existe déjà",
-    "43": "Une politique doit avoir au moins une version actuelle. Veuillez sélectionner une autre version comme version actuelle."
+    "43": "Une politique doit avoir au moins une version actuelle. Veuillez sélectionner une autre version comme version actuelle.",
+    "44": "Impossible de supprimer une politique avec une version actuelle active",
+    "45": "Politique introuvable",
+    "46": "Impossible de supprimer la version de politique actuellement active",
+    "47": "Version de la politique introuvable"
   },
   "CHAT": {
     "TITLE": "Chats",
