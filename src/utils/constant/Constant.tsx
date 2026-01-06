@@ -1412,7 +1412,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
     id: Modules.Policies,
     constant: ModulesName.Policy,
     title: ModulesTitles.Policies,
-    route: "/policies",
+    route: "/companypolicy/policies",
     icon: <PolicyIcon />,
     isDefault: false,
   },

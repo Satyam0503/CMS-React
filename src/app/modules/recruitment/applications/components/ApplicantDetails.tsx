@@ -41,7 +41,7 @@ import { ApplicantStatus, ModulesName, Permission } from "../../../../../utils/e
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
-import { CvPreview } from "./CvPreview";
+import { PdfViewer } from "../../../../shared/components/PdfViewer";
 
 export const ApplicantDetails = () => {
   const { formatMessage } = useIntl();
@@ -246,7 +246,7 @@ export const ApplicantDetails = () => {
         </Stack>
         {
           CvPreviewMode ?
-            <CvPreview pdfUrl={applicant.resumeUrl ?? ""} /> :
+            <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} /> :
             <Grid container spacing={2.5}>
               <Grid
                 size={{

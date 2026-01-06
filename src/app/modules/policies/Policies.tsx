@@ -1,11 +1,11 @@
-import { Card, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useIntl } from "react-intl";
 
 import PoliciesFoldersListing from "./components/PoliciesFoldersListing";
 import AddNewPolicyForm from "./components/AddNewPolicyForm";
-import { AddPolicyModel, PolicyFolderStructure } from "./models";
+import { AddPolicyModel } from "./models";
 
 const initaialValues: AddPolicyModel = {
   policyName: "",
@@ -15,11 +15,10 @@ const initaialValues: AddPolicyModel = {
   departments: [],
 };
 
-function Policies() {
+export const Policies = () => {
   const { setPageTitle } = usePageData();
   const { formatMessage: i } = useIntl();
-
-  const [addingPolicyFolder, setAddingPolicyFolder] = useState<boolean>(false);
+  const [addingPolicyFolder] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -27,9 +26,6 @@ function Policies() {
     setRefresh(!refresh);
   }
 
-  useEffect(() => {
-    setPageTitle(i({ id: "PAGE.POLICIES" }));
-  }, []);
 
   function handleCreateButtonClicked() {
     setOpen(true);
@@ -38,6 +34,10 @@ function Policies() {
   function handleCloseCreatePolicy() {
     setOpen(false);
   }
+
+  useEffect(() => {
+    setPageTitle(i({ id: "PAGE.POLICIES" }));
+  }, []);
 
   return (
     <>
@@ -68,4 +68,3 @@ function Policies() {
   );
 }
 
-export default Policies;

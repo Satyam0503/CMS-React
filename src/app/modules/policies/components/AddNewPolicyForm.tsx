@@ -35,9 +35,7 @@ export default function AddNewPolicyForm(props: Props) {
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
   const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
 
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
-  );
+  const currentLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage!);
 
   useEffect(() => {
     getAllRoles()
@@ -77,9 +75,7 @@ export default function AddNewPolicyForm(props: Props) {
           props.handleClose();
           props.handleRefresh();
         } else {
-          toast.error(
-            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) })
-          );
+          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
         }
       } else {
         const { data } = await updatePolicy(values);
@@ -88,9 +84,7 @@ export default function AddNewPolicyForm(props: Props) {
           props.handleClose();
           props.handleRefresh();
         } else {
-          toast.error(
-            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) })
-          );
+          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
         }
       }
     } catch (error) {
@@ -211,7 +205,6 @@ export default function AddNewPolicyForm(props: Props) {
                       return (
                         <li {...props} key={option.rolesId}>
                           <Checkbox
-                            // key={option.id}
                             checked={state.selected}
                             sx={{ mr: 1 }}
                           />

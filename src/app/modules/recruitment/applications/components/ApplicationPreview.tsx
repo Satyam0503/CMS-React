@@ -9,7 +9,7 @@ import {
 } from "../../../../../utils/common";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import { Applicant } from "../../models";
-import { CvPreview } from "./CvPreview";
+import { PdfViewer } from "../../../../shared/components/PdfViewer";
 import clsx from "clsx";
 import { ApplicationStatus } from "../../../../../utils/enums";
 
@@ -125,7 +125,7 @@ export const ApplicationPreview: FC<PropsType> = ({
             </Grid>
           </Grid>
         </Grid>
-        <CvPreview pdfUrl={applicantData.resumeUrl ?? ""} />
+        <PdfViewer pdfUrl={applicantData.resumeUrl ?? ""} />
       </Stack>
     </CustomisedModal>
   );

@@ -5,10 +5,10 @@ import { Document, Page } from "react-pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "./CustomIconButton";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { ResumeError } from "./ResumeError";
-import { ResumeLoader } from "./ResumeLoader";
+import { ResumeError } from "../../modules/recruitment/applications/components/ResumeError";
+import { ResumeLoader } from "../../modules/recruitment/applications/components/ResumeLoader";
 import { useIntl } from "react-intl";
 
 // pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -21,7 +21,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 interface Props {
   pdfUrl: string;
 }
-export const CvPreview: FC<Props> = ({ pdfUrl }) => {
+export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
   const { formatMessage: i } = useIntl();
   const [showButton, setShowButton] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);

@@ -17,13 +17,14 @@ import { ConfirmationModal } from "../../../shared/components/ConfirmationModal"
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 
-import { PolicyFolderStructure } from "../models";
+import { PolicyModel } from "../models";
 import { deletePolicy, getAllPolicies } from "../policyServices";
 import AddNewPolicyForm from "./AddNewPolicyForm";
-import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { getCustomStatusCodesErrorMessage, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 type Props = {
   addingPolicyFolder: boolean;
@@ -36,17 +37,12 @@ type Props = {
 export default function PoliciesFoldersListing(props: Props) {
   const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
-
-  const [policies, setPolicies] = useState<Array<PolicyFolderStructure>>([]);
-  const [actionBtnAnchor, setActionBtnAnchor] = useState<null | HTMLElement>(
-    null
-  );
+  const [policies, setPolicies] = useState<Array<PolicyModel>>([]);
+  const [actionBtnAnchor, setActionBtnAnchor] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedPolicy, setSelectedPolicy] =
-    useState<PolicyFolderStructure | null>();
+  const [selectedPolicy, setSelectedPolicy] = useState<PolicyModel | null>();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const hasPolicyAddPermission = hasModuleFeaturePermission(
     ModulesName.Policy,
@@ -66,10 +62,7 @@ export default function PoliciesFoldersListing(props: Props) {
     userModulesPermissions
   );
 
-  const handleActionButtonClick = (
-    event: React.MouseEvent<HTMLElement>,
-    policy?: PolicyFolderStructure
-  ) => {
+  const handleActionButtonClick = (event: React.MouseEvent<HTMLElement>, policy?: PolicyModel) => {
     setActionBtnAnchor(event.currentTarget);
     setSelectedPolicy(policy);
   };
@@ -81,6 +74,7 @@ export default function PoliciesFoldersListing(props: Props) {
 
   const handleDeleteModalClose = () => {
     setDeleteModalOpen(false);
+    setSelectedPolicy(null);
     handleActionMenuClose();
   };
 
@@ -90,8 +84,8 @@ export default function PoliciesFoldersListing(props: Props) {
     }
   };
 
-  function handleFolderClick(id: string) {
-    navigate(`/policies/${id}`);
+  function handleFolderClick(policyId: string) {
+    navigate(`/companypolicy/policies/${policyId}`);
   }
 
   function handleClose() {
@@ -101,38 +95,50 @@ export default function PoliciesFoldersListing(props: Props) {
 
   const handleDeletePolicy = async () => {
     try {
-      const { data } = await deletePolicy(selectedPolicy?.policyId!);
-      if (data.success) {
-        setSelectedPolicy(null);
-        props.handleRefresh();
-        toast.success(i({ id: "TOAST.SUCCESS.POLICY_DELETED" }));
-        handleDeleteModalClose();
-      } else {
-        toast.error(i({ id: "TOAST.FAILED.POLICY_DELETE_FAILED" }));
+      if (selectedPolicy && selectedPolicy.policyId) {
+        const { data } = await deletePolicy(selectedPolicy.policyId);
+        if (data.success) {
+          handleDeleteModalClose();
+          props.handleRefresh();
+          toast.success(i({ id: "TOAST.SUCCESS.POLICY_DELETED" }));
+        } else {
+          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode, "TOAST.FAILED.POLICY_DELETE_FAILED") }));
+        }
       }
     } catch (error) {
-      console.error((error as Error).message);
+      if (error instanceof AxiosError) {
+        console.error(error.message);
+      }
     }
   };
+
+  const handlePolicyEdit = () => {
+    if (selectedPolicy) {
+      setOpen(true);
+      setActionBtnAnchor(null);
+    }
+  }
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await getAllPolicies();
-        if (data) {
+        if (data.success) {
           setPolicies(data.methodResults);
         }
       } catch (error) {
-        console.error((error as Error).message);
+        if (error instanceof AxiosError) {
+          console.error(error.message);
+        }
       }
     })();
   }, [props.refresh]);
 
   return (
-    <Card sx={{ height: "100%" }} className="gap-4 p-4 p-md-6">
+    <Card sx={{ flexGrow: 1 }} className="gap-4 p-4 p-md-6">
       <Grid container spacing={2}>
-        {policies!.length > 0 || !hasPolicyAddPermission ? (
-          policies!.map((policy) => {
+        {policies.length > 0 || !hasPolicyAddPermission ? (
+          policies.map((policy) => {
             return (
               <Grid
                 size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
@@ -144,7 +150,7 @@ export default function PoliciesFoldersListing(props: Props) {
                     handleFolderClick(policy.policyId!);
                   }}
                 >
-                  <FolderIcon sx={{ width: "auto", fontSize: "70px" }} />
+                  <FolderIcon sx={{ fontSize: "70px" }} />
                   <Typography
                     sx={{
                       textAlign: "center",
@@ -215,7 +221,7 @@ export default function PoliciesFoldersListing(props: Props) {
           slotProps={{
             paper: {
               sx: {
-                boxShadow: 2,
+                boxShadow: 1,
               },
             },
           }}
@@ -223,12 +229,7 @@ export default function PoliciesFoldersListing(props: Props) {
           <List disablePadding className="popover-list">
             {hasPolicyEditPermission && (
               <ListItem disablePadding divider>
-                <ListItemButton
-                  onClick={() => {
-                    setActionBtnAnchor(null);
-                    setOpen(true);
-                  }}
-                >
+                <ListItemButton onClick={handlePolicyEdit}>
                   <ListItemText
                     primary={
                       <Typography>
@@ -266,7 +267,7 @@ export default function PoliciesFoldersListing(props: Props) {
           handleConfirmation={() => handleDeletePolicy()}
         />
       )}
-      {selectedPolicy && (
+      {selectedPolicy && open && (
         <AddNewPolicyForm
           open={open}
           handleClose={handleClose}
