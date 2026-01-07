@@ -99,7 +99,7 @@
       "DELETE_DEPARTMENT": "Êtes-vous sûr de vouloir supprimer ce département ?",
       "DELETE_ATR_ITEM": "Supprimer l'élément d'attribut",
       "DELETE_POLICY": "Supprimer la politique",
-      "DELETE_POLICY_VERSION":  "Supprimer la version de la politique"
+      "DELETE_POLICY_VERSION": "Supprimer la version de la politique"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "Êtes-vous sûr de vouloir supprimer cet historique de travail ?",
@@ -115,7 +115,7 @@
       "DELETE_DEPARTMENT": "Êtes-vous sûr ?",
       "DELETE_ATR_ITEM": "Êtes-vous sûr de vouloir supprimer cet élément ?",
       "DELETE_POLICY": "Êtes-vous sûr de vouloir supprimer cette politique ?",
-      "DELETE_POLICY_VERSION":  "Êtes-vous sûr de vouloir supprimer cette version de la politique ?"
+      "DELETE_POLICY_VERSION": "Êtes-vous sûr de vouloir supprimer cette version de la politique ?"
     }
   },
   "TOAST": {
@@ -953,13 +953,15 @@
       "NET_PAY": "Salaire net"
     }
   },
-  "POLICIES":{
+  "POLICIES": {
     "CREATE_FOLDER": "Créer un dossier",
     "ADD_POLICY": "Ajouter une politique",
     "IMPORT_DOCUMENT": "Importer un document",
-    "NO_POLICIES_FOUND_FR": "Aucune politique trouvée",
+    "NO_POLICIES_FOUND": "Aucune politique trouvée",
     "POLICY_NAME": "Nom de la politique",
     "POLICY_DESCRIPTION": "Description de la politique",
+    "POLICY_DOCUMENT": "Document de politique",
+    "DOCUMENT": "Documents",
     "VERSION": {
       "ADD_VERSION": "Ajouter une version",
       "VERSION_NAME": "Nom de la version"
@@ -994,6 +996,8 @@
     "APPLICANTS": "{applicants, plural, =0 {0 candidat} one {# candidat} other {# candidats}}"
   },
   "COMMON": {
-    "CONGRATULATION": "Félicitations"
+    "CONGRATULATION": "Félicitations",
+    "VERIFIED": "Vérifié",
+    "PAGE_NO": "Page - {currentPage} sur {totalPages}"
   }
 }

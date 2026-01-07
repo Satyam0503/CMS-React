@@ -10,13 +10,13 @@ import { PolicyVersions } from "../modules/policies/components/PolicyVersions";
 const policyBreadCrumbs: Array<Breadcrumb> = [
     {
         label: "PAGE.POLICIES",
-        path: "companypolicy/policies",
+        path: "/companypolicy/policies",
         parent: "/",
     },
     {
-        label: "PAGE.POLICIES",
-        path: "companypolicy/policies/:policyId",
-        parent: "companypolicy/policies",
+        label: "POLICIES.DOCUMENT",
+        path: "/companypolicy/policies/{policyId}",
+        parent: "/companypolicy/policies",
     },
 ];
 

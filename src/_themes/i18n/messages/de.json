@@ -98,7 +98,7 @@
       "DELETE_DEPARTMENT": "Abteilung löschen",
       "DELETE_ATR_ITEM": "Attribut löschen",
       "DELETE_POLICY": "Richtlinie löschen",
-      "DELETE_POLICY_VERSION":  "Richtlinienversion löschen"
+      "DELETE_POLICY_VERSION": "Richtlinienversion löschen"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "Sind Sie sicher, dass Sie diesen Arbeitsverlauf löschen möchten?",
@@ -114,7 +114,7 @@
       "DELETE_DEPARTMENT": "Sind Sie sicher?",
       "DELETE_ATR_ITEM": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
       "DELETE_POLICY": "Möchten Sie diese Richtlinie wirklich löschen?",
-      "DELETE_POLICY_VERSION":  "Möchten Sie diese Richtlinienversion wirklich löschen?"
+      "DELETE_POLICY_VERSION": "Möchten Sie diese Richtlinienversion wirklich löschen?"
     }
   },
   "TOAST": {
@@ -954,12 +954,14 @@
       "NET_PAY": "Nettogehalt"
     }
   },
-  "POLICIES":{
+  "POLICIES": {
     "CREATE_FOLDER": "Ordner erstellen",
     "ADD_POLICY": "Richtlinie hinzufügen",
     "IMPORT_DOCUMENT": "Dokument importieren",
-    "NO_POLICIES_FOUND_DE": "Keine Richtlinien gefunden",
+    "NO_POLICIES_FOUND": "Keine Richtlinien gefunden",
     "POLICY_NAME": "Richtlinienname",
+    "POLICY_DOCUMENT": "Richtliniendokument",
+    "DOCUMENT": "Dokumente",
     "POLICY_DESCRIPTION": "Richtlinienbeschreibung",
     "VERSION": {
       "ADD_VERSION": "Version hinzufügen",
@@ -995,6 +997,8 @@
     "APPLICANTS": "{applicants, plural, =0 {0 Bewerber} one {# Bewerber} other {# Bewerber}}"
   },
   "COMMON": {
-    "CONGRATULATION": "Herzlichen Glückwunsch"
+    "CONGRATULATION": "Herzlichen Glückwunsch",
+    "VERIFIED": "Verifiziert",
+    "PAGE_NO": "Seite - {currentPage} von {totalPages}"
   }
 }

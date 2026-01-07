@@ -1,8 +1,10 @@
-import React from "react";
 import { PolicyVersion } from "../models";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import { PdfViewer } from "../../../shared/components/PdfViewer";
+import { Stack } from "@mui/system";
+import { IconButton, Typography } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { useMemo } from "react";
+import { WordDocViewer } from "../../../shared/components/WordDocViewer";
 
 type Props = {
   open: boolean;
@@ -11,25 +13,58 @@ type Props = {
 };
 
 export default function PolicyVersionViewer(props: Props) {
-  const documentType = props.policyVersion.policyDocUrl.split(".").pop();
+  const { policyVersion, handleClose } = props;
+  const documentType = useMemo(() => {
+    const url = policyVersion.policyDocUrl;
+    if (!url) return null;
+    const cleanUrl = url.split("?")[0];
+    return cleanUrl.split(".").pop()?.toLowerCase() ?? null;
+  }, [policyVersion.policyDocUrl]);
+
+
+  const renderDocument = () => {
+    switch (documentType) {
+      case "pdf":
+        return <PdfViewer pdfUrl={policyVersion.policyDocUrl} />;
+
+      case "doc":
+      case "docx":
+        return (
+          <WordDocViewer
+            documents={[{ uri: policyVersion.policyDocUrl, fileType: documentType }]}
+          />
+        );
+
+      default:
+        return (
+          <Typography color="text.secondary">
+            Unsupported document format
+          </Typography>
+        );
+    }
+  };
+
   return (
-    <CustomisedModal
-      open={props.open}
-      handleClose={props.handleClose}
-      title={props.policyVersion.versionName}
-      maxWidth="lg"
-    >
-      {
-        documentType && documentType === "pdf" &&
-        <PdfViewer pdfUrl={props.policyVersion.policyDocUrl} />
-      }
-      {
-        (documentType && documentType === "doc") || (documentType && documentType === 'docx') &&
-        <DocViewer
-          documents={[{ uri: props.policyVersion.policyDocUrl }]}
-          pluginRenderers={DocViewerRenderers}
-        />
-      }
-    </CustomisedModal>
+    <Stack spacing={1}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Typography variant="h5" className="fs-16">
+          {policyVersion.versionName}
+        </Typography>
+
+        <IconButton
+          sx={{ border: 0 }}
+          onClick={handleClose}
+          aria-label="close-preview"
+        >
+          <Close />
+        </IconButton>
+      </Stack>
+
+      {renderDocument()}
+    </Stack>
   );
 }

@@ -968,6 +968,8 @@ button:hover .ql-fill,
 
 //Policies Page Styles
 .policy-folder {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--mui-palette-grey-300);
   border-radius: 12px;
   height: 170px;
@@ -975,27 +977,39 @@ button:hover .ql-fill,
   align-items: center;
   transition: 0.2s;
   position: relative;
-}
-
-.all-policies-folder {
   cursor: pointer;
   &:hover {
-    background-color: var(--mui-palette-grey-200);
+    background-color: $app-notification-hover;
+  }
+  & > #policy-action-button {
+    border: none;
+    position: absolute;
+    right: 5%;
+    top: 5%;
   }
 }
 
 .policy-file {
-  border: 2px solid var(--mui-palette-grey-300);
+  border: 1px solid var(--mui-palette-grey-300);
   display: flex;
+  flex-direction: column;
+  padding: 1rem;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   border-radius: 8px;
-  height: 50px;
-  padding: 0 10px;
   cursor: pointer;
-  // gap: 15px;
-
+  position: relative;
   &:hover {
-    background-color: var(--mui-palette-grey-100);
+    background-color: $app-notification-hover;
   }
+  & > #policy-action-button {
+    border: none;
+    position: absolute;
+    right: 5%;
+    top: 5%;
+  }
+}
+.current-active-policy {
+  border-color: var(--mui-palette-primary-main);
 }

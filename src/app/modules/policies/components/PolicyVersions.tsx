@@ -27,6 +27,8 @@ import { toast } from "react-toastify";
 import AddIcon from "@mui/icons-material/Add";
 import PolicyVersionViewer from "./PolicyVersionViewer";
 import PolicyRoundedIcon from "@mui/icons-material/PolicyRounded";
+import { PolicySkeleton } from "./PolicySkeleton";
+import clsx from "clsx";
 
 const initialValues: PolicyVersionModel = {
   policyId: "",
@@ -50,6 +52,7 @@ export const PolicyVersions = () => {
   const [editing, setEditing] = useState<boolean>(false);
   const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const hasPolicyAddPermission = hasModuleFeaturePermission(
     ModulesName.Policy,
@@ -157,6 +160,8 @@ export const PolicyVersions = () => {
         }
       } catch (error) {
         console.error((error as Error).message);
+      } finally {
+        setLoading(false);
       }
     })();
   }, [refresh]);
@@ -187,54 +192,61 @@ export const PolicyVersions = () => {
           </Button>
         </Stack>
       }
-      <Grid container spacing={2}>
-        {policyVersions.length > 0 ? (
-          policyVersions.map((policyVersion) => {
-            return (
-              <Grid key={policyVersion.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                <Box
-                  component="div"
-                  className="policy-file"
-                  onClick={() => handleViewPolicy(policyVersion)}
-                >
-                  <Box
-                    component="div"
-                    sx={{ display: "flex", gap: "5px", minWidth: "60px" }}
-                  >
-                    <PolicyRoundedIcon />
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                      }}
+      {
+        isLoading ?
+          <PolicySkeleton /> :
+          viewPolicy ?
+            <PolicyVersionViewer
+              open={true}
+              handleClose={handleCloseViewPolicy}
+              policyVersion={viewPolicy}
+            /> :
+            <Grid container spacing={2}>
+              {policyVersions.length > 0 ? (
+                policyVersions.map((policyVersion) => {
+                  return (
+                    <Grid
+                      key={policyVersion.id}
+                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                      className={clsx("policy-file", { "current-active-policy": policyVersion.isCurrent })}
+                      onClick={() => handleViewPolicy(policyVersion)}
                     >
-                      {policyVersion.versionName}
-                    </Typography>
-                  </Box>
-                  <IconButton
-                    sx={{
-                      border: "none",
-                    }}
-                    id="policy-action-button"
-                    onClick={(e) => {
-                      handleActionButtonClick(e, policyVersion);
-                      e.stopPropagation();
-                    }}
-                  >
-                    <MoreVertOutlined />
-                  </IconButton>
+                      <PolicyRoundedIcon className="fs-44" />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {policyVersion.versionName}
+                      </Typography>
+                      {
+                        (hasPolicyDeletePermission || hasPolicyEditPermission) &&
+                        <IconButton
+                          id="policy-action-button"
+                          onClick={(e) => {
+                            handleActionButtonClick(e, policyVersion);
+                            e.stopPropagation();
+                          }}
+                        >
+                          <MoreVertOutlined />
+                        </IconButton>
+                      }
+                    </Grid>
+                  );
+                })
+              ) : (
+                <Box component="div" sx={{ width: 1, height: 100, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Typography variant="h6" className="fs-20">
+                    {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
+                  </Typography>
                 </Box>
-              </Grid>
-            );
-          })
-        ) : (
-          <Typography variant="h5" fontWeight={600}>
-            {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
-          </Typography>
-        )}
-      </Grid>
+              )}
+            </Grid>
+      }
+
 
       {Boolean(actionBtnAnchor) && (
         <Popover
@@ -309,15 +321,6 @@ export const PolicyVersions = () => {
           handleConfirmation={handleDeletePolicyVersion}
         />
       )}
-
-      {
-        viewPolicy &&
-        <PolicyVersionViewer
-          open={true}
-          handleClose={handleCloseViewPolicy}
-          policyVersion={viewPolicy}
-        />
-      }
     </Card>
   );
 }

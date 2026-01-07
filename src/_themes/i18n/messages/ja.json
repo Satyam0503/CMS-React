@@ -98,7 +98,7 @@
       "DELETE_DEPARTMENT": "部署の削除",
       "DELETE_ATR_ITEM": "属性アイテムの削除",
       "DELETE_POLICY": "ポリシーを削除",
-      "DELETE_POLICY_VERSION":  "ポリシーバージョンの削除"
+      "DELETE_POLICY_VERSION": "ポリシーバージョンの削除"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "この職歴を削除してもよろしいですか？",
@@ -114,7 +114,7 @@
       "DELETE_DEPARTMENT": "本当に削除しますか？",
       "DELETE_ATR_ITEM": "このアイテムを削除してもよろしいですか？",
       "DELETE_POLICY": "このポリシーを削除してもよろしいですか？",
-      "DELETE_POLICY_VERSION":  "このポリシーバージョンを削除してもよろしいですか？"
+      "DELETE_POLICY_VERSION": "このポリシーバージョンを削除してもよろしいですか？"
     }
   },
   "TOAST": {
@@ -963,13 +963,15 @@
       "NET_PAY": "差引支給額"
     }
   },
-  "POLICIES":{
+  "POLICIES": {
     "CREATE_FOLDER": "フォルダーを作成",
     "ADD_POLICY": "ポリシーを追加",
     "IMPORT_DOCUMENT": "ドキュメントをインポート",
-    "NO_POLICIES_FOUND_JA": "ポリシーが見つかりません",
+    "NO_POLICIES_FOUND": "ポリシーが見つかりません",
     "POLICY_NAME": "ポリシー名",
     "POLICY_DESCRIPTION": "ポリシーの説明",
+    "POLICY_DOCUMENT": "ポリシー文書",
+    "DOCUMENT": "ドキュメント",
     "VERSION": {
       "ADD_VERSION": "バージョンを追加",
       "VERSION_NAME": "バージョン名"
@@ -1004,6 +1006,8 @@
     "APPLICANTS": "{applicants, plural, =0 {応募者0人} other {応募者#人}}"
   },
   "COMMON": {
-    "CONGRATULATION": "おめでとうございます"
+    "CONGRATULATION": "おめでとうございます",
+    "VERIFIED": "確認済み",
+    "PAGE_NO": "ページ - {currentPage} / {totalPages}"
   }
 }

@@ -1,4 +1,4 @@
-import { Breadcrumbs, IconButton, Stack, Typography } from "@mui/material";
+import { Breadcrumbs, Stack, Typography } from "@mui/material";
 import { useBreadcrumbs, replacePathParams } from "react-breadcrumble";
 import { Link, useLocation } from "react-router-dom";
 import { useIntl } from "react-intl";

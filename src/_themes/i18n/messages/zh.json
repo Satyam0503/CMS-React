@@ -118,7 +118,7 @@
       "DELETE_DEPARTMENT": "删除部门",
       "DELETE_ATR_ITEM": "删除属性项",
       "DELETE_POLICY": "删除策略",
-      "DELETE_POLICY_VERSION":  "删除策略版本"
+      "DELETE_POLICY_VERSION": "删除策略版本"
     },
     "CONTENT": {
       "DELETE_WORK_HISTORY": "确定要删除此工作历史吗？",
@@ -134,7 +134,7 @@
       "DELETE_DEPARTMENT": "您确定吗？",
       "DELETE_ATR_ITEM": "确定要删除此项吗？",
       "DELETE_POLICY": "您确定要删除此策略吗？",
-      "DELETE_POLICY_VERSION":  "您确定要删除此策略版本吗？"
+      "DELETE_POLICY_VERSION": "您确定要删除此策略版本吗？"
     }
   },
   "TOAST": {
@@ -976,12 +976,14 @@
       "NET_PAY": "实发工资"
     }
   },
-  "POLICIES":{
+  "POLICIES": {
     "CREATE_FOLDER": "创建文件夹",
     "ADD_POLICY": "添加策略",
     "IMPORT_DOCUMENT": "导入文档",
-    "NO_POLICIES_FOUND_ZH": "未找到任何策略",
+    "NO_POLICIES_FOUND": "未找到任何策略",
     "POLICY_NAME": "政策名称",
+    "POLICY_DOCUMENT": "政策文件",
+    "DOCUMENT": "文件",
     "POLICY_DESCRIPTION": "政策描述",
     "VERSION": {
       "ADD_VERSION": "添加版本",
@@ -1017,6 +1019,8 @@
     "APPLICANTS": "{applicants, plural, =0 {0 位申请人} other {# 位申请人}}"
   },
   "COMMON": {
-    "CONGRATULATION": "祝贺"
+    "CONGRATULATION": "祝贺",
+    "VERIFIED": "已验证",
+    "PAGE_NO": "第 {currentPage} 页，共 {totalPages} 页"
   }
 }

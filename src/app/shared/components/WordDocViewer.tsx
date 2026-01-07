@@ -5,7 +5,7 @@ interface DocViewerProps {
   documents: IDocument[];
 }
 
-const DocumentViewer = (props: DocViewerProps) => {
+const WordDocViewer = (props: DocViewerProps) => {
   const { palette } = useTheme();
   const { documents } = props;
   return (
@@ -15,11 +15,11 @@ const DocumentViewer = (props: DocViewerProps) => {
         pluginRenderers={DocViewerRenderers}
         config={
           {
-            // header: {
-            //  disableHeader: false,
-            //  disableFileName: false,
-            //  retainURLParams: false
-            // }
+            header: {
+              disableHeader: false,
+              disableFileName: true,
+              retainURLParams: false
+            }
           }
         }
         style={{ height: 500 }}
@@ -27,10 +27,6 @@ const DocumentViewer = (props: DocViewerProps) => {
         theme={{
           primary: palette.primary.lighter,
           secondary: palette.primary.main,
-          tertiary: "#5296d899",
-          text_primary: "#050303ff",
-          text_secondary: "#5296d8",
-          text_tertiary: "#00000099",
           disableThemeScrollbar: false,
         }}
       />
@@ -38,4 +34,4 @@ const DocumentViewer = (props: DocViewerProps) => {
   );
 };
 
-export { DocumentViewer };
+export { WordDocViewer };

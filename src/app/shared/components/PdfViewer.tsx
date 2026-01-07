@@ -11,11 +11,6 @@ import { ResumeError } from "../../modules/recruitment/applications/components/R
 import { ResumeLoader } from "../../modules/recruitment/applications/components/ResumeLoader";
 import { useIntl } from "react-intl";
 
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   "pdfjs-dist/build/pdf.worker.min.mjs",
-//   import.meta.url
-// ).toString();
-
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface Props {
@@ -44,48 +39,27 @@ export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
         borderWidth: 1,
         borderColor: 'text.secondary',
         borderStyle: "solid",
-        borderRadius: 1,
       }}
     >
-      <Stack
-        direction="column"
-        sx={{
-          padding: 2,
-          borderBottomColor: "text.secondary",
-          borderBottomStyle: "solid",
-          borderBottomWidth: 1
-        }}
-      >
-        <Typography variant="h6">
-          {i({ id: "APPLICATION.RESUME_PREVIEW" })}
-        </Typography>
-      </Stack>
-      <Stack sx={{ position: "relative" }}>
-        <Document
-          file={pdfUrl}
-          onLoadSuccess={handleDocumentLoadSuccess}
-          loading={<ResumeLoader />}
-          error={<ResumeError />}
-          noData={<ResumeError />}
+      {showButton && (
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            width: "100%",
+            backgroundColor: "background.header",
+            justifyContent: "end",
+            padding: 1,
+            borderBlockEndWidth: 1,
+            borderBlockEndColor: 'text.secondary',
+            borderBlockEndStyle: "solid",
+            alignItems: 'center'
+          }}
         >
-          <Page pageNumber={currentPage} className="pdf_viewer" />
-        </Document>
-        {showButton && (
-          <Stack
-            direction={"row"}
-            spacing={2}
-            sx={{
-              width: "100%",
-              backgroundColor: "background.header",
-              position: "absolute",
-              zIndex: 10,
-              left: "0",
-              bottom: "0",
-              display: "flex",
-              justifyContent: "center",
-              padding: "1rem",
-            }}
-          >
+          <Stack>
+            <Typography>{i({ id: "COMMON.PAGE_NO" }, { currentPage, totalPages })}</Typography>
+          </Stack>
+          <Stack direction="row" spacing={1}>
             <CustomIconButton
               icon={<NavigateBefore />}
               tooltip={i({ id: "TOOLTIP.PREVIOUS" })}
@@ -99,8 +73,20 @@ export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
               handleClick={() => handlePageChange(1)}
             />
           </Stack>
-        )}
+        </Stack>
+      )
+      }
+      <Stack>
+        <Document
+          file={pdfUrl}
+          onLoadSuccess={handleDocumentLoadSuccess}
+          loading={<ResumeLoader />}
+          error={<ResumeError />}
+          noData={<ResumeError />}
+        >
+          <Page pageNumber={currentPage} className="pdf_viewer" />
+        </Document>
       </Stack>
-    </Stack>
+    </Stack >
   );
 };

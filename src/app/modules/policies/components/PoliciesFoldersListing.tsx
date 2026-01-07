@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   IconButton,
   List,
@@ -25,6 +26,7 @@ import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { PolicySkeleton } from "./PolicySkeleton";
 
 type Props = {
   addingPolicyFolder: boolean;
@@ -43,6 +45,7 @@ export default function PoliciesFoldersListing(props: Props) {
   const [selectedPolicy, setSelectedPolicy] = useState<PolicyModel | null>();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const [isLoading, setLoading] = useState(true);
 
   const hasPolicyAddPermission = hasModuleFeaturePermission(
     ModulesName.Policy,
@@ -131,21 +134,24 @@ export default function PoliciesFoldersListing(props: Props) {
           console.error(error.message);
         }
       }
+      finally {
+        setLoading(false);
+      }
     })();
   }, [props.refresh]);
 
   return (
     <Card sx={{ flexGrow: 1 }} className="gap-4 p-4 p-md-6">
-      <Grid container spacing={2}>
-        {policies.length > 0 || !hasPolicyAddPermission ? (
-          policies.map((policy) => {
-            return (
-              <Grid
-                size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                key={policy.policyId}
-              >
-                <Stack
-                  className="policy-folder all-policies-folder"
+      {
+        isLoading ? <PolicySkeleton /> :
+          <Grid container spacing={2}>
+            {policies.length > 0 ? (
+              policies.map((policy) => (
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  key={policy.policyId}
+                  sx={{ p: 1 }}
+                  className="policy-folder"
                   onClick={() => {
                     handleFolderClick(policy.policyId!);
                   }}
@@ -161,12 +167,6 @@ export default function PoliciesFoldersListing(props: Props) {
                   </Typography>
                   {hasPolicyEditPermission && (
                     <IconButton
-                      sx={{
-                        border: "none",
-                        position: "absolute",
-                        right: "20px",
-                        top: "15px",
-                      }}
                       id="policy-action-button"
                       onClick={(e) => {
                         handleActionButtonClick(e, policy);
@@ -176,34 +176,38 @@ export default function PoliciesFoldersListing(props: Props) {
                       <MoreVertOutlined />
                     </IconButton>
                   )}
+                </Grid>
+              ))
+            ) :
+              !hasPolicyAddPermission ?
+                (
+                  <Box component="div" sx={{ width: 1, height: 150, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Typography variant="h6">
+                      {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
+                    </Typography>
+                  </Box>
+                ) : null
+            }
+            {hasPolicyAddPermission && (
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                <Stack
+                  className="policy-folder"
+                  onClick={() => props.handleClick()}
+                >
+                  <AddIcon sx={{ width: "auto", fontSize: "70px" }} />
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                    }}
+                    variant="h6"
+                  >
+                    {i({ id: "POLICIES.ADD_POLICY" })}
+                  </Typography>
                 </Stack>
               </Grid>
-            );
-          })
-        ) : (
-          <Typography variant="h5">
-            {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
-          </Typography>
-        )}
-        {hasPolicyAddPermission && (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-            <Stack
-              className="policy-folder all-policies-folder"
-              onClick={() => props.handleClick()}
-            >
-              <AddIcon sx={{ width: "auto", fontSize: "70px" }} />
-              <Typography
-                sx={{
-                  textAlign: "center",
-                }}
-                variant="h6"
-              >
-                {i({ id: "POLICIES.ADD_POLICY" })}
-              </Typography>
-            </Stack>
+            )}
           </Grid>
-        )}
-      </Grid>
+      }
       {Boolean(actionBtnAnchor) && (
         <Popover
           id="policy-action-menu"

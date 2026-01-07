@@ -1002,6 +1002,7 @@
     "POLICY_NAME": "Policy Name",
     "POLICY_DESCRIPTION": "Policy Description",
     "POLICY_DOCUMENT": "Policy Document",
+    "DOCUMENT": "Documents",
     "VERSION": {
       "ADD_VERSION": "Add Version",
       "VERSION_NAME": "Version Name"
@@ -1037,6 +1038,7 @@
   },
   "COMMON": {
     "CONGRATULATION": "Congratulation",
-    "VERIFIED": "Verified"
+    "VERIFIED": "Verified",
+    "PAGE_NO": "Page - {currentPage} of {totalPages}"
   }
 }
