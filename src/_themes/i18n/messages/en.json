@@ -752,7 +752,7 @@
     "404": "We're sorry, the page you requested could not be found. Please go back to the homepage!",
     "OPPS": "Opps!",
     "500": "Something went wrong! Please try again later!",
-    "RESUME_LOAD_FAILED": "Failed To Load Applicant Resume"
+    "DOC_LOAD_FAILED": "failed to load document"
   },
   "VALIDATION_ERR": {
     "MAX_LEAVE_DAY": "Maximum leave must be 1 day or more",

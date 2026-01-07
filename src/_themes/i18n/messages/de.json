@@ -721,7 +721,7 @@
     "404": "Entschuldigung, die angeforderte Seite konnte nicht gefunden werden. Bitte gehen Sie zurück zur Startseite!",
     "OPPS": "Hoppla!",
     "500": "Etwas ist schiefgelaufen! Bitte versuchen Sie es später erneut!",
-    "RESUME_LOAD_FAILED": "Fehler beim Laden des Bewerber-Lebenslaufs"
+    "DOC_LOAD_FAILED": "Dokument konnte nicht geladen werden"
   },
   "VALIDATION_ERR": {
     "MAX_LEAVE_DAY": "Der maximale Urlaub muss 1 Tag oder mehr sein",

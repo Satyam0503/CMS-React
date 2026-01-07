@@ -719,7 +719,7 @@
     "404": "Désolé, la page demandée est introuvable. Veuillez revenir à la page d’accueil !",
     "OPPS": "Oups !",
     "500": "Quelque chose s’est mal passé ! Veuillez réessayer plus tard.",
-    "RESUME_LOAD_FAILED": "Échec du chargement du CV du candidat"
+    "DOC_LOAD_FAILED": "échec du chargement du document"
   },
   "VALIDATION_ERR": {
     "MAX_LEAVE_DAY": "Le nombre maximum de jours de congé doit être d’au moins 1 jour",

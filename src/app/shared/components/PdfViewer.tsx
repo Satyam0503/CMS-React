@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { FC, useState } from "react";
 import { pdfjs } from "react-pdf";
 import { Document, Page } from "react-pdf";
@@ -6,9 +6,7 @@ import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { CustomIconButton } from "./CustomIconButton";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-import { ResumeError } from "../../modules/recruitment/applications/components/ResumeError";
-import { ResumeLoader } from "../../modules/recruitment/applications/components/ResumeLoader";
+import { ErrorOutline, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -80,13 +78,44 @@ export const PdfViewer: FC<Props> = ({ pdfUrl }) => {
         <Document
           file={pdfUrl}
           onLoadSuccess={handleDocumentLoadSuccess}
-          loading={<ResumeLoader />}
-          error={<ResumeError />}
-          noData={<ResumeError />}
+          loading={<DocLoading />}
+          error={<DocLoadError />}
+          noData={<DocLoadError />}
         >
           <Page pageNumber={currentPage} className="pdf_viewer" />
         </Document>
       </Stack>
     </Stack >
+  );
+};
+
+
+const DocLoading = () => {
+  return (
+    <Box sx={{ height: "400px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress />
+    </Box>
+  )
+}
+
+
+const DocLoadError = () => {
+  const { formatMessage: i } = useIntl();
+  return (
+    <Box
+      sx={{
+        height: "400px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Stack spacing={1} sx={{
+        alignItems: "center"
+      }}>
+        <ErrorOutline color="error" sx={{ fontSize: "3rem" }} />
+        <Typography variant="h6">{i({ id: "ERROR.DOC_LOAD_FAILED" })}</Typography>
+      </Stack>
+    </Box>
   );
 };

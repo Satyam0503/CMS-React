@@ -721,7 +721,7 @@
     "404": "Lo sentimos, la página que solicitaste no pudo ser encontrada. ¡Por favor regresa a la página principal!",
     "OPPS": "¡Ups!",
     "500": "¡Algo salió mal! Por favor intenta más tarde.",
-    "RESUME_LOAD_FAILED": "Error al cargar el currículum del candidato"
+    "DOC_LOAD_FAILED": "error al cargar el documento"
   },
   "VALIDATION_ERR": {
     "MAX_LEAVE_DAY": "El permiso máximo debe ser de 1 día o más",
