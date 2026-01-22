@@ -3,8 +3,10 @@ import { PdfViewer } from "../../../shared/components/PdfViewer";
 import { Stack } from "@mui/system";
 import { IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WordDocViewer } from "../../../shared/components/WordDocViewer";
+import { getPolicyDocument } from "../policyServices";
+import { useIntl } from "react-intl";
 
 type Props = {
   open: boolean;
@@ -14,6 +16,8 @@ type Props = {
 
 export default function PolicyVersionViewer(props: Props) {
   const { policyVersion, handleClose } = props;
+  const { formatMessage: i } = useIntl();
+  const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const documentType = useMemo(() => {
     const url = policyVersion.policyDocUrl;
     if (!url) return null;
@@ -21,24 +25,69 @@ export default function PolicyVersionViewer(props: Props) {
     return cleanUrl.split(".").pop()?.toLowerCase() ?? null;
   }, [policyVersion.policyDocUrl]);
 
+  const getMimeType = (ext: string | null): string => {
+    switch (ext) {
+      case "pdf":
+        return "application/pdf";
+      case "doc":
+        return "application/msword";
+      case "docx":
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      default:
+        return "";
+    }
+  };
+
+  useEffect(() => {
+    async function getDoc(policyVersionId: string) {
+      try {
+        const res = await getPolicyDocument(policyVersionId);
+        const mimeType = getMimeType(documentType);
+        const blob = new Blob([res.data], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setDocumentUrl(url);
+      } catch (error) {
+        console.error("Error fetching document:", error);
+      }
+    }
+
+    getDoc(policyVersion.id);
+
+    return () => {
+      if (documentUrl) URL.revokeObjectURL(documentUrl);
+    };
+  }, [policyVersion.id, documentType]);
+  console.log(documentType);
 
   const renderDocument = () => {
+    if (!documentUrl)
+      return (
+        <Typography>{i({ id: "POLICIES.LOADING_DOCUMENT" })}...</Typography>
+      );
+
+    if (!documentType)
+      return (
+        <Typography color="text.secondary">
+          {i({ id: "POLICIES.UNKONOWN_FILE_TYPE" })}
+        </Typography>
+      );
+
     switch (documentType) {
       case "pdf":
-        return <PdfViewer pdfUrl={policyVersion.policyDocUrl} />;
+        return <PdfViewer pdfUrl={documentUrl} />;
 
       case "doc":
       case "docx":
         return (
           <WordDocViewer
-            documents={[{ uri: policyVersion.policyDocUrl, fileType: documentType }]}
+            documents={[{ uri: documentUrl, fileType: documentType }]}
           />
         );
 
       default:
         return (
           <Typography color="text.secondary">
-            Unsupported document format
+            {i({ id: "POLICIES.UNSUPPORTED_DOCUMENT_FORMAT" })}
           </Typography>
         );
     }
@@ -46,11 +95,7 @@ export default function PolicyVersionViewer(props: Props) {
 
   return (
     <Stack spacing={1}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="h5" className="fs-16">
           {policyVersion.versionName}
         </Typography>

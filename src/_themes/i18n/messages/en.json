@@ -177,7 +177,8 @@
       "SELECT_PAY_MONTH": "Please select pay month",
       "INVITE_EMPLOYEE": "Failed to invite employee",
       "POLICY_DELETE_FAILED": "Failed to delete policy.",
-      "POLICY_VERSION_DELETE_FAILED": "Failed to delete policy version."
+      "POLICY_VERSION_DELETE_FAILED": "Failed to delete policy version.",
+      "REQUIRED_DOCUMENT": "Required document missing."
     }
   },
 
@@ -1007,7 +1008,10 @@
       "ADD_VERSION": "Add Version",
       "VERSION_NAME": "Version Name"
     },
-    "SELECTED_DOCUMENT": "Selected file: {document}"
+    "SELECTED_DOCUMENT": "Selected file: {document}",
+    "LOADING_DOCUMENT": "Loading Document",
+    "UNKONOWN_FILE_TYPE": "Unknown file Type",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "Unsupported document format"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Notification Preferences",

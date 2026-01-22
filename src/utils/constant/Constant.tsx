@@ -249,8 +249,8 @@ export const ServiceUrl = {
 
   // signalR endpoints
 
-  NOTIFICATION_HUB: '/notificationhub',
-  CHAT_HUB: '/chathub',
+  NOTIFICATION_HUB: "/notificationhub",
+  CHAT_HUB: "/chathub",
 
   // policies
   GET_POLICIES: "api/company/GetAllPolicies",
@@ -261,6 +261,7 @@ export const ServiceUrl = {
   GET_ALL_POLICY_VERSION: "api/Company/GetAllPolicyVersion",
   DELETE_POLICY: "api/Company/DeletePolicy",
   DELETE_POLICY_VERSION: "api/Company/DeletePolicyVersion",
+  GET_POLICY_DOCUMENT: "api/Company/GetPolicyDocument",
 } as const;
 
 export const languages = [
@@ -749,7 +750,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
     build: (
       row: NoticeModel,
       handleNoticeEdit: (row: NoticeModel) => void,
-      openConfirmationModal: (row: NoticeModel) => void
+      openConfirmationModal: (row: NoticeModel) => void,
     ) => (
       <ActionComponent
         row={row}
@@ -934,7 +935,7 @@ export const ApplicationTabTableColumnList: ColumnListTypes[] = [
       row: Applicant,
       handleApplicationEdit: (row: Applicant) => void,
       openConfirmationModal: (row: Applicant) => void,
-      openViewApplication: (row: Applicant) => void
+      openViewApplication: (row: Applicant) => void,
     ) => <ActionComponent row={row} openViewModal={openViewApplication} />,
   },
 ];
@@ -1029,7 +1030,7 @@ export const JobRequirementTableColumnList: ColumnListTypes[] = [
       row: JobModal,
       handleJobEdit: (row: JobModal) => void,
       openDeleteModal: (row: JobModal) => void,
-      openViewJobDetail: (row: JobModal) => void
+      openViewJobDetail: (row: JobModal) => void,
     ) => <ActionComponent row={row} openViewModal={openViewJobDetail} />,
   },
 ];
@@ -1181,7 +1182,7 @@ export const EmployeeLeaveBalanceColumnList: ColumnListTypes[] = [
     label: "ACTION",
     build: (
       row: LeaveBalance,
-      handleLeaveBalanceEdit: (row: LeaveBalance) => void
+      handleLeaveBalanceEdit: (row: LeaveBalance) => void,
     ) => <ActionComponent row={row} handleEdit={handleLeaveBalanceEdit} />,
   },
 ];

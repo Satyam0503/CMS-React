@@ -16,6 +16,7 @@ export interface ApiResponse {
   message: string;
   statusCode: number;
 }
+
 export interface CreatePasswordModel {
   newPassword: string;
   token: string;

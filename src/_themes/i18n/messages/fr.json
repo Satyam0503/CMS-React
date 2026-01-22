@@ -173,7 +173,8 @@
       "SELECT_PAY_MONTH": "Veuillez sélectionner le mois de paiement",
       "INVITE_EMPLOYEE": "Échec de l’invitation de l’employé",
       "POLICY_DELETE_FAILED": "Échec de la suppression de la politique.",
-      "POLICY_VERSION_DELETE_FAILED": "Échec de la suppression de la version de la politique."
+      "POLICY_VERSION_DELETE_FAILED": "Échec de la suppression de la version de la politique.",
+      "REQUIRED_DOCUMENT": "Un document requis est manquant."
     }
   },
   "BUTTON": {
@@ -966,7 +967,10 @@
       "ADD_VERSION": "Ajouter une version",
       "VERSION_NAME": "Nom de la version"
     },
-    "SELECTED_DOCUMENT": "Fichier sélectionné : {document}"
+    "SELECTED_DOCUMENT": "Fichier sélectionné : {document}",
+    "LOADING_DOCUMENT": "Chargement du document",
+    "UNKONOWN_FILE_TYPE": "Type de fichier inconnu",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "Format de document non pris en charge"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Préférences de notification",

@@ -172,7 +172,8 @@
       "PAY_SLIP_GENERATE": "Error al generar el recibo de sueldo",
       "SELECT_PAY_MONTH": "Por favor, seleccione el mes de pago",
       "INVITE_EMPLOYEE": "Error al invitar al empleado",
-      "POLICY_DELETE_FAILED": "Error al eliminar la política."
+      "POLICY_DELETE_FAILED": "Error al eliminar la política.",
+      "REQUIRED_DOCUMENT": "Falta un documento obligatorio."
     }
   },
   "BUTTON": {
@@ -968,7 +969,10 @@
       "ADD_VERSION": "Agregar versión",
       "VERSION_NAME": "Nombre de la versión"
     },
-    "SELECTED_DOCUMENT": "Archivo seleccionado: {document}"
+    "SELECTED_DOCUMENT": "Archivo seleccionado: {document}",
+    "LOADING_DOCUMENT": "Cargando documento",
+    "UNKONOWN_FILE_TYPE": "Tipo de archivo desconocido",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "Formato de documento no compatible"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Preferencias de notificación",

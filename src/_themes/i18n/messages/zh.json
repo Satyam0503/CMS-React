@@ -192,7 +192,8 @@
       "SELECT_PAY_MONTH": "请选择支付月份",
       "INVITE_EMPLOYEE": "邀请员工失败",
       "POLICY_DELETE_FAILED": "删除策略失败。",
-      "POLICY_VERSION_DELETE_FAILED": "删除策略版本失败。"
+      "POLICY_VERSION_DELETE_FAILED": "删除策略版本失败。",
+      "REQUIRED_DOCUMENT": "缺少必需的文件。"
     }
   },
   "BUTTON": {
@@ -989,7 +990,10 @@
       "ADD_VERSION": "添加版本",
       "VERSION_NAME": "版本名称"
     },
-    "SELECTED_DOCUMENT": "已选择的文件：{document}"
+    "SELECTED_DOCUMENT": "已选择的文件：{document}",
+    "LOADING_DOCUMENT": "正在加载文档",
+    "UNKONOWN_FILE_TYPE": "未知的文件类型",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "不支持的文档格式"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "通知偏好设置",

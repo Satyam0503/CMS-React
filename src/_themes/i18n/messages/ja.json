@@ -172,7 +172,8 @@
       "SELECT_PAY_MONTH": "支払月を選択してください",
       "INVITE_EMPLOYEE": "従業員を招待できませんでした",
       "POLICY_DELETE_FAILED": "ポリシーの削除に失敗しました。",
-      "POLICY_VERSION_DELETE_FAILED": "ポリシーバージョンの削除に失敗しました。"
+      "POLICY_VERSION_DELETE_FAILED": "ポリシーバージョンの削除に失敗しました。",
+      "REQUIRED_DOCUMENT": "必要な書類が不足しています。"
     }
   },
   "BUTTON": {
@@ -976,7 +977,10 @@
       "ADD_VERSION": "バージョンを追加",
       "VERSION_NAME": "バージョン名"
     },
-    "SELECTED_DOCUMENT": "選択されたファイル: {document}"
+    "SELECTED_DOCUMENT": "選択されたファイル: {document}",
+    "LOADING_DOCUMENT": "ドキュメントを読み込み中",
+    "UNKONOWN_FILE_TYPE": "不明なファイルタイプ",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "サポートされていないドキュメント形式"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "通知設定",

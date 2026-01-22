@@ -26,7 +26,6 @@ export const Policies = () => {
     setRefresh(!refresh);
   }
 
-
   function handleCreateButtonClicked() {
     setOpen(true);
   }
@@ -66,5 +65,4 @@ export const Policies = () => {
       </Stack>
     </>
   );
-}
-
+};

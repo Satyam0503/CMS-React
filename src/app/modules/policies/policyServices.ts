@@ -2,6 +2,7 @@ import { deleteRequest, getRequest, postRequest } from "../../../server/axios"
 import { ApiResponse, ResponseData } from "../../../utils/common_types"
 import { ServiceUrl } from "../../../utils/constant/Constant"
 import { AddPolicyModel, PolicyModel, PolicyVersion, PolicyVersionModel } from "./models"
+import axios from "axios";
 
 export const getAllPolicies = () => {
   return getRequest<ResponseData<PolicyModel>>(ServiceUrl.GET_POLICIES)
@@ -42,4 +43,11 @@ export const deletePolicyVersion = (policyVersionId: string) => {
   return deleteRequest<ApiResponse>(
     `${ServiceUrl.DELETE_POLICY_VERSION}/${policyVersionId}`
   );
+};
+
+
+export const getPolicyDocument = async (policyVersionId: string) => {
+  return  getRequest<ApiResponse>(`${ServiceUrl.GET_POLICY_DOCUMENT}/${policyVersionId}`, {
+    responseType: "arraybuffer",
+  });
 };

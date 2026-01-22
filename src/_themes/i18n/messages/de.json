@@ -172,7 +172,8 @@
       "SELECT_PAY_MONTH": "Bitte wählen Sie den Zahlmonat aus",
       "INVITE_EMPLOYEE": "Mitarbeiter konnte nicht eingeladen werden",
       "POLICY_DELETE_FAILED": "Löschen der Richtlinie fehlgeschlagen.",
-      "POLICY_VERSION_DELETE_FAILED": "Löschen der Richtlinienversion fehlgeschlagen."
+      "POLICY_VERSION_DELETE_FAILED": "Löschen der Richtlinienversion fehlgeschlagen.",
+      "REQUIRED_DOCUMENT": "Erforderliches Dokument fehlt."
     }
   },
   "BUTTON": {
@@ -967,7 +968,10 @@
       "ADD_VERSION": "Version hinzufügen",
       "VERSION_NAME": "Versionsname"
     },
-    "SELECTED_DOCUMENT": "Ausgewählte Datei: {document}"
+    "SELECTED_DOCUMENT": "Ausgewählte Datei: {document}",
+    "LOADING_DOCUMENT": "Dokument wird geladen",
+    "UNKONOWN_FILE_TYPE": "Unbekannter Dateityp",
+    "UNSUPPORTED_DOCUMENT_FORMAT": "Nicht unterstütztes Dokumentformat"
   },
   "NOTIFCATION_PREFERENCE": {
     "TITLE": "Benachrichtigungseinstellungen",
