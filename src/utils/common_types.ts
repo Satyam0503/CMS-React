@@ -152,6 +152,7 @@ export interface TabModel {
   title: string;
   icon: JSX.Element;
   tabId: number;
+  isActive?: boolean;
 }
 
 export type EmployeeSearchModel = {

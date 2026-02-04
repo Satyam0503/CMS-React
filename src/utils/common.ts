@@ -441,13 +441,11 @@ export const filterSideBarTabs = (
     ) {
       return tab;
     }
-    // if(tab.id === 16) return tab
-    // console.log(tab.id);
-    
     return null;
   }).filter((tab) => tab !== null);
   return filteredTabList;
 };
+
 
 export const getNotificationTitle = (
   notification: NotificationModel,

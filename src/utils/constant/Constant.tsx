@@ -1610,3 +1610,18 @@ export const TimePeriodOptions = [
     name: "DATETIME.LAST_12_MONTHS",
   },
 ];
+
+export const modules_description = [
+  { name: "Employees", description: "EMPLOYEES_DESCRIPTION" },
+  { name: "Calendar", description: "CALENDAR_DESCRIPTION" },
+  { name: "Applications", description: "APPLICATIONS_DESCRIPTION" },
+  { name: "Policy", description: "POLICY_DESCRIPTION" },
+
+  { name: "Attendance", description: "ATTENDANCE_DESCRIPTION" },
+  { name: "Notice_Board", description: "NOTICE_BOARD_DESCRIPTION" },
+  { name: "Process_Log", description: "PROCESS_LOG_DESCRIPTION" },
+
+  { name: "Leave_Management", description: "LEAVE_MANAGEMENT_DESCRIPTION" },
+  { name: "Jobs", description: "JOBS_DESCRIPTION" },
+  { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
+];
