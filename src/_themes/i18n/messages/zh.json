@@ -25,7 +25,8 @@
     "COMPANY_DETAILS": "公司详情",
     "PAYROLL": "工资单",
     "CALENDAR": "日历",
-    "POLICIES": "政策"
+    "POLICIES": "政策",
+    "PAYROLL_SETTINGS": "薪资设置"
   },
   "GENDER": {
     "MALE": "男性",

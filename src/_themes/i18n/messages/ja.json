@@ -25,7 +25,8 @@
     "COMPANY_DETAILS": "会社詳細",
     "PAYROLL": "給与管理",
     "CALENDAR": "カレンダー",
-    "POLICIES": "せいさく"
+    "POLICIES": "せいさく",
+    "PAYROLL_SETTINGS": "給与設定"
   },
   "GENDER": {
     "MALE": "男性",

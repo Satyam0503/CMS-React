@@ -25,7 +25,8 @@
     "COMPANY_DETAILS": "Unternehmensdetails",
     "PAYROLL": "Lohnabrechnung",
     "CALENDAR": "Kalender",
-    "POLICIES": "Richtlinien"
+    "POLICIES": "Richtlinien",
+    "PAYROLL_SETTINGS": "Gehaltsabrechnungseinstellungen"
   },
   "GENDER": {
     "MALE": "Männlich",

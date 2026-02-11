@@ -50,7 +50,8 @@ export enum Modules {
   CompanyMaster = 13,
   PayRoll = 14,
   CompanyDetails = 15,
-  Policies = 16
+  Policies = 16,
+  PayrollSettings = 17,
 }
 
 export enum ModulesName {
@@ -70,7 +71,8 @@ export enum ModulesName {
   CompanyMaster = "Company_Master",
   PayRoll = "PayRoll",
   CompanyDetails = "Company_Details",
-  Policy = "Policy"
+  Policy = "Policy",
+  PayrollSettings = "Payroll_Settings"
 }
 
 export enum ModulesTitles {
@@ -89,13 +91,15 @@ export enum ModulesTitles {
   CompanyMaster = "MODULES.COMPANY_MASTER",
   PayRoll = "MODULES.PAYROLL",
   CompanyDetails = "MODULES.COMPANY_DETAILS",
-  Policies = "MODULES.POLICIES"
+  Policies = "MODULES.POLICIES",
+  PayrollSettings = "MODULES.PAYROLL_SETTINGS"
 }
 
 export enum PayRollModuleTitles{
   LeaveManagement= "Leave_Management",
   Attendance= "Attendance",
-  PayRoll= "PayRoll"
+  PayRoll= "PayRoll",
+  PayRollSettings = "Payroll_Settings"
 }
 
 export enum RecruitmentModuleTitle{

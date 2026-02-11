@@ -25,7 +25,8 @@
     "COMPANY_DETAILS": "Company Details",
     "PAYROLL": "PayRoll",
     "CALENDAR": "Calendar",
-    "POLICIES": "Policies"
+    "POLICIES": "Policies",
+    "PAYROLL_SETTINGS": "Payroll Settings"
   },
   "GENDER": {
     "MALE": "Male",

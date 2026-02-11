@@ -25,7 +25,8 @@
     "COMPANY_DETAILS": "Detalles de la Empresa",
     "PAYROLL": "Nómina",
     "CALENDAR": "Calendario",
-    "POLICIES": "Políticas"
+    "POLICIES": "Políticas",
+    "PAYROLL_SETTINGS": "Configuración de nómina"
   },
 
   "GENDER": {
