@@ -16,6 +16,7 @@ export interface ApiResponse {
   message: string;
   statusCode: number;
 }
+
 export interface CreatePasswordModel {
   newPassword: string;
   token: string;
@@ -151,6 +152,7 @@ export interface TabModel {
   title: string;
   icon: JSX.Element;
   tabId: number;
+  isActive?: boolean;
 }
 
 export type EmployeeSearchModel = {

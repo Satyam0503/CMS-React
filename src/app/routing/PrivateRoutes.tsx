@@ -6,6 +6,7 @@ import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
+import PayrollSettings from "../modules/payrollsettings/PayrollSettings.tsx";
 
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
 const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
@@ -15,10 +16,15 @@ const Profile = lazy(() => import("./ProfileRoutes.tsx"));
 const Calendar = lazy(() => import("../modules/holidays/Calendar.tsx"));
 const NoticeBoard = lazy(() => import("./NoticeBoardRoutes.tsx"));
 const Policies = lazy(() => import("./PoliciesRoutes.tsx"));
-const Attendance = lazy(() => import("../modules/attendance/EmployeeAttendance.tsx"));
-const LeaveManagement = lazy(() => import("../modules/leaves/LeaveManagement.tsx"));
-const PayRollManagement = lazy(() => import("../modules/payroll/PayRollManagement.tsx"));
-
+const Attendance = lazy(
+  () => import("../modules/attendance/EmployeeAttendance.tsx"),
+);
+const LeaveManagement = lazy(
+  () => import("../modules/leaves/LeaveManagement.tsx"),
+);
+const PayRollManagement = lazy(
+  () => import("../modules/payroll/PayRollManagement.tsx"),
+);
 
 const PrivateRoutes = () => {
   return (
@@ -119,6 +125,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute module={ModulesName.PayRoll}>
               <SuspensedView>
                 <PayRollManagement />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="settingspayroll"
+          element={
+            <ProtectedRoute module={ModulesName.PayrollSettings}>
+              <SuspensedView>
+                <PayrollSettings />
               </SuspensedView>
             </ProtectedRoute>
           }

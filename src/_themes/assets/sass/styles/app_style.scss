@@ -495,6 +495,20 @@ button:hover .ql-fill,
   }
 }
 
+.module-card-styles {
+  padding: 15px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-color: var(--mui-palette-grey-400);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  &:hover {
+    border-color: (var--mui-palette-primary-main);
+  }
+}
+
 .logo-preview-container {
   border: 1px solid var(--mui-palette-grey-900);
   width: 200px;

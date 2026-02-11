@@ -12,3 +12,9 @@
 #root {
   display: contents;
 }
+
+@media print {
+  body {
+    display: none !important;
+  }
+}

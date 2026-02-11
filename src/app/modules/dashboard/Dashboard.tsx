@@ -21,61 +21,86 @@ import { usePageData } from "../../Context/PageDataProvider";
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
+  const userRoleType = useAppSelector(
+    (state) => state.user.userData?.roleType!,
+  );
+  const modulePermission = useAppSelector(
+    (state) => state.user.userData?.modulePermission,
+  );
 
-  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const hasAccessToEmpModule = useMemo(
     () =>
-      hasModuleFeaturePermission(ModulesName.Employees, Permission.View, userModulesPermissions),
-    [userModulesPermissions]
+      hasModuleFeaturePermission(
+        ModulesName.Employees,
+        Permission.View,
+        userModulesPermissions,
+      ),
+    [userModulesPermissions],
   );
 
   const hasAccessToJob = useMemo(
     () =>
-      hasModuleFeaturePermission(ModulesName.Jobs, Permission.View, userModulesPermissions),
-    [userModulesPermissions]
+      hasModuleFeaturePermission(
+        ModulesName.Jobs,
+        Permission.View,
+        userModulesPermissions,
+      ),
+    [userModulesPermissions],
+  );
+
+  const hasAccessToNoticeBoard = useMemo(
+    () =>
+      hasModuleFeaturePermission(
+        ModulesName.NoticeBoard,
+        Permission.View,
+        userModulesPermissions,
+      ),
+    [userModulesPermissions],
   );
 
   useEffect(() => {
     setPageTitle("");
-  }, [])
+  }, []);
 
   return (
     <React.Fragment>
       <DashboardHeader fullName={user.fullName} />
-      <Grid
-        container
-        spacing={2}
-        className="d-flex justify-content-between"
-      >
+      <Grid container spacing={2} className="d-flex justify-content-between">
         <Grid
           size={{
             xs: 12,
-            lg: 8
-          }}>
+            lg: 8,
+          }}
+        >
           <Grid container spacing={3}>
             {hasAccessToEmpModule && (
               <Grid
                 size={{
                   xs: 12,
-                  sm: 6
-                }}>
+                  sm: 6,
+                }}
+              >
                 <EmployeeChart />
               </Grid>
             )}
             <Grid
               size={{
                 xs: 12,
-                sm: 6
-              }}>
+                sm: 6,
+              }}
+            >
               <DepartmentChart />
             </Grid>
             {hasAccessToJob && (
               <Grid
                 size={{
                   xs: 12,
-                  sm: 6
-                }}>
+                  sm: 6,
+                }}
+              >
                 <OpenPositions />
               </Grid>
             )}
@@ -84,16 +109,16 @@ export default function Dashboard() {
                 sx={{ height: 310 }}
                 size={{
                   xs: 12,
-                  sm: 6
-                }}>
-
+                  sm: 6,
+                }}
+              >
                 <ApplicationsChart />
               </Grid>
             )}
 
             <Grid size={12}>
               <Stack spacing={3}>
-                <NoticeBoard />
+                {hasAccessToNoticeBoard && <NoticeBoard />}
                 {/* <EmployeePerformance /> */}
               </Stack>
             </Grid>
@@ -103,12 +128,10 @@ export default function Dashboard() {
           className="d-flex flex-column gap-4"
           size={{
             xs: 12,
-            lg: 4
-          }}>
-          {
-            Notification.permission == "default" &&
-            <PushNotification />
-          }
+            lg: 4,
+          }}
+        >
+          {Notification.permission == "default" && <PushNotification />}
           <EmpOnLeave />
           <UpComingHolidayAndEvents />
           <UpComingCelebration />

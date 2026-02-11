@@ -18,8 +18,15 @@ import { usePageData } from "../../../Context/PageDataProvider";
 import { Edit, Delete, MoreVertOutlined } from "@mui/icons-material";
 import PolilcyVersionForm from "./PolilcyVersionForm";
 import { PolicyVersion, PolicyVersionModel } from "../models";
-import { deletePolicyVersion, getAllPolicyVersions } from "../policyServices";
-import { getCustomStatusCodesErrorMessage, hasModuleFeaturePermission } from "../../../../utils/common";
+import {
+  deletePolicyVersion,
+  getAllPolicyVersions,
+  getPolicyDocument,
+} from "../policyServices";
+import {
+  getCustomStatusCodesErrorMessage,
+  hasModuleFeaturePermission,
+} from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
@@ -43,36 +50,45 @@ export const PolicyVersions = () => {
   const { setPageTitle } = usePageData();
   const { formatMessage: i } = useIntl();
   const [isFormOpen, setFormOpen] = useState<boolean>(false);
-  const [actionBtnAnchor, setActionBtnAnchor] = useState<null | HTMLElement>(null);
+  const [actionBtnAnchor, setActionBtnAnchor] = useState<null | HTMLElement>(
+    null,
+  );
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [selectedPolicyVersion, setSelectedPolicyVersion] = useState<PolicyVersion | null>(null);
+  const [selectedPolicyVersion, setSelectedPolicyVersion] =
+    useState<PolicyVersion | null>(null);
   const [viewPolicy, setViewPolicy] = useState<PolicyVersion | null>(null);
-  const [policyVersions, setPolicyVersions] = useState<Array<PolicyVersion>>([]);
+  const [policyVersions, setPolicyVersions] = useState<Array<PolicyVersion>>(
+    [],
+  );
   const [formValue, setFormValue] = useState(initialValues);
   const [editing, setEditing] = useState<boolean>(false);
-  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
   const hasPolicyAddPermission = hasModuleFeaturePermission(
     ModulesName.Policy,
     Permission.Create,
-    userModulesPermissions
+    userModulesPermissions,
   );
 
   const hasPolicyEditPermission = hasModuleFeaturePermission(
     ModulesName.Policy,
     Permission.Edit,
-    userModulesPermissions
+    userModulesPermissions,
   );
 
   const hasPolicyDeletePermission = hasModuleFeaturePermission(
     ModulesName.Policy,
     Permission.Delete,
-    userModulesPermissions
+    userModulesPermissions,
   );
 
-  const handleActionButtonClick = (event: React.MouseEvent<HTMLElement>, policyVersion: PolicyVersion) => {
+  const handleActionButtonClick = (
+    event: React.MouseEvent<HTMLElement>,
+    policyVersion: PolicyVersion,
+  ) => {
     setActionBtnAnchor(event.currentTarget);
     setSelectedPolicyVersion(policyVersion);
   };
@@ -141,7 +157,14 @@ export const PolicyVersions = () => {
           handleRefresh();
           toast.success(i({ id: "TOAST.SUCCESS.POLICY_VERSION_DELETED" }));
         } else {
-          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode, "TOAST.FAILED.POLICY_VERSION_DELETE_FAILED") }));
+          toast.error(
+            i({
+              id: getCustomStatusCodesErrorMessage(
+                data.statusCode,
+                "TOAST.FAILED.POLICY_VERSION_DELETE_FAILED",
+              ),
+            }),
+          );
         }
       }
     } catch (error) {
@@ -175,8 +198,7 @@ export const PolicyVersions = () => {
       sx={{ height: "100%" }}
       className="gap-6 p-4 p-md-6 flex d-flex flex-column"
     >
-      {
-        hasPolicyAddPermission &&
+      {hasPolicyAddPermission && (
         <Stack
           direction="row"
           className="align-items-center flex-wrap justify-content-end gap-4"
@@ -191,62 +213,74 @@ export const PolicyVersions = () => {
             {i({ id: "POLICIES.ADD_POLICY" })}
           </Button>
         </Stack>
-      }
-      {
-        isLoading ?
-          <PolicySkeleton /> :
-          viewPolicy ?
-            <PolicyVersionViewer
-              open={true}
-              handleClose={handleCloseViewPolicy}
-              policyVersion={viewPolicy}
-            /> :
-            <Grid container spacing={2}>
-              {policyVersions.length > 0 ? (
-                policyVersions.map((policyVersion) => {
-                  return (
-                    <Grid
-                      key={policyVersion.id}
-                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                      className={clsx("policy-file", { "current-active-policy": policyVersion.isCurrent })}
-                      onClick={() => handleViewPolicy(policyVersion)}
-                    >
-                      <PolicyRoundedIcon className="fs-44" />
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                        }}
-                      >
-                        {policyVersion.versionName}
-                      </Typography>
-                      {
-                        (hasPolicyDeletePermission || hasPolicyEditPermission) &&
-                        <IconButton
-                          id="policy-action-button"
-                          onClick={(e) => {
-                            handleActionButtonClick(e, policyVersion);
-                            e.stopPropagation();
-                          }}
-                        >
-                          <MoreVertOutlined />
-                        </IconButton>
-                      }
-                    </Grid>
-                  );
-                })
-              ) : (
-                <Box component="div" sx={{ width: 1, height: 100, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Typography variant="h6" className="fs-20">
-                    {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
+      )}
+      {isLoading ? (
+        <PolicySkeleton />
+      ) : viewPolicy ? (
+        <PolicyVersionViewer
+          open={true}
+          handleClose={handleCloseViewPolicy}
+          policyVersion={viewPolicy}
+        />
+      ) : (
+        <Grid container spacing={2}>
+          {policyVersions.length > 0 ? (
+            policyVersions.map((policyVersion) => {
+              return (
+                <Grid
+                  key={policyVersion.id}
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                  className={clsx("policy-file", {
+                    "current-active-policy": policyVersion.isCurrent,
+                  })}
+                  onClick={() => handleViewPolicy(policyVersion)}
+                >
+                  <PolicyRoundedIcon className="fs-44" />
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {policyVersion.versionName.length > 25
+                      ? policyVersion.versionName.slice(0, 25) + "..."
+                      : policyVersion.versionName}
+                    {/* {policyVersion.versionName} */}
                   </Typography>
-                </Box>
-              )}
-            </Grid>
-      }
-
+                  {(hasPolicyDeletePermission || hasPolicyEditPermission) && (
+                    <IconButton
+                      id="policy-action-button"
+                      onClick={(e) => {
+                        handleActionButtonClick(e, policyVersion);
+                        e.stopPropagation();
+                      }}
+                    >
+                      <MoreVertOutlined />
+                    </IconButton>
+                  )}
+                </Grid>
+              );
+            })
+          ) : (
+            <Box
+              component="div"
+              sx={{
+                width: 1,
+                height: 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="h6" className="fs-20">
+                {i({ id: "POLICIES.NO_POLICIES_FOUND" })}
+              </Typography>
+            </Box>
+          )}
+        </Grid>
+      )}
 
       {Boolean(actionBtnAnchor) && (
         <Popover
@@ -273,9 +307,7 @@ export const PolicyVersions = () => {
           <List disablePadding className="popover-list">
             {hasPolicyEditPermission && (
               <ListItem disablePadding divider>
-                <ListItemButton
-                  onClick={handlePolicyVersionEdit}
-                >
+                <ListItemButton onClick={handlePolicyVersionEdit}>
                   <ListItemText
                     primary={
                       <Typography>
@@ -323,4 +355,4 @@ export const PolicyVersions = () => {
       )}
     </Card>
   );
-}
+};

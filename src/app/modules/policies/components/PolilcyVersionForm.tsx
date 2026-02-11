@@ -18,10 +18,7 @@ import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
-import {
-  createPolicyVersion,
-  editPolicyVersion,
-} from "../policyServices";
+import { createPolicyVersion, editPolicyVersion } from "../policyServices";
 import { VisuallyHiddenInput } from "../../../shared/components/form-component/VisuallyHiddenInput";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 
@@ -51,7 +48,12 @@ export default function PolilcyVersionForm(props: Props) {
     }
   };
 
-  const handleSubmit = async (values: PolicyVersionModel, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleSubmit = async (
+    values: PolicyVersionModel,
+    setSubmitting: (isSubmitting: boolean) => void
+  ) => {
+    if (!props.isEdit && !values.policyDoc)
+      toast.error(i({ id: "TOAST.FAILED.REQUIRED_DOCUMENT" }));
     const formData = new FormData();
     formData.append("policyId", policyid!);
     formData.append("VersionName", values.versionName);
@@ -68,7 +70,9 @@ export default function PolilcyVersionForm(props: Props) {
           props.handleClose();
           props.handleRefresh();
         } else {
-          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
+          toast.error(
+            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) })
+          );
         }
       } else {
         const { data } = await editPolicyVersion(formData);
@@ -77,7 +81,9 @@ export default function PolilcyVersionForm(props: Props) {
           props.handleClose();
           props.handleRefresh();
         } else {
-          toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
+          toast.error(
+            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) })
+          );
         }
       }
     } catch (error) {
@@ -101,6 +107,8 @@ export default function PolilcyVersionForm(props: Props) {
         }}
       >
         {({ values, setFieldValue, setFieldTouched, ...formik }) => {
+          // console.log(formik.dirty);
+
           return (
             <form onSubmit={formik.handleSubmit}>
               <Grid container spacing={1}>
@@ -117,7 +125,10 @@ export default function PolilcyVersionForm(props: Props) {
                   <FormLabel sx={{ fontSize: 12, color: "text.secondary" }}>
                     {i({ id: "POLICIES.POLICY_DOCUMENT" })}
                   </FormLabel>
-                  <Stack className="p-6  align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
+                  <Stack
+                    className="p-6  align-items-center gap-1 rounded"
+                    sx={{ border: "1px dashed grey" }}
+                  >
                     <IconButton
                       component="label"
                       tabIndex={-1}
@@ -136,10 +147,13 @@ export default function PolilcyVersionForm(props: Props) {
                     </IconButton>
 
                     <Typography variant="caption">
-                      {i({ id: "POLICIES.SELECTED_DOCUMENT" }, { document: values.policyDoc?.name ?? "" })}
+                      {i(
+                        { id: "POLICIES.SELECTED_DOCUMENT" },
+                        { document: values.policyDoc?.name ?? "" }
+                      )}
                     </Typography>
                     <Typography variant="body2" className="text-center ">
-                      {i({ id: "VALIDATION_ERR.DOCUMENT_FORMAT", })}
+                      {i({ id: "VALIDATION_ERR.DOCUMENT_FORMAT" })}
                     </Typography>
                   </Stack>
                   {formik.touched.policyDoc && formik.errors.policyDoc && (
@@ -176,7 +190,9 @@ export default function PolilcyVersionForm(props: Props) {
                   type="submit"
                   disabled={!formik.isValid || formik.isSubmitting}
                   variant="contained"
-                  label={i({ id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD" })}
+                  label={i({
+                    id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                  })}
                 />
               </Stack>
             </form>
