@@ -1,0 +1,27 @@
+# Deployment Stages - Handles both Dev and Prod based on branch
+parameters:
+  - name: appBaseName
+    type: string
+    default: 'codeji'
+  - name: port
+    type: number
+    default: 80
+
+stages:
+  # Deploy to Development (runs on develop branch)
+  - template: deploy-stage.yml
+    parameters:
+      environment: 'Dev'
+      environmentName: 'Development'
+      siteName: '${{ parameters.appBaseName }}-develop'
+      port: ${{ parameters.port }}
+      condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))"
+
+  # Deploy to Production (runs on main branch)
+  - template: deploy-stage.yml
+    parameters:
+      environment: 'Prod'
+      environmentName: 'Production'
+      siteName: '${{ parameters.appBaseName }}-prod'
+      port: ${{ parameters.port }}
+      condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))"

@@ -1,0 +1,30 @@
+# Main Frontend CI/CD Pipeline
+# Codeji CMS Frontend (React + TypeScript + Vite)
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - '*'
+
+pool:
+  name: pool-codeji
+
+variables:
+  nodeVersion: '18.x'
+
+# Import stage templates
+stages:
+  # Build Stage
+  - template: .pipelines/templates/build-stage.yml
+    parameters:
+      nodeVersion: $(nodeVersion)
+
+  # Deploy Stages (Dev/Prod based on branch)
+  - template: .pipelines/templates/deploy-stages.yml
+    parameters:
+      appBaseName: 'codeji'
+      port: 80
