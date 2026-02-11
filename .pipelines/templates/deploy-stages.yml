@@ -12,16 +12,24 @@ stages:
   - template: deploy-stage.yml
     parameters:
       environment: 'Dev'
-      environmentName: 'Development'
+      environmentName: '$(EnvironmentName)'
       siteName: '${{ parameters.appBaseName }}-develop'
       port: ${{ parameters.port }}
+      vmIP: '$(VM.IP)'
+      vmUser: '$(VM.User)'
+      vmPassword: '$(VM.Password)'
+      frontendPath: '$(DeployPath)'
       condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))"
 
   # Deploy to Production (runs on main branch)
   - template: deploy-stage.yml
     parameters:
       environment: 'Prod'
-      environmentName: 'Production'
+      environmentName: '$(EnvironmentName)'
       siteName: '${{ parameters.appBaseName }}-prod'
       port: ${{ parameters.port }}
+      vmIP: '$(VM.IP)'
+      vmUser: '$(VM.User)'
+      vmPassword: '$(VM.Password)'
+      frontendPath: '$(DeployPath)'
       condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))"

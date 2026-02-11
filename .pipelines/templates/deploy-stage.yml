@@ -18,6 +18,14 @@ parameters:
   - name: condition
     type: string
     default: ''
+  - name: vmIP
+    type: string
+  - name: vmUser
+    type: string
+  - name: vmPassword
+    type: string
+  - name: frontendPath
+    type: string
 
 stages:
   - stage: Deploy${{ parameters.environment }}
@@ -25,18 +33,8 @@ stages:
     dependsOn: Build
     condition: ${{ parameters.condition }}
     variables:
-      # Dynamic variable groups based on environment
-      - group: CMS-Frontend-Secrets-${{ parameters.environment }}
-      - group: CMS-Deployment-Config
-      # Dynamic VM and deployment path variables based on environment
-      - name: vmIP
-        value: $(${{ parameters.environment }}.VM.IP)
-      - name: vmUser
-        value: $(${{ parameters.environment }}.VM.User)
-      - name: vmPassword
-        value: $(${{ parameters.environment }}.VM.Password)
-      - name: frontendPath
-        value: $(${{ parameters.environment }}.Frontend.Path)
+      # Variable group based on environment
+      - group: codeji-${{ lower(parameters.environment) }}
     jobs:
       - deployment: DeployTo${{ parameters.environment }}
         displayName: 'Deploy to ${{ parameters.environmentName }} VM'
@@ -73,11 +71,11 @@ stages:
                       Write-Host "   Port: ${{ parameters.port }}"
                       Write-Host "=========================================="
 
-                      $securePassword = ConvertTo-SecureString "$(vmPassword)" -AsPlainText -Force
-                      $credential = New-Object System.Management.Automation.PSCredential ("$(vmUser)", $securePassword)
+                      $securePassword = ConvertTo-SecureString "${{ parameters.vmPassword }}" -AsPlainText -Force
+                      $credential = New-Object System.Management.Automation.PSCredential ("${{ parameters.vmUser }}", $securePassword)
 
-                      Write-Host "🔌 Connecting to VM: $(vmIP)"
-                      $session = New-PSSession -ComputerName "$(vmIP)" -Credential $credential
+                      Write-Host "🔌 Connecting to VM: ${{ parameters.vmIP }}"
+                      $session = New-PSSession -ComputerName "${{ parameters.vmIP }}" -Credential $credential
 
                       # Create backup for Production only
                       ${{ if eq(parameters.environment, 'Prod') }}:
@@ -91,7 +89,7 @@ stages:
                             Copy-Item -Path $path -Destination $backupPath -Recurse -Force
                             Write-Host "✅ Backup created"
                           }
-                        } -ArgumentList "$(frontendPath)"
+                        } -ArgumentList "${{ parameters.frontendPath }}"
 
                       # Copy scripts to remote server
                       Write-Host "📦 Copying deployment scripts to VM"
@@ -99,11 +97,11 @@ stages:
 
                       # Setup IIS Website
                       Write-Host "⚙️  Setting up IIS Website: ${{ parameters.siteName }}"
-                      Invoke-Command -Session $session -FilePath "C:\Temp\deploy-scripts\setup-iis-website.ps1" -ArgumentList "${{ parameters.siteName }}", "$(frontendPath)", ${{ parameters.port }}
+                      Invoke-Command -Session $session -FilePath "C:\Temp\deploy-scripts\setup-iis-website.ps1" -ArgumentList "${{ parameters.siteName }}", "${{ parameters.frontendPath }}", ${{ parameters.port }}
 
                       # Copy dist folder
-                      Write-Host "📦 Copying frontend files to $(frontendPath)"
-                      Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination "$(frontendPath)" -ToSession $session -Recurse -Force
+                      Write-Host "📦 Copying frontend files to ${{ parameters.frontendPath }}"
+                      Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination "${{ parameters.frontendPath }}" -ToSession $session -Recurse -Force
 
                       Write-Host "=========================================="
                       Write-Host "✅ ${{ parameters.environmentName }} frontend deployment completed successfully!"

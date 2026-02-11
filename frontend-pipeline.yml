@@ -23,8 +23,28 @@ stages:
     parameters:
       nodeVersion: $(nodeVersion)
 
-  # Deploy Stages (Dev/Prod based on branch)
-  - template: .pipelines/templates/deploy-stages.yml
+  # Deploy to Development (runs on develop branch)
+  - template: .pipelines/templates/deploy-stage.yml
     parameters:
-      appBaseName: 'codeji'
+      environment: "Dev"
+      environmentName: "$(EnvironmentName)"
+      siteName: "codeji-develop"
       port: 80
+      vmIP: "$(VM.IP)"
+      vmUser: "$(VM.User)"
+      vmPassword: "$(VM.Password)"
+      frontendPath: "$(DeployPath)"
+      condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))"
+
+  # Deploy to Production (runs on main branch)
+  - template: .pipelines/templates/deploy-stage.yml
+    parameters:
+      environment: "Prod"
+      environmentName: "$(EnvironmentName)"
+      siteName: "codeji-prod"
+      port: 80
+      vmIP: "$(VM.IP)"
+      vmUser: "$(VM.User)"
+      vmPassword: "$(VM.Password)"
+      frontendPath: "$(DeployPath)"
+      condition: "and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))"
