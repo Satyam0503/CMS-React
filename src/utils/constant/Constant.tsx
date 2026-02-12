@@ -57,6 +57,7 @@ import {
   Work,
 } from "@mui/icons-material";
 import PolicyIcon from "@mui/icons-material/Policy";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
@@ -1318,6 +1319,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.PayRoll,
         route: "/payroll",
         icon: <CurrencyRupee />,
+        isDefault: false,
+      },
+      {
+        id: Modules.PayrollSettings,
+        title: ModulesTitles.PayrollSettings,
+        constant: ModulesName.PayrollSettings,
+        route: "/settingspayroll",
+        icon: <ReceiptLongIcon />,
         isDefault: false,
       },
     ],
