@@ -16,10 +16,8 @@ parameters:
     default:
       - name: Dev
         branch: develop
-        environment: Development
       - name: Prod
         branch: main
-        environment: Production
 
 variables:
   nodeVersion: "18.x"
@@ -112,7 +110,7 @@ stages:
         jobs:
           - deployment: DeployTo${{ env.name }}
             displayName: "Deploy to ${{ env.name }} VM"
-            environment: "${{ env.environment }}.CODEJI-SERVER"
+            environment: "Development.CODEJI-SERVER"
             strategy:
               runOnce:
                 deploy:
@@ -143,13 +141,14 @@ stages:
                           Write-Host "=========================================="
 
                           # Create backup for Production only
-                          ${{ if eq(env.name, 'Prod') }}:
+                          if ("${{ env.name }}" -eq "Prod") {
                             if (Test-Path "$(DeployPath)codeji_$(env)/app") {
                               $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
                               $backupPath = "$(DeployPath)codeji_$(env)/app-backup-$timestamp"
                               Copy-Item -Path "$(DeployPath)codeji_$(env)/app" -Destination $backupPath -Recurse -Force
                               Write-Host "Backup created at: $backupPath"
                             }
+                          }
 
                           # Setup IIS Website
                           & "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/setup-iis-website.ps1" -SiteName "codeji-$(env)" -PhysicalPath "$(DeployPath)codeji_$(env)/app" -Port 80
