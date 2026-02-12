@@ -7,7 +7,7 @@ trigger:
       - develop
   paths:
     include:
-      - '*'
+      - "*"
 
 # Environment configuration - add new environments here
 parameters:
@@ -16,146 +16,147 @@ parameters:
     default:
       - name: Dev
         branch: develop
+        environment: Development
       - name: Prod
         branch: main
-
-pool:
-  name: pool-codeji
+        environment: Production
 
 variables:
-  nodeVersion: '18.x'
+  nodeVersion: "18.x"
 
 stages:
   # ============================================
   # Build Stage
   # ============================================
   - stage: Build
-    displayName: 'Build Frontend'
+    displayName: "Build Frontend"
+    pool:
+      vmImage: "windows-latest"
     jobs:
       - job: BuildJob
-        displayName: 'Build React App'
+        displayName: "Build React App"
         steps:
           - checkout: self
             fetchDepth: 1
 
           - task: NodeTool@0
-            displayName: 'Install Node.js'
+            displayName: "Install Node.js"
             inputs:
-              versionSpec: '$(nodeVersion)'
+              versionSpec: "$(nodeVersion)"
 
           - task: Npm@1
-            displayName: 'npm install'
+            displayName: "npm install"
             inputs:
-              command: 'install'
-              workingDir: '$(Build.SourcesDirectory)'
+              command: "install"
+              workingDir: "$(Build.SourcesDirectory)"
 
           - task: Npm@1
-            displayName: 'npm run lint'
+            displayName: "npm run lint"
             inputs:
-              command: 'custom'
-              customCommand: 'run lint'
-              workingDir: '$(Build.SourcesDirectory)'
+              command: "custom"
+              customCommand: "run lint"
+              workingDir: "$(Build.SourcesDirectory)"
             continueOnError: true
 
           - task: Npm@1
-            displayName: 'Build for Development'
+            displayName: "Build for Development"
             condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
             inputs:
-              command: 'custom'
-              customCommand: 'run build'
-              workingDir: '$(Build.SourcesDirectory)'
+              command: "custom"
+              customCommand: "run build"
+              workingDir: "$(Build.SourcesDirectory)"
             env:
-              NODE_ENV: 'development'
+              NODE_ENV: "development"
 
           - task: Npm@1
-            displayName: 'Build for Production'
+            displayName: "Build for Production"
             condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
             inputs:
-              command: 'custom'
-              customCommand: 'run build'
-              workingDir: '$(Build.SourcesDirectory)'
+              command: "custom"
+              customCommand: "run build"
+              workingDir: "$(Build.SourcesDirectory)"
             env:
-              NODE_ENV: 'production'
+              NODE_ENV: "production"
 
           - task: CopyFiles@2
-            displayName: 'Copy dist folder'
+            displayName: "Copy dist folder"
             inputs:
-              SourceFolder: '$(Build.SourcesDirectory)/dist'
-              Contents: '**'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)/dist'
+              SourceFolder: "$(Build.SourcesDirectory)/dist"
+              Contents: "**"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)/dist"
 
           - task: CopyFiles@2
-            displayName: 'Copy Deployment Scripts'
+            displayName: "Copy Deployment Scripts"
             inputs:
-              SourceFolder: '.pipelines'
-              Contents: '**'
-              TargetFolder: '$(Build.ArtifactStagingDirectory)/.pipelines'
+              SourceFolder: ".pipelines"
+              Contents: "**"
+              TargetFolder: "$(Build.ArtifactStagingDirectory)/.pipelines"
 
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifacts'
+            displayName: "Publish Artifacts"
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'frontend-drop'
-              publishLocation: 'Container'
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+              ArtifactName: "frontend-drop"
+              publishLocation: "Container"
 
   # ============================================
   # Deploy Stages - generated from environments
   # ============================================
   - ${{ each env in parameters.environments }}:
-    - stage: Deploy${{ env.name }}
-      displayName: 'Deploy to ${{ env.name }}'
-      dependsOn: Build
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ env.branch }}'))
-      variables:
-        - group: codeji-${{ lower(env.name) }}
-      jobs:
-        - deployment: DeployTo${{ env.name }}
-          displayName: 'Deploy to ${{ env.name }} VM'
-          environment: '${{ env.name }}'
-          strategy:
-            runOnce:
-              deploy:
-                steps:
-                  - download: current
-                    artifact: 'frontend-drop'
+      - stage: Deploy${{ env.name }}
+        displayName: "Deploy to ${{ env.name }}"
+        dependsOn: Build
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ env.branch }}'))
+        variables:
+          - group: codeji-${{ lower(env.name) }}
+        jobs:
+          - deployment: DeployTo${{ env.name }}
+            displayName: "Deploy to ${{ env.name }} VM"
+            environment: "${{ env.environment }}.CODEJI-SERVER"
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - download: current
+                      artifact: "frontend-drop"
 
-                  - task: PowerShell@2
-                    displayName: 'Generate .env file'
-                    inputs:
-                      targetType: 'filePath'
-                      filePath: '$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/generate-env.ps1'
-                      arguments: >
-                        -OutputPath "$(Pipeline.Workspace)/frontend-drop/dist"
-                        -BaseUrl "$(VITE_BASEURL)"
-                        -CaptchaSiteKey "$(VITE_CAPTCHA_SITE_KEY)"
-                        -I18nConfigKey "$(VITE_APP_I18N_CONFIG_KEY)"
+                    - task: PowerShell@2
+                      displayName: "Generate .env file"
+                      inputs:
+                        targetType: "filePath"
+                        filePath: "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/generate-env.ps1"
+                        arguments: >
+                          -OutputPath "$(Pipeline.Workspace)/frontend-drop/dist"
+                          -BaseUrl "$(VITE_BASEURL)"
+                          -CaptchaSiteKey "$(VITE_CAPTCHA_SITE_KEY)"
+                          -I18nConfigKey "$(VITE_APP_I18N_CONFIG_KEY)"
 
-                  - task: PowerShell@2
-                    displayName: 'Deploy to ${{ env.name }} Web Server'
-                    inputs:
-                      targetType: 'inline'
-                      script: |
-                        Write-Host "=========================================="
-                        Write-Host "Deploying Frontend to ${{ env.name }}"
-                        Write-Host "   Site: codeji-$(env)"
-                        Write-Host "   Path: $(DeployPath)codeji_$(env)/app"
-                        Write-Host "=========================================="
+                    - task: PowerShell@2
+                      displayName: "Deploy to ${{ env.name }} Web Server"
+                      inputs:
+                        targetType: "inline"
+                        script: |
+                          Write-Host "=========================================="
+                          Write-Host "Deploying Frontend to ${{ env.name }}"
+                          Write-Host "   Site: codeji-$(env)"
+                          Write-Host "   Path: $(DeployPath)codeji_$(env)/app"
+                          Write-Host "=========================================="
 
-                        # Create backup for Production only
-                        ${{ if eq(env.name, 'Prod') }}:
-                          if (Test-Path "$(DeployPath)codeji_$(env)/app") {
-                            $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-                            $backupPath = "$(DeployPath)codeji_$(env)/app-backup-$timestamp"
-                            Copy-Item -Path "$(DeployPath)codeji_$(env)/app" -Destination $backupPath -Recurse -Force
-                            Write-Host "Backup created at: $backupPath"
-                          }
+                          # Create backup for Production only
+                          ${{ if eq(env.name, 'Prod') }}:
+                            if (Test-Path "$(DeployPath)codeji_$(env)/app") {
+                              $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+                              $backupPath = "$(DeployPath)codeji_$(env)/app-backup-$timestamp"
+                              Copy-Item -Path "$(DeployPath)codeji_$(env)/app" -Destination $backupPath -Recurse -Force
+                              Write-Host "Backup created at: $backupPath"
+                            }
 
-                        # Setup IIS Website
-                        & "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/setup-iis-website.ps1" -SiteName "codeji-$(env)" -PhysicalPath "$(DeployPath)codeji_$(env)/app" -Port 80
+                          # Setup IIS Website
+                          & "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/setup-iis-website.ps1" -SiteName "codeji-$(env)" -PhysicalPath "$(DeployPath)codeji_$(env)/app" -Port 80
 
-                        # Copy dist folder
-                        Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination "$(DeployPath)codeji_$(env)/app" -Recurse -Force
+                          # Copy dist folder
+                          Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination "$(DeployPath)codeji_$(env)/app" -Recurse -Force
 
-                        Write-Host "=========================================="
-                        Write-Host "${{ env.name }} frontend deployment completed!"
-                        Write-Host "=========================================="
+                          Write-Host "=========================================="
+                          Write-Host "${{ env.name }} frontend deployment completed!"
+                          Write-Host "=========================================="
