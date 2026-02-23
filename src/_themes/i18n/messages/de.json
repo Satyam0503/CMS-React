@@ -480,6 +480,7 @@
     "STEPPER": {
       "CREATE_ACCOUNT": "Benutzerkonto erstellen",
       "EDIT_DATA": "Benutzerdaten bearbeiten",
+      "UPDATE_SALARY":"Mitarbeitergehalt aktualisieren",
       "ALLOCATE_LEAVE": "Urlaub für Mitarbeiter zuweisen"
     },
     "INVITE_EMP": {

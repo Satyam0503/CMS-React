@@ -1,23 +1,52 @@
-import { Badge, Card, Stack } from "@mui/material";
-import React, { useState } from "react";
+import { Card, Stack, IconButton } from "@mui/material";
+import { useState, useEffect } from "react";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useIntl } from "react-intl";
-import { FilterList, Add } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import {
-  countAppliedFilter,
   hasModuleFeaturePermission,
 } from "../../../utils/common";
-import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { useAppSelector } from "../../Redux/hooks";
 import { ModulesName, Permission } from "../../../utils/enums";
-import AddEditPayrollSettings from "./components/AddEditPayrollSettings";
+import { PayRollTableData } from "./components/PayRollSettingtable";
+import { PayRollDataModel, PayRollResponseModel } from "../payroll/models";
+import { Nullable } from "../../../utils/common_types";
+import dayjs, { Dayjs } from "dayjs";
+import { getEmployeePayRollData } from "../payroll/services";
+import { AddUpdateEmployeePayRoll } from "../payroll/AddUpdateEmployeePayRoll";
+import { UploadPayRollData } from "../payroll/components/UploadPayRollData";
+import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
+
+
+
+
+export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayjs } = {
+  employeeId: "",
+  basicPay: null,
+  paidDays: null,
+  bonus: null,
+  hra: null,
+  lta: null,
+  otherAllowance: null,
+  lossOfPayDays: null,
+  lossOfPay: null,
+  incomeTax: null,
+  healthInsurance: null,
+  payMonth: dayjs().subtract(1, "month"),
+}
 
 export default function PayrollSettings() {
   const { setPageTitle } = usePageData();
   const intl = useIntl();
+  const { formatMessage: i } = useIntl();
   const [search, setSearch] = useState("");
-  const [openModal, setOpenModal] = useState(false);
+  const [payMonth, setPayMonth] = useState<Dayjs | null>(dayjs().subtract(1, "month").startOf("day"));
+  const [payRollData, setPayRollData] = useState<PayRollResponseModel[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [initialValues, setInitialValues] = useState<typeof initialPayRollValues>(initialPayRollValues);
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
@@ -30,16 +59,30 @@ export default function PayrollSettings() {
     Permission.Create,
     userModulesPermissions,
   );
-  const hasEditPermission = hasModuleFeaturePermission(
-    ModulesName.PayrollSettings,
-    Permission.Edit,
-    userModulesPermissions,
-  );
 
-  function handleClose() {
-    setOpenModal(false);
+
+  const handleDateChange = (newValue: Dayjs | null) => {
+    setPayMonth(newValue);
+  }
+  const handlePageRefresh = () => {
+    setRefresh(!refresh);
   }
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setIsEdit(false);
+    setInitialValues(initialPayRollValues);
+  }
+
+
+  const handleRowClick = (row: PayRollResponseModel) => {
+    setInitialValues({
+      ...row.payData,
+      payMonth: payMonth!
+    })
+    setIsEdit(true);
+    setIsModalOpen(true);
+  }
   const handleSearchChange = (value: string) => {
     if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
       setPaginationValues({ ...paginationValues, pageNo: 0 });
@@ -47,37 +90,45 @@ export default function PayrollSettings() {
     setSearch(value.trim());
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "MODULES.PAYROLL_SETTINGS" }));
-  }, []);
-  return (
+    (async () => {
+      try {
+        const { data } = await getEmployeePayRollData({ employeeName: search, payMonth: payMonth! });
+        if (data.success) {
+          setPayRollData(data.methodResults)
+        }
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    })()
+  }, [search, payMonth, refresh]);
+  return (<>
     <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
       <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse">
         <SearchInput search={search} setSearch={handleSearchChange} />
-        <Stack direction="row" spacing={1}>
-          <Badge
-            anchorOrigin={{
-              horizontal: "left",
-              vertical: "top",
-            }}
-            color="primary"
-            // badgeContent={countAppliedFilter(jobFilters)}
-          >
-            <CustomIconButton
-              icon={<FilterList />}
-              ariaLabel="job filter"
-              // handleClick={handleFilterClick}
-            />
-          </Badge>
-          {hasAddPermission && (
-            <CustomIconButton
-              icon={<Add />}
-              handleClick={() => setOpenModal(true)}
-            />
-          )}
+        <Stack direction="row" className="align-items-end flex-wrap gap-2">
+          <CustomisedDatePicker
+            label={i({ id: "PAYROLL.SELECT_PAY_MONTH" })}
+            views={["month", "year"]}
+            value={payMonth}
+            maxDate={dayjs().subtract(1, "month")}
+            setValue={handleDateChange}
+          />
+          {hasAddPermission && <>
+            <UploadPayRollData handlePageRefresh={handlePageRefresh} />
+            <IconButton sx={{ height: 36, width: 36 }} onClick={() => setIsModalOpen(true)} >
+              <Add />
+            </IconButton>
+          </>}
         </Stack>
       </Stack>
-      <AddEditPayrollSettings open={openModal} handleClose={handleClose} />
+      < PayRollTableData payRollData={payRollData} handleRowClick={handleRowClick} />
     </Card>
+    {
+      isModalOpen && <AddUpdateEmployeePayRoll edit={isEdit} open={isModalOpen} initialValues={initialValues} handleClose={handleModalClose} handlePageRefresh={handlePageRefresh} />
+    }
+  </>
+
   );
 }

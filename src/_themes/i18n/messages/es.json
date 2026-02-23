@@ -481,6 +481,7 @@
     "STEPPER": {
       "CREATE_ACCOUNT": "Crear cuenta de usuario",
       "EDIT_DATA": "Editar datos del usuario",
+      "UPDATE_SALARY": "Actualizar salario del empleado",
       "ALLOCATE_LEAVE": "Asignar permisos al empleado"
     },
     "INVITE_EMP": {

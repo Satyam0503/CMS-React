@@ -73,3 +73,38 @@ export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
 export type GetAllEmployeeResponseData =
   ResponseData<GetAllEmployeeResponseModel>;
+
+export interface SalaryModel {
+  userId: string;
+  basicPay: number;
+  hra: number;
+  otherAllowance: number;
+  lta: number;
+  bonus: number;
+  healthInsurance: number;
+  grossSalary: number;
+  totalDeductions: number;
+  netSalary: number;
+  ctc: number;
+  effectiveFrom: Dayjs;
+  effectiveTo: Dayjs | null;
+  paymentFrequency: string;
+  currency: string;
+  status: string;
+}
+
+export type CreateEmployeeSalary = Pick<
+  SalaryModel,
+  | "userId"
+  | "basicPay"
+  | "hra"
+  | "otherAllowance"
+  | "lta"
+  | "bonus"
+  | "healthInsurance"
+  | "totalDeductions"
+  | "effectiveFrom"
+  | "effectiveTo"
+  | "paymentFrequency"
+  | "status"
+>;

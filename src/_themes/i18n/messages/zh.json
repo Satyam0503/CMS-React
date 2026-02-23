@@ -499,6 +499,7 @@
     "STEPPER": {
       "CREATE_ACCOUNT": "创建用户账号",
       "EDIT_DATA": "编辑用户数据",
+      "UPDATE_SALARY":"更新员工薪资",
       "ALLOCATE_LEAVE": "分配员工假期"
     },
     "INVITE_EMP": {

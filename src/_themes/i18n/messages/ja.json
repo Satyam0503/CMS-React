@@ -481,6 +481,7 @@
     "STEPPER": {
       "CREATE_ACCOUNT": "ユーザーアカウントを作成",
       "EDIT_DATA": "ユーザーデータを編集",
+      "UPDATE_SALARY": "従業員の給与を更新する",
       "ALLOCATE_LEAVE": "従業員の休暇を割り当てる"
     },
     "INVITE_EMP": {

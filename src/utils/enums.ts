@@ -72,7 +72,7 @@ export enum ModulesName {
   PayRoll = "PayRoll",
   CompanyDetails = "Company_Details",
   Policy = "Policy",
-  PayrollSettings = "Payroll_Settings"
+  PayrollSettings = "Payroll_Settings",
 }
 
 export enum ModulesTitles {
@@ -92,25 +92,25 @@ export enum ModulesTitles {
   PayRoll = "MODULES.PAYROLL",
   CompanyDetails = "MODULES.COMPANY_DETAILS",
   Policies = "MODULES.POLICIES",
-  PayrollSettings = "MODULES.PAYROLL_SETTINGS"
+  PayrollSettings = "MODULES.PAYROLL_SETTINGS",
 }
 
-export enum PayRollModuleTitles{
-  LeaveManagement= "Leave_Management",
-  Attendance= "Attendance",
-  PayRoll= "PayRoll",
-  PayRollSettings = "Payroll_Settings"
+export enum PayRollModuleTitles {
+  LeaveManagement = "Leave_Management",
+  Attendance = "Attendance",
+  PayRoll = "PayRoll",
+  PayRollSettings = "Payroll_Settings",
 }
 
-export enum RecruitmentModuleTitle{
-  Jobs= "Jobs",
-  Applications= "Applications",
-  ProcessLog= "Process_Log",
+export enum RecruitmentModuleTitle {
+  Jobs = "Jobs",
+  Applications = "Applications",
+  ProcessLog = "Process_Log",
 }
 
-export enum DefaultModles{
-  Employees= "Employees",
-  Calendar= "Calendar"
+export enum DefaultModles {
+  Employees = "Employees",
+  Calendar = "Calendar",
 }
 
 export enum Roles {
@@ -126,6 +126,12 @@ export enum TIME_PERIOD_MAP {
   LAST_SIX_MONTHS = 4,
   LAST_12_MONTHS = 5,
   LAST_TWO_WEEK = 7,
+}
+
+export enum SALARY_PERIOD {
+  MONTHLY = 1,
+  QUATERLY = 2,
+  YEARLY = 3,
 }
 
 export enum LANGUAGE {

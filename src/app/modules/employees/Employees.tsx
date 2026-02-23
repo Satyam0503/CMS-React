@@ -7,15 +7,26 @@ import {
   IconButton,
   Tooltip,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { Add, Drafts, FilterList, GridView, ViewList } from "@mui/icons-material";
+import {
+  Add,
+  Drafts,
+  FilterList,
+  GridView,
+  ViewList,
+} from "@mui/icons-material";
 
 import { useEffect, useMemo, useState } from "react";
 import { getAllEmployees, resendInvitationLink } from "./employeeServices";
 import { toast } from "react-toastify";
 
-import { getCustomStatusCodesErrorMessage, getModulePermissions, hasModuleFeaturePermission } from "../../../utils/common";
+import {
+  getCustomStatusCodesErrorMessage,
+  getModulePermissions,
+  hasModuleFeaturePermission,
+} from "../../../utils/common";
 import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { ModulesName, Permission } from "../../../utils/enums";
@@ -30,93 +41,116 @@ import {
 import { countAppliedFilter } from "../../../utils/common";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
-import { GridColDef, GridPaginationModel, GridRowParams } from "@mui/x-data-grid";
+import {
+  GridColDef,
+  GridPaginationModel,
+  GridRowParams,
+} from "@mui/x-data-grid";
 import { AvatarCell } from "../../shared/components/AvatarCell";
 import { CustomDataGrid } from "../../shared/components/CustomDataGrid";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
+import CustomisedButton from "../../shared/components/CustomisedButton";
 
 type ViewMode = "table" | "grid";
 
-const useEmployeeTableColumnList = (): GridColDef<GetAllEmployeeResponseModel>[] => {
-  const { formatMessage: i } = useIntl();
-  const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
-  const canInviteEmployee = hasModuleFeaturePermission(ModulesName.Employees, Permission.Create, modulePermission);
-  const onlineUsers = useAppSelector(state => state.onlineUsers.onlineUsers);
-  return [
-    {
-      field: "employeeId",
-      headerName: i({ id: "USER.EMP_ID" }),
-      description: i({ id: "USER.EMP_ID" }),
-      minWidth: 100,
-      hideable: false,
-      sortable: true,
-      resizable: false,
-      flex: 0.5,
-    },
-    {
-      field: "fullName",
-      headerName: i({ id: "FORM.FULL_NAME" }),
-      description: i({ id: "FORM.FULL_NAME" }),
-      minWidth: 200,
-      hideable: false,
-      sortable: false,
-      resizable: true,
-      display: "flex",
-      flex: 1,
-      renderCell: (param) => (
-        <AvatarCell
-          avatarSrc={param.row.fullProfileUrl}
-          title={param.row.fullName}
-          subTitle={param.row.jobRole}
-          hasBadge={onlineUsers.includes(param.row.userId)}
-        />
-      )
-    },
-    {
-      field: "email",
-      headerName: i({ id: "FORM.EMAIL" }),
-      description: i({ id: "FORM.EMAIL" }),
-      minWidth: 200,
-      hideable: false,
-      sortable: true,
-      resizable: false,
-      flex: 1,
-    },
-    {
-      field: "phoneNumber",
-      headerName: i({ id: "FORM.PHONE" }),
-      description: i({ id: "FORM.PHONE" }),
-      minWidth: 150,
-      sortable: false,
-      resizable: false,
-      flex: 1
-    },
-    {
-      field: "department",
-      headerName: i({ id: "FORM.DEPARTMENT" }),
-      description: i({ id: "FORM.DEPARTMENT" }),
-      minWidth: 180,
-      sortable: false,
-      resizable: false,
-      renderCell: (param) => <SetDepartmentName department={param.row.department} />,
-      flex: 1
-    },
-    ...(canInviteEmployee ? [{
-      field: "isVerified",
-      headerName: i({ id: "FORM.VERIFICATION" }),
-      description: i({ id: "FORM.VERIFICATION" }),
-      minWidth: 200,
-      sortable: true,
-      resizable: false,
-      display: "flex",
-      renderCell: (param) => {
-        return param.row.isVerified ? <StyleStatus className="success" label="COMMON.VERIFIED" /> : <InvitationMailButton userId={param.row.userId} />
+const useEmployeeTableColumnList =
+  (): GridColDef<GetAllEmployeeResponseModel>[] => {
+    const { formatMessage: i } = useIntl();
+    const modulePermission =
+      useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+    const canInviteEmployee = hasModuleFeaturePermission(
+      ModulesName.Employees,
+      Permission.Create,
+      modulePermission,
+    );
+    const onlineUsers = useAppSelector(
+      (state) => state.onlineUsers.onlineUsers,
+    );
+    return [
+      {
+        field: "employeeId",
+        headerName: i({ id: "USER.EMP_ID" }),
+        description: i({ id: "USER.EMP_ID" }),
+        minWidth: 100,
+        hideable: false,
+        sortable: true,
+        resizable: false,
+        flex: 0.5,
       },
-      flex: 1
-    } satisfies GridColDef<GetAllEmployeeResponseModel>] : [])
-  ]
-}
+      {
+        field: "fullName",
+        headerName: i({ id: "FORM.FULL_NAME" }),
+        description: i({ id: "FORM.FULL_NAME" }),
+        minWidth: 200,
+        hideable: false,
+        sortable: false,
+        resizable: true,
+        display: "flex",
+        flex: 1,
+        renderCell: (param) => (
+          <AvatarCell
+            avatarSrc={param.row.fullProfileUrl}
+            title={param.row.fullName}
+            subTitle={param.row.jobRole}
+            hasBadge={onlineUsers.includes(param.row.userId)}
+          />
+        ),
+      },
+      {
+        field: "email",
+        headerName: i({ id: "FORM.EMAIL" }),
+        description: i({ id: "FORM.EMAIL" }),
+        minWidth: 200,
+        hideable: false,
+        sortable: true,
+        resizable: false,
+        flex: 1,
+      },
+      {
+        field: "phoneNumber",
+        headerName: i({ id: "FORM.PHONE" }),
+        description: i({ id: "FORM.PHONE" }),
+        minWidth: 150,
+        sortable: false,
+        resizable: false,
+        flex: 1,
+      },
+      {
+        field: "department",
+        headerName: i({ id: "FORM.DEPARTMENT" }),
+        description: i({ id: "FORM.DEPARTMENT" }),
+        minWidth: 180,
+        sortable: false,
+        resizable: false,
+        renderCell: (param) => (
+          <SetDepartmentName department={param.row.department} />
+        ),
+        flex: 1,
+      },
+      ...(canInviteEmployee
+        ? [
+            {
+              field: "isVerified",
+              headerName: i({ id: "FORM.VERIFICATION" }),
+              description: i({ id: "FORM.VERIFICATION" }),
+              minWidth: 200,
+              sortable: true,
+              resizable: false,
+              display: "flex",
+              renderCell: (param) => {
+                return param.row.isVerified ? (
+                  <StyleStatus className="success" label="COMMON.VERIFIED" />
+                ) : (
+                  <InvitationMailButton userId={param.row.userId} />
+                );
+              },
+              flex: 1,
+            } satisfies GridColDef<GetAllEmployeeResponseModel>,
+          ]
+        : []),
+    ];
+  };
 
 const InvitationMailButton = (props: { userId: string }) => {
   const { formatMessage: i } = useIntl();
@@ -129,28 +163,37 @@ const InvitationMailButton = (props: { userId: string }) => {
       toast.success(i({ id: "TOAST.SUCCESS.INVITE_EMPLOYEE" }));
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(i({ id: getCustomStatusCodesErrorMessage(+error.message, "TOAST.FAILED.INVITE_EMPLOYEE") }));
+        toast.error(
+          i({
+            id: getCustomStatusCodesErrorMessage(
+              +error.message,
+              "TOAST.FAILED.INVITE_EMPLOYEE",
+            ),
+          }),
+        );
         return;
       }
       console.error("failed to send invitation link");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-  }
-  return (
-    loading ? <CircularProgress enableTrackSlot size="28px" thickness={4} /> :
-      <Tooltip title={i({ id: "TOOLTIP.SEND_INVITATION_LINK" })}>
-        <IconButton sx={{ padding: 0, border: 0 }} onClick={(e => {
+  };
+  return loading ? (
+    <CircularProgress enableTrackSlot size="28px" thickness={4} />
+  ) : (
+    <Tooltip title={i({ id: "TOOLTIP.SEND_INVITATION_LINK" })}>
+      <IconButton
+        sx={{ padding: 0, border: 0 }}
+        onClick={(e) => {
           sentInvitationMail();
           e.stopPropagation();
-        })}>
-          <Drafts />
-        </IconButton>
-      </Tooltip>
-  )
-}
-
+        }}
+      >
+        <Drafts />
+      </IconButton>
+    </Tooltip>
+  );
+};
 
 const Employees = () => {
   const { formatMessage: i } = useIntl();
@@ -168,16 +211,22 @@ const Employees = () => {
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
+  const [openCheckModal, setOpenCheckModal] = useState<boolean>(false);
+
+  function handleCloseCkeckModal() {
+    setOpenCheckModal(false);
+  }
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
   const id = open ? "employee-filter" : undefined;
 
-  const userModulesPermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
   const userPermissionForModule = useMemo(
     () => getModulePermissions(ModulesName.Employees, userModulesPermissions),
-    [userModulesPermissions]
+    [userModulesPermissions],
   );
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
@@ -197,11 +246,13 @@ const Employees = () => {
   const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
       pageNo: model.page,
-      records: model.pageSize
-    })
-  }
+      records: model.pageSize,
+    });
+  };
 
-  const rowClickHandler = (param: GridRowParams<GetAllEmployeeResponseModel>) => {
+  const rowClickHandler = (
+    param: GridRowParams<GetAllEmployeeResponseModel>,
+  ) => {
     const empId = param.row.userId;
     empId === currentEmpId
       ? navigate("/profile")
@@ -210,7 +261,7 @@ const Employees = () => {
 
   const handleViewChange = (
     event: React.MouseEvent<HTMLElement>,
-    nextView: ViewMode
+    nextView: ViewMode,
   ) => {
     setViewMode(nextView);
   };
@@ -293,15 +344,15 @@ const Employees = () => {
               />
             </Badge>
             {userPermissionForModule.includes(
-              `${ModulesName.Employees}.${Permission.Create}`
+              `${ModulesName.Employees}.${Permission.Create}`,
             ) && (
-                <CustomIconButton
-                  icon={<Add />}
-                  handleClick={() => setShowAddEmployeeStepper(true)}
-                  tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                  ariaLabel="Add employee"
-                />
-              )}
+              <CustomIconButton
+                icon={<Add />}
+                handleClick={() => setShowAddEmployeeStepper(true)}
+                tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                ariaLabel="Add employee"
+              />
+            )}
           </Stack>
           {open && (
             <EmployeeFilter
@@ -320,7 +371,10 @@ const Employees = () => {
             loading={isLoading}
             rowClickHandler={rowClickHandler}
             rowCount={totalRecords}
-            paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
+            paginationModel={{
+              page: paginationValues.pageNo,
+              pageSize: paginationValues.records,
+            }}
             handlePaginationModelChange={handlePaginationModelChange}
           />
         ) : (
