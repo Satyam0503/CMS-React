@@ -709,6 +709,8 @@
       "COMPANY_DETAIL": "会社詳細",
       "APPLICATIONS_MODULE": "アプリモジュール"
     },
+    "INSTALL_PLUGIN":  "プラグインをインストール",
+    "REMOVE_PLUGIN": "プラグインを削除",
     "APP_MODULE_NOTE": "会社に対して有効にしたいアプリモジュールを選択してください",
     "EDIT_BUTTON": "詳細を編集",
     "COMPANY_PROFILE": "会社プロフィール",

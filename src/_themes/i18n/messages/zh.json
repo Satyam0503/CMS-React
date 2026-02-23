@@ -722,6 +722,8 @@
       "COMPANY_DETAIL": "公司详情",
       "APPLICATIONS_MODULE": "应用模块"
     },
+    "INSTALL_PLUGIN": "安装插件",
+    "REMOVE_PLUGIN": "移除插件",
     "APP_MODULE_NOTE": "选择您希望为公司启用的应用模块",
     "EDIT_BUTTON": "编辑详情",
     "COMPANY_PROFILE": "公司简介",

@@ -97,7 +97,11 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               }}
             >
               <span className="label">
-                {isInstalled ? "Remove plugin" : "Install plugin"}
+                {formatMessage({
+                  id: isInstalled
+                    ? "COMPANY_DETAILS.REMOVE_PLUGIN"
+                    : "COMPANY_DETAILS.INSTALL_PLUGIN",
+                })}
               </span>
             </Button>
           </Stack>

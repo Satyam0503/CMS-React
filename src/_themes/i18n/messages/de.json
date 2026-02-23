@@ -700,6 +700,8 @@
       "COMPANY_DETAIL": "Firmendetails",
       "APPLICATIONS_MODULE": "Anwendungs-Module"
     },
+    "INSTALL_PLUGIN": "Plugin installieren",
+    "REMOVE_PLUGIN": "Plugin entfernen",
     "APP_MODULE_NOTE": "Wählen Sie aus, welche Anwendungs-Module für Ihr Unternehmen aktiviert werden sollen",
     "EDIT_BUTTON": "Details bearbeiten",
     "COMPANY_PROFILE": "Firmenprofil",
