@@ -701,6 +701,8 @@
       "COMPANY_DETAIL": "Detalles de la empresa",
       "APPLICATIONS_MODULE": "Módulos de la aplicación"
     },
+    "INSTALL_PLUGIN": "Instalar complemento",
+    "REMOVE_PLUGIN": "Eliminar complemento",
     "APP_MODULE_NOTE": "Selecciona qué módulos de la aplicación quieres habilitar para tu empresa",
     "EDIT_BUTTON": "Editar detalles",
     "COMPANY_PROFILE": "Perfil de la empresa",

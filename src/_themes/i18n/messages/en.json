@@ -731,6 +731,8 @@
       "COMPANY_DETAIL": "Company Details",
       "APPLICATIONS_MODULE": "Application Modules"
     },
+    "INSTALL_PLUGIN": "Install Plugin",
+    "REMOVE_PLUGIN": "Remove Plugin",
     "APP_MODULE_NOTE": "Select which application modules you want to be enabled for your company",
     "EDIT_BUTTON": "Edit Details",
     "COMPANY_PROFILE": "Company Profile",
