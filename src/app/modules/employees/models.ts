@@ -1,6 +1,9 @@
 import { Dayjs } from "dayjs";
 import { ResponseData } from "../../../utils/common_types";
-import { EmployeeByIdResponse } from "../users/models";
+import {
+  EmployeeByIdResponse,
+  EmployeeSalaryByIdResponse,
+} from "../users/models";
 
 export interface GetAllEmployeeResponseModel {
   userId: string;
@@ -71,6 +74,8 @@ export type EmployeeLeaveBalance = Array<{
 
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
 
+export type CreateEmployeeSalaryResponseData =
+  ResponseData<EmployeeSalaryByIdResponse>;
 export type GetAllEmployeeResponseData =
   ResponseData<GetAllEmployeeResponseModel>;
 

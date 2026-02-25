@@ -234,20 +234,18 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
               </div>
             </Slide>
           )}
-          {activeStep === AddEmployeeSteps.UPDATE_SALARY &&
-            salary &&
-            newEmployeeData && (
-              <Slide direction="left" in={open} mountOnEnter unmountOnExit>
-                <div>
-                  <UpdateEmployeeSalaryData
-                    employeeId={newEmployeeData.employeeId}
-                    handleButtonLoading={handleButtonLoading}
-                    onUserUpdate={incrementStep}
-                    formRef={salaryUpdateRef}
-                  />
-                </div>
-              </Slide>
-            )}
+          {activeStep === AddEmployeeSteps.UPDATE_SALARY && newEmployeeData && (
+            <Slide direction="left" in={open} mountOnEnter unmountOnExit>
+              <div>
+                <UpdateEmployeeSalaryData
+                  employeeId={newEmployeeData.employeeId}
+                  handleButtonLoading={handleButtonLoading}
+                  onUserUpdate={incrementStep}
+                  formRef={salaryUpdateRef}
+                />
+              </div>
+            </Slide>
+          )}
           {activeStep === AddEmployeeSteps.ALLOCATE_LEAVE &&
             newEmployeeData && (
               <Slide direction="left" in={open} mountOnEnter unmountOnExit>
@@ -287,6 +285,11 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
               {i({ id: "BUTTON.CLOSE" })}
             </Button>
           )}
+          {activeStep === AddEmployeeSteps.UPDATE_SALARY && (
+            <Button variant="outlined" onClick={handleClose}>
+              {i({ id: "BUTTON.CLOSE" })}
+            </Button>
+          )}
           {activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && (
             <Button variant="outlined" onClick={handleSkip}>
               {i({ id: "BUTTON.SKIP" })}
@@ -304,9 +307,11 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                   ? "BUTTON.INVITE"
                   : activeStep === AddEmployeeSteps.UPDATE_DATA
                     ? "BUTTON.UPDATE"
-                    : activeStep === AddEmployeeSteps.ALLOCATE_LEAVE
+                    : activeStep === AddEmployeeSteps.UPDATE_SALARY
                       ? "BUTTON.ASSIGN"
-                      : "BUTTON.CLOSE",
+                      : activeStep === AddEmployeeSteps.ALLOCATE_LEAVE
+                        ? "BUTTON.ASSIGN"
+                        : "BUTTON.CLOSE",
             })}
           </Button>
         </DialogActions>

@@ -2,6 +2,8 @@ import { deleteRequest, postRequest } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
+  CreateEmployeeSalary,
+  CreateEmployeeSalaryResponseData,
   EditEmployeeResponseData,
   GetAllEmployeePayloadModel,
   GetAllEmployeeResponseData,
@@ -12,11 +14,21 @@ import { EditEmployeePayloadModel } from "../users/models";
 
 export const updateEmployee = async (
   payload: EditEmployeePayloadModel,
-  userId: string
+  userId: string,
 ) => {
   return postRequest<EditEmployeePayloadModel, EditEmployeeResponseData>(
     `${ServiceUrl.UPDATE_EMPLOYEE}?userId=${userId}`,
-    payload
+    payload,
+  );
+};
+
+export const updateSalary = async (
+  payload: CreateEmployeeSalary,
+  userId: String,
+) => {
+  return postRequest<CreateEmployeeSalary, CreateEmployeeSalaryResponseData>(
+    `${ServiceUrl.UPDATE_SALARY}?userId=${userId}`,
+    payload,
   );
 };
 
@@ -27,7 +39,7 @@ export const deleteEmployee = async (employeeId: string) => {
 };
 
 export const getAllEmployees = async (
-  payload: GetAllEmployeePayloadModel | null = null
+  payload: GetAllEmployeePayloadModel | null = null,
 ) => {
   return postRequest<
     GetAllEmployeePayloadModel | null,
@@ -44,6 +56,6 @@ export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
 
 export const resendInvitationLink = (userId: string) => {
   return postRequest<undefined, ApiResponse>(
-    `${ServiceUrl.RESEND_INVITE_LINK}/${userId}`
+    `${ServiceUrl.RESEND_INVITE_LINK}/${userId}`,
   );
 };

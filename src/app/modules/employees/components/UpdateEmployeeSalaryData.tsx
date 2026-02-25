@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { useIntl } from "react-intl";
+import { updateSalary } from "../employeeServices";
 
 interface PropsTypes {
   employeeId: string;
@@ -37,12 +39,30 @@ const employeeSalaryInitialValues: CreateEmployeeSalary = {
 
 export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   const { employeeId, onUserUpdate, formRef, handleButtonLoading } = props;
-
+  const { formatMessage: i } = useIntl();
   const [age, setAge] = React.useState("");
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
   };
+
+  async function UpadteSalaryData(
+    values: CreateEmployeeSalary,
+    setSubmittng: (isSubmitting: boolean) => void,
+  ) {
+    const payload = {
+      ...values,
+    };
+    try {
+      const response = await updateSalary(payload, employeeId);
+      const { success, statusCode } = response.data;
+    } catch (error) {
+      console.error((error as Error).message);
+    } finally {
+      setSubmittng(false);
+      handleButtonLoading(false);
+    }
+  }
 
   const handleSubmit = () => {
     console.log("Hello");
@@ -52,7 +72,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       <Formik
         initialValues={employeeSalaryInitialValues}
         onSubmit={(values, { setSubmitting }) => {
-          handleSubmit();
+          UpadteSalaryData(values, setSubmitting);
         }}
       >
         {({

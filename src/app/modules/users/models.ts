@@ -1,6 +1,10 @@
 import { Dayjs } from "dayjs";
 import { EmployeeSearchModel, ResponseData } from "../../../utils/common_types";
-import { EmployeeModel } from "../employees/models";
+import {
+  CreateEmployeeSalary,
+  EmployeeModel,
+  SalaryModel,
+} from "../employees/models";
 
 export type UploadProfileResponseModel = ResponseData<string>;
 
@@ -62,6 +66,8 @@ export type EmployeeByIdResponse = EmployeeModel & {
   bankAccountNumber: number | null;
   totalWorkExperience: number;
 };
+
+export type EmployeeSalaryByIdResponse = CreateEmployeeSalary;
 
 export type NotificationModel = {
   userNotificationId: string;
