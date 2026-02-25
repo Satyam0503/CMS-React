@@ -418,6 +418,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Mensual",
       "YEARLY": "Anual",
+      "QUARTERLY": "Trimestral",
       "NONE": "Ninguno"
     }
   },
@@ -495,6 +496,17 @@
       "PERSONAL_INFO": "Información personal",
       "OHTER_INFO": "Otra información"
     },
+      "SALARY": {
+        "BASIC_PAY": "Salario base",
+        "HRA": "HRA",
+        "OTHER_ALLOWANCE": "Otras asignaciones",
+        "LTA": "LTA",
+        "BONUS": "Bono",
+        "HEALTH_INSURANCE": "Seguro de salud",
+        "TOTAL_DEDUCTIONS": "Deducciones totales",
+        "EFFECTIVE_FROM": "Válido desde",
+        "EFFECTIVE_TO": "Válido hasta"
+      },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurar asignación de permisos del empleado",
       "NOTE": "Seleccione los tipos de permisos que desea asignar a este empleado. Puede modificar los saldos más adelante desde el perfil del empleado.",

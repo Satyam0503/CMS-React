@@ -95,7 +95,7 @@ export interface SalaryModel {
   effectiveTo: Dayjs | null;
   paymentFrequency: string;
   currency: string;
-  status: string;
+  status: boolean;
 }
 
 export type CreateEmployeeSalary = Pick<

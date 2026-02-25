@@ -437,6 +437,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "每月",
       "YEARLY": "每年",
+      "QUARTERLY": "季度",
       "NONE": "无"
     }
   },
@@ -512,6 +513,17 @@
       "WORK_INFO": "工作信息",
       "PERSONAL_INFO": "个人信息",
       "OHTER_INFO": "其他信息"
+    },
+    "SALARY": {
+      "BASIC_PAY": "基本工资",
+      "HRA": "住房补贴",
+      "OTHER_ALLOWANCE": "其他津贴",
+      "LTA": "LTA",
+      "BONUS": "奖金",
+      "HEALTH_INSURANCE": "健康保险",
+      "TOTAL_DEDUCTIONS": "总扣除额",
+      "EFFECTIVE_FROM": "生效日期",
+      "EFFECTIVE_TO": "结束日期"
     },
     "LEAVE": {
       "ASSIGN_LEAVE": "设置员工休假分配",

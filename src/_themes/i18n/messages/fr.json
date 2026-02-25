@@ -418,6 +418,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Mensuel",
       "YEARLY": "Annuel",
+      "QUARTERLY": "Trimestriel",
       "NONE": "Aucun"
     }
   },
@@ -493,6 +494,17 @@
       "PERSONAL_INFO": "Informations personnelles",
       "OHTER_INFO": "Autres informations"
     },
+      "SALARY": {
+        "BASIC_PAY": "Salaire de base",
+        "HRA": "HRA",
+        "OTHER_ALLOWANCE": "Autres allocations",
+        "LTA": "LTA",
+        "BONUS": "Prime",
+        "HEALTH_INSURANCE": "Assurance santé",
+        "TOTAL_DEDUCTIONS": "Déductions totales",
+        "EFFECTIVE_FROM": "Valable à partir de",
+        "EFFECTIVE_TO": "Valable jusqu'au"
+      },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurer l’allocation de congés de l’employé",
       "NOTE": "Sélectionnez les types de congés que vous souhaitez attribuer à cet employé. Vous pourrez modifier les soldes plus tard dans le profil de l’employé.",

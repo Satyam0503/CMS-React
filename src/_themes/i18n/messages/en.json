@@ -431,6 +431,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Monthly",
       "YEARLY": "Yearly",
+      "QUARTERLY": "Quarterly",
       "NONE": "None"
     }
   },
@@ -508,6 +509,17 @@
       "WORK_INFO": "Work Information",
       "PERSONAL_INFO": "Personal Information",
       "OHTER_INFO": "Other Information"
+    },
+    "SALARY":{
+      "BASIC_PAY": "Basic Pay",
+      "HRA": "HRA",
+      "OTHER_ALLOWANCE": "Other Allowance",
+      "LTA": "LTA",
+      "BONUS": "Bonus",
+      "HEALTH_INSURANCE": "Health Insurance",
+      "TOTAL_DEDUCTIONS": "Total Deductions",
+      "EFFECTIVE_FROM": "Effective From",
+      "EFFECTIVE_TO": "Effective To"
     },
     "LEAVE": {
       "ASSIGN_LEAVE": "Set Up Employee Leave Allocation",

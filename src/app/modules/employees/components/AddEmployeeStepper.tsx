@@ -82,8 +82,9 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
   const [activeStep, setActiveSteps] = useState(0);
   const [newEmployeeData, setNewEmployeeData] =
     useState<InviteEmployeeResponse>();
-  const [salary, setSalary] = useState<CreateEmployeeSalary>();
-  const salaryUpdateRef = useRef<FormikProps<SalaryModel> | null>(null);
+  const salaryUpdateRef = useRef<FormikProps<CreateEmployeeSalary> | null>(
+    null,
+  );
   const inviteFormRef = useRef<FormikProps<InviteNewEmployeeModel> | null>(
     null,
   );
@@ -238,7 +239,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
             <Slide direction="left" in={open} mountOnEnter unmountOnExit>
               <div>
                 <UpdateEmployeeSalaryData
-                  employeeId={newEmployeeData.employeeId}
+                  userId={newEmployeeData.userId}
                   handleButtonLoading={handleButtonLoading}
                   onUserUpdate={incrementStep}
                   formRef={salaryUpdateRef}

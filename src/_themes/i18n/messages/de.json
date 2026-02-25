@@ -418,6 +418,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "Monatlich",
       "YEARLY": "Jährlich",
+      "QUARTERLY": "Vierteljährlich",
       "NONE": "Keine"
     }
   },
@@ -494,6 +495,17 @@
       "PERSONAL_INFO": "Persönliche Informationen",
       "OHTER_INFO": "Weitere Informationen"
     },
+      "SALARY": {
+        "BASIC_PAY": "Grundgehalt",
+        "HRA": "Wohnungszulage",
+        "OTHER_ALLOWANCE": "Sonstige Zulage",
+        "LTA": "LTA",
+        "BONUS": "Bonus",
+        "HEALTH_INSURANCE": "Krankenversicherung",
+        "TOTAL_DEDUCTIONS": "Gesamtabzüge",
+        "EFFECTIVE_FROM": "Gültig ab",
+        "EFFECTIVE_TO": "Gültig bis"
+      },
     "LEAVE": {
       "ASSIGN_LEAVE": "Urlaubszuweisung für Mitarbeiter einrichten",
       "NOTE": "Wählen Sie die Urlaubsarten aus, die Sie diesem Mitarbeiter zuweisen möchten. Sie können die Urlaubsstände später im Mitarbeiterprofil ändern.",

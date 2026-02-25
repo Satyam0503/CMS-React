@@ -1,6 +1,6 @@
 import { Grid, Stack } from "@mui/system";
 import { Formik, FormikProps } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { CreateEmployeeSalary, SalaryModel } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import {
@@ -14,11 +14,12 @@ import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicke
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useIntl } from "react-intl";
 import { updateSalary } from "../employeeServices";
+import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidationSchema";
 
 interface PropsTypes {
-  employeeId: string;
+  userId: string;
   onUserUpdate: (success: boolean) => void;
-  formRef: React.MutableRefObject<FormikProps<SalaryModel> | null>;
+  formRef: React.MutableRefObject<FormikProps<CreateEmployeeSalary> | null>;
   handleButtonLoading: (loading: boolean) => void;
 }
 
@@ -34,17 +35,12 @@ const employeeSalaryInitialValues: CreateEmployeeSalary = {
   effectiveFrom: dayjs(Date.now()),
   effectiveTo: null,
   paymentFrequency: "",
-  status: "",
+  status: true,
 };
 
 export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
-  const { employeeId, onUserUpdate, formRef, handleButtonLoading } = props;
+  const { userId, onUserUpdate, formRef, handleButtonLoading } = props;
   const { formatMessage: i } = useIntl();
-  const [age, setAge] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
-  };
 
   async function UpadteSalaryData(
     values: CreateEmployeeSalary,
@@ -52,10 +48,12 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   ) {
     const payload = {
       ...values,
+      userId,
     };
     try {
-      const response = await updateSalary(payload, employeeId);
+      const response = await updateSalary(payload, userId);
       const { success, statusCode } = response.data;
+      onUserUpdate(success);
     } catch (error) {
       console.error((error as Error).message);
     } finally {
@@ -63,10 +61,6 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
       handleButtonLoading(false);
     }
   }
-
-  const handleSubmit = () => {
-    console.log("Hello");
-  };
   return (
     <Stack spacing={2} sx={{ p: 1 }}>
       <Formik
@@ -74,6 +68,8 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         onSubmit={(values, { setSubmitting }) => {
           UpadteSalaryData(values, setSubmitting);
         }}
+        validationSchema={salaryValidationSchema}
+        innerRef={formRef}
       >
         {({
           values,
@@ -83,6 +79,10 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
           errors,
           handleSubmit,
         }) => {
+          useEffect(() => {
+            setFieldValue("userId", userId);
+          }, []);
+
           return (
             <form onSubmit={handleSubmit}>
               <Stack spacing={1}>
@@ -90,107 +90,147 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="Basic Pay"
+                      label={i({ id: "EMPLOYEE.SALARY.BASIC_PAY" })}
                       sx={{ width: "100%" }}
+                      required
+                      name="basicPay"
+                      value={values.basicPay}
+                      onChange={(e) => {
+                        setFieldValue("basicPay", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="HRA"
+                      label={i({ id: "EMPLOYEE.SALARY.HRA" })}
                       sx={{ width: "100%" }}
+                      name="hra"
+                      value={values.hra}
+                      onChange={(e) => {
+                        setFieldValue("hra", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="LTA"
+                      label={i({ id: "EMPLOYEE.SALARY.LTA" })}
                       sx={{ width: "100%" }}
+                      name="lta"
+                      value={values.lta}
+                      onChange={(e) => {
+                        setFieldValue("lta", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="Other Allowances"
+                      label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
                       sx={{ width: "100%" }}
+                      name="otherAllowance"
+                      value={values.otherAllowance}
+                      onChange={(e) => {
+                        setFieldValue("otherAllowance", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="Bonus"
+                      label={i({ id: "EMPLOYEE.SALARY.BONUS" })}
                       sx={{ width: "100%" }}
+                      name="bonus"
+                      value={values.bonus}
+                      onChange={(e) => {
+                        setFieldValue("bonus", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
                     <TextField
                       type="Number"
-                      placeholder="Health Insurance"
+                      label={i({ id: "EMPLOYEE.SALARY.HEALTH_INSURANCE" })}
                       sx={{ width: "100%" }}
+                      name="healthInsurance"
+                      value={values.healthInsurance}
+                      onChange={(e) => {
+                        setFieldValue("healthInsurance", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={12} sx={{ marginTop: "10px" }}>
                     <TextField
                       type="Number"
-                      placeholder="Total Deduction"
+                      label={i({ id: "EMPLOYEE.SALARY.TOTAL_DEDUCTIONS" })}
                       sx={{ width: "100%" }}
+                      name="totalDeductions"
+                      value={values.totalDeductions}
+                      onChange={(e) => {
+                        setFieldValue("totalDeductions", e.target.value);
+                      }}
                     />
                   </Grid>
                   <Grid size={12}>
                     <CustomisedDatePicker
-                      label="Effective From"
+                      label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_FROM" })}
                       value={
                         values.effectiveFrom
                           ? dayjs(values.effectiveFrom)
                           : null
                       }
                       setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("date", true);
-                        setFieldValue("date", newDate);
+                        setFieldTouched("effectiveFrom", true);
+                        setFieldValue("effectiveFrom", newDate);
                       }}
-                      name="date"
+                      name="effectiveFrom"
                     />
                   </Grid>
                   <Grid size={12}>
                     <CustomisedDatePicker
-                      label="Effective To"
+                      label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_TO" })}
                       value={
                         values.effectiveTo ? dayjs(values.effectiveTo) : null
                       }
                       setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("date", true);
-                        setFieldValue("date", newDate);
+                        setFieldTouched("effectiveTo", true);
+                        setFieldValue("effectiveTo", newDate);
                       }}
-                      name="date"
+                      name="effectiveTo"
                     />
                   </Grid>
                   <Grid size={12}>
-                    {/* <Select label="Payment Frequency" sx={{ width: "100%" }}>
-                      <MenuItem>Monthly</MenuItem>
-                      <MenuItem>Quaterly</MenuItem>
-                      <MenuItem>Yearly</MenuItem>
-                    </Select> */}
                     <div>
                       <FormControl
                         sx={{ minWidth: 80, width: "100%", marginTop: "10px" }}
                       >
                         <InputLabel id="demo-simple-select-autowidth-label">
-                          Payment Frequency
+                          {i({ id: "" })}
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-autowidth-label"
                           id="demo-simple-select-autowidth"
-                          value={age}
-                          onChange={handleChange}
+                          value={values.paymentFrequency}
+                          onChange={(e) => {
+                            setFieldValue("paymentFrequency", e.target.value);
+                          }}
                           autoWidth
                           label="Payment Frequency"
+                          name="paymentFrequency"
                         >
                           <MenuItem value="">
                             <em>None</em>
                           </MenuItem>
-                          <MenuItem>Monthly</MenuItem>
-                          <MenuItem>Quaterly</MenuItem>
-                          <MenuItem>Yearly</MenuItem>
+                          <MenuItem value="Monthly">
+                            {i({ id: "ACCRUAL_PERIOD.MONTHLY" })}
+                          </MenuItem>
+                          <MenuItem value="Quaterly">
+                            {i({ id: "ACCRUAL_PERIOD.QUARTERLY" })}
+                          </MenuItem>
+                          <MenuItem value="Yearly">
+                            {i({ id: "ACCRUAL_PERIOD.YEARLY" })}
+                          </MenuItem>
                         </Select>
                       </FormControl>
                     </div>

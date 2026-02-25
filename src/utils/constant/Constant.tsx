@@ -110,7 +110,7 @@ export const ServiceUrl = {
   CHANGE_PASSWORD: `api/User/ChangePassword`,
   UPDATE_PROFILE_PICTURE: `api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `api/User/EditEmployees`,
-  UPDATE_SALARY : `api/User/UpdateSalary`,
+  UPDATE_SALARY: `api/Salary/UpdateSalary`,
 
   GET_LAST_EMPLOYEE_ID: "api/User/GetLastEmployeeId",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,

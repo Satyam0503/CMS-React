@@ -417,6 +417,7 @@
     "ACCRUAL_PERIOD": {
       "MONTHLY": "毎月",
       "YEARLY": "毎年",
+      "QUARTERLY": "四半期ごと",
       "NONE": "なし"
     }
   },
@@ -495,6 +496,17 @@
       "PERSONAL_INFO": "個人情報",
       "OHTER_INFO": "その他の情報"
     },
+      "SALARY": {
+        "BASIC_PAY": "基本給",
+        "HRA": "住宅手当",
+        "OTHER_ALLOWANCE": "その他手当",
+        "LTA": "LTA",
+        "BONUS": "ボーナス",
+        "HEALTH_INSURANCE": "健康保険",
+        "TOTAL_DEDUCTIONS": "総控除額",
+        "EFFECTIVE_FROM": "開始日",
+        "EFFECTIVE_TO": "終了日"
+      },
     "LEAVE": {
       "ASSIGN_LEAVE": "従業員の休暇割り当てを設定",
       "NOTE": "この従業員に割り当てたい休暇タイプを選択してください。休暇残高は後で従業員プロフィールから変更できます。",
