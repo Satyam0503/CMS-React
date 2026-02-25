@@ -523,7 +523,8 @@
       "HEALTH_INSURANCE": "健康保险",
       "TOTAL_DEDUCTIONS": "总扣除额",
       "EFFECTIVE_FROM": "生效日期",
-      "EFFECTIVE_TO": "结束日期"
+      "EFFECTIVE_TO": "结束日期",
+      "PAYMENT_FREQUENCY": "付款频率"
     },
     "LEAVE": {
       "ASSIGN_LEAVE": "设置员工休假分配",

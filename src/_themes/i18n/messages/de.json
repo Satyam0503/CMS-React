@@ -504,7 +504,8 @@
         "HEALTH_INSURANCE": "Krankenversicherung",
         "TOTAL_DEDUCTIONS": "Gesamtabzüge",
         "EFFECTIVE_FROM": "Gültig ab",
-        "EFFECTIVE_TO": "Gültig bis"
+        "EFFECTIVE_TO": "Gültig bis",
+        "PAYMENT_FREQUENCY": "Zahlungshäufigkeit"
       },
     "LEAVE": {
       "ASSIGN_LEAVE": "Urlaubszuweisung für Mitarbeiter einrichten",

@@ -505,7 +505,8 @@
         "HEALTH_INSURANCE": "Seguro de salud",
         "TOTAL_DEDUCTIONS": "Deducciones totales",
         "EFFECTIVE_FROM": "Válido desde",
-        "EFFECTIVE_TO": "Válido hasta"
+        "EFFECTIVE_TO": "Válido hasta",
+        "PAYMENT_FREQUENCY": "Frecuencia de pago"
       },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurar asignación de permisos del empleado",

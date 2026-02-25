@@ -519,7 +519,8 @@
       "HEALTH_INSURANCE": "Health Insurance",
       "TOTAL_DEDUCTIONS": "Total Deductions",
       "EFFECTIVE_FROM": "Effective From",
-      "EFFECTIVE_TO": "Effective To"
+      "EFFECTIVE_TO": "Effective To",
+      "PAYMENT_FREQUENCY": "Payment Frequency"
     },
     "LEAVE": {
       "ASSIGN_LEAVE": "Set Up Employee Leave Allocation",

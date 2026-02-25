@@ -206,7 +206,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                         sx={{ minWidth: 80, width: "100%", marginTop: "10px" }}
                       >
                         <InputLabel id="demo-simple-select-autowidth-label">
-                          {i({ id: "" })}
+                          {i({ id: "EMPLOYEE.SALARY.PAYMENT_FREQUENCY" })}
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-autowidth-label"

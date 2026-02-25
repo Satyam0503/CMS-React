@@ -503,7 +503,8 @@
         "HEALTH_INSURANCE": "Assurance santé",
         "TOTAL_DEDUCTIONS": "Déductions totales",
         "EFFECTIVE_FROM": "Valable à partir de",
-        "EFFECTIVE_TO": "Valable jusqu'au"
+        "EFFECTIVE_TO": "Valable jusqu'au",
+        "PAYMENT_FREQUENCY": "Fréquence de paiement"
       },
     "LEAVE": {
       "ASSIGN_LEAVE": "Configurer l’allocation de congés de l’employé",
