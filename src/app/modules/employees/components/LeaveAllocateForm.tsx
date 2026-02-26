@@ -33,6 +33,7 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
                 if (data.success) {
                     setLeavePolicies(data.methodResults);
                 }
+                console.log("pilicesss",data);
             } catch (error) {
                 console.error((error as Error).message);
             }
@@ -58,7 +59,13 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
                     handleLeaveAllocation();
                 }
                 else {
-                    toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
+                    const errorId = getCustomStatusCodesErrorMessage(data.statusCode);
+
+                    toast.error(
+                    errorId
+                        ? i({ id: errorId })
+                        : "Something went wrong"
+                    );
                 }
             } catch (error) {
                 console.error((error as Error).message);
@@ -145,7 +152,7 @@ export const LeaveAllocateForm = ({ formRef, employeeId, handleLeaveAllocation, 
 
                                                         <Typography variant="body1">
                                                             {i({ id: "EMPLOYEE.LEAVE.ACCRUAL_PERIOD" })} :
-                                                            {i({ id: AccrualPeriodMapper[item.accrualPeriod] })}
+                                                            {i({ id: item.accrualPeriod })}
                                                         </Typography>
 
                                                         <Typography variant="body1">

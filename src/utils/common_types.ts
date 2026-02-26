@@ -76,6 +76,7 @@ export type LeavesModel = {
   message: string;
 };
 export type AttendanceModel = {
+  [x: string]: any;
   id: string;
   target: string;
   type: string;
@@ -103,8 +104,8 @@ export type ColumnListTypes = {
   permission?: boolean;
 };
 
-// Api respone data types
 export interface ResponseData<T> {
+  items: never[];
   message: string;
   success: boolean;
   totalRecords: number;
@@ -152,6 +153,7 @@ export interface TabModel {
   title: string;
   icon: JSX.Element;
   tabId: number;
+  isActive?: boolean;
 }
 
 export type EmployeeSearchModel = {
@@ -181,7 +183,6 @@ export interface DateRangeFilter {
   filterTo: null | Dayjs | string;
 }
 
-// nullable utility type
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;

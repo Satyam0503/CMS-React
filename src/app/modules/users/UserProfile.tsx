@@ -9,7 +9,7 @@ import {
 import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 import { TabModel } from "../../../utils/common_types";
@@ -36,39 +36,6 @@ const employeeBreadCrumbs: Array<Breadcrumb> = [
   },
 ];
 
-const tabsRoutes: TabModel[] = [
-  {
-    tabId: 1,
-    to: "about",
-    title: "PROFILE.TABS.ABOUT",
-    icon: <Person />,
-  },
-  {
-    tabId: 2,
-    to: "leave",
-    title: "PROFILE.TABS.LEAVE_TRACKER",
-    icon: <CalendarMonth />,
-  },
-  {
-    tabId: 3,
-    to: "performance",
-    title: "PROFILE.TABS.PERFORMANCE",
-    icon: <Speed />,
-  },
-  {
-    tabId: 4,
-    to: "workhistory",
-    title: "PROFILE.TABS.WORKHISTORY",
-    icon: <WorkHistory />,
-  },
-  {
-    tabId: 5,
-    to: "setting",
-    title: "PROFILE.TABS.SETTING",
-    icon: <Settings />,
-  },
-];
-
 const UserProfile = () => {
   const { formatMessage: i } = useIntl();
   const navigate = useNavigate();
@@ -76,16 +43,66 @@ const UserProfile = () => {
   const { setPageTitle } = usePageData();
   const empId = useParams().employeeid;
   // const employeeId = useParams().employeeid;
-
-  const modulePermission =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userRoleType = useAppSelector(
+    (state) => state.user.userData?.roleType!,
+  );
+  const modulePermission = useAppSelector(
+    (state) => state.user.userData?.modulePermission,
+  );
+  const userModulePermission = modulePermission ?? [];
 
   useEffect(() => {
     setPageTitle(i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
     setBreadcrumbs(employeeBreadCrumbs);
   }, []);
 
-  // console.log(year);
+  const isLeaveActive = useMemo(
+    () =>
+      hasModuleFeaturePermission(
+        ModulesName.NoticeBoard,
+        Permission.View,
+        userModulePermission,
+      ),
+    [userModulePermission],
+  );
+
+  const tabsRoutes: TabModel[] = [
+    {
+      tabId: 1,
+      to: "about",
+      title: "PROFILE.TABS.ABOUT",
+      icon: <Person />,
+      isActive: true,
+    },
+    {
+      tabId: 2,
+      to: "leave",
+      title: "PROFILE.TABS.LEAVE_TRACKER",
+      icon: <CalendarMonth />,
+      isActive: isLeaveActive,
+    },
+    {
+      tabId: 3,
+      to: "performance",
+      title: "PROFILE.TABS.PERFORMANCE",
+      icon: <Speed />,
+      isActive: true,
+    },
+    {
+      tabId: 4,
+      to: "workhistory",
+      title: "PROFILE.TABS.WORKHISTORY",
+      icon: <WorkHistory />,
+      isActive: true,
+    },
+    {
+      tabId: 5,
+      to: "setting",
+      title: "PROFILE.TABS.SETTING",
+      icon: <Settings />,
+      isActive: true,
+    },
+  ];
 
   const filteredTabs = tabsRoutes.filter((tab) => {
     if (tab.to === "leave") {
@@ -94,7 +111,7 @@ const UserProfile = () => {
         hasModuleFeaturePermission(
           ModulesName.LeaveManagement,
           Permission.View,
-          modulePermission
+          modulePermission!,
         )
       );
     }
@@ -161,20 +178,22 @@ const UserProfile = () => {
                 const tabTo = empId
                   ? `employees/${empId}/${tab.to}`
                   : `profile/${tab.to}`;
-                return (
-                  <Box
-                    component="div"
-                    key={tab.tabId}
-                    className={clsx("tab-box", {
-                      tab_active: checkIsActive(location.pathname, tabTo),
-                    })}
-                    onClick={() => navigate(tab.to)}
-                    sx={{ color: "text.secondary" }}
-                  >
-                    {tab.icon}
-                    {i({ id: tab.title })}
-                  </Box>
-                );
+                if (tab.isActive) {
+                  return (
+                    <Box
+                      component="div"
+                      key={tab.tabId}
+                      className={clsx("tab-box", {
+                        tab_active: checkIsActive(location.pathname, tabTo),
+                      })}
+                      onClick={() => navigate(tab.to)}
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {tab.icon}
+                      {i({ id: tab.title })}
+                    </Box>
+                  );
+                }
               })}
             </Card>
             <Box component="div" className="flex-grow-1">

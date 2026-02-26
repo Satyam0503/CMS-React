@@ -81,7 +81,7 @@ export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
 export const I18N_CONFIG_KEY =
-  import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
+import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
 export const DEFAULT_USER_AVATAR = "/media/avatars/default-emp-imag.jpg";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
@@ -208,6 +208,12 @@ export const ServiceUrl = {
   ADD_AND_UPDATE_CALENDAR_ITEMS: `api/Calendar/AddUpdateCalendarItem`,
   DELETE_CALENDAR_ITEM: `api/Calendar/DeleteCalendarItem`,
   GET_HOLIDAYS: "api/Calendar/GetHolidays",
+
+  //Attendance
+  GET_ALL_ATTENDANCE: `/api/admin/attendance/GetAllAttendanceItems`,
+  CREATE_AND_UPDATE_ATTENDANCE: `/api/admin/attendance`,
+  DELETE_ATTENDANCE: `api/admin/attendance/DeleteAttendance`, 
+  
 
   // leave management
   CREATE_UPDATE_LEAVE_TYPE: `api/LeaveManagement/CreateUpdateLeaveType`,
@@ -1609,4 +1615,19 @@ export const TimePeriodOptions = [
     value: 365,
     name: "DATETIME.LAST_12_MONTHS",
   },
+];
+
+export const modules_description = [
+  { name: "Employees", description: "EMPLOYEES_DESCRIPTION" },
+  { name: "Calendar", description: "CALENDAR_DESCRIPTION" },
+  { name: "Applications", description: "APPLICATIONS_DESCRIPTION" },
+  { name: "Policy", description: "POLICY_DESCRIPTION" },
+
+  { name: "Attendance", description: "ATTENDANCE_DESCRIPTION" },
+  { name: "Notice_Board", description: "NOTICE_BOARD_DESCRIPTION" },
+  { name: "Process_Log", description: "PROCESS_LOG_DESCRIPTION" },
+
+  { name: "Leave_Management", description: "LEAVE_MANAGEMENT_DESCRIPTION" },
+  { name: "Jobs", description: "JOBS_DESCRIPTION" },
+  { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
 ];
