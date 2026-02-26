@@ -240,6 +240,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
               <div>
                 <UpdateEmployeeSalaryData
                   userId={newEmployeeData.userId}
+                  employeeId={newEmployeeData.employeeId}
                   handleButtonLoading={handleButtonLoading}
                   onUserUpdate={incrementStep}
                   formRef={salaryUpdateRef}

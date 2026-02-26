@@ -18,6 +18,7 @@ import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidatio
 
 interface PropsTypes {
   userId: string;
+  employeeId: string;
   onUserUpdate: (success: boolean) => void;
   formRef: React.MutableRefObject<FormikProps<CreateEmployeeSalary> | null>;
   handleButtonLoading: (loading: boolean) => void;
@@ -25,6 +26,7 @@ interface PropsTypes {
 
 const employeeSalaryInitialValues: CreateEmployeeSalary = {
   userId: "",
+  employeeId: "",
   basicPay: 0,
   hra: 0,
   otherAllowance: 0,
@@ -39,7 +41,8 @@ const employeeSalaryInitialValues: CreateEmployeeSalary = {
 };
 
 export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
-  const { userId, onUserUpdate, formRef, handleButtonLoading } = props;
+  const { userId, employeeId, onUserUpdate, formRef, handleButtonLoading } =
+    props;
   const { formatMessage: i } = useIntl();
 
   async function UpadteSalaryData(
@@ -49,9 +52,10 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     const payload = {
       ...values,
       userId,
+      employeeId,
     };
     try {
-      const response = await updateSalary(payload, userId);
+      const response = await updateSalary(payload, userId, employeeId);
       const { success, statusCode } = response.data;
       onUserUpdate(success);
     } catch (error) {
@@ -223,13 +227,13 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                             <em>None</em>
                           </MenuItem>
                           <MenuItem value="Monthly">
-                            {i({ id: "ACCRUAL_PERIOD.MONTHLY" })}
+                            {i({ id: "LEAVE.ACCRUAL_PERIOD.MONTHLY" })}
                           </MenuItem>
                           <MenuItem value="Quaterly">
-                            {i({ id: "ACCRUAL_PERIOD.QUARTERLY" })}
+                            {i({ id: "LEAVE.ACCRUAL_PERIOD.QUARTERLY" })}
                           </MenuItem>
                           <MenuItem value="Yearly">
-                            {i({ id: "ACCRUAL_PERIOD.YEARLY" })}
+                            {i({ id: "LEAVE.ACCRUAL_PERIOD.YEARLY" })}
                           </MenuItem>
                         </Select>
                       </FormControl>

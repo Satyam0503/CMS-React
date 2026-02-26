@@ -81,6 +81,7 @@ export type GetAllEmployeeResponseData =
 
 export interface SalaryModel {
   userId: string;
+  employeeId: string;
   basicPay: number;
   hra: number;
   otherAllowance: number;
@@ -101,6 +102,7 @@ export interface SalaryModel {
 export type CreateEmployeeSalary = Pick<
   SalaryModel,
   | "userId"
+  | "employeeId"
   | "basicPay"
   | "hra"
   | "otherAllowance"

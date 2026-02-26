@@ -25,6 +25,7 @@ export const updateEmployee = async (
 export const updateSalary = async (
   payload: CreateEmployeeSalary,
   userId: String,
+  employeeId: String,
 ) => {
   return postRequest<CreateEmployeeSalary, CreateEmployeeSalaryResponseData>(
     `${ServiceUrl.UPDATE_SALARY}`,
