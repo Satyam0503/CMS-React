@@ -39,7 +39,7 @@ export default function PayrollSettings() {
   const { formatMessage: i } = useIntl();
   const [search, setSearch] = useState("");
   const [payMonth, setPayMonth] = useState<Dayjs | null>(
-    dayjs().subtract(1, "month").startOf("day"),
+    dayjs().startOf("day"),
   );
   const [payRollData, setPayRollData] = useState<PayRollResponseModel[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -114,20 +114,9 @@ export default function PayrollSettings() {
               label={i({ id: "PAYROLL.SELECT_PAY_MONTH" })}
               views={["month", "year"]}
               value={payMonth}
-              maxDate={dayjs().subtract(1, "month")}
               setValue={handleDateChange}
+              disabled
             />
-            {hasAddPermission && (
-              <>
-                <UploadPayRollData handlePageRefresh={handlePageRefresh} />
-                <IconButton
-                  sx={{ height: 36, width: 36 }}
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <Add />
-                </IconButton>
-              </>
-            )}
           </Stack>
         </Stack>
         <PayRollTableData
