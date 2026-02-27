@@ -110,12 +110,29 @@ export const ApplicationsChart = () => {
               color: theme.vars?.palette.primary.main
             }]}
             hideLegend={true}
-            xAxis={
-              [{
-                scaleType: 'band', data: applicationData.applicationStatusData.map(item => i({ id: applicationStatusMapper[item.activityType] })), tickPlacement: "middle", tickLabelPlacement: "middle", categoryGapRatio: 0.3,
-                barGapRatio: 0.5,
-              }]
-            }
+      xAxis={[
+            {
+              scaleType: "band",
+              data: applicationData.applicationStatusData.map((item) => {
+                let key = applicationStatusMapper[item.activityType];
+
+                if (!key && item.activityType !== undefined && item.activityType !== null) {
+                  key = `STATUS.${String(item.activityType)}`;
+                }
+
+                return i({
+                  id: key || "STATUS.UNKNOWN",
+                  defaultMessage: String(item.activityType ?? ""),
+                });
+              }),
+              tickPlacement: "middle",
+              tickLabelPlacement: "middle",
+              categoryGapRatio: 0.3,
+              barGapRatio: 0.5,
+            },
+          ]}
+
+
             slotProps={{
               legend: {
                 direction: 'horizontal',

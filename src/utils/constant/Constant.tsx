@@ -82,7 +82,7 @@ export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
 export const I18N_CONFIG_KEY =
-  import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
+import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
 export const DEFAULT_USER_AVATAR = "/media/avatars/default-emp-imag.jpg";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
@@ -210,6 +210,12 @@ export const ServiceUrl = {
   ADD_AND_UPDATE_CALENDAR_ITEMS: `api/Calendar/AddUpdateCalendarItem`,
   DELETE_CALENDAR_ITEM: `api/Calendar/DeleteCalendarItem`,
   GET_HOLIDAYS: "api/Calendar/GetHolidays",
+
+  //Attendance
+  GET_ALL_ATTENDANCE: `/api/admin/attendance/GetAllAttendanceItems`,
+  CREATE_AND_UPDATE_ATTENDANCE: `/api/admin/attendance`,
+  DELETE_ATTENDANCE: `api/admin/attendance/DeleteAttendance`, 
+  
 
   // leave management
   CREATE_UPDATE_LEAVE_TYPE: `api/LeaveManagement/CreateUpdateLeaveType`,

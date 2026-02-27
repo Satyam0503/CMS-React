@@ -1,10 +1,12 @@
 import { Stack } from "@mui/system";
+
 import {
   DataGrid,
   gridClasses,
   GridColDef,
   GridPaginationModel,
   GridRowParams,
+  GridRowSelectionModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
 
@@ -19,6 +21,9 @@ interface Props<R extends GridValidRowModel> {
   paginationModel?: GridPaginationModel;
   rowCount?: number;
   handlePaginationModelChange?: (model: GridPaginationModel) => void;
+  checkboxSelection?: boolean;
+  onRowSelectionModelChange?: (ids: GridRowSelectionModel) => void;
+
 }
 
 export const CustomDataGrid = <R extends GridValidRowModel>(
@@ -60,6 +65,10 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
         rowCount={props.rowCount}
         getRowId={getRowKey}
         hideFooterPagination={props.hidePagination ?? false}
+       checkboxSelection={props.checkboxSelection}
+        onRowSelectionModelChange={props.onRowSelectionModelChange}
+
+
         sx={{
           borderInline: 0,
           backgroundColor: "transparent",
