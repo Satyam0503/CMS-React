@@ -53,19 +53,20 @@ const EmployeeAttendance = () => {
   const theme = useTheme();
 
   const [selectedDay, setSelectedDay] = React.useState("today");
-  const [AttendanceList, setAttendanceList] = React.useState<AttendanceModel[]>([]);
+  const [AttendanceList, setAttendanceList] = React.useState<AttendanceModel[]>(
+    [],
+  );
   const [Employee, setEmployee] = React.useState<any[]>([]);
   const [rowPerPage] = React.useState<number>(10);
   const [isLoading, setLoading] = React.useState(false);
   const [page] = React.useState(0);
   const [searchValue, setSearchValue] = React.useState("");
   const [attendanceStats, setAttendanceStats] = React.useState({
-
-  present: 0,
-  absent: 0,
-  late: 0,
-  total: 0,
-});
+    present: 0,
+    absent: 0,
+    late: 0,
+    total: 0,
+  });
   const debouncedSearch = useDebounce(searchValue, 500);
 
   useEffect(() => {
@@ -101,9 +102,6 @@ const EmployeeAttendance = () => {
     setSelectedDay(event.target.value);
   };
 
-
-
-
   const employeesForCalendar = React.useMemo(() => {
     return Employee.map((emp) => ({
       id: emp.userId,
@@ -116,7 +114,6 @@ const EmployeeAttendance = () => {
 
   return (
     <Grid container spacing={2}>
-      
       {/* ----------- Stats Cards ----------- */}
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -127,7 +124,6 @@ const EmployeeAttendance = () => {
                 iconColor="info.dark"
                 icon={<EventAvailable fontSize="large" />}
                 number={attendanceStats.present}
-
                 title="Present"
               />
             </CardContent>
@@ -155,8 +151,7 @@ const EmployeeAttendance = () => {
                 iconBg={theme.palette.secondary.lighter}
                 icon={<EventBusy fontSize="large" />}
                 iconColor="warning.light"
-               number={attendanceStats.absent}
-
+                number={attendanceStats.absent}
                 title="Absent"
               />
             </CardContent>
@@ -171,7 +166,6 @@ const EmployeeAttendance = () => {
                 icon={<SupervisorAccount fontSize="large" />}
                 iconColor="primary.main"
                 number={attendanceStats.total}
-
                 title="Total"
               />
             </CardContent>
@@ -180,7 +174,10 @@ const EmployeeAttendance = () => {
       </Grid>
 
       {/* ----------- Filter ----------- */}
-      <Grid size={{ xs: 12 }} sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <Grid
+        size={{ xs: 12 }}
+        sx={{ display: "flex", justifyContent: "flex-end" }}
+      >
         <Select
           name="days"
           value={selectedDay}
@@ -201,18 +198,6 @@ const EmployeeAttendance = () => {
           <Typography variant="h6" sx={{ mb: 3 }}>
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
-
-          <Box sx={{ mb: 3 }}>
-            <AttendanceCalendarGrid
-            employees={employeesForCalendar}
-            searchValue={debouncedSearch}
-            onStatsChange={setAttendanceStats}
-              selectedDay={selectedDay}  
-          />
-
-
-          </Box>
-
           <Stack
             direction="row"
             justifyContent="space-between"
@@ -222,23 +207,21 @@ const EmployeeAttendance = () => {
           >
             <SearchInput search={searchValue} setSearch={handleSearchChange} />
 
-            <Stack direction="row" spacing={1}>
+            {/* <Stack direction="row" spacing={1}>
               <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
               <CustomIconButton tooltip="Add Attendance" icon={<Add />} />
               <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-            </Stack>
+            </Stack> */}
           </Stack>
 
-        <CustomisedTable
-        tabName="Attendance"
-        columns={AttendanceMangementTableColumnList}
-        rows={AttendanceList}
-        keyName="userId"
-        page={page}
-        rowsPerPage={rowPerPage}
-        loading={isLoading}
-      />
-
+          <Box sx={{ mb: 3 }}>
+            <AttendanceCalendarGrid
+              employees={employeesForCalendar}
+              searchValue={debouncedSearch}
+              onStatsChange={setAttendanceStats}
+              selectedDay={selectedDay}
+            />
+          </Box>
         </Card>
       </Grid>
     </Grid>
