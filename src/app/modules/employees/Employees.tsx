@@ -11,7 +11,7 @@ import {
 import { useIntl } from "react-intl";
 import { Add, Drafts, FilterList, GridView, ViewList } from "@mui/icons-material";
 
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getAllEmployees, resendInvitationLink } from "./employeeServices";
 import { toast } from "react-toastify";
 
@@ -32,9 +32,14 @@ import { usePageData } from "../../Context/PageDataProvider";
 import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
 import { GridColDef, GridPaginationModel, GridRowParams } from "@mui/x-data-grid";
 import { AvatarCell } from "../../shared/components/AvatarCell";
-import { CustomDataGrid } from "../../shared/components/CustomDataGrid";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
+
+const CustomDataGrid = lazy(() =>
+  import("../../shared/components/CustomDataGrid").then((module) => ({
+    default: module.CustomDataGrid,
+  }))
+) as typeof import("../../shared/components/CustomDataGrid")["CustomDataGrid"];
 
 type ViewMode = "table" | "grid";
 
@@ -313,16 +318,18 @@ const Employees = () => {
           )}
         </Stack>
         {viewMode === "table" ? (
-          <CustomDataGrid
-            columns={columns}
-            row={employeeList}
-            keyName="userId"
-            loading={isLoading}
-            rowClickHandler={rowClickHandler}
-            rowCount={totalRecords}
-            paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
-            handlePaginationModelChange={handlePaginationModelChange}
-          />
+          <Suspense fallback={null}>
+            <CustomDataGrid
+              columns={columns}
+              row={employeeList}
+              keyName="userId"
+              loading={isLoading}
+              rowClickHandler={rowClickHandler}
+              rowCount={totalRecords}
+              paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.records }}
+              handlePaginationModelChange={handlePaginationModelChange}
+            />
+          </Suspense>
         ) : (
           <EmployeeGridView employeeList={employeeList} isLoading={isLoading} />
         )}

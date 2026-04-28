@@ -11,7 +11,7 @@ import {
   getAllJobVacancies,
 } from "../services";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { GetAllVacancyPayload, JobModal } from "../models";
@@ -42,8 +42,13 @@ import {
 } from "@mui/x-data-grid";
 import clsx from "clsx";
 import { StyleStatus } from "../../../shared/components/StyledStatus";
-import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
 import { Box } from "@mui/system";
+
+const CustomDataGrid = lazy(() =>
+  import("../../../shared/components/CustomDataGrid").then((module) => ({
+    default: module.CustomDataGrid,
+  }))
+) as typeof import("../../../shared/components/CustomDataGrid")["CustomDataGrid"];
 
 const initialValues: JobModal = {
   jobId: "",
@@ -373,19 +378,21 @@ export default function Jobs() {
           )}
         </Stack>
       </Stack>
-      <CustomDataGrid
-        keyName="jobId"
-        loading={loading}
-        columns={columnList}
-        row={jobList}
-        rowClickHandler={handleEditJob}
-        rowCount={totalRecords}
-        paginationModel={{
-          page: paginationValues.pageNo,
-          pageSize: paginationValues.records,
-        }}
-        handlePaginationModelChange={handlePaginationModelChange}
-      />
+      <Suspense fallback={null}>
+        <CustomDataGrid
+          keyName="jobId"
+          loading={loading}
+          columns={columnList}
+          row={jobList}
+          rowClickHandler={handleEditJob}
+          rowCount={totalRecords}
+          paginationModel={{
+            page: paginationValues.pageNo,
+            pageSize: paginationValues.records,
+          }}
+          handlePaginationModelChange={handlePaginationModelChange}
+        />
+      </Suspense>
       {isConfirmationModalOpen && selectedJob && (
         <ConfirmationModal
           title={i({

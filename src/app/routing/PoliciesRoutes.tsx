@@ -1,10 +1,23 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble"
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute";
 import { ModulesName } from "../../utils/enums";
-import { Policies } from "../modules/policies/Policies";
-import { PolicyVersions } from "../modules/policies/components/PolicyVersions";
+
+const Policies = lazy(() =>
+  import("../modules/policies/Policies").then((module) => ({
+    default: module.Policies,
+  }))
+);
+const PolicyVersions = lazy(() =>
+  import("../modules/policies/components/PolicyVersions").then((module) => ({
+    default: module.PolicyVersions,
+  }))
+);
+
+const SuspensedView = ({ children }: { children: JSX.Element }) => {
+  return <Suspense fallback={null}>{children}</Suspense>;
+};
 
 
 const policyBreadCrumbs: Array<Breadcrumb> = [
@@ -31,12 +44,16 @@ const PoliciesRoutes = () => {
                 <Route index element={<Navigate to="/companypolicy/policies" />} />
                 <Route path="policies" element={
                     <ProtectedRoute module={ModulesName.Policy}>
-                        <Policies />
+                        <SuspensedView>
+                            <Policies />
+                        </SuspensedView>
                     </ProtectedRoute>
                 } />
                 <Route path="policies/:policyId" element={
                     <ProtectedRoute module={ModulesName.Policy}>
-                        <PolicyVersions />
+                        <SuspensedView>
+                            <PolicyVersions />
+                        </SuspensedView>
                     </ProtectedRoute>
                 } />
                 <Route path="*" element={<Navigate to={"/error/404"} />} />
