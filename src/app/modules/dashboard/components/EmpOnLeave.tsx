@@ -17,7 +17,9 @@ export default function EmpOnLeave() {
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
   const [isLoading, setLoading] = useState(true);
   const { currentLanguage } = useAppLang();
-  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const defaultLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage ?? ""
+  );
 
   useEffect(() => {
     const fetchLeaveRequest = async () => {

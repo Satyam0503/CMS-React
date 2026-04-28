@@ -43,18 +43,15 @@ const UserProfile = () => {
   const { setPageTitle } = usePageData();
   const empId = useParams().employeeid;
   // const employeeId = useParams().employeeid;
-  const userRoleType = useAppSelector(
-    (state) => state.user.userData?.roleType!,
-  );
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
   );
-  const userModulePermission = modulePermission ?? [];
+  const userModulePermission = useMemo(() => modulePermission ?? [], [modulePermission]);
 
   useEffect(() => {
     setPageTitle(i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" }));
     setBreadcrumbs(employeeBreadCrumbs);
-  }, []);
+  }, [empId, i, setBreadcrumbs, setPageTitle]);
 
   const isLeaveActive = useMemo(
     () =>
@@ -111,7 +108,7 @@ const UserProfile = () => {
         hasModuleFeaturePermission(
           ModulesName.LeaveManagement,
           Permission.View,
-          modulePermission!,
+          modulePermission ?? [],
         )
       );
     }

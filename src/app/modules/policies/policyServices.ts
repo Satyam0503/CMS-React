@@ -47,7 +47,7 @@ export const deletePolicyVersion = (policyVersionId: string) => {
 
 
 export const getPolicyDocument = async (policyVersionId: string) => {
-  return  getRequest<ApiResponse>(`${ServiceUrl.GET_POLICY_DOCUMENT}/${policyVersionId}`, {
+  return getRequest<ArrayBuffer>(`${ServiceUrl.GET_POLICY_DOCUMENT}/${policyVersionId}`, {
     responseType: "arraybuffer",
   });
 };

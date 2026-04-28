@@ -10,10 +10,6 @@ import {
   Work,
 } from "@mui/icons-material";
 
-type Props = {
-  className: string;
-};
-
 export default function Achievements() {
   const intl = useIntl();
   return (

@@ -59,14 +59,14 @@ export const UserCertification = () => {
     try {
       if (isEdit) {
         const response = await updateEmployeeCertification(values);
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (success) {
           toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.UPDATE_CERTIFICATION" }));
           setRefresh(!refresh);
         }
       } else {
         const response = await addEmployeeCertification(values);
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (success) {
           toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.ADD_CERTIFICATION" }));
           setRefresh(!refresh);
@@ -111,7 +111,7 @@ export const UserCertification = () => {
           selectedCertificationId,
           employeeId
         );
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (success) {
           toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
           closeConfirmationModal();
@@ -135,7 +135,7 @@ export const UserCertification = () => {
       .catch((error) => {
         console.log(error.message);
       });
-  }, [refresh]);
+  }, [employeeId, refresh]);
 
 
   return (

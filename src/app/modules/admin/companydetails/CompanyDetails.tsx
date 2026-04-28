@@ -47,7 +47,7 @@ const CompanyDetails = () => {
   const { currentLanguage } = useAppLang();
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.COMPANY_DETAILS" }));
-  }, [currentLanguage]);
+  }, [currentLanguage, formatMessage, setPageTitle]);
 
   return (
     <Box className="d-flex flex-column flex-grow-1">

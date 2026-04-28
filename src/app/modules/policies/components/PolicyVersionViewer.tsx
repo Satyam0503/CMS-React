@@ -43,7 +43,7 @@ export default function PolicyVersionViewer(props: Props) {
       try {
         const res = await getPolicyDocument(policyVersionId);
         const mimeType = getMimeType(documentType);
-        const blob = new Blob([res.data], { type: mimeType });
+        const blob = new Blob([res.data as BlobPart], { type: mimeType });
         const url = URL.createObjectURL(blob);
         setDocumentUrl(url);
       } catch (error) {

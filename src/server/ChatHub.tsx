@@ -5,6 +5,7 @@ class ChatHub {
     private static instance: ChatHub | null = null;
     private connection: signalR.HubConnection | null = null;
     private onReadyCallbacks: (() => void)[] = [];
+    private activeToken: string | null = null;
 
     private constructor() { }
 
@@ -16,25 +17,37 @@ class ChatHub {
     }
 
     public startConnection = async (token: string) => {
-        if (this.connection?.state === signalR.HubConnectionState.Connected
-            || this.connection?.state === signalR.HubConnectionState.Connecting
-        ) return;
+        const currentState = this.connection?.state;
+        if (
+            currentState === signalR.HubConnectionState.Connected ||
+            currentState === signalR.HubConnectionState.Connecting ||
+            currentState === signalR.HubConnectionState.Reconnecting
+        ) {
+            return;
+        }
 
-        this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${BaseUrl}${ServiceUrl.CHAT_HUB}`, {
-                accessTokenFactory: () => token,
-            })
-            .withAutomaticReconnect()
-            .build();
+        if (this.connection && this.activeToken !== token) {
+            await this.stopConnection();
+        }
 
-        this.connection.onreconnected(() => {
-            console.log("Reconnected to SignalR hub");
-            this.notifyReady();
-        });
+        if (!this.connection) {
+            this.activeToken = token;
+            this.connection = new signalR.HubConnectionBuilder()
+                .withUrl(`${BaseUrl}${ServiceUrl.CHAT_HUB}`, {
+                    accessTokenFactory: () => this.activeToken ?? "",
+                })
+                .withAutomaticReconnect()
+                .build();
 
-        this.connection.onclose((err) => {
-            console.warn("SignalR connection closed", err);
-        });
+            this.connection.onreconnected(() => {
+                // Optionally add logging here for development only
+                this.notifyReady();
+            });
+
+            this.connection.onclose((err) => {
+                console.warn("SignalR connection closed", err);
+            });
+        }
 
         try {
             await this.connection.start();
@@ -61,6 +74,7 @@ class ChatHub {
         if (this.connection) {
             await this.connection.stop();
             this.connection = null;
+            this.activeToken = null;
             this.onReadyCallbacks = [];
         }
     };

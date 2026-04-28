@@ -20,7 +20,6 @@ import {
 } from "../../../../../utils/common_types";
 import { CircularLoader } from "../../../../shared/components/CircularLoader";
 import { AddEditRoleModel } from "../../models";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -63,7 +62,7 @@ export const AddPermission = () => {
       }
     };
     getAllPermissions();
-  }, []);
+  }, [formatMessage, setPageTitle]);
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -121,7 +120,7 @@ export const AddPermission = () => {
     };
     try {
       const response = await addEditRole(payload);
-      const { success, message } = response.data;
+      const { success } = response.data;
       if (success) {
         navigate("/admin/roles");
       }

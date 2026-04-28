@@ -1,8 +1,7 @@
-import { createContext, FC, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { getEmployeeById } from "./userservices";
 import { useParams } from "react-router-dom";
 import { EmployeeByIdResponse } from "./models";
-import { CircularLoader } from "../../shared/components/CircularLoader";
 
 type UserDataContextType = {
   userDetails: EmployeeByIdResponse;

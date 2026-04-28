@@ -94,7 +94,7 @@ const CompanyMaster = () => {
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.COMPANY_MASTER" }));
-  }, []);
+  }, [i, setPageTitle]);
 
   useEffect(() => {
     // fetch company custom attributes

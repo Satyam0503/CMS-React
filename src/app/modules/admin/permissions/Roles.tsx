@@ -1,11 +1,11 @@
-import { Typography, Stack, Card } from "@mui/material";
+import { Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedTable } from "../../../shared/components/CustomisedTable";
 import { RoleTableColumnList } from "../../../../utils/constant/Constant";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { useNavigate } from "react-router-dom";
 import { Add } from "@mui/icons-material";
-import { ModulesName, Permission } from "../../../../utils/enums";
+import { ModulesName } from "../../../../utils/enums";
 import { useEffect, useState } from "react";
 import { RoleModel } from "../models";
 import { getAllRoles } from "../adminservices";
@@ -32,7 +32,7 @@ export const Roles = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [intl, setPageTitle]);
 
   return (
     <>

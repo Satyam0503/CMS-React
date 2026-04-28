@@ -167,13 +167,13 @@ export const CompanyInfo = () => {
         const { success, methodResult } = response.data;
         if (success) {
           setCompanyInfo(methodResult);
-          setEditedInfo({
-            ...editedInfo,
+          setEditedInfo((prev) => ({
+            ...prev,
             companyName: methodResult.companyName,
             defaultLanguage: methodResult.defaultLanguage,
             applicationLanguage: methodResult.applicationLanguage,
             address: methodResult.address
-          });
+          }));
           setLoading(false);
         }
       }

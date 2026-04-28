@@ -4,7 +4,6 @@ import ReactCrop, {
   centerCrop,
   Crop,
   makeAspectCrop,
-  PercentCrop,
   PixelCrop,
 } from "react-image-crop";
 import { Box, Stack, Typography } from "@mui/material";
@@ -101,7 +100,7 @@ export const ImageCropper: FC<Props> = ({
     setCrop(crop);
   };
 
-  const onCropComplete = (crop: PixelCrop, pixelCrop: PercentCrop) => {
+  const onCropComplete = (crop: PixelCrop) => {
     if (!imgSrc || imageRef.current === null) return;
     const canvas = document.createElement("canvas");
     canvasPreview(imageRef.current, canvas, crop);
@@ -116,7 +115,7 @@ export const ImageCropper: FC<Props> = ({
         </Typography>
         <ReactCrop
           crop={crop}
-          onChange={(pixelCrop, percentCrop) => {
+          onChange={(_, percentCrop) => {
             setCrop(percentCrop);
           }}
           circularCrop={circularCrop}

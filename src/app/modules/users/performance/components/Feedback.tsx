@@ -3,10 +3,6 @@ import { useIntl } from "react-intl";
 import { Announcement, CalendarToday } from "@mui/icons-material";
 import HalfRating from "../../../../shared/components/HalfRating";
 
-type Props = {
-  className: string;
-};
-
 export default function Feedback() {
   const intl = useIntl();
   return (
