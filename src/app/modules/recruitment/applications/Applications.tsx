@@ -4,7 +4,7 @@ import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ApplicationPreview } from "./components/ApplicationPreview";
@@ -26,9 +26,14 @@ import { usePageData } from "../../../Context/PageDataProvider";
 import { GridActionsCell, GridActionsCellItem, GridColDef, GridPaginationModel, GridRenderCellParams, GridRowParams } from "@mui/x-data-grid";
 import { StyleStatus } from "../../../shared/components/StyledStatus";
 import clsx from "clsx";
-import { CustomDataGrid } from "../../../shared/components/CustomDataGrid";
 import { PaginationModel } from "../../../../utils/common_types";
 import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
+
+const CustomDataGrid = lazy(() =>
+  import("../../../shared/components/CustomDataGrid").then((module) => ({
+    default: module.CustomDataGrid,
+  }))
+) as typeof import("../../../shared/components/CustomDataGrid")["CustomDataGrid"];
 
 const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
   const { formatMessage: i } = useIntl();
@@ -309,16 +314,18 @@ export const Applications = () => {
           )}
         </Stack>
 
-        <CustomDataGrid
-          keyName="applicantId"
-          loading={loading}
-          columns={columnList}
-          row={applicationsList}
-          rowClickHandler={rowClickHandler}
-          rowCount={totalRecords}
-          paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.pageSize }}
-          handlePaginationModelChange={handlePaginationModelChange}
-        />
+        <Suspense fallback={null}>
+          <CustomDataGrid
+            keyName="applicantId"
+            loading={loading}
+            columns={columnList}
+            row={applicationsList}
+            rowClickHandler={rowClickHandler}
+            rowCount={totalRecords}
+            paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.pageSize }}
+            handlePaginationModelChange={handlePaginationModelChange}
+          />
+        </Suspense>
 
       </Card>
       {isAddModalOpen && (

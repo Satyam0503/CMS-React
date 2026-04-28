@@ -1,4 +1,4 @@
-import { Stack, Typography, Grid, Card, Avatar, Button } from "@mui/material";
+import { Stack, Typography, Grid } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Message } from "@mui/icons-material";
 import CustomisedButton from "../../../shared/components/CustomisedButton";

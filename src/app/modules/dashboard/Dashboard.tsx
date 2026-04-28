@@ -21,15 +21,10 @@ import { usePageData } from "../../Context/PageDataProvider";
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
-  const userRoleType = useAppSelector(
-    (state) => state.user.userData?.roleType!,
-  );
-  const modulePermission = useAppSelector(
-    (state) => state.user.userData?.modulePermission,
-  );
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector(
+    (state) => state.user.userData?.modulePermission ?? []
+  );
 
   const hasAccessToEmpModule = useMemo(
     () =>
@@ -63,7 +58,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setPageTitle("");
-  }, []);
+  }, [setPageTitle]);
 
   return (
     <React.Fragment>

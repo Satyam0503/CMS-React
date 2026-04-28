@@ -1,10 +1,13 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
-import { FC } from "react";
+import { FC, Suspense, lazy } from "react";
 
 import { useIntl } from "react-intl";
-import DonutApexChart from "../../../shared/components/DonutApexChart";
-import Feedback from "./components/Feedback";
-import Achievements from "./components/Achievements";
+
+const DonutApexChart = lazy(
+  () => import("../../../shared/components/DonutApexChart")
+);
+const Feedback = lazy(() => import("./components/Feedback"));
+const Achievements = lazy(() => import("./components/Achievements"));
 
 export const UserPerformance: FC = () => {
   const intl = useIntl();
@@ -25,29 +28,33 @@ export const UserPerformance: FC = () => {
             </Typography>
           </Stack>
 
-          <Stack direction={{ xs: "column", sm: "row" }}>
-            <DonutApexChart
-              height={150}
-              series={[132, 323]}
-              labels={["Present", "Holidays"]}
-            />
+          <Suspense fallback={null}>
+            <Stack direction={{ xs: "column", sm: "row" }}>
+              <DonutApexChart
+                height={150}
+                series={[132, 323]}
+                labels={["Present", "Holidays"]}
+              />
 
-            <DonutApexChart
-              height={150}
-              series={[132, 323]}
-              labels={["Present", "Holidays"]}
-            />
+              <DonutApexChart
+                height={150}
+                series={[132, 323]}
+                labels={["Present", "Holidays"]}
+              />
 
-            <DonutApexChart
-              height={150}
-              series={[4]}
-              labels={["Rating"]}
-              showLabelOnHover={true}
-            />
-          </Stack>
+              <DonutApexChart
+                height={150}
+                series={[4]}
+                labels={["Rating"]}
+                showLabelOnHover={true}
+              />
+            </Stack>
+          </Suspense>
         </Card>
-        <Feedback />
-        <Achievements />
+        <Suspense fallback={null}>
+          <Feedback />
+          <Achievements />
+        </Suspense>
       </Grid>
     </>
   );

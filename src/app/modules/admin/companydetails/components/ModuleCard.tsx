@@ -3,12 +3,8 @@ import {
   Card,
   Stack,
   Typography,
-  Chip,
-  IconButton,
-  Tooltip,
   Button,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { ModulesInfoModel } from "../../models";
 import { DefaultModles } from "../../../../../utils/enums";
 import AddIcon from "@mui/icons-material/Add";

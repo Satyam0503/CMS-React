@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import Typography from "@mui/material/Typography";
-import { FormHelperText, Grid, MenuItem, Stack } from "@mui/material";
+import { Grid, MenuItem, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";

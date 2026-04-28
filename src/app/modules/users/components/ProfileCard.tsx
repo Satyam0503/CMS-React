@@ -29,7 +29,6 @@ import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
 import {
   LANGUAGE,
-  Modules,
   ModulesName,
   Permission,
 } from "../../../../utils/enums";
@@ -49,13 +48,10 @@ export default function ProfileCard() {
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const userRoleType = useAppSelector(
-    (state) => state.user.userData?.roleType!,
-  );
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
   );
-  const userModulePermission = modulePermission ?? [];
+  const userModulePermission = useMemo(() => modulePermission ?? [], [modulePermission]);
 
   const handleClose = () => {
     setOpen(false);

@@ -5,6 +5,7 @@ import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
 class Connector {
     private static instance: Connector | null = null;
     private connection: signalR.HubConnection | null = null;
+    private activeToken: string | null = null;
 
     private constructor() { }
 
@@ -16,22 +17,36 @@ class Connector {
     }
 
     public startConnection = async (token: string) => {
-        if (this.connection) return;
+        const currentState = this.connection?.state;
+        if (
+            currentState === signalR.HubConnectionState.Connected ||
+            currentState === signalR.HubConnectionState.Connecting ||
+            currentState === signalR.HubConnectionState.Reconnecting
+        ) {
+            return;
+        }
 
-        this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(`${BaseUrl}${ServiceUrl.NOTIFICATION_HUB}`, {
-                accessTokenFactory: () => token,
-            })
-            .withAutomaticReconnect()
-            .build();
+        if (this.connection && this.activeToken !== token) {
+            await this.stopConnection();
+        }
 
-        this.connection.onreconnected(() => {
-            console.log("Reconnected to SignalR hub");
-        });
+        if (!this.connection) {
+            this.activeToken = token;
+            this.connection = new signalR.HubConnectionBuilder()
+                .withUrl(`${BaseUrl}${ServiceUrl.NOTIFICATION_HUB}`, {
+                    accessTokenFactory: () => this.activeToken ?? "",
+                })
+                .withAutomaticReconnect()
+                .build();
 
-        this.connection.onclose((err) => {
-            console.warn("SignalR connection closed", err);
-        });
+            this.connection.onreconnected(() => {
+                // Optionally add logging here for development only
+            });
+
+            this.connection.onclose((err) => {
+                console.warn("SignalR connection closed", err);
+            });
+        }
 
         try {
             await this.connection.start();
@@ -44,6 +59,7 @@ class Connector {
         if (this.connection) {
             await this.connection.stop();
             this.connection = null;
+            this.activeToken = null;
         }
     };
 

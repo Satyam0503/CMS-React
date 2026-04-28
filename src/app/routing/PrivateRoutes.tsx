@@ -6,7 +6,6 @@ import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute
 import { ModulesName } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
-import PayrollSettings from "../modules/payrollsettings/PayrollSettings.tsx";
 
 const Admin = lazy(() => import("../modules/admin/adminRoutes.tsx"));
 const Recruitment = lazy(() => import("./RecruitmentRoutes.tsx"));
@@ -24,6 +23,9 @@ const LeaveManagement = lazy(
 );
 const PayRollManagement = lazy(
   () => import("../modules/payroll/PayRollManagement.tsx"),
+);
+const PayrollSettings = lazy(
+  () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
 
 const PrivateRoutes = () => {

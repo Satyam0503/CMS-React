@@ -1,6 +1,6 @@
 import { Box, IconButton, Switch, TextField } from "@mui/material";
-import React, { ChangeEvent, FC, useEffect, useState } from "react";
-import { Delete, Edit } from "@mui/icons-material";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Delete } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
@@ -32,11 +32,11 @@ export const AttributeItemRow = <T extends ReqProps>({
   const [item, setItem] = useState<T>(structuredClone(itemData));
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
+    (state) => state.user.userData?.defaultLanguage ?? ""
   );
   const translatedTitle = item.titles[translationLanguage];
   const currentTitle = item.titles[currentLanguage];
-  const [error, setError] = useState(false);
+  const [, setError] = useState(false);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,10 +61,7 @@ export const AttributeItemRow = <T extends ReqProps>({
     }
   };
 
-  const handleSwitchChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => {
+  const handleSwitchChange = (checked: boolean) => {
     const updateItem = {
       ...item,
       isActive: checked,
@@ -110,7 +107,7 @@ export const AttributeItemRow = <T extends ReqProps>({
             value={currentTitle ?? ""}
             onChange={handleChange}
             onBlur={validateAndUpdateNewItemData}
-            error={!Boolean(currentTitle?.length)}
+            error={!currentTitle?.length}
             required
           />
           <TextField
@@ -120,7 +117,10 @@ export const AttributeItemRow = <T extends ReqProps>({
             onChange={handleChange}
             onBlur={validateAndUpdateNewItemData}
           />
-          <Switch checked={item.isActive} onChange={handleSwitchChange} />
+          <Switch
+            checked={item.isActive}
+            onChange={(_, checked) => handleSwitchChange(checked)}
+          />
         </>
         <div className="d-flex align-items-center gap-2">
           <IconButton

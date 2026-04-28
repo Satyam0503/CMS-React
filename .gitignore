@@ -49,7 +49,14 @@ web_modules/
 
 # Optional npm cache directory
 .npm
+
+# Environment files (contains secrets and environment-specific config)
 .env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
 
 # Optional eslint cache
 .eslintcache

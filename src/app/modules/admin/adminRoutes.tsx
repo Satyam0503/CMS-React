@@ -39,7 +39,7 @@ const AdminRoutes = () => {
   const {setBreadcrumbs}= useBreadcrumbs();
   useEffect(()=>{
     setBreadcrumbs(adminBreadcrumbs);
-  },[]);
+  },[setBreadcrumbs]);
   return (
     <Routes>
       <Route element={<Outlet />}>

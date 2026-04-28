@@ -6,8 +6,7 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import React, { useEffect, useState } from "react";
-import { initialLeaveRequestFilter } from "../../leaves/components/LeaveRequestFilter";
+import { useEffect, useState } from "react";
 import { getMyLeaveRequest } from "../../leaves/leaveServices";
 import {
   GetLeaveRequestPayLoad,

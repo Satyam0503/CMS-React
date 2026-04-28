@@ -78,7 +78,7 @@ export const EditPermission = () => {
       .catch((err) => {
         console.log(err.message);
       });
-  }, [refresh]);
+  }, [formatMessage, refresh, roleid, setPageTitle]);
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -98,7 +98,7 @@ export const EditPermission = () => {
       }
     };
     getPermissions();
-  }, []);
+  }, [roleid]);
 
   const checkUserModulePermission = (modulePermissionId: number) => {
     const hasModulePermission = rolePermissionList.findIndex(
@@ -147,7 +147,7 @@ export const EditPermission = () => {
       roleId: currentRoleDetails?.rolesId,
       roleTitle: roleValues.title,
       description: roleValues.description,
-      hasAppAccess: currentRoleDetails?.hasAppAccess!,
+      hasAppAccess: Boolean(currentRoleDetails?.hasAppAccess),
       rolePermissions: rolePermissionList,
       userRoles: [],
     };
@@ -164,12 +164,12 @@ export const EditPermission = () => {
     }
   };
 
-  const handleAppAccessChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => {
+  const handleAppAccessChange = async (checked: boolean) => {
+    if (!currentRoleDetails?.rolesId) {
+      return;
+    }
     try {
-      const res = await changeAppAccess(currentRoleDetails?.rolesId!, checked);
+      const res = await changeAppAccess(currentRoleDetails.rolesId, checked);
       if (res.data.success) {
         toast.success(formatMessage({ id: "ROLE.APP_ACCESS.UPDATED" }));
         setRefresh(!refresh);
@@ -226,7 +226,7 @@ export const EditPermission = () => {
               </Typography>
               <Switch
                 checked={currentRoleDetails?.hasAppAccess}
-                onChange={handleAppAccessChange}
+                onChange={(_, checked) => handleAppAccessChange(checked)}
               />
             </Stack>
             <Typography variant="caption">

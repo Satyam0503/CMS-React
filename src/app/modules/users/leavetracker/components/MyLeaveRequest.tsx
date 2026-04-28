@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../../../../Redux/hooks";
 import {
   EmployeeLeaveTypeBalance,
   GetLeaveRequestPayLoad,
@@ -62,7 +61,6 @@ export const MyLeaveRequests = ({
   const [selectedLeaveRequestId, setSelectedLeaveRequestId] = useState<string | null>();
   const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<MyLeaveRequestModel | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const employeeId = useParams().employeeid;
 
 
@@ -125,7 +123,7 @@ export const MyLeaveRequests = ({
       }
     };
     fetchLeaveRequest();
-  }, [paginationValues, refresh]);
+  }, [employeeId, paginationValues, refresh]);
 
   return (
     <>

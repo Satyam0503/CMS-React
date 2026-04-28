@@ -46,10 +46,10 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   const { formatMessage: i } = useIntl();
   const applicationLanguage = useAppSelector(
-    (state) => state.user.userData?.applicationLanguage!
+    (state) => state.user.userData?.applicationLanguage ?? []
   );
   const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
+    (state) => state.user.userData?.defaultLanguage ?? ""
   );
   const [translationLang, setTranslationLang] = useState<string>(
     applicationLanguage.find((lang) => lang !== currentLanguage) ?? ""
@@ -129,7 +129,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       setTitle(attributeTitle);
       initialAttributeTitle.current = structuredClone(attributeTitle);
     }
-  }, [attributeTitle]);
+  }, [attributeTitle, isDefaultAttribute]);
 
   return (
     <Stack spacing={1} className="flex-grow-1">
