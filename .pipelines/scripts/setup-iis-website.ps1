@@ -1,5 +1,5 @@
 # Setup IIS Website for React SPA
-# Usage: .\setup-iis-website.ps1 -SiteName "codeji.dev.app" -PhysicalPath "C:\inetpub\wwwroot\app" -Port 80
+# Usage: .\setup-iis-website.ps1 -SiteName "crm-test-app" -PhysicalPath "D:\Hosting\Codeji\crm-test-app" -HostName "testapp.codeji.in"
 
 param(
     [Parameter(Mandatory=$true)]
@@ -8,12 +8,25 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$PhysicalPath,
 
-    [Parameter(Mandatory=$true)]
-    [int]$Port
+    [Parameter(Mandatory=$false)]
+    [int]$Port = 80,
+
+    [Parameter(Mandatory=$false)]
+    [string]$HostName = "",
+
+    [Parameter(Mandatory=$false)]
+    [string]$AppPoolName = ""
 )
+
+if ([string]::IsNullOrWhiteSpace($AppPoolName)) {
+    $AppPoolName = $SiteName
+}
 
 Write-Host "=========================================="
 Write-Host "Setting up IIS Website for SPA: $SiteName"
+Write-Host "  Pool: $AppPoolName"
+Write-Host "  Path: $PhysicalPath"
+Write-Host "  Binding: *:${Port}:${HostName}"
 Write-Host "=========================================="
 
 # Import WebAdministration module
@@ -21,21 +34,37 @@ Import-Module WebAdministration
 
 # Create Physical Directory if it doesn't exist
 if (-not (Test-Path $PhysicalPath)) {
-    Write-Host "📁 Creating physical directory: $PhysicalPath"
+    Write-Host "Creating physical directory: $PhysicalPath"
     New-Item -Path $PhysicalPath -ItemType Directory -Force | Out-Null
-    Write-Host "✅ Directory created"
+    Write-Host "Directory created"
 } else {
-    Write-Host "✅ Physical directory already exists"
+    Write-Host "Physical directory already exists"
+}
+
+# Create Application Pool if it doesn't exist
+$pool = Get-Item "IIS:\AppPools\$AppPoolName" -ErrorAction SilentlyContinue
+if (-not $pool) {
+    Write-Host "Creating IIS App Pool: $AppPoolName"
+    New-WebAppPool -Name $AppPoolName | Out-Null
+    Set-ItemProperty "IIS:\AppPools\$AppPoolName" -Name "managedRuntimeVersion" -Value ""
+    Set-ItemProperty "IIS:\AppPools\$AppPoolName" -Name "startMode" -Value "AlwaysRunning"
+    Write-Host "App Pool created (No Managed Code, AlwaysRunning)"
+} else {
+    Write-Host "App Pool already exists"
 }
 
 # Check if Website exists, create if not
 $site = Get-Website -Name $SiteName -ErrorAction SilentlyContinue
 if (-not $site) {
-    Write-Host "🌐 Creating IIS Website: $SiteName on port $Port"
-    New-Website -Name $SiteName -PhysicalPath $PhysicalPath -Port $Port | Out-Null
+    Write-Host "Creating IIS Website: $SiteName"
+    if ([string]::IsNullOrWhiteSpace($HostName)) {
+        New-Website -Name $SiteName -PhysicalPath $PhysicalPath -Port $Port -ApplicationPool $AppPoolName | Out-Null
+    } else {
+        New-Website -Name $SiteName -PhysicalPath $PhysicalPath -Port $Port -HostHeader $HostName -ApplicationPool $AppPoolName | Out-Null
+    }
 
     # Configure URL Rewrite for React SPA routing
-    Write-Host "⚙️  Configuring URL Rewrite for SPA routing"
+    Write-Host "Configuring URL Rewrite for SPA routing"
     $webConfig = @"
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
@@ -67,11 +96,27 @@ if (-not $site) {
 "@
     $webConfig | Out-File "$PhysicalPath\web.config" -Encoding UTF8 -Force
 
-    Write-Host "✅ IIS Website created with SPA routing configuration"
+    Write-Host "IIS Website created with SPA routing configuration"
 } else {
-    Write-Host "✅ IIS Website already exists"
+    Write-Host "IIS Website already exists - reconciling pool and bindings"
+
+    # Ensure correct app pool
+    Set-ItemProperty "IIS:\Sites\$SiteName" -Name "applicationPool" -Value $AppPoolName
+
+    # Ensure expected binding exists
+    $expectedBinding = if ([string]::IsNullOrWhiteSpace($HostName)) { "*:${Port}:" } else { "*:${Port}:${HostName}" }
+    $bindings = Get-WebBinding -Name $SiteName -ErrorAction SilentlyContinue
+    $hasBinding = $bindings | Where-Object { $_.bindingInformation -eq $expectedBinding -and $_.protocol -eq "http" }
+    if (-not $hasBinding) {
+        Write-Host "Adding missing binding: $expectedBinding"
+        if ([string]::IsNullOrWhiteSpace($HostName)) {
+            New-WebBinding -Name $SiteName -Protocol "http" -Port $Port | Out-Null
+        } else {
+            New-WebBinding -Name $SiteName -Protocol "http" -Port $Port -HostHeader $HostName | Out-Null
+        }
+    }
 }
 
 Write-Host "=========================================="
-Write-Host "✅ IIS configuration completed"
+Write-Host "IIS configuration completed"
 Write-Host "=========================================="

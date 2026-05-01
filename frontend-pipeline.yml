@@ -14,9 +14,9 @@ parameters:
   - name: environments
     type: object
     default:
-      - name: Dev
+      - name: test
         branch: develop
-      - name: Prod
+      - name: prod
         branch: main
 
 variables:
@@ -106,7 +106,7 @@ stages:
         dependsOn: Build
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ env.branch }}'))
         variables:
-          - group: codeji-${{ lower(env.name) }}
+          - group: codeji-${{ env.name }}
         jobs:
           - deployment: DeployTo${{ env.name }}
             displayName: "Deploy to ${{ env.name }} VM"
@@ -119,13 +119,24 @@ stages:
                       artifact: "frontend-drop"
 
                     - task: PowerShell@2
+                      displayName: "Resolve URLs from AppSettings"
+                      inputs:
+                        targetType: "inline"
+                        script: |
+                          $appHost  = ([Uri]"$(AppSettings.AppUrl)").Host
+                          $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/')
+                          Write-Host "##vso[task.setvariable variable=AppHost]$appHost"
+                          Write-Host "##vso[task.setvariable variable=ViteBase]$viteBase"
+                          Write-Host "Resolved: AppHost=$appHost, ViteBase=$viteBase"
+
+                    - task: PowerShell@2
                       displayName: "Generate .env file"
                       inputs:
                         targetType: "filePath"
                         filePath: "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/generate-env.ps1"
                         arguments: >
                           -OutputPath "$(Pipeline.Workspace)/frontend-drop/dist"
-                          -BaseUrl "$(VITE_BASEURL)"
+                          -BaseUrl "$(ViteBase)"
                           -CaptchaSiteKey "$(VITE_CAPTCHA_SITE_KEY)"
                           -I18nConfigKey "$(VITE_APP_I18N_CONFIG_KEY)"
 
@@ -134,27 +145,37 @@ stages:
                       inputs:
                         targetType: "inline"
                         script: |
+                          $siteName = "crm-${{ env.name }}-app"
+                          $deployPath = "$(DeployRoot)\$siteName"
+
                           Write-Host "=========================================="
                           Write-Host "Deploying Frontend to ${{ env.name }}"
-                          Write-Host "   Site: codeji-$(env)"
-                          Write-Host "   Path: $(DeployPath)codeji_$(env)/app"
+                          Write-Host "   Site:     $siteName"
+                          Write-Host "   Pool:     $siteName"
+                          Write-Host "   Host:     $(AppHost)"
+                          Write-Host "   Path:     $deployPath"
                           Write-Host "=========================================="
 
                           # Create backup for Production only
-                          if ("${{ env.name }}" -eq "Prod") {
-                            if (Test-Path "$(DeployPath)codeji_$(env)/app") {
+                          if ("${{ env.name }}" -eq "prod") {
+                            if (Test-Path $deployPath) {
                               $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-                              $backupPath = "$(DeployPath)codeji_$(env)/app-backup-$timestamp"
-                              Copy-Item -Path "$(DeployPath)codeji_$(env)/app" -Destination $backupPath -Recurse -Force
+                              $backupPath = "$deployPath-backup-$timestamp"
+                              Copy-Item -Path $deployPath -Destination $backupPath -Recurse -Force
                               Write-Host "Backup created at: $backupPath"
                             }
                           }
 
-                          # Setup IIS Website
-                          & "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/setup-iis-website.ps1" -SiteName "codeji-$(env)" -PhysicalPath "$(DeployPath)codeji_$(env)/app" -Port 80
+                          # Setup IIS Website (creates app pool, site, and host-header binding)
+                          & "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/setup-iis-website.ps1" `
+                            -SiteName $siteName `
+                            -PhysicalPath $deployPath `
+                            -Port 80 `
+                            -HostName "$(AppHost)" `
+                            -AppPoolName $siteName
 
                           # Copy dist folder
-                          Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination "$(DeployPath)codeji_$(env)/app" -Recurse -Force
+                          Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination $deployPath -Recurse -Force
 
                           Write-Host "=========================================="
                           Write-Host "${{ env.name }} frontend deployment completed!"
