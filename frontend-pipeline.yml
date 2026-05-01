@@ -29,7 +29,7 @@ stages:
   - stage: Build
     displayName: "Build Frontend"
     pool:
-      vmImage: "windows-latest"
+      name: Codeji-Pool
     jobs:
       - job: BuildJob
         displayName: "Build React App"
