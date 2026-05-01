@@ -1,13 +1,31 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
-import UserProfile from "../modules/users/UserProfile";
-import AboutUser from "../modules/users/about/AboutUser";
-import { UserPerformance } from "../modules/users/performance/UserPerformance";
-import { WorkHistory } from "../modules/users/workhistory/WorkHistory";
-import Setting from "../modules/users/usersetting/Setting";
-import { LeaveTracker } from "../modules/users/leavetracker/LeaveTracker";
 import { useAppSelector } from "../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../utils/common";
 import { ModulesName, Permission } from "../../utils/enums";
+
+const UserProfile = lazy(() => import("../modules/users/UserProfile"));
+const AboutUser = lazy(() => import("../modules/users/about/AboutUser"));
+const UserPerformance = lazy(() =>
+  import("../modules/users/performance/UserPerformance").then((module) => ({
+    default: module.UserPerformance,
+  }))
+);
+const WorkHistory = lazy(() =>
+  import("../modules/users/workhistory/WorkHistory").then((module) => ({
+    default: module.WorkHistory,
+  }))
+);
+const Setting = lazy(() => import("../modules/users/usersetting/Setting"));
+const LeaveTracker = lazy(() =>
+  import("../modules/users/leavetracker/LeaveTracker").then((module) => ({
+    default: module.LeaveTracker,
+  }))
+);
+
+const SuspensedView = ({ children }: { children: JSX.Element }) => {
+  return <Suspense fallback={null}>{children}</Suspense>;
+};
 
 const ProfileTabs = () => {
     const empId = useParams().employeeid;
@@ -16,18 +34,18 @@ const ProfileTabs = () => {
 
     return (
         <Routes>
-            <Route element={<UserProfile />}>
+            <Route element={<SuspensedView><UserProfile /></SuspensedView>}>
                 <Route index element={<Navigate to={"about"} />} />
-                <Route path="about" element={<AboutUser />} />
-                <Route path="performance" element={<UserPerformance />} />
-                <Route path="workhistory" element={<WorkHistory />} />
+                <Route path="about" element={<SuspensedView><AboutUser /></SuspensedView>} />
+                <Route path="performance" element={<SuspensedView><UserPerformance /></SuspensedView>} />
+                <Route path="workhistory" element={<SuspensedView><WorkHistory /></SuspensedView>} />
                 {
                     (!empId || hasLeavePanelAccess) &&
-                    <Route path="leave" element={<LeaveTracker />} />
+                    <Route path="leave" element={<SuspensedView><LeaveTracker /></SuspensedView>} />
                 }
                 {
                     !empId &&
-                    <Route path="setting" element={<Setting />} />
+                    <Route path="setting" element={<SuspensedView><Setting /></SuspensedView>} />
                 }
             </Route>
             <Route path="*" element={<Navigate to={"/error"} />} />

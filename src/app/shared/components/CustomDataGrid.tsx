@@ -40,7 +40,6 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
         loading={props.loading}
         showToolbar={props.showToolbar ?? false}
         className="data-grid-parent-container"
-        disableVirtualization
         rows={props.row}
         columns={props.columns}
         density="comfortable"

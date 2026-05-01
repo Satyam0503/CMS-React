@@ -25,7 +25,9 @@ const AddNewAttributeItem = <T extends ReqProps>({
     titles: {},
   } as T);
   const { formatMessage: i } = useIntl();
-  const currentLang = useAppSelector((state) => state.user.userData?.defaultLanguage!);
+  const currentLang = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage ?? ""
+  );
   const [error, setError] = useState(false);
   const translationLanguageTitle = newAttributeValue.titles[translationLang] ?? "";
   const currentLanguageTitle = newAttributeValue.titles[currentLang] ?? "";
@@ -92,10 +94,7 @@ const AddNewAttributeItem = <T extends ReqProps>({
     }
   };
 
-  const handleSwitchChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => {
+  const handleSwitchChange = (checked: boolean) => {
     const updatedItem = {
       ...newAttributeValue,
       isActive: checked,
@@ -130,7 +129,7 @@ const AddNewAttributeItem = <T extends ReqProps>({
       />
       <Switch
         checked={newAttributeValue.isActive}
-        onChange={handleSwitchChange}
+        onChange={(_, checked) => handleSwitchChange(checked)}
       />
     </Box>
   );

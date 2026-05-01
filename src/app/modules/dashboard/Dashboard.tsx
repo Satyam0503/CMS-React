@@ -28,8 +28,9 @@ export default function Dashboard() {
     (state) => state.user.userData?.modulePermission,
   );
 
-  const userModulesPermissions =
-    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const userModulesPermissions = useAppSelector(
+    (state) => state.user.userData?.modulePermission ?? [],
+  );
 
   const hasAccessToEmpModule = useMemo(
     () =>

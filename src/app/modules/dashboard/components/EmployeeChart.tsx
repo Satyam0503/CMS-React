@@ -9,7 +9,6 @@ import { defaultPieChartSeries, genderMapper } from "../../../../utils/common";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { PieSeries, PieValueType } from "@mui/x-charts";
 import { DonutChart } from "../../../shared/components/DonutChart";
-import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 
 
 const createChartData = (data: GenderModel[], intl: IntlShape) => {
@@ -37,7 +36,6 @@ export const EmployeeChart: FC = () => {
   const [empData, setEmpData] = useState<GenderModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalEmployee, setTotalEmployee] = useState(0);
-  const { currentLanguage } = useAppLang();
 
   const series: PieSeries[] = useMemo(() => {
     return [
@@ -46,7 +44,7 @@ export const EmployeeChart: FC = () => {
         data: empData.length > 0 ? createChartData(empData, intl) : [],
       }
     ];
-  }, [empData, currentLanguage])
+  }, [empData, intl])
 
 
   useEffect(() => {

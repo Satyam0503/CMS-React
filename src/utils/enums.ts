@@ -113,23 +113,6 @@ export enum DefaultModles {
   Calendar = "Calendar",
 }
 
-export enum PayRollModuleTitles{
-  LeaveManagement= "Leave_Management",
-  Attendance= "Attendance",
-  PayRoll= "PayRoll"
-}
-
-export enum RecruitmentModuleTitle{
-  Jobs= "Jobs",
-  Applications= "Applications",
-  ProcessLog= "Process_Log",
-}
-
-export enum DefaultModles{
-  Employees= "Employees",
-  Calendar= "Calendar"
-}
-
 export enum Roles {
   Administrator = 1,
   HRManager = 2,

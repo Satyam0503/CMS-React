@@ -18,7 +18,7 @@ import {
   ViewList,
 } from "@mui/icons-material";
 
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getAllEmployees, resendInvitationLink } from "./employeeServices";
 import { toast } from "react-toastify";
 
@@ -47,10 +47,15 @@ import {
   GridRowParams,
 } from "@mui/x-data-grid";
 import { AvatarCell } from "../../shared/components/AvatarCell";
-import { CustomDataGrid } from "../../shared/components/CustomDataGrid";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
 import CustomisedButton from "../../shared/components/CustomisedButton";
+
+const CustomDataGrid = lazy(() =>
+  import("../../shared/components/CustomDataGrid").then((module) => ({
+    default: module.CustomDataGrid,
+  })),
+) as (typeof import("../../shared/components/CustomDataGrid"))["CustomDataGrid"];
 
 type ViewMode = "table" | "grid";
 

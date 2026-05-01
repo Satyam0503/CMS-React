@@ -1,5 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// Remove unnecessary ESLint disables. Only add back if you see lint errors that are not fixable.
 import { FC, createContext, useContext, useState, useEffect } from 'react'
 import { DefaultConfig } from './_LayoutConfig'
 import {

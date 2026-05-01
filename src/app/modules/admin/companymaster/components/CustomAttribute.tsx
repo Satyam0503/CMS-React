@@ -86,12 +86,10 @@ export const CustomAttribute = () => {
     }
   };
 
-  // naviagate to error page if customAttributeId is not present
-  if (!customAttributeId) {
-    return <Navigate to={"/error"} />;
-  }
-
   useEffect(() => {
+    if (!customAttributeId) {
+      return;
+    }
     // fetch custom attribute data by id
     (async () => {
       try {
@@ -104,6 +102,11 @@ export const CustomAttribute = () => {
       }
     })();
   }, [customAttributeId, refresh]);
+
+  // naviagate to error page if customAttributeId is not present
+  if (!customAttributeId) {
+    return <Navigate to={"/error"} />;
+  }
 
   return (
     <Stack spacing={1} className="flex-grow-1">

@@ -22,7 +22,7 @@ import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
 import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
 import { useNavigate } from "react-router-dom";
-import { createNotifications } from "../../../../../app/modules/dashboard/components/PushNotification";
+import { createNotifications } from "../../../../../app/modules/dashboard/components/pushNotificationUtils";
 import { toAbsoluteUrl } from "../../../../helpers";
 
 export const NotificationIconMapper: {

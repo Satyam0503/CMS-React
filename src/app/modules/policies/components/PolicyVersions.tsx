@@ -11,18 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Grid, Stack } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { usePageData } from "../../../Context/PageDataProvider";
 import { Edit, Delete, MoreVertOutlined } from "@mui/icons-material";
-import PolilcyVersionForm from "./PolilcyVersionForm";
 import { PolicyVersion, PolicyVersionModel } from "../models";
-import {
-  deletePolicyVersion,
-  getAllPolicyVersions,
-  getPolicyDocument,
-} from "../policyServices";
+import { deletePolicyVersion, getAllPolicyVersions } from "../policyServices";
 import {
   getCustomStatusCodesErrorMessage,
   hasModuleFeaturePermission,
@@ -32,10 +27,12 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import { toast } from "react-toastify";
 import AddIcon from "@mui/icons-material/Add";
-import PolicyVersionViewer from "./PolicyVersionViewer";
 import PolicyRoundedIcon from "@mui/icons-material/PolicyRounded";
 import { PolicySkeleton } from "./PolicySkeleton";
 import clsx from "clsx";
+
+const PolilcyVersionForm = lazy(() => import("./PolilcyVersionForm"));
+const PolicyVersionViewer = lazy(() => import("./PolicyVersionViewer"));
 
 const initialValues: PolicyVersionModel = {
   policyId: "",
@@ -217,11 +214,13 @@ export const PolicyVersions = () => {
       {isLoading ? (
         <PolicySkeleton />
       ) : viewPolicy ? (
-        <PolicyVersionViewer
-          open={true}
-          handleClose={handleCloseViewPolicy}
-          policyVersion={viewPolicy}
-        />
+        <Suspense fallback={<PolicySkeleton />}>
+          <PolicyVersionViewer
+            open={true}
+            handleClose={handleCloseViewPolicy}
+            policyVersion={viewPolicy}
+          />
+        </Suspense>
       ) : (
         <Grid container spacing={2}>
           {policyVersions.length > 0 ? (
@@ -336,13 +335,17 @@ export const PolicyVersions = () => {
           </List>
         </Popover>
       )}
-      <PolilcyVersionForm
-        open={isFormOpen}
-        handleClose={handleFormClose}
-        initialValues={formValue}
-        isEdit={editing}
-        handleRefresh={handleRefresh}
-      />
+      {isFormOpen && (
+        <Suspense fallback={null}>
+          <PolilcyVersionForm
+            open={isFormOpen}
+            handleClose={handleFormClose}
+            initialValues={formValue}
+            isEdit={editing}
+            handleRefresh={handleRefresh}
+          />
+        </Suspense>
+      )}
 
       {isDeleteModalOpen && (
         <ConfirmationModal

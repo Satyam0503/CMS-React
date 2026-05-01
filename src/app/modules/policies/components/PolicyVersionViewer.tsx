@@ -1,12 +1,17 @@
 import { PolicyVersion } from "../models";
-import { PdfViewer } from "../../../shared/components/PdfViewer";
 import { Stack } from "@mui/system";
 import { IconButton, Typography } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { WordDocViewer } from "../../../shared/components/WordDocViewer";
 import { getPolicyDocument } from "../policyServices";
 import { useIntl } from "react-intl";
+
+const PdfViewer = lazy(() =>
+  import("../../../shared/components/PdfViewer").then((module) => ({
+    default: module.PdfViewer,
+  })),
+);
 
 type Props = {
   open: boolean;
@@ -43,7 +48,9 @@ export default function PolicyVersionViewer(props: Props) {
       try {
         const res = await getPolicyDocument(policyVersionId);
         const mimeType = getMimeType(documentType);
-        const blob = new Blob([res.data], { type: mimeType });
+        const blob = new Blob([res.data as unknown as BlobPart], {
+          type: mimeType,
+        });
         const url = URL.createObjectURL(blob);
         setDocumentUrl(url);
       } catch (error) {
@@ -74,7 +81,17 @@ export default function PolicyVersionViewer(props: Props) {
 
     switch (documentType) {
       case "pdf":
-        return <PdfViewer pdfUrl={documentUrl} />;
+        return (
+          <Suspense
+            fallback={
+              <Typography>
+                {i({ id: "POLICIES.LOADING_DOCUMENT" })}...
+              </Typography>
+            }
+          >
+            <PdfViewer pdfUrl={documentUrl} />
+          </Suspense>
+        );
 
       case "doc":
       case "docx":

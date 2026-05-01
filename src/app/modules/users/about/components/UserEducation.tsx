@@ -15,10 +15,8 @@ import {
 } from "../../../../../utils/common";
 import AddUpdateEducation from "./AddUpdateEducation";
 import {
-  addEmployeeEducation,
   deleteEmployeeEducation,
   getEmployeeEducations,
-  updateEmployeeEducation,
 } from "../../userservices";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
@@ -86,7 +84,7 @@ export const UserEducation = () => {
           selectedEducationId,
           employeeId
         );
-        const { success, message } = response.data;
+        const { success } = response.data;
         if (success) {
           toast.success(intl.formatMessage({ id: "TOAST.SUCCESS.DELETE" }));
           handleCloseConfirmation();
@@ -110,7 +108,7 @@ export const UserEducation = () => {
       .catch((error) => {
         console.error((error as Error).message);
       });
-  }, [refresh]);
+  }, [employeeId, refresh]);
 
   return (
     <Card sx={{ p: 2 }}>

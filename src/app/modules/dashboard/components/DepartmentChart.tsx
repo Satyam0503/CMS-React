@@ -17,7 +17,9 @@ export const DepartmentChart: FC = () => {
   const [departmentList, setDepartmentList] = useState<DepartmentResponseModel[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentLanguage } = useAppLang();
-  const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
+  const defaultLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage ?? ""
+  );
 
   useEffect(() => {
     const getAllDepartmentDetails = async () => {

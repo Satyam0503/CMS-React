@@ -18,7 +18,7 @@ export const AttributeTitleRow = ({
   const { formatMessage: i } = useIntl();
   const [title, setTitle] = useState<Record<string, string>>(attributeTitle);
   const defaultLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage!
+    (state) => state.user.userData?.defaultLanguage ?? ""
   );
   const [error, setError] = useState(false);
   const translationLanguageTitle = title[translationLang] ?? "";
