@@ -123,3 +123,4 @@ dist
 .pnp.*
 /public/notToUse
 
+.env

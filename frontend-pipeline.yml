@@ -30,6 +30,11 @@ stages:
     displayName: "Build Frontend"
     pool:
       name: Codeji-Pool
+    variables:
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          - group: codeji-test
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+          - group: codeji-prod
     jobs:
       - job: BuildJob
         displayName: "Build React App"
@@ -55,6 +60,21 @@ stages:
               customCommand: "run lint"
               workingDir: "$(Build.SourcesDirectory)"
             continueOnError: true
+
+          # Vite inlines env vars at build time, so .env must exist BEFORE `npm run build`.
+          - task: PowerShell@2
+            displayName: "Generate .env file (pre-build)"
+            inputs:
+              targetType: "inline"
+              script: |
+                $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/')
+                $envFile  = Join-Path "$(Build.SourcesDirectory)" ".env"
+                @"
+                VITE_BASEURL=$viteBase
+                VITE_CAPTCHA_SITE_KEY=$(VITE_CAPTCHA_SITE_KEY)
+                VITE_APP_I18N_CONFIG_KEY=$(VITE_APP_I18N_CONFIG_KEY)
+                "@ | Out-File -FilePath $envFile -Encoding UTF8 -Force
+                Write-Host "Wrote $envFile with VITE_BASEURL=$viteBase"
 
           - task: Npm@1
             displayName: "Build for Development"
@@ -136,22 +156,9 @@ stages:
                       inputs:
                         targetType: "inline"
                         script: |
-                          $appHost  = ([Uri]"$(AppSettings.AppUrl)").Host
-                          $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/')
+                          $appHost = ([Uri]"$(AppSettings.AppUrl)").Host
                           Write-Host "##vso[task.setvariable variable=AppHost]$appHost"
-                          Write-Host "##vso[task.setvariable variable=ViteBase]$viteBase"
-                          Write-Host "Resolved: AppHost=$appHost, ViteBase=$viteBase"
-
-                    - task: PowerShell@2
-                      displayName: "Generate .env file"
-                      inputs:
-                        targetType: "filePath"
-                        filePath: "$(Pipeline.Workspace)/frontend-drop/.pipelines/scripts/generate-env.ps1"
-                        arguments: >
-                          -OutputPath "$(Pipeline.Workspace)/frontend-drop/dist"
-                          -BaseUrl "$(ViteBase)"
-                          -CaptchaSiteKey "$(VITE_CAPTCHA_SITE_KEY)"
-                          -I18nConfigKey "$(VITE_APP_I18N_CONFIG_KEY)"
+                          Write-Host "Resolved: AppHost=$appHost"
 
                     - task: PowerShell@2
                       displayName: "Deploy to ${{ env.name }} Web Server"
