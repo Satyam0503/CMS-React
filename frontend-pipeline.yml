@@ -97,6 +97,19 @@ stages:
               ArtifactName: "frontend-drop"
               publishLocation: "Container"
 
+          - task: PowerShell@2
+            displayName: "Cleanup build workspace"
+            condition: always()
+            inputs:
+              targetType: "inline"
+              script: |
+                foreach ($p in @("$(Build.ArtifactStagingDirectory)", "$(Build.SourcesDirectory)")) {
+                  if (Test-Path $p) {
+                    Remove-Item -Path "$p\*" -Recurse -Force -ErrorAction SilentlyContinue
+                    Write-Host "Cleaned $p"
+                  }
+                }
+
   # ============================================
   # Deploy Stages - generated from environments
   # ============================================
@@ -180,3 +193,15 @@ stages:
                           Write-Host "=========================================="
                           Write-Host "${{ env.name }} frontend deployment completed!"
                           Write-Host "=========================================="
+
+                    - task: PowerShell@2
+                      displayName: "Cleanup downloaded artifact"
+                      condition: always()
+                      inputs:
+                        targetType: "inline"
+                        script: |
+                          $artifactDir = "$(Pipeline.Workspace)\frontend-drop"
+                          if (Test-Path $artifactDir) {
+                            Remove-Item -Path $artifactDir -Recurse -Force -ErrorAction SilentlyContinue
+                            Write-Host "Cleaned up $artifactDir"
+                          }
