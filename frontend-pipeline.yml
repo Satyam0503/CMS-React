@@ -159,7 +159,7 @@ stages:
                         targetType: "inline"
                         script: |
                           $siteName = "crm-${{ env.name }}-app"
-                          $deployPath = "$(DeployRoot)\$siteName"
+                          $deployPath = "$(DeployRoot)\crm-${{ env.name }}\frontend\Codeji.CMS.ReactApp"
 
                           Write-Host "=========================================="
                           Write-Host "Deploying Frontend to ${{ env.name }}"
