@@ -96,12 +96,14 @@ stages:
             env:
               NODE_ENV: "production"
 
-          - task: CopyFiles@2
-            displayName: "Copy dist folder"
+          - task: ArchiveFiles@2
+            displayName: "Archive dist folder"
             inputs:
-              SourceFolder: "$(Build.SourcesDirectory)/dist"
-              Contents: "**"
-              TargetFolder: "$(Build.ArtifactStagingDirectory)/dist"
+              rootFolderOrFile: "$(Build.SourcesDirectory)/dist"
+              includeRootFolder: false
+              archiveType: "zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/dist.zip"
+              replaceExistingArchive: true
 
           - task: CopyFiles@2
             displayName: "Copy Deployment Scripts"
@@ -151,6 +153,13 @@ stages:
                     - download: current
                       artifact: "frontend-drop"
 
+                    - task: ExtractFiles@1
+                      displayName: "Extract dist zip to staging"
+                      inputs:
+                        archiveFilePatterns: "$(Pipeline.Workspace)/frontend-drop/dist.zip"
+                        destinationFolder: "$(Pipeline.Workspace)/dist-staging"
+                        cleanDestinationFolder: true
+
                     - task: PowerShell@2
                       displayName: "Resolve URLs from AppSettings"
                       inputs:
@@ -194,8 +203,8 @@ stages:
                             -HostName "$(AppHost)" `
                             -AppPoolName $siteName
 
-                          # Copy dist folder
-                          Copy-Item -Path "$(Pipeline.Workspace)/frontend-drop/dist/*" -Destination $deployPath -Recurse -Force
+                          # Copy extracted dist folder
+                          Copy-Item -Path "$(Pipeline.Workspace)/dist-staging/*" -Destination $deployPath -Recurse -Force
 
                           Write-Host "=========================================="
                           Write-Host "${{ env.name }} frontend deployment completed!"
@@ -207,8 +216,9 @@ stages:
                       inputs:
                         targetType: "inline"
                         script: |
-                          $artifactDir = "$(Pipeline.Workspace)\frontend-drop"
-                          if (Test-Path $artifactDir) {
-                            Remove-Item -Path $artifactDir -Recurse -Force -ErrorAction SilentlyContinue
-                            Write-Host "Cleaned up $artifactDir"
+                          foreach ($p in @("$(Pipeline.Workspace)\frontend-drop", "$(Pipeline.Workspace)\dist-staging")) {
+                            if (Test-Path $p) {
+                              Remove-Item -Path $p -Recurse -Force -ErrorAction SilentlyContinue
+                              Write-Host "Cleaned up $p"
+                            }
                           }
