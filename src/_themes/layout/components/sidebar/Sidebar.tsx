@@ -4,6 +4,7 @@ import { useAppSelector } from "../../../../app/Redux/hooks";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
 import { West } from "@mui/icons-material";
 import { DEFAULT_COMPANY_LOGO, DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
 
 type Props = {
   open: boolean;
@@ -19,6 +20,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
   const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
+  const { style: sidebarStyle } = useAppStyle();
 
   const handleSideBarToggle = () => {
     setMiniSidebar(!isMiniSidebar);
@@ -42,6 +44,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       onClose={handleClose}
       className="sidebar"
       data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
+      data-sidebar-style={sidebarStyle}
     >
       <Stack role="presentation" onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
         {

@@ -56,7 +56,9 @@ const PrivateRoutes = () => {
           path="noticeboard/*"
           element={
             <SuspensedView>
-              <NoticeBoard />
+              <ProtectedRoute module={ModulesName.NoticeBoard}>
+                <NoticeBoard />
+              </ProtectedRoute>
             </SuspensedView>
           }
         />
@@ -64,7 +66,9 @@ const PrivateRoutes = () => {
           path="companypolicy/*"
           element={
             <SuspensedView>
-              <Policies />
+              <ProtectedRoute module={ModulesName.Policy}>
+                <Policies />
+              </ProtectedRoute>
             </SuspensedView>
           }
         />

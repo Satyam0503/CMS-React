@@ -94,3 +94,125 @@
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Sidebar style variants — switched by the AppStylePicker popover (in header).
+// Each rule keys off [data-sidebar-style="..."] applied to the .sidebar root
+// (which mirrors the global app style from useAppStyle()). Adding a new style:
+// add a block here + an entry to APP_STYLES in useAppStyle.ts + a `surface`
+// branch in MuiTheme.ts + a block in _app-style.scss.
+// ---------------------------------------------------------------------------
+
+// Active-item accent shared by glass + gradient (primary + secondary blend).
+%sidebar-active-glow {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.78) 100%
+  );
+  color: var(--mui-palette-primary-main) !important;
+  & .MuiTypography-root {
+    color: var(--mui-palette-primary-main) !important;
+  }
+}
+
+// --- Classic (default) — no overrides; relies on existing rules above. -----
+.sidebar[data-sidebar-style="classic"] {
+  // Intentionally empty: existing styling already produces "classic".
+}
+
+// --- Glass: translucent panel with backdrop blur ---------------------------
+.sidebar[data-sidebar-style="glass"] {
+  & .sidebar-paper {
+    background: linear-gradient(
+      180deg,
+      rgba(20, 18, 40, 0.55) 0%,
+      rgba(20, 18, 40, 0.35) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    backdrop-filter: blur(22px) saturate(160%);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.18);
+  }
+
+  & .sidebar-menu-item {
+    border-radius: 10px;
+    transition: background-color 160ms ease, transform 160ms ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+    &.Mui-selected {
+      @extend %sidebar-active-glow;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    }
+  }
+}
+
+// --- Gradient: vibrant primary→secondary, rounded items, glow on active ---
+.sidebar[data-sidebar-style="gradient"] {
+  & .sidebar-paper {
+    background: linear-gradient(
+      180deg,
+      var(--mui-palette-primary-dark) 0%,
+      var(--mui-palette-secondary-dark) 100%
+    ) !important;
+    border-right: none;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.22);
+  }
+
+  & .sidebar-menu-item {
+    border-radius: 12px;
+    margin-block: 0.35rem !important;
+    transition: background-color 160ms ease, transform 160ms ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.12);
+      transform: translateX(2px);
+    }
+    &.Mui-selected {
+      @extend %sidebar-active-glow;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.25),
+        0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+  }
+}
+
+// --- Minimal: flat, light, low-contrast ------------------------------------
+.sidebar[data-sidebar-style="minimal"] {
+  & .sidebar-paper {
+    background: #f8fafc !important;
+    border-right: 1px solid #e2e8f0;
+    box-shadow: none;
+  }
+
+  & .user-name,
+  & .sidebar-menu-item,
+  & .sidebar-menu-item .MuiTypography-root,
+  & .sidebar-menu-item .MuiListItemIcon-root {
+    color: #1e293b !important;
+  }
+
+  & .sidebar-collapse-button {
+    background-color: #ffffff !important;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+  }
+
+  & .sidebar-menu-item {
+    border-radius: 8px;
+    transition: background-color 120ms ease;
+
+    &:hover {
+      background-color: #eef2f7;
+    }
+    &.Mui-selected {
+      background: #e0e7ff !important;
+      color: var(--mui-palette-primary-main) !important;
+      & .MuiTypography-root {
+        color: var(--mui-palette-primary-main) !important;
+      }
+    }
+  }
+}

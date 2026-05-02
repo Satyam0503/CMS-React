@@ -279,7 +279,7 @@ export const ProcessLogTableColumnList: ColumnListTypes[] = [
             textOverflow: "ellipsis",
             fontSize: "12px",
           }}
-          dangerouslySetInnerHTML={{ __html: value }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
           sx={{
             "& p": {
               margin: 0,
@@ -544,7 +544,7 @@ export const CommentTableColumnList: ColumnListTypes[] = [
             textOverflow: "ellipsis",
             fontSize: "12px",
           }}
-          dangerouslySetInnerHTML={{ __html: value }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(value) }}
           sx={{
             "& p": {
               margin: 0,

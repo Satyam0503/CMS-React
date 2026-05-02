@@ -3,6 +3,7 @@ import { JobModal } from "../../recruitment/models";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import ApplyJobForm from "./ApplyJobForm";
+import { sanitizeHtmlContent } from "../../../../utils/common";
 
 type Props = {
   selectedJob: JobModal | undefined;
@@ -57,7 +58,7 @@ export default function JobInfo(props: Props) {
             <Typography
               variant="body1"
               dangerouslySetInnerHTML={{
-                __html: props.selectedJob.description,
+                __html: sanitizeHtmlContent(props.selectedJob.description),
               }}
               sx={{
                 fontWeight: 400,

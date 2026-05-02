@@ -19,7 +19,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
       sx={{
         backgroundColor: 'background.header',
       }}
-      className="p-4 flex-row align-items-center justify-content-between position-sticky top-0 z-3"
+      className="app-header p-4 flex-row align-items-center justify-content-between position-sticky top-0 z-3"
     >
       {
         isSmallScreen &&

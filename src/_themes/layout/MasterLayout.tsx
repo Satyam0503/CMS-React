@@ -30,7 +30,7 @@ const MasterLayout = () => {
       <BreadcrumbProvider>
         <PageDataProvider>
           <Stack
-            className="flex-column flex-shrink-0 flex-grow-1"
+            className="app-shell flex-column flex-shrink-0 flex-grow-1"
           >
             <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack

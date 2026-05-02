@@ -15,6 +15,7 @@ import { useAppLang } from "../_themes/i18n/Metronici18n";
 import React from "react";
 import { getCurrentLocaleForMui } from "./modules/theme/themePalettes";
 import { createApplicationTheme } from "./modules/theme/MuiTheme";
+import { useAppStyle } from "./modules/theme/useAppStyle";
 import ChatHub from "../server/ChatHub";
 
 const App = () => {
@@ -24,13 +25,20 @@ const App = () => {
   const token = getLocalKey()?.token ?? "";
   const instance = Connector.getInstance();
   const chatHubInstance = ChatHub.getInstance();
+  const { style: appStyle } = useAppStyle();
+
+  // Stamp the chosen style on <html> so SCSS can key off it for surfaces
+  // outside the MUI theme (body background, header chrome, etc.).
+  useEffect(() => {
+    document.documentElement.setAttribute("data-app-style", appStyle);
+  }, [appStyle]);
 
   const theme = React.useMemo(
     () => {
       const currentLocale = getCurrentLocaleForMui(currentLanguage);
-      return createApplicationTheme(currentLocale);
+      return createApplicationTheme(currentLocale, appStyle);
     },
-    [currentLanguage]
+    [currentLanguage, appStyle]
   );
 
   // set dayjs locale to current locale

@@ -1,8 +1,60 @@
 import { createTheme } from "@mui/material";
 import { Localization } from "@mui/material/locale";
 import { darkPalette, lightPalette } from "./themePalettes";
+import { AppStyle } from "./useAppStyle";
 
-export const createApplicationTheme = (locale: Localization) => {
+// Surface treatment per style — applied to MuiCard / MuiPaper / MuiAppBar.
+// Returns CSS-in-JS objects (not full sx). Kept inline for theme integration;
+// rules outside MUI live in _app-style.scss keyed off [data-app-style].
+const getSurfaceOverrides = (appStyle: AppStyle) => {
+  switch (appStyle) {
+    case "glass":
+      return {
+        card: {
+          background: "rgba(255, 255, 255, 0.55)",
+          WebkitBackdropFilter: "blur(14px) saturate(160%)",
+          backdropFilter: "blur(14px) saturate(160%)",
+          border: "1px solid rgba(255, 255, 255, 0.35)",
+          boxShadow:
+            "0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
+        },
+        paper: {
+          background: "rgba(255, 255, 255, 0.65)",
+          WebkitBackdropFilter: "blur(12px)",
+          backdropFilter: "blur(12px)",
+        },
+      };
+    case "gradient":
+      return {
+        card: {
+          borderRadius: 14,
+          boxShadow: "0 6px 22px rgba(0, 0, 0, 0.08)",
+          border: "1px solid rgba(0, 0, 0, 0.04)",
+        },
+        paper: {
+          borderRadius: 12,
+        },
+      };
+    case "minimal":
+      return {
+        card: {
+          borderRadius: 4,
+          boxShadow: "none",
+          border: "1px solid #e2e8f0",
+        },
+        paper: {
+          borderRadius: 4,
+          boxShadow: "none",
+        },
+      };
+    case "classic":
+    default:
+      return { card: {}, paper: {} };
+  }
+};
+
+export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = "classic") => {
+  const surface = getSurfaceOverrides(appStyle);
   const theme = createTheme(
     {
       cssVariables: {
@@ -87,7 +139,14 @@ export const createApplicationTheme = (locale: Localization) => {
             fontSize: "12px",
             boxShadow:
               "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
+            ...surface.card,
           },
+        },
+      },
+
+      MuiPaper: {
+        styleOverrides: {
+          root: surface.paper,
         },
       },
 

@@ -1,0 +1,70 @@
+// =============================================================================
+// App-wide style variants — switched by the AppStylePicker popover (in header).
+// Each rule keys off [data-app-style="..."] applied to <html> from App.tsx.
+// MUI surface treatments (Card, Paper) live in MuiTheme.ts; non-MUI surfaces
+// (body bg, header chrome, container backgrounds) are handled here.
+// Adding a new style: add a new block below + a new entry to APP_STYLES in
+// useAppStyle.ts + a `surface` branch in MuiTheme.ts.
+// =============================================================================
+
+// ----- Classic (default) — relies on existing styling, no overrides ---------
+:root[data-app-style="classic"] {
+  // Intentionally empty.
+}
+
+// ----- Glass: gradient body so glass surfaces have something to blur over ---
+:root[data-app-style="glass"] {
+  body {
+    background: linear-gradient(
+      135deg,
+      #c7d2fe 0%,
+      #fbcfe8 50%,
+      #fde68a 100%
+    );
+    background-attachment: fixed;
+  }
+
+  & .app-header {
+    background: rgba(255, 255, 255, 0.55) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+}
+
+// ----- Gradient: subtle off-white body, vibrant header --------------------
+:root[data-app-style="gradient"] {
+  body {
+    background: #f5f3ff;
+  }
+
+  & .app-header {
+    background: linear-gradient(
+      90deg,
+      var(--mui-palette-primary-main) 0%,
+      var(--mui-palette-secondary-main) 100%
+    ) !important;
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+
+    & .MuiTypography-root,
+    & .MuiIconButton-root,
+    & .MuiSvgIcon-root {
+      color: #fff !important;
+    }
+  }
+}
+
+// ----- Minimal: pure white body, hairline-bordered header ------------------
+:root[data-app-style="minimal"] {
+  body {
+    background: #ffffff;
+  }
+
+  & .app-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: none;
+  }
+}

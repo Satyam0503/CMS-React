@@ -1,6 +1,6 @@
 import { Grid, Stack } from "@mui/system";
 import { Formik, FormikProps } from "formik";
-import React, { useEffect } from "react";
+import React from "react";
 import { CreateEmployeeSalary, SalaryModel } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import {
@@ -68,7 +68,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   return (
     <Stack spacing={2} sx={{ p: 1 }}>
       <Formik
-        initialValues={employeeSalaryInitialValues}
+        initialValues={{ ...employeeSalaryInitialValues, userId, employeeId }}
         onSubmit={(values, { setSubmitting }) => {
           UpadteSalaryData(values, setSubmitting);
         }}
@@ -83,10 +83,6 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
           errors,
           handleSubmit,
         }) => {
-          useEffect(() => {
-            setFieldValue("userId", userId);
-          }, []);
-
           return (
             <form onSubmit={handleSubmit}>
               <Stack spacing={1}>

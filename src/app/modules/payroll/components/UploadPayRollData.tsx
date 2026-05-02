@@ -10,6 +10,7 @@ import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicke
 import dayjs, { Dayjs } from "dayjs";
 import { PayRollDataModel, PayRollRequestModel } from "../models";
 import { uploadEmpPayRollData } from "../services";
+import { sanitizeHtmlContent } from "../../../../utils/common";
 
 const ValidFileExtension = ["xlsx", "xls"];
 const requiredHeaders = ["Income Tax", "Basic Pay", "Bonus", "Employee Id", "HRA", "Health Insurance", "LTA", "Loss of Pay", "Loss of Pay Days", "Other Allowance", "Paid Days"];
@@ -207,7 +208,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                         <Stack spacing={1}>
                             <Typography className="fs-16" >{i({ id: "PAYROLL.EXCEL_PREVIEW" })}</Typography>
                             <Stack className="overflow-x-scroll excel-table">
-                                <div dangerouslySetInnerHTML={{ __html }}></div>
+                                <div dangerouslySetInnerHTML={{ __html: sanitizeHtmlContent(__html) }}></div>
                             </Stack>
                         </Stack>
                         <Stack direction="row" className="justify-content-end gap-2">
