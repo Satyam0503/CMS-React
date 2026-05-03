@@ -32,7 +32,7 @@ const MasterLayout = () => {
           <Stack
             className="app-shell flex-column flex-shrink-0 flex-grow-1"
           >
-            <HeaderWrapper openSideBar={handleOpenSidebar} />
+            <HeaderWrapper openSideBar={handleOpenSidebar} isMiniSidebar={isMiniSidebar} />
             <Stack
               direction="row"
               className="flex-grow-1"

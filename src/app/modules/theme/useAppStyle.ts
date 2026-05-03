@@ -1,8 +1,9 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-export type AppStyle = "classic" | "glass" | "gradient" | "minimal";
+export type AppStyle = "cobalt" | "classic" | "glass" | "gradient" | "minimal";
 
 export const APP_STYLES: { value: AppStyle; label: string; description: string }[] = [
+  { value: "cobalt",   label: "Cobalt",   description: "Modern cobalt gradient with frosted glass items" },
   { value: "classic",  label: "Classic",  description: "The original look" },
   { value: "glass",    label: "Glass",    description: "Translucent surfaces with backdrop blur" },
   { value: "gradient", label: "Gradient", description: "Vibrant primary→secondary gradient" },
@@ -10,7 +11,7 @@ export const APP_STYLES: { value: AppStyle; label: string; description: string }
 ];
 
 const STORAGE_KEY = "appStyle";
-const DEFAULT_STYLE: AppStyle = "classic";
+const DEFAULT_STYLE: AppStyle = "cobalt";
 // Same-tab broadcast event — the native `storage` event only fires for OTHER tabs.
 const SAME_TAB_EVENT = "app-style-change";
 

@@ -7,27 +7,60 @@
     white-space: nowrap;
     transition: width 0.4s linear;
   }
+
+  // Collapse toggle — kept subtle so it doesn't compete with content.
   & .sidebar-collapse-button {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    padding: 0;
     right: 0;
     transform: translate(50%);
-    top: 30%;
+    top: 83px;
     z-index: 20;
     pointer-events: auto;
+    background-color: rgba(255, 255, 255, 0.92);
+    color: var(--mui-palette-primary-main);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
 
     & > .MuiSvgIcon-root {
+      font-size: 16px;
       transition: rotate 0.4s linear;
+    }
+
+    &:hover {
+      background-color: #ffffff;
     }
   }
 
-  & .user-profile-wrapper {
-    width: 100%;
-    max-width: $app-sidebar-user-profile-size;
-    max-height: $app-sidebar-user-profile-size;
-    aspect-ratio: 1;
-    margin-block-start: 2.5rem;
+  // Brand strip (company logo) — top of sidebar.
+  // Visibility against the dark background is the client's responsibility
+  // (they upload a logo that contrasts with their chosen sidebar style).
+  & .sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    margin-block: 0.25rem 0.5rem;
+  }
+
+  // Compact user block (avatar + name + role pill).
+  & .sidebar-user-block {
+    padding: 0.25rem;
+    margin-block: 0.75rem 0.75rem;
+
+    & .user-name {
+      transition: opacity 0.2s linear;
+    }
+  }
+
+  // Hairline divider between user block and menu list.
+  & .sidebar-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-block: 0.25rem 1rem;
   }
 
   & .sidebar-menu-main {
@@ -40,27 +73,45 @@
       display: flex;
       align-items: center;
       flex-direction: row;
-      padding-block: 0.25rem;
-      margin-block: 0.25rem;
+      padding: 0.6rem 0.85rem;
+      margin-block: 0.2rem;
+      border-radius: 12px;
+      color: rgba(255, 255, 255, 0.78);
+      transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
 
       & .MuiTypography-root {
-        font-weight: 600 !important;
+        font-weight: 500 !important;
+        font-size: 14px;
         opacity: 1;
-        transition: display 0.4s linear;
+        transition: opacity 0.2s linear;
       }
       & .MuiListItemIcon-root {
         color: inherit;
-        margin-inline-end: 0.5rem;
+        margin-inline-end: 0.75rem;
+        min-width: 22px;
       }
-
       & .MuiSvgIcon-root {
+        font-size: 20px;
         transition: all 0.4s linear;
       }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+      }
+
       &.Mui-selected {
-        background-color: var(--mui-palette-common-white);
-        color: var(--mui-palette-primary-main) !important;
+        background-color: rgba(255, 255, 255, 0.14);
+        color: #ffffff !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          0 4px 14px rgba(15, 23, 42, 0.18);
         & .MuiTypography-root {
-          color: var(--mui-palette-primary-main) !important;
+          color: #ffffff !important;
+          font-weight: 600 !important;
         }
       }
     }
@@ -74,11 +125,26 @@
       & .sidebar-collapse-button > .MuiSvgIcon-root {
         rotate: 180deg;
       }
+      & .sidebar-brand,
+      & .user-block-info {
+        display: none;
+      }
+      // Center the avatar inside the narrow collapsed column.
+      & .sidebar-user-block {
+        justify-content: center;
+      }
       & .sidebar-menu-main {
         & .sidebar-menu-item {
-          margin-block: 0.5rem;
-          // justify-content: center;
+          margin-block: 0.4rem;
+          padding-inline: 0.5rem;
+          justify-content: center;
 
+          // Hide the full ListItemText wrapper, not just the inner Typography —
+          // otherwise the wrapper keeps occupying horizontal space and the icon
+          // ends up left-aligned with empty room to its right.
+          & .MuiListItemText-root {
+            display: none;
+          }
           & .MuiTypography-root {
             opacity: 0;
             display: none;
@@ -88,6 +154,7 @@
           }
           & .MuiListItemIcon-root {
             margin-inline-end: 0;
+            min-width: 0;
           }
         }
       }
@@ -116,7 +183,38 @@
   }
 }
 
-// --- Classic (default) — no overrides; relies on existing rules above. -----
+// --- Cobalt: deep navy → cobalt gradient, frosted active item ---------------
+.sidebar[data-sidebar-style="cobalt"] {
+  & .sidebar-paper {
+    background: linear-gradient(
+      180deg,
+      #0f172a 0%,
+      #1e3a8a 55%,
+      #2563eb 100%
+    ) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 4px 0 28px rgba(15, 23, 42, 0.18);
+  }
+
+  & .sidebar-menu-item {
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+    &.Mui-selected {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.22) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      );
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        0 6px 18px rgba(0, 0, 0, 0.18);
+    }
+  }
+}
+
+// --- Classic (legacy) — no overrides; relies on existing rules above. ------
 .sidebar[data-sidebar-style="classic"] {
   // Intentionally empty: existing styling already produces "classic".
 }
@@ -137,7 +235,9 @@
 
   & .sidebar-menu-item {
     border-radius: 10px;
-    transition: background-color 160ms ease, transform 160ms ease;
+    transition:
+      background-color 160ms ease,
+      transform 160ms ease;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.08);
@@ -164,7 +264,9 @@
   & .sidebar-menu-item {
     border-radius: 12px;
     margin-block: 0.35rem !important;
-    transition: background-color 160ms ease, transform 160ms ease;
+    transition:
+      background-color 160ms ease,
+      transform 160ms ease;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.12);
@@ -192,6 +294,14 @@
   & .sidebar-menu-item .MuiTypography-root,
   & .sidebar-menu-item .MuiListItemIcon-root {
     color: #1e293b !important;
+  }
+
+  & .user-jobtitle {
+    color: rgba(15, 23, 42, 0.55) !important;
+  }
+
+  & .sidebar-divider {
+    background-color: #e2e8f0;
   }
 
   & .sidebar-collapse-button {

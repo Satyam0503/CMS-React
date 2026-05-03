@@ -8,6 +8,19 @@ import { AppStyle } from "./useAppStyle";
 // rules outside MUI live in _app-style.scss keyed off [data-app-style].
 const getSurfaceOverrides = (appStyle: AppStyle) => {
   switch (appStyle) {
+    case "cobalt":
+      return {
+        card: {
+          background: "rgba(255, 255, 255, 0.92)",
+          border: "1px solid rgba(255, 255, 255, 0.6)",
+          borderRadius: 14,
+          boxShadow:
+            "0 8px 24px rgba(15, 23, 42, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6) inset",
+        },
+        paper: {
+          borderRadius: 12,
+        },
+      };
     case "glass":
       return {
         card: {

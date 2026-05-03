@@ -130,12 +130,15 @@ export const postRequest = <RequestData, ResponseData>(
   config?: AxiosRequestConfig,
   isformData: boolean = false
 ) => {
+  // For multipart uploads, do NOT set Content-Type manually — axios auto-sets
+  // it to "multipart/form-data; boundary=...." when it sees a FormData body.
+  // Setting it manually drops the boundary and the server fails to parse.
+  const headers: Record<string, string> = { "Cache-Control": " max-age=3600" };
+  if (!isformData) headers["Content-Type"] = "application/json";
+
   return instance.post<ResponseData>(path, data, {
     ...config,
-    headers: {
-      "Content-Type": isformData ? "multipart/form-data" : "application/json",
-      "Cache-Control": " max-age=3600",
-    },
+    headers,
   });
 };
 

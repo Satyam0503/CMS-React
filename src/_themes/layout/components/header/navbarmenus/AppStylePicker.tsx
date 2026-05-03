@@ -6,6 +6,7 @@ import { APP_STYLES, AppStyle, useAppStyle } from "../../../../../app/modules/th
 
 // Visual preview of each style — shown as a small swatch in the picker.
 const SWATCH_BG: Record<AppStyle, string> = {
+  cobalt:   "linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%)",
   classic:  "linear-gradient(180deg, #1e1b4b 0%, #312e81 100%)",
   glass:    "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
   gradient: "linear-gradient(180deg, #7c3aed 0%, #ec4899 100%)",

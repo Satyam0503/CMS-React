@@ -29,6 +29,9 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   fullName: string;
+  // Localized job title — already resolved by the backend using Accept-Language.
+  // Empty/absent when the employee has no job role assigned.
+  jobTitle?: string | null;
   profileImage: string | null;
   companyLogo: string | null;
   defaultLanguage: string;

@@ -66,8 +66,14 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
   }
 
   const handleUpdateAvatar = async () => {
-    if (croppedImage && selectedImage) {
-      const formData = new FormData();
+    // Upload requires a selected file. Cropping is optional — if the user
+    // confirmed a crop we send the cropped Blob, otherwise we send the
+    // original file as-is. Previously the handler bailed silently when the
+    // crop step was skipped, so clicking Upload did nothing.
+    if (!selectedImage) return;
+
+    const formData = new FormData();
+    if (croppedImage) {
       const base64Image = croppedImage.split(",")[1];
       const blob = new Blob(
         [
@@ -77,24 +83,23 @@ export const PictureUpdateModal: FC<Props> = ({ open, handleClose }) => {
               .map((c) => c.charCodeAt(0))
           ),
         ],
-        {
-          type: selectedImage.type,
-        }
+        { type: selectedImage.type }
       );
-
       formData.append("profilePicture", blob, selectedImage.name);
+    } else {
+      formData.append("profilePicture", selectedImage, selectedImage.name);
+    }
 
-      try {
-        const response = await updateProfilePicture(formData);
-        const { success, methodResult } = response.data;
-        if (success) {
-          dispatch(setCurrentUser({ ...userData, profileImage: methodResult }));
-          handleClose();
-          toast.success(i({ id: "TOAST.SUCCESS.PROFILE_PICTURE_UPDATE" }));
-        }
-      } catch (error) {
-        toast.error("TOAST.FAILED.PROFILE_PICTURE_UPDATE");
+    try {
+      const response = await updateProfilePicture(formData);
+      const { success, methodResult } = response.data;
+      if (success) {
+        dispatch(setCurrentUser({ ...userData, profileImage: methodResult }));
+        handleClose();
+        toast.success(i({ id: "TOAST.SUCCESS.PROFILE_PICTURE_UPDATE" }));
       }
+    } catch (error) {
+      toast.error(i({ id: "TOAST.FAILED.PROFILE_PICTURE_UPDATE" }));
     }
   };
 

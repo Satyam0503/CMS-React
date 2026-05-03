@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Avatar, Box, Drawer, IconButton, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
-import { West } from "@mui/icons-material";
+import { ChevronLeft } from "@mui/icons-material";
 import { DEFAULT_COMPANY_LOGO, DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
 
@@ -12,6 +12,7 @@ type Props = {
   isMiniSidebar: boolean;
   setMiniSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 
 const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }) => {
   const theme = useTheme();
@@ -33,6 +34,9 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
     setOpenIndex(index);
   }
 
+  const fullName = `${currentUser?.firstName ?? ""} ${currentUser?.lastName ?? ""}`.trim();
+  const jobTitle = currentUser?.jobTitle ?? "";
+
   return (
     <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open}
       slotProps={{
@@ -49,14 +53,16 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       <Stack role="presentation" onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
         {
           !isSmallScreen &&
-          <IconButton aria-label="menu toggle" size="large" className="sidebar-collapse-button" sx={{ backgroundColor: 'background.card' }}
+          <IconButton aria-label="menu toggle" size="small" className="sidebar-collapse-button"
             onClick={handleSideBarToggle}
             onMouseOver={(e) => e.stopPropagation()}
           >
-            <West className="fs-20" />
+            <ChevronLeft className="fs-18" />
           </IconButton>
         }
-        <Stack className="align-items-center mt-4 mb-6" >
+
+        {/* Company logo strip — small, top-of-sidebar */}
+        <Box className="sidebar-brand">
           <Avatar
             variant="square"
             alt="Company Logo"
@@ -64,31 +70,77 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             className="company-logo"
             sx={{
               backgroundColor: "transparent",
-              maxWidth: "200px",
               width: "100%",
-              height: "60px",
-              "& .MuiAvatar-img": {
-                objectFit: "contain",
-              }
+              maxWidth: 160,
+              height: 36,
+              "& .MuiAvatar-img": { objectFit: "contain", objectPosition: "left center" },
             }}
           />
-          <Box component="div" className="user-profile-wrapper">
-            <Avatar
-              alt=""
-              src={profileUrl || DEFAULT_USER_AVATAR}
+        </Box>
+
+        {/* Compact user block — avatar (left) + name + role pill */}
+        <Stack
+          direction="row"
+          spacing={1.5}
+          alignItems="center"
+          className="sidebar-user-block"
+        >
+          <Avatar
+            alt={fullName}
+            src={profileUrl || DEFAULT_USER_AVATAR}
+            className="user-avatar"
+            sx={{
+              width: 44,
+              height: 44,
+              flexShrink: 0,
+              border: "2px solid rgba(255, 255, 255, 0.18)",
+            }}
+          />
+          <Stack
+            direction="column"
+            spacing={0.25}
+            className="user-block-info"
+            sx={{ minWidth: 0, flexGrow: 1 }}
+          >
+            <Typography
+              className="user-name"
               sx={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                aspectRatio: 1,
-                backgroundColor: "secondary.main",
+                color: "common.white",
+                fontWeight: 600,
+                fontSize: 15,
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                minWidth: 0,
               }}
-            />
-          </Box>
-          <Typography sx={{ color: 'common.white', textAlign: "center", textWrap: "balance" }} className="user-name mt-4">
-            {`${currentUser?.firstName}  ${currentUser?.lastName}`}
-          </Typography>
+              title={fullName}
+            >
+              {fullName}
+            </Typography>
+            {jobTitle && (
+              <Typography
+                className="user-jobtitle"
+                sx={{
+                  color: "rgba(255, 255, 255, 0.65)",
+                  fontWeight: 500,
+                  fontSize: 12,
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  minWidth: 0,
+                }}
+                title={jobTitle}
+              >
+                {jobTitle}
+              </Typography>
+            )}
+          </Stack>
         </Stack>
+
+        <Box className="sidebar-divider" />
+
         <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
       </Stack>
     </Drawer >

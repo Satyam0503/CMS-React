@@ -7,7 +7,25 @@
 // useAppStyle.ts + a `surface` branch in MuiTheme.ts.
 // =============================================================================
 
-// ----- Classic (default) — relies on existing styling, no overrides ---------
+// ----- Cobalt (default for new tenants) — soft blue body, glassy header -----
+:root[data-app-style="cobalt"] {
+  body {
+    background:
+      radial-gradient(80% 60% at 0% 0%, rgba(37, 99, 235, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+    background-attachment: fixed;
+  }
+
+  & .app-header {
+    background: rgba(255, 255, 255, 0.72) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  }
+}
+
+// ----- Classic (legacy) — relies on existing styling, no overrides ---------
 :root[data-app-style="classic"] {
   // Intentionally empty.
 }
