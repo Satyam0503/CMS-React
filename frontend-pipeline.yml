@@ -67,7 +67,7 @@ stages:
             inputs:
               targetType: "inline"
               script: |
-                $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/')
+                $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/', '\')
                 $envFile  = Join-Path "$(Build.SourcesDirectory)" ".env"
                 @"
                 VITE_BASEURL=$viteBase
@@ -165,7 +165,13 @@ stages:
                       inputs:
                         targetType: "inline"
                         script: |
-                          $appHost = ([Uri]"$(AppSettings.AppUrl)").Host
+                          # Tolerant hostname extraction: matches anything between :// and the
+                          # first / or \, so trailing slashes (forward or back) don't break parsing.
+                          $appUrlRaw = "$(AppSettings.AppUrl)"
+                          if ($appUrlRaw -notmatch '^https?://([^/\\?#]+)') {
+                            throw "Could not parse hostname from AppSettings.AppUrl: '$appUrlRaw'"
+                          }
+                          $appHost = $matches[1]
                           Write-Host "##vso[task.setvariable variable=AppHost]$appHost"
                           Write-Host "Resolved: AppHost=$appHost"
 
