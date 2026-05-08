@@ -13,7 +13,9 @@ import {
   TIME_PERIOD_MAP,
 } from "../enums";
 
-export const BaseUrl = import.meta.env.VITE_BASEURL;
+const rawBaseUrl =
+  import.meta.env.VITE_BASEURL ?? import.meta.env.VITE_BASE_URL ?? "";
+export const BaseUrl = rawBaseUrl.trim().replace(/\/+$/, "");
 export const ReCAPTCHA_SITE_KEY = import.meta.env.VITE_CAPTCHA_SITE_KEY;
 export const APP_FILTER_KEY = "app-filters";
 export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
@@ -58,6 +60,7 @@ export const ServiceUrl = {
   GET_EMPLOYEE_SKILLS: `api/User/GetEmployeeSkills`,
 
   INVITE_NEW_EMPLOYEE: "api/User/InviteNewEmployee",
+  BULK_IMPORT_EMPLOYEES: "api/User/BulkImportEmployees",
   ADD_EMPLOYEE_EDUCATION: `api/User/AddEmployeeEducation`,
   ADD_EMPLOYEE_CERTIFICATION: `api/User/AddEmployeeCertification`,
 

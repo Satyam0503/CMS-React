@@ -15,6 +15,7 @@ import {
   Drafts,
   FilterList,
   GridView,
+  UploadFile,
   ViewList,
 } from "@mui/icons-material";
 
@@ -41,6 +42,7 @@ import {
 import { countAppliedFilter } from "../../../utils/common";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AddEmployeeStepper } from "./components/AddEmployeeStepper";
+import { BulkImportEmployeesModal } from "./components/BulkImportEmployeesModal";
 import {
   GridColDef,
   GridPaginationModel,
@@ -205,6 +207,7 @@ const Employees = () => {
   const { setPageTitle } = usePageData();
   const navigate = useNavigate();
   const [showAddEmployeeStepper, setShowAddEmployeeStepper] = useState(false);
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [paginationValues, setPaginationValues] = useState({
     pageNo: 0,
     records: 10,
@@ -351,12 +354,22 @@ const Employees = () => {
             {userPermissionForModule.includes(
               `${ModulesName.Employees}.${Permission.Create}`,
             ) && (
-              <CustomIconButton
-                icon={<Add />}
-                handleClick={() => setShowAddEmployeeStepper(true)}
-                tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
-                ariaLabel="Add employee"
-              />
+              <>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<UploadFile />}
+                  onClick={() => setShowBulkImportModal(true)}
+                >
+                  Bulk Import
+                </Button>
+                <CustomIconButton
+                  icon={<Add />}
+                  handleClick={() => setShowAddEmployeeStepper(true)}
+                  tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
+                  ariaLabel="Add employee"
+                />
+              </>
             )}
           </Stack>
           {open && (
@@ -391,6 +404,13 @@ const Employees = () => {
           open={showAddEmployeeStepper}
           handleReresh={handleReresh}
           handleClose={() => setShowAddEmployeeStepper(false)}
+        />
+      )}
+      {showBulkImportModal && (
+        <BulkImportEmployeesModal
+          open={showBulkImportModal}
+          handleClose={() => setShowBulkImportModal(false)}
+          onImported={handleReresh}
         />
       )}
     </>

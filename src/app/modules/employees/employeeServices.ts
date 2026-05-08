@@ -2,6 +2,8 @@ import { deleteRequest, postRequest } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
+  BulkImportEmployeesRequest,
+  BulkImportEmployeesResponse,
   CreateEmployeeSalary,
   CreateEmployeeSalaryResponseData,
   EditEmployeeResponseData,
@@ -58,5 +60,12 @@ export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
 export const resendInvitationLink = (userId: string) => {
   return postRequest<undefined, ApiResponse>(
     `${ServiceUrl.RESEND_INVITE_LINK}/${userId}`,
+  );
+};
+
+export const bulkImportEmployees = (payload: BulkImportEmployeesRequest) => {
+  return postRequest<BulkImportEmployeesRequest, ResponseData<BulkImportEmployeesResponse>>(
+    ServiceUrl.BULK_IMPORT_EMPLOYEES,
+    payload,
   );
 };
