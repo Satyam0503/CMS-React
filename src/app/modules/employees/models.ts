@@ -115,3 +115,33 @@ export type CreateEmployeeSalary = Pick<
   | "paymentFrequency"
   | "status"
 >;
+
+export type BulkImportEmployeeModel = {
+  empId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  department: string;
+  jobRole: string;
+};
+
+export type BulkImportEmployeesRequest = {
+  employees: BulkImportEmployeeModel[];
+};
+
+export type BulkImportEmployeeResult = {
+  rowNumber?: number;
+  empId?: string;
+  email?: string;
+  status?: string;
+  message?: string;
+  createdUserId?: string;
+};
+
+export type BulkImportEmployeesResponse = {
+  total?: number;
+  createdCount?: number;
+  failedCount?: number;
+  results?: BulkImportEmployeeResult[];
+};
