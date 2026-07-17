@@ -9,9 +9,10 @@ import { FC, useMemo } from "react";
 type Props = {
   currentIndex: number | null;
   handleToggle: (index: number | null) => void;
+  isMiniSidebar: boolean;
 };
 
-export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
+export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle, isMiniSidebar }) => {
   const { formatMessage } = useIntl();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
@@ -40,9 +41,10 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
                 index={index}
                 key={tab?.id}
                 to={tab?.route}
-                isOpen={currentIndex ? index === currentIndex : false}
+                isOpen={currentIndex === index}
                 title={formatMessage({ id: tab?.title })}
                 icon={tab?.icon}
+                isMiniSidebar={isMiniSidebar}
                 setCurrentMenuIndex={handleToggle}
               >
                 {tab?.subTabs?.map((subTab) => {
@@ -52,6 +54,7 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
                       to={subTab?.route}
                       title={formatMessage({ id: subTab?.title })}
                       icon={subTab?.icon}
+                      isMiniSidebar={isMiniSidebar}
                     />
                   );
                 })}
@@ -65,6 +68,7 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle }) => {
                 to={tab.route}
                 icon={tab.icon}
                 title={formatMessage({ id: tab.title })}
+                isMiniSidebar={isMiniSidebar}
               />
             );
           }

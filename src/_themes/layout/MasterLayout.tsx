@@ -35,7 +35,7 @@ const MasterLayout = () => {
             <HeaderWrapper openSideBar={handleOpenSidebar} isMiniSidebar={isMiniSidebar} />
             <Stack
               direction="row"
-              className="flex-grow-1"
+              className="app-content-surface flex-grow-1"
               sx={{
                 marginLeft: isSmallScreen
                   ? 0

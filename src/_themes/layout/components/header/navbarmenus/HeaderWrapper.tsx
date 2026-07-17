@@ -18,10 +18,9 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, isMiniSidebar }) => {
   const isMobileScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
 
-  // Logo lives in the sidebar when it's full. When collapsed (mini) or on
-  // small screens (where the drawer is temporary and may be closed), surface
-  // it in the header so users always see brand context.
-  const showHeaderLogo = isMiniSidebar || isSmallScreen;
+  // On desktop the logo always lives in the sidebar, including its collapsed
+  // state. Keep a header logo only on small screens where the drawer is temporary.
+  const showHeaderLogo = isSmallScreen;
 
   // Sidebar paper sits at the left edge with a higher z-index than the header,
   // so without this dodge it covers the header's left content (logo, hamburger).

@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
-import { Avatar, Box, Drawer, IconButton, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Avatar, Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { useAppSelector } from "../../../../app/Redux/hooks";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
-import { ChevronLeft } from "@mui/icons-material";
-import { DEFAULT_COMPANY_LOGO, DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
+import { KeyboardDoubleArrowLeft } from "@mui/icons-material";
+import { DEFAULT_COMPANY_LOGO } from "../../../../utils/constant/Constant";
 import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
 
 type Props = {
@@ -16,8 +16,6 @@ type Props = {
 
 const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }) => {
   const theme = useTheme();
-  const currentUser = useAppSelector((state) => state.user.userData);
-  const profileUrl = useAppSelector((state) => state.user.userData?.profileImage);
   const companyLogo = useAppSelector((state => state.user.userData?.companyLogo));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
@@ -33,9 +31,6 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
   const handleToggle = (index: number | null) => {
     setOpenIndex(index);
   }
-
-  const fullName = `${currentUser?.firstName ?? ""} ${currentUser?.lastName ?? ""}`.trim();
-  const jobTitle = currentUser?.jobTitle ?? "";
 
   return (
     <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open}
@@ -53,12 +48,21 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       <Stack role="presentation" onClick={handleClose} sx={{ flexGrow: 1, p: 2, overflow: "hidden" }}>
         {
           !isSmallScreen &&
-          <IconButton aria-label="menu toggle" size="small" className="sidebar-collapse-button"
-            onClick={handleSideBarToggle}
-            onMouseOver={(e) => e.stopPropagation()}
-          >
-            <ChevronLeft className="fs-18" />
-          </IconButton>
+          <Tooltip title={isMiniSidebar ? "Expand sidebar" : "Collapse sidebar"} placement="right" arrow>
+            <ButtonBase
+              aria-label={isMiniSidebar ? "Expand sidebar" : "Collapse sidebar"}
+              aria-expanded={!isMiniSidebar}
+              className="sidebar-edge-toggle"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleSideBarToggle();
+              }}
+            >
+              <Box component="span" className="sidebar-edge-toggle-icon">
+                <KeyboardDoubleArrowLeft />
+              </Box>
+            </ButtonBase>
+          </Tooltip>
         }
 
         {/* Company logo strip — small, top-of-sidebar */}
@@ -70,78 +74,24 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
             className="company-logo"
             sx={{
               backgroundColor: "transparent",
-              width: "100%",
-              maxWidth: 160,
+              width: !isSmallScreen && isMiniSidebar ? 36 : "100%",
+              maxWidth: !isSmallScreen && isMiniSidebar ? 36 : 160,
               height: 36,
-              "& .MuiAvatar-img": { objectFit: "contain", objectPosition: "left center" },
+              "& .MuiAvatar-img": {
+                objectFit: "contain",
+                objectPosition: !isSmallScreen && isMiniSidebar ? "center" : "left center",
+              },
             }}
           />
         </Box>
 
-        {/* Compact user block — avatar (left) + name + role pill */}
-        <Stack
-          direction="row"
-          spacing={1.5}
-          alignItems="center"
-          className="sidebar-user-block"
-        >
-          <Avatar
-            alt={fullName}
-            src={profileUrl || DEFAULT_USER_AVATAR}
-            className="user-avatar"
-            sx={{
-              width: 44,
-              height: 44,
-              flexShrink: 0,
-              border: "2px solid rgba(255, 255, 255, 0.18)",
-            }}
-          />
-          <Stack
-            direction="column"
-            spacing={0.25}
-            className="user-block-info"
-            sx={{ minWidth: 0, flexGrow: 1 }}
-          >
-            <Typography
-              className="user-name"
-              sx={{
-                color: "common.white",
-                fontWeight: 600,
-                fontSize: 15,
-                lineHeight: 1.2,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                minWidth: 0,
-              }}
-              title={fullName}
-            >
-              {fullName}
-            </Typography>
-            {jobTitle && (
-              <Typography
-                className="user-jobtitle"
-                sx={{
-                  color: "rgba(255, 255, 255, 0.65)",
-                  fontWeight: 500,
-                  fontSize: 12,
-                  lineHeight: 1.2,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  minWidth: 0,
-                }}
-                title={jobTitle}
-              >
-                {jobTitle}
-              </Typography>
-            )}
-          </Stack>
-        </Stack>
-
         <Box className="sidebar-divider" />
 
-        <SidebarMenuMain currentIndex={openIndex} handleToggle={handleToggle} />
+        <SidebarMenuMain
+          currentIndex={openIndex}
+          handleToggle={handleToggle}
+          isMiniSidebar={!isSmallScreen && isMiniSidebar}
+        />
       </Stack>
     </Drawer >
   );

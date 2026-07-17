@@ -11,11 +11,11 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
     case "cobalt":
       return {
         card: {
-          background: "rgba(255, 255, 255, 0.92)",
-          border: "1px solid rgba(255, 255, 255, 0.6)",
+          background: "color-mix(in srgb, var(--mui-palette-background-paper) 92%, transparent)",
+          border: "1px solid var(--mui-palette-divider)",
           borderRadius: 14,
           boxShadow:
-            "0 8px 24px rgba(15, 23, 42, 0.08), 0 1px 0 rgba(255, 255, 255, 0.6) inset",
+            "0 8px 24px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
         },
         paper: {
           borderRadius: 12,
@@ -24,15 +24,15 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
     case "glass":
       return {
         card: {
-          background: "rgba(255, 255, 255, 0.55)",
+          background: "color-mix(in srgb, var(--mui-palette-background-paper) 65%, transparent)",
           WebkitBackdropFilter: "blur(14px) saturate(160%)",
           backdropFilter: "blur(14px) saturate(160%)",
-          border: "1px solid rgba(255, 255, 255, 0.35)",
+          border: "1px solid var(--mui-palette-divider)",
           boxShadow:
-            "0 4px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4)",
+            "0 4px 16px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
         },
         paper: {
-          background: "rgba(255, 255, 255, 0.65)",
+          background: "color-mix(in srgb, var(--mui-palette-background-paper) 72%, transparent)",
           WebkitBackdropFilter: "blur(12px)",
           backdropFilter: "blur(12px)",
         },
@@ -42,7 +42,7 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
         card: {
           borderRadius: 14,
           boxShadow: "0 6px 22px rgba(0, 0, 0, 0.08)",
-          border: "1px solid rgba(0, 0, 0, 0.04)",
+          border: "1px solid var(--mui-palette-divider)",
         },
         paper: {
           borderRadius: 12,
@@ -53,7 +53,7 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
         card: {
           borderRadius: 4,
           boxShadow: "none",
-          border: "1px solid #e2e8f0",
+          border: "1px solid var(--mui-palette-divider)",
         },
         paper: {
           borderRadius: 4,

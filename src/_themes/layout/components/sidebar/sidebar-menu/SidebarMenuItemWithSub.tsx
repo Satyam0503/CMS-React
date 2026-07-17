@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Collapse, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Collapse, List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   title: string;
   icon?: ReactNode;
   children: ReactNode;
+  isMiniSidebar: boolean;
   setCurrentMenuIndex: (index: number | null) => void;
 };
 
@@ -18,6 +19,7 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
   icon,
   index,
   isOpen,
+  isMiniSidebar,
   setCurrentMenuIndex
 }) => {
 
@@ -32,13 +34,15 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
 
   return (
     <>
-      <ListItemButton onClick={handleMenuToggle} sx={{ color: 'common.white' }} className="sidebar-menu-item">
-        <ListItemIcon>
-          {icon}
-        </ListItemIcon>
-        <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
-        {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
-      </ListItemButton>
+      <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
+        <ListItemButton onClick={handleMenuToggle} sx={{ color: 'common.white' }} className="sidebar-menu-item">
+          <ListItemIcon>
+            {icon}
+          </ListItemIcon>
+          <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
+          {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
+        </ListItemButton>
+      </Tooltip>
       <Collapse in={isOpen} timeout="auto" unmountOnExit >
         <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
           {children}
