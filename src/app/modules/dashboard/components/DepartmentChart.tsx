@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
-import { getAllDepartmentInfo } from '../dashboardservices';
 import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -10,34 +9,17 @@ import { DepartmentResponseModel } from "../model";
 import { DonutChart } from "../../../shared/components/DonutChart";
 import { PieSeries } from "@mui/x-charts";
 import { defaultPieChartSeries } from "../../../../utils/common";
+import { useDepartmentsQuery } from "../dashboardQueries";
 
 
 export const DepartmentChart: FC = () => {
   const { formatMessage: i } = useIntl();
-  const [departmentList, setDepartmentList] = useState<DepartmentResponseModel[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isPending: loading } = useDepartmentsQuery();
+  const departmentList: DepartmentResponseModel[] = data?.success ? data.methodResults : [];
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector(
     (state) => state.user.userData?.defaultLanguage ?? ""
   );
-
-  useEffect(() => {
-    const getAllDepartmentDetails = async () => {
-      try {
-        const response = await getAllDepartmentInfo();
-        const { success, methodResults } = response.data;
-        if (success) {
-          setDepartmentList(methodResults);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      finally {
-        setLoading(false);
-      }
-    };
-    getAllDepartmentDetails();
-  }, [])
 
   const chartSeries = [
     {

@@ -9,6 +9,8 @@ import {
   Tooltip,
   IconButton,
   Card,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { GridRowSelectionModel } from "@mui/x-data-grid";
 import utc from "dayjs/plugin/utc";
@@ -83,6 +85,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   searchValue,
   onStatsChange,
 }) => {
+  const theme = useTheme();
   const [attendanceData, setAttendanceData] = useState<
     Record<string, AttendanceData>
   >({});
@@ -447,9 +450,15 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           return (
             <>
               {name.substring(0, index)}
-              <span style={{ backgroundColor: "#ffe58f" }}>
+              <Box
+                component="span"
+                sx={{
+                  bgcolor: alpha(theme.palette.warning.main, 0.28),
+                  color: "text.primary",
+                }}
+              >
                 {name.substring(index, index + search.length)}
-              </span>
+              </Box>
               {name.substring(index + search.length)}
             </>
           );
@@ -465,47 +474,47 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
         const getIcon = (value: AttendanceData) => {
           if (isHoliday) {
-            return <CelebrationIcon sx={{ fontSize: 18, color: "#db2777" }} />;
+            return <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />;
           }
 
           if (isWeekend && !isHoliday) {
             return (
-              <FreeBreakfastIcon sx={{ fontSize: 18, color: "#64748b" }} />
+              <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />
             );
           }
 
           switch (value.status) {
             case "P":
-              return <TaskAltIcon sx={{ fontSize: 18, color: "#16a34a" }} />;
+              return <TaskAltIcon sx={{ fontSize: 18, color: "success.main" }} />;
 
             case "A":
-              return <PersonOffIcon sx={{ fontSize: 18, color: "#dc2626" }} />;
+              return <PersonOffIcon sx={{ fontSize: 18, color: "error.main" }} />;
 
             case "H":
-              return <TimelapseIcon sx={{ fontSize: 18, color: "#f59e0b" }} />;
+              return <TimelapseIcon sx={{ fontSize: 18, color: "warning.main" }} />;
 
             case "L":
-              return <EventBusyIcon sx={{ fontSize: 18, color: "#7c3aed" }} />;
+              return <EventBusyIcon sx={{ fontSize: 18, color: "primary.main" }} />;
 
             default:
               return null;
           }
         };
         const getBg = (value: AttendanceData) => {
-          if (isHoliday) return "#fce7f3";
-          if (isWeekend && !isHoliday) return "#f1f5f9";
+          if (isHoliday) return alpha(theme.palette.secondary.main, 0.16);
+          if (isWeekend && !isHoliday) return theme.palette.action.hover;
 
           switch (value.status) {
             case "P":
-              return "#e6f7ee";
+              return alpha(theme.palette.success.main, 0.14);
             case "A":
-              return "#fdecea";
+              return alpha(theme.palette.error.main, 0.14);
             case "H":
-              return "#fff4e5";
+              return alpha(theme.palette.warning.main, 0.14);
             case "L":
-              return "#f3e8ff";
+              return alpha(theme.palette.primary.main, 0.14);
             default:
-              return "#ffffff";
+              return theme.palette.background.paper;
           }
         };
 
@@ -528,7 +537,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 }
               }}
             >
-              <Typography fontSize={11} color="#64748b">
+              <Typography fontSize={11} color="text.secondary">
                 {dayjs(dateObj).format("ddd")}
               </Typography>
               <Typography fontWeight="600" fontSize={14}>
@@ -576,12 +585,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     borderRadius: 2,
                     cursor: editable ? "pointer" : "default",
                     transition: "all 0.2s ease",
-                    border: "1px solid #f1f5f9",
+                    border: "1px solid",
+                    borderColor: "divider",
 
                     "&:hover": {
                       ...(editable && {
                         transform: "scale(1.05)",
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+                        boxShadow: theme.shadows[3],
                       }),
                     },
                   }}
@@ -594,7 +604,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         };
       }),
     ];
-  }, [daysInMonth, holidays, selectedMonth, selectedYear, today, searchValue]);
+  }, [daysInMonth, holidays, selectedMonth, selectedYear, today, searchValue, theme]);
 
   /* ------------------------------------------------------------ GRID ROW ------------------------------------------------------------------------------------- */
 
@@ -709,9 +719,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             px: 2,
             py: 1,
             borderRadius: 3,
-            border: "1px solid #e6eaf0",
-            backgroundColor: "#ffffff",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            border: "1px solid",
+            borderColor: "divider",
+            backgroundColor: "background.paper",
+            boxShadow: theme.shadows[2],
           }}
         >
           <IconButton
@@ -730,7 +741,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               fontSize: 15,
               minWidth: 140,
               textAlign: "center",
-              color: "#1f2937",
+              color: "text.primary",
               letterSpacing: 0.3,
             }}
           >
@@ -753,19 +764,22 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         sx={{
           p: 2,
           borderRadius: 3,
-          boxShadow: "0 4px 16px rgba(0,0,0,0.05)",
-          border: "1px solid #e6eaf0",
+          boxShadow: theme.shadows[2],
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Box
           sx={{
             border: "none",
             "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#f8fafc",
-              borderBottom: "1px solid #e6eaf0",
+              backgroundColor: "background.default",
+              borderBottom: "1px solid",
+              borderBottomColor: "divider",
             },
             "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid #f1f5f9",
+              borderBottom: "1px solid",
+              borderBottomColor: "divider",
             },
             "& .MuiDataGrid-row:hover": {
               backgroundColor: "transparent",

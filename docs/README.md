@@ -6,6 +6,8 @@ Architectural reference for the **CMS-React** frontend. Written for AI agents an
 
 ## How to use these docs
 
+For the frontend server-state implementation, read [`tanstack-query.md`](./tanstack-query.md). It documents the global Axios cache, query keys, invalidation, retries, authentication isolation, feature hooks, tests, and migration guidance.
+
 If you only have time to read **one** file, read [`modules.md`](./modules.md) — it's the catalog of every feature in the app. Everything else exists to support adding to or modifying that catalog.
 
 Recommended reading order for a new contributor (human or AI):

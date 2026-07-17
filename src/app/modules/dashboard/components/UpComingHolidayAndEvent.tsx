@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { CardSkeleton } from "./CardSkeleton";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
@@ -7,31 +6,15 @@ import { dateFormatter } from "../../../../utils/common";
 import React from "react";
 import { CalendarToday, Celebration } from "@mui/icons-material";
 import { UpComingHolidayAndEventModel } from "../model";
-import { getUpcomingHolidayAndEvents } from "../dashboardservices";
 import { Link } from "react-router-dom";
+import { useUpcomingEventsQuery } from "../dashboardQueries";
 
 export const UpComingHolidayAndEvents = () => {
     const { formatMessage: i } = useIntl();
-    const [holidayandEvent, setHolidayAndEvent] = useState<UpComingHolidayAndEventModel>({ holiday: [], event: [] });
-    const [isLoading, setLoading] = useState(true);
-
-    useEffect(() => {
-        setLoading(true);
-        const fetchedHolidayAndEventData = async () => {
-            try {
-                const { data } = await getUpcomingHolidayAndEvents();
-                if (data.success) {
-                    setHolidayAndEvent(data.methodResult);
-                }
-            } catch (error) {
-                console.error((error as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchedHolidayAndEventData()
-    }, []);
+    const { data, isPending: isLoading } = useUpcomingEventsQuery();
+    const holidayandEvent: UpComingHolidayAndEventModel = data?.success
+        ? data.methodResult
+        : { holiday: [], event: [] };
 
     if (isLoading) {
         return <CardSkeleton />

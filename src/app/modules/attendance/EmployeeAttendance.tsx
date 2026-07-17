@@ -10,6 +10,7 @@ import {
   Select,
   Stack,
   Typography,
+  alpha,
   useTheme,
 } from "@mui/material";
 import {
@@ -120,7 +121,7 @@ const EmployeeAttendance = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg="#d9e5f5"
+                iconBg={alpha(theme.palette.info.main, 0.18)}
                 iconColor="info.dark"
                 icon={<EventAvailable fontSize="large" />}
                 number={attendanceStats.present}
@@ -134,7 +135,7 @@ const EmployeeAttendance = () => {
           <Card>
             <CardContent>
               <IconStat
-                iconBg="#d9f5df"
+                iconBg={alpha(theme.palette.success.main, 0.18)}
                 icon={<TimerOffOutlined fontSize="large" />}
                 iconColor="success.light"
                 number={attendanceStats.late}
@@ -182,7 +183,7 @@ const EmployeeAttendance = () => {
           name="days"
           value={selectedDay}
           onChange={handleChange}
-          sx={{ minWidth: 130, bgcolor: "common.white" }}
+          sx={{ minWidth: 130, bgcolor: "background.paper" }}
         >
           {Days.map((item) => (
             <MenuItem key={item.id} value={item.value}>

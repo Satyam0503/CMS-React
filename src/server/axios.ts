@@ -12,11 +12,24 @@ import {
 import { refreshTokenAsync } from "../app/modules/auth/core/_requests";
 import { getCurrentAppLanguage } from "../utils/common";
 import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
+import { queryClient } from "../app/query/queryClient";
+import { apiQueryKey } from "../app/query/queryKeys";
 
 let isRefreshing = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
 
 const timeout = 30000;
+
+const getAuthCacheScope = () => {
+  const token = getLocalKey()?.token ?? "anonymous";
+  let hash = 0;
+
+  for (let index = 0; index < token.length; index += 1) {
+    hash = (hash * 31 + token.charCodeAt(index)) | 0;
+  }
+
+  return hash.toString(36);
+};
 
 const instance = axios.create({
   baseURL: BaseUrl,
@@ -116,15 +129,29 @@ export const getRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
-  return instance.get<ResponseData>(path, {
-    ...config,
-    headers: {
-      "Cache-Control": "max-age=3600",
-    },
+  return queryClient.fetchQuery({
+    queryKey: apiQueryKey(
+      path,
+      config?.params,
+      getCurrentAppLanguage(),
+      getAuthCacheScope(),
+    ),
+    queryFn: ({ signal }) =>
+      instance.get<ResponseData>(path, {
+        ...config,
+        signal: config?.signal ?? signal,
+        headers: {
+          ...config?.headers,
+          "Cache-Control": "max-age=3600",
+        },
+      }),
   });
 };
 
-export const postRequest = <RequestData, ResponseData>(
+const invalidateApiQueries = () =>
+  queryClient.invalidateQueries();
+
+export const postRequest = async <RequestData, ResponseData>(
   path: string,
   data?: RequestData,
   config?: AxiosRequestConfig,
@@ -136,41 +163,49 @@ export const postRequest = <RequestData, ResponseData>(
   const headers: Record<string, string> = { "Cache-Control": " max-age=3600" };
   if (!isformData) headers["Content-Type"] = "application/json";
 
-  return instance.post<ResponseData>(path, data, {
+  const response = await instance.post<ResponseData>(path, data, {
     ...config,
     headers,
   });
+  await invalidateApiQueries();
+  return response;
 };
 
-export const patchRequest = <Data, ResponseData>(
+export const patchRequest = async <Data, ResponseData>(
   path: string,
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return instance.patch<ResponseData>(path, data, {
+  const response = await instance.patch<ResponseData>(path, data, {
     ...config,
     headers: {
       "Content-Type": "application/json",
     },
   });
+  await invalidateApiQueries();
+  return response;
 };
 
-export const deleteRequest = <ResponseData>(
+export const deleteRequest = async <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
-  return instance.delete<ResponseData>(path, config);
+  const response = await instance.delete<ResponseData>(path, config);
+  await invalidateApiQueries();
+  return response;
 };
 
-export const putRequest = <Data, ResponseData>(
+export const putRequest = async <Data, ResponseData>(
   path: string,
   data?: Data,
   config?: AxiosRequestConfig
 ) => {
-  return instance.put<ResponseData>(path, data, {
+  const response = await instance.put<ResponseData>(path, data, {
     ...config,
     headers: {
       "Content-Type": "application/json",
     },
   });
+  await invalidateApiQueries();
+  return response;
 };

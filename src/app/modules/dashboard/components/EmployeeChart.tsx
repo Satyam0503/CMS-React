@@ -1,14 +1,14 @@
 import { IntlShape, useIntl } from "react-intl";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import { CustomCard } from "../../../shared/components/CustomCard";
 import { CardSkeleton } from "./CardSkeleton";
-import { getAllGenderInfo } from "../dashboardservices";
 import { GenderModel } from "../model";
 import { defaultPieChartSeries, genderMapper } from "../../../../utils/common";
 import { MakeOptional } from "@mui/x-date-pickers/internals";
 import { PieSeries, PieValueType } from "@mui/x-charts";
 import { DonutChart } from "../../../shared/components/DonutChart";
+import { useGenderQuery } from "../dashboardQueries";
 
 
 const createChartData = (data: GenderModel[], intl: IntlShape) => {
@@ -33,9 +33,12 @@ const countTotalEmployee = (empData: GenderModel[]) => {
 export const EmployeeChart: FC = () => {
   const intl = useIntl();
   const { formatMessage: i } = intl;
-  const [empData, setEmpData] = useState<GenderModel[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [totalEmployee, setTotalEmployee] = useState(0);
+  const { data, isPending: loading } = useGenderQuery();
+  const empData = useMemo(
+    () => (data?.success ? data.methodResults : []),
+    [data],
+  );
+  const totalEmployee = countTotalEmployee(empData);
 
   const series: PieSeries[] = useMemo(() => {
     return [
@@ -46,23 +49,6 @@ export const EmployeeChart: FC = () => {
     ];
   }, [empData, intl])
 
-
-  useEffect(() => {
-    const getAllGenderDetails = async () => {
-      try {
-        const { data } = await getAllGenderInfo();
-        if (data.success) {
-          setEmpData(data.methodResults);
-          setTotalEmployee(countTotalEmployee(data.methodResults));
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getAllGenderDetails();
-  }, []);
 
   if (loading) {
     return <CardSkeleton />;

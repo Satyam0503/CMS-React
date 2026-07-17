@@ -1,33 +1,18 @@
 import { Stack, Typography, Avatar, Box, Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { dateFormatter, getOrdinalSuffix } from "../../../../utils/common";
 import { CardSkeleton } from "./CardSkeleton";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { UpcomingCelebration } from "../model";
-import { getUpcomingCelebration } from "../dashboardservices";
+import { useUpcomingCelebrationsQuery } from "../dashboardQueries";
 
 export const UpComingCelebration = () => {
   const { formatMessage: i } = useIntl();
-  const [data, setData] = useState<UpcomingCelebration>({ birthday: [], workAnniversary: [] });
-  const [isLoading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await getUpcomingCelebration();
-        if (data.success) {
-          setData(data.methodResult);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      finally {
-        setLoading(false);
-      }
-    })();
-  }, [])
+  const { data: response, isPending: isLoading } = useUpcomingCelebrationsQuery();
+  const data: UpcomingCelebration = response?.success
+    ? response.methodResult
+    : { birthday: [], workAnniversary: [] };
 
   if (isLoading) {
     return <CardSkeleton />

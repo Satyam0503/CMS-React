@@ -10,6 +10,7 @@ import { logout } from "../../Redux/Reducers/authSlice";
 import { resetUserSlice } from "../../Redux/Reducers/userSlice";
 import ChatHub from "../../../server/ChatHub";
 import { resetOnlineUsers } from "../../Redux/Reducers/onlineUsersSlice";
+import { queryClient } from "../../query/queryClient";
 
 export const Logout = () => {
   const dispatch = useAppDispatch();
@@ -35,6 +36,7 @@ export const Logout = () => {
         dispatch(resetUserSlice());
         dispatch(resetOnlineUsers());
         localStorage.clear();
+        queryClient.clear();
         signalRInstance.stopConnection();
         chatHubInstance.stopConnection();
         setRedirect(true);
