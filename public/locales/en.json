@@ -510,7 +510,7 @@
       "PERSONAL_INFO": "Personal Information",
       "OHTER_INFO": "Other Information"
     },
-    "SALARY":{
+    "SALARY": {
       "BASIC_PAY": "Basic Pay",
       "HRA": "HRA",
       "OTHER_ALLOWANCE": "Other Allowance",
@@ -535,7 +535,7 @@
       "NOTE": "You've successfully created the employee account and assigned all required details"
     },
     "TYPE": {
-      "FULLTIME": "Full Time",
+      "FULLTIME": "Employee",
       "PARTTIME": "Part Time",
       "CONTRACTUAL": "Contractual",
       "INTERNSHIP": "Internship",
