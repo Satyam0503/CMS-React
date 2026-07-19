@@ -20,6 +20,7 @@ export const initialPayRollValues: Nullable<PayRollDataModel> & {
   payMonth: Dayjs;
 } = {
   employeeId: "",
+  paidDate: null,
   basicPay: null,
   paidDays: null,
   bonus: null,
@@ -76,6 +77,8 @@ export default function PayrollSettings() {
   const handleRowClick = (row: PayRollResponseModel) => {
     setInitialValues({
       ...row.payData,
+      // the API returns paidDate as a plain ISO string, not a Dayjs instance
+      paidDate: row.payData.paidDate ? dayjs(row.payData.paidDate as unknown as string) : null,
       payMonth: payMonth!,
     });
     setIsEdit(true);

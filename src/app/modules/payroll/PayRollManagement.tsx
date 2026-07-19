@@ -19,6 +19,7 @@ import { ModulesName, Permission } from "../../../utils/enums";
 
 export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayjs } = {
     employeeId: "",
+    paidDate: null,
     basicPay: null,
     paidDays: null,
     bonus: null,
@@ -56,6 +57,8 @@ const PayRollManagement = () => {
     const handleRowClick = (row: PayRollResponseModel) => {
         setInitialValues({
             ...row.payData,
+            // the API returns paidDate as a plain ISO string, not a Dayjs instance
+            paidDate: row.payData.paidDate ? dayjs(row.payData.paidDate as unknown as string) : null,
             payMonth: payMonth!
         })
         setIsEdit(true);
@@ -118,7 +121,7 @@ const PayRollManagement = () => {
                         }
                     </Stack>
                 </Stack>
-                <PayRollTable payRollData={payRollData} handleRowClick={handleRowClick} />
+                <PayRollTable payRollData={payRollData} payMonth={payMonth} handleRowClick={handleRowClick} />
             </Card>
             {
                 isModalOpen && <AddUpdateEmployeePayRoll edit={isEdit} open={isModalOpen} initialValues={initialValues} handleClose={handleModalClose} handlePageRefresh={handlePageRefresh} />

@@ -192,6 +192,7 @@ export const ServiceUrl = {
   // payroll
   UPLOAD_PAYROLL: `api/PayRoll/UploadPayloadData`,
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
+  GENERATE_EMPLOYEE_PAY_SLIP: `api/PayRoll/GenerateEmployeePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
 

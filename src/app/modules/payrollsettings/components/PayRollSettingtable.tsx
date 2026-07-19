@@ -11,7 +11,7 @@ import { useIntl } from "react-intl";
 import { PayRollDataModel, PayRollResponseModel } from "../../payroll/models";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
 import { useMemo } from "react";
-import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import clsx from "clsx";
@@ -31,6 +31,7 @@ interface Column {
 const columns: Column[] = [
   { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 120 },
   { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 200 },
+  { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 130 },
   { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 100 },
   { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 100 },
   { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 100 },
@@ -146,6 +147,13 @@ export const PayRollTableData = ({ payRollData, handleRowClick }: TableProps) =>
                             title={row.employeeName}
                             subTitle={row.jobTitle}
                           />
+                        </TableCell>
+                      );
+                    }
+                    if (column.id === "paidDate") {
+                      return (
+                        <TableCell key={column.id}>
+                          {dateFormatter(row.payData.paidDate, "DD MMM YYYY")}
                         </TableCell>
                       );
                     }

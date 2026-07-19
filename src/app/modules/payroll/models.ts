@@ -5,6 +5,7 @@ import { initialPayRollValues } from "./PayRollManagement";
 export type PayRollDataModel = {
   payRollId?: string;
   employeeId: string;
+  paidDate: Dayjs;
   basicPay: number;
   paidDays: number;
   bonus: number;
@@ -25,6 +26,10 @@ export type PayRollRequestModel = {
 export type PayslipPayload = {
   year: number;
   month: number;
+};
+
+export type EmployeePayslipPayload = PayslipPayload & {
+  employeeId: string;
 };
 
 export type PayRollResponseModel = {

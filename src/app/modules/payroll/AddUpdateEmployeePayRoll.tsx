@@ -9,15 +9,18 @@ import { PayRollDataModel } from "./models";
 import { Nullable } from "../../../utils/common_types";
 import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
 import dayjs, { Dayjs } from "dayjs";
+import { DateView } from "@mui/x-date-pickers";
 import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";
 import { addUpdateEmployeePayRoll } from "./services";
 import { toast } from "react-toastify";
 import { getStatusCodeString } from "../../../utils/common";
 
+type PayRollFormValues = Nullable<PayRollDataModel> & { payMonth: Dayjs };
+
 interface PropsType {
     open: boolean;
     edit: boolean;
-    initialValues: Nullable<PayRollDataModel> & { payMonth: Dayjs };
+    initialValues: PayRollFormValues;
     handleClose: () => void;
     handlePageRefresh: () => void;
 }
@@ -25,10 +28,12 @@ interface PropsType {
 interface FormFieldProps {
     id: number;
     label: string;
-    name: string;
+    name: keyof PayRollFormValues;
     type: React.InputHTMLAttributes<unknown>['type'] | "dateTime";
     min?: number;
     max?: number;
+    views?: DateView[];
+    maxDate?: Dayjs;
 }
 
 const formField: FormFieldProps[] = [
@@ -43,7 +48,8 @@ const formField: FormFieldProps[] = [
     { id: 9, label: "PAYROLL.TABLE.LOSS_OF_PAY", name: "lossOfPay", type: "number", min: 0 },
     { id: 10, label: "PAYROLL.TABLE.INCOME_TAX", name: "incomeTax", type: "number", min: 0 },
     { id: 11, label: "PAYROLL.TABLE.HEALTH_INS", name: "healthInsurance", type: "number", min: 0 },
-    { id: 12, label: "PAYROLL.TABLE.PAY_MONTH", name: "payMonth", type: "dateTime" },
+    { id: 12, label: "PAYROLL.TABLE.PAY_MONTH", name: "payMonth", type: "dateTime", views: ["year", "month"], maxDate: dayjs().subtract(1, "month") },
+    { id: 13, label: "PAYROLL.TABLE.PAID_DATE", name: "paidDate", type: "dateTime", views: ["year", "month", "day"], maxDate: dayjs() },
 ]
 export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValues, handlePageRefresh }: PropsType) => {
     const { formatMessage: i } = useIntl();
@@ -94,19 +100,19 @@ export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValue
                                                     }}>
                                                     <CustomisedDatePicker
                                                         name={field.name}
-                                                        value={initialValues.payMonth}
+                                                        value={formik.values[field.name] as Dayjs | null}
                                                         label={i({ id: field.label })}
-                                                        views={['year', 'month']}
+                                                        views={field.views}
                                                         setValue={(date: Dayjs | null) => {
-                                                            setFieldTouched("payMonth", true);
-                                                            setFieldValue("payMonth", date);
+                                                            setFieldTouched(field.name, true);
+                                                            setFieldValue(field.name, date);
                                                         }}
-                                                        maxDate={dayjs().subtract(1, "month")}
+                                                        maxDate={field.maxDate}
                                                     />
                                                     {
-                                                        formik.touched.payMonth &&
-                                                        formik.errors.payMonth &&
-                                                        <ErrorLabel errorLabel={formik.errors.payMonth as string} />
+                                                        formik.touched[field.name] &&
+                                                        formik.errors[field.name] &&
+                                                        <ErrorLabel errorLabel={formik.errors[field.name] as string} />
                                                     }
                                                 </Grid>
                                             );

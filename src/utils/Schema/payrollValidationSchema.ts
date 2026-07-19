@@ -32,4 +32,7 @@ export const payrollValidationSchema = Yup.object().shape({
   payMonth: Yup.date()
     .max(dayjs().subtract(1, "month"))
     .required("VALIDATION_ERR.REQUIRED_TYPE"),
+  paidDate: Yup.date()
+    .max(dayjs())
+    .required("VALIDATION_ERR.REQUIRED_TYPE"),
 });

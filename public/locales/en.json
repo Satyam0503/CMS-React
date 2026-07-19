@@ -775,6 +775,7 @@
     "DOC_LOAD_FAILED": "failed to load document"
   },
   "VALIDATION_ERR": {
+    "INVALID_FILE_TYPE": "Invalid file type. Only .xlsx or .xls files are allowed",
     "MAX_LEAVE_DAY": "Maximum leave must be 1 day or more",
     "INVALID_LEAVE_TYPE": "Invalid leave type",
     "END_DATE_EARLIER_ERROR": "The end date cannot be earlier than the start date.",
@@ -993,8 +994,13 @@
     "ADD_EMP_PAYROLL": "Add Employee Payroll",
     "UPDATE_EMP_PAYROLL": "Update Employee Payroll",
     "UPLOAD_EXCEL_DATA": "Upload Excel Data",
+    "DOWNLOAD_SAMPLE_FILE": "Download sample file",
+    "UPLOAD_ERRORS_TITLE": "Your file couldn't be uploaded:",
+    "MISSING_COLUMNS_TITLE": "Your file is missing these required columns:",
+    "MISSING_COLUMNS_HINT": "Fix the issues above and try again, or start from the",
     "TABLE": {
       "PAY_MONTH": "Pay Month",
+      "PAID_DATE": "Paid Date",
       "DEDUCTIONS": "Deductions",
       "ALLOWANCES": "Allowances",
       "EMP_ID": "Employee Id",
@@ -1011,7 +1017,8 @@
       "HEALTH_INS": "Health Insurance",
       "GROSS_PAY": "Gross Pay",
       "TOTAL_DEDUCTION": "Total Deduction",
-      "NET_PAY": "Net Pay"
+      "NET_PAY": "Net Pay",
+      "PREVIEW_PAYSLIP": "Preview salary slip"
     }
   },
   "POLICIES": {
