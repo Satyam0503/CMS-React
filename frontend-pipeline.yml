@@ -5,6 +5,7 @@ trigger:
     include:
       - main
       - develop
+      - uat
   paths:
     include:
       - "*"
@@ -14,8 +15,10 @@ parameters:
   - name: environments
     type: object
     default:
-      - name: test
+      - name: dep
         branch: develop
+      - name: test
+        branch: uat
       - name: prod
         branch: main
 
@@ -32,6 +35,8 @@ stages:
       name: Codeji-Pool
     variables:
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+          - group: codeji-dep
+      - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
           - group: codeji-test
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
           - group: codeji-prod
@@ -78,7 +83,7 @@ stages:
 
           - task: Npm@1
             displayName: "Build for Development"
-            condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+            condition: in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/uat')
             inputs:
               command: "custom"
               customCommand: "run build"
