@@ -448,7 +448,7 @@
       "YOE": "{years, plural, =0 {Year} one {Year} other {Years} } Of Experience",
       "TOTAL_YEAR": "{years , plural, =0 {Year} one {Year} other {Years} } At {companyName}",
       "TITLE": "Personal Information",
-      "DOWNLOAD_PAY_SLIP": "Download Pay Slip",
+      "DOWNLOAD_PAY_SLIP": "View Pay Slip",
       "EXPERIENCE_TEXT": "{years, plural, =0 {} one {# yr} other {# yrs}} {months, plural, =0 {} one {# mos} other {# mos}}"
     },
     "SKILLS": {
@@ -1022,6 +1022,19 @@
       "NET_PAY": "Net Pay",
       "PREVIEW_PAYSLIP": "Preview salary slip"
     }
+  },
+  "PAYROLL_SETTINGS": {
+    "PROCESS_MONTH": "Process Month",
+    "PROCESS_SALARY": "Process Salary",
+    "CONFIRM_PROCESS_TITLE": "Process Salary",
+    "CONFIRM_PROCESS_BODY": "This will generate/update payroll for all employees with a defined salary structure for {month}, based on their attendance for that month. Continue?",
+    "SALARY_SAVED": "Salary structure saved successfully",
+    "GROSS_SALARY": "Gross Salary",
+    "CTC": "CTC",
+    "EFFECTIVE_FROM": "Effective From",
+    "STATUS": "Status",
+    "STATUS_ACTIVE": "Active",
+    "STATUS_NOT_SET": "Not Set"
   },
   "POLICIES": {
     "CREATE_FOLDER": "Create Folder",

@@ -22,6 +22,9 @@ interface PropsTypes {
   onUserUpdate: (success: boolean) => void;
   formRef: React.MutableRefObject<FormikProps<CreateEmployeeSalary> | null>;
   handleButtonLoading: (loading: boolean) => void;
+  // pre-fills the form with the employee's current active salary when editing one that
+  // already exists; omit for a brand new employee who has no salary yet
+  existingSalary?: SalaryModel | null;
 }
 
 const employeeSalaryInitialValues: CreateEmployeeSalary = {
@@ -41,8 +44,14 @@ const employeeSalaryInitialValues: CreateEmployeeSalary = {
 };
 
 export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
-  const { userId, employeeId, onUserUpdate, formRef, handleButtonLoading } =
-    props;
+  const {
+    userId,
+    employeeId,
+    onUserUpdate,
+    formRef,
+    handleButtonLoading,
+    existingSalary,
+  } = props;
   const { formatMessage: i } = useIntl();
 
   async function UpadteSalaryData(
@@ -68,7 +77,21 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   return (
     <Stack spacing={2} sx={{ p: 1 }}>
       <Formik
-        initialValues={{ ...employeeSalaryInitialValues, userId, employeeId }}
+        initialValues={{
+          ...employeeSalaryInitialValues,
+          ...(existingSalary && {
+            basicPay: existingSalary.basicPay,
+            hra: existingSalary.hra,
+            lta: existingSalary.lta,
+            otherAllowance: existingSalary.otherAllowance,
+            bonus: existingSalary.bonus,
+            healthInsurance: existingSalary.healthInsurance,
+            totalDeductions: existingSalary.totalDeductions,
+            paymentFrequency: existingSalary.paymentFrequency,
+          }),
+          userId,
+          employeeId,
+        }}
         onSubmit={(values, { setSubmitting }) => {
           UpadteSalaryData(values, setSubmitting);
         }}

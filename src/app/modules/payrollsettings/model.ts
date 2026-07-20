@@ -1,18 +1,20 @@
-export type payrollSettingModel = {
-    payrollSettingsId?: string,
-    employeeId: string,
-    basicPay: number,
-    bonus: number,
-    paidDays: number,
-    HRA: number,
-    LTA: number,
-    otherAllowance: number,
-    lossOfPaydays: number,
-    lossOfPay: number,
-    incomeTax: number,
-    healthInsurance: number,
-    grossPay: number,
-    totalDeduction: number,
-    isActive: boolean,
-    netPay: number
-}
+import { SalaryModel } from "../employees/models";
+
+export type CompanySalaryResponseModel = {
+  userId: string;
+  employeeId: string;
+  employeeName: string;
+  jobTitle: Record<string, string> | null;
+  activeSalary: SalaryModel | null;
+};
+
+export type CompanySalaryFilterPayload = {
+  employeeName: string;
+};
+
+export type ProcessPayrollPayload = {
+  // date-only (YYYY-MM-DD), not a Dayjs/Date object - serializing a Dayjs here would
+  // convert through UTC and can shift the 1st of the month into the previous month
+  // for any positive UTC-offset timezone (e.g. IST), silently processing the wrong month
+  payMonth: string;
+};

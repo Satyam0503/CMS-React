@@ -24,6 +24,29 @@ export const updateEmployee = async (
   );
 };
 
+export type EditOwnProfilePayloadModel = Pick<
+  EditEmployeePayloadModel,
+  | "firstName"
+  | "lastName"
+  | "gender"
+  | "dateOfBirth"
+  | "phoneNumber"
+  | "bloodGroup"
+  | "personalEmail"
+  | "emergencyContact"
+  | "address"
+>;
+
+// Lets a user update their own profile without requiring the Employees module's Edit
+// permission (that permission governs managing *other* employees). Always targets the
+// caller's own account server-side; only accepts non-privileged, self-service fields.
+export const updateOwnProfile = async (payload: EditOwnProfilePayloadModel) => {
+  return postRequest<EditOwnProfilePayloadModel, EditEmployeeResponseData>(
+    ServiceUrl.EDIT_OWN_PROFILE,
+    payload,
+  );
+};
+
 export const updateSalary = async (
   payload: CreateEmployeeSalary,
   userId: String,

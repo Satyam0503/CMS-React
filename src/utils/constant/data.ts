@@ -49,7 +49,10 @@ export const ServiceUrl = {
   CHANGE_PASSWORD: `api/User/ChangePassword`,
   UPDATE_PROFILE_PICTURE: `api/User/UploadUserImage`,
   UPDATE_EMPLOYEE: `api/User/EditEmployees`,
+  EDIT_OWN_PROFILE: `api/User/EditOwnProfile`,
   UPDATE_SALARY: `api/Salary/UpdateSalary`,
+  GET_COMPANY_SALARIES: `api/Salary/GetCompanySalaries`,
+  PROCESS_PAYROLL: `api/AutoPayroll/GeneratePayRollMonthly`,
 
   GET_LAST_EMPLOYEE_ID: "api/User/GetLastEmployeeId",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,

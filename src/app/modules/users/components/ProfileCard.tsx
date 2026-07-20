@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Download, Edit } from "@mui/icons-material";
+import { Edit, Visibility } from "@mui/icons-material";
 import { useMemo, useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -60,7 +60,7 @@ export default function ProfileCard() {
     setDate(date);
   };
 
-  const downloadPaySlip = async () => {
+  const viewPaySlip = async () => {
     if (!date) {
       return;
     }
@@ -71,21 +71,10 @@ export default function ProfileCard() {
         year: date.year(),
       };
       const response = await generatePaySlip(payload);
-      const contentDisposition = response.headers["content-disposition"];
-      let fileName = "paySlip.pdf";
-      if (contentDisposition) {
-        const match = contentDisposition.match(/filename="?([^"]+)"?/);
-        if (match?.[1]) {
-          fileName = match[1];
-        }
-      }
-      // Create blob URL
+      // open in a new tab - the browser's native PDF viewer lets the user
+      // download it themselves from there if they want to keep a copy
       const fileURL = URL.createObjectURL(response.data);
-      const a = document.createElement("a");
-      a.href = fileURL;
-      a.download = fileName;
-      a.click();
-      URL.revokeObjectURL(fileURL);
+      window.open(fileURL, "_blank");
     } catch (error) {
       const response = (error as AxiosError).response;
       if (
@@ -255,13 +244,13 @@ export default function ProfileCard() {
             <IconButton
               className="border-1 border-white"
               sx={{ height: 36, width: 36, borderRadius: 1 }}
-              onClick={downloadPaySlip}
+              onClick={viewPaySlip}
               disabled={loading}
             >
               {loading ? (
                 <span className="loader" />
               ) : (
-                <Download sx={{ color: "#fff" }} />
+                <Visibility sx={{ color: "#fff" }} />
               )}
             </IconButton>
           </Stack>

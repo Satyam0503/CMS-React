@@ -17,7 +17,7 @@ import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { getAllEmployees, updateEmployee } from "../../../employees/employeeServices";
+import { getAllEmployees, updateEmployee, updateOwnProfile } from "../../../employees/employeeServices";
 import { useUserDetails } from "../../UserDataProvider";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
@@ -103,7 +103,23 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     setSubmitting: (isSubmitting: boolean) => void
   ) {
     try {
-      const response = await updateEmployee(values, userData?.userId);
+      // Editing your own profile (no employeeId in the route) only requires the always-editable
+      // self-service fields, so it shouldn't be blocked by the Employees module's Edit permission
+      // (that permission is meant for HR/Admins managing *other* employees' records).
+      const isSelfEditWithoutManagePermission = !employeeId && !hasEditPermission;
+      const response = isSelfEditWithoutManagePermission
+        ? await updateOwnProfile({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          gender: values.gender,
+          dateOfBirth: values.dateOfBirth,
+          phoneNumber: values.phoneNumber,
+          bloodGroup: values.bloodGroup,
+          personalEmail: values.personalEmail,
+          emergencyContact: values.emergencyContact,
+          address: values.address,
+        })
+        : await updateEmployee(values, userData?.userId);
       const { success, statusCode, methodResult } = response.data;
       if (success && statusCode === 200) {
         updateUserDetails(methodResult);
@@ -125,6 +141,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
       }
     } catch (error) {
       console.error((error as Error).message);
+      toast.error(i({ id: "ERROR.SOMETHING_WRONG" }));
     } finally {
       setSubmitting(false);
     }
