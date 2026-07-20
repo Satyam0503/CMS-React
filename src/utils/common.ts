@@ -45,6 +45,16 @@ export const dateFormatter = (
   return dayjs(date).format(format);
 };
 
+export const currencyFormatter = (amount: number | null | undefined) => {
+  if (amount === null || amount === undefined) {
+    return "NA";
+  }
+  return `₹ ${amount.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
 export const relativeTimeFormatter = (date: Dayjs | string) => {
   const daysDiff = dayjs().diff(date, "day");
   if (daysDiff > 3) {

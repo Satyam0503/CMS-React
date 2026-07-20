@@ -13,7 +13,8 @@ import { uploadEmpPayRollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
 
 const ValidFileExtension = ["xlsx", "xls"];
-const requiredHeaders = ["Income Tax", "Basic Pay", "Bonus", "Employee Id", "HRA", "Health Insurance", "LTA", "Loss of Pay", "Loss of Pay Days", "Other Allowance", "Paid Days", "Paid Date", "EPF", "ESIC"];
+// Bonus, LTA, Other Allowance, Health Insurance, EPF, ESIC are optional - default to 0 if omitted
+const requiredHeaders = ["Income Tax", "Basic Pay", "Employee Id", "HRA", "Loss of Pay", "Loss of Pay Days", "Paid Days", "Paid Date"];
 // currency columns only - "Paid Days"/"Loss of Pay Days" are day counts, not money amounts
 const moneyHeaders = ["Basic Pay", "Bonus", "HRA", "LTA", "Other Allowance", "Loss of Pay", "Income Tax", "Health Insurance", "EPF", "ESIC"];
 const SAMPLE_FILE_URL = "/payroll-upload-sample.xlsx";

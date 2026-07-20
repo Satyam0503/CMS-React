@@ -11,7 +11,7 @@ import { useIntl } from "react-intl";
 import { PayRollDataModel, PayRollResponseModel } from "../../payroll/models";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
 import { useMemo } from "react";
-import { dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
+import { currencyFormatter, dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import clsx from "clsx";
@@ -60,6 +60,11 @@ const columns: Column[] = [
   },
   { id: "netPay", label: "PAYROLL.TABLE.NET_PAY", minWidth: 100 },
 ];
+
+const amountColumns = new Set<Column["id"]>([
+  "basicPay", "bonus", "hra", "lta", "otherAllowance", "lossOfPay",
+  "incomeTax", "healthInsurance", "epf", "esic", "grossPay", "totalDeductions", "netPay",
+]);
 
 type TableProps = {
   payRollData: PayRollResponseModel[];
@@ -158,6 +163,13 @@ export const PayRollTableData = ({ payRollData, handleRowClick }: TableProps) =>
                       return (
                         <TableCell key={column.id}>
                           {dateFormatter(row.payData.paidDate, "DD MMM YYYY")}
+                        </TableCell>
+                      );
+                    }
+                    if (amountColumns.has(column.id)) {
+                      return (
+                        <TableCell key={column.id}>
+                          {currencyFormatter(row.payData[column.id] as number | null | undefined)}
                         </TableCell>
                       );
                     }
