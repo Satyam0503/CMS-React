@@ -13,9 +13,9 @@ import { uploadEmpPayRollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
 
 const ValidFileExtension = ["xlsx", "xls"];
-const requiredHeaders = ["Income Tax", "Basic Pay", "Bonus", "Employee Id", "HRA", "Health Insurance", "LTA", "Loss of Pay", "Loss of Pay Days", "Other Allowance", "Paid Days", "Paid Date"];
+const requiredHeaders = ["Income Tax", "Basic Pay", "Bonus", "Employee Id", "HRA", "Health Insurance", "LTA", "Loss of Pay", "Loss of Pay Days", "Other Allowance", "Paid Days", "Paid Date", "EPF", "ESIC"];
 // currency columns only - "Paid Days"/"Loss of Pay Days" are day counts, not money amounts
-const moneyHeaders = ["Basic Pay", "Bonus", "HRA", "LTA", "Other Allowance", "Loss of Pay", "Income Tax", "Health Insurance"];
+const moneyHeaders = ["Basic Pay", "Bonus", "HRA", "LTA", "Other Allowance", "Loss of Pay", "Income Tax", "Health Insurance", "EPF", "ESIC"];
 const SAMPLE_FILE_URL = "/payroll-upload-sample.xlsx";
 
 type KeyMappingType = {
@@ -39,6 +39,8 @@ const keyMapper: KeyMappingType = {
     "LTA": "lta",
     "Health Insurance": "healthInsurance",
     "Income Tax": "incomeTax",
+    "EPF": "epf",
+    "ESIC": "esic",
 }
 
 // case/whitespace-insensitive comparison, so "Loss Of Pay" and "loss of pay " both match "Loss of Pay"

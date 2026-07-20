@@ -60,6 +60,8 @@ const columns: Column[] = [
   { id: "lossOfPay", label: "PAYROLL.TABLE.LOSS_OF_PAY", minWidth: 120 },
   { id: "incomeTax", label: "PAYROLL.TABLE.INCOME_TAX", minWidth: 100 },
   { id: "healthInsurance", label: "PAYROLL.TABLE.HEALTH_INS", minWidth: 150 },
+  { id: "epf", label: "PAYROLL.TABLE.EPF", minWidth: 100 },
+  { id: "esic", label: "PAYROLL.TABLE.ESIC", minWidth: 100 },
   { id: "grossPay", label: "PAYROLL.TABLE.GROSS_PAY", minWidth: 120 },
   {
     id: "totalDeductions",
@@ -141,7 +143,9 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
       const totalDeductions =
         (row.payData.incomeTax ?? 0) +
         (row.payData.healthInsurance ?? 0) +
-        (row.payData.lossOfPay ?? 0);
+        (row.payData.lossOfPay ?? 0) +
+        (row.payData.epf ?? 0) +
+        (row.payData.esic ?? 0);
       const netPay = grossPay - totalDeductions;
       return {
         ...row,

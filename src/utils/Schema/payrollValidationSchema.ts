@@ -28,6 +28,8 @@ export const payrollValidationSchema = Yup.object().shape({
   healthInsurance: Yup.number()
     .min(0, "VALIDATION_ERR.NEGATIVE_BALANCE")
     .notRequired(),
+  epf: Yup.number().min(0, "VALIDATION_ERR.NEGATIVE_BALANCE").notRequired(),
+  esic: Yup.number().min(0, "VALIDATION_ERR.NEGATIVE_BALANCE").notRequired(),
   employeeId: Yup.string().required("VALIDATION_ERR.EMP_ID_REQ"),
   payMonth: Yup.date()
     .max(dayjs().subtract(1, "month"))

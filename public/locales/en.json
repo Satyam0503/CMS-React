@@ -1015,6 +1015,8 @@
       "PAID_DAYS": "Paid Days",
       "INCOME_TAX": "Income Tax",
       "HEALTH_INS": "Health Insurance",
+      "EPF": "EPF",
+      "ESIC": "ESIC Employee",
       "GROSS_PAY": "Gross Pay",
       "TOTAL_DEDUCTION": "Total Deduction",
       "NET_PAY": "Net Pay",

@@ -31,6 +31,8 @@ export const initialPayRollValues: Nullable<PayRollDataModel> & {
   lossOfPay: null,
   incomeTax: null,
   healthInsurance: null,
+  epf: null,
+  esic: null,
   payMonth: dayjs().subtract(1, "month"),
 };
 

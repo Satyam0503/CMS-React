@@ -48,8 +48,10 @@ const formField: FormFieldProps[] = [
     { id: 9, label: "PAYROLL.TABLE.LOSS_OF_PAY", name: "lossOfPay", type: "number", min: 0 },
     { id: 10, label: "PAYROLL.TABLE.INCOME_TAX", name: "incomeTax", type: "number", min: 0 },
     { id: 11, label: "PAYROLL.TABLE.HEALTH_INS", name: "healthInsurance", type: "number", min: 0 },
-    { id: 12, label: "PAYROLL.TABLE.PAY_MONTH", name: "payMonth", type: "dateTime", views: ["year", "month"], maxDate: dayjs().subtract(1, "month") },
-    { id: 13, label: "PAYROLL.TABLE.PAID_DATE", name: "paidDate", type: "dateTime", views: ["year", "month", "day"], maxDate: dayjs() },
+    { id: 12, label: "PAYROLL.TABLE.EPF", name: "epf", type: "number", min: 0 },
+    { id: 13, label: "PAYROLL.TABLE.ESIC", name: "esic", type: "number", min: 0 },
+    { id: 14, label: "PAYROLL.TABLE.PAY_MONTH", name: "payMonth", type: "dateTime", views: ["year", "month"], maxDate: dayjs().subtract(1, "month") },
+    { id: 15, label: "PAYROLL.TABLE.PAID_DATE", name: "paidDate", type: "dateTime", views: ["year", "month", "day"], maxDate: dayjs() },
 ]
 export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValues, handlePageRefresh }: PropsType) => {
     const { formatMessage: i } = useIntl();

@@ -16,6 +16,8 @@ export type PayRollDataModel = {
   lossOfPay: number;
   incomeTax: number;
   healthInsurance: number;
+  epf: number;
+  esic: number;
 };
 
 export type PayRollRequestModel = {
