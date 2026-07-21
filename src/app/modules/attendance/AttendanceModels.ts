@@ -1,4 +1,19 @@
-export type AttendanceStatus = "P" | "A" | "H" | "L";
+export type AttendanceStatus =
+  | "P"
+  | "A"
+  | "SL"
+  | "CL"
+  | "EL"
+  | "WFH"
+  | "HD"
+  | "ED"
+  | "LHD"
+  | "WFH+WFO"
+  | "COMP-OFF"
+  | "CL-HALF"
+  | "SL-HALF"
+  | "WFH-HD"
+  | "L";
 
 export interface AttendancePayload {
   fromDate: string; 
@@ -40,6 +55,6 @@ export interface AdminAttendanceCreateDto {
   Date: string;         
   CheckInTime?: string; 
   CheckOutTime?: string; 
-  Status: "P" | "A" | "H" | "L";
+  Status: AttendanceStatus;
   Remarks?: string | null;
 }

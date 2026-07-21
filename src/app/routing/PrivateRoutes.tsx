@@ -27,6 +27,7 @@ const PayRollManagement = lazy(
 const PayrollSettings = lazy(
   () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
+const AttendanceStatusSettings = lazy(() => import("../modules/attendance/AttendanceStatusSettings.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -115,6 +116,7 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
         <Route
           path="leavemanagement/*"
           element={

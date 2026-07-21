@@ -1,14 +1,16 @@
 import {
+  Box,
   Chip,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
 import { currencyFormatter, dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
@@ -48,6 +50,8 @@ type TableProps = {
 };
 
 export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { formatMessage: i } = useIntl();
   const userModulePermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -57,11 +61,26 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
     userModulePermissions,
   );
 
-  const rows = useMemo(() => salaryData, [salaryData]);
+  useEffect(() => {
+    setPage(0);
+  }, [salaryData]);
+
+  const rows = useMemo(
+    () => salaryData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [salaryData, page, rowsPerPage],
+  );
 
   return (
-    <TableContainer className="flex-grow-1">
-      <Table sx={{ minWidth: 1200 }}>
+    <Box className="d-flex flex-column flex-grow-1" sx={{ minWidth: 0 }}>
+      <TableContainer
+        sx={{
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "auto",
+          scrollbarGutter: "stable",
+        }}
+      >
+      <Table sx={{ minWidth: 1560 }}>
         <TableHead>
           <TableRow>
             {columns.map((col) => (
@@ -135,6 +154,19 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
           )}
         </TableBody>
       </Table>
-    </TableContainer>
+      </TableContainer>
+      <TablePagination
+        component="div"
+        count={salaryData.length}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[10, 25, 50]}
+        onPageChange={(_, newPage) => setPage(newPage)}
+        onRowsPerPageChange={(event) => {
+          setRowsPerPage(Number.parseInt(event.target.value, 10));
+          setPage(0);
+        }}
+      />
+    </Box>
   );
 };

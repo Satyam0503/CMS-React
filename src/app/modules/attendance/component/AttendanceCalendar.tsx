@@ -9,6 +9,7 @@ import {
   Tooltip,
   IconButton,
   Card,
+  TablePagination,
   alpha,
   useTheme,
 } from "@mui/material";
@@ -23,7 +24,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { getHolidays } from "../../holidays/calendarServices";
 import { HolidayPayload, HolidayModel } from "../../holidays/models";
 import { addEditAttendance, getAllAttendance } from "../AttendanceServices";
-import { AdminAttendanceCreateDto } from "../AttendanceModels";
+import { AdminAttendanceCreateDto, AttendanceStatus } from "../AttendanceModels";
 import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
@@ -34,6 +35,10 @@ import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
 import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { getAllLeaveRequest } from "../../leaves/leaveServices";
+import { getRequest } from "../../../../server/axios";
+import { ResponseData } from "../../../../utils/common_types";
+import { AttendanceStatusSetting } from "../AttendanceStatusSettings";
+import MonthlyAttendanceExceptions from "./MonthlyAttendanceExceptions";
 
 interface Employee {
   name: string;
@@ -50,11 +55,36 @@ interface AttendanceRow {
 }
 
 interface AttendanceData {
-  status: "P" | "A" | "H" | "L" | "";
+  status: AttendanceStatus | "";
   checkIn: string;
   checkOut: string;
   remarks: string;
 }
+
+const attendanceStatusOptions: Array<{ value: AttendanceStatus; label: string; requiresTime?: boolean }> = [
+  { value: "P", label: "Present" },
+  { value: "A", label: "Absent" },
+  { value: "SL", label: "Sick Leave" },
+  { value: "CL", label: "Casual Leave" },
+  { value: "EL", label: "Earned Leave" },
+  { value: "WFH", label: "Work From Home" },
+  { value: "HD", label: "Half Day" },
+  { value: "ED", label: "Early Departure" },
+  { value: "LHD", label: "Late Arrival-Half Day" },
+  { value: "WFH+WFO", label: "Half WFH and Half WFO" },
+  { value: "COMP-OFF", label: "Compensatory Off" },
+  { value: "CL-HALF", label: "Casual Leave (Half Day)" },
+  { value: "SL-HALF", label: "Sick Leave (Half Day)" },
+  { value: "WFH-HD", label: "WFH with Half Day" },
+];
+
+const attendanceStatusLabels = Object.fromEntries(
+  attendanceStatusOptions.map(({ value, label }) => [value, label]),
+) as Record<AttendanceStatus, string>;
+
+const statusesWithTimes = new Set<AttendanceStatus>([
+  "P", "WFH", "HD", "ED", "LHD", "WFH+WFO", "WFH-HD",
+]);
 
 interface Props {
   employees: Employee[];
@@ -86,6 +116,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   onStatsChange,
 }) => {
   const theme = useTheme();
+  const [statusOptions, setStatusOptions] = useState(attendanceStatusOptions);
+  useEffect(() => {
+    getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=true")
+      .then(({ data }) => setStatusOptions((data.methodResults ?? []).map(x => ({ value: x.code as AttendanceStatus, label: x.name, requiresTime: x.requiresTime }))))
+      .catch(() => setStatusOptions(attendanceStatusOptions));
+  }, []);
   const [attendanceData, setAttendanceData] = useState<
     Record<string, AttendanceData>
   >({});
@@ -96,6 +132,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   const [modalData, setModalData] = useState<AttendanceData>(initialModalState);
   const [holidays, setHolidays] = useState<number[]>([]);
+  const [weeklyOffDays, setWeeklyOffDays] = useState<number[]>([0, 6]);
+  useEffect(() => {
+    getRequest<{ offDays: number[] }>("api/attendance/weekly-offs")
+      .then(({ data }) => setWeeklyOffDays(data.offDays))
+      .catch(() => setWeeklyOffDays([0, 6]));
+  }, []);
 
   const today = dayjs();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(today);
@@ -117,6 +159,52 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   });
   const [attendanceItems, setAttendanceItems] = useState<any[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequestModel[]>([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  useEffect(() => {
+    const handleExceptionEdit = (event: Event) => {
+      const detail = (event as CustomEvent<{ employeeId: string; date: string }>).detail;
+      if (!detail?.employeeId || !detail?.date) return;
+
+      const employeeIndex = employees.findIndex(
+        (employee) => employee.employeeId === detail.employeeId,
+      );
+      if (employeeIndex < 0) {
+        setConfirmationModal({
+          open: true,
+          title: "Employee not found",
+          content: `Employee ${detail.employeeId} is not available in the attendance table.`,
+        });
+        return;
+      }
+
+      const employee = employees[employeeIndex];
+      const affectedDate = dayjs(detail.date);
+      if (!affectedDate.isValid()) return;
+
+      setSelectedDate(affectedDate);
+      setPage(Math.floor(employeeIndex / rowsPerPage));
+      setSelectedCell({
+        employee: {
+          id: employee.id,
+          employeeId: employee.employeeId,
+          name: employee.name,
+        },
+        dateObj: affectedDate.toDate(),
+      });
+
+      window.setTimeout(() => {
+        document.querySelector(".data-grid-parent-container")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+    };
+
+    window.addEventListener("edit-attendance-exception", handleExceptionEdit);
+    return () => window.removeEventListener("edit-attendance-exception", handleExceptionEdit);
+  }, [employees, rowsPerPage]);
 
   /*---------------------------------LEave------------------------------- */
 
@@ -260,8 +348,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
     setModalData({
       status: existing?.status ?? "",
-      checkIn: existing?.checkIn ?? (existing?.status === "H" ? "09:00" : ""),
-      checkOut: existing?.checkOut ?? (existing?.status === "H" ? "13:00" : ""),
+      checkIn: existing?.checkIn ?? (existing?.status === "HD" ? "09:00" : ""),
+      checkOut: existing?.checkOut ?? (existing?.status === "HD" ? "13:00" : ""),
       remarks: existing?.remarks ?? "",
     });
   }, [selectedCell, attendanceData]);
@@ -285,7 +373,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     try {
       for (const emp of employees) {
         const dayOfWeek = bulkDate.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isWeekend = weeklyOffDays.includes(dayOfWeek);
         const isHoliday = holidays.includes(bulkDate.getDate());
         if (isWeekend || isHoliday) {
           setConfirmationModal({
@@ -369,7 +457,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     try {
       for (const userId of selectedEmployeeIds) {
         const dayOfWeek = bulkDate.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isWeekend = weeklyOffDays.includes(dayOfWeek);
         const isHoliday = holidays.includes(bulkDate.getDate());
 
         if (isWeekend || isHoliday) {
@@ -468,7 +556,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       ...Array.from({ length: daysInMonth }, (_, i) => {
         const dateObj = new Date(selectedYear, selectedMonth, i + 1);
         const dayOfWeek = dateObj.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isWeekend = weeklyOffDays.includes(dayOfWeek);
         const isHoliday = holidays.includes(i + 1);
         const editable = dateObj <= today.toDate() && !isHoliday && !isWeekend;
 
@@ -490,11 +578,23 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             case "A":
               return <PersonOffIcon sx={{ fontSize: 18, color: "error.main" }} />;
 
-            case "H":
+            case "HD":
+            case "LHD":
+            case "WFH-HD":
               return <TimelapseIcon sx={{ fontSize: 18, color: "warning.main" }} />;
 
-            case "L":
+            case "SL":
+            case "CL":
+            case "EL":
+            case "COMP-OFF":
+            case "CL-HALF":
+            case "SL-HALF":
               return <EventBusyIcon sx={{ fontSize: 18, color: "primary.main" }} />;
+
+            case "WFH":
+            case "WFH+WFO":
+            case "ED":
+              return <TaskAltIcon sx={{ fontSize: 18, color: "info.main" }} />;
 
             default:
               return null;
@@ -509,10 +609,21 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               return alpha(theme.palette.success.main, 0.14);
             case "A":
               return alpha(theme.palette.error.main, 0.14);
-            case "H":
+            case "HD":
+            case "LHD":
+            case "WFH-HD":
               return alpha(theme.palette.warning.main, 0.14);
-            case "L":
+            case "SL":
+            case "CL":
+            case "EL":
+            case "COMP-OFF":
+            case "CL-HALF":
+            case "SL-HALF":
               return alpha(theme.palette.primary.main, 0.14);
+            case "WFH":
+            case "WFH+WFO":
+            case "ED":
+              return alpha(theme.palette.info.main, 0.14);
             default:
               return theme.palette.background.paper;
           }
@@ -558,15 +669,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     ? "Public Holiday"
                     : isWeekend
                       ? "Weekend"
-                      : value.status === "P"
-                        ? "Present"
-                        : value.status === "A"
-                          ? "Absent"
-                          : value.status === "H"
-                            ? "Half Day"
-                            : value.status === "L"
-                              ? "Leave"
-                              : ""
+                      : value.status
+                        ? attendanceStatusLabels[value.status as AttendanceStatus] ?? value.status
+                        : ""
                 }
               >
                 <Box
@@ -604,7 +709,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         };
       }),
     ];
-  }, [daysInMonth, holidays, selectedMonth, selectedYear, today, searchValue, theme]);
+  }, [daysInMonth, holidays, weeklyOffDays, selectedMonth, selectedYear, today, searchValue, theme]);
 
   /* ------------------------------------------------------------ GRID ROW ------------------------------------------------------------------------------------- */
 
@@ -645,6 +750,15 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       return row;
     });
   }, [employees, attendanceData, daysInMonth, leaveRequests]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [employees, selectedMonth, selectedYear]);
+
+  const paginatedRows = useMemo(
+    () => rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [rows, page, rowsPerPage],
+  );
 
   /* --------------------------------------------------------------- SAVE -------------------------------------------------------------------------- */
 
@@ -771,6 +885,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       >
         <Box
           sx={{
+            overflowX: "auto",
+            width: "100%",
+            pb: 1,
             border: "none",
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "background.default",
@@ -786,22 +903,37 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             },
           }}
         >
-          <CustomDataGrid
-            row={rows}
-            columns={columns}
-            keyName="id"
-            hidePagination
-            loading={false}
-            checkboxSelection
-            onRowSelectionModelChange={(
-              selectionModel: GridRowSelectionModel,
-            ) => {
-              const selectedIds = Array.from(selectionModel.ids);
-              setSelectedEmployeeIds(selectedIds.map((id) => String(id)));
-            }}
-          />
+          <Box sx={{ minWidth: 230 + daysInMonth * 85 }}>
+            <CustomDataGrid
+              row={paginatedRows}
+              columns={columns}
+              keyName="id"
+              hidePagination
+              loading={false}
+              checkboxSelection
+              onRowSelectionModelChange={(
+                selectionModel: GridRowSelectionModel,
+              ) => {
+                const selectedIds = Array.from(selectionModel.ids);
+                setSelectedEmployeeIds(selectedIds.map((id) => String(id)));
+              }}
+            />
+          </Box>
         </Box>
+        <TablePagination
+          component="div"
+          count={rows.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          onPageChange={(_, nextPage) => setPage(nextPage)}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(Number(event.target.value));
+            setPage(0);
+          }}
+        />
       </Card>
+      <MonthlyAttendanceExceptions month={selectedDate ?? today} />
       <CustomisedModal
         open={Boolean(selectedCell)}
         handleClose={() => {
@@ -826,13 +958,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 }))
               }
             >
-              <MenuItem value="P">Present</MenuItem>
-              <MenuItem value="A">Absent</MenuItem>
-              <MenuItem value="H">Half Day</MenuItem>
-              <MenuItem value="L">Leave</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.value} - {option.label}
+                </MenuItem>
+              ))}
             </TextField>
 
-            {["P", "H"].includes(modalData.status) && (
+            {modalData.status && (statusOptions.find(x => x.value === modalData.status)?.requiresTime ?? statusesWithTimes.has(modalData.status)) && (
               <>
                 <TextField
                   label="Check-in"
@@ -927,10 +1060,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 setBulkStatus(e.target.value as AttendanceData["status"])
               }
             >
-              <MenuItem value="P">Present</MenuItem>
-              <MenuItem value="A">Absent</MenuItem>
-              <MenuItem value="H">Half Day</MenuItem>
-              <MenuItem value="L">Leave</MenuItem>
+              {statusOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.value} - {option.label}
+                </MenuItem>
+              ))}
             </TextField>
 
             <Button

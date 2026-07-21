@@ -55,6 +55,7 @@ export const CompanyInfo = () => {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [croppedLogo, setCroppedLogo] = useState<string | null>(null);
   const [isCropperOpen, setCropperOpen] = useState(false);
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
 
   const userData = useAppSelector(state => state.user.userData)!;
   const dispatch = useAppDispatch();
@@ -75,9 +76,12 @@ export const CompanyInfo = () => {
     setImgSrc("");
     setCropperOpen(false);
   };
-  const handleImageCropSuccess = (croppedImageDataUrl: string) => {
+  const handleImageCropSuccess = async (croppedImageDataUrl: string) => {
     setCroppedLogo(croppedImageDataUrl);
     setCropperOpen(false);
+    if (!isEdit) {
+      await handleUpdateCompanyDetails(croppedImageDataUrl, selectedLogo, true);
+    }
   };
 
   const handleFileChange = (
@@ -107,10 +111,14 @@ export const CompanyInfo = () => {
     }
   };
 
-  const handleUpdateCompanyDetails = async () => {
+  const handleUpdateCompanyDetails = async (
+    logoDataUrl = croppedLogo,
+    logoFile = selectedLogo,
+    logoOnly = false,
+  ) => {
     const formData = new FormData();
-    if (croppedLogo && selectedLogo) {
-      const base64Image = croppedLogo.split(",")[1];
+    if (logoDataUrl && logoFile) {
+      const base64Image = logoDataUrl.split(",")[1];
       const blob = new Blob(
         [
           new Uint8Array(
@@ -120,10 +128,10 @@ export const CompanyInfo = () => {
           ),
         ],
         {
-          type: selectedLogo.type,
+          type: logoFile.type,
         }
       );
-      formData.append("companyLogo", blob, selectedLogo.name);
+      formData.append("companyLogo", blob, logoFile.name);
     }
 
     formData.append("CompanyName", values.companyName);
@@ -135,6 +143,7 @@ export const CompanyInfo = () => {
       );
     }
     try {
+      if (logoOnly) setIsLogoUploading(true);
       const response = await updateCompanyDetails(formData);
       const { success, methodResult } = response.data;
       if (success) {
@@ -147,11 +156,15 @@ export const CompanyInfo = () => {
         toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
         setSelectedLogo(null);
+        setCroppedLogo(null);
       } else {
-        toast.error(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
+        toast.error(response.data.message || formatMessage({ id: "ERROR.500" }));
       }
     } catch (error) {
       console.error((error as Error).message);
+      toast.error(formatMessage({ id: "ERROR.500" }));
+    } finally {
+      if (logoOnly) setIsLogoUploading(false);
     }
   };
 
@@ -411,13 +424,11 @@ export const CompanyInfo = () => {
                 />
                 <Typography variant="h6">{companyInfo.companyName}</Typography>
               </Stack>
-              {
-                isEdit &&
-                <Box
+              <Box
                   className="logo-update-button"
                   sx={{ borderRadius: 1, border: 1, borderColor: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'text.secondary' }}
                 >
-                  <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
+                  <IconButton component="label" role="button" aria-label="upload company logo" disabled={isLogoUploading} sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
                     <CloudUploadOutlined />
                     <input
                       name="companyLogo"
@@ -437,10 +448,9 @@ export const CompanyInfo = () => {
                   {
                     touched.companyLogo && Boolean(errors.companyLogo) ?
                       <Typography variant="body2" sx={{ color: 'error.main' }}>{errors.companyLogo}</Typography> :
-                      <Typography variant="body2">{formatMessage({ id: "COMPANY_DETAILS.LOGO_UPDATE_NOTE" })}</Typography>
+                      <Typography variant="body2">{isLogoUploading ? "Uploading company logo..." : formatMessage({ id: "COMPANY_DETAILS.LOGO_UPDATE_NOTE" })}</Typography>
                   }
                 </Box>
-              }
 
             </Grid>
           </Grid>

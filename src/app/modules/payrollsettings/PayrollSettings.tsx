@@ -15,6 +15,16 @@ import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import { ConfirmationModal } from "../../shared/components/ConfirmationModal";
 import { toast } from "react-toastify";
+import { getAllEmployees } from "../employees/employeeServices";
+import { getRequest, postRequest } from "../../../server/axios";
+import { ApiResponse } from "../../../utils/common_types";
+
+type AttendanceMonthLockStatus = {
+  payrollMonth: string;
+  isLocked: boolean;
+  eligibleEmployeeCount: number;
+  lockedEmployeeCount: number;
+};
 
 export default function PayrollSettings() {
   const { setPageTitle } = usePageData();
@@ -30,6 +40,9 @@ export default function PayrollSettings() {
   const [processMonth, setProcessMonth] = useState<Dayjs | null>(dayjs());
   const [isProcessing, setIsProcessing] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isLocking, setIsLocking] = useState(false);
+  const [attendanceLocked, setAttendanceLocked] = useState(false);
+  const [isCheckingLock, setIsCheckingLock] = useState(false);
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -66,13 +79,54 @@ export default function PayrollSettings() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    setAttendanceLocked(false);
+    if (!processMonth) return;
+    setIsCheckingLock(true);
+    getRequest<AttendanceMonthLockStatus>(
+      "api/attendance/penalty/month/lock-status",
+      { params: { month: processMonth.format("YYYY-MM-01") } },
+    )
+      .then(({ data }) => {
+        if (!cancelled) setAttendanceLocked(data.isLocked);
+      })
+      .catch(() => {
+        if (!cancelled) setAttendanceLocked(false);
+      })
+      .finally(() => {
+        if (!cancelled) setIsCheckingLock(false);
+      });
+    return () => { cancelled = true; };
+  }, [processMonth]);
+
+  useEffect(() => {
     (async () => {
       try {
         const { data } = await getCompanySalaries({ employeeName: search });
-        if (data.success) {
-          setSalaryData(data.methodResults);
-        }
+        setSalaryData(data.methodResults ?? []);
       } catch (error) {
+        try {
+          const employeeResponse = await getAllEmployees({
+            pageNo: 1,
+            records: 10000,
+            name: search,
+            departmentId: [],
+            gender: [],
+          });
+          setSalaryData(
+            (employeeResponse.data.methodResults ?? []).map((employee) => ({
+              userId: employee.userId,
+              employeeId: employee.employeeId,
+              employeeName: employee.fullName,
+              jobTitle: employee.jobRole,
+              activeSalary: null,
+            })),
+          );
+        } catch (fallbackError) {
+          setSalaryData([]);
+          toast.error(i({ id: "ERROR.500" }));
+          console.error((fallbackError as Error).message);
+        }
         console.error((error as Error).message);
       }
     })();
@@ -80,6 +134,10 @@ export default function PayrollSettings() {
 
   const handleProcessSalary = async () => {
     if (!processMonth) return;
+    if (!attendanceLocked) {
+      toast.info("Validate and lock attendance before processing salary.");
+      return;
+    }
     setConfirmOpen(false);
     setIsProcessing(true);
     try {
@@ -93,10 +151,45 @@ export default function PayrollSettings() {
         toast.error(data.message || i({ id: "ERROR.500" }));
       }
     } catch (error) {
-      toast.error(i({ id: "ERROR.500" }));
+      toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleValidateAndLock = async () => {
+    if (!processMonth) return;
+    const selectedMonth = processMonth.startOf("month");
+    const currentMonth = dayjs().startOf("month");
+    if (selectedMonth.isSame(currentMonth, "month")) {
+      toast.info(
+        `${processMonth.format("MMMM YYYY")} is still in progress. Lock attendance after ${processMonth.endOf("month").format("MMMM D")}.`,
+        { autoClose: 5000 },
+      );
+      return;
+    }
+    if (selectedMonth.isAfter(currentMonth, "month")) {
+      toast.info("A future payroll month cannot be locked.", { autoClose: 5000 });
+      return;
+    }
+    setIsLocking(true);
+    try {
+      const { data } = await postRequest<{ payrollMonth: string }, ApiResponse>(
+        "api/attendance/penalty/month/validate-lock",
+        { payrollMonth: processMonth.format("YYYY-MM-01") },
+      );
+      if (data.success) {
+        setAttendanceLocked(true);
+        toast.success(data.message);
+      } else {
+        setAttendanceLocked(false);
+        toast.error(data.message);
+      }
+    } catch (error) {
+      setAttendanceLocked(false);
+      toast.error((error as any)?.response?.data?.message ?? "Attendance validation or lock failed.");
+    }
+    finally { setIsLocking(false); }
   };
 
   return (
@@ -117,9 +210,15 @@ export default function PayrollSettings() {
                 setValue={handleProcessMonthChange}
               />
               <CustomisedButton
+                label="Validate & Lock Attendance"
+                handleClick={() => void handleValidateAndLock()}
+                disabled={!processMonth}
+                loading={isLocking}
+              />
+              <CustomisedButton
                 label={i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
                 handleClick={() => setConfirmOpen(true)}
-                disabled={!processMonth}
+                disabled={!processMonth || !attendanceLocked || isCheckingLock || isLocking}
                 loading={isProcessing}
               />
             </Stack>
