@@ -124,6 +124,7 @@ export type BulkImportEmployeeModel = {
   role: string;
   department: string;
   jobRole: string;
+  gender: string;
 };
 
 export type BulkImportEmployeesRequest = {

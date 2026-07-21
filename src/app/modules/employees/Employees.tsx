@@ -13,6 +13,7 @@ import { useIntl } from "react-intl";
 import {
   Add,
   Drafts,
+  FileDownload,
   FilterList,
   GridView,
   UploadFile,
@@ -52,6 +53,7 @@ import { AvatarCell } from "../../shared/components/AvatarCell";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
 import CustomisedButton from "../../shared/components/CustomisedButton";
+import * as XLSX from "xlsx";
 
 const CustomDataGrid = lazy(() =>
   import("../../shared/components/CustomDataGrid").then((module) => ({
@@ -216,6 +218,7 @@ const Employees = () => {
     GetAllEmployeeResponseModel[]
   >([]);
   const [isLoading, setLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
@@ -280,6 +283,50 @@ const Employees = () => {
 
   const handleReresh = () => {
     setRefresh(!isRefresh);
+  };
+
+  const handleBulkExport = async () => {
+    setIsExporting(true);
+    try {
+      const response = await getAllEmployees({
+        pageNo: 1,
+        records: Math.max(totalRecords, 1),
+        name: search,
+        ...(employeeFilters ?? initialFilterValues),
+      });
+      const { success, methodResults } = response.data;
+      if (!success) throw new Error("Failed to export employees");
+
+      const rows = methodResults.map((employee) => ({
+        "Employee ID": employee.employeeId,
+        Name: employee.fullName,
+        Email: employee.email,
+        Phone: employee.phoneNumber ?? "",
+        Gender: employee.gender,
+        Department: employee.department
+          ? Object.values(employee.department)[0] ?? ""
+          : "",
+        "Job Role": employee.jobRole
+          ? Object.values(employee.jobRole)[0] ?? ""
+          : "",
+        "Date of Birth": employee.dateOfBirth ?? "",
+        Verified: employee.isVerified ? "Yes" : "No",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+      XLSX.writeFile(
+        workbook,
+        `employees-${new Date().toISOString().slice(0, 10)}.xlsx`,
+      );
+      toast.success("Employees exported successfully");
+    } catch (error) {
+      console.error((error as Error).message);
+      toast.error("Failed to export employees");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   useEffect(() => {
@@ -362,6 +409,17 @@ const Employees = () => {
                   onClick={() => setShowBulkImportModal(true)}
                 >
                   Bulk Import
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={
+                    isExporting ? <CircularProgress size={16} /> : <FileDownload />
+                  }
+                  onClick={handleBulkExport}
+                  disabled={isExporting || totalRecords === 0}
+                >
+                  Bulk Export
                 </Button>
                 <CustomIconButton
                   icon={<Add />}
