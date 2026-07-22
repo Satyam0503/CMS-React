@@ -29,6 +29,7 @@ const LeavePolicyModelInitials: LeavePolicyModel = {
   halfDayAllowed: true,
   weekendInclusive: false,
   holidayInclusive: false,
+  attendanceStatusCode: "",
   applicableTo: [],
 };
 

@@ -94,6 +94,7 @@ export type EmployeeLeaveTypeBalance = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  attendanceStatusCode?: string | null;
 };
 
 export type LeaveRequestApprovalPayload = {
@@ -132,6 +133,7 @@ export type LeavePolicyModel = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  attendanceStatusCode?: string | null;
   applicableTo?: Array<string> | null;
 };
 

@@ -213,6 +213,14 @@ export default function AddLeavePolicy(props: Props) {
                         />
                       </Grid>
 
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <TextInput
+                          label="Attendance status code"
+                          name="attendanceStatusCode"
+                          type="text"
+                        />
+                      </Grid>
+
                       <Grid
                         size={{
                           xs: 12,
