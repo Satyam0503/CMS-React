@@ -111,9 +111,9 @@ export const UserEducation = () => {
   }, [employeeId, refresh]);
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between mb-4">
-        <Typography variant="h5">
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
+      <Stack className="flex-row justify-content-between" sx={{ mb: 2.5 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
           {intl.formatMessage({ id: "PROFILE.EDUCATION.TITLE" })}
         </Typography>
         {
@@ -137,6 +137,12 @@ export const UserEducation = () => {
               className="flex-row justify-content-between align-items-center"
               spacing={1}
               sx={{
+                p: 1.5,
+                borderRadius: 2,
+                border: 1,
+                borderColor: "divider",
+                transition: "transform .2s ease, border-color .2s ease, background-color .2s ease",
+                "&:hover": { transform: "translateX(3px)", borderColor: "primary.light", bgcolor: "action.hover" },
                 "&:hover .MuiStack-root": {
                   visibility: "visible",
                 },

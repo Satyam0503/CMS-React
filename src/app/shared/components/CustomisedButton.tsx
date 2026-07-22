@@ -1,5 +1,6 @@
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import React from "react";
+import { AppButton } from "./ui";
 
 type Props = {
   type?: "submit" | "button" | "reset";
@@ -33,7 +34,7 @@ const CustomisedButton = (props: Props) => {
   return (
     <>
       {permission && (
-        <Button
+        <AppButton
           color={color}
           variant={variant}
           onClick={handleClick}
@@ -52,7 +53,7 @@ const CustomisedButton = (props: Props) => {
           }
         >
           {label}
-        </Button>
+        </AppButton>
       )}
     </>
   );

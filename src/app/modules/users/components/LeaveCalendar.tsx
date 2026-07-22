@@ -60,7 +60,7 @@ function LeaveCalendar() {
   }, [year, empId]);
 
   return (
-    <Card sx={{ height: 1, paddingInline: "16px", paddingBlockEnd: "16px" }}>
+    <Card sx={{ height: 1, px: 2, pb: 2, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 10px 28px rgba(0,0,0,.07)", overflow: "hidden" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           onMonthChange={(newDate) => {
@@ -106,7 +106,7 @@ function LeaveCalendar() {
           }}
         />
       </LocalizationProvider>
-      <Chip label={i({ id: "LEAVE.TITLE" })} sx={{ borderRadius: "16px" }} />
+      <Chip label={i({ id: "LEAVE.TITLE" })} sx={{ borderRadius: 2, px: .5, fontWeight: 600, bgcolor: "primary.lighter", color: "primary.dark" }} />
     </Card>
   );
 }

@@ -123,7 +123,7 @@ const UserProfile = () => {
 
   return (
     <UserDetailsProvider>
-      <Grid container spacing={{ xs: 2, lg: 3, xl: 2 }} className="flex-grow-1">
+      <Grid container spacing={{ xs: 2, lg: 3 }} className="flex-grow-1" sx={{ maxWidth: 1440, width: "100%", mx: "auto", pb: 4, position: "relative", isolation: "isolate", "&::before": { content: '""', position: "absolute", zIndex: -1, width: 280, height: 280, borderRadius: "50%", top: -80, right: 20, bgcolor: "primary.main", opacity: .06, filter: "blur(4px)" }, "&::after": { content: '""', position: "absolute", zIndex: -1, width: 220, height: 220, borderRadius: "50%", bottom: 60, left: 180, bgcolor: "secondary.main", opacity: .05, filter: "blur(8px)" } }}>
         <Grid
           size={{
             xs: 12,
@@ -172,8 +172,8 @@ const UserProfile = () => {
           }}
         >
           <ProfileHeader />
-          <Stack spacing={2} className="flex-grow-1">
-            <Card className="tab-container d-flex flex-row">
+          <Stack spacing={2.5} className="flex-grow-1">
+            <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto" }}>
               {filteredTabs.map((tab) => {
                 const tabTo = empId
                   ? `employees/${empId}/${tab.to}`

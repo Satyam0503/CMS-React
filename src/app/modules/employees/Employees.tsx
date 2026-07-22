@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   Stack,
   ToggleButton,
@@ -8,6 +9,7 @@ import {
   Tooltip,
   CircularProgress,
   Button,
+  Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -359,17 +361,64 @@ const Employees = () => {
 
   return (
     <>
-      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
+      <Card
+        className="d-flex flex-column flex-grow-1"
+        sx={{
+          width: "100%",
+          maxWidth: 1440,
+          mx: "auto",
+          p: { xs: 2, sm: 3, md: 4 },
+          gap: { xs: 2.5, md: 3 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          backgroundImage:
+            "linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent), transparent 32%)",
+          boxShadow: "0 18px 45px rgba(0, 0, 0, 0.12)",
+          overflow: "visible",
+        }}
+      >
         <Stack
-          direction="row"
-          className="justify-content-between flex-wrap-reverse align-items-center"
+          direction={{ xs: "column", md: "row" }}
+          className="justify-content-between"
           sx={{
-            gap: 2,
+            gap: 2.5,
+            alignItems: { xs: "stretch", md: "center" },
+            p: { xs: 1.5, sm: 2 },
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 2.5,
+            bgcolor: "action.hover",
           }}
         >
-          <SearchInput search={search} setSearch={handleSearchChange} />
+          <Stack spacing={0.75} sx={{ minWidth: { md: 260 } }}>
+            <Typography variant="subtitle1" fontWeight={700}>
+              Employee directory
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {totalRecords} {totalRecords === 1 ? "employee" : "employees"} found
+            </Typography>
+            <Box
+              sx={{
+                pt: 0.5,
+                "& .MuiTextField-root": { width: { xs: "100%", sm: 280 } },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  bgcolor: "background.paper",
+                },
+              }}
+            >
+              <SearchInput search={search} setSearch={handleSearchChange} />
+            </Box>
+          </Stack>
 
-          <Stack direction="row" spacing={1.5}>
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            flexWrap="wrap"
+            sx={{ alignItems: "center", justifyContent: { xs: "flex-start", md: "flex-end" } }}
+          >
             <ToggleButtonGroup
               orientation="horizontal"
               value={viewMode}
@@ -377,7 +426,23 @@ const Employees = () => {
               onChange={handleViewChange}
               size="small"
               sx={{
-                height: 32,
+                height: 38,
+                p: 0.35,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: "10px",
+                bgcolor: "background.paper",
+                "& .MuiToggleButton-root": {
+                  border: 0,
+                  borderRadius: "7px !important",
+                  px: 1.25,
+                  color: "text.secondary",
+                  "&.Mui-selected": {
+                    color: "primary.contrastText",
+                    bgcolor: "primary.main",
+                    "&:hover": { bgcolor: "primary.dark" },
+                  },
+                },
               }}
             >
               <ToggleButton value="table" aria-label="table">
@@ -407,6 +472,7 @@ const Employees = () => {
                   size="small"
                   startIcon={<UploadFile />}
                   onClick={() => setShowBulkImportModal(true)}
+                  sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700 }}
                 >
                   Bulk Import
                 </Button>
@@ -418,6 +484,7 @@ const Employees = () => {
                   }
                   onClick={handleBulkExport}
                   disabled={isExporting || totalRecords === 0}
+                  sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700 }}
                 >
                   Bulk Export
                 </Button>

@@ -59,8 +59,7 @@ export const ApplicationsChart = () => {
 
   return (
     <Card
-      // sx={{ : "100%", }}
-      className="p-4 d-flex flex-column h-100"
+      className="dashboard-applications-card p-4 d-flex flex-column h-100"
     >
       <Stack direction="row" className="mb-4 justify-content-between flex-wrap">
         <Typography className="fw-bold fs-16">{i({ id: "TITLES.TOTAL_APPLICATIONS" })}</Typography>

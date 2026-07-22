@@ -31,9 +31,9 @@ export const PersonalDetails = () => {
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage!);
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between mb-4">
-        <Typography variant="h5">{i({ id: "PROFILE.PI.TITLE" })}</Typography>
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
+      <Stack className="flex-row justify-content-between" sx={{ mb: 2.5 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>{i({ id: "PROFILE.PI.TITLE" })}</Typography>
         {hasEmployeeEditPermission && (
           <CustomIconButton
             tooltip={i({ id: "BUTTON.EDIT" })}
@@ -50,7 +50,7 @@ export const PersonalDetails = () => {
           />
         )}
       </Stack>
-      <Grid container spacing={1}>
+      <Grid container spacing={1.5} sx={{ "& > .MuiGrid-root": { p: 1.5, borderRadius: 2, bgcolor: "action.hover", minHeight: 66 }, "& .MuiTypography-body2": { color: "text.secondary", fontSize: 12, mb: .4 }, "& .MuiTypography-body1": { fontWeight: 600, overflowWrap: "anywhere" } }}>
         <Grid size={12}>
           <Typography variant="body2">{i({ id: "USER.ADDRESS" })}</Typography>
           <Typography variant="body1">

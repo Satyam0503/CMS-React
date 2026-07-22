@@ -150,11 +150,11 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   };
 
   return (
-    <Card variant="outlined" sx={{ p: 2, mt: 2 }}>
-      <Typography variant="h5" color="primary.main" sx={{ mb: 2 }}>
+    <Card variant="outlined" sx={{ p: { xs: 2, md: 3 }, mt: 3, borderRadius: 3, overflow: "hidden" }}>
+      <Typography variant="h5" color="primary.main" sx={{ mb: 2.5, fontWeight: 700 }}>
         Monthly Exceptions
       </Typography>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(190px, 1fr) minmax(170px, 1fr) auto auto" }, gap: 2, alignItems: "center" }}>
         <TextField
           label="Attendance month"
           value={month.format("MMMM YYYY")}
@@ -182,9 +182,9 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         <Button variant="contained" disabled={loading} onClick={() => void resolveAllFixed()}>
           Resolve All Fixed Issues
         </Button>
-      </Stack>
+      </Box>
 
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }} sx={{ mt: 2 }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "220px auto minmax(260px, 1fr)" }, gap: 2, alignItems: "center", mt: 2 }}>
         <TextField
           select
           size="small"
@@ -208,7 +208,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         <Typography variant="body2" color="text.secondary">
           Structural errors resolve only after attendance data is corrected and rechecked.
         </Typography>
-      </Stack>
+      </Box>
 
       <Box sx={{ overflowX: "auto", width: "100%", mt: 2 }}>
         <Box sx={{ minWidth: 820 }}>
@@ -217,12 +217,9 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
               No exceptions found for this month.
             </Typography>
           ) : items.map((item) => (
-            <Stack
+            <Box
               key={item.id}
-              direction="row"
-              spacing={2}
-              alignItems="center"
-              sx={{ borderBottom: 1, borderColor: "divider", py: 1.5 }}
+              sx={{ display: "grid", gridTemplateColumns: "150px minmax(330px, 1fr) 170px 180px", columnGap: 2, alignItems: "center", borderBottom: 1, borderColor: "divider", minHeight: 68, py: 1.25, px: 0.5, transition: "background-color .2s ease", "&:hover": { bgcolor: "action.hover" } }}
             >
               <Typography sx={{ width: 150, flexShrink: 0 }}>{item.employeeId}</Typography>
               <Box sx={{ minWidth: 330, flex: 1 }}>
@@ -261,7 +258,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                   <Button size="small" onClick={() => void load(true)}>Recheck</Button>
                 </Stack>
               ) : <Box sx={{ width: 180, flexShrink: 0 }} />}
-            </Stack>
+            </Box>
           ))}
         </Box>
       </Box>

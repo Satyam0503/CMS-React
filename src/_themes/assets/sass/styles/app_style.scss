@@ -56,9 +56,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--mui-palette-primary-main);
-  gap: 1rem;
-  padding: 1rem;
+  background: linear-gradient(145deg, var(--mui-palette-primary-dark), var(--mui-palette-primary-main) 58%, var(--mui-palette-secondary-main));
+  gap: 1.25rem;
+  padding: 1.5rem 1rem;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 38px rgba(91, 43, 150, 0.2);
   & > .profile-picture {
     display: flex;
     align-self: center;
@@ -67,7 +70,8 @@
     height: 150px;
     width: 150px;
     aspect-ratio: 1;
-    border: 3px solid var(--mui-palette-common-white);
+    border: 4px solid var(--mui-palette-common-white);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
     border-radius: 50%;
     position: relative;
     transition: "transform 0.8s ease-in-out";
@@ -329,42 +333,61 @@ button:hover .ql-fill,
 
 .employee-grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
-  grid-template-rows: repeat(auto-fill, 270px);
-  justify-content: space-evenly;
-  gap: 2rem;
-  margin-block: 3rem !important;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 1.5rem;
+  margin-block: 0.5rem !important;
   flex-grow: 1;
 }
 
 .employee-card {
   position: relative;
-  height: 270px;
-  border-radius: 0.75rem;
+  min-width: 0;
+  height: 310px;
+  border-radius: 1rem;
+  border: 1px solid var(--mui-palette-divider);
   background-image: var(--mui-overlays-6);
-  box-shadow: var(--mui-shadows-2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
   cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-6px);
+    border-color: var(--mui-palette-primary-main);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.25);
+    outline: none;
+
+    & > img {
+      transform: scale(1.045);
+    }
+
+    .employee-card-link {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   & > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
+    transition: transform 350ms ease;
   }
   &::before {
     border-radius: inherit;
     position: absolute;
     z-index: 2;
     content: "";
-    content: "";
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background: linear-gradient(
-      to top,
-      var(--mui-palette-grey-900),
-      transparent
-    );
+    background:
+      linear-gradient(to top, rgba(9, 12, 20, 0.98) 0%, rgba(9, 12, 20, 0.72) 34%, transparent 68%),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.16), transparent 30%);
   }
 
   & > .employee-card-content {
@@ -374,17 +397,183 @@ button:hover .ql-fill,
     content: "";
     width: 100%;
     height: 100%;
-    height: 100%;
     top: 0;
     left: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 1.25rem;
+
+    .employee-role-chip {
+      max-width: 100%;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+
+      .MuiChip-icon {
+        color: var(--mui-palette-primary-light);
+      }
+
+      .MuiChip-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .employee-card-name {
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .employee-card-link {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: rgba(255, 255, 255, 0.76);
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 180ms ease, transform 180ms ease;
+
+      svg {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .employee-grid-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .employee-card {
+    height: 290px;
+  }
+}
+
+.dashboard-modern {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-bottom: 2rem;
+
+  .dashboard-side-column { gap: 1.5rem; }
+
+  .MuiCard-root {
+    position: relative;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 16px;
+    background-image: linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent), transparent 40%);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+
+    &::after {
+      position: absolute;
+      content: "";
+      width: 90px;
+      height: 90px;
+      top: -55px;
+      right: -45px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent);
+      pointer-events: none;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      border-color: color-mix(in srgb, var(--mui-palette-primary-main) 42%, var(--mui-palette-divider));
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
+    }
+  }
+
+  .MuiAvatar-root {
+    border: 2px solid color-mix(in srgb, var(--mui-palette-primary-main) 22%, transparent);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.14);
+  }
+
+  a {
+    color: var(--mui-palette-primary-main);
+    font-weight: 700;
+    text-decoration: none;
+    &:hover { color: var(--mui-palette-primary-light); }
+  }
+
+  .dashboard-applications-card .MuiSelect-root { min-width: 90px; }
+}
+
+.dashboard-hero {
+  position: relative;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--mui-palette-secondary-main) 16%, transparent), transparent 30%),
+    linear-gradient(125deg, color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent), transparent 55%);
+  overflow: hidden;
+
+  &::before {
+    position: absolute;
+    content: "";
+    width: 180px;
+    height: 180px;
+    right: 15%;
+    bottom: -145px;
+    border: 22px solid color-mix(in srgb, var(--mui-palette-primary-main) 8%, transparent);
+    border-radius: 50%;
+  }
+
+  .dashboard-hero-chip {
+    width: fit-content;
+    color: var(--mui-palette-primary-main);
+    background: color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
+    .MuiChip-icon { color: inherit; }
+  }
+
+  .dashboard-welcome-title {
+    font-size: clamp(1.65rem, 3vw, 2.35rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .dashboard-welcome-copy { font-size: 0.95rem; }
+
+  .dashboard-date-card {
+    position: relative;
+    z-index: 1;
     align-items: center;
-    gap: 0.25rem;
-    padding: 1rem 0.5rem;
-    gap: 0.25rem;
-    padding: 1rem 0.5rem;
+    min-width: 210px;
+    padding: 0.9rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 20%, var(--mui-palette-divider));
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--mui-palette-background-paper) 80%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .dashboard-weather-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0.35rem;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--mui-palette-warning-main) 12%, transparent);
+    img { width: 100%; height: 100%; object-fit: contain; }
+  }
+}
+
+@media (max-width: 599px) {
+  .dashboard-hero {
+    align-items: stretch;
+    padding: 1.25rem;
+    .dashboard-date-card { width: 100%; min-width: 0; }
   }
 }
 
@@ -425,20 +614,28 @@ button:hover .ql-fill,
   }
 }
 .tab-container {
-  overflow-x: scroll !important ;
+  overflow-x: auto !important;
   scrollbar-width: none;
   & > * {
     flex-grow: 1;
   }
   & .tab-box {
-    border-bottom: 2px solid var(--mui-palette-grey-500);
+    border: 1px solid transparent;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     font-weight: bolder;
-    padding: 1.5rem;
-    font-size: 1rem;
+    padding: 1rem 1.25rem;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    &:hover {
+      color: var(--mui-palette-primary-main) !important;
+      background-color: var(--mui-palette-action-hover);
+      transform: translateY(-1px);
+    }
     cursor: pointer;
     white-space: nowrap;
     &:hover {
@@ -456,8 +653,10 @@ button:hover .ql-fill,
 }
 
 .tab_active {
-  border-bottom: 2px solid var(--mui-palette-primary-main) !important;
+  border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 35%, transparent) !important;
+  background: color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent) !important;
   color: var(--mui-palette-primary-main) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent);
 }
 
 .truncate-multi-line {
@@ -1027,4 +1226,105 @@ button:hover .ql-fill,
 .current-active-policy {
   border-color: var(--mui-palette-primary-main);
 
+}
+
+// App motion system: lightweight interaction feedback without changing layout.
+@keyframes app-page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes app-card-reveal {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes app-soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mui-palette-primary-main) 0%, transparent); }
+  50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent); }
+}
+
+.app-content-surface > .MuiContainer-root > :last-child {
+  animation: app-page-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-shell {
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiToggleButton-root {
+    transition:
+      transform 160ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease;
+
+    &:not(:disabled):active { transform: scale(0.96); }
+  }
+
+  .MuiButton-contained:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
+  }
+
+  .MuiIconButton-root:not(:disabled):hover { transform: translateY(-1px) scale(1.05); }
+
+  .MuiOutlinedInput-root {
+    transition: box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
+
+    &.Mui-focused {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent);
+    }
+  }
+
+  .MuiSwitch-switchBase,
+  .MuiSwitch-thumb,
+  .MuiCheckbox-root svg { transition: transform 180ms ease, color 180ms ease; }
+
+  .MuiCheckbox-root:hover svg { transform: scale(1.08); }
+}
+
+.sidebar .sidebar-menu-item {
+  &:hover {
+    transform: translateX(3px);
+    .MuiSvgIcon-root { transform: scale(1.1); }
+  }
+
+  &.Mui-selected .MuiSvgIcon-root { animation: app-soft-pulse 2.6s ease-in-out infinite; }
+}
+
+.dashboard-modern {
+  > .MuiGrid-root .MuiCard-root {
+    opacity: 0;
+    animation: app-card-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(1) .MuiCard-root { animation-delay: 60ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(2) .MuiCard-root { animation-delay: 110ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(3) .MuiCard-root { animation-delay: 160ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(4) .MuiCard-root { animation-delay: 210ms; }
+  .dashboard-side-column .MuiCard-root { animation-delay: 180ms; }
+
+  .dashboard-weather-icon img {
+    transition: transform 300ms ease;
+    &:hover { transform: rotate(-6deg) scale(1.1); }
+  }
+}
+
+.employee-grid-container .employee-card {
+  animation: app-card-reveal 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

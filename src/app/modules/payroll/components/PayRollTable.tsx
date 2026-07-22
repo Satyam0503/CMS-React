@@ -5,6 +5,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
@@ -12,7 +13,7 @@ import { Visibility } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { PayRollDataModel, PayRollResponseModel } from "../models";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { currencyFormatter, dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -94,6 +95,8 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
   const [previewingEmployeeId, setPreviewingEmployeeId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewTitle, setPreviewTitle] = useState<string>("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handlePreviewPaySlip = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -164,6 +167,15 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
     });
   }, [payRollData]);
 
+  useEffect(() => {
+    setPage(0);
+  }, [payRollData, payMonth]);
+
+  const visibleRows = useMemo(
+    () => processedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [processedData, page, rowsPerPage],
+  );
+
   return (
     <>
       <TableContainer className="flex-grow-1">
@@ -191,11 +203,11 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                 </TableCell>
               </TableRow>
             ) : (
-              processedData.map((row, index) => (
+              visibleRows.map((row, index) => (
                 <TableRow
                   hover
                   tabIndex={-1}
-                  key={index}
+                  key={row.payData.payRollId || `${row.employeeId}-${page * rowsPerPage + index}`}
                   className={clsx("pointer-cursor", {
                     "pe-none": !hasEditPermission || row.payData.isProcessed,
                   })}
@@ -255,6 +267,19 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={processedData.length}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        onPageChange={(_, nextPage) => setPage(nextPage)}
+        onRowsPerPageChange={(event) => {
+          setRowsPerPage(Number(event.target.value));
+          setPage(0);
+        }}
+        sx={{ borderTop: 1, borderColor: "divider", mt: 1 }}
+      />
       {
         previewUrl &&
         <CustomisedModal open={true} handleClose={handleClosePreview} title={previewTitle} allowMaximize>

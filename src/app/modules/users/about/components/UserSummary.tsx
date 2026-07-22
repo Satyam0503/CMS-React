@@ -63,9 +63,9 @@ export const UserSummary = () => {
   }, [refresh]);
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between mb-4"  >
-        <Typography variant="h5">
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
+      <Stack className="flex-row justify-content-between" sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
           {formatMessage({ id: "PROFILE.ABOUT.TITLE" })}
         </Typography>
         {isEdit ? (
@@ -110,7 +110,7 @@ export const UserSummary = () => {
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
-        <Typography variant="body1" >
+        <Typography variant="body1" sx={{ color: "text.secondary", lineHeight: 1.7, minHeight: 28 }}>
           {userSummary && userSummary.summary.trim().length > 0
             ? userSummary.summary
             : formatMessage({ id: "PROFILE.ABOUT.ADD_SUMMARY" })}

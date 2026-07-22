@@ -12,7 +12,7 @@ export default function AboutUser() {
         container
         sx={{
           display: "flex",
-          gap: 2
+          gap: 2.5
         }}>
         <Grid size={12}>
           <UserSummary />

@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import { useAppSelector } from "../../Redux/hooks";
 import React, { useEffect, useMemo } from "react";
 import { EmployeeChart } from "./components/EmployeeChart";
@@ -68,16 +68,16 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <React.Fragment>
+    <Box className="dashboard-modern">
       <DashboardHeader fullName={user.fullName} />
-      <Grid container spacing={2} className="d-flex justify-content-between">
+      <Grid container spacing={{ xs: 2, md: 3 }} className="d-flex justify-content-between">
         <Grid
           size={{
             xs: 12,
             lg: 8,
           }}
         >
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, md: 3 }}>
             {hasAccessToEmpModule && (
               <Grid
                 size={{
@@ -108,7 +108,7 @@ export default function Dashboard() {
             )}
             {hasAccessToJob && (
               <Grid
-                sx={{ height: 310 }}
+                sx={{ minHeight: 330 }}
                 size={{
                   xs: 12,
                   sm: 6,
@@ -127,7 +127,7 @@ export default function Dashboard() {
           </Grid>
         </Grid>
         <Grid
-          className="d-flex flex-column gap-4"
+          className="dashboard-side-column d-flex flex-column"
           size={{
             xs: 12,
             lg: 4,
@@ -142,6 +142,6 @@ export default function Dashboard() {
           <Help />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Box>
   );
 }

@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { Box, Card, Typography } from "@mui/material";
+import { ArrowForward, WorkOutline } from "@mui/icons-material";
+import { Box, Card, Chip, Typography } from "@mui/material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmpCardSkeleton } from "./EmployeeCardSkeleton";
@@ -27,7 +28,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
       : navigate(`/employees/${employeeId}`);
   };
 
-  if (employeeList.length === 0) {
+  if (!isLoading && employeeList.length === 0) {
     return <CardMessage title="MESSAGE.NO_EMPLOYEE" />
   }
 
@@ -43,6 +44,14 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
             className="employee-card "
             key={emp.userId}
             onClick={() => handleClick(emp.userId)}
+            tabIndex={0}
+            role="button"
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleClick(emp.userId);
+              }
+            }}
           >
             <img
               src={
@@ -51,14 +60,27 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
               alt="employee-profile-image"
             />
             <Box className="employee-card-content">
+              <Chip
+                icon={<WorkOutline />}
+                label={
+                  emp.jobRole === null
+                    ? <FormattedMessage id="NOT_AVAILABLE" />
+                    : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]
+                }
+                size="small"
+                className="employee-role-chip"
+              />
               <Typography
                 variant="h6"
-                className="fw-bold"
+                className="fw-bold employee-card-name"
                 sx={{ color: 'common.white' }}
               >
                 {emp.fullName}
               </Typography>
-              <Typography sx={{ color: 'common.white' }}>{emp.jobRole === null ? <FormattedMessage id="NOT_AVAILABLE" /> : emp.jobRole[currentLanguage] || emp.jobRole[defaultLang]}</Typography>
+              <Box className="employee-card-link">
+                <Typography variant="caption">View profile</Typography>
+                <ArrowForward />
+              </Box>
             </Box>
           </Card>
         ))}

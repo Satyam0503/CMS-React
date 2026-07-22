@@ -1,4 +1,5 @@
-import { Stack, Typography } from "@mui/material";
+import { CalendarMonth, WavingHand } from "@mui/icons-material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { memo } from "react";
 import dayjs from "dayjs";
@@ -7,36 +8,42 @@ import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export const DashboardHeader = memo((props: { fullName: string }) => {
   const intl = useIntl();
+
   return (
     <Stack
-      direction={"row"}
-      spacing={2}
-      sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2 }}
+      direction={{ xs: "column", sm: "row" }}
+      className="dashboard-hero"
+      sx={{ justifyContent: "space-between", gap: 2 }}
     >
-      <Stack>
-        <Typography variant="h2">
+      <Stack spacing={1} sx={{ position: "relative", zIndex: 1 }}>
+        <Chip
+          icon={<WavingHand />}
+          label="Workspace overview"
+          size="small"
+          className="dashboard-hero-chip"
+        />
+        <Typography variant="h2" className="dashboard-welcome-title">
           {intl.formatMessage({ id: "MESSAGE.WELCOME" })} {props.fullName || ""}
         </Typography>
+        <Typography color="text.secondary" className="dashboard-welcome-copy">
+          Here is what is happening across your workplace today.
+        </Typography>
       </Stack>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "start"
-        }}>
-          <Stack sx={{ width: "40px" }}>
-            <img
-              src={toAbsoluteUrl("media/Icons/Sun_behind_clouds.png")}
-              alt="clouds"
-            />
-          </Stack>
-          <Stack sx={{
-            alignItems: "end"
-          }}>
-            <Typography variant="h3">
-              {dateFormatter(dayjs(), "dddd")}
-            </Typography>
-            <Typography variant="body1">
+
+      <Stack direction="row" spacing={1.5} className="dashboard-date-card">
+        <Box className="dashboard-weather-icon">
+          <img
+            src={toAbsoluteUrl("media/Icons/Sun_behind_clouds.png")}
+            alt="Current weather"
+          />
+        </Box>
+        <Stack sx={{ alignItems: { xs: "flex-start", sm: "flex-end" } }}>
+          <Typography variant="h4" fontWeight={800}>
+            {dateFormatter(dayjs(), "dddd")}
+          </Typography>
+          <Stack direction="row" spacing={0.75} alignItems="center">
+            <CalendarMonth sx={{ fontSize: 15, color: "primary.main" }} />
+            <Typography variant="body2" color="text.secondary">
               {dateFormatter(dayjs(), "ll")}
             </Typography>
           </Stack>

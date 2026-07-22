@@ -19,7 +19,7 @@ export const ProfileHeader = () => {
   const totalYearAtCurrentCompany = dayjs().diff(userDetails.dateOfJoining, "years");
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={2}>
       <Grid size={{ xs: 12, sm: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.secondary.lighter}
