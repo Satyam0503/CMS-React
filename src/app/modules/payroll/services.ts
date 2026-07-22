@@ -8,6 +8,7 @@ import {
   GetPayRollResponseModel,
   PayRollRequestModel,
   PayslipPayload,
+  ProcessPayrollMonthPayload,
 } from "./models";
 
 type GetPayRollPayload = {
@@ -50,6 +51,12 @@ export const getEmployeePayRollData = (payload: GetPayRollPayload) => {
     payload
   );
 };
+
+export const processPayrollMonth = (payload: ProcessPayrollMonthPayload) =>
+  postRequest<ProcessPayrollMonthPayload, ApiResponse>(
+    ServiceUrl.PUBLISH_PAYROLL_MONTH,
+    payload,
+  );
 
 export const addUpdateEmployeePayRoll = (payload: AddUpdatePayRollPayload) => {
   return postRequest<AddUpdatePayRollPayload, ApiResponse>(

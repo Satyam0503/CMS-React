@@ -18,6 +18,7 @@ export type PayRollDataModel = {
   healthInsurance: number;
   epf: number;
   esic: number;
+  isProcessed: boolean;
 };
 
 export type PayRollRequestModel = {
@@ -42,5 +43,9 @@ export type PayRollResponseModel = {
 };
 
 export type AddUpdatePayRollPayload = typeof initialPayRollValues;
+
+export type ProcessPayrollMonthPayload = {
+  payMonth: string;
+};
 
 export type GetPayRollResponseModel = ResponseData<PayRollResponseModel>;

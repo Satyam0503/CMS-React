@@ -197,7 +197,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   tabIndex={-1}
                   key={index}
                   className={clsx("pointer-cursor", {
-                    "pe-none": !hasEditPermission,
+                    "pe-none": !hasEditPermission || row.payData.isProcessed,
                   })}
                   sx={{ borderBottom: 1, borderColor: "text.disabled" }}
                   onClick={() => handleRowClick(row)}

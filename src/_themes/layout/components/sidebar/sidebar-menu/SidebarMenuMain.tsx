@@ -24,7 +24,7 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle, isMiniS
 
   const filteredTabList = useMemo(
     () => filterSideBarTabs(userModulePermission, userRoleType),
-    [userModulePermission],
+    [userModulePermission, userRoleType],
   );
 
   if (filteredTabList.length === 0) {

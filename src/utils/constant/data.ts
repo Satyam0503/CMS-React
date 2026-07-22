@@ -53,6 +53,7 @@ export const ServiceUrl = {
   UPDATE_SALARY: `api/Salary/UpdateSalary`,
   GET_COMPANY_SALARIES: `api/Salary/GetCompanySalaries`,
   PROCESS_PAYROLL: `api/AutoPayroll/GeneratePayRollMonthly`,
+  PUBLISH_PAYROLL_MONTH: `api/PayRoll/ProcessPayrollMonth`,
 
   GET_LAST_EMPLOYEE_ID: "api/User/GetLastEmployeeId",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,

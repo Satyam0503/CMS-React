@@ -1,4 +1,4 @@
-import { Card, IconButton, Stack, Typography } from "@mui/material"
+import { Button, Card, Stack, Tooltip, Typography } from "@mui/material"
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { usePageData } from "../../Context/PageDataProvider";
@@ -6,15 +6,17 @@ import { PayRollTable } from "./components/PayRollTable";
 import { PayRollDataModel, PayRollResponseModel } from "./models";
 import { SearchInput } from "../../shared/components/SearchInput";
 import dayjs, { Dayjs } from "dayjs";
-import { getEmployeePayRollData } from "./services";
+import { getEmployeePayRollData, processPayrollMonth } from "./services";
 import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
 import { UploadPayRollData } from "./components/UploadPayRollData";
-import { Add } from "@mui/icons-material";
+import { Add, PlayArrow } from "@mui/icons-material";
 import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
 import { Nullable } from "../../../utils/common_types";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
+import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
+import { toast } from "react-toastify";
 
 
 export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayjs } = {
@@ -32,6 +34,7 @@ export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayj
     healthInsurance: null,
     epf: null,
     esic: null,
+    isProcessed: false,
     payMonth: dayjs().subtract(1, "month"),
 }
 
@@ -47,6 +50,11 @@ const PayRollManagement = () => {
     const [refresh, setRefresh] = useState<boolean>(false);
     const userModulePermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
     const hasCreatePermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Create, userModulePermissions);
+    const hasEditPermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Edit, userModulePermissions);
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const payrollRows = payRollData.filter(row => Boolean(row.payData.payRollId));
+    const isMonthProcessed = payrollRows.length > 0 && payrollRows.every(row => row.payData.isProcessed);
 
     const handleDateChange = (newValue: Dayjs | null) => {
         setPayMonth(newValue);
@@ -57,6 +65,10 @@ const PayRollManagement = () => {
     };
 
     const handleRowClick = (row: PayRollResponseModel) => {
+        if (row.payData.isProcessed) {
+            toast.info("Processed payroll is locked and cannot be edited.");
+            return;
+        }
         setInitialValues({
             ...row.payData,
             // the API returns paidDate as a plain ISO string, not a Dayjs instance
@@ -70,6 +82,24 @@ const PayRollManagement = () => {
     const handlePageRefresh = () => {
         setRefresh(!refresh);
     }
+
+    const handleProcessMonth = async () => {
+        if (!payMonth || payrollRows.length === 0 || isMonthProcessed || isProcessing) return;
+        setIsProcessing(true);
+        try {
+            const { data } = await processPayrollMonth({ payMonth: payMonth.startOf("month").format("YYYY-MM-DD") });
+            if (data.success) {
+                toast.success(data.message);
+                handlePageRefresh();
+            } else {
+                toast.error(data.message || i({ id: "ERROR.500" }));
+            }
+        } catch (error) {
+            toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     const handleModalClose = () => {
         setIsModalOpen(false);
@@ -116,11 +146,34 @@ const PayRollManagement = () => {
                             hasCreatePermission &&
                             <>
                                 <UploadPayRollData handlePageRefresh={handlePageRefresh} />
-                                <IconButton sx={{ height: 36, width: 36 }} onClick={() => setIsModalOpen(true)} >
-                                    <Add />
-                                </IconButton>
+                                <Tooltip title={i({ id: "BUTTON.ADD" })} arrow placement="top">
+                                    <Button
+                                        variant="outlined"
+                                        aria-label={i({ id: "BUTTON.ADD" })}
+                                        sx={payrollActionButtonSx}
+                                        onClick={() => setIsModalOpen(true)}
+                                    >
+                                        <Add fontSize="small" />
+                                    </Button>
+                                </Tooltip>
                             </>
                         }
+                        {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
+                            <Tooltip title={isMonthProcessed ? `Payroll for ${payMonth?.format("MMMM YYYY")} is processed` : `Process payroll for ${payMonth?.format("MMMM YYYY")}`} arrow placement="top">
+                                <span>
+                                    <Button
+                                        variant={isMonthProcessed ? "contained" : "outlined"}
+                                        color={isMonthProcessed ? "success" : "primary"}
+                                        aria-label={`Process payroll for ${payMonth?.format("MMMM YYYY")}`}
+                                        sx={payrollActionButtonSx}
+                                        disabled={isMonthProcessed || isProcessing}
+                                        onClick={handleProcessMonth}
+                                    >
+                                        <PlayArrow fontSize="small" />
+                                    </Button>
+                                </span>
+                            </Tooltip>
+                        )}
                     </Stack>
                 </Stack>
                 <PayRollTable payRollData={payRollData} payMonth={payMonth} handleRowClick={handleRowClick} />

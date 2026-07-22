@@ -424,7 +424,7 @@ export const filterSideBarTabs = (
 ) => {
   const filteredTabList = SideBarTabList.map((tab) => {
     if (tab.isDefault) return tab;
-    else if (tab.adminOnly)
+    if (tab.adminOnly)
       return userRoleType === Roles.Administrator ? tab : null;
     else if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
@@ -455,6 +455,9 @@ export const filterSideBarTabs = (
   }).filter((tab) => tab !== null);
   return filteredTabList;
 };
+
+export const canAccessHrManagement = (roleType?: number) =>
+  roleType === Roles.Administrator || roleType === Roles.HRManager;
 
 
 export const getNotificationTitle = (

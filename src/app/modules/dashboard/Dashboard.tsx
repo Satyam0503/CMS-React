@@ -9,7 +9,7 @@ import { DepartmentChart } from "./components/DepartmentChart";
 import EmpOnLeave from "./components/EmpOnLeave";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
-import { hasModuleFeaturePermission } from "../../../utils/common";
+import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { UpComingCelebration } from "./components/UpcomingCelebration";
@@ -31,25 +31,26 @@ export default function Dashboard() {
   const userModulesPermissions = useAppSelector(
     (state) => state.user.userData?.modulePermission ?? [],
   );
+  const hasHrAccess = canAccessHrManagement(userRoleType);
 
   const hasAccessToEmpModule = useMemo(
     () =>
-      hasModuleFeaturePermission(
+      hasHrAccess && hasModuleFeaturePermission(
         ModulesName.Employees,
         Permission.View,
         userModulesPermissions,
       ),
-    [userModulesPermissions],
+    [hasHrAccess, userModulesPermissions],
   );
 
   const hasAccessToJob = useMemo(
     () =>
-      hasModuleFeaturePermission(
+      hasHrAccess && hasModuleFeaturePermission(
         ModulesName.Jobs,
         Permission.View,
         userModulesPermissions,
       ),
-    [userModulesPermissions],
+    [hasHrAccess, userModulesPermissions],
   );
 
   const hasAccessToNoticeBoard = useMemo(
@@ -87,14 +88,14 @@ export default function Dashboard() {
                 <EmployeeChart />
               </Grid>
             )}
-            <Grid
+            {hasHrAccess && <Grid
               size={{
                 xs: 12,
                 sm: 6,
               }}
             >
               <DepartmentChart />
-            </Grid>
+            </Grid>}
             {hasAccessToJob && (
               <Grid
                 size={{
@@ -133,7 +134,7 @@ export default function Dashboard() {
           }}
         >
           {Notification.permission == "default" && <PushNotification />}
-          <EmpOnLeave />
+          {hasHrAccess && <EmpOnLeave />}
           <UpComingHolidayAndEvents />
           <UpComingCelebration />
           {/* <Punctual />

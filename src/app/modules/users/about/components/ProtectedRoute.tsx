@@ -15,12 +15,12 @@ export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = 
   const userRoleType = useAppSelector(state=>state.user.userData?.roleType!);
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   if(adminOnly){
-    return userRoleType === Roles.Administrator ? children : <Navigate to={"/unauthorize"} />; 
+    return userRoleType === Roles.Administrator ? children : <Navigate to={"/unauthorize"} replace />;
   }else if (module && modulePermissions.length>0) {
     const hasAccess = hasModuleFeaturePermission(module, permission, modulePermissions);
-    return hasAccess ? children :<Navigate to={"/unauthorize"} />; 
+    return hasAccess ? children :<Navigate to={"/unauthorize"} replace />;
   }
   else{
-    return <Navigate to={"/unauthorize"} />;
+    return <Navigate to={"/unauthorize"} replace />;
   }
 };

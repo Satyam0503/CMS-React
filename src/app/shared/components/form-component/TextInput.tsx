@@ -4,6 +4,8 @@ import {
   InputBaseProps,
   OutlinedInputProps,
   TextField,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import { useField } from "formik";
 import { FC } from "react";
@@ -22,6 +24,7 @@ export interface InputFieldProps {
   InputProps?: Partial<OutlinedInputProps>;
   labelVarient?: "notched" | "seperate",
   showErrorLabel?: boolean,
+  sx?: SxProps<Theme>,
 }
 
 export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, labelVarient = "notched", showErrorLabel = true, ...props }) => {

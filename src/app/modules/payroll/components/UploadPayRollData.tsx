@@ -1,5 +1,5 @@
-import { Add, Download } from "@mui/icons-material";
-import { Alert, Button, Link, Stack, Typography } from "@mui/material"
+import { Download, UploadFile } from "@mui/icons-material";
+import { Alert, Button, Link, Stack, Tooltip, Typography } from "@mui/material"
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
@@ -11,6 +11,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { PayRollDataModel, PayRollRequestModel } from "../models";
 import { uploadEmpPayRollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
+import { payrollActionButtonSx } from "./payrollActionButtonSx";
 
 const ValidFileExtension = ["xlsx", "xls"];
 // Bonus, LTA, Other Allowance, Health Insurance, EPF, ESIC are optional - default to 0 if omitted
@@ -280,24 +281,26 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
 
     return (
         <>
-            <Stack direction="row" spacing={2} className="align-items-center">
-                <Button variant="contained" component="label" role="button" aria-label="import excel" >
-                    <Add />
-                    {i({ id: "PAYROLL.IMPORT_EXCEL" })}
-                    <input
-                        hidden
-                        ref={inputRef}
-                        name="excel"
-                        type="file"
-                        accept=".xlsx,.xls"
-                        id="payrollImport"
-                        onChange={handleFileChange}
-                    />
-                </Button>
-                <Link href={SAMPLE_FILE_URL} download className="d-flex align-items-center gap-1">
-                    <Download fontSize="small" />
-                    {i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}
-                </Link>
+            <Stack direction="row" spacing={1} className="align-items-center">
+                <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
+                    <Button variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
+                        <UploadFile fontSize="small" />
+                        <input
+                            hidden
+                            ref={inputRef}
+                            name="excel"
+                            type="file"
+                            accept=".xlsx,.xls"
+                            id="payrollImport"
+                            onChange={handleFileChange}
+                        />
+                    </Button>
+                </Tooltip>
+                <Tooltip title={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} arrow placement="top">
+                    <Button component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
+                        <Download fontSize="small" />
+                    </Button>
+                </Tooltip>
             </Stack>
             {
                 open && <CustomisedModal open={true} handleClose={handleCloseModal}

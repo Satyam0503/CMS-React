@@ -8,13 +8,12 @@ import {
 } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Edit, Visibility } from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
 import {
   getDateDiffInYears,
   getStatusCodeString,
-  hasModuleFeaturePermission,
 } from "../../../../utils/common";
 import { PictureUpdateModal } from "./ProfileUpdateModal";
 import { useParams } from "react-router-dom";
@@ -27,7 +26,7 @@ import { toast } from "react-toastify";
 import { PayslipPayload } from "../../payroll/models";
 import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
-import { LANGUAGE, ModulesName, Permission } from "../../../../utils/enums";
+import { LANGUAGE } from "../../../../utils/enums";
 
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
@@ -43,14 +42,6 @@ export default function ProfileCard() {
     LANGUAGE.ENGLISH;
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const modulePermission = useAppSelector(
-    (state) => state.user.userData?.modulePermission,
-  );
-  const userModulePermission = useMemo(
-    () => modulePermission ?? [],
-    [modulePermission],
-  );
 
   const handleClose = () => {
     setOpen(false);
@@ -93,16 +84,6 @@ export default function ProfileCard() {
       setDate(null);
     }
   };
-
-  const isPayRollActive = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.NoticeBoard,
-        Permission.View,
-        userModulePermission,
-      ),
-    [userModulePermission],
-  );
 
   return (
     <>
@@ -204,7 +185,7 @@ export default function ProfileCard() {
             </Typography>
           </Stack>
         </Stack>
-        {!employeeId && isPayRollActive && (
+        {!employeeId && (
           <Stack
             direction="row"
             className="gap-2 align-items-end justify-content-center"
