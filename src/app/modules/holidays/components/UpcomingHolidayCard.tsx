@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Popover,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import { CalendarItem } from "../models";
 import { calendarItemStyleMapper, dateFormatter, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
@@ -12,6 +23,7 @@ import HolidayForm from "./HolidayForm";
 import { toast } from "react-toastify";
 import { deleteCalendarItem } from "../calendarServices";
 
+import { AppIconButton } from "../../../shared/components/ui";
 const initialValues: CalendarItem = {
   id: "",
   name: "",
@@ -170,7 +182,7 @@ export const UpcomingHolidayCard = (props: Props) => {
       </Tooltip >
 
       {((hasEditPermission || hasDeletePermission) && (props.occasion.type != 3 && props.occasion.type != 4)) && (
-        <IconButton
+        <AppIconButton
           className="holiday-card-action-button"
           sx={{
             border: 'none'
@@ -181,7 +193,7 @@ export const UpcomingHolidayCard = (props: Props) => {
           }}
         >
           <MoreVertOutlined />
-        </IconButton>
+        </AppIconButton>
       )}
       {
         Boolean(actionBtnAnchor) &&

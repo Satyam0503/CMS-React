@@ -1,6 +1,13 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState } from "react";
 
-import { Alert, Grid, IconButton, InputAdornment, Stack, Typography } from "@mui/material";
+import {
+  Grid,
+  InputAdornment,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
@@ -15,6 +22,7 @@ import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
+import { AppAlert, AppIconButton } from "../../../shared/components/ui";
 const validationSchema = Yup.object().shape({
   newPassword: Yup.string()
     .matches(
@@ -109,9 +117,9 @@ export function CreatePassword() {
         {(formik) => (
           <form onSubmit={formik.handleSubmit}>
             {formik.status && (
-              <Alert variant="standard" severity="error" className="mb-8">
+              <AppAlert variant="standard" severity="error" className="mb-8">
                 {formik.status}
-              </Alert>
+              </AppAlert>
             )}
             <Stack spacing={2}>
               <Stack spacing={1}>
@@ -123,13 +131,13 @@ export function CreatePassword() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton
+                        <AppIconButton
                           aria-label={showNewPassword ? "Hide new password" : "Show new password"}
                           edge="end"
                           onClick={() => setShowNewPassword((visible) => !visible)}
                         >
                           {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                        </IconButton>
+                        </AppIconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -144,13 +152,13 @@ export function CreatePassword() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <IconButton
+                      <AppIconButton
                         aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
                         edge="end"
                         onClick={() => setShowConfirmPassword((visible) => !visible)}
                       >
                         {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
+                      </AppIconButton>
                     </InputAdornment>
                   ),
                 }}

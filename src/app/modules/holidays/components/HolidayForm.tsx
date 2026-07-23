@@ -5,12 +5,9 @@ import {
   FormHelperText,
   Stack,
   Box,
-  IconButton,
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio,
-  Checkbox,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
@@ -25,6 +22,7 @@ import { CalendarItem } from "../models";
 import { addEditCalendarItem } from "../calendarServices";
 import { toast } from "react-toastify";
 
+import { AppCheckbox, AppIconButton, AppRadio } from "../../../shared/components/ui";
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
@@ -170,12 +168,12 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   >
                     <FormControlLabel
                       value="1"
-                      control={<Radio />}
+                      control={<AppRadio />}
                       label={i({ id: "OCCASION.TYPES.HOLIDAY" })}
                     />
                     <FormControlLabel
                       value="2"
-                      control={<Radio />}
+                      control={<AppRadio />}
                       label={i({ id: "OCCASION.TYPES.EVENT" })}
                     />
                   </RadioGroup>
@@ -189,7 +187,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                 >
                   <FormControlLabel
                     control={
-                      <Checkbox
+                      <AppCheckbox
                         // defaultChecked
                         value={formik.values.recurring}
                         onChange={(e, checked) => {
@@ -228,7 +226,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   }}
                   className="d-flex flex-column align-items-center text-center p-4 "
                 >
-                  <IconButton
+                  <AppIconButton
                     component="label"
                     role="button"
                     aria-label="select logo"
@@ -249,7 +247,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       onChange={(e) => handleFileChange(e, formik)}
                       hidden
                     />
-                  </IconButton>
+                  </AppIconButton>
                   <Stack>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       {" "}

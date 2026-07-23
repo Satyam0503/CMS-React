@@ -2,7 +2,6 @@ import {
   Badge,
   Box,
   Chip,
-  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -25,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { createNotifications } from "../../../../../app/modules/dashboard/components/pushNotificationUtils";
 import { toAbsoluteUrl } from "../../../../helpers";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
 export const NotificationIconMapper: {
   [index: number]: ReactNode
 } = {
@@ -175,7 +175,7 @@ export default function HeaderNotificationMenu() {
     <>
       <Tooltip title={i({ id: "TOOLTIP.NOTIFICATIONS" })} placement="bottom">
         <Badge badgeContent={notificationCount.unread} color="primary">
-          <IconButton
+          <AppIconButton
             onClick={handleClick}
             aria-describedby={id}
             sx={{ border: 0, p: 0 }}
@@ -183,7 +183,7 @@ export default function HeaderNotificationMenu() {
             aria-label="notification menu"
           >
             <NotificationsActive className="fs-32" />
-          </IconButton>
+          </AppIconButton>
         </Badge>
       </Tooltip>
       <Popover

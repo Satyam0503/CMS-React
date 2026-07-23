@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Card,
-  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -28,6 +27,7 @@ import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
 import { LANGUAGE } from "../../../../utils/enums";
 
+import { AppIconButton } from "../../../shared/components/ui";
 export default function ProfileCard() {
   const [open, setOpen] = useState(false);
   const { formatMessage: i } = useIntl();
@@ -222,7 +222,7 @@ export default function ProfileCard() {
                 },
               }}
             />
-            <IconButton
+            <AppIconButton
               className="border-1 border-white"
               sx={{ height: 36, width: 36, borderRadius: 1 }}
               onClick={viewPaySlip}
@@ -233,7 +233,7 @@ export default function ProfileCard() {
               ) : (
                 <Visibility sx={{ color: "#fff" }} />
               )}
-            </IconButton>
+            </AppIconButton>
           </Stack>
         )}
       </Card>

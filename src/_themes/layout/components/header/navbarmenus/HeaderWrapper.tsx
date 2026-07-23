@@ -1,4 +1,9 @@
-import { Avatar, IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Stack,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { FC } from "react";
 import { Navbar } from "./Navbar";
 import { MenuOutlined } from "@mui/icons-material";
@@ -7,6 +12,7 @@ import { EmployeeSearchInput } from "./EmployeeSearchInput";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { DEFAULT_COMPANY_LOGO } from "../../../../../utils/constant/Constant";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
 type Props = {
   openSideBar: () => void;
   isMiniSidebar: boolean;
@@ -38,9 +44,9 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, isMiniSidebar }) => {
     >
       <Stack direction="row" alignItems="center" spacing={1.5}>
         {isSmallScreen && (
-          <IconButton sx={{ border: 0 }} onClick={openSideBar}>
+          <AppIconButton sx={{ border: 0 }} onClick={openSideBar}>
             <MenuOutlined className="fs-32" />
-          </IconButton>
+          </AppIconButton>
         )}
         {showHeaderLogo && (
           <Avatar

@@ -138,3 +138,46 @@ body,
     }
   }
 }
+
+// Header controls must remain legible regardless of the selected surface style.
+// Styles with a custom header background override this single foreground token.
+.app-header {
+  --app-header-foreground: var(--mui-palette-text-primary);
+  color: var(--app-header-foreground);
+
+  & .MuiIconButton-root {
+    color: var(--app-header-foreground) !important;
+
+    & .MuiSvgIcon-root {
+      color: inherit !important;
+      fill: currentColor;
+    }
+
+    &:not(:disabled):hover {
+      color: var(--app-header-foreground) !important;
+      background-color: color-mix(
+        in srgb,
+        var(--app-header-foreground) 12%,
+        transparent
+      );
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--app-header-foreground);
+      outline-offset: 3px;
+    }
+
+    &:disabled {
+      color: var(--mui-palette-text-disabled) !important;
+      opacity: 0.72;
+    }
+  }
+}
+
+:root[data-app-style="gradient"] .app-header {
+  --app-header-foreground: #fff;
+}
+
+:root.dark[data-app-style="gradient"] .app-header {
+  --app-header-foreground: var(--mui-palette-text-primary);
+}

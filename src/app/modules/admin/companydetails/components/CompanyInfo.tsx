@@ -6,12 +6,9 @@ import {
   Chip,
   Divider,
   Grid,
-  IconButton,
   ListItemText,
   MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -32,6 +29,7 @@ import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { LANGUAGE } from "../../../../../utils/enums";
 
+import { AppIconButton, AppSelect, AppTextField } from "../../../../shared/components/ui";
 const initialCompanyInfo: CompanyModel = {
   defaultLanguage: "",
   applicationLanguage: [],
@@ -257,7 +255,7 @@ export const CompanyInfo = () => {
                 </Typography>
                 {
                   isEdit ?
-                    <Select
+                    <AppSelect
                       fullWidth
                       required
                       labelId="defaultLanguage"
@@ -272,7 +270,7 @@ export const CompanyInfo = () => {
                           <MenuItem key={item.id} value={item.lang}>{formatMessage({ id: item.name })}</MenuItem>
                         )
                       }
-                    </Select>
+                    </AppSelect>
                     :
                     <Typography variant="body2">{formatMessage({ id: defaultLanguage })}</Typography>
                 }
@@ -300,7 +298,7 @@ export const CompanyInfo = () => {
                       }}
                       getOptionLabel={(option) => option.name}
                       renderInput={(params) => (
-                        <TextField {...params} />
+                        <AppTextField {...params} />
                       )}
                       renderValue={(value, getTagProps) => (
                         value.map((option, index: number) => {
@@ -350,7 +348,7 @@ export const CompanyInfo = () => {
               }}>
               {
                 isEdit ?
-                  <TextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
+                  <AppTextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
                   :
                   <Typography variant="body1">{companyInfo.companyName}</Typography>
               }
@@ -382,7 +380,7 @@ export const CompanyInfo = () => {
               }}>
               {
                 isEdit ?
-                  <TextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
+                  <AppTextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
                   :
                   <Typography variant="body1">{companyInfo.address || formatMessage({ id: "NOT_AVAILABLE" })}</Typography>
               }
@@ -428,7 +426,7 @@ export const CompanyInfo = () => {
                   className="logo-update-button"
                   sx={{ borderRadius: 1, border: 1, borderColor: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'text.secondary' }}
                 >
-                  <IconButton component="label" role="button" aria-label="upload company logo" disabled={isLogoUploading} sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
+                  <AppIconButton component="label" role="button" aria-label="upload company logo" disabled={isLogoUploading} sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
                     <CloudUploadOutlined />
                     <input
                       name="companyLogo"
@@ -440,7 +438,7 @@ export const CompanyInfo = () => {
                       }}
                       hidden
                     />
-                  </IconButton>
+                  </AppIconButton>
                   {
                     selectedLogo &&
                     <Typography variant="body2" sx={{ fontWeight: 600 }}> {formatMessage({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: selectedLogo.name })}</Typography>

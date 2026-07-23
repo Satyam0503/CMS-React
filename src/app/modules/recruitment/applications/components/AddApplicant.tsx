@@ -1,10 +1,8 @@
 import {
   Autocomplete,
-  Button,
   Grid,
   MenuItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
@@ -30,6 +28,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { VisuallyHiddenInput } from "../../../../shared/components/form-component/VisuallyHiddenInput";
 import { AxiosError } from "axios";
 
+import { AppButton, AppTextField } from "../../../../shared/components/ui";
 const initialValues: ApplicantModel = {
   applicantId: "",
   firstName: "",
@@ -239,7 +238,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           formik.setFieldValue("state", value?.value);
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={i({ id: "APPLICATION.SELECT_STATE" })} />
+                          <AppTextField {...param} label={i({ id: "APPLICATION.SELECT_STATE" })} />
                         )}
                         getOptionLabel={(option) => option.label}
                       />
@@ -250,7 +249,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                     </Grid>
                   </Grid>
                   <Stack className="p-6 mt-4 align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
-                    <Button
+                    <AppButton
                       component="label"
                       role={undefined}
                       variant="contained"
@@ -267,7 +266,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           handleFileChange(e, formik.setFieldValue);
                         }}
                       />
-                    </Button>
+                    </AppButton>
 
                     <Typography variant="caption">
                       {`${i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })} : ${formik.values.resume?.name ?? ""}`}

@@ -1,12 +1,12 @@
-import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  ArrowDropUp } from "@mui/icons-material";
 import {
   Autocomplete,
-  Checkbox,
   ListItemText,
   Menu,
   MenuItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
@@ -31,6 +31,7 @@ import { FilterComponentProps } from "../../../../../utils/common_types";
 import { getVacancyPayload } from "../../jobs/Jobs";
 
 
+import { AppCheckbox, AppTextField } from "../../../../shared/components/ui";
 export const initialFilterValues: ApplicationFilterModel = {
   filterFrom: null,
   filterTo: null,
@@ -206,12 +207,12 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => option.title}
               renderInput={(params) => (
-                <TextField {...params} placeholder="Jobs" />
+                <AppTextField {...params} placeholder="Jobs" />
               )}
               renderOption={(props, option, state) => {
                 return (
                   <li {...props}>
-                    <Checkbox
+                    <AppCheckbox
                       key={option.jobId}
                       checked={state.selected}
                       sx={{ mr: 1 }}
@@ -243,12 +244,12 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => formatMessage({ id: option.label })}
               renderInput={(params) => (
-                <TextField {...params} placeholder={formatMessage({ id: "APPLICATION.STATUS_LABEL" })} />
+                <AppTextField {...params} placeholder={formatMessage({ id: "APPLICATION.STATUS_LABEL" })} />
               )}
               renderOption={(props, option, state) => {
                 return (
                   <li {...props}>
-                    <Checkbox
+                    <AppCheckbox
                       key={option.id}
                       checked={state.selected}
                       sx={{ mr: 1 }}
@@ -280,12 +281,12 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => formatMessage({ id: option.label })}
               renderInput={(params) => (
-                <TextField {...params} placeholder={formatMessage({ id: "APPLICANT.STATUS_LABEL" })} />
+                <AppTextField {...params} placeholder={formatMessage({ id: "APPLICANT.STATUS_LABEL" })} />
               )}
               renderOption={(props, option, state) => {
                 return (
                   <li {...props}>
-                    <Checkbox
+                    <AppCheckbox
                       key={option.id}
                       checked={state.selected}
                       sx={{ mr: 1 }}
@@ -302,7 +303,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
               {formatMessage({ id: "FORM.EXPERIENCE" })}
             </Typography>
             <Stack spacing={1} direction={"row"} useFlexGap>
-              <TextField
+              <AppTextField
                 fullWidth
                 error={Boolean(errors.minExperience)}
                 placeholder={formatMessage({ id: "APPLICANT.MIN_EXP" })}
@@ -320,7 +321,7 @@ export const ApplicationFilter: FC<FilterComponentProps> = (props) => {
                   }
                 }}
               />
-              <TextField
+              <AppTextField
                 placeholder={formatMessage({ id: "APPLICANT.MAX_EXP" })}
                 fullWidth
                 type="number"

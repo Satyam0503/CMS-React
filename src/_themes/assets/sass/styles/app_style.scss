@@ -301,8 +301,14 @@ button:hover .ql-fill,
 
 .breadcrumb-link {
   color: var(--mui-palette-grey-600);
+  cursor: pointer;
+  pointer-events: auto;
+  text-decoration: none;
+  transition: color 160ms ease;
+
   &:hover {
     color: var(--mui-palette-primary-main);
+    text-decoration: underline !important;
   }
 }
 

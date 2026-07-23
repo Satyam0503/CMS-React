@@ -1,10 +1,9 @@
 import {
-    Grid,
-    Stack,
-    Typography,
-    MenuItem,
-    Autocomplete,
-    TextField,
+  Grid,
+  Stack,
+  Typography,
+  MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { Formik, FormikProps } from "formik";
@@ -26,6 +25,7 @@ import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { EditEmployeePayloadModel } from "../../users/models";
 
+import { AppTextField } from "../../../shared/components/ui";
 const employeeInitialValue: EditEmployeePayloadModel = {
     roleId: "",
     firstName: "",
@@ -266,7 +266,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                     );
                                                 }}
                                                 renderInput={(param) => (
-                                                    <TextField
+                                                    <AppTextField
                                                         {...param}
                                                         label={i({
                                                             id: "FORM.JOB_ROLE",
@@ -297,7 +297,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                     );
                                                 }}
                                                 renderInput={(param) => (
-                                                    <TextField
+                                                    <AppTextField
                                                         {...param}
                                                         label={i({
                                                             id: "USER.REPORTING_MANAGER",

@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Chip,
   FormControl,
@@ -8,9 +7,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Radio,
   RadioGroup,
-  Select,
   Stack,
   Typography,
 } from "@mui/material";
@@ -29,7 +26,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createLeaveRequest, updateLeaveRequest, } from "../../../leaves/leaveServices";
+import { createEmployeeLeaveRequest, createLeaveRequest, updateLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -37,6 +34,7 @@ import { getHolidays } from "../../../holidays/calendarServices";
 import { HolidayModel, HolidayPayload } from "../../../holidays/models";
 import { useEffect, useState } from "react";
 
+import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui";
 type Props = {
   edit: boolean;
   initialValues: RequestLeaveModel;
@@ -44,6 +42,7 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   handleRefresh?: () => void;
+  targetEmployeeId?: string;
 };
 
 export const LeaveApplication = (props: Props) => {
@@ -56,7 +55,8 @@ export const LeaveApplication = (props: Props) => {
     handleRefresh,
   } = props;
   const { formatMessage: i } = useIntl();
-  const employeeId = useParams().employeeid;
+  const routeEmployeeId = useParams().employeeid;
+  const employeeId = props.targetEmployeeId ?? routeEmployeeId;
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
   const [filter, setFilter] = useState<HolidayPayload>({
@@ -210,7 +210,9 @@ export const LeaveApplication = (props: Props) => {
       try {
         const { data } = props.edit
           ? await updateLeaveRequest(payload)
-          : await createLeaveRequest(payload);
+          : employeeId
+            ? await createEmployeeLeaveRequest(employeeId, payload)
+            : await createLeaveRequest(payload);
         if (data.success) {
           toast.success(
             i({
@@ -270,9 +272,9 @@ export const LeaveApplication = (props: Props) => {
           return (
             <form onSubmit={handleSubmit}>
               {status && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <AppAlert severity="error" sx={{ mb: 2 }}>
                   {status}
-                </Alert>
+                </AppAlert>
               )}
               <Grid container spacing={2}>
                 <Grid size={12}>
@@ -280,7 +282,7 @@ export const LeaveApplication = (props: Props) => {
                     <InputLabel id="leave-policy-label">
                       {i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
                     </InputLabel>
-                    <Select
+                    <AppSelect
                       {...formik.getFieldProps("leavePolicyId")}
                       labelId="leave-policy-label"
                       label={i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
@@ -298,7 +300,7 @@ export const LeaveApplication = (props: Props) => {
                           {type.name}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
                 </Grid>
                 {
@@ -334,12 +336,12 @@ export const LeaveApplication = (props: Props) => {
                       >
                         <FormControlLabel
                           value={true}
-                          control={<Radio />}
+                          control={<AppRadio />}
                           label={i({ id: "YES" })}
                         />
                         <FormControlLabel
                           value={false}
-                          control={<Radio />}
+                          control={<AppRadio />}
                           label={i({ id: "NO" })}
                         />
                       </RadioGroup>

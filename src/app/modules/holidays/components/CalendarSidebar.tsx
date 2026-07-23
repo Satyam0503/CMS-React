@@ -1,4 +1,8 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,6 +18,7 @@ import { UpcomingHolidayCard } from './UpcomingHolidayCard';
 
 
 
+import { AppButton } from "../../../shared/components/ui";
 type Props = {
     occasions: Array<CalendarItem>,
     selectedDate: Dayjs | null,
@@ -166,7 +171,7 @@ export default function CalendarSidebar(props: Props) {
             {
                 // Add New Occasion Section
                 hasAddPermission &&
-                <Button variant="contained"
+                <AppButton variant="contained"
                     sx={{
                         width: 1,
                         fontSize: 14
@@ -175,7 +180,7 @@ export default function CalendarSidebar(props: Props) {
                 >
                     {i({ id: "BUTTON.ADD" })}
                     <AddIcon />
-                </Button>
+                </AppButton>
             }
 
             {/* Occasions For Selected Month */}

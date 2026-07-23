@@ -4,7 +4,6 @@ import {
   Grid,
   MenuItem,
   Stack,
-  TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
@@ -27,6 +26,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { UserEducationModel } from "../../models";
 
+import { AppTextField } from "../../../../shared/components/ui";
 type PropTypes = {
   isEdit: boolean;
   open: boolean;
@@ -209,7 +209,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                       setSearchValue("");
                     }}
                     renderInput={(params) => (
-                      <TextField
+                      <AppTextField
                         {...params}
                         placeholder={i({ id: "PROFILE.EDUCATION.COLLEGE_NAME" })}
                         slotProps={{

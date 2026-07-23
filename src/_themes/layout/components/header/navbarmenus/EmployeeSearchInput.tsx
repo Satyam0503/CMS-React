@@ -1,6 +1,14 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState } from "react";
 import { EmployeeSearchModel } from "../../../../../utils/common_types";
-import { Autocomplete, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField } from "@mui/material";
+import { Autocomplete,
+  Avatar,
+  CircularProgress,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import { ClearSharp, Search } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -9,6 +17,7 @@ import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 import { useDebounce } from "../../../../../app/hooks/useDebounce";
 import { searchEmployee } from "../../../../../app/modules/users/userservices";
 
+import { AppTextField } from "../../../../../app/shared/components/ui";
 export const EmployeeSearchInput = () => {
     const { formatMessage } = useIntl();
     const [loading, setLoading] = useState(false);
@@ -66,7 +75,7 @@ export const EmployeeSearchInput = () => {
             loading={loading}
             noOptionsText={formatMessage({ id: "MESSAGE.NO_RESULT" })}
             renderInput={(params) => (
-                <TextField
+                <AppTextField
                     {...params}
                     placeholder={formatMessage({ id: "PLACEHOLDER.SEARCH_EMP" })}
                     slotProps={{

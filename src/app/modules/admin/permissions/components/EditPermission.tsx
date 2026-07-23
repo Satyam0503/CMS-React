@@ -1,13 +1,10 @@
 import {
   Box,
   Card,
-  Checkbox,
   Divider,
   FormControlLabel,
   FormGroup,
   Stack,
-  Switch,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -34,6 +31,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { usePageData } from "../../../../Context/PageDataProvider";
 
+import { AppCheckbox, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 const validationSchema = Yup.object().shape({
   description: Yup.string().required(),
   title: Yup.string().required(),
@@ -186,7 +184,7 @@ export const EditPermission = () => {
         className="flex-grow-1 d-flex flex-column gap-5"
       >
         <Stack spacing={2}>
-          <TextField
+          <AppTextField
             fullWidth
             required
             error={formik.touched.title && Boolean(formik.errors.title)}
@@ -194,7 +192,7 @@ export const EditPermission = () => {
             label={formatMessage({ id: "ROLE.NAME" })}
             {...formik.getFieldProps("title")}
           />
-          <TextField
+          <AppTextField
             fullWidth
             required
             multiline
@@ -224,7 +222,7 @@ export const EditPermission = () => {
                 )}{" "}
                 :
               </Typography>
-              <Switch
+              <AppSwitch
                 checked={currentRoleDetails?.hasAppAccess}
                 onChange={(_, checked) => handleAppAccessChange(checked)}
               />
@@ -280,7 +278,7 @@ export const EditPermission = () => {
                                   }
                                   value={permission.modulePermissionId}
                                   control={
-                                    <Checkbox
+                                    <AppCheckbox
                                       onChange={(e) => {
                                         handlePermissionChange(
                                           permission,

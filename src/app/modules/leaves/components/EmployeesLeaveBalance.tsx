@@ -5,9 +5,7 @@ import {
   Grid,
   InputAdornment,
   Stack,
-  TextField,
   Typography,
-  IconButton,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomIconButton } from "../../../shared/components/CustomIconButton";
@@ -28,6 +26,7 @@ import { useDebounce } from "../../../hooks/useDebounce";
 import FilterPolicySearch from "./FilterPolicySearch";
 import { CircularLoader } from "../../../shared/components/CircularLoader";
 
+import { AppIconButton, AppTextField } from "../../../shared/components/ui";
 export const EmployeesLeaveBalance = () => {
   const { formatMessage: i } = useIntl();
   const { currentLanguage } = useAppLang();
@@ -118,7 +117,7 @@ export const EmployeesLeaveBalance = () => {
           direction={"row"}
           sx={{ width: "100%", justifyContent: "space-between", gap: "15px" }}
         >
-          <TextField
+          <AppTextField
             id="outlined-search"
             variant="outlined"
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
@@ -198,7 +197,7 @@ export const EmployeesLeaveBalance = () => {
                             : i({ id: "NOT_AVAILABLE" })}
                         </Typography>
                       </Stack>
-                      <IconButton
+                      <AppIconButton
                         aria-label=""
                         onClick={() => handleClickOptions(emp)}
                         sx={{
@@ -209,7 +208,7 @@ export const EmployeesLeaveBalance = () => {
                         }}
                       >
                         <MoreHorizIcon />
-                      </IconButton>
+                      </AppIconButton>
                     </Box>
 
                     <Box component="div" sx={{ padding: "0px 8px", }}>

@@ -1,4 +1,10 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, Stack } from "@mui/material"
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Stack,
+} from "@mui/material";
 import { useFormik } from "formik"
 import { leaveRequestFilterValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas"
 import { LeaveRequestsFilterModel } from "../model"
@@ -9,6 +15,8 @@ import { useIntl } from "react-intl"
 import dayjs, { Dayjs } from "dayjs"
 import { LeaveRequestStatusTypes, LeaveTypeConstant } from "../../../../utils/constant/Constant"
 import CustomisedButton from "../../../shared/components/CustomisedButton"
+import { AppSelect } from "../../../shared/components/ui";
+
 
 export const initialLeaveRequestFilter: LeaveRequestsFilterModel = {
     startDate: null,
@@ -48,7 +56,7 @@ export const LeaveRequestFilter = () => {
             <Box component="div" className="filter-fields">
                 <FormControl className="mt-2" fullWidth>
                     <InputLabel id="leave-request-status" >{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
-                    <Select
+                    <AppSelect
                         labelId="leave-request-status"
                         label={i({ id: "LEAVE.APPROVAL_STATUS" })}
                         size="small"
@@ -60,7 +68,7 @@ export const LeaveRequestFilter = () => {
                                 return <MenuItem value={type.value} key={type.id}>{i({ id: type.label })}</MenuItem>
                             })
                         }
-                    </Select>
+                    </AppSelect>
                 </FormControl>
                 <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
@@ -95,7 +103,7 @@ export const LeaveRequestFilter = () => {
                     type="submit"
                     size="large"
                     className="mt-2"
-                    label={i({ id: "BUTTON.APPLY" })}
+                    label={i({ id: "BUTTON.FILTER", defaultMessage: "Filter" })}
                 />
                 <CustomisedButton
                     variant="outlined"
@@ -107,4 +115,5 @@ export const LeaveRequestFilter = () => {
             </Stack>
         </form>
     )
+
 }

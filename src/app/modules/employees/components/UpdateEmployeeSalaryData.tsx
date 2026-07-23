@@ -1,21 +1,27 @@
-import { Grid, Stack } from "@mui/system";
-import { Formik, FormikProps } from "formik";
+import { AppSelect } from "../../../shared/components/ui";
+import {
+  Grid,
+  Stack } from "@mui/system";
+import { Formik,
+  FormikProps } from "formik";
 import React from "react";
-import { CreateEmployeeSalary, SalaryModel } from "../models";
-import dayjs, { Dayjs } from "dayjs";
+import { CreateEmployeeSalary,
+  SalaryModel } from "../models";
+import dayjs,
+  { Dayjs } from "dayjs";
 import {
   FormControl,
   InputLabel,
   MenuItem,
-  TextField,
   Typography,
 } from "@mui/material";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { SelectChangeEvent } from "@mui/material/Select";
 import { useIntl } from "react-intl";
 import { updateSalary } from "../employeeServices";
 import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidationSchema";
 
+import { AppTextField } from "../../../shared/components/ui";
 interface PropsTypes {
   userId: string;
   employeeId: string;
@@ -111,7 +117,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
               <Stack spacing={1}>
                 <Grid container spacing={2}>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.BASIC_PAY" })}
                       sx={{ width: "100%" }}
@@ -124,7 +130,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.HRA" })}
                       sx={{ width: "100%" }}
@@ -136,7 +142,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.LTA" })}
                       sx={{ width: "100%" }}
@@ -148,7 +154,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
                       sx={{ width: "100%" }}
@@ -160,7 +166,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.BONUS" })}
                       sx={{ width: "100%" }}
@@ -172,7 +178,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.HEALTH_INSURANCE" })}
                       sx={{ width: "100%" }}
@@ -184,7 +190,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                     />
                   </Grid>
                   <Grid size={12} sx={{ marginTop: "10px" }}>
-                    <TextField
+                    <AppTextField
                       type="Number"
                       label={i({ id: "EMPLOYEE.SALARY.TOTAL_DEDUCTIONS" })}
                       sx={{ width: "100%" }}
@@ -231,7 +237,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                         <InputLabel id="demo-simple-select-autowidth-label">
                           {i({ id: "EMPLOYEE.SALARY.PAYMENT_FREQUENCY" })}
                         </InputLabel>
-                        <Select
+                        <AppSelect
                           labelId="demo-simple-select-autowidth-label"
                           id="demo-simple-select-autowidth"
                           value={values.paymentFrequency}
@@ -254,7 +260,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                           <MenuItem value="Yearly">
                             {i({ id: "LEAVE.ACCRUAL_PERIOD.YEARLY" })}
                           </MenuItem>
-                        </Select>
+                        </AppSelect>
                       </FormControl>
                     </div>
                   </Grid>

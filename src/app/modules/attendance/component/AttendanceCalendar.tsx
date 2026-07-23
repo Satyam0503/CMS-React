@@ -1,13 +1,14 @@
-import { FC, useMemo, useState, useEffect } from "react";
+import {
+  FC,
+  useMemo,
+  useState,
+  useEffect } from "react";
 import {
   Box,
   Stack,
   Typography,
-  Button,
-  TextField,
   MenuItem,
   Tooltip,
-  IconButton,
   Card,
   TablePagination,
   alpha,
@@ -40,6 +41,7 @@ import { ResponseData } from "../../../../utils/common_types";
 import { AttendanceStatusSetting } from "../AttendanceStatusSettings";
 import MonthlyAttendanceExceptions from "./MonthlyAttendanceExceptions";
 
+import { AppButton, AppIconButton, AppTextField } from "../../../shared/components/ui";
 interface Employee {
   name: string;
   id: string;
@@ -839,7 +841,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             boxShadow: theme.shadows[2],
           }}
         >
-          <IconButton
+          <AppIconButton
             size="small"
             sx={{ p: 0.5 }}
             onClick={() =>
@@ -847,7 +849,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             }
           >
             <KeyboardArrowLeftIcon fontSize="small" />
-          </IconButton>
+          </AppIconButton>
 
           <Typography
             sx={{
@@ -862,7 +864,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             {selectedDate?.format("MMMM YYYY")}
           </Typography>
 
-          <IconButton
+          <AppIconButton
             size="small"
             sx={{ p: 0.5 }}
             onClick={() =>
@@ -870,7 +872,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             }
           >
             <KeyboardArrowRightIcon fontSize="small" />
-          </IconButton>
+          </AppIconButton>
         </Box>
       </Box>
 
@@ -946,7 +948,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           <Stack spacing={2}>
             <Typography>{selectedCell.dateObj.toDateString()}</Typography>
 
-            <TextField
+            <AppTextField
               select
               label="Status"
               fullWidth
@@ -963,11 +965,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   {option.value} - {option.label}
                 </MenuItem>
               ))}
-            </TextField>
+            </AppTextField>
 
             {modalData.status && (statusOptions.find(x => x.value === modalData.status)?.requiresTime ?? statusesWithTimes.has(modalData.status)) && (
               <>
-                <TextField
+                <AppTextField
                   label="Check-in"
                   type="time"
                   fullWidth
@@ -980,7 +982,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     }))
                   }
                 />
-                <TextField
+                <AppTextField
                   label="Check-out"
                   type="time"
                   fullWidth
@@ -996,7 +998,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               </>
             )}
 
-            <TextField
+            <AppTextField
               label="Remarks"
               fullWidth
               multiline
@@ -1011,7 +1013,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             />
 
             <Stack direction="row" spacing={2}>
-              <Button
+              <AppButton
                 variant="contained"
                 sx={{
                   borderRadius: 2,
@@ -1021,15 +1023,15 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 onClick={saveAttendance}
               >
                 Save
-              </Button>
-              <Button
+              </AppButton>
+              <AppButton
                 onClick={() => {
                   setSelectedCell(null);
                   setModalData(initialModalState);
                 }}
               >
                 Cancel
-              </Button>
+              </AppButton>
             </Stack>
           </Stack>
         )}
@@ -1051,7 +1053,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 : "All Employees"}
             </Typography>
 
-            <TextField
+            <AppTextField
               select
               label="Select Status"
               fullWidth
@@ -1065,9 +1067,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   {option.value} - {option.label}
                 </MenuItem>
               ))}
-            </TextField>
+            </AppTextField>
 
-            <Button
+            <AppButton
               variant="contained"
               onClick={
                 selectedEmployeeIds.length > 0
@@ -1078,7 +1080,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               {selectedEmployeeIds.length > 0
                 ? "Apply to Selected"
                 : "Apply to All"}
-            </Button>
+            </AppButton>
           </Stack>
         )}
       </CustomisedModal>

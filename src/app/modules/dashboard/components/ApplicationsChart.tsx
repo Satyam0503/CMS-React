@@ -1,7 +1,15 @@
-import { useIntl } from "react-intl";
-import { useEffect, useState } from "react";
+import {
+  useIntl } from "react-intl";
+import { useEffect,
+  useState } from "react";
 import { AxiosError } from "axios";
-import { Box, Card, MenuItem, Select, Stack, Typography, useTheme } from "@mui/material";
+import { Box,
+  Card,
+  MenuItem,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { applicationStatusMapper } from "../../../../utils/common";
 import { CardSkeleton } from "./CardSkeleton";
 import { ApplicationStatusModel } from "../model";
@@ -12,6 +20,7 @@ import { JobModal } from "../../recruitment/models";
 import { BarChart } from "@mui/x-charts/BarChart";
 
 
+import { AppSelect } from "../../../shared/components/ui";
 export const ApplicationsChart = () => {
   const { formatMessage: i } = useIntl();
   const [applicationData, setApplicationData] = useState<ApplicationStatusModel | null>(null);
@@ -63,7 +72,7 @@ export const ApplicationsChart = () => {
     >
       <Stack direction="row" className="mb-4 justify-content-between flex-wrap">
         <Typography className="fw-bold fs-16">{i({ id: "TITLES.TOTAL_APPLICATIONS" })}</Typography>
-        <Select
+        <AppSelect
           id="vacancy-dropdown"
           value={selectedVacancy}
           variant="standard"
@@ -91,7 +100,7 @@ export const ApplicationsChart = () => {
           {vacancyList.map(item => (
             <MenuItem key={item.jobId} value={item.jobId}>{item.title}</MenuItem>
           ))}
-        </Select>
+        </AppSelect>
       </Stack>
       {
         applicationData === null || applicationData?.totalApplications === 0 ? (

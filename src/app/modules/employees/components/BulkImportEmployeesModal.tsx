@@ -1,8 +1,7 @@
-import { UploadFile } from "@mui/icons-material";
 import {
-  Alert,
+  UploadFile } from "@mui/icons-material";
+import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,6 +15,7 @@ import * as XLSX from "xlsx";
 import { bulkImportEmployees } from "../employeeServices";
 import { BulkImportEmployeeModel } from "../models";
 
+import { AppAlert, AppButton } from "../../../shared/components/ui";
 type Props = {
   open: boolean;
   handleClose: () => void;
@@ -276,15 +276,15 @@ export const BulkImportEmployeesModal = ({
               Parsed rows: {bulkImportedEmployees.length}
             </Typography>
           )}
-          {saveSummary && <Alert severity="success">{saveSummary}</Alert>}
+          {saveSummary && <AppAlert severity="success">{saveSummary}</AppAlert>}
           {saveErrors.length > 0 && (
-            <Alert severity="error">
+            <AppAlert severity="error">
               {saveErrors.map((errorMessage) => (
                 <Typography key={errorMessage} variant="body2">
                   {errorMessage}
                 </Typography>
               ))}
-            </Alert>
+            </AppAlert>
           )}
         </Box>
       </DialogContent>
@@ -296,14 +296,14 @@ export const BulkImportEmployeesModal = ({
           hidden
           onChange={handleBulkImportFileChange}
         />
-        <Button
+        <AppButton
           variant="contained"
           startIcon={<UploadFile />}
           onClick={handleBulkImportClick}
         >
           Upload File
-        </Button>
-        <Button
+        </AppButton>
+        <AppButton
           variant="contained"
           color="success"
           onClick={handleSave}
@@ -311,10 +311,10 @@ export const BulkImportEmployeesModal = ({
           disabled={!bulkImportedEmployees.length}
         >
           Save
-        </Button>
-        <Button variant="outlined" onClick={handleClose}>
+        </AppButton>
+        <AppButton variant="outlined" onClick={handleClose}>
           Close
-        </Button>
+        </AppButton>
       </DialogActions>
     </Dialog>
   );

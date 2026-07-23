@@ -1,9 +1,14 @@
-import { useEffect, useRef } from "react";
+import {
+  useEffect,
+  useRef } from "react";
 import * as Yup from "yup";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation,
+  useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import { Regex } from "../../../../utils/constant/Constant";
 import { resetPassword } from "../core/_requests";
@@ -13,6 +18,7 @@ import { getStatusCodeString } from "../../../../utils/common";
 import { AxiosError } from "axios";
 import { ApiResponse } from "../../../../utils/common_types";
 
+import { AppTextField } from "../../../shared/components/ui";
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
@@ -78,7 +84,7 @@ export function ForgotPassword() {
       </Stack>
 
       <Stack sx={{ mb: 2 }}>
-        <TextField
+        <AppTextField
           fullWidth
           type="email"
           label={i({ id: "FORM.EMAIL" })}

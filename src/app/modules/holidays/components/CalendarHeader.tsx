@@ -2,10 +2,8 @@ import {
   Box,
   Card,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Select,
 } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -15,6 +13,7 @@ import { useIntl } from "react-intl";
 import { CalendarItemType } from "../models";
 import { CALENDAR_ITEM } from "../../../../utils/enums";
 
+import { AppIconButton, AppSelect } from "../../../shared/components/ui";
 type Props = {
   selectedDate: Dayjs | null;
   handleSelectedDateChange: (date: Dayjs | null) => void;
@@ -45,20 +44,20 @@ export default function CalendarHeader(props: Props) {
             format="DD MMMM YYYY"
           />
         </Box>
-        <IconButton onClick={decreaseMonth}>
+        <AppIconButton onClick={decreaseMonth}>
           <KeyboardArrowLeftIcon />
-        </IconButton>
+        </AppIconButton>
 
-        <IconButton
+        <AppIconButton
           onClick={increaseMonth}
         >
           <KeyboardArrowRightIcon />
-        </IconButton>
+        </AppIconButton>
       </Box>
       <Box component='div' sx={{ width: '150px' }} >
         <FormControl fullWidth>
           <InputLabel id="calendar-item-type">{i({ id: "OCCASION.TYPES.CATEGORY" })}</InputLabel>
-          <Select
+          <AppSelect
             labelId="calendar-item-type"
             id="item-dropdown"
             value={props.category}
@@ -71,7 +70,7 @@ export default function CalendarHeader(props: Props) {
             <MenuItem value={CALENDAR_ITEM.EVENT}>{i({ id: "OCCASION.TYPES.EVENT" })}</MenuItem>
             <MenuItem value={CALENDAR_ITEM.BIRTHDAY}>{i({ id: "OCCASION.TYPES.BIRTHDAY" })}</MenuItem>
             <MenuItem value={CALENDAR_ITEM.ANNIVERSARY}>{i({ id: "OCCASION.TYPES.ANNIVERSARY" })}</MenuItem>
-          </Select>
+          </AppSelect>
         </FormControl>
       </Box>
     </Card >

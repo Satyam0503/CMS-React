@@ -1,5 +1,4 @@
 import {
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -25,6 +24,7 @@ import { generateEmployeePaySlip } from "../services";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { PdfViewer } from "../../../shared/components/PdfViewer";
 
+import { AppIconButton } from "../../../shared/components/ui";
 interface Column {
   id:
     | keyof PayRollDataModel
@@ -237,14 +237,14 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                       const hasPayRoll = Boolean(row.payData.payRollId);
                       return (
                         <TableCell key={column.id} className="pe-auto">
-                          <IconButton
+                          <AppIconButton
                             aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
                             title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
                             disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
                             onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
                           >
                             <Visibility fontSize="small" />
-                          </IconButton>
+                          </AppIconButton>
                         </TableCell>
                       );
                     }

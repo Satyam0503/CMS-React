@@ -1,6 +1,10 @@
-import { FormControl, InputLabel, Select } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { useField } from "formik";
 import { FC, ReactNode } from "react";
+import { AppSelect } from "../ui";
 // import { useIntl } from "react-intl";
 
 interface PropsTypes {
@@ -18,7 +22,7 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
   return (
     <FormControl fullWidth>
       <InputLabel id="select-label" required={props.required}>{label}</InputLabel>
-      <Select
+      <AppSelect
         fullWidth
         variant="outlined"
         labelId="select-label"
@@ -29,7 +33,7 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         value={field.value ?? ""}
       >
         {children}
-      </Select>
+      </AppSelect>
       {/* {meta.touched && meta.error && (
         <FormHelperText
           sx={{

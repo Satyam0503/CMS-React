@@ -1,6 +1,9 @@
-import { IconButton, Tooltip } from "@mui/material";
+import {
+  Tooltip,
+} from "@mui/material";
 import React from "react";
 
+import { AppIconButton } from "./ui";
 type Props = {
   handleClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   onMouseClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
@@ -32,7 +35,7 @@ export const CustomIconButton = (props: Props) => {
     <>
       {permission && (
         <Tooltip title={tooltip} placement="top" arrow>
-          <IconButton
+          <AppIconButton
             onClick={handleClick}
             disabled={disabled}
             size={size}
@@ -49,7 +52,7 @@ export const CustomIconButton = (props: Props) => {
             }}
           >
             {icon}
-          </IconButton>
+          </AppIconButton>
         </Tooltip >
       )}
     </>

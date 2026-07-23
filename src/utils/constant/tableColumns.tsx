@@ -2,7 +2,6 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Button,
   Stack,
   Tooltip,
   Typography,
@@ -40,6 +39,7 @@ import {
 } from "../../app/modules/leaves/model";
 import { DEFAULT_USER_AVATAR } from "./data";
 
+import { AppButton } from "../../app/shared/components/ui";
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -427,7 +427,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     minWidth: 180,
     build: (row: RoleModel) => (
       <Link to={`/admin/roles/edit/${row.rolesId}`}>
-        <Button variant="contained">
+        <AppButton variant="contained">
           <FormattedMessage
             id={
               row.isNotEditable
@@ -435,7 +435,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
                 : "ROLE.EDIT_PERMISSION"
             }
           />
-        </Button>
+        </AppButton>
       </Link>
     ),
   },

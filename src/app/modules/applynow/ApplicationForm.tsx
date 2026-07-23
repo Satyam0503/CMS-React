@@ -1,9 +1,7 @@
 import {
   Typography,
   Grid,
-  TextField,
   FormControl,
-  Select,
   MenuItem,
   Container,
   Box,
@@ -12,6 +10,7 @@ import { useIntl } from "react-intl";
 import { Close, CloudUploadOutlined } from "@mui/icons-material";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 
+import { AppSelect, AppTextField } from "../../shared/components/ui";
 type Props = {
   className: string;
 };
@@ -36,25 +35,25 @@ export default function ApplicationForm() {
             <Typography variant="body1">
               {intl.formatMessage({ id: "FORM.FIRST_NAME" })}
             </Typography>
-            <TextField fullWidth />
+            <AppTextField fullWidth />
           </Grid>
           <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "USER.LAST_NAME" })}
             </Typography>
-            <TextField fullWidth type="text" />
+            <AppTextField fullWidth type="text" />
           </Grid>
           <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "FORM.PHONE" })}
             </Typography>
-            <TextField fullWidth type="number" />
+            <AppTextField fullWidth type="number" />
           </Grid>
           <Grid size={12}>
             <Typography variant="body1">
               {intl.formatMessage({ id: "AUTH.INPUT.EMAIL" })}
             </Typography>
-            <TextField
+            <AppTextField
               fullWidth
               type="email"
               onWheel={(e: any) => e.target.blur()}
@@ -74,10 +73,10 @@ export default function ApplicationForm() {
               <Typography variant="body1">
                 {intl.formatMessage({ id: "JOB.POSITION" })}
               </Typography>
-              <Select labelId="demo-simple-select-label">
+              <AppSelect labelId="demo-simple-select-label">
                 <MenuItem>.Net Developer</MenuItem>
                 <MenuItem>Designer</MenuItem>
-              </Select>
+              </AppSelect>
             </FormControl>
           </Grid>
           <Grid
@@ -90,13 +89,13 @@ export default function ApplicationForm() {
               {intl.formatMessage({ id: "USER.EXPERIENCE" })}
             </Typography>
             <FormControl fullWidth>
-              <Select labelId="demo-simple-select-label">
+              <AppSelect labelId="demo-simple-select-label">
                 <MenuItem>0-1</MenuItem>
                 <MenuItem>1-2</MenuItem>
                 <MenuItem>2-3</MenuItem>
                 <MenuItem>3-4</MenuItem>
                 <MenuItem>4-5</MenuItem>
-              </Select>
+              </AppSelect>
             </FormControl>
           </Grid>
           <Grid size={12}>

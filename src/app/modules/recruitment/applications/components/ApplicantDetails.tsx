@@ -4,10 +4,8 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -43,6 +41,7 @@ import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
 
+import { AppSelect, AppSwitch } from "../../../../shared/components/ui";
 export const ApplicantDetails = () => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
@@ -354,7 +353,7 @@ export const ApplicantDetails = () => {
                     <InputLabel id="demo-simple-select-label">
                       {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                     </InputLabel>
-                    <Select
+                    <AppSelect
                       name="applicantStatus"
                       value={status.applicationStatus}
                       sx={{ width: "150px" }}
@@ -367,7 +366,7 @@ export const ApplicantDetails = () => {
                           {formatMessage({ id: status.label })}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
                 </Stack>
               </Grid>
@@ -383,7 +382,7 @@ export const ApplicantDetails = () => {
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
                   </Typography>
-                  <Switch
+                  <AppSwitch
                     checked={status.applicantStatus === ApplicantStatus.Active}
                     onChange={(event) => {
                       handleEditApplicant(

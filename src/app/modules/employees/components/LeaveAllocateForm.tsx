@@ -1,9 +1,10 @@
-import { Formik, FormikProps } from "formik";
+import {
+  Formik,
+  FormikProps } from "formik";
 import * as Yup from "yup";
 import { useIntl } from "react-intl";
 import {
   Box,
-  Checkbox,
   FormControlLabel,
   Stack,
   Typography,
@@ -21,6 +22,7 @@ import {
 import { EmployeeLeaveBalance } from "../models";
 import { toast } from "react-toastify";
 
+import { AppCheckbox } from "../../../shared/components/ui";
 interface PropsTypes {
   formRef: React.MutableRefObject<FormikProps<{
     selectedPolicies: string[];
@@ -139,7 +141,7 @@ export const LeaveAllocateForm = ({
                       key={item.id}
                       className="leave-policy-item"
                       control={
-                        <Checkbox
+                        <AppCheckbox
                           checked={values.selectedPolicies.includes(item.id!)}
                           onChange={() => handleCheck(item.id!)}
                           sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}

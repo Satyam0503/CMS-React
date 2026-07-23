@@ -4,9 +4,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
@@ -20,6 +18,7 @@ import { Add } from "@mui/icons-material";
 import { AttributeTitleRow } from "./AttributeTitleRow";
 import { v4 as uuidv4 } from "uuid";
 
+import { AppSelect, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
   isDefaultAttribute?: boolean;
   attributeName: string;
@@ -137,7 +136,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
         <Typography variant="h6">
           {i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.NAME" }) + ":"}
         </Typography>
-        <TextField
+        <AppTextField
           variant="outlined"
           value={attributeName}
           disabled={true}
@@ -154,7 +153,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
               {i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" })}
             </InputLabel>
 
-            <Select
+            <AppSelect
               label={i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" })}
               labelId="language-translation"
               variant="outlined"
@@ -175,7 +174,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                     </MenuItem>
                   );
                 })}
-            </Select>
+            </AppSelect>
           </FormControl>
         </Stack>
         {!isDefaultAttribute && (

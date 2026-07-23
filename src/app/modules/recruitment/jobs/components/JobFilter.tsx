@@ -1,8 +1,14 @@
-import { FC } from "react"
+import {
+  FC } from "react"
 import { FilterComponent } from "../../../../shared/components/FilterComponent"
 import { FilterComponentProps } from "../../../../../utils/common_types"
 import { useFormik } from "formik";
-import { Autocomplete, Checkbox, ListItemText, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete,
+  ListItemText,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
@@ -11,6 +17,7 @@ import { resetFilter, setJobsFilter } from "../../../../Redux/Reducers/filterSli
 import { JobFilterValidationSchema } from "../../../../../utils/Schema/filterValidationSchema";
 import { JobsFilterModel } from "../../models";
 
+import { AppCheckbox, AppSelect, AppTextField } from "../../../../shared/components/ui";
 export const jobStatusDecoder: { [index: number]: boolean } = {
     1: true,
     0: false,
@@ -44,13 +51,13 @@ export const JobFilter: FC<FilterComponentProps> = (props) => {
                                 {i({ id: "STATUS" })}
                             </Typography>
                         </Stack>
-                        <Select value={values.status ?? ""} onChange={(e) => {
+                        <AppSelect value={values.status ?? ""} onChange={(e) => {
                             const value = Number(e.target.value);
                             setFieldValue("status", value);
                         }}>
                             <MenuItem value={1}>{i({ id: "ACTIVE" })}</MenuItem>
                             <MenuItem value={0}>{i({ id: "INACTIVE" })}</MenuItem>
-                        </Select>
+                        </AppSelect>
                     </Stack>
                     <Stack >
                         <Typography variant="caption">
@@ -73,12 +80,12 @@ export const JobFilter: FC<FilterComponentProps> = (props) => {
                             }}
                             getOptionLabel={(option) => i({ id: option.label })}
                             renderInput={(params) => (
-                                <TextField {...params} placeholder={i({ id: "JOB.JOB_TYPES" })} />
+                                <AppTextField {...params} placeholder={i({ id: "JOB.JOB_TYPES" })} />
                             )}
                             renderOption={(props, option, state) => {
                                 return (
                                     <li {...props}>
-                                        <Checkbox
+                                        <AppCheckbox
                                             key={option.id}
                                             checked={state.selected}
                                             sx={{ mr: 1 }}

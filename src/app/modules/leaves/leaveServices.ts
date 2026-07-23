@@ -75,6 +75,13 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
   );
 };
 
+export const createEmployeeLeaveRequest = (employeeId: string, payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    `${ServiceUrl.CREATE_EMPLOYEE_LEAVE_REQUEST}/${employeeId}`,
+    payload
+  );
+};
+
 export const updateLeaveRequest = (payload: RequestLeaveModel) => {
   return postRequest<RequestLeaveModel, ApiResponse>(
     ServiceUrl.UPDATE_LEAVE_REQUEST,

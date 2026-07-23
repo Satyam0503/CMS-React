@@ -1,9 +1,19 @@
-import { Close, Fullscreen, FullscreenExit } from "@mui/icons-material";
-import { Breakpoint, Dialog, DialogContent, DialogTitle, IconButton, Stack, Zoom } from "@mui/material";
+import {
+  Close,
+  Fullscreen,
+  FullscreenExit } from "@mui/icons-material";
+import { Breakpoint,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Zoom,
+} from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import clsx from "clsx";
 import React, { useState } from "react";
 
+import { AppIconButton } from "./ui";
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
@@ -45,21 +55,21 @@ export const CustomisedModal = (props: PropsTypes) => {
           <Stack direction="row">
             {
               allowMaximize &&
-              <IconButton
+              <AppIconButton
                 aria-label={isMaximized ? "restore" : "maximize"}
                 onClick={() => setIsMaximized(prev => !prev)}
                 className="border-0"
               >
                 {isMaximized ? <FullscreenExit /> : <Fullscreen />}
-              </IconButton>
+              </AppIconButton>
             }
-            <IconButton
+            <AppIconButton
               aria-label="close"
               onClick={handleClose}
               className="border-0"
             >
               <Close />
-            </IconButton>
+            </AppIconButton>
           </Stack>
         </DialogTitle>
       }

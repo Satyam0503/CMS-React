@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import {
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -18,6 +17,7 @@ import { useIntl } from "react-intl";
 import { LanguageNameMapper, } from "../../../../../utils/common";
 import { useAppLang } from "../../../../i18n/Metronici18n";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
 const Languages = () => {
   const { currentLanguage, changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
@@ -52,11 +52,11 @@ const Languages = () => {
           src={currentLanguageIcon?.flag}
           alt="countryflag"
         />
-        <IconButton
+        <AppIconButton
           className="p-0 border-0 bg-transparent"
         >
           {open ? <ArrowDropUp /> : <ArrowDropDown />}
-        </IconButton>
+        </AppIconButton>
       </Stack>
       <Popover
         id={id}

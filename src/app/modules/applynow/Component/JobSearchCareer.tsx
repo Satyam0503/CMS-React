@@ -1,12 +1,11 @@
 import {
-    Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    Stack,
-    TextField, Typography,
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  SelectChangeEvent,
+  Stack,
+  Typography,
 } from "@mui/material";
 import JobsSection from "./JobsSection";
 import React, { useEffect, useState } from "react";
@@ -21,6 +20,7 @@ import NoVacancy from "./NoVacancy";
 import { CircularLoader } from "../../../shared/components/CircularLoader";
 import { useIntl } from "react-intl";
 
+import { AppSelect, AppTextField } from "../../../shared/components/ui";
 type FilterProps = {
     jobTypes: number;
     searchTitle: string;
@@ -74,7 +74,7 @@ export default function JobSearchCareer() {
             className="recent-jobs"
         >
             <Box component={"div"} className="job-search-bar">
-                <TextField
+                <AppTextField
                     name="searchTitle"
                     label={i({ id: "PLACEHOLDER.SEARCH" })}
                     className="job-search-section"
@@ -88,7 +88,7 @@ export default function JobSearchCareer() {
                 />
                 <FormControl className="job-search-section">
                     <InputLabel id="job-type-select-label">{i({ id: "JOB.TYPE" })}</InputLabel>
-                    <Select
+                    <AppSelect
                         name="jobTypes"
                         labelId="job-type-select-label"
                         id="job-type-select"
@@ -100,7 +100,7 @@ export default function JobSearchCareer() {
                         <MenuItem value={1}>On Site</MenuItem>
                         <MenuItem value={2}>Hybrid</MenuItem>
                         <MenuItem value={3}>Remote</MenuItem>
-                    </Select>
+                    </AppSelect>
                 </FormControl>
             </Box>
             {

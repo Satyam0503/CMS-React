@@ -1,8 +1,15 @@
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import {
+  Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login } from "../core/_requests";
-import { Alert, Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  FormControlLabel,
+  InputAdornment,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import { ArrowForwardRounded, LockOutlined, MailOutlineRounded, ShieldOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
@@ -14,6 +21,7 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 
+import { AppAlert, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
@@ -109,7 +117,7 @@ export function Login() {
           <form onSubmit={handleSubmit} noValidate id="kt_login_signin_form">
             <Stack spacing={2.25}>
               {status && (
-                <Alert severity="error" sx={{ my: 2 }} className="mb-5">{status}</Alert>
+                <AppAlert severity="error" sx={{ my: 2 }} className="mb-5">{status}</AppAlert>
               )}
               <Stack spacing={2}>
                 <Stack>
@@ -139,14 +147,14 @@ export function Login() {
                       startAdornment: <InputAdornment position="start"><LockOutlined color="action" fontSize="small" /></InputAdornment>,
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton
+                          <AppIconButton
                             type="button"
                             size="small"
                             aria-label={showPassword ? "Hide password" : "Show password"}
                             onClick={() => setShowPassword((visible) => !visible)}
                           >
                             {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                          </IconButton>
+                          </AppIconButton>
                         </InputAdornment>
                       ),
                     }}
@@ -154,7 +162,7 @@ export function Login() {
                 </Stack>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: -1 }}>
                   <FormControlLabel
-                    control={<Checkbox size="small" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />}
+                    control={<AppCheckbox size="small" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />}
                     label={<Typography variant="body2" color="text.secondary">Remember me</Typography>}
                     sx={{ m: 0 }}
                   />

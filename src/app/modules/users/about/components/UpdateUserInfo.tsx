@@ -2,7 +2,6 @@ import {
   Grid,
   Stack,
   MenuItem,
-  TextField,
   Autocomplete,
   CircularProgress,
 } from "@mui/material";
@@ -32,6 +31,7 @@ import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { EditEmployeePayloadModel, EmployeeByIdResponse, EmployeeCustomAttribute } from "../../models";
 import React from "react";
 
+import { AppTextField } from "../../../../shared/components/ui";
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -311,7 +311,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         );
                       }}
                       renderInput={(param) => (
-                        <TextField
+                        <AppTextField
                           {...param}
                           label={i({
                             id: "FORM.JOB_ROLE",
@@ -363,7 +363,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         );
                       }}
                       renderInput={(param) => (
-                        <TextField
+                        <AppTextField
                           {...param}
                           label={i({
                             id: "USER.REPORTING_MANAGER",
@@ -641,7 +641,7 @@ const UserCustomAttribute = (props: PropsType) => {
         getOptionLabel={option => option.titles[currentLanguage] ?? option.titles[defaultLang] ?? ""}
         getOptionKey={option => option.customAttributeValueId!}
         renderInput={(param) => (
-          <TextField
+          <AppTextField
             {...param}
             label={attribute.customAttributeTitle[currentLanguage] ?? `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${attribute.customAttributeNumber}`}
             slotProps={{

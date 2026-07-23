@@ -3,10 +3,9 @@ import {
   CurrencyRupee,
   EditDocument,
   PersonAdd,
-} from "@mui/icons-material";
+  } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -36,6 +35,7 @@ import { EditEmployeePayloadModel } from "../../users/models";
 import { LeaveAllocateForm } from "./LeaveAllocateForm";
 import { UpdateEmployeeSalaryData } from "./UpdateEmployeeSalaryData";
 
+import { AppButton } from "../../../shared/components/ui";
 enum AddEmployeeSteps {
   CREATE_ACCOUNT,
   UPDATE_DATA,
@@ -283,22 +283,22 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
           sx={{ px: 4, paddingBlockEnd: 3, justifyContent: "flex-end" }}
         >
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
-            <Button variant="outlined" onClick={handleClose}>
+            <AppButton variant="outlined" onClick={handleClose}>
               {i({ id: "BUTTON.CLOSE" })}
-            </Button>
+            </AppButton>
           )}
           {activeStep === AddEmployeeSteps.UPDATE_SALARY && (
-            <Button variant="outlined" onClick={handleClose}>
+            <AppButton variant="outlined" onClick={handleClose}>
               {i({ id: "BUTTON.CLOSE" })}
-            </Button>
+            </AppButton>
           )}
           {activeStep === AddEmployeeSteps.ALLOCATE_LEAVE && (
-            <Button variant="outlined" onClick={handleSkip}>
+            <AppButton variant="outlined" onClick={handleSkip}>
               {i({ id: "BUTTON.SKIP" })}
-            </Button>
+            </AppButton>
           )}
 
-          <Button
+          <AppButton
             variant="contained"
             onClick={handleClick}
             loading={buttonLoading}
@@ -315,7 +315,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                         ? "BUTTON.ASSIGN"
                         : "BUTTON.CLOSE",
             })}
-          </Button>
+          </AppButton>
         </DialogActions>
       </Dialog>
     </React.Fragment>

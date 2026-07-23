@@ -1,7 +1,15 @@
-import { FC } from "react"
+import {
+  FC } from "react"
 import { CustomisedModal } from "../../../shared/components/CustomisedModal"
 import { LeaveType } from "../model"
-import { FormControl, FormControlLabel, FormLabel, Grid, MenuItem, Radio, RadioGroup, Stack, Switch } from "@mui/material"
+import { FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  MenuItem,
+  RadioGroup,
+  Stack,
+} from "@mui/material";
 import { useIntl } from "react-intl"
 import { Formik } from "formik"
 import { SelectInput } from "../../../shared/components/form-component/SelectInput"
@@ -12,6 +20,8 @@ import { leaveTypeValidationSchma } from "../../../../utils/Schema/leaveManageme
 import { createUpdateLeaveType } from "../leaveServices"
 import { toast } from "react-toastify"
 import { getStatusCodeString } from "../../../../utils/common"
+import { AppRadio, AppSwitch } from "../../../shared/components/ui";
+
 
 type Props = {
     isEdit: boolean,
@@ -115,8 +125,8 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                                 }
                                             }}
                                         >
-                                            <FormControlLabel value={true} control={<Radio />} label={i({ id: "YES" })} />
-                                            <FormControlLabel value={false} control={<Radio />} label={i({ id: "NO" })} />
+                                            <FormControlLabel value={true} control={<AppRadio />} label={i({ id: "YES" })} />
+                                            <FormControlLabel value={false} control={<AppRadio />} label={i({ id: "NO" })} />
                                         </RadioGroup>
                                     </FormControl>
                                 </Grid>
@@ -127,7 +137,7 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
                                         sm: 6
                                     }}>
                                     <FormLabel sx={{ color: "text.primary" }}>{i({ id: "STATUS" })}</FormLabel>
-                                    <Switch
+                                    <AppSwitch
                                         className="mx-4"
                                         checked={values.isActive}
                                         onChange={(event) => {
@@ -151,4 +161,5 @@ export const AddLeaveTypes: FC<Props> = ({ isEdit, open, handleClose, initialLea
             </Formik>
         </CustomisedModal >
     );
+
 }

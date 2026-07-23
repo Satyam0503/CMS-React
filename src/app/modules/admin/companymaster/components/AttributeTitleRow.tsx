@@ -1,9 +1,14 @@
-import { Box, FormLabel, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  FormLabel,
+  Stack,
+} from "@mui/material";
 import { LanguageNameMapper } from "../../../../../utils/common";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { useAppSelector } from "../../../../Redux/hooks";
 
+import { AppTextField } from "../../../../shared/components/ui";
 interface AttributeTitleProps {
   translationLang: string;
   attributeTitle: Record<string, string>;
@@ -61,7 +66,7 @@ export const AttributeTitleRow = ({
             { language: i({ id: LanguageNameMapper[defaultLanguage] }) }
           )}
         </FormLabel>
-        <TextField
+        <AppTextField
           variant="standard"
           value={currentLanguageTitle}
           onChange={handleChange}
@@ -79,7 +84,7 @@ export const AttributeTitleRow = ({
               { language: i({ id: LanguageNameMapper[translationLang] }) }
             )}
           </FormLabel>
-          <TextField
+          <AppTextField
             variant="standard"
             disabled={!translationLang}
             value={translationLanguageTitle}

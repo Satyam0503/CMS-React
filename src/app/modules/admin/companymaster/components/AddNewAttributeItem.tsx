@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { Box, Switch, TextField } from "@mui/material";
+import {
+  useState } from "react";
+import { Box,
+} from "@mui/material";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { ReqProps } from "./AttributeItemRow";
 import { toast } from "react-toastify";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper } from "../../../../../utils/common";
 
+import { AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
   translationLang: string;
   newItemKey: string;
@@ -113,21 +116,21 @@ const AddNewAttributeItem = <T extends ReqProps>({
 
   return (
     <Box className="attribute-row">
-      <TextField
+      <AppTextField
         value={currentLanguageTitle}
         onChange={handleChange}
         name={currentLang}
         onBlur={validateAndUpdateNewItemData}
         error={Boolean(error)}
       />
-      <TextField
+      <AppTextField
         disabled={!translationLang}
         value={translationLanguageTitle}
         onChange={handleChange}
         name={translationLang}
         onBlur={validateAndUpdateNewItemData}
       />
-      <Switch
+      <AppSwitch
         checked={newAttributeValue.isActive}
         onChange={(_, checked) => handleSwitchChange(checked)}
       />

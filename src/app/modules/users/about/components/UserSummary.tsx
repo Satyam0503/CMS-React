@@ -1,4 +1,8 @@
-import { Card, Stack, TextField, Typography } from "@mui/material";
+import {
+  Card,
+  Stack,
+  Typography,
+} from "@mui/material";
 import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
 import { useEffect, useState } from "react";
@@ -13,6 +17,7 @@ import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { UserSummaryModel } from "../../models";
 
+import { AppTextField } from "../../../../shared/components/ui";
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [userSummary, setUserSummary] = useState<UserSummaryModel>();
@@ -99,7 +104,7 @@ export const UserSummary = () => {
         )}
       </Stack>
       {isEdit ? (
-        <TextField
+        <AppTextField
           sx={{ mt: 1 }}
           fullWidth
           multiline

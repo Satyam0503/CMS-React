@@ -1,6 +1,11 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 
+import { AppButton } from "../../../shared/components/ui";
 function CareerHero() {
     return (
         <Stack
@@ -33,7 +38,7 @@ function CareerHero() {
                     Join a team where innovation, collaboration, and purpose come together. Supported by people who care about your growth and your success every step of the
                     way.
                 </Typography>
-                <Button component="a" href='#recent-jobs' variant='contained' className='find-jobs-button mt-4 rounded-pill'>Find Jobs</Button>
+                <AppButton component="a" href='#recent-jobs' variant='contained' className='find-jobs-button mt-4 rounded-pill'>Find Jobs</AppButton>
             </Stack>
             <Box component={'div'} className='object-fit-fill h-85 w-50 overflow-hidden m-0 career-display-disable-on-md-sceen'
                 sx={{

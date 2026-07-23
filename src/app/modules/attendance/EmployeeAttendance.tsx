@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { useIntl } from "react-intl";
+import {
+  useIntl } from "react-intl";
 import IconStat from "../../shared/components/IconStat";
 import {
   Box,
@@ -7,7 +8,6 @@ import {
   CardContent,
   Grid,
   MenuItem,
-  Select,
   Stack,
   Typography,
   alpha,
@@ -35,6 +35,7 @@ import { AttendanceModel } from "../../../utils/common_types";
 import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
 import { getAllEmployees } from "../employees/employeeServices";
 
+import { AppSelect } from "../../shared/components/ui";
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
@@ -179,7 +180,7 @@ const EmployeeAttendance = () => {
         size={{ xs: 12 }}
         sx={{ display: "flex", justifyContent: "flex-end" }}
       >
-        <Select
+        <AppSelect
           name="days"
           value={selectedDay}
           onChange={handleChange}
@@ -190,7 +191,7 @@ const EmployeeAttendance = () => {
               {item.label}
             </MenuItem>
           ))}
-        </Select>
+        </AppSelect>
       </Grid>
 
       {/* ----------- Attendance Section ----------- */}

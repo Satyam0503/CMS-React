@@ -1,11 +1,11 @@
 import {
+  Autocomplete,
   Card,
+  CircularProgress,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
   Table,
@@ -14,10 +14,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { LeaveRequestStatusTypes } from "../../../../utils/constant/Constant";
@@ -40,10 +39,22 @@ import {
 } from "./LeaveRequestFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 import { StyleStatus } from "../../../shared/components/StyledStatus";
-import { Edit } from "@mui/icons-material";
+import { Add, Edit } from "@mui/icons-material";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 
+import { AppIconButton, AppSelect, AppTextField } from "../../../shared/components/ui";
+import { ModulesName, Permission } from "../../../../utils/enums";
+import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { getAllEmployees } from "../../employees/employeeServices";
+import { GetAllEmployeeResponseModel } from "../../employees/models";
+import { EmployeeLeaveTypeBalance, RequestLeaveModel } from "../model";
+import { getEmployeeLeaveBalance } from "../leaveServices";
+import { LeaveApplication } from "../../users/leavetracker/components/LeaveApplication";
+
+const emptyLeaveRequest: RequestLeaveModel = {
+  isHalfDay: false, startDate: null, endDate: null, reason: "", userId: "", leavePolicyId: "",
+};
 export const LeaveRequest = () => {
   const { formatMessage: i } = useIntl();
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
@@ -56,6 +67,15 @@ export const LeaveRequest = () => {
   const [refresh, setRefresh] = useState(false);
   const [selectedLeaveRequest, setSelectedLeaveRequest] =
     useState<LeaveRequestModel | null>(null);
+  const [showCreateLeave, setShowCreateLeave] = useState(false);
+  const modulePermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const canCreateForEmployee = useMemo(
+    () =>
+      hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Create, modulePermissions) &&
+      hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Edit, modulePermissions),
+    [modulePermissions],
+  );
   const appliedLeaveRequestFilter =
     useAppSelector((state) => state.filters.leaveRequest) ??
     initialLeaveRequestFilter;
@@ -192,12 +212,12 @@ export const LeaveRequest = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <IconButton
+                      <AppIconButton
                         onClick={() => setSelectedLeaveRequest(row)}
                         disabled={row.status === 4}
                       >
                         <Edit className="fs-20" />
-                      </IconButton>
+                      </AppIconButton>
                     </TableCell>
                   </TableRow>
                 ))
@@ -215,6 +235,12 @@ export const LeaveRequest = () => {
           totalRecords={totalRecords}
         />
       )}
+      {showCreateLeave && (
+        <CreateEmployeeLeaveModal
+          handleClose={() => setShowCreateLeave(false)}
+          handleRefresh={handleRefresh}
+        />
+      )}
       {selectedLeaveRequest && (
         <LeaveApprovalModal
           open={true}
@@ -224,6 +250,109 @@ export const LeaveRequest = () => {
         />
       )}
     </Card>
+  );
+};
+
+
+type CreateEmployeeLeaveModalProps = {
+  handleClose: () => void;
+  handleRefresh: () => void;
+};
+
+const CreateEmployeeLeaveModal = ({ handleClose, handleRefresh }: CreateEmployeeLeaveModalProps) => {
+  const { formatMessage: i } = useIntl();
+  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | null>(null);
+  const [leaveBalances, setLeaveBalances] = useState<EmployeeLeaveTypeBalance[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showApplication, setShowApplication] = useState(false);
+
+  useEffect(() => {
+    const loadEmployees = async () => {
+      setLoading(true);
+      try {
+        const { data } = await getAllEmployees({
+          pageNo: 1, records: 1000, name: "", departmentId: [], gender: [],
+        });
+        if (data.success) setEmployees(data.methodResults);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadEmployees();
+  }, []);
+
+  const continueToApplication = async () => {
+    if (!selectedEmployee) return;
+    setLoading(true);
+    try {
+      const { data } = await getEmployeeLeaveBalance(selectedEmployee.userId);
+      if (!data.success || data.methodResults.length === 0) {
+        toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
+        return;
+      }
+      setLeaveBalances(data.methodResults);
+      setShowApplication(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showApplication && selectedEmployee) {
+    return (
+      <LeaveApplication
+        edit={false}
+        open
+        initialValues={emptyLeaveRequest}
+        leaveTypeBalance={leaveBalances}
+        targetEmployeeId={selectedEmployee.userId}
+        handleClose={handleClose}
+        handleRefresh={handleRefresh}
+      />
+    );
+  }
+
+  return (
+    <CustomisedModal
+      open
+      handleClose={handleClose}
+      title={i({ id: "LEAVE.SELECT_EMPLOYEE", defaultMessage: "Select Employee" })}
+    >
+      <Stack spacing={3}>
+        <Autocomplete
+          options={employees}
+          value={selectedEmployee}
+          loading={loading}
+          getOptionLabel={(option) => `${option.fullName} (${option.employeeId})`}
+          isOptionEqualToValue={(option, value) => option.userId === value.userId}
+          onChange={(_event, value) => setSelectedEmployee(value)}
+          renderInput={(params) => (
+            <AppTextField
+              {...params}
+              label={i({ id: "LEAVE.EMPLOYEE_NAME" })}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress size={18} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+        <Stack direction="row" justifyContent="flex-end" gap={1}>
+          <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={handleClose} />
+          <CustomisedButton
+            label={i({ id: "BUTTON.CONTINUE", defaultMessage: "Continue" })}
+            disabled={!selectedEmployee || loading}
+            loading={loading}
+            handleClick={continueToApplication}
+          />
+        </Stack>
+      </Stack>
+    </CustomisedModal>
   );
 };
 
@@ -290,7 +419,7 @@ export const LeaveApprovalModal = ({
           <InputLabel id="leave-request-status">
             {i({ id: "LEAVE.APPROVAL_STATUS" })}
           </InputLabel>
-          <Select
+          <AppSelect
             labelId="leave-request-status"
             label={i({ id: "LEAVE.APPROVAL_STATUS" })}
             size="small"
@@ -311,10 +440,10 @@ export const LeaveApprovalModal = ({
                 {i({ id: item.label })}
               </MenuItem>
             ))}
-          </Select>
+          </AppSelect>
         </FormControl>
 
-        <TextField
+        <AppTextField
           fullWidth
           multiline
           type="text"

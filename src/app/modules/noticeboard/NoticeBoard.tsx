@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Badge, Button, Card, Stack } from "@mui/material";
+import {
+  Badge,
+  Card,
+  Stack,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import {
   Add,
@@ -25,6 +29,7 @@ import { NoticeBoardFilter } from "./components/NoticeBoardFilter";
 import { NoticeViewModel } from "./components/NoticeViewModel";
 import { usePageData } from "../../Context/PageDataProvider";
 
+import { AppButton } from "../../shared/components/ui";
 export const NoticeBoard = () => {
   const { formatMessage } = useIntl();
   const [searchValue, setSearchValue] = React.useState("");
@@ -146,9 +151,9 @@ export const NoticeBoard = () => {
             }}>
             {
               hasAddPermission &&
-              <Button sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
+              <AppButton sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
                 {formatMessage({ id: "NOTICE.TITLES.MY_NOTICE" })}
-              </Button>
+              </AppButton>
             }
             <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
               <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />

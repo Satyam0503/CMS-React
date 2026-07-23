@@ -2,7 +2,9 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { InviteEmployeeResponse, InviteNewEmployeeModel } from "../models";
 import { InputFieldProps, TextInput } from "../../../shared/components/form-component/TextInput";
 import { PersonAdd } from "@mui/icons-material";
-import { Alert, Stack } from "@mui/material";
+import {
+  Stack,
+} from "@mui/material";
 import { Formik, FormikProps } from "formik";
 import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
 import { inviteNewEmployee } from "../employeeServices";
@@ -12,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getLastAddedEmployeeId } from "../../users/userservices";
 import React from "react";
 
+import { AppAlert } from "../../../shared/components/ui";
 interface PropsTypes {
     handleInviteUser: (isInvited: boolean, employeeData: InviteEmployeeResponse) => void,
     formRef: React.MutableRefObject<FormikProps<InviteNewEmployeeModel> | null>,
@@ -72,9 +75,9 @@ export const InviteNewEmployee = (props: PropsTypes) => {
 
     return (
         <Stack spacing={2} sx={{ p: 1 }}>
-            <Alert severity="warning" icon={<PersonAdd />}>
+            <AppAlert severity="warning" icon={<PersonAdd />}>
                 {i({ id: "EMPLOYEE.INVITE_EMP.INVITE_NOTE" })}
-            </Alert>
+            </AppAlert>
             <Formik
                 initialValues={initialEmployeeDetails}
                 validationSchema={inviteEmployeeSchema}
@@ -100,12 +103,12 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                         />
                                         {
                                             field.name === "employeeId" && lastEmployeeId &&
-                                            <Alert severity="info" className="my-1">
+                                            <AppAlert severity="info" className="my-1">
                                                 <FormattedMessage id="EMPLOYEE.INVITE_EMP.LAST_EMP_ID" values={{
                                                     empId: lastEmployeeId,
                                                     strong: (chunks) => <strong>{chunks}</strong>
                                                 }} />
-                                            </Alert>
+                                            </AppAlert>
                                         }
                                     </React.Fragment>
                                 ))

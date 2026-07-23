@@ -1,12 +1,10 @@
-import { DeleteOutline } from "@mui/icons-material";
+import {
+  DeleteOutline } from "@mui/icons-material";
 import {
   Divider,
   Grid,
   MenuItem,
-  Select,
   Stack,
-  Switch,
-  TextField,
   Typography,
 } from "@mui/material";
 import { FC, useCallback, useState } from "react";
@@ -21,6 +19,7 @@ import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLa
 import { blockInvalidCharOnNumberField } from "../../../../../utils/common";
 import { JobModal } from "../../models";
 
+import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface PropsTypes {
   initialValues: JobModal;
   isEdit: boolean;
@@ -97,7 +96,7 @@ export const AddEditJob: FC<PropsTypes> = ({
                 xs: 8,
                 md: 6
               }}>
-              <TextField
+              <AppTextField
                 fullWidth
                 placeholder={i({ id: "JOB.JOB_TITLE" })}
                 variant="outlined"
@@ -129,7 +128,7 @@ export const AddEditJob: FC<PropsTypes> = ({
                 xs: 8,
                 md: 6
               }}>
-              <TextField
+              <AppTextField
                 fullWidth
                 placeholder={i({ id: "JOB.VACANCIES" })}
                 variant="outlined"
@@ -171,7 +170,7 @@ export const AddEditJob: FC<PropsTypes> = ({
                 xs: 8,
                 md: 6
               }}>
-              <Select
+              <AppSelect
                 fullWidth
                 error={touched.jobType && Boolean(errors.jobType)}
                 {...getFieldProps("jobType")}
@@ -181,7 +180,7 @@ export const AddEditJob: FC<PropsTypes> = ({
                     {i({ id: job.label })}
                   </MenuItem>
                 ))}
-              </Select>
+              </AppSelect>
               {touched.jobType && errors.jobType &&
                 <ErrorLabel errorLabel={errors.jobType} />
               }
@@ -212,7 +211,7 @@ export const AddEditJob: FC<PropsTypes> = ({
               sx={{
                 pl: 0.8
               }}>
-              <Switch
+              <AppSwitch
                 checked={values.status}
                 onChange={(event) => {
                   formik.setFieldValue("status", event.target.checked);

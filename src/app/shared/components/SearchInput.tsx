@@ -1,9 +1,12 @@
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import {
+  InputAdornment,
+} from "@mui/material";
 import { Close, Search } from "@mui/icons-material";
 import { FC, memo, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useIntl } from "react-intl";
 
+import { AppIconButton, AppTextField } from "./ui";
 type PropsType = {
   search: string;
   setSearch: (value: string) => void;
@@ -28,7 +31,7 @@ export const SearchInput: FC<PropsType> = memo(
 
     return (
       <>
-        <TextField
+        <AppTextField
           variant="outlined"
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -37,7 +40,7 @@ export const SearchInput: FC<PropsType> = memo(
             input: {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton
+                  <AppIconButton
                     sx={{
                       border: "none",
                       p: 0,
@@ -45,7 +48,7 @@ export const SearchInput: FC<PropsType> = memo(
                     onClick={handleClearSearch}
                   >
                     {value ? <Close className="fs-20" /> : <Search color="disabled" className="fs-20" />}
-                  </IconButton>
+                  </AppIconButton>
                 </InputAdornment>
               ),
             }

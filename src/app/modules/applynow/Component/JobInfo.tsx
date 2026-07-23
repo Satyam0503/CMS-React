@@ -1,10 +1,15 @@
-import { useState } from "react";
+import {
+  useState } from "react";
 import { JobModal } from "../../recruitment/models";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 import ApplyJobForm from "./ApplyJobForm";
 import { sanitizeHtmlContent } from "../../../../utils/common";
 
+import { AppButton } from "../../../shared/components/ui";
 type Props = {
   selectedJob: JobModal | undefined;
   activeJobPositionsList: Array<JobModal>;
@@ -37,7 +42,7 @@ export default function JobInfo(props: Props) {
         >
           {i({ id: "JOB.DESCRIPTION" })}
         </Typography>
-        <Button
+        <AppButton
           variant="contained"
           sx={{
             width: "30%",
@@ -49,7 +54,7 @@ export default function JobInfo(props: Props) {
           onClick={() => setApplyFormOpen(true)}
         >
           {i({ id: "BUTTON.APPLY" })}
-        </Button>
+        </AppButton>
       </Box>
 
       <Stack>
@@ -68,7 +73,7 @@ export default function JobInfo(props: Props) {
               component="div"
               sx={{ display: "flex", justifyContent: "center" }}
             >
-              <Button
+              <AppButton
                 variant="contained"
                 sx={{
                   width: "150px",
@@ -80,7 +85,7 @@ export default function JobInfo(props: Props) {
                 onClick={() => setApplyFormOpen(true)}
               >
                 {i({ id: "BUTTON.APPLY" })}
-              </Button>
+              </AppButton>
             </Box>
             {
               isApplyFormOpen &&

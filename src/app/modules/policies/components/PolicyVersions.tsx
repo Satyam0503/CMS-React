@@ -1,8 +1,6 @@
 import {
   Box,
-  Button,
   Card,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -31,6 +29,7 @@ import PolicyRoundedIcon from "@mui/icons-material/PolicyRounded";
 import { PolicySkeleton } from "./PolicySkeleton";
 import clsx from "clsx";
 
+import { AppButton, AppIconButton } from "../../../shared/components/ui";
 const PolilcyVersionForm = lazy(() => import("./PolilcyVersionForm"));
 const PolicyVersionViewer = lazy(() => import("./PolicyVersionViewer"));
 
@@ -201,14 +200,14 @@ export const PolicyVersions = () => {
           className="align-items-center flex-wrap justify-content-end gap-4"
           sx={{ width: "100%" }}
         >
-          <Button
+          <AppButton
             variant="contained"
             aria-label="add policy version"
             onClick={handleButtonClick}
             startIcon={<AddIcon />}
           >
             {i({ id: "POLICIES.ADD_POLICY" })}
-          </Button>
+          </AppButton>
         </Stack>
       )}
       {isLoading ? (
@@ -249,7 +248,7 @@ export const PolicyVersions = () => {
                     {/* {policyVersion.versionName} */}
                   </Typography>
                   {(hasPolicyDeletePermission || hasPolicyEditPermission) && (
-                    <IconButton
+                    <AppIconButton
                       id="policy-action-button"
                       onClick={(e) => {
                         handleActionButtonClick(e, policyVersion);
@@ -257,7 +256,7 @@ export const PolicyVersions = () => {
                       }}
                     >
                       <MoreVertOutlined />
-                    </IconButton>
+                    </AppIconButton>
                   )}
                 </Grid>
               );

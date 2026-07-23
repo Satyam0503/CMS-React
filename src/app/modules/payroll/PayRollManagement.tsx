@@ -1,4 +1,9 @@
-import { Button, Card, Stack, Tooltip, Typography } from "@mui/material"
+import {
+  Card,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { usePageData } from "../../Context/PageDataProvider";
@@ -19,6 +24,7 @@ import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
 import { toast } from "react-toastify";
 
 
+import { AppButton } from "../../shared/components/ui";
 export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayjs } = {
     employeeId: "",
     paidDate: null,
@@ -147,21 +153,21 @@ const PayRollManagement = () => {
                             <>
                                 <UploadPayRollData handlePageRefresh={handlePageRefresh} />
                                 <Tooltip title={i({ id: "BUTTON.ADD" })} arrow placement="top">
-                                    <Button
+                                    <AppButton
                                         variant="outlined"
                                         aria-label={i({ id: "BUTTON.ADD" })}
                                         sx={payrollActionButtonSx}
                                         onClick={() => setIsModalOpen(true)}
                                     >
                                         <Add fontSize="small" />
-                                    </Button>
+                                    </AppButton>
                                 </Tooltip>
                             </>
                         }
                         {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
                             <Tooltip title={isMonthProcessed ? `Payroll for ${payMonth?.format("MMMM YYYY")} is processed` : `Process payroll for ${payMonth?.format("MMMM YYYY")}`} arrow placement="top">
                                 <span>
-                                    <Button
+                                    <AppButton
                                         variant={isMonthProcessed ? "contained" : "outlined"}
                                         color={isMonthProcessed ? "success" : "primary"}
                                         aria-label={`Process payroll for ${payMonth?.format("MMMM YYYY")}`}
@@ -170,7 +176,7 @@ const PayRollManagement = () => {
                                         onClick={handleProcessMonth}
                                     >
                                         <PlayArrow fontSize="small" />
-                                    </Button>
+                                    </AppButton>
                                 </span>
                             </Tooltip>
                         )}

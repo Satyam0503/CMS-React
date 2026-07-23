@@ -1,15 +1,13 @@
 import React from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import {
+  CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { CloudUpload } from "@mui/icons-material";
 import {
   Typography,
-  TextField,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
   Autocomplete,
-  Button,
 } from "@mui/material";
 import { Grid, Stack } from "@mui/system";
 import { Formik } from "formik";
@@ -31,6 +29,7 @@ import { VisuallyHiddenInput } from "../../../shared/components/form-component/V
 import { AxiosError } from "axios";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 
+import { AppButton, AppSelect, AppTextField } from "../../../shared/components/ui";
 const initialValues: ApplicantModel = {
   applicantId: "",
   firstName: "",
@@ -136,7 +135,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.FIRST_NAME",
@@ -152,7 +151,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.LAST_NAME",
@@ -168,7 +167,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({ id: "FORM.PHONE" })}
                     error={touched.phone && Boolean(errors.phone)}
@@ -182,7 +181,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.EMAIL",
@@ -204,7 +203,7 @@ export default function ApplyJobForm(props: Props) {
                       {i({ id: "JOB.POSITION" })}
                     </InputLabel>
 
-                    <Select
+                    <AppSelect
                       label={i({
                         id: "JOB.POSITION",
                       })}
@@ -232,7 +231,7 @@ export default function ApplyJobForm(props: Props) {
                           {jobPosition.title}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
                   {touched.vacancyId && errors.vacancyId && (
                     <ErrorLabel errorLabel={errors.vacancyId} />
@@ -270,7 +269,7 @@ export default function ApplyJobForm(props: Props) {
                       setFieldValue("state", value?.value);
                     }}
                     renderInput={(param) => (
-                      <TextField {...param} label={"Select State"} />
+                      <AppTextField {...param} label={"Select State"} />
                     )}
                     getOptionLabel={(option) => option.label}
                   />
@@ -285,7 +284,7 @@ export default function ApplyJobForm(props: Props) {
               </Typography>
 
               <Stack className="p-6  align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
-                <Button
+                <AppButton
                   component="label"
                   role={undefined}
                   variant="contained"
@@ -302,7 +301,7 @@ export default function ApplyJobForm(props: Props) {
                       handleFileChange(e, setFieldValue);
                     }}
                   />
-                </Button>
+                </AppButton>
 
                 <Typography variant="caption">
                   {`${i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })} : ${values.resume?.name ?? ""}`}

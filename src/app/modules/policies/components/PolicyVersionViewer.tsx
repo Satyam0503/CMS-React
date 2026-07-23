@@ -1,12 +1,15 @@
 import { PolicyVersion } from "../models";
 import { Stack } from "@mui/system";
-import { IconButton, Typography } from "@mui/material";
+import {
+  Typography,
+} from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { WordDocViewer } from "../../../shared/components/WordDocViewer";
 import { getPolicyDocument } from "../policyServices";
 import { useIntl } from "react-intl";
 
+import { AppIconButton } from "../../../shared/components/ui";
 const PdfViewer = lazy(() =>
   import("../../../shared/components/PdfViewer").then((module) => ({
     default: module.PdfViewer,
@@ -117,13 +120,13 @@ export default function PolicyVersionViewer(props: Props) {
           {policyVersion.versionName}
         </Typography>
 
-        <IconButton
+        <AppIconButton
           sx={{ border: 0 }}
           onClick={handleClose}
           aria-label="close-preview"
         >
           <Close />
-        </IconButton>
+        </AppIconButton>
       </Stack>
 
       {renderDocument()}

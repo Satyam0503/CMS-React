@@ -5,10 +5,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Badge,
-  IconButton,
   Tooltip,
   CircularProgress,
-  Button,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
@@ -57,6 +55,7 @@ import { StyleStatus } from "../../shared/components/StyledStatus";
 import CustomisedButton from "../../shared/components/CustomisedButton";
 import * as XLSX from "xlsx";
 
+import { AppButton, AppIconButton } from "../../shared/components/ui";
 const CustomDataGrid = lazy(() =>
   import("../../shared/components/CustomDataGrid").then((module) => ({
     default: module.CustomDataGrid,
@@ -193,7 +192,7 @@ const InvitationMailButton = (props: { userId: string }) => {
     <CircularProgress enableTrackSlot size="28px" thickness={4} />
   ) : (
     <Tooltip title={i({ id: "TOOLTIP.SEND_INVITATION_LINK" })}>
-      <IconButton
+      <AppIconButton
         sx={{ padding: 0, border: 0 }}
         onClick={(e) => {
           sentInvitationMail();
@@ -201,7 +200,7 @@ const InvitationMailButton = (props: { userId: string }) => {
         }}
       >
         <Drafts />
-      </IconButton>
+      </AppIconButton>
     </Tooltip>
   );
 };
@@ -383,7 +382,7 @@ const Employees = () => {
           className="justify-content-between"
           sx={{
             gap: 2.5,
-            alignItems: { xs: "stretch", md: "center" },
+            alignItems: "stretch",
             p: { xs: 1.5, sm: 2 },
             border: "1px solid",
             borderColor: "divider",
@@ -417,7 +416,15 @@ const Employees = () => {
             spacing={1}
             useFlexGap
             flexWrap="wrap"
-            sx={{ alignItems: "center", justifyContent: { xs: "flex-start", md: "flex-end" } }}
+            sx={{
+              alignItems: "center",
+              alignSelf: { md: "flex-end" },
+              justifyContent: { xs: "flex-start", md: "flex-end" },
+              "& .MuiIconButton-root": {
+                width: 38,
+                height: 38,
+              },
+            }}
           >
             <ToggleButtonGroup
               orientation="horizontal"
@@ -467,7 +474,7 @@ const Employees = () => {
               `${ModulesName.Employees}.${Permission.Create}`,
             ) && (
               <>
-                <Button
+                <AppButton
                   variant="outlined"
                   size="small"
                   startIcon={<UploadFile />}
@@ -475,8 +482,8 @@ const Employees = () => {
                   sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700 }}
                 >
                   Bulk Import
-                </Button>
-                <Button
+                </AppButton>
+                <AppButton
                   variant="outlined"
                   size="small"
                   startIcon={
@@ -487,7 +494,7 @@ const Employees = () => {
                   sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700 }}
                 >
                   Bulk Export
-                </Button>
+                </AppButton>
                 <CustomIconButton
                   icon={<Add />}
                   handleClick={() => setShowAddEmployeeStepper(true)}

@@ -6,7 +6,6 @@ import {
   Grid,
   MenuItem,
   Stack,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -44,6 +43,7 @@ import { getVacancyPayload } from "../../jobs/Jobs";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { AxiosError } from "axios";
 
+import { AppTextField } from "../../../../shared/components/ui";
 export const EditApplicant = () => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
@@ -330,7 +330,7 @@ export const EditApplicant = () => {
                             formik.setFieldValue("state", value?.value);
                           }}
                           renderInput={(param) => (
-                            <TextField {...param} label={formatMessage({ id: "APPLICATION.SELECT_STATE" })} />
+                            <AppTextField {...param} label={formatMessage({ id: "APPLICATION.SELECT_STATE" })} />
                           )}
                           getOptionLabel={(option) => option.label}
                         />

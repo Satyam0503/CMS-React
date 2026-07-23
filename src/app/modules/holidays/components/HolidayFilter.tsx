@@ -1,18 +1,25 @@
-import { FC } from "react";
+import {
+  FC } from "react";
 import { HolidayFilterModel } from "../models";
 import { useIntl } from "react-intl";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { useAppDispatch,
+  useAppSelector } from "../../../Redux/hooks";
 import { useFormik } from "formik";
 import { holidayFilterValidationSchema } from "../../../../utils/Schema/filterValidationSchema";
 import { setHolidayFilter } from "../../../Redux/Reducers/filterSlice";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
-import { Autocomplete, Checkbox, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 import { HolidayTypes } from "../../../../utils/constant/Constant";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
 import dayjs, { Dayjs } from "dayjs";
 import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 interface PropsType {
     id?: string;
     open: boolean;
@@ -64,12 +71,12 @@ export const HolidayFilter: FC<PropsType> = (props) => {
                         }}
                         getOptionLabel={(option) => formatMessage({ id: option.label })}
                         renderInput={(params) => (
-                            <TextField {...params} placeholder="HolidayType" />
+                            <AppTextField {...params} placeholder="HolidayType" />
                         )}
                         renderOption={(props, option, state) => {
                             return (
                                 <li {...props}>
-                                    <Checkbox
+                                    <AppCheckbox
                                         key={option.id}
                                         checked={state.selected}
                                         sx={{ mr: 1 }}

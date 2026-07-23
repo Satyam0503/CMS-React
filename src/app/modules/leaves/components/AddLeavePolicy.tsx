@@ -1,19 +1,14 @@
 import {
-  Alert,
   Grid,
   Autocomplete,
   Stack,
   MenuItem,
   FormControl,
   InputLabel,
-  Select,
-  Switch,
   FormControlLabel,
-  Checkbox,
   FormLabel,
   Chip,
   Tooltip,
-  TextField,
   CircularProgress,
 } from "@mui/material";
 import { Formik } from "formik";
@@ -31,6 +26,7 @@ import { createLeavePolicy, updateLeavePolicy } from "../leaveServices";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 
+import { AppAlert, AppCheckbox, AppSelect, AppSwitch, AppTextField } from "../../../shared/components/ui";
 type Props = {
   open: boolean;
   handleClose: () => void;
@@ -174,9 +170,9 @@ export default function AddLeavePolicy(props: Props) {
             return (
               <form onSubmit={handleSubmit}>
                 {Boolean(formik.status) && (
-                  <Alert severity="warning" className="mb-4">
+                  <AppAlert severity="warning" className="mb-4">
                     {formik.status}
-                  </Alert>
+                  </AppAlert>
                 )}
                 <Grid container spacing={2}>
                   {
@@ -246,7 +242,7 @@ export default function AddLeavePolicy(props: Props) {
                           <InputLabel id="accrual-period-select-label">
                             {i({ id: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD" })}
                           </InputLabel>
-                          <Select
+                          <AppSelect
                             labelId="accrual-period-select-label"
                             id="accrual-period-select"
                             label={i({
@@ -270,7 +266,7 @@ export default function AddLeavePolicy(props: Props) {
                             <MenuItem value={1}>Month</MenuItem>
                             <MenuItem value={2}>Year</MenuItem>
                             <MenuItem value={3}>None</MenuItem>
-                          </Select>
+                          </AppSelect>
                         </FormControl>
                       </Grid>
                       <Grid
@@ -305,7 +301,7 @@ export default function AddLeavePolicy(props: Props) {
                       >
                         <FormControlLabel
                           control={
-                            <Checkbox
+                            <AppCheckbox
                               sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
                             />
                           }
@@ -344,7 +340,7 @@ export default function AddLeavePolicy(props: Props) {
                       >
                         <FormControlLabel
                           control={
-                            <Checkbox
+                            <AppCheckbox
                               sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
                             />
                           }
@@ -381,7 +377,7 @@ export default function AddLeavePolicy(props: Props) {
                       >
                         <FormControlLabel
                           control={
-                            <Checkbox
+                            <AppCheckbox
                               sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
                             />
                           }
@@ -405,7 +401,7 @@ export default function AddLeavePolicy(props: Props) {
                         <FormLabel sx={{ color: "text.primary" }}>
                           {i({ id: "STATUS" })}
                         </FormLabel>
-                        <Switch
+                        <AppSwitch
                           className="mx-4"
                           onChange={(event) => {
                             setFieldValue("status", event.target.checked);
@@ -424,7 +420,7 @@ export default function AddLeavePolicy(props: Props) {
                         <FormControlLabel
                           labelPlacement="start"
                           control={
-                            <Checkbox
+                            <AppCheckbox
                               sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
                             />
                           }
@@ -466,7 +462,7 @@ export default function AddLeavePolicy(props: Props) {
                       >
                         <FormControlLabel
                           control={
-                            <Checkbox
+                            <AppCheckbox
                               sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }}
                             />
                           }
@@ -552,7 +548,7 @@ export default function AddLeavePolicy(props: Props) {
                               );
                             }}
                             renderInput={(params) => (
-                              <TextField
+                              <AppTextField
                                 {...params}
                                 label={i({ id: "PAGE.EMPLOYEES" })}
                                 slotProps={{

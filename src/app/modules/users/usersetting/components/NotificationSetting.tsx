@@ -1,4 +1,10 @@
-import { Card, Checkbox, FormControlLabel, FormGroup, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  FormControlLabel,
+  FormGroup,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { NotificationPreferences } from "../../models";
 import { useEffect, useState } from "react";
 import { getNotificationPreferences, updateNotificationPreferences } from "../../userservices";
@@ -7,6 +13,7 @@ import CustomisedButton from "../../../../shared/components/CustomisedButton";
 import { toast } from "react-toastify";
 import { ListSkeleton } from "../../about/components/ListSkeleton";
 
+import { AppCheckbox } from "../../../../shared/components/ui";
 export const NotificationSetting = () => {
   const { formatMessage: i } = useIntl();
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({} as NotificationPreferences);
@@ -65,7 +72,7 @@ export const NotificationSetting = () => {
               className="hover-secondary rounded"
               key={index}
               control={
-                <Checkbox
+                <AppCheckbox
                   name={key}
                   checked={notificationPreferences[key as keyof NotificationPreferences]}
                   onChange={handleToggle}

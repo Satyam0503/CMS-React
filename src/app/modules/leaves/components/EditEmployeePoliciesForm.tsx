@@ -2,8 +2,6 @@ import {
   Box,
   Typography,
   FormControlLabel,
-  Checkbox,
-  TextField,
   Stack,
 } from "@mui/material";
 import { Formik } from "formik";
@@ -20,6 +18,7 @@ import {
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { toast } from "react-toastify";
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 type Props = {
   openOptions: boolean;
   handleClose: () => void;
@@ -185,7 +184,7 @@ export default function EditEmployeePoliciesForm(props: Props) {
                         width: "100%",
                       }}
                       control={
-                        <Checkbox
+                        <AppCheckbox
                           value={leave.id}
                           checked={selectedLeave ? true : false}
                           // name={leave.id}
@@ -205,7 +204,7 @@ export default function EditEmployeePoliciesForm(props: Props) {
                         />
                       }
                     />
-                    <TextField
+                    <AppTextField
                       fullWidth
                       label={i({
                         id: "LEAVE.TITLES.LEAVE_BALANCE",

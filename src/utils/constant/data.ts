@@ -176,6 +176,7 @@ export const ServiceUrl = {
   UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,
 
   CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateLeaveRequest`,
+  CREATE_EMPLOYEE_LEAVE_REQUEST: `api/LeaveManagement/CreateEmployeeLeaveRequest`,
   UPDATE_LEAVE_REQUEST: `api/LeaveManagement/UpdateLeaveRequest`,
   GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequests`,
   DELETE_LEAVE_REQUEST: `api/LeaveManagement/DeleteLeaveRequest`,

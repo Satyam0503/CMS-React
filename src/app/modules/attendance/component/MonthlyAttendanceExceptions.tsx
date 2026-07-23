@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState } from "react";
 import {
   Box,
-  Button,
   Card,
   CircularProgress,
   MenuItem,
   Stack,
   TablePagination,
-  TextField,
   Typography,
 } from "@mui/material";
 import { Dayjs } from "dayjs";
@@ -15,6 +16,7 @@ import { toast } from "react-toastify";
 import { patchRequest, postRequest } from "../../../../server/axios";
 import { ResponseData } from "../../../../utils/common_types";
 
+import { AppButton, AppTextField } from "../../../shared/components/ui";
 type PayrollException = {
   id: string;
   employeeId: string;
@@ -155,13 +157,13 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         Monthly Exceptions
       </Typography>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(190px, 1fr) minmax(170px, 1fr) auto auto" }, gap: 2, alignItems: "center" }}>
-        <TextField
+        <AppTextField
           label="Attendance month"
           value={month.format("MMMM YYYY")}
           size="small"
           InputProps={{ readOnly: true }}
         />
-        <TextField
+        <AppTextField
           select
           size="small"
           label="Status"
@@ -175,17 +177,17 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <MenuItem value="WAIVED">Waived</MenuItem>
           <MenuItem value="DEDUCTION_APPROVED">Deduction approved</MenuItem>
           <MenuItem value="RESOLVED">Resolved</MenuItem>
-        </TextField>
-        <Button variant="outlined" disabled={loading} onClick={() => void load(true)}>
+        </AppTextField>
+        <AppButton variant="outlined" disabled={loading} onClick={() => void load(true)}>
           {loading ? <CircularProgress size={20} /> : "Recalculate & Load"}
-        </Button>
-        <Button variant="contained" disabled={loading} onClick={() => void resolveAllFixed()}>
+        </AppButton>
+        <AppButton variant="contained" disabled={loading} onClick={() => void resolveAllFixed()}>
           Resolve All Fixed Issues
-        </Button>
+        </AppButton>
       </Box>
 
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "220px auto minmax(260px, 1fr)" }, gap: 2, alignItems: "center", mt: 2 }}>
-        <TextField
+        <AppTextField
           select
           size="small"
           label="Bulk LHD/ED decision"
@@ -197,14 +199,14 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <MenuItem value="WARNING_ONLY">Warning only</MenuItem>
           <MenuItem value="HALF_DAY_LOP">Half-day LOP</MenuItem>
           <MenuItem value="FULL_DAY_LOP">Full-day LOP</MenuItem>
-        </TextField>
-        <Button
+        </AppTextField>
+        <AppButton
           variant="outlined"
           disabled={!bulkDecision || loading}
           onClick={() => void reviewAllPenaltyExceptions()}
         >
           Apply to All Pending LHD/ED
-        </Button>
+        </AppButton>
         <Typography variant="body2" color="text.secondary">
           Structural errors resolve only after attendance data is corrected and rechecked.
         </Typography>
@@ -232,7 +234,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
               </Box>
               <Typography sx={{ width: 170, flexShrink: 0 }}>{item.status}</Typography>
               {item.status === "PENDING_REVIEW" && item.exceptionType === "LHD_ED_LIMIT_EXCEEDED" ? (
-                <TextField
+                <AppTextField
                   select
                   size="small"
                   label="Decision"
@@ -244,18 +246,18 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                   <MenuItem value="WARNING_ONLY">Warning only</MenuItem>
                   <MenuItem value="HALF_DAY_LOP">Half-day LOP</MenuItem>
                   <MenuItem value="FULL_DAY_LOP">Full-day LOP</MenuItem>
-                </TextField>
+                </AppTextField>
               ) : item.status === "PENDING_REVIEW" ? (
                 <Stack direction="row" spacing={1} sx={{ width: 180, flexShrink: 0 }}>
-                  <Button
+                  <AppButton
                     size="small"
                     variant="outlined"
                     disabled={!item.affectedDates?.length}
                     onClick={() => openAttendanceRecord(item)}
                   >
                     Edit
-                  </Button>
-                  <Button size="small" onClick={() => void load(true)}>Recheck</Button>
+                  </AppButton>
+                  <AppButton size="small" onClick={() => void load(true)}>Recheck</AppButton>
                 </Stack>
               ) : <Box sx={{ width: 180, flexShrink: 0 }} />}
             </Box>

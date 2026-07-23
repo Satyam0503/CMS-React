@@ -1,18 +1,20 @@
-import { EmployeeFilterModel } from "../models";
-import { FC, useEffect, useState } from "react";
+import {
+  EmployeeFilterModel } from "../models";
+import { FC,
+  useEffect,
+  useState } from "react";
 import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import { useAppDispatch,
+  useAppSelector } from "../../../Redux/hooks";
 import { setEmployeesFilter } from "../../../Redux/Reducers/filterSlice";
 import { getAllDepartmentInfo } from "../../dashboard/dashboardservices";
 import { useFormik } from "formik";
 
 import {
   Autocomplete,
-  Checkbox,
   Chip,
   ListItemText,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 
@@ -25,6 +27,7 @@ import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DepartmentResponseModel } from "../../dashboard/model";
 import { LANGUAGE } from "../../../../utils/enums";
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
   gender: [],
@@ -88,12 +91,12 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             }}
             getOptionLabel={(option) => option.label[currentLanguage] || option.label[defaultLanguage]}
             renderInput={(params) => (
-              <TextField {...params} placeholder={formatMessage({ id: "FORM.DEPARTMENT" })} />
+              <AppTextField {...params} placeholder={formatMessage({ id: "FORM.DEPARTMENT" })} />
             )}
             renderOption={(props, option, state) => {
               return (
                 <li {...props}>
-                  <Checkbox
+                  <AppCheckbox
                     key={option.departmentId}
                     checked={state.selected}
                     sx={{ mr: 1 }}
@@ -125,12 +128,12 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             }}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => (
-              <TextField {...params} placeholder={formatMessage({ id: "FORM.GENDER" })} />
+              <AppTextField {...params} placeholder={formatMessage({ id: "FORM.GENDER" })} />
             )}
             renderOption={(props, option, state) => {
               return (
                 <li {...props}>
-                  <Checkbox
+                  <AppCheckbox
                     key={option.id}
                     checked={state.selected}
                     sx={{ mr: 1 }}

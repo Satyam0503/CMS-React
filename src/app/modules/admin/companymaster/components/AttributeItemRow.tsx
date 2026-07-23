@@ -1,4 +1,6 @@
-import { Box, IconButton, Switch, TextField } from "@mui/material";
+import {
+  Box,
+} from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
@@ -7,6 +9,7 @@ import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { LanguageNameMapper } from "../../../../../utils/common";
 
+import { AppIconButton, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 type Props<T> = {
   itemData: T;
   UpdatedItemData: (item: T) => void;
@@ -102,7 +105,7 @@ export const AttributeItemRow = <T extends ReqProps>({
     <>
       <Box className="attribute-row">
         <>
-          <TextField
+          <AppTextField
             name={currentLanguage}
             value={currentTitle ?? ""}
             onChange={handleChange}
@@ -110,25 +113,25 @@ export const AttributeItemRow = <T extends ReqProps>({
             error={!currentTitle?.length}
             required
           />
-          <TextField
+          <AppTextField
             disabled={!translationLanguage}
             name={translationLanguage}
             value={translatedTitle ?? ""}
             onChange={handleChange}
             onBlur={validateAndUpdateNewItemData}
           />
-          <Switch
+          <AppSwitch
             checked={item.isActive}
             onChange={(_, checked) => handleSwitchChange(checked)}
           />
         </>
         <div className="d-flex align-items-center gap-2">
-          <IconButton
+          <AppIconButton
             onClick={() => setConfirmModalOpen(true)}
             className="border-0"
           >
             <Delete color="error" />
-          </IconButton>
+          </AppIconButton>
         </div>
       </Box>
       {isConfirmModalOpen && (

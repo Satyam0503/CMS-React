@@ -1,5 +1,12 @@
-import { Download, UploadFile } from "@mui/icons-material";
-import { Alert, Button, Link, Stack, Tooltip, Typography } from "@mui/material"
+import {
+  Download,
+  UploadFile } from "@mui/icons-material";
+import {
+  Link,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
@@ -13,6 +20,7 @@ import { uploadEmpPayRollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
 import { payrollActionButtonSx } from "./payrollActionButtonSx";
 
+import { AppAlert, AppButton } from "../../../shared/components/ui";
 const ValidFileExtension = ["xlsx", "xls"];
 // Bonus, LTA, Other Allowance, Health Insurance, EPF, ESIC are optional - default to 0 if omitted
 const requiredHeaders = ["Income Tax", "Basic Pay", "Employee Id", "HRA", "Loss of Pay", "Loss of Pay Days", "Paid Days", "Paid Date"];
@@ -283,7 +291,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
         <>
             <Stack direction="row" spacing={1} className="align-items-center">
                 <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
-                    <Button variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
+                    <AppButton variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
                         <UploadFile fontSize="small" />
                         <input
                             hidden
@@ -294,12 +302,12 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                             id="payrollImport"
                             onChange={handleFileChange}
                         />
-                    </Button>
+                    </AppButton>
                 </Tooltip>
                 <Tooltip title={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} arrow placement="top">
-                    <Button component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
+                    <AppButton component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
                         <Download fontSize="small" />
-                    </Button>
+                    </AppButton>
                 </Tooltip>
             </Stack>
             {
@@ -313,7 +321,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                             <Stack className="overflow-x-scroll flex-row gap-2 justify-content-start py-2 position-sticky top-0">
                                 {
                                     workBookData?.SheetNames.map((sheet, index) =>
-                                        <Button key={index} variant={selectedWorkSheet === sheet ? "contained" : "outlined"} onClick={() => handleWorkSheetChange(sheet)}>{sheet}</Button>
+                                        <AppButton key={index} variant={selectedWorkSheet === sheet ? "contained" : "outlined"} onClick={() => handleWorkSheetChange(sheet)}>{sheet}</AppButton>
                                     )
                                 }
                             </Stack>
@@ -329,25 +337,25 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                         />
                         {
                             missingHeaders.length > 0 &&
-                            <Alert severity="error">
+                            <AppAlert severity="error">
                                 <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.MISSING_COLUMNS_TITLE" })}</Typography>
                                 <Typography variant="body2">{missingHeaders.join(", ")}</Typography>
                                 <Typography variant="body2">
                                     {i({ id: "PAYROLL.MISSING_COLUMNS_HINT" })}{" "}
                                     <Link href={SAMPLE_FILE_URL} download>{i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}</Link>
                                 </Typography>
-                            </Alert>
+                            </AppAlert>
                         }
                         {
                             missingHeaders.length === 0 && serverErrors.length > 0 &&
-                            <Alert severity="error">
+                            <AppAlert severity="error">
                                 <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.UPLOAD_ERRORS_TITLE" })}</Typography>
                                 {
                                     serverErrors.map((errorMessage, index) =>
                                         <Typography key={index} variant="body2">{errorMessage}</Typography>
                                     )
                                 }
-                            </Alert>
+                            </AppAlert>
                         }
                         <Stack spacing={1}>
                             <Typography className="fs-16" >{i({ id: "PAYROLL.EXCEL_PREVIEW" })}</Typography>

@@ -4,9 +4,7 @@ import {
   Stack,
   Typography,
   Chip,
-  IconButton,
   Tooltip,
-  Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ModulesInfoModel } from "../../models";
@@ -14,6 +12,7 @@ import { DefaultModles } from "../../../../../utils/enums";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
+import { AppButton, AppIconButton } from "../../../../shared/components/ui";
 interface ModuleCardProps {
   moduleId: string;
   titleMessageId: string;
@@ -64,7 +63,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               </Typography>
             </Stack>
 
-            <Button
+            <AppButton
               size="small"
               onClick={handleChange}
               disabled={isDisabled}
@@ -103,7 +102,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                     : "COMPANY_DETAILS.INSTALL_PLUGIN",
                 })}
               </span>
-            </Button>
+            </AppButton>
           </Stack>
           <Typography
             variant="body2"
@@ -127,7 +126,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           {isInstalled ? (
             <Tooltip title={formatMessage({ id: "COMMON.UNINSTALL" })}>
               <span>
-                <IconButton
+                <AppIconButton
                   size="small"
                   disabled={isDisabled}
                   onClick={handleChange}
@@ -140,11 +139,11 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
                   }}
                 >
                   <DeleteIcon fontSize="small" />
-                </IconButton>
+                </AppIconButton>
               </span>
             </Tooltip>
           ) : (
-            <Button
+            <AppButton
               variant="contained"
               size="small"
               disabled={isDisabled}
@@ -155,7 +154,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               }}
             >
               {formatMessage({ id: "COMMON.INSTALL" })}
-            </Button>
+            </AppButton>
           )}
         </Stack> */}
       </Stack>

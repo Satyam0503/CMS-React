@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState } from "react";
 import { CustomisedModal } from "../../../shared/components/CustomisedModal";
 import { useIntl } from "react-intl";
-import { Grid, Stack } from "@mui/system";
+import { Grid,
+  Stack } from "@mui/system";
 import { Formik } from "formik";
 import { policySchema } from "../../../../utils/Schema/policySchema";
 import { AddPolicyModel } from "../models";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import {
   Autocomplete,
-  Checkbox,
   FormControlLabel,
   ListItemText,
-  Switch,
-  TextField,
 } from "@mui/material";
 import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { DepartmentModel, RoleModel } from "../../admin/models";
@@ -22,6 +22,7 @@ import { addPolicy, updatePolicy } from "../policyServices";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 
+import { AppCheckbox, AppSwitch, AppTextField } from "../../../shared/components/ui";
 type Props = {
   open: boolean;
   handleClose: () => void;
@@ -158,7 +159,7 @@ export default function AddNewPolicyForm(props: Props) {
                       return option.titles["en"];
                     }}
                     renderInput={(params) => (
-                      <TextField
+                      <AppTextField
                         {...params}
                         placeholder={i({
                           id: "TITLES.DEPARTMENT",
@@ -168,7 +169,7 @@ export default function AddNewPolicyForm(props: Props) {
                     renderOption={(props, option, state) => {
                       return (
                         <li {...props} key={option.departmentId}>
-                          <Checkbox
+                          <AppCheckbox
                             // key={option.id}
                             checked={state.selected}
                             sx={{ mr: 1 }}
@@ -202,7 +203,7 @@ export default function AddNewPolicyForm(props: Props) {
                       return option.titles;
                     }}
                     renderInput={(params) => (
-                      <TextField
+                      <AppTextField
                         {...params}
                         placeholder={i({ id: "TITLES.ROLES" })}
                       />
@@ -210,7 +211,7 @@ export default function AddNewPolicyForm(props: Props) {
                     renderOption={(props, option, state) => {
                       return (
                         <li {...props} key={option.rolesId}>
-                          <Checkbox checked={state.selected} sx={{ mr: 1 }} />
+                          <AppCheckbox checked={state.selected} sx={{ mr: 1 }} />
                           <ListItemText primary={option.titles} />
                         </li>
                       );
@@ -221,7 +222,7 @@ export default function AddNewPolicyForm(props: Props) {
                   <FormControlLabel
                     labelPlacement="start"
                     control={
-                      <Switch
+                      <AppSwitch
                         onChange={(e, checked) => {
                           setFieldValue("isActive", checked);
                         }}

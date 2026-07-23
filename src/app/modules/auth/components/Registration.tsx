@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import {
+  useEffect } from "react";
 import { Formik } from "formik";
 import { registerCompany } from "../core/_requests";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,
+  useNavigate } from "react-router-dom";
 import {
-  Alert,
   Box,
-  Checkbox,
   FormHelperText,
   Grid,
   InputAdornment,
@@ -21,6 +21,7 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
+import { AppAlert, AppCheckbox } from "../../../shared/components/ui";
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -91,9 +92,9 @@ export function Registration() {
           <form onSubmit={handleSubmit}>
             <Stack spacing={2}>
               {status && (
-                <Alert severity="error" className="mb-4">
+                <AppAlert severity="error" className="mb-4">
                   {status}
-                </Alert>
+                </AppAlert>
               )}
 
               <TextInput
@@ -216,7 +217,7 @@ export function Registration() {
               <Stack direction={"row"} className="ms-n2" sx={{
                 alignItems: "center"
               }}>
-                <Checkbox
+                <AppCheckbox
                   checked={values.acceptTerms}
                   {...getFieldProps("acceptTerms")}
                 />

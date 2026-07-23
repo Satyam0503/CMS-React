@@ -1,9 +1,18 @@
-import { FC, useState, MouseEvent } from "react";
-import { Box, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  FC,
+  useState,
+  MouseEvent } from "react";
+import { Box,
+  Popover,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Palette } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { APP_STYLES, AppStyle, useAppStyle } from "../../../../../app/modules/theme/useAppStyle";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
 // Visual preview of each style — shown as a small swatch in the picker.
 const SWATCH_BG: Record<AppStyle, string> = {
   cobalt:   "linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%)",
@@ -32,14 +41,14 @@ const AppStylePicker: FC = () => {
   return (
     <>
       <Tooltip title={tooltipLabel}>
-        <IconButton
+        <AppIconButton
           onClick={handleOpen}
           sx={{ border: 0, p: 0 }}
           role="button"
           aria-label="choose app style"
         >
           <Palette className="fs-32" />
-        </IconButton>
+        </AppIconButton>
       </Tooltip>
       <Popover
         open={open}
