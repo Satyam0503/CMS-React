@@ -52,6 +52,7 @@ export enum Modules {
   CompanyDetails = 15,
   Policies = 16,
   PayrollSettings = 17,
+  CareerProfile = 18,
 }
 
 export enum ModulesName {
@@ -73,6 +74,7 @@ export enum ModulesName {
   CompanyDetails = "Company_Details",
   Policy = "Policy",
   PayrollSettings = "Payroll_Settings",
+  CareerProfile = "Career_Profile",
 }
 
 export enum ModulesTitles {
@@ -93,6 +95,7 @@ export enum ModulesTitles {
   CompanyDetails = "MODULES.COMPANY_DETAILS",
   Policies = "MODULES.POLICIES",
   PayrollSettings = "MODULES.PAYROLL_SETTINGS",
+  CareerProfile = "MODULES.CAREER_PROFILE",
 }
 
 export enum PayRollModuleTitles {

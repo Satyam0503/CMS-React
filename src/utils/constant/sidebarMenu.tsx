@@ -14,6 +14,7 @@ import {
   Settings,
   ToggleOn,
   Work,
+  WebRounded,
 } from "@mui/icons-material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PolicyIcon from "@mui/icons-material/Policy";
@@ -112,6 +113,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.ProcessLog,
         route: "/recruitment/processlog",
         icon: <Book />,
+        isDefault: false,
+      },
+      {
+        id: Modules.CareerProfile,
+        title: ModulesTitles.CareerProfile,
+        constant: ModulesName.CareerProfile,
+        route: "/recruitment/career-profile",
+        icon: <WebRounded />,
         isDefault: false,
       },
     ],

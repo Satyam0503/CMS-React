@@ -47,10 +47,11 @@ stages:
           - checkout: self
             fetchDepth: 1
 
-          - task: NodeTool@0
+          - task: UseNode@1
             displayName: "Install Node.js"
             inputs:
-              versionSpec: "$(nodeVersion)"
+              version: "$(nodeVersion)"
+              checkLatest: false
 
           - task: Npm@1
             displayName: "npm install"

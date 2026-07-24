@@ -26,7 +26,8 @@
     "PAYROLL": "工资单",
     "CALENDAR": "日历",
     "POLICIES": "政策",
-    "PAYROLL_SETTINGS": "薪资设置"
+    "PAYROLL_SETTINGS": "薪资设置",
+    "CAREER_PROFILE": "招聘资料"
   },
   "GENDER": {
     "MALE": "男性",

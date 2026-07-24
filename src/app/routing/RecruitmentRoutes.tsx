@@ -8,6 +8,7 @@ import { Applications } from "../modules/recruitment/applications/Applications";
 import ProcessLogs from "../modules/recruitment/processlog/ProcessLog";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { useEffect } from "react";
+import { CareerProfileAdminPage } from "../modules/careerPortal/pages/CareerProfileAdminPage";
 
 const recruitmentBreadcrumb: Array<Breadcrumb> = [
   {
@@ -85,6 +86,14 @@ const RecruitmentRoutes = () => {
           element={
             <ProtectedRoute module={ModulesName.ProcessLog}>
               <ProcessLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="career-profile"
+          element={
+            <ProtectedRoute module={ModulesName.CareerProfile} permission={Permission.Edit}>
+              <CareerProfileAdminPage />
             </ProtectedRoute>
           }
         />

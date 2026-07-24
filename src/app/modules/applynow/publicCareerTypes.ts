@@ -3,6 +3,15 @@ export type PublicJobSummary = {
   slug: string;
   title: string;
   shortDescription: string;
+  summary?: string | null;
+  department?: string | null;
+  industry?: string | null;
+  roleCategory?: string | null;
+  educationRequirement?: string | null;
+  isFeatured?: boolean | null;
+  isUrgentHiring?: boolean | null;
+  isWalkIn?: boolean | null;
+  showSalary?: boolean | null;
   vacancies: number;
   jobType: number;
   location?: string | null;
@@ -28,6 +37,18 @@ export type PublicJobSummary = {
 
 export type PublicJobDetails = PublicJobSummary & {
   description: string;
+  functionalArea?: string | null;
+  responsibilities?: string[];
+  requiredSkills?: string[];
+  preferredSkills?: string[];
+  benefits?: string[];
+  shiftType?: string | null;
+  workingDays?: string | null;
+  travelRequirement?: string | null;
+  walkInStartAt?: string | null;
+  walkInEndAt?: string | null;
+  walkInAddress?: string | null;
+  noticePeriodMaxDays?: number | null;
   referenceCode?: string | null;
   expiresAt?: string | null;
 };

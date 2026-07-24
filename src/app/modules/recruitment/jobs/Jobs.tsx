@@ -57,6 +57,30 @@ const initialValues: JobModal = {
   description: "",
   jobType: 1,
   status: true,
+  summary: "",
+  location: "",
+  workplaceType: "",
+  employmentType: "",
+  experienceMin: null,
+  experienceMax: null,
+  department: "",
+  functionalArea: "",
+  industry: "",
+  roleCategory: "",
+  educationRequirement: "",
+  responsibilities: [],
+  requiredSkills: [],
+  preferredSkills: [],
+  benefits: [],
+  keywords: [],
+  shiftType: "",
+  workingDays: "",
+  recruiterContactEmail: "",
+  applicationDeadline: null,
+  publishToCareerPortal: true,
+  publishToMasterPortal: false,
+  isFeatured: false,
+  isUrgentHiring: false,
 };
 
 const useJobTableColumnList = (): GridColDef<JobModal>[] => {
@@ -274,6 +298,10 @@ export default function Jobs() {
     const payload = {
       ...values,
       description: removeUnwantedString(values.description),
+      workplaceType:
+        values.jobType === 3 ? "Remote" : values.jobType === 2 ? "Hybrid" : "On-site",
+      publishToMasterPortal:
+        !!values.publishToCareerPortal && !!values.publishToMasterPortal,
     };
     if (isEdit) {
       const jobId = values.jobId;

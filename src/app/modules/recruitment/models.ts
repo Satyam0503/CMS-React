@@ -61,6 +61,30 @@ export interface JobModal {
   status: boolean;
   description: string;
   totalApplication?: number;
+  summary?: string;
+  location?: string;
+  workplaceType?: string;
+  employmentType?: string;
+  experienceMin?: number | null;
+  experienceMax?: number | null;
+  department?: string;
+  functionalArea?: string;
+  industry?: string;
+  roleCategory?: string;
+  educationRequirement?: string;
+  responsibilities?: string[];
+  requiredSkills?: string[];
+  preferredSkills?: string[];
+  benefits?: string[];
+  keywords?: string[];
+  shiftType?: string;
+  workingDays?: string;
+  recruiterContactEmail?: string;
+  applicationDeadline?: string | null;
+  publishToCareerPortal?: boolean;
+  publishToMasterPortal?: boolean;
+  isFeatured?: boolean;
+  isUrgentHiring?: boolean;
 }
 
 export interface CommentModel {
