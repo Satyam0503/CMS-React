@@ -16,6 +16,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.app-shell {
+  --app-header-height: 72px;
+  --app-footer-height: 48px;
+}
+
 body {
   display: flex;
   flex-direction: column;

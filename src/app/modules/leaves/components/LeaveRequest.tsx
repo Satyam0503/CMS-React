@@ -72,7 +72,6 @@ export const LeaveRequest = () => {
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const canCreateForEmployee = useMemo(
     () =>
-      hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Create, modulePermissions) &&
       hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Edit, modulePermissions),
     [modulePermissions],
   );
@@ -125,9 +124,23 @@ export const LeaveRequest = () => {
   };
   return (
     <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
-      <Typography variant="h5">
-        {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
-      </Typography>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "stretch", sm: "center" }}
+        gap={2}
+      >
+        <Typography variant="h5">
+          {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
+        </Typography>
+        {canCreateForEmployee && (
+          <CustomisedButton
+            Icon={<Add />}
+            label={i({ id: "LEAVE.CREATE_FOR_EMPLOYEE", defaultMessage: "Create Leave for Employee" })}
+            handleClick={() => setShowCreateLeave(true)}
+          />
+        )}
+      </Stack>
       <LeaveRequestFilter />
       <Divider className="mt-2" />
       <TableContainer className="mb-2 h-100">
@@ -141,13 +154,13 @@ export const LeaveRequest = () => {
               <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
-              <TableCell>{i({ id: "ACTION" })}</TableCell>
+              {canCreateForEmployee && <TableCell>{i({ id: "ACTION" })}</TableCell>}
             </TableRow>
           </TableHead>
           {isLoading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={12} align="center">
+                <TableCell colSpan={canCreateForEmployee ? 8 : 7} align="center">
                   <TableSkeleton />
                 </TableCell>
               </TableRow>
@@ -156,7 +169,7 @@ export const LeaveRequest = () => {
             <TableBody>
               {leaveRequest.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={12} align="center">
+                  <TableCell colSpan={canCreateForEmployee ? 8 : 7} align="center">
                     {i({ id: "MESSAGE.NO_DATA_AVAILABLE" })}
                   </TableCell>
                 </TableRow>
@@ -211,14 +224,16 @@ export const LeaveRequest = () => {
                         }
                       />
                     </TableCell>
-                    <TableCell>
-                      <AppIconButton
-                        onClick={() => setSelectedLeaveRequest(row)}
-                        disabled={row.status === 4}
-                      >
-                        <Edit className="fs-20" />
-                      </AppIconButton>
-                    </TableCell>
+                    {canCreateForEmployee && (
+                      <TableCell>
+                        <AppIconButton
+                          onClick={() => setSelectedLeaveRequest(row)}
+                          disabled={row.status === 4}
+                        >
+                          <Edit className="fs-20" />
+                        </AppIconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
@@ -373,10 +388,13 @@ export const LeaveApprovalModal = ({
     status: leaveRequest.status,
     comment: leaveRequest.comment,
   });
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // console.log(leaveData);
 
   const handleLeaveStatusUpdate = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
     try {
       const payload: LeaveRequestApprovalPayload = {
         ...leaveData,
@@ -390,9 +408,17 @@ export const LeaveApprovalModal = ({
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
         refresh();
         handleClose();
+      } else {
+        toast.error(
+          data.message ||
+            i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" }),
+        );
       }
     } catch (error) {
       console.error((error as Error).message);
+      toast.error(i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" }));
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -459,11 +485,13 @@ export const LeaveApprovalModal = ({
           <CustomisedButton
             variant="outlined"
             label={i({ id: "BUTTON.CLOSE" })}
+            disabled={isUpdating}
             handleClick={handleClose}
           />
           <CustomisedButton
             label={i({ id: "BUTTON.UPDATE" })}
-            disabled={leaveRequest.status === leaveData.status}
+            disabled={isUpdating || leaveRequest.status === leaveData.status}
+            loading={isUpdating}
             handleClick={handleLeaveStatusUpdate}
           />
         </Stack>

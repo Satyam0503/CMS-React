@@ -8,35 +8,45 @@ const Footer = () => {
   return (
     <>
       <Grid
+        className="app-footer"
         container
         display={"flex"}
         justifyContent={"space-between"}
-        p={1}
+        px={{ xs: 2, md: 3 }}
         alignItems={"center"}
-        bgcolor="common.white"
+        bgcolor="background.header"
+        color="text.secondary"
+        sx={{
+          height: "var(--app-footer-height)",
+          minHeight: "var(--app-footer-height)",
+          borderTop: "1px solid",
+          borderColor: "divider",
+          position: "relative",
+          zIndex: 1300,
+        }}
       >
         <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
-          <Typography variant="body1" fontWeight={400}>
+          <Typography variant="body2" color="text.secondary" fontWeight={500}>
             {" "}
             Codeji Infotech Pvt Ltd
           </Typography>
         </Link>
 
-        <Stack direction={"row"} gap={4}>
+        <Stack direction={"row"} gap={{ xs: 1.5, sm: 3 }}>
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
-            <Typography variant="body1" fontWeight={400}>
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
               {" "}
               About
             </Typography>
           </Link>
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
-            <Typography variant="body1" fontWeight={400}>
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
               Support
             </Typography>
           </Link>
 
           <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
-            <Typography variant="body1" fontWeight={400}>
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
               Purchase
             </Typography>
           </Link>

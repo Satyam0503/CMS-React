@@ -29,7 +29,6 @@ import {
   getModulePermissions,
   hasModuleFeaturePermission,
 } from "../../../utils/common";
-import { SearchInput } from "../../shared/components/SearchInput";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
@@ -221,7 +220,6 @@ const Employees = () => {
   const [isLoading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [isRefresh, setRefresh] = useState(false);
-  const [search, setSearch] = useState<string>("");
   const [totalRecords, setTotalRecords] = useState(0);
   const [openCheckModal, setOpenCheckModal] = useState<boolean>(false);
 
@@ -247,13 +245,6 @@ const Employees = () => {
   const employeeFilters = useAppSelector((state) => state.filters.employee);
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
   const columns = useEmployeeTableColumnList();
-
-  const handleSearchChange = (value: string) => {
-    if (paginationValues.pageNo > 0 && value.trim().length >= 0) {
-      setPaginationValues({ ...paginationValues, pageNo: 0 });
-    }
-    setSearch(value.trim());
-  };
 
   const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
@@ -292,7 +283,7 @@ const Employees = () => {
       const response = await getAllEmployees({
         pageNo: 1,
         records: Math.max(totalRecords, 1),
-        name: search,
+        name: "",
         ...(employeeFilters ?? initialFilterValues),
       });
       const { success, methodResults } = response.data;
@@ -337,7 +328,7 @@ const Employees = () => {
         const response = await getAllEmployees({
           pageNo: paginationValues.pageNo + 1,
           records: paginationValues.records,
-          name: search,
+          name: "",
           ...(employeeFilters ?? initialFilterValues),
         });
         const { success, methodResults, totalRecords } = response.data;
@@ -352,7 +343,7 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, employeeFilters, isRefresh, search]);
+  }, [paginationValues, employeeFilters, isRefresh]);
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.EMPLOYEES" }));
@@ -390,25 +381,13 @@ const Employees = () => {
             bgcolor: "action.hover",
           }}
         >
-          <Stack spacing={0.75} sx={{ minWidth: { md: 260 } }}>
+          <Stack spacing={0.75}>
             <Typography variant="subtitle1" fontWeight={700}>
               Employee directory
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {totalRecords} {totalRecords === 1 ? "employee" : "employees"} found
             </Typography>
-            <Box
-              sx={{
-                pt: 0.5,
-                "& .MuiTextField-root": { width: { xs: "100%", sm: 280 } },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                  bgcolor: "background.paper",
-                },
-              }}
-            >
-              <SearchInput search={search} setSearch={handleSearchChange} />
-            </Box>
           </Stack>
 
           <Stack
@@ -418,7 +397,7 @@ const Employees = () => {
             flexWrap="wrap"
             sx={{
               alignItems: "center",
-              alignSelf: { md: "flex-end" },
+              alignSelf: { md: "center" },
               justifyContent: { xs: "flex-start", md: "flex-end" },
               "& .MuiIconButton-root": {
                 width: 38,

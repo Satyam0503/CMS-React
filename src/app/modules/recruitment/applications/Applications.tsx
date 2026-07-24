@@ -1,4 +1,4 @@
-import { Badge, Card, Stack, Tooltip } from "@mui/material";
+import { Badge, Box, Card, Stack, Tooltip } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
@@ -275,17 +275,54 @@ export const Applications = () => {
 
   return (
     <>
-      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
+      <Card
+        className="d-flex flex-column flex-grow-1"
+        sx={{
+          gap: { xs: 2.5, md: 3 },
+          p: { xs: 2, sm: 2.5, md: 3 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          backgroundImage: "none",
+          boxShadow: "0 12px 36px rgba(15,23,42,.06)",
+        }}
+      >
         <Stack
-          direction="row"
-          className="justify-content-between align-items-center flex-wrap-reverse"
+          direction={{ xs: "column", sm: "row" }}
           sx={{
-            gap: 2
+            gap: 1.5,
+            alignItems: { xs: "stretch", sm: "center" },
           }}
         >
-          <SearchInput search={search} setSearch={handleSearchChange} />
+          <Box
+            sx={{
+              flex: "1 1 auto",
+              minWidth: 0,
+              order: { xs: 2, sm: 1 },
+              "& .MuiFormControl-root": { width: "100%" },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2.5,
+                bgcolor: "action.hover",
+                transition: "background-color .2s, box-shadow .2s",
+                "&.Mui-focused": {
+                  bgcolor: "background.paper",
+                  boxShadow: "0 0 0 3px rgba(156,75,214,.12)",
+                },
+              },
+            }}
+          >
+            <SearchInput search={search} setSearch={handleSearchChange} />
+          </Box>
 
-          <Stack direction="row" spacing={1}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              flexShrink: 0,
+              order: { xs: 1, sm: 2 },
+              justifyContent: { xs: "flex-end", sm: "initial" },
+            }}
+          >
             <Badge
               badgeContent={totalAppliedFilter}
               anchorOrigin={{ horizontal: "left", vertical: "top" }}

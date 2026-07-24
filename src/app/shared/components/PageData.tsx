@@ -11,6 +11,22 @@ const PageData = () => {
   const { pageTitle } = usePageData();
   const navigate = useNavigate();
   const intl = useIntl();
+  const activeBreadcrumb = trail[trail.length - 1];
+  const currentSegments = location.pathname.split("/").filter(Boolean);
+  const editApplicantMatch = location.pathname.match(
+    /^\/recruitment\/applicant\/edit\/([^/]+)\/?$/
+  );
+  const patternSegments = activeBreadcrumb?.path.split("/").filter(Boolean) ?? [];
+  const routeParams = patternSegments.reduce<Array<{ key: string; value: string }>>(
+    (params, segment, index) => {
+      const match = segment.match(/^\{(.+)\}$/);
+      if (match && currentSegments[index]) {
+        params.push({ key: match[1], value: decodeURIComponent(currentSegments[index]) });
+      }
+      return params;
+    },
+    []
+  );
 
   return (
     <Stack className="justify-content-between flex-row flex-wrap gap-2" >
@@ -23,7 +39,16 @@ const PageData = () => {
           <Breadcrumbs aria-label="breadcrumb">
             {trail.map((breadcrumb, index) => {
               const label = intl.formatMessage({ id: breadcrumb.label });
-              const target = replacePathParams(breadcrumb.path, breadcrumb.params);
+              const resolvedTarget = replacePathParams(
+                breadcrumb.path,
+                [...(breadcrumb.params ?? []), ...routeParams]
+              );
+              const target =
+                breadcrumb.label === "PAGE.APPLICANT" && editApplicantMatch
+                  ? `/recruitment/applicant/${encodeURIComponent(
+                      decodeURIComponent(editApplicantMatch[1])
+                    )}`
+                  : resolvedTarget;
 
               return trail.length === index + 1 ? (
                 <Typography key={index}>

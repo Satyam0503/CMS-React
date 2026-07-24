@@ -8,6 +8,7 @@ import { PageData } from "../../app/shared/components/PageData";
 // import { ChatMessenger } from "./components/header/chats/ChatMessanger";
 import { PageDataProvider } from "../../app/Context/PageDataProvider";
 import { OnlineUsersListener } from "../../app/modules/employees/components/OnlineUsersListener";
+import { Footer } from "./components/footer/Footer";
 
 const MasterLayout = () => {
   const theme = useTheme();
@@ -31,17 +32,24 @@ const MasterLayout = () => {
         <PageDataProvider>
           <Stack
             className="app-shell flex-column flex-shrink-0 flex-grow-1"
+            sx={{ height: "100dvh", overflow: "hidden" }}
           >
-            <HeaderWrapper openSideBar={handleOpenSidebar} isMiniSidebar={isMiniSidebar} />
+            <HeaderWrapper openSideBar={handleOpenSidebar} />
             <Stack
               direction="row"
               className="app-content-surface flex-grow-1"
               sx={{
+                flex: "1 1 0",
+                height: 0,
+                minHeight: 0,
+                overflowX: "hidden",
+                overflowY: "auto",
+                overscrollBehavior: "contain",
                 marginLeft: isSmallScreen
                   ? 0
                   : isMiniSidebar
-                    ? "90px"
-                    : "265px",
+                    ? "124px"
+                    : "289px",
                 transition: "margin .3s linear",
               }}
             >
@@ -51,11 +59,15 @@ const MasterLayout = () => {
                 isMiniSidebar={isMiniSidebar}
                 setMiniSidebar={setMiniSidebar}
               />
-              <Container className="d-flex flex-column flex-grow-1 gap-4">
+              <Container
+                className="d-flex flex-column flex-grow-1 gap-4"
+                sx={{ minWidth: 0, minHeight: "max-content", overflow: "visible", py: 2, pb: 4 }}
+              >
                 <PageData />
                 <Outlet />
               </Container>
             </Stack>
+            <Footer />
           </Stack>
           {/* <ChatMessenger /> */}
         </PageDataProvider>

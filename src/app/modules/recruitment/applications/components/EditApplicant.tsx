@@ -137,7 +137,7 @@ export const EditApplicant = () => {
     if (success) {
       toast.success(formatMessage({ id: "TOAST.SUCCESS.APPLICANT_UPDATE" }));
       handleModalClose();
-      window.history.back();
+      navigate(`/recruitment/applicant/${applicantId}`, { replace: true });
     }
   };
 
@@ -477,7 +477,7 @@ export const EditApplicant = () => {
                         variant="outlined"
                         size="medium"
                         label={formatMessage({ id: "BUTTON.CANCEL" })}
-                        handleClick={() => navigate(-1)}
+                        handleClick={() => navigate(`/recruitment/applicant/${applicantId}`)}
                       />
                       <CustomisedButton
                         variant="contained"

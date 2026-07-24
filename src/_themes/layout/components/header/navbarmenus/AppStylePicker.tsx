@@ -20,6 +20,9 @@ const SWATCH_BG: Record<AppStyle, string> = {
   glass:    "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
   gradient: "linear-gradient(180deg, #7c3aed 0%, #ec4899 100%)",
   minimal:  "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+  aurora:   "linear-gradient(135deg, #0f766e 0%, #7c3aed 100%)",
+  sunset:   "linear-gradient(135deg, #7c2d5c 0%, #fb923c 100%)",
+  executive:"linear-gradient(135deg, #111827 0%, #4338ca 100%)",
 };
 
 const AppStylePicker: FC = () => {
@@ -64,6 +67,8 @@ const AppStylePicker: FC = () => {
               borderRadius: 2,
               boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
               mt: 1,
+              maxHeight: "calc(100vh - 96px)",
+              overflowY: "auto",
             },
           },
         }}

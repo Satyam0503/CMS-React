@@ -60,6 +60,33 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
           boxShadow: "none",
         },
       };
+    case "aurora":
+      return {
+        card: {
+          borderRadius: 18,
+          border: "1px solid color-mix(in srgb, var(--mui-palette-primary-main) 18%, var(--mui-palette-divider))",
+          boxShadow: "0 10px 28px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+        },
+        paper: { borderRadius: 16 },
+      };
+    case "sunset":
+      return {
+        card: {
+          borderRadius: 16,
+          border: "1px solid color-mix(in srgb, var(--mui-palette-secondary-main) 20%, var(--mui-palette-divider))",
+          boxShadow: "0 10px 26px color-mix(in srgb, var(--mui-palette-secondary-main) 10%, transparent)",
+        },
+        paper: { borderRadius: 14 },
+      };
+    case "executive":
+      return {
+        card: {
+          borderRadius: 12,
+          border: "1px solid var(--mui-palette-divider)",
+          boxShadow: "0 8px 24px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
+        },
+        paper: { borderRadius: 12 },
+      };
     case "classic":
     default:
       return { card: {}, paper: {} };

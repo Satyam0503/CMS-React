@@ -2,7 +2,6 @@ import { Box, Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ApplicantStatus, ApplicationStatus } from '../../../../utils/enums';
 import { ApplicantModel, JobModal } from '../../recruitment/models';
-import { useParams } from "react-router-dom";
 import JobInfo from './JobInfo';
 import clsx from 'clsx';
 import { useIntl } from 'react-intl';
@@ -31,9 +30,6 @@ export default function JobsSection(props: Props) {
     const [formValues, setFromValues] = useState(initialValues);
     const [selectedJobPosition, setSelectedJobPosition] = useState<JobModal | undefined>();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-    const { id } = useParams();
-    if (id) localStorage.setItem("clientId", id);
 
     function handleChangePostion(job: JobModal | undefined) {
         setSelectedJobPosition(job)

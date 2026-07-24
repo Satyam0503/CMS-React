@@ -32,7 +32,7 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle, isMiniS
   }
 
   return (
-    <Box className="sidebar-menu-main" sx={{ my: 2 }}>
+    <Box className="sidebar-menu-main" sx={{ flex: "1 1 0", height: 0, minHeight: 0, my: 1 }}>
       <Stack>
         {filteredTabList.map((tab, index) => {
           if (tab?.hasSubTabs) {

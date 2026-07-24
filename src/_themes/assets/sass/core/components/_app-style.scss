@@ -120,6 +120,38 @@ body,
   }
 }
 
+:root[data-app-style="aurora"] {
+  --app-content-background:
+    radial-gradient(circle at 86% 8%, color-mix(in srgb, #7c3aed 12%, transparent), transparent 34%),
+    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 94%, #0f766e), var(--mui-palette-background-body));
+
+  & .app-header {
+    background: color-mix(in srgb, var(--mui-palette-background-header) 90%, #0f766e) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 72%, #14b8a6);
+  }
+}
+
+:root[data-app-style="sunset"] {
+  --app-content-background:
+    radial-gradient(circle at 92% 4%, color-mix(in srgb, #fb923c 13%, transparent), transparent 30%),
+    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 95%, #9d174d), var(--mui-palette-background-body));
+
+  & .app-header {
+    background: color-mix(in srgb, var(--mui-palette-background-header) 91%, #9d174d) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 75%, #fb923c);
+  }
+}
+
+:root[data-app-style="executive"] {
+  --app-content-background:
+    linear-gradient(160deg, color-mix(in srgb, var(--mui-palette-background-body) 95%, #4338ca), var(--mui-palette-background-body) 48%);
+
+  & .app-header {
+    background: color-mix(in srgb, var(--mui-palette-background-header) 94%, #312e81) !important;
+    border-bottom: 1px solid var(--mui-palette-divider);
+  }
+}
+
 // Keep header chrome aligned with dark mode even when the Gradient style is
 // selected. Light mode retains the vibrant product-color gradient above.
 :root.dark[data-app-style="gradient"] {

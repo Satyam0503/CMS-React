@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-export type AppStyle = "cobalt" | "classic" | "glass" | "gradient" | "minimal";
+export type AppStyle = "cobalt" | "classic" | "glass" | "gradient" | "minimal" | "aurora" | "sunset" | "executive";
 
 export const APP_STYLES: { value: AppStyle; label: string; description: string }[] = [
   { value: "cobalt",   label: "Cobalt",   description: "Modern cobalt gradient with frosted glass items" },
@@ -8,6 +8,9 @@ export const APP_STYLES: { value: AppStyle; label: string; description: string }
   { value: "glass",    label: "Glass",    description: "Translucent surfaces with backdrop blur" },
   { value: "gradient", label: "Gradient", description: "Vibrant primary→secondary gradient" },
   { value: "minimal",  label: "Minimal",  description: "Flat, light, low-contrast" },
+  { value: "aurora", label: "Aurora", description: "Calm teal and violet with luminous accents" },
+  { value: "sunset", label: "Sunset", description: "Warm coral, plum and amber surfaces" },
+  { value: "executive", label: "Executive", description: "Refined graphite and indigo workspace" },
 ];
 
 const STORAGE_KEY = "appStyle";

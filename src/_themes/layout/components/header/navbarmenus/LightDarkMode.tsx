@@ -10,12 +10,10 @@ import { AppIconButton } from "../../../../../app/shared/components/ui";
 export default function LightDarkMode() {
   const { mode, systemMode, setMode } = useColorScheme();
   const { formatMessage: i } = useIntl();
+  const effectiveMode = mode === "system" ? systemMode : mode;
 
   const handleThemeChange = () => {
-    if (systemMode) {
-      setMode(systemMode === "dark" ? "light" : "dark");
-    }
-    setMode(mode === "dark" ? "light" : "dark")
+    setMode(effectiveMode === "dark" ? "light" : "dark");
   }
 
   return (
@@ -27,7 +25,7 @@ export default function LightDarkMode() {
           role="button"
           aria-label="change theme"
         >
-          {mode === "light" ? <Brightness4 className="fs-32" /> : <LightModeOutlined className="fs-32" />}
+          {effectiveMode === "light" ? <Brightness4 className="fs-32" /> : <LightModeOutlined className="fs-32" />}
         </AppIconButton>
       </Tooltip >
     </>

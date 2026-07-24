@@ -57,6 +57,9 @@ export type CompanyModel = {
   primaryContact: string;
   country: string;
   companyId?: string;
+  careerSlug?: string;
+  publicCompanyCode?: string;
+  careerPortalEnabled?: boolean;
   address: string;
 };
 

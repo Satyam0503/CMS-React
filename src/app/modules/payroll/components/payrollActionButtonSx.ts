@@ -1,7 +1,7 @@
 export const payrollActionButtonSx = {
-  height: 36,
-  minWidth: 36,
-  width: 36,
+  height: 40,
+  minWidth: 40,
+  width: 40,
   px: 0,
   justifyContent: "center",
   borderRadius: 1,

@@ -46,6 +46,7 @@ export type AddUpdatePayRollPayload = typeof initialPayRollValues;
 
 export type ProcessPayrollMonthPayload = {
   payMonth: string;
+  employeeIds?: string[];
 };
 
 export type GetPayRollResponseModel = ResponseData<PayRollResponseModel>;

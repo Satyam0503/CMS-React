@@ -17,13 +17,13 @@ const recruitmentBreadcrumb: Array<Breadcrumb> = [
   },
   {
     label: "PAGE.APPLICANT",
-    path: "/recruitment/applicant/{id}",
+    path: "/recruitment/applicant/{applicantid}",
     parent: "/recruitment/applications",
   },
   {
     label: "PAGE.EDIT_APPLICANT",
-    path: "/recruitment/applicant/edit/{id}",
-    parent: "/recruitment/applicant/{id}",
+    path: "/recruitment/applicant/edit/{applicantid}",
+    parent: "/recruitment/applicant/{applicantid}",
   },
   {
     label: "PAGE.JOBS",

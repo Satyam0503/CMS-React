@@ -1,5 +1,6 @@
 import {
   Card,
+  Chip,
   Stack,
   Tooltip,
   Typography,
@@ -14,13 +15,14 @@ import dayjs, { Dayjs } from "dayjs";
 import { getEmployeePayRollData, processPayrollMonth } from "./services";
 import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
 import { UploadPayRollData } from "./components/UploadPayRollData";
-import { Add, PlayArrow } from "@mui/icons-material";
+import { Add, CheckCircle, PlayArrow } from "@mui/icons-material";
 import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
 import { Nullable } from "../../../utils/common_types";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
+import { ProcessPayrollModal } from "./components/ProcessPayrollModal";
 import { toast } from "react-toastify";
 
 
@@ -58,8 +60,10 @@ const PayRollManagement = () => {
     const hasCreatePermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Create, userModulePermissions);
     const hasEditPermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Edit, userModulePermissions);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
 
     const payrollRows = payRollData.filter(row => Boolean(row.payData.payRollId));
+    const processableRows = payrollRows.filter(row => !row.payData.isProcessed);
     const isMonthProcessed = payrollRows.length > 0 && payrollRows.every(row => row.payData.isProcessed);
 
     const handleDateChange = (newValue: Dayjs | null) => {
@@ -89,13 +93,17 @@ const PayRollManagement = () => {
         setRefresh(!refresh);
     }
 
-    const handleProcessMonth = async () => {
-        if (!payMonth || payrollRows.length === 0 || isMonthProcessed || isProcessing) return;
+    const handleProcessMonth = async (employeeIds: string[]) => {
+        if (!payMonth || employeeIds.length === 0 || isMonthProcessed || isProcessing) return;
         setIsProcessing(true);
         try {
-            const { data } = await processPayrollMonth({ payMonth: payMonth.startOf("month").format("YYYY-MM-DD") });
+            const { data } = await processPayrollMonth({
+                payMonth: payMonth.startOf("month").format("YYYY-MM-DD"),
+                employeeIds,
+            });
             if (data.success) {
                 toast.success(data.message);
+                setIsProcessModalOpen(false);
                 handlePageRefresh();
             } else {
                 toast.error(data.message || i({ id: "ERROR.500" }));
@@ -136,11 +144,33 @@ const PayRollManagement = () => {
             <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
                 <Stack
                     direction="row"
-                    className="justify-content-between flex-wrap-reverse gap-2"
-                    sx={{ alignItems: "end" }}
+                    spacing={1.25}
+                    useFlexGap
+                    sx={{
+                        alignItems: "center",
+                        flexWrap: { xs: "wrap", lg: "nowrap" },
+                        width: "100%",
+                        p: { xs: 1.25, sm: 1.5 },
+                        border: 1,
+                        borderColor: "divider",
+                        borderRadius: 2,
+                        bgcolor: "action.hover",
+                        "& .MuiOutlinedInput-root": {
+                            height: 40,
+                            bgcolor: "background.paper",
+                        },
+                    }}
                 >
-                    <SearchInput search={search} setSearch={handleSearchChange} />
-                    <Stack direction="row" className="align-items-end flex-wrap gap-2">
+                    <Stack
+                        sx={{
+                            width: { xs: "100%", sm: 232 },
+                            flexShrink: 0,
+                            "& > .MuiStack-root": {
+                                pt: "0 !important",
+                                overflow: "visible",
+                            },
+                        }}
+                    >
                         <CustomisedDatePicker
                             label={i({ id: "PAYROLL.SELECT_PAY_MONTH" })}
                             views={["month", "year"]}
@@ -148,6 +178,22 @@ const PayRollManagement = () => {
                             maxDate={dayjs().subtract(1, "month")}
                             setValue={handleDateChange}
                         />
+                    </Stack>
+                    <Stack sx={{ flex: "1 1 360px", minWidth: { xs: "100%", sm: 240 } }}>
+                        <SearchInput search={search} setSearch={handleSearchChange} />
+                    </Stack>
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{
+                            alignItems: "center",
+                            flexShrink: 0,
+                            ml: { lg: 0.25 },
+                            pl: { lg: 1.25 },
+                            borderLeft: { lg: 1 },
+                            borderColor: { lg: "divider" },
+                        }}
+                    >
                         {
                             hasCreatePermission &&
                             <>
@@ -165,20 +211,40 @@ const PayRollManagement = () => {
                             </>
                         }
                         {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
-                            <Tooltip title={isMonthProcessed ? `Payroll for ${payMonth?.format("MMMM YYYY")} is processed` : `Process payroll for ${payMonth?.format("MMMM YYYY")}`} arrow placement="top">
-                                <span>
+                            isMonthProcessed ? (
+                                <Chip
+                                    icon={<CheckCircle />}
+                                    color="success"
+                                    variant="outlined"
+                                    label="Already processed"
+                                    aria-label={`Payroll for ${payMonth?.format("MMMM YYYY")} is already processed`}
+                                    sx={{
+                                        height: 40,
+                                        px: 0.5,
+                                        fontWeight: 600,
+                                        borderRadius: 1.5,
+                                        bgcolor: "background.paper",
+                                        "& .MuiChip-icon": { fontSize: 20 },
+                                    }}
+                                />
+                            ) : (
+                                <Tooltip
+                                    title={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
+                                    arrow
+                                    placement="top"
+                                >
                                     <AppButton
-                                        variant={isMonthProcessed ? "contained" : "outlined"}
-                                        color={isMonthProcessed ? "success" : "primary"}
-                                        aria-label={`Process payroll for ${payMonth?.format("MMMM YYYY")}`}
+                                        variant="outlined"
+                                        color="primary"
+                                        aria-label={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
                                         sx={payrollActionButtonSx}
-                                        disabled={isMonthProcessed || isProcessing}
-                                        onClick={handleProcessMonth}
+                                        disabled={isProcessing || processableRows.length === 0}
+                                        onClick={() => setIsProcessModalOpen(true)}
                                     >
                                         <PlayArrow fontSize="small" />
                                     </AppButton>
-                                </span>
-                            </Tooltip>
+                                </Tooltip>
+                            )
                         )}
                     </Stack>
                 </Stack>
@@ -187,6 +253,16 @@ const PayRollManagement = () => {
             {
                 isModalOpen && <AddUpdateEmployeePayRoll edit={isEdit} open={isModalOpen} initialValues={initialValues} handleClose={handleModalClose} handlePageRefresh={handlePageRefresh} />
             }
+            {isProcessModalOpen && payMonth && (
+                <ProcessPayrollModal
+                    open={isProcessModalOpen}
+                    monthLabel={payMonth.format("MMMM YYYY")}
+                    employees={processableRows}
+                    processing={isProcessing}
+                    onClose={() => setIsProcessModalOpen(false)}
+                    onConfirm={handleProcessMonth}
+                />
+            )}
         </>
     )
 }

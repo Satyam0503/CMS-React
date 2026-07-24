@@ -1,8 +1,8 @@
 import {
+  Box,
   Card,
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
   SelectChangeEvent,
   Stack,
@@ -216,12 +216,26 @@ export const ApplicantDetails = () => {
     });
   };
   return (
-    <Stack spacing={2} sx={{ flexGrow: 1 }}>
-      <Card className="p-6 h-auto">
-        <Stack className="flex-row mb-4 gap-2 flex-wrap justify-content-between">
-          <Typography variant="h5">
-            {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
-          </Typography>
+    <Stack spacing={2.5} sx={{ flexGrow: 1, pb: 3 }}>
+      <Card
+        sx={{
+          p: { xs: 2, sm: 3 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          boxShadow: "0 12px 36px rgba(15,23,42,.06)",
+          backgroundImage: "none",
+        }}
+      >
+        <Stack direction="row" mb={3} gap={2} flexWrap="wrap" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="h5" fontWeight={800}>
+              {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              Review candidate information and manage this application.
+            </Typography>
+          </Box>
 
           <Stack direction="row" spacing={1}>
             <CustomIconButton
@@ -246,7 +260,28 @@ export const ApplicantDetails = () => {
         {
           CvPreviewMode ?
             <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} /> :
-            <Grid container spacing={2.5}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                "& > .MuiGrid-root > .MuiStack-root": {
+                  minHeight: 76,
+                  p: 2,
+                  borderRadius: 2.5,
+                  bgcolor: "action.hover",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  flexWrap: "wrap",
+                  alignContent: "center",
+                },
+                "& > .MuiGrid-root > .MuiStack-root .fw-bold": {
+                  color: "text.secondary",
+                  fontSize: "0.75rem",
+                  width: "100%",
+                  lineHeight: 1.2,
+                },
+              }}
+            >
               <Grid
                 size={{
                   xs: 12,
@@ -255,7 +290,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.FULL_NAME" })} :
+                    {formatMessage({ id: "FORM.FULL_NAME" })}
                   </Typography>{" "}
                   <Typography variant="body1">
                     {applicant?.firstName + " " + applicant?.lastName}
@@ -271,7 +306,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.EMAIL" })} :
+                    {formatMessage({ id: "FORM.EMAIL" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.email}</Typography>
@@ -286,7 +321,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.PHONE" })} :
+                    {formatMessage({ id: "FORM.PHONE" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.phone}</Typography>
@@ -301,7 +336,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "JOB.POSITION" })} :
+                    {formatMessage({ id: "JOB.POSITION" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.vacancyName}</Typography>
@@ -315,7 +350,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.EXPERIENCE" })} :
+                    {formatMessage({ id: "FORM.EXPERIENCE" })}
                   </Typography>
 
                   <Typography variant="body1">
@@ -331,7 +366,7 @@ export const ApplicantDetails = () => {
                 }}>
                 <Stack direction="row" spacing={2}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
+                    {formatMessage({ id: "APPLICATION.APPLIED_DATE" })}
                   </Typography>
                   <Typography variant="body1">
                     {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
@@ -350,13 +385,10 @@ export const ApplicantDetails = () => {
                     {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                   </Typography>
                   <FormControl>
-                    <InputLabel id="demo-simple-select-label">
-                      {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
-                    </InputLabel>
                     <AppSelect
                       name="applicantStatus"
                       value={status.applicationStatus}
-                      sx={{ width: "150px" }}
+                      sx={{ width: { xs: "100%", sm: "170px" } }}
                       onChange={handleStatusChange}
                       className="select"
                       label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
@@ -400,11 +432,25 @@ export const ApplicantDetails = () => {
       </Card>
       {
         !CvPreviewMode &&
-        <Card className="p-4 flex-grow-1 gap-4 d-flex flex-column">
-          <Stack className="gap-4 flex-row justify-content-between align-items-center flex-wrap">
-            <Typography variant="h5">
-              {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
-            </Typography>
+        <Card
+          sx={{
+            p: { xs: 2, sm: 3 },
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 12px 36px rgba(15,23,42,.06)",
+            backgroundImage: "none",
+          }}
+        >
+          <Stack direction="row" gap={2} justifyContent="space-between" alignItems="center" flexWrap="wrap" mb={2.5}>
+            <Box>
+              <Typography variant="h5" fontWeight={800}>
+                {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                A chronological record of updates and hiring decisions.
+              </Typography>
+            </Box>
             <CustomisedButton
               label={formatMessage({ id: "COMMENT.ADD_COMMENT" })}
               Icon={<Add />}
@@ -414,20 +460,24 @@ export const ApplicantDetails = () => {
             />
           </Stack>
 
-          <CustomisedTable
-            keyName="id"
-            rows={commentList}
-            columns={CommentTableColumnList}
-            page={0}
-            rowsPerPage={0}
-          />
-          <Pagination
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.pageSize}
-            setPage={handlePageChange}
-            setRowPerPage={handleRowPerPageChange}
-            totalRecords={totalRecords}
-          />
+          <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2.5, overflowX: "auto" }}>
+            <CustomisedTable
+              keyName="id"
+              rows={commentList}
+              columns={CommentTableColumnList}
+              page={0}
+              rowsPerPage={0}
+            />
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <Pagination
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.pageSize}
+              setPage={handlePageChange}
+              setRowPerPage={handleRowPerPageChange}
+              totalRecords={totalRecords}
+            />
+          </Box>
           {isModalOpen && (
             <AddComment
               loading={loading}

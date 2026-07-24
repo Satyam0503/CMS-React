@@ -90,6 +90,12 @@ export const darkPalette: ColorSystemOptions = {
       box: "#1d2430",
       sidebar: "#0c111b",
     },
+    text: {
+      primary: "#f4f5f7",
+      secondary: "#b8bfca",
+      disabled: "#7e8795",
+    },
+    divider: "rgba(226, 232, 240, 0.18)",
     mode: "dark",
   },
 };
@@ -118,6 +124,12 @@ export const lightPalette: ColorSystemOptions = {
       card: "#ffffff",
       sidebar: "#000000",
     },
+    text: {
+      primary: "#20242d",
+      secondary: "#606978",
+      disabled: "#9299a6",
+    },
+    divider: "rgba(32, 36, 45, 0.14)",
     mode: "light",
   },
 };
