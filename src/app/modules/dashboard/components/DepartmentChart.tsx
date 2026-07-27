@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";

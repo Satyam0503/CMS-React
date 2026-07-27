@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  CustomisedModal } from "../../../shared/components/CustomisedModal";
+  CustomisedModal } from "../../../shared/components/C_Modal";
 import { CloudUpload } from "@mui/icons-material";
 import {
   Typography,
@@ -16,7 +16,7 @@ import {
   indianStates,
 } from "../../../../utils/constant/Constant";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { toast } from "react-toastify";

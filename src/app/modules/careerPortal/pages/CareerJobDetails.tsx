@@ -14,11 +14,11 @@ import {
   Alert,
   Avatar,
   Box,
-  Button,
   Chip,
   CircularProgress,
   Container,
   Divider,
+  IconButton,
   Paper,
   Snackbar,
   Stack,
@@ -40,6 +40,8 @@ import {
   trackCareerEvent,
 } from "../services/careerPortalService";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
+import { Alrt, Btn } from "../../../shared/components/ui";
+import { CircularLoader } from "../../../shared/components";
 
 const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value?: React.ReactNode }) =>
   value ? <Stack direction="row" spacing={1.2} alignItems="flex-start"><Box sx={{ color: "primary.main", mt: 0.15 }}>{icon}</Box><Box><Typography variant="caption" color="text.secondary">{label}</Typography><Typography fontWeight={700}>{value}</Typography></Box></Stack> : null;
@@ -120,16 +122,50 @@ export const CareerJobDetails = () => {
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
       <CareerHeader />
       <Container maxWidth="xl" sx={{ py: { xs: 3, md: 6 } }}>
-        <Button component={Link} to={companyCode ? `/careers/${companyCode}` : "/careers"} color="inherit" startIcon={<ArrowBackRounded />}>Back to jobs</Button>
-        {loading ? <Box sx={{ minHeight: 500, display: "grid", placeItems: "center" }}><CircularProgress /></Box> :
-        error || !job ? <Alert severity="error" sx={{ mt: 3 }}>{error || "Job not found."}</Alert> : (
+        <Btn component={Link} to={companyCode ? `/careers/${companyCode}` : "/careers"} color="inherit" startIcon={<ArrowBackRounded />}>Back to jobs</Btn>
+        {loading ? <Box sx={{ minHeight: 500 }}><CircularLoader /></Box> :
+        error || !job ? <Alrt severity="error" sx={{ mt: 3 }}>{error || "Job not found."}</Alrt> : (
           <>
             <Stack direction={{ xs: "column", lg: "row" }} gap={3.5} alignItems="flex-start" sx={{ mt: 2 }}>
               <Paper sx={{ flex: 1, minWidth: 0, width: "100%", borderRadius: 5, border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
-                <Box sx={{ p: { xs: 3, md: 5 }, background: "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-primary-main) 10%, var(--mui-palette-background-paper)), var(--mui-palette-background-paper))" }}>
-                  <Stack direction="row" alignItems="center" spacing={1.5}>
-                    <Avatar src={job.companyLogo ?? undefined} sx={{ width: 54, height: 54, bgcolor: "primary.lighter", color: "primary.dark", fontWeight: 900 }}>{job.companyName[0]}</Avatar>
-                    <Box><Typography fontWeight={800}>{job.companyName}</Typography><Button onClick={follow} size="small" sx={{ p: 0, minWidth: 0 }}>Follow company</Button></Box>
+                <Box
+                  sx={{
+                    p: { xs: 3, md: 5 },
+                    background: "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-primary-main) 10%, var(--mui-palette-background-paper)), var(--mui-palette-background-paper))",
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+                    <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0 }}>
+                      <Avatar src={job.companyLogo ?? undefined} sx={{ width: 54, height: 54, bgcolor: "primary.lighter", color: "primary.dark", fontWeight: 900 }}>{job.companyName[0]}</Avatar>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography fontWeight={800} sx={{ lineHeight: 1.2 }}>{job.companyName}</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
+                          Company profile
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <Btn
+                      onClick={follow}
+                      size="small"
+                      variant="contained"
+                      sx={{
+                        flexShrink: 0,
+                        px: 2,
+                        py: 1,
+                        borderRadius: 999,
+                        fontWeight: 800,
+                        textTransform: "none",
+                        color: "common.white",
+                        background: "linear-gradient(135deg, var(--mui-palette-primary-main), var(--mui-palette-secondary-main))",
+                        boxShadow: "0 10px 24px color-mix(in srgb, var(--mui-palette-primary-main) 28%, transparent)",
+                        "&:hover": {
+                          background: "linear-gradient(135deg, var(--mui-palette-primary-dark), var(--mui-palette-secondary-dark))",
+                          boxShadow: "0 14px 28px color-mix(in srgb, var(--mui-palette-primary-main) 34%, transparent)",
+                        },
+                      }}
+                    >
+                      Follow company
+                    </Btn>
                   </Stack>
                   <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} sx={{ mt: 4 }}>
                     <Box>
@@ -170,9 +206,9 @@ export const CareerJobDetails = () => {
                 <Typography color="text.secondary" sx={{ mt: 1, mb: 3, lineHeight: 1.65 }}>Your application goes directly to the hiring team for this role.</Typography>
                 {job.applicationClosedReason && <Alert severity="warning" sx={{ mb: 2 }}>{job.applicationClosedReason}</Alert>}
                 {job.applicationMode === "External" && job.externalApplicationUrl
-                  ? <Button fullWidth href={job.externalApplicationUrl} target="_blank" rel="noopener noreferrer" variant="contained" endIcon={<ArrowOutwardRounded />} disabled={!job.canApply} onClick={() => trackCareerEvent("ExternalApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode)}>Apply on company site</Button>
-                  : <Button fullWidth variant="contained" size="large" onClick={() => { trackCareerEvent("ApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode); setApplyOpen(true); }} disabled={!job.canApply} sx={{ py: 1.4 }}>Apply now</Button>}
-                <Button fullWidth component={Link} to={`/careers/${companyCode}`} sx={{ mt: 1.2 }}>More at {job.companyName}</Button>
+                  ? <Btn fullWidth href={job.externalApplicationUrl} target="_blank" rel="noopener noreferrer" variant="contained" endIcon={<ArrowOutwardRounded />} disabled={!job.canApply} onClick={() => trackCareerEvent("ExternalApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode)}>Apply on company site</Btn>
+                  : <Btn fullWidth variant="contained" size="large" onClick={() => { trackCareerEvent("ApplyClicked", getCareerVisitorToken(), job.publicJobId, companyCode); setApplyOpen(true); }} disabled={!job.canApply} sx={{ py: 1.4 }}>Apply now</Btn>}
+                <Btn fullWidth component={Link} to={`/careers/${companyCode}`} sx={{ mt: 1.2 }}>More at {job.companyName}</Btn>
               </Paper>
             </Stack>
             {!!similar.length && <Box sx={{ mt: 7 }}><Typography variant="h4" fontWeight={900}>Similar opportunities</Typography><Stack spacing={2} sx={{ mt: 2.5 }}>{similar.map((item) => <JobCard key={item.publicJobId} job={item} />)}</Stack></Box>}

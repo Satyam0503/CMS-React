@@ -15,7 +15,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { useIntl } from "react-intl";
 import { updateSalary } from "../employeeServices";

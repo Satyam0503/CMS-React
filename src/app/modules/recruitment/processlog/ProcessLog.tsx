@@ -8,12 +8,12 @@ import {
 } from "../models";
 import { getProcessLogData } from "../services";
 import { SearchInput } from "../../../shared/components/SearchInput";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/C_Table";
 import { ModulesName } from "../../../../utils/enums";
 import { ProcessLogTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../../shared/components/Pagination";
 import { useAppSelector } from "../../../Redux/hooks";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { FilterList } from "@mui/icons-material";
 import { ProcessLogFilter } from "./components/ProcessLogFilter";
 import { countAppliedFilter } from "../../../../utils/common";

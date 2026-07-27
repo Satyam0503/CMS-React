@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import {
     Avatar,
     Box,
@@ -9,7 +9,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import {
     relativeTimeFormatter,
     sanitizeHtmlContent,

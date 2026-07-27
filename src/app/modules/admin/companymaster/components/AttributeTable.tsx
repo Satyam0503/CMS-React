@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 import { AddNewAttributeItem } from "./AddNewAttributeItem";
 import { AttributeItemRow, ReqProps } from "./AttributeItemRow";

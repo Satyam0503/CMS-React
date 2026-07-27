@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import FolderIcon from "@mui/icons-material/Folder";
 import { useIntl } from "react-intl";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 

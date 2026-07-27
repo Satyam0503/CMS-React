@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Close, CloudUploadOutlined } from "@mui/icons-material";
-import CustomisedButton from "../../shared/components/CustomisedButton";
+import CustomisedButton from "../../shared/components/C_Button";
 
 import { AppSelect, AppTextField } from "../../shared/components/ui";
 type Props = {

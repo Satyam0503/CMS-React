@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { PasswordResetModel } from "./components/PasswordResetModal";
 import { NotificationSetting } from "./components/NotificationSetting";
 

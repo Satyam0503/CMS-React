@@ -1,6 +1,6 @@
 import { Grid, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { } from "../../../../../utils/common_types";
 import { FC } from "react";
 import {

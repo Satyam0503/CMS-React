@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";

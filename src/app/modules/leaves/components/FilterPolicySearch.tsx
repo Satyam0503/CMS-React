@@ -6,7 +6,7 @@ import { Stack } from "@mui/system";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { getLeavePolicies } from "../leaveServices";
 import { useIntl } from "react-intl";
 import { LeavePolicyModel } from "../model";

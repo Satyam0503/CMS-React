@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { CustomIconButton } from "./CustomIconButton";
+import { CustomIconButton } from "./C_IconButton";
 import {
   AssignmentOutlined,
   DeleteOutlineOutlined,

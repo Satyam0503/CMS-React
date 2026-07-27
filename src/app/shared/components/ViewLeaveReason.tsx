@@ -1,8 +1,8 @@
 import { Box, Stack, Typography } from "@mui/material"
 import { useState } from "react";
 import { useIntl } from "react-intl"
-import { CustomisedModal } from "./CustomisedModal";
-import CustomisedButton from "./CustomisedButton";
+import { CustomisedModal } from "./C_Modal";
+import CustomisedButton from "./C_Button";
 
 export const ViewLeaveReason = ({ reason }: { reason: string }) => {
     const { formatMessage: i } = useIntl();

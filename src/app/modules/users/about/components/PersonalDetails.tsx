@@ -7,7 +7,7 @@ import {
 } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
 import { useState } from "react";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
 import { Link, useParams } from "react-router-dom";

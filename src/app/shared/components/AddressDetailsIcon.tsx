@@ -1,8 +1,8 @@
 import { Place } from "@mui/icons-material";
-import { CustomIconButton } from "./CustomIconButton";
-import { CustomisedModal } from "./CustomisedModal";
+import { CustomIconButton } from "./C_IconButton";
+import { CustomisedModal } from "./C_Modal";
 import { Stack, Typography } from "@mui/material";
-import CustomisedButton from "./CustomisedButton";
+import CustomisedButton from "./C_Button";
 import { useState } from "react";
 
 export const AddressDetailsIcon = (props: { address: string }) => {

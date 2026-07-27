@@ -2,7 +2,7 @@ import * as React from "react";
 import { Badge, Card, Stack, Tooltip } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import {
   addJobVacancy,
@@ -13,7 +13,7 @@ import {
 import { toast } from "react-toastify";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { ViewJobDetails } from "./components/ViewJobDetails";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { GetAllVacancyPayload, JobModal } from "../models";
 import { AddEditJob } from "./components/AddEditJob";
 import {
@@ -45,10 +45,10 @@ import { StyleStatus } from "../../../shared/components/StyledStatus";
 import { Box } from "@mui/system";
 
 const CustomDataGrid = lazy(() =>
-  import("../../../shared/components/CustomDataGrid").then((module) => ({
+  import("../../../shared/components/C_DataGrid").then((module) => ({
     default: module.CustomDataGrid,
   }))
-) as typeof import("../../../shared/components/CustomDataGrid")["CustomDataGrid"];
+) as typeof import("../../../shared/components/C_DataGrid")["CustomDataGrid"];
 
 const initialValues: JobModal = {
   jobId: "",

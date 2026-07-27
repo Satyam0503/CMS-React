@@ -40,8 +40,8 @@ import {
 import { useAppSelector } from "../../../Redux/hooks";
 import { StyleStatus } from "../../../shared/components/StyledStatus";
 import { Add, Edit } from "@mui/icons-material";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
+import CustomisedButton from "../../../shared/components/C_Button";
 
 import { AppIconButton, AppSelect, AppTextField } from "../../../shared/components/ui";
 import { ModulesName, Permission } from "../../../../utils/enums";

@@ -10,14 +10,14 @@ import {
   Edit,
   LocationOn,
 } from "@mui/icons-material";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { AddUpdateWorkHistory } from "./components/AddUpdateWorkHistory";
 import { WorkHistoryModel } from "../models";
 import { deleteEmployeeWorkHistory, getWorkHistory } from "../userservices";
 import { useParams } from "react-router-dom";
 import { dateFormatter, hasModuleFeaturePermission } from "../../../../utils/common";
 import dayjs, { Dayjs } from "dayjs";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../Redux/hooks";
 import { ModulesName, Permission } from "../../../../utils/enums";

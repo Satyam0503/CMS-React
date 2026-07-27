@@ -18,7 +18,7 @@ import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useIntl } from "react-intl";
 import dayjs from "dayjs";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import HolidayForm from "./HolidayForm";
 import { toast } from "react-toastify";
 import { deleteCalendarItem } from "../calendarServices";

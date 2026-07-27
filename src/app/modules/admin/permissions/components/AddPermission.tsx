@@ -10,7 +10,7 @@ import {
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { addEditRole, getAllModulePermission } from "../../adminservices";
 import {
   ModulePermissoinModel,

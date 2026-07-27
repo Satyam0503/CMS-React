@@ -6,7 +6,6 @@ import {
 import {
   Alert,
   Box,
-  Button,
   CircularProgress,
   Container,
   IconButton,
@@ -20,6 +19,8 @@ import { CareerHeader } from "../components/CareerHeader";
 import { useCareerVisitor } from "../hooks/useCareerVisitor";
 import { getSavedJobs, unsaveJob } from "../services/careerPortalService";
 import { SavedCareerJob } from "../types/careerPortalTypes";
+import { Alrt, Btn } from "../../../shared/components/ui";
+import { CircularLoader } from "../../../shared/components";
 
 export const SavedJobsPage = () => {
   const { visitorToken, sessionToken } = useCareerVisitor();
@@ -50,8 +51,8 @@ export const SavedJobsPage = () => {
           <Box sx={{ width: 52, height: 52, borderRadius: 3, display: "grid", placeItems: "center", bgcolor: "primary.lighter", color: "primary.dark" }}><BookmarkRounded /></Box>
           <Box><Typography variant="h3" fontWeight={950} letterSpacing="-.04em">Saved jobs</Typography><Typography color="text.secondary">Keep promising opportunities in one calm place.</Typography></Box>
         </Stack>
-        {error && <Alert severity="error" sx={{ mt: 3 }}>{error}</Alert>}
-        {loading ? <Box sx={{ minHeight: 320, display: "grid", placeItems: "center" }}><CircularProgress /></Box> : (
+        {error && <Alrt severity="error" sx={{ mt: 3 }}>{error}</Alrt>}
+        {loading ? <Box sx={{ minHeight: 320 }}><CircularLoader /></Box> : (
           <Stack spacing={2} sx={{ mt: 4 }}>
             {jobs.map((job) => (
               <Paper key={job.publicJobId} sx={{ p: 3, borderRadius: 4, border: "1px solid", borderColor: "divider" }}>
@@ -62,13 +63,13 @@ export const SavedJobsPage = () => {
                     {!!job.locations?.length && <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 1.5, color: "text.secondary" }}><LocationOnRounded fontSize="small" /><Typography variant="body2">{job.locations.join(", ")}</Typography></Stack>}
                   </Box>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <Button component={Link} to={`/careers/${job.companyCode}/jobs/${job.slug}`} variant="contained">View job</Button>
+                    <Btn component={Link} to={`/careers/${job.companyCode}/jobs/${job.slug}`} variant="contained">View job</Btn>
                     <IconButton aria-label="Remove saved job" onClick={() => remove(job.publicJobId)}><DeleteOutlineRounded /></IconButton>
                   </Stack>
                 </Stack>
               </Paper>
             ))}
-            {!jobs.length && !error && <Paper sx={{ p: 7, textAlign: "center", borderRadius: 4, border: "1px dashed", borderColor: "divider", background: "linear-gradient(145deg, background.paper, color-mix(in srgb, var(--mui-palette-primary-main) 5%, var(--mui-palette-background-paper)))" }}><BookmarkRounded color="primary" sx={{ fontSize: 52 }} /><Typography variant="h5" fontWeight={850} sx={{ mt: 1.5 }}>Nothing saved yet</Typography><Typography color="text.secondary" sx={{ mt: 1 }}>Save interesting roles while you explore. They will stay here after refresh.</Typography><Button component={Link} to="/careers" variant="contained" sx={{ mt: 3 }}>Explore jobs</Button></Paper>}
+            {!jobs.length && !error && <Paper sx={{ p: 7, textAlign: "center", borderRadius: 4, border: "1px dashed", borderColor: "divider", background: "linear-gradient(145deg, background.paper, color-mix(in srgb, var(--mui-palette-primary-main) 5%, var(--mui-palette-background-paper)))" }}><BookmarkRounded color="primary" sx={{ fontSize: 52 }} /><Typography variant="h5" fontWeight={850} sx={{ mt: 1.5 }}>Nothing saved yet</Typography><Typography color="text.secondary" sx={{ mt: 1 }}>Save interesting roles while you explore. They will stay here after refresh.</Typography><Btn component={Link} to="/careers" variant="contained" sx={{ mt: 3 }}>Explore jobs</Btn></Paper>}
           </Stack>
         )}
       </Container>

@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import { Link } from "react-router-dom";
 import { JobModal } from "../../recruitment/models";
 import { getAllJobVacancies } from "../../recruitment/services";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { JobTypeMapper } from "../../../../utils/common";
 import { getVacancyPayload } from "../../recruitment/jobs/Jobs";

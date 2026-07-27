@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import TextEditor from "../../../../shared/components/TextEditor";
 import { useFormik } from "formik";
 import jobSchema from "../../../../../utils/Schema/jobSchema";

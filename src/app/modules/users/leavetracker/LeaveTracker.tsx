@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { LeaveApplication } from "./components/LeaveApplication";
 import { Add } from "@mui/icons-material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useParams } from "react-router-dom";
 import { EmployeeLeaveTypesCharts } from "./components/LeaveTypesChart";
 import { MyLeaveRequests } from "./components/MyLeaveRequest";

@@ -1,6 +1,6 @@
 import { Stack, Typography, Box, Avatar } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { useEffect, useState } from "react";
 import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
 import dayjs from "dayjs";

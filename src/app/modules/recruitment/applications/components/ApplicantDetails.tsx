@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Close, Edit, Visibility } from "@mui/icons-material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -30,11 +30,11 @@ import {
   CommentTableColumnList,
 } from "../../../../../utils/constant/Constant";
 
-import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../../shared/components/C_Table";
 import { AddComment } from "./AddComment";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { ApplicantStatus, ModulesName, Permission } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";

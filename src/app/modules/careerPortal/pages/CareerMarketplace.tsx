@@ -11,7 +11,6 @@ import {
   Autocomplete,
   Avatar,
   Box,
-  Button,
   Chip,
   CircularProgress,
   Container,
@@ -23,7 +22,6 @@ import {
   Paper,
   Stack,
   Switch,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -39,6 +37,8 @@ import { discoverJobs, getCompanies, getCompanyProfile, getJobLocations, getSave
 import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisitor";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
 import { buildCareerSearchParams, CareerSearchFilters } from "../utils/careerSearch";
+import { Alrt, Btn, Sel, Txt } from "../../../shared/components/ui";
+import { CircularLoader } from "../../../shared/components";
 
 type Filters = CareerSearchFilters;
 
@@ -62,7 +62,7 @@ const FilterContent = ({
   <Stack spacing={2.25}>
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Stack direction="row" spacing={1} alignItems="center"><TuneRounded color="primary" /><Typography variant="h6" fontWeight={850}>Filters</Typography></Stack>
-      <Button size="small" onClick={reset}>Reset</Button>
+      <Btn size="small" onClick={reset}>Reset</Btn>
     </Stack>
     <Autocomplete
       freeSolo
@@ -70,21 +70,21 @@ const FilterContent = ({
       value={filters.location}
       onInputChange={(_, value) => setFilters((x) => ({ ...x, location: value }))}
       onChange={(_, value) => setFilters((x) => ({ ...x, location: value ?? "" }))}
-      renderInput={(params) => <TextField {...params} label="Search location" placeholder="City, state, or remote" />}
+      renderInput={(params) => <Txt {...params} label="Search location" placeholder="City, state, or remote" />}
     />
-    <TextField select label="Work arrangement" value={filters.workplaceType} onChange={(e) => setFilters((x) => ({ ...x, workplaceType: e.target.value }))}>
+    <Sel label="Work arrangement" value={filters.workplaceType} onChange={(e) => setFilters((x) => ({ ...x, workplaceType: e.target.value }))}>
       <MenuItem value="">Any arrangement</MenuItem><MenuItem value="Remote">Remote</MenuItem><MenuItem value="Hybrid">Hybrid</MenuItem><MenuItem value="On-site">On-site</MenuItem>
-    </TextField>
-    <TextField select label="Employment type" value={filters.employmentType} onChange={(e) => setFilters((x) => ({ ...x, employmentType: e.target.value }))}>
+    </Sel>
+    <Sel label="Employment type" value={filters.employmentType} onChange={(e) => setFilters((x) => ({ ...x, employmentType: e.target.value }))}>
       <MenuItem value="">Any type</MenuItem><MenuItem value="Full-time">Full-time</MenuItem><MenuItem value="Part-time">Part-time</MenuItem><MenuItem value="Contract">Contract</MenuItem><MenuItem value="Internship">Internship</MenuItem>
-    </TextField>
-    <TextField label="Minimum experience" type="number" value={filters.experienceMin} onChange={(e) => setFilters((x) => ({ ...x, experienceMin: e.target.value }))} />
-    <TextField label="Department" value={filters.department} onChange={(e) => setFilters((x) => ({ ...x, department: e.target.value }))} />
-    <TextField label="Industry" value={filters.industry} onChange={(e) => setFilters((x) => ({ ...x, industry: e.target.value }))} />
-    <TextField label="Skills (comma separated)" value={filters.skills} onChange={(e) => setFilters((x) => ({ ...x, skills: e.target.value }))} />
-    <TextField select label="Date posted" value={filters.datePostedDays} onChange={(e) => setFilters((x) => ({ ...x, datePostedDays: e.target.value }))}>
+    </Sel>
+    <Txt label="Minimum experience" type="number" value={filters.experienceMin} onChange={(e) => setFilters((x) => ({ ...x, experienceMin: e.target.value }))} />
+    <Txt label="Department" value={filters.department} onChange={(e) => setFilters((x) => ({ ...x, department: e.target.value }))} />
+    <Txt label="Industry" value={filters.industry} onChange={(e) => setFilters((x) => ({ ...x, industry: e.target.value }))} />
+    <Txt label="Skills (comma separated)" value={filters.skills} onChange={(e) => setFilters((x) => ({ ...x, skills: e.target.value }))} />
+    <Sel label="Date posted" value={filters.datePostedDays} onChange={(e) => setFilters((x) => ({ ...x, datePostedDays: e.target.value }))}>
       <MenuItem value="">Any time</MenuItem><MenuItem value="1">Past 24 hours</MenuItem><MenuItem value="7">Past week</MenuItem><MenuItem value="30">Past month</MenuItem>
-    </TextField>
+    </Sel>
     <Box>
       <FormControlLabel control={<Switch checked={filters.featured} onChange={(e) => setFilters((x) => ({ ...x, featured: e.target.checked }))} />} label="Featured roles" />
       <FormControlLabel control={<Switch checked={filters.urgentHiring} onChange={(e) => setFilters((x) => ({ ...x, urgentHiring: e.target.checked }))} />} label="Urgent hiring" />
@@ -227,19 +227,19 @@ export const CareerMarketplace = () => {
               <Typography sx={{ mt: 2, maxWidth: 680, color: "rgba(255,255,255,.78)", fontSize: { md: "1.12rem" }, lineHeight: 1.75 }}>
                 {profile?.shortDescription || "Search ambitious teams, useful work, and roles designed around where you want your career to go."}
               </Typography>
-              <Button onClick={() => setSubscribeOpen(true)} variant="contained" color="inherit" sx={{ mt: 3, color: "primary.dark", bgcolor: "#fff", "&:hover": { bgcolor: "grey.100" } }}>
+              <Btn onClick={() => setSubscribeOpen(true)} color="inherit" sx={{ mt: 3, color: "primary.dark", bgcolor: "#fff", "&:hover": { bgcolor: "grey.100" } }}>
                 Get matching jobs
-              </Button>
+              </Btn>
             </Box>
           </Box>
 
           <Paper sx={{ mx: { md: 5 }, mt: { xs: 3, md: -3.5 }, position: "relative", zIndex: 2, p: 1.25, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
             <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
-              <TextField fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
-              <TextField select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: 190, "& fieldset": { border: 0 } }}>
+              <Txt fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
+              <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: 190, "& fieldset": { border: 0 } }}>
                 <MenuItem value="relevance">Most relevant</MenuItem><MenuItem value="newest">Newest first</MenuItem><MenuItem value="oldest">Oldest first</MenuItem><MenuItem value="deadline">Deadline soon</MenuItem><MenuItem value="salary-high">Salary: high to low</MenuItem><MenuItem value="salary-low">Salary: low to high</MenuItem><MenuItem value="most-saved">Most saved</MenuItem><MenuItem value="most-viewed">Most viewed</MenuItem>
-              </TextField>
-              {!desktop && <Button variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)}>Filters {activeFilters ? `(${activeFilters})` : ""}</Button>}
+              </Txt>
+              {!desktop && <Btn variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)}>Filters {activeFilters ? `(${activeFilters})` : ""}</Btn>}
             </Stack>
           </Paper>
 
@@ -279,12 +279,12 @@ export const CareerMarketplace = () => {
               <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "end" }} gap={1} sx={{ mb: 2.5 }}>
                 <Box>
                   <Typography variant="h4" fontWeight={900} letterSpacing="-.035em">Open opportunities</Typography>
-                  <Typography color="text.secondary" sx={{ mt: 0.5 }}>{loading ? "Searching…" : `${total} role${total === 1 ? "" : "s"} found`}</Typography>
+                  <Typography color="text.secondary" sx={{ mt: 0.5 }}>{loading ? "Searching..." : `${total} role${total === 1 ? "" : "s"} found`}</Typography>
                 </Box>
                 {activeFilters > 0 && <Chip label={`${activeFilters} active filter${activeFilters === 1 ? "" : "s"}`} onDelete={() => setFilters(defaults)} />}
               </Stack>
-              {error && <Alert severity="error" sx={{ mb: 2.5, borderRadius: 3 }}>{error}</Alert>}
-              {loading ? <Box sx={{ minHeight: 360, display: "grid", placeItems: "center" }}><CircularProgress /></Box> : (
+              {error && <Alrt severity="error" sx={{ mb: 2.5, borderRadius: 3 }}>{error}</Alrt>}
+              {loading ? <Box sx={{ minHeight: 360 }}><CircularLoader /></Box> : (
                 <Stack spacing={2}>
                   {jobs.map((job) => (
                     <JobCard
@@ -339,7 +339,7 @@ export const CareerMarketplace = () => {
       </Box>
       <Drawer anchor="bottom" open={drawer} onClose={() => setDrawer(false)} PaperProps={{ sx: { borderRadius: "28px 28px 0 0", p: 3, maxHeight: "88vh", overflowY: "auto" } }}>
         <FilterContent filters={filters} setFilters={setFilters} reset={() => setFilters(defaults)} locations={locations} />
-        <Button variant="contained" onClick={() => setDrawer(false)} sx={{ mt: 3 }}>Show {total} jobs</Button>
+        <Btn variant="contained" onClick={() => setDrawer(false)} sx={{ mt: 3 }}>Show {total} jobs</Btn>
       </Drawer>
       <SubscribeModal open={subscribeOpen} onClose={() => setSubscribeOpen(false)} companyCode={companyCode} />
     </Box>

@@ -29,7 +29,7 @@ import {
   getModulePermissions,
   hasModuleFeaturePermission,
 } from "../../../utils/common";
-import { CustomIconButton } from "../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../shared/components/C_IconButton";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
@@ -51,15 +51,15 @@ import {
 import { AvatarCell } from "../../shared/components/AvatarCell";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
-import CustomisedButton from "../../shared/components/CustomisedButton";
+import CustomisedButton from "../../shared/components/C_Button";
 import * as XLSX from "xlsx";
 
 import { AppButton, AppIconButton } from "../../shared/components/ui";
 const CustomDataGrid = lazy(() =>
-  import("../../shared/components/CustomDataGrid").then((module) => ({
+  import("../../shared/components/C_DataGrid").then((module) => ({
     default: module.CustomDataGrid,
   })),
-) as (typeof import("../../shared/components/CustomDataGrid"))["CustomDataGrid"];
+) as (typeof import("../../shared/components/C_DataGrid"))["CustomDataGrid"];
 
 type ViewMode = "table" | "grid";
 

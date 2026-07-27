@@ -11,7 +11,7 @@ import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import {
   ModulePermissoinModel,
   PermissionModel,

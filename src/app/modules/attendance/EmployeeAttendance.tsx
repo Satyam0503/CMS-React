@@ -28,9 +28,9 @@ import {
   Days,
 } from "../../../utils/constant/Constant";
 
-import { CustomIconButton } from "../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../shared/components/C_IconButton";
 import { SearchInput } from "../../shared/components/SearchInput";
-import { CustomisedTable } from "../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../shared/components/C_Table";
 import { AttendanceModel } from "../../../utils/common_types";
 import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
 import { getAllEmployees } from "../employees/employeeServices";

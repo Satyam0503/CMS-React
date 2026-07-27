@@ -8,14 +8,14 @@ import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { EmployeeLeaveBalanceData, LeavePolicyModel } from "../model";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { getLeavePolicies, updateEmployeeLeaveBalance } from "../leaveServices";
 import {
   AccrualPeriodMapper,
   blockInvalidCharOnNumberField,
   getCustomStatusCodesErrorMessage,
 } from "../../../../utils/common";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { toast } from "react-toastify";
 
 import { AppCheckbox, AppTextField } from "../../../shared/components/ui";

@@ -4,10 +4,11 @@ import {
   LocationOnRounded,
   WorkOutlineRounded,
 } from "@mui/icons-material";
-import { Avatar, Box, Button, Card, Chip, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, Chip, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { SaveJobButton } from "./SaveJobButton";
+import { Btn } from "../../../shared/components/ui";
 
 export const JobCard = ({ job, initiallySaved = false, onSavedChange }: {
   job: PublicJobSummary;
@@ -66,7 +67,7 @@ export const JobCard = ({ job, initiallySaved = false, onSavedChange }: {
             <Stack direction="row" gap={0.7} sx={{ overflow: "hidden" }}>
               {job.skills?.slice(0, 4).map((skill) => <Chip key={skill} size="small" variant="outlined" label={skill} />)}
             </Stack>
-            <Button endIcon={<ArrowForwardRounded />} sx={{ flexShrink: 0 }}>View role</Button>
+            <Btn endIcon={<ArrowForwardRounded />} sx={{ flexShrink: 0 }}>View role</Btn>
           </Stack>
         </Box>
       </Stack>

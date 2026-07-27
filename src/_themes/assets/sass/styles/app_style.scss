@@ -867,15 +867,6 @@ button:hover .ql-fill,
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      height: auto;
-    }
-
-    @media (min-width: 960px) {
-      justify-content: space-between;
-    }
-
-    @media (min-width: 1200px) {
-      width: 100%;
     }
 
     .calendar-controls {

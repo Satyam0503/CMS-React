@@ -10,9 +10,9 @@ import {
   Typography,
 } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { getAllJobVacancies } from "../../services";
 import {

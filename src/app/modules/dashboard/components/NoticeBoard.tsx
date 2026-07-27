@@ -1,6 +1,6 @@
 import { Typography, Stack, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { NoticeResponseModel } from "../../noticeboard/models";

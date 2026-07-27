@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import { Link, Stack } from "@mui/material";
 import { useIntl } from "react-intl";
 import { BarChart } from "@mui/icons-material";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 
 function createData(
   sno: number,

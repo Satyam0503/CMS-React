@@ -9,7 +9,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Edit, Visibility } from "@mui/icons-material";
 import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import {
   getDateDiffInYears,
   getStatusCodeString,
@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import { PayslipPayload } from "../../payroll/models";

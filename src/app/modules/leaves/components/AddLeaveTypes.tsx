@@ -1,6 +1,6 @@
 import {
   FC } from "react"
-import { CustomisedModal } from "../../../shared/components/CustomisedModal"
+import { CustomisedModal } from "../../../shared/components/C_Modal"
 import { LeaveType } from "../model"
 import { FormControl,
   FormControlLabel,
@@ -15,7 +15,7 @@ import { Formik } from "formik"
 import { SelectInput } from "../../../shared/components/form-component/SelectInput"
 import { LeaveTypeConstant } from "../../../../utils/constant/Constant"
 import { TextInput } from "../../../shared/components/form-component/TextInput"
-import CustomisedButton from "../../../shared/components/CustomisedButton"
+import CustomisedButton from "../../../shared/components/C_Button"
 import { leaveTypeValidationSchma } from "../../../../utils/Schema/leaveManagementValidationSchemas"
 import { createUpdateLeaveType } from "../leaveServices"
 import { toast } from "react-toastify"

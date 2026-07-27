@@ -2,7 +2,7 @@ import { Card, Stack, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { getAllModulesInfo, updateModuleAccess } from "../../adminservices";
 import { ModulesInfoModel } from "../../models";
 import Grid from "@mui/material/Grid";

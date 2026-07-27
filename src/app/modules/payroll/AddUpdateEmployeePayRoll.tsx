@@ -1,13 +1,13 @@
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../shared/components/C_Modal";
 import { Formik } from "formik";
 import { TextInput } from "../../shared/components/form-component/TextInput";
 import { DialogActions, Grid } from "@mui/material";
 import { payrollValidationSchema } from "../../../utils/Schema/payrollValidationSchema";
-import CustomisedButton from "../../shared/components/CustomisedButton";
+import CustomisedButton from "../../shared/components/C_Button";
 import { PayRollDataModel } from "./models";
 import { Nullable } from "../../../utils/common_types";
-import CustomisedDatePicker from "../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { DateView } from "@mui/x-date-pickers";
 import { ErrorLabel } from "../../shared/components/form-component/ErrorLabel";

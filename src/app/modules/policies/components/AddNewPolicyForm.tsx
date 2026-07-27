@@ -1,7 +1,7 @@
 import {
   useEffect,
   useState } from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { useIntl } from "react-intl";
 import { Grid,
   Stack } from "@mui/system";
@@ -17,7 +17,7 @@ import {
 import { getAllDepartments, getAllRoles } from "../../admin/adminservices";
 import { DepartmentModel, RoleModel } from "../../admin/models";
 import { useAppSelector } from "../../../Redux/hooks";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { addPolicy, updatePolicy } from "../policyServices";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";

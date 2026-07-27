@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
 import { AddApplicant } from "./components/AddApplicant";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { getAllApplicantList } from "../services";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -30,10 +30,10 @@ import { PaginationModel } from "../../../../utils/common_types";
 import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
 
 const CustomDataGrid = lazy(() =>
-  import("../../../shared/components/CustomDataGrid").then((module) => ({
+  import("../../../shared/components/C_DataGrid").then((module) => ({
     default: module.CustomDataGrid,
   }))
-) as typeof import("../../../shared/components/CustomDataGrid")["CustomDataGrid"];
+) as typeof import("../../../shared/components/C_DataGrid")["CustomDataGrid"];
 
 const useApplicantTableColumnList = (): GridColDef<Applicant>[] => {
   const { formatMessage: i } = useIntl();

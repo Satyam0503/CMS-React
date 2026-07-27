@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { FC } from "react";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import TextEditor from "../../../../shared/components/TextEditor";
 import { useIntl } from "react-intl";
 

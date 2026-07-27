@@ -10,7 +10,7 @@ import { Autocomplete,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { JobType } from "../../../../../utils/constant/Constant";
 import { resetFilter, setJobsFilter } from "../../../../Redux/Reducers/filterSlice";

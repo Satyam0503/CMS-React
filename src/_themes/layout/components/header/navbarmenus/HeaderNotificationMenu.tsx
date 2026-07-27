@@ -19,7 +19,7 @@ import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } f
 import { getNotificationTitle, redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
-import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
+import { showCustomToast } from "../../../../../app/shared/components/C_Toast";
 import { useNavigate } from "react-router-dom";
 import { createNotifications } from "../../../../../app/modules/dashboard/components/pushNotificationUtils";
 import { toAbsoluteUrl } from "../../../../helpers";

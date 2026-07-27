@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { Check, ErrorOutline } from "@mui/icons-material";
 import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 import { toast } from "react-toastify";

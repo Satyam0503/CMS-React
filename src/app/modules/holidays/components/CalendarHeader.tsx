@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { Dayjs } from "dayjs";
 import { useIntl } from "react-intl";
 import { CalendarItemType } from "../models";

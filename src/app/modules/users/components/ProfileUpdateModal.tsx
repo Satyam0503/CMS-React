@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { Box, Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -7,7 +7,7 @@ import {
   CloudUploadOutlined,
   DeleteOutlineOutlined,
 } from "@mui/icons-material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { removeProfilePicture, updateProfilePicture } from "../userservices";

@@ -1,6 +1,6 @@
 import { Card, Typography } from "@mui/material"
 import { useIntl } from "react-intl"
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useAppSelector } from "../../../Redux/hooks";
 import { NotificationsActive } from "@mui/icons-material";
 

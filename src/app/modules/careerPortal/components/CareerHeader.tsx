@@ -3,8 +3,9 @@ import {
   BookmarkBorderRounded,
   NotificationsNoneRounded,
 } from "@mui/icons-material";
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { Btn } from "../../../shared/components/ui";
 
 export const CareerHeader = () => (
   <Box
@@ -48,12 +49,12 @@ export const CareerHeader = () => (
           </Box>
         </Stack>
         <Stack direction="row" spacing={0.5}>
-          <Button component={Link} to="/careers/saved" color="inherit" startIcon={<BookmarkBorderRounded />}>
+          <Btn component={Link} to="/careers/saved" color="inherit" startIcon={<BookmarkBorderRounded />}>
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Saved jobs</Box>
-          </Button>
-          <Button component={Link} to="/careers/preferences" color="inherit" startIcon={<NotificationsNoneRounded />}>
+          </Btn>
+          <Btn component={Link} to="/careers/preferences" color="inherit" startIcon={<NotificationsNoneRounded />}>
             <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Job alerts</Box>
-          </Button>
+          </Btn>
         </Stack>
       </Stack>
     </Container>

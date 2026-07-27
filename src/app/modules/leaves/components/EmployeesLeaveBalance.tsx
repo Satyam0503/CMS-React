@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { useEffect, useState } from "react";
 import {
   EmployeeLeaveBalanceData,

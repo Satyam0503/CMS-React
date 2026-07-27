@@ -2,7 +2,7 @@ import { Grid, Card, Stack, Typography, Skeleton } from "@mui/material";
 import { useCallback } from "react";
 import { useIntl } from "react-intl";
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
-import { CustomCard } from "../../../../shared/components/CustomCard";
+import { CustomCard } from "../../../../shared/components/C_Card";
 import { defaultPieChartSeries } from "../../../../../utils/common";
 import { toAbsoluteUrl } from "../../../../../_themes/helpers";
 import { DonutChart } from "../../../../shared/components/DonutChart";

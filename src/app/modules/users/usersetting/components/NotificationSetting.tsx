@@ -9,7 +9,7 @@ import { NotificationPreferences } from "../../models";
 import { useEffect, useState } from "react";
 import { getNotificationPreferences, updateNotificationPreferences } from "../../userservices";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { toast } from "react-toastify";
 import { ListSkeleton } from "../../about/components/ListSkeleton";
 

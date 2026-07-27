@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "./CustomisedButton";
-import { CustomisedModal } from "./CustomisedModal";
+import CustomisedButton from "./C_Button";
+import { CustomisedModal } from "./C_Modal";
 
 interface PropsTypes {
   open: boolean;

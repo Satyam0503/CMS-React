@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { ArrowForwardRounded, LockOutlined, MailOutlineRounded, ShieldOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { setToken } from "../../../Redux/Reducers/authSlice";

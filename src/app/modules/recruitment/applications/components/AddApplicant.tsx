@@ -5,12 +5,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { FC, useEffect, useState } from "react";
 import { CloudUpload, } from "@mui/icons-material";
 import { Formik } from "formik";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";

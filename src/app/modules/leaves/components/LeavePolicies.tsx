@@ -1,7 +1,7 @@
 import { Add } from "@mui/icons-material";
 import { Card, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { useIntl } from "react-intl";
 import AddLeavePolicy from "./AddLeavePolicy";
 import { LeavePolicyModel } from "../model";
@@ -11,7 +11,7 @@ import {
 import {
   EmployeeLeavePoliciesColumnList,
 } from "../../../../utils/constant/Constant";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/C_Table";
 
 const LeavePolicyModelInitials: LeavePolicyModel = {
   id: null,

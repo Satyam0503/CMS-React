@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { useLocation,
   useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { Stack,
   Typography,
 } from "@mui/material";

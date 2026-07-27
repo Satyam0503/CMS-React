@@ -4,7 +4,7 @@ import {
 import { Formik,
   FormikProps } from "formik";
 import { policyVersionSchema } from "../../../../utils/Schema/policySchema";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { useIntl } from "react-intl";
 import { Grid,
   Stack } from "@mui/system";
@@ -15,7 +15,7 @@ import {
   FormLabel,
   Typography,
 } from "@mui/material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";

@@ -7,8 +7,8 @@ import {
   Stack,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { FC, useEffect, useState } from "react";
 import { SkillModel } from "../../models";
 import React from "react";

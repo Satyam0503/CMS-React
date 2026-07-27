@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import * as Yup from "yup";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";

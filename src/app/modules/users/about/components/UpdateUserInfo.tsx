@@ -7,12 +7,12 @@ import {
 } from "@mui/material";
 import { FC, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 import { bloodGroups, EmploymentType, Gender } from "../../../../../utils/constant/Constant";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";

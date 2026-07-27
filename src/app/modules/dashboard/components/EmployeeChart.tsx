@@ -1,7 +1,7 @@
 import { IntlShape, useIntl } from "react-intl";
 import { FC, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { GenderModel } from "../model";
 import { defaultPieChartSeries, genderMapper } from "../../../../utils/common";

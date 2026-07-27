@@ -22,7 +22,7 @@ import {
 } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import AddIcon from "@mui/icons-material/Add";
 import PolicyRoundedIcon from "@mui/icons-material/PolicyRounded";

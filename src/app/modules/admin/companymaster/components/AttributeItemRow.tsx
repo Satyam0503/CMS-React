@@ -3,7 +3,7 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";

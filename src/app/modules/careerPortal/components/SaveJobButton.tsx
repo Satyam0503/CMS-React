@@ -3,6 +3,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useCareerVisitor } from "../hooks/useCareerVisitor";
 import { saveJob, unsaveJob } from "../services/careerPortalService";
+import { IconBtn } from "../../../shared/components/ui";
 
 type Props = { publicJobId: string; initiallySaved?: boolean; onChange?: (saved: boolean) => void };
 
@@ -30,7 +31,7 @@ export const SaveJobButton = ({ publicJobId, initiallySaved = false, onChange }:
   return (
     <Tooltip title={saved ? "Remove saved job" : "Save job"}>
       <span>
-        <IconButton
+        <IconBtn
           disabled={busy}
           onClick={toggle}
           color={saved ? "primary" : "default"}
@@ -38,7 +39,7 @@ export const SaveJobButton = ({ publicJobId, initiallySaved = false, onChange }:
           sx={{ border: "1px solid", borderColor: "divider", bgcolor: "background.paper" }}
         >
           {saved ? <BookmarkRounded /> : <BookmarkBorderRounded />}
-        </IconButton>
+        </IconBtn>
       </span>
     </Tooltip>
   );

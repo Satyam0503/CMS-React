@@ -3,8 +3,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";

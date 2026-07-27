@@ -12,7 +12,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmploymentType, Gender, bloodGroups } from "../../../../utils/constant/Constant";
 import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";

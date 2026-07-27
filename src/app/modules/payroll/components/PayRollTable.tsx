@@ -21,7 +21,7 @@ import { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { generateEmployeePaySlip } from "../services";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { PdfViewer } from "../../../shared/components/PdfViewer";
 
 import { AppIconButton } from "../../../shared/components/ui";

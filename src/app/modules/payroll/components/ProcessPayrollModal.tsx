@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { AppButton, AppCheckbox } from "../../../shared/components/ui";
 import { PayRollResponseModel } from "../models";
 

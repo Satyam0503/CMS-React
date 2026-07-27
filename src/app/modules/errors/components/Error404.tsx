@@ -2,7 +2,7 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Grid, Stack, Typography } from "@mui/material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { Home } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 

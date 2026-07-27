@@ -1,5 +1,5 @@
 import { Card, Stack, Typography } from "@mui/material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import {
   Add,
   CalendarToday,
@@ -20,7 +20,7 @@ import {
 } from "../../userservices";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";

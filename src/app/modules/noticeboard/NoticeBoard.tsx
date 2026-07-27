@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 
 import { SearchInput } from "../../shared/components/SearchInput";
-import { CustomIconButton } from "../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../shared/components/C_IconButton";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AddNotice } from "./components/AddNotice";
@@ -21,7 +21,7 @@ import { countAppliedFilter, hasModuleFeaturePermission, initialNoticeFilter } f
 import { ModulesName, Permission } from "../../../utils/enums";
 import { GetAllNoticePayload, NoticeResponseModel } from "./models";
 import { getAllNotices } from "./services";
-import { CustomisedTable } from "../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../shared/components/C_Table";
 import { NoticeBoardTableColumnList } from "../../../utils/constant/Constant";
 import { Pagination } from "../../shared/components/Pagination";
 import { initialNoticeValuesObj } from "./components/MyNotices";

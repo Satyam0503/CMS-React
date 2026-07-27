@@ -5,7 +5,7 @@ import { Document, Page } from "react-pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { CustomIconButton } from "./CustomIconButton";
+import { CustomIconButton } from "./C_IconButton";
 import { ErrorOutline, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 

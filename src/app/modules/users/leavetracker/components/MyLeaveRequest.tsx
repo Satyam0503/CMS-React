@@ -27,9 +27,9 @@ import {
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import clsx from "clsx";
 import { LEAVE_REQUEST_STATUS } from "../../../../../utils/enums";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { Delete, Edit } from "@mui/icons-material";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { ViewLeaveReason } from "../../../../shared/components/ViewLeaveReason";
 import { toast } from "react-toastify";
