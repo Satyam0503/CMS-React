@@ -33,6 +33,10 @@ export enum Permission {
   Delete = "Delete",
   Edit = "Edit",
   Create = "Create",
+  ViewOwn = "ViewOwn",
+  ViewAll = "ViewAll",
+  CreateForEmployee = "CreateForEmployee",
+  Override = "Override",
 }
 export enum Modules {
   Dashboard = 1,
@@ -120,6 +124,7 @@ export enum Roles {
   Administrator = 1,
   HRManager = 2,
   Employee = 3,
+  HRExecutive = 4,
 }
 
 export enum TIME_PERIOD_MAP {

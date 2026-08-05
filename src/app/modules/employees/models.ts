@@ -58,7 +58,7 @@ export interface EmployeeModel {
 
 export type InviteNewEmployeeModel = Pick<
   EmployeeModel,
-  "employeeId" | "firstName" | "lastName" | "email"
+  "employeeId" | "firstName" | "lastName" | "email" | "reportingManager"
 >;
 
 export type InviteEmployeeResponse = InviteNewEmployeeModel & {
@@ -69,7 +69,7 @@ export type EmployeeLeaveBalance = Array<{
   leaveBalanceId?: string;
   employeeId: string;
   leavePolicyId: string;
-  balance: number;
+  totalAllocated: number;
 }>;
 
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;

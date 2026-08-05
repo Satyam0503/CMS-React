@@ -31,6 +31,8 @@ const LeavePolicyModelInitials: LeavePolicyModel = {
   holidayInclusive: false,
   attendanceStatusCode: "",
   applicableTo: [],
+  policyType: 1,
+  workFromHome: null,
 };
 
 function LeavePolicies() {

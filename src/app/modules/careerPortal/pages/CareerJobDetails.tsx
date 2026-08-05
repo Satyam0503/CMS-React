@@ -12,7 +12,6 @@ import {
 } from "@mui/icons-material";
 import {
   Alert,
-  Avatar,
   Box,
   Chip,
   CircularProgress,
@@ -42,6 +41,7 @@ import {
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { Alrt, Btn } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
+import { CompanyLogo } from "../components/CompanyLogo";
 
 const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value?: React.ReactNode }) =>
   value ? <Stack direction="row" spacing={1.2} alignItems="flex-start"><Box sx={{ color: "primary.main", mt: 0.15 }}>{icon}</Box><Box><Typography variant="caption" color="text.secondary">{label}</Typography><Typography fontWeight={700}>{value}</Typography></Box></Stack> : null;
@@ -135,12 +135,20 @@ export const CareerJobDetails = () => {
                   }}
                 >
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
-                    <Stack direction="row" alignItems="center" spacing={1.5} sx={{ minWidth: 0 }}>
-                      <Avatar src={job.companyLogo ?? undefined} sx={{ width: 54, height: 54, bgcolor: "primary.lighter", color: "primary.dark", fontWeight: 900 }}>{job.companyName[0]}</Avatar>
+                    <Stack
+                      component={Link}
+                      to={`/careers/${companyCode}`}
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.5}
+                      aria-label={`View ${job.companyName} company profile`}
+                      sx={{ minWidth: 0, color: "inherit", textDecoration: "none", borderRadius: 2, "&:hover": { color: "primary.main" }, "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 4 } }}
+                    >
+                      <CompanyLogo src={job.companyLogo} name={job.companyName} size={60} />
                       <Box sx={{ minWidth: 0 }}>
                         <Typography fontWeight={800} sx={{ lineHeight: 1.2 }}>{job.companyName}</Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-                          Company profile
+                          View company profile
                         </Typography>
                       </Box>
                     </Stack>

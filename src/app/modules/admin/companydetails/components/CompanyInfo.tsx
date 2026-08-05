@@ -8,7 +8,9 @@ import {
   Grid,
   ListItemText,
   MenuItem,
+  FormControlLabel,
   Stack,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -144,6 +146,8 @@ export const CompanyInfo = () => {
     formData.append("CompanyName", values.companyName);
     formData.append("DefaultLanguage", values.defaultLanguage);
     formData.append("Address", values.address);
+    formData.append("EmployeeIdPrefix", values.employeeIdPrefix ?? "");
+    formData.append("AutoGenerateEmployeeId", String(values.autoGenerateEmployeeId ?? true));
     if (values.applicationLanguage.length > 0) {
       values.applicationLanguage.forEach(language =>
         formData.append('ApplicationLanguage', language)
@@ -192,7 +196,9 @@ export const CompanyInfo = () => {
             companyName: methodResult.companyName,
             defaultLanguage: methodResult.defaultLanguage,
             applicationLanguage: methodResult.applicationLanguage,
-            address: methodResult.address
+            address: methodResult.address,
+            employeeIdPrefix: methodResult.employeeIdPrefix ?? "",
+            autoGenerateEmployeeId: methodResult.autoGenerateEmployeeId ?? true,
           }));
           setLoading(false);
         }
@@ -368,6 +374,23 @@ export const CompanyInfo = () => {
                     : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang }) + ", ")}</Typography>
                 }
               </Stack>
+            </Grid>
+          </Grid>
+          <Divider sx={{ my: 1 }} />
+          <Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Employee ID format</Typography>
+              <Typography variant="body2">Set the company prefix, such as CD for Codeji. Automatic IDs use CD-0001; turn it off to enter IDs manually.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              {isEdit ? (
+                <Stack spacing={1}>
+                  <AppTextField label="Company employee code" inputProps={{ maxLength: 6 }} {...getFieldProps("employeeIdPrefix")} />
+                  <FormControlLabel control={<Switch checked={values.autoGenerateEmployeeId ?? true} onChange={(event) => setFieldValue("autoGenerateEmployeeId", event.target.checked)} />} label="Generate employee IDs automatically" />
+                </Stack>
+              ) : (
+                <Typography variant="body1">{companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : `${companyInfo.employeeIdPrefix || "Company"}-0001`}</Typography>
+              )}
             </Grid>
           </Grid>
           <Divider sx={{ my: 1 }} />

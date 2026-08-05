@@ -8,7 +8,7 @@ import IconStat from "../../../../shared/components/IconStat";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useUserDetails } from "../../UserDataProvider";
 import { useIntl } from "react-intl";
-import dayjs from "dayjs";
+import { getYearsAtCurrentCompany } from "./profileHeaderUtils";
 
 export const ProfileHeader = () => {
   const companyName = useAppSelector((state) => state.user.userData?.companyName);
@@ -16,7 +16,7 @@ export const ProfileHeader = () => {
   const { formatMessage: i } = useIntl();
   const theme = useTheme();
   const experience = userDetails.totalWorkExperience ? (userDetails.totalWorkExperience / 12).toFixed(1) : 0;
-  const totalYearAtCurrentCompany = dayjs().diff(userDetails.dateOfJoining, "years");
+  const totalYearAtCurrentCompany = getYearsAtCurrentCompany(userDetails.dateOfJoining);
 
   return (
     <Grid container spacing={2}>

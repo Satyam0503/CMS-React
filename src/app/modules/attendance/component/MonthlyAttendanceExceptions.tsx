@@ -6,6 +6,10 @@ import {
   Box,
   Card,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   MenuItem,
   Stack,
   TablePagination,
@@ -51,6 +55,11 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [bulkDecision, setBulkDecision] = useState("");
+  const [wfhException, setWfhException] = useState<PayrollException | null>(null);
+  const [checkInTime, setCheckInTime] = useState("");
+  const [checkOutTime, setCheckOutTime] = useState("");
+  const [correctionReason, setCorrectionReason] = useState("");
+  const [savingCorrection, setSavingCorrection] = useState(false);
 
   const load = useCallback(async (recalculate = false) => {
     setLoading(true);
@@ -149,6 +158,49 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     window.dispatchEvent(new CustomEvent("edit-attendance-exception", {
       detail: { employeeId: item.employeeId, date: affectedDate },
     }));
+  };
+
+  const openWfhHoursCorrection = (item: PayrollException) => {
+    const date = item.affectedDates?.[0];
+    if (!date) {
+      toast.error("No affected attendance date is available for this exception.");
+      return;
+    }
+    const localDate = new Date(date).toISOString().slice(0, 10);
+    setCheckInTime(`${localDate}T09:00`);
+    setCheckOutTime(`${localDate}T18:00`);
+    setCorrectionReason("");
+    setWfhException(item);
+  };
+
+  const saveWfhHoursCorrection = async () => {
+    if (!wfhException || !checkInTime || !checkOutTime || !correctionReason.trim()) {
+      toast.error("Check-in, check-out, and a correction reason are required.");
+      return;
+    }
+    setSavingCorrection(true);
+    try {
+      const { data } = await patchRequest<
+        { checkInTime: string; checkOutTime: string; remarks: string; exceptionVersion: number },
+        { success: boolean; message: string; statusCode: number }
+      >(`api/wfh/attendance-exceptions/${wfhException.id}/hours`, {
+        checkInTime: new Date(checkInTime).toISOString(),
+        checkOutTime: new Date(checkOutTime).toISOString(),
+        remarks: correctionReason.trim(),
+        exceptionVersion: wfhException.version,
+      });
+      if (!data.success) {
+        toast.error(data.message || "WFH hours could not be corrected.");
+        return;
+      }
+      toast.success(data.message || "WFH hours updated and exception resolved.");
+      setWfhException(null);
+      await load(true);
+    } catch {
+      toast.error("WFH hours could not be corrected. Refresh and try again.");
+    } finally {
+      setSavingCorrection(false);
+    }
   };
 
   return (
@@ -253,7 +305,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                     size="small"
                     variant="outlined"
                     disabled={!item.affectedDates?.length}
-                    onClick={() => openAttendanceRecord(item)}
+                    onClick={() => item.exceptionType === "WFH_INSUFFICIENT_HOURS" ? openWfhHoursCorrection(item) : openAttendanceRecord(item)}
                   >
                     Edit
                   </AppButton>
@@ -276,6 +328,23 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           setPage(0);
         }}
       />
+      <Dialog open={!!wfhException} onClose={() => !savingCorrection && setWfhException(null)} fullWidth maxWidth="xs">
+        <DialogTitle>Correct WFH working hours</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Enter the verified working hours. The WFH attendance status is retained; this exception resolves only when the policy minimum is met.
+          </Typography>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <AppTextField label="Check-in" type="datetime-local" value={checkInTime} onChange={(event) => setCheckInTime(event.target.value)} InputLabelProps={{ shrink: true }} />
+            <AppTextField label="Check-out" type="datetime-local" value={checkOutTime} onChange={(event) => setCheckOutTime(event.target.value)} InputLabelProps={{ shrink: true }} />
+            <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <AppButton variant="outlined" disabled={savingCorrection} onClick={() => setWfhException(null)}>Cancel</AppButton>
+          <AppButton disabled={savingCorrection} onClick={() => void saveWfhHoursCorrection()}>{savingCorrection ? "Saving…" : "Update & resolve"}</AppButton>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }

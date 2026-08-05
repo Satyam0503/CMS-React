@@ -28,6 +28,7 @@ import {
   getCustomStatusCodesErrorMessage,
   getModulePermissions,
   hasModuleFeaturePermission,
+  canAccessHrManagement,
 } from "../../../utils/common";
 import { CustomIconButton } from "../../shared/components/C_IconButton";
 import { ModulesName, Permission } from "../../../utils/enums";
@@ -76,6 +77,9 @@ const useEmployeeTableColumnList =
     const onlineUsers = useAppSelector(
       (state) => state.onlineUsers.onlineUsers,
     );
+    const canViewEmployeePhoneNumbers = canAccessHrManagement(
+      useAppSelector((state) => state.user.userData?.roleType),
+    );
     return [
       {
         field: "employeeId",
@@ -116,15 +120,19 @@ const useEmployeeTableColumnList =
         resizable: false,
         flex: 1,
       },
-      {
-        field: "phoneNumber",
-        headerName: i({ id: "FORM.PHONE" }),
-        description: i({ id: "FORM.PHONE" }),
-        minWidth: 150,
-        sortable: false,
-        resizable: false,
-        flex: 1,
-      },
+      ...(canViewEmployeePhoneNumbers
+        ? [
+            {
+              field: "phoneNumber",
+              headerName: i({ id: "FORM.PHONE" }),
+              description: i({ id: "FORM.PHONE" }),
+              minWidth: 150,
+              sortable: false,
+              resizable: false,
+              flex: 1,
+            } satisfies GridColDef<GetAllEmployeeResponseModel>,
+          ]
+        : []),
       {
         field: "department",
         headerName: i({ id: "FORM.DEPARTMENT" }),

@@ -16,7 +16,7 @@ import { AppButton, AppIconButton } from "../../../../shared/components/ui";
 interface ModuleCardProps {
   moduleId: string;
   titleMessageId: string;
-  descriptionMessageId: string;
+  descriptionMessageId?: string;
   modules: ModulesInfoModel[];
   moduleCostant?: string;
   disabled?: boolean;
@@ -104,13 +104,15 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               </span>
             </AppButton>
           </Stack>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ lineHeight: 1.6 }}
-          >
-            {formatMessage({ id: descriptionMessageId })}
-          </Typography>
+          {descriptionMessageId && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ lineHeight: 1.6 }}
+            >
+              {formatMessage({ id: descriptionMessageId })}
+            </Typography>
+          )}
         </Stack>
         {/* <Stack
           direction="row"

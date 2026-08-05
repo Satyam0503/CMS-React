@@ -9,12 +9,11 @@ import {
 import {
   Alert,
   Autocomplete,
-  Avatar,
   Box,
   Chip,
-  CircularProgress,
   Container,
   Drawer,
+  Divider,
   FormControlLabel,
   InputAdornment,
   MenuItem,
@@ -33,12 +32,13 @@ import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { CareerHeader } from "../components/CareerHeader";
 import { JobCard } from "../components/JobCard";
 import { SubscribeModal } from "../components/SubscribeModal";
-import { discoverJobs, getCompanies, getCompanyProfile, getJobLocations, getSavedJobs, getVisitorPreferences, trackCareerEvent } from "../services/careerPortalService";
+import { discoverJobs, getCompanies, getCompanyProfile, getJobLocations, getVisitorPreferences, trackCareerEvent } from "../services/careerPortalService";
 import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisitor";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
 import { buildCareerSearchParams, CareerSearchFilters } from "../utils/careerSearch";
 import { Alrt, Btn, Sel, Txt } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
+import { CompanyLogo } from "../components/CompanyLogo";
 
 type Filters = CareerSearchFilters;
 
@@ -64,6 +64,7 @@ const FilterContent = ({
       <Stack direction="row" spacing={1} alignItems="center"><TuneRounded color="primary" /><Typography variant="h6" fontWeight={850}>Filters</Typography></Stack>
       <Btn size="small" onClick={reset}>Reset</Btn>
     </Stack>
+    <Typography variant="body2" color="text.secondary">Narrow roles by location, work style, and experience.</Typography>
     <Autocomplete
       freeSolo
       options={locations}
@@ -85,6 +86,7 @@ const FilterContent = ({
     <Sel label="Date posted" value={filters.datePostedDays} onChange={(e) => setFilters((x) => ({ ...x, datePostedDays: e.target.value }))}>
       <MenuItem value="">Any time</MenuItem><MenuItem value="1">Past 24 hours</MenuItem><MenuItem value="7">Past week</MenuItem><MenuItem value="30">Past month</MenuItem>
     </Sel>
+    <Divider />
     <Box>
       <FormControlLabel control={<Switch checked={filters.featured} onChange={(e) => setFilters((x) => ({ ...x, featured: e.target.checked }))} />} label="Featured roles" />
       <FormControlLabel control={<Switch checked={filters.urgentHiring} onChange={(e) => setFilters((x) => ({ ...x, urgentHiring: e.target.checked }))} />} label="Urgent hiring" />
@@ -96,7 +98,9 @@ const FilterContent = ({
 export const CareerMarketplace = () => {
   const { companyCode } = useParams();
   const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
+  // Keep the filter drawer until there is enough width for a useful sidebar and
+  // readable job cards side by side.
+  const desktop = useMediaQuery(theme.breakpoints.up("lg"));
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filters, setFilters] = useState(defaults);
@@ -106,7 +110,6 @@ export const CareerMarketplace = () => {
   const [profile, setProfile] = useState<PublicCompanyProfile | null>(null);
   const [featuredCompanies, setFeaturedCompanies] = useState<PublicCompanyProfile[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [recentJobs] = useState<PublicJobSummary[]>(() => {
     try { return JSON.parse(localStorage.getItem("career_recent_jobs") || "[]"); }
     catch { return []; }
@@ -138,9 +141,6 @@ export const CareerMarketplace = () => {
     getJobLocations(companyCode)
       .then(({ data }) => setLocations(data.methodResults ?? []))
       .catch(() => setLocations([]));
-    getSavedJobs(getCareerVisitorToken(), getCareerSession())
-      .then(({ data }) => setSavedIds(new Set((data.methodResults ?? []).map((job) => job.publicJobId))))
-      .catch(() => setSavedIds(new Set()));
   }, [companyCode]);
 
   useEffect(() => {
@@ -249,7 +249,7 @@ export const CareerMarketplace = () => {
               <Stack direction="row" spacing={2} sx={{ mt: 2.5, overflowX: "auto", pb: 1 }}>
                 {featuredCompanies.map((company) => (
                   <Paper key={company.publicCompanyCode} component="a" href={`/careers/${company.publicCompanyCode}`} sx={{ minWidth: 235, p: 2.5, borderRadius: 4, border: "1px solid", borderColor: "divider", color: "text.primary", textDecoration: "none", "&:hover": { borderColor: "primary.main" } }}>
-                    <Avatar src={company.logoUrl ?? undefined} sx={{ width: 48, height: 48, bgcolor: "primary.lighter", color: "primary.dark", fontWeight: 900 }}>{company.displayName[0]}</Avatar>
+                    <CompanyLogo src={company.logoUrl} name={company.displayName} size={52} />
                     <Typography fontWeight={850} sx={{ mt: 1.5 }}>{company.displayName}</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>{company.industry || company.companySize || "Explore open roles"}</Typography>
                   </Paper>
@@ -269,9 +269,9 @@ export const CareerMarketplace = () => {
             </Box>
           )}
 
-          <Stack direction="row" alignItems="flex-start" spacing={3.5} sx={{ mt: 6 }}>
+          <Stack direction={{ xs: "column", lg: "row" }} alignItems="flex-start" spacing={{ xs: 3, lg: 4 }} sx={{ mt: { xs: 4, md: 6 } }}>
             {desktop && (
-              <Paper sx={{ width: 292, flexShrink: 0, p: 3, borderRadius: 4, border: "1px solid", borderColor: "divider", position: "sticky", top: 94 }}>
+              <Paper sx={{ width: 308, flexShrink: 0, p: 3, borderRadius: 4, border: "1px solid", borderColor: "divider", position: "sticky", top: 94, bgcolor: "background.paper", boxShadow: "0 14px 34px color-mix(in srgb, var(--mui-palette-common-black) 7%, transparent)" }}>
                 <FilterContent filters={filters} setFilters={setFilters} reset={() => setFilters(defaults)} locations={locations} />
               </Paper>
             )}
@@ -290,12 +290,6 @@ export const CareerMarketplace = () => {
                     <JobCard
                       key={job.publicJobId}
                       job={job}
-                      initiallySaved={savedIds.has(job.publicJobId)}
-                      onSavedChange={(saved) => setSavedIds((current) => {
-                        const next = new Set(current);
-                        saved ? next.add(job.publicJobId) : next.delete(job.publicJobId);
-                        return next;
-                      })}
                     />
                   ))}
                   {!jobs.length && !error && (

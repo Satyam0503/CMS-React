@@ -127,7 +127,7 @@ export default function CalendarDays(props: Props) {
                 height: "100%",
             }}
         >
-            <Card className="calendar-days-grid" >
+            <Card className="calendar-days-grid calendar-weekdays" >
                 {
                     weekDayShort.map((weekDay, index) => {
                         return (
@@ -166,7 +166,11 @@ export default function CalendarDays(props: Props) {
                                     checkForOccasionForDate(day, e)
                                 }
                             }}
-                            className={clsx("hover-theme-color calendar-day hover-secondary ", { "selected-day": selectedDate?.date() === day })}
+                            className={clsx("hover-theme-color calendar-day hover-secondary ", {
+                                "selected-day": selectedDate?.date() === day,
+                                "today-cell": checkIsSameDay(day as number),
+                                "calendar-day-empty": typeof day !== "number",
+                            })}
                         >
                             <Typography variant="h6" className={clsx({ "today": checkIsSameDay(day as number) })}
                                 sx={{

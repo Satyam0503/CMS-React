@@ -1,6 +1,6 @@
 import { useIntl } from "react-intl";
-import { Navigate, Outlet, Route, Routes, useNavigate } from "react-router-dom";
-import { Box, Stack, } from "@mui/material";
+import { Link as RouterLink, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { Box, ButtonBase, Stack, } from "@mui/material";
 import { CorporateFare, Work } from "@mui/icons-material";
 import { useEffect } from "react";
 import { TabModel } from "../../../../utils/common_types";
@@ -43,7 +43,7 @@ export const CompanyDetailsTab = () => {
 const CompanyDetails = () => {
   const { setPageTitle } = usePageData();
   const { formatMessage } = useIntl();
-  const navigate = useNavigate();
+  const location = useLocation();
   const { currentLanguage } = useAppLang();
   useEffect(() => {
     setPageTitle(formatMessage({ id: "PAGE.COMPANY_DETAILS" }));
@@ -54,20 +54,23 @@ const CompanyDetails = () => {
       <Stack direction="row" spacing={0.5} className="tab-container" sx={{ bgcolor: "background.card" }} >
         {tabsRoutes.map((tab) => {
           return (
-            <Box
-              component={"div"}
+            <ButtonBase
+              component={RouterLink}
+              to={tab.to}
               key={tab.tabId}
               className={clsx("tab-box", {
                 tab_active: checkIsActive(location.pathname, tab.to),
               })}
-              onClick={() => navigate(tab.to)}
+              role="tab"
+              aria-selected={checkIsActive(location.pathname, tab.to)}
               sx={{
                 color: "text.secondary",
+                textDecoration: "none",
               }}
             >
               {tab.icon}
               {formatMessage({ id: tab.title })}
-            </Box>
+            </ButtonBase>
           );
         })}
       </Stack>

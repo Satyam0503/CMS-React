@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, SxProps, Theme } from "@mui/material";
 import React from "react";
 import { AppButton } from "./ui";
 
@@ -13,6 +13,8 @@ type Props = {
   disabled?: boolean;
   permission?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
+  sx?: SxProps<Theme>;
   color?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
 };
 
@@ -28,6 +30,8 @@ const CustomisedButton = (props: Props) => {
     permission = true,
     type = "button",
     loading = false,
+    fullWidth = false,
+    sx,
     color = "primary",
   } = props;
 
@@ -43,6 +47,8 @@ const CustomisedButton = (props: Props) => {
           className={className}
           type={type}
           loading={loading}
+          fullWidth={fullWidth}
+          sx={sx}
           endIcon={Icon}
           loadingIndicator={
             <CircularProgress

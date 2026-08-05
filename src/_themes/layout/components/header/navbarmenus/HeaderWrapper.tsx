@@ -15,9 +15,10 @@ import { DEFAULT_COMPANY_LOGO } from "../../../../../utils/constant/Constant";
 import { AppIconButton } from "../../../../../app/shared/components/ui";
 type Props = {
   openSideBar: () => void;
+  sidebarState: "mobile" | "collapsed" | "expanded";
 };
 
-export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
+export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const isMobileScreen = useMediaQuery(theme.breakpoints.up("sm"));
@@ -32,6 +33,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar }) => {
         borderBottom: "1px solid",
         borderColor: "divider",
       }}
+      data-sidebar-state={sidebarState}
       className="app-header px-4 flex-row align-items-center justify-content-between position-relative z-3"
     >
       <Stack direction="row" alignItems="center" spacing={1.5}>

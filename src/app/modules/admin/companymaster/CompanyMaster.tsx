@@ -2,7 +2,7 @@ import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { Box, Stack } from "@mui/material";
 import { Departments } from "./components/Department";
-import { Add, CorporateFare, Work } from "@mui/icons-material";
+import { Add, CorporateFare, Work, AccessTimeRounded } from "@mui/icons-material";
 import {
   Navigate,
   Outlet,
@@ -22,6 +22,7 @@ import {
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { CustomAttributeWrapper } from "./components/CustomAttributeWrapper";
 import { usePageData } from "../../../Context/PageDataProvider";
+import { OfficeSchedule } from "./components/OfficeSchedule";
 
 const tabsRoutes: TabModel[] = [
   {
@@ -36,6 +37,12 @@ const tabsRoutes: TabModel[] = [
     title: "COMPANY_MASTER.TAB.JOB_TILES",
     icon: <Work />,
   },
+  {
+    tabId: 3,
+    to: "/admin/companymaster/office-schedule",
+    title: "Office Schedule",
+    icon: <AccessTimeRounded />,
+  },
 ];
 
 export const CompanyMasterTab = () => {
@@ -45,6 +52,7 @@ export const CompanyMasterTab = () => {
         <Route index element={<Navigate to={"department"} />} />
         <Route path="department" element={<Departments />} />
         <Route path="jobtitle" element={<JobTitles />} />
+        <Route path="office-schedule" element={<OfficeSchedule />} />
         <Route
           path="customattribute/:customAttributeId"
           element={<CustomAttributeWrapper />}

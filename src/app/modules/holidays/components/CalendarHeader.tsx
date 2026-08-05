@@ -2,8 +2,8 @@ import {
   Box,
   Card,
   FormControl,
-  InputLabel,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -54,16 +54,17 @@ export default function CalendarHeader(props: Props) {
           <KeyboardArrowRightIcon />
         </AppIconButton>
       </Box>
-      <Box component='div' sx={{ width: '150px' }} >
-        <FormControl fullWidth>
-          <InputLabel id="calendar-item-type">{i({ id: "OCCASION.TYPES.CATEGORY" })}</InputLabel>
+      <Box component="div" className="calendar-filter">
+        <Typography component="label" htmlFor="item-dropdown" className="calendar-filter-label">
+          {i({ id: "OCCASION.TYPES.CATEGORY" })}
+        </Typography>
+        <FormControl fullWidth size="small">
           <AppSelect
             labelId="calendar-item-type"
             id="item-dropdown"
             value={props.category}
-            label={i({ id: "OCCASION.TYPES.CATEGORY" })}
+            inputProps={{ "aria-label": i({ id: "OCCASION.TYPES.CATEGORY" }) }}
             onChange={(e) => props.handleCategoryChange(e.target.value)}
-            size='small'
           >
             <MenuItem value={0}>{i({ id: "OCCASION.TYPES.ALL" })}</MenuItem>
             <MenuItem value={CALENDAR_ITEM.HOLIDAY}>{i({ id: "OCCASION.TYPES.HOLIDAY" })}</MenuItem>

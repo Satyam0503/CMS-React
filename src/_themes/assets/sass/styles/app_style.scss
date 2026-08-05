@@ -858,10 +858,13 @@ button:hover .ql-fill,
 
   .calendar-header {
     display: flex;
-    padding: 20px;
-    gap: 15px;
+    padding: 16px 20px;
+    gap: 16px;
     flex-direction: column;
     justify-content: center;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 14px;
+    box-shadow: none;
 
     @media (min-width: 600px) {
       flex-direction: row;
@@ -874,18 +877,55 @@ button:hover .ql-fill,
       align-items: center;
       gap: 0.5rem;
       height: 100%;
+      min-width: 0;
+
+      .calendar-input {
+        min-width: 220px;
+      }
     }
 
-    .calendar-filters {
-      .MuiFormControl-root {
-        .MuiInputBase-root {
-          .MuiSelect-select {
-            display: flex;
-            font-size: 16px;
-            justify-content: start;
-            align-items: center;
-          }
+    .calendar-filter {
+      width: 176px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+
+      .calendar-filter-label {
+        color: var(--mui-palette-text-secondary);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1;
+      }
+
+      .MuiInputBase-root {
+        min-height: 36px;
+        border-radius: 8px;
+      }
+
+      .MuiSelect-select {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+    }
+
+    @media (max-width: 599px) {
+      padding: 14px;
+
+      .calendar-controls {
+        width: 100%;
+
+        .calendar-input {
+          min-width: 0;
+          flex: 1;
         }
+      }
+
+      .calendar-filter {
+        width: 100%;
       }
     }
   }
@@ -900,29 +940,76 @@ button:hover .ql-fill,
       align-items: stretch;
       justify-content: start;
       gap: 0;
-      grid-auto-rows: min-content;
+      grid-auto-rows: minmax(104px, 1fr);
       background-color: var(--mui-palette-background-card);
-      overflow-x: scroll;
+      border: 1px solid var(--mui-palette-divider);
+      border-radius: 14px;
+      overflow-x: auto;
       scrollbar-width: none;
+
+      &.calendar-weekdays {
+        grid-auto-rows: 64px;
+        overflow: hidden;
+        box-shadow: none;
+
+        .MuiTypography-root {
+          color: var(--mui-palette-secondary-main);
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: 0.02em;
+        }
+      }
     }
 
     .calendar-day {
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--mui-palette-grey-300);
-      gap: 2px;
-      align-items: center;
-      justify-content: end;
-      aspect-ratio: 1;
+      border-right: 1px solid var(--mui-palette-divider);
+      border-bottom: 1px solid var(--mui-palette-divider);
+      gap: 6px;
+      align-items: stretch;
+      justify-content: flex-start;
+      min-width: 112px;
+      min-height: 104px;
+      padding: 12px 10px 8px;
       position: relative;
-      border-radius: 0.25rem;
+      border-radius: 0;
+
+      &:nth-child(7n) {
+        border-right: 0;
+      }
+
+      &:nth-last-child(-n + 7) {
+        border-bottom: 0;
+      }
+
+      &.calendar-day-empty {
+        background-color: color-mix(in srgb, var(--mui-palette-background-default) 55%, transparent);
+        cursor: default;
+      }
+
+      &.selected-day {
+        background-color: color-mix(in srgb, var(--mui-palette-secondary-main) 10%, transparent);
+        box-shadow: inset 0 0 0 1px var(--mui-palette-secondary-main);
+      }
+
+      &.today-cell .MuiTypography-root {
+        display: inline-flex;
+        width: 34px;
+        height: 34px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: var(--mui-palette-secondary-main);
+        color: var(--mui-palette-secondary-contrastText);
+      }
 
       @media (min-width: 600px) {
-        justify-content: center;
+        justify-content: flex-start;
       }
 
       @media (min-width: 850px) {
-        overflow: auto;
+        overflow: hidden;
       }
 
       .calendar-day-holiday {
@@ -1174,6 +1261,61 @@ button:hover .ql-fill,
 
 .leave-policy-checkbox {
   margin-left: 0;
+  width: 100%;
+  justify-content: space-between;
+  .MuiFormControlLabel-label {
+    white-space: normal;
+  }
+}
+
+.leave-policy-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .policy-modal-section {
+    padding: 1.25rem;
+    border: 1px solid var(--mui-palette-grey-200);
+    border-radius: 16px;
+    background: var(--mui-palette-background-paper);
+    margin-bottom: 0.75rem;
+  }
+
+  .policy-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .policy-toggle-row {
+    width: 100%;
+    .MuiFormControlLabel-root {
+      width: 100%;
+      margin-bottom: 0.75rem;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      .MuiFormControlLabel-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin-right: 0.75rem;
+        white-space: normal;
+      }
+      .MuiCheckbox-root,
+      .MuiSwitch-root {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .policy-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
 }
 
 //Policies Page Styles

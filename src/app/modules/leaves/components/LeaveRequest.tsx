@@ -389,11 +389,18 @@ export const LeaveApprovalModal = ({
     comment: leaveRequest.comment,
   });
   const [isUpdating, setIsUpdating] = useState(false);
+  const isRejection = leaveData.status === LEAVE_REQUEST_STATUS.REJECTED;
+  const friendlyMessage = (message: string | undefined, fallback: string) =>
+    message?.replace(/^[A-Z][A-Z0-9_]+:\s*/, "").trim() || fallback;
 
   // console.log(leaveData);
 
   const handleLeaveStatusUpdate = async () => {
     if (isUpdating) return;
+    if (isRejection && !leaveData.comment?.trim()) {
+      toast.error(i({ id: "LEAVE.REJECTION_REASON_REQUIRED", defaultMessage: "Rejection requires a reason." }));
+      return;
+    }
     setIsUpdating(true);
     try {
       const payload: LeaveRequestApprovalPayload = {
@@ -409,14 +416,17 @@ export const LeaveApprovalModal = ({
         refresh();
         handleClose();
       } else {
-        toast.error(
-          data.message ||
-            i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" }),
-        );
+        toast.error(friendlyMessage(data.message, i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" })));
       }
     } catch (error) {
       console.error((error as Error).message);
-      toast.error(i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" }));
+      const responseMessage =
+        typeof error === "object" && error !== null && "response" in error
+          ? (error as { response?: { data?: { message?: unknown } } }).response?.data?.message
+          : undefined;
+      toast.error(
+        friendlyMessage(typeof responseMessage === "string" ? responseMessage : undefined, i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" })),
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -453,7 +463,10 @@ export const LeaveApprovalModal = ({
             value={leaveData.status}
             onChange={handleChange}
           >
-            {LeaveRequestStatusTypes.map((item) => (
+            {LeaveRequestStatusTypes.filter((item) =>
+              item.value === LEAVE_REQUEST_STATUS.APPROVED ||
+              item.value === LEAVE_REQUEST_STATUS.REJECTED
+            ).map((item) => (
               <MenuItem
                 value={item.value}
                 key={item.id}
@@ -479,6 +492,7 @@ export const LeaveApprovalModal = ({
           placeholder={i({ id: "LEAVE.COMMENT" })}
           value={leaveData.comment}
           onChange={handleChange}
+          required={isRejection}
         />
 
         <Stack className="flex-row gap-2 justify-content-end">

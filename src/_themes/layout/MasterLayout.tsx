@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Container, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { CSSProperties } from "react";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
 import { Sidebar } from "./components/sidebar";
 import { BreadcrumbProvider } from "react-breadcrumble";
@@ -17,6 +18,16 @@ const MasterLayout = () => {
     theme.breakpoints.down(theme.breakpoints.values.md)
   );
   const [isMiniSidebar, setMiniSidebar] = useState(false);
+  const sidebarState = isSmallScreen ? "mobile" : isMiniSidebar ? "collapsed" : "expanded";
+  const shellVariables = {
+    "--sidebar-expanded-width": "265px",
+    "--sidebar-collapsed-width": "100px",
+    "--sidebar-current-width": isSmallScreen
+      ? "0px"
+      : isMiniSidebar
+        ? "var(--sidebar-collapsed-width)"
+        : "var(--sidebar-expanded-width)",
+  } as CSSProperties;
 
   const handleOpenSidebar = () => {
     setOpen(true);
@@ -32,12 +43,15 @@ const MasterLayout = () => {
         <PageDataProvider>
           <Stack
             className="app-shell flex-column flex-shrink-0 flex-grow-1"
+            data-sidebar-state={sidebarState}
+            style={shellVariables}
             sx={{ height: "100dvh", overflow: "hidden" }}
           >
-            <HeaderWrapper openSideBar={handleOpenSidebar} />
+            <HeaderWrapper openSideBar={handleOpenSidebar} sidebarState={sidebarState} />
             <Stack
               direction="row"
               className="app-content-surface flex-grow-1"
+              data-sidebar-state={sidebarState}
               sx={{
                 flex: "1 1 0",
                 height: 0,
@@ -45,12 +59,8 @@ const MasterLayout = () => {
                 overflowX: "hidden",
                 overflowY: "auto",
                 overscrollBehavior: "contain",
-                marginLeft: isSmallScreen
-                  ? 0
-                  : isMiniSidebar
-                    ? "124px"
-                    : "289px",
-                transition: "margin .3s linear",
+                marginLeft: "calc(var(--sidebar-current-width) + 24px)",
+                transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
               }}
             >
               <Sidebar
@@ -60,8 +70,18 @@ const MasterLayout = () => {
                 setMiniSidebar={setMiniSidebar}
               />
               <Container
+                maxWidth={isSmallScreen || isMiniSidebar ? false : "lg"}
                 className="d-flex flex-column flex-grow-1 gap-4"
-                sx={{ minWidth: 0, minHeight: "max-content", overflow: "visible", py: 2, pb: 4 }}
+                sx={{
+                  width: "100%",
+                  minWidth: 0,
+                  minHeight: "max-content",
+                  overflow: "visible",
+                  py: 2,
+                  pb: 4,
+                  px: { xs: 2, md: 3 },
+                  transition: "max-width 0.32s cubic-bezier(.2, .8, .2, 1)",
+                }}
               >
                 <PageData />
                 <Outlet />

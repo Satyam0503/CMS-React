@@ -9,8 +9,8 @@ import { DepartmentChart } from "./components/DepartmentChart";
 import EmpOnLeave from "./components/EmpOnLeave";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
-import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
-import { ModulesName, Permission } from "../../../utils/enums";
+import { hasModuleFeaturePermission } from "../../../utils/common";
+import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { UpComingCelebration } from "./components/UpcomingCelebration";
 import { PushNotification } from "./components/PushNotification";
@@ -21,36 +21,39 @@ import { usePageData } from "../../Context/PageDataProvider";
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
-  const userRoleType = useAppSelector(
-    (state) => state.user.userData?.roleType!,
-  );
-  const modulePermission = useAppSelector(
-    (state) => state.user.userData?.modulePermission,
-  );
-
   const userModulesPermissions = useAppSelector(
     (state) => state.user.userData?.modulePermission ?? [],
   );
-  const hasHrAccess = canAccessHrManagement(userRoleType);
 
   const hasAccessToEmpModule = useMemo(
     () =>
-      hasHrAccess && hasModuleFeaturePermission(
+      hasModuleFeaturePermission(
         ModulesName.Employees,
         Permission.View,
         userModulesPermissions,
       ),
-    [hasHrAccess, userModulesPermissions],
+    [userModulesPermissions],
+  );
+
+  const canViewCompanyDashboard = useMemo(
+    () =>
+      user.roleType === Roles.Administrator ||
+      hasModuleFeaturePermission(
+        ModulesName.Dashboard,
+        Permission.ViewAll,
+        userModulesPermissions,
+      ),
+    [user.roleType, userModulesPermissions],
   );
 
   const hasAccessToJob = useMemo(
     () =>
-      hasHrAccess && hasModuleFeaturePermission(
+      hasModuleFeaturePermission(
         ModulesName.Jobs,
         Permission.View,
         userModulesPermissions,
       ),
-    [hasHrAccess, userModulesPermissions],
+    [userModulesPermissions],
   );
 
   const hasAccessToNoticeBoard = useMemo(
@@ -66,6 +69,25 @@ export default function Dashboard() {
   useEffect(() => {
     setPageTitle("");
   }, []);
+
+  if (!canViewCompanyDashboard) {
+    return (
+      <Box className="dashboard-modern">
+        <DashboardHeader fullName={user.fullName} />
+        <Grid container spacing={{ xs: 2, md: 3 }}>
+          <Grid size={{ xs: 12, lg: 8 }}>
+            {hasAccessToNoticeBoard && <NoticeBoard />}
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Stack spacing={{ xs: 2, md: 3 }}>
+              <UpComingHolidayAndEvents />
+              <UpComingCelebration />
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  }
 
   return (
     <Box className="dashboard-modern">
@@ -88,7 +110,7 @@ export default function Dashboard() {
                 <EmployeeChart />
               </Grid>
             )}
-            {hasHrAccess && <Grid
+            {hasAccessToEmpModule && <Grid
               size={{
                 xs: 12,
                 sm: 6,
@@ -134,7 +156,7 @@ export default function Dashboard() {
           }}
         >
           {Notification.permission == "default" && <PushNotification />}
-          {hasHrAccess && <EmpOnLeave />}
+          {hasAccessToEmpModule && <EmpOnLeave />}
           <UpComingHolidayAndEvents />
           <UpComingCelebration />
           {/* <Punctual />

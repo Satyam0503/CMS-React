@@ -37,6 +37,7 @@ export default function Help() {
                 variant="contained"
                 label="Contact"
                 Icon={<Message />}
+                handleClick={() => window.open("https://codeji.in/contact-us/", "_blank", "noopener,noreferrer")}
               />
             </Stack>
           </Grid>

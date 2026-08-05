@@ -664,7 +664,10 @@ export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
   {
     id: "accrualPeriod",
     label: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD",
-    build: (value: number) => {
+    build: (value: number, row: { policyType?: number }) => {
+      if (row.policyType === 2) {
+        return <Typography>Weekly</Typography>;
+      }
       return (
         value &&
         (value === 1 ? (

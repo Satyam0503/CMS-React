@@ -2,7 +2,7 @@
 
 .sidebar {
   & .sidebar-paper {
-    width: $app-sidebar-width;
+    width: var(--sidebar-current-width);
     top: calc(var(--app-header-height) + 12px);
     bottom: calc(var(--app-footer-height) + 12px);
     left: 12px;
@@ -185,7 +185,7 @@
 
   &[data-sidebar-mini="true"] {
       & .sidebar-paper {
-        width: $app-mini-sidebar-width !important;
+        width: var(--sidebar-current-width) !important;
         border-radius: 22px;
       }
       & .user-block-info {

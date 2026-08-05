@@ -1,8 +1,10 @@
+import dayjs from "dayjs";
 import {
   deleteRequest,
   getRequest,
   patchRequest,
   postRequest,
+  putRequest,
 } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
@@ -68,16 +70,71 @@ export const getLeaveBalance = (payload: LeaveBalanceFilter) => {
   );
 };
 
+const serializeLeaveRequestPayload = (payload: RequestLeaveModel) => ({
+  ...payload,
+  startDate: payload.startDate
+    ? dayjs(payload.startDate).startOf("day").format("YYYY-MM-DD")
+    : null,
+  endDate: payload.endDate
+    ? dayjs(payload.endDate).startOf("day").format("YYYY-MM-DD")
+    : null,
+});
+
 export const createLeaveRequest = (payload: RequestLeaveModel) => {
   return postRequest<RequestLeaveModel, ApiResponse>(
     ServiceUrl.CREATE_LEAVE_REQUEST,
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const createEmployeeLeaveRequest = (
+  employeeId: string,
+  payload: RequestLeaveModel
+) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    `${ServiceUrl.CREATE_EMPLOYEE_LEAVE_REQUEST}/${employeeId}`,
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const createMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    "api/LeaveManagement/me/requests",
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export type WorkFromHomeRequestPayload = {
+  fromDate: string;
+  toDate: string;
+  durationType: "FullDay" | "FirstHalf";
+  reasonCode: string;
+  reasonText: string;
+};
+
+export const createWorkFromHomeRequest = (payload: WorkFromHomeRequestPayload) => {
+  return postRequest<WorkFromHomeRequestPayload, ApiResponse>(
+    "api/wfh/requests",
     payload
   );
 };
 
-export const createEmployeeLeaveRequest = (employeeId: string, payload: RequestLeaveModel) => {
-  return postRequest<RequestLeaveModel, ApiResponse>(
-    `${ServiceUrl.CREATE_EMPLOYEE_LEAVE_REQUEST}/${employeeId}`,
+export type WorkFromHomeEmployeeAllocation = {
+  employeeId: string;
+  weeklyLimit: number;
+};
+
+export const getWorkFromHomeEmployeeAllocations = () => {
+  return getRequest<{ methodResults?: WorkFromHomeEmployeeAllocation[] }>(
+    "api/wfh/allocations"
+  );
+};
+
+export const saveWorkFromHomeEmployeeAllocation = (
+  payload: WorkFromHomeEmployeeAllocation
+) => {
+  return putRequest<WorkFromHomeEmployeeAllocation, ApiResponse>(
+    "api/wfh/allocations",
     payload
   );
 };
@@ -85,7 +142,14 @@ export const createEmployeeLeaveRequest = (employeeId: string, payload: RequestL
 export const updateLeaveRequest = (payload: RequestLeaveModel) => {
   return postRequest<RequestLeaveModel, ApiResponse>(
     ServiceUrl.UPDATE_LEAVE_REQUEST,
-    payload
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const updateMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
+  return patchRequest<RequestLeaveModel, ApiResponse>(
+    "api/LeaveManagement/me/requests",
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
   );
 };
 
@@ -103,15 +167,34 @@ export const getMyLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
   );
 };
 
+export const getMyProfileLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetMyLeaveRequestsResponse>(
+    "api/LeaveManagement/me/requests/search",
+    payload
+  );
+};
+
 export const deleteLeaveRequest = (leaveRequestId: string) => {
   return deleteRequest<ApiResponse>(
     `${ServiceUrl.DELETE_LEAVE_REQUEST}/${leaveRequestId}`
   );
 };
 
+export const deleteMyProfileLeaveRequest = (leaveRequestId: string) => {
+  return deleteRequest<ApiResponse>(
+    `api/LeaveManagement/me/requests/${leaveRequestId}`
+  );
+};
+
 export const getEmployeeLeaveBalance = (employeeId: string) => {
   return getRequest<GetEmployeeLeaveBalanceResponse>(
     `${ServiceUrl.GET_EMP_LEAVE_BALANCE}/${employeeId}`
+  );
+};
+
+export const getMyProfileLeaveBalance = () => {
+  return getRequest<GetEmployeeLeaveBalanceResponse>(
+    "api/LeaveManagement/me/balances"
   );
 };
 

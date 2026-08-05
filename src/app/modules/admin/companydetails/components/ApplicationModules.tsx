@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Alert, Button, Card, CircularProgress, Stack, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
@@ -33,6 +33,8 @@ export const ApplicationModules: FC = () => {
 
   const [refresh, setRefresh] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [actionType, setActionType] = useState<ActionType>("SINGLE");
   const [currentModuleId, setCurrentModuleId] = useState<string | null>(null);
@@ -132,10 +134,20 @@ export const ApplicationModules: FC = () => {
   useEffect(() => {
     const getAllModules = async () => {
       try {
+        setIsLoading(true);
+        setLoadError(null);
         const response = await getAllModulesInfo();
         const { success, methodResults } = response.data;
 
-        if (!success) return;
+        if (!success) {
+          setLoadError("Unable to load application modules. Please try again.");
+          return;
+        }
+
+        if (!Array.isArray(methodResults)) {
+          setLoadError("The application modules response is invalid. Please try again.");
+          return;
+        }
 
         const payrollValues = Object.values(PayRollModuleTitles) as string[];
         const recruitmentValues = Object.values(
@@ -159,8 +171,10 @@ export const ApplicationModules: FC = () => {
         setPayrollModules(payroll);
         setRecruitmentModules(recruitment);
         setOtherModules(remaining);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        setLoadError("Unable to load application modules. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -183,6 +197,19 @@ export const ApplicationModules: FC = () => {
           </Typography>
         </Stack>
 
+        {isLoading ? (
+          <Stack alignItems="center" justifyContent="center" sx={{ minHeight: 240 }} spacing={2}>
+            <CircularProgress size={28} />
+            <Typography variant="body2" color="text.secondary">Loading application modules…</Typography>
+          </Stack>
+        ) : loadError ? (
+          <Alert
+            severity="error"
+            action={<Button color="inherit" size="small" onClick={() => setRefresh((previous) => !previous)}>Retry</Button>}
+          >
+            {loadError}
+          </Alert>
+        ) : (
         <Grid container spacing={3}>
           {otherModules.map((module) => {
             const moduleDesc = modules_description.find(
@@ -198,7 +225,7 @@ export const ApplicationModules: FC = () => {
                   moduleCostant={module.moduleConstant}
                   titleMessageId={`COMMON.${module.moduleConstant.toUpperCase()}`}
                   descriptionMessageId={
-                    moduleDesc ? `COMMON.${moduleDesc.description}` : ""
+                    moduleDesc ? `COMMON.${moduleDesc.description}` : undefined
                   }
                   modules={[module]}
                   formatMessage={formatMessage}
@@ -249,6 +276,7 @@ export const ApplicationModules: FC = () => {
             />
           </Grid>
         </Grid>
+        )}
       </Card>
 
       {isConfirmModalOpen && (

@@ -59,6 +59,8 @@ export type CompanyModel = {
   companyId?: string;
   careerSlug?: string;
   publicCompanyCode?: string;
+  employeeIdPrefix?: string;
+  autoGenerateEmployeeId?: boolean;
   careerPortalEnabled?: boolean;
   address: string;
 };

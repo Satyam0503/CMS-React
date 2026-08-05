@@ -1,10 +1,11 @@
 import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Stack,
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Stack,
 } from "@mui/material";
+import { useEffect } from "react";
 import { useFormik } from "formik"
 import { leaveRequestFilterValidationSchema } from "../../../../utils/Schema/leaveManagementValidationSchemas"
 import { LeaveRequestsFilterModel } from "../model"
@@ -16,6 +17,7 @@ import dayjs, { Dayjs } from "dayjs"
 import { LeaveRequestStatusTypes, LeaveTypeConstant } from "../../../../utils/constant/Constant"
 import CustomisedButton from "../../../shared/components/C_Button"
 import { AppSelect } from "../../../shared/components/ui";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 
 export const initialLeaveRequestFilter: LeaveRequestsFilterModel = {
@@ -39,6 +41,23 @@ export const LeaveRequestFilter = () => {
                 dispatch(setLeaveRequestFilter(values));
             },
         });
+
+    const debouncedValues = useDebounce(values, 500);
+
+    useEffect(() => {
+        // only dispatch when validation passes
+        if (Object.keys(errors).length === 0) {
+            const statusValue = (debouncedValues.status as unknown) === "" ? null : debouncedValues.status;
+            dispatch(
+                setLeaveRequestFilter({
+                    startDate: debouncedValues.startDate ?? null,
+                    endDate: debouncedValues.endDate ?? null,
+                    status: statusValue ?? null,
+                })
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedValues, errors, dispatch]);
 
     const handleResetFilter = () => {
         if (!appliedLeaveRequestFilter) {

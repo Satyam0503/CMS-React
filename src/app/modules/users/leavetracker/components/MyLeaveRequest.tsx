@@ -6,7 +6,9 @@ import {
 } from "../../../leaves/model";
 import {
   deleteLeaveRequest,
+  deleteMyProfileLeaveRequest,
   getMyLeaveRequest,
+  getMyProfileLeaveRequest,
 } from "../../../leaves/leaveServices";
 import {
   Card,
@@ -84,7 +86,9 @@ export const MyLeaveRequests = ({
       return;
     }
     try {
-      const { data } = await deleteLeaveRequest(selectedLeaveRequestId);
+      const { data } = employeeId
+        ? await deleteLeaveRequest(selectedLeaveRequestId)
+        : await deleteMyProfileLeaveRequest(selectedLeaveRequestId);
       if (data.success) {
         setSelectedLeaveRequestId(null);
         handleRefresh;
@@ -111,7 +115,9 @@ export const MyLeaveRequests = ({
         employeeId: employeeId
       };
       try {
-        const { data } = await getMyLeaveRequest(payload);
+        const { data } = employeeId
+          ? await getMyLeaveRequest(payload)
+          : await getMyProfileLeaveRequest(payload);
         if (data.success) {
           setLeaveRequest(data.methodResults);
           setTotalRecords(data.totalRecords);

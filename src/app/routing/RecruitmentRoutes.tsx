@@ -92,7 +92,7 @@ const RecruitmentRoutes = () => {
         <Route
           path="career-profile"
           element={
-            <ProtectedRoute module={ModulesName.CareerProfile} permission={Permission.Edit}>
+            <ProtectedRoute module={ModulesName.CareerProfile} permission={Permission.View}>
               <CareerProfileAdminPage />
             </ProtectedRoute>
           }

@@ -136,7 +136,7 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                       openConfirmationModal,
                                       openViewModal
                                     )
-                                    : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeTitle") ? column.build(row) : column.build(value)
+                                    : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeTitle") ? column.build(row) : column.build(value, row)
                                   : value}
                           </TableCell>
                         );

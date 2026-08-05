@@ -1,13 +1,8 @@
-import { Grid, Card, Stack, Typography, Skeleton } from "@mui/material";
-import { useCallback } from "react";
+import { Grid, Card, Stack, Typography, Skeleton, useTheme, Box, Chip, alpha } from "@mui/material";
+import { useMemo } from "react";
 import { useIntl } from "react-intl";
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
-import { CustomCard } from "../../../../shared/components/C_Card";
-import { defaultPieChartSeries } from "../../../../../utils/common";
-import { toAbsoluteUrl } from "../../../../../_themes/helpers";
-import { DonutChart } from "../../../../shared/components/DonutChart";
-import { PieSeries, PieValueType } from "@mui/x-charts";
-import { MakeOptional } from "@mui/x-date-pickers/internals";
+import { BarChart } from "@mui/x-charts";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 interface PropsType {
@@ -21,22 +16,46 @@ export const EmployeeLeaveTypesCharts = ({
 }: PropsType) => {
   const { formatMessage: i } = useIntl();
   const { currentLanguage } = useAppLang();
-  const getLabelAndDataForLeaveType = useCallback(
-    (leaveType: EmployeeLeaveTypeBalance) => {
-      const chartData: MakeOptional<PieValueType, "id">[] = [
-        {
-          label: i({ id: "LEAVE.REMAINING" }),
-          value: leaveType.balance,
-        },
-        {
-          label: i({ id: "LEAVE.TAKEN" }),
-          value: leaveType.usedBalance,
-        },
-      ];
-      return chartData;
-    },
-    [currentLanguage]
+  const theme = useTheme();
+
+  const leaveTypeLabels = useMemo(
+    () => leaveBalance.map((type) => type.name),
+    [leaveBalance],
   );
+
+  const series = useMemo(() => {
+    return [
+      {
+        label: i({ id: "LEAVE.TAKEN" }),
+        data: leaveBalance.map((type) => type.taken),
+        color: theme.palette.primary.main,
+      },
+      {
+        label: i({ id: "LEAVE.REMAINING" }),
+        data: leaveBalance.map((type) => type.remaining),
+        color: theme.palette.success.main,
+      },
+    ];
+  }, [leaveBalance, i, theme.palette.primary.main, theme.palette.success.main]);
+
+  const chartScale = useMemo(() => {
+    const largestEntitlement = Math.max(
+      ...leaveBalance.map((type) => Math.max(0, type.taken) + Math.max(0, type.remaining)),
+      0,
+    );
+    // Keep every whole-day mark for normal balances. Larger leave policies
+    // automatically use fewer labels, avoiding an unreadable Y axis.
+    const max = Math.max(1, Math.ceil(largestEntitlement));
+    const step = max <= 10 ? 1 : Math.ceil(max / 10);
+    const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, index) => index * step);
+    if (ticks[ticks.length - 1] !== max) ticks.push(max);
+    return { max, ticks, height: Math.max(300, Math.min(420, 220 + ticks.length * 16)) };
+  }, [leaveBalance]);
+
+  const balanceSummary = useMemo(() => ({
+    taken: leaveBalance.reduce((total, type) => total + Math.max(0, type.taken), 0),
+    remaining: leaveBalance.reduce((total, type) => total + Math.max(0, type.remaining), 0),
+  }), [leaveBalance]);
 
   if (isLoading) {
     return (
@@ -51,11 +70,6 @@ export const EmployeeLeaveTypesCharts = ({
   if (leaveBalance.length === 0) {
     return (
       <Card className="py-6 d-flex flex-column align-items-center">
-        <img
-          className="mx-auto"
-          src={toAbsoluteUrl("media/Icons/no_data_256.png")}
-          style={{ maxWidth: 200 }}
-        />
         <Typography variant="h6" className="fs-24">
           {i({ id: "ERROR.OPPS" })}
         </Typography>
@@ -68,34 +82,48 @@ export const EmployeeLeaveTypesCharts = ({
 
   return (
     <Grid container spacing={2}>
-      {leaveBalance.map((type) => {
-        if (type.balance > 0 || type.usedBalance > 0) {
-          const series = [
-            {
-              ...defaultPieChartSeries,
-              data: getLabelAndDataForLeaveType(type),
-            },
-          ] satisfies PieSeries[];
-          return (
-            <Grid
-              key={type.leavePolicyId}
-              size={{
-                xs: 12,
-                sm: 6,
-                md: 4,
+      <Grid size={12}>
+        <Card sx={{ p: { xs: 2, md: 2.5 }, border: `1px solid ${alpha(theme.palette.divider, 0.9)}` }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ sm: "center" }} sx={{ mb: 2 }}>
+            <Box>
+              <Typography className="fw-bold fs-16">
+              {i({ id: "LEAVE.TITLES.LEAVE_BALANCE_GRAPH", defaultMessage: "Leave Balance Overview" })}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                Whole-day view that adjusts automatically to your leave balance.
+              </Typography>
+            </Box>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip size="small" label={`${balanceSummary.taken} taken`} sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.primary.main, 0.14), color: theme.palette.primary.main }} />
+              <Chip size="small" label={`${balanceSummary.remaining} remaining`} sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.success.main, 0.14), color: theme.palette.success.dark }} />
+            </Stack>
+          </Stack>
+          <Box sx={{ width: "100%", overflowX: "auto", borderRadius: 2, border: `1px solid ${alpha(theme.palette.divider, 0.55)}` }}>
+            <BarChart
+              height={chartScale.height}
+              series={series.map((item) => ({ ...item, stack: "leaveBalance" }))}
+              xAxis={[{ scaleType: "band", data: leaveTypeLabels, tickPlacement: "middle", tickLabelPlacement: "middle" }]}
+              yAxis={[{ width: 42, min: 0, max: chartScale.max, tickInterval: chartScale.ticks, valueFormatter: (value: number) => `${value}` }]}
+              slotProps={{
+                legend: {
+                  direction: "horizontal",
+                  position: { vertical: "bottom", horizontal: "center" },
+                },
               }}
-            >
-              <CustomCard label={type.name} applyMinHeight={false}>
-                <DonutChart
-                  loading={isLoading}
-                  series={series}
-                  centerLabel={type.balance || "0"}
-                />
-              </CustomCard>
-            </Grid>
-          );
-        }
-      })}
+              loading={isLoading}
+              borderRadius={6}
+              margin={{ top: 22, bottom: 42, left: 14, right: 18 }}
+              sx={{
+                "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": { stroke: theme.palette.divider },
+                "& .MuiChartsAxis-tickLabel": { fill: theme.palette.text.secondary, fontSize: 12, fontWeight: 600 },
+                "& .MuiChartsLegend-label": { fill: theme.palette.text.primary, fontWeight: 700 },
+                "& .MuiChartsGrid-line": { stroke: alpha(theme.palette.divider, 0.55), strokeDasharray: "3 4" },
+              }}
+              style={{ width: "100%", display: "block" }}
+            />
+          </Box>
+        </Card>
+      </Grid>
     </Grid>
   );
 };

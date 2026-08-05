@@ -5,6 +5,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
   Popover,
   Stack,
   Tooltip,
@@ -46,6 +47,7 @@ export default function HeaderNotificationMenu() {
     totalNotification: 0,
     unread: 0
   })
+  const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const [paginationValues, setPaginationValues] = useState(initialPaginationValue);
@@ -112,6 +114,7 @@ export default function HeaderNotificationMenu() {
   useEffect(() => {
     (async () => {
       try {
+        setIsLoading(true);
         const payload: NotificationRequestPayload = {
           type: activeTab === 1 ? "all" : "unread",
           pageNo: paginationValues.pageNo,
@@ -132,6 +135,9 @@ export default function HeaderNotificationMenu() {
       }
       catch (error) {
         console.log((error as Error).message);
+      }
+      finally {
+        setIsLoading(false);
       }
     })();
   }, [activeTab, paginationValues.pageNo])
@@ -174,7 +180,7 @@ export default function HeaderNotificationMenu() {
   return (
     <>
       <Tooltip title={i({ id: "TOOLTIP.NOTIFICATIONS" })} placement="bottom">
-        <Badge badgeContent={notificationCount.unread} color="primary">
+        <Badge badgeContent={notificationCount.unread || undefined} color="primary" aria-live="polite">
           <AppIconButton
             onClick={handleClick}
             aria-describedby={id}
@@ -233,33 +239,52 @@ export default function HeaderNotificationMenu() {
         </Box>
         <Stack>
           <List disablePadding className="notification-wrapper" >
-            {
-              notificationList.length > 0 ?
-                notificationList.map(item => (
-                  <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
-                    <Stack sx={{ bgcolor: "secondary.light" }}>
-                      <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.darker" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
-                    </Stack>
-                    <ListItemText
-                      primary={<Typography >{getNotificationTitle(item, intl)}</Typography>}
-                      secondary={
+            {isLoading && notificationList.length === 0 ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                <CircularProgress size={24} />
+              </Box>
+            ) : notificationList.length > 0 ? (
+              notificationList.map(item => (
+                <ListItem
+                  key={item.userNotificationId}
+                  disablePadding
+                  className={clsx({ "unread-notification": !item.isRead })}
+                  onClick={() => handleNotificationClick(item)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleNotificationClick(item);
+                    }
+                  }}
+                >
+                  <Stack sx={{ bgcolor: "secondary.light" }}>
+                    <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.darker" }} >{NotificationIconMapper[item.notificationTypes] ?? <NotificationsActive className="fs-32" />} </Stack>
+                  </Stack>
+                  <ListItemText
+                    primary={<Typography fontWeight={item.targetId?.startsWith("attendance-review-") ? 700 : undefined}>{item.targetId?.startsWith("attendance-review-") ? item.title : getNotificationTitle(item, intl)}</Typography>}
+                    secondary={
+                      <Box component="span">
+                        {item.targetId?.startsWith("attendance-review-") && <Typography variant="caption" component="span" sx={{ color: "text.secondary", display: "block", lineHeight: 1.35 }}>{item.body}</Typography>}
                         <Box component="span" className="d-flex align-items-center gap-1">
                           <AccessTime className="fs-16" />
                           <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
-                        </Box>} />
-                  </ListItem>
-                ))
-                :
-                <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
-                  <img src={toAbsoluteUrl("media/Icons/no-notification.png")} />
-                  <Typography sx={{ color: "text.secondary" }}>{i({ id: "NOTIFICATION.NONE" })}</Typography>
-                </Box>
-            }
+                        </Box>
+                      </Box>} />
+                </ListItem>
+              ))
+            ) : (
+              <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
+                <img src={toAbsoluteUrl("media/Icons/no-notification.png")} alt="no notifications" />
+                <Typography sx={{ color: "text.secondary" }}>{i({ id: "NOTIFICATION.NONE" })}</Typography>
+              </Box>
+            )}
           </List>
           {
             (activeTab == 1 ? notificationList.length < notificationCount.totalNotification :
               notificationList.length < notificationCount.unread) &&
-            <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification}  >
+            <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification} role="button" tabIndex={0} onKeyDown={(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); handleLoadMoreNotification(); } }} >
               {i({ id: "BUTTON.SEE_MORE" })}
             </Box>
           }

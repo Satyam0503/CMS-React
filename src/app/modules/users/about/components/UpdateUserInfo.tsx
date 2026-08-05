@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useParams } from "react-router-dom";
-import { getStatusCodeString, hasModuleFeaturePermission } from "../../../../../utils/common";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel } from "../../../admin/models";
 import { getAllCustomAttributes, getAllDepartments, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
@@ -62,6 +62,10 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
 
   const userPermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
   const hasEditPermission = hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
+  // Employee-management permission applies to other people.  A manager or HR
+  // user must use the same restricted self-service profile flow as an employee.
+  const isEditingOwnProfile = !employeeId || employeeId === user.userId;
+  const canEditEmploymentDetails = hasEditPermission && !isEditingOwnProfile;
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
@@ -102,12 +106,18 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
+    if (values.reportingManager === userData.userId) {
+      const employeeName = `${userData.firstName} ${userData.lastName}`.trim();
+      toast.error(`${employeeName || "This employee"} cannot be assigned as their own reporting manager. Please select another employee or clear the Reporting Manager field.`);
+      setSubmitting(false);
+      return;
+    }
+
     try {
       // Editing your own profile (no employeeId in the route) only requires the always-editable
       // self-service fields, so it shouldn't be blocked by the Employees module's Edit permission
       // (that permission is meant for HR/Admins managing *other* employees' records).
-      const isSelfEditWithoutManagePermission = !employeeId && !hasEditPermission;
-      const response = isSelfEditWithoutManagePermission
+      const response = isEditingOwnProfile
         ? await updateOwnProfile({
           firstName: values.firstName,
           lastName: values.lastName,
@@ -120,7 +130,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
           address: values.address,
         })
         : await updateEmployee(values, userData?.userId);
-      const { success, statusCode, methodResult } = response.data;
+      const { success, statusCode, methodResult, message } = response.data;
       if (success && statusCode === 200) {
         updateUserDetails(methodResult);
         if (!employeeId) {
@@ -137,7 +147,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
         handleClose();
       }
       else {
-        toast.error(i({ id: getStatusCodeString(statusCode) }))
+        toast.error(message || i({ id: "ERROR.SOMETHING_WRONG" }));
       }
     } catch (error) {
       console.error((error as Error).message);
@@ -298,7 +308,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="job_title"
                       size="small"
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                       value={jobTitleList.find(
                         (jt) => jt.jobTitleId === values.jobRole
                       ) || null}
@@ -330,7 +340,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <SelectInput
                       name="employmentType"
                       label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                     >
                       {EmploymentType.map((type) => (
                         <MenuItem
@@ -352,9 +362,9 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="reporting_manager"
                       size="small"
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                       value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
-                      options={employeeList}
+                      options={employeeList.filter((employee) => employee.userId !== userData.userId)}
                       onChange={(event, value) => {
                         setFieldTouched("reportingManager", true);
                         setFieldValue(
@@ -381,7 +391,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <SelectInput
                       name="department"
                       label={i({ id: "FORM.DEPARTMENT" })}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                     >
                       {departments.map((dep) => (
                         <MenuItem
@@ -464,11 +474,11 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
                       }}
                       maxDate={dayjs()}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                     />
                   </Grid>
                   {
-                    hasEditPermission &&
+                    canEditEmploymentDetails &&
                     <>
                       <Grid
                         size={{
@@ -500,7 +510,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
 
                 </Grid>
                 {
-                  hasEditPermission &&
+                  canEditEmploymentDetails &&
 
                   <Grid container spacing={2} sx={{ mt: 2 }}>
                     {

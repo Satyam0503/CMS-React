@@ -3,7 +3,9 @@ import { InviteEmployeeResponse, InviteNewEmployeeModel } from "../models";
 import { InputFieldProps, TextInput } from "../../../shared/components/form-component/TextInput";
 import { PersonAdd } from "@mui/icons-material";
 import {
-  Stack,
+    Autocomplete,
+    Stack,
+    TextField,
 } from "@mui/material";
 import { Formik, FormikProps } from "formik";
 import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
@@ -11,7 +13,8 @@ import { inviteNewEmployee } from "../employeeServices";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { useEffect, useState } from "react";
-import { getLastAddedEmployeeId } from "../../users/userservices";
+import { getNextEmployeeId } from "../../users/userservices";
+import { getAllEmployees } from "../employeeServices";
 import React from "react";
 
 import { AppAlert } from "../../../shared/components/ui";
@@ -26,6 +29,7 @@ const initialEmployeeDetails: InviteNewEmployeeModel = {
     email: "",
     firstName: "",
     lastName: "",
+    reportingManager: null,
 }
 
 const inviteEmployeeFormFields: InputFieldProps[] = [
@@ -38,7 +42,8 @@ const inviteEmployeeFormFields: InputFieldProps[] = [
 export const InviteNewEmployee = (props: PropsTypes) => {
     const { handleInviteUser, formRef, handleButtonLoading } = props
     const { formatMessage: i } = useIntl();
-    const [lastEmployeeId, setLastEmployeeId] = useState<string>("");
+    const [nextEmployeeId, setNextEmployeeId] = useState<string>("");
+    const [managers, setManagers] = useState<Array<{ userId: string; fullName: string; employeeId: string }>>([]);
 
     const InviteNewEmployee = async (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
         try {
@@ -60,17 +65,23 @@ export const InviteNewEmployee = (props: PropsTypes) => {
     }
 
     useEffect(() => {
-        const fetchLastEmployeeId = async () => {
+        const fetchNextEmployeeId = async () => {
             try {
-                const { data } = await getLastAddedEmployeeId();
+                const { data } = await getNextEmployeeId();
                 if (data.success) {
-                    setLastEmployeeId(data.message);
+                    setNextEmployeeId(data.message);
                 }
             } catch (error) {
-                console.error("Error fetching last employee ID:", error);
+                console.error("Error fetching next employee ID:", error);
             }
         };
-        fetchLastEmployeeId();
+        fetchNextEmployeeId();
+    }, []);
+
+    useEffect(() => {
+        void getAllEmployees({ name: "", pageNo: 1, records: 1000, departmentId: [], gender: [] }).then(({ data }) => {
+            if (data.success) setManagers((data.methodResults ?? []).map((employee) => ({ userId: employee.userId, fullName: employee.fullName, employeeId: employee.employeeId })));
+        });
     }, []);
 
     return (
@@ -79,7 +90,8 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                 {i({ id: "EMPLOYEE.INVITE_EMP.INVITE_NOTE" })}
             </AppAlert>
             <Formik
-                initialValues={initialEmployeeDetails}
+                initialValues={{ ...initialEmployeeDetails, employeeId: nextEmployeeId }}
+                enableReinitialize
                 validationSchema={inviteEmployeeSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     InviteNewEmployee(values, setSubmitting);
@@ -99,13 +111,14 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                             placeholder={i({ id: field.placeholder })}
                                             type={field.type}
                                             name={field.name}
+                                            disabled={field.name === "employeeId" && Boolean(nextEmployeeId)}
                                             showErrorLabel={false}
                                         />
                                         {
-                                            field.name === "employeeId" && lastEmployeeId &&
+                                            field.name === "employeeId" && nextEmployeeId &&
                                             <AppAlert severity="info" className="my-1">
                                                 <FormattedMessage id="EMPLOYEE.INVITE_EMP.LAST_EMP_ID" values={{
-                                                    empId: lastEmployeeId,
+                                                    empId: nextEmployeeId,
                                                     strong: (chunks) => <strong>{chunks}</strong>
                                                 }} />
                                             </AppAlert>
@@ -113,6 +126,14 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                     </React.Fragment>
                                 ))
                             }
+                            <Autocomplete
+                                size="small"
+                                options={managers}
+                                value={managers.find((manager) => manager.userId === formik.values.reportingManager) ?? null}
+                                onChange={(_, manager) => formik.setFieldValue("reportingManager", manager?.userId ?? null)}
+                                getOptionLabel={(manager) => `${manager.fullName} (${manager.employeeId})`}
+                                renderInput={(params) => <TextField {...params} label="Reporting Manager" placeholder="Select reporting manager" />}
+                            />
                         </form>
                     }
                 }

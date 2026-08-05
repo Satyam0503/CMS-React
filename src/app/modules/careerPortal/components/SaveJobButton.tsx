@@ -1,17 +1,18 @@
 import { BookmarkBorderRounded, BookmarkRounded } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCareerVisitor } from "../hooks/useCareerVisitor";
 import { saveJob, unsaveJob } from "../services/careerPortalService";
 import { IconBtn } from "../../../shared/components/ui";
+import { useSavedJobs } from "../context/SavedJobsContext";
 
-type Props = { publicJobId: string; initiallySaved?: boolean; onChange?: (saved: boolean) => void };
+type Props = { publicJobId: string; onChange?: (saved: boolean) => void };
 
-export const SaveJobButton = ({ publicJobId, initiallySaved = false, onChange }: Props) => {
-  const [saved, setSaved] = useState(initiallySaved);
+export const SaveJobButton = ({ publicJobId, onChange }: Props) => {
   const [busy, setBusy] = useState(false);
   const { visitorToken, sessionToken } = useCareerVisitor();
-  useEffect(() => setSaved(initiallySaved), [initiallySaved]);
+  const { savedIds, setJobSaved } = useSavedJobs();
+  const saved = savedIds.has(publicJobId);
 
   const toggle = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -21,7 +22,7 @@ export const SaveJobButton = ({ publicJobId, initiallySaved = false, onChange }:
     try {
       if (saved) await unsaveJob(publicJobId, visitorToken, sessionToken);
       else await saveJob(publicJobId, visitorToken, sessionToken);
-      setSaved(!saved);
+      setJobSaved(publicJobId, !saved);
       onChange?.(!saved);
     } finally {
       setBusy(false);

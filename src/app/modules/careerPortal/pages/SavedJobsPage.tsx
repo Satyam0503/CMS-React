@@ -6,7 +6,6 @@ import {
 import {
   Alert,
   Box,
-  CircularProgress,
   Container,
   IconButton,
   Paper,
@@ -21,12 +20,14 @@ import { getSavedJobs, unsaveJob } from "../services/careerPortalService";
 import { SavedCareerJob } from "../types/careerPortalTypes";
 import { Alrt, Btn } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
+import { useSavedJobs } from "../context/SavedJobsContext";
 
 export const SavedJobsPage = () => {
   const { visitorToken, sessionToken } = useCareerVisitor();
   const [jobs, setJobs] = useState<SavedCareerJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { setJobSaved } = useSavedJobs();
 
   const load = () => {
     setLoading(true);
@@ -41,6 +42,7 @@ export const SavedJobsPage = () => {
   const remove = async (id: string) => {
     await unsaveJob(id, visitorToken, sessionToken);
     setJobs((items) => items.filter((x) => x.publicJobId !== id));
+    setJobSaved(id, false);
   };
 
   return (

@@ -33,7 +33,7 @@ const Footer = () => {
         </Link>
 
         <Stack direction={"row"} gap={{ xs: 1.5, sm: 3 }}>
-          <Link href="https://codeji.in/" sx={{ textDecoration: "none" }}>
+          <Link href="https://codeji.in/contact-us/" target="_blank" rel="noopener noreferrer" sx={{ textDecoration: "none" }}>
             <Typography variant="body2" color="text.secondary" fontWeight={500}>
               {" "}
               About

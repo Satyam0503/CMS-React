@@ -31,6 +31,8 @@ export interface AttendanceModel {
   totalHours?: number;
   status: AttendanceStatus;
   remarks?: string;
+  sourceType?: string | null;
+  sourceId?: string | null;
 }
 
 export interface CalendarAttendanceRow {
@@ -43,6 +45,8 @@ export interface CalendarAttendanceRow {
   checkInTime?: string;
   checkOutTime?: string;
   remarks?: string;
+  sourceType?: string | null;
+  sourceId?: string | null;
 }
 
 export interface GetAllAttendanceData {

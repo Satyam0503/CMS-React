@@ -19,6 +19,9 @@ body {
 .app-shell {
   --app-header-height: 72px;
   --app-footer-height: 48px;
+  --sidebar-expanded-width: 265px;
+  --sidebar-collapsed-width: 100px;
+  --sidebar-current-width: var(--sidebar-expanded-width);
 }
 
 body {

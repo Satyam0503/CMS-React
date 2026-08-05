@@ -45,6 +45,46 @@ export const dateFormatter = (
   return dayjs(date).format(format);
 };
 
+export const formatServerDate = (
+  date: Date | Dayjs | string | null | undefined,
+  format: string
+) => {
+  if (!date) {
+    return "NA";
+  }
+
+  if (typeof date === "string") {
+    const normalized = date.trim();
+    const dateOnlyMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (dateOnlyMatch) {
+      return dayjs(dateOnlyMatch[1]).format(format);
+    }
+    return dayjs(normalized).format(format);
+  }
+
+  if (date instanceof Date) {
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    return dayjs(`${year}-${month}-${day}`).format(format);
+  }
+
+  return dayjs(date).format(format);
+};
+
+/** CMS business timezone. Persisted timestamps stay UTC; user-facing times use IST. */
+export const INDIA_TIME_ZONE = "Asia/Kolkata";
+
+export const formatIndianTime = (date: Date | string | null | undefined) => {
+  if (!date) return "";
+  const value = new Date(date);
+  if (Number.isNaN(value.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("en-IN", { timeZone: INDIA_TIME_ZONE, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(value);
+  const hour = parts.find((part) => part.type === "hour")?.value;
+  const minute = parts.find((part) => part.type === "minute")?.value;
+  return hour && minute ? `${hour}:${minute}` : "";
+};
+
 export const currencyFormatter = (amount: number | null | undefined) => {
   if (amount === null || amount === undefined) {
     return "NA";
@@ -422,10 +462,14 @@ export const filterSideBarTabs = (
   userModulePermission: string[],
   userRoleType: number
 ) => {
+  // Administrators should see all sidebar tabs regardless of modulePermission entries
+  if (userRoleType === Roles.Administrator) {
+    return SideBarTabList;
+  }
+
   const filteredTabList = SideBarTabList.map((tab) => {
     if (tab.isDefault) return tab;
-    if (tab.adminOnly)
-      return userRoleType === Roles.Administrator ? tab : null;
+    if (tab.adminOnly) return null; // non-admins can't see admin-only
     else if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         hasModuleFeaturePermission(
@@ -457,7 +501,7 @@ export const filterSideBarTabs = (
 };
 
 export const canAccessHrManagement = (roleType?: number) =>
-  roleType === Roles.Administrator || roleType === Roles.HRManager;
+  roleType === Roles.Administrator || roleType === Roles.HRManager || roleType === Roles.HRExecutive;
 
 
 export const getNotificationTitle = (
@@ -465,6 +509,9 @@ export const getNotificationTitle = (
   intl: IntlShape
 ) => {
   const { formatMessage: i } = intl;
+  // WFH notifications carry a server-generated title but do not have a legacy
+  // translation entry, so use it instead of the generic fallback.
+  if (notification.title?.trim().startsWith("WFH")) return notification.title;
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
       return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
@@ -506,7 +553,11 @@ export const redirectUserToTargetUrl = (
     targetPath: "",
     data: null,
   };
-  switch (notification.notificationTypes) {
+  if (notification.targetId?.startsWith("attendance-review-")) {
+    redirectOption.targetPath = "/attendance";
+  } else if (notification.title?.startsWith("WFH")) {
+    redirectOption.targetPath = "/leavemanagement/work-from-home";
+  } else switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE: {
       redirectOption.targetPath = "/noticeboard/notices";
       redirectOption.data = notification.targetId;

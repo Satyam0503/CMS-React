@@ -27,7 +27,6 @@ export const addEditAttendance = async (
   );
 };
 
-
 export const deleteAttendance = async (attendanceId: string) => {
   return deleteRequest<ApiResponse>(
     `${ServiceUrl.DELETE_ATTENDANCE}/${attendanceId}`

@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import {
   Link } from "react-router-dom";
 import { Formik } from "formik";
-import { login } from "../core/_requests";
+import { login, resendEmailVerification } from "../core/_requests";
 import {
   Box,
   FormControlLabel,
@@ -21,7 +21,8 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 
-import { AppAlert, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
+import { AppAlert, AppButton, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
+import { toast } from "react-toastify";
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
@@ -44,6 +45,8 @@ export function Login() {
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
   const fieldSx = {
     "& .MuiOutlinedInput-root": {
       minHeight: 58,
@@ -72,12 +75,28 @@ export function Login() {
         setLocalKey(data.methodResult);
         setStatus("");
       } else {
+        setUnverifiedEmail(data.statusCode === 3 ? values.email.trim() : null);
         setStatus(i({ id: getStatusCodeString(data.statusCode) }));
       }
     } catch (error) {
       console.error((error as Error).message);
     } finally {
       setSubmitting(false);
+    }
+  }
+  async function handleResendVerification(email: string) {
+    setIsResendingVerification(true);
+    try {
+      const { data } = await resendEmailVerification(email.trim());
+      if (data.success) {
+        toast.success("Verification email sent. Check your inbox and spam folder.");
+      } else {
+        toast.error(data.message || "We could not send the verification email. Please try again.");
+      }
+    } catch {
+      toast.error("We could not send the verification email. Please try again.");
+    } finally {
+      setIsResendingVerification(false);
     }
   }
   return (
@@ -117,7 +136,20 @@ export function Login() {
           <form onSubmit={handleSubmit} noValidate id="kt_login_signin_form">
             <Stack spacing={2.25}>
               {status && (
-                <AppAlert severity="error" sx={{ my: 2 }} className="mb-5">{status}</AppAlert>
+                <Stack spacing={1} sx={{ my: 2 }} className="mb-5">
+                  <AppAlert severity="error">{status}</AppAlert>
+                  {unverifiedEmail && (
+                    <AppButton
+                      type="button"
+                      variant="outlined"
+                      size="small"
+                      disabled={isResendingVerification}
+                      onClick={() => handleResendVerification(unverifiedEmail)}
+                    >
+                      {isResendingVerification ? "Sending verification email…" : "Resend verification email"}
+                    </AppButton>
+                  )}
+                </Stack>
               )}
               <Stack spacing={2}>
                 <Stack>

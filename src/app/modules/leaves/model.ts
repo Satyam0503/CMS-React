@@ -84,8 +84,9 @@ export type LeaveBalance = {
 export type EmployeeLeaveTypeBalance = {
   leaveBalanceId: string;
   leavePolicyId: string;
-  balance: number;
-  usedBalance: number;
+  totalAllocated: number;
+  taken: number;
+  remaining: number;
   name: string;
   code: string;
   description: string;
@@ -135,6 +136,27 @@ export type LeavePolicyModel = {
   holidayInclusive: boolean;
   attendanceStatusCode?: string | null;
   applicableTo?: Array<string> | null;
+  policyType: 1 | 2;
+  workFromHome?: {
+    approvalRequired: boolean;
+    approverStrategy: "REPORTING_MANAGER" | "DEPARTMENT_HEAD" | "HR_ADMIN";
+    reasonRequired: boolean;
+    maxDaysPerWeek?: number | null;
+    maxDaysPerMonth?: number | null;
+    allowFullDay: boolean;
+    allowFirstHalf: boolean;
+    allowSecondHalf: boolean;
+    allowMixedHalfDayLeave: boolean;
+    allowOnWeeklyOff: boolean;
+    allowOnHoliday: boolean;
+    fullDayAttendanceStatusCode: string;
+    halfDayAttendanceStatusCode: string;
+    mixedAttendanceStatusCode?: string | null;
+    useEffectiveOfficeSchedule: boolean;
+    fullDayRequiredWorkingMinutes?: number | null;
+    halfDayRequiredWorkingMinutes?: number | null;
+    breakMinutes: number;
+  } | null;
 };
 
 export type EmployeeLeaveBalanceFilter = {
@@ -149,8 +171,9 @@ export type EmployeeLeaveInfo = {
   leavePolicyId: string;
   leavePolicyName: string;
   leavePolicyCode: string;
+  totalAllocated: number;
+  taken: number;
   remaining: number;
-  usedLeave: number;
 };
 
 export type EmployeeLeaveBalanceData = {

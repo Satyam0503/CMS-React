@@ -19,9 +19,8 @@ import { ProfileHeader } from "./about/components/ProfileHeader";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useAppSelector } from "../../Redux/hooks";
-import { hasModuleFeaturePermission } from "../../../utils/common";
-import { ModulesName, Permission } from "../../../utils/enums";
 import LeaveCalendar from "./components/LeaveCalendar";
+import { getProfileTabs } from "./profileTabs";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -56,70 +55,12 @@ const UserProfile = () => {
     setBreadcrumbs(employeeBreadCrumbs);
   }, [empId, i, setBreadcrumbs, setPageTitle]);
 
-  const isLeaveActive = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.NoticeBoard,
-        Permission.View,
-        userModulePermission,
-      ),
-    [userModulePermission],
+  const tabsRoutes = useMemo<TabModel[]>(
+    () => getProfileTabs(userModulePermission, empId),
+    [empId, userModulePermission],
   );
 
-  const tabsRoutes: TabModel[] = [
-    {
-      tabId: 1,
-      to: "about",
-      title: "PROFILE.TABS.ABOUT",
-      icon: <Person />,
-      isActive: true,
-    },
-    {
-      tabId: 2,
-      to: "leave",
-      title: "PROFILE.TABS.LEAVE_TRACKER",
-      icon: <CalendarMonth />,
-      isActive: isLeaveActive,
-    },
-    {
-      tabId: 3,
-      to: "performance",
-      title: "PROFILE.TABS.PERFORMANCE",
-      icon: <Speed />,
-      isActive: true,
-    },
-    {
-      tabId: 4,
-      to: "workhistory",
-      title: "PROFILE.TABS.WORKHISTORY",
-      icon: <WorkHistory />,
-      isActive: true,
-    },
-    {
-      tabId: 5,
-      to: "setting",
-      title: "PROFILE.TABS.SETTING",
-      icon: <Settings />,
-      isActive: true,
-    },
-  ];
-
-  const filteredTabs = tabsRoutes.filter((tab) => {
-    if (tab.to === "leave") {
-      return (
-        !empId ||
-        hasModuleFeaturePermission(
-          ModulesName.LeaveManagement,
-          Permission.View,
-          modulePermission ?? [],
-        )
-      );
-    }
-    if (tab.to === "setting") {
-      return !empId;
-    }
-    return true;
-  });
+  const filteredTabs = tabsRoutes;
 
   return (
     <UserDetailsProvider>

@@ -8,17 +8,25 @@ interface PropsTypes {
   module?: ModulesName;
   children: React.ReactNode;
   permission?: Permission;
+  permissions?: Permission[];
   adminOnly?:boolean;
 }
 
-export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = Permission.View,adminOnly=false }) => {
+export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = Permission.View, permissions, adminOnly=false }) => {
   const userRoleType = useAppSelector(state=>state.user.userData?.roleType!);
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  // Administrators bypass module permission checks and always have access
+  if (userRoleType === Roles.Administrator) {
+    return <>{children}</>;
+  }
+
   if(adminOnly){
     return userRoleType === Roles.Administrator ? children : <Navigate to={"/unauthorize"} replace />;
-  }else if (module && modulePermissions.length>0) {
-    const hasAccess = hasModuleFeaturePermission(module, permission, modulePermissions);
-    return hasAccess ? children :<Navigate to={"/unauthorize"} replace />;
+  } else if (module && modulePermissions.length>0) {
+    const hasAccess = permissions?.length
+      ? permissions.some((perm) => hasModuleFeaturePermission(module, perm, modulePermissions))
+      : hasModuleFeaturePermission(module, permission, modulePermissions);
+    return hasAccess ? children : <Navigate to={"/unauthorize"} replace />;
   }
   else{
     return <Navigate to={"/unauthorize"} replace />;

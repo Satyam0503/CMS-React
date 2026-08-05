@@ -9,6 +9,7 @@ import { CareerMarketplace } from "../modules/careerPortal/pages/CareerMarketpla
 import { CareerJobDetails } from "../modules/careerPortal/pages/CareerJobDetails";
 import { SavedJobsPage } from "../modules/careerPortal/pages/SavedJobsPage";
 import { CareerPreferencesPage } from "../modules/careerPortal/pages/CareerPreferencesPage";
+import { SavedJobsProvider } from "../modules/careerPortal/context/SavedJobsContext";
 
 const { BASE_URL } = import.meta.env;
 
@@ -17,7 +18,7 @@ const AppRoutes: FC = () => {
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
-        <Route element={<App />}>
+        <Route element={<SavedJobsProvider><App /></SavedJobsProvider>}>
           <Route path="error/*" element={<ErrorsPage />} />
           <Route path="career" element={<Navigate to="/careers" replace />} />
           <Route path="career/:legacyValue" element={<Navigate to="/careers" replace />} />

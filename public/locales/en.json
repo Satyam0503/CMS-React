@@ -981,7 +981,8 @@
     "44": "Cannot delete a policy with an active current version",
     "45": "Policy not found",
     "46": "Can not delete current active policy version",
-    "47": "Policy version not found"
+    "47": "Policy version not found",
+    "48": "Attendance status code was not found or cannot be used for leave. Choose an active status that does not require time."
   },
   "CHAT": {
     "TITLE": "Chats",

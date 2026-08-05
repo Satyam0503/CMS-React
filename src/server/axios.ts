@@ -129,6 +129,7 @@ export const getRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
+  const bypassQueryCache = config?.headers?.["Cache-Control"] === "no-cache";
   return queryClient.fetchQuery({
     queryKey: apiQueryKey(
       path,
@@ -142,9 +143,15 @@ export const getRequest = <ResponseData>(
         signal: config?.signal ?? signal,
         headers: {
           ...config?.headers,
-          "Cache-Control": "max-age=3600",
+          // Callers that display time-sensitive, token-derived data (for example
+          // an employee's own attendance) can explicitly opt out of a cached
+          // response. Preserve the default for the existing read-heavy screens.
+          "Cache-Control": config?.headers?.["Cache-Control"] ?? "max-age=3600",
         },
       }),
+    // `fetchQuery` otherwise returns a still-fresh TanStack cache entry before
+    // Axios has a chance to honour the caller's no-cache header.
+    staleTime: bypassQueryCache ? 0 : undefined,
   });
 };
 

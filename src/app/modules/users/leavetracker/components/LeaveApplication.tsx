@@ -18,6 +18,7 @@ import CustomisedButton from "../../../../shared/components/C_Button";
 import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import {
   EmployeeLeaveTypeBalance,
+  LeavePolicyModel,
   RequestLeaveModel,
 } from "../../../leaves/model";
 import { Formik } from "formik";
@@ -26,7 +27,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createEmployeeLeaveRequest, createLeaveRequest, updateLeaveRequest, } from "../../../leaves/leaveServices";
+import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createWorkFromHomeRequest, getLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -35,6 +36,10 @@ import { HolidayModel, HolidayPayload } from "../../../holidays/models";
 import { useEffect, useState } from "react";
 
 import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui";
+
+type SelectableLeaveType = EmployeeLeaveTypeBalance & {
+  policyType?: 1 | 2;
+};
 type Props = {
   edit: boolean;
   initialValues: RequestLeaveModel;
@@ -43,6 +48,27 @@ type Props = {
   handleClose: () => void;
   handleRefresh?: () => void;
   targetEmployeeId?: string;
+};
+
+const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
+  const [rawCode, ...rawDetails] = (errorMessage ?? "").split(":");
+  const code = rawCode.trim();
+  const details = rawDetails.join(":").trim();
+
+  const messages: Record<string, string> = {
+    WFH_WEEKLY_QUOTA_EXCEED: "You have already used this week's Work From Home allowance. You can apply again next Monday.",
+    WFH_WEEKLY_QUOTA_EXCEEDED: "You have already used this week's Work From Home allowance. You can apply again next Monday.",
+    WFH_OVERLAPPING_REQUEST: "You already have a Work From Home request for one or more of the selected dates.",
+    WFH_BACKDATED_NOT_ALLOWED: "Work From Home can only be requested for today or a future working day.",
+    WFH_ADVANCE_NOTICE_REQUIRED: "This request does not meet the required advance notice period.",
+    WFH_WEEKLY_OFF_NOT_ALLOWED: "Work From Home cannot be requested on a weekly off day.",
+    WFH_HOLIDAY_NOT_ALLOWED: "Work From Home cannot be requested on a holiday.",
+    WFH_POLICY_NOT_ASSIGNED: "Work From Home is not available for your current profile. Please contact HR.",
+    WFH_POLICY_DISABLED: "Work From Home is not currently enabled for your company. Please contact HR.",
+    WFH_DATE_LOCKED: "The attendance period for the selected date is locked. Please contact HR.",
+  };
+
+  return messages[code] || details || errorMessage || "We could not submit your Work From Home request. Please try again.";
 };
 
 export const LeaveApplication = (props: Props) => {
@@ -59,6 +85,7 @@ export const LeaveApplication = (props: Props) => {
   const employeeId = props.targetEmployeeId ?? routeEmployeeId;
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
+  const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
   const [filter, setFilter] = useState<HolidayPayload>({
     fromDate: null,
     toDate: null,
@@ -82,6 +109,54 @@ export const LeaveApplication = (props: Props) => {
       fetchedHolidayData();
     }
   }, [filter]);
+
+  useEffect(() => {
+    // WFH is a policy rather than a leave balance. It is therefore added only
+    // to an employee's own form, not to HR's separate employee-allocation flow.
+    if (props.targetEmployeeId) {
+      setWorkFromHomeTypes([]);
+      return;
+    }
+
+    const loadWorkFromHomePolicy = async () => {
+      try {
+        const { data } = await getLeavePolicies(true);
+        const policies = (data.methodResults ?? []) as LeavePolicyModel[];
+        setWorkFromHomeTypes(
+          policies
+            .filter((policy) => policy.policyType === 2 && policy.id)
+            .map((policy) => ({
+              leaveBalanceId: `wfh-${policy.id}`,
+              leavePolicyId: policy.id!,
+              totalAllocated: 0,
+              taken: 0,
+              remaining: 0,
+              name: policy.name,
+              code: policy.code,
+              description: policy.description ?? "",
+              paid: policy.paid,
+              minNoticeDays: 0,
+              halfDayAllowed: Boolean(policy.workFromHome?.allowFirstHalf || policy.workFromHome?.allowSecondHalf),
+              weekendInclusive: Boolean(policy.workFromHome?.allowOnWeeklyOff),
+              holidayInclusive: Boolean(policy.workFromHome?.allowOnHoliday),
+              attendanceStatusCode: policy.attendanceStatusCode,
+              policyType: 2,
+            }))
+        );
+      } catch (error) {
+        console.error("Unable to load the Work From Home policy.", error);
+      }
+    };
+
+    loadWorkFromHomePolicy();
+  }, [currentUserId, employeeId]);
+
+  const selectableLeaveTypes: SelectableLeaveType[] = [
+    ...leaveTypeBalance.map((leave) => ({ ...leave, policyType: 1 as const })),
+    ...workFromHomeTypes.filter((wfh) =>
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
+    ),
+  ];
 
   //Gets the dates between two dates
   const getDatesBetween = (startDate: Dayjs, endDate: Dayjs) => {
@@ -117,7 +192,7 @@ export const LeaveApplication = (props: Props) => {
   ) {
     if (!startDate || !endDate || !leaveTypeId) return 0;
 
-    const selectedLeave = leaveTypeBalance.find(
+    const selectedLeave = selectableLeaveTypes.find(
       (leave) => leave.leavePolicyId === leaveTypeId
     );
     if (!selectedLeave) return 0;
@@ -156,8 +231,52 @@ export const LeaveApplication = (props: Props) => {
     setSubmitting: (isSubmitting: boolean) => void,
     setStatus: (status?: unknown) => void
   ) => {
+    const selectedLeaveType = selectableLeaveTypes.find(
+      (type) => type.leavePolicyId === values.leavePolicyId
+    );
+
+    if (selectedLeaveType?.policyType === 2) {
+      if (edit) {
+        setStatus("Work From Home requests cannot be edited here. Please cancel the request and submit a new one.");
+        setSubmitting(false);
+        return;
+      }
+
+      if (values.isHalfDay && !selectedLeaveType.halfDayAllowed) {
+        setStatus("Half-day Work From Home is not enabled in the current policy.");
+        setSubmitting(false);
+        return;
+      }
+
+      try {
+        const { data } = await createWorkFromHomeRequest({
+          fromDate: dayjs(values.startDate).startOf("day").format("YYYY-MM-DD"),
+          toDate: dayjs(values.endDate).startOf("day").format("YYYY-MM-DD"),
+          durationType: values.isHalfDay ? "FirstHalf" : "FullDay",
+          reasonCode: "OTHER",
+          reasonText: values.reason.trim(),
+        });
+
+        if (!data.success) {
+          throw new Error(data.message || data.statusCode.toString());
+        }
+
+        toast.success("Work From Home request submitted successfully.");
+        handleClose();
+        props.handleRefresh?.();
+      } catch (error) {
+        const message = (error as Error).message;
+        toast.error(message && !/^\d+$/.test(message)
+          ? getWorkFromHomeErrorMessage(message)
+          : i({ id: getCustomStatusCodesErrorMessage(+message) }));
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     const minAdvanceNoticeDate =
-      leaveTypeBalance.find(
+      selectableLeaveTypes.find(
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.minNoticeDays ?? 0;
     const currentNoticeDays = dayjs(values.startDate).diff(dayjs().startOf("day"), "days");
@@ -166,7 +285,7 @@ export const LeaveApplication = (props: Props) => {
         i(
           { id: "MESSAGE.ADVANCE_LEAVE_NOTICE_ERROR" },
           {
-            leaveType: leaveTypeBalance.find(
+            leaveType: selectableLeaveTypes.find(
               (leave) => leave.leavePolicyId === values.leavePolicyId
             )?.name,
             days: minAdvanceNoticeDate,
@@ -183,9 +302,9 @@ export const LeaveApplication = (props: Props) => {
       return;
     }
     const remainingLeaveForTypes =
-      leaveTypeBalance.find(
+      selectableLeaveTypes.find(
         (type) => type.leavePolicyId === values.leavePolicyId
-      )?.balance ?? 0;
+      )?.remaining ?? 0;
 
     if (totalHolidayDays > remainingLeaveForTypes) {
       setStatus(
@@ -193,7 +312,7 @@ export const LeaveApplication = (props: Props) => {
           { id: "MESSAGE.INSUFFICIENT_LEAVE_ERROR" },
           {
             remainingLeave: remainingLeaveForTypes,
-            leaveType: leaveTypeBalance.find(
+            leaveType: selectableLeaveTypes.find(
               (leave) => leave.leavePolicyId === values.leavePolicyId
             )?.name,
           }
@@ -209,10 +328,12 @@ export const LeaveApplication = (props: Props) => {
       };
       try {
         const { data } = props.edit
-          ? await updateLeaveRequest(payload)
+          ? employeeId
+            ? await updateLeaveRequest(payload)
+            : await updateMyProfileLeaveRequest(payload)
           : employeeId
             ? await createEmployeeLeaveRequest(employeeId, payload)
-            : await createLeaveRequest(payload);
+            : await createMyProfileLeaveRequest(payload);
         if (data.success) {
           toast.success(
             i({
@@ -276,6 +397,7 @@ export const LeaveApplication = (props: Props) => {
                   {status}
                 </AppAlert>
               )}
+              <Stack sx={{ maxHeight: "min(62vh, 560px)", overflowY: "auto", overflowX: "hidden", pr: 1.5 }}>
               <Grid container spacing={2}>
                 <Grid size={12}>
                   <FormControl fullWidth>
@@ -292,7 +414,7 @@ export const LeaveApplication = (props: Props) => {
                         setFieldValue("leavePolicyId", e.target.value);
                       }}
                     >
-                      {leaveTypeBalance.map((type) => (
+                      {selectableLeaveTypes.map((type) => (
                         <MenuItem
                           key={type.leaveBalanceId}
                           value={type.leavePolicyId}
@@ -309,7 +431,7 @@ export const LeaveApplication = (props: Props) => {
                       fullWidth
                       className="d-flex flex-row align-items-center gap-4"
                       disabled={
-                        leaveTypeBalance.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
+                        selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
                           ? true
                           : false
                       }
@@ -416,7 +538,7 @@ export const LeaveApplication = (props: Props) => {
                           (leave, index) => {
                             const isWeekend = checkIfWeekend(leave);
                             const isHoliday = checkIfHoliday(leave);
-                            const selectedPolicy = leaveTypeBalance.find(lb => lb.leavePolicyId === values.leavePolicyId);
+                            const selectedPolicy = selectableLeaveTypes.find(lb => lb.leavePolicyId === values.leavePolicyId);
 
                             const label = (!selectedPolicy?.weekendInclusive && isWeekend) ? "LEAVE.TITLES.LEAVE_WEEKEND" : (!selectedPolicy?.holidayInclusive && isHoliday) ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY";
                             return (
@@ -498,6 +620,7 @@ export const LeaveApplication = (props: Props) => {
                   />
                 </Grid>
               </Grid>
+              </Stack>
               <Grid className="d-flex gap-2 flex-row justify-content-end mt-4">
                 <CustomisedButton
                   variant="outlined"

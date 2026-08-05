@@ -1,18 +1,17 @@
 import {
   ArrowForwardRounded,
-  BusinessRounded,
   LocationOnRounded,
   WorkOutlineRounded,
 } from "@mui/icons-material";
-import { Avatar, Box, Card, Chip, Stack, Typography } from "@mui/material";
+import { Box, Card, Chip, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { SaveJobButton } from "./SaveJobButton";
 import { Btn } from "../../../shared/components/ui";
+import { CompanyLogo } from "./CompanyLogo";
 
-export const JobCard = ({ job, initiallySaved = false, onSavedChange }: {
+export const JobCard = ({ job, onSavedChange }: {
   job: PublicJobSummary;
-  initiallySaved?: boolean;
   onSavedChange?: (saved: boolean) => void;
 }) => {
   const navigate = useNavigate();
@@ -36,9 +35,7 @@ export const JobCard = ({ job, initiallySaved = false, onSavedChange }: {
       }}
     >
       <Stack direction="row" spacing={2.25} alignItems="flex-start">
-        <Avatar src={job.companyLogo ?? undefined} sx={{ width: 54, height: 54, bgcolor: "primary.lighter", color: "primary.dark", fontWeight: 900 }}>
-          {job.companyName?.[0] ?? <BusinessRounded />}
-        </Avatar>
+        <CompanyLogo src={job.companyLogo} name={job.companyName} />
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Stack direction="row" justifyContent="space-between" gap={1}>
             <Box>
@@ -50,7 +47,7 @@ export const JobCard = ({ job, initiallySaved = false, onSavedChange }: {
               <Typography variant="h5" fontWeight={850} letterSpacing="-.025em">{job.title}</Typography>
               <Typography color="text.secondary" fontWeight={650} sx={{ mt: 0.4 }}>{job.companyName}</Typography>
             </Box>
-            <SaveJobButton publicJobId={job.publicJobId} initiallySaved={initiallySaved} onChange={onSavedChange} />
+            <SaveJobButton publicJobId={job.publicJobId} onChange={onSavedChange} />
           </Stack>
           <Stack direction="row" flexWrap="wrap" gap={0.8} sx={{ mt: 2 }}>
             {job.location && <Chip size="small" icon={<LocationOnRounded />} label={job.location} />}

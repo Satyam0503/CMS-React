@@ -14,8 +14,6 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import { GridRowSelectionModel } from "@mui/x-data-grid";
-import utc from "dayjs/plugin/utc";
 import { GridColDef } from "@mui/x-data-grid";
 import { CustomDataGrid } from "../../../shared/components/C_DataGrid";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
@@ -24,6 +22,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import dayjs, { Dayjs } from "dayjs";
 import { getHolidays } from "../../holidays/calendarServices";
 import { HolidayPayload, HolidayModel } from "../../holidays/models";
+import { formatIndianTime, formatServerDate } from "../../../../utils/common";
 import { addEditAttendance, getAllAttendance } from "../AttendanceServices";
 import { AdminAttendanceCreateDto, AttendanceStatus } from "../AttendanceModels";
 import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
@@ -31,6 +30,7 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
 import TimelapseIcon from "@mui/icons-material/Timelapse";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import FreeBreakfastIcon from "@mui/icons-material/FreeBreakfast";
 import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
@@ -61,6 +61,8 @@ interface AttendanceData {
   checkIn: string;
   checkOut: string;
   remarks: string;
+  sourceType?: string | null;
+  sourceId?: string | null;
 }
 
 const attendanceStatusOptions: Array<{ value: AttendanceStatus; label: string; requiresTime?: boolean }> = [
@@ -92,6 +94,10 @@ interface Props {
   employees: Employee[];
   searchValue: string;
   selectedDay: string;
+  // Company view is independent from mutation authority. A reviewer can see
+  // the company grid without gaining edit, bulk, or exception controls.
+  companyView?: boolean;
+  readOnly?: boolean;
   onStatsChange?: (stats: {
     present: number;
     absent: number;
@@ -114,7 +120,9 @@ const initialModalState: AttendanceData = {
 export const AttendanceCalendarGrid: FC<Props> = ({
   employees,
   selectedDay,
+  companyView = false,
   searchValue,
+  readOnly = false,
   onStatsChange,
 }) => {
   const theme = useTheme();
@@ -133,7 +141,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   } | null>(null);
 
   const [modalData, setModalData] = useState<AttendanceData>(initialModalState);
-  const [holidays, setHolidays] = useState<number[]>([]);
+  const [holidays, setHolidays] = useState<Set<string>>(new Set());
   const [weeklyOffDays, setWeeklyOffDays] = useState<number[]>([0, 6]);
   useEffect(() => {
     getRequest<{ offDays: number[] }>("api/attendance/weekly-offs")
@@ -147,9 +155,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   const selectedMonth = selectedDate?.month() ?? today.month();
   const selectedYear = selectedDate?.year() ?? today.year();
   const daysInMonth = selectedDate?.daysInMonth() ?? today.daysInMonth();
-  const [bulkDate, setBulkDate] = useState<Date | null>(null);
-  const [bulkStatus, setBulkStatus] = useState<AttendanceData["status"]>("");
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [confirmationModal, setConfirmationModal] = useState<{
     open: boolean;
     title: string;
@@ -159,10 +164,21 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     title: "",
     content: "",
   });
+
+  const normalizeUserId = (userId?: string) => (userId ?? "").toString().trim().toLowerCase();
+  const resolveRowId = (emp: Employee) => normalizeUserId(emp.userId || emp.id);
   const [attendanceItems, setAttendanceItems] = useState<any[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequestModel[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const isLeaveGeneratedAttendance = (userId: string, dateISO: string) =>
+    attendanceItems.some((item) =>
+      item.userId === userId &&
+      formatServerDate(item.date, "YYYY-MM-DD") === dateISO &&
+      String(item.sourceType ?? "").toUpperCase() === "LEAVE",
+    );
 
   useEffect(() => {
     const handleExceptionEdit = (event: Event) => {
@@ -216,6 +232,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const fetchAllData = async () => {
       try {
         /* ------------------ LEAVES ------------------ */
+        let leaveItems: LeaveRequestModel[] = [];
+        const approvedWfhById = new Map<string, { fromDate: string; toDate: string }>();
+        if (companyView) {
         const leavePayload: GetLeaveRequestPayLoad = {
           pageNo: 1,
           pageSize: 1000,
@@ -225,8 +244,22 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         };
 
         const leaveResponse = await getAllLeaveRequest(leavePayload);
-        const leaveItems = leaveResponse?.data?.methodResults ?? [];
+        leaveItems = leaveResponse?.data?.methodResults ?? [];
         setLeaveRequests(leaveItems);
+        // A legacy WFH attendance row can have been serialized at the previous
+        // UTC day. The approved request owns the business date, just as an
+        // approved leave request does, so use it for one-day WFH rows.
+        try {
+          const wfhResponse = await getRequest<{ methodResults?: Array<{ requestId: string; fromDate: string; toDate: string; status: string }> }>("api/wfh/requests/all");
+          (wfhResponse.data.methodResults ?? [])
+            .filter((request) => request.status === "Approved")
+            .forEach((request) => approvedWfhById.set(request.requestId, request));
+        } catch {
+          // Attendance remains usable for viewers without WFH-all permission.
+        }
+        } else {
+          setLeaveRequests([]);
+        }
 
         /* ------------------ HOLIDAYS ------------------ */
         const holidayPayload: HolidayPayload = {
@@ -235,39 +268,70 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         };
 
         const holidayResponse = await getHolidays(holidayPayload);
-        const holidayDays =
+        const holidayDates =
           holidayResponse?.data?.methodResults?.map((h: HolidayModel) =>
-            new Date(h.date).getDate(),
+            formatServerDate(h.date, "YYYY-MM-DD"),
           ) ?? [];
 
-        setHolidays(holidayDays);
+        setHolidays(new Set(holidayDates));
 
         /* ------------------ ATTENDANCE ------------------ */
         const attendancePayload = {
           fromDate: selectedDate.startOf("month").format("YYYY-MM-DD"),
           toDate: selectedDate.endOf("month").format("YYYY-MM-DD"),
-          userIds: employees.map((e) => e.id),
+          userIds: employees.map((e) => e.userId || e.id).filter(Boolean),
         };
 
-        const attendanceResponse = await getAllAttendance(attendancePayload);
-        const items = attendanceResponse?.data?.items ?? [];
+        const attendanceResponse = !companyView
+          ? await getRequest<{ items?: any[] }>(`api/attendance/me/grid?year=${selectedYear}&month=${selectedMonth + 1}`, {
+              headers: { "Cache-Control": "no-cache" },
+            })
+          : await getAllAttendance(attendancePayload);
+        // Current calendar endpoints return { items }.  Older deployed API builds
+        // return the standard Result envelope, so accept both while deployments roll.
+        const responsePayload = attendanceResponse?.data as any;
+        const responseItems = responsePayload?.items ?? responsePayload?.methodResults ?? responsePayload?.methodResult ?? responsePayload;
+        const items = Array.isArray(responseItems) ? responseItems : [];
         setAttendanceItems(items);
 
         const formatted: Record<string, AttendanceData> = {};
+        const approvedLeaveById = new Map<string, LeaveRequestModel>(
+          leaveItems.map((leave: LeaveRequestModel) => [leave.leaveRequestId, leave] as const),
+        );
 
         items.forEach((item: any) => {
-          const dateISO = dayjs(item.date).format("YYYY-MM-DD");
-          const key = `${item.userId}-${dateISO}`;
+          const sourceIsLeave = String(item.sourceType ?? "").toUpperCase() === "LEAVE";
+          const relatedLeave = sourceIsLeave
+            ? approvedLeaveById.get(item.sourceId)
+            : undefined;
+          const sourceIsWfh = String(item.sourceType ?? "").toUpperCase() === "WFH_REQUEST";
+          const relatedWfh = sourceIsWfh ? approvedWfhById.get(item.sourceId) : undefined;
+
+          // Leave requests own the business date. For a single-day source row, use the
+          // approved request date rather than a serialized attendance timestamp. This
+          // prevents a timezone-shifted/stale source timestamp from showing a 5 Aug or
+          // 17 Aug leave under an earlier calendar column.
+          const dateISO = relatedLeave && relatedLeave.totalDays <= 1
+            ? dayjs(relatedLeave.startDate).format("YYYY-MM-DD")
+            : relatedWfh && relatedWfh.fromDate.slice(0, 10) === relatedWfh.toDate.slice(0, 10)
+              ? dayjs(relatedWfh.fromDate).format("YYYY-MM-DD")
+            : formatServerDate(item.date, "YYYY-MM-DD");
+          if (!dateISO || dateISO === "NA") return;
+
+          // The self endpoint derives the employee from the access token.  Use
+          // the rendered row identity for that one-row grid rather than relying
+          // on a legacy user-id representation returned by older attendance rows.
+          const rowUserId = !companyView ? resolveRowId(employees[0]) : normalizeUserId(item.userId);
+          if (!rowUserId) return;
+          const key = `${rowUserId}-${dateISO}`;
 
           formatted[key] = {
             status: item.status,
-            checkIn: item.checkInTime
-              ? dayjs(item.checkInTime).format("HH:mm")
-              : "",
-            checkOut: item.checkOutTime
-              ? dayjs(item.checkOutTime).format("HH:mm")
-              : "",
+            checkIn: formatIndianTime(item.checkInTime),
+            checkOut: formatIndianTime(item.checkOutTime),
             remarks: item.remarks ?? "",
+            sourceType: item.sourceType ?? null,
+            sourceId: item.sourceId ?? null,
           };
         });
 
@@ -278,7 +342,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     };
 
     fetchAllData();
-  }, [selectedDate, employees]);
+  }, [selectedDate, employees, companyView, reloadKey]);
 
   /*-------------------------------ICON STATS-------------------------------------- */
 
@@ -300,7 +364,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const todayDate = dayjs();
 
     attendanceItems.forEach((item: any) => {
-      const itemDate = dayjs(item.date);
+      const itemDate = dayjs(formatServerDate(item.date, "YYYY-MM-DD"));
 
       let include = false;
 
@@ -345,7 +409,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     }
 
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
-    const key = `${selectedCell.employee.id}-${dateISO}`;
+    const rowId = selectedCell.employee.userId || selectedCell.employee.id;
+    const key = `${rowId}-${dateISO}`;
     const existing = attendanceData[key];
 
     setModalData({
@@ -355,170 +420,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       remarks: existing?.remarks ?? "",
     });
   }, [selectedCell, attendanceData]);
-
-  /* ----------------------------------------------------------BULK SAVE--------------------------------------------------------------------------*/
-  const handleBulkSave = async () => {
-    if (!bulkDate || !bulkStatus) {
-      setConfirmationModal({
-        open: true,
-        title: "Check",
-        content: "Please Select Status And Date",
-      });
-
-      return;
-    }
-
-    const dateISO = dayjs(bulkDate).format("YYYY-MM-DD");
-
-    const updates: Record<string, AttendanceData> = {};
-
-    try {
-      for (const emp of employees) {
-        const dayOfWeek = bulkDate.getDay();
-        const isWeekend = weeklyOffDays.includes(dayOfWeek);
-        const isHoliday = holidays.includes(bulkDate.getDate());
-        if (isWeekend || isHoliday) {
-          setConfirmationModal({
-            open: true,
-            title: "Invalid",
-            content: "Cannot mark attendance on Weekend or Public Holiday",
-          });
-          return;
-        }
-
-        const key = `${emp.userId}-${dateISO}`;
-
-        const payload: AdminAttendanceCreateDto = {
-          UserId: emp.id,
-          EmployeeId: emp.employeeId,
-          Date: dateISO,
-          Status: bulkStatus,
-          CheckInTime: bulkStatus === "P" ? "09:00" : undefined,
-          CheckOutTime: bulkStatus === "P" ? "18:00" : undefined,
-          Remarks: null,
-        };
-
-        await addEditAttendance(payload);
-
-        updates[key] = {
-          status: bulkStatus,
-          checkIn: bulkStatus === "P" ? "09:00" : "",
-          checkOut: bulkStatus === "P" ? "18:00" : "",
-          remarks: "",
-        };
-      }
-
-      setAttendanceData((prev) => ({
-        ...prev,
-        ...updates,
-      }));
-
-      setConfirmationModal({
-        open: true,
-        title: "Success",
-        content: "Bulk attendance applied successfully!",
-      });
-    } catch (error) {
-      console.error(error);
-      setConfirmationModal({
-        open: true,
-        title: "Error",
-        content: "Bulk save failed",
-      });
-    }
-
-    setBulkDate(null);
-    setBulkStatus("");
-    setSelectedEmployeeIds([]);
-  };
-
-  /*-----------------------------------------------------------------SELECTED BULK ATTENDANCE-----------------------------------------------------*/
-  const handleSelectedBulk = async () => {
-    if (!bulkDate || !bulkStatus) {
-      setConfirmationModal({
-        open: true,
-        title: "Check",
-        content: "Please Select Status And Date",
-      });
-      return;
-    }
-
-    if (selectedEmployeeIds.length === 0) {
-      setConfirmationModal({
-        open: true,
-        title: "Select",
-        content: "Select Employee",
-      });
-      return;
-    }
-
-    const dateISO = dayjs(bulkDate).format("YYYY-MM-DD");
-
-    const updates: Record<string, AttendanceData> = {};
-
-    try {
-      for (const userId of selectedEmployeeIds) {
-        const dayOfWeek = bulkDate.getDay();
-        const isWeekend = weeklyOffDays.includes(dayOfWeek);
-        const isHoliday = holidays.includes(bulkDate.getDate());
-
-        if (isWeekend || isHoliday) {
-          setConfirmationModal({
-            open: true,
-            title: "Invalid",
-            content: "Cannot mark attendance on Weekend or Public Holiday",
-          });
-          return;
-        }
-
-        const emp = employees.find((e) => e.userId === userId);
-        if (!emp) continue;
-
-        const key = `${emp.userId}-${dateISO}`;
-
-        const payload: AdminAttendanceCreateDto = {
-          UserId: emp.userId,
-          EmployeeId: emp.employeeId,
-          Date: dateISO,
-          Status: bulkStatus,
-          CheckInTime: bulkStatus === "P" ? "09:00" : undefined,
-          CheckOutTime: bulkStatus === "P" ? "18:00" : undefined,
-          Remarks: null,
-        };
-
-        await addEditAttendance(payload);
-
-        updates[key] = {
-          status: bulkStatus,
-          checkIn: bulkStatus === "P" ? "09:00" : "",
-          checkOut: bulkStatus === "P" ? "18:00" : "",
-          remarks: "",
-        };
-      }
-
-      setAttendanceData((prev) => ({
-        ...prev,
-        ...updates,
-      }));
-
-      setConfirmationModal({
-        open: true,
-        title: "Success",
-        content: "Selected employees updated successfully!",
-      });
-    } catch (error) {
-      console.error(error);
-      setConfirmationModal({
-        open: true,
-        title: "Error",
-        content: "Bulk update failed",
-      });
-    }
-
-    setBulkDate(null);
-    setBulkStatus("");
-    setSelectedEmployeeIds([]);
-  };
 
   /* ----------------------------------------------------------- GRID COLUMN ------------------------------------------- */
 
@@ -559,20 +460,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         const dateObj = new Date(selectedYear, selectedMonth, i + 1);
         const dayOfWeek = dateObj.getDay();
         const isWeekend = weeklyOffDays.includes(dayOfWeek);
-        const isHoliday = holidays.includes(i + 1);
-        const editable = dateObj <= today.toDate() && !isHoliday && !isWeekend;
+        const dateIso = dayjs(dateObj).format("YYYY-MM-DD");
+        const isHoliday = holidays.has(dateIso);
+        const editable = !readOnly && dateObj <= today.toDate() && !isHoliday && !isWeekend;
 
         const getIcon = (value: AttendanceData) => {
-          if (isHoliday) {
-            return <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />;
-          }
-
-          if (isWeekend && !isHoliday) {
-            return (
-              <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-            );
-          }
-
           switch (value.status) {
             case "P":
               return <TaskAltIcon sx={{ fontSize: 18, color: "success.main" }} />;
@@ -599,12 +491,21 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               return <TaskAltIcon sx={{ fontSize: 18, color: "info.main" }} />;
 
             default:
+              if (isHoliday) {
+                return <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />;
+              }
+
+              if (isWeekend && !isHoliday) {
+                return (
+                  <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />
+                );
+              }
               return null;
           }
         };
         const getBg = (value: AttendanceData) => {
           if (isHoliday) return alpha(theme.palette.secondary.main, 0.16);
-          if (isWeekend && !isHoliday) return theme.palette.action.hover;
+          if (isWeekend && !isHoliday && !value.status) return theme.palette.action.hover;
 
           switch (value.status) {
             case "P":
@@ -639,15 +540,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               spacing={0.5}
               sx={{
                 py: 1,
-                cursor: dayjs(dateObj).isAfter(today, "day")
-                  ? "not-allowed"
-                  : "pointer",
-              }}
-              onClick={() => {
-                const isFuture = dayjs(dateObj).isAfter(today, "day");
-                if (!isFuture) {
-                  setBulkDate(dateObj);
-                }
+                opacity: isHoliday || isWeekend ? 0.7 : 1,
               }}
             >
               <Typography fontSize={11} color="text.secondary">
@@ -663,24 +556,55 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           sortable: false,
           renderCell: (params: any) => {
             const value = params.value as AttendanceData;
+            const isLeaveGenerated = value.sourceType?.toUpperCase() === "LEAVE";
+            const isSystemDefault = ["SYSTEM_DEFAULT_PRESENT", "SYSTEM_OFFICE_START_PRESENT"].includes(value.sourceType?.toUpperCase() ?? "");
+            const relatedLeave = isLeaveGenerated
+              ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
+              : undefined;
+            const statusCode = value.status || "—";
+            const statusLabel = value.status
+              ? attendanceStatusLabels[value.status as AttendanceStatus] ?? value.status
+              : "No attendance recorded";
+            const leaveDetail = relatedLeave
+              ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
+              : "Approved leave • Generated from leave request";
+            const tooltipText = isLeaveGenerated
+              ? `${statusCode} — ${statusLabel}\n${leaveDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}`
+              : isSystemDefault
+                ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
+              : isHoliday
+                ? "Public Holiday"
+                : isWeekend
+                  ? "Weekend"
+                  : statusLabel;
+            const canEdit = editable && !isLeaveGenerated;
 
             return (
               <Tooltip
-                title={
-                  isHoliday
-                    ? "Public Holiday"
-                    : isWeekend
-                      ? "Weekend"
-                      : value.status
-                        ? attendanceStatusLabels[value.status as AttendanceStatus] ?? value.status
-                        : ""
-                }
+                title={<Typography component="span" variant="body2" sx={{ whiteSpace: "pre-line" }}>{tooltipText}</Typography>}
               >
                 <Box
-                  onClick={() =>
-                    editable &&
-                    setSelectedCell({ employee: params.row, dateObj })
-                  }
+                  onClick={() => {
+                    if (readOnly) return;
+                    if (isLeaveGenerated) {
+                      setConfirmationModal({
+                        open: true,
+                        title: "Leave-generated attendance",
+                        content: "This record is generated from an approved leave request. Use the authorized leave-attendance conflict-resolution workflow to make a correction.",
+                      });
+                      return;
+                    }
+                    if (canEdit) setSelectedCell({ employee: params.row, dateObj });
+                  }}
+                  role="button"
+                  tabIndex={!readOnly && (isLeaveGenerated || canEdit) ? 0 : -1}
+                  aria-label={tooltipText.replace(/\n/g, ". ")}
+                  onKeyDown={(event) => {
+                    if (!readOnly && (event.key === "Enter" || event.key === " ") && (isLeaveGenerated || canEdit)) {
+                      event.preventDefault();
+                      event.currentTarget.click();
+                    }
+                  }}
                   sx={{
                     width: "100%",
                     height: "100%",
@@ -690,20 +614,34 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     justifyContent: "center",
                     backgroundColor: getBg(value),
                     borderRadius: 2,
-                    cursor: editable ? "pointer" : "default",
+                    cursor: isLeaveGenerated || canEdit ? "pointer" : "default",
                     transition: "all 0.2s ease",
                     border: "1px solid",
                     borderColor: "divider",
-
-                    "&:hover": {
-                      ...(editable && {
-                        transform: "scale(1.05)",
-                        boxShadow: theme.shadows[3],
-                      }),
-                    },
+                    "&:hover": (isLeaveGenerated || canEdit) ? {
+                      transform: "scale(1.05)",
+                      boxShadow: theme.shadows[3],
+                    } : {},
                   }}
                 >
-                  {getIcon(value)}
+                  {isLeaveGenerated ? (
+                    <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+                      <Typography component="span" fontSize={12} fontWeight={800} aria-hidden="true">
+                        {statusCode}
+                      </Typography>
+                      {isSystemDefault && <Typography component="span" fontSize={8} color="text.secondary" aria-hidden="true">System</Typography>}
+                      <LockOutlinedIcon sx={{ fontSize: 14 }} aria-hidden="true" />
+                    </Stack>
+                  ) : value.status ? (
+                    <Stack alignItems="center" spacing={0.25}>
+                      {getIcon(value)}
+                      <Typography component="span" fontSize={11} fontWeight={800} aria-hidden="true">
+                        {statusCode}
+                      </Typography>
+                    </Stack>
+                  ) : (
+                    getIcon(value)
+                  )}
                 </Box>
               </Tooltip>
             );
@@ -711,42 +649,24 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         };
       }),
     ];
-  }, [daysInMonth, holidays, weeklyOffDays, selectedMonth, selectedYear, today, searchValue, theme]);
+  }, [daysInMonth, holidays, weeklyOffDays, selectedMonth, selectedYear, today, searchValue, theme, leaveRequests]);
 
   /* ------------------------------------------------------------ GRID ROW ------------------------------------------------------------------------------------- */
 
   const rows: AttendanceRow[] = useMemo(() => {
     return employees.map((emp) => {
       const row: AttendanceRow = {
-        id: emp.id,
+        id: resolveRowId(emp),
         employeeId: emp.employeeId ?? "",
         name: emp.name,
       };
 
-      const employeeLeaves = leaveRequests.filter(
-        (leaveItem) => leaveItem.employeeId === emp.employeeId,
-      );
-
       for (let i = 1; i <= daysInMonth; i++) {
         const dateObj = new Date(selectedYear, selectedMonth, i);
         const dateISO = dayjs(dateObj).format("YYYY-MM-DD");
-        const key = `${emp.id}-${dateISO}`;
+        const key = `${resolveRowId(emp)}-${dateISO}`;
 
-        const leave = employeeLeaves.find((leaveItem) => {
-          const start = dayjs(leaveItem.startDate).format("YYYY-MM-DD");
-          const end = dayjs(leaveItem.endDate).format("YYYY-MM-DD");
-          return dateISO >= start && dateISO <= end;
-        });
-        if (leave) {
-          row[`day-${i}`] = {
-            status: leave.isHalfDay ? "H" : "L",
-            checkIn: "",
-            checkOut: "",
-            remarks: leave.leavePolicyName,
-          };
-        } else {
-          row[`day-${i}`] = attendanceData[key] ?? initialModalState;
-        }
+        row[`day-${i}`] = attendanceData[key] ?? initialModalState;
       }
 
       return row;
@@ -762,6 +682,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     [rows, page, rowsPerPage],
   );
 
+  const hasAttendanceForVisibleMonth = attendanceItems.length > 0;
+
   /* --------------------------------------------------------------- SAVE -------------------------------------------------------------------------- */
 
   const saveAttendance = async () => {
@@ -776,7 +698,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
     const dateISO = dayjs(selectedCell.dateObj).format("YYYY-MM-DD");
     const payload: AdminAttendanceCreateDto = {
-      UserId: selectedCell.employee.id,
+      UserId: selectedCell.employee.userId || selectedCell.employee.id,
       EmployeeId: selectedCell.employee.employeeId,
       Date: dateISO,
       CheckInTime: modalData.checkIn || undefined,
@@ -785,7 +707,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       Remarks: modalData.remarks || null,
     };
 
-    const key = `${selectedCell.employee.id}-${dateISO}`;
+    const rowId = selectedCell.employee.userId || selectedCell.employee.id;
+    const key = `${rowId}-${dateISO}`;
 
     try {
       await addEditAttendance(payload);
@@ -794,6 +717,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         ...prev,
         [key]: modalData,
       }));
+      setReloadKey((key) => key + 1);
 
       setConfirmationModal({
         open: true,
@@ -802,10 +726,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       });
     } catch (err) {
       console.error("Save failed", err);
+      const responseMessage =
+        typeof err === "object" && err !== null && "response" in err
+          ? (err.response as { data?: { message?: string } })?.data?.message
+          : err instanceof Error
+            ? err.message
+            : undefined;
+      const isLocked = /locked/i.test(responseMessage ?? "");
       setConfirmationModal({
         open: true,
-        title: "Error",
-        content: "Failed to save attendance",
+        title: isLocked ? "Attendance Locked" : "Error",
+        content: responseMessage || "Failed to save attendance",
       });
       return;
     }
@@ -839,8 +770,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             borderColor: "divider",
             backgroundColor: "background.paper",
             boxShadow: theme.shadows[2],
-          }}
-        >
+          }}>
+          
           <AppIconButton
             size="small"
             sx={{ p: 0.5 }}
@@ -875,7 +806,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           </AppIconButton>
         </Box>
       </Box>
-
       <Card
         sx={{
           p: 2,
@@ -906,19 +836,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           }}
         >
           <Box sx={{ minWidth: 230 + daysInMonth * 85 }}>
-            <CustomDataGrid
+      {!hasAttendanceForVisibleMonth && !companyView && (
+        <Typography variant="body2" color="text.secondary" sx={{ px: 1, pb: 1 }}>
+          No attendance has been recorded for {selectedDate?.format("MMMM YYYY")}.
+        </Typography>
+      )}
+      <CustomDataGrid
               row={paginatedRows}
               columns={columns}
               keyName="id"
               hidePagination
               loading={false}
-              checkboxSelection
-              onRowSelectionModelChange={(
-                selectionModel: GridRowSelectionModel,
-              ) => {
-                const selectedIds = Array.from(selectionModel.ids);
-                setSelectedEmployeeIds(selectedIds.map((id) => String(id)));
-              }}
+              checkboxSelection={false}
             />
           </Box>
         </Box>
@@ -935,7 +864,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           }}
         />
       </Card>
-      <MonthlyAttendanceExceptions month={selectedDate ?? today} />
+      {!readOnly && <MonthlyAttendanceExceptions month={selectedDate ?? today} />}
       <CustomisedModal
         open={Boolean(selectedCell)}
         handleClose={() => {
@@ -1036,55 +965,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           </Stack>
         )}
       </CustomisedModal>
-      <CustomisedModal
-        open={Boolean(bulkDate)}
-        handleClose={() => {
-          setBulkDate(null);
-          setBulkStatus("");
-        }}
-        title="Mark Attendance for All"
-      >
-        {bulkDate && (
-          <Stack spacing={2}>
-            <Typography>{bulkDate.toDateString()}</Typography>
-            <Typography color="primary">
-              {selectedEmployeeIds.length > 0
-                ? `${selectedEmployeeIds.length} Employees Selected`
-                : "All Employees"}
-            </Typography>
-
-            <AppTextField
-              select
-              label="Select Status"
-              fullWidth
-              value={bulkStatus}
-              onChange={(e) =>
-                setBulkStatus(e.target.value as AttendanceData["status"])
-              }
-            >
-              {statusOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.value} - {option.label}
-                </MenuItem>
-              ))}
-            </AppTextField>
-
-            <AppButton
-              variant="contained"
-              onClick={
-                selectedEmployeeIds.length > 0
-                  ? handleSelectedBulk
-                  : handleBulkSave
-              }
-            >
-              {selectedEmployeeIds.length > 0
-                ? "Apply to Selected"
-                : "Apply to All"}
-            </AppButton>
-          </Stack>
-        )}
-      </CustomisedModal>
-
       <ConfirmationModal
         open={confirmationModal.open}
         title={confirmationModal.title}

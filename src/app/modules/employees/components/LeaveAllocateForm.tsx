@@ -70,7 +70,7 @@ export const LeaveAllocateForm = ({
         (item) => ({
           employeeId: employeeId,
           leavePolicyId: item,
-          balance:
+          totalAllocated:
             leavePolicies.find((lp) => lp.id === item)?.accrualAmount ?? 0,
         }),
       );

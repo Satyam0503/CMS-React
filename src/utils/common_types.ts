@@ -154,7 +154,7 @@ export interface BaseModel {
 export interface TabModel {
   to: string;
   title: string;
-  icon: JSX.Element;
+  icon?: ReactNode | null;
   tabId: number;
   isActive?: boolean;
 }

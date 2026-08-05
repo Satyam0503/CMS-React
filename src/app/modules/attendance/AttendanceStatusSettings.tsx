@@ -9,12 +9,12 @@ import { AppButton, AppCheckbox, AppSwitch, AppTextField } from "../../shared/co
 
 export type AttendanceStatusSetting = {
   id?: string; code: string; name: string; isActive: boolean; isSystem: boolean;
-  sortOrder: number; requiresTime: boolean; paidDayFraction: number; unpaidDayFraction: number;
+  sortOrder: number; requiresTime: boolean; isAvailableForLeaveManagement: boolean; colorHex: string; paidDayFraction: number; unpaidDayFraction: number;
 };
 
 const empty: AttendanceStatusSetting = {
   code: "", name: "", isActive: true, isSystem: false, sortOrder: 99,
-  requiresTime: false, paidDayFraction: 1, unpaidDayFraction: 0,
+  requiresTime: false, isAvailableForLeaveManagement: false, colorHex: "#607D8B", paidDayFraction: 1, unpaidDayFraction: 0,
 };
 
 const defaultStatuses: AttendanceStatusSetting[] = [
@@ -27,7 +27,7 @@ const defaultStatuses: AttendanceStatusSetting[] = [
 ].map(([code, name, requiresTime, paid, unpaid], index) => ({
   code: code as string, name: name as string, requiresTime: requiresTime as boolean,
   paidDayFraction: paid as number, unpaidDayFraction: unpaid as number,
-  isActive: true, isSystem: true, sortOrder: index,
+  isActive: true, isSystem: true, isAvailableForLeaveManagement: ["SL", "CL", "EL", "COMP-OFF", "CL-HALF", "SL-HALF"].includes(code as string), colorHex: "#607D8B", sortOrder: index,
 }));
 
 type PenaltyPolicy = {
@@ -156,14 +156,16 @@ export default function AttendanceStatusSettings() {
           <Typography variant="h6" fontWeight={750}>Status catalogue</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Status names can be edited while system codes remain stable.</Typography>
           <Box sx={{ overflowX: "auto", border: "1px solid", borderColor: "divider", borderRadius: 2.5 }}>
-            <Box sx={{ minWidth: 760 }}>
-              <Box sx={{ display: "grid", gridTemplateColumns: "94px minmax(260px, 1fr) 112px 72px 72px", columnGap: 2, alignItems: "center", px: 2, py: 1.5, bgcolor: "background.default", color: "text.secondary" }}>
-                {["Code", "Status name", "Status", "Paid", "Unpaid"].map((label) => <Typography key={label} variant="caption" fontWeight={700}>{label}</Typography>)}
+            <Box sx={{ minWidth: 980 }}>
+              <Box sx={{ display: "grid", gridTemplateColumns: "94px minmax(220px, 1fr) 92px 142px 112px 72px 72px", columnGap: 2, alignItems: "center", px: 2, py: 1.5, bgcolor: "background.default", color: "text.secondary" }}>
+                {["Code", "Status name", "Color", "Available for leave", "Status", "Paid", "Unpaid"].map((label) => <Typography key={label} variant="caption" fontWeight={700}>{label}</Typography>)}
               </Box>
               {items.map((item) => (
-                <Box key={item.id ?? item.code} sx={{ display: "grid", gridTemplateColumns: "94px minmax(260px, 1fr) 112px 72px 72px", columnGap: 2, alignItems: "center", borderTop: "1px solid", borderColor: "divider", px: 2, py: 1.1, "&:hover": { bgcolor: "action.hover" } }}>
-                  <Typography fontWeight={750} color="primary.main">{item.code}</Typography>
+                <Box key={item.id ?? item.code} sx={{ display: "grid", gridTemplateColumns: "94px minmax(220px, 1fr) 92px 142px 112px 72px 72px", columnGap: 2, alignItems: "center", borderTop: "1px solid", borderColor: "divider", px: 2, py: 1.1, "&:hover": { bgcolor: "action.hover" } }}>
+                  <Typography fontWeight={750} sx={{ color: item.colorHex }}>{item.code}</Typography>
                   <AppTextField size="small" disabled={!isEditing} value={item.name} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, name: e.target.value } : x))} />
+                  <AppTextField size="small" type="color" disabled={!isEditing} value={item.colorHex} inputProps={{ "aria-label": `${item.code} display color` }} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, colorHex: e.target.value } : x))} />
+                  <FormControlLabel sx={{ m: 0 }} control={<AppSwitch disabled={!isEditing || item.requiresTime} checked={item.isAvailableForLeaveManagement} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, isAvailableForLeaveManagement: e.target.checked } : x))} />} label={item.requiresTime ? "Time status" : item.isAvailableForLeaveManagement ? "Shown" : "Hidden"} />
                   <FormControlLabel sx={{ m: 0 }} control={<AppSwitch disabled={!isEditing} checked={item.isActive} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, isActive: e.target.checked } : x))} />} label={item.isActive ? "Active" : "Inactive"} />
                   <Typography>{item.paidDayFraction}</Typography>
                   <Typography>{item.unpaidDayFraction}</Typography>

@@ -10,6 +10,8 @@ import {
   MenuItem,
   Stack,
   Typography,
+  TextField,
+  Button,
   alpha,
   useTheme,
 } from "@mui/material";
@@ -36,6 +38,13 @@ import { AttendanceCalendarGrid } from "./component/AttendanceCalendar";
 import { getAllEmployees } from "../employees/employeeServices";
 
 import { AppSelect } from "../../shared/components/ui";
+import { getRequest, postRequest } from "../../../server/axios";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { useAppSelector } from "../../Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../utils/common";
+import { ModulesName, Permission, Roles } from "../../../utils/enums";
+import { useNavigate } from "react-router-dom";
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
@@ -53,6 +62,13 @@ const useDebounce = (value: string, delay: number) => {
 const EmployeeAttendance = () => {
   const intl = useIntl();
   const theme = useTheme();
+  const userData = useAppSelector((state) => state.user.userData);
+  // Administrators are authorized by the API independently of individual module grants.
+  // Other roles must have the granular attendance permissions returned at sign-in.
+  const isAdministrator = userData?.roleType === Roles.Administrator;
+  const canViewAllAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []);
+  const canManageAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.CreateForEmployee, userData?.modulePermission ?? []) ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []);
 
   const [selectedDay, setSelectedDay] = React.useState("today");
   const [AttendanceList, setAttendanceList] = React.useState<AttendanceModel[]>(
@@ -69,10 +85,20 @@ const EmployeeAttendance = () => {
     late: 0,
     total: 0,
   });
+  const [correctionDate, setCorrectionDate] = React.useState("");
+  const [correctionReason, setCorrectionReason] = React.useState("");
+  const [correctionType, setCorrectionType] = React.useState("Incorrect status");
+  const navigate = useNavigate();
+  const [submittingCorrection, setSubmittingCorrection] = React.useState(false);
+  const [correctionRequests, setCorrectionRequests] = React.useState<any[]>([]);
   const debouncedSearch = useDebounce(searchValue, 500);
 
   useEffect(() => {
     const fetchEmployees = async () => {
+      if (!canViewAllAttendance) {
+        if (userData?.userId) setEmployee([{ userId: userData.userId, employeeId: "", fullName: "My attendance" }]);
+        return;
+      }
       setLoading(true);
       try {
         const response = await getAllEmployees({
@@ -94,7 +120,23 @@ const EmployeeAttendance = () => {
     };
 
     fetchEmployees();
-  }, [debouncedSearch]);
+  }, [canViewAllAttendance, debouncedSearch, userData?.userId]);
+
+  const loadMyCorrectionRequests = React.useCallback(async () => {
+    if (canViewAllAttendance) return;
+    try {
+      const response = await getRequest<{ items?: any[] }>("api/attendance/me/correction-requests", {
+        headers: { "Cache-Control": "no-cache" },
+      });
+      setCorrectionRequests(Array.isArray(response.data?.items) ? response.data.items : []);
+    } catch (error) {
+      console.error("Unable to load attendance correction requests", error);
+    }
+  }, [canViewAllAttendance]);
+
+  useEffect(() => {
+    void loadMyCorrectionRequests();
+  }, [loadMyCorrectionRequests]);
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
@@ -102,6 +144,33 @@ const EmployeeAttendance = () => {
 
   const handleChange = (event: any) => {
     setSelectedDay(event.target.value);
+  };
+
+  const submitCorrection = async () => {
+    if (!correctionDate || !correctionReason.trim()) {
+      toast.error("Select an attendance date and describe the correction required.");
+      return;
+    }
+    try {
+      setSubmittingCorrection(true);
+      await postRequest("api/attendance/me/correction-requests", { attendanceDate: correctionDate, reason: `${correctionType}: ${correctionReason.trim()}` });
+      toast.success("Your correction request has been sent to HR.");
+      setCorrectionDate("");
+      setCorrectionReason("");
+      await loadMyCorrectionRequests();
+    } catch (error) {
+      const status = error instanceof AxiosError ? error.response?.status : undefined;
+      if (status === 409) {
+        toast.info("A correction request for this date is already pending. See your request status below.");
+        await loadMyCorrectionRequests();
+      } else if (status === 404) {
+        toast.error("No attendance record exists for the selected date. Select a date that is shown in your attendance grid.");
+      } else {
+        toast.error("Unable to send the correction request. Please try again or contact HR.");
+      }
+    } finally {
+      setSubmittingCorrection(false);
+    }
   };
 
   const employeesForCalendar = React.useMemo(() => {
@@ -176,7 +245,7 @@ const EmployeeAttendance = () => {
       </Grid>
 
       {/* ----------- Filter ----------- */}
-      <Grid
+      {canViewAllAttendance && <Grid
         size={{ xs: 12 }}
         sx={{ display: "flex", justifyContent: "flex-end" }}
       >
@@ -192,7 +261,7 @@ const EmployeeAttendance = () => {
             </MenuItem>
           ))}
         </AppSelect>
-      </Grid>
+      </Grid>}
 
       {/* ----------- Attendance Section ----------- */}
       <Grid size={{ xs: 12 }}>
@@ -200,21 +269,19 @@ const EmployeeAttendance = () => {
           <Typography variant="h6" sx={{ mb: 3 }}>
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
-          <Stack
+          {(canViewAllAttendance || canManageAttendance) && <Stack
             direction="row"
             justifyContent="space-between"
             alignItems="center"
             flexWrap="wrap-reverse"
             gap={2}
           >
-            <SearchInput search={searchValue} setSearch={handleSearchChange} />
-
-            {/* <Stack direction="row" spacing={1}>
-              <CustomIconButton tooltip="Filter List" icon={<FilterList />} />
-              <CustomIconButton tooltip="Add Attendance" icon={<Add />} />
-              <CustomIconButton tooltip="Import Excel" icon={<Download />} />
-            </Stack> */}
-          </Stack>
+            {canViewAllAttendance ? (
+              <SearchInput search={searchValue} setSearch={handleSearchChange} />
+            ) : (
+              <Typography color="text.secondary">You can manage attendance for yourself or assigned employees.</Typography>
+            )}
+          </Stack>}
 
           <Box sx={{ mb: 3 }}>
             <AttendanceCalendarGrid
@@ -222,10 +289,48 @@ const EmployeeAttendance = () => {
               searchValue={debouncedSearch}
               onStatsChange={setAttendanceStats}
               selectedDay={selectedDay}
+              companyView={canViewAllAttendance}
+              readOnly={!canManageAttendance}
             />
           </Box>
         </Card>
       </Grid>
+
+      {!canViewAllAttendance && <Grid size={{ xs: 12 }}>
+        <Card sx={{ p: 2 }}>
+          <Typography variant="h6" sx={{ mb: 1 }}>Report incorrect attendance</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            This does not change your attendance. HR/Admin will review your request.
+          </Typography>
+          <Stack spacing={2} sx={{ maxWidth: 640 }}>
+            <TextField label="Attendance date" type="date" value={correctionDate} onChange={(e) => setCorrectionDate(e.target.value)} InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().slice(0, 10) }} />
+            <TextField select label="Issue type" value={correctionType} onChange={(e) => setCorrectionType(e.target.value)}>
+              <MenuItem value="Incorrect status">Incorrect status</MenuItem>
+              <MenuItem value="Missing check-in">Missing check-in</MenuItem>
+              <MenuItem value="Missing check-out">Missing check-out</MenuItem>
+              <MenuItem value="Incorrect working hours">Incorrect working hours</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </TextField>
+            <TextField label="Describe the correction needed" placeholder="For example: I checked in at 9:15 AM, but the status shows absent." value={correctionReason} onChange={(e) => setCorrectionReason(e.target.value)} multiline minRows={4} helperText={`${correctionReason.length}/1000 characters`} inputProps={{ maxLength: 1000 }} />
+            <Button variant="contained" size="large" onClick={submitCorrection} disabled={submittingCorrection}>{submittingCorrection ? "Sending request..." : "Send correction request to HR"}</Button>
+          </Stack>
+          {correctionRequests.length > 0 && (
+            <Box sx={{ mt: 3, maxWidth: 640 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>My correction requests</Typography>
+              <Stack spacing={1}>
+                {correctionRequests.map((request) => (
+                  <Box key={request.id} sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
+                    <Typography variant="body2" fontWeight={700}>
+                      {new Date(request.attendanceDate).toLocaleDateString()} — {request.status}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">{request.reason}</Typography>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          )}
+        </Card>
+      </Grid>}
     </Grid>
   );
 };

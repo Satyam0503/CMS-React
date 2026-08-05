@@ -271,8 +271,6 @@ export const updateNotificationPreferences = (
   >(ServiceUrl.UPDATE_NOTIFICATION_PREFERENCES, payload);
 };
 
-//  get last employee id
-
-export const getLastAddedEmployeeId = () => {
-  return getRequest<ApiResponse>(ServiceUrl.GET_LAST_EMPLOYEE_ID);
+export const getNextEmployeeId = () => {
+  return getRequest<ApiResponse>(ServiceUrl.GET_NEXT_EMPLOYEE_ID);
 };

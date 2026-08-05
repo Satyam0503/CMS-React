@@ -1,4 +1,4 @@
-import { AccountBalanceWallet, DynamicFeed, EditCalendar } from "@mui/icons-material";
+import { AccountBalanceWallet, EditCalendar, HomeWork } from "@mui/icons-material";
 import { Box, Card, Stack } from "@mui/material"
 import { Outlet, useNavigate } from "react-router-dom"
 import { TabModel } from "../../../../utils/common_types";
@@ -32,6 +32,12 @@ const tabsRoutes: TabModel[] = [
         title: "LEAVE.TITLES.LEAVE_POLICIES",
         icon: <PolicyIcon />,
     },
+    {
+        tabId: 5,
+        to: "work-from-home",
+        title: "Work from home",
+        icon: <HomeWork />,
+    },
 ];
 
 export const LeaveManagementTabs = () => {
@@ -52,7 +58,7 @@ export const LeaveManagementTabs = () => {
                             sx={{ color: "text.secondary" }}
                         >
                             {tab.icon}
-                            {i({ id: tab.title })}
+                            {tab.title.startsWith("LEAVE.") ? i({ id: tab.title }) : tab.title}
                         </Box>
                     );
                 })}

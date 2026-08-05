@@ -22,14 +22,18 @@ export interface InputFieldProps {
   multiline?: boolean;
   inputProps?: InputBaseProps["inputProps"];
   InputProps?: Partial<OutlinedInputProps>;
-  labelVarient?: "notched" | "seperate",
-  showErrorLabel?: boolean,
-  sx?: SxProps<Theme>,
+  helperText?: string;
+  labelVarient?: "notched" | "seperate";
+  showErrorLabel?: boolean;
+  sx?: SxProps<Theme>;
 }
 
-export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, labelVarient = "notched", showErrorLabel = true, ...props }) => {
+export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, helperText, labelVarient = "notched", showErrorLabel = true, ...props }) => {
   const { formatMessage: i } = useIntl();
   const [fields, meta] = useField(props);
+  const fieldError = meta.touched && meta.error ? i({ id: meta.error, defaultMessage: meta.error }) : "";
+  const finalHelperText = showErrorLabel ? fieldError || helperText || "" : helperText || "";
+
   return (
     <FormControl fullWidth>
       {
@@ -40,8 +44,8 @@ export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, 
         fullWidth
         label={labelVarient === "notched" ? label : ""}
         variant="outlined"
-        error={meta.touched && Boolean(meta.error)}
-        helperText={showErrorLabel ? meta.touched && meta.error && i({ id: meta.error, defaultMessage: " " }) : ""}
+        error={Boolean(fieldError)}
+        helperText={finalHelperText}
         onKeyDown={(e) => {
           if (props.type === "number") {
             blockInvalidCharOnNumberField(e)

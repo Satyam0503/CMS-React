@@ -253,7 +253,7 @@ export const EmployeesLeaveBalance = () => {
                             >
                               <Grid size={5}>{leave.leavePolicyName}</Grid>
                               <Grid size={4}>{leave.remaining}</Grid>
-                              <Grid size={3}>{leave.usedLeave}</Grid>
+                              <Grid size={3}>{leave.taken}</Grid>
                             </Grid>
                           );
                         })}

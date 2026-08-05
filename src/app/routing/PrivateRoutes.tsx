@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
-import { ModulesName } from "../../utils/enums.ts";
+import { ModulesName, Permission } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
 

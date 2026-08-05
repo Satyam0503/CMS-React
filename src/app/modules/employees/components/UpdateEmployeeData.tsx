@@ -19,7 +19,6 @@ import { SelectInput } from "../../../shared/components/form-component/SelectInp
 import { DepartmentModel, JobTitleResponseModel, RoleModel } from "../../admin/models";
 import { getAllDepartments, getAllRoles, getJobTitles } from "../../admin/adminservices";
 import { GetAllEmployeeResponseModel, InviteNewEmployeeModel } from "../models";
-import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { getAllEmployees, updateEmployee } from "../employeeServices";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -69,17 +68,23 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
         values: EditEmployeePayloadModel,
         setSubmitting: (isSubmitting: boolean) => void
     ) {
+        if (values.reportingManager === employeeData.userId) {
+            toast.error("You cannot select this employee as their own reporting manager. Choose another active employee or clear the manager field.");
+            setSubmitting(false);
+            handleButtonLoading(false);
+            return;
+        }
         const payload = {
             ...values,
         };
         try {
             const response = await updateEmployee(payload, employeeData.userId);
-            const { success, statusCode } = response.data;
+            const { success, message } = response.data;
             if (success) {
                 setSubmitting(false);
                 onUserUpdate(success);
             } else {
-                toast.error(i({ id: getCustomStatusCodesErrorMessage(statusCode) }));
+                toast.error(message || "Unable to update the employee. Verify the reporting manager is an active employee in the same company.");
             }
         } catch (error) {
             console.error((error as Error).message);
@@ -288,7 +293,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 value={employeeList.find(
                                                     (emp) => emp.userId === values.reportingManager
                                                 ) || null}
-                                                options={employeeList}
+                                                options={employeeList.filter((employee) => employee.userId !== employeeData.userId)}
                                                 onChange={(event, value) => {
                                                     setFieldTouched("reportingManager", true);
                                                     setFieldValue(

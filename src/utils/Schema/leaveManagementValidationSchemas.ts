@@ -22,15 +22,48 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
   status: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   paid: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   accrualPeriod: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
-  accrualAmount: Yup.number().required().min(1),
-  maxBalance: Yup.number().moreThan(Yup.ref('accrualAmount'),"VALIDATION_ERR.CARRY_OVER_TOO_LOW" ).required("VALIDATION_ERR.REQUIRED_TYPE"),
+  policyType: Yup.number().oneOf([1, 2]).required(),
+  accrualAmount: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE").when("policyType", {
+    is: 1,
+    then: schema => schema.min(0.5, "VALIDATION_ERR.MIN_CREDITED_LEAVES"),
+    otherwise: schema => schema.min(0),
+  }),
+  maxBalance: Yup.number()
+    .required("VALIDATION_ERR.REQUIRED_TYPE")
+    .when("accrualAmount", {
+      is: (accrualAmount: any) => accrualAmount != null,
+      then: (schema: Yup.NumberSchema<number>) =>
+        schema.min(Yup.ref("accrualAmount"), "VALIDATION_ERR.MAX_BALANCE_LESS_THAN_CREDITED"),
+      otherwise: (schema: Yup.NumberSchema<number>) => schema,
+    }),
   carryOverAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   carryOverLimit: Yup.number().nullable(),
   minNoticeDays: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
   halfDayAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   weekendInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   holidayInclusive: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
-  applicableTo: Yup.array().of(Yup.string()).nullable()
+  attendanceStatusCode: Yup.string()
+    .trim()
+    .max(20, "Attendance status code must be 20 characters or less")
+    .nullable(),
+  applicableTo: Yup.array().of(Yup.string()).nullable(),
+  workFromHome: Yup.mixed().when("policyType", {
+    is: 2,
+    then: () => Yup.object({
+      fullDayAttendanceStatusCode: Yup.string().trim().required("VALIDATION_ERR.REQUIRED_TYPE"),
+      halfDayAttendanceStatusCode: Yup.string().trim().when(["allowFirstHalf", "allowSecondHalf"], {
+        is: (first: boolean, second: boolean) => first || second,
+        then: schema => schema.required("VALIDATION_ERR.REQUIRED_TYPE"),
+        otherwise: schema => schema.notRequired(),
+      }),
+      maxDaysPerWeek: Yup.number().nullable().min(1),
+      maxDaysPerMonth: Yup.number().nullable().min(1),
+      fullDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
+      halfDayRequiredWorkingMinutes: Yup.number().nullable().min(0),
+      breakMinutes: Yup.number().min(0).required(),
+    }).required(),
+    otherwise: () => Yup.mixed().nullable(),
+  })
 })
 
 export const leaveBalanceValidationSchema = Yup.object().shape({
