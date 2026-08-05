@@ -56,7 +56,6 @@ export const LeaveRequestFilter = () => {
                 })
             );
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedValues, errors, dispatch]);
 
     const handleResetFilter = () => {
