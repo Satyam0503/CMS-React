@@ -256,7 +256,7 @@ export default function AttendanceStatusSettings() {
           </Box>
         </Box>
       </Stack>
-      {statusPendingDelete && <ConfirmationModal open title={`Delete ${statusPendingDelete.code}?`} content={`This permanently deletes the custom attendance status \"${statusPendingDelete.name}\" for this company. Default statuses cannot be deleted.`} handleClose={() => setStatusPendingDelete(null)} handleConfirmation={() => void confirmDelete()} />}
+      {statusPendingDelete && <ConfirmationModal open title={`Delete ${statusPendingDelete.code}?`} content={`This permanently deletes the custom attendance status "${statusPendingDelete.name}" for this company. Default statuses cannot be deleted.`} handleClose={() => setStatusPendingDelete(null)} handleConfirmation={() => void confirmDelete()} />}
     </Card>
   );
 }
