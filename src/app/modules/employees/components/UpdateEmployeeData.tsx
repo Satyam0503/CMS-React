@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmploymentType, Gender, bloodGroups } from "../../../../utils/constant/Constant";
-import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
+import { employeeSchema, normalizeEmployeeNameFields } from "../../../../utils/Schema/employeeSchema";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
@@ -48,7 +48,7 @@ const employeeInitialValue: EditEmployeePayloadModel = {
 };
 
 interface PropsTypes {
-    employeeData: InviteNewEmployeeModel & { userId: string };
+    employeeData: InviteNewEmployeeModel & { userId: string; department?: string | null };
     onUserUpdate: (success: boolean) => void;
     formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>,
     handleButtonLoading: (loading: boolean) => void;
@@ -60,6 +60,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
     const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
+    const [selectedDepartment, setSelectedDepartment] = useState<string | null>(employeeData.department ?? null);
     const { formatMessage: i } = useIntl();
     const { currentLanguage } = useAppLang();
     const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
@@ -74,9 +75,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
             handleButtonLoading(false);
             return;
         }
-        const payload = {
-            ...values,
-        };
+        const payload = normalizeEmployeeNameFields(values);
         try {
             const response = await updateEmployee(payload, employeeData.userId);
             const { success, message } = response.data;
@@ -113,20 +112,27 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     useEffect(() => {
         (async () => {
             try {
-                const result = await Promise.allSettled([getAllEmployees(), getJobTitles()]);
+                const result = await Promise.allSettled([getAllEmployees()]);
                 if (result[0].status === "fulfilled") {
                     const { success, methodResults } = result[0].value.data;
                     if (success) setEmployeeList(methodResults);
-                }
-                if (result[1].status === "fulfilled") {
-                    const { success, methodResults } = result[1].value.data;
-                    if (success) setJobTitleList(methodResults);
                 }
             } catch (error) {
                 console.log(error);
             }
         })();
     }, [])
+
+    useEffect(() => {
+        if (!selectedDepartment) {
+            setJobTitleList([]);
+            return;
+        }
+
+        getJobTitles(true, selectedDepartment)
+            .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
+            .catch((error) => console.log(error));
+    }, [selectedDepartment]);
 
     return (
         <Stack spacing={2} sx={{ p: 1, }}>
@@ -198,9 +204,9 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                     </Grid>
                                     <Grid container spacing={2} sx={{ width: "100%" }}>
                                         <Grid size={{ xs: 12, sm: 6 }}>
-                                            <SelectInput
+                                                <SelectInput
                                                 name="roleId"
-                                                label={i({ id: "FORM.ROLE" })}
+                                                label="Access Role"
                                                 required={true}
                                             >
                                                 {roles.map((role) => {
@@ -221,6 +227,11 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 name="department"
                                                 label={i({ id: "FORM.DEPARTMENT" })}
                                                 required={true}
+                                                onValueChange={(departmentId) => {
+                                                    setSelectedDepartment(departmentId);
+                                                    setFieldTouched("jobRole", true);
+                                                    setFieldValue("jobRole", "");
+                                                }}
                                             >
                                                 {departmentList.map((dep) => (
                                                     <MenuItem
@@ -259,10 +270,12 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                             <Autocomplete
                                                 id="job_title"
                                                 size="small"
+                                                disabled={!values.department}
                                                 value={jobTitleList.find(
                                                     (jt) => jt.jobTitleId === values.jobRole
                                                 ) || null}
                                                 options={jobTitleList}
+                                                noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
                                                 onChange={(event, value) => {
                                                     setFieldTouched("jobRole", true);
                                                     setFieldValue(

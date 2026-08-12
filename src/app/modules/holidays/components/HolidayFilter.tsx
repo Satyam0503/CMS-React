@@ -95,7 +95,7 @@ export const HolidayFilter: FC<PropsType> = (props) => {
                         label={formatMessage({ id: "HOLIDAY.DATE" })}
                         value={Boolean(values.date) ? dayjs(values.date) : null}
                         setValue={(newDate: Dayjs | null) => {
-                            setFieldValue("date", newDate?.toISOString());
+                            setFieldValue("date", newDate?.format("YYYY-MM-DD"));
                             setFieldTouched("date", true);
                         }}
                     />

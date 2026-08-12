@@ -16,6 +16,7 @@ export interface GetAllEmployeeResponseModel {
   phoneNumber: string | null;
   fullProfileUrl: string | null;
   dateOfBirth: string | null;
+  dateOfJoining?: string | null;
   isVerified: boolean;
 }
 

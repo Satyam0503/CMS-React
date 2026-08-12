@@ -1,13 +1,23 @@
 import * as Yup from "yup";
 import { Regex } from "../constant/Constant";
 import { InviteNewEmployeeModel } from "../../app/modules/employees/models";
+
+export const normalizeEmployeeName = (value: string) => value.trim().replace(/\s+/g, " ");
+
+export const normalizeEmployeeNameFields = <T extends { firstName: string; lastName: string }>(values: T): T => ({
+  ...values,
+  firstName: normalizeEmployeeName(values.firstName),
+  lastName: normalizeEmployeeName(values.lastName),
+});
+
+const employeeName = (requiredMessage: string) => Yup.string()
+  .transform((value) => typeof value === "string" ? normalizeEmployeeName(value) : value)
+  .required(requiredMessage)
+  .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME");
+
 export const employeeSchema = Yup.object().shape({
-  firstName: Yup.string()
-    .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
-    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
-  lastName: Yup.string()
-    .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
-    .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
+  firstName: employeeName("VALIDATION_ERR.FIRST_NAME_REQUIRED"),
+  lastName: employeeName("VALIDATION_ERR.LAST_NAME_REQUIRED"),
   email: Yup.string()
     .required("VALIDATION_ERR.EMAIL_REQ")
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
@@ -54,12 +64,8 @@ export const employeeSchema = Yup.object().shape({
 export const inviteEmployeeSchema: Yup.ObjectSchema<InviteNewEmployeeModel> =
   Yup.object().shape({
     employeeId: Yup.string().required(),
-    firstName: Yup.string()
-      .required("VALIDATION_ERR.FIRST_NAME_REQUIRED")
-      .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
-    lastName: Yup.string()
-      .required("VALIDATION_ERR.LAST_NAME_REQUIRED")
-      .matches(Regex.Name, "VALIDATION_ERR.INVALID_NAME"),
+    firstName: employeeName("VALIDATION_ERR.FIRST_NAME_REQUIRED"),
+    lastName: employeeName("VALIDATION_ERR.LAST_NAME_REQUIRED"),
     email: Yup.string()
       .required("VALIDATION_ERR.EMAIL_REQ")
       .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),

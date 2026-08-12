@@ -30,7 +30,7 @@ export const LeaveRequestFilter = () => {
     const dispatch = useAppDispatch();
     const { formatMessage: i } = useIntl();
     const appliedLeaveRequestFilter = useAppSelector(state => state.filters.leaveRequest);
-    const { values, errors, handleSubmit, getFieldProps, setFieldValue, resetForm } =
+    const { values, errors, getFieldProps, setFieldValue, resetForm } =
         useFormik({
             initialValues: appliedLeaveRequestFilter ?? initialLeaveRequestFilter,
             enableReinitialize: true,
@@ -70,7 +70,7 @@ export const LeaveRequestFilter = () => {
     // console.log(errors);
     
     return (
-        <form onSubmit={handleSubmit} className="leave-request-filter">
+        <Box component="div" className="leave-request-filter">
             <Box component="div" className="filter-fields">
                 <FormControl className="mt-2" fullWidth>
                     <InputLabel id="leave-request-status" >{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
@@ -118,12 +118,6 @@ export const LeaveRequestFilter = () => {
             </Box>
             <Stack direction="row" className="gap-2" >
                 <CustomisedButton
-                    type="submit"
-                    size="large"
-                    className="mt-2"
-                    label={i({ id: "BUTTON.FILTER", defaultMessage: "Filter" })}
-                />
-                <CustomisedButton
                     variant="outlined"
                     size="large"
                     className="mt-2"
@@ -131,7 +125,7 @@ export const LeaveRequestFilter = () => {
                     handleClick={handleResetFilter}
                 />
             </Stack>
-        </form>
+        </Box>
     )
 
 }

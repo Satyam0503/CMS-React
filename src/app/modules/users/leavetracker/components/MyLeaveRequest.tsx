@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   EmployeeLeaveTypeBalance,
   GetLeaveRequestPayLoad,
@@ -63,6 +63,8 @@ export const MyLeaveRequests = ({
   const [selectedLeaveRequestId, setSelectedLeaveRequestId] = useState<string | null>();
   const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<MyLeaveRequestModel | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const withdrawalInFlight = useRef(false);
   const employeeId = useParams().employeeid;
 
 
@@ -82,22 +84,27 @@ export const MyLeaveRequests = ({
   };
 
   const handleLeaveRequestDeletion = async (str: string) => {
-    if (str !== "ok" || !selectedLeaveRequestId) {
+    if (str !== "ok" || !selectedLeaveRequestId || withdrawalInFlight.current) {
       return;
     }
+    withdrawalInFlight.current = true;
+    setIsWithdrawing(true);
     try {
       const { data } = employeeId
         ? await deleteLeaveRequest(selectedLeaveRequestId)
         : await deleteMyProfileLeaveRequest(selectedLeaveRequestId);
       if (data.success) {
         setSelectedLeaveRequestId(null);
-        handleRefresh;
-        toast.success(i({ id: "TOAST.SUCCESS.LEAVE_REQ_DELETE" }));
+        handleRefresh();
+        toast.success("Leave request withdrawn successfully.");
       } else {
-        toast.error(i({ id: "TOAST.FAILED.LEAVE_REQ_DELETE" }));
+        toast.error(data.message || "Unable to withdraw this leave request.");
       }
     } catch (error) {
       console.error((error as Error).message);
+    } finally {
+      withdrawalInFlight.current = false;
+      setIsWithdrawing(false);
     }
   };
 
@@ -211,27 +218,33 @@ export const MyLeaveRequests = ({
                         )}
                       </TableCell>
                       <TableCell>
-                        {row.status === LEAVE_REQUEST_STATUS.PENDING ? (
+                        {(() => {
+                          const canWithdraw =
+                            (row.status === LEAVE_REQUEST_STATUS.PENDING || row.status === LEAVE_REQUEST_STATUS.APPROVED) &&
+                            !dayjs(row.endDate).isBefore(dayjs(), "day");
+                          const canEdit = row.status === LEAVE_REQUEST_STATUS.PENDING && canWithdraw;
+                          return canWithdraw ? (
                           <Stack direction="row">
-                            <CustomIconButton
-                              icon={<Edit />}
-                              classNames="me-2"
-                              tooltip={i({ id: "TOOLTIP.EDIT_LEAVE_REQUEST" })}
-                              handleClick={() => setSelectedLeaveRequest(row)}
-                            />
+                            {canEdit && (
+                              <CustomIconButton
+                                icon={<Edit />}
+                                classNames="me-2"
+                                tooltip={i({ id: "TOOLTIP.EDIT_LEAVE_REQUEST" })}
+                                handleClick={() => setSelectedLeaveRequest(row)}
+                              />
+                            )}
                             <CustomIconButton
                               icon={<Delete color="error" />}
-                              tooltip={i({
-                                id: "TOOLTIP.DELETE_LEAVE_REQUEST",
-                              })}
+                              tooltip="Withdraw leave request"
                               handleClick={() =>
                                 setSelectedLeaveRequestId(row.leaveRequestId)
                               }
                             />
                           </Stack>
-                        ) : (
+                          ) : (
                           "-"
-                        )}
+                          );
+                        })()}
                       </TableCell>
                     </TableRow>
                   ))
@@ -253,10 +266,11 @@ export const MyLeaveRequests = ({
       {selectedLeaveRequestId && (
         <ConfirmationModal
           open={true}
-          title={i({ id: "CONFIRMATION.TITLE.DELETE_LEAVE_REQUEST" })}
-          content={i({ id: "CONFIRMATION.CONTENT.DELETE_LEAVE_REQUEST" })}
+          title="Withdraw leave request"
+          content="Are you sure you want to withdraw this leave request?"
           handleClose={() => setSelectedLeaveRequestId(null)}
           handleConfirmation={handleLeaveRequestDeletion}
+          confirming={isWithdrawing}
         />
       )}
       {selectedLeaveRequest !== null && (

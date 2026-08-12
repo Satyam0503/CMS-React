@@ -39,6 +39,20 @@ interface PropsTypes {
   ) => void;
 }
 
+const commaSeparatedJobFields = [
+  "requiredSkills",
+  "preferredSkills",
+  "responsibilities",
+  "benefits",
+  "keywords",
+] as const;
+
+type CommaSeparatedJobField = typeof commaSeparatedJobFields[number];
+
+const serializeCommaSeparatedList = (items?: string[]) => (items ?? []).join(", ");
+const parseCommaSeparatedList = (value: string) =>
+  value.split(",").map((item) => item.trim()).filter(Boolean);
+
 const FormSwitch = ({ label, description, checked, disabled = false, onChange }: {
   label: string;
   description: string;
@@ -69,6 +83,9 @@ export const AddEditJob: FC<PropsTypes> = ({
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
   );
+  const [listDrafts, setListDrafts] = useState<Record<CommaSeparatedJobField, string>>(() =>
+    Object.fromEntries(commaSeparatedJobFields.map((field) => [field, serializeCommaSeparatedList(initialValues[field])])) as Record<CommaSeparatedJobField, string>,
+  );
 
   const {
     handleSubmit,
@@ -93,13 +110,16 @@ export const AddEditJob: FC<PropsTypes> = ({
     formik.setFieldValue("description", description.replace("<p><br></p>", ""));
   }, []);
 
-  const listValue = (field: keyof JobModal) =>
-    ((values[field] as string[] | undefined) ?? []).join(", ");
-  const setListValue = (field: keyof JobModal, value: string) =>
-    formik.setFieldValue(field, value.split(",").map((item) => item.trim()).filter(Boolean));
+  const setListValue = (field: CommaSeparatedJobField, value: string) => {
+    setListDrafts((current) => ({ ...current, [field]: value }));
+    formik.setFieldValue(field, parseCommaSeparatedList(value));
+  };
 
   useEffect(() => {
     if (!open) return;
+    setListDrafts(Object.fromEntries(
+      commaSeparatedJobFields.map((field) => [field, serializeCommaSeparatedList(initialValues[field])]),
+    ) as Record<CommaSeparatedJobField, string>);
     getAllDepartments(true)
       .then(({ data }) => data.success && setDepartments(data.methodResults ?? []))
       .catch(() => setDepartments([]));
@@ -306,11 +326,11 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid size={{ xs: 12, md: 4 }}><AppTextField fullWidth label="Functional area" helperText="Broad function, such as Engineering or Sales." {...getFieldProps("functionalArea")} /></Grid>
             <Grid size={{ xs: 12, md: 4 }}><AppTextField fullWidth label="Role category" helperText="Specialization within the function." {...getFieldProps("roleCategory")} /></Grid>
             <Grid size={{ xs: 12 }}><AppTextField fullWidth label="Education requirement" helperText="Required degree, certification, or equivalent experience." {...getFieldProps("educationRequirement")} /></Grid>
-            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth label="Required skills" helperText="Mandatory skills, separated by commas." placeholder="React, TypeScript, API design" value={listValue("requiredSkills")} onChange={(e) => setListValue("requiredSkills", e.target.value)} /></Grid>
-            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth label="Preferred skills" helperText="Helpful but optional skills, separated by commas." placeholder="AWS, MongoDB" value={listValue("preferredSkills")} onChange={(e) => setListValue("preferredSkills", e.target.value)} /></Grid>
-            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth multiline minRows={2} label="Responsibilities" helperText="Core duties, separated by commas." placeholder="Design APIs, Review code" value={listValue("responsibilities")} onChange={(e) => setListValue("responsibilities", e.target.value)} /></Grid>
-            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth multiline minRows={2} label="Benefits" helperText="Candidate benefits, separated by commas." placeholder="Health cover, Flexible hours" value={listValue("benefits")} onChange={(e) => setListValue("benefits", e.target.value)} /></Grid>
-            <Grid size={{ xs: 12, md: 4 }}><AppTextField fullWidth label="Keywords" helperText="Extra search terms, separated by commas." placeholder="MERN, SaaS" value={listValue("keywords")} onChange={(e) => setListValue("keywords", e.target.value)} /></Grid>
+            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth label="Required skills" helperText="Mandatory skills, separated by commas. Spaces inside a skill are allowed." placeholder="React, TypeScript, API design" value={listDrafts.requiredSkills} onChange={(e) => setListValue("requiredSkills", e.target.value)} /></Grid>
+            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth label="Preferred skills" helperText="Helpful but optional skills, separated by commas. Spaces inside a skill are allowed." placeholder="AWS, MongoDB" value={listDrafts.preferredSkills} onChange={(e) => setListValue("preferredSkills", e.target.value)} /></Grid>
+            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth multiline minRows={2} label="Responsibilities" helperText="Core duties, separated by commas. Spaces inside a duty are allowed." placeholder="Design APIs, Review code" value={listDrafts.responsibilities} onChange={(e) => setListValue("responsibilities", e.target.value)} /></Grid>
+            <Grid size={{ xs: 12, md: 6 }}><AppTextField fullWidth multiline minRows={2} label="Benefits" helperText="Candidate benefits, separated by commas. Spaces inside a benefit are allowed." placeholder="Health cover, Flexible hours" value={listDrafts.benefits} onChange={(e) => setListValue("benefits", e.target.value)} /></Grid>
+            <Grid size={{ xs: 12, md: 4 }}><AppTextField fullWidth label="Keywords" helperText="Extra search terms, separated by commas. Spaces inside a keyword are allowed." placeholder="MERN, SaaS" value={listDrafts.keywords} onChange={(e) => setListValue("keywords", e.target.value)} /></Grid>
             <Grid size={{ xs: 12, md: 4 }}>
               <AppSelect fullWidth displayEmpty {...getFieldProps("shiftType")}>
                 <MenuItem value="">Select shift</MenuItem><MenuItem value="General">General</MenuItem><MenuItem value="Morning">Morning</MenuItem><MenuItem value="Evening">Evening</MenuItem><MenuItem value="Night">Night</MenuItem><MenuItem value="Rotational">Rotational</MenuItem>

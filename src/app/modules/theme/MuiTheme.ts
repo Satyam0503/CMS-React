@@ -1,26 +1,13 @@
 import { createTheme } from "@mui/material";
 import { Localization } from "@mui/material/locale";
 import { darkPalette, lightPalette } from "./themePalettes";
-import { AppStyle } from "./useAppStyle";
+import { AppStyle, DEFAULT_THEME } from "./useAppStyle";
 
 // Surface treatment per style — applied to MuiCard / MuiPaper / MuiAppBar.
 // Returns CSS-in-JS objects (not full sx). Kept inline for theme integration;
 // rules outside MUI live in _app-style.scss keyed off [data-app-style].
 const getSurfaceOverrides = (appStyle: AppStyle) => {
   switch (appStyle) {
-    case "cobalt":
-      return {
-        card: {
-          background: "color-mix(in srgb, var(--mui-palette-background-paper) 92%, transparent)",
-          border: "1px solid var(--mui-palette-divider)",
-          borderRadius: 14,
-          boxShadow:
-            "0 8px 24px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
-        },
-        paper: {
-          borderRadius: 12,
-        },
-      };
     case "glass":
       return {
         card: {
@@ -35,17 +22,6 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
           background: "color-mix(in srgb, var(--mui-palette-background-paper) 72%, transparent)",
           WebkitBackdropFilter: "blur(12px)",
           backdropFilter: "blur(12px)",
-        },
-      };
-    case "gradient":
-      return {
-        card: {
-          borderRadius: 14,
-          boxShadow: "0 6px 22px rgba(0, 0, 0, 0.08)",
-          border: "1px solid var(--mui-palette-divider)",
-        },
-        paper: {
-          borderRadius: 12,
         },
       };
     case "minimal":
@@ -69,31 +45,12 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
         },
         paper: { borderRadius: 16 },
       };
-    case "sunset":
-      return {
-        card: {
-          borderRadius: 16,
-          border: "1px solid color-mix(in srgb, var(--mui-palette-secondary-main) 20%, var(--mui-palette-divider))",
-          boxShadow: "0 10px 26px color-mix(in srgb, var(--mui-palette-secondary-main) 10%, transparent)",
-        },
-        paper: { borderRadius: 14 },
-      };
-    case "executive":
-      return {
-        card: {
-          borderRadius: 12,
-          border: "1px solid var(--mui-palette-divider)",
-          boxShadow: "0 8px 24px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
-        },
-        paper: { borderRadius: 12 },
-      };
-    case "classic":
     default:
       return { card: {}, paper: {} };
   }
 };
 
-export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = "classic") => {
+export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = DEFAULT_THEME) => {
   const surface = getSurfaceOverrides(appStyle);
   const theme = createTheme(
     {

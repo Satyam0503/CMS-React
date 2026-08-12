@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { ArrowForward, WorkOutline } from "@mui/icons-material";
-import { Box, Card, Chip, Typography } from "@mui/material";
+import { Box, Card, Chip, TablePagination, Typography } from "@mui/material";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmpCardSkeleton } from "./EmployeeCardSkeleton";
@@ -14,9 +14,13 @@ import { LANGUAGE } from "../../../../utils/enums";
 interface Props {
   employeeList: GetAllEmployeeResponseModel[];
   isLoading: boolean;
+  page: number;
+  pageSize: number;
+  totalRecords: number;
+  onPaginationChange: (page: number, pageSize: number) => void;
 }
 
-const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
+const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, totalRecords, onPaginationChange }) => {
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId) ?? "";
   const navigate = useNavigate();
   const { currentLanguage } = useAppLang();
@@ -33,6 +37,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
   }
 
   return (
+    <>
     <Box component="div" className="employee-grid-container">
       {isLoading
         ? [1, 2, 3, 4, 5, 6].map((ele) => {
@@ -85,6 +90,17 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading }) => {
           </Card>
         ))}
     </Box>
+    {!isLoading && totalRecords > 0 && <TablePagination
+      component="div"
+      count={totalRecords}
+      page={page}
+      rowsPerPage={pageSize}
+      rowsPerPageOptions={[10, 25, 50]}
+      onPageChange={(_, nextPage) => onPaginationChange(nextPage, pageSize)}
+      onRowsPerPageChange={(event) => onPaginationChange(0, Number(event.target.value))}
+      labelRowsPerPage="Employees per page:"
+    />}
+    </>
   );
 };
 

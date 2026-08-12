@@ -2,6 +2,7 @@ import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../shared/components/C_Modal";
 import { Formik } from "formik";
 import { TextInput } from "../../shared/components/form-component/TextInput";
+import { CurrencyInput } from "../../shared/components/form-component/CurrencyInput";
 import { DialogActions, Grid } from "@mui/material";
 import { payrollValidationSchema } from "../../../utils/Schema/payrollValidationSchema";
 import CustomisedButton from "../../shared/components/C_Button";
@@ -32,24 +33,25 @@ interface FormFieldProps {
     type: React.InputHTMLAttributes<unknown>['type'] | "dateTime";
     min?: number;
     max?: number;
+    isCurrency?: boolean;
     views?: DateView[];
     maxDate?: Dayjs;
 }
 
 const formField: FormFieldProps[] = [
     { id: 1, label: "PAYROLL.TABLE.EMP_ID", name: "employeeId", type: "text" },
-    { id: 2, label: "PAYROLL.TABLE.BASIC_PAY", name: "basicPay", type: "number", min: 0 },
+    { id: 2, label: "PAYROLL.TABLE.BASIC_PAY", name: "basicPay", type: "number", min: 0, isCurrency: true },
     { id: 3, label: "PAYROLL.TABLE.PAID_DAYS", name: "paidDays", type: "number", min: 0, max: 31 },
-    { id: 4, label: "PAYROLL.TABLE.BONUS", name: "bonus", type: "number", min: 0 },
-    { id: 5, label: "PAYROLL.TABLE.HRA", name: "hra", type: "number", min: 0 },
-    { id: 6, label: "PAYROLL.TABLE.LTA", name: "lta", type: "number", min: 0 },
-    { id: 7, label: "PAYROLL.TABLE.OTHER_ALLOWANCE", name: "otherAllowance", type: "number", min: 0 },
+    { id: 4, label: "PAYROLL.TABLE.BONUS", name: "bonus", type: "number", min: 0, isCurrency: true },
+    { id: 5, label: "PAYROLL.TABLE.HRA", name: "hra", type: "number", min: 0, isCurrency: true },
+    { id: 6, label: "PAYROLL.TABLE.LTA", name: "lta", type: "number", min: 0, isCurrency: true },
+    { id: 7, label: "PAYROLL.TABLE.OTHER_ALLOWANCE", name: "otherAllowance", type: "number", min: 0, isCurrency: true },
     { id: 8, label: "PAYROLL.TABLE.LOSS_OF_PAID_DAYS", name: "lossOfPayDays", type: "number", min: 0, max: 31 },
-    { id: 9, label: "PAYROLL.TABLE.LOSS_OF_PAY", name: "lossOfPay", type: "number", min: 0 },
-    { id: 10, label: "PAYROLL.TABLE.INCOME_TAX", name: "incomeTax", type: "number", min: 0 },
-    { id: 11, label: "PAYROLL.TABLE.HEALTH_INS", name: "healthInsurance", type: "number", min: 0 },
-    { id: 12, label: "PAYROLL.TABLE.EPF", name: "epf", type: "number", min: 0 },
-    { id: 13, label: "PAYROLL.TABLE.ESIC", name: "esic", type: "number", min: 0 },
+    { id: 9, label: "PAYROLL.TABLE.LOSS_OF_PAY", name: "lossOfPay", type: "number", min: 0, isCurrency: true },
+    { id: 10, label: "PAYROLL.TABLE.INCOME_TAX", name: "incomeTax", type: "number", min: 0, isCurrency: true },
+    { id: 11, label: "PAYROLL.TABLE.HEALTH_INS", name: "healthInsurance", type: "number", min: 0, isCurrency: true },
+    { id: 12, label: "PAYROLL.TABLE.EPF", name: "epf", type: "number", min: 0, isCurrency: true },
+    { id: 13, label: "PAYROLL.TABLE.ESIC", name: "esic", type: "number", min: 0, isCurrency: true },
     { id: 14, label: "PAYROLL.TABLE.PAY_MONTH", name: "payMonth", type: "dateTime", views: ["year", "month"], maxDate: dayjs().subtract(1, "month") },
     { id: 15, label: "PAYROLL.TABLE.PAID_DATE", name: "paidDate", type: "dateTime", views: ["year", "month", "day"], maxDate: dayjs() },
 ]
@@ -120,21 +122,25 @@ export const AddUpdateEmployeePayRoll = ({ open, handleClose, edit, initialValue
                                             );
                                         }
                                         return (
-                                            <Grid
+                                            <Grid key={field.id}
                                                 size={{
                                                     xs: 12,
                                                     sm: 6
                                                 }}>
-                                                <TextInput
-                                                    name={field.name}
-                                                    type={field.type}
-                                                    label={i({ id: field.label })}
-                                                    inputProps={{
-                                                        min: field.min,
-                                                        max: field.max,
-                                                        step: "0.0001"
-                                                    }}
-                                                />
+                                                {field.isCurrency ? (
+                                                    <CurrencyInput
+                                                        name={field.name}
+                                                        label={i({ id: field.label })}
+                                                        inputProps={{ min: field.min, max: field.max }}
+                                                    />
+                                                ) : (
+                                                    <TextInput
+                                                        name={field.name}
+                                                        type={field.type}
+                                                        label={i({ id: field.label })}
+                                                        inputProps={{ min: field.min, max: field.max, step: "0.0001" }}
+                                                    />
+                                                )}
                                             </Grid>
                                         );
                                     })

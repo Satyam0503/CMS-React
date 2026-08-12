@@ -515,7 +515,14 @@ const Employees = () => {
             handlePaginationModelChange={handlePaginationModelChange}
           />
         ) : (
-          <EmployeeGridView employeeList={employeeList} isLoading={isLoading} />
+          <EmployeeGridView
+            employeeList={employeeList}
+            isLoading={isLoading}
+            page={paginationValues.pageNo}
+            pageSize={paginationValues.records}
+            totalRecords={totalRecords}
+            onPaginationChange={(pageNo, records) => setPaginationValues({ pageNo, records })}
+          />
         )}
       </Card>
       {showAddEmployeeStepper && (

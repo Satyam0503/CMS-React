@@ -18,39 +18,7 @@ body,
   background-image: none;
 }
 
-// ----- Cobalt (default for new tenants) — soft blue body, glassy header -----
-:root[data-app-style="cobalt"] {
-  --app-content-background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--mui-palette-background-body) 94%, var(--mui-palette-primary-main)) 0%,
-    var(--mui-palette-background-body) 100%
-  );
-
-  body {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--mui-palette-background-body) 94%, var(--mui-palette-primary-main)) 0%,
-        var(--mui-palette-background-body) 100%
-      );
-    background-attachment: fixed;
-  }
-
-  & .app-header {
-    background: color-mix(in srgb, var(--mui-palette-background-header) 82%, transparent) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    backdrop-filter: blur(14px) saturate(160%);
-    border-bottom: 1px solid var(--mui-palette-divider);
-    box-shadow: 0 1px 0 color-mix(in srgb, var(--mui-palette-common-white) 10%, transparent) inset;
-  }
-}
-
-// ----- Classic (legacy) — relies on existing styling, no overrides ---------
-:root[data-app-style="classic"] {
-  --app-content-background: var(--mui-palette-background-body);
-}
-
-// ----- Glass: gradient body so glass surfaces have something to blur over ---
+// ----- Glass: translucent surfaces with a soft, blurred application shell -----
 :root[data-app-style="glass"] {
   --app-content-background: linear-gradient(
     135deg,
@@ -78,32 +46,14 @@ body,
   }
 }
 
-// ----- Gradient: subtle off-white body, vibrant header --------------------
-:root[data-app-style="gradient"] {
-  --app-content-background: color-mix(
-    in srgb,
-    var(--mui-palette-background-body) 94%,
-    var(--mui-palette-primary-main)
-  );
-
-  body {
-    background: color-mix(in srgb, var(--mui-palette-background-body) 94%, var(--mui-palette-primary-main));
-  }
+:root[data-app-style="aurora"] {
+  --app-content-background:
+    radial-gradient(circle at 86% 8%, color-mix(in srgb, #7c3aed 12%, transparent), transparent 34%),
+    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 94%, #0f766e), var(--mui-palette-background-body));
 
   & .app-header {
-    background: linear-gradient(
-      90deg,
-      var(--mui-palette-primary-main) 0%,
-      var(--mui-palette-secondary-main) 100%
-    ) !important;
-    color: #fff;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-
-    & .MuiTypography-root,
-    & .MuiIconButton-root,
-    & .MuiSvgIcon-root {
-      color: #fff !important;
-    }
+    background: color-mix(in srgb, var(--mui-palette-background-header) 90%, #0f766e) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 72%, #14b8a6);
   }
 }
 
@@ -119,57 +69,6 @@ body,
     background: var(--mui-palette-background-header) !important;
     border-bottom: 1px solid var(--mui-palette-divider);
     box-shadow: none;
-  }
-}
-
-:root[data-app-style="aurora"] {
-  --app-content-background:
-    radial-gradient(circle at 86% 8%, color-mix(in srgb, #7c3aed 12%, transparent), transparent 34%),
-    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 94%, #0f766e), var(--mui-palette-background-body));
-
-  & .app-header {
-    background: color-mix(in srgb, var(--mui-palette-background-header) 90%, #0f766e) !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 72%, #14b8a6);
-  }
-}
-
-:root[data-app-style="sunset"] {
-  --app-content-background:
-    radial-gradient(circle at 92% 4%, color-mix(in srgb, #fb923c 13%, transparent), transparent 30%),
-    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 95%, #9d174d), var(--mui-palette-background-body));
-
-  & .app-header {
-    background: color-mix(in srgb, var(--mui-palette-background-header) 91%, #9d174d) !important;
-    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 75%, #fb923c);
-  }
-}
-
-:root[data-app-style="executive"] {
-  --app-content-background:
-    linear-gradient(160deg, color-mix(in srgb, var(--mui-palette-background-body) 95%, #4338ca), var(--mui-palette-background-body) 48%);
-
-  & .app-header {
-    background: color-mix(in srgb, var(--mui-palette-background-header) 94%, #312e81) !important;
-    border-bottom: 1px solid var(--mui-palette-divider);
-  }
-}
-
-// Keep header chrome aligned with dark mode even when the Gradient style is
-// selected. Light mode retains the vibrant product-color gradient above.
-:root.dark[data-app-style="gradient"] {
-  & .app-header {
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--mui-palette-background-header) 88%, var(--mui-palette-primary-main)) 0%,
-      color-mix(in srgb, var(--mui-palette-background-header) 90%, var(--mui-palette-secondary-main)) 100%
-    ) !important;
-    border-bottom: 1px solid var(--mui-palette-divider);
-
-    & .MuiTypography-root,
-    & .MuiIconButton-root,
-    & .MuiSvgIcon-root {
-      color: var(--mui-palette-text-primary) !important;
-    }
   }
 }
 

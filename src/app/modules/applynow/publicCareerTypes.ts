@@ -60,6 +60,12 @@ export type PublicJobApplicationPayload = {
   phone: string;
   state?: string;
   experience: number;
+  currentCompany?: string;
+  currentJobTitle?: string;
+  noticePeriodDays?: number;
+  linkedInUrl?: string;
+  portfolioUrl?: string;
+  coverLetter?: string;
 };
 
 export type PublicJobApplicationResponse = {

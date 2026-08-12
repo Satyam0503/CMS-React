@@ -111,12 +111,20 @@ export const updateCompanyDetails = async (payload: FormData) => {
   );
 };
 
+type EmployeeIdSequence = { currentNextEmployeeId: string; format: string };
+export const getEmployeeIdSequence = () => getRequest<ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.GET_EMPLOYEE_ID_SEQUENCE);
+export const skipEmployeeIds = (skipCount: number) => postRequest<{ skipCount: number }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.SKIP_EMPLOYEE_IDS, { skipCount });
+export const startEmployeeIdSequence = (employeeId: string) => postRequest<{ employeeId: string }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.START_EMPLOYEE_ID_SEQUENCE, { employeeId });
+
 // company jobTitles
 
-export const getJobTitles = async (isActive: boolean = false) => {
+export const getJobTitles = async (isActive: boolean = false, departmentId?: string) => {
+  const parameters = new URLSearchParams();
+  if (isActive) parameters.set("isActive", "true");
+  if (departmentId) parameters.set("departmentId", departmentId);
   return getRequest<GetJobTitleResponse>(
-    isActive
-      ? `${ServiceUrl.GET_JOB_TITLE}?isActive=${isActive}`
+    parameters.size > 0
+      ? `${ServiceUrl.GET_JOB_TITLE}?${parameters.toString()}`
       : ServiceUrl.GET_JOB_TITLE
   );
 };

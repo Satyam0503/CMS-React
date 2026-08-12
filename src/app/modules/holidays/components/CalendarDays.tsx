@@ -14,7 +14,7 @@ import { CalendarItem } from "../models";
 import dayjs, { Dayjs } from "dayjs";
 import { CalendarToday } from "@mui/icons-material";
 import clsx from "clsx";
-import { calendarItemStyleMapper, dateFormatter, getOrdinalSuffix } from "../../../../utils/common";
+import { calendarItemStyleMapper, dateFormatter, formatServerDate, getOrdinalSuffix } from "../../../../utils/common";
 
 
 type Props = {
@@ -42,8 +42,9 @@ export default function CalendarDays(props: Props) {
     //Gets number of days in any month
     function getDaysInCurrentMonth() {
         const days: Array<number | string> = [];
-        const firstDateOfMonth = dayjs(selectedDate).startOf("month").day();
-        const daysInCurrentMonth = dayjs(selectedDate).daysInMonth();
+        const activeDate = selectedDate ?? dayjs();
+        const firstDateOfMonth = activeDate.startOf("month").day();
+        const daysInCurrentMonth = activeDate.daysInMonth();
 
         for (let i: number = 0; i < firstDateOfMonth; i++) {
             days.push(" ");
@@ -58,7 +59,7 @@ export default function CalendarDays(props: Props) {
     // Checks If It Is Current Month And Year To Set Today Date
     function checkIsSameDay(dayofMonth: number) {
         if (typeof dayofMonth === "number") {
-            const today = selectedDate?.set("date", dayofMonth);
+            const today = (selectedDate ?? dayjs()).set("date", dayofMonth);
             return dayjs().isSame(today, 'day');
         }
         return false;
@@ -67,7 +68,7 @@ export default function CalendarDays(props: Props) {
     //Find Occasions For Selected Month
     function findOccasionsForMonth() {
         setthisMonthsHolidays(structuredClone(occasions).filter(occ => {
-            const occassionMonth = dayjs(occ.date).month();
+            const occassionMonth = dayjs(formatServerDate(occ.date, "YYYY-MM-DD")).month();
             return selectedDate?.month() === occassionMonth;
         }))
     }
@@ -88,7 +89,7 @@ export default function CalendarDays(props: Props) {
         const dateOccasions: Array<CalendarItem> = []
         thisMonthsHolidays.length > 0 &&
             thisMonthsHolidays.map((holiday) => {
-                const holidayDate = dayjs(holiday.date).date();
+                const holidayDate = dayjs(formatServerDate(holiday.date, "YYYY-MM-DD")).date();
                 if (holidayDate == day) {
                     dateCheck = true
                     dateOccasions.push(holiday)
@@ -124,10 +125,11 @@ export default function CalendarDays(props: Props) {
             component={"div"}
             className="gap-4 calendar-days"
             sx={{
-                height: "100%",
+                height: "auto",
+                minHeight: 0,
             }}
         >
-            <Card className="calendar-days-grid calendar-weekdays" >
+            <Card className="calendar-days-grid calendar-weekdays" sx={{ borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 10px 28px rgba(51, 34, 85, .08)", overflow: "hidden" }}>
                 {
                     weekDayShort.map((weekDay, index) => {
                         return (
@@ -138,6 +140,7 @@ export default function CalendarDays(props: Props) {
                                 sx={{
                                     width: "100%",
                                     height: "80px",
+                                    color: index === 0 || index === 6 ? "secondary.main" : "text.secondary",
                                 }}
                             >
                                 <Typography
@@ -152,7 +155,7 @@ export default function CalendarDays(props: Props) {
                         );
                     })}
             </Card>
-            <Box className="calendar-days-grid" >
+            <Box className="calendar-days-grid" sx={{ border: 1, borderColor: "divider", borderRadius: 3, overflow: "hidden", boxShadow: "0 12px 32px rgba(51, 34, 85, .08)", bgcolor: "background.paper" }}>
                 {monthDays.map((day, index) => {
                     return (
                         <Box key={index}
@@ -171,6 +174,7 @@ export default function CalendarDays(props: Props) {
                                 "today-cell": checkIsSameDay(day as number),
                                 "calendar-day-empty": typeof day !== "number",
                             })}
+                            sx={{ minHeight: { xs: 92, md: 126 }, transition: "transform .16s ease, box-shadow .16s ease", "&:hover": { transform: "translateY(-2px)", boxShadow: 3, zIndex: 1 }, ...(checkIsSameDay(day as number) ? { bgcolor: "action.selected", border: "2px solid", borderColor: "primary.main" } : {}) }}
                         >
                             <Typography variant="h6" className={clsx({ "today": checkIsSameDay(day as number) })}
                                 sx={{
@@ -202,7 +206,7 @@ export default function CalendarDays(props: Props) {
                                 >
                                     {thisMonthsHolidays.length > 0 &&
                                         thisMonthsHolidays.map((holiday, index) => {
-                                            const holidayDate = dayjs(holiday.date).format("DD");
+                                            const holidayDate = dayjs(formatServerDate(holiday.date, "YYYY-MM-DD")).format("DD");
 
                                             if (holidayDate == day) {
                                                 return (

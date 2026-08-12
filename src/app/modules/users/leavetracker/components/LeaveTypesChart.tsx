@@ -49,7 +49,7 @@ export const EmployeeLeaveTypesCharts = ({
     const step = max <= 10 ? 1 : Math.ceil(max / 10);
     const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, index) => index * step);
     if (ticks[ticks.length - 1] !== max) ticks.push(max);
-    return { max, ticks, height: Math.max(300, Math.min(420, 220 + ticks.length * 16)) };
+    return { max, ticks, height: 238 };
   }, [leaveBalance]);
 
   const balanceSummary = useMemo(() => ({
@@ -83,8 +83,8 @@ export const EmployeeLeaveTypesCharts = ({
   return (
     <Grid container spacing={2}>
       <Grid size={12}>
-        <Card sx={{ p: { xs: 2, md: 2.5 }, border: `1px solid ${alpha(theme.palette.divider, 0.9)}` }}>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ sm: "center" }} sx={{ mb: 2 }}>
+        <Card sx={{ p: { xs: 2, md: 2.5 }, border: `1px solid ${alpha(theme.palette.divider, 0.9)}`, boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.05)}` }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ sm: "center" }} sx={{ mb: 1.5 }}>
             <Box>
               <Typography className="fw-bold fs-16">
               {i({ id: "LEAVE.TITLES.LEAVE_BALANCE_GRAPH", defaultMessage: "Leave Balance Overview" })}
@@ -98,28 +98,32 @@ export const EmployeeLeaveTypesCharts = ({
               <Chip size="small" label={`${balanceSummary.remaining} remaining`} sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.success.main, 0.14), color: theme.palette.success.dark }} />
             </Stack>
           </Stack>
-          <Box sx={{ width: "100%", overflowX: "auto", borderRadius: 2, border: `1px solid ${alpha(theme.palette.divider, 0.55)}` }}>
+          <Box sx={{ width: "100%", overflowX: "auto", borderRadius: 2, border: `1px solid ${alpha(theme.palette.divider, 0.55)}`, bgcolor: alpha(theme.palette.background.default, 0.45) }}>
             <BarChart
               height={chartScale.height}
               series={series.map((item) => ({ ...item, stack: "leaveBalance" }))}
-              xAxis={[{ scaleType: "band", data: leaveTypeLabels, tickPlacement: "middle", tickLabelPlacement: "middle" }]}
+              xAxis={[{ scaleType: "band", data: leaveTypeLabels, tickPlacement: "middle", tickLabelPlacement: "middle", categoryGapRatio: 0.58, barGapRatio: 0.2 }]}
               yAxis={[{ width: 42, min: 0, max: chartScale.max, tickInterval: chartScale.ticks, valueFormatter: (value: number) => `${value}` }]}
               slotProps={{
                 legend: {
                   direction: "horizontal",
                   position: { vertical: "bottom", horizontal: "center" },
                 },
+                tooltip: {
+                  trigger: "item",
+                },
               }}
               loading={isLoading}
-              borderRadius={6}
-              margin={{ top: 22, bottom: 42, left: 14, right: 18 }}
+              borderRadius={5}
+              margin={{ top: 14, bottom: 40, left: 14, right: 18 }}
               sx={{
                 "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": { stroke: theme.palette.divider },
                 "& .MuiChartsAxis-tickLabel": { fill: theme.palette.text.secondary, fontSize: 12, fontWeight: 600 },
                 "& .MuiChartsLegend-label": { fill: theme.palette.text.primary, fontWeight: 700 },
                 "& .MuiChartsGrid-line": { stroke: alpha(theme.palette.divider, 0.55), strokeDasharray: "3 4" },
+                "& .MuiBarElement-root": { filter: `drop-shadow(0 2px 2px ${alpha(theme.palette.common.black, 0.08)})` },
               }}
-              style={{ width: "100%", display: "block" }}
+              style={{ width: "100%", minWidth: `${Math.max(620, leaveTypeLabels.length * 150)}px`, display: "block" }}
             />
           </Box>
         </Card>

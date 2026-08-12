@@ -32,3 +32,11 @@ export const deleteAttendance = async (attendanceId: string) => {
     `${ServiceUrl.DELETE_ATTENDANCE}/${attendanceId}`
   );
 };
+
+export const exportMonthlyAttendance = async (year: number, month: number) => {
+  return getRequest<Blob>("api/admin/attendance/export/monthly", {
+    params: { year, month },
+    responseType: "blob",
+    headers: { "Cache-Control": "no-cache" },
+  });
+};

@@ -22,7 +22,7 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
   status: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   paid: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   accrualPeriod: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE"),
-  policyType: Yup.number().oneOf([1, 2]).required(),
+  policyType: Yup.number().oneOf([1, 2, 3]).required(),
   accrualAmount: Yup.number().required("VALIDATION_ERR.REQUIRED_TYPE").when("policyType", {
     is: 1,
     then: schema => schema.min(0.5, "VALIDATION_ERR.MIN_CREDITED_LEAVES"),

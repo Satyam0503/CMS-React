@@ -38,6 +38,8 @@ export default function Dashboard() {
   const canViewCompanyDashboard = useMemo(
     () =>
       user.roleType === Roles.Administrator ||
+      user.roleType === Roles.HRManager ||
+      user.roleType === Roles.HRExecutive ||
       hasModuleFeaturePermission(
         ModulesName.Dashboard,
         Permission.ViewAll,

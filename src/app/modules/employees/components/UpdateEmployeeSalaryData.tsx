@@ -13,15 +13,13 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Typography,
 } from "@mui/material";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
-import { SelectChangeEvent } from "@mui/material/Select";
 import { useIntl } from "react-intl";
 import { updateSalary } from "../employeeServices";
 import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidationSchema";
 
-import { AppTextField } from "../../../shared/components/ui";
+import { CurrencyInput } from "../../../shared/components/form-component/CurrencyInput";
 interface PropsTypes {
   userId: string;
   employeeId: string;
@@ -71,7 +69,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     };
     try {
       const response = await updateSalary(payload, userId, employeeId);
-      const { success, statusCode } = response.data;
+      const { success } = response.data;
       onUserUpdate(success);
     } catch (error) {
       console.error((error as Error).message);
@@ -108,8 +106,6 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
           values,
           setFieldTouched,
           setFieldValue,
-          touched,
-          errors,
           handleSubmit,
         }) => {
           return (
@@ -117,88 +113,46 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
               <Stack spacing={1}>
                 <Grid container spacing={2}>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.BASIC_PAY" })}
-                      sx={{ width: "100%" }}
                       required
                       name="basicPay"
-                      value={values.basicPay}
-                      onChange={(e) => {
-                        setFieldValue("basicPay", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.HRA" })}
-                      sx={{ width: "100%" }}
                       name="hra"
-                      value={values.hra}
-                      onChange={(e) => {
-                        setFieldValue("hra", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.LTA" })}
-                      sx={{ width: "100%" }}
                       name="lta"
-                      value={values.lta}
-                      onChange={(e) => {
-                        setFieldValue("lta", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
-                      sx={{ width: "100%" }}
                       name="otherAllowance"
-                      value={values.otherAllowance}
-                      onChange={(e) => {
-                        setFieldValue("otherAllowance", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.BONUS" })}
-                      sx={{ width: "100%" }}
                       name="bonus"
-                      value={values.bonus}
-                      onChange={(e) => {
-                        setFieldValue("bonus", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.HEALTH_INSURANCE" })}
-                      sx={{ width: "100%" }}
                       name="healthInsurance"
-                      value={values.healthInsurance}
-                      onChange={(e) => {
-                        setFieldValue("healthInsurance", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={12} sx={{ marginTop: "10px" }}>
-                    <AppTextField
-                      type="Number"
+                    <CurrencyInput
                       label={i({ id: "EMPLOYEE.SALARY.TOTAL_DEDUCTIONS" })}
-                      sx={{ width: "100%" }}
                       name="totalDeductions"
-                      value={values.totalDeductions}
-                      onChange={(e) => {
-                        setFieldValue("totalDeductions", e.target.value);
-                      }}
                     />
                   </Grid>
                   <Grid size={12}>

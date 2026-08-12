@@ -35,7 +35,7 @@ import { AddComment } from "./AddComment";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import CustomisedButton from "../../../../shared/components/C_Button";
-import { ApplicantStatus, ModulesName, Permission } from "../../../../../utils/enums";
+import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
@@ -143,7 +143,8 @@ export const ApplicantDetails = () => {
   const handleAddComment = async () => {
     setLoading(true);
     try {
-      if (status.applicationStatus !== applicant.activityType) {
+      const hasStatusChange = status.applicationStatus !== applicant.activityType;
+      if (hasStatusChange) {
         const payload = {
           applicantId: applicant.applicantId,
           firstName: applicant.firstName,
@@ -162,22 +163,24 @@ export const ApplicantDetails = () => {
           throw new Error();
         }
       }
-      const commentPayload = {
-        applicantId: applicant.applicantId,
-        userId: currentUser.userId,
-        description: comment,
-        activityCategory: commentActionEncoderForApplicationStatus(
-          status.applicationStatus
-        ),
-        jobTitle: applicant.vacancyName,
-      };
-      const commentResponse = await addComment(commentPayload);
-      if (!commentResponse.data.success) {
-        throw new Error();
+      if (comment.trim()) {
+        const commentPayload = {
+          applicantId: applicant.applicantId,
+          userId: currentUser.userId,
+          description: comment.trim(),
+          activityCategory: commentActionEncoderForApplicationStatus(
+            status.applicationStatus
+          ),
+          jobTitle: applicant.vacancyName,
+        };
+        const commentResponse = await addComment(commentPayload);
+        if (!commentResponse.data.success) {
+          throw new Error();
+        }
       }
-      toast.success(formatMessage({ id: "TOAST.SUCCESS.ADD_COMMENT" }));
+      toast.success(formatMessage({ id: hasStatusChange ? "TOAST.SUCCESS.APPLICANT_UPDATE" : "TOAST.SUCCESS.ADD_COMMENT" }));
       handleClose();
-      if (status.applicationStatus !== applicant.activityType) {
+      if (hasStatusChange) {
         setRefresh(!refresh);
       }
       setRefreshComment(!refreshComment);
@@ -200,6 +203,18 @@ export const ApplicantDetails = () => {
       setModalOpen(true);
     }
   };
+
+  const getStatusLabel = (activityType: number) => {
+    const configuredStatus = ApplicationEvaluationStatus.find(item => item.value === activityType);
+    return configuredStatus ? formatMessage({ id: configuredStatus.label }) : "Re-apply";
+  };
+
+  const isStatusChangePending = status.applicationStatus !== applicant.activityType;
+  const isTerminalStatus = [
+    ApplicationStatus.Selected,
+    ApplicationStatus.Rejected,
+    ApplicationStatus.ReApply,
+  ].includes(applicant.activityType);
 
   const handlePageChange = (page: number) => {
     setPaginationValues({
@@ -390,10 +405,17 @@ export const ApplicantDetails = () => {
                       value={status.applicationStatus}
                       sx={{ width: { xs: "100%", sm: "170px" } }}
                       onChange={handleStatusChange}
+                      disabled={isTerminalStatus}
                       className="select"
                       label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
                     >
-                      {ApplicationEvaluationStatus.map((status) => (
+                      {ApplicationEvaluationStatus
+                        .filter((option) =>
+                          isTerminalStatus
+                            ? option.value === applicant.activityType
+                            : option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
+                        )
+                        .map((status) => (
                         <MenuItem key={status.id} value={status.value}>
                           {formatMessage({ id: status.label })}
                         </MenuItem>
@@ -486,6 +508,10 @@ export const ApplicantDetails = () => {
               handleCommentChange={handleCommentChange}
               handleClose={handleClose}
               handleAddComment={handleAddComment}
+              statusChange={isStatusChangePending ? {
+                from: getStatusLabel(applicant.activityType),
+                to: getStatusLabel(status.applicationStatus),
+              } : undefined}
             />
           )}
         </Card>

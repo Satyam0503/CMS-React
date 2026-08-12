@@ -1,25 +1,46 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-export type AppStyle = "cobalt" | "classic" | "glass" | "gradient" | "minimal" | "aurora" | "sunset" | "executive";
+export const SUPPORTED_THEMES = ["glass", "aurora", "minimal"] as const;
+export const DEFAULT_THEME = "glass" as const;
+export type AppStyle = (typeof SUPPORTED_THEMES)[number];
 
 export const APP_STYLES: { value: AppStyle; label: string; description: string }[] = [
-  { value: "cobalt",   label: "Cobalt",   description: "Modern cobalt gradient with frosted glass items" },
-  { value: "classic",  label: "Classic",  description: "The original look" },
-  { value: "glass",    label: "Glass",    description: "Translucent surfaces with backdrop blur" },
-  { value: "gradient", label: "Gradient", description: "Vibrant primary→secondary gradient" },
-  { value: "minimal",  label: "Minimal",  description: "Flat, light, low-contrast" },
+  { value: "glass", label: "Glass", description: "Translucent surfaces with backdrop blur" },
   { value: "aurora", label: "Aurora", description: "Calm teal and violet with luminous accents" },
-  { value: "sunset", label: "Sunset", description: "Warm coral, plum and amber surfaces" },
-  { value: "executive", label: "Executive", description: "Refined graphite and indigo workspace" },
+  { value: "minimal", label: "Minimal", description: "Flat, light, low-contrast" },
 ];
 
 const STORAGE_KEY = "appStyle";
-const DEFAULT_STYLE: AppStyle = "cobalt";
-// Same-tab broadcast event — the native `storage` event only fires for OTHER tabs.
 const SAME_TAB_EVENT = "app-style-change";
 
-const isValidStyle = (value: unknown): value is AppStyle =>
-  typeof value === "string" && APP_STYLES.some((s) => s.value === value);
+export const normalizeAppStyle = (value: unknown): AppStyle => {
+  const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
+  return SUPPORTED_THEMES.includes(normalized as AppStyle) ? (normalized as AppStyle) : DEFAULT_THEME;
+};
+
+const isValidStyle = (value: unknown): value is AppStyle => normalizeAppStyle(value) === value?.toString().trim().toLowerCase();
+
+const persistStyle = (next: AppStyle) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+    window.dispatchEvent(new Event(SAME_TAB_EVENT));
+  } catch {
+    // localStorage can be disabled (private mode, quota); silently ignore.
+  }
+};
+
+const getStoredStyle = (): AppStyle => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const normalized = normalizeAppStyle(raw);
+    if (raw && raw !== normalized) {
+      persistStyle(normalized);
+    }
+    return normalized;
+  } catch {
+    return DEFAULT_THEME;
+  }
+};
 
 // Subscriber registry for useSyncExternalStore. Listens for both the native
 // cross-tab `storage` event and our same-tab custom event so every component
@@ -39,26 +60,20 @@ const subscribe = (callback: () => void) => {
 
 const getSnapshot = (): AppStyle => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return isValidStyle(raw) ? raw : DEFAULT_STYLE;
+    return getStoredStyle();
   } catch {
-    return DEFAULT_STYLE;
+    return DEFAULT_THEME;
   }
 };
 
 // SSR-safe initial value (project is SPA, but useSyncExternalStore wants this).
-const getServerSnapshot = (): AppStyle => DEFAULT_STYLE;
+const getServerSnapshot = (): AppStyle => DEFAULT_THEME;
 
 export const useAppStyle = () => {
   const style = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const setStyle = useCallback((next: AppStyle) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-      window.dispatchEvent(new Event(SAME_TAB_EVENT));
-    } catch {
-      // localStorage can be disabled (private mode, quota); silently ignore.
-    }
+    persistStyle(normalizeAppStyle(next));
   }, []);
 
   return { style, setStyle };

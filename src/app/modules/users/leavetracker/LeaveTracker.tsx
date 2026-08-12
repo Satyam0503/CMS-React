@@ -1,4 +1,4 @@
-import { Card, Chip, Stack, Typography } from "@mui/material";
+import { Card, Chip, Divider, Stack, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { LeaveApplication } from "./components/LeaveApplication";
@@ -17,7 +17,8 @@ import { getEmployeeLeaveBalance, getMyProfileLeaveBalance } from "../../leaves/
 import { toast } from "react-toastify";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { resolveLeaveBalanceTargetUserId } from "./leaveTrackerUtils";
-import { getRequest } from "../../../../server/axios";
+import { getRequest, postRequest } from "../../../../server/axios";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 
 type WorkFromHomeContext = {
   isEligible: boolean;
@@ -26,6 +27,22 @@ type WorkFromHomeContext = {
   remainingThisWeek: number;
   canSchedule: boolean;
   disabledReasonCode?: string;
+  businessDate?: string;
+  isSameDayRequestCutoffPassed?: boolean;
+  effectiveOfficeStartTime?: string | null;
+};
+
+type WorkFromHomeRequest = {
+  requestId: string;
+  fromDate: string;
+  toDate: string;
+  durationType: string;
+  reasonText?: string;
+  status: string;
+  version: number;
+  createdDate?: string;
+  reviewedByUserId?: string;
+  reviewedAt?: string;
 };
 
 const initialLeaveRequestValue: RequestLeaveModel = {
@@ -48,6 +65,8 @@ export const LeaveTracker: FC = () => {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [wfhContext, setWfhContext] = useState<WorkFromHomeContext | null>(null);
+  const [wfhRequests, setWfhRequests] = useState<WorkFromHomeRequest[]>([]);
+  const [wfhRequestsOpen, setWfhRequestsOpen] = useState(false);
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -64,8 +83,17 @@ export const LeaveTracker: FC = () => {
   };
 
   const handleRefresh = () => {
-    setRefresh(!refresh);
+    setRefresh((current) => !current);
   };
+
+  useEffect(() => {
+    window.addEventListener("leave-allocation-changed", handleRefresh);
+    window.addEventListener("wfh-allocation-changed", handleRefresh);
+    return () => {
+      window.removeEventListener("leave-allocation-changed", handleRefresh);
+      window.removeEventListener("wfh-allocation-changed", handleRefresh);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchEmployeeLeaveTypeBalance = async () => {
@@ -75,11 +103,7 @@ export const LeaveTracker: FC = () => {
               resolveLeaveBalanceTargetUserId(employeeId, currentUserId)
             )
           : await getMyProfileLeaveBalance();
-        if (data.success && data.totalRecords > 0) {
-          // console.log(data.methodResults);
-
-          setEmployeeLeaveTypeBalance(data.methodResults);
-        }
+        if (data.success) setEmployeeLeaveTypeBalance(data.methodResults ?? []);
       } catch (error) {
         console.error((error as Error).message);
       } finally {
@@ -97,10 +121,39 @@ export const LeaveTracker: FC = () => {
       return;
     }
 
-    getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context")
-      .then(({ data }) => setWfhContext(data.methodResult ?? null))
+    Promise.all([
+      getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context"),
+      getRequest<{ methodResults?: WorkFromHomeRequest[] }>("api/wfh/requests/my"),
+    ])
+      .then(([context, requests]) => {
+        setWfhContext(context.data.methodResult ?? null);
+        setWfhRequests(requests.data.methodResults ?? []);
+      })
       .catch((error) => console.error("Unable to load WFH allowance.", error));
   }, [employeeId, refresh]);
+
+  const withdrawWfhRequest = async (request: WorkFromHomeRequest) => {
+    try {
+      const { data } = await postRequest<{ version: number; remarksCode: string }, { success: boolean; message?: string }>(
+        `api/wfh/requests/${request.requestId}/cancel`,
+        { version: request.version, remarksCode: "EMPLOYEE_WITHDRAWN" }
+      );
+      if (!data.success) throw new Error(data.message || "Work From Home request could not be withdrawn.");
+      toast.success("Work From Home request withdrawn successfully.");
+      handleRefresh();
+    } catch (error) {
+      const message = (error as Error).message || "Work From Home request could not be withdrawn.";
+      const [, ...details] = message.split(":");
+      toast.error(details.join(":").trim() || message);
+    }
+  };
+
+  const canWithdrawWfhRequest = (request: WorkFromHomeRequest) => {
+    if (!wfhContext?.businessDate || !["Pending", "Returned", "Approved"].includes(request.status)) return false;
+    const requestDate = request.fromDate.slice(0, 10);
+    const businessDate = wfhContext.businessDate.slice(0, 10);
+    return requestDate > businessDate || (requestDate === businessDate && !wfhContext.isSameDayRequestCutoffPassed);
+  };
 
   return (
     <Stack className="gap-2">
@@ -144,6 +197,7 @@ export const LeaveTracker: FC = () => {
             <Stack direction="row" spacing={1}>
               <Chip label={`${wfhContext.usedThisWeek} used`} color="secondary" size="small" />
               <Chip label={`${wfhContext.remainingThisWeek} remaining`} color={wfhContext.canSchedule ? "success" : "default"} size="small" />
+              <CustomisedButton label={`View requests (${wfhRequests.length})`} size="small" variant="outlined" handleClick={() => setWfhRequestsOpen(true)} />
             </Stack>
           </Stack>
           <Typography sx={{ mt: 2 }}>
@@ -159,6 +213,41 @@ export const LeaveTracker: FC = () => {
             </Typography>
           )}
         </Card>
+      )}
+      {!employeeId && (
+        <CustomisedModal
+          open={wfhRequestsOpen}
+          handleClose={() => setWfhRequestsOpen(false)}
+          title="Work from home requests"
+          maxWidth="sm"
+        >
+          <Stack sx={{ minWidth: { sm: 500 }, pb: 1 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}>
+            <Stack spacing={0.25}>
+              <Typography variant="body2" color="text.secondary">Your pending, approved, rejected, and cancelled WFH history.</Typography>
+            </Stack>
+            <Chip label={`${wfhRequests.length} request${wfhRequests.length === 1 ? "" : "s"}`} size="small" variant="outlined" />
+          </Stack>
+          <Divider sx={{ my: 2 }} />
+          <Stack spacing={1.25} sx={{ maxHeight: "55vh", overflowY: "auto", pr: 0.5 }}>
+            {wfhRequests.length === 0 ? (
+              <Typography color="text.secondary">No Work From Home requests yet.</Typography>
+            ) : wfhRequests.map((request) => (
+              <Stack key={request.requestId} direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.25} sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+                <Stack spacing={0.25}>
+                  <Typography fontWeight={700}>{new Date(request.fromDate).toLocaleDateString()} – {new Date(request.toDate).toLocaleDateString()}</Typography>
+                  <Typography variant="body2" color="text.secondary">{request.durationType.replace(/([A-Z])/g, " $1").trim()}{request.createdDate ? ` · Requested ${new Date(request.createdDate).toLocaleDateString()}` : ""}</Typography>
+                  {request.reasonText && <Typography variant="body2" color="text.secondary">{request.reasonText}</Typography>}
+                </Stack>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Chip label={request.status} color={request.status === "Approved" ? "success" : request.status === "Rejected" ? "error" : request.status === "Cancelled" ? "default" : "warning"} size="small" />
+                  {canWithdrawWfhRequest(request) && <CustomisedButton label="Withdraw" size="small" color="error" variant="outlined" handleClick={() => void withdrawWfhRequest(request)} />}
+                </Stack>
+              </Stack>
+            ))}
+          </Stack>
+          </Stack>
+        </CustomisedModal>
       )}
       <EmployeeLeaveTypesCharts
         isLoading={loading}

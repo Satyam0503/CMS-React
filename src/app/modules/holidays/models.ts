@@ -54,3 +54,5 @@ export type HolidayModel = {
 
 export type GetAllCalendarItemData = ResponseData<CalendarItem>;
 export type AddHolidayResponseData = ResponseData<OccasionModel>;
+
+export type CalendarImportItem = { name: string; date: string; type: 1 | 2 };

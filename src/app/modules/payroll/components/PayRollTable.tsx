@@ -235,16 +235,21 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                     }
                     if (column.id === "actions") {
                       const hasPayRoll = Boolean(row.payData.payRollId);
+                      const isProcessed = Boolean(row.payData.isProcessed);
                       return (
                         <TableCell key={column.id} className="pe-auto">
-                          <AppIconButton
-                            aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                            title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                            disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
-                            onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
-                          >
-                            <Visibility fontSize="small" />
-                          </AppIconButton>
+                          {hasPayRoll && !isProcessed ? (
+                            <Typography variant="caption" color="warning.main" fontWeight={700}>Draft</Typography>
+                          ) : (
+                            <AppIconButton
+                              aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                              title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                              disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
+                              onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
+                            >
+                              <Visibility fontSize="small" />
+                            </AppIconButton>
+                          )}
                         </TableCell>
                       );
                     }

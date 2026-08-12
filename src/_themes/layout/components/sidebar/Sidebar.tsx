@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
-import { KeyboardDoubleArrowLeft } from "@mui/icons-material";
+import { Close, KeyboardDoubleArrowLeft } from "@mui/icons-material";
 import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
 
 type Props = {
@@ -30,12 +30,17 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
   }
 
   return (
-    <Drawer variant={isSmallScreen ? 'temporary' : 'permanent'} open={open}
+    <Drawer
+      anchor="left"
+      variant={isSmallScreen ? 'temporary' : 'permanent'}
+      open={isSmallScreen ? open : true}
+      ModalProps={{ keepMounted: false }}
       slotProps={{
+        backdrop: { sx: { backgroundColor: "rgba(15, 23, 42, 0.44)", backdropFilter: "blur(2px)" } },
         paper: {
           sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
           className: 'sidebar-paper',
-        }
+        },
       }}
       onClose={handleClose}
       className="sidebar"
@@ -43,6 +48,15 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       data-sidebar-style={sidebarStyle}
     >
       <Stack role="presentation" onClick={handleClose} sx={{ height: "100%", minHeight: 0, flexGrow: 1, p: 2, overflow: "hidden" }}>
+        {isSmallScreen && (
+          <ButtonBase
+            aria-label="Close navigation menu"
+            onClick={(event) => { event.stopPropagation(); handleClose(); }}
+            sx={{ alignSelf: "flex-end", width: 36, height: 36, borderRadius: 1, color: "common.white" }}
+          >
+            <Close fontSize="small" />
+          </ButtonBase>
+        )}
         {/* Company logo strip — small, top-of-sidebar */}
         <SidebarMenuMain
           currentIndex={openIndex}

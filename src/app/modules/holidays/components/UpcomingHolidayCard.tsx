@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import { CalendarItem } from "../models";
-import { calendarItemStyleMapper, dateFormatter, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
+import { calendarItemStyleMapper, dateFormatter, formatServerDate, getOrdinalSuffix, hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useIntl } from "react-intl";
@@ -142,7 +142,7 @@ export const UpcomingHolidayCard = (props: Props) => {
     }
   };
 
-  const date = dayjs(props.occasion.date);
+  const date = dayjs(formatServerDate(props.occasion.date, "YYYY-MM-DD"));
 
   return (
 

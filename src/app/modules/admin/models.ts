@@ -70,10 +70,11 @@ export type JobTitleResponseModel = Pick<
   "isActive" | "titles"
 > & {
   jobTitleId?: string;
+  departmentId?: string;
 };
 export type JobTitleRequestModel = Pick<
   JobTitleResponseModel,
-  "isActive" | "jobTitleId"
+  "isActive" | "jobTitleId" | "departmentId"
 > & {
   titles: MultilingualModel[];
 };

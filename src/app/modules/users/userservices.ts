@@ -274,3 +274,6 @@ export const updateNotificationPreferences = (
 export const getNextEmployeeId = () => {
   return getRequest<ApiResponse>(ServiceUrl.GET_NEXT_EMPLOYEE_ID);
 };
+
+export const assignMissingEmployeeId = (userId: string, employeeId?: string) =>
+  postRequest<{ employeeId?: string }, ApiResponse>(`api/User/Employees/${encodeURIComponent(userId)}/AssignEmployeeId`, { employeeId });

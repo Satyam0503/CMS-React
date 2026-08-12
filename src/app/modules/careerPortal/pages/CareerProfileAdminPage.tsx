@@ -1,5 +1,5 @@
-import { CloseRounded, EditRounded, LaunchRounded, PreviewRounded, SaveRounded, VisibilityRounded } from "@mui/icons-material";
-import { Alert, Box, Button, Chip, CircularProgress, FormControlLabel, Paper, Stack, Switch, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { CloseRounded, EditRounded, InfoOutlined, LaunchRounded, PreviewRounded, SaveRounded, VisibilityRounded } from "@mui/icons-material";
+import { Alert, Box, Button, Chip, CircularProgress, FormControlLabel, IconButton, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -14,11 +14,46 @@ const emptyProfile: PublicCompanyProfile = {
   publicCompanyCode: "", displayName: "", officeLocations: [], values: [], benefits: [], technologies: [], socialLinks: {}, isPublished: false,
 };
 
-const CsvField = ({ label, value, onChange }: { label: string; value: string[]; onChange: (value: string[]) => void }) => (
-  <TextField fullWidth label={label} value={value.join(", ")}
-    onChange={(event) => onChange(event.target.value.split(",").map((item) => item.trim()).filter(Boolean))}
-    helperText="Separate values with commas" />
-);
+const parseCommaSeparatedValues = (value: string) =>
+  value.split(",").map((item) => item.trim()).filter(Boolean);
+
+const fieldHelp: Partial<Record<keyof PublicCompanyProfile, string>> = {
+  industry: "Industry helps candidates understand your business area.", companySize: "Company size is shown to candidates as general context.",
+  shortDescription: "A short introduction displayed near the top of your careers page.", aboutCompanyHtml: "Your longer company introduction shown to candidates.",
+  websiteUrl: "Your public company website link.", coverImageUrl: "Banner image shown at the top of the careers page.",
+  headquarters: "Main company location shown on the public page.", foundedYear: "The year your company was founded.", companyType: "A short description of your organization type.",
+  officeLocations: "Locations where your company operates.", mission: "What your company aims to achieve.", vision: "The future your company is working toward.",
+  values: "Values candidates will see on your public careers page.", benefits: "Benefits and perks available to employees.", technologies: "Technologies commonly used by your teams.",
+  workCultureHtml: "Describe how teams work together at your company.", hiringProcessHtml: "Explain the steps candidates can expect after applying.", diversityStatementHtml: "Share your company’s inclusion commitment.",
+};
+const HelpLabel = ({ label, field }: { label: string; field: keyof PublicCompanyProfile }) => <Stack direction="row" alignItems="center" spacing={0.25}><span>{label}</span>{fieldHelp[field] && <Tooltip title={fieldHelp[field]} enterTouchDelay={0}><IconButton size="small" aria-label={`Help for ${label}`} sx={{ p: 0.25 }}><InfoOutlined fontSize="inherit" /></IconButton></Tooltip>}</Stack>;
+
+const CsvField = ({ label, field, value, onChange }: { label: string; field: keyof PublicCompanyProfile; value: string[]; onChange: (value: string[]) => void }) => {
+  // Keep the text the user is actively typing separate from the saved array.
+  // Parsing on every keystroke is still useful to keep the form state current,
+  // but the draft must retain a trailing comma or space until the user finishes.
+  const [draft, setDraft] = useState(() => value.join(", "));
+
+  useEffect(() => {
+    const parsedDraft = parseCommaSeparatedValues(draft);
+    const matchesValue = parsedDraft.length === value.length && parsedDraft.every((item, index) => item === value[index]);
+    if (!matchesValue) setDraft(value.join(", "));
+  }, [value]);
+
+  return (
+    <TextField
+      fullWidth
+      label={<HelpLabel label={label} field={field} />}
+      value={draft}
+      onChange={(event) => {
+        const nextDraft = event.target.value;
+        setDraft(nextDraft);
+        onChange(parseCommaSeparatedValues(nextDraft));
+      }}
+      helperText="Separate values with commas. Spaces inside a value are allowed."
+    />
+  );
+};
 
 export const CareerProfileAdminPage = () => {
   const userData = useAppSelector((state) => state.user.userData);
@@ -34,6 +69,8 @@ export const CareerProfileAdminPage = () => {
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => { document.title = `${profile.displayName || "Company"} Careers`; }, [profile.displayName]);
 
   useEffect(() => {
     getManagedCompanyProfile()
@@ -101,16 +138,16 @@ export const CareerProfileAdminPage = () => {
           {!editing && tab !== 2 && <Alert severity="info" sx={{ mb: 2 }}>This profile is read-only. Select Edit profile to make changes.</Alert>}
           <fieldset disabled={!editing && tab !== 2} style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
             {tab === 0 && <Stack spacing={2.5}>
-              <Stack direction={{ xs: "column", md: "row" }} spacing={2}><TextField disabled fullWidth label="Company name" value={profile.displayName} helperText="Managed in Company Details and kept in sync automatically." /><TextField fullWidth label="Industry" value={profile.industry ?? ""} onChange={(e) => set("industry", e.target.value)} /><TextField fullWidth label="Company size" value={profile.companySize ?? ""} onChange={(e) => set("companySize", e.target.value)} /></Stack>
-              <TextField fullWidth label="Short description" multiline minRows={2} value={profile.shortDescription ?? ""} onChange={(e) => set("shortDescription", e.target.value)} />
-              <TextField fullWidth label="About company (safe HTML supported)" multiline minRows={6} value={profile.aboutCompanyHtml ?? ""} onChange={(e) => set("aboutCompanyHtml", e.target.value)} />
+              <Stack direction={{ xs: "column", md: "row" }} spacing={2}><TextField disabled fullWidth label="Company name" value={profile.displayName} helperText="Managed in Company Details and kept in sync automatically." /><TextField fullWidth label={<HelpLabel label="Industry" field="industry" />} value={profile.industry ?? ""} onChange={(e) => set("industry", e.target.value)} /><TextField fullWidth label={<HelpLabel label="Company size" field="companySize" />} value={profile.companySize ?? ""} onChange={(e) => set("companySize", e.target.value)} /></Stack>
+              <TextField fullWidth label={<HelpLabel label="Short description" field="shortDescription" />} multiline minRows={2} value={profile.shortDescription ?? ""} onChange={(e) => set("shortDescription", e.target.value)} />
+              <TextField fullWidth label={<HelpLabel label="About company (safe HTML supported)" field="aboutCompanyHtml" />} multiline minRows={6} value={profile.aboutCompanyHtml ?? ""} onChange={(e) => set("aboutCompanyHtml", e.target.value)} />
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}><TextField fullWidth label="Website" value={profile.websiteUrl ?? ""} onChange={(e) => set("websiteUrl", e.target.value)} /><TextField disabled fullWidth label="Company logo" value={profile.logoUrl ?? ""} helperText="Managed in Company Details and kept in sync automatically." /><TextField fullWidth label="Cover image URL" value={profile.coverImageUrl ?? ""} onChange={(e) => set("coverImageUrl", e.target.value)} /></Stack>
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}><TextField fullWidth label="Headquarters" value={profile.headquarters ?? ""} onChange={(e) => set("headquarters", e.target.value)} /><TextField fullWidth label="Founded year" type="number" value={profile.foundedYear ?? ""} onChange={(e) => set("foundedYear", e.target.value ? Number(e.target.value) : null)} /><TextField fullWidth label="Company type" value={profile.companyType ?? ""} onChange={(e) => set("companyType", e.target.value)} /></Stack>
-              <CsvField label="Office locations" value={profile.officeLocations} onChange={(value) => set("officeLocations", value)} />
+              <CsvField label="Office locations" field="officeLocations" value={profile.officeLocations} onChange={(value) => set("officeLocations", value)} />
               <Stack direction={{ xs: "column", md: "row" }} spacing={2}><TextField fullWidth label="Mission" multiline minRows={3} value={profile.mission ?? ""} onChange={(e) => set("mission", e.target.value)} /><TextField fullWidth label="Vision" multiline minRows={3} value={profile.vision ?? ""} onChange={(e) => set("vision", e.target.value)} /></Stack>
             </Stack>}
             {tab === 1 && <Stack spacing={2.5}>
-              <CsvField label="Values" value={profile.values} onChange={(value) => set("values", value)} /><CsvField label="Benefits" value={profile.benefits} onChange={(value) => set("benefits", value)} /><CsvField label="Technologies" value={profile.technologies} onChange={(value) => set("technologies", value)} />
+              <CsvField label="Values" field="values" value={profile.values} onChange={(value) => set("values", value)} /><CsvField label="Benefits" field="benefits" value={profile.benefits} onChange={(value) => set("benefits", value)} /><CsvField label="Technologies" field="technologies" value={profile.technologies} onChange={(value) => set("technologies", value)} />
               <TextField fullWidth label="Work culture (safe HTML supported)" multiline minRows={5} value={profile.workCultureHtml ?? ""} onChange={(e) => set("workCultureHtml", e.target.value)} /><TextField fullWidth label="Hiring process (safe HTML supported)" multiline minRows={5} value={profile.hiringProcessHtml ?? ""} onChange={(e) => set("hiringProcessHtml", e.target.value)} /><TextField fullWidth label="Diversity statement (safe HTML supported)" multiline minRows={4} value={profile.diversityStatementHtml ?? ""} onChange={(e) => set("diversityStatementHtml", e.target.value)} />
               <FormControlLabel control={<Switch checked={profile.isPublished} onChange={(e) => set("isPublished", e.target.checked)} />} label={profile.isPublished ? "Published on the career portal" : "Saved as draft"} />
             </Stack>}

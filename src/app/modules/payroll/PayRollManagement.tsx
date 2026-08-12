@@ -248,6 +248,11 @@ const PayRollManagement = () => {
                         )}
                     </Stack>
                 </Stack>
+                {payrollRows.length > 0 && !isMonthProcessed && (
+                    <Typography variant="body2" color="warning.main" sx={{ mt: -2 }}>
+                        Draft payroll is visible only to authorized payroll users. It is not finalized, cannot generate payslips, and must pass attendance readiness before processing.
+                    </Typography>
+                )}
                 <PayRollTable payRollData={payRollData} payMonth={payMonth} handleRowClick={handleRowClick} />
             </Card>
             {

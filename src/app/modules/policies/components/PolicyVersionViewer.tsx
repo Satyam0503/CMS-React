@@ -1,9 +1,11 @@
 import { PolicyVersion } from "../models";
 import { Stack } from "@mui/system";
 import {
+  Box,
+  Button,
   Typography,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Close, DownloadOutlined } from "@mui/icons-material";
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { WordDocViewer } from "../../../shared/components/WordDocViewer";
 import { getPolicyDocument } from "../policyServices";
@@ -114,22 +116,17 @@ export default function PolicyVersionViewer(props: Props) {
   };
 
   return (
-    <Stack spacing={1}>
+    <Stack spacing={1.5} className="policy-document-viewer">
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h5" className="fs-16">
-          {policyVersion.versionName}
-        </Typography>
+        <Box><Typography variant="h5" className="fs-16">{policyVersion.versionName}</Typography><Typography variant="body2" color="text.secondary">Current document preview. Scroll inside the document to read every page.</Typography></Box>
 
-        <AppIconButton
-          sx={{ border: 0 }}
-          onClick={handleClose}
-          aria-label="close-preview"
-        >
-          <Close />
-        </AppIconButton>
+        <Stack direction="row" spacing={1}>
+          {documentUrl && <Button component="a" href={documentUrl} download={`${policyVersion.versionName}.${documentType ?? "document"}`} size="small" startIcon={<DownloadOutlined />}>Download</Button>}
+          <AppIconButton sx={{ border: 0 }} onClick={handleClose} aria-label="close-preview"><Close /></AppIconButton>
+        </Stack>
       </Stack>
 
-      {renderDocument()}
+      <Box className="policy-document-frame">{renderDocument()}</Box>
     </Stack>
   );
 }

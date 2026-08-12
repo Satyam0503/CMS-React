@@ -107,7 +107,7 @@ export const createMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
 export type WorkFromHomeRequestPayload = {
   fromDate: string;
   toDate: string;
-  durationType: "FullDay" | "FirstHalf";
+  durationType: "FullDay" | "FirstHalf" | "SecondHalf" | "Mixed";
   reasonCode: string;
   reasonText: string;
 };
@@ -122,10 +122,22 @@ export const createWorkFromHomeRequest = (payload: WorkFromHomeRequestPayload) =
 export type WorkFromHomeEmployeeAllocation = {
   employeeId: string;
   weeklyLimit: number;
+  isEligible?: boolean;
+};
+
+export type WorkFromHomeEmployeeAllocationsResponse = {
+  // The WFH API returns this collection as Result<IEnumerable<T>>.
+  methodResult?: WorkFromHomeEmployeeAllocation[];
+};
+
+export const getMySelfServiceLeavePolicies = () => {
+  return getRequest<ResponseData<Omit<LeavePolicyModel, "applicableTo">>>(
+    "api/LeaveManagement/me/policies"
+  );
 };
 
 export const getWorkFromHomeEmployeeAllocations = () => {
-  return getRequest<{ methodResults?: WorkFromHomeEmployeeAllocation[] }>(
+  return getRequest<WorkFromHomeEmployeeAllocationsResponse>(
     "api/wfh/allocations"
   );
 };

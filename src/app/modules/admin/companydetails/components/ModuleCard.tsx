@@ -16,6 +16,7 @@ import { AppButton, AppIconButton } from "../../../../shared/components/ui";
 interface ModuleCardProps {
   moduleId: string;
   titleMessageId: string;
+  title?: string;
   descriptionMessageId?: string;
   modules: ModulesInfoModel[];
   moduleCostant?: string;
@@ -26,6 +27,7 @@ interface ModuleCardProps {
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
   titleMessageId,
+  title,
   descriptionMessageId,
   modules,
   moduleCostant,
@@ -56,7 +58,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           >
             <Stack spacing={0.5}>
               <Typography variant="h6" fontWeight={600}>
-                {formatMessage({ id: titleMessageId })}
+                {title ?? formatMessage({ id: titleMessageId })}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 {formatMessage({ id: "COMMON.SYSTEM_EXTENSION" })}

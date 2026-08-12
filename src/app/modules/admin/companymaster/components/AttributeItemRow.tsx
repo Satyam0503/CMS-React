@@ -1,6 +1,4 @@
-import {
-  Box,
-} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
@@ -9,13 +7,15 @@ import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { LanguageNameMapper } from "../../../../../utils/common";
 
-import { AppIconButton, AppSwitch, AppTextField } from "../../../../shared/components/ui";
+import { AppIconButton, AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 type Props<T> = {
   itemData: T;
   UpdatedItemData: (item: T) => void;
   translationLanguage: string;
   keyName: keyof T;
   handleDeleteAttribute: (id: string) => Promise<void>;
+  selectField?: keyof T;
+  selectOptions?: Array<{ value: string; label: string }>;
 };
 
 export type ReqProps = {
@@ -30,6 +30,8 @@ export const AttributeItemRow = <T extends ReqProps>({
   translationLanguage,
   keyName,
   handleDeleteAttribute,
+  selectField,
+  selectOptions,
 }: Props<T>) => {
   const { formatMessage } = useIntl();
   const [item, setItem] = useState<T>(structuredClone(itemData));
@@ -51,10 +53,12 @@ export const AttributeItemRow = <T extends ReqProps>({
     } else {
       updatedTitles[updatedLanguage] = e.target.value;
     }
-    setItem({
+    const updatedItem = {
       ...item,
       titles: updatedTitles,
-    });
+    } as T;
+    setItem(updatedItem);
+    UpdatedItemData(updatedItem);
   };
 
   const handleItemDelete = async (str: string) => {
@@ -74,6 +78,13 @@ export const AttributeItemRow = <T extends ReqProps>({
     if (hasDefaultLangTitle) {
       UpdatedItemData(updateItem);
     }
+  };
+
+  const handleSelectChange = (value: string) => {
+    if (!selectField) return;
+    const updatedItem = { ...item, [selectField]: value } as T;
+    setItem(updatedItem);
+    UpdatedItemData(updatedItem);
   };
 
   const validateAndUpdateNewItemData = () => {
@@ -113,13 +124,27 @@ export const AttributeItemRow = <T extends ReqProps>({
             error={!currentTitle?.length}
             required
           />
-          <AppTextField
-            disabled={!translationLanguage}
-            name={translationLanguage}
-            value={translatedTitle ?? ""}
-            onChange={handleChange}
-            onBlur={validateAndUpdateNewItemData}
-          />
+          {translationLanguage && (
+            <AppTextField
+              name={translationLanguage}
+              value={translatedTitle ?? ""}
+              onChange={handleChange}
+              onBlur={validateAndUpdateNewItemData}
+            />
+          )}
+          {selectField && (
+            <FormControl fullWidth size="small">
+              <InputLabel id={`${String(selectField)}-label`}>Department</InputLabel>
+              <AppSelect
+                labelId={`${String(selectField)}-label`}
+                label="Department"
+                value={(item[selectField] as string) ?? ""}
+                onChange={(event) => handleSelectChange(event.target.value)}
+              >
+                {selectOptions?.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+              </AppSelect>
+            </FormControl>
+          )}
           <AppSwitch
             checked={item.isActive}
             onChange={(_, checked) => handleSwitchChange(checked)}

@@ -19,7 +19,7 @@ import { useAppSelector } from "../../../Redux/hooks";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { getAllEmployeeLeaveBalance } from "../leaveServices";
+import { getAllEmployeeLeaveBalance, getWorkFromHomeEmployeeAllocations, WorkFromHomeEmployeeAllocation } from "../leaveServices";
 import EditEmployeePoliciesForm from "./EditEmployeePoliciesForm";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useDebounce } from "../../../hooks/useDebounce";
@@ -46,6 +46,7 @@ export const EmployeesLeaveBalance = () => {
     useState<EmployeeLeaveBalanceData>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [policies, setPolicies] = useState<Array<string>>([]);
+  const [wfhAllocations, setWfhAllocations] = useState<Record<string, WorkFromHomeEmployeeAllocation>>({});
 
   const open = Boolean(anchorEl);
 
@@ -65,6 +66,7 @@ export const EmployeesLeaveBalance = () => {
 
   function setRowPerPage(rowPerPage: number) {
     setPageSize(rowPerPage);
+    setPageNo(0);
   }
 
   function setPage(pageValue: number) {
@@ -72,11 +74,13 @@ export const EmployeesLeaveBalance = () => {
   }
 
   function handleRefresh() {
-    setRefresh(!refresh);
+    setRefresh((current) => !current);
+    window.dispatchEvent(new CustomEvent("leave-allocation-changed"));
   }
 
   function handleSelectingPolicies(policyIds: Array<string>) {
     setPolicies(policyIds);
+    setPageNo(0);
   }
 
   useEffect(() => {
@@ -91,8 +95,28 @@ export const EmployeesLeaveBalance = () => {
       try {
         const { data } = await getAllEmployeeLeaveBalance(payload);
         if (data.success) {
-          setEmployeeBalance(data.methodResults);
+          setEmployeeBalance(data.methodResults ?? []);
           setTotalRecords(data.totalRecords);
+        } else {
+          setEmployeeBalance([]);
+          setTotalRecords(0);
+        }
+
+        // WFH is deliberately not an EmployeeLeaveBalance. Load its explicit
+        // allocations separately so this HR screen shows the same persisted
+        // assignment state that the employee WFH context uses.
+        try {
+          const { data: allocationData } = await getWorkFromHomeEmployeeAllocations();
+          const byEmployeeId = (allocationData.methodResult ?? []).reduce<Record<string, WorkFromHomeEmployeeAllocation>>((result, allocation) => {
+            result[allocation.employeeId.trim().toUpperCase()] = allocation;
+            return result;
+          }, {});
+          setWfhAllocations(byEmployeeId);
+        } catch (error) {
+          // The leave-balance screen remains usable for roles without the
+          // dedicated WFH allocation permission.
+          console.error("Unable to load WFH allocation state.", error);
+          setWfhAllocations({});
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -102,7 +126,7 @@ export const EmployeesLeaveBalance = () => {
     };
 
     getLeaveBalanceFunc();
-  }, [refresh, pageSize, debouncedValue, policies]);
+  }, [refresh, pageNo, pageSize, debouncedValue, policies]);
 
   if (isLoading) {
     return <Card sx={{ height: '400px' }}>
@@ -124,6 +148,7 @@ export const EmployeesLeaveBalance = () => {
             size="small"
             onChange={(e) => {
               setSearch(e.target.value);
+              setPageNo(0);
             }}
             slotProps={{
               htmlInput: {
@@ -239,6 +264,11 @@ export const EmployeesLeaveBalance = () => {
                           width: "100%",
                         }}
                       >
+                        {emp.leaveBalances.length === 0 && (
+                          <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
+                            No leave policies are currently assigned to this employee.
+                          </Typography>
+                        )}
                         {emp.leaveBalances.map((leave) => {
                           return (
                             <Grid
@@ -257,6 +287,20 @@ export const EmployeesLeaveBalance = () => {
                             </Grid>
                           );
                         })}
+                        {(() => {
+                          const allocation = emp.employeeCode
+                            ? wfhAllocations[emp.employeeCode.trim().toUpperCase()]
+                            : undefined;
+                          if (!allocation) return null;
+
+                          return (
+                            <Grid container sx={{ display: "flex", width: "100%", minHeight: "24px" }} key="wfh-allocation">
+                              <Grid size={5}>Work from home</Grid>
+                              <Grid size={4}>{allocation.weeklyLimit} day(s)/week</Grid>
+                              <Grid size={3}>{allocation.isEligible ? "Assigned" : "Not assigned"}</Grid>
+                            </Grid>
+                          );
+                        })()}
                       </Stack>
                     </Box>
                   </Stack>
@@ -271,6 +315,7 @@ export const EmployeesLeaveBalance = () => {
           setRowPerPage={setRowPerPage}
           setPage={setPage}
           totalRecords={totalRecords}
+          rowsPerPageOptions={[10, 25, 50]}
         />
       </Card>
       {

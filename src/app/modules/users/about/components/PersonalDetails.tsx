@@ -1,4 +1,4 @@
-import { Card, Grid, Stack, Typography } from "@mui/material";
+import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   dateFormatter,
@@ -14,11 +14,16 @@ import { Link, useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { assignMissingEmployeeId, getNextEmployeeId } from "../../userservices";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
+import { AppButton } from "../../../../shared/components/ui";
+import { toast } from "react-toastify";
 
 export const PersonalDetails = () => {
   const { formatMessage: i } = useIntl();
   const [isModalOpen, setModalOpen] = useState(false);
-  const { userDetails } = useUserDetails();
+  const { userDetails, setRefresh } = useUserDetails();
   const employeeId = useParams().employeeid;
   const userPermissions = useAppSelector((state) => state.user.userData?.modulePermission) || [];
   const hasEmployeeEditPermission = !employeeId ||
@@ -29,6 +34,53 @@ export const PersonalDetails = () => {
     );
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage!);
+  const [assignmentOpen, setAssignmentOpen] = useState(false);
+  const [manualEntry, setManualEntry] = useState(false);
+  const [manualEmployeeId, setManualEmployeeId] = useState("");
+  const [previewEmployeeId, setPreviewEmployeeId] = useState("");
+  const [submittingEmployeeId, setSubmittingEmployeeId] = useState(false);
+  const [assignmentConfirmationOpen, setAssignmentConfirmationOpen] = useState(false);
+  const canAssignEmployeeId = Boolean(employeeId && hasEmployeeEditPermission && !userDetails?.employeeId);
+
+  const openEmployeeIdAssignment = async () => {
+    try {
+      const { data } = await getNextEmployeeId();
+      setPreviewEmployeeId(data.message ?? "");
+      setManualEntry(!data.message);
+      setAssignmentOpen(true);
+    } catch {
+      toast.error("Unable to load Employee ID settings. Please try again.");
+    }
+  };
+
+  const requestEmployeeIdAssignment = () => {
+    if (!employeeId || (manualEntry && !manualEmployeeId.trim())) {
+      toast.error("Enter an Employee ID to continue.");
+      return;
+    }
+    setAssignmentConfirmationOpen(true);
+  };
+
+  const assignEmployeeId = async () => {
+    if (!employeeId) return;
+    try {
+      setSubmittingEmployeeId(true);
+      const { data } = await assignMissingEmployeeId(employeeId, manualEntry ? manualEmployeeId : undefined);
+      if (!data.success) {
+        toast.error(data.message || "Unable to assign Employee ID.");
+        return;
+      }
+      toast.success(data.message || "Employee ID assigned successfully.");
+      setAssignmentConfirmationOpen(false);
+      setAssignmentOpen(false);
+      setManualEmployeeId("");
+      setRefresh();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Unable to assign Employee ID.");
+    } finally {
+      setSubmittingEmployeeId(false);
+    }
+  };
 
   return (
     <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
@@ -121,6 +173,7 @@ export const PersonalDetails = () => {
           <Typography variant="body1">
             {userDetails?.employeeId || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
+          {canAssignEmployeeId && <AppButton size="small" variant="outlined" sx={{ mt: 1 }} onClick={openEmployeeIdAssignment}>Assign Employee ID</AppButton>}
         </Grid>
         <Grid
           size={{
@@ -253,6 +306,23 @@ export const PersonalDetails = () => {
             </Grid>
           ))}
       </Grid>
+      <CustomisedModal open={assignmentOpen} handleClose={() => !submittingEmployeeId && setAssignmentOpen(false)} title="Assign Employee ID" maxWidth="sm">
+        <Stack spacing={2} sx={{ pt: 1, width: "100%" }}>
+          <Typography variant="body2" color="text.secondary">{manualEntry ? "Enter an Employee ID in the company’s configured format. It cannot be changed after assignment." : `The next company Employee ID will be assigned${previewEmployeeId ? `: ${previewEmployeeId}` : ""}.`}</Typography>
+          {manualEntry && <TextField autoFocus fullWidth label="Employee ID" value={manualEmployeeId} onChange={(event) => setManualEmployeeId(event.target.value)} placeholder="Enter Employee ID" inputProps={{ maxLength: 64 }} />}
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}><AppButton variant="contained" onClick={requestEmployeeIdAssignment} disabled={submittingEmployeeId}>{submittingEmployeeId ? "Assigning..." : "Review assignment"}</AppButton></Box>
+        </Stack>
+      </CustomisedModal>
+      <ConfirmationModal
+        open={assignmentConfirmationOpen}
+        title="Confirm Employee ID assignment"
+        content={manualEntry
+          ? `Assign Employee ID ${manualEmployeeId.trim().toUpperCase()} to ${`${userDetails?.firstName ?? ""} ${userDetails?.lastName ?? ""}`.trim() || "this employee"}? This cannot be changed from this action.`
+          : `Assign the next configured Employee ID${previewEmployeeId ? ` (${previewEmployeeId})` : ""} to ${`${userDetails?.firstName ?? ""} ${userDetails?.lastName ?? ""}`.trim() || "this employee"}?`}
+        handleClose={() => !submittingEmployeeId && setAssignmentConfirmationOpen(false)}
+        handleConfirmation={() => void assignEmployeeId()}
+        ok_btn
+      />
     </Card>
   );
 };

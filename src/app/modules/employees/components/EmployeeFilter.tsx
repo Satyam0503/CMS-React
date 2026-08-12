@@ -7,7 +7,7 @@ import CustomisedButton from "../../../shared/components/C_Button";
 import { useAppDispatch,
   useAppSelector } from "../../../Redux/hooks";
 import { setEmployeesFilter } from "../../../Redux/Reducers/filterSlice";
-import { getAllDepartmentInfo } from "../../dashboard/dashboardservices";
+import { getDirectoryDepartments } from "../employeeServices";
 import { useFormik } from "formik";
 
 import {
@@ -37,6 +37,7 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
   const [deptList, setDeptList] = useState<DepartmentResponseModel[]>([]);
+  const [departmentLoadFailed, setDepartmentLoadFailed] = useState(false);
   const appliedEmpFilters = useAppSelector(state => state.filters.employee);
   const { values, handleSubmit, setFieldValue } =
     useFormik({
@@ -54,13 +55,19 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
   useEffect(() => {
     const getAllDepartments = async () => {
       try {
-        const response = await getAllDepartmentInfo();
+        const response = await getDirectoryDepartments();
         const { success, methodResults } = response.data;
         if (success) {
           setDeptList(methodResults);
+          setDepartmentLoadFailed(false);
+        } else {
+          setDepartmentLoadFailed(true);
         }
       } catch (error) {
-        console.log((error as Error).message);
+        // An empty list is a valid tenant state.  Authorization/network failures are
+        // deliberately visible to the user rather than being mistaken for no departments.
+        console.error("Unable to load Employee Directory departments.", error);
+        setDepartmentLoadFailed(true);
       }
     };
     getAllDepartments();
@@ -106,6 +113,11 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
               );
             }}
           />
+          {departmentLoadFailed && (
+            <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+              Unable to load departments. Please refresh and try again.
+            </Typography>
+          )}
         </Stack>
         <Stack sx={{ mt: 1 }}>
           <Typography variant="caption">

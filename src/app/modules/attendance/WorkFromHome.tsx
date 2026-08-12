@@ -10,7 +10,7 @@ import { ApiResponse } from "../../../utils/common_types";
 type Policy = { isEnabled:boolean; maxDaysPerWeek:number; minimumAdvanceNoticeHours?:number; managerApprovalRequired?:boolean; applyToAllEmployees:boolean; applicableDepartments:string[]; applicableEmployeeIds:string[]; allowHalfDay:boolean; allowMixedDay:boolean; requireReason:boolean; fullDayAttendanceStatusCode:string; halfDayAttendanceStatusCode:string; mixedAttendanceStatusCode:string };
 type Request = { requestId:string; employeeId?:string; fromDate:string; toDate:string; durationType:string; reasonCode:string; reasonText?:string; status:string; version:number };
 type Timing = { isApprovedForToday:boolean; checkInTime?:string; checkOutTime?:string; totalHours?:number; requiredHours:number };
-type Context = { isFeatureEnabled:boolean; isEligible:boolean; weeklyLimit:number; usedThisWeek:number; remainingThisWeek:number; canSchedule:boolean; disabledReasonCode?:string; nextAvailableDate?:string; managerApprovalRequired:boolean; minimumAdvanceNoticeHours:number; officeStartTime?:string; officeEndTime?:string; checkInAvailableFrom?:string; checkInAvailableUntil?:string; checkOutAvailableFrom?:string; checkOutAvailableUntil?:string };
+type Context = { isFeatureEnabled:boolean; isEligible:boolean; weeklyLimit:number; usedThisWeek:number; remainingThisWeek:number; canSchedule:boolean; disabledReasonCode?:string; nextAvailableDate?:string; managerApprovalRequired:boolean; minimumAdvanceNoticeHours:number; businessDate?:string; isSameDayRequestCutoffPassed?:boolean; officeStartTime?:string; officeEndTime?:string; checkInAvailableFrom?:string; checkInAvailableUntil?:string; checkOutAvailableFrom?:string; checkOutAvailableUntil?:string };
 const defaultPolicy: Policy = { isEnabled:true, maxDaysPerWeek:1, applyToAllEmployees:true, applicableDepartments:[], applicableEmployeeIds:[], allowHalfDay:false, allowMixedDay:false, requireReason:true, fullDayAttendanceStatusCode:"WFH", halfDayAttendanceStatusCode:"WFH-HD", mixedAttendanceStatusCode:"WFH+WFO" };
 
 export default function WorkFromHome() {
@@ -31,7 +31,32 @@ export default function WorkFromHome() {
   const saving = false;
   const savePolicy = async () => undefined;
   const [form, setForm] = useState({ fromDate:"", toDate:"", durationType:"FullDay", reasonCode:"OTHER", reasonText:"" });
-  const load = async () => { try { const [p, r, c] = await Promise.all([getRequest<{methodResult?:Policy}>("api/wfh/policy"), getRequest<{methodResults?:Request[]}>("api/wfh/requests/my"), getRequest<{methodResult?:Context}>("api/wfh/context")]); setPolicy(p.data.methodResult ?? defaultPolicy); setRequests(r.data.methodResults ?? []); setContext(c.data.methodResult ?? null); try { const response = await getRequest<{methodResults?:Request[]}>("api/wfh/requests/all"); setTeam(response.data.methodResults ?? []); setCanReviewWfh(true); } catch { try { const response = await getRequest<{methodResults?:Request[]}>("api/wfh/requests/team"); setTeam(response.data.methodResults ?? []); setCanReviewWfh(true); } catch { setTeam([]); setCanReviewWfh(false); } } } catch { toast.error("Unable to load WFH data."); } };
+  const load = async () => {
+    const [policyResult, myRequestsResult, contextResult] = await Promise.allSettled([
+      getRequest<{ methodResult?: Policy }>("api/wfh/policy"),
+      getRequest<{ methodResults?: Request[] }>("api/wfh/requests/my"),
+      getRequest<{ methodResult?: Context }>("api/wfh/context"),
+    ]);
+    if (policyResult.status === "fulfilled") setPolicy(policyResult.value.data.methodResult ?? defaultPolicy);
+    if (myRequestsResult.status === "fulfilled") setRequests(myRequestsResult.value.data.methodResults ?? []);
+    if (contextResult.status === "fulfilled") setContext(contextResult.value.data.methodResult ?? null);
+    if (myRequestsResult.status === "rejected") toast.error("Unable to load your WFH requests.");
+
+    try {
+      const response = await getRequest<{ methodResults?: Request[] }>("api/wfh/requests/all");
+      setTeam(response.data.methodResults ?? []);
+      setCanReviewWfh(true);
+    } catch {
+      try {
+        const response = await getRequest<{ methodResults?: Request[] }>("api/wfh/requests/team");
+        setTeam(response.data.methodResults ?? []);
+        setCanReviewWfh(true);
+      } catch {
+        setTeam([]);
+        setCanReviewWfh(false);
+      }
+    }
+  };
   useEffect(() => { void load(); setPageTitle("Work from home"); return () => setPageTitle(""); }, []);
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   const submit = async () => { if (!context?.canSchedule) return; try { const { data } = await postRequest<typeof form, ApiResponse>("api/wfh/requests", form); if (!data.success) throw new Error(data.message); toast.success(context.managerApprovalRequired ? "WFH request submitted for approval." : "WFH scheduled. HR has been notified."); setForm({ fromDate:"", toDate:"", durationType:"FullDay", reasonCode:"OTHER", reasonText:"" }); await load(); } catch (e) { toast.error((e as Error).message || "Unable to submit WFH request."); } };

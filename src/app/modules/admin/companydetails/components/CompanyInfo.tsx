@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { CompanyInfoModel, CompanyModel } from "../../models";
-import { getCompanyDetails, updateCompanyDetails } from "../../adminservices";
+import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence } from "../../adminservices";
 import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
@@ -32,6 +32,7 @@ import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { LANGUAGE } from "../../../../../utils/enums";
 
 import { AppIconButton, AppSelect, AppTextField } from "../../../../shared/components/ui";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 const initialCompanyInfo: CompanyModel = {
   defaultLanguage: "",
   applicationLanguage: [],
@@ -52,6 +53,10 @@ export const CompanyInfo = () => {
   const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
   const [editedInfo, setEditedInfo] = useState<CompanyModel>(initialCompanyInfo);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
+  const [nextEmployeeId, setNextEmployeeId] = useState("");
+  const [employeeIdFormat, setEmployeeIdFormat] = useState("");
+  const [skipCount, setSkipCount] = useState("");
+  const [startFromId, setStartFromId] = useState("");
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [croppedLogo, setCroppedLogo] = useState<string | null>(null);
   const [isCropperOpen, setCropperOpen] = useState(false);
@@ -209,6 +214,78 @@ export const CompanyInfo = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    void getEmployeeIdSequence().then(({ data }) => {
+      if (data.success && data.methodResult) {
+        setNextEmployeeId(data.methodResult.currentNextEmployeeId);
+        setEmployeeIdFormat(data.methodResult.format);
+      }
+    });
+  }, []);
+
+  const refreshEmployeeIdSequence = async () => {
+    const { data } = await getEmployeeIdSequence();
+    if (data.success && data.methodResult) setNextEmployeeId(data.methodResult.currentNextEmployeeId);
+  };
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [confirmationTitle, setConfirmationTitle] = useState("");
+  const [confirmationContent, setConfirmationContent] = useState("");
+  const [confirmationAction, setConfirmationAction] = useState<(() => Promise<void>) | null>(null);
+  const [confirmationLoading, setConfirmationLoading] = useState(false);
+  const confirmSkip = async () => {
+    const count = Number(skipCount);
+    if (!Number.isInteger(count) || count <= 0) return toast.error("Skip count must be greater than 0.");
+    setConfirmationTitle("Confirm Skip");
+    setConfirmationContent(`Automatic Employee ID generation will skip ${count} ID(s). Existing employee IDs will not be changed. Continue?`);
+    setConfirmationAction(async () => {
+      try {
+        setConfirmationLoading(true);
+        const { data } = await skipEmployeeIds(count);
+        if (!data.success) {
+          void toast.error(data.message || "Unable to skip Employee IDs.");
+          return;
+        }
+        toast.success(data.message);
+        setSkipCount("");
+        await refreshEmployeeIdSequence();
+      } catch (err) {
+        console.error(err);
+        toast.error("Unable to skip Employee IDs.");
+      } finally {
+        setConfirmationLoading(false);
+        setConfirmationOpen(false);
+      }
+      return;
+    });
+    setConfirmationOpen(true);
+  };
+  const confirmStartFrom = async () => {
+    if (!startFromId.trim()) return toast.error("Employee ID is required.");
+    setConfirmationTitle("Set Starting ID");
+    setConfirmationContent(`Automatic Employee ID generation will continue from ${startFromId.trim().toUpperCase()}. Existing employee IDs will not be changed. Continue?`);
+    setConfirmationAction(async () => {
+      try {
+        setConfirmationLoading(true);
+        const { data } = await startEmployeeIdSequence(startFromId);
+        if (!data.success) {
+          void toast.error(data.message || "Unable to update Employee ID sequence.");
+          return;
+        }
+        toast.success(data.message);
+        setStartFromId("");
+        await refreshEmployeeIdSequence();
+      } catch (err) {
+        console.error(err);
+        toast.error("Unable to update Employee ID sequence.");
+      } finally {
+        setConfirmationLoading(false);
+        setConfirmationOpen(false);
+      }
+      return;
+    });
+    setConfirmationOpen(true);
+  };
+
   if (loading) {
     return <CompanyInfoSkeleton />;
   }
@@ -226,7 +303,7 @@ export const CompanyInfo = () => {
             </Typography>
           </Stack>
 
-          {
+              {
             isEdit ?
               <Stack direction="row" spacing={1}>
                 <CustomisedButton variant="outlined" label={formatMessage({ id: "BUTTON.CANCEL" })} handleClick={handleEditCancel} />
@@ -376,6 +453,17 @@ export const CompanyInfo = () => {
               </Stack>
             </Grid>
           </Grid>
+          {companyInfo.autoGenerateEmployeeId !== false && <><Divider sx={{ my: 1 }} /><Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Employee ID sequence</Typography>
+              <Typography variant="body2">Control where automatic Employee ID generation continues. Existing employee IDs are never changed.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}><Stack spacing={2}>
+              <Typography variant="body1">Current Next Employee ID: <strong>{nextEmployeeId || "Loading..."}</strong></Typography>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField label="Skip Count" value={skipCount} onChange={e => setSkipCount(e.target.value)} inputProps={{ inputMode: "numeric" }} /><CustomisedButton label="Confirm Skip" handleClick={() => { void confirmSkip(); }} /></Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField label="Start From ID" placeholder={employeeIdFormat || "TT-0001"} value={startFromId} onChange={e => setStartFromId(e.target.value)} /><CustomisedButton label="Set Starting ID" handleClick={() => { void confirmStartFrom(); }} /></Stack>
+            </Stack></Grid>
+          </Grid></>}
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }}>
             <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
@@ -538,6 +626,23 @@ export const CompanyInfo = () => {
           />
         )
       }
+      {confirmationOpen && (
+        <ConfirmationModal
+          open={confirmationOpen}
+          title={confirmationTitle}
+          content={confirmationContent}
+          handleClose={() => setConfirmationOpen(false)}
+          handleConfirmation={async (res: string) => {
+            if (res === "ok" && confirmationAction) {
+              await confirmationAction();
+            } else {
+              setConfirmationOpen(false);
+            }
+          }}
+          ok_btn={true}
+          confirming={confirmationLoading}
+        />
+      )}
     </>
   );
 };

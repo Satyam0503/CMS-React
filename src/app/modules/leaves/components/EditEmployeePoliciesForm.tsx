@@ -31,6 +31,7 @@ type InitialValueType = {
   employeeId: string;
   leavePolicyId: string;
   totalAllocated: number;
+  expectedVersion?: number;
   remove?: boolean;
 }[];
 
@@ -64,15 +65,17 @@ export default function EditEmployeePoliciesForm(props: Props) {
     (async () => {
       try {
         const { data } = await getWorkFromHomeEmployeeAllocations();
-        const allocation = data.methodResults?.find(
-          (item) => item.employeeId === selectedEmployee.employeeCode
+        const allocation = data.methodResult?.find(
+          (item) => item.employeeId.trim().toUpperCase() === selectedEmployee.employeeCode?.trim().toUpperCase()
         );
         const policyLimit = leavePolicies.find((policy) => policy.policyType === 2)
           ?.workFromHome?.maxDaysPerWeek ?? 1;
         const limit = allocation?.weeklyLimit ?? policyLimit;
         setWfhWeeklyLimit(limit);
         setInitialWfhWeeklyLimit(limit);
-        const eligible = (allocation?.weeklyLimit ?? policyLimit) > 0;
+        // Do not infer assignment from the company default. The API evaluates
+        // the selected employee against the same WFH policy used on submission.
+        const eligible = allocation?.isEligible ?? false;
         setWfhEligible(eligible);
         setInitialWfhEligible(eligible);
       } catch (error) {
@@ -89,6 +92,7 @@ export default function EditEmployeePoliciesForm(props: Props) {
           employeeId: selectedEmployee.employeeId,
           leavePolicyId: lb.leavePolicyId,
           totalAllocated: lb.totalAllocated,
+          expectedVersion: lb.version,
           remove: false,
         };
       });
@@ -99,15 +103,13 @@ export default function EditEmployeePoliciesForm(props: Props) {
 
   async function handleLeaveBalanceSubmission(
     values: InitialValueType,
-    setSubmitting: (isSubmitting: boolean) => void
+    setSubmitting: (isSubmitting: boolean) => void,
+    hasLeaveBalanceChanges: boolean
   ) {
     try {
-      const payload: InitialValueType = values;
-      const { data } = await updateEmployeeLeaveBalance(payload);
-      if (!data.success) {
-        throw new Error(data.message || data.statusCode?.toString() || "Unable to update leave allocation.");
-      }
-
+      // WFH has its own persisted allocation. Do not make this employee-level
+      // setting depend on a separate leave-balance mutation when HR changed
+      // only the WFH checkbox or weekly limit.
       if (wfhWeeklyLimit !== null && (wfhWeeklyLimit !== initialWfhWeeklyLimit || wfhEligible !== initialWfhEligible)) {
         if (!selectedEmployee.employeeCode) {
           throw new Error("WFH allocation is unavailable because this employee has no employee code.");
@@ -121,8 +123,17 @@ export default function EditEmployeePoliciesForm(props: Props) {
         }
       }
 
+      if (hasLeaveBalanceChanges) {
+        const payload: InitialValueType = values;
+        const { data } = await updateEmployeeLeaveBalance(payload);
+        if (!data.success) {
+          throw new Error(data.message || data.statusCode?.toString() || "Unable to update leave allocation.");
+        }
+      }
+
       {
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
+        window.dispatchEvent(new CustomEvent("wfh-allocation-changed"));
         props.handleRefresh();
         props.handleClose();
       }
@@ -139,14 +150,22 @@ export default function EditEmployeePoliciesForm(props: Props) {
     <CustomisedModal
       open={props.openOptions}
       handleClose={props.handleClose}
-      title={i({ id: "LEAVE.TITLES.MANAGE_LEAVE_ALLOCATION" })}
+      title={`${i({ id: "LEAVE.TITLES.MANAGE_LEAVE_ALLOCATION" })} — ${selectedEmployee.employeeName}`}
     >
       <Box component={"div"}>
         <Formik
           enableReinitialize={true}
           initialValues={getInitialValues()}
           onSubmit={(values, { setSubmitting }) => {
-            handleLeaveBalanceSubmission(values, setSubmitting);
+            const changedLeaveBalances = values.filter((value) => {
+              const original = selectedEmployee.leaveBalances.find(
+                (balance) => balance.leaveBalanceId === value.leaveBalanceId || balance.leavePolicyId === value.leavePolicyId
+              );
+              return !original
+                ? !value.remove
+                : Boolean(value.remove) || original.totalAllocated !== value.totalAllocated;
+            });
+            handleLeaveBalanceSubmission(changedLeaveBalances, setSubmitting, changedLeaveBalances.length > 0);
           }}
         >
           {({

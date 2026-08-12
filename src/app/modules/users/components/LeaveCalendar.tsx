@@ -4,12 +4,13 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { getAllAttendance } from "../../attendance/AttendanceServices";
-import { formatServerDate } from "../../../../utils/common";
+import { formatServerDate, hasModuleFeaturePermission } from "../../../../utils/common";
 import { AttendanceModel } from "../../attendance/AttendanceModels";
 import { getRequest } from "../../../../server/axios";
 import { ResponseData } from "../../../../utils/common_types";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useUserDetails } from "../UserDataProvider";
+import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 
 type AttendanceStatusSetting = {
   code: string;
@@ -27,11 +28,14 @@ function LeaveCalendar() {
   const [attendance, setAttendance] = useState<AttendanceModel[]>([]);
   const [statuses, setStatuses] = useState<AttendanceStatusSetting[]>([]);
   const { userDetails } = useUserDetails();
-  const currentUserId = useAppSelector((state) => state.user.userData?.userId);
+  const userData = useAppSelector((state) => state.user.userData);
+  const currentUserId = userData?.userId;
   const targetUserId = userDetails.userId || currentUserId;
+  const canViewOtherAttendance = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []);
+  const mayViewCalendar = targetUserId === currentUserId || canViewOtherAttendance;
 
   useEffect(() => {
-    if (!targetUserId) return;
+    if (!targetUserId || !mayViewCalendar) { setAttendance([]); return; }
 
     const load = async () => {
       const fromDate = month.startOf("month").format("YYYY-MM-DD");
@@ -53,7 +57,7 @@ function LeaveCalendar() {
     };
 
     void load();
-  }, [currentUserId, month, targetUserId]);
+  }, [currentUserId, mayViewCalendar, month, targetUserId]);
 
   const attendanceByDay = useMemo(
     () => new Map(attendance.map((item) => [formatServerDate(item.date, "YYYY-MM-DD"), item])),
@@ -71,6 +75,10 @@ function LeaveCalendar() {
     })),
     [attendance, statusByCode],
   );
+
+  if (!mayViewCalendar) {
+    return <Card sx={{ p: 2 }}><Typography color="text.secondary">You do not have permission to view this employee's attendance.</Typography></Card>;
+  }
 
   const renderDay = (dayProps: PickersDayProps<Dayjs>) => {
     const record = attendanceByDay.get(dayProps.day.format("YYYY-MM-DD"));

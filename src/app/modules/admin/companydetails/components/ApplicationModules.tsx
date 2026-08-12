@@ -40,6 +40,11 @@ export const ApplicationModules: FC = () => {
   const [currentModuleId, setCurrentModuleId] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [option, setOPtion] = useState<boolean>(false);
+  const friendlyModuleLabel = (module: ModulesInfoModel) => {
+    const translated = formatMessage({ id: `COMMON.${module.moduleConstant.toUpperCase()}` });
+    if (translated !== `COMMON.${module.moduleConstant.toUpperCase()}`) return translated;
+    return (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  };
 
   const closeConfirmationModal = () => {
     setIsConfirmModalOpen(false);
@@ -224,6 +229,7 @@ export const ApplicationModules: FC = () => {
                   moduleId={module.moduleId}
                   moduleCostant={module.moduleConstant}
                   titleMessageId={`COMMON.${module.moduleConstant.toUpperCase()}`}
+                  title={friendlyModuleLabel(module)}
                   descriptionMessageId={
                     moduleDesc ? `COMMON.${moduleDesc.description}` : undefined
                   }

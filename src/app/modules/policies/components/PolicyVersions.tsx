@@ -13,9 +13,9 @@ import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { usePageData } from "../../../Context/PageDataProvider";
-import { Edit, Delete, MoreVertOutlined } from "@mui/icons-material";
+import { Edit, Delete, MoreVertOutlined, PublishedWithChanges } from "@mui/icons-material";
 import { PolicyVersion, PolicyVersionModel } from "../models";
-import { deletePolicyVersion, getAllPolicyVersions } from "../policyServices";
+import { deletePolicyVersion, editPolicyVersion, getAllPolicyVersions, setCurrentPolicyVersion } from "../policyServices";
 import {
   getCustomStatusCodesErrorMessage,
   hasModuleFeaturePermission,
@@ -37,7 +37,7 @@ const initialValues: PolicyVersionModel = {
   policyId: "",
   versionName: "",
   policyDoc: null,
-  isCurrent: false,
+  isCurrent: true,
 };
 
 export const PolicyVersions = () => {
@@ -95,7 +95,7 @@ export const PolicyVersions = () => {
   };
 
   function handleRefresh() {
-    setRefresh(!refresh);
+    setRefresh((current) => !current);
   }
 
   function handleFormClose() {
@@ -124,6 +124,46 @@ export const PolicyVersions = () => {
   function handleViewPolicy(policyVersion: PolicyVersion) {
     setViewPolicy(policyVersion);
   }
+
+  const handleMakeCurrent = async () => {
+    if (!selectedPolicyVersion || !policyid || selectedPolicyVersion.isCurrent) return;
+    try {
+      const { data } = await setCurrentPolicyVersion(policyid, selectedPolicyVersion.id);
+      if (data.success) {
+        handleActionMenuClose();
+        handleRefresh();
+        toast.success("Policy version is now current.");
+      } else {
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode, "Unable to change the current policy version.") }));
+      }
+    } catch (error) {
+      console.error((error as Error).message);
+      toast.error("Unable to change the current policy version. Please try again.");
+    }
+  };
+
+  const handleMakeInactive = async () => {
+    if (!selectedPolicyVersion || !policyid || !selectedPolicyVersion.isCurrent) return;
+    const formData = new FormData();
+    formData.append("id", selectedPolicyVersion.id);
+    formData.append("policyId", policyid);
+    formData.append("VersionName", selectedPolicyVersion.versionName);
+    formData.append("IsCurrent", "false");
+
+    try {
+      const { data } = await editPolicyVersion(formData);
+      if (data.success) {
+        handleActionMenuClose();
+        handleRefresh();
+        toast.success("Policy version is now inactive.");
+      } else {
+        toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode, "Unable to make the policy version inactive.") }));
+      }
+    } catch (error) {
+      console.error((error as Error).message);
+      toast.error("Unable to make the policy version inactive. Please try again.");
+    }
+  };
 
   function handleCloseViewPolicy() {
     setViewPolicy(null);
@@ -171,6 +211,7 @@ export const PolicyVersions = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         if (policyid) {
           const { data } = await getAllPolicyVersions(policyid);
           if (data.success) {
@@ -183,7 +224,7 @@ export const PolicyVersions = () => {
         setLoading(false);
       }
     })();
-  }, [refresh]);
+  }, [refresh, policyid]);
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.POLICIES" }));
@@ -191,7 +232,7 @@ export const PolicyVersions = () => {
 
   return (
     <Card
-      sx={{ height: "100%" }}
+      sx={{ height: "auto", minHeight: 0 }}
       className="gap-6 p-4 p-md-6 flex d-flex flex-column"
     >
       {hasPolicyAddPermission && (
@@ -234,6 +275,16 @@ export const PolicyVersions = () => {
                   onClick={() => handleViewPolicy(policyVersion)}
                 >
                   <PolicyRoundedIcon className="fs-44" />
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {policyVersion.isCurrent ? "Current / Published" : "Previous"}
+                  </Typography>
                   <Typography
                     variant="body1"
                     sx={{
@@ -314,6 +365,20 @@ export const PolicyVersions = () => {
                       </Typography>
                     }
                   />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {hasPolicyEditPermission && !selectedPolicyVersion?.isCurrent && (
+              <ListItem disablePadding divider>
+                <ListItemButton onClick={handleMakeCurrent}>
+                  <ListItemText primary={<Typography><PublishedWithChanges className="fs-16 me-2" />Make Current</Typography>} />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {hasPolicyEditPermission && selectedPolicyVersion?.isCurrent && (
+              <ListItem disablePadding divider>
+                <ListItemButton onClick={handleMakeInactive}>
+                  <ListItemText primary={<Typography><PublishedWithChanges className="fs-16 me-2" />Make Inactive</Typography>} />
                 </ListItemButton>
               </ListItem>
             )}

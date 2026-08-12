@@ -1,4 +1,5 @@
 import { Stack } from "@mui/system";
+import type { SxProps, Theme } from "@mui/material/styles";
 
 import {
   DataGrid,
@@ -23,7 +24,8 @@ interface Props<R extends GridValidRowModel> {
   handlePaginationModelChange?: (model: GridPaginationModel) => void;
   checkboxSelection?: boolean;
   onRowSelectionModelChange?: (ids: GridRowSelectionModel) => void;
-
+  autoHeight?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 export const CustomDataGrid = <R extends GridValidRowModel>(
@@ -33,9 +35,9 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
     return row[props.keyName];
   };
   return (
-    <Stack direction="row">
+    <Stack direction="row" sx={{ width: "100%" }}>
       <DataGrid
-        autoHeight
+        autoHeight={props.autoHeight ?? false}
         disableColumnSelector={false}
         loading={props.loading}
         showToolbar={props.showToolbar ?? false}
@@ -64,13 +66,14 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
         rowCount={props.rowCount}
         getRowId={getRowKey}
         hideFooterPagination={props.hidePagination ?? false}
-       checkboxSelection={props.checkboxSelection}
+        checkboxSelection={props.checkboxSelection}
         onRowSelectionModelChange={props.onRowSelectionModelChange}
-
-
         sx={{
           borderInline: 0,
           backgroundColor: "transparent",
+          width: "100%",
+          minWidth: 0,
+          ...props.sx,
           [`& .${gridClasses.cell}:focus, & .${gridClasses.cell}:focus-within`]:
             {
               outline: "none",

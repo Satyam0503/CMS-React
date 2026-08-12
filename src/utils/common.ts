@@ -53,23 +53,48 @@ export const formatServerDate = (
     return "NA";
   }
 
+  const toIndiaDateString = (value: Date) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: INDIA_TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(value);
+    const year = parts.find((part) => part.type === "year")?.value;
+    const month = parts.find((part) => part.type === "month")?.value;
+    const day = parts.find((part) => part.type === "day")?.value;
+    return year && month && day ? `${year}-${month}-${day}` : null;
+  };
+
   if (typeof date === "string") {
     const normalized = date.trim();
-    const dateOnlyMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})/);
+    const dateOnlyMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})$/);
     if (dateOnlyMatch) {
-      return dayjs(dateOnlyMatch[1]).format(format);
+      return dayjs(dateOnlyMatch[1], "YYYY-MM-DD").format(format);
     }
-    return dayjs(normalized).format(format);
+
+    const midnightBusinessDateMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})T00:00:00(?:\.0+)?$/);
+    if (midnightBusinessDateMatch) {
+      return dayjs(midnightBusinessDateMatch[1], "YYYY-MM-DD").format(format);
+    }
+
+    const parsed = new Date(normalized);
+    if (Number.isNaN(parsed.getTime())) {
+      return dayjs(normalized).format(format);
+    }
+
+    const indiaDate = toIndiaDateString(parsed);
+    return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(parsed).format(format);
   }
 
   if (date instanceof Date) {
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    return dayjs(`${year}-${month}-${day}`).format(format);
+    const indiaDate = toIndiaDateString(date);
+    return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(date).format(format);
   }
 
-  return dayjs(date).format(format);
+  const value = date.toDate ? date.toDate() : new Date(String(date));
+  const indiaDate = toIndiaDateString(value);
+  return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(value).format(format);
 };
 
 /** CMS business timezone. Persisted timestamps stay UTC; user-facing times use IST. */

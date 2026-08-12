@@ -30,6 +30,9 @@ interface Props<T> {
     attributeTitle?: Record<string, string>
   ) => Promise<void>;
   handleDeleteAttribute: (id: string) => Promise<void>;
+  selectField?: keyof T;
+  selectLabel?: string;
+  selectOptions?: Array<{ value: string; label: string }>;
 }
 
 export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
@@ -41,6 +44,9 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
     handleAttributeUpdate,
     handleDeleteAttribute,
     attributeTitle,
+    selectField,
+    selectLabel,
+    selectOptions,
   } = props;
 
   const { formatMessage: i } = useIntl();
@@ -50,11 +56,13 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   const currentLanguage = useAppSelector(
     (state) => state.user.userData?.defaultLanguage ?? ""
   );
-  const [translationLang, setTranslationLang] = useState<string>(
-    applicationLanguage.find((lang) => lang !== currentLanguage) ?? ""
-  );
+  // Translation is opt-in. Rendering an empty second column was misleading and
+  // made the language selector appear to have no effect.
+  const [translationLang, setTranslationLang] = useState<string>("");
   const [itemsList, setItemsList] = useState<T[]>([]);
   const [newItemsList, setNewItemsList] = useState<T[]>([]);
+  const itemsRef = useRef<T[]>([]);
+  const newItemsRef = useRef<T[]>([]);
   const [newItemIds, setNewItemIds] = useState<string[]>([]);
   const [title, setTitle] = useState<Record<string, string>>({});
   const [initialAttributeValue, setInitialAttributeValue] = useState<T[]>([]);
@@ -73,25 +81,23 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   const UpdateExistingItemData = (updatedItem: T) => {
     if (updatedItem[keyName]) {
-      setItemsList(
-        itemsList.map((item) => {
-          if (item[keyName] === updatedItem[keyName]) {
-            return updatedItem;
-          }
-          return item;
-        })
-      );
+      const updated = itemsList.map((item) => (item[keyName] === updatedItem[keyName] ? updatedItem : item));
+      itemsRef.current = updated;
+      setItemsList(updated);
     } else {
-      setItemsList([...itemsList, updatedItem]);
+      const updated = [...itemsList, updatedItem];
+      itemsRef.current = updated;
+      setItemsList(updated);
     }
   };
 
   const UpdateNewItemsList = (list: T[]) => {
+    newItemsRef.current = list;
     setNewItemsList(list);
   };
 
   const handleUpdate = async () => {
-    const allItems = [...newItemsList, ...itemsList];
+    const allItems = [...newItemsRef.current, ...itemsRef.current];
     allItems.forEach(item => delete item.newItemKey);
 
     const shouldUpdate = allItems.length > 0 || Object.keys(title).length > 0;
@@ -199,9 +205,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                 }
               )}
             </Typography>
-            <Typography variant="body1" className="fw-bolder">
-              {Boolean(translationLang) &&
-                i(
+            {translationLang && <Typography variant="body1" className="fw-bolder">
+              {i(
                   { id: "COMPANY_MASTER.TITLE2" },
                   {
                     language: i({
@@ -211,7 +216,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                     }),
                   }
                 )}
-            </Typography>
+            </Typography>}
+            {selectField && <Typography variant="body1" className="fw-bolder">{selectLabel}</Typography>}
             <Typography variant="body1" className="fw-bolder">
               {i({ id: "STATUS" })}
             </Typography>
@@ -225,6 +231,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
               translationLanguage={translationLang}
               keyName={keyName}
               handleDeleteAttribute={handleDeleteAttribute}
+              selectField={selectField}
+              selectOptions={selectOptions}
             />
           ))}
           {newItemIds.map((item) => (
@@ -234,6 +242,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
               newItemKey={item}
               newItemsList={newItemsList}
               setNewItemList={UpdateNewItemsList}
+              selectField={selectField}
+              selectOptions={selectOptions}
             />
           ))}
           <span

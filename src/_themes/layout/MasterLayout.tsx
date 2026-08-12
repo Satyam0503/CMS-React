@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { Container, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { CSSProperties } from "react";
 import { HeaderWrapper } from "./components/header/navbarmenus/HeaderWrapper";
@@ -13,6 +13,7 @@ import { Footer } from "./components/footer/Footer";
 
 const MasterLayout = () => {
   const theme = useTheme();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery(
     theme.breakpoints.down(theme.breakpoints.values.md)
@@ -35,6 +36,16 @@ const MasterLayout = () => {
   const handleSideBarClose = () => {
     setOpen(false);
   };
+
+  // The desktop collapse state and the mobile drawer state are intentionally
+  // separate. A temporary drawer must never survive a resize or route change.
+  useEffect(() => {
+    if (!isSmallScreen) setOpen(false);
+  }, [isSmallScreen]);
+
+  useEffect(() => {
+    if (isSmallScreen) setOpen(false);
+  }, [isSmallScreen, location.pathname]);
 
   return (
     <>
@@ -59,7 +70,8 @@ const MasterLayout = () => {
                 overflowX: "hidden",
                 overflowY: "auto",
                 overscrollBehavior: "contain",
-                marginLeft: "calc(var(--sidebar-current-width) + 24px)",
+                marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 24px)" },
+                width: { xs: "100%", md: "auto" },
                 transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
               }}
             >

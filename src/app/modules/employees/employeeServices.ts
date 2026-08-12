@@ -1,4 +1,4 @@
-import { deleteRequest, postRequest } from "../../../server/axios";
+import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
 import {
@@ -13,6 +13,7 @@ import {
   InviteNewEmployeeModel,
 } from "./models";
 import { EditEmployeePayloadModel } from "../users/models";
+import { GetAllDepartmentDetailsResponseData } from "../dashboard/model";
 
 export const updateEmployee = async (
   payload: EditEmployeePayloadModel,
@@ -72,6 +73,11 @@ export const getAllEmployees = async (
     GetAllEmployeeResponseData
   >(ServiceUrl.GET_ALL_EMPLOYEE, payload);
 };
+
+export const getDirectoryDepartments = () =>
+  getRequest<GetAllDepartmentDetailsResponseData>(
+    ServiceUrl.GET_DIRECTORY_DEPARTMENTS,
+  );
 
 export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
   return postRequest<

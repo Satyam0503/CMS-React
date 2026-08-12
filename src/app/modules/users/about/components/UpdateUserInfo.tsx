@@ -24,8 +24,8 @@ import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useParams } from "react-router-dom";
 import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
-import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel } from "../../../admin/models";
-import { getAllCustomAttributes, getAllDepartments, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
+import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel, RoleModel } from "../../../admin/models";
+import { getAllCustomAttributes, getAllDepartments, getAllRoles, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
 import { GetAllEmployeeResponseModel } from "../../../employees/models";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { EditEmployeePayloadModel, EmployeeByIdResponse, EmployeeCustomAttribute } from "../../models";
@@ -69,6 +69,8 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(userData.department ?? null);
+  const [accessRoles, setAccessRoles] = useState<RoleModel[]>([]);
   const [allCustomAttributes, setAllCustomAttributes] = useState<CompanyCustomAttributeModel[]>([])
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
@@ -174,24 +176,38 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await Promise.allSettled([getAllEmployees(), getJobTitles(), getAllCustomAttributes()]);
+        const result = await Promise.allSettled([getAllEmployees(), getAllCustomAttributes(), getAllRoles(true)]);
         if (result[0].status === "fulfilled") {
           const { success, methodResults } = result[0].value.data;
           if (success) setEmployeeList(methodResults);
         }
         if (result[1].status === "fulfilled") {
           const { success, methodResults } = result[1].value.data;
-          if (success) setJobTitleList(methodResults);
-        }
-        if (result[2].status === "fulfilled") {
-          const { success, methodResults } = result[2].value.data;
           if (success) setAllCustomAttributes(methodResults);
+        }
+        if (result[2].status === "fulfilled" && result[2].value.data.success) {
+          setAccessRoles(result[2].value.data.methodResults ?? []);
         }
       } catch (error) {
         console.log(error);
       }
     })();
   }, [])
+
+  useEffect(() => {
+    setSelectedDepartment(userData.department ?? null);
+  }, [userData.department]);
+
+  useEffect(() => {
+    if (!selectedDepartment) {
+      setJobTitleList([]);
+      return;
+    }
+
+    getJobTitles(true, selectedDepartment)
+      .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
+      .catch((error) => console.log(error));
+  }, [selectedDepartment]);
 
   return (
     <>
@@ -238,6 +254,21 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       name="lastName"
                       placeholder={i({ id: "FORM.LAST_NAME" })}
                     />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <SelectInput
+                      name="roleId"
+                      label="Access Role"
+                      disabled={!canEditEmploymentDetails}
+                      required
+                    >
+                      {accessRoles.map((role) => (
+                        <MenuItem key={role.rolesId} value={role.rolesId}>
+                          {role.titles}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
                   </Grid>
 
                   <Grid
@@ -308,11 +339,12 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="job_title"
                       size="small"
-                      disabled={!canEditEmploymentDetails}
+                      disabled={!canEditEmploymentDetails || !values.department}
                       value={jobTitleList.find(
                         (jt) => jt.jobTitleId === values.jobRole
                       ) || null}
                       options={jobTitleList}
+                      noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
                       onChange={(event, value) => {
                         setFieldTouched("jobRole", true);
                         setFieldValue(
@@ -392,6 +424,11 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       name="department"
                       label={i({ id: "FORM.DEPARTMENT" })}
                       disabled={!canEditEmploymentDetails}
+                      onValueChange={(departmentId) => {
+                        setSelectedDepartment(departmentId);
+                        setFieldTouched("jobRole", true);
+                        setFieldValue("jobRole", "");
+                      }}
                     >
                       {departments.map((dep) => (
                         <MenuItem

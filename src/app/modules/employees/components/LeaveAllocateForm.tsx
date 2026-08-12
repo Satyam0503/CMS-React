@@ -48,7 +48,9 @@ export const LeaveAllocateForm = ({
       try {
         const { data } = await getLeavePolicies(true);
         if (data.success) {
-          setLeavePolicies(data.methodResults);
+          // This step creates employee leave-credit balances. UL is approval-only
+          // and WFH has its own policy workflow, so neither belongs in this batch.
+          setLeavePolicies((data.methodResults ?? []).filter((policy) => policy.policyType === 1));
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -80,9 +82,7 @@ export const LeaveAllocateForm = ({
         if (data.success) {
           handleLeaveAllocation();
         } else {
-          toast.error(
-            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }),
-          );
+          toast.error(data.message || i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
         }
       } catch (error) {
         console.error((error as Error).message);

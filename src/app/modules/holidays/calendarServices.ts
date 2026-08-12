@@ -6,6 +6,7 @@ import {
   GetCalendarItemPayload,
   HolidayModel,
   HolidayPayload,
+  CalendarImportItem,
 } from "./models";
 
 export const getAllCalendarItem = async (payload: GetCalendarItemPayload) => {
@@ -31,8 +32,18 @@ export const deleteCalendarItem = async (holidayId: string) => {
 };
 
 export const getHolidays = async (payload: HolidayPayload) => {
-  return postRequest<HolidayPayload, ResponseData<HolidayModel>>(
+  const body = {
+    fromDate: payload.fromDate ? payload.fromDate.format("YYYY-MM-DD") : null,
+    toDate: payload.toDate ? payload.toDate.format("YYYY-MM-DD") : null,
+  };
+  return postRequest<typeof body, ResponseData<HolidayModel>>(
     ServiceUrl.GET_HOLIDAYS,
-    payload
+    body as any
   );
 };
+
+export const importCalendarItems = async (items: CalendarImportItem[]) =>
+  postRequest<{ items: CalendarImportItem[] }, ApiResponse>(
+    ServiceUrl.IMPORT_CALENDAR_ITEMS,
+    { items }
+  );

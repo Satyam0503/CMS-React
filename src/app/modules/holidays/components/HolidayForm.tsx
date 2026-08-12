@@ -63,7 +63,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
       }
       formData.append("name", values.name);
       formData.append("type", values.type.toString());
-      formData.append("date", dayjs(values.date).startOf("day").toISOString());
+      formData.append("date", dayjs(values.date).startOf("day").format("YYYY-MM-DD"));
       formData.append("image", values.image!);
       formData.append("description", values.description);
       formData.append("recurring", String(values.recurring));
@@ -188,15 +188,14 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   <FormControlLabel
                     control={
                       <AppCheckbox
-                        // defaultChecked
-                        value={formik.values.recurring}
+                        checked={formik.values.recurring}
+                        name="recurring"
                         onChange={(e, checked) => {
                           formik.setFieldValue("recurring", checked);
                         }}
                       />
                     }
                     label={i({ id: "OCCASION.RECURRING" })}
-                    // name="recurring"
                   />
                 </Grid>
 

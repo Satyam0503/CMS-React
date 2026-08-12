@@ -7,8 +7,8 @@ import {
     Stack,
     TextField,
 } from "@mui/material";
-import { Formik, FormikProps } from "formik";
-import { inviteEmployeeSchema } from "../../../../utils/Schema/employeeSchema";
+import { Formik, FormikHelpers, FormikProps } from "formik";
+import { inviteEmployeeSchema, normalizeEmployeeNameFields } from "../../../../utils/Schema/employeeSchema";
 import { inviteNewEmployee } from "../employeeServices";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
@@ -45,21 +45,24 @@ export const InviteNewEmployee = (props: PropsTypes) => {
     const [nextEmployeeId, setNextEmployeeId] = useState<string>("");
     const [managers, setManagers] = useState<Array<{ userId: string; fullName: string; employeeId: string }>>([]);
 
-    const InviteNewEmployee = async (values: InviteNewEmployeeModel, setSubmitting: (isSubmitting: boolean) => void) => {
+    const InviteNewEmployee = async (values: InviteNewEmployeeModel, formikHelpers: Pick<FormikHelpers<InviteNewEmployeeModel>, "setSubmitting" | "setFieldError">) => {
         try {
-            const { data } = await inviteNewEmployee(values);
+            const { data } = await inviteNewEmployee(normalizeEmployeeNameFields(values));
             if (data.success) {
                 toast.success(i({ id: "TOAST.SUCCESS.INVITE_EMPLOYEE" }));
                 setTimeout(() => {
                     handleInviteUser(data.success, data.methodResult);
                 }, 0);
             } else {
-                toast.error(i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }))
+                const message = data.message || i({ id: getCustomStatusCodesErrorMessage(data.statusCode) });
+                if (data.statusCode === 12) formikHelpers.setFieldError("email", message);
+                if (data.statusCode === 13) formikHelpers.setFieldError("employeeId", message);
+                toast.error(message);
             }
         } catch (error) {
             toast.error(i({ id: "TOAST.FAILED.INVITE_EMPLOYEE" }))
         } finally {
-            setSubmitting(false);
+            formikHelpers.setSubmitting(false);
             handleButtonLoading(false);
         }
     }
@@ -93,8 +96,8 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                 initialValues={{ ...initialEmployeeDetails, employeeId: nextEmployeeId }}
                 enableReinitialize
                 validationSchema={inviteEmployeeSchema}
-                onSubmit={(values, { setSubmitting }) => {
-                    InviteNewEmployee(values, setSubmitting);
+                onSubmit={(values, formikHelpers) => {
+                    InviteNewEmployee(values, formikHelpers);
                 }}
                 innerRef={formRef}
             >
@@ -112,7 +115,6 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                             type={field.type}
                                             name={field.name}
                                             disabled={field.name === "employeeId" && Boolean(nextEmployeeId)}
-                                            showErrorLabel={false}
                                         />
                                         {
                                             field.name === "employeeId" && nextEmployeeId &&

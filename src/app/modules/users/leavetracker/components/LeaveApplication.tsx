@@ -27,18 +27,19 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createWorkFromHomeRequest, getLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
+import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { getHolidays } from "../../../holidays/calendarServices";
 import { HolidayModel, HolidayPayload } from "../../../holidays/models";
 import { useEffect, useState } from "react";
+import { getRequest } from "../../../../../server/axios";
 
 import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui";
 
 type SelectableLeaveType = EmployeeLeaveTypeBalance & {
-  policyType?: 1 | 2;
+  policyType?: 1 | 2 | 3;
 };
 type Props = {
   edit: boolean;
@@ -61,6 +62,7 @@ const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
     WFH_OVERLAPPING_REQUEST: "You already have a Work From Home request for one or more of the selected dates.",
     WFH_BACKDATED_NOT_ALLOWED: "Work From Home can only be requested for today or a future working day.",
     WFH_ADVANCE_NOTICE_REQUIRED: "This request does not meet the required advance notice period.",
+    WFH_SAME_DAY_OFFICE_STARTED: details || "Work From Home for today must be requested before your office start time.",
     WFH_WEEKLY_OFF_NOT_ALLOWED: "Work From Home cannot be requested on a weekly off day.",
     WFH_HOLIDAY_NOT_ALLOWED: "Work From Home cannot be requested on a holiday.",
     WFH_POLICY_NOT_ASSIGNED: "Work From Home is not available for your current profile. Please contact HR.",
@@ -69,6 +71,26 @@ const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
   };
 
   return messages[code] || details || errorMessage || "We could not submit your Work From Home request. Please try again.";
+};
+
+type WorkFromHomeContext = {
+  isEligible?: boolean;
+  weeklyLimit?: number;
+  remainingThisWeek?: number;
+  businessDate?: string;
+  isSameDayRequestCutoffPassed?: boolean;
+  effectiveOfficeStartTime?: string | null;
+};
+
+const formatOfficeStartTime = (value?: string | null) => {
+  if (!value) return "your office start time";
+  const [rawHour, rawMinute] = value.split(":");
+  const hour = Number(rawHour);
+  const minute = Number(rawMinute);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return "your office start time";
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
 };
 
 export const LeaveApplication = (props: Props) => {
@@ -86,10 +108,33 @@ export const LeaveApplication = (props: Props) => {
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
   const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
+  const [wfhEligibility, setWfhEligibility] = useState<WorkFromHomeContext | null>(null);
+  const [unpaidLeaveTypes, setUnpaidLeaveTypes] = useState<SelectableLeaveType[]>([]);
   const [filter, setFilter] = useState<HolidayPayload>({
     fromDate: null,
     toDate: null,
   })
+
+  useEffect(() => {
+    if (props.targetEmployeeId || routeEmployeeId) {
+      setWfhEligibility(null);
+      return;
+    }
+
+    const loadWfhEligibility = async () => {
+      try {
+        const { data } = await getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context");
+        setWfhEligibility(data.methodResult ?? null);
+      } catch {
+        // Do not offer WFH until the authoritative eligibility check succeeds.
+        setWfhEligibility(null);
+      }
+    };
+
+    void loadWfhEligibility();
+    window.addEventListener("wfh-allocation-changed", loadWfhEligibility);
+    return () => window.removeEventListener("wfh-allocation-changed", loadWfhEligibility);
+  }, [props.targetEmployeeId, routeEmployeeId]);
 
   useEffect(() => {
     const fetchedHolidayData = async () => {
@@ -111,20 +156,18 @@ export const LeaveApplication = (props: Props) => {
   }, [filter]);
 
   useEffect(() => {
-    // WFH is a policy rather than a leave balance. It is therefore added only
-    // to an employee's own form, not to HR's separate employee-allocation flow.
-    if (props.targetEmployeeId) {
-      setWorkFromHomeTypes([]);
-      return;
-    }
-
-    const loadWorkFromHomePolicy = async () => {
+    const loadNonBalancePolicies = async () => {
       try {
-        const { data } = await getLeavePolicies(true);
+        const { data } = props.targetEmployeeId
+          ? await getLeavePolicies(true)
+          : await getMySelfServiceLeavePolicies();
         const policies = (data.methodResults ?? []) as LeavePolicyModel[];
+        const targetUserId = props.targetEmployeeId ?? currentUserId;
+        const appliesToEmployee = (policy: LeavePolicyModel) =>
+          !policy.applicableTo || policy.applicableTo.length === 0 || policy.applicableTo.includes(targetUserId);
         setWorkFromHomeTypes(
           policies
-            .filter((policy) => policy.policyType === 2 && policy.id)
+            .filter((policy) => !props.targetEmployeeId && policy.policyType === 2 && policy.id && appliesToEmployee(policy))
             .map((policy) => ({
               leaveBalanceId: `wfh-${policy.id}`,
               leavePolicyId: policy.id!,
@@ -143,18 +186,36 @@ export const LeaveApplication = (props: Props) => {
               policyType: 2,
             }))
         );
+        setUnpaidLeaveTypes(
+          policies
+            // UL is approval-based and deliberately has no balance/credit record.
+            // It remains selectable only when it is assigned to the employee.
+            .filter((policy) => policy.policyType === 3 && policy.id && appliesToEmployee(policy))
+            .map((policy) => ({
+              leaveBalanceId: `ul-${policy.id}`,
+              leavePolicyId: policy.id!, totalAllocated: 0, taken: 0, remaining: 0,
+              name: policy.name, code: policy.code, description: policy.description ?? "",
+              paid: false, minNoticeDays: policy.minNoticeDays,
+              halfDayAllowed: policy.halfDayAllowed, weekendInclusive: policy.weekendInclusive,
+              holidayInclusive: policy.holidayInclusive, attendanceStatusCode: policy.attendanceStatusCode,
+              policyType: 3,
+            }))
+        );
       } catch (error) {
-        console.error("Unable to load the Work From Home policy.", error);
+        console.error("Unable to load non-balance leave policies.", error);
       }
     };
 
-    loadWorkFromHomePolicy();
-  }, [currentUserId, employeeId]);
+    loadNonBalancePolicies();
+  }, [currentUserId, employeeId, props.targetEmployeeId]);
 
   const selectableLeaveTypes: SelectableLeaveType[] = [
     ...leaveTypeBalance.map((leave) => ({ ...leave, policyType: 1 as const })),
-    ...workFromHomeTypes.filter((wfh) =>
+    ...workFromHomeTypes.filter((wfh) => wfhEligibility?.isEligible &&
       !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
+    ),
+    ...unpaidLeaveTypes.filter((unpaid) =>
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === unpaid.leavePolicyId)
     ),
   ];
 
@@ -249,10 +310,29 @@ export const LeaveApplication = (props: Props) => {
       }
 
       try {
+        // This only gives immediate feedback. The service repeats this check so a
+        // stale page, an altered request, or a boundary-time race cannot bypass it.
+        try {
+          const { data: contextResponse } = await getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context");
+          const context = contextResponse.methodResult;
+          const requestedToday = context?.businessDate && getDatesBetween(dayjs(values.startDate), dayjs(values.endDate))
+            .some((date) => date.isSame(dayjs(context.businessDate), "day"));
+          if (requestedToday && context?.isSameDayRequestCutoffPassed) {
+            const startTime = formatOfficeStartTime(context.effectiveOfficeStartTime);
+            setStatus(`Work From Home for today must be requested before your office start time (${startTime}).`);
+            setSubmitting(false);
+            return;
+          }
+        } catch {
+          // Continue to the authoritative server-side validation if context cannot be refreshed.
+        }
+
         const { data } = await createWorkFromHomeRequest({
           fromDate: dayjs(values.startDate).startOf("day").format("YYYY-MM-DD"),
           toDate: dayjs(values.endDate).startOf("day").format("YYYY-MM-DD"),
-          durationType: values.isHalfDay ? "FirstHalf" : "FullDay",
+          durationType: values.isHalfDay
+            ? values.halfDayPeriod === "SECOND_HALF" ? "SecondHalf" : "FirstHalf"
+            : "FullDay",
           reasonCode: "OTHER",
           reasonText: values.reason.trim(),
         });
@@ -301,12 +381,14 @@ export const LeaveApplication = (props: Props) => {
       setSubmitting(false);
       return;
     }
-    const remainingLeaveForTypes =
-      selectableLeaveTypes.find(
-        (type) => type.leavePolicyId === values.leavePolicyId
-      )?.remaining ?? 0;
+    const selectedLeaveForBalance = selectableLeaveTypes.find(
+      (type) => type.leavePolicyId === values.leavePolicyId
+    );
+    const remainingLeaveForTypes = selectedLeaveForBalance?.remaining ?? 0;
 
-    if (totalHolidayDays > remainingLeaveForTypes) {
+    // UL has no credit or balance. It remains a pending request and the backend
+    // performs the final tenant-scoped policy validation before approval.
+    if (selectedLeaveForBalance?.policyType !== 3 && totalHolidayDays > remainingLeaveForTypes) {
       setStatus(
         i(
           { id: "MESSAGE.INSUFFICIENT_LEAVE_ERROR" },
@@ -447,6 +529,7 @@ export const LeaveApplication = (props: Props) => {
                         onChange={(e, value) => {
                           const half = value === "true";
                           setFieldValue("isHalfDay", half);
+                          setFieldValue("halfDayPeriod", half ? values.halfDayPeriod ?? "FIRST_HALF" : undefined);
 
                           if (half && values.startDate) {
                             setFieldValue("endDate", values.startDate);
@@ -470,6 +553,22 @@ export const LeaveApplication = (props: Props) => {
                     </FormControl>
                   </Grid>
                 }
+                {values.isHalfDay && (
+                  <Grid size={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="half-day-period-label">Leave half</InputLabel>
+                      <AppSelect
+                        labelId="half-day-period-label"
+                        label="Leave half"
+                        value={values.halfDayPeriod ?? "FIRST_HALF"}
+                        onChange={(event) => setFieldValue("halfDayPeriod", event.target.value)}
+                      >
+                        <MenuItem value="FIRST_HALF">First half</MenuItem>
+                        <MenuItem value="SECOND_HALF">Second half</MenuItem>
+                      </AppSelect>
+                    </FormControl>
+                  </Grid>
+                )}
                 <Grid
                   size={{
                     xs: 12,

@@ -22,6 +22,9 @@ export interface RequestLeaveModel {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   isHalfDay: boolean;
+  // Half-day requests must identify their segment so leave and WFH can share
+  // one business date without overwriting each other.
+  halfDayPeriod?: "FIRST_HALF" | "SECOND_HALF";
   reason: string;
 }
 
@@ -96,6 +99,8 @@ export type EmployeeLeaveTypeBalance = {
   weekendInclusive: boolean;
   holidayInclusive: boolean;
   attendanceStatusCode?: string | null;
+  fullDayAttendanceStatusCode?: string | null;
+  halfDayAttendanceStatusCode?: string | null;
 };
 
 export type LeaveRequestApprovalPayload = {
@@ -135,8 +140,10 @@ export type LeavePolicyModel = {
   weekendInclusive: boolean;
   holidayInclusive: boolean;
   attendanceStatusCode?: string | null;
+  fullDayAttendanceStatusCode?: string | null;
+  halfDayAttendanceStatusCode?: string | null;
   applicableTo?: Array<string> | null;
-  policyType: 1 | 2;
+  policyType: 1 | 2 | 3;
   workFromHome?: {
     approvalRequired: boolean;
     approverStrategy: "REPORTING_MANAGER" | "DEPARTMENT_HEAD" | "HR_ADMIN";
@@ -174,6 +181,7 @@ export type EmployeeLeaveInfo = {
   totalAllocated: number;
   taken: number;
   remaining: number;
+  version: number;
 };
 
 export type EmployeeLeaveBalanceData = {

@@ -161,7 +161,7 @@ export const SideBarTabList: SideBarTabListProps[] = [
       },
       {
         id: Modules.Attendance,
-        title: ModulesTitles.Attendance,
+        title: ModulesTitles.AttendanceSettings,
         constant: ModulesName.Attendance,
         route: "/attendance-settings",
         icon: <AccessTime />,

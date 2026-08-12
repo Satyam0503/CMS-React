@@ -10,10 +10,11 @@ interface PropsTypes {
   handleClose: () => void;
   handleConfirmation: (res: string) => void;
   ok_btn?: boolean;
+  confirming?: boolean;
 }
 export const ConfirmationModal = (props: PropsTypes) => {
   const { formatMessage: i } = useIntl();
-  const { open, handleClose, handleConfirmation, title, content, ok_btn = false } = props;
+  const { open, handleClose, handleConfirmation, title, content, ok_btn = false, confirming = false } = props;
   return (
     <CustomisedModal open={open} handleClose={handleClose} maxWidth="sm">
       <Stack spacing={1.5}>
@@ -26,10 +27,13 @@ export const ConfirmationModal = (props: PropsTypes) => {
             label={i({ id: "BUTTON.CANCEL" })}
             handleClick={handleClose}
             variant="outlined"
+            disabled={confirming}
           />
           <CustomisedButton
             label={i({ id: ok_btn ? "BUTTON.OK" : "BUTTON.DELETE" })}
             handleClick={() => handleConfirmation("ok")}
+            loading={confirming}
+            disabled={confirming}
           />
         </Stack>
       </Stack>

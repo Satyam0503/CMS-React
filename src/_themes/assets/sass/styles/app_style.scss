@@ -337,6 +337,10 @@ button:hover .ql-fill,
   padding-block: 0.6rem;
 }
 
+.attribute-row:has(.MuiFormControl-root:nth-child(3)) {
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(180px, 1fr) 70px 70px;
+}
+
 .employee-grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
@@ -763,7 +767,8 @@ button:hover .ql-fill,
 .main-holiday-calendar {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
+  min-height: 0;
 
   @media (min-width: 1280px) {
     flex-direction: row;
@@ -858,6 +863,8 @@ button:hover .ql-fill,
 
   .calendar-header {
     display: flex;
+    flex: 0 0 auto;
+    min-height: 76px;
     padding: 16px 20px;
     gap: 16px;
     flex-direction: column;
@@ -866,7 +873,9 @@ button:hover .ql-fill,
     border-radius: 14px;
     box-shadow: none;
 
-    @media (min-width: 600px) {
+    // The date picker, filter and import action do not fit safely beside each
+    // other until a wide desktop viewport. Keep them on separate rows below it.
+    @media (min-width: 1200px) {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
@@ -878,18 +887,32 @@ button:hover .ql-fill,
       gap: 0.5rem;
       height: 100%;
       min-width: 0;
+      flex: 1 1 360px;
+      flex-wrap: wrap;
 
       .calendar-input {
-        min-width: 220px;
+        min-width: 180px;
+        flex: 1 1 180px;
       }
     }
 
     .calendar-filter {
-      width: 176px;
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: end;
+      gap: 8px;
       flex-shrink: 0;
+
+      .calendar-filter-select {
+        width: 176px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .calendar-import-button {
+        height: 40px;
+        white-space: nowrap;
+      }
 
       .calendar-filter-label {
         color: var(--mui-palette-text-secondary);
@@ -912,7 +935,8 @@ button:hover .ql-fill,
       }
     }
 
-    @media (max-width: 599px) {
+    @media (max-width: 1199px) {
+      min-height: 126px;
       padding: 14px;
 
       .calendar-controls {
@@ -926,6 +950,12 @@ button:hover .ql-fill,
 
       .calendar-filter {
         width: 100%;
+        align-items: end;
+
+        .calendar-filter-select {
+          flex: 1;
+          min-width: 0;
+        }
       }
     }
   }
@@ -933,6 +963,8 @@ button:hover .ql-fill,
   .calendar-days {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
+    min-height: 0;
 
     .calendar-days-grid {
       display: grid;
@@ -1365,6 +1397,25 @@ button:hover .ql-fill,
 .current-active-policy {
   border-color: var(--mui-palette-primary-main);
 
+}
+
+.policy-document-viewer {
+  min-height: 0;
+
+  .policy-document-frame {
+    height: min(72dvh, 900px);
+    min-height: 520px;
+    overflow: auto;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-paper);
+
+    .pdf_viewer {
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+    }
+  }
 }
 
 // App motion system: lightweight interaction feedback without changing layout.

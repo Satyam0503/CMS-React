@@ -38,7 +38,7 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
     >
       <Stack direction="row" alignItems="center" spacing={1.5}>
         {isSmallScreen && (
-          <AppIconButton sx={{ border: 0 }} onClick={openSideBar}>
+          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0 }} onClick={openSideBar}>
             <MenuOutlined className="fs-32" />
           </AppIconButton>
         )}

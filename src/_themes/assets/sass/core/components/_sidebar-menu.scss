@@ -258,7 +258,7 @@
 // branch in MuiTheme.ts + a block in _app-style.scss.
 // ---------------------------------------------------------------------------
 
-// Active-item accent shared by glass + gradient (primary + secondary blend).
+// Active-item accent shared by the supported glass/aurora/minimal surfaces.
 %sidebar-active-glow {
   background: linear-gradient(
     135deg,
@@ -269,42 +269,6 @@
   & .MuiTypography-root {
     color: var(--mui-palette-primary-main) !important;
   }
-}
-
-// --- Cobalt: deep navy → cobalt gradient, frosted active item ---------------
-.sidebar[data-sidebar-style="cobalt"] {
-  & .sidebar-paper {
-    background: linear-gradient(
-      180deg,
-      #0f172a 0%,
-      #1e3a8a 55%,
-      #2563eb 100%
-    ) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 4px 0 28px rgba(15, 23, 42, 0.18);
-  }
-
-  & .sidebar-menu-item {
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-    }
-    &.Mui-selected {
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.22) 0%,
-        rgba(255, 255, 255, 0.1) 100%
-      );
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.32),
-        0 6px 18px rgba(0, 0, 0, 0.18);
-    }
-  }
-}
-
-// --- Classic (legacy) — no overrides; relies on existing rules above. ------
-.sidebar[data-sidebar-style="classic"] {
-  // Intentionally empty: existing styling already produces "classic".
 }
 
 // --- Glass: translucent panel with backdrop blur ---------------------------
@@ -337,34 +301,22 @@
   }
 }
 
-// --- Gradient: vibrant primary→secondary, rounded items, glow on active ---
-.sidebar[data-sidebar-style="gradient"] {
-  & .sidebar-paper {
-    background: linear-gradient(
-      180deg,
-      var(--mui-palette-primary-dark) 0%,
-      var(--mui-palette-secondary-dark) 100%
-    ) !important;
-    border-right: none;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.22);
+.sidebar[data-sidebar-style="aurora"] .sidebar-paper {
+  background: linear-gradient(180deg, #123b4a 0%, #115e59 46%, #5b21b6 100%) !important;
+}
+
+.sidebar[data-sidebar-style="aurora"] {
+  & .sidebar-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
-  & .sidebar-menu-item {
-    border-radius: 12px;
-    margin-block: 0.35rem !important;
-    transition:
-      background-color 160ms ease,
-      transform 160ms ease;
+  & .sidebar-menu-item.Mui-selected {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff !important;
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.12);
-      transform: translateX(2px);
-    }
-    &.Mui-selected {
-      @extend %sidebar-active-glow;
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.25),
-        0 6px 18px rgba(0, 0, 0, 0.25);
+    & .MuiTypography-root,
+    & .MuiListItemIcon-root {
+      color: #fff !important;
     }
   }
 }
@@ -419,48 +371,7 @@
   }
 }
 
-.sidebar[data-sidebar-style="aurora"] .sidebar-paper {
-  background: linear-gradient(180deg, #123b4a 0%, #115e59 46%, #5b21b6 100%) !important;
-}
-
-.sidebar[data-sidebar-style="sunset"] .sidebar-paper {
-  background: linear-gradient(180deg, #3f1835 0%, #831843 52%, #c2410c 100%) !important;
-}
-
-.sidebar[data-sidebar-style="executive"] .sidebar-paper {
-  background: linear-gradient(180deg, #111827 0%, #1e293b 52%, #3730a3 100%) !important;
-}
-
-.sidebar[data-sidebar-style="aurora"],
-.sidebar[data-sidebar-style="sunset"],
-.sidebar[data-sidebar-style="executive"] {
-  & .sidebar-menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  & .sidebar-menu-item.Mui-selected {
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff !important;
-
-    & .MuiTypography-root,
-    & .MuiListItemIcon-root {
-      color: #fff !important;
-    }
-  }
-}
-
-// A selected visual style may decorate the shell, but dark mode always keeps
-// the navigation chrome dark enough for the active text and icon palette.
 :root.dark {
-  & .sidebar[data-sidebar-style="gradient"] .sidebar-paper {
-    background: linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--mui-palette-background-sidebar) 88%, var(--mui-palette-primary-main)) 0%,
-      color-mix(in srgb, var(--mui-palette-background-sidebar) 90%, var(--mui-palette-secondary-main)) 100%
-    ) !important;
-    border-right: 1px solid var(--mui-palette-divider);
-  }
-
   & .sidebar[data-sidebar-style="minimal"] .sidebar-menu-item.Mui-selected {
     color: var(--mui-palette-primary-light) !important;
 

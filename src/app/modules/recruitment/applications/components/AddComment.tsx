@@ -12,6 +12,7 @@ interface PropTypes {
   handleCommentChange: (value: string) => void;
   handleClose: () => void;
   handleAddComment: () => void;
+  statusChange?: { from: string; to: string };
 }
 export const AddComment: FC<PropTypes> = ({
   loading,
@@ -20,12 +21,24 @@ export const AddComment: FC<PropTypes> = ({
   open,
   handleClose,
   handleAddComment,
+  statusChange,
 }) => {
   const intl = useIntl();
   return (
     <CustomisedModal open={open} handleClose={handleClose}>
       <Stack spacing={2}>
-        <Typography variant="h5">{intl.formatMessage({ id: "COMMENT.ADD_COMMENT" })}</Typography>
+        <Typography variant="h5">
+          {statusChange ? "Confirm applicant status change" : intl.formatMessage({ id: "COMMENT.ADD_COMMENT" })}
+        </Typography>
+        {statusChange && (
+          <Stack sx={{ p: 1.5, borderRadius: 1.5, bgcolor: "action.hover" }}>
+            <Typography variant="body2" color="text.secondary">The applicant will move from</Typography>
+            <Typography fontWeight={700}>{statusChange.from} → {statusChange.to}</Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+              This action is recorded in the applicant history and cannot be moved backward.
+            </Typography>
+          </Stack>
+        )}
         <TextEditor value={comment} setValue={(value) => handleCommentChange(value)} />
         <Stack direction={"row"} spacing={1} className="justify-content-end">
           <CustomisedButton
@@ -35,8 +48,8 @@ export const AddComment: FC<PropTypes> = ({
           />
           <CustomisedButton
             loading={loading}
-            label={intl.formatMessage({ id: "BUTTON.ADD" })}
-            disabled={comment.length === 0}
+            label={statusChange ? "Confirm change" : intl.formatMessage({ id: "BUTTON.ADD" })}
+            disabled={!statusChange && comment.length === 0}
             handleClick={handleAddComment}
           />
         </Stack>

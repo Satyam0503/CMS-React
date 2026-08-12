@@ -56,7 +56,11 @@ export const ServiceUrl = {
   PUBLISH_PAYROLL_MONTH: `api/PayRoll/ProcessPayrollMonth`,
 
   GET_NEXT_EMPLOYEE_ID: "api/User/GetNextEmployeeId",
+  GET_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence",
+  SKIP_EMPLOYEE_IDS: "api/User/EmployeeIdSequence/Skip",
+  START_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence/StartFrom",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,
+  GET_DIRECTORY_DEPARTMENTS: `api/User/GetDirectoryDepartments`,
   GET_EMPLOYEE_DETAILS: `api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `api/User/GetEmployeeEducationDetails`,
@@ -152,6 +156,7 @@ export const ServiceUrl = {
   //Calendar
   GET_ALL_CALENDAR_ITEMS: `api/Calendar/GetAllCalendarItems`,
   ADD_AND_UPDATE_CALENDAR_ITEMS: `api/Calendar/AddUpdateCalendarItem`,
+  IMPORT_CALENDAR_ITEMS: `api/Calendar/ImportCalendarItems`,
   DELETE_CALENDAR_ITEM: `api/Calendar/DeleteCalendarItem`,
   GET_HOLIDAYS: "api/Calendar/GetHolidays",
 
@@ -212,6 +217,7 @@ export const ServiceUrl = {
   EDIT_POLICY: "api/Company/UpdatePolicy",
   CREATE_POLICY_VERSION: "api/Company/CreatePolicyVersion",
   EDIT_POLICY_VERSION: "api/Company/EditPolicyVersion",
+  SET_CURRENT_POLICY_VERSION: "api/Company/SetCurrentPolicyVersion",
   GET_ALL_POLICY_VERSION: "api/Company/GetAllPolicyVersion",
   DELETE_POLICY: "api/Company/DeletePolicy",
   DELETE_POLICY_VERSION: "api/Company/DeletePolicyVersion",

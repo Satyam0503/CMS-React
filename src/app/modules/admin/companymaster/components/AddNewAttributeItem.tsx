@@ -1,19 +1,20 @@
 import {
   useState } from "react";
-import { Box,
-} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { ReqProps } from "./AttributeItemRow";
 import { toast } from "react-toastify";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper } from "../../../../../utils/common";
 
-import { AppSwitch, AppTextField } from "../../../../shared/components/ui";
+import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
   translationLang: string;
   newItemKey: string;
   newItemsList: T[];
   setNewItemList: (items: T[]) => void;
+  selectField?: keyof T;
+  selectOptions?: Array<{ value: string; label: string }>;
 }
 
 const AddNewAttributeItem = <T extends ReqProps>({
@@ -21,6 +22,8 @@ const AddNewAttributeItem = <T extends ReqProps>({
   newItemKey,
   newItemsList,
   setNewItemList,
+  selectField,
+  selectOptions,
 }: Props<T>) => {
   const [newAttributeValue, setNewAttributeValue] = useState<T>({
     isActive: true,
@@ -114,6 +117,13 @@ const AddNewAttributeItem = <T extends ReqProps>({
     );
   };
 
+  const handleSelectChange = (value: string) => {
+    if (!selectField) return;
+    const updatedItem = { ...newAttributeValue, [selectField]: value } as T;
+    setNewAttributeValue(updatedItem);
+    setNewItemList(newItemsList.map((item) => item?.newItemKey === newAttributeValue?.newItemKey ? updatedItem : item));
+  };
+
   return (
     <Box className="attribute-row">
       <AppTextField
@@ -123,13 +133,25 @@ const AddNewAttributeItem = <T extends ReqProps>({
         onBlur={validateAndUpdateNewItemData}
         error={Boolean(error)}
       />
-      <AppTextField
-        disabled={!translationLang}
+      {translationLang && <AppTextField
         value={translationLanguageTitle}
         onChange={handleChange}
         name={translationLang}
         onBlur={validateAndUpdateNewItemData}
-      />
+      />}
+      {selectField && (
+        <FormControl fullWidth size="small">
+          <InputLabel id={`${String(selectField)}-new-label`}>Department</InputLabel>
+          <AppSelect
+            labelId={`${String(selectField)}-new-label`}
+            label="Department"
+            value={(newAttributeValue[selectField] as string) ?? ""}
+            onChange={(event) => handleSelectChange(event.target.value)}
+          >
+            {selectOptions?.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+          </AppSelect>
+        </FormControl>
+      )}
       <AppSwitch
         checked={newAttributeValue.isActive}
         onChange={(_, checked) => handleSwitchChange(checked)}

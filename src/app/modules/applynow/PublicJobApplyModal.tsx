@@ -17,7 +17,7 @@ type Props = {
   onSubmitted: (message: string) => void;
 };
 
-const initialForm = { firstName: "", lastName: "", email: "", phone: "", state: "", experience: 0 };
+const initialForm = { firstName: "", lastName: "", email: "", phone: "", state: "", experience: 0, currentCompany: "", currentJobTitle: "", noticePeriodDays: "", linkedInUrl: "", portfolioUrl: "", coverLetter: "" };
 
 export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) => {
   const [form, setForm] = useState(initialForm);
@@ -27,7 +27,7 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
 
   const update = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: name === "experience" ? Number(value) : value }));
+    setForm((current) => ({ ...current, [name]: ["experience", "noticePeriodDays"].includes(name) ? (value === "" ? "" : Number(value)) : value }));
   };
 
   const submit = async (event: FormEvent) => {
@@ -40,7 +40,10 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
     }
     setSaving(true);
     try {
-      const { data } = await applyForPublicJob(job.publicJobId, form);
+      const { data } = await applyForPublicJob(job.publicJobId, {
+        ...form,
+        noticePeriodDays: form.noticePeriodDays === "" ? undefined : Number(form.noticePeriodDays),
+      });
       if (!data.success || !data.methodResult) throw new Error(data.message || "Application failed.");
       if (resume) {
         await uploadPublicResume(data.methodResult.applicationReference, data.methodResult.resumeUploadToken, resume);
@@ -100,6 +103,17 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
               <TextField sx={fieldSx} name="firstName" label="First name" value={form.firstName} onChange={update} required fullWidth />
               <TextField sx={fieldSx} name="lastName" label="Last name" value={form.lastName} onChange={update} required fullWidth />
             </Stack>
+            <Typography variant="subtitle2" fontWeight={800}>Professional information</Typography>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField sx={fieldSx} name="currentCompany" label="Current company" value={form.currentCompany} onChange={update} fullWidth />
+              <TextField sx={fieldSx} name="currentJobTitle" label="Current job title" value={form.currentJobTitle} onChange={update} fullWidth />
+            </Stack>
+            <TextField sx={fieldSx} name="noticePeriodDays" label="Notice period (days)" type="number" value={form.noticePeriodDays} onChange={update} fullWidth inputProps={{ min: 0 }} />
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField sx={fieldSx} name="linkedInUrl" label="LinkedIn URL" type="url" value={form.linkedInUrl} onChange={update} fullWidth />
+              <TextField sx={fieldSx} name="portfolioUrl" label="Portfolio or GitHub URL" type="url" value={form.portfolioUrl} onChange={update} fullWidth />
+            </Stack>
+            <TextField sx={fieldSx} name="coverLetter" label="Cover letter or message" value={form.coverLetter} onChange={update} multiline minRows={3} fullWidth />
             <TextField sx={fieldSx} name="email" label="Email" type="email" value={form.email} onChange={update} required fullWidth />
             <TextField sx={fieldSx} name="phone" label="Phone" value={form.phone} onChange={update} required fullWidth />
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>

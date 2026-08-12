@@ -13,9 +13,10 @@ interface PropsTypes {
   children: ReactNode;
   required?: boolean;
   disabled?: boolean;
+  onValueChange?: (value: string) => void;
 }
 
-export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
+export const SelectInput: FC<PropsTypes> = ({ label, children, onValueChange, ...props }) => {
   const [field, meta] = useField(props);
   // const { formatMessage: i } = useIntl()
 
@@ -31,6 +32,10 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         {...field}
         {...props}
         value={field.value ?? ""}
+        onChange={(event) => {
+          field.onChange(event);
+          onValueChange?.(event.target.value as string);
+        }}
       >
         {children}
       </AppSelect>

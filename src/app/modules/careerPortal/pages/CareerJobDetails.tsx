@@ -66,6 +66,8 @@ export const CareerJobDetails = () => {
   const [notice, setNotice] = useState("");
   const description = useMemo(() => ({ __html: DOMPurify.sanitize(job?.description || "") }), [job]);
 
+  useEffect(() => { if (job) document.title = `${job.title} - ${job.companyName}`; }, [job]);
+
   useEffect(() => {
     if (!companyCode || !jobSlug || !/^\d{6}$/.test(companyCode)) {
       setError("This job link is invalid.");
@@ -137,7 +139,7 @@ export const CareerJobDetails = () => {
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
                     <Stack
                       component={Link}
-                      to={`/careers/${companyCode}`}
+                      to={`/careers/${job.companyPublicCode}`}
                       direction="row"
                       alignItems="center"
                       spacing={1.5}

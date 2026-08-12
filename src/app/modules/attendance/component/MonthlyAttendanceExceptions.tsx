@@ -2,6 +2,7 @@ import {
   useCallback,
   useEffect,
   useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 import {
   Box,
   Card,
@@ -15,14 +16,14 @@ import {
   TablePagination,
   Typography,
 } from "@mui/material";
-import { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
-import { patchRequest, postRequest } from "../../../../server/axios";
+import { getRequest, patchRequest, postRequest } from "../../../../server/axios";
 import { ResponseData } from "../../../../utils/common_types";
 
 import { AppButton, AppTextField } from "../../../shared/components/ui";
 type PayrollException = {
   id: string;
+  userId: string;
   employeeId: string;
   exceptionType?: string;
   affectedDates?: string[];
@@ -32,6 +33,17 @@ type PayrollException = {
   exceededOccurrenceCount: number;
   status: string;
   version: number;
+};
+
+type AttendanceStatusOption = { code: string; name: string; requiresTime: boolean };
+type ExistingAttendance = { status?: string; checkInTime?: string | null; checkOutTime?: string | null };
+type AttendanceResolution = {
+  item: PayrollException;
+  date: string;
+  status: string;
+  checkInTime: string;
+  checkOutTime: string;
+  reason: string;
 };
 
 interface Props {
@@ -60,6 +72,15 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   const [checkOutTime, setCheckOutTime] = useState("");
   const [correctionReason, setCorrectionReason] = useState("");
   const [savingCorrection, setSavingCorrection] = useState(false);
+  const [statusOptions, setStatusOptions] = useState<AttendanceStatusOption[]>([]);
+  const [attendanceResolution, setAttendanceResolution] = useState<AttendanceResolution | null>(null);
+  const [savingResolution, setSavingResolution] = useState(false);
+
+  useEffect(() => {
+    getRequest<ResponseData<AttendanceStatusOption>>("api/attendance-status-settings?activeOnly=true")
+      .then(({ data }) => setStatusOptions(data.methodResults ?? []))
+      .catch(() => toast.error("Unable to load attendance status options."));
+  }, []);
 
   const load = useCallback(async (recalculate = false) => {
     setLoading(true);
@@ -149,15 +170,57 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     }
   };
 
-  const openAttendanceRecord = (item: PayrollException) => {
+  const timeFromAttendance = (value?: string | null) => value ? dayjs(value).format("HH:mm") : "";
+
+  const openAttendanceResolution = async (item: PayrollException) => {
     const affectedDate = item.affectedDates?.[0];
     if (!affectedDate) {
       toast.error("No affected attendance date is available for this exception.");
       return;
     }
-    window.dispatchEvent(new CustomEvent("edit-attendance-exception", {
-      detail: { employeeId: item.employeeId, date: affectedDate },
-    }));
+    const date = dayjs(affectedDate).format("YYYY-MM-DD");
+    try {
+      const { data } = await getRequest<ExistingAttendance>(`api/admin/attendance/${item.userId}/date?date=${date}`);
+      setAttendanceResolution({ item, date, status: data.status ?? "A", checkInTime: timeFromAttendance(data.checkInTime), checkOutTime: timeFromAttendance(data.checkOutTime), reason: "" });
+    } catch {
+      // Missing attendance is the expected condition for this exception type.
+      setAttendanceResolution({ item, date, status: "A", checkInTime: "", checkOutTime: "", reason: "" });
+    }
+  };
+
+  const saveAttendanceResolution = async () => {
+    if (!attendanceResolution || !attendanceResolution.status || !attendanceResolution.reason.trim()) {
+      toast.error("Status and correction reason are required.");
+      return;
+    }
+    const selectedStatus = statusOptions.find((status) => status.code === attendanceResolution.status);
+    if (selectedStatus?.requiresTime && (!attendanceResolution.checkInTime || !attendanceResolution.checkOutTime)) {
+      toast.error("Check-in and check-out are required for the selected attendance status.");
+      return;
+    }
+    setSavingResolution(true);
+    try {
+      const { data } = await postRequest<
+        { attendanceDate: string; status: string; checkInTime?: string; checkOutTime?: string; reason: string; exceptionVersion: number },
+        { success: boolean; message?: string; methodResult?: { isResolved?: boolean } }
+      >(`api/attendance/penalty/exceptions/${attendanceResolution.item.id}/resolve-attendance`, {
+        attendanceDate: attendanceResolution.date,
+        status: attendanceResolution.status,
+        checkInTime: attendanceResolution.checkInTime || undefined,
+        checkOutTime: attendanceResolution.checkOutTime || undefined,
+        reason: attendanceResolution.reason.trim(),
+        exceptionVersion: attendanceResolution.item.version,
+      });
+      if (!data.success) { toast.error(data.message || "Attendance correction was rejected."); return; }
+      toast.success(data.message || "Attendance corrected.");
+      setAttendanceResolution(null);
+      window.dispatchEvent(new Event("attendance-exception-resolved"));
+      await load(true);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Attendance correction could not be saved.");
+    } finally {
+      setSavingResolution(false);
+    }
   };
 
   const openWfhHoursCorrection = (item: PayrollException) => {
@@ -305,7 +368,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                     size="small"
                     variant="outlined"
                     disabled={!item.affectedDates?.length}
-                    onClick={() => item.exceptionType === "WFH_INSUFFICIENT_HOURS" ? openWfhHoursCorrection(item) : openAttendanceRecord(item)}
+                    onClick={() => item.exceptionType === "WFH_INSUFFICIENT_HOURS" ? openWfhHoursCorrection(item) : void openAttendanceResolution(item)}
                   >
                     Edit
                   </AppButton>
@@ -343,6 +406,28 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <AppButton variant="outlined" disabled={savingCorrection} onClick={() => setWfhException(null)}>Cancel</AppButton>
           <AppButton disabled={savingCorrection} onClick={() => void saveWfhHoursCorrection()}>{savingCorrection ? "Saving…" : "Update & resolve"}</AppButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={!!attendanceResolution} onClose={() => !savingResolution && setAttendanceResolution(null)} fullWidth maxWidth="xs">
+        <DialogTitle>Resolve attendance exception</DialogTitle>
+        <DialogContent>
+          {attendanceResolution && <Stack spacing={2} sx={{ pt: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              {attendanceResolution.item.employeeId} • {dayjs(attendanceResolution.date).format("DD MMM YYYY")} • {exceptionDescription(attendanceResolution.item)}
+            </Typography>
+            <AppTextField select label="Status" value={attendanceResolution.status} onChange={(event) => setAttendanceResolution((current) => current ? { ...current, status: event.target.value } : current)} required>
+              {statusOptions.map((option) => <MenuItem key={option.code} value={option.code}>{option.code} - {option.name}</MenuItem>)}
+            </AppTextField>
+            {(statusOptions.find((option) => option.code === attendanceResolution.status)?.requiresTime ?? false) && <>
+              <AppTextField label="Check-in" type="time" value={attendanceResolution.checkInTime} onChange={(event) => setAttendanceResolution((current) => current ? { ...current, checkInTime: event.target.value } : current)} InputLabelProps={{ shrink: true }} required />
+              <AppTextField label="Check-out" type="time" value={attendanceResolution.checkOutTime} onChange={(event) => setAttendanceResolution((current) => current ? { ...current, checkOutTime: event.target.value } : current)} InputLabelProps={{ shrink: true }} required />
+            </>}
+            <AppTextField label="Correction reason" value={attendanceResolution.reason} onChange={(event) => setAttendanceResolution((current) => current ? { ...current, reason: event.target.value } : current)} multiline minRows={3} required />
+          </Stack>}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <AppButton variant="outlined" disabled={savingResolution} onClick={() => setAttendanceResolution(null)}>Cancel</AppButton>
+          <AppButton disabled={savingResolution} onClick={() => void saveAttendanceResolution()}>{savingResolution ? "Saving…" : "Save correction"}</AppButton>
         </DialogActions>
       </Dialog>
     </Card>

@@ -2,7 +2,9 @@ import {
   FC,
   useMemo,
   useState,
-  useEffect } from "react";
+  useEffect,
+  useCallback,
+} from "react";
 import {
   Box,
   Stack,
@@ -10,15 +12,12 @@ import {
   MenuItem,
   Tooltip,
   Card,
+  Chip,
   TablePagination,
   alpha,
   useTheme,
 } from "@mui/material";
-import { GridColDef } from "@mui/x-data-grid";
-import { CustomDataGrid } from "../../../shared/components/C_DataGrid";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import dayjs, { Dayjs } from "dayjs";
 import { getHolidays } from "../../holidays/calendarServices";
 import { HolidayPayload, HolidayModel } from "../../holidays/models";
@@ -40,14 +39,27 @@ import { getRequest } from "../../../../server/axios";
 import { ResponseData } from "../../../../utils/common_types";
 import { AttendanceStatusSetting } from "../AttendanceStatusSettings";
 import MonthlyAttendanceExceptions from "./MonthlyAttendanceExceptions";
+import { AttendanceDateRange } from "../attendancePeriod";
+import {
+  buildAttendanceStatusColorMap,
+  DEFAULT_ATTENDANCE_STATUS_COLOR,
+  resolveAttendanceStatusColor,
+  toAlphaHex,
+} from "../attendanceStatusColors";
+import {
+  ATTENDANCE_DATE_COLUMN_WIDTH,
+  ATTENDANCE_EMPLOYEE_COLUMN_WIDTH,
+  buildAttendanceGridScrollContainerSx,
+} from "../attendanceGridLayout";
 
-import { AppButton, AppIconButton, AppTextField } from "../../../shared/components/ui";
+import { AppButton, AppTextField } from "../../../shared/components/ui";
 interface Employee {
   name: string;
   id: string;
   userId: string;
   employeeId: string;
   fullName: string;
+  dateOfJoining?: string | null;
 }
 interface AttendanceRow {
   id: string;
@@ -63,23 +75,32 @@ interface AttendanceData {
   remarks: string;
   sourceType?: string | null;
   sourceId?: string | null;
+  isDaySegment?: boolean;
+  segment?: string | null;
+  halfDaySegments?: Partial<Record<"FIRST_HALF" | "SECOND_HALF", AttendanceSegmentData>>;
 }
 
-const attendanceStatusOptions: Array<{ value: AttendanceStatus; label: string; requiresTime?: boolean }> = [
-  { value: "P", label: "Present" },
-  { value: "A", label: "Absent" },
-  { value: "SL", label: "Sick Leave" },
-  { value: "CL", label: "Casual Leave" },
-  { value: "EL", label: "Earned Leave" },
-  { value: "WFH", label: "Work From Home" },
-  { value: "HD", label: "Half Day" },
-  { value: "ED", label: "Early Departure" },
-  { value: "LHD", label: "Late Arrival-Half Day" },
-  { value: "WFH+WFO", label: "Half WFH and Half WFO" },
-  { value: "COMP-OFF", label: "Compensatory Off" },
-  { value: "CL-HALF", label: "Casual Leave (Half Day)" },
-  { value: "SL-HALF", label: "Sick Leave (Half Day)" },
-  { value: "WFH-HD", label: "WFH with Half Day" },
+interface AttendanceSegmentData {
+  status: AttendanceStatus | string;
+  sourceType?: string | null;
+  sourceId?: string | null;
+}
+
+const attendanceStatusOptions: Array<{ value: AttendanceStatus; label: string; requiresTime?: boolean; colorHex?: string }> = [
+  { value: "P", label: "Present", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "A", label: "Absent", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "SL", label: "Sick Leave", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "CL", label: "Casual Leave", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "EL", label: "Earned Leave", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "WFH", label: "Work From Home", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "HD", label: "Half Day", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "ED", label: "Early Departure", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "LHD", label: "Late Arrival-Half Day", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "WFH+WFO", label: "Half WFH and Half WFO", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "COMP-OFF", label: "Compensatory Off", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "CL-HALF", label: "Casual Leave (Half Day)", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "SL-HALF", label: "Sick Leave (Half Day)", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
+  { value: "WFH-HD", label: "WFH with Half Day", colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR },
 ];
 
 const attendanceStatusLabels = Object.fromEntries(
@@ -93,7 +114,9 @@ const statusesWithTimes = new Set<AttendanceStatus>([
 interface Props {
   employees: Employee[];
   searchValue: string;
-  selectedDay: string;
+  dateRange: AttendanceDateRange;
+  showWholeMonth?: boolean;
+  showWholeWeek?: boolean;
   // Company view is independent from mutation authority. A reviewer can see
   // the company grid without gaining edit, bulk, or exception controls.
   companyView?: boolean;
@@ -101,8 +124,11 @@ interface Props {
   onStatsChange?: (stats: {
     present: number;
     absent: number;
-    late: number;
-    total: number;
+    leave: number;
+    wfh: number;
+    halfDay: number;
+    exceptions: number;
+    members: { Present: string[]; Absent: string[]; WFH: string[]; Leave: string[]; "Half Day": string[] };
   }) => void;
 }
 
@@ -119,7 +145,9 @@ const initialModalState: AttendanceData = {
 
 export const AttendanceCalendarGrid: FC<Props> = ({
   employees,
-  selectedDay,
+  dateRange,
+  showWholeMonth = false,
+  showWholeWeek = false,
   companyView = false,
   searchValue,
   readOnly = false,
@@ -127,10 +155,41 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 }) => {
   const theme = useTheme();
   const [statusOptions, setStatusOptions] = useState(attendanceStatusOptions);
+  const attendanceStatusColorMap = useMemo(
+    () => buildAttendanceStatusColorMap(statusOptions.map((status) => ({ code: status.value, colorHex: status.colorHex }))),
+    [statusOptions],
+  );
+
+  const getStatusColor = (status?: string | null) => resolveAttendanceStatusColor(status, attendanceStatusColorMap);
+
   useEffect(() => {
-    getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=true")
-      .then(({ data }) => setStatusOptions((data.methodResults ?? []).map(x => ({ value: x.code as AttendanceStatus, label: x.name, requiresTime: x.requiresTime }))))
-      .catch(() => setStatusOptions(attendanceStatusOptions));
+    const loadStatusOptions = async () => {
+      try {
+        const { data } = await getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=true");
+        const settings = data.methodResults ?? [];
+        setStatusOptions(
+          settings.length > 0
+            ? settings.map((x) => ({
+                value: x.code as AttendanceStatus,
+                label: x.name,
+                requiresTime: x.requiresTime,
+                colorHex: x.colorHex || DEFAULT_ATTENDANCE_STATUS_COLOR,
+              }))
+            : attendanceStatusOptions,
+        );
+      } catch {
+        setStatusOptions(attendanceStatusOptions);
+      }
+    };
+
+    void loadStatusOptions();
+
+    const refreshStatusOptions = () => {
+      void loadStatusOptions();
+    };
+
+    window.addEventListener("attendance-status-settings-updated", refreshStatusOptions);
+    return () => window.removeEventListener("attendance-status-settings-updated", refreshStatusOptions);
   }, []);
   const [attendanceData, setAttendanceData] = useState<
     Record<string, AttendanceData>
@@ -149,12 +208,19 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       .catch(() => setWeeklyOffDays([0, 6]));
   }, []);
 
-  const today = dayjs();
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(today);
-
-  const selectedMonth = selectedDate?.month() ?? today.month();
-  const selectedYear = selectedDate?.year() ?? today.year();
-  const daysInMonth = selectedDate?.daysInMonth() ?? today.daysInMonth();
+  const today = dayjs().startOf("day");
+  const visibleDates = useMemo(() => {
+    const dates: Dayjs[] = [];
+    const displayEndDate = showWholeMonth
+      ? dateRange.startDate.endOf("month").startOf("day")
+      : showWholeWeek
+        ? dateRange.startDate.endOf("week").startOf("day")
+      : dateRange.endDate.startOf("day");
+    for (let date = dateRange.startDate.startOf("day"); !date.isAfter(displayEndDate, "day"); date = date.add(1, "day")) dates.push(date);
+    return dates;
+  }, [dateRange.endDate, dateRange.startDate, showWholeMonth, showWholeWeek]);
+  const isSingleDay = visibleDates.length === 1;
+  const displayEndDate = visibleDates.at(-1) ?? dateRange.endDate;
   const [confirmationModal, setConfirmationModal] = useState<{
     open: boolean;
     title: string;
@@ -165,20 +231,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     content: "",
   });
 
-  const normalizeUserId = (userId?: string) => (userId ?? "").toString().trim().toLowerCase();
-  const resolveRowId = (emp: Employee) => normalizeUserId(emp.userId || emp.id);
+  const normalizeUserId = useCallback((userId?: string) => (userId ?? "").toString().trim().toLowerCase(), []);
+  const resolveRowId = useCallback((emp: Employee) => normalizeUserId(emp.userId || emp.id), [normalizeUserId]);
   const [attendanceItems, setAttendanceItems] = useState<any[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequestModel[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [reloadKey, setReloadKey] = useState(0);
-
-  const isLeaveGeneratedAttendance = (userId: string, dateISO: string) =>
-    attendanceItems.some((item) =>
-      item.userId === userId &&
-      formatServerDate(item.date, "YYYY-MM-DD") === dateISO &&
-      String(item.sourceType ?? "").toUpperCase() === "LEAVE",
-    );
 
   useEffect(() => {
     const handleExceptionEdit = (event: Event) => {
@@ -200,8 +259,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       const employee = employees[employeeIndex];
       const affectedDate = dayjs(detail.date);
       if (!affectedDate.isValid()) return;
+      const joiningDate = employee.dateOfJoining ? dayjs(employee.dateOfJoining).startOf("day") : null;
+      if (joiningDate?.isValid() && affectedDate.isBefore(joiningDate, "day")) {
+        setConfirmationModal({ open: true, title: "Not applicable", content: `Attendance cannot be marked before the employee's joining date of ${joiningDate.format("DD MMM YYYY")}.` });
+        return;
+      }
 
-      setSelectedDate(affectedDate);
       setPage(Math.floor(employeeIndex / rowsPerPage));
       setSelectedCell({
         employee: {
@@ -224,10 +287,16 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     return () => window.removeEventListener("edit-attendance-exception", handleExceptionEdit);
   }, [employees, rowsPerPage]);
 
+  useEffect(() => {
+    const refreshAfterExceptionResolution = () => setReloadKey((value) => value + 1);
+    window.addEventListener("attendance-exception-resolved", refreshAfterExceptionResolution);
+    return () => window.removeEventListener("attendance-exception-resolved", refreshAfterExceptionResolution);
+  }, []);
+
   /*---------------------------------LEave------------------------------- */
 
   useEffect(() => {
-    if (!selectedDate || employees.length === 0) return;
+    if (employees.length === 0) return;
 
     const fetchAllData = async () => {
       try {
@@ -238,8 +307,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         const leavePayload: GetLeaveRequestPayLoad = {
           pageNo: 1,
           pageSize: 1000,
-          startDate: selectedDate.startOf("month"),
-          endDate: selectedDate.endOf("month"),
+          startDate: dateRange.startDate,
+          endDate: displayEndDate,
           status: LEAVE_REQUEST_STATUS.APPROVED,
         };
 
@@ -263,8 +332,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
         /* ------------------ HOLIDAYS ------------------ */
         const holidayPayload: HolidayPayload = {
-          fromDate: selectedDate.startOf("month"),
-          toDate: selectedDate.endOf("month"),
+          fromDate: dateRange.startDate,
+          toDate: displayEndDate,
         };
 
         const holidayResponse = await getHolidays(holidayPayload);
@@ -277,21 +346,32 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
         /* ------------------ ATTENDANCE ------------------ */
         const attendancePayload = {
-          fromDate: selectedDate.startOf("month").format("YYYY-MM-DD"),
-          toDate: selectedDate.endOf("month").format("YYYY-MM-DD"),
+          fromDate: dateRange.startDate.format("YYYY-MM-DD"),
+          toDate: displayEndDate.format("YYYY-MM-DD"),
           userIds: employees.map((e) => e.userId || e.id).filter(Boolean),
         };
 
         const attendanceResponse = !companyView
-          ? await getRequest<{ items?: any[] }>(`api/attendance/me/grid?year=${selectedYear}&month=${selectedMonth + 1}`, {
-              headers: { "Cache-Control": "no-cache" },
-            })
+          ? await Promise.all(
+              Array.from(new Set(visibleDates.map((date) => `${date.year()}-${date.month() + 1}`))).map((period) => {
+                const [year, month] = period.split("-");
+                return getRequest<{ items?: any[] }>(`api/attendance/me/grid?year=${year}&month=${month}`, {
+                  headers: { "Cache-Control": "no-cache" },
+                });
+              }),
+            )
           : await getAllAttendance(attendancePayload);
         // Current calendar endpoints return { items }.  Older deployed API builds
         // return the standard Result envelope, so accept both while deployments roll.
-        const responsePayload = attendanceResponse?.data as any;
-        const responseItems = responsePayload?.items ?? responsePayload?.methodResults ?? responsePayload?.methodResult ?? responsePayload;
-        const items = Array.isArray(responseItems) ? responseItems : [];
+        const responses = Array.isArray(attendanceResponse) ? attendanceResponse : [attendanceResponse];
+        const items = responses.flatMap((response) => {
+          const responsePayload = response?.data as any;
+          const responseItems = responsePayload?.items ?? responsePayload?.methodResults ?? responsePayload?.methodResult ?? responsePayload;
+          return Array.isArray(responseItems) ? responseItems : [];
+        }).filter((item) => {
+          const itemDate = dayjs(formatServerDate(item.date, "YYYY-MM-DD"));
+          return !itemDate.isBefore(dateRange.startDate, "day") && !itemDate.isAfter(displayEndDate, "day");
+        });
         setAttendanceItems(items);
 
         const formatted: Record<string, AttendanceData> = {};
@@ -325,6 +405,39 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           if (!rowUserId) return;
           const key = `${rowUserId}-${dateISO}`;
 
+          const isDaySegment = item.isDaySegment === true;
+          const segmentName = item.segment === "FIRST_HALF" || item.segment === "SECOND_HALF"
+            ? item.segment as "FIRST_HALF" | "SECOND_HALF"
+            : null;
+
+          // Keep both authoritative half-day segments. A split day must never
+          // lose one workflow because its API row happened to arrive last.
+          if (isDaySegment && segmentName) {
+            const current = formatted[key] ?? { status: "", checkIn: "", checkOut: "", remarks: "" };
+            formatted[key] = {
+              ...current,
+              status: item.status,
+              checkIn: formatIndianTime(item.checkInTime),
+              checkOut: formatIndianTime(item.checkOutTime),
+              remarks: item.remarks ?? "",
+              sourceType: item.sourceType ?? null,
+              sourceId: item.sourceId ?? null,
+              isDaySegment: true,
+              segment: segmentName,
+              halfDaySegments: {
+                ...current.halfDaySegments,
+                [segmentName]: {
+                  status: item.status,
+                  sourceType: item.sourceType ?? null,
+                  sourceId: item.sourceId ?? null,
+                },
+              },
+            };
+            return;
+          }
+
+          if (formatted[key]?.isDaySegment && !isDaySegment) return;
+
           formatted[key] = {
             status: item.status,
             checkIn: formatIndianTime(item.checkInTime),
@@ -332,6 +445,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             remarks: item.remarks ?? "",
             sourceType: item.sourceType ?? null,
             sourceId: item.sourceId ?? null,
+            isDaySegment,
+            segment: item.segment ?? null,
           };
         });
 
@@ -342,7 +457,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     };
 
     fetchAllData();
-  }, [selectedDate, employees, companyView, reloadKey]);
+  }, [dateRange, displayEndDate, employees, companyView, normalizeUserId, reloadKey, resolveRowId, visibleDates]);
 
   /*-------------------------------ICON STATS-------------------------------------- */
 
@@ -351,54 +466,52 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       onStatsChange?.({
         present: 0,
         absent: 0,
-        late: 0,
-        total: employees.length,
+        leave: 0,
+        wfh: 0,
+        halfDay: 0,
+        exceptions: 0,
+      members: { Present: [], Absent: [], WFH: [], Leave: [], "Half Day": [] },
       });
       return;
     }
 
     let present = 0;
     let absent = 0;
-    let late = 0;
-
-    const todayDate = dayjs();
+    let leave = 0;
+    let wfh = 0;
+    let halfDay = 0;
+    let exceptions = 0;
+    const members = { Present: new Set<string>(), Absent: new Set<string>(), WFH: new Set<string>(), Leave: new Set<string>(), "Half Day": new Set<string>() };
 
     attendanceItems.forEach((item: any) => {
       const itemDate = dayjs(formatServerDate(item.date, "YYYY-MM-DD"));
-
-      let include = false;
-
-      switch (selectedDay) {
-        case "today":
-          include = itemDate.isSame(todayDate, "day");
-          break;
-
-        case "week":
-          include = itemDate.isSame(todayDate, "week");
-          break;
-
-        case "month":
-          include = itemDate.isSame(todayDate, "month");
-          break;
-
-        default:
-          include = true;
-      }
+      // The overview cards are an operational today snapshot.  The grid itself
+      // continues to honour the selected period and its full set of columns.
+      const include = itemDate.isSame(today, "day");
 
       if (include) {
         if (item.status === "P") present++;
         if (item.status === "A") absent++;
-        if (item.lateCount > 0) late++;
+        const employeeName = employees.find((employee) => resolveRowId(employee) === normalizeUserId(item.userId))?.name ?? item.employeeName ?? item.userId;
+        if (item.status === "P" && employeeName) members.Present.add(employeeName);
+        if (item.status === "A" && employeeName) members.Absent.add(employeeName);
+        if (["SL", "CL", "EL", "COMP-OFF", "CL-HALF", "SL-HALF"].includes(item.status)) { leave++; if (employeeName) members.Leave.add(employeeName); }
+        if (["WFH", "WFH+WFO", "WFH-HD"].includes(item.status)) { wfh++; if (employeeName) members.WFH.add(employeeName); }
+        if (["HD", "LHD", "WFH-HD", "CL-HALF", "SL-HALF"].includes(item.status)) { halfDay++; if (employeeName) members["Half Day"].add(employeeName); }
+        if (item.exceptionId || item.hasException || item.lateCount > 0) exceptions++;
       }
     });
 
     onStatsChange?.({
       present,
       absent,
-      late,
-      total: employees.length,
+      leave,
+      wfh,
+      halfDay,
+      exceptions,
+      members: { Present: [...members.Present], Absent: [...members.Absent], WFH: [...members.WFH], Leave: [...members.Leave], "Half Day": [...members["Half Day"]] },
     });
-  }, [attendanceItems, selectedDay, employees]);
+  }, [attendanceItems, dateRange, employees, normalizeUserId, onStatsChange, resolveRowId, today]);
 
   /* ------------------------------------------------ LOAD MODAL ------------------------------------- */
 
@@ -423,233 +536,180 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
   /* ----------------------------------------------------------- GRID COLUMN ------------------------------------------- */
 
-  const columns: GridColDef<AttendanceRow>[] = useMemo(() => {
-    return [
-      {
-        field: "name",
-        headerName: "Employee",
-        width: 200,
-        renderCell: (params) => {
-          const name = params.value || "";
-          const search = searchValue?.toLowerCase();
+  const renderAttendanceCell = (row: AttendanceRow, date: Dayjs, index: number) => {
+    const dateObj = date.toDate();
+    const dayOfWeek = date.day();
+    const isWeekend = weeklyOffDays.includes(dayOfWeek);
+    const dateIso = date.format("YYYY-MM-DD");
+    const isHoliday = holidays.has(dateIso);
+    const isFutureDate = date.isAfter(today, "day");
+    const editable = !readOnly && dateObj <= today.toDate() && !isHoliday && !isWeekend;
+    const value = (row[`day-${index + 1}`] ?? initialModalState) as AttendanceData;
+    const joiningDate = row.dateOfJoining ? dayjs(row.dateOfJoining).startOf("day") : null;
+    const isBeforeJoining = Boolean(joiningDate?.isValid() && dayjs(dateObj).isBefore(joiningDate, "day"));
+    const firstHalf = value.halfDaySegments?.FIRST_HALF;
+    const secondHalf = value.halfDaySegments?.SECOND_HALF;
+    const hasHalfDaySegments = Boolean(firstHalf || secondHalf);
+    const isLeaveGenerated = value.sourceType?.toUpperCase() === "LEAVE";
+    const isWfhGenerated = value.sourceType?.toUpperCase() === "WFH_REQUEST";
+    const isWorkflowOwned = isLeaveGenerated || isWfhGenerated;
+    const isSourceOwnedSegment = hasHalfDaySegments && [firstHalf, secondHalf]
+      .some((half) => half?.sourceType?.toUpperCase() === "LEAVE" || half?.sourceType?.toUpperCase() === "WFH_REQUEST");
+    const isSystemDefault = ["SYSTEM_DEFAULT_PRESENT", "SYSTEM_OFFICE_START_PRESENT"].includes(value.sourceType?.toUpperCase() ?? "");
+    const relatedLeave = isLeaveGenerated
+      ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
+      : undefined;
+    const statusCode = value.status || "—";
+    const statusLabel = value.status
+      ? attendanceStatusLabels[value.status as AttendanceStatus] ?? value.status
+      : isFutureDate
+        ? "Future date — attendance is not calculated"
+        : "No attendance recorded";
+    const leaveDetail = relatedLeave
+      ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
+      : "Approved leave • Generated from leave request";
+    const halfDayDetail = [
+      firstHalf && `First half: ${firstHalf.status}`,
+      secondHalf && `Second half: ${secondHalf.status}`,
+    ].filter(Boolean).join("\n");
+    const tooltipText = isBeforeJoining
+      ? `Not applicable — employee joins on ${joiningDate?.format("DD MMM YYYY")}.`
+      : hasHalfDaySegments
+      ? `${halfDayDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}\nGenerated from approved attendance workflows.`
+      : isLeaveGenerated
+      ? `${statusCode} — ${statusLabel}\n${leaveDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}`
+      : isWfhGenerated
+      ? `${statusCode} — ${statusLabel}\nApproved work-from-home request • Generated from WFH workflow\n${dayjs(dateObj).format("DD MMMM YYYY")}`
+      : isSystemDefault
+        ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
+      : isFutureDate
+        ? "Future date — attendance is not calculated."
+        : isHoliday
+        ? "Public Holiday"
+        : isWeekend
+          ? "Weekend"
+          : statusLabel;
+    const canEdit = editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining;
 
-          if (!search) return name;
+    const getIcon = (attendanceValue: AttendanceData) => {
+      if (!attendanceValue.status) {
+        if (isHoliday) {
+          return <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />;
+        }
+        if (isWeekend && !isHoliday) {
+          return <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />;
+        }
+        return null;
+      }
 
-          const index = name.toLowerCase().indexOf(search);
-          if (index === -1) return name;
+      const color = getStatusColor(attendanceValue.status);
+      switch (attendanceValue.status) {
+        case "P": return <TaskAltIcon sx={{ fontSize: 18, color }} />;
+        case "A": return <PersonOffIcon sx={{ fontSize: 18, color }} />;
+        case "HD":
+        case "LHD":
+        case "WFH-HD": return <TimelapseIcon sx={{ fontSize: 18, color }} />;
+        case "SL":
+        case "CL":
+        case "EL":
+        case "COMP-OFF":
+        case "CL-HALF":
+        case "SL-HALF": return <EventBusyIcon sx={{ fontSize: 18, color }} />;
+        case "WFH":
+        case "WFH+WFO":
+        case "ED": return <TaskAltIcon sx={{ fontSize: 18, color }} />;
+        default: return <TaskAltIcon sx={{ fontSize: 18, color }} />;
+      }
+    };
 
-          return (
-            <>
-              {name.substring(0, index)}
-              <Box
-                component="span"
-                sx={{
-                  bgcolor: alpha(theme.palette.warning.main, 0.28),
-                  color: "text.primary",
-                }}
-              >
-                {name.substring(index, index + search.length)}
-              </Box>
-              {name.substring(index + search.length)}
-            </>
-          );
-        },
-      },
+    const getBg = (attendanceValue: AttendanceData) => {
+      if (isHoliday) return alpha(theme.palette.secondary.main, 0.16);
+      if (isWeekend && !isHoliday && !attendanceValue.status) return theme.palette.action.hover;
+      if (!attendanceValue.status) return theme.palette.background.paper;
+      const color = getStatusColor(attendanceValue.status);
+      return alpha(color, 0.14);
+    };
 
-      ...Array.from({ length: daysInMonth }, (_, i) => {
-        const dateObj = new Date(selectedYear, selectedMonth, i + 1);
-        const dayOfWeek = dateObj.getDay();
-        const isWeekend = weeklyOffDays.includes(dayOfWeek);
-        const dateIso = dayjs(dateObj).format("YYYY-MM-DD");
-        const isHoliday = holidays.has(dateIso);
-        const editable = !readOnly && dateObj <= today.toDate() && !isHoliday && !isWeekend;
-
-        const getIcon = (value: AttendanceData) => {
-          switch (value.status) {
-            case "P":
-              return <TaskAltIcon sx={{ fontSize: 18, color: "success.main" }} />;
-
-            case "A":
-              return <PersonOffIcon sx={{ fontSize: 18, color: "error.main" }} />;
-
-            case "HD":
-            case "LHD":
-            case "WFH-HD":
-              return <TimelapseIcon sx={{ fontSize: 18, color: "warning.main" }} />;
-
-            case "SL":
-            case "CL":
-            case "EL":
-            case "COMP-OFF":
-            case "CL-HALF":
-            case "SL-HALF":
-              return <EventBusyIcon sx={{ fontSize: 18, color: "primary.main" }} />;
-
-            case "WFH":
-            case "WFH+WFO":
-            case "ED":
-              return <TaskAltIcon sx={{ fontSize: 18, color: "info.main" }} />;
-
-            default:
-              if (isHoliday) {
-                return <CelebrationIcon sx={{ fontSize: 18, color: "secondary.main" }} />;
-              }
-
-              if (isWeekend && !isHoliday) {
-                return (
-                  <FreeBreakfastIcon sx={{ fontSize: 18, color: "text.secondary" }} />
-                );
-              }
-              return null;
-          }
-        };
-        const getBg = (value: AttendanceData) => {
-          if (isHoliday) return alpha(theme.palette.secondary.main, 0.16);
-          if (isWeekend && !isHoliday && !value.status) return theme.palette.action.hover;
-
-          switch (value.status) {
-            case "P":
-              return alpha(theme.palette.success.main, 0.14);
-            case "A":
-              return alpha(theme.palette.error.main, 0.14);
-            case "HD":
-            case "LHD":
-            case "WFH-HD":
-              return alpha(theme.palette.warning.main, 0.14);
-            case "SL":
-            case "CL":
-            case "EL":
-            case "COMP-OFF":
-            case "CL-HALF":
-            case "SL-HALF":
-              return alpha(theme.palette.primary.main, 0.14);
-            case "WFH":
-            case "WFH+WFO":
-            case "ED":
-              return alpha(theme.palette.info.main, 0.14);
-            default:
-              return theme.palette.background.paper;
-          }
-        };
-
-        return {
-          field: `day-${i + 1}`,
-          renderHeader: () => (
-            <Stack
-              alignItems="center"
-              spacing={0.5}
-              sx={{
-                py: 1,
-                opacity: isHoliday || isWeekend ? 0.7 : 1,
-              }}
-            >
-              <Typography fontSize={11} color="text.secondary">
-                {dayjs(dateObj).format("ddd")}
-              </Typography>
-              <Typography fontWeight="600" fontSize={14}>
-                {i + 1}
-              </Typography>
+    return (
+      <Tooltip title={<Typography component="span" variant="body2" sx={{ whiteSpace: "pre-line" }}>{tooltipText}</Typography>}>
+        <Box
+          onClick={() => {
+            if (isFutureDate) return;
+            if (readOnly) return;
+            if (isWorkflowOwned || isSourceOwnedSegment) {
+              setConfirmationModal({
+                open: true,
+                title: isWfhGenerated ? "WFH-generated attendance" : "Leave-generated attendance",
+                content: isWfhGenerated
+                  ? "This record is generated from an approved WFH request. Update or cancel the WFH request through its workflow to make a correction."
+                  : "This record is generated from an approved leave request. Use the authorized leave-attendance conflict-resolution workflow to make a correction.",
+              });
+              return;
+            }
+            if (canEdit) setSelectedCell({ employee: row, dateObj });
+          }}
+          role="button"
+          tabIndex={!readOnly && (isWorkflowOwned || isSourceOwnedSegment || canEdit) ? 0 : -1}
+          aria-label={tooltipText.replace(/\n/g, ". ")}
+          onKeyDown={(event) => {
+            if (!readOnly && (event.key === "Enter" || event.key === " ") && (isWorkflowOwned || isSourceOwnedSegment || canEdit)) {
+              event.preventDefault();
+              event.currentTarget.click();
+            }
+          }}
+          sx={{
+            width: "100%",
+            minHeight: 52,
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: isBeforeJoining ? theme.palette.action.disabledBackground : getBg(value),
+            borderRight: "1px solid",
+            borderRightColor: "divider",
+            borderBottom: "1px solid",
+            borderBottomColor: "divider",
+            opacity: isFutureDate ? 0.45 : 1,
+            cursor: isBeforeJoining ? "not-allowed" : isWorkflowOwned || isSourceOwnedSegment || canEdit ? "pointer" : "default",
+            transition: "all 0.2s ease",
+            borderRadius: 0,
+            "&:hover": (isWorkflowOwned || isSourceOwnedSegment || canEdit) ? {
+              boxShadow: theme.shadows[3],
+            } : {},
+          }}
+        >
+          {isBeforeJoining ? (
+            <Typography component="span" fontSize={10} color="text.secondary" fontWeight={700} aria-hidden="true">N/A</Typography>
+          ) : hasHalfDaySegments ? (
+            <Stack spacing={0.15} alignItems="center" justifyContent="center">
+              {firstHalf && <Typography component="span" fontSize={9} fontWeight={800} aria-label={`First half ${firstHalf.status}`}>FH: {firstHalf.status}</Typography>}
+              {secondHalf && <Typography component="span" fontSize={9} fontWeight={800} aria-label={`Second half ${secondHalf.status}`}>SH: {secondHalf.status}</Typography>}
+              {isSourceOwnedSegment && <LockOutlinedIcon sx={{ fontSize: 12 }} aria-hidden="true" />}
             </Stack>
-          ),
-
-          width: 85,
-          sortable: false,
-          renderCell: (params: any) => {
-            const value = params.value as AttendanceData;
-            const isLeaveGenerated = value.sourceType?.toUpperCase() === "LEAVE";
-            const isSystemDefault = ["SYSTEM_DEFAULT_PRESENT", "SYSTEM_OFFICE_START_PRESENT"].includes(value.sourceType?.toUpperCase() ?? "");
-            const relatedLeave = isLeaveGenerated
-              ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
-              : undefined;
-            const statusCode = value.status || "—";
-            const statusLabel = value.status
-              ? attendanceStatusLabels[value.status as AttendanceStatus] ?? value.status
-              : "No attendance recorded";
-            const leaveDetail = relatedLeave
-              ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
-              : "Approved leave • Generated from leave request";
-            const tooltipText = isLeaveGenerated
-              ? `${statusCode} — ${statusLabel}\n${leaveDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}`
-              : isSystemDefault
-                ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
-              : isHoliday
-                ? "Public Holiday"
-                : isWeekend
-                  ? "Weekend"
-                  : statusLabel;
-            const canEdit = editable && !isLeaveGenerated;
-
-            return (
-              <Tooltip
-                title={<Typography component="span" variant="body2" sx={{ whiteSpace: "pre-line" }}>{tooltipText}</Typography>}
-              >
-                <Box
-                  onClick={() => {
-                    if (readOnly) return;
-                    if (isLeaveGenerated) {
-                      setConfirmationModal({
-                        open: true,
-                        title: "Leave-generated attendance",
-                        content: "This record is generated from an approved leave request. Use the authorized leave-attendance conflict-resolution workflow to make a correction.",
-                      });
-                      return;
-                    }
-                    if (canEdit) setSelectedCell({ employee: params.row, dateObj });
-                  }}
-                  role="button"
-                  tabIndex={!readOnly && (isLeaveGenerated || canEdit) ? 0 : -1}
-                  aria-label={tooltipText.replace(/\n/g, ". ")}
-                  onKeyDown={(event) => {
-                    if (!readOnly && (event.key === "Enter" || event.key === " ") && (isLeaveGenerated || canEdit)) {
-                      event.preventDefault();
-                      event.currentTarget.click();
-                    }
-                  }}
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    minHeight: 46,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: getBg(value),
-                    borderRadius: 2,
-                    cursor: isLeaveGenerated || canEdit ? "pointer" : "default",
-                    transition: "all 0.2s ease",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    "&:hover": (isLeaveGenerated || canEdit) ? {
-                      transform: "scale(1.05)",
-                      boxShadow: theme.shadows[3],
-                    } : {},
-                  }}
-                >
-                  {isLeaveGenerated ? (
-                    <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
-                      <Typography component="span" fontSize={12} fontWeight={800} aria-hidden="true">
-                        {statusCode}
-                      </Typography>
-                      {isSystemDefault && <Typography component="span" fontSize={8} color="text.secondary" aria-hidden="true">System</Typography>}
-                      <LockOutlinedIcon sx={{ fontSize: 14 }} aria-hidden="true" />
-                    </Stack>
-                  ) : value.status ? (
-                    <Stack alignItems="center" spacing={0.25}>
-                      {getIcon(value)}
-                      <Typography component="span" fontSize={11} fontWeight={800} aria-hidden="true">
-                        {statusCode}
-                      </Typography>
-                    </Stack>
-                  ) : (
-                    getIcon(value)
-                  )}
-                </Box>
-              </Tooltip>
-            );
-          },
-        };
-      }),
-    ];
-  }, [daysInMonth, holidays, weeklyOffDays, selectedMonth, selectedYear, today, searchValue, theme, leaveRequests]);
+          ) : isLeaveGenerated ? (
+            <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+              <Typography component="span" fontSize={12} fontWeight={800} aria-hidden="true">{statusCode}</Typography>
+              {isSystemDefault && <Typography component="span" fontSize={8} color="text.secondary" aria-hidden="true">System</Typography>}
+              <LockOutlinedIcon sx={{ fontSize: 14 }} aria-hidden="true" />
+            </Stack>
+          ) : isWfhGenerated ? (
+            <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+              {getIcon(value)}
+              <Typography component="span" fontSize={12} fontWeight={800} aria-hidden="true">WFH</Typography>
+              <LockOutlinedIcon sx={{ fontSize: 14 }} aria-hidden="true" />
+            </Stack>
+          ) : value.status ? (
+            <Stack alignItems="center" spacing={0.25}>
+              {getIcon(value)}
+              <Typography component="span" fontSize={11} fontWeight={800} aria-hidden="true">{statusCode}</Typography>
+            </Stack>
+          ) : (
+            getIcon(value)
+          )}
+        </Box>
+      </Tooltip>
+    );
+  };
 
   /* ------------------------------------------------------------ GRID ROW ------------------------------------------------------------------------------------- */
 
@@ -657,25 +717,25 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     return employees.map((emp) => {
       const row: AttendanceRow = {
         id: resolveRowId(emp),
+        userId: emp.userId,
         employeeId: emp.employeeId ?? "",
         name: emp.name,
+        dateOfJoining: emp.dateOfJoining,
       };
 
-      for (let i = 1; i <= daysInMonth; i++) {
-        const dateObj = new Date(selectedYear, selectedMonth, i);
-        const dateISO = dayjs(dateObj).format("YYYY-MM-DD");
+      visibleDates.forEach((date, index) => {
+        const dateISO = date.format("YYYY-MM-DD");
         const key = `${resolveRowId(emp)}-${dateISO}`;
-
-        row[`day-${i}`] = attendanceData[key] ?? initialModalState;
-      }
+        row[`day-${index + 1}`] = attendanceData[key] ?? initialModalState;
+      });
 
       return row;
     });
-  }, [employees, attendanceData, daysInMonth, leaveRequests]);
+  }, [employees, attendanceData, resolveRowId, visibleDates]);
 
   useEffect(() => {
     setPage(0);
-  }, [employees, selectedMonth, selectedYear]);
+  }, [employees, visibleDates]);
 
   const paginatedRows = useMemo(
     () => rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -745,67 +805,45 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     setModalData(initialModalState);
   };
 
+  const openTodayAttendance = (row: AttendanceRow) => {
+    const value = row["day-1"] as AttendanceData;
+    const dateObj = visibleDates[0]?.toDate();
+    if (!dateObj || readOnly || dayjs(dateObj).isAfter(today, "day")) return;
+    const isWorkflowOwned = ["LEAVE", "WFH_REQUEST"].includes((value.sourceType ?? "").toUpperCase());
+    const isSourceOwnedSegment = Object.values(value.halfDaySegments ?? {}).some((segment) =>
+      ["LEAVE", "WFH_REQUEST"].includes((segment?.sourceType ?? "").toUpperCase()),
+    );
+    if (isWorkflowOwned || isSourceOwnedSegment) {
+      const isWfh = value.sourceType?.toUpperCase() === "WFH_REQUEST";
+      setConfirmationModal({
+        open: true,
+        title: isWfh ? "WFH-generated attendance" : "Workflow-owned attendance",
+        content: isWfh
+          ? "This status is maintained by the approved WFH request. Update or cancel that request to make a change."
+          : "This status is maintained by an approved leave or half-day workflow and cannot be edited from attendance.",
+      });
+      return;
+    }
+    setSelectedCell({ employee: row, dateObj });
+  };
+
+  const getStatusChipStyle = (status: string | null | undefined) => {
+    const color = getStatusColor(status);
+    return {
+      backgroundColor: toAlphaHex(color, 15),
+      color,
+      border: `1px solid ${toAlphaHex(color, 45)}`,
+      fontWeight: 800,
+    };
+  };
+
   /* ------------------------------------------------- RENDER ------------------------------------------------------------ */
 
   return (
     <Stack spacing={2}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-          mt: 2,
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            px: 2,
-            py: 1,
-            borderRadius: 3,
-            border: "1px solid",
-            borderColor: "divider",
-            backgroundColor: "background.paper",
-            boxShadow: theme.shadows[2],
-          }}>
-          
-          <AppIconButton
-            size="small"
-            sx={{ p: 0.5 }}
-            onClick={() =>
-              setSelectedDate((prev) => prev?.subtract(1, "month") ?? prev)
-            }
-          >
-            <KeyboardArrowLeftIcon fontSize="small" />
-          </AppIconButton>
-
-          <Typography
-            sx={{
-              fontWeight: 600,
-              fontSize: 15,
-              minWidth: 140,
-              textAlign: "center",
-              color: "text.primary",
-              letterSpacing: 0.3,
-            }}
-          >
-            {selectedDate?.format("MMMM YYYY")}
-          </Typography>
-
-          <AppIconButton
-            size="small"
-            sx={{ p: 0.5 }}
-            onClick={() =>
-              setSelectedDate((prev) => prev?.add(1, "month") ?? prev)
-            }
-          >
-            <KeyboardArrowRightIcon fontSize="small" />
-          </AppIconButton>
-        </Box>
-      </Box>
+      <Typography variant="body2" color="text.secondary" fontWeight={700} sx={{ display: "none" }}>
+        {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
+      </Typography>
       <Card
         sx={{
           p: 2,
@@ -813,44 +851,255 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           boxShadow: theme.shadows[2],
           border: "1px solid",
           borderColor: "divider",
+          overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            overflowX: "auto",
-            width: "100%",
-            pb: 1,
-            border: "none",
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "background.default",
-              borderBottom: "1px solid",
-              borderBottomColor: "divider",
-            },
-            "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid",
-              borderBottomColor: "divider",
-            },
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor: "transparent",
-            },
-          }}
-        >
-          <Box sx={{ minWidth: 230 + daysInMonth * 85 }}>
-      {!hasAttendanceForVisibleMonth && !companyView && (
-        <Typography variant="body2" color="text.secondary" sx={{ px: 1, pb: 1 }}>
-          No attendance has been recorded for {selectedDate?.format("MMMM YYYY")}.
-        </Typography>
-      )}
-      <CustomDataGrid
-              row={paginatedRows}
-              columns={columns}
-              keyName="id"
-              hidePagination
-              loading={false}
-              checkboxSelection={false}
-            />
+        {isSingleDay ? (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
+              gap: 1.5,
+              maxHeight: "62vh",
+              overflowY: "auto",
+              pr: 0.75,
+              "@keyframes attendance-card-in": {
+                from: { opacity: 0, transform: "translateY(10px)" },
+                to: { opacity: 1, transform: "translateY(0)" },
+              },
+            }}
+          >
+            {paginatedRows.map((row, index) => {
+              const value = row["day-1"] as AttendanceData;
+              const status = value.status || "Not marked";
+              const isWorkflowOwned = ["LEAVE", "WFH_REQUEST"].includes((value.sourceType ?? "").toUpperCase());
+              const isLegacySystemPresent = value.status === "P" && ["SYSTEM_DEFAULT_PRESENT", "SYSTEM_OFFICE_START_PRESENT"].includes((value.sourceType ?? "").toUpperCase());
+              return (
+                <Card
+                  key={row.id}
+                  variant="outlined"
+                  onClick={() => openTodayAttendance(row)}
+                  role={!readOnly ? "button" : undefined}
+                  tabIndex={!readOnly ? 0 : -1}
+                  onKeyDown={(event) => {
+                    if (!readOnly && (event.key === "Enter" || event.key === " ")) {
+                      event.preventDefault();
+                      openTodayAttendance(row);
+                    }
+                  }}
+                  sx={{
+                    p: 1.75,
+                    borderRadius: 2.5,
+                    cursor: readOnly ? "default" : "pointer",
+                    borderColor: value.status ? toAlphaHex(getStatusColor(value.status), 55) : "divider",
+                    animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
+                    transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+                    "&:hover": readOnly ? {} : { transform: "translateY(-3px)", boxShadow: theme.shadows[4], borderColor: "primary.main" },
+                    "&:focus-visible": { outline: `2px solid ${theme.palette.primary.main}`, outlineOffset: 2 },
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography fontWeight={800} noWrap title={row.name}>{row.name}</Typography>
+                      <Typography variant="caption" color="text.secondary" noWrap>{row.employeeId || "Employee"}</Typography>
+                    </Box>
+                    <Chip
+                      size="small"
+                      label={status}
+                      variant={isWorkflowOwned ? "filled" : "outlined"}
+                      sx={{
+                        ...getStatusChipStyle(value.status),
+                        opacity: isWorkflowOwned ? 0.96 : 1,
+                      }}
+                    />
+                  </Stack>
+                  <Stack direction="row" spacing={1.25} sx={{ mt: 1.25 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      In: <Box component="span" sx={{ color: "text.primary", fontWeight: 700 }}>{value.checkIn || (isLegacySystemPresent ? "09:00" : "—")}</Box>
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Out: <Box component="span" sx={{ color: "text.primary", fontWeight: 700 }}>{value.checkOut || (isLegacySystemPresent ? "18:00" : "—")}</Box>
+                    </Typography>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.5 }}>
+                    {isWorkflowOwned ? "Managed by approved workflow" : readOnly ? "Attendance status" : "Select to update attendance"}
+                  </Typography>
+                </Card>
+              );
+            })}
           </Box>
-        </Box>
+        ) : (
+          <Box sx={{ width: "100%", overflow: "hidden" }}>
+            {!hasAttendanceForVisibleMonth && (
+              <Stack alignItems="center" justifyContent="center" spacing={1} sx={{ minHeight: 300, px: 3, textAlign: "center" }}>
+                <Typography fontWeight={700}>No attendance recorded in this period</Typography>
+                <Typography variant="body2" color="text.secondary">The selected range is ready for review. Attendance will appear here as it is recorded.</Typography>
+              </Stack>
+            )}
+            {hasAttendanceForVisibleMonth && (
+              <Box
+                sx={{
+                  ...buildAttendanceGridScrollContainerSx(theme),
+                  width: "100%",
+                  maxHeight: "68vh",
+                  overflowX: "hidden",
+                  overflowY: "auto",
+                }}
+              >
+                <Box sx={{ display: "flex", width: "100%", minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      width: ATTENDANCE_EMPLOYEE_COLUMN_WIDTH,
+                      minWidth: ATTENDANCE_EMPLOYEE_COLUMN_WIDTH,
+                      maxWidth: ATTENDANCE_EMPLOYEE_COLUMN_WIDTH,
+                      flexShrink: 0,
+                      backgroundColor: "background.paper",
+                      borderRight: "1px solid",
+                      borderColor: "divider",
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 3,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        position: "sticky",
+                        top: 0,
+                        zIndex: 4,
+                        height: 72,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "background.default",
+                        borderBottom: "1px solid",
+                        borderColor: "divider",
+                        fontWeight: 800,
+                      }}
+                    >
+                      Employee
+                    </Box>
+                    {paginatedRows.map((row) => {
+                      const search = searchValue?.toLowerCase();
+                      const name = row.name || "";
+                      const matchIndex = search ? name.toLowerCase().indexOf(search) : -1;
+                      const displayName = matchIndex >= 0 && search ? (
+                        <>
+                          {name.substring(0, matchIndex)}
+                          <Box component="span" sx={{ backgroundColor: alpha(theme.palette.warning.main, 0.28), color: "text.primary" }}>
+                            {name.substring(matchIndex, matchIndex + search.length)}
+                          </Box>
+                          {name.substring(matchIndex + search.length)}
+                        </>
+                      ) : name;
+
+                      return (
+                        <Box
+                          key={row.id}
+                          sx={{
+                            height: 52,
+                            minHeight: 52,
+                            display: "flex",
+                            alignItems: "center",
+                            px: 1.5,
+                            borderBottom: "1px solid",
+                            borderColor: "divider",
+                            backgroundColor: "background.paper",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            fontWeight: 600,
+                            title: row.name,
+                          }}
+                        >
+                          {displayName}
+                        </Box>
+                      );
+                    })}
+                  </Box>
+
+                  <Box
+                    sx={{
+                      flex: 1,
+                      minWidth: 0,
+                      overflowX: "auto",
+                      overflowY: "hidden",
+                      scrollbarWidth: "thin",
+                      scrollbarColor: `${theme.palette.primary.light} ${theme.palette.action.hover}`,
+                      "&::-webkit-scrollbar": { height: 10 },
+                      "&::-webkit-scrollbar-track": { backgroundColor: theme.palette.action.hover, borderRadius: 8 },
+                      "&::-webkit-scrollbar-thumb": { backgroundColor: theme.palette.primary.light, borderRadius: 8 },
+                      "&::-webkit-scrollbar-thumb:hover": { backgroundColor: theme.palette.primary.main },
+                    }}
+                  >
+                    <Box sx={{ width: "max-content", minWidth: visibleDates.length * ATTENDANCE_DATE_COLUMN_WIDTH }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          position: "sticky",
+                          top: 0,
+                          zIndex: 2,
+                          backgroundColor: "background.default",
+                          borderBottom: "1px solid",
+                          borderColor: "divider",
+                        }}
+                      >
+                        {visibleDates.map((date) => {
+                          const dayOfWeek = date.day();
+                          const isWeekend = weeklyOffDays.includes(dayOfWeek);
+                          const dateIso = date.format("YYYY-MM-DD");
+                          const isHoliday = holidays.has(dateIso);
+
+                          return (
+                            <Box
+                              key={`header-${dateIso}`}
+                              sx={{
+                                width: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                minWidth: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                maxWidth: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                height: 72,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                py: 1,
+                                borderRight: "1px solid",
+                                borderColor: "divider",
+                                opacity: isHoliday || isWeekend ? 0.7 : 1,
+                              }}
+                            >
+                              <Typography fontSize={11} color="text.secondary">{date.format("ddd")}</Typography>
+                              <Typography fontWeight={600} fontSize={14}>{date.format("D")}</Typography>
+                            </Box>
+                          );
+                        })}
+                      </Box>
+
+                      {paginatedRows.map((row) => (
+                        <Box key={row.id} sx={{ display: "flex", minHeight: 52, backgroundColor: "background.paper" }}>
+                          {visibleDates.map((date, index) => (
+                            <Box
+                              key={`${row.id}-${date.format("YYYY-MM-DD")}`}
+                              sx={{
+                                width: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                minWidth: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                maxWidth: ATTENDANCE_DATE_COLUMN_WIDTH,
+                                flexShrink: 0,
+                                borderRight: "1px solid",
+                                borderColor: "divider",
+                              }}
+                            >
+                              {renderAttendanceCell(row, date, index)}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        )}
         <TablePagination
           component="div"
           count={rows.length}
@@ -864,7 +1113,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           }}
         />
       </Card>
-      {!readOnly && <MonthlyAttendanceExceptions month={selectedDate ?? today} />}
+      {!readOnly && dateRange.startDate.isSame(dateRange.endDate, "month") && <MonthlyAttendanceExceptions month={dateRange.startDate} />}
       <CustomisedModal
         open={Boolean(selectedCell)}
         handleClose={() => {
@@ -898,8 +1147,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
             {modalData.status && (statusOptions.find(x => x.value === modalData.status)?.requiresTime ?? statusesWithTimes.has(modalData.status)) && (
               <>
-                <AppTextField
-                  label="Check-in"
+                {modalData.status !== "ED" && <AppTextField
+                  label="Check-in Time"
                   type="time"
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -910,9 +1159,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       checkIn: e.target.value,
                     }))
                   }
-                />
-                <AppTextField
-                  label="Check-out"
+                />}
+                {modalData.status !== "LHD" && <AppTextField
+                  label="Check-out Time"
                   type="time"
                   fullWidth
                   InputLabelProps={{ shrink: true }}
@@ -923,7 +1172,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       checkOut: e.target.value,
                     }))
                   }
-                />
+                />}
               </>
             )}
 

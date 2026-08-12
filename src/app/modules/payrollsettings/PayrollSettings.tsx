@@ -1,4 +1,4 @@
-import { Card, Stack } from "@mui/material";
+import { Card, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useIntl } from "react-intl";
@@ -17,13 +17,30 @@ import { ConfirmationModal } from "../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import { getAllEmployees } from "../employees/employeeServices";
 import { getRequest, postRequest } from "../../../server/axios";
-import { ApiResponse } from "../../../utils/common_types";
+import { ResponseData } from "../../../utils/common_types";
+import { CustomisedModal } from "../../shared/components/C_Modal";
 
 type AttendanceMonthLockStatus = {
   payrollMonth: string;
   isLocked: boolean;
   eligibleEmployeeCount: number;
   lockedEmployeeCount: number;
+};
+
+type AttendanceLockBlockingIssue = {
+  employeeId: string;
+  employeeCode: string;
+  employeeName: string;
+  attendanceDate: string;
+  exceptionType: string;
+  currentAttendanceStatus?: string | null;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  message: string;
+};
+
+type AttendanceMonthLockValidationResult = {
+  blockingIssues: AttendanceLockBlockingIssue[];
 };
 
 export default function PayrollSettings() {
@@ -43,6 +60,7 @@ export default function PayrollSettings() {
   const [isLocking, setIsLocking] = useState(false);
   const [attendanceLocked, setAttendanceLocked] = useState(false);
   const [isCheckingLock, setIsCheckingLock] = useState(false);
+  const [blockingIssues, setBlockingIssues] = useState<AttendanceLockBlockingIssue[]>([]);
 
   const userModulesPermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -174,22 +192,31 @@ export default function PayrollSettings() {
     }
     setIsLocking(true);
     try {
-      const { data } = await postRequest<{ payrollMonth: string }, ApiResponse>(
+      const { data } = await postRequest<{ payrollMonth: string }, ResponseData<AttendanceMonthLockValidationResult>>(
         "api/attendance/penalty/month/validate-lock",
         { payrollMonth: processMonth.format("YYYY-MM-01") },
       );
       if (data.success) {
         setAttendanceLocked(true);
+        setBlockingIssues([]);
         toast.success(data.message);
       } else {
         setAttendanceLocked(false);
-        toast.error(data.message);
+        setBlockingIssues(data.methodResult?.blockingIssues ?? []);
+        toast.error(data.message || "Attendance validation failed.");
       }
     } catch (error) {
       setAttendanceLocked(false);
       toast.error((error as any)?.response?.data?.message ?? "Attendance validation or lock failed.");
     }
     finally { setIsLocking(false); }
+  };
+
+  const openAttendanceCell = (issue: AttendanceLockBlockingIssue) => {
+    window.dispatchEvent(new CustomEvent("edit-attendance-exception", {
+      detail: { employeeId: issue.employeeCode, date: issue.attendanceDate },
+    }));
+    setBlockingIssues([]);
   };
 
   return (
@@ -250,6 +277,33 @@ export default function PayrollSettings() {
           ok_btn
         />
       )}
+      <CustomisedModal
+        open={blockingIssues.length > 0}
+        handleClose={() => setBlockingIssues([])}
+        title="Attendance validation failed"
+        maxWidth="lg"
+        allowMaximize
+      >
+        <Stack spacing={2}>
+          <Typography>
+            Attendance cannot be locked because {blockingIssues.length} blocking issue{blockingIssues.length === 1 ? "" : "s"} need to be resolved.
+          </Typography>
+          <Table size="small" stickyHeader aria-label="Blocking attendance issues">
+            <TableHead><TableRow><TableCell>Employee</TableCell><TableCell>Date</TableCell><TableCell>Issue</TableCell><TableCell>Status / timing</TableCell><TableCell>Action</TableCell></TableRow></TableHead>
+            <TableBody>
+              {blockingIssues.map((issue, index) => (
+                <TableRow key={`${issue.employeeId}-${issue.attendanceDate}-${issue.exceptionType}-${index}`}>
+                  <TableCell>{issue.employeeName}<br /><Typography variant="caption">{issue.employeeCode}</Typography></TableCell>
+                  <TableCell>{dayjs(issue.attendanceDate).format("DD MMM YYYY")}</TableCell>
+                  <TableCell>{issue.message}</TableCell>
+                  <TableCell>{issue.currentAttendanceStatus ?? "—"}{issue.checkInTime ? ` | In: ${dayjs(issue.checkInTime).format("HH:mm")}` : ""}{issue.checkOutTime ? ` | Out: ${dayjs(issue.checkOutTime).format("HH:mm")}` : ""}</TableCell>
+                  <TableCell><CustomisedButton label="View" variant="outlined" handleClick={() => openAttendanceCell(issue)} /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Stack>
+      </CustomisedModal>
     </>
   );
 }
