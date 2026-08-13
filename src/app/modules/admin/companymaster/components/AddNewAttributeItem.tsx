@@ -1,11 +1,12 @@
 import {
   useState } from "react";
 import { Box, FormControl, InputLabel, MenuItem } from "@mui/material";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { ReqProps } from "./AttributeItemRow";
 import { toast } from "react-toastify";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper } from "../../../../../utils/common";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
@@ -31,9 +32,8 @@ const AddNewAttributeItem = <T extends ReqProps>({
     titles: {},
   } as T);
   const { formatMessage: i } = useIntl();
-  const currentLang = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
-  );
+  const { currentLanguage: selectedUiLanguage } = useAppLang();
+  const currentLang = selectedUiLanguage || LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = newAttributeValue.titles[translationLang] ?? "";
   const currentLanguageTitle = newAttributeValue.titles[currentLang] ?? "";
@@ -125,7 +125,7 @@ const AddNewAttributeItem = <T extends ReqProps>({
   };
 
   return (
-    <Box className="attribute-row">
+    <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
       <AppTextField
         value={currentLanguageTitle}
         onChange={handleChange}

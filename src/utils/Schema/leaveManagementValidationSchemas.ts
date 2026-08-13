@@ -30,11 +30,11 @@ export const LeavePolicyValidationSchema = Yup.object().shape({
   }),
   maxBalance: Yup.number()
     .required("VALIDATION_ERR.REQUIRED_TYPE")
-    .when("accrualAmount", {
-      is: (accrualAmount: any) => accrualAmount != null,
+    .when("policyType", {
+      is: 1,
       then: (schema: Yup.NumberSchema<number>) =>
         schema.min(Yup.ref("accrualAmount"), "VALIDATION_ERR.MAX_BALANCE_LESS_THAN_CREDITED"),
-      otherwise: (schema: Yup.NumberSchema<number>) => schema,
+      otherwise: (schema: Yup.NumberSchema<number>) => schema.min(0),
     }),
   carryOverAllowed: Yup.boolean().required("VALIDATION_ERR.REQUIRED_TYPE"),
   carryOverLimit: Yup.number().nullable(),

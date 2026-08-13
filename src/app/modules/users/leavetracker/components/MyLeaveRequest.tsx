@@ -222,7 +222,8 @@ export const MyLeaveRequests = ({
                           const canWithdraw =
                             (row.status === LEAVE_REQUEST_STATUS.PENDING || row.status === LEAVE_REQUEST_STATUS.APPROVED) &&
                             !dayjs(row.endDate).isBefore(dayjs(), "day");
-                          const canEdit = row.status === LEAVE_REQUEST_STATUS.PENDING && canWithdraw;
+                            const canEdit = row.status === LEAVE_REQUEST_STATUS.PENDING &&
+                              !dayjs(row.startDate).isBefore(dayjs(), "day");
                           return canWithdraw ? (
                           <Stack direction="row">
                             {canEdit && (

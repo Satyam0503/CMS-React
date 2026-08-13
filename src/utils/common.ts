@@ -436,7 +436,10 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
   const ls = localStorage.getItem(I18N_CONFIG_KEY);
   if (ls) {
     try {
-      return (JSON.parse(ls) as AppLanguageProps).selectedLang;
+      const selectedLang = (JSON.parse(ls) as AppLanguageProps).selectedLang;
+      if (Object.values(LANGUAGE).includes(selectedLang as LANGUAGE)) {
+        return selectedLang as LANGUAGE;
+      }
     } catch (er) {
       console.error(er);
     }
@@ -445,7 +448,9 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
 };
 
 export function setAppLanguage(lang: string) {
-  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
+  if (Object.values(LANGUAGE).includes(lang as LANGUAGE)) {
+    localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
+  }
 }
 
 export const transformAttributeObjectToList = (

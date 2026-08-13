@@ -6,7 +6,8 @@ import {
 import { LanguageNameMapper } from "../../../../../utils/common";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { useAppSelector } from "../../../../Redux/hooks";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 import { AppTextField } from "../../../../shared/components/ui";
 interface AttributeTitleProps {
@@ -22,9 +23,8 @@ export const AttributeTitleRow = ({
 }: AttributeTitleProps) => {
   const { formatMessage: i } = useIntl();
   const [title, setTitle] = useState<Record<string, string>>(attributeTitle);
-  const defaultLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
-  );
+  const { currentLanguage: selectedUiLanguage } = useAppLang();
+  const defaultLanguage = selectedUiLanguage || LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = title[translationLang] ?? "";
   const currentLanguageTitle = title[defaultLanguage] ?? "";
@@ -58,7 +58,7 @@ export const AttributeTitleRow = ({
   }, [attributeTitle]);
 
   return (
-    <Box className="attribute-row">
+    <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}`}>
       <Stack>
         <FormLabel sx={{ color: "text.secondary" }}>
           {i(

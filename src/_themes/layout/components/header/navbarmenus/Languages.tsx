@@ -23,7 +23,10 @@ const Languages = () => {
   const { formatMessage } = useIntl();
   // Unauthenticated pages (login/register) have no company language restriction yet,
   // so every supported UI language must be selectable there.
-  const appLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage) ?? languages.map((lang) => lang.lang);
+  const configuredLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage);
+  const appLanguages = configuredLanguages?.length
+    ? configuredLanguages
+    : languages.map((lang) => lang.lang);
   const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -43,7 +46,8 @@ const Languages = () => {
 
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
-  const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage);
+  const visibleLanguages = languages.filter(lang => appLanguages.includes(lang.lang));
+  const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage) ?? languages[0];
 
   return (
     <>
@@ -75,7 +79,7 @@ const Languages = () => {
         }}
       >
         <List>
-          {languages.filter(lang => appLanguages.includes(lang.lang)).map((lang) => (
+          {visibleLanguages.map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {

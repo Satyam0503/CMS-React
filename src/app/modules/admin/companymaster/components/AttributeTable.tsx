@@ -18,6 +18,7 @@ import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { Add } from "@mui/icons-material";
 import { AttributeTitleRow } from "./AttributeTitleRow";
 import { v4 as uuidv4 } from "uuid";
+import { LANGUAGE } from "../../../../../utils/enums";
 
 import { AppSelect, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
@@ -54,22 +55,17 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   const applicationLanguage = useAppSelector(
     (state) => state.user.userData?.applicationLanguage ?? []
   );
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
-  );
+  const { currentLanguage: selectedUiLanguage } = useAppLang();
+  const currentLanguage = selectedUiLanguage || LANGUAGE.ENGLISH;
   // Translation is opt-in. Rendering an empty second column was misleading and
   // made the language selector appear to have no effect.
   const [translationLang, setTranslationLang] = useState<string>("");
-  const { currentLanguage: selectedUiLanguage } = useAppLang();
-
-  // Keep the second column synced with the language switcher in the header:
-  // switching the app language should show that language's title without an
-  // extra manual pick, while the dropdown below still allows overriding it.
+  // Keep the two visible language columns distinct when the app language changes.
   useEffect(() => {
-    if (selectedUiLanguage && selectedUiLanguage !== currentLanguage && applicationLanguage.includes(selectedUiLanguage)) {
-      setTranslationLang(selectedUiLanguage);
+    if (translationLang && translationLang === currentLanguage) {
+      setTranslationLang("");
     }
-  }, [selectedUiLanguage, currentLanguage, applicationLanguage]);
+  }, [currentLanguage, translationLang]);
   const [itemsList, setItemsList] = useState<T[]>([]);
   const [newItemsList, setNewItemsList] = useState<T[]>([]);
   const itemsRef = useRef<T[]>([]);
@@ -149,7 +145,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   return (
     <Stack spacing={1} className="flex-grow-1">
-      <Card className="p-6 p-lg-10 py-8 d-flex flex-row gap-6 align-items-center">
+      <Card className="p-4 p-lg-6 py-4 d-flex flex-row gap-3 align-items-center">
         <Typography variant="h6">
           {i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.NAME" }) + ":"}
         </Typography>
@@ -160,7 +156,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
           placeholder={i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.NAME" })}
         />
       </Card>
-      <Card className="p-6 p-lg-10 d-flex flex-column gap-8 flex-grow-1">
+      <Card className="p-4 p-lg-6 d-flex flex-column gap-4 flex-grow-1">
         <Stack
           direction="row"
           className="justify-content-end align-items-center flex-wrap gap-4"
@@ -204,7 +200,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
           </Box>
         )}
         <Stack className="attribute-container">
-          <Box className="attribute-row">
+          <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
             <Typography variant="body1" className="fw-bolder">
               {i(
                 { id: "COMPANY_MASTER.TITLE" },

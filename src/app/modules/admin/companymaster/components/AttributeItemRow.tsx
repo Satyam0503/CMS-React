@@ -4,8 +4,9 @@ import { Delete } from "@mui/icons-material";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { LanguageNameMapper } from "../../../../../utils/common";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 import { AppIconButton, AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 type Props<T> = {
@@ -36,9 +37,8 @@ export const AttributeItemRow = <T extends ReqProps>({
   const { formatMessage } = useIntl();
   const [item, setItem] = useState<T>(structuredClone(itemData));
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
-  );
+  const { currentLanguage: selectedUiLanguage } = useAppLang();
+  const currentLanguage = selectedUiLanguage || LANGUAGE.ENGLISH;
   const translatedTitle = item.titles[translationLanguage];
   const currentTitle = item.titles[currentLanguage];
   const [, setError] = useState(false);
@@ -114,7 +114,7 @@ export const AttributeItemRow = <T extends ReqProps>({
 
   return (
     <>
-      <Box className="attribute-row">
+      <Box className={`attribute-row${translationLanguage ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
         <>
           <AppTextField
             name={currentLanguage}

@@ -40,6 +40,8 @@ import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui"
 
 type SelectableLeaveType = EmployeeLeaveTypeBalance & {
   policyType?: 1 | 2 | 3;
+  wfhCombination?: "" | "Mixed" | "WfhHd" | "WfhSl" | "WfhCl";
+  wfhCombinations?: Record<string, string | null | undefined>;
 };
 type Props = {
   edit: boolean;
@@ -180,6 +182,12 @@ export const LeaveApplication = (props: Props) => {
               paid: policy.paid,
               minNoticeDays: 0,
               halfDayAllowed: Boolean(policy.workFromHome?.allowFirstHalf || policy.workFromHome?.allowSecondHalf),
+              wfhCombinations: policy.workFromHome?.allowMixedHalfDayLeave ? {
+                wfhWfo: policy.workFromHome?.wfhWfoAttendanceStatusCode,
+                wfhHd: policy.workFromHome?.wfhHdAttendanceStatusCode,
+                wfhSl: policy.workFromHome?.wfhSlAttendanceStatusCode,
+                wfhCl: policy.workFromHome?.wfhClAttendanceStatusCode,
+              } : undefined,
               weekendInclusive: Boolean(policy.workFromHome?.allowOnWeeklyOff),
               holidayInclusive: Boolean(policy.workFromHome?.allowOnHoliday),
               attendanceStatusCode: policy.attendanceStatusCode,
@@ -327,12 +335,13 @@ export const LeaveApplication = (props: Props) => {
           // Continue to the authoritative server-side validation if context cannot be refreshed.
         }
 
+        const wfhDuration = (values.wfhCombination || undefined) ?? (values.isHalfDay
+          ? values.halfDayPeriod === "SECOND_HALF" ? "SecondHalf" : "FirstHalf"
+          : "FullDay");
         const { data } = await createWorkFromHomeRequest({
           fromDate: dayjs(values.startDate).startOf("day").format("YYYY-MM-DD"),
           toDate: dayjs(values.endDate).startOf("day").format("YYYY-MM-DD"),
-          durationType: values.isHalfDay
-            ? values.halfDayPeriod === "SECOND_HALF" ? "SecondHalf" : "FirstHalf"
-            : "FullDay",
+          durationType: wfhDuration,
           reasonCode: "OTHER",
           reasonText: values.reason.trim(),
         });
@@ -565,6 +574,23 @@ export const LeaveApplication = (props: Props) => {
                       >
                         <MenuItem value="FIRST_HALF">First half</MenuItem>
                         <MenuItem value="SECOND_HALF">Second half</MenuItem>
+                      </AppSelect>
+                    </FormControl>
+                  </Grid>
+                )}
+                {selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId)?.wfhCombinations && (
+                  <Grid size={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="wfh-combination-label">WFH attendance</InputLabel>
+                      <AppSelect labelId="wfh-combination-label" label="WFH attendance" value={selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId)?.wfhCombination ?? ""} onChange={(event) => {
+                        setFieldValue("wfhCombination", event.target.value);
+                        setFieldValue("isHalfDay", false);
+                      }}>
+                        <MenuItem value="">Full-day WFH</MenuItem>
+                        <MenuItem value="Mixed">WFH + WFO</MenuItem>
+                        <MenuItem value="WfhHd">WFH + HD</MenuItem>
+                        <MenuItem value="WfhSl">WFH + SL</MenuItem>
+                        <MenuItem value="WfhCl">WFH + CL</MenuItem>
                       </AppSelect>
                     </FormControl>
                   </Grid>

@@ -107,7 +107,7 @@ export const createMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
 export type WorkFromHomeRequestPayload = {
   fromDate: string;
   toDate: string;
-  durationType: "FullDay" | "FirstHalf" | "SecondHalf" | "Mixed";
+  durationType: "FullDay" | "FirstHalf" | "SecondHalf" | "Mixed" | "WfhHd" | "WfhSl" | "WfhCl";
   reasonCode: string;
   reasonText: string;
 };

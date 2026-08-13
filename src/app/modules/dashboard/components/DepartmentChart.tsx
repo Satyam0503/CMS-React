@@ -49,7 +49,18 @@ export const DepartmentChart: FC = () => {
     >
       {!hasAssignedEmployees ? (
         <Box component="div" className="flex-grow-1 align-content-center text-center ">
-          <Typography variant="h5">{i({ id: departmentList.length === 0 ? "MESSAGE.NO_DEPARTMENTS" : "MESSAGE.NO_DEPARTMENT_EMPLOYEES" })}</Typography>
+          {departmentList.length === 0 ? (
+            <Typography variant="h5">{i({ id: "MESSAGE.NO_DEPARTMENTS" })}</Typography>
+          ) : (
+            <>
+              <Typography variant="h2" color="primary.main" fontWeight={700}>
+                {departmentList.length}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                {i({ id: "TITLES.DEPARTMENT" })}
+              </Typography>
+            </>
+          )}
         </Box>
       ) : (
         <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.length} />

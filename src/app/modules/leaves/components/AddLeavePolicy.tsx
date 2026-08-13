@@ -343,6 +343,18 @@ export default function AddLeavePolicy(props: Props) {
                                 </AppTextField>
                               </Grid>
                             )}
+                            <Grid size={{ xs:12, md:6 }}><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowMixedHalfDayLeave} onChange={e=>setFieldValue("workFromHome.allowMixedHalfDayLeave",e.target.checked)}/>} label="Allow WFH combinations" /></Grid>
+                            {values.workFromHome.allowMixedHalfDayLeave && <>
+                              {[
+                                ["wfhWfoAttendanceStatusCode", "WFH + WFO status"],
+                                ["wfhHdAttendanceStatusCode", "WFH + HD status"],
+                                ["wfhSlAttendanceStatusCode", "WFH + SL status"],
+                                ["wfhClAttendanceStatusCode", "WFH + CL status"],
+                              ].map(([field, label]) => <Grid key={field} size={{ xs:12, md:6 }}><AppTextField select fullWidth label={label} value={values.workFromHome?.[field as keyof typeof values.workFromHome] ?? ""} onChange={e=>setFieldValue(`workFromHome.${field}`, e.target.value)}>
+                                <MenuItem value="">Select attendance status</MenuItem>
+                                {leaveStatuses.filter(x => x.isActive).map(x => <MenuItem key={x.code} value={x.code}>{x.code} — {x.name}</MenuItem>)}
+                              </AppTextField></Grid>)}
+                            </>}
                             <Grid size={12}>
                               <Autocomplete
                                 fullWidth
