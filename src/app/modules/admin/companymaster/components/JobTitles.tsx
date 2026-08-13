@@ -30,9 +30,6 @@ export const JobTitles = () => {
       titles: transformAttributeObjectToList(item.titles),
     }));
     try {
-      // log payload to help debug missing departmentIds
-      // eslint-disable-next-line no-console
-      console.log("AddUpdateJobTitle payload:", payload);
       const { data } = await addUpdateJobTitles(payload);
       if (data.success) {
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
