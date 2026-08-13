@@ -894,6 +894,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Bitte wählen Sie einen Mitarbeiter aus",
     "NO_RESULT": "Kein Ergebnis",
     "NO_DEPARTMENTS": "Bitte fügen Sie Abteilungen hinzu",
+    "NO_DEPARTMENT_EMPLOYEES": "Noch keine Mitarbeiter einer Abteilung zugewiesen",
     "ADD_LANGUAGE_TITLE": "Bitte geben Sie einen Titel für {language} ein",
     "LEAVE_DAYS_CANT_BE_ZERO": "Urlaubstage dürfen nicht 0 sein"
   },

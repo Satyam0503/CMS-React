@@ -892,6 +892,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Veuillez sélectionner un employé",
     "NO_RESULT": "Aucun résultat",
     "NO_DEPARTMENTS": "Veuillez ajouter des départements",
+    "NO_DEPARTMENT_EMPLOYEES": "Aucun employé assigné à un département pour le moment",
     "ADD_LANGUAGE_TITLE": "Veuillez saisir un titre pour {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Les jours de congé ne peuvent pas être 0"
   },

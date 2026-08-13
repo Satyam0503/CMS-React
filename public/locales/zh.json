@@ -917,6 +917,7 @@
     "PLEASE_SELECT_EMPLOYEE": "请选择员工",
     "NO_RESULT": "无结果",
     "NO_DEPARTMENTS": "请添加部门",
+    "NO_DEPARTMENT_EMPLOYEES": "尚未有员工分配到部门",
     "ADD_LANGUAGE_TITLE": "请输入 {language} 的标题",
     "LEAVE_DAYS_CANT_BE_ZERO": "请假天数不能为0"
   },

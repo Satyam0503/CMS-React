@@ -904,6 +904,7 @@
     "PLEASE_SELECT_EMPLOYEE": "従業員を選択してください",
     "NO_RESULT": "結果がありません",
     "NO_DEPARTMENTS": "部署を追加してください",
+    "NO_DEPARTMENT_EMPLOYEES": "まだ部署に割り当てられた従業員がいません",
     "ADD_LANGUAGE_TITLE": "{language} のタイトルを入力してください",
     "LEAVE_DAYS_CANT_BE_ZERO": "休暇日数を0にすることはできません"
   },

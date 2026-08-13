@@ -20,6 +20,10 @@ export const DepartmentChart: FC = () => {
   const defaultLanguage = useAppSelector(
     (state) => state.user.userData?.defaultLanguage ?? ""
   );
+  // A pie series where every department has 0 employees (e.g. a brand-new company whose
+  // only employee has no department yet) renders as one indistinct full ring instead of
+  // a real breakdown, so treat it the same as having no departments to chart.
+  const hasAssignedEmployees = departmentList.some((dep) => dep.employeeCount > 0);
 
   const chartSeries = [
     {
@@ -43,9 +47,9 @@ export const DepartmentChart: FC = () => {
       label={i({ id: "TITLES.DEPARTMENT" })}
       value={departmentList.length}
     >
-      {departmentList.length === 0 ? (
+      {!hasAssignedEmployees ? (
         <Box component="div" className="flex-grow-1 align-content-center text-center ">
-          <Typography variant="h5">{i({ id: "MESSAGE.NO_DEPARTMENTS" })}</Typography>
+          <Typography variant="h5">{i({ id: departmentList.length === 0 ? "MESSAGE.NO_DEPARTMENTS" : "MESSAGE.NO_DEPARTMENT_EMPLOYEES" })}</Typography>
         </Box>
       ) : (
         <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.length} />

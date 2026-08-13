@@ -895,6 +895,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Por favor selecciona un empleado",
     "NO_RESULT": "Sin resultados",
     "NO_DEPARTMENTS": "Por favor agrega departamentos",
+    "NO_DEPARTMENT_EMPLOYEES": "Aún no hay empleados asignados a un departamento",
     "ADD_LANGUAGE_TITLE": "Por favor ingrese un título para {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Los días de licencia no pueden ser 0"
   },

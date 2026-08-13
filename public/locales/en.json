@@ -931,6 +931,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Please select employee",
     "NO_RESULT": "No Result",
     "NO_DEPARTMENTS": "Please add departments",
+    "NO_DEPARTMENT_EMPLOYEES": "No employees assigned to a department yet",
     "ADD_LANGUAGE_TITLE": "Please enter a title for {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Leave days cannot be 0"
   },
