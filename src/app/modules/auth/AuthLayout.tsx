@@ -62,11 +62,8 @@ const AuthLayout = () => {
               component="img"
               src={toAbsoluteUrl("media/logos/favicon.png")}
               alt="CodeJi CMS"
-              sx={{ width: 38, height: 38, objectFit: "contain" }}
+              sx={{ height: 34, width: "auto", objectFit: "contain" }}
             />
-            <Typography variant="h6" fontWeight={800} letterSpacing="-.02em">
-              CodeJi <Box component="span" sx={{ color: "primary.main" }}>CMS</Box>
-            </Typography>
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
             <LightDarkMode />
@@ -113,10 +110,10 @@ const AuthLayout = () => {
                   label="Modern workforce management"
                   sx={{ color: "white", bgcolor: "rgba(255,255,255,.14)", backdropFilter: "blur(8px)", mb: 4 }}
                 />
-                <Typography variant="h2" fontWeight={800} lineHeight={1.08} letterSpacing="-.045em" maxWidth={620}>
+                <Typography variant="h2" fontWeight={800} lineHeight={1.08} letterSpacing="-.045em" maxWidth={620} sx={{ color: "common.white" }}>
                   Everything your team needs to do their best work.
                 </Typography>
-                <Typography variant="h6" fontWeight={400} sx={{ mt: 2.5, opacity: .82, lineHeight: 1.65, maxWidth: 570 }}>
+                <Typography variant="h6" fontWeight={400} sx={{ mt: 2.5, opacity: .82, lineHeight: 1.65, maxWidth: 570, color: "common.white" }}>
                   Bring employee records, attendance, leave, payroll, and hiring into one calm, connected workspace.
                 </Typography>
               </Box>
@@ -127,7 +124,7 @@ const AuthLayout = () => {
                     <Box sx={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 2.5, bgcolor: "rgba(255,255,255,.14)" }}>
                       {benefit.icon}
                     </Box>
-                    <Typography fontWeight={600}>{benefit.label}</Typography>
+                    <Typography fontWeight={600} sx={{ color: "common.white" }}>{benefit.label}</Typography>
                     <CheckCircleRounded sx={{ ml: "auto !important", opacity: .7, fontSize: 20 }} />
                   </Stack>
                 ))}

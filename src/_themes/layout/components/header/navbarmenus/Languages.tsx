@@ -21,7 +21,9 @@ import { AppIconButton } from "../../../../../app/shared/components/ui";
 const Languages = () => {
   const { currentLanguage, changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
-  const appLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage) ?? [currentLanguage];
+  // Unauthenticated pages (login/register) have no company language restriction yet,
+  // so every supported UI language must be selectable there.
+  const appLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage) ?? languages.map((lang) => lang.lang);
   const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

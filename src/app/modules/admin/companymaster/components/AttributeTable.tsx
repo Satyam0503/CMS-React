@@ -14,6 +14,7 @@ import { AttributeItemRow, ReqProps } from "./AttributeItemRow";
 import { languages } from "../../../../../utils/constant/Constant";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../../Redux/hooks";
+import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { Add } from "@mui/icons-material";
 import { AttributeTitleRow } from "./AttributeTitleRow";
 import { v4 as uuidv4 } from "uuid";
@@ -59,6 +60,16 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
   // Translation is opt-in. Rendering an empty second column was misleading and
   // made the language selector appear to have no effect.
   const [translationLang, setTranslationLang] = useState<string>("");
+  const { currentLanguage: selectedUiLanguage } = useAppLang();
+
+  // Keep the second column synced with the language switcher in the header:
+  // switching the app language should show that language's title without an
+  // extra manual pick, while the dropdown below still allows overriding it.
+  useEffect(() => {
+    if (selectedUiLanguage && selectedUiLanguage !== currentLanguage && applicationLanguage.includes(selectedUiLanguage)) {
+      setTranslationLang(selectedUiLanguage);
+    }
+  }, [selectedUiLanguage, currentLanguage, applicationLanguage]);
   const [itemsList, setItemsList] = useState<T[]>([]);
   const [newItemsList, setNewItemsList] = useState<T[]>([]);
   const itemsRef = useRef<T[]>([]);
