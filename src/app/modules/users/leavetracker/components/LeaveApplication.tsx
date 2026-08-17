@@ -582,7 +582,7 @@ export const LeaveApplication = (props: Props) => {
                   <Grid size={12}>
                     <FormControl fullWidth>
                       <InputLabel id="wfh-combination-label">WFH attendance</InputLabel>
-                      <AppSelect labelId="wfh-combination-label" label="WFH attendance" value={selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId)?.wfhCombination ?? ""} onChange={(event) => {
+                      <AppSelect labelId="wfh-combination-label" label="WFH attendance" value={values.wfhCombination ?? ""} onChange={(event) => {
                         setFieldValue("wfhCombination", event.target.value);
                         setFieldValue("isHalfDay", false);
                       }}>

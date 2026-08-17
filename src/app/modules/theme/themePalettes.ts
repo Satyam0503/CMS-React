@@ -15,15 +15,15 @@ export const colors = {
     900: "#173C39",
   },
   secondary: {
-    100: "#FFF3E0",
-    200: "#FFE2B8",
-    300: "#FFD090",
-    400: "#FFBE78",
-    500: "#FEBB68",
-    600: "#E5A359",
-    700: "#CC8C4A",
-    800: "#B3743B",
-    900: "#995D2D",
+    100: "#F1F5F9",
+    200: "#E2E8F0",
+    300: "#CBD5E1",
+    400: "#94A3B8",
+    500: "#64748B",
+    600: "#475569",
+    700: "#334155",
+    800: "#1E293B",
+    900: "#0F172A",
   },
 };
 
@@ -134,12 +134,55 @@ export const lightPalette: ColorSystemOptions = {
   },
 };
 
+// Dawn uses clear lavender as its main accent and rose as its secondary color.
+export const dawnLightPalette: ColorSystemOptions = {
+  ...lightPalette,
+  palette: {
+    ...lightPalette.palette,
+    primary: {
+      lighter: "#EDE1F3",
+      light: "#C9A7D4",
+      main: "#87518E",
+      dark: "#673B70",
+      darker: "#4D2857",
+    },
+    secondary: {
+      lighter: "#FDE5EE",
+      light: "#F1ADC5",
+      main: "#D56892",
+      dark: "#AC426D",
+      darker: "#7D264B",
+    },
+  },
+};
+
+export const dawnDarkPalette: ColorSystemOptions = {
+  ...darkPalette,
+  palette: {
+    ...darkPalette.palette,
+    primary: {
+      lighter: "#E9D7ED",
+      light: "#CFA8D5",
+      main: "#B77DB8",
+      dark: "#8E5A90",
+      darker: "#6B426D",
+    },
+    secondary: {
+      lighter: "#F9D9E4",
+      light: "#EEA9BE",
+      main: "#E38BA8",
+      dark: "#B75D7A",
+      darker: "#893C57",
+    },
+  },
+};
+
 // chart palette
 
 const chartColorpalette: { [key: string]: string[] } = {
   light: [
     "#2F7D78", // muted teal
-    "#D49A45", // warm amber
+    "#718096", // steel blue-grey
     "#6B7280", // slate
     "#C56C5C", // soft terracotta
     "#7E8F4F", // olive
@@ -149,7 +192,7 @@ const chartColorpalette: { [key: string]: string[] } = {
   ],
   dark: [
     "#5ED0C6", // teal
-    "#F0B35B", // amber
+    "#A8B8C8", // light steel blue-grey
     "#A8B1C1", // slate
     "#E58B78", // terracotta
     "#A8C46B", // olive
@@ -159,11 +202,16 @@ const chartColorpalette: { [key: string]: string[] } = {
   ],
 };
 
+const dawnChartColorPalette: { [key: string]: string[] } = {
+  light: ["#9B669C", "#D7839C", "#6B7280", "#B56A68", "#7E8F4F", "#B87A9C", "#657A9B", "#9A7A53"],
+  dark: ["#B77DB8", "#E38BA8", "#A8B1C1", "#E58B78", "#A8C46B", "#D19ABC", "#91AACD", "#C8A57A"],
+};
+
 export const getChartPalette = (
   mode: "light" | "dark" | "system" | undefined,
-  systemMode: "light" | "dark" | undefined
+  systemMode: "light" | "dark" | undefined,
+  appStyle?: string
 ) => {
-  if (systemMode) return chartColorpalette[systemMode];
-  else if (mode) return chartColorpalette[mode];
-  else return chartColorpalette["light"];
+  const resolvedMode = systemMode ?? (mode === "dark" ? "dark" : "light");
+  return (appStyle === "dawn" ? dawnChartColorPalette : chartColorpalette)[resolvedMode];
 };

@@ -1,4 +1,6 @@
 import {
+  SxProps,
+  Theme,
   Tooltip,
 } from "@mui/material";
 import React from "react";
@@ -15,6 +17,8 @@ type Props = {
   permission?: boolean;
   ariaLabel?: string;
   classNames?: string;
+  sx?: SxProps<Theme>;
+  toolbar?: boolean;
 };
 
 export const CustomIconButton = (props: Props) => {
@@ -28,7 +32,9 @@ export const CustomIconButton = (props: Props) => {
     disabled = false,
     permission = true,
     ariaLabel = "button",
-    classNames
+    classNames,
+    sx,
+    toolbar = false,
   } = props;
 
   return (
@@ -48,7 +54,22 @@ export const CustomIconButton = (props: Props) => {
               width: "32px", height: "32px", bgcolor: "transparent",
               "& .MuiSvgIcon-root": {
                 fontSize: 20,
-              }
+              },
+              ...(toolbar
+                ? {
+                    width: 40,
+                    height: 40,
+                    minWidth: 40,
+                    borderRadius: 1.75,
+                    bgcolor: "background.paper",
+                    border: "1px solid",
+                    borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)",
+                    "&:hover": {
+                      bgcolor: "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+                    },
+                  }
+                : {}),
+              ...sx,
             }}
           >
             {icon}

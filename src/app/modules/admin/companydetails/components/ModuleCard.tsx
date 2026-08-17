@@ -65,46 +65,57 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               </Typography>
             </Stack>
 
-            <AppButton
-              size="small"
-              onClick={handleChange}
-              disabled={isDisabled}
-              startIcon={isInstalled ? <DeleteOutlineIcon /> : <AddIcon />}
-              color={isInstalled ? "error" : "success"}
-              variant={isInstalled ? "outlined" : "contained"}
-              sx={{
-                minWidth: 36,
-                px: 1,
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                transition: "all 0.25s ease",
-                "& .MuiButton-startIcon": {
-                  mr: isInstalled ? 0.4 : 0,
-                  transition: "margin 0.25s ease",
-                },
-                "& .label": {
-                  maxWidth: 0,
-                  opacity: 0,
-                  transition: "all 0.45s ease",
-                },
-                "&:hover .label": {
-                  maxWidth: 120,
-                  opacity: 1,
-                  ml: 0.5,
-                },
-                "&:hover": {
-                  px: 2,
-                },
-              }}
-            >
-              <span className="label">
-                {formatMessage({
-                  id: isInstalled
-                    ? "COMPANY_DETAILS.REMOVE_PLUGIN"
-                    : "COMPANY_DETAILS.INSTALL_PLUGIN",
-                })}
+            <Tooltip title={isHardDisabled ? "This core module cannot be removed." : disabled ? "You do not have permission to change this module." : isInstalled ? formatMessage({ id: "COMPANY_DETAILS.REMOVE_PLUGIN" }) : formatMessage({ id: "COMPANY_DETAILS.INSTALL_PLUGIN" })}>
+              <span>
+                <AppButton
+                  size="small"
+                  onClick={handleChange}
+                  disabled={isDisabled}
+                  startIcon={isInstalled ? <DeleteOutlineIcon /> : <AddIcon />}
+                  color={isInstalled ? "error" : "success"}
+                  variant={isInstalled ? "outlined" : "contained"}
+                  sx={{
+                    minWidth: 36,
+                    px: 1,
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.25s ease",
+                    "& .MuiButton-startIcon": {
+                      mr: isInstalled ? 0.4 : 0,
+                      transition: "margin 0.25s ease",
+                    },
+                    "& .label": {
+                      maxWidth: 0,
+                      opacity: 0,
+                      transition: "all 0.45s ease",
+                    },
+                    "&:hover .label": {
+                      maxWidth: 120,
+                      opacity: 1,
+                      ml: 0.5,
+                    },
+                    "&:hover": {
+                      px: 2,
+                    },
+                    "&.Mui-disabled": {
+                      color: isInstalled ? "error.main" : "success.main",
+                      borderColor: isInstalled ? "error.main" : "success.main",
+                      backgroundColor: "transparent",
+                      opacity: 0.7,
+                    },
+                    "&.Mui-disabled .MuiButton-startIcon": { color: "inherit" },
+                  }}
+                >
+                  <span className="label">
+                    {formatMessage({
+                      id: isInstalled
+                        ? "COMPANY_DETAILS.REMOVE_PLUGIN"
+                        : "COMPANY_DETAILS.INSTALL_PLUGIN",
+                    })}
+                  </span>
+                </AppButton>
               </span>
-            </AppButton>
+            </Tooltip>
           </Stack>
           {descriptionMessageId && (
             <Typography

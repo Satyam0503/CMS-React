@@ -73,11 +73,12 @@ export const LeaveRequestSummaryChart = () => {
         display: "flex",
         flexDirection: "column",
         flex: 1,
-        minHeight: 0,
+        minWidth: 0,
+        minHeight: { xs: 260, sm: 300 },
         p: 2,
       }}
     >
-      <Stack className="mb-2 gap-2 flex-row align-items-center">
+      <Stack direction="row" flexWrap="wrap" className="mb-2 gap-2 align-items-center">
         <Typography className="fw-bold fs-16">
           {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
         </Typography>

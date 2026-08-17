@@ -152,6 +152,16 @@ const attendanceStatusOptions: Array<{
     label: "WFH with Half Day",
     colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
   },
+  {
+    value: "WFH+SL",
+    label: "Work From Home + Sick Leave",
+    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
+  },
+  {
+    value: "WFH+CL",
+    label: "Work From Home + Casual Leave",
+    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
+  },
 ];
 
 const attendanceStatusLabels = Object.fromEntries(
@@ -166,7 +176,15 @@ const statusesWithTimes = new Set<AttendanceStatus>([
   "LHD",
   "WFH+WFO",
   "WFH-HD",
+  "WFH+SL",
+  "WFH+CL",
 ]);
+
+// Keep the normal attendance editor aligned with the exception correction flow.
+// Users can select a common time quickly, while exact HH:MM values remain supported.
+const checkInTimePresets = ["09:00", "09:30", "10:00", "10:30"];
+const checkOutTimePresets = ["17:00", "17:30", "18:00", "18:30", "19:00"];
+const formatTimePreset = (value: string) => dayjs(`2000-01-01T${value}`).format("h:mm A");
 
 // Unpaid leave is assigned by the leave workflow and reconciles as an unpaid
 // absence. It must not be selectable while an admin is manually marking a day.
@@ -750,7 +768,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           leave++;
           if (employeeName) members.Leave.add(employeeName);
         }
-        if (["WFH", "WFH+WFO", "WFH-HD"].includes(item.status)) {
+        if (["WFH", "WFH+WFO", "WFH-HD", "WFH+SL", "WFH+CL"].includes(item.status)) {
           wfh++;
           if (employeeName) members.WFH.add(employeeName);
         }
@@ -1893,34 +1911,46 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 statusesWithTimes.has(modalData.status)) && (
                 <>
                   {modalData.status !== "ED" && (
-                    <AppTextField
-                      label="Check-in Time"
-                      type="time"
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                      value={modalData.checkIn}
-                      onChange={(e) =>
-                        setModalData((prev) => ({
-                          ...prev,
-                          checkIn: e.target.value,
-                        }))
-                      }
-                    />
+                    <Stack spacing={0.75}>
+                      <AppTextField
+                        label="Check-in Time"
+                        fullWidth
+                        value={modalData.checkIn}
+                        placeholder="HH:MM (for example, 09:00)"
+                        inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                        onChange={(e) =>
+                          setModalData((prev) => ({ ...prev, checkIn: e.target.value }))
+                        }
+                      />
+                      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                        {checkInTimePresets.map((time) => (
+                          <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkIn: time }))}>
+                            {formatTimePreset(time)}
+                          </AppButton>
+                        ))}
+                      </Stack>
+                    </Stack>
                   )}
                   {modalData.status !== "LHD" && (
-                    <AppTextField
-                      label="Check-out Time"
-                      type="time"
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                      value={modalData.checkOut}
-                      onChange={(e) =>
-                        setModalData((prev) => ({
-                          ...prev,
-                          checkOut: e.target.value,
-                        }))
-                      }
-                    />
+                    <Stack spacing={0.75}>
+                      <AppTextField
+                        label="Check-out Time"
+                        fullWidth
+                        value={modalData.checkOut}
+                        placeholder="HH:MM (for example, 18:00)"
+                        inputProps={{ inputMode: "numeric", maxLength: 5 }}
+                        onChange={(e) =>
+                          setModalData((prev) => ({ ...prev, checkOut: e.target.value }))
+                        }
+                      />
+                      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                        {checkOutTimePresets.map((time) => (
+                          <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkOut: time }))}>
+                            {formatTimePreset(time)}
+                          </AppButton>
+                        ))}
+                      </Stack>
+                    </Stack>
                   )}
                 </>
               )}

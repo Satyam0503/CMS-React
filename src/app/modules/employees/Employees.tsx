@@ -359,6 +359,31 @@ const Employees = () => {
   }, []);
 
   const pageHeaderActionsTarget = document.getElementById("page-header-actions");
+  const toolbarIconSx = {
+    width: 38,
+    height: 38,
+    borderRadius: 2,
+    border: "1px solid",
+    borderColor: "divider",
+    bgcolor: "background.paper",
+    color: "primary.main",
+    "&:hover": {
+      bgcolor: "action.hover",
+      borderColor: "primary.main",
+      color: "primary.dark",
+    },
+  };
+  const primaryToolbarIconSx = {
+    ...toolbarIconSx,
+    bgcolor: "primary.main",
+    borderColor: "primary.main",
+    color: "primary.contrastText",
+    "&:hover": {
+      bgcolor: "primary.dark",
+      borderColor: "primary.dark",
+      color: "primary.contrastText",
+    },
+  };
 
   return (
     <>
@@ -375,7 +400,6 @@ const Employees = () => {
               width: { xs: "100%", md: "auto" },
               columnGap: 1,
               rowGap: 1,
-              "& .MuiIconButton-root": { width: 38, height: 38 },
             }}
           >
             <Stack
@@ -415,14 +439,19 @@ const Employees = () => {
                 <ToggleButton value="grid" aria-label="grid"><GridView className="fs-20" /></ToggleButton>
               </ToggleButtonGroup>
               <Badge badgeContent={totalAppliedFilter} anchorOrigin={{ horizontal: "left", vertical: "top" }} color="primary">
-                <CustomIconButton icon={<FilterList />} ariaLabel="Filter Employee" handleClick={handleFilterClick} />
+                <CustomIconButton
+                  icon={<FilterList />}
+                  ariaLabel="Filter Employee"
+                  handleClick={handleFilterClick}
+                  sx={totalAppliedFilter > 0 ? primaryToolbarIconSx : toolbarIconSx}
+                />
               </Badge>
             </Stack>
             {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
               <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap" sx={{ width: { xs: "100%", md: "auto" } }}>
-                <AppButton variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Import</AppButton>
-                <AppButton variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Export</AppButton>
-                <CustomIconButton icon={<Add />} handleClick={() => setShowAddEmployeeStepper(true)} tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })} ariaLabel="Add employee" />
+                <AppButton variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Import</AppButton>
+                <AppButton variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Export</AppButton>
+                <CustomIconButton icon={<Add />} handleClick={() => setShowAddEmployeeStepper(true)} tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })} ariaLabel="Add employee" sx={primaryToolbarIconSx} />
               </Stack>
             )}
           </Stack>,
@@ -437,9 +466,12 @@ const Employees = () => {
           borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",
-          backgroundImage:
-            "linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent), transparent 32%)",
-          boxShadow: "0 18px 45px rgba(0, 0, 0, 0.12)",
+          backgroundColor: "background.paper",
+          backgroundImage: "none",
+          // The page already has a defined card border. A large fixed shadow
+          // made the entire employee list look like it was floating, especially
+          // in the light Dawn theme.
+          boxShadow: "none",
           overflow: "visible",
         }}
       >
@@ -456,6 +488,18 @@ const Employees = () => {
               pageSize: paginationValues.records,
             }}
             handlePaginationModelChange={handlePaginationModelChange}
+            sx={{
+              backgroundColor: "background.paper",
+              backgroundImage: "none",
+              "& .MuiDataGrid-main, & .MuiDataGrid-virtualScroller, & .MuiDataGrid-row, & .MuiDataGrid-cell, & .MuiDataGrid-footerContainer": {
+                backgroundColor: "background.paper",
+                backgroundImage: "none",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "background.paper",
+                backgroundImage: "none",
+              },
+            }}
           />
         ) : (
           <EmployeeGridView

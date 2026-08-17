@@ -8,9 +8,8 @@ import { AppIconButton } from "../../../../../app/shared/components/ui";
 
 const SWATCH_BG: Record<AppStyle, string> = {
   glass: "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
-  aurora: "linear-gradient(135deg, #0f766e 0%, #2f7d78 100%)",
   slate: "linear-gradient(135deg, #f8fafc 0%, #dce4ed 55%, #cbd5e1 100%)",
-  minimal: "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+  dawn: "linear-gradient(118deg, #ddc6eb 0%, #faf7fc 48%, #f9d7e5 100%)",
 };
 
 const AppStylePicker: FC = () => {

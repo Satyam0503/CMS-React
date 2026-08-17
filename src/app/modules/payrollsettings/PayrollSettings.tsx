@@ -222,8 +222,8 @@ export default function PayrollSettings() {
   return (
     <>
       <Card sx={{ p: { xs: 2, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)" }}>
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(260px, 1fr) auto" }, gap: 1.5, alignItems: "end", mb: 2.5, p: { xs: 1.25, sm: 1.5 }, borderRadius: 2.5, bgcolor: "action.hover" }}>
-          <Box sx={{ width: "100%", minWidth: 0 }}>
+        <Box sx={{ display: "flex", flexWrap: { xs: "wrap", lg: "nowrap" }, gap: 1.5, alignItems: "end", mb: 2.5, p: { xs: 1.25, sm: 1.5 }, borderRadius: 2.5, bgcolor: "action.hover" }}>
+          <Box sx={{ width: { xs: "100%", sm: "auto" }, minWidth: 0 }}>
             <SearchInput search={search} setSearch={handleSearchChange} />
           </Box>
           {hasProcessPermission && (

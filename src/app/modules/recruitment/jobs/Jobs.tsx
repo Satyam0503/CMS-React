@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { SearchInput } from "../../../shared/components/SearchInput";
+import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
 import {
   addJobVacancy,
   deleteJobVacancy,
@@ -394,11 +395,13 @@ export default function Jobs() {
 
   return (
     <Card sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)", minWidth: 0, overflow: "hidden" }}>
-      <Box sx={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) auto", gap: 1, alignItems: "center", p: { xs: 1, sm: 1.5 }, mb: 1.75, borderRadius: 2.5, bgcolor: "action.hover" }}>
-        <Box sx={{ minWidth: 0, width: "100%", "& .MuiTextField-root": { width: "100%" } }}>
+      <ResponsiveTableToolbar
+        search={
+          <Box sx={{ minWidth: 0 }}>
           <SearchInput search={search} setSearch={handleSearchChange} />
-        </Box>
-        <Stack direction="row" spacing={0.75} sx={{ justifyContent: "flex-end", "& button": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)", "&:hover": { bgcolor: "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)" } } }}>
+          </Box>
+        }
+        actions={<Stack direction="row" spacing={0.75} sx={{ "& button": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)", "&:hover": { bgcolor: "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)" } } }}>
           <Badge
             anchorOrigin={{
               horizontal: "left",
@@ -412,6 +415,7 @@ export default function Jobs() {
               ariaLabel="job filter"
               tooltip="Filter jobs"
               handleClick={handleFilterClick}
+              toolbar
             />
           </Badge>
           {hasAddPermission && (
@@ -420,10 +424,11 @@ export default function Jobs() {
               tooltip="Add job"
               ariaLabel="Add job"
               handleClick={() => setOpenModal(true)}
+              toolbar
             />
           )}
-        </Stack>
-      </Box>
+        </Stack>}
+      />
       <Suspense fallback={null}>
         <CustomDataGrid
           keyName="jobId"

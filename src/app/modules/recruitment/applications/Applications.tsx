@@ -2,6 +2,7 @@ import { Badge, Box, Card, Stack, Tooltip, useMediaQuery } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
+import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
 import { AddApplicant } from "./components/AddApplicant";
 import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
@@ -302,22 +303,10 @@ export const Applications = () => {
           overflow: "hidden",
         }}
       >
-        <Stack
-          direction="row"
-          sx={{
-            gap: 1,
-            alignItems: "center",
-            p: { xs: 1, sm: 1.5 },
-            borderRadius: 2.5,
-            bgcolor: "action.hover",
-          }}
-        >
-          <Box
+        <ResponsiveTableToolbar
+          search={<Box
             sx={{
-              flex: "1 1 auto",
               minWidth: 0,
-              order: 1,
-              "& .MuiFormControl-root": { width: "100%" },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2.5,
                 bgcolor: "action.hover",
@@ -330,15 +319,11 @@ export const Applications = () => {
             }}
           >
             <SearchInput search={search} setSearch={handleSearchChange} />
-          </Box>
-
-          <Stack
+          </Box>}
+          actions={<Stack
             direction="row"
             spacing={1}
             sx={{
-              flexShrink: 0,
-              order: 2,
-              justifyContent: "flex-end",
               "& button": {
                 width: 40,
                 height: 40,
@@ -361,6 +346,7 @@ export const Applications = () => {
                 ariaLabel="Filter Application"
                 tooltip="Filter applications"
                 handleClick={handleFilterClick}
+                toolbar
               />
             </Badge>
             {userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`) && (
@@ -369,18 +355,19 @@ export const Applications = () => {
                 ariaLabel="Add application"
                 tooltip="Add application"
                 handleClick={() => setAddModalOpen(true)}
+                toolbar
               />
             )}
-          </Stack>
-          {open && (
-            <ApplicationFilter
-              open={open}
-              id={id}
-              anchorEl={anchorEl}
-              handleClose={() => setAnchorEl(null)}
-            />
-          )}
-        </Stack>
+          </Stack>}
+        />
+        {open && (
+          <ApplicationFilter
+            open={open}
+            id={id}
+            anchorEl={anchorEl}
+            handleClose={() => setAnchorEl(null)}
+          />
+        )}
 
         <Suspense fallback={null}>
           <CustomDataGrid

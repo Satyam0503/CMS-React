@@ -123,7 +123,7 @@ export const LeaveRequest = () => {
     setRefresh(!refresh);
   };
   return (
-    <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
+    <Card className="d-flex flex-column flex-grow-1" sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, gap: { xs: 2, md: 2.5 }, minWidth: 0, overflow: "hidden" }}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
@@ -138,12 +138,13 @@ export const LeaveRequest = () => {
             Icon={<Add />}
             label={i({ id: "LEAVE.CREATE_FOR_EMPLOYEE", defaultMessage: "Create Leave for Employee" })}
             handleClick={() => setShowCreateLeave(true)}
+            sx={{ width: { xs: "100%", sm: "auto" }, whiteSpace: "nowrap" }}
           />
         )}
       </Stack>
       <LeaveRequestFilter />
       <Divider className="mt-2" />
-      <TableContainer className="mb-2 h-100">
+      <TableContainer sx={{ mb: 0.5, width: "100%", overflowX: "auto", overflowY: "hidden", "&::-webkit-scrollbar": { height: 6 } }}>
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
             <TableRow>

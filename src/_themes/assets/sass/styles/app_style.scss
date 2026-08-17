@@ -492,18 +492,27 @@ button:hover .ql-fill,
 }
 
 .dashboard-modern {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   padding-bottom: 2rem;
+  background:
+    radial-gradient(circle at 8% 4%, color-mix(in srgb, var(--mui-palette-primary-light) 22%, transparent), transparent 28%),
+    radial-gradient(circle at 92% 20%, color-mix(in srgb, var(--mui-palette-secondary-light) 22%, transparent), transparent 30%),
+    linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-background-paper) 56%, transparent), color-mix(in srgb, var(--mui-palette-primary-lighter) 22%, transparent));
+  border-radius: 24px;
 
   .dashboard-side-column { gap: 1.5rem; }
 
   .MuiCard-root {
     position: relative;
-    border: 1px solid var(--mui-palette-divider);
+    border: 1px solid color-mix(in srgb, white 54%, var(--mui-palette-divider));
     border-radius: 16px;
+    background-color: color-mix(in srgb, var(--mui-palette-background-paper) 72%, transparent);
     background-image: linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent), transparent 40%);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    backdrop-filter: blur(18px) saturate(135%);
     transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
 
     &::after {
@@ -549,7 +558,9 @@ button:hover .ql-fill,
   border-radius: 18px;
   background:
     radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--mui-palette-secondary-main) 16%, transparent), transparent 30%),
-    linear-gradient(125deg, color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent), transparent 55%);
+    linear-gradient(125deg, color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent), color-mix(in srgb, var(--mui-palette-background-paper) 68%, transparent) 55%);
+  box-shadow: 0 16px 36px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
   overflow: hidden;
 
   &::before {
@@ -649,7 +660,12 @@ button:hover .ql-fill,
     border-radius: 16px;
     background: linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-warning-main) 18%, transparent), color-mix(in srgb, var(--mui-palette-secondary-main) 8%, transparent));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
-    img { width: 100%; height: 100%; object-fit: contain; }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(1) sepia(0.25) hue-rotate(235deg) saturate(0.8);
+    }
   }
 }
 
@@ -1677,6 +1693,33 @@ input[type="password"]::-ms-clear {
     gap: 0.75rem;
     margin-top: 1.25rem;
   }
+
+  @media (max-width: 599px) {
+    gap: 0.75rem;
+
+    .policy-modal-section {
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .policy-form-actions {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .tab-container {
+    scrollbar-width: thin;
+    padding: 0.35rem;
+
+    & .tab-box {
+      flex: 0 0 auto;
+      min-width: 164px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
 }
 
 //Policies Page Styles
@@ -1792,7 +1835,10 @@ input[type="password"]::-ms-clear {
     transition: box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
 
     &.Mui-focused {
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent);
+      // MUI's focused fieldset is the single focus indicator for inputs.
+      // A second shadow on the root creates a distracting double outline,
+      // particularly for compact search and autocomplete controls.
+      box-shadow: none;
     }
   }
 

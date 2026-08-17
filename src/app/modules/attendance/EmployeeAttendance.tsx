@@ -348,22 +348,22 @@ const EmployeeAttendance = () => {
           <Typography variant="h6" sx={{ mb: 2, textAlign: "center", fontWeight: 800 }}>
             {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
           </Typography>
-          <Grid container spacing={1.5} alignItems="end" sx={{ mb: 2.5 }}>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Box sx={{ width: { xs: "100%", md: 230 } }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} />
+          <Grid container spacing={{ xs: 1.25, sm: 1.5 }} alignItems="end" sx={{ mb: 2.5 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ minWidth: 0 }}>
+              <Box sx={{ width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none" }} />
               <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
                 {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
               </Typography></Box>
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Stack direction="row" alignItems="center" justifyContent="center" spacing={0.5} sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5, maxWidth: 270, mx: "auto" }}>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month"><KeyboardArrowLeft /></Button>
-                <Typography fontWeight={800} sx={{ minWidth: 120, textAlign: "center" }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month"><KeyboardArrowRight /></Button>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ minWidth: 0 }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", minHeight: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
+                <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowLeft /></Button>
+                <Typography fontWeight={800} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5 }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
+                <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowRight /></Button>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent={{ md: "flex-end" }} gap={1.25}>
+            <Grid size={{ xs: 12, md: 4, lg: 6 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent={{ lg: "flex-end" }} gap={1.25}>
                 <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 190 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
                 {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
               </Stack>

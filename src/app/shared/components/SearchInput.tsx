@@ -1,5 +1,8 @@
 import {
+  Box,
   InputAdornment,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import { Close, Search } from "@mui/icons-material";
 import { FC, memo, useEffect, useState } from "react";
@@ -11,10 +14,11 @@ type PropsType = {
   search: string;
   setSearch: (value: string) => void;
   placeholder?: string;
+  sx?: SxProps<Theme>;
 };
 
 export const SearchInput: FC<PropsType> = memo(
-  ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH" }) => {
+  ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH", sx }) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
     const { formatMessage: i } = useIntl();
@@ -30,7 +34,15 @@ export const SearchInput: FC<PropsType> = memo(
     };
 
     return (
-      <>
+      <Box
+        sx={[
+          {
+            width: { xs: "100%", sm: "clamp(240px, 32vw, 420px)" },
+            flexShrink: 0,
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+      >
         <AppTextField
           variant="outlined"
           value={value}
@@ -54,7 +66,7 @@ export const SearchInput: FC<PropsType> = memo(
             }
           }}
         />
-      </>
+      </Box>
     );
   }
 );

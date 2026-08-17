@@ -64,7 +64,7 @@ const UserProfile = () => {
 
   return (
     <UserDetailsProvider>
-      <Grid container spacing={{ xs: 2, lg: 3 }} className="flex-grow-1" sx={{ maxWidth: 1440, width: "100%", mx: "auto", pb: 4, position: "relative", isolation: "isolate", "&::before": { content: '""', position: "absolute", zIndex: -1, width: 280, height: 280, borderRadius: "50%", top: -80, right: 20, bgcolor: "primary.main", opacity: .06, filter: "blur(4px)" }, "&::after": { content: '""', position: "absolute", zIndex: -1, width: 220, height: 220, borderRadius: "50%", bottom: 60, left: 180, bgcolor: "secondary.main", opacity: .05, filter: "blur(8px)" } }}>
+      <Grid container spacing={{ xs: 2, lg: 3 }} className="flex-grow-1" sx={{ width: "100%", minWidth: 0, pb: 4, position: "relative", isolation: "isolate", "&::before": { content: '""', position: "absolute", zIndex: -1, width: 280, height: 280, borderRadius: "50%", top: -80, right: 20, bgcolor: "primary.main", opacity: .06, filter: "blur(4px)" }, "&::after": { content: '""', position: "absolute", zIndex: -1, width: 220, height: 220, borderRadius: "50%", bottom: 60, left: 180, bgcolor: "secondary.main", opacity: .05, filter: "blur(8px)" } }}>
         <Grid
           size={{
             xs: 12,
@@ -105,6 +105,7 @@ const UserProfile = () => {
         </Grid>
         <Grid
           className="d-flex flex-column gap-4"
+          sx={{ minWidth: 0 }}
           size={{
             xs: 12,
             md: 12,

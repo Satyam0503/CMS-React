@@ -138,14 +138,22 @@ export const EmployeesLeaveBalance = () => {
     <>
       <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
         <Stack
-          direction={"row"}
-          sx={{ width: "100%", justifyContent: "space-between", gap: "15px" }}
+          direction={{ xs: "column", sm: "row" }}
+          alignItems={{ xs: "stretch", sm: "center" }}
+          sx={{ width: "100%", justifyContent: "space-between", gap: 1.25 }}
         >
           <AppTextField
             id="outlined-search"
             variant="outlined"
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
             size="small"
+            sx={{
+              // This is a local employee filter, not a page-wide search. Keep
+              // it compact on desktop and let it use the available width on
+              // phones where a short field would be difficult to use.
+              width: { xs: "100%", sm: "clamp(240px, 34vw, 420px)" },
+              flex: "0 1 auto",
+            }}
             onChange={(e) => {
               setSearch(e.target.value);
               setPageNo(0);

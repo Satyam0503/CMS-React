@@ -1,6 +1,6 @@
-import { Badge, Card, Stack, Typography } from "@mui/material";
+import { Badge, Card } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CommentResponseModel,
   ProcessLogFilterModel,
@@ -8,6 +8,7 @@ import {
 } from "../models";
 import { getProcessLogData } from "../services";
 import { SearchInput } from "../../../shared/components/SearchInput";
+import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
 import { CustomisedTable } from "../../../shared/components/C_Table";
 import { ModulesName } from "../../../../utils/enums";
 import { ProcessLogTableColumnList } from "../../../../utils/constant/Constant";
@@ -108,12 +109,9 @@ const ProcessLogs = () => {
 
   return (
     <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-      <Stack
-        direction="row"
-        className="align-items-center justify-content-between"
-      >
-        <SearchInput search={searchValue} setSearch={handleSearchChange} />
-        <Badge
+      <ResponsiveTableToolbar
+        search={<SearchInput search={searchValue} setSearch={handleSearchChange} />}
+        actions={<Badge
           badgeContent={totalAppliedFilters}
           anchorOrigin={{ horizontal: "left", vertical: "top" }}
           color="primary"
@@ -121,16 +119,17 @@ const ProcessLogs = () => {
           <CustomIconButton
             icon={<FilterList />}
             handleClick={handleFilterClick}
+            toolbar
           />
-        </Badge>
-        {open && (
-          <ProcessLogFilter
-            open={open}
-            handleClose={handleCloseFilter}
-            anchorEl={anchorEl}
-          />
-        )}
-      </Stack>
+        </Badge>}
+      />
+      {open && (
+        <ProcessLogFilter
+          open={open}
+          handleClose={handleCloseFilter}
+          anchorEl={anchorEl}
+        />
+      )}
 
       <CustomisedTable
         tabName={ModulesName.ProcessLog}

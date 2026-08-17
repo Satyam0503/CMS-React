@@ -26,6 +26,8 @@ const defaultStatuses: AttendanceStatusSetting[] = [
   ["WFH+WFO", "Half WFH and Half WFO", true, 1, 0], ["COMP-OFF", "Compensatory Off", false, 1, 0],
   ["CL-HALF", "Casual Leave (Half Day)", false, 1, 0], ["SL-HALF", "Sick Leave (Half Day)", false, 1, 0],
   ["WFH-HD", "WFH with Half Day", true, .5, .5],
+  ["WFH+SL", "Work From Home + Sick Leave", true, 1, 0],
+  ["WFH+CL", "Work From Home + Casual Leave", true, 1, 0],
 ].map(([code, name, requiresTime, paid, unpaid], index) => ({
   code: code as string, name: name as string, requiresTime: requiresTime as boolean,
   paidDayFraction: paid as number, unpaidDayFraction: unpaid as number,

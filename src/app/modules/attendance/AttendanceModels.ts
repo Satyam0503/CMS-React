@@ -13,6 +13,8 @@ export type AttendanceStatus =
   | "CL-HALF"
   | "SL-HALF"
   | "WFH-HD"
+  | "WFH+SL"
+  | "WFH+CL"
   | "L";
 
 export interface AttendancePayload {

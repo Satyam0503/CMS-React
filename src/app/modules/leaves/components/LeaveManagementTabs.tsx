@@ -45,7 +45,7 @@ export const LeaveManagementTabs = () => {
     const navigate = useNavigate();
     return (
         <Stack spacing={1} className="flex-grow-1">
-            <Card className="tab-container d-flex flex-row">
+            <Card className="tab-container d-flex flex-row" sx={{ minWidth: 0 }}>
                 {tabsRoutes.map((tab) => {
                     return (
                         <Box

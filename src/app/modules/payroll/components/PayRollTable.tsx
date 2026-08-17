@@ -178,14 +178,32 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
 
   return (
     <>
-      <TableContainer className="flex-grow-1">
-        <Table sx={{ minWidth: 1200 }}>
+      <TableContainer
+        className="flex-grow-1"
+        sx={{
+          width: "100%",
+          minWidth: 0,
+          overflowX: "auto",
+          overflowY: "hidden",
+          touchAction: "pan-x",
+          "&::-webkit-scrollbar": { height: 7 },
+        }}
+      >
+        <Table sx={{ minWidth: { xs: 1200, lg: 1440 } }}>
           <TableHead>
             <TableRow>
               {columns.map((col) => (
                 <TableCell
                   id={col.id}
-                  sx={{ minWidth: col.minWidth }}
+                  sx={{
+                    minWidth: col.minWidth,
+                    ...(col.id === "actions" ? {
+                      position: "sticky",
+                      left: 0,
+                      zIndex: 3,
+                      bgcolor: "background.paper",
+                    } : {}),
+                  }}
                   align={col.align}
                   key={col.id}
                 >
@@ -237,7 +255,11 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                       const hasPayRoll = Boolean(row.payData.payRollId);
                       const isProcessed = Boolean(row.payData.isProcessed);
                       return (
-                        <TableCell key={column.id} className="pe-auto">
+                        <TableCell
+                          key={column.id}
+                          className="pe-auto"
+                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper" }}
+                        >
                           {hasPayRoll && !isProcessed ? (
                             <Typography variant="caption" color="warning.main" fontWeight={700}>Draft</Typography>
                           ) : (
@@ -283,7 +305,21 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
           setRowsPerPage(Number(event.target.value));
           setPage(0);
         }}
-        sx={{ borderTop: 1, borderColor: "divider", mt: 1 }}
+        sx={{
+          borderTop: 1,
+          borderColor: "divider",
+          mt: 1,
+          overflowX: "auto",
+          "& .MuiTablePagination-toolbar": {
+            minHeight: 48,
+            px: { xs: 0, sm: 1 },
+            flexWrap: "wrap",
+            justifyContent: { xs: "flex-end", sm: "initial" },
+            gap: { xs: 0.5, sm: 0 },
+          },
+          "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 } },
+        }}
       />
       {
         previewUrl &&

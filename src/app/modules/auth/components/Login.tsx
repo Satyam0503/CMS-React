@@ -9,6 +9,8 @@ import {
   InputAdornment,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/C_Button";
@@ -42,6 +44,7 @@ const initialValues = {
 
 export function Login() {
   const { formatMessage: i } = useIntl();
+  const theme = useTheme();
   const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -56,7 +59,7 @@ export function Login() {
       "&:hover": { bgcolor: "action.selected" },
       "&.Mui-focused": {
         bgcolor: "background.paper",
-        boxShadow: "0 0 0 4px rgba(151, 71, 215, .1)",
+        boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, .12)}`,
       },
     },
     "& .MuiInputAdornment-root": { color: "text.secondary" },
@@ -107,7 +110,7 @@ export function Login() {
         <Box
           sx={{
             display: { xs: "inline-flex", md: "none" }, alignSelf: "flex-start",
-            px: 1.5, py: .65, borderRadius: 99, color: "primary.main", bgcolor: "rgba(155, 77, 224, .1)",
+            px: 1.5, py: .65, borderRadius: 99, color: "primary.main", bgcolor: alpha(theme.palette.primary.main, .1),
             fontWeight: 700, fontSize: 12, letterSpacing: ".04em", textTransform: "uppercase",
           }}
         >
@@ -217,7 +220,7 @@ export function Login() {
                       fontWeight: 800,
                       textTransform: "none",
                       fontSize: 15,
-                      boxShadow: "0 12px 28px rgba(142, 68, 210, .28)",
+                      boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, .28)}`,
                     },
                   }}
                 >

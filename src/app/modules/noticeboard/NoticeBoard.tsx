@@ -193,8 +193,8 @@ export const NoticeBoard = () => {
         >
           <Box
             sx={{
-              flex: "1 1 320px",
-              maxWidth: { sm: 560 },
+              flex: "0 1 auto",
+              maxWidth: { sm: 420 },
               minWidth: 0,
               "& .MuiFormControl-root": { width: "100%" },
               "& .MuiOutlinedInput-root": {
@@ -238,6 +238,7 @@ export const NoticeBoard = () => {
                 icon={<FilterList />}
                 handleClick={handleFilterOpen}
                 tooltip="Filter notices"
+                toolbar
               />
             </Badge>
             {
@@ -247,6 +248,7 @@ export const NoticeBoard = () => {
                 tooltip={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
+                toolbar
               />
             }
           </Stack>
