@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper } from "../../../../../utils/common";
 import { LANGUAGE } from "../../../../../utils/enums";
-import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
@@ -32,8 +33,10 @@ const AddNewAttributeItem = <T extends ReqProps>({
     titles: {},
   } as T);
   const { formatMessage: i } = useIntl();
-  const { currentLanguage: selectedUiLanguage } = useAppLang();
-  const currentLang = selectedUiLanguage || LANGUAGE.ENGLISH;
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
+  );
+  const currentLang = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = newAttributeValue.titles[translationLang] ?? "";
   const currentLanguageTitle = newAttributeValue.titles[currentLang] ?? "";

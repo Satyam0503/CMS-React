@@ -8,12 +8,26 @@ interface AuthenticationState {
   token: string | null;
 }
 
+const getStoredAccessToken = (): string | null => {
+  const storedAuth = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+  if (!storedAuth) {
+    return null;
+  }
+
+  try {
+    const authTokens = JSON.parse(storedAuth) as Partial<AuthTokens>;
+    return typeof authTokens.token === "string" && authTokens.token.length > 0
+      ? authTokens.token
+      : null;
+  } catch {
+    // A malformed legacy value must not prevent the application from loading.
+    return null;
+  }
+};
+
 const initialState: AuthenticationState = {
   isUserAuthenticated: false,
-  token: localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
-    ? (JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!) as AuthTokens)
-        .refreshToken
-    : null,
+  token: getStoredAccessToken(),
 };
 const authSlice = createSlice({
   name: "auth",

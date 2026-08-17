@@ -6,7 +6,9 @@ import dayjs, { Dayjs } from "dayjs";
 import {
   Box,
   Card,
+  Chip,
   CircularProgress,
+  Divider,
   Dialog,
   DialogActions,
   DialogContent,
@@ -57,6 +59,17 @@ const exceptionDescription = (item: PayrollException) => {
 
   const name = item.exceptionType.replace(/_/g, " ").toLowerCase();
   return `${name} (${item.affectedDates?.length ?? 0} affected date(s))`;
+};
+
+const exceptionStatusColor = (status: string): "default" | "warning" | "success" | "error" | "info" => {
+  switch (status) {
+    case "RESOLVED": return "success";
+    case "PENDING_REVIEW": return "warning";
+    case "OPEN": return "error";
+    case "WAIVED":
+    case "DEDUCTION_APPROVED": return "info";
+    default: return "default";
+  }
 };
 
 export default function MonthlyAttendanceExceptions({ month }: Props) {
@@ -267,11 +280,30 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   };
 
   return (
-    <Card variant="outlined" sx={{ p: { xs: 2, md: 3 }, mt: 3, borderRadius: 3, overflow: "hidden" }}>
-      <Typography variant="h5" color="primary.main" sx={{ mb: 2.5, fontWeight: 700 }}>
-        Monthly Exceptions
-      </Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(190px, 1fr) minmax(170px, 1fr) auto auto" }, gap: 2, alignItems: "center" }}>
+    <Card
+      variant="outlined"
+      sx={{
+        p: { xs: 2, sm: 2.5, md: 3 },
+        mt: 3,
+        borderRadius: 3,
+        overflow: "hidden",
+        borderColor: "divider",
+        boxShadow: "0 12px 30px rgba(46, 38, 69, 0.08)",
+      }}
+    >
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1.25} sx={{ mb: 2.5 }}>
+        <Box>
+          <Typography variant="h5" color="primary.main" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
+            Monthly Exceptions
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            Review attendance exceptions and recheck resolved records for {month.format("MMMM YYYY")}.
+          </Typography>
+        </Box>
+        <Chip label={`${total} ${total === 1 ? "exception" : "exceptions"}`} color={total ? "warning" : "success"} variant="outlined" />
+      </Stack>
+
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "minmax(190px, 1fr) minmax(170px, 1fr) auto auto" }, gap: 1.5, alignItems: "end" }}>
         <AppTextField
           label="Attendance month"
           value={month.format("MMMM YYYY")}
@@ -284,7 +316,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           label="Status"
           value={status}
           onChange={(event) => { setStatus(event.target.value); setPage(0); }}
-          sx={{ minWidth: 170 }}
+          sx={{ minWidth: 0 }}
         >
           <MenuItem value="">All statuses</MenuItem>
           <MenuItem value="PENDING_REVIEW">Pending review</MenuItem>
@@ -293,22 +325,22 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <MenuItem value="DEDUCTION_APPROVED">Deduction approved</MenuItem>
           <MenuItem value="RESOLVED">Resolved</MenuItem>
         </AppTextField>
-        <AppButton variant="outlined" disabled={loading} onClick={() => void load(true)}>
+        <AppButton variant="outlined" disabled={loading} onClick={() => void load(true)} sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", lg: "auto" } }}>
           {loading ? <CircularProgress size={20} /> : "Recalculate & Load"}
         </AppButton>
-        <AppButton variant="contained" disabled={loading} onClick={() => void resolveAllFixed()}>
+        <AppButton variant="contained" disabled={loading} onClick={() => void resolveAllFixed()} sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", lg: "auto" } }}>
           Resolve All Fixed Issues
         </AppButton>
       </Box>
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "220px auto minmax(260px, 1fr)" }, gap: 2, alignItems: "center", mt: 2 }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "minmax(210px, 1fr) auto", lg: "220px auto minmax(260px, 1fr)" }, gap: 1.5, alignItems: "end", mt: 2.5, p: { xs: 1.25, sm: 1.5 }, borderRadius: 2, bgcolor: "action.hover" }}>
         <AppTextField
           select
           size="small"
           label="Bulk LHD/ED decision"
           value={bulkDecision}
           onChange={(event) => setBulkDecision(event.target.value)}
-          sx={{ minWidth: 220 }}
+          sx={{ minWidth: 0 }}
         >
           <MenuItem value="WAIVE">Waive</MenuItem>
           <MenuItem value="WARNING_ONLY">Warning only</MenuItem>
@@ -319,16 +351,24 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           variant="outlined"
           disabled={!bulkDecision || loading}
           onClick={() => void reviewAllPenaltyExceptions()}
+          sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" } }}
         >
           Apply to All Pending LHD/ED
         </AppButton>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ gridColumn: { xs: "auto", sm: "1 / -1", lg: "auto" }, alignSelf: "center" }}>
           Structural errors resolve only after attendance data is corrected and rechecked.
         </Typography>
       </Box>
 
-      <Box sx={{ overflowX: "auto", width: "100%", mt: 2 }}>
+      <Box sx={{ display: { xs: "none", md: "block" }, overflowX: "auto", width: "100%", mt: 2.5 }}>
         <Box sx={{ minWidth: 820 }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "150px minmax(330px, 1fr) 170px 180px", columnGap: 2, px: 0.5, pb: 1, color: "text.secondary" }}>
+            <Typography variant="caption" sx={{ fontWeight: 800 }}>Employee</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 800 }}>Exception details</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 800 }}>Review status</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 800 }}>Action</Typography>
+          </Box>
+          <Divider />
           {items.length === 0 && !loading ? (
             <Typography color="text.secondary" sx={{ py: 3 }}>
               No exceptions found for this month.
@@ -347,7 +387,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                   </Typography>
                 )}
               </Box>
-              <Typography sx={{ width: 170, flexShrink: 0 }}>{item.status}</Typography>
+              <Chip label={item.status.replace(/_/g, " ")} color={exceptionStatusColor(item.status)} size="small" variant="outlined" sx={{ justifySelf: "start", textTransform: "capitalize" }} />
               {item.status === "PENDING_REVIEW" && item.exceptionType === "LHD_ED_LIMIT_EXCEEDED" ? (
                 <AppTextField
                   select
@@ -379,6 +419,39 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           ))}
         </Box>
       </Box>
+      <Stack spacing={1.25} sx={{ display: { xs: "flex", md: "none" }, mt: 2.5 }}>
+        {items.length === 0 && !loading ? (
+          <Box sx={{ py: 4, textAlign: "center", border: 1, borderColor: "divider", borderRadius: 2 }}>
+            <Typography color="text.secondary">No exceptions found for this month.</Typography>
+          </Box>
+        ) : items.map((item) => (
+          <Box key={item.id} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.paper", boxShadow: "0 4px 12px rgba(46, 38, 69, 0.04)" }}>
+            <Stack direction="row" justifyContent="space-between" spacing={1} alignItems="flex-start">
+              <Box sx={{ minWidth: 0 }}>
+                <Typography fontWeight={800}>{item.employeeId}</Typography>
+                <Typography variant="body2" sx={{ mt: 0.5, textTransform: "capitalize" }}>{exceptionDescription(item)}</Typography>
+              </Box>
+              <Chip label={item.status.replace(/_/g, " ")} color={exceptionStatusColor(item.status)} size="small" variant="outlined" sx={{ flexShrink: 0, textTransform: "capitalize" }} />
+            </Stack>
+            {!!item.affectedDates?.length && <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+              Affected: {item.affectedDates.map((date) => new Date(date).toLocaleDateString()).join(", ")}
+            </Typography>}
+            {item.status === "PENDING_REVIEW" && item.exceptionType === "LHD_ED_LIMIT_EXCEEDED" ? (
+              <AppTextField select size="small" label="Decision" value="" onChange={(event) => void review(item, event.target.value)} sx={{ mt: 1.5, width: "100%" }}>
+                <MenuItem value="WAIVE">Waive</MenuItem>
+                <MenuItem value="WARNING_ONLY">Warning only</MenuItem>
+                <MenuItem value="HALF_DAY_LOP">Half-day LOP</MenuItem>
+                <MenuItem value="FULL_DAY_LOP">Full-day LOP</MenuItem>
+              </AppTextField>
+            ) : item.status === "PENDING_REVIEW" ? (
+              <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                <AppButton size="small" variant="outlined" disabled={!item.affectedDates?.length} onClick={() => item.exceptionType === "WFH_INSUFFICIENT_HOURS" ? openWfhHoursCorrection(item) : void openAttendanceResolution(item)} sx={{ flex: 1 }}>Edit</AppButton>
+                <AppButton size="small" onClick={() => void load(true)} sx={{ flex: 1 }}>Recheck</AppButton>
+              </Stack>
+            ) : null}
+          </Box>
+        ))}
+      </Stack>
       <TablePagination
         component="div"
         count={total}
@@ -390,6 +463,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           setRowsPerPage(Number(event.target.value));
           setPage(0);
         }}
+        sx={{ mt: 1.5, borderTop: 1, borderColor: "divider", "& .MuiTablePagination-toolbar": { px: { xs: 0, sm: 1 }, flexWrap: "wrap", justifyContent: "flex-end", gap: 0.5 }, "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } } }}
       />
       <Dialog open={!!wfhException} onClose={() => !savingCorrection && setWfhException(null)} fullWidth maxWidth="xs">
         <DialogTitle>Correct WFH working hours</DialogTitle>

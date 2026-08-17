@@ -7,7 +7,8 @@ import { LanguageNameMapper } from "../../../../../utils/common";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { LANGUAGE } from "../../../../../utils/enums";
-import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 import { AppTextField } from "../../../../shared/components/ui";
 interface AttributeTitleProps {
@@ -23,8 +24,10 @@ export const AttributeTitleRow = ({
 }: AttributeTitleProps) => {
   const { formatMessage: i } = useIntl();
   const [title, setTitle] = useState<Record<string, string>>(attributeTitle);
-  const { currentLanguage: selectedUiLanguage } = useAppLang();
-  const defaultLanguage = selectedUiLanguage || LANGUAGE.ENGLISH;
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
+  );
+  const defaultLanguage = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = title[translationLang] ?? "";
   const currentLanguageTitle = title[defaultLanguage] ?? "";
@@ -40,6 +43,9 @@ export const AttributeTitleRow = ({
       updatedTitle[name] = value;
     }
     setTitle({ ...updatedTitle });
+    // Keep the parent payload current while typing. Saving immediately after an
+    // input loses focus previously raced the onBlur-only parent update.
+    updateAttributeTitle(updatedTitle);
   };
 
   const validateAndUpdateNewItemData = () => {

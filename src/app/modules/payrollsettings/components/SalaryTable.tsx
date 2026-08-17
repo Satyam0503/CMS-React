@@ -78,9 +78,14 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
           maxWidth: "100%",
           overflowX: "auto",
           scrollbarGutter: "stable",
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 2.5,
+          "&::-webkit-scrollbar": { height: 8 },
+          "&::-webkit-scrollbar-thumb": { bgcolor: "action.selected", borderRadius: 8 },
         }}
       >
-      <Table sx={{ minWidth: 1560 }}>
+      <Table stickyHeader sx={{ minWidth: 1560, "& .MuiTableCell-root": { py: 1.35 }, "& .MuiTableHead-root .MuiTableCell-root": { bgcolor: "action.hover", color: "text.secondary", fontWeight: 800, fontSize: 12, whiteSpace: "nowrap" } }}>
         <TableHead>
           <TableRow>
             {columns.map((col) => (
@@ -104,7 +109,7 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
                 tabIndex={-1}
                 key={index}
                 className={clsx("pointer-cursor", { "pe-none": !hasEditPermission })}
-                sx={{ borderBottom: 1, borderColor: "text.disabled" }}
+                sx={{ borderBottom: 1, borderColor: "divider", transition: "background-color .2s ease", "&:hover": { bgcolor: "action.hover" } }}
                 onClick={() => handleRowClick(row)}
               >
                 {columns.map((column) => {
@@ -166,6 +171,7 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
           setRowsPerPage(Number.parseInt(event.target.value, 10));
           setPage(0);
         }}
+        sx={{ mt: 1, "& .MuiTablePagination-toolbar": { px: { xs: 0, sm: 1 }, flexWrap: "wrap", justifyContent: "flex-end", gap: 0.5 }, "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } } }}
       />
     </Box>
   );

@@ -20,13 +20,33 @@ export const UpComingHolidayAndEvents = () => {
         return <CardSkeleton />
     }
     return (
-        <Card className="p-4" sx={{ minHeight: 280 }}>
+        <Card sx={{ p: { xs: 2, sm: 2.5 }, minHeight: 0 }}>
             {holidayandEvent.event.length == 0 && holidayandEvent.holiday.length == 0 ?
-                <Box component="div" className="h-100 align-content-center text-center">
+                <Box component="div" sx={{ minHeight: 160, display: "grid", placeItems: "center" }}>
                     <Typography className="fs-16">{i({ id: "TITLES.NO_EVENT_HOLIDAY" })}</Typography>
                 </Box>
                 :
-                <Stack spacing={2}>
+                <Stack
+                    spacing={2}
+                    tabIndex={0}
+                    aria-label="Upcoming holidays and events"
+                    sx={{
+                        maxHeight: { xs: 360, lg: 420 },
+                        overflowY: "auto",
+                        pr: 0.75,
+                        mr: -0.75,
+                        scrollbarWidth: "none",
+                        "&::-webkit-scrollbar": { width: 0 },
+                        "&:hover, &:focus, &:focus-within": {
+                            scrollbarWidth: "thin",
+                            "&::-webkit-scrollbar": { width: 6 },
+                            "&::-webkit-scrollbar-thumb": {
+                                backgroundColor: "color-mix(in srgb, var(--mui-palette-primary-main) 42%, transparent)",
+                                borderRadius: 99,
+                            },
+                        },
+                    }}
+                >
                     {
                         holidayandEvent.holiday.length > 0 &&
                         <Box component="div">

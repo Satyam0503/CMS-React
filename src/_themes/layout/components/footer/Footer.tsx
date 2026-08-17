@@ -12,13 +12,18 @@ const Footer = () => {
         container
         display={"flex"}
         justifyContent={"space-between"}
+        flexDirection={{ xs: "column", sm: "row" }}
         px={{ xs: 2, md: 3 }}
+        py={{ xs: 1.25, sm: 0 }}
         alignItems={"center"}
         bgcolor="background.header"
         color="text.secondary"
         sx={{
-          height: "var(--app-footer-height)",
           minHeight: "var(--app-footer-height)",
+          width: "100%",
+          boxSizing: "border-box",
+          flexShrink: 0,
+          gap: { xs: 1, sm: 2 },
           borderTop: "1px solid",
           borderColor: "divider",
           position: "relative",

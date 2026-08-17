@@ -164,8 +164,23 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     <React.Fragment>
       <Dialog
         fullWidth={true}
-        maxWidth="xl"
+        maxWidth="md"
         open={open}
+        PaperProps={{
+          sx: {
+            borderRadius: { xs: 2.5, sm: 3.5 },
+            overflow: "hidden",
+            border: "1px solid",
+            borderColor: "divider",
+            backgroundColor: "background.paper",
+            boxShadow: "0 28px 80px rgba(15, 23, 42, 0.34)",
+          },
+        }}
+        slotProps={{
+          backdrop: {
+            sx: { backgroundColor: "rgba(15, 23, 42, 0.56)", backdropFilter: "blur(3px)" },
+          },
+        }}
         onClose={() => {
           if (activeStep > 0) {
             return;
@@ -173,19 +188,40 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
           handleClose();
         }}
       >
-        <DialogTitle className="fs-20">
+        <DialogTitle
+          sx={{
+            px: { xs: 2.5, sm: 4 },
+            pt: { xs: 2.5, sm: 3 },
+            pb: 1,
+            fontSize: { xs: 20, sm: 22 },
+            fontWeight: 800,
+            color: "text.primary",
+            letterSpacing: "-0.02em",
+          }}
+        >
           {i({ id: "EMPLOYEE.ADD_NEW_EMP" })}
         </DialogTitle>
         {activeStep !== steps.length && (
           <Box
             component="div"
             sx={{
-              paddingBlockEnd: 1,
-              px: 2,
+              px: { xs: 2.5, sm: 4 },
+              py: 2,
               position: "sticky",
               top: 0,
               width: "100%",
               zIndex: 10,
+              background: "linear-gradient(180deg, rgba(156, 91, 210, 0.08), rgba(156, 91, 210, 0.01))",
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              "& .MuiStepLabel-label": {
+                mt: 0.75,
+                color: "text.secondary",
+                fontSize: { xs: 0, sm: 12 },
+                fontWeight: 700,
+                lineHeight: 1.2,
+                "&.Mui-active, &.Mui-completed": { color: "text.primary" },
+              },
             }}
           >
             <Stepper activeStep={activeStep} connector={<ColorlibConnector />}>
@@ -211,7 +247,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
             </Stepper>
           </Box>
         )}
-        <DialogContent>
+        <DialogContent sx={{ px: { xs: 2.5, sm: 4 }, py: { xs: 2.5, sm: 3 }, backgroundColor: "background.default" }}>
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
             <Slide direction="left" in={open} mountOnEnter unmountOnExit>
               <div>
@@ -280,7 +316,16 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
         </DialogContent>
 
         <DialogActions
-          sx={{ px: 4, paddingBlockEnd: 3, justifyContent: "flex-end" }}
+          sx={{
+            px: { xs: 2.5, sm: 4 },
+            py: 2,
+            gap: 1,
+            justifyContent: "flex-end",
+            borderTop: "1px solid",
+            borderColor: "divider",
+            backgroundColor: "background.paper",
+            "& .MuiButton-root": { minWidth: 88, minHeight: 40, fontWeight: 700, borderRadius: 2 },
+          }}
         >
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
             <AppButton variant="outlined" onClick={handleClose}>
@@ -329,13 +374,13 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 136deg, #dab7f7ff 0%, #9A56D3 50%, #7d1fc9ff 100%)",
+        "linear-gradient(136deg, #B7E7DF 0%, #2F7D78 50%, #1D4946 100%)",
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       backgroundImage:
-        "linear-gradient( 136deg, #dab7f7ff 0%, #9A56D3 50%, #8023cdff 100%)",
+        "linear-gradient(136deg, #B7E7DF 0%, #2F7D78 50%, #235955 100%)",
     },
   },
   [`& .${stepConnectorClasses.line}`]: {
@@ -377,7 +422,7 @@ const ColorlibStepIconRoot = styled("div")<{
       props: ({ ownerState }) => ownerState.completed,
       style: {
         backgroundImage:
-          "linear-gradient( 136deg, #dab7f7ff 0%, #9A56D3 50%, #6a02bfff 100%)",
+          "linear-gradient(136deg, #B7E7DF 0%, #2F7D78 50%, #173C39 100%)",
       },
     },
   ],

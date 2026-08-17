@@ -45,6 +45,21 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
         },
         paper: { borderRadius: 16 },
       };
+    case "slate":
+      return {
+        card: {
+          background: "#ffffff",
+          borderRadius: 14,
+          border: "1px solid #d9e2ec",
+          boxShadow: "0 10px 26px rgba(51, 65, 85, 0.08)",
+        },
+        paper: {
+          background: "#ffffff",
+          borderRadius: 12,
+          border: "1px solid #e2e8f0",
+          boxShadow: "0 6px 18px rgba(51, 65, 85, 0.06)",
+        },
+      };
     default:
       return { card: {}, paper: {} };
   }
@@ -52,6 +67,7 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
 
 export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = DEFAULT_THEME) => {
   const surface = getSurfaceOverrides(appStyle);
+  const pageRadius = 12;
   const theme = createTheme(
     {
       cssVariables: {
@@ -95,6 +111,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
           },
           root: {
             padding: 0,
+            borderRadius: pageRadius,
             "& input:-webkit-autofill": {
               backgroundColor: "transparent", // Removes autofill background
               WebkitBoxShadow: "0 0 0 1000px transparent inset", // Ensures no background shadow
@@ -134,16 +151,23 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             fontSize: "12px",
-            boxShadow:
-              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
             ...surface.card,
+            // Page cards are a shared surface. The important flag also makes
+            // legacy page-level sx values inherit the same visual language.
+            borderRadius: `${pageRadius}px !important`,
+            border: surface.card.border ?? "1px solid var(--mui-palette-divider)",
+            boxShadow: surface.card.boxShadow ??
+              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
           },
         },
       },
 
       MuiPaper: {
         styleOverrides: {
-          root: surface.paper,
+          root: {
+            ...surface.paper,
+            borderRadius: `${pageRadius}px !important`,
+          },
         },
       },
 
@@ -163,6 +187,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             fontSize: 12,
+            borderRadius: 8,
             textTransform: "capitalize",
             "&.Mui-disabled": {
               color: theme.vars?.palette.common.white,
@@ -516,6 +541,9 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       subtitle2: {
         color: theme.vars?.palette.primary.main,
       },
+    },
+    shape: {
+      borderRadius: pageRadius,
     },
   });
   return extendedTheme;

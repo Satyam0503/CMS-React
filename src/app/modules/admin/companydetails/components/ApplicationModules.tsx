@@ -188,7 +188,17 @@ export const ApplicationModules: FC = () => {
 
   return (
     <>
-      <Card className="px-8 py-6 d-flex flex-column flex-grow-1 gap-8">
+      <Card
+        sx={{
+          mt: 1,
+          p: { xs: 2, sm: 3 },
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          gap: { xs: 2, sm: 3 },
+          minWidth: 0,
+        }}
+      >
         <Stack>
           <Typography variant="h5" mb={1}>
             {formatMessage({
@@ -215,7 +225,7 @@ export const ApplicationModules: FC = () => {
             {loadError}
           </Alert>
         ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
           {otherModules.map((module) => {
             const moduleDesc = modules_description.find(
               (m) =>

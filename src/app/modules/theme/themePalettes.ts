@@ -4,15 +4,15 @@ import { frFR, enUS, deDE, jaJP, esES, zhCN } from "@mui/material/locale";
 
 export const colors = {
   primary: {
-    100: "#E6D9F5",
-    200: "#E6D9F5",
-    300: "#c0a4ebff",
-    400: "#ad5ef2ff",
-    500: "#9A56D3",
-    600: "#8B4CBB",
-    700: "#7C41A3",
-    800: "#6D378B",
-    900: "#5E2D73",
+    100: "#D9F3EF",
+    200: "#B7E7DF",
+    300: "#86D5C8",
+    400: "#57B9AC",
+    500: "#2F7D78",
+    600: "#286B67",
+    700: "#235955",
+    800: "#1D4946",
+    900: "#173C39",
   },
   secondary: {
     100: "#FFF3E0",
@@ -138,21 +138,24 @@ export const lightPalette: ColorSystemOptions = {
 
 const chartColorpalette: { [key: string]: string[] } = {
   light: [
-    "#9A56D3", // purple
-    "#FFA52F", // orange
-    "#6d6d6dff",
-    "#E0468F", // magenta
-    "#F45D48", // coral
-    "#FFC107", // amber
-    "#3949AB", // deep blue
+    "#2F7D78", // muted teal
+    "#D49A45", // warm amber
+    "#6B7280", // slate
+    "#C56C5C", // soft terracotta
+    "#7E8F4F", // olive
+    "#B57A9C", // dusty rose
+    "#667C9D", // steel blue
+    "#9A7A53", // sand
   ],
   dark: [
-    "#9A56D3", // purple
-    "#FFA52F", // orange
-    "#E0468F", // magenta
-    "#F45D48", // coral
-    "#FFC107", // amber
-    "#3949AB", // deep blue
+    "#5ED0C6", // teal
+    "#F0B35B", // amber
+    "#A8B1C1", // slate
+    "#E58B78", // terracotta
+    "#A8C46B", // olive
+    "#DC9BBC", // rose
+    "#91AACD", // steel
+    "#C8A57A", // sand
   ],
 };
 

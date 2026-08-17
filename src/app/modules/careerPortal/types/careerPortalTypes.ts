@@ -42,6 +42,12 @@ export type CareerPreferences = {
   isActive: boolean;
 };
 
+export type CompanyFollowStatus = {
+  isFollowing: boolean;
+  notifyForNewJobs: boolean;
+  notifyForJobUpdates: boolean;
+};
+
 export type JobAlert = {
   jobAlertSubscriptionId: string;
   name: string;

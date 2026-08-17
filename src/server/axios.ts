@@ -18,6 +18,18 @@ import { apiQueryKey } from "../app/query/queryKeys";
 let isRefreshing = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
 
+const anonymousAuthRoutes = new Set([
+  ServiceUrl.USER_LOGIN,
+  ServiceUrl.REGISTER_COMPANY,
+  ServiceUrl.REFRESH_TOKEN,
+  ServiceUrl.CREATE_NEW_PASSWORD,
+  ServiceUrl.RESET_PASSWORD,
+  "api/account/resend-email-verification",
+]);
+
+const isAnonymousAuthRoute = (url?: string) =>
+  anonymousAuthRoutes.has((url ?? "").split("?")[0].replace(/^\//, ""));
+
 const timeout = 30000;
 
 const getAuthCacheScope = () => {
@@ -64,11 +76,12 @@ export const refreshToken = async () => {
 // using interceptors to automatically set token and current Language for each request
 instance.interceptors.request.use(
   (config) => {
+    const isAnonymousRoute = isAnonymousAuthRoute(config.url);
     const token = getLocalKey()?.token ?? "";
     config.headers["Accept-Language"] = getCurrentAppLanguage();
-    if (token) {
+    if (!isAnonymousRoute && token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else {
+    } else if (!isAnonymousRoute) {
       const cId = localStorage.getItem("clientId") || "";
       if (cId != null && cId != "") config.headers["cId"] = cId;
     }
@@ -89,6 +102,7 @@ instance.interceptors.response.use(
     if (error.response) {
       if (
         error.response.status === 401 &&
+        !isAnonymousAuthRoute(originalRequest?.url) &&
         !originalRequest?._retry &&
         !isRefreshing
       ) {

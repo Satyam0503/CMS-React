@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
-import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper, } from "../../../../../utils/common";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -21,12 +20,6 @@ import { AppIconButton } from "../../../../../app/shared/components/ui";
 const Languages = () => {
   const { currentLanguage, changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
-  // Unauthenticated pages (login/register) have no company language restriction yet,
-  // so every supported UI language must be selectable there.
-  const configuredLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage);
-  const appLanguages = configuredLanguages?.length
-    ? configuredLanguages
-    : languages.map((lang) => lang.lang);
   const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -46,7 +39,6 @@ const Languages = () => {
 
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
-  const visibleLanguages = languages.filter(lang => appLanguages.includes(lang.lang));
   const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage) ?? languages[0];
 
   return (
@@ -79,7 +71,7 @@ const Languages = () => {
         }}
       >
         <List>
-          {visibleLanguages.map((lang) => (
+          {languages.map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {

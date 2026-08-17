@@ -19,7 +19,7 @@ type PropsTypes = {
   handleClose: () => void;
   children: React.ReactNode;
   maxWidth?: Breakpoint;
-  title?: string;
+  title?: React.ReactNode;
   // shows a maximize/restore toggle in the title bar; off by default so existing modals are unaffected
   allowMaximize?: boolean;
 };

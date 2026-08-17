@@ -4,6 +4,7 @@ import {
   Box,
   Card,
   Chip,
+  Button,
   Divider,
   Grid,
   ListItemText,
@@ -61,6 +62,10 @@ export const CompanyInfo = () => {
   const [croppedLogo, setCroppedLogo] = useState<string | null>(null);
   const [isCropperOpen, setCropperOpen] = useState(false);
   const [isLogoUploading, setIsLogoUploading] = useState(false);
+  const applyEmployeeIdSequence = (sequence: { currentNextEmployeeId: string; format: string }) => {
+    setNextEmployeeId(sequence.currentNextEmployeeId);
+    setEmployeeIdFormat(sequence.format);
+  };
 
   const userData = useAppSelector(state => state.user.userData)!;
   const dispatch = useAppDispatch();
@@ -169,6 +174,7 @@ export const CompanyInfo = () => {
         }));
         changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         setCompanyInfo(methodResult);
+        await refreshEmployeeIdSequence();
         toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
         setSelectedLogo(null);
@@ -217,15 +223,14 @@ export const CompanyInfo = () => {
   useEffect(() => {
     void getEmployeeIdSequence().then(({ data }) => {
       if (data.success && data.methodResult) {
-        setNextEmployeeId(data.methodResult.currentNextEmployeeId);
-        setEmployeeIdFormat(data.methodResult.format);
+        applyEmployeeIdSequence(data.methodResult);
       }
     });
   }, []);
 
   const refreshEmployeeIdSequence = async () => {
     const { data } = await getEmployeeIdSequence();
-    if (data.success && data.methodResult) setNextEmployeeId(data.methodResult.currentNextEmployeeId);
+    if (data.success && data.methodResult) applyEmployeeIdSequence(data.methodResult);
   };
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmationTitle, setConfirmationTitle] = useState("");
@@ -247,7 +252,8 @@ export const CompanyInfo = () => {
         }
         toast.success(data.message);
         setSkipCount("");
-        await refreshEmployeeIdSequence();
+        if (data.methodResult) applyEmployeeIdSequence(data.methodResult);
+        else await refreshEmployeeIdSequence();
       } catch (err) {
         console.error(err);
         toast.error("Unable to skip Employee IDs.");
@@ -273,7 +279,8 @@ export const CompanyInfo = () => {
         }
         toast.success(data.message);
         setStartFromId("");
-        await refreshEmployeeIdSequence();
+        if (data.methodResult) applyEmployeeIdSequence(data.methodResult);
+        else await refreshEmployeeIdSequence();
       } catch (err) {
         console.error(err);
         toast.error("Unable to update Employee ID sequence.");
@@ -458,11 +465,23 @@ export const CompanyInfo = () => {
               <Typography variant="h6">Employee ID sequence</Typography>
               <Typography variant="body2">Control where automatic Employee ID generation continues. Existing employee IDs are never changed.</Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 7, md: 6 }}><Stack spacing={2}>
-              <Typography variant="body1">Current Next Employee ID: <strong>{nextEmployeeId || "Loading..."}</strong></Typography>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField label="Skip Count" value={skipCount} onChange={e => setSkipCount(e.target.value)} inputProps={{ inputMode: "numeric" }} /><CustomisedButton label="Confirm Skip" handleClick={() => { void confirmSkip(); }} /></Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}><AppTextField label="Start From ID" placeholder={employeeIdFormat || "TT-0001"} value={startFromId} onChange={e => setStartFromId(e.target.value)} /><CustomisedButton label="Set Starting ID" handleClick={() => { void confirmStartFrom(); }} /></Stack>
-            </Stack></Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              <Stack spacing={1.5}>
+                <Box sx={{ px: 1.5, py: 1.25, border: 1, borderColor: "primary.light", borderRadius: 2, bgcolor: "action.hover" }}>
+                  <Typography variant="caption" color="text.secondary">Next automatic Employee ID</Typography>
+                  <Typography variant="h6" fontWeight={800} color="primary.main">{nextEmployeeId || "Loading..."}</Typography>
+                  <Typography variant="caption" color="text.secondary">Required format: {employeeIdFormat || "TT-0001"}</Typography>
+                </Box>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
+                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Skip unused IDs" placeholder="For example: 5" value={skipCount} onChange={e => setSkipCount(e.target.value)} inputProps={{ inputMode: "numeric", min: 1, step: 1 }} />
+                  <Button size="small" variant="contained" onClick={() => { void confirmSkip(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Skip IDs</Button>
+                </Stack>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
+                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Set next Employee ID" placeholder={nextEmployeeId || employeeIdFormat || "TT-0001"} value={startFromId} onChange={e => setStartFromId(e.target.value)} />
+                  <Button size="small" variant="outlined" onClick={() => { void confirmStartFrom(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Set next ID</Button>
+                </Stack>
+              </Stack>
+            </Grid>
           </Grid></>}
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }}>
@@ -477,7 +496,7 @@ export const CompanyInfo = () => {
                   <FormControlLabel control={<Switch checked={values.autoGenerateEmployeeId ?? true} onChange={(event) => setFieldValue("autoGenerateEmployeeId", event.target.checked)} />} label="Generate employee IDs automatically" />
                 </Stack>
               ) : (
-                <Typography variant="body1">{companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : `${companyInfo.employeeIdPrefix || "Company"}-0001`}</Typography>
+                <Typography variant="body1">{companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : employeeIdFormat || "Loading..."}</Typography>
               )}
             </Grid>
           </Grid>

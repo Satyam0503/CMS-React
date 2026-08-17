@@ -37,7 +37,7 @@ export default function CalendarHeader(props: Props) {
       props.handleSelectedDateChange(props.selectedDate.subtract(1, "month"));
   };
   return (
-    <Card className="calendar-header">
+    <Card className="calendar-header" elevation={0}>
       <Box component="div" className="calendar-controls">
         <Box component="div" className="reset-padding">
           <CustomisedDatePicker
@@ -48,16 +48,22 @@ export default function CalendarHeader(props: Props) {
             format="DD MMMM YYYY"
           />
         </Box>
-        <AppIconButton onClick={decreaseMonth}>
-          <KeyboardArrowLeftIcon />
-        </AppIconButton>
-
-        <AppIconButton
-          onClick={increaseMonth}
-        >
-          <KeyboardArrowRightIcon />
-        </AppIconButton>
-        <Button size="small" variant="outlined" onClick={() => props.handleSelectedDateChange(dayjs())}>Today</Button>
+        <Box component="div" className="calendar-navigation">
+          <AppIconButton onClick={decreaseMonth}>
+            <KeyboardArrowLeftIcon />
+          </AppIconButton>
+          <AppIconButton onClick={increaseMonth}>
+            <KeyboardArrowRightIcon />
+          </AppIconButton>
+          <Button
+            size="small"
+            variant="outlined"
+            className="calendar-today-button"
+            onClick={() => props.handleSelectedDateChange(dayjs())}
+          >
+            Today
+          </Button>
+        </Box>
       </Box>
       <Box component="div" className="calendar-filter">
         <Box className="calendar-filter-select">

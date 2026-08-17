@@ -114,7 +114,7 @@ export default function Calendar() {
     return (
         <>
             <Box component={'div'}
-                className='main-holiday-calendar gap-4'
+                className='main-holiday-calendar calendar-page-shell gap-4'
             >
                 <CalendarSidebar
                     occasions={calendarItems}
@@ -131,6 +131,10 @@ export default function Calendar() {
                         height: 'auto',
                         minHeight: 0,
                         flex: 1,
+                        animation: "calendar-content-enter 420ms ease-out both",
+                        "@media (prefers-reduced-motion: reduce)": {
+                            animation: "none",
+                        },
                     }}>
                     <CalendarHeader
                         selectedDate={selectedDate}

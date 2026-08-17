@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Stack, Tooltip } from "@mui/material";
+import { Badge, Box, Card, Stack, Tooltip, useMediaQuery } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { SearchInput } from "../../../shared/components/SearchInput";
@@ -190,6 +190,20 @@ export const Applications = () => {
   const dispatch = useAppDispatch();
   const intl = useIntl();
   const columnList = useApplicantTableColumnList();
+  const compactView = useMediaQuery("(max-width:599px)");
+  const responsiveColumns = useMemo(
+    () => columnList
+      .filter((column) => !compactView || !["email", "experience", "applyDate", "status"].includes(column.field))
+      .map((column) => {
+        if (!compactView) return column;
+        if (column.field === "name") return { ...column, minWidth: 140, flex: 1.25 };
+        if (column.field === "vacancyName") return { ...column, minWidth: 112, flex: 0.9 };
+        if (column.field === "applicationStatus") return { ...column, minWidth: 92, flex: 0.7 };
+        if (column.field === "action") return { ...column, minWidth: 48, flex: 0.3 };
+        return column;
+      }),
+    [columnList, compactView],
+  );
   const navigate = useNavigate();
   const [paginationValues, setPaginationValues] = useState<PaginationModel>({ pageNo: 0, pageSize: 10, });
   const [search, setSearch] = useState("");
@@ -278,27 +292,31 @@ export const Applications = () => {
       <Card
         className="d-flex flex-column flex-grow-1"
         sx={{
-          gap: { xs: 2.5, md: 3 },
-          p: { xs: 2, sm: 2.5, md: 3 },
+          gap: { xs: 1.75, md: 2.5 },
+          p: { xs: 1.5, sm: 2.5, md: 3 },
           borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",
-          backgroundImage: "none",
-          boxShadow: "0 12px 36px rgba(15,23,42,.06)",
+          boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)",
+          minWidth: 0,
+          overflow: "hidden",
         }}
       >
         <Stack
-          direction={{ xs: "column", sm: "row" }}
+          direction="row"
           sx={{
-            gap: 1.5,
-            alignItems: { xs: "stretch", sm: "center" },
+            gap: 1,
+            alignItems: "center",
+            p: { xs: 1, sm: 1.5 },
+            borderRadius: 2.5,
+            bgcolor: "action.hover",
           }}
         >
           <Box
             sx={{
               flex: "1 1 auto",
               minWidth: 0,
-              order: { xs: 2, sm: 1 },
+              order: 1,
               "& .MuiFormControl-root": { width: "100%" },
               "& .MuiOutlinedInput-root": {
                 borderRadius: 2.5,
@@ -306,7 +324,7 @@ export const Applications = () => {
                 transition: "background-color .2s, box-shadow .2s",
                 "&.Mui-focused": {
                   bgcolor: "background.paper",
-                  boxShadow: "0 0 0 3px rgba(156,75,214,.12)",
+                  boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 16%, transparent)",
                 },
               },
             }}
@@ -319,8 +337,18 @@ export const Applications = () => {
             spacing={1}
             sx={{
               flexShrink: 0,
-              order: { xs: 1, sm: 2 },
-              justifyContent: { xs: "flex-end", sm: "initial" },
+              order: 2,
+              justifyContent: "flex-end",
+              "& button": {
+                width: 40,
+                height: 40,
+                minWidth: 40,
+                borderRadius: 1.75,
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)",
+                "&:hover": { bgcolor: "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)" },
+              },
             }}
           >
             <Badge
@@ -331,12 +359,15 @@ export const Applications = () => {
               <CustomIconButton
                 icon={<FilterList />}
                 ariaLabel="Filter Application"
+                tooltip="Filter applications"
                 handleClick={handleFilterClick}
               />
             </Badge>
             {userPermissionsForModule.includes(`${ModulesName.Applications}.${Permission.Create}`) && (
               <CustomIconButton
                 icon={<Add />}
+                ariaLabel="Add application"
+                tooltip="Add application"
                 handleClick={() => setAddModalOpen(true)}
               />
             )}
@@ -355,12 +386,21 @@ export const Applications = () => {
           <CustomDataGrid
             keyName="applicantId"
             loading={loading}
-            columns={columnList}
+            columns={responsiveColumns}
             row={applicationsList}
             rowClickHandler={rowClickHandler}
             rowCount={totalRecords}
             paginationModel={{ page: paginationValues.pageNo, pageSize: paginationValues.pageSize }}
             handlePaginationModelChange={handlePaginationModelChange}
+            sx={{
+              minHeight: { xs: 385, sm: 460 },
+              "& .MuiDataGrid-columnHeaders": { bgcolor: "action.hover" },
+              "& .MuiDataGrid-cell": { px: { xs: 1, sm: 1.5 } },
+              "& .MuiDataGrid-columnHeader": { px: { xs: 1, sm: 1.5 } },
+              "& .MuiDataGrid-footerContainer": { flexWrap: "wrap", minHeight: 52 },
+              "& .MuiTablePagination-toolbar": { px: { xs: 0.5, sm: 1 }, flexWrap: "wrap", justifyContent: "flex-end" },
+              "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
+            }}
           />
         </Suspense>
 

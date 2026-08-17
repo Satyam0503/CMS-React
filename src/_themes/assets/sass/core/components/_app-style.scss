@@ -8,32 +8,32 @@
 // =============================================================================
 
 body,
-.app-content-surface {
+.app-shell {
   background: var(--app-content-background, var(--mui-palette-background-body));
 }
 
-.app-content-surface {
+.app-shell {
   transition: background-color 0.2s ease, background-image 0.2s ease;
-  background-color: transparent;
+  background-attachment: fixed;
+}
+
+.app-content-surface {
+  // The shell owns the background so it flows continuously behind the
+  // floating sidebar and content instead of creating a visible seam.
+  background: transparent;
   background-image: none;
 }
 
+
 // ----- Glass: translucent surfaces with a soft, blurred application shell -----
 :root[data-app-style="glass"] {
-  --app-content-background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--mui-palette-background-body) 78%, var(--mui-palette-primary-main)) 0%,
-    var(--mui-palette-background-body) 50%,
-    color-mix(in srgb, var(--mui-palette-background-body) 84%, var(--mui-palette-secondary-main)) 100%
-  );
+  --app-content-background:
+    radial-gradient(circle at 2% 4%, color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent), transparent 42%),
+    radial-gradient(circle at 100% 96%, color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent), transparent 46%),
+    linear-gradient(135deg, #dff3f0 0%, #f3fbfa 48%, #e4f5f2 100%);
 
   body {
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--mui-palette-background-body) 78%, var(--mui-palette-primary-main)) 0%,
-      var(--mui-palette-background-body) 50%,
-      color-mix(in srgb, var(--mui-palette-background-body) 84%, var(--mui-palette-secondary-main)) 100%
-    );
+    background: var(--app-content-background);
     background-attachment: fixed;
   }
 
@@ -46,14 +46,154 @@ body,
   }
 }
 
+:root.dark[data-app-style="glass"] {
+  --app-content-background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--mui-palette-primary-main) 20%, transparent), transparent 42%),
+    linear-gradient(135deg, #101d1d 0%, #142424 52%, #10201e 100%);
+}
+
 :root[data-app-style="aurora"] {
   --app-content-background:
-    radial-gradient(circle at 86% 8%, color-mix(in srgb, #7c3aed 12%, transparent), transparent 34%),
-    linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-background-body) 94%, #0f766e), var(--mui-palette-background-body));
+    radial-gradient(ellipse 72% 60% at -8% -14%, rgba(45, 212, 191, 0.28), transparent 68%),
+    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(129, 140, 248, 0.16), transparent 70%),
+    radial-gradient(ellipse 55% 48% at 88% 108%, rgba(251, 191, 36, 0.12), transparent 72%),
+    repeating-linear-gradient(115deg, rgba(15, 118, 110, 0.025) 0 1px, transparent 1px 18px),
+    linear-gradient(135deg, #d8f1ee 0%, #f7fbfb 42%, #e5f3f3 100%);
 
   & .app-header {
     background: color-mix(in srgb, var(--mui-palette-background-header) 90%, #0f766e) !important;
     border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-divider) 72%, #14b8a6);
+  }
+}
+
+:root.dark[data-app-style="aurora"] {
+  --app-content-background:
+    radial-gradient(ellipse 72% 60% at -8% -14%, rgba(20, 184, 166, 0.22), transparent 66%),
+    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(99, 102, 241, 0.16), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 88% 108%, rgba(245, 158, 11, 0.08), transparent 72%),
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 18px),
+    linear-gradient(135deg, #102725 0%, #132a30 48%, #17252d 100%);
+}
+
+// ----- Slate: bright production workspace with subtle, cool page depth -----
+:root[data-app-style="slate"] {
+  --app-content-background:
+    radial-gradient(ellipse 62% 58% at -8% -14%, rgba(45, 212, 191, 0.16), transparent 68%),
+    radial-gradient(ellipse 58% 54% at 108% 4%, rgba(96, 165, 250, 0.15), transparent 70%),
+    radial-gradient(ellipse 54% 52% at 82% 108%, rgba(129, 140, 248, 0.11), transparent 72%),
+    radial-gradient(ellipse 48% 46% at 32% 76%, rgba(20, 184, 166, 0.07), transparent 74%),
+    radial-gradient(ellipse 52% 48% at 48% 22%, rgba(255, 255, 255, 0.76), transparent 76%),
+    linear-gradient(135deg, #f9fcfc 0%, #eef6f8 44%, #e4eef5 100%);
+
+  & .app-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #dce5ee;
+    box-shadow: 0 4px 14px rgba(51, 65, 85, 0.06);
+  }
+
+  // Keep the workspace quiet, then use the brand color only where users act.
+  & .MuiButton-contained {
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+
+    &:hover {
+      box-shadow: 0 12px 22px color-mix(in srgb, var(--mui-palette-primary-main) 32%, transparent);
+      transform: translateY(-1px);
+    }
+  }
+
+  & .MuiButton-outlined {
+    background-color: #ffffff;
+    border-color: #b8c7d8;
+
+    &:hover {
+      background-color: #f4f8fb;
+      border-color: var(--mui-palette-primary-main);
+    }
+  }
+
+  & .MuiOutlinedInput-root {
+    background-color: #ffffff;
+
+    & .MuiOutlinedInput-notchedOutline { border-color: #cbd5e1; }
+
+    &:hover .MuiOutlinedInput-notchedOutline { border-color: #94a3b8; }
+
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: var(--mui-palette-primary-main);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent);
+    }
+  }
+
+  & .MuiTableHead-root .MuiTableCell-root {
+    background-color: #f3f7fa;
+    color: #475569;
+    font-weight: 700;
+  }
+
+  & :focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--mui-palette-primary-main) 36%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+:root.dark[data-app-style="slate"] {
+  --app-content-background:
+    radial-gradient(ellipse 66% 56% at -10% -12%, rgba(100, 116, 139, 0.2), transparent 68%),
+    radial-gradient(ellipse 52% 45% at 104% 8%, rgba(71, 85, 105, 0.22), transparent 72%),
+    repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 20px),
+    linear-gradient(140deg, #111827 0%, #172033 48%, #1e293b 100%);
+
+  // Slate light mode intentionally uses white surfaces. Re-declare them for
+  // dark mode so switching themes never leaves bright, low-contrast panels.
+  & .app-header {
+    background: #101827 !important;
+    border-bottom: 1px solid #334155;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.32);
+  }
+
+  & .MuiCard-root,
+  & .MuiPaper-root {
+    background: #172235 !important;
+    border-color: #334155 !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24) !important;
+  }
+
+  & .MuiOutlinedInput-root {
+    background: #111827 !important;
+    color: #f8fafc;
+
+    & .MuiOutlinedInput-notchedOutline { border-color: #475569; }
+    &:hover .MuiOutlinedInput-notchedOutline { border-color: #64748b; }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--bs-primary); }
+
+    input,
+    textarea { color: #f8fafc; }
+  }
+
+  & .MuiInputLabel-root { color: #cbd5e1; }
+
+  & .MuiButton-outlined {
+    background: #182433;
+    border-color: #475569;
+    color: #e2e8f0;
+
+    &:hover {
+      background: #22324a;
+      border-color: #64748b;
+    }
+  }
+
+  & .MuiTableHead-root .MuiTableCell-root {
+    background: #1e293b;
+    color: #e2e8f0;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    background-attachment: scroll;
   }
 }
 

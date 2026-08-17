@@ -4,6 +4,7 @@ import { InputFieldProps, TextInput } from "../../../shared/components/form-comp
 import { PersonAdd } from "@mui/icons-material";
 import {
     Autocomplete,
+    Box,
     Stack,
     TextField,
 } from "@mui/material";
@@ -88,8 +89,8 @@ export const InviteNewEmployee = (props: PropsTypes) => {
     }, []);
 
     return (
-        <Stack spacing={2} sx={{ p: 1 }}>
-            <AppAlert severity="warning" icon={<PersonAdd />}>
+        <Stack spacing={2.25} sx={{ py: 0.5 }}>
+            <AppAlert severity="warning" icon={<PersonAdd />} sx={{ border: "1px solid", borderColor: "warning.light", borderRadius: 2, alignItems: "center", "& .MuiAlert-message": { fontSize: 13, lineHeight: 1.5 } }}>
                 {i({ id: "EMPLOYEE.INVITE_EMP.INVITE_NOTE" })}
             </AppAlert>
             <Formik
@@ -107,15 +108,17 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                             {
                                 inviteEmployeeFormFields.map(field => (
                                     <React.Fragment key={field.name}>
-                                        <TextInput
-                                            key={field.name}
-                                            labelVarient="seperate"
-                                            label={i({ id: field.label })}
-                                            placeholder={i({ id: field.placeholder })}
-                                            type={field.type}
-                                            name={field.name}
-                                            disabled={field.name === "employeeId" && Boolean(nextEmployeeId)}
-                                        />
+                                        <Box sx={{ "& .MuiFormLabel-root": { color: "text.primary", fontSize: 13, fontWeight: 700, mb: 0.75 }, "& .MuiOutlinedInput-root": { backgroundColor: "background.paper", borderRadius: 2, "& fieldset": { borderColor: "divider" }, "&:hover fieldset": { borderColor: "primary.light" }, "&.Mui-focused fieldset": { borderWidth: 2 } } }}>
+                                          <TextInput
+                                              key={field.name}
+                                              labelVarient="seperate"
+                                              label={i({ id: field.label })}
+                                              placeholder={i({ id: field.placeholder })}
+                                              type={field.type}
+                                              name={field.name}
+                                              disabled={field.name === "employeeId" && Boolean(nextEmployeeId)}
+                                          />
+                                        </Box>
                                         {
                                             field.name === "employeeId" && nextEmployeeId &&
                                             <AppAlert severity="info" className="my-1">
@@ -134,7 +137,7 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                 value={managers.find((manager) => manager.userId === formik.values.reportingManager) ?? null}
                                 onChange={(_, manager) => formik.setFieldValue("reportingManager", manager?.userId ?? null)}
                                 getOptionLabel={(manager) => `${manager.fullName} (${manager.employeeId})`}
-                                renderInput={(params) => <TextField {...params} label="Reporting Manager" placeholder="Select reporting manager" />}
+                                renderInput={(params) => <TextField {...params} label="Reporting Manager" placeholder="Select reporting manager" sx={{ "& .MuiOutlinedInput-root": { backgroundColor: "background.paper", borderRadius: 2, "& fieldset": { borderColor: "divider" }, "&:hover fieldset": { borderColor: "primary.light" }, "&.Mui-focused fieldset": { borderWidth: 2 } }, "& .MuiInputLabel-root": { fontWeight: 700 } }} />}
                             />
                         </form>
                     }

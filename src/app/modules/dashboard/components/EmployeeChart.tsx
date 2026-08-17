@@ -56,7 +56,12 @@ export const EmployeeChart: FC = () => {
 
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee} applyMinHeight={false}>
+      <CustomCard
+        label={i({ id: "TITLES.TOTAL_EMP" })}
+        value={totalEmployee}
+        applyMinHeight={false}
+        fillHeight
+      >
         {empData.length == 0 ? (
           <Box
             className="flex-grow-1 align-content-center text-center"

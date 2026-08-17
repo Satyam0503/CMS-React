@@ -3,6 +3,7 @@ import { ResponseData } from "../../../../utils/common_types";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import {
   CareerPreferences,
+  CompanyFollowStatus,
   JobAlert,
   PublicCompanyProfile,
   SavedCareerJob,
@@ -86,9 +87,21 @@ export const updatePreferences = (session: string, value: CareerPreferences) =>
   putRequest("api/public/career/subscribers/preferences", value, sessionConfig(session));
 
 export const followCompany = (companyCode: string, session: string) =>
-  postRequest(
+  postRequest<{ subscriberSessionToken: string; notifyForNewJobs: boolean; notifyForJobUpdates: boolean }, ResponseData<void>>(
     `api/public/career/companies/${encodeURIComponent(companyCode)}/follow`,
     { subscriberSessionToken: session, notifyForNewJobs: true, notifyForJobUpdates: false },
+    sessionConfig(session),
+  );
+
+export const unfollowCompany = (companyCode: string, session: string) =>
+  deleteRequest<ResponseData<void>>(
+    `api/public/career/companies/${encodeURIComponent(companyCode)}/follow`,
+    sessionConfig(session),
+  );
+
+export const getFollowStatus = (companyCode: string, session: string) =>
+  getRequest<ResponseData<CompanyFollowStatus>>(
+    `api/public/career/companies/${encodeURIComponent(companyCode)}/follow-status`,
     sessionConfig(session),
   );
 

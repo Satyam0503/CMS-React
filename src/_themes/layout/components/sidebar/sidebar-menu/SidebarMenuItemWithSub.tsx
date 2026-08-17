@@ -35,11 +35,11 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
   return (
     <>
       <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
-        <ListItemButton onClick={handleMenuToggle} sx={{ color: 'common.white' }} className="sidebar-menu-item">
+        <ListItemButton onClick={handleMenuToggle} className="sidebar-menu-item">
           <ListItemIcon>
             {icon}
           </ListItemIcon>
-          <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
+          <ListItemText primary={title} />
           {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
         </ListItemButton>
       </Tooltip>

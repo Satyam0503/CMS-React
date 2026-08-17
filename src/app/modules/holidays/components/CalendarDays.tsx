@@ -129,7 +129,7 @@ export default function CalendarDays(props: Props) {
                 minHeight: 0,
             }}
         >
-            <Card className="calendar-days-grid calendar-weekdays" sx={{ borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 10px 28px rgba(51, 34, 85, .08)", overflow: "hidden" }}>
+            <Card className="calendar-days-grid calendar-weekdays" elevation={0}>
                 {
                     weekDayShort.map((weekDay, index) => {
                         return (
@@ -139,7 +139,7 @@ export default function CalendarDays(props: Props) {
                                 className="d-flex justify-content-center align-items-center"
                                 sx={{
                                     width: "100%",
-                                    height: "80px",
+                                    height: { xs: 42, sm: 52, md: 64 },
                                     color: index === 0 || index === 6 ? "secondary.main" : "text.secondary",
                                 }}
                             >
@@ -147,6 +147,7 @@ export default function CalendarDays(props: Props) {
                                     variant="h5"
                                     sx={{
                                         fontWeight: "600",
+                                        fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1.5rem" },
                                     }}
                                 >
                                     {isSmallScreen ? weekDay.at(0) : weekDay}
@@ -155,7 +156,7 @@ export default function CalendarDays(props: Props) {
                         );
                     })}
             </Card>
-            <Box className="calendar-days-grid" sx={{ border: 1, borderColor: "divider", borderRadius: 3, overflow: "hidden", boxShadow: "0 12px 32px rgba(51, 34, 85, .08)", bgcolor: "background.paper" }}>
+            <Box className="calendar-days-grid calendar-month-grid">
                 {monthDays.map((day, index) => {
                     return (
                         <Box key={index}
@@ -174,7 +175,7 @@ export default function CalendarDays(props: Props) {
                                 "today-cell": checkIsSameDay(day as number),
                                 "calendar-day-empty": typeof day !== "number",
                             })}
-                            sx={{ minHeight: { xs: 92, md: 126 }, transition: "transform .16s ease, box-shadow .16s ease", "&:hover": { transform: "translateY(-2px)", boxShadow: 3, zIndex: 1 }, ...(checkIsSameDay(day as number) ? { bgcolor: "action.selected", border: "2px solid", borderColor: "primary.main" } : {}) }}
+                            sx={{ minHeight: { xs: 64, sm: 88, md: 126 }, ...(checkIsSameDay(day as number) ? { bgcolor: "action.selected", border: "2px solid", borderColor: "primary.main" } : {}) }}
                         >
                             <Typography variant="h6" className={clsx({ "today": checkIsSameDay(day as number) })}
                                 sx={{
@@ -196,9 +197,9 @@ export default function CalendarDays(props: Props) {
                                 className=
                                 'd-flex w-100 flex-column'
                                 sx={{
-                                    maxHeight: '65px',
+                                    maxHeight: { xs: '32px', sm: '48px', md: '65px' },
                                     overflowY: 'auto',
-                                    padding: '5px',
+                                    padding: { xs: '2px', sm: '4px', md: '5px' },
                                 }}
                             >
                                 <Box component={'div'}

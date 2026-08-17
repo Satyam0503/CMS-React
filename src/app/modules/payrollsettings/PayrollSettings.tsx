@@ -1,4 +1,4 @@
-import { Card, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Card, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useIntl } from "react-intl";
@@ -221,13 +221,17 @@ export default function PayrollSettings() {
 
   return (
     <>
-      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-        <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse">
-          <SearchInput search={search} setSearch={handleSearchChange} />
+      <Card sx={{ p: { xs: 2, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)" }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(260px, 1fr) auto" }, gap: 1.5, alignItems: "end", mb: 2.5, p: { xs: 1.25, sm: 1.5 }, borderRadius: 2.5, bgcolor: "action.hover" }}>
+          <Box sx={{ width: "100%", minWidth: 0 }}>
+            <SearchInput search={search} setSearch={handleSearchChange} />
+          </Box>
           {hasProcessPermission && (
             <Stack
               direction="row"
-              className="align-items-end flex-wrap gap-2"
+              spacing={1}
+              useFlexGap
+              sx={{ alignItems: "end", flexWrap: "wrap", justifyContent: { xs: "stretch", lg: "flex-end" }, "& > *": { flexGrow: { xs: 1, sm: 0 } } }}
             >
               <CustomisedDatePicker
                 label={i({ id: "PAYROLL_SETTINGS.PROCESS_MONTH" })}
@@ -241,16 +245,18 @@ export default function PayrollSettings() {
                 handleClick={() => void handleValidateAndLock()}
                 disabled={!processMonth}
                 loading={isLocking}
+                sx={{ minHeight: 40, whiteSpace: "nowrap" }}
               />
               <CustomisedButton
                 label={i({ id: "PAYROLL_SETTINGS.PROCESS_SALARY" })}
                 handleClick={() => setConfirmOpen(true)}
                 disabled={!processMonth || !attendanceLocked || isCheckingLock || isLocking}
                 loading={isProcessing}
+                sx={{ minHeight: 40, whiteSpace: "nowrap" }}
               />
             </Stack>
           )}
-        </Stack>
+        </Box>
         <SalaryTable salaryData={salaryData} handleRowClick={handleRowClick} />
       </Card>
       {isModalOpen && selectedEmployee && (

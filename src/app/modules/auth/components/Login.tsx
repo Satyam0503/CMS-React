@@ -69,10 +69,10 @@ export function Login() {
     setStatus: (status?: any) => void
   ) {
     try {
-      const { data } = await login({ ...values });
+      const { data } = await login({ ...values, email: values.email.trim() });
       if (data.success) {
-        dispatch(setToken({ token: data.methodResult.token }));
         setLocalKey(data.methodResult);
+        dispatch(setToken({ token: data.methodResult.token }));
         setStatus("");
       } else {
         setUnverifiedEmail(data.statusCode === 3 ? values.email.trim() : null);
@@ -80,6 +80,8 @@ export function Login() {
       }
     } catch (error) {
       console.error((error as Error).message);
+      setUnverifiedEmail(null);
+      setStatus(i({ id: "ERROR.SOMETHING_WRONG" }));
     } finally {
       setSubmitting(false);
     }
