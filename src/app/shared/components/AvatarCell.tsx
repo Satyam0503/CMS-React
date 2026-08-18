@@ -5,7 +5,7 @@ import { DEFAULT_USER_AVATAR } from "../../../utils/constant/Constant";
 
 interface AvatarCellPropsTypes {
   title?: string;
-  subTitle?: null | Record<string, string>;
+  subTitle?: null | string | Record<string, string>;
   avatarSrc?: string | null;
   hasBadge?: boolean;
 }
@@ -40,7 +40,9 @@ export const AvatarCell = ({
         </Typography>
         {
           (subTitle !== null && subTitle !== undefined) &&
-          <Typography variant="body2">{subTitle[currentLanguage] || subTitle[defaultLang]}</Typography>
+          <Typography variant="body2">
+            {typeof subTitle === "string" ? subTitle : subTitle[currentLanguage] || subTitle[defaultLang]}
+          </Typography>
         }
       </Stack>
     </Stack>

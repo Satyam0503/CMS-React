@@ -20,7 +20,7 @@ export const ProfileHeader = () => {
 
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
@@ -29,7 +29,7 @@ export const ProfileHeader = () => {
           title={i({ id: "PROFILE.PI.YOE" }, { years: experience })}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.primary.lighter}
           icon={<CorporateFareOutlined fontSize="large" />}
@@ -38,7 +38,7 @@ export const ProfileHeader = () => {
           title={i({ id: "PROFILE.PI.TOTAL_YEAR" }, { years: totalYearAtCurrentCompany, companyName })}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.secondary.lighter}
           icon={<Build fontSize="large" />}

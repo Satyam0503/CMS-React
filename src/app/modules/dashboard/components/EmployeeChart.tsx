@@ -58,7 +58,6 @@ export const EmployeeChart: FC = () => {
     <>
       <CustomCard
         label={i({ id: "TITLES.TOTAL_EMP" })}
-        value={totalEmployee}
         applyMinHeight={false}
         fillHeight
       >
@@ -72,7 +71,7 @@ export const EmployeeChart: FC = () => {
             </Typography>
           </Box>
         ) : (
-          <DonutChart loading={loading} series={series} />
+          <DonutChart loading={loading} series={series} centerLabel={totalEmployee} />
         )}
       </CustomCard>
     </>

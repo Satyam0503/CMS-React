@@ -48,9 +48,54 @@ body,
 }
 
 :root.dark[data-app-style="glass"] {
+  --app-glass-surface: rgba(15, 29, 38, 0.78);
+  --app-glass-surface-elevated: rgba(20, 38, 49, 0.86);
+  --app-glass-border: rgba(171, 213, 222, 0.22);
+  --app-glass-border-strong: rgba(112, 211, 200, 0.38);
   --app-content-background:
-    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--mui-palette-primary-main) 20%, transparent), transparent 42%),
-    linear-gradient(135deg, #101d1d 0%, #142424 52%, #10201e 100%);
+    radial-gradient(ellipse 62% 56% at -10% -14%, rgba(45, 212, 191, 0.16), transparent 68%),
+    radial-gradient(ellipse 54% 50% at 108% 4%, rgba(96, 165, 250, 0.14), transparent 70%),
+    radial-gradient(ellipse 50% 46% at 84% 108%, rgba(20, 184, 166, 0.10), transparent 72%),
+    linear-gradient(135deg, #09151b 0%, #0d2029 50%, #10262b 100%);
+
+  & .app-header {
+    background: rgba(9, 20, 27, 0.82) !important;
+    border-bottom-color: rgba(171, 213, 222, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.26);
+  }
+
+  // Dark glass needs a dark base beneath the highlight layer. Without this,
+  // the light-mode white mix in the shared MUI override turns large cards grey.
+  & .MuiCard-root,
+  & .MuiPaper-root {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018) 46%),
+      var(--app-glass-surface) !important;
+    border-color: var(--app-glass-border) !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+  }
+
+  & .MuiOutlinedInput-root {
+    background: rgba(6, 20, 28, 0.64) !important;
+
+    & .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border); }
+    &:hover .MuiOutlinedInput-notchedOutline { border-color: rgba(171, 213, 222, 0.42); }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--app-glass-border-strong); }
+
+    input,
+    textarea { color: #eef7f8; }
+  }
+
+  & .MuiInputLabel-root { color: #b8ccd2; }
+
+  & .MuiTableHead-root .MuiTableCell-root {
+    background: rgba(255, 255, 255, 0.055);
+    color: #e3f0f2;
+  }
+
+  & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background-color: rgba(174, 214, 222, 0.035);
+  }
 }
 
 :root[data-app-style="aurora"] {

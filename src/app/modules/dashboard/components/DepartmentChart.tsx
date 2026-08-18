@@ -45,7 +45,6 @@ export const DepartmentChart: FC = () => {
   return (
     <CustomCard
       label={i({ id: "TITLES.DEPARTMENT" })}
-      value={departmentList.length}
     >
       {!hasAssignedEmployees ? (
         <Box component="div" className="flex-grow-1 align-content-center text-center ">

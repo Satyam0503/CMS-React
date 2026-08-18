@@ -34,6 +34,10 @@ export const EmployeeSearchInput = ({ sx, autoFocus = false }: EmployeeSearchInp
     const [search, setSearch] = useState("");
     const debouncedValue = useDebounce(search);
     const navigate = useNavigate();
+    const mergedSx: SxProps<Theme> = [
+        { minWidth: 250 },
+        ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+    ];
     const handleSearchChange = async (event: React.SyntheticEvent, value: string) => {
         setSearch(value)
     };
@@ -65,7 +69,7 @@ export const EmployeeSearchInput = ({ sx, autoFocus = false }: EmployeeSearchInp
     return (
         <Autocomplete
             id="employee_search"
-            sx={[{ minWidth: 250 }, sx]}
+            sx={mergedSx}
             size="small"
             open={open}
             onClose={() => {

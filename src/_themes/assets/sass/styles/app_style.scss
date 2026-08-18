@@ -1855,7 +1855,7 @@ input[type="password"]::-ms-clear {
     .MuiSvgIcon-root { transform: scale(1.1); }
   }
 
-  &.Mui-selected .MuiSvgIcon-root { animation: app-soft-pulse 2.6s ease-in-out infinite; }
+  &.Mui-selected .MuiSvgIcon-root { animation: none; }
 }
 
 .dashboard-modern {

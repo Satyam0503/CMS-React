@@ -77,7 +77,7 @@ function LeaveCalendar() {
   );
 
   if (!mayViewCalendar) {
-    return <Card sx={{ p: 2 }}><Typography color="text.secondary">You do not have permission to view this employee's attendance.</Typography></Card>;
+    return null;
   }
 
   const renderDay = (dayProps: PickersDayProps<Dayjs>) => {
