@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getProfileTabs, isLeaveTabEnabled } from "./profileTabs";
+import { Roles } from "../../../utils/enums";
 
 describe("profile tabs visibility", () => {
   it("uses leave-management permission for leave tab visibility", () => {
@@ -20,5 +21,12 @@ describe("profile tabs visibility", () => {
 
     expect(leaveTab).toBeDefined();
     expect(leaveTab?.isActive).toBe(true);
+  });
+
+  it("shows the performance tab only to HR and administrators", () => {
+    expect(getProfileTabs([], "employee-1", Roles.Employee).find((tab) => tab.to === "performance")).toBeUndefined();
+    expect(getProfileTabs([], "employee-1", Roles.HRManager).find((tab) => tab.to === "performance")).toBeDefined();
+    expect(getProfileTabs([], "employee-1", Roles.HRExecutive).find((tab) => tab.to === "performance")).toBeDefined();
+    expect(getProfileTabs([], "employee-1", Roles.Administrator).find((tab) => tab.to === "performance")).toBeDefined();
   });
 });

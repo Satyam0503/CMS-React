@@ -108,6 +108,7 @@ export type CompanyInfoModel = BaseModel & CompanyModel;
 
 export type OutletContextType = {
   updateAttribute: (attribute: CompanyCustomAttributeModel) => void;
+  removeAttribute: (customAttributeId: string) => void;
 };
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;

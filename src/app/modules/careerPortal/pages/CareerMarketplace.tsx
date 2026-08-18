@@ -36,7 +36,7 @@ import { discoverJobs, getCompanies, getCompanyProfile, getJobLocations, getVisi
 import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisitor";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
 import { buildCareerSearchParams, CareerSearchFilters } from "../utils/careerSearch";
-import { Alrt, Btn, Sel, Txt } from "../../../shared/components/ui";
+import { Alrt, Btn, Txt } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
 import { CompanyLogo } from "../components/CompanyLogo";
 
@@ -60,11 +60,11 @@ const FilterContent = ({
   locations: string[];
 }) => (
   <Stack spacing={2.25}>
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
+    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: 1.5, borderBottom: "1px solid", borderColor: "divider" }}>
       <Stack direction="row" spacing={1} alignItems="center"><TuneRounded color="primary" /><Typography variant="h6" fontWeight={850}>Filters</Typography></Stack>
-      <Btn size="small" onClick={reset}>Reset</Btn>
+      <Btn size="small" onClick={reset} sx={{ minWidth: 64 }}>Reset</Btn>
     </Stack>
-    <Typography variant="body2" color="text.secondary">Narrow roles by location, work style, and experience.</Typography>
+    <Typography variant="body2" color="text.secondary" sx={{ mt: -0.75, lineHeight: 1.55 }}>Narrow roles by location, work style, and experience.</Typography>
     <Autocomplete
       freeSolo
       options={locations}
@@ -73,25 +73,26 @@ const FilterContent = ({
       onChange={(_, value) => setFilters((x) => ({ ...x, location: value ?? "" }))}
       renderInput={(params) => <Txt {...params} label="Search location" placeholder="City, state, or remote" />}
     />
-    <Sel label="Work arrangement" value={filters.workplaceType} onChange={(e) => setFilters((x) => ({ ...x, workplaceType: e.target.value }))}>
+    <Txt select label="Work arrangement" value={filters.workplaceType} onChange={(e) => setFilters((x) => ({ ...x, workplaceType: e.target.value }))}>
       <MenuItem value="">Any arrangement</MenuItem><MenuItem value="Remote">Remote</MenuItem><MenuItem value="Hybrid">Hybrid</MenuItem><MenuItem value="On-site">On-site</MenuItem>
-    </Sel>
-    <Sel label="Employment type" value={filters.employmentType} onChange={(e) => setFilters((x) => ({ ...x, employmentType: e.target.value }))}>
+    </Txt>
+    <Txt select label="Employment type" value={filters.employmentType} onChange={(e) => setFilters((x) => ({ ...x, employmentType: e.target.value }))}>
       <MenuItem value="">Any type</MenuItem><MenuItem value="Full-time">Full-time</MenuItem><MenuItem value="Part-time">Part-time</MenuItem><MenuItem value="Contract">Contract</MenuItem><MenuItem value="Internship">Internship</MenuItem>
-    </Sel>
+    </Txt>
     <Txt label="Minimum experience" type="number" value={filters.experienceMin} onChange={(e) => setFilters((x) => ({ ...x, experienceMin: e.target.value }))} />
     <Txt label="Department" value={filters.department} onChange={(e) => setFilters((x) => ({ ...x, department: e.target.value }))} />
     <Txt label="Industry" value={filters.industry} onChange={(e) => setFilters((x) => ({ ...x, industry: e.target.value }))} />
     <Txt label="Skills (comma separated)" value={filters.skills} onChange={(e) => setFilters((x) => ({ ...x, skills: e.target.value }))} />
-    <Sel label="Date posted" value={filters.datePostedDays} onChange={(e) => setFilters((x) => ({ ...x, datePostedDays: e.target.value }))}>
+    <Txt select label="Date posted" value={filters.datePostedDays} onChange={(e) => setFilters((x) => ({ ...x, datePostedDays: e.target.value }))}>
       <MenuItem value="">Any time</MenuItem><MenuItem value="1">Past 24 hours</MenuItem><MenuItem value="7">Past week</MenuItem><MenuItem value="30">Past month</MenuItem>
-    </Sel>
+    </Txt>
     <Divider />
-    <Box>
-      <FormControlLabel control={<Switch checked={filters.featured} onChange={(e) => setFilters((x) => ({ ...x, featured: e.target.checked }))} />} label="Featured roles" />
-      <FormControlLabel control={<Switch checked={filters.urgentHiring} onChange={(e) => setFilters((x) => ({ ...x, urgentHiring: e.target.checked }))} />} label="Urgent hiring" />
-      <FormControlLabel control={<Switch checked={filters.walkIn} onChange={(e) => setFilters((x) => ({ ...x, walkIn: e.target.checked }))} />} label="Walk-in roles" />
-    </Box>
+    <Stack spacing={0.25}>
+      <Typography variant="overline" color="text.secondary" fontWeight={800}>Role preferences</Typography>
+      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.featured} onChange={(e) => setFilters((x) => ({ ...x, featured: e.target.checked }))} />} label="Featured roles" />
+      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.urgentHiring} onChange={(e) => setFilters((x) => ({ ...x, urgentHiring: e.target.checked }))} />} label="Urgent hiring" />
+      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.walkIn} onChange={(e) => setFilters((x) => ({ ...x, walkIn: e.target.checked }))} />} label="Walk-in roles" />
+    </Stack>
   </Stack>
 );
 
@@ -200,32 +201,32 @@ export const CareerMarketplace = () => {
   useEffect(() => { document.title = companyName ? `${companyName} Careers` : "Careers"; }, [companyName]);
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
+    <Box sx={{ minHeight: "100vh", color: "text.primary", background: "radial-gradient(circle at 0% 18%, color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent), transparent 32%), radial-gradient(circle at 100% 0%, rgba(129,140,248,.10), transparent 30%), linear-gradient(180deg, #fbfdfd 0%, #edf5f5 100%)" }}>
       <CareerHeader />
-      <Box sx={{ pt: { xs: 4, md: 7 }, pb: { xs: 5, md: 8 } }}>
-        <Container maxWidth="xl">
+      <Box sx={{ pt: { xs: 2.5, sm: 4, md: 7 }, pb: { xs: 4, md: 8 } }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
           <Box
             sx={{
               position: "relative",
               overflow: "hidden",
               borderRadius: { xs: 4, md: 6 },
-              p: { xs: 3.5, sm: 5, md: 7 },
-              minHeight: { md: 350 },
+              p: { xs: 3, sm: 5, md: 7 },
+              minHeight: { xs: 310, sm: 350, md: 390 },
               display: "flex",
               alignItems: "center",
               color: "#fff",
               background: profile?.coverImageUrl
                 ? `linear-gradient(105deg, rgba(14,18,42,.94), rgba(74,45,160,.72)), url("${profile.coverImageUrl}") center/cover`
                 : "radial-gradient(circle at 88% 5%, rgba(255,255,255,.17) 0 12%, transparent 12.2%), linear-gradient(125deg, #17142f 0%, var(--mui-palette-primary-dark) 52%, var(--mui-palette-primary-main) 100%)",
-              boxShadow: "0 26px 70px color-mix(in srgb, var(--mui-palette-primary-main) 20%, transparent)",
+              boxShadow: "0 26px 70px color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
             }}
           >
-            <Box sx={{ position: "relative", maxWidth: 800 }}>
-              <Chip icon={companyCode ? <BusinessRounded /> : <AutoAwesomeRounded />} label={companyCode ? "COMPANY CAREERS" : "CURATED OPPORTUNITIES"} sx={{ bgcolor: "rgba(255,255,255,.13)", color: "#fff", fontWeight: 800 }} />
-              <Typography variant="h1" sx={{ mt: 2.5, fontWeight: 900, letterSpacing: "-.055em", lineHeight: 1.02, fontSize: { xs: "2.65rem", md: "4.8rem" } }}>
+            <Box sx={{ position: "relative", zIndex: 1, maxWidth: 800 }}>
+              <Chip icon={companyCode ? <BusinessRounded /> : <AutoAwesomeRounded />} label={companyCode ? "COMPANY CAREERS" : "CURATED OPPORTUNITIES"} sx={{ bgcolor: "rgba(255,255,255,.16)", color: "#fff", border: "1px solid rgba(255,255,255,.24)", fontWeight: 800 }} />
+              <Typography variant="h1" sx={{ mt: 2.5, color: "#fff !important", textShadow: "0 3px 18px rgba(0,0,0,.32)", fontWeight: 900, letterSpacing: "-.055em", lineHeight: 1.02, fontSize: { xs: "2.65rem", sm: "3.5rem", md: "4.8rem" } }}>
                 {companyCode ? `Build what’s next with ${companyName || "us"}.` : "Find work worth showing up for."}
               </Typography>
-              <Typography sx={{ mt: 2, maxWidth: 680, color: "rgba(255,255,255,.78)", fontSize: { md: "1.12rem" }, lineHeight: 1.75 }}>
+              <Typography sx={{ mt: 2, maxWidth: 680, color: "rgba(255,255,255,.90)", textShadow: "0 2px 12px rgba(0,0,0,.20)", fontSize: { md: "1.12rem" }, lineHeight: 1.75 }}>
                 {profile?.shortDescription || "Search ambitious teams, useful work, and roles designed around where you want your career to go."}
               </Typography>
               <Btn onClick={() => setSubscribeOpen(true)} color="inherit" sx={{ mt: 3, color: "primary.dark", bgcolor: "#fff", "&:hover": { bgcolor: "grey.100" } }}>
@@ -234,10 +235,10 @@ export const CareerMarketplace = () => {
             </Box>
           </Box>
 
-          <Paper sx={{ mx: { md: 5 }, mt: { xs: 3, md: -3.5 }, position: "relative", zIndex: 2, p: 1.25, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
+          <Paper sx={{ mx: { xs: 0, sm: 2, md: 5 }, mt: { xs: 3, md: -3.5 }, position: "relative", zIndex: 2, p: { xs: 1, sm: 1.25 }, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
             <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
               <Txt fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
-              <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: 190, "& fieldset": { border: 0 } }}>
+              <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: { sm: 190 }, "& fieldset": { border: 0 } }}>
                 <MenuItem value="relevance">Most relevant</MenuItem><MenuItem value="newest">Newest first</MenuItem><MenuItem value="oldest">Oldest first</MenuItem><MenuItem value="deadline">Deadline soon</MenuItem><MenuItem value="salary-high">Salary: high to low</MenuItem><MenuItem value="salary-low">Salary: low to high</MenuItem><MenuItem value="most-saved">Most saved</MenuItem><MenuItem value="most-viewed">Most viewed</MenuItem>
               </Txt>
               {!desktop && <Btn variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)}>Filters {activeFilters ? `(${activeFilters})` : ""}</Btn>}

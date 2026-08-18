@@ -585,6 +585,7 @@ export const redirectUserToTargetUrl = (
   };
   if (notification.targetId?.startsWith("attendance-review-")) {
     redirectOption.targetPath = "/attendance";
+    redirectOption.data = notification.targetId.substring("attendance-review-".length);
   } else if (notification.title?.startsWith("WFH")) {
     redirectOption.targetPath = "/leavemanagement/work-from-home";
   } else switch (notification.notificationTypes) {

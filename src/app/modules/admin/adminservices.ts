@@ -149,12 +149,14 @@ export const getAllCustomAttributes = async () => {
 
 export const getCustomAttributeById = async (
   customAttributeId: string,
-  active: boolean = false
+  active: boolean = false,
+  forceRefresh: boolean = false
 ) => {
   return getRequest<GetCustomAttributeByIdResponse>(
     active
       ? `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}?active=${active}`
-      : `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}`
+      : `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}`,
+    forceRefresh ? { headers: { "Cache-Control": "no-cache" } } : undefined
   );
 };
 
@@ -173,3 +175,8 @@ export const updateCustomAttribute = (
     payload
   );
 };
+
+export const deleteCustomAttribute = (customAttributeId: string) =>
+  deleteRequest<ApiResponse>(
+    `${ServiceUrl.DELETE_CUSTOM_ATTRIBUTE}/${customAttributeId}`,
+  );

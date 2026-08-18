@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Badge, Card, Stack, Tooltip } from "@mui/material";
+import { Badge, Card, Stack, Tooltip, useMediaQuery } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, AssignmentOutlined, FilterList } from "@mui/icons-material";
 import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { SearchInput } from "../../../shared/components/SearchInput";
+import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
 import {
   addJobVacancy,
   deleteJobVacancy,
@@ -228,6 +229,19 @@ export default function Jobs() {
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const jobFilters = useAppSelector((state) => state.filters.jobs);
   const columnList = useJobTableColumnList();
+  const compactView = useMediaQuery("(max-width:599px)");
+  const responsiveColumns = React.useMemo(
+    () => columnList.map((column) => {
+      if (!compactView) return column;
+      if (column.field === "jobType") return { ...column, hideable: true };
+      if (column.field === "title") return { ...column, minWidth: 175, flex: 1.5 };
+      if (column.field === "vacancies") return { ...column, minWidth: 78, flex: 0.55 };
+      if (column.field === "status") return { ...column, minWidth: 74, flex: 0.6 };
+      if (column.field === "action") return { ...column, minWidth: 48, flex: 0.35 };
+      return column;
+    }).filter((column) => !compactView || column.field !== "jobType"),
+    [columnList, compactView],
+  );
 
   const hasAddPermission = hasModuleFeaturePermission(
     ModulesName.Jobs,
@@ -380,10 +394,14 @@ export default function Jobs() {
   }, []);
 
   return (
-    <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-      <Stack className="flex-row justify-content-between align-items-center gap-4 flex-wrap-reverse">
-        <SearchInput search={search} setSearch={handleSearchChange} />
-        <Stack direction="row" spacing={1}>
+    <Card sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: "divider", boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)", minWidth: 0, overflow: "hidden" }}>
+      <ResponsiveTableToolbar
+        search={
+          <Box sx={{ minWidth: 0 }}>
+          <SearchInput search={search} setSearch={handleSearchChange} />
+          </Box>
+        }
+        actions={<Stack direction="row" spacing={0.75} sx={{ "& button": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 25%, transparent)", "&:hover": { bgcolor: "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)" } } }}>
           <Badge
             anchorOrigin={{
               horizontal: "left",
@@ -395,22 +413,27 @@ export default function Jobs() {
             <CustomIconButton
               icon={<FilterList />}
               ariaLabel="job filter"
+              tooltip="Filter jobs"
               handleClick={handleFilterClick}
+              toolbar
             />
           </Badge>
           {hasAddPermission && (
             <CustomIconButton
               icon={<Add />}
+              tooltip="Add job"
+              ariaLabel="Add job"
               handleClick={() => setOpenModal(true)}
+              toolbar
             />
           )}
-        </Stack>
-      </Stack>
+        </Stack>}
+      />
       <Suspense fallback={null}>
         <CustomDataGrid
           keyName="jobId"
           loading={loading}
-          columns={columnList}
+          columns={responsiveColumns}
           row={jobList}
           rowClickHandler={handleEditJob}
           rowCount={totalRecords}
@@ -419,6 +442,15 @@ export default function Jobs() {
             pageSize: paginationValues.records,
           }}
           handlePaginationModelChange={handlePaginationModelChange}
+          sx={{
+            minHeight: { xs: 385, sm: 430 },
+            "& .MuiDataGrid-columnHeaders": { bgcolor: "action.hover" },
+            "& .MuiDataGrid-cell": { px: { xs: 1, sm: 1.5 } },
+            "& .MuiDataGrid-columnHeader": { px: { xs: 1, sm: 1.5 } },
+            "& .MuiDataGrid-footerContainer": { flexWrap: "wrap", minHeight: 52 },
+            "& .MuiTablePagination-toolbar": { px: { xs: 0.5, sm: 1 }, flexWrap: "wrap", justifyContent: "flex-end" },
+            "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
+          }}
         />
       </Suspense>
       {isConfirmationModalOpen && selectedJob && (

@@ -3,10 +3,13 @@ import { DEFAULT_THEME, normalizeAppStyle, SUPPORTED_THEMES } from "./useAppStyl
 
 describe("useAppStyle normalization", () => {
   it("keeps supported values and falls back for invalid or legacy ones", () => {
-    expect(SUPPORTED_THEMES).toEqual(["glass", "aurora", "minimal"]);
+    expect(SUPPORTED_THEMES).toEqual(["glass", "slate", "dawn", "blush"]);
     expect(normalizeAppStyle("glass")).toBe("glass");
-    expect(normalizeAppStyle("aurora")).toBe("aurora");
-    expect(normalizeAppStyle("minimal")).toBe("minimal");
+    expect(normalizeAppStyle("aurora")).toBe(DEFAULT_THEME);
+    expect(normalizeAppStyle("slate")).toBe("slate");
+    expect(normalizeAppStyle("dawn")).toBe("dawn");
+    expect(normalizeAppStyle("blush")).toBe("blush");
+    expect(normalizeAppStyle("minimal")).toBe(DEFAULT_THEME);
 
     expect(normalizeAppStyle("cobalt")).toBe(DEFAULT_THEME);
     expect(normalizeAppStyle("classic")).toBe(DEFAULT_THEME);

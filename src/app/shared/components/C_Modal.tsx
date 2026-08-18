@@ -7,6 +7,8 @@ import { Breakpoint,
   DialogContent,
   DialogTitle,
   Stack,
+  SxProps,
+  Theme,
   Zoom,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
@@ -19,9 +21,12 @@ type PropsTypes = {
   handleClose: () => void;
   children: React.ReactNode;
   maxWidth?: Breakpoint;
-  title?: string;
+  title?: React.ReactNode;
   // shows a maximize/restore toggle in the title bar; off by default so existing modals are unaffected
   allowMaximize?: boolean;
+  // Lets complex forms opt into a wider responsive paper without changing the
+  // sizing of every existing shared modal.
+  paperSx?: SxProps<Theme>;
 };
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,7 +38,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export const CustomisedModal = (props: PropsTypes) => {
-  const { open, handleClose, children, title, maxWidth = "md", allowMaximize = false } = props;
+  const { open, handleClose, children, title, maxWidth = "md", allowMaximize = false, paperSx } = props;
   const [isMaximized, setIsMaximized] = useState(false);
 
   return (
@@ -45,7 +50,11 @@ export const CustomisedModal = (props: PropsTypes) => {
       slotProps={{
         // the theme's MuiDialog styleOverrides hardcode paper maxWidth: 720px, which otherwise
         // wins over the maxWidth/fullWidth/fullScreen props above and caps the maximized width
-        paper: isMaximized ? { sx: { maxWidth: "100%", width: "100%" } } : undefined
+        paper: {
+          sx: isMaximized
+            ? { maxWidth: "100%", width: "100%" }
+            : paperSx,
+        }
       }}
     >
       {

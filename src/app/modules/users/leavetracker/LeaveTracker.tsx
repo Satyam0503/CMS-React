@@ -156,8 +156,9 @@ export const LeaveTracker: FC = () => {
   };
 
   return (
-    <Stack className="gap-2">
-      <Card className="p-4 d-flex justify-content-between">
+    <Stack sx={{ gap: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
+      <Card sx={{ p: { xs: 1.5, sm: 2.5 }, minWidth: 0 }}>
+        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1.5}>
         <Typography className="fs-20" variant="h6">
           {i({ id: "LEAVE.TITLE" })}
         </Typography>
@@ -168,12 +169,13 @@ export const LeaveTracker: FC = () => {
             modulePermission
           )) && (
             <CustomisedButton
-              className="align-self-end"
               Icon={<Add />}
               label={i({ id: "LEAVE.APPLY_FOR_LEAVE" })}
               handleClick={handleOpen}
+              sx={{ width: { xs: "100%", sm: "auto" }, whiteSpace: "nowrap" }}
             />
           )}
+        </Stack>
       </Card>
       {open && (
         <LeaveApplication
@@ -186,7 +188,7 @@ export const LeaveTracker: FC = () => {
         />
       )}
       {!employeeId && wfhContext && (
-        <Card className="p-4">
+        <Card sx={{ p: { xs: 1.5, sm: 2.5 }, minWidth: 0 }}>
           <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={2}>
             <Stack spacing={0.5}>
               <Typography variant="h6">Work from home</Typography>
@@ -194,7 +196,7 @@ export const LeaveTracker: FC = () => {
                 Weekly allowance resets every Monday. WFH is tracked separately from monthly leave balances.
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
               <Chip label={`${wfhContext.usedThisWeek} used`} color="secondary" size="small" />
               <Chip label={`${wfhContext.remainingThisWeek} remaining`} color={wfhContext.canSchedule ? "success" : "default"} size="small" />
               <CustomisedButton label={`View requests (${wfhRequests.length})`} size="small" variant="outlined" handleClick={() => setWfhRequestsOpen(true)} />

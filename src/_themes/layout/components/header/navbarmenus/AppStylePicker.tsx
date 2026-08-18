@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useState } from "react";
-import { Box, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Popover, Stack, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import { Palette } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { APP_STYLES, AppStyle, useAppStyle } from "../../../../../app/modules/theme/useAppStyle";
@@ -8,11 +8,16 @@ import { AppIconButton } from "../../../../../app/shared/components/ui";
 
 const SWATCH_BG: Record<AppStyle, string> = {
   glass: "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
-  aurora: "linear-gradient(135deg, #0f766e 0%, #7c3aed 100%)",
-  minimal: "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+  slate: "linear-gradient(135deg, #f8fafc 0%, #dce4ed 55%, #cbd5e1 100%)",
+  dawn: "linear-gradient(118deg, #ddc6eb 0%, #faf7fc 48%, #f9d7e5 100%)",
+  blush: "linear-gradient(135deg, #f3dbe8 0%, #fffafb 52%, #f7dce9 100%)",
 };
 
-const AppStylePicker: FC = () => {
+type AppStylePickerProps = {
+  sx?: SxProps<Theme>;
+};
+
+const AppStylePicker: FC<AppStylePickerProps> = ({ sx }) => {
   const { style, setStyle } = useAppStyle();
   const { formatMessage: i } = useIntl();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -33,7 +38,10 @@ const AppStylePicker: FC = () => {
       <Tooltip title={tooltipLabel}>
         <AppIconButton
           onClick={handleOpen}
-          sx={{ border: 0, p: 0 }}
+          sx={[
+            { border: 0, p: 0 },
+            ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+          ]}
           role="button"
           aria-label="choose app style"
         >

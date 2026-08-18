@@ -115,7 +115,7 @@ export const ApplicationsChart = () => {
             series={[{
               data: applicationData.applicationStatusData.map(item => item.count),
               label: i({ id: "PAGE.APPLICATIONS" }),
-              color: theme.vars?.palette.primary.main
+              color: theme.palette.primary.main
             }]}
             hideLegend={true}
       xAxis={[

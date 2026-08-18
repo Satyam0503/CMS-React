@@ -197,6 +197,7 @@ export const ServiceUrl = {
   GET_COMPANY_CUSTOM_ATTRIBUTE: `api/CompanyMaster/GetAllCustomAttribute`,
   GET_CUSTOM_ATTRIBUTE_BY_ID: `api/CompanyMaster/GetCustomAttributeById`,
   UPDATE_CUSTOM_ATTRIBUTE: `api/CompanyMaster/UpdateCustomAttribute`,
+  DELETE_CUSTOM_ATTRIBUTE: `api/CompanyMaster/DeleteCustomAttribute`,
   DELETE_CUSTOM_ATTRIBUTE_VALUE: `api/CompanyMaster/DeleteCustomAttributeValue`,
 
   // payroll

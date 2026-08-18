@@ -166,7 +166,13 @@ export default function CalendarSidebar(props: Props) {
     return (
         <Stack
             className='gap-8 calendar-sidebar'
-            sx={{ backgroundColor: "background.card" }}
+            sx={{
+                backgroundColor: "background.card",
+                animation: "calendar-sidebar-enter 360ms ease-out both",
+                "@media (prefers-reduced-motion: reduce)": {
+                    animation: "none",
+                },
+            }}
         >
             <HolidayForm open={open} handleClose={handleClose} isEdit={isEdit} handleRefresh={props.handleRefresh} initialValues={initialHolidayValues} />
             {
@@ -175,7 +181,8 @@ export default function CalendarSidebar(props: Props) {
                 <AppButton variant="contained"
                     sx={{
                         width: 1,
-                        fontSize: 14
+                        fontSize: 14,
+                        minHeight: 44,
                     }}
                     onClick={() => setOpen(true)}
                 >
@@ -192,7 +199,7 @@ export default function CalendarSidebar(props: Props) {
                     {i({ id: "OCCASION.MONTH_OVERVIEW" })}
                 </Typography>
                 <Box component={'div'}
-                    className='gap-4 calendar-sidear-holidays-holder'
+                    className='gap-4 calendar-sidear-holidays-holder calendar-summary-grid'
                 >
                     {CalendarItems.map((item, index) => {
                         return (

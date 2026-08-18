@@ -64,7 +64,7 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
       borderRadius: 2.5,
       bgcolor: "action.hover",
       transition: "background-color .2s, box-shadow .2s",
-      "&.Mui-focused": { bgcolor: "background.paper", boxShadow: "0 0 0 3px rgba(156,75,214,.12)" },
+      "&.Mui-focused": { bgcolor: "background.paper", boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 16%, transparent)" },
     },
   };
 
@@ -74,16 +74,22 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
       onClose={onClose}
       fullWidth
       maxWidth="sm"
+      scroll="paper"
       PaperProps={{
         sx: {
-          borderRadius: { xs: 0, sm: 4 }, backgroundImage: "none",
+          width: { xs: "calc(100% - 24px)", sm: "100%" },
+          height: { xs: "calc(100dvh - 24px)", sm: "auto" },
+          maxHeight: { xs: "calc(100dvh - 24px)", sm: "calc(100dvh - 48px)" },
+          m: { xs: 1.5, sm: 3 },
+          borderRadius: { xs: 3, sm: 4 }, backgroundImage: "none",
           border: "1px solid", borderColor: "divider",
           boxShadow: "0 32px 80px rgba(15,23,42,.24)", overflow: "hidden",
-          m: { xs: 0, sm: 2 }, maxHeight: { xs: "100%", sm: "calc(100% - 32px)" },
+          display: "flex", flexDirection: "column",
+          "@media (max-width: 359px)": { width: "100%", height: "100dvh", maxHeight: "100dvh", m: 0, borderRadius: 0 },
         },
       }}
     >
-      <Box component="form" onSubmit={submit}>
+      <Box component="form" onSubmit={submit} sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
         <DialogTitle sx={{ px: { xs: 2.5, sm: 4 }, pt: { xs: 3, sm: 4 }, pb: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
             <Box>
@@ -96,8 +102,8 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
             </Button>
           </Stack>
         </DialogTitle>
-        <DialogContent sx={{ px: { xs: 2.5, sm: 4 }, py: 2 }}>
-          <Stack spacing={2}>
+        <DialogContent sx={{ px: { xs: 2.5, sm: 4 }, py: 2, flex: 1, minHeight: 0, overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+          <Stack spacing={{ xs: 1.5, sm: 2 }}>
             {error && <Alert severity="error">{error}</Alert>}
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField sx={fieldSx} name="firstName" label="First name" value={form.firstName} onChange={update} required fullWidth />
@@ -169,7 +175,7 @@ export const PublicJobApplyModal = ({ job, open, onClose, onSubmitted }: Props) 
             </Button>
           </Stack>
         </DialogContent>
-        <DialogActions sx={{ px: { xs: 2.5, sm: 4 }, pb: { xs: 3, sm: 4 }, pt: 2, gap: 1,
+        <DialogActions sx={{ px: { xs: 2.5, sm: 4 }, pb: { xs: 2.5, sm: 4 }, pt: 2, gap: 1, flexShrink: 0,
           flexDirection: { xs: "column-reverse", sm: "row" }, "& > :not(style) ~ :not(style)": { ml: { xs: 0, sm: 1 } } }}>
           <Button onClick={onClose} color="inherit" sx={{ minHeight: 46, borderRadius: 2.5, width: { xs: "100%", sm: "auto" } }}>Cancel</Button>
           <Button type="submit" variant="contained" disabled={saving}

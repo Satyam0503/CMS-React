@@ -8,6 +8,8 @@ import { Autocomplete,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import { ClearSharp, Search } from "@mui/icons-material";
 import { useIntl } from "react-intl";
@@ -18,7 +20,12 @@ import { useDebounce } from "../../../../../app/hooks/useDebounce";
 import { searchEmployee } from "../../../../../app/modules/users/userservices";
 
 import { AppTextField } from "../../../../../app/shared/components/ui";
-export const EmployeeSearchInput = () => {
+type EmployeeSearchInputProps = {
+    sx?: SxProps<Theme>;
+    autoFocus?: boolean;
+};
+
+export const EmployeeSearchInput = ({ sx, autoFocus = false }: EmployeeSearchInputProps) => {
     const { formatMessage } = useIntl();
     const [loading, setLoading] = useState(false);
     const [employeeList, setEmployeeList] = useState<EmployeeSearchModel[]>([]);
@@ -27,6 +34,10 @@ export const EmployeeSearchInput = () => {
     const [search, setSearch] = useState("");
     const debouncedValue = useDebounce(search);
     const navigate = useNavigate();
+    const mergedSx: SxProps<Theme> = [
+        { minWidth: 250 },
+        ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+    ];
     const handleSearchChange = async (event: React.SyntheticEvent, value: string) => {
         setSearch(value)
     };
@@ -58,7 +69,7 @@ export const EmployeeSearchInput = () => {
     return (
         <Autocomplete
             id="employee_search"
-            sx={{ minWidth: 250 }}
+            sx={mergedSx}
             size="small"
             open={open}
             onClose={() => {
@@ -77,6 +88,7 @@ export const EmployeeSearchInput = () => {
             renderInput={(params) => (
                 <AppTextField
                     {...params}
+                    autoFocus={autoFocus}
                     placeholder={formatMessage({ id: "PLACEHOLDER.SEARCH_EMP" })}
                     slotProps={{
                         input: {

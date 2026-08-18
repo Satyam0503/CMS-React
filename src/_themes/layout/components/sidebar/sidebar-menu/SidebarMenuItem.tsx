@@ -22,11 +22,11 @@ const SidebarMenuItem: FC<Props> = ({
 
   return (
     <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
-      <ListItemButton className="sidebar-menu-item " sx={{ color: "common.white" }} selected={isActive} onClick={() => navigate(to)} >
-        <ListItemIcon sx={{ color: "common.white" }}>
+      <ListItemButton className="sidebar-menu-item" selected={isActive} onClick={() => navigate(to)}>
+        <ListItemIcon>
           {icon}
         </ListItemIcon>
-        <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
+        <ListItemText primary={title} />
       </ListItemButton>
     </Tooltip>
   );

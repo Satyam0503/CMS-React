@@ -23,7 +23,10 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
           className="dashboard-hero-chip"
         />
         <Typography variant="h2" className="dashboard-welcome-title">
-          {intl.formatMessage({ id: "MESSAGE.WELCOME" })} {props.fullName || ""}
+          <span className="dashboard-welcome-word">
+            {intl.formatMessage({ id: "MESSAGE.WELCOME" })}
+          </span>{" "}
+          <span className="dashboard-welcome-name">{props.fullName || ""}</span>
         </Typography>
         <Typography color="text.secondary" className="dashboard-welcome-copy">
           Here is what is happening across your workplace today.
@@ -37,7 +40,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
             alt="Current weather"
           />
         </Box>
-        <Stack sx={{ alignItems: { xs: "flex-start", sm: "flex-end" } }}>
+        <Stack sx={{ alignItems: "flex-start" }}>
           <Typography variant="h4" fontWeight={800}>
             {dateFormatter(dayjs(), "dddd")}
           </Typography>

@@ -2,7 +2,6 @@ import { Card } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CustomisedTable } from "../../../shared/components/C_Table";
 import { RoleTableColumnList } from "../../../../utils/constant/Constant";
-import CustomisedButton from "../../../shared/components/C_Button";
 import { useNavigate } from "react-router-dom";
 import { Add } from "@mui/icons-material";
 import { ModulesName } from "../../../../utils/enums";
@@ -10,6 +9,7 @@ import { useEffect, useState } from "react";
 import { RoleModel } from "../models";
 import { getAllRoles } from "../adminservices";
 import { usePageData } from "../../../Context/PageDataProvider";
+import CustomisedButton from "../../../shared/components/C_Button";
 
 export const Roles = () => {
   const intl = useIntl();

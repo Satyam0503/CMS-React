@@ -140,11 +140,11 @@ export const MyLeaveRequests = ({
 
   return (
     <>
-      <Card className="p-4">
+      <Card sx={{ p: { xs: 1.5, sm: 2.5 }, minWidth: 0, overflow: "hidden" }}>
         <Typography variant="h5" className="mb-2">
           {i({ id: "LEAVE.LEAVE_HISTORY" })}
         </Typography>
-        <TableContainer className="mb-2">
+        <TableContainer sx={{ mb: 0.5, width: "100%", overflowX: "auto", overflowY: "hidden", "&::-webkit-scrollbar": { height: 6 } }}>
           <Table sx={{ minWidth: 960 }}>
             <TableHead>
               <TableRow>

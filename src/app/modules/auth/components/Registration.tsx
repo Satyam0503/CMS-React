@@ -1,5 +1,4 @@
-import {
-  useEffect } from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import { registerCompany } from "../core/_requests";
 import { Link,
@@ -14,14 +13,14 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/C_Button";
-import { Check, ErrorOutline } from "@mui/icons-material";
+import { Check, ErrorOutline, Visibility, VisibilityOff } from "@mui/icons-material";
 import { registrationSchema } from "../../../../utils/Schema/registrationSchema";
 import { toast } from "react-toastify";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
-import { AppAlert, AppCheckbox } from "../../../shared/components/ui";
+import { AppAlert, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -35,6 +34,8 @@ const initialValues = {
 export function Registration() {
   const navigate = useNavigate();
   const { formatMessage: i } = useIntl();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleRegistration(
     values: typeof initialValues,
@@ -173,13 +174,22 @@ export function Registration() {
                   {i({ id: "AUTH.PASSWORD_NOTE" })}
                 </Typography>
                 <TextInput
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   label={i({ id: "FORM.PASSWORD" })}
                   placeholder={i({ id: "FORM.PASSWORD" })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
+                        <AppIconButton
+                          type="button"
+                          size="small"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => setShowPassword((visible) => !visible)}
+                        >
+                          {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                        </AppIconButton>
                         {touched.password && errors.password ? (
                           <ErrorOutline color="error" />
                         ) : touched.password && !errors.password ? (
@@ -194,7 +204,7 @@ export function Registration() {
 
               <Stack>
                 <TextInput
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   name="changePassword"
                   label={i({ id: "FORM.CONFIRM_PASSWORD" })}
                   placeholder={i({
@@ -203,6 +213,15 @@ export function Registration() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
+                        <AppIconButton
+                          type="button"
+                          size="small"
+                          aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => setShowConfirmPassword((visible) => !visible)}
+                        >
+                          {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                        </AppIconButton>
                         {touched.changePassword && errors.changePassword ? (
                           <ErrorOutline color="error" />
                         ) : touched.changePassword && !errors.changePassword ? (

@@ -4,6 +4,7 @@ export { CustomisedModal } from "./C_Modal";
 export { CustomIconButton } from "./C_IconButton";
 export { default as CustomSwitchButton } from "./C_SwitchButton";
 export { SearchInput } from "./SearchInput";
+export { ResponsiveTableToolbar } from "./ResponsiveTableToolbar";
 export { default as CustomisedDatePicker } from "./C_DatePicker";
 export { CustomisedTable } from "./C_Table";
 export { CircularLoader } from "./CircularLoader";

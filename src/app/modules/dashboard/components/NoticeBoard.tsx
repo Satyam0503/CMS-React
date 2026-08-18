@@ -57,7 +57,10 @@ export default function NoticeBoard() {
 
   return (
     <>
-      <CustomCard label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
+      <CustomCard
+        label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}
+        applyMinHeight={false}
+      >
         <Stack
           className={clsx("flex-grow-1 gap-4 mt-4", {
             "justify-content-center": noticeList.length === 0,

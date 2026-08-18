@@ -1,12 +1,13 @@
 import {
   Avatar,
+  Box,
   Stack,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Navbar } from "./Navbar";
-import { MenuOutlined } from "@mui/icons-material";
+import { Close, MenuOutlined, Search } from "@mui/icons-material";
 
 import { EmployeeSearchInput } from "./EmployeeSearchInput";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
@@ -21,8 +22,9 @@ type Props = {
 export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
-  const isMobileScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const isCompactScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const companyLogo = useAppSelector((state) => state.user.userData?.companyLogo);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   return (
     <Stack
@@ -32,13 +34,15 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
         minHeight: "var(--app-header-height)",
         borderBottom: "1px solid",
         borderColor: "divider",
+        px: { xs: 1, sm: 3, md: 4 },
+        gap: { xs: 0.5, sm: 1 },
       }}
       data-sidebar-state={sidebarState}
-      className="app-header px-4 flex-row align-items-center justify-content-between position-relative z-3"
+      className="app-header flex-row align-items-center justify-content-between position-relative z-3"
     >
-      <Stack direction="row" alignItems="center" spacing={1.5}>
+      <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }} sx={{ minWidth: 0, flexShrink: 1 }}>
         {isSmallScreen && (
-          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0 }} onClick={openSideBar}>
+          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0, width: { xs: 32, sm: "auto" }, minWidth: { xs: 32, sm: 0 }, height: { xs: 32, sm: "auto" }, p: { xs: 0.5, sm: 1 } }} onClick={openSideBar}>
             <MenuOutlined className="fs-32" />
           </AppIconButton>
         )}
@@ -50,9 +54,9 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
           sx={{
             backgroundColor: "transparent",
             width: "auto",
-            minWidth: 36,
-            maxWidth: { xs: 120, sm: 160 },
-            height: 38,
+            minWidth: 0,
+            maxWidth: { xs: 94, sm: 160 },
+            height: { xs: 34, sm: 38 },
             "& .MuiAvatar-img": {
               objectFit: "contain",
               objectPosition: "left center",
@@ -60,10 +64,35 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
           }}
         />
       </Stack>
-      <Stack direction="row" className="align-items-center flex-grow-1 justify-content-end gap-5">
-        {isMobileScreen && <EmployeeSearchInput />}
+      <Stack direction="row" alignItems="center" sx={{ flexGrow: 0, flexShrink: 0, gap: { xs: 0.25, sm: 1 } }}>
+        {isCompactScreen ? (
+          <AppIconButton aria-label="Search employees" sx={{ border: 0, width: 32, minWidth: 32, height: 32, p: 0.5 }} onClick={() => setIsMobileSearchOpen(true)}>
+            <Search />
+          </AppIconButton>
+        ) : (
+          <EmployeeSearchInput />
+        )}
         <Navbar />
       </Stack>
+      {isCompactScreen && isMobileSearchOpen && (
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 6,
+            zIndex: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+            px: 0.5,
+            bgcolor: "background.header",
+          }}
+        >
+          <EmployeeSearchInput autoFocus sx={{ minWidth: 0, width: "100%", flex: 1 }} />
+          <AppIconButton aria-label="Close employee search" sx={{ border: 0, flex: "0 0 auto" }} onClick={() => setIsMobileSearchOpen(false)}>
+            <Close />
+          </AppIconButton>
+        </Box>
+      )}
     </Stack>
   );
 };

@@ -138,14 +138,23 @@ export const EmployeesLeaveBalance = () => {
     <>
       <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
         <Stack
-          direction={"row"}
-          sx={{ width: "100%", justifyContent: "space-between", gap: "15px" }}
+          direction="row"
+          alignItems="center"
+          sx={{ width: "100%", justifyContent: "space-between", gap: 1.25 }}
         >
           <AppTextField
             id="outlined-search"
             variant="outlined"
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
             size="small"
+            sx={{
+              // Keep the search and filter actions on one row at every
+              // viewport width. The field uses all remaining space on mobile
+              // while the filter control retains a stable tap target.
+              minWidth: 0,
+              width: "100%",
+              flex: "1 1 auto",
+            }}
             onChange={(e) => {
               setSearch(e.target.value);
               setPageNo(0);

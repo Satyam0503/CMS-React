@@ -70,8 +70,8 @@ export const LeaveRequestFilter = () => {
     // console.log(errors);
     
     return (
-        <Box component="div" className="leave-request-filter">
-            <Box component="div" className="filter-fields">
+        <Box component="div" className="leave-request-filter" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) auto" }, gap: 1.5, alignItems: "end" }}>
+            <Box component="div" className="filter-fields" sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" }, gap: 1.25, minWidth: 0 }}>
                 <FormControl className="mt-2" fullWidth>
                     <InputLabel id="leave-request-status" >{i({ id: "LEAVE.APPROVAL_STATUS" })}</InputLabel>
                     <AppSelect
@@ -116,13 +116,14 @@ export const LeaveRequestFilter = () => {
                     }}
                 />
             </Box>
-            <Stack direction="row" className="gap-2" >
+            <Stack direction="row" className="gap-2" sx={{ width: { xs: "100%", md: "auto" } }}>
                 <CustomisedButton
                     variant="outlined"
                     size="large"
                     className="mt-2"
                     label={i({ id: "BUTTON.CLEAR" })}
                     handleClick={handleResetFilter}
+                    sx={{ width: { xs: "100%", md: "auto" }, minWidth: { md: 96 } }}
                 />
             </Stack>
         </Box>

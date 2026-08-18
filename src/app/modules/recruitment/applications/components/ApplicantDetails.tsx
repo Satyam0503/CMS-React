@@ -231,18 +231,18 @@ export const ApplicantDetails = () => {
     });
   };
   return (
-    <Stack spacing={2.5} sx={{ flexGrow: 1, pb: 3 }}>
+    <Stack spacing={{ xs: 1.5, sm: 2.5 }} sx={{ flexGrow: 1, pb: { xs: 2, sm: 3 }, minWidth: 0 }}>
       <Card
         sx={{
-          p: { xs: 2, sm: 3 },
+          p: { xs: 1.5, sm: 2.5, md: 3 },
           borderRadius: 3,
           border: "1px solid",
           borderColor: "divider",
-          boxShadow: "0 12px 36px rgba(15,23,42,.06)",
-          backgroundImage: "none",
+          boxShadow: "0 12px 36px rgba(15,23,42,.07)",
+          overflow: "hidden",
         }}
       >
-        <Stack direction="row" mb={3} gap={2} flexWrap="wrap" justifyContent="space-between" alignItems="center">
+        <Stack direction={{ xs: "column", sm: "row" }} mb={{ xs: 2, sm: 3 }} gap={1.5} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }}>
           <Box>
             <Typography variant="h5" fontWeight={800}>
               {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
@@ -252,7 +252,7 @@ export const ApplicantDetails = () => {
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, "& button": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" } }}>
             <CustomIconButton
               icon={CvPreviewMode ? <Close /> : <Visibility />}
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
@@ -280,13 +280,15 @@ export const ApplicantDetails = () => {
               spacing={2}
               sx={{
                 "& > .MuiGrid-root > .MuiStack-root": {
-                  minHeight: 76,
-                  p: 2,
+                  minHeight: { xs: 88, sm: 76 },
+                  p: { xs: 1.5, sm: 2 },
                   borderRadius: 2.5,
                   bgcolor: "action.hover",
                   border: "1px solid",
                   borderColor: "divider",
-                  flexWrap: "wrap",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "center",
                   alignContent: "center",
                 },
                 "& > .MuiGrid-root > .MuiStack-root .fw-bold": {
@@ -303,7 +305,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.FULL_NAME" })}
                   </Typography>{" "}
@@ -319,7 +321,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.EMAIL" })}
                   </Typography>
@@ -334,7 +336,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.PHONE" })}
                   </Typography>
@@ -349,7 +351,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "JOB.POSITION" })}
                   </Typography>
@@ -363,7 +365,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "FORM.EXPERIENCE" })}
                   </Typography>
@@ -379,7 +381,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.APPLIED_DATE" })}
                   </Typography>
@@ -395,7 +397,7 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+                <Stack spacing={0.75} sx={{ alignItems: "flex-start" }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                   </Typography>
@@ -430,8 +432,8 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2} sx={{
-                  alignItems: "center"
+                <Stack spacing={0.75} sx={{
+                  alignItems: "flex-start"
                 }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
@@ -456,15 +458,16 @@ export const ApplicantDetails = () => {
         !CvPreviewMode &&
         <Card
           sx={{
-            p: { xs: 2, sm: 3 },
+            p: { xs: 1.5, sm: 2.5, md: 3 },
             borderRadius: 3,
             border: "1px solid",
             borderColor: "divider",
-            boxShadow: "0 12px 36px rgba(15,23,42,.06)",
+            boxShadow: "0 12px 36px rgba(15,23,42,.07)",
             backgroundImage: "none",
+            overflow: "hidden",
           }}
         >
-          <Stack direction="row" gap={2} justifyContent="space-between" alignItems="center" flexWrap="wrap" mb={2.5}>
+          <Stack direction={{ xs: "column", sm: "row" }} gap={1.5} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} mb={{ xs: 2, sm: 2.5 }}>
             <Box>
               <Typography variant="h5" fontWeight={800}>
                 {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
@@ -479,10 +482,12 @@ export const ApplicantDetails = () => {
               handleClick={() => {
                 setModalOpen(true);
               }}
+              fullWidth={false}
+              sx={{ minHeight: 42, alignSelf: { xs: "stretch", sm: "auto" } }}
             />
           </Stack>
 
-          <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2.5, overflowX: "auto" }}>
+          <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2.5, overflowX: "auto", "&::-webkit-scrollbar": { height: 7 }, "&::-webkit-scrollbar-thumb": { bgcolor: "action.selected", borderRadius: 8 } }}>
             <CustomisedTable
               keyName="id"
               rows={commentList}

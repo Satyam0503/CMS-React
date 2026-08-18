@@ -141,16 +141,15 @@ const PayRollManagement = () => {
 
     return (
         <>
-            <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
+            <Card className="d-flex flex-column flex-grow-1" sx={{ gap: { xs: 2, md: 3 }, p: { xs: 1.5, sm: 2.5, md: 3 }, minWidth: 0, overflow: "hidden" }}>
                 <Stack
-                    direction="row"
+                    direction={{ xs: "column", lg: "row" }}
                     spacing={1.25}
                     useFlexGap
                     sx={{
-                        alignItems: "center",
-                        flexWrap: { xs: "wrap", lg: "nowrap" },
+                        alignItems: { xs: "stretch", lg: "center" },
                         width: "100%",
-                        p: { xs: 1.25, sm: 1.5 },
+                        p: { xs: 1, sm: 1.5 },
                         border: 1,
                         borderColor: "divider",
                         borderRadius: 2,
@@ -163,7 +162,7 @@ const PayRollManagement = () => {
                 >
                     <Stack
                         sx={{
-                            width: { xs: "100%", sm: 232 },
+                            width: { xs: "100%", lg: 232 },
                             flexShrink: 0,
                             "& > .MuiStack-root": {
                                 pt: "0 !important",
@@ -179,15 +178,19 @@ const PayRollManagement = () => {
                             setValue={handleDateChange}
                         />
                     </Stack>
-                    <Stack sx={{ flex: "1 1 360px", minWidth: { xs: "100%", sm: 240 } }}>
+                    <Stack sx={{ flex: "0 1 auto", width: { xs: "100%", lg: "auto" }, minWidth: 0 }}>
                         <SearchInput search={search} setSearch={handleSearchChange} />
                     </Stack>
                     <Stack
                         direction="row"
                         spacing={1}
+                        useFlexGap
                         sx={{
                             alignItems: "center",
-                            flexShrink: 0,
+                            flexShrink: { lg: 0 },
+                            flexWrap: "wrap",
+                            width: { xs: "100%", lg: "auto" },
+                            justifyContent: { xs: "flex-start", lg: "flex-end" },
                             ml: { lg: 0.25 },
                             pl: { lg: 1.25 },
                             borderLeft: { lg: 1 },
@@ -197,12 +200,12 @@ const PayRollManagement = () => {
                         {
                             hasCreatePermission &&
                             <>
-                                <UploadPayRollData handlePageRefresh={handlePageRefresh} />
+                                <UploadPayRollData handlePageRefresh={handlePageRefresh} fillToolbarRow />
                                 <Tooltip title={i({ id: "BUTTON.ADD" })} arrow placement="top">
                                     <AppButton
                                         variant="outlined"
                                         aria-label={i({ id: "BUTTON.ADD" })}
-                                        sx={payrollActionButtonSx}
+                                        sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}
                                         onClick={() => setIsModalOpen(true)}
                                     >
                                         <Add fontSize="small" />
@@ -224,6 +227,9 @@ const PayRollManagement = () => {
                                         fontWeight: 600,
                                         borderRadius: 1.5,
                                         bgcolor: "background.paper",
+                                        maxWidth: "100%",
+                                        flexBasis: { xs: "100%", lg: "auto" },
+                                        "& .MuiChip-label": { overflow: "hidden", textOverflow: "ellipsis" },
                                         "& .MuiChip-icon": { fontSize: 20 },
                                     }}
                                 />
@@ -237,7 +243,7 @@ const PayRollManagement = () => {
                                         variant="outlined"
                                         color="primary"
                                         aria-label={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
-                                        sx={payrollActionButtonSx}
+                                        sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}
                                         disabled={isProcessing || processableRows.length === 0}
                                         onClick={() => setIsProcessModalOpen(true)}
                                     >

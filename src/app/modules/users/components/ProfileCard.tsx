@@ -4,6 +4,8 @@ import {
   Card,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Edit, Visibility } from "@mui/icons-material";
@@ -29,6 +31,7 @@ import { LANGUAGE } from "../../../../utils/enums";
 
 import { AppIconButton } from "../../../shared/components/ui";
 export default function ProfileCard() {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const { formatMessage: i } = useIntl();
   const { userDetails } = useUserDetails();
@@ -42,6 +45,9 @@ export default function ProfileCard() {
     LANGUAGE.ENGLISH;
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
+  const paySlipControlColor = theme.palette.mode === "light"
+    ? theme.palette.primary.dark
+    : theme.palette.common.white;
 
   const handleClose = () => {
     setOpen(false);
@@ -198,40 +204,48 @@ export default function ProfileCard() {
               setValue={handleDateChange}
               sx={{
                 "& .MuiOutlinedInput-root": {
+                  backgroundColor: alpha(paySlipControlColor, 0.1),
                   "& fieldset": {
-                    borderColor: "common.white",
+                    borderColor: alpha(paySlipControlColor, 0.82),
                   },
                   "&:hover:not(.Mui-focused)": {
                     "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "common.white",
+                      borderColor: paySlipControlColor,
                     },
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "common.white",
+                    borderColor: paySlipControlColor,
                   },
-                  color: "common.white",
+                  color: paySlipControlColor,
                 },
                 "& .MuiInputLabel-root": {
-                  color: "common.white",
+                  color: paySlipControlColor,
                 },
                 "& .MuiInputLabel-root.Mui-focused": {
-                  color: "common.white",
+                  color: paySlipControlColor,
                 },
                 "& .MuiSvgIcon-root": {
-                  color: "common.white",
+                  color: paySlipControlColor,
                 },
               }}
             />
             <AppIconButton
-              className="border-1 border-white"
-              sx={{ height: 36, width: 36, borderRadius: 1 }}
+              sx={{
+                height: 36,
+                width: 36,
+                borderRadius: 1,
+                border: "1px solid",
+                borderColor: alpha(paySlipControlColor, 0.82),
+                backgroundColor: alpha(paySlipControlColor, 0.1),
+                "&:hover": { backgroundColor: alpha(paySlipControlColor, 0.2) },
+              }}
               onClick={viewPaySlip}
               disabled={loading}
             >
               {loading ? (
                 <span className="loader" />
               ) : (
-                <Visibility sx={{ color: "#fff" }} />
+                <Visibility sx={{ color: paySlipControlColor }} />
               )}
             </AppIconButton>
           </Stack>

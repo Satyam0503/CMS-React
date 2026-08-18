@@ -2,10 +2,12 @@ import { CloseRounded, EditRounded, InfoOutlined, LaunchRounded, PreviewRounded,
 import { Alert, Box, Button, Chip, CircularProgress, FormControlLabel, IconButton, Paper, Stack, Switch, Tab, Tabs, TextField, Tooltip, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
 import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { useAppSelector } from "../../../Redux/hooks";
+import { usePageData } from "../../../Context/PageDataProvider";
 import { CompanyLogo } from "../components/CompanyLogo";
 import { getManagedCompanyProfile, saveManagedCompanyProfile } from "../services/careerPortalService";
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
@@ -56,6 +58,7 @@ const CsvField = ({ label, field, value, onChange }: { label: string; field: key
 };
 
 export const CareerProfileAdminPage = () => {
+  const { setPageTitle } = usePageData();
   const userData = useAppSelector((state) => state.user.userData);
   const canEdit = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(
     ModulesName.CareerProfile,
@@ -69,8 +72,13 @@ export const CareerProfileAdminPage = () => {
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
+  const pageHeaderActionsTarget = document.getElementById("page-header-actions");
 
   useEffect(() => { document.title = `${profile.displayName || "Company"} Careers`; }, [profile.displayName]);
+  useEffect(() => {
+    setPageTitle("Career Profile");
+    return () => setPageTitle("");
+  }, [setPageTitle]);
 
   useEffect(() => {
     getManagedCompanyProfile()
@@ -123,16 +131,15 @@ export const CareerProfileAdminPage = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems={{ md: "center" }} gap={2}>
-        <Box><Typography variant="h4" fontWeight={900}>Public career profile</Typography><Typography color="text.secondary">Shape how candidates see your company before they apply.</Typography></Box>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+    <>
+      {pageHeaderActionsTarget && createPortal(
+        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ justifyContent: { xs: "flex-start", md: "flex-end" }, width: { xs: "100%", md: "auto" } }}>
           {!!profile.publicCompanyCode && <Button href={`/careers/${profile.publicCompanyCode}`} target="_blank" rel="noopener noreferrer" startIcon={<LaunchRounded />}>Open public page</Button>}
           {editing ? <><Button startIcon={<CloseRounded />} disabled={saving} onClick={() => { setProfile(savedProfile); setError(""); setEditing(false); }}>Cancel</Button><Button variant="contained" startIcon={<SaveRounded />} onClick={save} disabled={saving}>{saving ? "Saving..." : "Save changes"}</Button></> : <Button variant="contained" startIcon={<EditRounded />} onClick={() => setEditing(true)}>Edit profile</Button>}
-        </Stack>
-      </Stack>
+        </Stack>, pageHeaderActionsTarget)}
+    <Box sx={{ minWidth: 0, width: "100%" }}>
       {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-      <Paper sx={{ mt: 3, borderRadius: 4, border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
+      <Paper sx={{ border: "1px solid", borderColor: "divider", overflow: "hidden" }}>
         <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable"><Tab label="Company story" /><Tab label="Culture & benefits" /><Tab label="Preview" icon={<PreviewRounded />} iconPosition="start" /></Tabs>
         <Box sx={{ p: { xs: 2.5, md: 4 } }}>
           {!editing && tab !== 2 && <Alert severity="info" sx={{ mb: 2 }}>This profile is read-only. Select Edit profile to make changes.</Alert>}
@@ -160,5 +167,6 @@ export const CareerProfileAdminPage = () => {
         </Box>
       </Paper>
     </Box>
+    </>
   );
 };

@@ -33,8 +33,8 @@ export const MonthlyLeaveTakenLineChart = () => {
     }, []);
 
     return (
-        <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, p: 2 }}>
-            <Stack className="mb-2 flex-row justify-content-between">
+        <Card sx={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0, minHeight: { xs: 260, sm: 300 }, p: { xs: 1.5, sm: 2 } }}>
+            <Stack direction="row" flexWrap="wrap" gap={1} className="mb-2 justify-content-between">
                 <Typography className="fw-bold fs-16">{i({ id: "LEAVE.TITLES.MONTHLY_LEAVE_SUMMARY" })}</Typography>
                 <Typography className="fw-bold fs-16">{dayjs().format("YYYY")}</Typography>
             </Stack>

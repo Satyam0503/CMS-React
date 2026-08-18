@@ -36,7 +36,9 @@ import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisit
 import {
   discoverJobs,
   followCompany,
+  getFollowStatus,
   trackCareerEvent,
+  unfollowCompany,
 } from "../services/careerPortalService";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { Alrt, Btn } from "../../../shared/components/ui";
@@ -64,9 +66,27 @@ export const CareerJobDetails = () => {
   const [error, setError] = useState("");
   const [applyOpen, setApplyOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
   const description = useMemo(() => ({ __html: DOMPurify.sanitize(job?.description || "") }), [job]);
 
   useEffect(() => { if (job) document.title = `${job.title} - ${job.companyName}`; }, [job]);
+
+  useEffect(() => {
+    const session = getCareerSession();
+    if (!companyCode || !session) {
+      setIsFollowing(false);
+      return;
+    }
+
+    let active = true;
+    getFollowStatus(companyCode, session)
+      .then(({ data }) => {
+        if (active && data.success) setIsFollowing(data.methodResult?.isFollowing === true);
+      })
+      .catch(() => active && setIsFollowing(false));
+    return () => { active = false; };
+  }, [companyCode]);
 
   useEffect(() => {
     if (!companyCode || !jobSlug || !/^\d{6}$/.test(companyCode)) {
@@ -110,14 +130,29 @@ export const CareerJobDetails = () => {
     return () => { active = false; };
   }, [companyCode, jobSlug]);
 
-  const follow = async () => {
+  const toggleFollow = async () => {
     const session = getCareerSession();
     if (!session) {
       setNotice("Verify an email on the Job alerts page before following companies.");
       return;
     }
-    await followCompany(companyCode!, session);
-    setNotice(`You’re now following ${job?.companyName}.`);
+    if (!companyCode || followLoading) return;
+
+    setFollowLoading(true);
+    try {
+      const { data } = isFollowing
+        ? await unfollowCompany(companyCode, session)
+        : await followCompany(companyCode, session);
+      if (!data.success) throw new Error(data.message || "Unable to update company follow status.");
+
+      const nextFollowing = !isFollowing;
+      setIsFollowing(nextFollowing);
+      setNotice(nextFollowing ? `Following ${job?.companyName}.` : `Unfollowed ${job?.companyName}.`);
+    } catch (reason: any) {
+      setNotice(reason?.response?.data?.message || reason?.message || "Unable to update company follow status.");
+    } finally {
+      setFollowLoading(false);
+    }
   };
 
   return (
@@ -155,9 +190,12 @@ export const CareerJobDetails = () => {
                       </Box>
                     </Stack>
                     <Btn
-                      onClick={follow}
+                      onClick={toggleFollow}
                       size="small"
                       variant="contained"
+                      disabled={followLoading}
+                      aria-pressed={isFollowing}
+                      startIcon={isFollowing ? <CheckCircleOutlineRounded /> : undefined}
                       sx={{
                         flexShrink: 0,
                         px: 2,
@@ -166,15 +204,19 @@ export const CareerJobDetails = () => {
                         fontWeight: 800,
                         textTransform: "none",
                         color: "common.white",
-                        background: "linear-gradient(135deg, var(--mui-palette-primary-main), var(--mui-palette-secondary-main))",
+                        background: isFollowing
+                          ? "linear-gradient(135deg, var(--mui-palette-success-dark), var(--mui-palette-success-main))"
+                          : "linear-gradient(135deg, var(--mui-palette-primary-main), var(--mui-palette-secondary-main))",
                         boxShadow: "0 10px 24px color-mix(in srgb, var(--mui-palette-primary-main) 28%, transparent)",
                         "&:hover": {
-                          background: "linear-gradient(135deg, var(--mui-palette-primary-dark), var(--mui-palette-secondary-dark))",
+                          background: isFollowing
+                            ? "linear-gradient(135deg, var(--mui-palette-success-dark), var(--mui-palette-success-main))"
+                            : "linear-gradient(135deg, var(--mui-palette-primary-dark), var(--mui-palette-secondary-dark))",
                           boxShadow: "0 14px 28px color-mix(in srgb, var(--mui-palette-primary-main) 34%, transparent)",
                         },
                       }}
                     >
-                      Follow company
+                      {followLoading ? "Updating…" : isFollowing ? "Following" : "Follow company"}
                     </Btn>
                   </Stack>
                   <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} sx={{ mt: 4 }}>

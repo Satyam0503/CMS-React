@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material";
 import { Localization } from "@mui/material/locale";
-import { darkPalette, lightPalette } from "./themePalettes";
+import { darkPalette, dawnDarkPalette, dawnLightPalette, lightPalette } from "./themePalettes";
 import { AppStyle, DEFAULT_THEME } from "./useAppStyle";
 
 // Surface treatment per style — applied to MuiCard / MuiPaper / MuiAppBar.
@@ -11,39 +11,75 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
     case "glass":
       return {
         card: {
-          background: "color-mix(in srgb, var(--mui-palette-background-paper) 65%, transparent)",
-          WebkitBackdropFilter: "blur(14px) saturate(160%)",
-          backdropFilter: "blur(14px) saturate(160%)",
-          border: "1px solid var(--mui-palette-divider)",
+          // Keep content readable first, then layer the glass effect over the
+          // shared app backdrop.  The previous 65% surface was too transparent
+          // on larger pages and made otherwise clear screens look washed out.
+          background:
+            "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-common-white) 34%, transparent), transparent 46%), color-mix(in srgb, var(--mui-palette-background-paper) 82%, transparent)",
+          WebkitBackdropFilter: "blur(20px) saturate(145%)",
+          backdropFilter: "blur(20px) saturate(145%)",
+          border: "1px solid color-mix(in srgb, var(--mui-palette-common-white) 58%, var(--mui-palette-divider))",
           boxShadow:
-            "0 4px 16px color-mix(in srgb, var(--mui-palette-common-black) 12%, transparent)",
+            "0 14px 32px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent), 0 2px 8px color-mix(in srgb, var(--mui-palette-common-black) 7%, transparent)",
         },
         paper: {
-          background: "color-mix(in srgb, var(--mui-palette-background-paper) 72%, transparent)",
-          WebkitBackdropFilter: "blur(12px)",
-          backdropFilter: "blur(12px)",
+          background:
+            "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-common-white) 24%, transparent), transparent 52%), color-mix(in srgb, var(--mui-palette-background-paper) 86%, transparent)",
+          WebkitBackdropFilter: "blur(18px) saturate(135%)",
+          backdropFilter: "blur(18px) saturate(135%)",
+          border: "1px solid color-mix(in srgb, var(--mui-palette-common-white) 46%, var(--mui-palette-divider))",
         },
       };
-    case "minimal":
+    case "slate":
       return {
         card: {
-          borderRadius: 4,
-          boxShadow: "none",
-          border: "1px solid var(--mui-palette-divider)",
+          // Keep Slate surfaces token-driven.  The SCSS style layer changes
+          // these tokens for the selected color scheme, so dialogs, cards and
+          // page-level Paper components do not keep a light-only background
+          // after a dark-mode switch.
+          background: "var(--app-slate-surface, #ffffff)",
+          borderRadius: 14,
+          border: "1px solid var(--app-slate-border, #d9e2ec)",
+          boxShadow: "var(--app-slate-card-shadow, 0 10px 26px rgba(51, 65, 85, 0.08))",
         },
         paper: {
-          borderRadius: 4,
-          boxShadow: "none",
+          background: "var(--app-slate-surface, #ffffff)",
+          borderRadius: 12,
+          border: "1px solid var(--app-slate-border-soft, #e2e8f0)",
+          boxShadow: "var(--app-slate-paper-shadow, 0 6px 18px rgba(51, 65, 85, 0.06))",
         },
       };
-    case "aurora":
+    case "dawn":
+      return {
+        // Dawn pairs its ambient backdrop with the warm coral action palette,
+        // while content remains on white surfaces.
+        card: {
+          background: "var(--app-dawn-card-background, #ffffff)",
+          borderRadius: 14,
+          border: "1px solid var(--app-dawn-border, #e6ddeb)",
+          boxShadow: "var(--app-dawn-card-shadow, 0 12px 30px rgba(73, 59, 89, 0.08))",
+        },
+        paper: {
+          background: "var(--app-dawn-surface, #ffffff)",
+          borderRadius: 12,
+          border: "1px solid var(--app-dawn-border-soft, #efe7f2)",
+          boxShadow: "var(--app-dawn-paper-shadow, 0 7px 20px rgba(73, 59, 89, 0.06))",
+        },
+      };
+    case "blush":
       return {
         card: {
-          borderRadius: 18,
-          border: "1px solid color-mix(in srgb, var(--mui-palette-primary-main) 18%, var(--mui-palette-divider))",
-          boxShadow: "0 10px 28px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+          background: "var(--app-blush-surface, #ffffff)",
+          borderRadius: 14,
+          border: "1px solid var(--app-blush-border, #efd1df)",
+          boxShadow: "var(--app-blush-card-shadow, 0 12px 30px rgba(150, 82, 120, 0.10))",
         },
-        paper: { borderRadius: 16 },
+        paper: {
+          background: "var(--app-blush-surface, #ffffff)",
+          borderRadius: 12,
+          border: "1px solid var(--app-blush-border-soft, #f5dfe8)",
+          boxShadow: "var(--app-blush-paper-shadow, 0 7px 20px rgba(150, 82, 120, 0.07))",
+        },
       };
     default:
       return { card: {}, paper: {} };
@@ -52,14 +88,15 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
 
 export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = DEFAULT_THEME) => {
   const surface = getSurfaceOverrides(appStyle);
+  const pageRadius = 12;
   const theme = createTheme(
     {
       cssVariables: {
         colorSchemeSelector: "class",
       },
       colorSchemes: {
-        dark: darkPalette,
-        light: lightPalette,
+        dark: appStyle === "dawn" || appStyle === "blush" ? dawnDarkPalette : darkPalette,
+        light: appStyle === "dawn" || appStyle === "blush" ? dawnLightPalette : lightPalette,
       },
     },
     locale
@@ -95,6 +132,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
           },
           root: {
             padding: 0,
+            borderRadius: pageRadius,
             "& input:-webkit-autofill": {
               backgroundColor: "transparent", // Removes autofill background
               WebkitBoxShadow: "0 0 0 1000px transparent inset", // Ensures no background shadow
@@ -134,16 +172,23 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             fontSize: "12px",
-            boxShadow:
-              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
             ...surface.card,
+            // Page cards are a shared surface. The important flag also makes
+            // legacy page-level sx values inherit the same visual language.
+            borderRadius: `${pageRadius}px !important`,
+            border: surface.card.border ?? "1px solid var(--mui-palette-divider)",
+            boxShadow: surface.card.boxShadow ??
+              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
           },
         },
       },
 
       MuiPaper: {
         styleOverrides: {
-          root: surface.paper,
+          root: {
+            ...surface.paper,
+            borderRadius: `${pageRadius}px !important`,
+          },
         },
       },
 
@@ -163,6 +208,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             fontSize: 12,
+            borderRadius: 8,
             textTransform: "capitalize",
             "&.Mui-disabled": {
               color: theme.vars?.palette.common.white,
@@ -516,6 +562,9 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       subtitle2: {
         color: theme.vars?.palette.primary.main,
       },
+    },
+    shape: {
+      borderRadius: pageRadius,
     },
   });
   return extendedTheme;

@@ -51,7 +51,23 @@ const CompanyDetails = () => {
 
   return (
     <Box className="d-flex flex-column flex-grow-1">
-      <Stack direction="row" spacing={0.5} className="tab-container" sx={{ bgcolor: "background.card" }} >
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={0.5}
+        className="tab-container"
+        sx={{
+          bgcolor: "background.card",
+          overflowX: "visible !important",
+          "& .tab-box": {
+            minHeight: 52,
+            width: { xs: "100%", sm: "auto" },
+            minWidth: 0,
+            px: { xs: 1.5, sm: 2 },
+            py: { xs: 1, sm: 1.25 },
+            fontSize: { xs: "0.875rem", sm: "0.92rem" },
+          },
+        }}
+      >
         {tabsRoutes.map((tab) => {
           return (
             <ButtonBase

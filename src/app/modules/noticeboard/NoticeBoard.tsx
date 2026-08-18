@@ -1,8 +1,11 @@
 import * as React from "react";
 import {
   Badge,
+  Box,
   Card,
+  Chip,
   Stack,
+  Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -119,7 +122,7 @@ export const NoticeBoard = () => {
       try {
         const { data } = await getAllNotices(payload);
         if (data.success) {
-          setNoticeList(data.methodResults);
+          setNoticeList(Array.isArray(data.methodResults) ? data.methodResults : []);
           setTotalRecords(data.totalRecords);
         }
       } catch (error) {
@@ -140,44 +143,204 @@ export const NoticeBoard = () => {
 
   return (
     <>
-      <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-        <Stack className="flex-row justify-content-between gap-4 flex-wrap" >
-          <SearchInput search={searchValue} setSearch={handleSearchChange} />
-          <Stack
-            direction={"row"}
+      <Card
+        className="d-flex flex-column gap-4 p-4 p-md-6"
+        sx={{
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
+          boxShadow: "0 12px 32px rgba(36, 24, 62, 0.08)",
+          overflow: "hidden",
+          "& .MuiTableContainer-root": {
+            border: "1px solid",
+            borderColor: "divider",
+            borderRadius: 2.5,
+          },
+          "& .MuiTableHead-root .MuiTableCell-root": {
+            bgcolor: "action.hover",
+            color: "text.secondary",
+            fontSize: 12,
+            fontWeight: 800,
+            letterSpacing: "0.03em",
+            py: 1.5,
+            textTransform: "uppercase",
+          },
+          "& .MuiTableBody-root .MuiTableRow-root": {
+            transition: "background-color 160ms ease, transform 160ms ease",
+          },
+          "& .MuiTableBody-root .MuiTableRow-root:hover": {
+            bgcolor: "action.hover",
+          },
+          "& .MuiTableBody-root .MuiTableCell-root": { py: 1.75 },
+          "& .MuiTablePagination-toolbar": {
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
+            minHeight: 48,
+            px: { xs: 0, sm: 1 },
+          },
+          "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
+          "& .MuiTablePagination-selectLabel": { ml: { xs: 0, sm: 1 } },
+        }}
+      >
+        <Box
+          sx={{
+            alignItems: { xs: "stretch", sm: "center" },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 1.5,
+            justifyContent: "space-between",
+          }}
+        >
+          <Box
             sx={{
-              flexWrap: "wrap",
-              gap: 1
-            }}>
+              flex: "0 1 auto",
+              maxWidth: { sm: 420 },
+              minWidth: 0,
+              "& .MuiFormControl-root": { width: "100%" },
+              "& .MuiOutlinedInput-root": {
+                bgcolor: "background.paper",
+                borderRadius: 2,
+              },
+            }}
+          >
+            <SearchInput search={searchValue} setSearch={handleSearchChange} />
+          </Box>
+          <Stack
+            alignItems="center"
+            direction="row"
+            spacing={1}
+            sx={{
+              flexShrink: 0,
+              justifyContent: "flex-end",
+              width: { xs: "100%", sm: "auto" },
+            }}
+          >
             {
               hasAddPermission &&
-              <AppButton sx={{ height: 32 }} variant="outlined" endIcon={<ListAltOutlined className="fs-20" />} onClick={() => navigate("/noticeboard/notices/mynotices")}>
+              <AppButton
+                startIcon={<ListAltOutlined className="fs-20" />}
+                sx={{
+                  borderRadius: 2,
+                  fontWeight: 700,
+                  height: 36,
+                  px: 1.5,
+                  whiteSpace: "nowrap",
+                }}
+                variant="outlined"
+                onClick={() => navigate("/noticeboard/notices/mynotices")}
+              >
                 {formatMessage({ id: "NOTICE.TITLES.MY_NOTICE" })}
               </AppButton>
             }
             <Badge badgeContent={countAppliedFilter(noticeBoardFilter)} color="primary">
-              <CustomIconButton icon={<FilterList />} handleClick={handleFilterOpen} />
+              <CustomIconButton
+                ariaLabel="Filter notices"
+                icon={<FilterList />}
+                handleClick={handleFilterOpen}
+                tooltip="Filter notices"
+                toolbar
+              />
             </Badge>
             {
               hasAddPermission &&
               <CustomIconButton
+                ariaLabel={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
                 tooltip={formatMessage({ id: "TOOLTIP.POST_NOTICE" })}
                 icon={<Add />}
                 handleClick={() => setModalOpen(true)}
+                toolbar
               />
             }
           </Stack>
+        </Box>
+        <Box sx={{ display: { xs: "none", sm: "block" } }}>
+          <CustomisedTable
+            keyName="noticeId"
+            tabName={ModulesName.NoticeBoard}
+            rows={NoticeList}
+            columns={NoticeBoardTableColumnList}
+            rowClickHandler={handleRowClick}
+            page={paginationValues.pageNo}
+            rowsPerPage={paginationValues.records}
+            loading={loading}
+          />
+        </Box>
+        <Stack
+          spacing={1.25}
+          sx={{ display: { xs: "flex", sm: "none" } }}
+        >
+          {loading ? (
+            <Box sx={{ color: "text.secondary", py: 4, textAlign: "center" }}>
+              Loading notices…
+            </Box>
+          ) : NoticeList.length === 0 ? (
+            <Box sx={{ color: "text.secondary", py: 4, textAlign: "center" }}>
+              {formatMessage({ id: "MESSAGE.NO_DATA_AVAILABLE" })}
+            </Box>
+          ) : (
+            NoticeList.map((notice, index) => {
+              const noticeType = notice.noticeType === 1 ? "General" : notice.noticeType === 2 ? "Important" : "Urgent";
+              const tone = notice.noticeType === 1 ? "success" : notice.noticeType === 2 ? "warning" : "error";
+              const designation = typeof notice.userDesignation === "string"
+                ? notice.userDesignation
+                : notice.userDesignation && typeof notice.userDesignation === "object"
+                  ? Object.values(notice.userDesignation).filter(Boolean).join(" · ")
+                  : "Notice";
+              return (
+                <Card
+                  key={notice.noticeId}
+                  onClick={() => handleRowClick(notice)}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: notice.viewedStatus ? "divider" : "primary.light",
+                    borderRadius: 2.5,
+                    boxShadow: "none",
+                    cursor: "pointer",
+                    px: 1.75,
+                    py: 1.5,
+                    "&:active": { bgcolor: "action.selected" },
+                  }}
+                >
+                  <Stack direction="row" justifyContent="space-between" spacing={1.5}>
+                    <Stack direction="row" minWidth={0} spacing={1.25}>
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          bgcolor: "primary.50",
+                          borderRadius: 1.5,
+                          color: "primary.main",
+                          display: "flex",
+                          flex: "0 0 auto",
+                          fontSize: 12,
+                          fontWeight: 800,
+                          height: 30,
+                          justifyContent: "center",
+                          width: 30,
+                        }}
+                      >
+                        {paginationValues.pageNo * paginationValues.records + index + 1}
+                      </Box>
+                      <Box minWidth={0}>
+                        <Typography noWrap fontSize={14} fontWeight={800}>{notice.userName}</Typography>
+                        <Typography color="text.secondary" fontSize={12} noWrap>{designation}</Typography>
+                      </Box>
+                    </Stack>
+                    <Chip color={tone} label={noticeType} size="small" sx={{ flexShrink: 0, fontWeight: 700 }} />
+                  </Stack>
+                  <Typography
+                    color={notice.viewedStatus ? "text.secondary" : "text.primary"}
+                    sx={{ display: "-webkit-box", fontSize: 14, fontWeight: notice.viewedStatus ? 400 : 600, mt: 1.25, overflow: "hidden", WebkitBoxOrient: "vertical", WebkitLineClamp: 2 }}
+                  >
+                    {notice.noticeTitle}
+                  </Typography>
+                  <Typography color="text.secondary" fontSize={12} sx={{ mt: 1 }}>
+                    {new Date(notice.createdDateTime).toLocaleString()}
+                  </Typography>
+                </Card>
+              );
+            })
+          )}
         </Stack>
-        <CustomisedTable
-          keyName="noticeId"
-          tabName={ModulesName.NoticeBoard}
-          rows={NoticeList}
-          columns={NoticeBoardTableColumnList}
-          rowClickHandler={handleRowClick}
-          page={paginationValues.pageNo}
-          rowsPerPage={paginationValues.records}
-          loading={loading}
-        />
         {
           totalRecords > 0 &&
           <Pagination

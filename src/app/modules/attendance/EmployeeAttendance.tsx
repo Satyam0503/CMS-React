@@ -22,6 +22,9 @@ import {
   HomeWorkOutlined,
   ErrorOutline,
   DownloadOutlined,
+  AssignmentTurnedInOutlined,
+  HistoryOutlined,
+  SendRounded,
 } from "@mui/icons-material";
 
 import { SearchInput } from "../../shared/components/SearchInput";
@@ -40,6 +43,8 @@ import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { attendancePeriods, AttendancePeriod, resolveAttendanceDateRange } from "./attendancePeriod";
 import dayjs from "dayjs";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
+import { usePageData } from "../../Context/PageDataProvider";
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
 
@@ -56,6 +61,8 @@ const useDebounce = (value: string, delay: number) => {
 
 const EmployeeAttendance = () => {
   const intl = useIntl();
+  const { setPageTitle } = usePageData();
+  const location = useLocation();
   const theme = useTheme();
   const userData = useAppSelector((state) => state.user.userData);
   // Administrators are authorized by the API independently of individual module grants.
@@ -90,7 +97,12 @@ const EmployeeAttendance = () => {
   const [submittingCorrection, setSubmittingCorrection] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [correctionRequests, setCorrectionRequests] = React.useState<any[]>([]);
+  const [reviewCorrection, setReviewCorrection] = React.useState<any | null>(null);
   const debouncedSearch = useDebounce(searchValue, 500);
+
+  useEffect(() => {
+    setPageTitle("Attendance Report");
+  }, [setPageTitle]);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -136,6 +148,29 @@ const EmployeeAttendance = () => {
   useEffect(() => {
     void loadMyCorrectionRequests();
   }, [loadMyCorrectionRequests]);
+
+  useEffect(() => {
+    const requestId = typeof location.state === "string" ? location.state : null;
+    if (!canViewAllAttendance || !requestId) return;
+
+    (async () => {
+      try {
+        const response = await getRequest<{ items?: any[] }>("api/admin/attendance/correction-requests", {
+          headers: { "Cache-Control": "no-cache" },
+        });
+        const request = response.data?.items?.find((item) => item.id === requestId);
+        if (request) {
+          setReviewCorrection(request);
+        } else {
+          toast.info("This correction request is no longer pending.");
+        }
+      } catch {
+        toast.error("Unable to open the attendance correction request.");
+      } finally {
+        window.history.replaceState(null, document.title, window.location.pathname);
+      }
+    })();
+  }, [canViewAllAttendance, location.state]);
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
@@ -213,8 +248,8 @@ const EmployeeAttendance = () => {
 
   return (
     <Grid container spacing={2}>
-      {/* ----------- Today's overview and summary ----------- */}
-      <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
+      {/* Company-wide summary is intentionally not exposed on the employee self-service view. */}
+      {canViewAllAttendance && <Grid size={{ xs: 12 }} sx={{ order: 1 }}>
         <Card
           variant="outlined"
           sx={{
@@ -305,35 +340,36 @@ const EmployeeAttendance = () => {
         </Grid>
           </Grid>
         </Card>
-      </Grid>
+      </Grid>}
 
       {/* ----------- Attendance Section ----------- */}
       <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
-        <Card sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 3, boxShadow: "0 10px 30px rgba(71, 46, 117, 0.08)" }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: "center", fontWeight: 800 }}>
-            {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
+        <Card sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 3, boxShadow: "0 10px 30px rgba(71, 46, 117, 0.08)", containerType: "inline-size" }}>
+          <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
+            Attendance Report
           </Typography>
-          <Grid container spacing={1.5} alignItems="end" sx={{ mb: 2.5 }}>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Box sx={{ width: { xs: "100%", md: 230 } }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} />
-              <Typography fontWeight={800} sx={{ display: "none" }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 1.5, alignItems: "end", mb: 2.5, "@container (max-width: 900px)": { gridTemplateColumns: "repeat(2, minmax(0, 1fr))", "& .attendance-report-period": { gridColumn: "1 / -1" } }, "@container (max-width: 640px)": { gridTemplateColumns: "minmax(0, 1fr)" } }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: "block", minHeight: 17, lineHeight: "17px" }}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none", "& .MuiOutlinedInput-root": { minHeight: 40 } }} />
+              <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
                 {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
               </Typography></Box>
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Stack direction="row" alignItems="center" justifyContent="center" spacing={0.5} sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5, maxWidth: 270, mx: "auto" }}>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month"><KeyboardArrowLeft /></Button>
-                <Typography fontWeight={800} sx={{ minWidth: 120, textAlign: "center" }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month"><KeyboardArrowRight /></Button>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", height: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
+                <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowLeft /></Button>
+                <Typography fontWeight={800} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5 }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
+                <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowRight /></Button>
               </Stack>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent={{ md: "flex-end" }} gap={1.25}>
-                <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 190 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
-                {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
+            </Box>
+            <Box className="attendance-report-period" sx={{ minWidth: 0 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent="flex-start" gap={1.25} sx={{ width: "100%" }}>
+                <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 210 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ minHeight: 17, lineHeight: "17px" }}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }} sx={{ height: 40 }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
+                {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ height: 40, minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-end" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
               </Stack>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
+          {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{dateRange.startDate.format("DD MMM")} – {dateRange.startDate.endOf("week").format("DD MMM YYYY")} · Full week view</Box>}
           {!canViewAllAttendance && canManageAttendance && <Typography color="text.secondary" sx={{ mb: 2 }}>You can manage attendance for yourself or assigned employees.</Typography>}
 
           <Box sx={{ mb: 3 }}>
@@ -356,30 +392,63 @@ const EmployeeAttendance = () => {
         <Stack spacing={1}>{summaryModal?.people.length ? summaryModal.people.map((person) => <Box key={person} sx={{ px: 1.5, py: 1, borderRadius: 1, bgcolor: "action.hover" }}>{person}</Box>) : <Typography color="text.secondary">No employees match this status for the selected period.</Typography>}</Stack>
       </CustomisedModal>
 
-      {!canViewAllAttendance && <Grid size={{ xs: 12 }}>
-        <Card sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Report incorrect attendance</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            This does not change your attendance. HR/Admin will review your request.
-          </Typography>
-          <Stack spacing={2} sx={{ maxWidth: 640 }}>
-            <TextField label="Attendance date" type="date" value={correctionDate} onChange={(e) => setCorrectionDate(e.target.value)} InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().slice(0, 10) }} />
-            <TextField select label="Issue type" value={correctionType} onChange={(e) => setCorrectionType(e.target.value)}>
+      <CustomisedModal open={Boolean(reviewCorrection)} handleClose={() => setReviewCorrection(null)} title="Attendance correction request" maxWidth="sm">
+        {reviewCorrection && <Stack spacing={1.5}>
+          <Box sx={{ bgcolor: "action.hover", borderRadius: 2, p: 1.5 }}>
+            <Typography variant="caption" color="text.secondary">Attendance date</Typography>
+            <Typography fontWeight={800}>{new Date(reviewCorrection.attendanceDate).toLocaleDateString()}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">Requested correction</Typography>
+            <Typography sx={{ whiteSpace: "pre-wrap" }}>{reviewCorrection.reason}</Typography>
+          </Box>
+          <Typography variant="body2" color="text.secondary">Review this request from the attendance correction workflow.</Typography>
+        </Stack>}
+      </CustomisedModal>
+
+      {!canViewAllAttendance && <Grid size={{ xs: 12 }} sx={{ order: 4 }}>
+        <Card sx={{ p: { xs: 2, sm: 2.5, md: 3 }, borderRadius: 3, border: "1px solid", borderColor: alpha(theme.palette.primary.main, 0.18), boxShadow: "0 12px 32px rgba(71, 46, 117, 0.10)", background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.06)}, transparent 45%)` }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "flex-start", sm: "center" }} justifyContent="space-between" sx={{ mb: 2.5 }}>
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <Box sx={{ width: 42, height: 42, borderRadius: 2, display: "grid", placeItems: "center", color: "primary.main", bgcolor: "background.paper", boxShadow: "0 4px 12px rgba(71, 46, 117, 0.12)" }}><AssignmentTurnedInOutlined /></Box>
+              <Box>
+                <Typography variant="h6" fontWeight={800}>Report incorrect attendance</Typography>
+                <Typography variant="body2" color="text.secondary">Send a correction request for HR or Admin review.</Typography>
+              </Box>
+            </Stack>
+            <Box sx={{ px: 1.25, py: 0.75, borderRadius: 2, bgcolor: alpha(theme.palette.background.paper, 0.8), color: "text.secondary", fontSize: 12, fontWeight: 700 }}>Attendance stays unchanged until reviewed</Box>
+          </Stack>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1.35fr) minmax(280px, 0.65fr)" }, gap: { xs: 2.5, lg: 3 } }}>
+          <Box component="form" onSubmit={(event) => { event.preventDefault(); void submitCorrection(); }}>
+          <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 0.5 }}>Request details</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Include the date and a short, specific description for a faster review.</Typography>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.75 }}>
+            <TextField fullWidth label="Attendance date" type="date" value={correctionDate} onChange={(e) => setCorrectionDate(e.target.value)} InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().slice(0, 10) }} />
+            <TextField fullWidth select label="Issue type" value={correctionType} onChange={(e) => setCorrectionType(e.target.value)}>
               <MenuItem value="Incorrect status">Incorrect status</MenuItem>
               <MenuItem value="Missing check-in">Missing check-in</MenuItem>
               <MenuItem value="Missing check-out">Missing check-out</MenuItem>
               <MenuItem value="Incorrect working hours">Incorrect working hours</MenuItem>
               <MenuItem value="Other">Other</MenuItem>
             </TextField>
-            <TextField label="Describe the correction needed" placeholder="For example: I checked in at 9:15 AM, but the status shows absent." value={correctionReason} onChange={(e) => setCorrectionReason(e.target.value)} multiline minRows={4} helperText={`${correctionReason.length}/1000 characters`} inputProps={{ maxLength: 1000 }} />
-            <Button variant="contained" size="large" onClick={submitCorrection} disabled={submittingCorrection}>{submittingCorrection ? "Sending request..." : "Send correction request to HR"}</Button>
-          </Stack>
-          {correctionRequests.length > 0 && (
-            <Box sx={{ mt: 3, maxWidth: 640 }}>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>My correction requests</Typography>
+            <TextField fullWidth sx={{ gridColumn: { xs: "auto", sm: "1 / -1" } }} label="Describe the correction needed" placeholder="For example: I checked in at 9:15 AM, but the status shows absent." value={correctionReason} onChange={(e) => setCorrectionReason(e.target.value)} multiline minRows={5} helperText={`${correctionReason.length}/1000 characters`} inputProps={{ maxLength: 1000 }} />
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: { xs: "stretch", sm: "flex-end" }, mt: 2 }}>
+            <Button type="submit" variant="contained" size="large" startIcon={<SendRounded />} disabled={submittingCorrection} sx={{ minHeight: 46, px: { xs: 2, sm: 3 }, width: { xs: "100%", sm: "auto" }, borderRadius: 2, boxShadow: "0 8px 18px rgba(122, 73, 190, 0.28)" }}>{submittingCorrection ? "Sending request..." : "Send correction request"}</Button>
+          </Box>
+          </Box>
+          <Box sx={{ p: { xs: 1.5, sm: 2 }, border: "1px solid", borderColor: alpha(theme.palette.primary.main, 0.16), borderRadius: 2.5, bgcolor: alpha(theme.palette.primary.main, 0.035), minWidth: 0 }}>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+              <HistoryOutlined color="primary" fontSize="small" />
+              <Typography variant="subtitle1" fontWeight={800}>My requests</Typography>
+              <Box sx={{ ml: "auto", px: 0.9, py: 0.25, borderRadius: 99, bgcolor: alpha(theme.palette.primary.main, 0.12), color: "primary.main", fontSize: 12, fontWeight: 800 }}>{correctionRequests.length}</Box>
+            </Stack>
+          {correctionRequests.length > 0 ? (
+            <Box sx={{ maxHeight: { xs: "none", lg: 310 }, overflowY: "auto", pr: { lg: 0.5 } }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Recent correction requests</Typography>
               <Stack spacing={1}>
                 {correctionRequests.map((request) => (
-                  <Box key={request.id} sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
+                  <Box key={request.id} sx={{ p: 1.35, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}>
                     <Typography variant="body2" fontWeight={700}>
                       {new Date(request.attendanceDate).toLocaleDateString()} — {request.status}
                     </Typography>
@@ -388,7 +457,9 @@ const EmployeeAttendance = () => {
                 ))}
               </Stack>
             </Box>
-          )}
+          ) : <Box sx={{ py: 3, textAlign: "center", borderRadius: 2, border: "1px dashed", borderColor: "divider" }}><Typography variant="body2" color="text.secondary">No correction requests yet.</Typography></Box>}
+          </Box>
+          </Box>
         </Card>
       </Grid>}
     </Grid>

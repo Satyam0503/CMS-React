@@ -51,21 +51,44 @@ export default function EmpOnLeave() {
   }
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.EMP_ON_LEAVE" })}>
-        <Stack className="flex-grow-1 justify-content-between mt-4 gap-2" >
+      <CustomCard
+        label={i({ id: "TITLES.EMP_ON_LEAVE" })}
+        applyMinHeight={false}
+      >
+        <Stack className="mt-3" spacing={1.25}>
           {!leaveRequest.length ? (
-            <Box component="div" className="flex-grow-1 align-content-center text-center">
-              <Typography variant="h5">{i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}</Typography>
+            <Box component="div" sx={{ minHeight: 112, display: "grid", placeItems: "center" }}>
+              <Typography className="text-center">{i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}</Typography>
             </Box>
           ) : (
-            <Stack className="gap-3">
-              {leaveRequest.slice(0, 5).map((leave) => {
+            <Stack
+              spacing={1.25}
+              tabIndex={0}
+              aria-label="Employees currently on leave"
+              sx={{
+                maxHeight: 270,
+                overflowY: "auto",
+                pr: 0.75,
+                mr: -0.75,
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { width: 0 },
+                "&:hover, &:focus, &:focus-within": {
+                  scrollbarWidth: "thin",
+                  "&::-webkit-scrollbar": { width: 6 },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "color-mix(in srgb, var(--mui-palette-primary-main) 42%, transparent)",
+                    borderRadius: 99,
+                  },
+                },
+              }}
+            >
+              {leaveRequest.map((leave) => {
                 return (
                   <Stack
                     key={leave.leaveRequestId}
-                    className="justify-content-between flex-row align-items-center"
+                    className="justify-content-between flex-row align-items-center gap-2 p-1 rounded hover-secondary"
                   >
-                    <Stack className="justify-content-between flex-row gap-2  align-items-center" >
+                    <Stack className="justify-content-between flex-row gap-2 align-items-center" sx={{ minWidth: 0 }}>
                       <Avatar
                         alt={leave.employeeName}
                         src={leave.profileUrl ?? DEFAULT_USER_AVATAR}
@@ -76,8 +99,8 @@ export default function EmpOnLeave() {
                           backgroundColor: "secondary.main",
                         }}
                       />
-                      <Stack>
-                        <Typography variant="body1">{leave.employeeName}</Typography>
+                      <Stack sx={{ minWidth: 0 }}>
+                        <Typography variant="body1" noWrap>{leave.employeeName}</Typography>
                         {
                           leave.jobRole &&
                           <Typography variant="body2">{leave.jobRole[currentLanguage] || leave.jobRole[defaultLanguage]}</Typography>
@@ -85,7 +108,7 @@ export default function EmpOnLeave() {
                       </Stack>
                     </Stack>
 
-                    <Typography variant="subtitle2">
+                    <Typography variant="subtitle2" sx={{ flexShrink: 0, whiteSpace: "nowrap", color: "primary.main" }}>
                       {
                         `${dayjs().isSame(leave.startDate, "day") ? i({ id: "DATETIME.TODAY" }) : dateFormatter(leave.startDate, "DD MMM")} - ${!leave.isHalfDay ? dateFormatter(leave.endDate, "DD MMM") : "H"}`
                       }

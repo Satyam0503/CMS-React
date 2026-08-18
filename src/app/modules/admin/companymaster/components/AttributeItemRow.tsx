@@ -6,7 +6,8 @@ import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { LanguageNameMapper } from "../../../../../utils/common";
 import { LANGUAGE } from "../../../../../utils/enums";
-import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { useAppSelector } from "../../../../Redux/hooks";
 
 import { AppIconButton, AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 type Props<T> = {
@@ -15,6 +16,7 @@ type Props<T> = {
   translationLanguage: string;
   keyName: keyof T;
   handleDeleteAttribute: (id: string) => Promise<void>;
+  canDelete?: boolean;
   selectField?: keyof T;
   selectOptions?: Array<{ value: string; label: string }>;
 };
@@ -31,14 +33,17 @@ export const AttributeItemRow = <T extends ReqProps>({
   translationLanguage,
   keyName,
   handleDeleteAttribute,
+  canDelete = false,
   selectField,
   selectOptions,
 }: Props<T>) => {
   const { formatMessage } = useIntl();
   const [item, setItem] = useState<T>(structuredClone(itemData));
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const { currentLanguage: selectedUiLanguage } = useAppLang();
-  const currentLanguage = selectedUiLanguage || LANGUAGE.ENGLISH;
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
+  );
+  const currentLanguage = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const translatedTitle = item.titles[translationLanguage];
   const currentTitle = item.titles[currentLanguage];
   const [, setError] = useState(false);
@@ -150,16 +155,17 @@ export const AttributeItemRow = <T extends ReqProps>({
             onChange={(_, checked) => handleSwitchChange(checked)}
           />
         </>
-        <div className="d-flex align-items-center gap-2">
+        {canDelete && <div className="d-flex align-items-center gap-2">
           <AppIconButton
             onClick={() => setConfirmModalOpen(true)}
             className="border-0"
+            aria-label="Delete custom attribute value"
           >
             <Delete color="error" />
           </AppIconButton>
-        </div>
+        </div>}
       </Box>
-      {isConfirmModalOpen && (
+      {canDelete && isConfirmModalOpen && (
         <ConfirmationModal
           open={isConfirmModalOpen}
           title={formatMessage({ id: "CONFIRMATION.TITLE.DELETE_ATR_ITEM" })}

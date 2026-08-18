@@ -33,15 +33,15 @@ $gray-900: #071437 !default;
 
 // colors based on figma
 
-$purple-100: #e6d9f5 !default;
-$purple-500: #9a56d3 !default;
-$purple-700: #7c41a3 !default;
-$orange-100: #fff3e0 !default;
-$orange-200: #ffe2b8 !default;
-$orange-300: #ffd090 !default;
-$orange-400: #ffbe78 !default;
-$orange-500: #febb68 !default;
-$orange-clarity: rgba(#febb68, 50) !default;
+$blue-100: #dbeafe !default;
+$blue-500: #2f7d78 !default;
+$blue-700: #235955 !default;
+$orange-100: #f1f5f9 !default;
+$orange-200: #e2e8f0 !default;
+$orange-300: #cbd5e1 !default;
+$orange-400: #94a3b8 !default;
+$orange-500: #64748b !default;
+$orange-clarity: rgba(#64748b, 50) !default;
 $salmon: #ff897c !default;
 $salmon-clarity: rgba(#ff897c33, 20) !default;
 $white-smoke: #f5f5f5 !default;
@@ -65,10 +65,10 @@ $grays: (
 
 // Bootstrap contextual colors
 // Primary colors
-$primary: $purple-500 !default;
-$primary-active: $purple-700 !default;
-$primary-light: $purple-100 !default;
-$primary-clarity: rgba($purple-700, 0.2) !default;
+$primary: $blue-500 !default;
+$primary-active: $blue-700 !default;
+$primary-light: $blue-100 !default;
+$primary-clarity: rgba($blue-700, 0.2) !default;
 $primary-inverse: $white !default;
 
 // Secondary colors

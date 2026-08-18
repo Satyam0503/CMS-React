@@ -16,10 +16,14 @@ const MasterLayout = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery(
-    theme.breakpoints.down(theme.breakpoints.values.md)
+    theme.breakpoints.down(theme.breakpoints.values.md),
   );
   const [isMiniSidebar, setMiniSidebar] = useState(false);
-  const sidebarState = isSmallScreen ? "mobile" : isMiniSidebar ? "collapsed" : "expanded";
+  const sidebarState = isSmallScreen
+    ? "mobile"
+    : isMiniSidebar
+      ? "collapsed"
+      : "expanded";
   const shellVariables = {
     "--sidebar-expanded-width": "265px",
     "--sidebar-collapsed-width": "100px",
@@ -58,11 +62,12 @@ const MasterLayout = () => {
             style={shellVariables}
             sx={{ height: "100dvh", overflow: "hidden" }}
           >
-            <HeaderWrapper openSideBar={handleOpenSidebar} sidebarState={sidebarState} />
+            <HeaderWrapper
+              openSideBar={handleOpenSidebar}
+              sidebarState={sidebarState}
+            />
             <Stack
-              direction="row"
-              className="app-content-surface flex-grow-1"
-              data-sidebar-state={sidebarState}
+              direction="column"
               sx={{
                 flex: "1 1 0",
                 height: 0,
@@ -70,36 +75,50 @@ const MasterLayout = () => {
                 overflowX: "hidden",
                 overflowY: "auto",
                 overscrollBehavior: "contain",
-                marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 24px)" },
-                width: { xs: "100%", md: "auto" },
-                transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
               }}
             >
-              <Sidebar
-                open={open}
-                handleClose={handleSideBarClose}
-                isMiniSidebar={isMiniSidebar}
-                setMiniSidebar={setMiniSidebar}
-              />
-              <Container
-                maxWidth={isSmallScreen || isMiniSidebar ? false : "lg"}
-                className="d-flex flex-column flex-grow-1 gap-4"
+              <Stack
+                direction="column"
+                className="app-content-surface"
+                data-sidebar-state={sidebarState}
                 sx={{
-                  width: "100%",
-                  minWidth: 0,
-                  minHeight: "max-content",
-                  overflow: "visible",
-                  py: 2,
-                  pb: 4,
-                  px: { xs: 2, md: 3 },
-                  transition: "max-width 0.32s cubic-bezier(.2, .8, .2, 1)",
+                  flex: "1 0 auto",
+                  minHeight: 0,
+                  marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 24px)" },
+                  width: { xs: "100%", md: "auto" },
+                  transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
                 }}
               >
-                <PageData />
-                <Outlet />
-              </Container>
+                <Sidebar
+                  open={open}
+                  handleClose={handleSideBarClose}
+                  isMiniSidebar={isMiniSidebar}
+                  setMiniSidebar={setMiniSidebar}
+                />
+                <Container
+                  maxWidth={isSmallScreen || isMiniSidebar ? false : "lg"}
+                  className="d-flex flex-column flex-grow-1 gap-4"
+                  sx={{
+                    width: "100%",
+                    // The theme sets a standard desktop cap for every Container.
+                    // Override it only in mini-sidebar mode so the reclaimed
+                    // navigation space is available to the active page.
+                    maxWidth: { xs: "none", md: isMiniSidebar ? "none" : "1280px" },
+                    minWidth: 0,
+                    minHeight: "max-content",
+                    overflow: "visible",
+                    py: 2,
+                    pb: 4,
+                    px: { xs: 2, md: 3 },
+                    transition: "max-width 0.32s cubic-bezier(.2, .8, .2, 1), padding 0.32s cubic-bezier(.2, .8, .2, 1)",
+                  }}
+                >
+                  <PageData />
+                  <Outlet />
+                </Container>
+              </Stack>
+              <Footer />
             </Stack>
-            <Footer />
           </Stack>
           {/* <ChatMessenger /> */}
         </PageDataProvider>

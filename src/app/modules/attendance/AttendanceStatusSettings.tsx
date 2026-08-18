@@ -26,6 +26,8 @@ const defaultStatuses: AttendanceStatusSetting[] = [
   ["WFH+WFO", "Half WFH and Half WFO", true, 1, 0], ["COMP-OFF", "Compensatory Off", false, 1, 0],
   ["CL-HALF", "Casual Leave (Half Day)", false, 1, 0], ["SL-HALF", "Sick Leave (Half Day)", false, 1, 0],
   ["WFH-HD", "WFH with Half Day", true, .5, .5],
+  ["WFH+SL", "Work From Home + Sick Leave", true, 1, 0],
+  ["WFH+CL", "Work From Home + Casual Leave", true, 1, 0],
 ].map(([code, name, requiresTime, paid, unpaid], index) => ({
   code: code as string, name: name as string, requiresTime: requiresTime as boolean,
   paidDayFraction: paid as number, unpaidDayFraction: unpaid as number,
@@ -169,21 +171,6 @@ export default function AttendanceStatusSettings() {
   return (
     <Card sx={{ p: { xs: 2, sm: 3, lg: 4 }, mb: 2, overflow: "visible" }}>
       <Stack spacing={3}>
-        <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={2}>
-          <Box>
-            <Typography variant="h4" fontWeight={800}>Attendance status settings</Typography>
-            <Typography color="text.secondary" sx={{ mt: .5 }}>Configure attendance codes, weekly offs, and payroll penalty rules.</Typography>
-          </Box>
-          <Stack direction="row" spacing={1}>
-            {isEditing && (
-              <AppButton variant="outlined" disabled={isSaving} onClick={handleCancelEdit}>Cancel</AppButton>
-            )}
-            <AppButton variant="contained" startIcon={isEditing ? <Save /> : <Edit />} disabled={isSaving} onClick={() => isEditing ? void saveAll() : setIsEditing(true)}>
-              {isEditing ? (isSaving ? "Saving…" : "Save changes") : "Edit settings"}
-            </AppButton>
-          </Stack>
-        </Stack>
-
         {isEditing && (
           <Box sx={{ ...sectionSx, bgcolor: "background.default" }}>
             <Typography variant="subtitle1" fontWeight={750} sx={{ mb: 2 }}>Add a custom status</Typography>
@@ -208,7 +195,15 @@ export default function AttendanceStatusSettings() {
               <Typography variant="h6" fontWeight={750}>Status catalogue</Typography>
               <Typography variant="body2" color="text.secondary">Manage display, payroll effect, and whether a no-time status can be mapped to Leave Management.</Typography>
             </Box>
-            <Chip size="small" color="primary" variant="outlined" label={`${items.filter((item) => item.isActive).length} active statuses`} />
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+              <Chip size="small" color="primary" variant="outlined" label={`${items.filter((item) => item.isActive).length} active statuses`} />
+              {isEditing && (
+                <AppButton variant="outlined" disabled={isSaving} onClick={handleCancelEdit}>Cancel</AppButton>
+              )}
+              <AppButton variant="contained" startIcon={isEditing ? <Save /> : <Edit />} disabled={isSaving} onClick={() => isEditing ? void saveAll() : setIsEditing(true)}>
+                {isEditing ? (isSaving ? "Saving…" : "Save changes") : "Edit settings"}
+              </AppButton>
+            </Stack>
           </Stack>
           <Box sx={{ overflowX: "auto", border: "1px solid", borderColor: "divider", borderRadius: 2.5 }}>
             <Box sx={{ minWidth: 1060 }}>

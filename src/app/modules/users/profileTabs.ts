@@ -1,8 +1,8 @@
 import { TabModel } from "../../../utils/common_types";
-import { hasModuleFeaturePermission } from "../../../utils/common";
+import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 
-const createTabs = (modulePermissions: string[], empId?: string): TabModel[] => {
+const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
   const isLeaveEnabled = hasModuleFeaturePermission(
     ModulesName.LeaveManagement,
     Permission.View,
@@ -31,7 +31,7 @@ const createTabs = (modulePermissions: string[], empId?: string): TabModel[] => 
       to: "performance",
       title: "PROFILE.TABS.PERFORMANCE",
       icon: null,
-      isActive: true,
+      isActive: canAccessHrManagement(roleType),
     },
     {
       tabId: 4,
@@ -56,12 +56,15 @@ const createTabs = (modulePermissions: string[], empId?: string): TabModel[] => 
     if (tab.to === "setting") {
       return !empId;
     }
+    if (tab.to === "performance") {
+      return canAccessHrManagement(roleType);
+    }
     return true;
   });
 };
 
-export const getProfileTabs = (modulePermissions: string[] = [], empId?: string) =>
-  createTabs(modulePermissions, empId);
+export const getProfileTabs = (modulePermissions: string[] = [], empId?: string, roleType?: number) =>
+  createTabs(modulePermissions, empId, roleType);
 
 export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
   hasModuleFeaturePermission(

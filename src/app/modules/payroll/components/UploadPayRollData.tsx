@@ -34,6 +34,7 @@ type KeyMappingType = {
 
 type PropsType = {
     handlePageRefresh: () => void;
+    fillToolbarRow?: boolean;
 }
 
 const keyMapper: KeyMappingType = {
@@ -152,7 +153,7 @@ const mapExcelRowtoPayLoad = (row: Record<string, unknown>): PayRollDataModel =>
     return mappedRow as PayRollDataModel;
 };
 
-export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
+export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }: PropsType) => {
     const { formatMessage: i } = useIntl();
     const [workBookData, setWorkBookData] = useState<XLSX.WorkBook | null>(null);
     const [open, setOpen] = useState(false);
@@ -289,7 +290,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
 
     return (
         <>
-            <Stack direction="row" spacing={1} className="align-items-center">
+            <Stack direction="row" spacing={1} className="align-items-center" sx={fillToolbarRow ? { flex: { xs: "2 1 0", lg: "0 0 auto" }, minWidth: 0, "& .MuiButton-root": { flex: 1, width: { xs: "100%", lg: 40 } } } : undefined}>
                 <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
                     <AppButton variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
                         <UploadFile fontSize="small" />

@@ -8,11 +8,9 @@ import {
   FormControlLabel,
   FormHelperText,
   InputLabel,
-  FormLabel,
   Chip,
   Tooltip,
   CircularProgress,
-  Divider,
   Typography,
   InputAdornment,
 } from "@mui/material";
@@ -167,9 +165,16 @@ export default function AddLeavePolicy(props: Props) {
       handleClose={props.handleClose}
       title={i({
         id: props.isEdit
-          ? "LEAVE.TITLES.UPDATE_LEAVE_BALANCE"
+          ? "LEAVE.TITLES.LEAVE_POLICY"
           : "LEAVE.TITLES.ADD_LEAVE_POLICIES",
       })}
+      maxWidth="lg"
+      allowMaximize
+      paperSx={{
+        width: { xs: "calc(100% - 24px)", sm: "calc(100% - 48px)", lg: "min(1120px, calc(100% - 64px))" },
+        maxWidth: "1120px",
+        m: { xs: 1.5, sm: 3 },
+      }}
     >
       {props.initialValues && (
         <Formik
@@ -231,7 +236,7 @@ export default function AddLeavePolicy(props: Props) {
             ...formik
           }) => {
             return (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} style={{ width: "100%" }}>
                 {Boolean(formik.status) && (
                   <AppAlert severity="warning" className="mb-4">
                     {formik.status}
@@ -332,9 +337,14 @@ export default function AddLeavePolicy(props: Props) {
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Maximum WFH days per week" type="number" inputProps={{min:1}} value={values.workFromHome.maxDaysPerWeek ?? ""} onChange={e=>setFieldValue("workFromHome.maxDaysPerWeek", e.target.value === "" ? null : Number(e.target.value))}/></Grid>
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Full-day required working minutes" type="number" inputProps={{min:0}} value={values.workFromHome.fullDayRequiredWorkingMinutes ?? ""} onChange={e=>setFieldValue("workFromHome.fullDayRequiredWorkingMinutes", e.target.value === "" ? null : Number(e.target.value))} helperText="Leave empty to use the effective office schedule." /></Grid>
                             <Grid size={{ xs:12, md:6 }}><AppTextField label="Break minutes" type="number" inputProps={{min:0}} value={values.workFromHome.breakMinutes} onChange={e=>setFieldValue("workFromHome.breakMinutes", Number(e.target.value))}/></Grid>
-                            <Grid size={{ xs:12, md:6 }}><FormControlLabel control={<AppSwitch checked={values.status} onChange={e=>setFieldValue("status", e.target.checked)}/>} label={values.status ? "WFH policy active" : "WFH policy inactive"}/></Grid>
-                            <Grid size={{ xs:12, md:6 }}><FormControlLabel control={<AppSwitch checked={values.workFromHome.approvalRequired} onChange={e=>setFieldValue("workFromHome.approvalRequired", e.target.checked)}/>} label="Require approval"/></Grid>
-                            <Grid size={{ xs:12, md:6 }}><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowFirstHalf || values.workFromHome.allowSecondHalf} onChange={e=>{ setFieldValue("workFromHome.allowFirstHalf",e.target.checked); setFieldValue("workFromHome.allowSecondHalf",e.target.checked); }}/>} label="Allow half-day WFH"/></Grid>
+                            <Grid size={12}>
+                              <Grid container spacing={1.5}>
+                                <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.status} onChange={e=>setFieldValue("status", e.target.checked)}/>} label={values.status ? "WFH policy active" : "WFH policy inactive"}/></Box></Grid>
+                                <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.approvalRequired} onChange={e=>setFieldValue("workFromHome.approvalRequired", e.target.checked)}/>} label="Require approval"/></Box></Grid>
+                                <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowFirstHalf || values.workFromHome.allowSecondHalf} onChange={e=>{ setFieldValue("workFromHome.allowFirstHalf",e.target.checked); setFieldValue("workFromHome.allowSecondHalf",e.target.checked); }}/>} label="Allow half-day WFH"/></Box></Grid>
+                                <Grid size={{ xs: 12, sm: 6, lg: 3 }}><Box className="policy-toggle-row"><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowMixedHalfDayLeave} onChange={e=>setFieldValue("workFromHome.allowMixedHalfDayLeave",e.target.checked)}/>} label="Allow WFH combinations" /></Box></Grid>
+                              </Grid>
+                            </Grid>
                             {(values.workFromHome.allowFirstHalf || values.workFromHome.allowSecondHalf) && (
                               <Grid size={{ xs:12, md:6 }}>
                                 <AppTextField select fullWidth label="Half-day WFH status" value={values.workFromHome.halfDayAttendanceStatusCode ?? ""} onChange={e=>setFieldValue("workFromHome.halfDayAttendanceStatusCode", e.target.value)} helperText="Required when half-day WFH is enabled.">
@@ -343,14 +353,14 @@ export default function AddLeavePolicy(props: Props) {
                                 </AppTextField>
                               </Grid>
                             )}
-                            <Grid size={{ xs:12, md:6 }}><FormControlLabel control={<AppSwitch checked={values.workFromHome.allowMixedHalfDayLeave} onChange={e=>setFieldValue("workFromHome.allowMixedHalfDayLeave",e.target.checked)}/>} label="Allow WFH combinations" /></Grid>
                             {values.workFromHome.allowMixedHalfDayLeave && <>
+                              <Grid size={12}><Typography variant="subtitle2" fontWeight={700}>WFH combination attendance statuses</Typography></Grid>
                               {[
                                 ["wfhWfoAttendanceStatusCode", "WFH + WFO status"],
                                 ["wfhHdAttendanceStatusCode", "WFH + HD status"],
                                 ["wfhSlAttendanceStatusCode", "WFH + SL status"],
                                 ["wfhClAttendanceStatusCode", "WFH + CL status"],
-                              ].map(([field, label]) => <Grid key={field} size={{ xs:12, md:6 }}><AppTextField select fullWidth label={label} value={values.workFromHome?.[field as keyof typeof values.workFromHome] ?? ""} onChange={e=>setFieldValue(`workFromHome.${field}`, e.target.value)}>
+                              ].map(([field, label]) => <Grid key={field} size={{ xs:12, sm:6, lg:3 }}><AppTextField select fullWidth label={label} value={values.workFromHome?.[field as keyof typeof values.workFromHome] ?? ""} onChange={e=>setFieldValue(`workFromHome.${field}`, e.target.value)}>
                                 <MenuItem value="">Select attendance status</MenuItem>
                                 {leaveStatuses.filter(x => x.isActive).map(x => <MenuItem key={x.code} value={x.code}>{x.code} — {x.name}</MenuItem>)}
                               </AppTextField></Grid>)}
@@ -382,7 +392,18 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
                     )}
 
-                    {values.policyType === 3 && <Grid size={12}><AppAlert severity="info">Unpaid Leave is automatically available to every employee and does not use leave credits or a balance. Requests remain pending until approval; approved UL is recorded as unpaid attendance.</AppAlert></Grid>}
+                    {values.policyType === 3 && <Grid size={12}>
+                      <Stack spacing={1.5}>
+                        <AppAlert severity="info">Unpaid Leave is automatically available to every employee and does not use leave credits or a balance. Requests remain pending until approval; approved UL is recorded as unpaid attendance.</AppAlert>
+                        <Box className="policy-toggle-row policy-toggle-row--single">
+                          <FormControlLabel
+                            control={<AppSwitch checked={values.status} onChange={(event) => setFieldValue("status", event.target.checked)} />}
+                            label={values.status ? "Unpaid Leave policy active" : "Unpaid Leave policy inactive"}
+                            labelPlacement="start"
+                          />
+                        </Box>
+                      </Stack>
+                    </Grid>}
 
                     {values.policyType === 1 && <Grid size={12}>
                       <Box className="policy-modal-section">
@@ -552,6 +573,7 @@ export default function AddLeavePolicy(props: Props) {
                                     }
                                     name="weekendInclusive"
                                     checked={values.weekendInclusive}
+                                    labelPlacement="start"
                                     onChange={(e, value) => {
                                       setFieldValue("weekendInclusive", value);
                                     }}
@@ -571,6 +593,7 @@ export default function AddLeavePolicy(props: Props) {
                                     }
                                     name="holidayInclusive"
                                     checked={values.holidayInclusive}
+                                    labelPlacement="start"
                                     onChange={(e, value) => {
                                       setFieldValue("holidayInclusive", value);
                                     }}
@@ -674,31 +697,34 @@ export default function AddLeavePolicy(props: Props) {
                     </Grid>}
                   </Grid>
                 </Box>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  sx={{ justifyContent: "flex-end", mt: 4, width: "100%" }}
-                >
-                  <CustomisedButton
-                    variant="outlined"
-                    label={i({ id: "BUTTON.CANCEL" })}
-                    handleClick={props.handleClose}
-                    fullWidth
-                    sx={{ maxWidth: { xs: "100%", sm: "160px" } }}
-                  />
-                  <CustomisedButton
-                    label={i({
-                      id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
-                    })}
-                    type="submit"
-                    loading={formik.isSubmitting}
-                    disabled={
-                      formik.isSubmitting || !(formik.isValid && formik.dirty)
-                    }
-                    fullWidth
-                    sx={{ maxWidth: { xs: "100%", sm: "160px" } }}
-                  />
-                </Stack>
+                <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    className="policy-form-actions"
+                    sx={{ width: { xs: "100%", sm: "auto" }, alignItems: { xs: "stretch", sm: "center" } }}
+                  >
+                    <CustomisedButton
+                      variant="outlined"
+                      label={i({ id: "BUTTON.CANCEL" })}
+                      handleClick={props.handleClose}
+                      fullWidth
+                      sx={{ width: { xs: "100%", sm: "160px" }, maxWidth: "none" }}
+                    />
+                    <CustomisedButton
+                      label={i({
+                        id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                      })}
+                      type="submit"
+                      loading={formik.isSubmitting}
+                      disabled={
+                        formik.isSubmitting || !(formik.isValid && formik.dirty)
+                      }
+                      fullWidth
+                      sx={{ width: { xs: "100%", sm: "160px" }, maxWidth: "none" }}
+                    />
+                  </Stack>
+                </Box>
               </form>
             );
           }}

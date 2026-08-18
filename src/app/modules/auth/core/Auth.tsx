@@ -7,6 +7,8 @@ import { setCurrentUser } from "../../../Redux/Reducers/userSlice";
 import { useNavigate } from "react-router-dom";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { LANGUAGE } from "../../../../utils/enums";
+import { getCurrentAppLanguage } from "../../../../utils/common";
+import { normalizeAppLanguage } from "../../../../_themes/i18n/languageUtils";
 import { WithChildren } from "../../../../utils/common_types";
 
 
@@ -29,7 +31,13 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
           }
           dispatch(setCurrentUser(methodResult));
           dispatch(setAuth());
-          changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
+
+          const savedLanguage = getCurrentAppLanguage();
+          const defaultLanguage = normalizeAppLanguage(methodResult.defaultLanguage) ?? LANGUAGE.ENGLISH;
+          // UI locale is a user preference, not a company-content filter. Keep
+          // the choice made on auth pages even when a legacy company has only
+          // one configured content language.
+          changeAppLanguage?.(savedLanguage ?? defaultLanguage);
         }
       } catch (error) {
         if (isUserAuthenticated) {

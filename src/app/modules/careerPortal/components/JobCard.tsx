@@ -20,8 +20,8 @@ export const JobCard = ({ job, onSavedChange }: {
       component="article"
       onClick={() => navigate(`/careers/${job.companyPublicCode}/jobs/${job.slug}`)}
       sx={{
-        p: { xs: 2.25, md: 3 },
-        borderRadius: 4,
+        p: { xs: 2, sm: 2.5, md: 3 },
+        borderRadius: { xs: 3, sm: 4 },
         border: "1px solid",
         borderColor: "divider",
         boxShadow: "0 8px 30px color-mix(in srgb, var(--mui-palette-common-black) 6%, transparent)",
@@ -34,8 +34,8 @@ export const JobCard = ({ job, onSavedChange }: {
         },
       }}
     >
-      <Stack direction="row" spacing={2.25} alignItems="flex-start">
-        <CompanyLogo src={job.companyLogo} name={job.companyName} />
+      <Stack direction="row" spacing={{ xs: 1.5, sm: 2.25 }} alignItems="flex-start">
+        <Box sx={{ flexShrink: 0 }}><CompanyLogo src={job.companyLogo} name={job.companyName} size={48} /></Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Stack direction="row" justifyContent="space-between" gap={1}>
             <Box>
@@ -44,27 +44,27 @@ export const JobCard = ({ job, onSavedChange }: {
                 {job.isUrgentHiring && <Chip size="small" color="warning" label="Urgent hiring" />}
                 {job.isWalkIn && <Chip size="small" color="success" label="Walk-in" />}
               </Stack>
-              <Typography variant="h5" fontWeight={850} letterSpacing="-.025em">{job.title}</Typography>
+              <Typography variant="h6" fontWeight={850} letterSpacing="-.025em" sx={{ fontSize: { sm: "1.35rem" }, lineHeight: 1.25 }}>{job.title}</Typography>
               <Typography color="text.secondary" fontWeight={650} sx={{ mt: 0.4 }}>{job.companyName}</Typography>
             </Box>
             <SaveJobButton publicJobId={job.publicJobId} onChange={onSavedChange} />
           </Stack>
-          <Stack direction="row" flexWrap="wrap" gap={0.8} sx={{ mt: 2 }}>
+          <Stack direction="row" flexWrap="wrap" gap={0.65} sx={{ mt: { xs: 1.5, sm: 2 } }}>
             {job.location && <Chip size="small" icon={<LocationOnRounded />} label={job.location} />}
             {job.employmentType && <Chip size="small" icon={<WorkOutlineRounded />} label={job.employmentType} />}
             {job.workplaceType && <Chip size="small" label={job.workplaceType} />}
             {job.experienceMin != null && <Chip size="small" label={`${job.experienceMin}–${job.experienceMax ?? job.experienceMin}+ yrs`} />}
           </Stack>
           {(job.summary || job.shortDescription) && (
-            <Typography color="text.secondary" sx={{ mt: 2, lineHeight: 1.65 }} noWrap>
+            <Typography color="text.secondary" sx={{ mt: 1.5, lineHeight: 1.6, fontSize: { xs: "0.875rem", sm: "inherit" }, display: "-webkit-box", WebkitLineClamp: { xs: 3, sm: 2 }, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
               {job.summary || job.shortDescription}
             </Typography>
           )}
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 2.25 }}>
-            <Stack direction="row" gap={0.7} sx={{ overflow: "hidden" }}>
+          <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" gap={1.25} sx={{ mt: 2 }}>
+            <Stack direction="row" gap={0.7} flexWrap="wrap" sx={{ minWidth: 0 }}>
               {job.skills?.slice(0, 4).map((skill) => <Chip key={skill} size="small" variant="outlined" label={skill} />)}
             </Stack>
-            <Btn endIcon={<ArrowForwardRounded />} sx={{ flexShrink: 0 }}>View role</Btn>
+            <Btn endIcon={<ArrowForwardRounded />} sx={{ flexShrink: 0, alignSelf: { xs: "stretch", sm: "auto" } }}>View role</Btn>
           </Stack>
         </Box>
       </Stack>

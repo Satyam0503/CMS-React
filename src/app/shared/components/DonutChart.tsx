@@ -2,6 +2,7 @@ import { styled, useColorScheme } from "@mui/material";
 import { useDrawingArea } from "@mui/x-charts/hooks";
 import { PieChart, PieSeries } from "@mui/x-charts/PieChart"
 import { getChartPalette } from "../../modules/theme/themePalettes";
+import { useAppStyle } from "../../modules/theme/useAppStyle";
 
 interface DonutChartProps {
     loading: boolean,
@@ -15,6 +16,7 @@ interface DonutChartProps {
 export const DonutChart = (props: DonutChartProps) => {
     const { loading, series, hideLegend = false, height = 200, centerLabel } = props;
     const { mode, systemMode } = useColorScheme();
+    const { style: appStyle } = useAppStyle();
     return (
         <PieChart
             series={series}
@@ -23,7 +25,7 @@ export const DonutChart = (props: DonutChartProps) => {
             height={height}
             style={{ width: "100%", height: "100%", display: "block" }}
 
-            colors={getChartPalette(mode, systemMode)}
+            colors={getChartPalette(mode, systemMode, appStyle)}
             slotProps={{
                 legend: {
                     direction: 'horizontal',

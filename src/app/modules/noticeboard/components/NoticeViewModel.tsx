@@ -36,6 +36,10 @@ export const NoticeViewModel: FC<Props> = (props) => {
     const defaultLanguage = useAppSelector(
         (state) => state.user.userData?.defaultLanguage!
     );
+    const designation = notice?.userDesignation;
+    const designationLabel = typeof designation === "string"
+        ? designation
+        : designation?.[currentLanguage] || designation?.[defaultLanguage];
 
     useEffect(() => {
         (async () => {
@@ -89,11 +93,9 @@ export const NoticeViewModel: FC<Props> = (props) => {
                             <Typography variant="body1">{notice?.userName}</Typography>
                             <Stack className="flex-row gap-4">
                                 {
-                                    notice?.userDesignation &&
+                                    designationLabel &&
                                     <Typography variant="caption">
-                                        {
-                                            notice?.userDesignation[currentLanguage] || notice?.userDesignation[defaultLanguage]
-                                        }
+                                        {designationLabel}
                                     </Typography>
                                 }
                                 <Typography

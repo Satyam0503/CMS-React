@@ -1,4 +1,4 @@
-import { Breadcrumbs, Stack, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Stack, Typography } from "@mui/material";
 import { useBreadcrumbs, replacePathParams } from "react-breadcrumble";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useIntl } from "react-intl";
@@ -29,49 +29,71 @@ const PageData = () => {
   );
 
   return (
-    <Stack className="justify-content-between flex-row flex-wrap gap-2" >
-      {pageTitle && <Typography variant="h4" className="fw-bold">{pageTitle}</Typography>}
-      {trail.length > 1 && (
-        <Stack
-          className="flex-row justify-content-start align-items-center"
-          sx={{ position: "relative", zIndex: 1, pointerEvents: "auto" }}
-        >
-          <Breadcrumbs aria-label="breadcrumb">
-            {trail.map((breadcrumb, index) => {
-              const label = intl.formatMessage({ id: breadcrumb.label });
-              const resolvedTarget = replacePathParams(
-                breadcrumb.path,
-                [...(breadcrumb.params ?? []), ...routeParams]
-              );
-              const target =
-                breadcrumb.label === "PAGE.APPLICANT" && editApplicantMatch
-                  ? `/recruitment/applicant/${encodeURIComponent(
-                      decodeURIComponent(editApplicantMatch[1])
-                    )}`
-                  : resolvedTarget;
+    <Stack
+      direction={{ xs: "column", md: "row" }}
+      spacing={{ xs: 1.25, md: 3 }}
+      alignItems={{ xs: "stretch", md: "center" }}
+      justifyContent={{ md: "space-between" }}
+      sx={{ minWidth: 0, width: "100%" }}
+    >
+      {pageTitle && <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0 }}>{pageTitle}</Typography>}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={{ xs: 1, sm: 2 }}
+        useFlexGap
+        flexWrap="wrap"
+        alignItems={{ xs: "flex-start", md: "center" }}
+        justifyContent={{ md: "flex-end" }}
+        sx={{ minWidth: 0, ml: { md: "auto" } }}
+      >
+        {trail.length > 1 && (
+          <Stack
+            className="flex-row justify-content-start align-items-center"
+            sx={{ position: "relative", zIndex: 1, pointerEvents: "auto", minWidth: 0 }}
+          >
+            <Breadcrumbs aria-label="breadcrumb">
+              {trail.map((breadcrumb, index) => {
+                const label = intl.formatMessage({ id: breadcrumb.label });
+                const resolvedTarget = replacePathParams(
+                  breadcrumb.path,
+                  [...(breadcrumb.params ?? []), ...routeParams]
+                );
+                const target =
+                  breadcrumb.label === "PAGE.APPLICANT" && editApplicantMatch
+                    ? `/recruitment/applicant/${encodeURIComponent(
+                        decodeURIComponent(editApplicantMatch[1])
+                      )}`
+                    : resolvedTarget;
 
-              return trail.length === index + 1 ? (
-                <Typography key={index}>
-                  {label}
-                </Typography>
-              ) : (
-                <Link
-                  to={target}
-                  key={index}
-                  className="breadcrumb-link"
-                  aria-label={`Back to ${label}`}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    navigate(target);
-                  }}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </Breadcrumbs>
-        </Stack>
-      )}
+                return trail.length === index + 1 ? (
+                  <Typography key={index}>{label}</Typography>
+                ) : (
+                  <Link
+                    to={target}
+                    key={index}
+                    className="breadcrumb-link"
+                    aria-label={`Back to ${label}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      navigate(target);
+                    }}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </Breadcrumbs>
+          </Stack>
+        )}
+        <Box
+          id="page-header-actions"
+          sx={{
+            minWidth: 0,
+            display: "flex",
+            justifyContent: { xs: "flex-start", md: "flex-end" },
+          }}
+        />
+      </Stack>
     </Stack>
   );
 };

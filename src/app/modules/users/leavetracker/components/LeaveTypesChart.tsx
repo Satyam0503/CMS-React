@@ -1,9 +1,8 @@
-import { Grid, Card, Stack, Typography, Skeleton, useTheme, Box, Chip, alpha } from "@mui/material";
+import { Grid, Card, Stack, Typography, Skeleton, useTheme, useMediaQuery, Box, Chip, alpha } from "@mui/material";
 import { useMemo } from "react";
 import { useIntl } from "react-intl";
 import { EmployeeLeaveTypeBalance } from "../../../leaves/model";
 import { BarChart } from "@mui/x-charts";
-import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 
 interface PropsType {
   leaveBalance: EmployeeLeaveTypeBalance[];
@@ -15,12 +14,12 @@ export const EmployeeLeaveTypesCharts = ({
   isLoading,
 }: PropsType) => {
   const { formatMessage: i } = useIntl();
-  const { currentLanguage } = useAppLang();
   const theme = useTheme();
+  const isCompact = useMediaQuery(theme.breakpoints.down("sm"));
 
   const leaveTypeLabels = useMemo(
-    () => leaveBalance.map((type) => type.name),
-    [leaveBalance],
+    () => leaveBalance.map((type) => isCompact ? type.code || type.name : type.name),
+    [isCompact, leaveBalance],
   );
 
   const series = useMemo(() => {
@@ -49,8 +48,8 @@ export const EmployeeLeaveTypesCharts = ({
     const step = max <= 10 ? 1 : Math.ceil(max / 10);
     const ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, index) => index * step);
     if (ticks[ticks.length - 1] !== max) ticks.push(max);
-    return { max, ticks, height: 238 };
-  }, [leaveBalance]);
+    return { max, ticks, height: isCompact ? 220 : 250 };
+  }, [isCompact, leaveBalance]);
 
   const balanceSummary = useMemo(() => ({
     taken: leaveBalance.reduce((total, type) => total + Math.max(0, type.taken), 0),
@@ -81,16 +80,16 @@ export const EmployeeLeaveTypesCharts = ({
   }
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ minWidth: 0 }}>
       <Grid size={12}>
-        <Card sx={{ p: { xs: 2, md: 2.5 }, border: `1px solid ${alpha(theme.palette.divider, 0.9)}`, boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.05)}` }}>
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="space-between" alignItems={{ sm: "center" }} sx={{ mb: 1.5 }}>
+        <Card sx={{ p: { xs: 1.5, sm: 2, md: 2.5 }, minWidth: 0, border: `1px solid ${alpha(theme.palette.divider, 0.8)}`, boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.05)}` }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} justifyContent="space-between" alignItems={{ sm: "center" }} sx={{ mb: 1.25 }}>
             <Box>
               <Typography className="fw-bold fs-16">
               {i({ id: "LEAVE.TITLES.LEAVE_BALANCE_GRAPH", defaultMessage: "Leave Balance Overview" })}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                Whole-day view that adjusts automatically to your leave balance.
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.35 }}>
+                Your used and available days by leave type.
               </Typography>
             </Box>
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -98,12 +97,12 @@ export const EmployeeLeaveTypesCharts = ({
               <Chip size="small" label={`${balanceSummary.remaining} remaining`} sx={{ fontWeight: 700, bgcolor: alpha(theme.palette.success.main, 0.14), color: theme.palette.success.dark }} />
             </Stack>
           </Stack>
-          <Box sx={{ width: "100%", overflowX: "auto", borderRadius: 2, border: `1px solid ${alpha(theme.palette.divider, 0.55)}`, bgcolor: alpha(theme.palette.background.default, 0.45) }}>
+          <Box sx={{ width: "100%", minWidth: 0, overflow: "hidden", borderRadius: 2, bgcolor: alpha(theme.palette.primary.main, 0.025) }}>
             <BarChart
               height={chartScale.height}
               series={series.map((item) => ({ ...item, stack: "leaveBalance" }))}
-              xAxis={[{ scaleType: "band", data: leaveTypeLabels, tickPlacement: "middle", tickLabelPlacement: "middle", categoryGapRatio: 0.58, barGapRatio: 0.2 }]}
-              yAxis={[{ width: 42, min: 0, max: chartScale.max, tickInterval: chartScale.ticks, valueFormatter: (value: number) => `${value}` }]}
+              xAxis={[{ scaleType: "band", data: leaveTypeLabels, tickPlacement: "middle", tickLabelPlacement: "middle", categoryGapRatio: isCompact ? 0.45 : 0.72, barGapRatio: 0.14, tickLabelStyle: { fontSize: isCompact ? 9 : 11 } }]}
+              yAxis={[{ width: 34, min: 0, max: chartScale.max, tickInterval: chartScale.ticks, valueFormatter: (value: number) => `${value}` }]}
               slotProps={{
                 legend: {
                   direction: "horizontal",
@@ -114,16 +113,16 @@ export const EmployeeLeaveTypesCharts = ({
                 },
               }}
               loading={isLoading}
-              borderRadius={5}
-              margin={{ top: 14, bottom: 40, left: 14, right: 18 }}
+              borderRadius={6}
+              margin={{ top: 8, bottom: 42, left: isCompact ? 0 : 8, right: isCompact ? 0 : 8 }}
               sx={{
                 "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": { stroke: theme.palette.divider },
-                "& .MuiChartsAxis-tickLabel": { fill: theme.palette.text.secondary, fontSize: 12, fontWeight: 600 },
-                "& .MuiChartsLegend-label": { fill: theme.palette.text.primary, fontWeight: 700 },
+                "& .MuiChartsAxis-tickLabel": { fill: theme.palette.text.secondary, fontSize: 11, fontWeight: 600 },
+                "& .MuiChartsLegend-label": { fill: theme.palette.text.secondary, fontSize: 12, fontWeight: 700 },
                 "& .MuiChartsGrid-line": { stroke: alpha(theme.palette.divider, 0.55), strokeDasharray: "3 4" },
-                "& .MuiBarElement-root": { filter: `drop-shadow(0 2px 2px ${alpha(theme.palette.common.black, 0.08)})` },
+                "& .MuiBarElement-root": { filter: `drop-shadow(0 2px 2px ${alpha(theme.palette.common.black, 0.1)})` },
               }}
-              style={{ width: "100%", minWidth: `${Math.max(620, leaveTypeLabels.length * 150)}px`, display: "block" }}
+              style={{ width: "100%", minWidth: 0, display: "block" }}
             />
           </Box>
         </Card>
