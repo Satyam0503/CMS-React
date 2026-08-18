@@ -138,8 +138,8 @@ export const EmployeesLeaveBalance = () => {
     <>
       <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
         <Stack
-          direction={{ xs: "column", sm: "row" }}
-          alignItems={{ xs: "stretch", sm: "center" }}
+          direction="row"
+          alignItems="center"
           sx={{ width: "100%", justifyContent: "space-between", gap: 1.25 }}
         >
           <AppTextField
@@ -148,11 +148,12 @@ export const EmployeesLeaveBalance = () => {
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
             size="small"
             sx={{
-              // This is a local employee filter, not a page-wide search. Keep
-              // it compact on desktop and let it use the available width on
-              // phones where a short field would be difficult to use.
-              width: { xs: "100%", sm: "clamp(240px, 34vw, 420px)" },
-              flex: "0 1 auto",
+              // Keep the search and filter actions on one row at every
+              // viewport width. The field uses all remaining space on mobile
+              // while the filter control retains a stable tap target.
+              minWidth: 0,
+              width: "100%",
+              flex: "1 1 auto",
             }}
             onChange={(e) => {
               setSearch(e.target.value);
