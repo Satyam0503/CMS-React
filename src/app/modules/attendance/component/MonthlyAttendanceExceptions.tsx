@@ -3,16 +3,21 @@ import {
   useEffect,
   useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Box,
   Card,
   Chip,
+  Collapse,
   CircularProgress,
   Divider,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   MenuItem,
   Stack,
   TablePagination,
@@ -39,7 +44,7 @@ type PayrollException = {
 };
 
 type AttendanceStatusOption = { code: string; name: string; requiresTime: boolean };
-type ExistingAttendance = { status?: string; checkInTime?: string | null; checkOutTime?: string | null };
+type ExistingAttendance = { status?: string; checkInTime?: string | null; checkOutTime?: string | null; sourceType?: string | null; sourceId?: string | null };
 type AttendanceResolution = {
   item: PayrollException;
   date: string;
@@ -80,6 +85,7 @@ const exceptionStatusColor = (status: string): "default" | "warning" | "success"
 
 const checkInPresets = ["09:00", "09:30", "10:00", "10:30"];
 const checkOutPresets = ["17:00", "17:30", "18:00", "18:30", "19:00"];
+const monthlyExceptionsExpandedStorageKey = "codeji.attendance.monthly-exceptions-expanded";
 const isValidTime = (value: string) => /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value);
 const formatTimeLabel = (value: string) => dayjs(`2000-01-01T${value}`).format("h:mm A");
 
@@ -90,8 +96,16 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(() => {
+    try {
+      return typeof window !== "undefined" && window.localStorage.getItem(monthlyExceptionsExpandedStorageKey) === "true";
+    } catch {
+      return false;
+    }
+  });
   const [bulkDecision, setBulkDecision] = useState("");
   const [wfhException, setWfhException] = useState<PayrollException | null>(null);
+  const [leaveException, setLeaveException] = useState<{ item: PayrollException; sourceId: string } | null>(null);
   const [checkInTime, setCheckInTime] = useState("");
   const [checkOutTime, setCheckOutTime] = useState("");
   const [correctionReason, setCorrectionReason] = useState("");
@@ -220,11 +234,36 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     setAttendanceTimeError("");
     try {
       const { data } = await getRequest<ExistingAttendance>(`api/admin/attendance/${item.userId}/date?date=${date}`);
+      if (data.sourceType === "WFH_REQUEST") {
+        openWfhHoursCorrection(item);
+        return;
+      }
+      if (data.sourceType === "LEAVE" && data.sourceId) {
+        setLeaveException({ item, sourceId: data.sourceId });
+        return;
+      }
       setAttendanceResolution({ item, date, status: data.status ?? "A", checkInTime: timeFromAttendance(data.checkInTime), checkOutTime: timeFromAttendance(data.checkOutTime), reason: "" });
     } catch {
       // Missing attendance is the expected condition for this exception type.
       setAttendanceResolution({ item, date, status: "A", checkInTime: "", checkOutTime: "", reason: "" });
     }
+  };
+
+  const cancelLeaveAndResync = async () => {
+    if (!leaveException) return;
+    setSavingResolution(true);
+    try {
+      const { data } = await patchRequest<{ status: number; comment: string }, { success: boolean; message?: string }>(
+        `api/LeaveManagement/LeaveRequest/${leaveException.sourceId}/Status`,
+        { status: 4, comment: "Cancelled by HR/Admin to correct a source-owned attendance exception." },
+      );
+      if (!data.success) { toast.error(data.message || "The leave request could not be cancelled."); return; }
+      toast.success("Leave request cancelled and attendance re-synchronised. Recheck the exception to continue its correction.");
+      setLeaveException(null);
+      await load(true);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "The leave request could not be cancelled.");
+    } finally { setSavingResolution(false); }
   };
 
   const saveAttendanceResolution = async () => {
@@ -280,7 +319,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
       toast.error("No affected attendance date is available for this exception.");
       return;
     }
-    const localDate = new Date(date).toISOString().slice(0, 10);
+    const localDate = dayjs(date).format("YYYY-MM-DD");
     setCheckInTime(`${localDate}T09:00`);
     setCheckOutTime(`${localDate}T18:00`);
     setCorrectionReason("");
@@ -329,7 +368,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         boxShadow: "0 12px 30px rgba(46, 38, 69, 0.08)",
       }}
     >
-      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1.25} sx={{ mb: 2.5 }}>
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={1.25} sx={{ mb: expanded ? 2.5 : 0 }}>
         <Box>
           <Typography variant="h5" color="primary.main" sx={{ fontWeight: 800, letterSpacing: "-0.02em" }}>
             Monthly Exceptions
@@ -338,9 +377,26 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
             Review attendance exceptions and recheck resolved records for {month.format("MMMM YYYY")}.
           </Typography>
         </Box>
-        <Chip label={`${total} ${total === 1 ? "exception" : "exceptions"}`} color={total ? "warning" : "success"} variant="outlined" />
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ alignSelf: { xs: "stretch", sm: "center" }, justifyContent: { xs: "space-between", sm: "flex-end" } }}>
+          <Chip label={`${total} ${total === 1 ? "exception" : "exceptions"}`} color={total ? "warning" : "success"} variant="outlined" />
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() => setExpanded((current) => {
+              const next = !current;
+              try { window.localStorage.setItem(monthlyExceptionsExpandedStorageKey, String(next)); } catch { /* Storage can be unavailable. */ }
+              return next;
+            })}
+            aria-label={expanded ? "Collapse monthly exceptions" : "Expand monthly exceptions"}
+            aria-expanded={expanded}
+            sx={{ border: 1, borderColor: "divider", borderRadius: 1.5 }}
+          >
+            {expanded ? <ExpandLess /> : <ExpandMore />}
+          </IconButton>
+        </Stack>
       </Stack>
 
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "minmax(190px, 1fr) minmax(170px, 1fr) auto auto" }, gap: 1.5, alignItems: "end" }}>
         <AppTextField
           label="Attendance month"
@@ -502,6 +558,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         }}
         sx={{ mt: 1.5, borderTop: 1, borderColor: "divider", "& .MuiTablePagination-toolbar": { px: { xs: 0, sm: 1 }, flexWrap: "wrap", justifyContent: "flex-end", gap: 0.5 }, "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } } }}
       />
+      </Collapse>
       <CustomisedModal
         open={!!penaltyReview}
         handleClose={() => !loading && setPenaltyReview(null)}
@@ -535,15 +592,37 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Enter the verified working hours. The WFH attendance status is retained; this exception resolves only when the policy minimum is met.
           </Typography>
-          <Stack spacing={2} sx={{ pt: 1 }}>
-            <AppTextField label="Check-in" type="datetime-local" value={checkInTime} onChange={(event) => setCheckInTime(event.target.value)} InputLabelProps={{ shrink: true }} />
-            <AppTextField label="Check-out" type="datetime-local" value={checkOutTime} onChange={(event) => setCheckOutTime(event.target.value)} InputLabelProps={{ shrink: true }} />
-            <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required />
-          </Stack>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Stack spacing={2} sx={{ pt: 1 }}>
+              <DateTimePicker
+                label="Check-in"
+                value={checkInTime ? dayjs(checkInTime) : null}
+                onChange={(value) => setCheckInTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
+                format="DD MMM YYYY, hh:mm A"
+                slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
+              />
+              <DateTimePicker
+                label="Check-out"
+                value={checkOutTime ? dayjs(checkOutTime) : null}
+                onChange={(value) => setCheckOutTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
+                format="DD MMM YYYY, hh:mm A"
+                slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
+              />
+              <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required />
+            </Stack>
+          </LocalizationProvider>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <AppButton variant="outlined" disabled={savingCorrection} onClick={() => setWfhException(null)}>Cancel</AppButton>
           <AppButton disabled={savingCorrection} onClick={() => void saveWfhHoursCorrection()}>{savingCorrection ? "Saving…" : "Update & resolve"}</AppButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={!!leaveException} onClose={() => !savingResolution && setLeaveException(null)} fullWidth maxWidth="xs">
+        <DialogTitle>Cancel leave and re-sync attendance</DialogTitle>
+        <DialogContent><Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>This attendance is owned by an approved leave request. Cancelling the request reverses its generated attendance safely; you can then recheck and correct any remaining attendance exception.</Typography></DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <AppButton variant="outlined" disabled={savingResolution} onClick={() => setLeaveException(null)}>Keep leave</AppButton>
+          <AppButton color="error" disabled={savingResolution} onClick={() => void cancelLeaveAndResync()}>{savingResolution ? "Cancelling…" : "Cancel leave & re-sync"}</AppButton>
         </DialogActions>
       </Dialog>
       <Dialog open={!!attendanceResolution} onClose={() => !savingResolution && setAttendanceResolution(null)} fullWidth maxWidth="xs">

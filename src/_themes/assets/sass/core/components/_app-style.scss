@@ -419,6 +419,134 @@ body,
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) { background-color: rgba(148, 163, 184, 0.055); }
 }
 
+// ----- Blush: soft pink ambient background with clean white work surfaces --
+:root[data-app-style="blush"] {
+  --app-blush-surface: #ffffff;
+  --app-blush-border: #e5e7eb;
+  --app-blush-border-soft: #eef0f3;
+  --app-blush-card-shadow: 0 14px 32px rgba(15, 23, 42, 0.08), 0 3px 10px rgba(15, 23, 42, 0.04);
+  --app-blush-paper-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  --mui-palette-background-default: #fff8fb;
+  --mui-palette-background-body: #fff8fb;
+  --mui-palette-background-card: #ffffff;
+  --mui-palette-background-box: #fffafd;
+  --mui-palette-background-header: #ffffff;
+
+  --app-content-background:
+    radial-gradient(ellipse 58% 54% at -8% -12%, rgba(225, 138, 181, 0.46), transparent 68%),
+    radial-gradient(ellipse 54% 52% at 108% 0%, rgba(248, 180, 205, 0.44), transparent 70%),
+    radial-gradient(ellipse 46% 44% at 68% 108%, rgba(211, 177, 237, 0.34), transparent 74%),
+    radial-gradient(ellipse 38% 32% at 36% 38%, rgba(255, 255, 255, 0.80), transparent 72%),
+    repeating-linear-gradient(118deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 22px),
+    linear-gradient(135deg, #f7dce8 0%, #fff8fb 44%, #f9dce9 100%);
+
+  & .app-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+  }
+
+  & .app-content-surface {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.26), transparent 30%, rgba(255, 255, 255, 0.16) 100%),
+      radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.30), transparent 30%);
+  }
+
+
+  & .MuiOutlinedInput-root {
+    background: #ffffff;
+
+    & .MuiOutlinedInput-notchedOutline { border-color: #d7dce3; }
+    &:hover .MuiOutlinedInput-notchedOutline { border-color: #94a3b8; }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--mui-palette-primary-main); }
+  }
+
+  // Shared work surfaces stay neutral white. This also covers pages that use
+  // Paper, menus, dialogs, or table containers instead of the common Card.
+  & .MuiCard-root,
+  & .MuiPaper-root,
+  & .MuiDialog-paper,
+  & .MuiMenu-paper,
+  & .MuiPopover-paper,
+  & .MuiAutocomplete-paper,
+  & .MuiTableContainer-root,
+  & .MuiDataGrid-root,
+  & .MuiPickersPopper-paper,
+  & .tab-container {
+    background: #ffffff !important;
+    background-image: none !important;
+    border-color: var(--app-blush-border-soft) !important;
+  }
+
+  & .MuiTableHead-root .MuiTableCell-root {
+    background: #f8fafc;
+    color: #5f4960;
+    font-weight: 700;
+  }
+
+  & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background-color: #fbfcfd;
+  }
+
+  // Keep the pink ambience outside the work areas. Dashboard-specific glass
+  // rules otherwise add translucent gradients back onto cards after the theme
+  // surface override has made the shared Card component white.
+  & .dashboard-modern {
+    background: transparent;
+
+    & .MuiCard-root,
+    & .dashboard-hero,
+    & .dashboard-date-card {
+      background: #ffffff !important;
+      background-image: none !important;
+      border-color: var(--app-blush-border) !important;
+      box-shadow: var(--app-blush-card-shadow) !important;
+      backdrop-filter: none;
+    }
+
+    & .MuiCard-root::after,
+    & .dashboard-hero::before {
+      display: none;
+    }
+  }
+}
+
+:root.dark[data-app-style="blush"] {
+  --app-blush-surface: #1b202c;
+  --app-blush-border: #4a4055;
+  --app-blush-border-soft: #393342;
+  --app-blush-card-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+  --app-blush-paper-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+  --mui-palette-background-default: #141821;
+  --mui-palette-background-body: #141821;
+  --mui-palette-background-card: #1b202c;
+  --mui-palette-background-box: #242a37;
+  --mui-palette-background-header: #121720;
+
+  --app-content-background:
+    radial-gradient(ellipse 64% 60% at -8% -12%, rgba(183, 125, 184, 0.16), transparent 68%),
+    radial-gradient(ellipse 54% 50% at 108% 2%, rgba(227, 139, 168, 0.12), transparent 72%),
+    linear-gradient(135deg, #141821 0%, #1c202c 52%, #252231 100%);
+
+  & .app-header { background: #121720 !important; border-bottom-color: #453b4d; }
+  & .MuiCard-root, & .MuiPaper-root, & .MuiDialog-paper, & .MuiMenu-paper, & .MuiPopover-paper, & .MuiAutocomplete-paper, & .MuiTableContainer-root, & .MuiDataGrid-root, & .MuiPickersPopper-paper, & .tab-container { background: var(--app-blush-surface) !important; border-color: var(--app-blush-border) !important; }
+  & .MuiOutlinedInput-root { background: #141821 !important; color: #f8f4f7; }
+  & .MuiTableHead-root .MuiTableCell-root { background: #252a37; color: #f3e9ef; }
+  & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) { background-color: rgba(255, 255, 255, 0.035); }
+
+  // Override the light Blush dashboard treatment: the hero is not a Card, so
+  // it must receive its own dark surface instead of retaining a white panel.
+  & .dashboard-modern {
+    & .dashboard-hero,
+    & .dashboard-date-card {
+      background: var(--app-blush-surface) !important;
+      background-image: none !important;
+      border-color: var(--app-blush-border) !important;
+      box-shadow: var(--app-blush-card-shadow) !important;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .app-shell {
     background-attachment: scroll;

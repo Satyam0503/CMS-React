@@ -101,7 +101,7 @@ const EmployeeAttendance = () => {
   const debouncedSearch = useDebounce(searchValue, 500);
 
   useEffect(() => {
-    setPageTitle("Attendance");
+    setPageTitle("Attendance Report");
   }, [setPageTitle]);
 
   useEffect(() => {
@@ -344,31 +344,31 @@ const EmployeeAttendance = () => {
 
       {/* ----------- Attendance Section ----------- */}
       <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
-        <Card sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 3, boxShadow: "0 10px 30px rgba(71, 46, 117, 0.08)" }}>
-          <Typography variant="h6" sx={{ mb: 2, textAlign: "center", fontWeight: 800 }}>
-            {intl.formatMessage({ id: "MODULES.ATTENDANCE" })}
+        <Card sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 3, boxShadow: "0 10px 30px rgba(71, 46, 117, 0.08)", containerType: "inline-size" }}>
+          <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
+            Attendance Report
           </Typography>
-          <Grid container spacing={{ xs: 1.25, sm: 1.5 }} alignItems="end" sx={{ mb: 2.5 }}>
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ minWidth: 0 }}>
-              <Box sx={{ width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none" }} />
+          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 1.5, alignItems: "end", mb: 2.5, "@container (max-width: 900px)": { gridTemplateColumns: "repeat(2, minmax(0, 1fr))", "& .attendance-report-period": { gridColumn: "1 / -1" } }, "@container (max-width: 640px)": { gridTemplateColumns: "minmax(0, 1fr)" } }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: "block", minHeight: 17, lineHeight: "17px" }}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none", "& .MuiOutlinedInput-root": { minHeight: 40 } }} />
               <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
                 {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
               </Typography></Box>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} sx={{ minWidth: 0 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", minHeight: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", height: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
                 <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowLeft /></Button>
                 <Typography fontWeight={800} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5 }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
                 <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowRight /></Button>
               </Stack>
-            </Grid>
-            <Grid size={{ xs: 12, md: 4, lg: 6 }}>
-              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent={{ lg: "flex-end" }} gap={1.25}>
-                <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 190 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
-                {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
+            </Box>
+            <Box className="attendance-report-period" sx={{ minWidth: 0 }}>
+              <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent="flex-start" gap={1.25} sx={{ width: "100%" }}>
+                <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 210 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ minHeight: 17, lineHeight: "17px" }}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }} sx={{ height: 40 }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
+                {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ height: 40, minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-end" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
               </Stack>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           {selectedPeriod === "this-week" && <Box sx={{ mb: 2, px: 1.5, py: 1, borderRadius: 2, bgcolor: "action.hover", color: "text.secondary", fontSize: 13, fontWeight: 700 }}>{dateRange.startDate.format("DD MMM")} – {dateRange.startDate.endOf("week").format("DD MMM YYYY")} · Full week view</Box>}
           {!canViewAllAttendance && canManageAttendance && <Typography color="text.secondary" sx={{ mb: 2 }}>You can manage attendance for yourself or assigned employees.</Typography>}
 

@@ -66,6 +66,21 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
           boxShadow: "var(--app-dawn-paper-shadow, 0 7px 20px rgba(73, 59, 89, 0.06))",
         },
       };
+    case "blush":
+      return {
+        card: {
+          background: "var(--app-blush-surface, #ffffff)",
+          borderRadius: 14,
+          border: "1px solid var(--app-blush-border, #efd1df)",
+          boxShadow: "var(--app-blush-card-shadow, 0 12px 30px rgba(150, 82, 120, 0.10))",
+        },
+        paper: {
+          background: "var(--app-blush-surface, #ffffff)",
+          borderRadius: 12,
+          border: "1px solid var(--app-blush-border-soft, #f5dfe8)",
+          boxShadow: "var(--app-blush-paper-shadow, 0 7px 20px rgba(150, 82, 120, 0.07))",
+        },
+      };
     default:
       return { card: {}, paper: {} };
   }
@@ -80,8 +95,8 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         colorSchemeSelector: "class",
       },
       colorSchemes: {
-        dark: appStyle === "dawn" ? dawnDarkPalette : darkPalette,
-        light: appStyle === "dawn" ? dawnLightPalette : lightPalette,
+        dark: appStyle === "dawn" || appStyle === "blush" ? dawnDarkPalette : darkPalette,
+        light: appStyle === "dawn" || appStyle === "blush" ? dawnLightPalette : lightPalette,
       },
     },
     locale

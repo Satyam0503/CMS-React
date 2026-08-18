@@ -81,7 +81,22 @@ const AuthLayout = () => {
             />
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
-            <AppStylePicker />
+            <AppStylePicker
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 2.5,
+                color: isDark ? "common.white" : "primary.main",
+                bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+                border: "1px solid",
+                borderColor: isDark ? "rgba(255,255,255,.24)" : "color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
+                "&:hover": {
+                  color: "common.white",
+                  bgcolor: "primary.main",
+                  borderColor: "primary.main",
+                },
+              }}
+            />
             <LightDarkMode
               sx={{
                 width: 40,

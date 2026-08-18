@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-export const SUPPORTED_THEMES = ["glass", "slate", "dawn"] as const;
+export const SUPPORTED_THEMES = ["glass", "slate", "dawn", "blush"] as const;
 export const DEFAULT_THEME = "glass" as const;
 export type AppStyle = (typeof SUPPORTED_THEMES)[number];
 
@@ -8,6 +8,7 @@ export const APP_STYLES: { value: AppStyle; label: string; description: string }
   { value: "glass", label: "Glass", description: "Translucent surfaces with backdrop blur" },
   { value: "slate", label: "Slate", description: "Warm off-white with calm grey-blue depth" },
   { value: "dawn", label: "Dawn", description: "Crisp lavender glass with rose accents" },
+  { value: "blush", label: "Blush", description: "Soft pink workspace with clean white surfaces" },
 ];
 
 const STORAGE_KEY = "appStyle";

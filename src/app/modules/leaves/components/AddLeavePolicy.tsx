@@ -236,7 +236,7 @@ export default function AddLeavePolicy(props: Props) {
             ...formik
           }) => {
             return (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} style={{ width: "100%" }}>
                 {Boolean(formik.status) && (
                   <AppAlert severity="warning" className="mb-4">
                     {formik.status}
@@ -392,7 +392,18 @@ export default function AddLeavePolicy(props: Props) {
                       </Grid>
                     )}
 
-                    {values.policyType === 3 && <Grid size={12}><AppAlert severity="info">Unpaid Leave is automatically available to every employee and does not use leave credits or a balance. Requests remain pending until approval; approved UL is recorded as unpaid attendance.</AppAlert></Grid>}
+                    {values.policyType === 3 && <Grid size={12}>
+                      <Stack spacing={1.5}>
+                        <AppAlert severity="info">Unpaid Leave is automatically available to every employee and does not use leave credits or a balance. Requests remain pending until approval; approved UL is recorded as unpaid attendance.</AppAlert>
+                        <Box className="policy-toggle-row policy-toggle-row--single">
+                          <FormControlLabel
+                            control={<AppSwitch checked={values.status} onChange={(event) => setFieldValue("status", event.target.checked)} />}
+                            label={values.status ? "Unpaid Leave policy active" : "Unpaid Leave policy inactive"}
+                            labelPlacement="start"
+                          />
+                        </Box>
+                      </Stack>
+                    </Grid>}
 
                     {values.policyType === 1 && <Grid size={12}>
                       <Box className="policy-modal-section">
@@ -562,6 +573,7 @@ export default function AddLeavePolicy(props: Props) {
                                     }
                                     name="weekendInclusive"
                                     checked={values.weekendInclusive}
+                                    labelPlacement="start"
                                     onChange={(e, value) => {
                                       setFieldValue("weekendInclusive", value);
                                     }}
@@ -581,6 +593,7 @@ export default function AddLeavePolicy(props: Props) {
                                     }
                                     name="holidayInclusive"
                                     checked={values.holidayInclusive}
+                                    labelPlacement="start"
                                     onChange={(e, value) => {
                                       setFieldValue("holidayInclusive", value);
                                     }}
@@ -684,31 +697,34 @@ export default function AddLeavePolicy(props: Props) {
                     </Grid>}
                   </Grid>
                 </Box>
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  className="policy-form-actions"
-                >
-                  <CustomisedButton
-                    variant="outlined"
-                    label={i({ id: "BUTTON.CANCEL" })}
-                    handleClick={props.handleClose}
-                    fullWidth
-                    sx={{ maxWidth: { xs: "100%", sm: "160px" } }}
-                  />
-                  <CustomisedButton
-                    label={i({
-                      id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
-                    })}
-                    type="submit"
-                    loading={formik.isSubmitting}
-                    disabled={
-                      formik.isSubmitting || !(formik.isValid && formik.dirty)
-                    }
-                    fullWidth
-                    sx={{ maxWidth: { xs: "100%", sm: "160px" } }}
-                  />
-                </Stack>
+                <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.5}
+                    className="policy-form-actions"
+                    sx={{ width: { xs: "100%", sm: "auto" }, alignItems: { xs: "stretch", sm: "center" } }}
+                  >
+                    <CustomisedButton
+                      variant="outlined"
+                      label={i({ id: "BUTTON.CANCEL" })}
+                      handleClick={props.handleClose}
+                      fullWidth
+                      sx={{ width: { xs: "100%", sm: "160px" }, maxWidth: "none" }}
+                    />
+                    <CustomisedButton
+                      label={i({
+                        id: props.isEdit ? "BUTTON.UPDATE" : "BUTTON.ADD",
+                      })}
+                      type="submit"
+                      loading={formik.isSubmitting}
+                      disabled={
+                        formik.isSubmitting || !(formik.isValid && formik.dirty)
+                      }
+                      fullWidth
+                      sx={{ width: { xs: "100%", sm: "160px" }, maxWidth: "none" }}
+                    />
+                  </Stack>
+                </Box>
               </form>
             );
           }}
