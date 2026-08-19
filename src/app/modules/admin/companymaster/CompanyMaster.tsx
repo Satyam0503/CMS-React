@@ -2,7 +2,7 @@ import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { alpha, Box, ButtonBase, Card, Stack, Typography } from "@mui/material";
 import { Departments } from "./components/Department";
-import { Add, CorporateFare, Work, AccessTimeRounded, LabelOutlined } from "@mui/icons-material";
+import { Add, CorporateFare, Work, LabelOutlined } from "@mui/icons-material";
 import {
   Navigate,
   Outlet,
@@ -21,7 +21,6 @@ import {
 } from "../adminservices";
 import { CustomAttributeWrapper } from "./components/CustomAttributeWrapper";
 import { usePageData } from "../../../Context/PageDataProvider";
-import { OfficeSchedule } from "./components/OfficeSchedule";
 import { toast } from "react-toastify";
 import { AppButton } from "../../../shared/components/ui";
 
@@ -38,12 +37,6 @@ const tabsRoutes: TabModel[] = [
     title: "COMPANY_MASTER.TAB.JOB_TILES",
     icon: <Work />,
   },
-  {
-    tabId: 3,
-    to: "/admin/companymaster/office-schedule",
-    title: "Office Schedule",
-    icon: <AccessTimeRounded />,
-  },
 ];
 
 const getCustomAttributeTitle = (attribute: CompanyCustomAttributeModel) =>
@@ -57,7 +50,7 @@ export const CompanyMasterTab = () => {
         <Route index element={<Navigate to={"department"} />} />
         <Route path="department" element={<Departments />} />
         <Route path="jobtitle" element={<JobTitles />} />
-        <Route path="office-schedule" element={<OfficeSchedule />} />
+        <Route path="office-schedule" element={<Navigate to="/admin/companydetails/office-schedule" replace />} />
         <Route
           path="customattribute/:customAttributeId"
           element={<CustomAttributeWrapper />}

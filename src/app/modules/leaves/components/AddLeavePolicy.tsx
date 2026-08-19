@@ -508,7 +508,7 @@ export default function AddLeavePolicy(props: Props) {
                                     control={
                                       <AppCheckbox sx={{ "& .MuiSvgIcon-root": { fontSize: 24 } }} />
                                     }
-                                    label={`${i({ id: "LEAVE.TYPES.POLICY_CARRY_OVER_ALLOWED" })}:`}
+                                    label={i({ id: "LEAVE.TYPES.POLICY_CARRY_OVER_ALLOWED" })}
                                     name="carryOverAllowed"
                                     labelPlacement="start"
                                     checked={values.carryOverAllowed}

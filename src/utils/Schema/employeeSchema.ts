@@ -70,5 +70,6 @@ export const inviteEmployeeSchema: Yup.ObjectSchema<InviteNewEmployeeModel> =
       .required("VALIDATION_ERR.EMAIL_REQ")
       .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL"),
     reportingManager: Yup.string().nullable().defined().default(null),
+    scheduleId: Yup.string().optional(),
     // roleId: Yup.string().required("VALIDATION_ERR.REQUIRED_TYPE"),
   });

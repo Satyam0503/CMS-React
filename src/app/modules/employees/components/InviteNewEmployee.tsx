@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { getNextEmployeeId } from "../../users/userservices";
 import { getAllEmployees } from "../employeeServices";
 import React from "react";
+import { getRequest } from "../../../../server/axios";
 
 import { AppAlert } from "../../../shared/components/ui";
 interface PropsTypes {
@@ -31,6 +32,7 @@ const initialEmployeeDetails: InviteNewEmployeeModel = {
     firstName: "",
     lastName: "",
     reportingManager: null,
+    scheduleId: "",
 }
 
 const inviteEmployeeFormFields: InputFieldProps[] = [
@@ -45,6 +47,7 @@ export const InviteNewEmployee = (props: PropsTypes) => {
     const { formatMessage: i } = useIntl();
     const [nextEmployeeId, setNextEmployeeId] = useState<string>("");
     const [managers, setManagers] = useState<Array<{ userId: string; fullName: string; employeeId: string }>>([]);
+    const [schedules, setSchedules] = useState<Array<{ scheduleId: string; name: string; isDefault: boolean }>>([]);
 
     const InviteNewEmployee = async (values: InviteNewEmployeeModel, formikHelpers: Pick<FormikHelpers<InviteNewEmployeeModel>, "setSubmitting" | "setFieldError">) => {
         try {
@@ -80,6 +83,12 @@ export const InviteNewEmployee = (props: PropsTypes) => {
             }
         };
         fetchNextEmployeeId();
+    }, []);
+
+    useEffect(() => {
+        void getRequest<any>("api/CompanyMaster/OfficeSchedules").then(({ data }) => {
+            if (data.success) setSchedules((data.methodResults ?? []).filter((shift: any) => shift.isActive));
+        }).catch(() => setSchedules([]));
     }, []);
 
     useEffect(() => {
@@ -138,6 +147,14 @@ export const InviteNewEmployee = (props: PropsTypes) => {
                                 onChange={(_, manager) => formik.setFieldValue("reportingManager", manager?.userId ?? null)}
                                 getOptionLabel={(manager) => `${manager.fullName} (${manager.employeeId})`}
                                 renderInput={(params) => <TextField {...params} label="Reporting Manager" placeholder="Select reporting manager" sx={{ "& .MuiOutlinedInput-root": { backgroundColor: "background.paper", borderRadius: 2, "& fieldset": { borderColor: "divider" }, "&:hover fieldset": { borderColor: "primary.light" }, "&.Mui-focused fieldset": { borderWidth: 2 } }, "& .MuiInputLabel-root": { fontWeight: 700 } }} />}
+                            />
+                            <Autocomplete
+                                size="small"
+                                options={schedules}
+                                value={schedules.find((shift) => shift.scheduleId === formik.values.scheduleId) ?? null}
+                                onChange={(_, shift) => formik.setFieldValue("scheduleId", shift?.scheduleId ?? "")}
+                                getOptionLabel={(shift) => `${shift.name}${shift.isDefault ? " (Default)" : ""}`}
+                                renderInput={(params) => <TextField {...params} label="Shift" placeholder="Use company default shift" helperText="Optional. If skipped, the company default shift is applied automatically." sx={{ "& .MuiOutlinedInput-root": { backgroundColor: "background.paper", borderRadius: 2 }, "& .MuiInputLabel-root": { fontWeight: 700 } }} />}
                             />
                         </form>
                     }

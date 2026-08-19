@@ -302,7 +302,7 @@ export default function PayrollSettings() {
                   <TableCell>{issue.employeeName}<br /><Typography variant="caption">{issue.employeeCode}</Typography></TableCell>
                   <TableCell>{dayjs(issue.attendanceDate).format("DD MMM YYYY")}</TableCell>
                   <TableCell>{issue.message}</TableCell>
-                  <TableCell>{issue.currentAttendanceStatus ?? "—"}{issue.checkInTime ? ` | In: ${dayjs(issue.checkInTime).format("HH:mm")}` : ""}{issue.checkOutTime ? ` | Out: ${dayjs(issue.checkOutTime).format("HH:mm")}` : ""}</TableCell>
+                  <TableCell>{issue.currentAttendanceStatus ?? "—"}{issue.checkInTime ? ` | Punch in: ${dayjs(issue.checkInTime).format("HH:mm")}` : ""}{issue.checkOutTime ? ` | Punch out: ${dayjs(issue.checkOutTime).format("HH:mm")}` : ""}</TableCell>
                   <TableCell><CustomisedButton label="View" variant="outlined" handleClick={() => openAttendanceCell(issue)} /></TableCell>
                 </TableRow>
               ))}

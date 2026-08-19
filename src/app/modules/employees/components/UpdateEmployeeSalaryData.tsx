@@ -23,7 +23,7 @@ import { CurrencyInput } from "../../../shared/components/form-component/Currenc
 interface PropsTypes {
   userId: string;
   employeeId: string;
-  onUserUpdate: (success: boolean) => void;
+  onUserUpdate: (success: boolean) => void | Promise<void>;
   formRef: React.MutableRefObject<FormikProps<CreateEmployeeSalary> | null>;
   handleButtonLoading: (loading: boolean) => void;
   // pre-fills the form with the employee's current active salary when editing one that
@@ -70,7 +70,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     try {
       const response = await updateSalary(payload, userId, employeeId);
       const { success } = response.data;
-      onUserUpdate(success);
+      await onUserUpdate(success);
     } catch (error) {
       console.error((error as Error).message);
     } finally {

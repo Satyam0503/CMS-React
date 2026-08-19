@@ -1,11 +1,11 @@
 import { Add, DeleteOutline, Edit, Save } from "@mui/icons-material";
-import { Box, Card, Chip, Divider, FormControlLabel, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, Chip, FormControlLabel, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { deleteRequest, getRequest, postRequest } from "../../../server/axios";
 import { ResponseData } from "../../../utils/common_types";
 import { usePageData } from "../../Context/PageDataProvider";
-import { AppButton, AppCheckbox, AppSwitch, AppTextField } from "../../shared/components/ui";
+import { AppButton, AppCheckbox, AppTextField } from "../../shared/components/ui";
 import { ConfirmationModal } from "../../shared/components/ConfirmModal";
 
 export type AttendanceStatusSetting = {
@@ -34,12 +34,6 @@ const defaultStatuses: AttendanceStatusSetting[] = [
   isActive: true, isSystem: true, isAvailableForLeaveManagement: ["SL", "CL", "EL", "COMP-OFF", "CL-HALF", "SL-HALF"].includes(code as string), colorHex: "#607D8B", sortOrder: index,
 }));
 
-type PenaltyPolicy = {
-  id?: string; name: string; combinedLhdEdMonthlyLimit: number; isEnabled: boolean;
-  requiresHrApproval: boolean; defaultDecision: string; effectiveFrom: string;
-  effectiveTo?: string; version: number;
-};
-
 const sectionSx = {
   p: { xs: 2, md: 2.5 },
   border: "1px solid",
@@ -53,12 +47,6 @@ export default function AttendanceStatusSettings() {
   const [items, setItems] = useState<AttendanceStatusSetting[]>([]);
   const [originalItems, setOriginalItems] = useState<AttendanceStatusSetting[]>([]);
   const [draft, setDraft] = useState(empty);
-  const [policy, setPolicy] = useState<PenaltyPolicy>({
-    name: "Combined LHD + ED monthly limit", combinedLhdEdMonthlyLimit: 2,
-    isEnabled: true, requiresHrApproval: true, defaultDecision: "REVIEW_REQUIRED",
-    effectiveFrom: new Date().toISOString().slice(0, 10), version: 1,
-  });
-  const [originalPolicy, setOriginalPolicy] = useState<PenaltyPolicy | null>(null);
   const [offDays, setOffDays] = useState<number[]>([0, 6]);
   const [originalOffDays, setOriginalOffDays] = useState<number[]>([0, 6]);
   const [isEditing, setIsEditing] = useState(false);
@@ -75,13 +63,6 @@ export default function AttendanceStatusSettings() {
       toast.error("Unable to load saved settings. Showing defaults.");
     }
   };
-  const loadPolicy = async () => {
-    try {
-      const { data } = await getRequest<PenaltyPolicy>("api/attendance/penalty/policy");
-      const loaded = { ...data, effectiveFrom: data.effectiveFrom.slice(0, 10) };
-      setPolicy(loaded); setOriginalPolicy(loaded);
-    } catch { toast.error("Unable to load attendance penalty policy."); }
-  };
   const loadWeeklyOffs = async () => {
     try {
       const { data } = await getRequest<{ offDays: number[] }>("api/attendance/weekly-offs");
@@ -89,7 +70,7 @@ export default function AttendanceStatusSettings() {
     } catch { setOffDays([0, 6]); setOriginalOffDays([0, 6]); }
   };
 
-  useEffect(() => { void load(); void loadPolicy(); void loadWeeklyOffs(); }, []);
+  useEffect(() => { void load(); void loadWeeklyOffs(); }, []);
   useEffect(() => { setPageTitle("Attendance Settings"); return () => setPageTitle(""); }, [setPageTitle]);
 
   const addDraft = () => {
@@ -126,7 +107,6 @@ export default function AttendanceStatusSettings() {
   const handleCancelEdit = () => {
     setItems(originalItems);
     setOffDays(originalOffDays);
-    setPolicy(originalPolicy ?? policy);
     setDraft(empty);
     setIsEditing(false);
   };
@@ -147,11 +127,7 @@ export default function AttendanceStatusSettings() {
         const { data } = await postRequest<{ offDays: number[] }, { success: boolean; message: string }>("api/attendance/weekly-offs", { offDays });
         if (!data.success) throw new Error(data.message || "Unable to save weekly offs.");
       }
-      if (originalPolicy && JSON.stringify(policy) !== JSON.stringify(originalPolicy)) {
-        const { data } = await postRequest<PenaltyPolicy, { success: boolean; message: string }>("api/attendance/penalty/policy", policy);
-        if (!data.success) throw new Error(data.message || "Unable to save policy.");
-      }
-      await Promise.all([load(), loadPolicy(), loadWeeklyOffs()]);
+      await Promise.all([load(), loadWeeklyOffs()]);
       window.dispatchEvent(new CustomEvent("attendance-status-settings-updated"));
       setIsEditing(false);
       toast.success("Attendance settings saved.");
@@ -181,7 +157,7 @@ export default function AttendanceStatusSettings() {
               <AppTextField label="Unpaid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.unpaidDayFraction} onChange={(e) => setDraft({ ...draft, unpaidDayFraction: +e.target.value })} />
             </Box>
             <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={1.5} sx={{ mt: 2 }}>
-              <FormControlLabel control={<AppCheckbox checked={draft.requiresTime} onChange={(e) => setDraft({ ...draft, requiresTime: e.target.checked, isAvailableForLeaveManagement: e.target.checked ? false : draft.isAvailableForLeaveManagement })} />} label="Requires check-in and check-out time" />
+              <FormControlLabel control={<AppCheckbox checked={draft.requiresTime} onChange={(e) => setDraft({ ...draft, requiresTime: e.target.checked, isAvailableForLeaveManagement: e.target.checked ? false : draft.isAvailableForLeaveManagement })} />} label="Requires punch in and punch out time" />
               <FormControlLabel control={<AppCheckbox checked={draft.isAvailableForLeaveManagement} disabled={draft.requiresTime} onChange={(e) => setDraft({ ...draft, isAvailableForLeaveManagement: e.target.checked })} />} label="Available for Leave" />
               <AppButton startIcon={<Add />} variant="outlined" disabled={!draft.code.trim() || !draft.name.trim()} onClick={addDraft}>Add status</AppButton>
             </Stack>
@@ -240,16 +216,6 @@ export default function AttendanceStatusSettings() {
           </Stack>
         </Box>
 
-        <Box sx={sectionSx}>
-          <Typography variant="h6" fontWeight={750}>Payroll penalty policy</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: .5, mb: 2 }}>Exceeded-limit penalties require an audited HR/Admin decision before payroll.</Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "minmax(240px, 1fr) minmax(220px, 1fr) auto" }, gap: 2, alignItems: "center" }}>
-            <AppTextField disabled={!isEditing} label="Combined LHD + ED monthly limit" type="number" value={policy.combinedLhdEdMonthlyLimit} onChange={(e) => setPolicy({ ...policy, combinedLhdEdMonthlyLimit: +e.target.value })} />
-            <AppTextField disabled={!isEditing} label="Effective from" type="date" InputLabelProps={{ shrink: true }} value={policy.effectiveFrom} onChange={(e) => setPolicy({ ...policy, effectiveFrom: e.target.value })} />
-            <FormControlLabel sx={{ m: 0, minWidth: 110 }} control={<AppSwitch disabled={!isEditing} checked={policy.isEnabled} onChange={(e) => setPolicy({ ...policy, isEnabled: e.target.checked })} />} label="Enabled" />
-          </Box>
-        </Box>
       </Stack>
       {statusPendingDelete && <ConfirmationModal open title={`Delete ${statusPendingDelete.code}?`} content={`This permanently deletes the custom attendance status "${statusPendingDelete.name}" for this company. Default statuses cannot be deleted.`} handleClose={() => setStatusPendingDelete(null)} handleConfirmation={() => void confirmDelete()} />}
     </Card>

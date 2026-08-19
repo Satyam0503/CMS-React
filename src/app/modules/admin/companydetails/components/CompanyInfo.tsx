@@ -24,7 +24,7 @@ import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/C
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
 import { companyValidationSchema } from "../../../../../utils/Schema/companyValidationSchema";
-import { CloudUploadOutlined, ContentCopy, OpenInNew } from "@mui/icons-material";
+import { CloudUploadOutlined } from "@mui/icons-material";
 import { ImageCropper } from "../../../users/components/ImageCropper";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
@@ -72,16 +72,6 @@ export const CompanyInfo = () => {
 
   const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? "NOT_AVAILABLE";
   const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : ["NOT_AVAILABLE"];
-  const careerUrl = companyInfo.publicCompanyCode
-    ? `${window.location.origin}/careers/${companyInfo.publicCompanyCode}`
-    : "";
-
-  const copyCareerUrl = async () => {
-    if (!careerUrl) return;
-    await navigator.clipboard.writeText(careerUrl);
-    toast.success("Career portal link copied.");
-  };
-
   const { values, dirty, handleSubmit, resetForm, setFieldValue, setFieldError, setFieldTouched, errors, touched, getFieldProps, submitForm } = useFormik({
     enableReinitialize: true,
     initialValues: editedInfo,
@@ -324,45 +314,6 @@ export const CompanyInfo = () => {
           }
         </Stack>
         <Divider sx={{ my: 2 }} />
-        {careerUrl && (
-          <>
-            <Stack
-              direction={{ xs: "column", md: "row" }}
-              spacing={2}
-              sx={{
-                justifyContent: "space-between",
-                alignItems: { xs: "stretch", md: "center" },
-                p: 2,
-                mb: 2,
-                border: 1,
-                borderColor: "divider",
-                borderRadius: 2,
-                bgcolor: "action.hover",
-              }}
-            >
-              <Stack spacing={0.5} sx={{ minWidth: 0 }}>
-                <Typography variant="h6">Public career portal</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
-                  {careerUrl}
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1}>
-                <CustomisedButton
-                  variant="outlined"
-                  label="Copy link"
-                  Icon={<ContentCopy />}
-                  handleClick={copyCareerUrl}
-                />
-                <CustomisedButton
-                  label="Open portal"
-                  Icon={<OpenInNew />}
-                  handleClick={() => window.open(careerUrl, "_blank", "noopener,noreferrer")}
-                />
-              </Stack>
-            </Stack>
-            <Divider sx={{ my: 2 }} />
-          </>
-        )}
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-6">
           <Grid container sx={{ gap: 3 }}>
             <Grid
