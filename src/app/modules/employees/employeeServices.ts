@@ -50,8 +50,8 @@ export const updateOwnProfile = async (payload: EditOwnProfilePayloadModel) => {
 
 export const updateSalary = async (
   payload: CreateEmployeeSalary,
-  userId: String,
-  employeeId: String,
+  userId: string,
+  employeeId: string,
 ) => {
   return postRequest<CreateEmployeeSalary, CreateEmployeeSalaryResponseData>(
     `${ServiceUrl.UPDATE_SALARY}`,

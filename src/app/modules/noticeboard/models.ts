@@ -43,7 +43,7 @@ export type ViewModel = {
   viewedAt: string;
 }[];
 
-export type MyNoticeModel = NoticeModel & {};
+export type MyNoticeModel = NoticeModel;
 
 export type GetAllNoticeResponse = ResponseData<NoticeResponseModel>;
 export type GetMyNoticesResponse = ResponseData<NoticeModel>;
