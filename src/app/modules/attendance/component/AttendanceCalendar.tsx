@@ -60,6 +60,15 @@ interface Employee {
   employeeId: string;
   fullName: string;
   dateOfJoining?: string | null;
+  scheduleId?: string | null;
+  scheduleName?: string | null;
+  scheduledStartTime?: string | null;
+  scheduledEndTime?: string | null;
+  punchInAllowedFrom?: string | null;
+  punchInAllowedUntil?: string | null;
+  punchOutAllowedFrom?: string | null;
+  punchOutAllowedUntil?: string | null;
+  scheduleSource?: string | null;
 }
 interface AttendanceRow {
   id: string;
@@ -75,6 +84,7 @@ interface AttendanceData {
   remarks: string;
   sourceType?: string | null;
   sourceId?: string | null;
+  scheduleId?: string | null;
   isDaySegment?: boolean;
   segment?: string | null;
   halfDaySegments?: Partial<
@@ -180,11 +190,21 @@ const statusesWithTimes = new Set<AttendanceStatus>([
   "WFH+CL",
 ]);
 
-// Keep the normal attendance editor aligned with the exception correction flow.
-// Users can select a common time quickly, while exact HH:MM values remain supported.
-const checkInTimePresets = ["09:00", "09:30", "10:00", "10:30"];
-const checkOutTimePresets = ["17:00", "17:30", "18:00", "18:30", "19:00"];
 const formatTimePreset = (value: string) => dayjs(`2000-01-01T${value}`).format("h:mm A");
+const timeToMinutes = (value?: string | null) => {
+  if (!value || !/^\d{2}:\d{2}$/.test(value)) return null;
+  const [hours, minutes] = value.split(":").map(Number);
+  return hours < 24 && minutes < 60 ? hours * 60 + minutes : null;
+};
+const createPunchPresets = (from?: string | null, until?: string | null, fallback?: string | null) => {
+  const start = timeToMinutes(from ?? fallback);
+  const end = timeToMinutes(until ?? fallback);
+  if (start === null || end === null || end < start) return fallback ? [fallback] : [];
+  return Array.from({ length: Math.floor((end - start) / 15) + 1 }, (_, index) => {
+    const minutes = start + index * 15;
+    return `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+  });
+};
 
 // Unpaid leave is assigned by the leave workflow and reconciles as an unpaid
 // absence. It must not be selectable while an admin is manually marking a day.
@@ -201,6 +221,7 @@ interface Props {
   // the company grid without gaining edit, bulk, or exception controls.
   companyView?: boolean;
   readOnly?: boolean;
+  scheduleIdFilter?: string;
   onStatsChange?: (stats: {
     present: number;
     absent: number;
@@ -237,6 +258,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   companyView = false,
   searchValue,
   readOnly = false,
+  scheduleIdFilter = "",
   onStatsChange,
 }) => {
   const theme = useTheme();
@@ -355,6 +377,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   } | null>(null);
 
   const [modalData, setModalData] = useState<AttendanceData>(initialModalState);
+  const scheduleTimePresets = useMemo(() => {
+    const employee = selectedCell?.employee;
+    return {
+      checkIn: createPunchPresets(employee?.punchInAllowedFrom, employee?.punchInAllowedUntil, employee?.scheduledStartTime),
+      checkOut: createPunchPresets(employee?.punchOutAllowedFrom, employee?.punchOutAllowedUntil, employee?.scheduledEndTime),
+    };
+  }, [selectedCell]);
   const [holidays, setHolidays] = useState<Set<string>>(new Set());
   const [weeklyOffDays, setWeeklyOffDays] = useState<number[]>([0, 6]);
   useEffect(() => {
@@ -658,6 +687,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
               remarks: item.remarks ?? "",
               sourceType: item.sourceType ?? null,
               sourceId: item.sourceId ?? null,
+              scheduleId: item.scheduleId ?? null,
               isDaySegment: true,
               segment: segmentName,
               halfDaySegments: {
@@ -681,6 +711,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             remarks: item.remarks ?? "",
             sourceType: item.sourceType ?? null,
             sourceId: item.sourceId ?? null,
+            scheduleId: item.scheduleId ?? null,
             isDaySegment,
             segment: item.segment ?? null,
           };
@@ -823,9 +854,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
     setModalData({
       status: existing?.status ?? "",
-      checkIn: existing?.checkIn ?? (existing?.status === "HD" ? "09:00" : ""),
+      checkIn: existing?.checkIn ?? selectedCell.employee.scheduledStartTime ?? "",
       checkOut:
-        existing?.checkOut ?? (existing?.status === "HD" ? "13:00" : ""),
+        existing?.checkOut ?? selectedCell.employee.scheduledEndTime ?? "",
       remarks: existing?.remarks ?? "",
     });
   }, [selectedCell, attendanceData]);
@@ -1171,13 +1202,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   /* ------------------------------------------------------------ GRID ROW ------------------------------------------------------------------------------------- */
 
   const rows: AttendanceRow[] = useMemo(() => {
-    return employees.map((emp) => {
+    return employees.filter((emp) => !scheduleIdFilter || emp.scheduleId === scheduleIdFilter).map((emp) => {
       const row: AttendanceRow = {
         id: resolveRowId(emp),
         userId: emp.userId,
         employeeId: emp.employeeId ?? "",
         name: emp.name,
         dateOfJoining: emp.dateOfJoining,
+        scheduleId: emp.scheduleId,
+        scheduleName: emp.scheduleName,
+        scheduledStartTime: emp.scheduledStartTime,
+        scheduledEndTime: emp.scheduledEndTime,
+        scheduleSource: emp.scheduleSource,
       };
 
       visibleDates.forEach((date, index) => {
@@ -1188,7 +1224,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
 
       return row;
     });
-  }, [employees, attendanceData, resolveRowId, visibleDates]);
+  }, [employees, attendanceData, resolveRowId, scheduleIdFilter, visibleDates]);
 
   useEffect(() => {
     setPage(0);
@@ -1418,9 +1454,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       }}
                     />
                   </Stack>
+                  {row.scheduleName && (
+                    <Typography variant="caption" color="primary.main" fontWeight={700} sx={{ display: "block", mt: 0.75 }}>
+                      {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
+                    </Typography>
+                  )}
                   <Stack direction="row" spacing={1.25} sx={{ mt: 1.25 }}>
                     <Typography variant="caption" color="text.secondary">
-                      In:{" "}
+                      Punch in:{" "}
                       <Box
                         component="span"
                         sx={{ color: "text.primary", fontWeight: 700 }}
@@ -1430,7 +1471,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                       </Box>
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Out:{" "}
+                      Punch out:{" "}
                       <Box
                         component="span"
                         sx={{ color: "text.primary", fontWeight: 700 }}
@@ -1815,6 +1856,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 </Typography>
               </Box>
             </Box>
+            {selectedCell.employee.scheduleName && (
+              <Typography variant="caption" color="text.secondary" sx={{ mt: -1 }}>
+                Effective shift: <Box component="span" sx={{ color: "text.primary", fontWeight: 800 }}>{selectedCell.employee.scheduleName} · {selectedCell.employee.scheduledStartTime}–{selectedCell.employee.scheduledEndTime}</Box>{selectedCell.employee.scheduleSource ? ` · ${selectedCell.employee.scheduleSource}` : ""}
+              </Typography>
+            )}
 
             <AppTextField
               select
@@ -1897,7 +1943,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     <Box sx={{ minWidth: 0 }}>
                       <Typography fontSize={14} fontWeight={700}>{option.label}</Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {option.requiresTime ? "Check-in and check-out required" : "Attendance status"}
+                        {option.requiresTime ? "Punch in and punch out required" : "Attendance status"}
                       </Typography>
                     </Box>
                   </Stack>
@@ -1913,7 +1959,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   {modalData.status !== "ED" && (
                     <Stack spacing={0.75}>
                       <AppTextField
-                        label="Check-in Time"
+                        label="Punch in time"
                         fullWidth
                         value={modalData.checkIn}
                         placeholder="HH:MM (for example, 09:00)"
@@ -1923,7 +1969,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                         }
                       />
                       <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                        {checkInTimePresets.map((time) => (
+                        {scheduleTimePresets.checkIn.map((time) => (
                           <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkIn: time }))}>
                             {formatTimePreset(time)}
                           </AppButton>
@@ -1934,7 +1980,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   {modalData.status !== "LHD" && (
                     <Stack spacing={0.75}>
                       <AppTextField
-                        label="Check-out Time"
+                        label="Punch out time"
                         fullWidth
                         value={modalData.checkOut}
                         placeholder="HH:MM (for example, 18:00)"
@@ -1944,7 +1990,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                         }
                       />
                       <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
-                        {checkOutTimePresets.map((time) => (
+                        {scheduleTimePresets.checkOut.map((time) => (
                           <AppButton key={time} size="small" variant="outlined" onClick={() => setModalData((prev) => ({ ...prev, checkOut: time }))}>
                             {formatTimePreset(time)}
                           </AppButton>

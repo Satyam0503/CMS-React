@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Box, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   dateFormatter,
@@ -6,7 +6,7 @@ import {
   hasModuleFeaturePermission,
 } from "../../../../../utils/common";
 import { UpdateUserInfo } from "./UpdateUserInfo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { Edit } from "@mui/icons-material";
 import { useUserDetails } from "../../UserDataProvider";
@@ -19,6 +19,10 @@ import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { AppButton } from "../../../../shared/components/ui";
 import { toast } from "react-toastify";
+import { getRequest, putRequest } from "../../../../../server/axios";
+
+type OfficeSchedule = { scheduleId: string; name: string; standardCheckIn: string; standardCheckOut: string };
+type OfficeScheduleAssignment = { scheduleId?: string; scheduleName?: string; source: string };
 
 export const PersonalDetails = () => {
   const { formatMessage: i } = useIntl();
@@ -40,7 +44,47 @@ export const PersonalDetails = () => {
   const [previewEmployeeId, setPreviewEmployeeId] = useState("");
   const [submittingEmployeeId, setSubmittingEmployeeId] = useState(false);
   const [assignmentConfirmationOpen, setAssignmentConfirmationOpen] = useState(false);
+  const [shiftAssignment, setShiftAssignment] = useState<OfficeScheduleAssignment | null>(null);
+  const [officeSchedules, setOfficeSchedules] = useState<OfficeSchedule[]>([]);
+  const [shiftAssignmentOpen, setShiftAssignmentOpen] = useState(false);
+  const [savingShiftAssignment, setSavingShiftAssignment] = useState(false);
   const canAssignEmployeeId = Boolean(employeeId && hasEmployeeEditPermission && !userDetails?.employeeId);
+  const canManageEmployeeShift = Boolean(employeeId && hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions));
+
+  const loadShiftAssignment = async () => {
+    if (!employeeId || !userDetails?.userId || !canManageEmployeeShift) return;
+    try {
+      const [assignmentResponse, schedulesResponse] = await Promise.all([
+        getRequest<any>(`api/User/OfficeScheduleAssignment/${encodeURIComponent(userDetails.userId)}`),
+        getRequest<any>("api/User/AvailableOfficeSchedules"),
+      ]);
+      if (assignmentResponse.data.success) setShiftAssignment(assignmentResponse.data.methodResult);
+      if (schedulesResponse.data.success) setOfficeSchedules(schedulesResponse.data.methodResults ?? []);
+    } catch {
+      toast.error("Unable to load the employee shift assignment.");
+    }
+  };
+
+  const saveShiftAssignment = async () => {
+    if (!userDetails?.userId) return;
+    setSavingShiftAssignment(true);
+    try {
+      const { data } = await putRequest<{ scheduleId?: string }, any>(
+        `api/User/OfficeScheduleAssignment/${encodeURIComponent(userDetails.userId)}`,
+        { scheduleId: shiftAssignment?.scheduleId || undefined },
+      );
+      if (!data.success) throw new Error(data.message || "Unable to update the employee shift.");
+      setShiftAssignment(data.methodResult);
+      setShiftAssignmentOpen(false);
+      toast.success("Employee shift assignment updated.");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message || "Unable to update the employee shift.");
+    } finally {
+      setSavingShiftAssignment(false);
+    }
+  };
+
+  useEffect(() => { void loadShiftAssignment(); }, [employeeId, userDetails?.userId, canManageEmployeeShift]);
 
   const openEmployeeIdAssignment = async () => {
     try {
@@ -109,6 +153,15 @@ export const PersonalDetails = () => {
             {userDetails?.address || <FormattedMessage id="NOT_AVAILABLE" />}
           </Typography>
         </Grid>
+
+        {canManageEmployeeShift && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="body2">Work shift</Typography>
+            <Typography variant="body1">{shiftAssignment?.scheduleName || "Department or company default"}</Typography>
+            <Typography variant="caption" color="text.secondary">{shiftAssignment?.source === "EmployeeOverride" ? "Individual employee override" : "Inherited from department or company default"}</Typography>
+            <AppButton size="small" variant="outlined" sx={{ mt: 1, display: "block" }} onClick={() => { void loadShiftAssignment(); setShiftAssignmentOpen(true); }}>Change shift</AppButton>
+          </Grid>
+        )}
 
         <Grid
           size={{
@@ -311,6 +364,19 @@ export const PersonalDetails = () => {
           <Typography variant="body2" color="text.secondary">{manualEntry ? "Enter an Employee ID in the company’s configured format. It cannot be changed after assignment." : `The next company Employee ID will be assigned${previewEmployeeId ? `: ${previewEmployeeId}` : ""}.`}</Typography>
           {manualEntry && <TextField autoFocus fullWidth label="Employee ID" value={manualEmployeeId} onChange={(event) => setManualEmployeeId(event.target.value)} placeholder="Enter Employee ID" inputProps={{ maxLength: 64 }} />}
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}><AppButton variant="contained" onClick={requestEmployeeIdAssignment} disabled={submittingEmployeeId}>{submittingEmployeeId ? "Assigning..." : "Review assignment"}</AppButton></Box>
+        </Stack>
+      </CustomisedModal>
+      <CustomisedModal open={shiftAssignmentOpen} handleClose={() => !savingShiftAssignment && setShiftAssignmentOpen(false)} title="Employee shift assignment" maxWidth="sm">
+        <Stack spacing={2} sx={{ pt: 1, width: "100%" }}>
+          <Typography variant="body2" color="text.secondary">An individual shift overrides the department shift. Choose inheritance to use the department shift, then the company default if none is assigned.</Typography>
+          <FormControl fullWidth>
+            <InputLabel id="employee-shift-label">Shift</InputLabel>
+            <Select labelId="employee-shift-label" label="Shift" value={shiftAssignment?.scheduleId || ""} onChange={(event) => setShiftAssignment((current) => ({ ...(current ?? { source: "EmployeeOverride" }), scheduleId: event.target.value || undefined, scheduleName: officeSchedules.find((schedule) => schedule.scheduleId === event.target.value)?.name, source: event.target.value ? "EmployeeOverride" : "DepartmentOrCompanyDefault" }))}>
+              <MenuItem value=""><em>Use department or company default</em></MenuItem>
+              {officeSchedules.map((schedule) => <MenuItem key={schedule.scheduleId} value={schedule.scheduleId}>{schedule.name} ({schedule.standardCheckIn} - {schedule.standardCheckOut})</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}><AppButton variant="contained" onClick={saveShiftAssignment} disabled={savingShiftAssignment}>{savingShiftAssignment ? "Saving..." : "Save shift"}</AppButton></Box>
         </Stack>
       </CustomisedModal>
       <ConfirmationModal

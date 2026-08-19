@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
 import CustomisedButton from "../../../shared/components/C_Button";
 import { UpdateEmployeeSalaryData } from "../../employees/components/UpdateEmployeeSalaryData";
+import { EmployeePayrollPenaltyPolicy, EmployeePayrollPenaltyPolicyHandle } from "../../employees/components/EmployeePayrollPenaltyPolicy";
 import { CreateEmployeeSalary, SalaryModel } from "../../employees/models";
 
 interface PropsType {
@@ -29,10 +30,15 @@ export const AddUpdateEmployeeSalary = ({
 }: PropsType) => {
   const { formatMessage: i } = useIntl();
   const formRef = useRef<FormikProps<CreateEmployeeSalary> | null>(null);
+  const policyRef = useRef<EmployeePayrollPenaltyPolicyHandle | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleUserUpdate = (success: boolean) => {
+  const handleUserUpdate = async (success: boolean) => {
     if (success) {
+      if (!await policyRef.current?.save()) {
+        toast.error("Salary was saved, but the employee payroll policy could not be saved. Correct it and save again.");
+        return;
+      }
       toast.success(i({ id: "PAYROLL_SETTINGS.SALARY_SAVED" }));
       handleClose();
       handlePageRefresh();
@@ -60,6 +66,7 @@ export const AddUpdateEmployeeSalary = ({
         onUserUpdate={handleUserUpdate}
         existingSalary={existingSalary}
       />
+      <EmployeePayrollPenaltyPolicy ref={policyRef} employeeUserId={userId} />
       <DialogActions className="mt-4">
         <CustomisedButton
           label={i({ id: "BUTTON.CANCEL" })}

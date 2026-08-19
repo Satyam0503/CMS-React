@@ -1638,15 +1638,15 @@ input[type="password"]::-ms-clear {
 
 .leave-policy-checkbox {
   margin: 0;
-  min-height: 52px;
-  padding: 0.625rem 0.75rem;
+  min-height: 64px;
+  padding: 0.75rem 0.875rem;
   width: 100%;
   border: 1px solid var(--mui-palette-divider);
   border-radius: 10px;
   background: var(--mui-palette-background-paper);
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 
   .MuiFormControlLabel-label {
     flex: 1 1 auto;
@@ -1658,6 +1658,12 @@ input[type="password"]::-ms-clear {
   .MuiSwitch-root {
     flex: 0 0 auto;
     margin: 0;
+  }
+
+  .MuiFormControlLabel-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.35;
   }
 }
 
@@ -1684,15 +1690,15 @@ input[type="password"]::-ms-clear {
     width: 100%;
     .MuiFormControlLabel-root {
       width: 100%;
-      min-height: 52px;
+      min-height: 64px;
       margin: 0;
-      padding: 0.625rem 0.75rem;
+      padding: 0.75rem 0.875rem;
       border: 1px solid var(--mui-palette-divider);
       border-radius: 10px;
       background: var(--mui-palette-background-paper);
       justify-content: space-between;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
       .MuiFormControlLabel-label {
         flex: 1 1 auto;
         min-width: 0;
@@ -1703,6 +1709,11 @@ input[type="password"]::-ms-clear {
       .MuiSwitch-root {
         flex: 0 0 auto;
         margin: 0;
+      }
+      .MuiFormControlLabel-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.35;
       }
     }
   }

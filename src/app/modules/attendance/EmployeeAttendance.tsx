@@ -81,6 +81,9 @@ const EmployeeAttendance = () => {
   const [Employee, setEmployee] = React.useState<any[]>([]);
   const [isLoading, setLoading] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
+  const [selectedShiftId, setSelectedShiftId] = React.useState("");
+  const [shiftOptions, setShiftOptions] = React.useState<Array<{ scheduleId: string; name: string }>>([]);
+  const [effectiveSchedules, setEffectiveSchedules] = React.useState<Record<string, { scheduleId?: string | null; scheduleName?: string | null; startTime?: string | null; endTime?: string | null; punchInAllowedFrom?: string | null; punchInAllowedUntil?: string | null; punchOutAllowedFrom?: string | null; punchOutAllowedUntil?: string | null; source?: string }>>({});
   const [attendanceStats, setAttendanceStats] = React.useState({
     present: 0,
     absent: 0,
@@ -132,6 +135,15 @@ const EmployeeAttendance = () => {
 
     fetchEmployees();
   }, [canViewAllAttendance, debouncedSearch, userData?.userId]);
+
+  useEffect(() => {
+    if (!canViewAllAttendance) return;
+    void getRequest<any>("api/User/AvailableOfficeSchedules")
+      .then((response) => {
+        if (response.data?.success) setShiftOptions(response.data.methodResults ?? []);
+      })
+      .catch(() => toast.error("Unable to load company shifts."));
+  }, [canViewAllAttendance]);
 
   const loadMyCorrectionRequests = React.useCallback(async () => {
     if (canViewAllAttendance) return;
@@ -186,6 +198,31 @@ const EmployeeAttendance = () => {
       : { startDate: calendarMonth.startOf("month"), endDate: calendarMonth.endOf("month") };
   }, [selectedPeriod, calendarOffset]);
   const todayOverview = React.useMemo(() => resolveAttendanceDateRange("today"), []);
+
+  useEffect(() => {
+    if (!canViewAllAttendance || Employee.length === 0) {
+      setEffectiveSchedules({});
+      return;
+    }
+    let cancelled = false;
+    void postRequest<{ userIds: string[]; attendanceDate: string }, { items?: Array<any> }>("api/admin/attendance/effective-schedules", {
+      userIds: Employee.map((employee) => employee.userId).filter(Boolean),
+      attendanceDate: dateRange.startDate.format("YYYY-MM-DD"),
+    }).then((response) => {
+      if (cancelled) return;
+      const schedules = (response.data?.items ?? []).reduce((result: Record<string, any>, item: any) => {
+        result[item.userId] = item;
+        return result;
+      }, {});
+      setEffectiveSchedules(schedules);
+    }).catch(() => {
+      if (!cancelled) {
+        setEffectiveSchedules({});
+        toast.error("Unable to resolve employee shifts for this report.");
+      }
+    });
+    return () => { cancelled = true; };
+  }, [canViewAllAttendance, Employee, dateRange.startDate]);
 
   const submitCorrection = async () => {
     if (!correctionDate || !correctionReason.trim()) {
@@ -243,8 +280,17 @@ const EmployeeAttendance = () => {
       name: emp.fullName,
       fullName: emp.fullName,
       dateOfJoining: emp.dateOfJoining,
+      scheduleId: effectiveSchedules[emp.userId]?.scheduleId,
+      scheduleName: effectiveSchedules[emp.userId]?.scheduleName,
+      scheduledStartTime: effectiveSchedules[emp.userId]?.startTime,
+      scheduledEndTime: effectiveSchedules[emp.userId]?.endTime,
+      punchInAllowedFrom: effectiveSchedules[emp.userId]?.punchInAllowedFrom,
+      punchInAllowedUntil: effectiveSchedules[emp.userId]?.punchInAllowedUntil,
+      punchOutAllowedFrom: effectiveSchedules[emp.userId]?.punchOutAllowedFrom,
+      punchOutAllowedUntil: effectiveSchedules[emp.userId]?.punchOutAllowedUntil,
+      scheduleSource: effectiveSchedules[emp.userId]?.source,
     }));
-  }, [Employee, debouncedSearch]);
+  }, [Employee, debouncedSearch, effectiveSchedules]);
 
   return (
     <Grid container spacing={2}>
@@ -348,13 +394,14 @@ const EmployeeAttendance = () => {
           <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
             Attendance Report
           </Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 1.5, alignItems: "end", mb: 2.5, "@container (max-width: 900px)": { gridTemplateColumns: "repeat(2, minmax(0, 1fr))", "& .attendance-report-period": { gridColumn: "1 / -1" } }, "@container (max-width: 640px)": { gridTemplateColumns: "minmax(0, 1fr)" } }}>
+          <Box sx={{ display: "grid", gridTemplateColumns: "minmax(220px, 1fr) minmax(150px, 190px) minmax(200px, 290px) auto", gap: 1.25, alignItems: "end", mb: 2.5, "@container (max-width: 1050px)": { gridTemplateColumns: "minmax(0, 1fr) minmax(150px, 190px)", "& .attendance-report-period": { gridColumn: "1 / -1" } }, "@container (max-width: 640px)": { gridTemplateColumns: "minmax(0, 1fr)", gap: 1 } }}>
             <Box sx={{ minWidth: 0 }}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: "block", minHeight: 17, lineHeight: "17px" }}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none", "& .MuiOutlinedInput-root": { minHeight: 40 } }} />
               <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
                 {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
               </Typography></Box>
             </Box>
+            {canViewAllAttendance && <Box sx={{ minWidth: 0 }}><Stack spacing={0.5}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ minHeight: 17, lineHeight: "17px" }}>Shift</Typography><AppSelect displayEmpty value={selectedShiftId} onChange={(event: any) => setSelectedShiftId(event.target.value)} renderValue={(value: unknown) => value ? shiftOptions.find((shift) => shift.scheduleId === value)?.name ?? "Selected shift" : "All shifts"} sx={{ height: 36, fontSize: 13 }}><MenuItem value="">All shifts</MenuItem>{shiftOptions.map((shift) => <MenuItem key={shift.scheduleId} value={shift.scheduleId}>{shift.name}</MenuItem>)}</AppSelect></Stack></Box>}
             <Box sx={{ minWidth: 0 }}>
               <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", height: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
                 <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowLeft /></Button>
@@ -382,6 +429,7 @@ const EmployeeAttendance = () => {
               showWholeWeek={selectedPeriod === "this-week"}
               companyView={canViewAllAttendance}
               readOnly={!canManageAttendance}
+              scheduleIdFilter={selectedShiftId}
             />
           </Box>
         </Card>
@@ -426,8 +474,8 @@ const EmployeeAttendance = () => {
             <TextField fullWidth label="Attendance date" type="date" value={correctionDate} onChange={(e) => setCorrectionDate(e.target.value)} InputLabelProps={{ shrink: true }} inputProps={{ max: new Date().toISOString().slice(0, 10) }} />
             <TextField fullWidth select label="Issue type" value={correctionType} onChange={(e) => setCorrectionType(e.target.value)}>
               <MenuItem value="Incorrect status">Incorrect status</MenuItem>
-              <MenuItem value="Missing check-in">Missing check-in</MenuItem>
-              <MenuItem value="Missing check-out">Missing check-out</MenuItem>
+              <MenuItem value="Missing check-in">Missing punch in</MenuItem>
+              <MenuItem value="Missing check-out">Missing punch out</MenuItem>
               <MenuItem value="Incorrect working hours">Incorrect working hours</MenuItem>
               <MenuItem value="Other">Other</MenuItem>
             </TextField>

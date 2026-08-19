@@ -88,7 +88,7 @@ function LeaveCalendar() {
     const color = setting?.colorHex ?? fallbackColors[record.status] ?? "#64748B";
     const statusName = setting?.name ?? record.status;
     const timeText = record.checkInTime
-      ? `\nIn: ${dayjs(record.checkInTime).format("hh:mm A")}${record.checkOutTime ? ` · Out: ${dayjs(record.checkOutTime).format("hh:mm A")}` : ""}`
+      ? `\nPunch in: ${dayjs(record.checkInTime).format("hh:mm A")}${record.checkOutTime ? ` · Punch out: ${dayjs(record.checkOutTime).format("hh:mm A")}` : ""}`
       : "";
 
     return (

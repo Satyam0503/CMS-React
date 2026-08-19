@@ -278,7 +278,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     setAttendanceResolutionError("");
     const selectedStatus = statusOptions.find((status) => status.code === attendanceResolution.status);
     if (selectedStatus?.requiresTime && (!attendanceResolution.checkInTime || !attendanceResolution.checkOutTime)) {
-      setAttendanceTimeError("Enter both check-in and check-out times.");
+      setAttendanceTimeError("Enter both punch in and punch out times.");
       return;
     }
     if (selectedStatus?.requiresTime && (!isValidTime(attendanceResolution.checkInTime) || !isValidTime(attendanceResolution.checkOutTime))) {
@@ -328,7 +328,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
 
   const saveWfhHoursCorrection = async () => {
     if (!wfhException || !checkInTime || !checkOutTime || !correctionReason.trim()) {
-      toast.error("Check-in, check-out, and a correction reason are required.");
+      toast.error("Punch in, punch out, and a correction reason are required.");
       return;
     }
     setSavingCorrection(true);
@@ -595,14 +595,14 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <DateTimePicker
-                label="Check-in"
+                label="Punch in"
                 value={checkInTime ? dayjs(checkInTime) : null}
                 onChange={(value) => setCheckInTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
                 format="DD MMM YYYY, hh:mm A"
                 slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
               />
               <DateTimePicker
-                label="Check-out"
+                label="Punch out"
                 value={checkOutTime ? dayjs(checkOutTime) : null}
                 onChange={(value) => setCheckOutTime(value?.format("YYYY-MM-DDTHH:mm") ?? "")}
                 format="DD MMM YYYY, hh:mm A"
@@ -638,7 +638,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
             {(statusOptions.find((option) => option.code === attendanceResolution.status)?.requiresTime ?? false) && <>
               <Stack spacing={0.75}>
                 <AppTextField
-                  label="Check-in"
+                  label="Punch in"
                   value={attendanceResolution.checkInTime}
                   onChange={(event) => { const checkInTime = event.target.value; setAttendanceResolution((current) => current ? { ...current, checkInTime } : current); setAttendanceTimeError(""); }}
                   placeholder="HH:MM (for example, 09:00)"
@@ -652,7 +652,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
               </Stack>
               <Stack spacing={0.75}>
                 <AppTextField
-                  label="Check-out"
+                  label="Punch out"
                   value={attendanceResolution.checkOutTime}
                   onChange={(event) => { const checkOutTime = event.target.value; setAttendanceResolution((current) => current ? { ...current, checkOutTime } : current); setAttendanceTimeError(""); }}
                   placeholder="HH:MM (for example, 18:00)"

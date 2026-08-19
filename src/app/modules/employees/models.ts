@@ -60,7 +60,7 @@ export interface EmployeeModel {
 export type InviteNewEmployeeModel = Pick<
   EmployeeModel,
   "employeeId" | "firstName" | "lastName" | "email" | "reportingManager"
->;
+> & { scheduleId?: string };
 
 export type InviteEmployeeResponse = InviteNewEmployeeModel & {
   userId: string;

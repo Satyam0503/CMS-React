@@ -35,6 +35,7 @@ export interface AttendanceModel {
   remarks?: string;
   sourceType?: string | null;
   sourceId?: string | null;
+  scheduleId?: string | null;
 }
 
 export interface CalendarAttendanceRow {
@@ -49,6 +50,7 @@ export interface CalendarAttendanceRow {
   remarks?: string;
   sourceType?: string | null;
   sourceId?: string | null;
+  scheduleId?: string | null;
 }
 
 export interface GetAllAttendanceData {
