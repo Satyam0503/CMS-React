@@ -72,9 +72,11 @@ const EmployeeAttendance = () => {
   const hasAnyAttendancePermission = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.Attendance}.`));
   const canViewAllAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []) ||
     (isHrAttendanceRole && hasAnyAttendancePermission);
-  const canManageAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.CreateForEmployee, userData?.modulePermission ?? []) ||
-    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []) ||
-    (isHrAttendanceRole && hasAnyAttendancePermission);
+  // Updating a row can alter payroll and must mirror the API's explicit
+  // Attendance.Override requirement. Viewing or creating attendance does not
+  // grant access to source-owned WFH/leave correction controls.
+  const canManageAttendance = isAdministrator ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []);
 
   const [selectedPeriod, setSelectedPeriod] = React.useState<AttendancePeriod>("today");
   const [calendarOffset, setCalendarOffset] = React.useState(0);
