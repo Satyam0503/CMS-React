@@ -34,15 +34,21 @@ test.describe("Payroll Module @smoke", () => {
 
 test.describe("Payroll — Access Control", () => {
   test("non-admin cannot access payroll settings", async ({ page, helpers }) => {
-    // This test should be run with employee-level credentials
-    // For now, verify the route exists and loads
-    await helpers.login();
-    await page.goto("/payroll/settings");
-    await page.waitForTimeout(3000);
-    // Should either show content (if admin) or redirect/show forbidden
-    const url = page.url();
-    const hasAccess = url.includes("/payroll");
-    const redirectedAway = url.includes("/auth") || url.includes("/dashboard");
-    expect(hasAccess || redirectedAway).toBeTruthy();
+    const employeeEmail = process.env.QA_EMPLOYEE_EMAIL;
+    const employeePassword = process.env.QA_EMPLOYEE_PASSWORD;
+
+    test.skip(
+      !employeeEmail || !employeePassword,
+      "Set QA_EMPLOYEE_EMAIL and QA_EMPLOYEE_PASSWORD for the non-admin access-control test.",
+    );
+
+    await helpers.login({
+      email: employeeEmail!,
+      password: employeePassword!,
+    });
+    await page.goto("/settingspayroll");
+
+    await expect(page).toHaveURL(/\/unauthorize$/);
+    await expect(page.getByRole("heading")).toBeVisible();
   });
 });

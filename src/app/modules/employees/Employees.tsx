@@ -266,9 +266,11 @@ const Employees = () => {
     param: GridRowParams<GetAllEmployeeResponseModel>,
   ) => {
     const empId = param.row.userId;
-    empId === currentEmpId
-      ? navigate("/profile")
-      : navigate(`/employees/${empId}`);
+    if (empId === currentEmpId) {
+      navigate("/profile");
+    } else {
+      navigate(`/employees/${empId}`);
+    }
   };
 
   const handleViewChange = (

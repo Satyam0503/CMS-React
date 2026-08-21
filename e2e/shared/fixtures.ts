@@ -16,20 +16,29 @@ interface AuthState {
 export class TestHelpers {
   constructor(private page: Page) {}
 
-  async login(
-    creds: AuthCredentials = {
-      email: "admin@test.codeji.in",
-      password: "Test@1234",
+  async login(creds?: AuthCredentials): Promise<AuthState> {
+    const email = creds?.email ?? process.env.QA_EMAIL;
+    const password = creds?.password ?? process.env.QA_PASSWORD;
+
+    if (!email || !password) {
+      throw new Error(
+        "QA_EMAIL and QA_PASSWORD must be set before running authenticated Playwright tests."
+      );
     }
-  ): Promise<AuthState> {
+
     const response = await this.page.request.post(`${API_URL}/api/account/login`, {
-      data: creds,
+      data: { email, password },
     });
     expect(response.ok()).toBeTruthy();
     const body = await response.json();
-    expect(body.success).toBeTruthy();
+    if (!body.success) {
+      throw new Error(
+        `Test login failed (status ${body.statusCode ?? "unknown"}). Verify QA_EMAIL and QA_PASSWORD for ${API_URL}.`
+      );
+    }
 
     const auth: AuthState = body.methodResult;
+    await this.page.goto("/");
     await this.page.evaluate((authData) => {
       localStorage.setItem("kt-auth-react-v", JSON.stringify(authData));
     }, auth);
@@ -67,11 +76,14 @@ export class TestHelpers {
       violations.push(`${images.length} image(s) missing alt text`);
     }
 
-    const buttons = await this.page
-      .locator("button:not([aria-label]):not(:has-text(/.+/))")
-      .all();
-    if (buttons.length > 0) {
-      violations.push(`${buttons.length} button(s) with no label or text`);
+    const buttonsWithoutAccessibleText = this.page
+      .locator("button:not([aria-label])")
+      .filter({ hasNotText: /\S/ });
+    const buttonsWithoutAccessibleTextCount = await buttonsWithoutAccessibleText.count();
+    if (buttonsWithoutAccessibleTextCount > 0) {
+      violations.push(
+        `${buttonsWithoutAccessibleTextCount} button(s) with no label or text`
+      );
     }
 
     const inputs = await this.page

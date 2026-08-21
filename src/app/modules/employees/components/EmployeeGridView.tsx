@@ -27,9 +27,11 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, 
   const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
 
   const handleClick = (employeeId: string) => {
-    employeeId === currentEmpId
-      ? navigate("/profile")
-      : navigate(`/employees/${employeeId}`);
+    if (employeeId === currentEmpId) {
+      navigate("/profile");
+    } else {
+      navigate(`/employees/${employeeId}`);
+    }
   };
 
   if (!isLoading && employeeList.length === 0) {

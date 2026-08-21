@@ -445,7 +445,9 @@ export const LeaveApplication = (props: Props) => {
       } finally {
         setSubmitting(false);
         setStatus("");
-        props.handleRefresh && props.handleRefresh();
+        if (props.handleRefresh) {
+          props.handleRefresh();
+        }
       }
     }
   };

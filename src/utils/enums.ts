@@ -85,7 +85,7 @@ export enum ModulesTitles {
   Dashboard = "MODULES.DASHBOARD",
   Employees = "MODULES.EMPLOYEES",
   Attendance = "MODULES.ATTENDANCE",
-  AttendanceSettings = "Attendance Settings",
+  AttendanceSettings = "MODULES.ATTENDANCE_SETTINGS",
   LeaveManagement = "MODULES.LEAVE_MANAGEMENT",
   Recruitment = "MODULES.RECRUITMENT",
   Admin = "MODULES.ADMIN",

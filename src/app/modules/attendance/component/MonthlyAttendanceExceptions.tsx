@@ -162,7 +162,11 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         reason,
         version: item.version,
       });
-      data.success ? toast.success("Exception reviewed.") : toast.error(data.message);
+      if (data.success) {
+        toast.success("Exception reviewed.");
+      } else {
+        toast.error(data.message);
+      }
       await load();
     } catch {
       toast.error("Unable to review the exception.");

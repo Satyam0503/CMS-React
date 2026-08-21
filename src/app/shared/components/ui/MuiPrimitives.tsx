@@ -16,11 +16,14 @@ import {
   TextField,
   TextFieldProps,
 } from "@mui/material";
+import { forwardRef } from "react";
 
 /** Central MUI primitives. Keep product-wide defaults here instead of per page. */
-export const AppButton = (({ variant = "contained", disableElevation = true, ...props }: ButtonProps) => (
-  <Button variant={variant} disableElevation={disableElevation} {...props} />
-)) as typeof Button;
+export const AppButton = forwardRef<HTMLButtonElement, ButtonProps>(
+  function AppButton({ variant = "contained", disableElevation = true, ...props }, ref) {
+    return <Button ref={ref} variant={variant} disableElevation={disableElevation} {...props} />;
+  },
+) as typeof Button;
 
 export const Btn = AppButton;
 
@@ -50,8 +53,15 @@ export const AppSwitch = ({ color = "primary", ...props }: SwitchProps) => (
 
 export const Sw = AppSwitch;
 
-export const AppIconButton = ({ color = "inherit", ...props }: IconButtonProps) => (
-  <IconButton color={color} {...props} />
+/**
+ * Tooltip and similar MUI components attach a ref to their direct child.
+ * Forward it through this shared wrapper so it remains safe to use as a
+ * Tooltip child throughout the application.
+ */
+export const AppIconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  function AppIconButton({ color = "inherit", ...props }, ref) {
+    return <IconButton ref={ref} color={color} {...props} />;
+  },
 );
 
 export const IconBtn = AppIconButton;

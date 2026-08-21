@@ -23,7 +23,7 @@ parameters:
         branch: main
 
 variables:
-  nodeVersion: "18.x"
+  nodeVersion: "20.x"
 
 stages:
   # ============================================
@@ -54,9 +54,10 @@ stages:
               checkLatest: false
 
           - task: Npm@1
-            displayName: "npm install"
+            displayName: "npm ci"
             inputs:
-              command: "install"
+              command: "custom"
+              customCommand: "ci"
               workingDir: "$(Build.SourcesDirectory)"
 
           - task: Npm@1
@@ -65,7 +66,19 @@ stages:
               command: "custom"
               customCommand: "run lint"
               workingDir: "$(Build.SourcesDirectory)"
-            continueOnError: true
+          - task: Npm@1
+            displayName: "npm run typecheck"
+            inputs:
+              command: "custom"
+              customCommand: "run typecheck"
+              workingDir: "$(Build.SourcesDirectory)"
+
+          - task: Npm@1
+            displayName: "npm run test"
+            inputs:
+              command: "custom"
+              customCommand: "run test"
+              workingDir: "$(Build.SourcesDirectory)"
 
           # Vite inlines env vars at build time, so .env must exist BEFORE `npm run build`.
           - task: PowerShell@2
