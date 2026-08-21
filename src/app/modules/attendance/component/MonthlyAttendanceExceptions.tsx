@@ -41,6 +41,15 @@ type PayrollException = {
   exceededOccurrenceCount: number;
   status: string;
   version: number;
+  severity?: string;
+  reason?: string;
+  resolution?: string;
+  attendanceDate?: string;
+  existingAttendanceId?: string;
+  existingStatus?: string;
+  leaveRequestId?: string;
+  requestedLeaveStatus?: string;
+  sourceVersion?: number;
 };
 
 type AttendanceStatusOption = { code: string; name: string; requiresTime: boolean };
@@ -116,6 +125,8 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   const [attendanceResolutionError, setAttendanceResolutionError] = useState("");
   const [attendanceTimeError, setAttendanceTimeError] = useState("");
   const [penaltyReview, setPenaltyReview] = useState<PenaltyReviewModal | null>(null);
+  const [sourceConflict, setSourceConflict] = useState<{ item: PayrollException; sourceType?: string; sourceId?: string | null } | null>(null);
+  const [sourceConflictRemarks, setSourceConflictRemarks] = useState("");
 
   useEffect(() => {
     getRequest<ResponseData<AttendanceStatusOption>>("api/attendance-status-settings?activeOnly=true")
@@ -238,8 +249,13 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     setAttendanceTimeError("");
     try {
       const { data } = await getRequest<ExistingAttendance>(`api/admin/attendance/${item.userId}/date?date=${date}`);
-      if (data.sourceType === "WFH_REQUEST") {
+      if (data.sourceType === "WFH_REQUEST" && item.exceptionType === "WFH_INSUFFICIENT_HOURS") {
         openWfhHoursCorrection(item);
+        return;
+      }
+      if (data.sourceType === "WFH_REQUEST") {
+        setSourceConflict({ item, sourceType: data.sourceType, sourceId: data.sourceId });
+        setSourceConflictRemarks("");
         return;
       }
       if (data.sourceType === "LEAVE" && data.sourceId) {
@@ -353,11 +369,32 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
       toast.success(data.message || "WFH hours updated and exception resolved.");
       setWfhException(null);
       await load(true);
-    } catch {
-      toast.error("WFH hours could not be corrected. Refresh and try again.");
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "WFH hours could not be corrected. Refresh and try again.";
+      toast.error(message);
     } finally {
       setSavingCorrection(false);
     }
+  };
+
+  const resolveSourceConflict = async (resolution: "KEEP_LEAVE_CANCEL_WFH" | "KEEP_WFH_CANCEL_LEAVE") => {
+    if (!sourceConflict || sourceConflictRemarks.trim().length < 3) {
+      toast.error("Enter a resolution reason of at least 3 characters.");
+      return;
+    }
+    setSavingResolution(true);
+    try {
+      const { data } = await patchRequest<{ resolution: string; remarks: string; exceptionVersion: number }, { success: boolean; message?: string }>(
+        `api/wfh/attendance-exceptions/${sourceConflict.item.id}/resolve-conflict`,
+        { resolution, remarks: sourceConflictRemarks.trim(), exceptionVersion: sourceConflict.item.version },
+      );
+      if (!data.success) { toast.error(data.message || "The conflict could not be resolved."); return; }
+      toast.success(data.message || "Attendance conflict resolved.");
+      setSourceConflict(null);
+      await load(true);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "The conflict could not be resolved.");
+    } finally { setSavingResolution(false); }
   };
 
   return (
@@ -483,6 +520,11 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                     {item.affectedDates.map((date) => new Date(date).toLocaleDateString()).join(", ")}
                   </Typography>
                 )}
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.35 }}>
+                  {item.severity ? `Severity: ${item.severity.replace(/_/g, " ")} • ` : ""}
+                  {item.existingStatus ? `Existing status: ${item.existingStatus} • ` : ""}
+                  {item.reason || "No additional reason was recorded."}
+                </Typography>
               </Box>
               <Chip label={item.status.replace(/_/g, " ")} color={exceptionStatusColor(item.status)} size="small" variant="outlined" sx={{ justifySelf: "start", textTransform: "capitalize" }} />
               {item.status === "PENDING_REVIEW" && item.exceptionType === "LHD_ED_LIMIT_EXCEEDED" ? (
@@ -533,6 +575,9 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
             {!!item.affectedDates?.length && <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
               Affected: {item.affectedDates.map((date) => new Date(date).toLocaleDateString()).join(", ")}
             </Typography>}
+            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
+              {item.severity ? `Severity: ${item.severity.replace(/_/g, " ")} • ` : ""}{item.existingStatus ? `Existing: ${item.existingStatus} • ` : ""}{item.reason || "No additional reason was recorded."}
+            </Typography>
             {item.status === "PENDING_REVIEW" && item.exceptionType === "LHD_ED_LIMIT_EXCEEDED" ? (
               <AppTextField select size="small" label="Decision" value="" onChange={(event) => setPenaltyReview({ item, decision: event.target.value, reason: "" })} sx={{ mt: 1.5, width: "100%" }}>
                 <MenuItem value="WAIVE">Waive</MenuItem>
@@ -627,6 +672,26 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <AppButton variant="outlined" disabled={savingResolution} onClick={() => setLeaveException(null)}>Keep leave</AppButton>
           <AppButton color="error" disabled={savingResolution} onClick={() => void cancelLeaveAndResync()}>{savingResolution ? "Cancelling…" : "Cancel leave & re-sync"}</AppButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={!!sourceConflict} onClose={() => setSourceConflict(null)} fullWidth maxWidth="sm">
+        <DialogTitle>WFH source conflict details</DialogTitle>
+        <DialogContent>
+          {sourceConflict && <Stack spacing={1.2} sx={{ pt: 1 }}>
+            <Typography variant="body2">{sourceConflict.item.employeeId} • {sourceConflict.item.exceptionType?.replace(/_/g, " ")}</Typography>
+            <Typography variant="body2" color="text.secondary">{sourceConflict.item.reason || "The linked WFH/leave attendance sources overlap."}</Typography>
+            <Typography variant="body2" color="text.secondary">Affected date: {sourceConflict.item.attendanceDate ? dayjs(sourceConflict.item.attendanceDate).format("DD MMM YYYY") : sourceConflict.item.affectedDates?.map((date) => dayjs(date).format("DD MMM YYYY")).join(", ") || "Not recorded"}</Typography>
+            <Typography variant="body2" color="text.secondary">Current source: {sourceConflict.sourceType || "Unknown"}{sourceConflict.sourceId ? ` (${sourceConflict.sourceId})` : ""}</Typography>
+            <Typography variant="body2" color="text.secondary">Existing attendance: {sourceConflict.item.existingStatus || "Not recorded"}{sourceConflict.item.existingAttendanceId ? ` (${sourceConflict.item.existingAttendanceId})` : ""}</Typography>
+            <Typography variant="body2" color="text.secondary">WFH request: {sourceConflict.item.leaveRequestId || "Not recorded"} • Source version: {sourceConflict.item.sourceVersion ?? "Not recorded"}</Typography>
+            <Typography variant="caption" color="text.secondary">For WFH+SL/WFH+CL, recheck after the combined status is saved. For any other source conflict, correct the linked leave or WFH request first; attendance ownership is intentionally preserved.</Typography>
+            <AppTextField label="HR/Admin resolution reason" value={sourceConflictRemarks} onChange={(event) => setSourceConflictRemarks(event.target.value)} multiline minRows={2} required />
+          </Stack>}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <AppButton variant="outlined" disabled={savingResolution} onClick={() => setSourceConflict(null)}>Close</AppButton>
+          <AppButton color="error" disabled={savingResolution} onClick={() => void resolveSourceConflict("KEEP_LEAVE_CANCEL_WFH")}>Keep leave</AppButton>
+          <AppButton disabled={savingResolution} onClick={() => void resolveSourceConflict("KEEP_WFH_CANCEL_LEAVE")}>Keep WFH</AppButton>
         </DialogActions>
       </Dialog>
       <Dialog open={!!attendanceResolution} onClose={() => !savingResolution && setAttendanceResolution(null)} fullWidth maxWidth="xs">
