@@ -45,6 +45,14 @@ type WorkFromHomeRequest = {
   reviewedAt?: string;
 };
 
+type WorkFromHomeTiming = {
+  isApprovedForToday: boolean;
+  checkInTime?: string;
+  checkOutTime?: string;
+  totalHours?: number;
+  requiredHours: number;
+};
+
 const initialLeaveRequestValue: RequestLeaveModel = {
   isHalfDay: false,
   startDate: null,
@@ -67,6 +75,9 @@ export const LeaveTracker: FC = () => {
   const [wfhContext, setWfhContext] = useState<WorkFromHomeContext | null>(null);
   const [wfhRequests, setWfhRequests] = useState<WorkFromHomeRequest[]>([]);
   const [wfhRequestsOpen, setWfhRequestsOpen] = useState(false);
+  const [todayWfhRequest, setTodayWfhRequest] = useState<WorkFromHomeRequest | null>(null);
+  const [wfhTiming, setWfhTiming] = useState<WorkFromHomeTiming | null>(null);
+  const [clocking, setClocking] = useState(false);
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
 
@@ -126,8 +137,22 @@ export const LeaveTracker: FC = () => {
       getRequest<{ methodResults?: WorkFromHomeRequest[] }>("api/wfh/requests/my"),
     ])
       .then(([context, requests]) => {
-        setWfhContext(context.data.methodResult ?? null);
-        setWfhRequests(requests.data.methodResults ?? []);
+        const wfhContext = context.data.methodResult ?? null;
+        const wfhRequests = requests.data.methodResults ?? [];
+        setWfhContext(wfhContext);
+        setWfhRequests(wfhRequests);
+
+        const businessDate = wfhContext?.businessDate?.slice(0, 10);
+        const todayRequest = businessDate
+          ? wfhRequests.find((request) => request.status === "Approved" && request.fromDate.slice(0, 10) <= businessDate && request.toDate.slice(0, 10) >= businessDate) ?? null
+          : null;
+        setTodayWfhRequest(todayRequest);
+        setWfhTiming(null);
+        if (todayRequest) {
+          void getRequest<{ methodResult?: WorkFromHomeTiming }>(`api/wfh/requests/${todayRequest.requestId}/timing`)
+            .then((timing) => setWfhTiming(timing.data.methodResult ?? null))
+            .catch(() => setWfhTiming(null));
+        }
       })
       .catch((error) => console.error("Unable to load WFH allowance.", error));
   }, [employeeId, refresh]);
@@ -153,6 +178,27 @@ export const LeaveTracker: FC = () => {
     const requestDate = request.fromDate.slice(0, 10);
     const businessDate = wfhContext.businessDate.slice(0, 10);
     return requestDate > businessDate || (requestDate === businessDate && !wfhContext.isSameDayRequestCutoffPassed);
+  };
+
+  const toggleWfhAttendance = async () => {
+    if (!todayWfhRequest || clocking) return;
+    const action = wfhTiming?.checkInTime ? "check-out" : "check-in";
+    setClocking(true);
+    try {
+      const { data } = await postRequest<Record<string, never>, { success: boolean; message?: string }>(
+        `api/wfh/requests/${todayWfhRequest.requestId}/${action}`,
+        {}
+      );
+      if (!data.success) throw new Error(data.message || `WFH ${action} could not be recorded.`);
+      toast.success(action === "check-in" ? "WFH check-in recorded." : "WFH check-out recorded.");
+      handleRefresh();
+    } catch (error) {
+      const message = (error as Error).message || `WFH ${action} could not be recorded.`;
+      const [, ...details] = message.split(":");
+      toast.error(details.join(":").trim() || message);
+    } finally {
+      setClocking(false);
+    }
   };
 
   return (
@@ -202,12 +248,31 @@ export const LeaveTracker: FC = () => {
               <CustomisedButton label={`View requests (${wfhRequests.length})`} size="small" variant="outlined" handleClick={() => setWfhRequestsOpen(true)} />
             </Stack>
           </Stack>
-          <Typography sx={{ mt: 2 }}>
+           <Typography sx={{ mt: 2 }}>
             {wfhContext.isEligible
               ? `${wfhContext.remainingThisWeek} of ${wfhContext.weeklyLimit} WFH day(s) remain this Monday–Sunday week.`
               : "Work from home is not assigned to your employee profile."}
-          </Typography>
-          {!wfhContext.canSchedule && wfhContext.isEligible && (
+           </Typography>
+           {todayWfhRequest && wfhTiming?.isApprovedForToday && (
+             <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} gap={1} sx={{ mt: 2 }}>
+               {wfhTiming.checkOutTime ? (
+                 <Chip color="success" label="WFH attendance completed" />
+               ) : (
+                 <CustomisedButton
+                   label={clocking ? "Saving..." : wfhTiming.checkInTime ? "Clock out from WFH" : "Clock in to WFH"}
+                   color={wfhTiming.checkInTime ? "warning" : "primary"}
+                   disabled={clocking}
+                   handleClick={() => void toggleWfhAttendance()}
+                 />
+               )}
+               <Typography variant="body2" color="text.secondary">
+                 {wfhTiming.checkInTime
+                   ? `Checked in at ${new Date(wfhTiming.checkInTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Required: ${wfhTiming.requiredHours} hour(s).`
+                   : "Clock in is available only for your approved WFH request and policy time window."}
+               </Typography>
+             </Stack>
+           )}
+           {!wfhContext.canSchedule && wfhContext.isEligible && (
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               {wfhContext.disabledReasonCode === "WFH_WEEKLY_LIMIT_USED"
                 ? "This week’s WFH allowance has been used."

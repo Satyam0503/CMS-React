@@ -36,6 +36,10 @@ export interface AttendanceModel {
   sourceType?: string | null;
   sourceId?: string | null;
   scheduleId?: string | null;
+  // Half-day leave and WFH are returned as individual segment rows. A day can
+  // therefore contain both FIRST_HALF and SECOND_HALF records.
+  isDaySegment?: boolean;
+  segment?: "FIRST_HALF" | "SECOND_HALF" | string | null;
 }
 
 export interface CalendarAttendanceRow {

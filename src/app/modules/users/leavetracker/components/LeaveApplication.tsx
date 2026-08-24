@@ -592,23 +592,6 @@ export const LeaveApplication = (props: Props) => {
                     </FormControl>
                   </Grid>
                 )}
-                {selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId)?.wfhCombinations && (
-                  <Grid size={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="wfh-combination-label">WFH attendance</InputLabel>
-                      <AppSelect labelId="wfh-combination-label" label="WFH attendance" value={values.wfhCombination ?? ""} onChange={(event) => {
-                        setFieldValue("wfhCombination", event.target.value);
-                        setFieldValue("isHalfDay", false);
-                      }}>
-                        <MenuItem value="">Full-day WFH</MenuItem>
-                        <MenuItem value="Mixed">WFH + WFO</MenuItem>
-                        <MenuItem value="WfhHd">WFH + HD</MenuItem>
-                        <MenuItem value="WfhSl">WFH + SL</MenuItem>
-                        <MenuItem value="WfhCl">WFH + CL</MenuItem>
-                      </AppSelect>
-                    </FormControl>
-                  </Grid>
-                )}
                 <Grid
                   size={{
                     xs: 12,

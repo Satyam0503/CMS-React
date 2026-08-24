@@ -23,6 +23,11 @@ const fallbackColors: Record<string, string> = {
   WFH: "#5E35B1", HD: "#EF6C00", ED: "#C62828", LHD: "#AD1457",
 };
 
+type CalendarDayAttendance = {
+  daily?: AttendanceModel;
+  segments: AttendanceModel[];
+};
+
 function LeaveCalendar() {
   const [month, setMonth] = useState(dayjs().startOf("month"));
   const [attendance, setAttendance] = useState<AttendanceModel[]>([]);
@@ -59,10 +64,23 @@ function LeaveCalendar() {
     void load();
   }, [currentUserId, mayViewCalendar, month, targetUserId]);
 
-  const attendanceByDay = useMemo(
-    () => new Map(attendance.map((item) => [formatServerDate(item.date, "YYYY-MM-DD"), item])),
-    [attendance],
-  );
+  const attendanceByDay = useMemo(() => {
+    const days = new Map<string, CalendarDayAttendance>();
+    attendance.forEach((item) => {
+      const date = formatServerDate(item.date, "YYYY-MM-DD");
+      const entry = days.get(date) ?? { segments: [] };
+      if (item.isDaySegment) {
+        entry.segments.push(item);
+      } else {
+        entry.daily = item;
+      }
+      days.set(date, entry);
+    });
+    for (const entry of days.values()) {
+      entry.segments.sort((left, right) => left.segment === "FIRST_HALF" ? -1 : right.segment === "FIRST_HALF" ? 1 : 0);
+    }
+    return days;
+  }, [attendance]);
   const statusByCode = useMemo(
     () => new Map(statuses.map((status) => [status.code, status])),
     [statuses],
@@ -81,28 +99,43 @@ function LeaveCalendar() {
   }
 
   const renderDay = (dayProps: PickersDayProps<Dayjs>) => {
-    const record = attendanceByDay.get(dayProps.day.format("YYYY-MM-DD"));
-    if (!record) return <PickersDay {...dayProps} />;
+    const dayAttendance = attendanceByDay.get(dayProps.day.format("YYYY-MM-DD"));
+    if (!dayAttendance) return <PickersDay {...dayProps} />;
 
-    const setting = statusByCode.get(record.status);
-    const color = setting?.colorHex ?? fallbackColors[record.status] ?? "#64748B";
-    const statusName = setting?.name ?? record.status;
-    const timeText = record.checkInTime
-      ? `\nPunch in: ${dayjs(record.checkInTime).format("hh:mm A")}${record.checkOutTime ? ` · Punch out: ${dayjs(record.checkOutTime).format("hh:mm A")}` : ""}`
+    // Segments are authoritative whenever present: the daily compatibility row
+    // cannot describe a day containing two different half-day statuses.
+    const records = dayAttendance.segments.length ? dayAttendance.segments : dayAttendance.daily ? [dayAttendance.daily] : [];
+    if (!records.length) return <PickersDay {...dayProps} />;
+    const colors = records.map((record) => statusByCode.get(record.status)?.colorHex ?? fallbackColors[record.status] ?? "#64748B");
+    const color = colors[0];
+    const background = colors.length > 1
+      ? `linear-gradient(135deg, ${colors[0]} 0%, ${colors[0]} 50%, ${colors[1]} 50%, ${colors[1]} 100%)`
+      : color;
+    const statusLines = records.map((record) => {
+      const segmentLabel = record.isDaySegment
+        ? `${record.segment === "SECOND_HALF" ? "Second" : "First"} half: `
+        : "";
+      const statusName = statusByCode.get(record.status)?.name ?? record.status;
+      return `${segmentLabel}${record.status} · ${statusName}`;
+    });
+    const timingRecord = records.find((record) => record.checkInTime);
+    const timeText = timingRecord?.checkInTime
+      ? `\nPunch in: ${dayjs(timingRecord.checkInTime).format("hh:mm A")}${timingRecord.checkOutTime ? ` · Punch out: ${dayjs(timingRecord.checkOutTime).format("hh:mm A")}` : ""}`
       : "";
 
     return (
-      <Tooltip arrow placement="top" title={<Box><Typography variant="caption" fontWeight={800}>{record.status} · {statusName}</Typography><Typography variant="caption" display="block">{dayProps.day.format("DD MMMM YYYY")}{timeText}</Typography></Box>}>
+      <Tooltip arrow placement="top" title={<Box>{statusLines.map((line) => <Typography key={line} variant="caption" display="block" fontWeight={800}>{line}</Typography>)}<Typography variant="caption" display="block">{dayProps.day.format("DD MMMM YYYY")}{timeText}</Typography></Box>}>
         <PickersDay
           {...dayProps}
           sx={{
             bgcolor: color,
+            background,
             color: "#fff",
             fontWeight: 800,
             border: "2px solid",
             borderColor: "background.paper",
-            "&:hover, &:focus": { bgcolor: color, filter: "brightness(.9)" },
-            "&.Mui-selected": { bgcolor: color, color: "#fff" },
+            "&:hover, &:focus": { bgcolor: color, background, filter: "brightness(.9)" },
+            "&.Mui-selected": { bgcolor: color, background, color: "#fff" },
           }}
         />
       </Tooltip>
