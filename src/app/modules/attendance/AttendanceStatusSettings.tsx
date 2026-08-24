@@ -1,4 +1,7 @@
-import { Add, DeleteOutline, Edit, Save } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
+import Edit from "@mui/icons-material/Edit";
+import Save from "@mui/icons-material/Save";
 import { Box, Card, Chip, FormControlLabel, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

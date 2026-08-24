@@ -23,17 +23,14 @@ import {
   ACCURAL_PERIOD,
   CALENDAR_ITEM,
 } from "./enums";
-import {
-  APP_FILTER_KEY,
-  I18N_CONFIG_KEY,
-  SideBarTabList,
-} from "./constant/Constant";
+import { APP_FILTER_KEY, I18N_CONFIG_KEY } from "./constant/data";
+import { SideBarTabList } from "./constant/sidebarMenu";
 import { NotificationModel } from "../app/modules/users/models";
 import { NavigateFunction } from "react-router-dom";
 import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
-import { PieSeries } from "@mui/x-charts";
+import type { PieSeries } from "@mui/x-charts";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,

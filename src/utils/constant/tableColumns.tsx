@@ -6,7 +6,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Check, Close } from "@mui/icons-material";
+import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import clsx from "clsx";
