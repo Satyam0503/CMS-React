@@ -2,12 +2,15 @@ import { TabModel } from "../../../utils/common_types";
 import { canAccessHrManagement, hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 
-const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
-  const isLeaveEnabled = hasModuleFeaturePermission(
+export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
+  hasModuleFeaturePermission(
     ModulesName.LeaveManagement,
     Permission.View,
     modulePermissions,
-  );
+  ) || modulePermissions.includes("LeaveManagement.View");
+
+const createTabs = (modulePermissions: string[], empId?: string, roleType?: number): TabModel[] => {
+  const isLeaveEnabled = isLeaveTabEnabled(modulePermissions);
 
   const tabsRoutes: TabModel[] = [
     {
@@ -65,10 +68,3 @@ const createTabs = (modulePermissions: string[], empId?: string, roleType?: numb
 
 export const getProfileTabs = (modulePermissions: string[] = [], empId?: string, roleType?: number) =>
   createTabs(modulePermissions, empId, roleType);
-
-export const isLeaveTabEnabled = (modulePermissions: string[] = []) =>
-  hasModuleFeaturePermission(
-    ModulesName.LeaveManagement,
-    Permission.View,
-    modulePermissions,
-  );
