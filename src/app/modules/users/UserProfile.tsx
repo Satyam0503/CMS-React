@@ -104,7 +104,7 @@ const UserProfile = () => {
         >
           <ProfileHeader />
           <Stack spacing={2.5} className="flex-grow-1">
-            <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto" }}>
+            <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" }, "& .tab-box": { flex: "0 0 auto", minWidth: { xs: 132, sm: 150 } } }}>
               {filteredTabs.map((tab) => {
                 const tabTo = empId
                   ? `employees/${empId}/${tab.to}`

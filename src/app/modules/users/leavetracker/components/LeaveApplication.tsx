@@ -75,6 +75,15 @@ const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
   return messages[code] || details || errorMessage || "We could not submit your Work From Home request. Please try again.";
 };
 
+const getLeaveRequestErrorMessage = (errorMessage?: string) => {
+  const [rawCode, ...rawDetails] = (errorMessage ?? "").split(":");
+  const code = rawCode.trim();
+  const details = rawDetails.join(":").trim();
+  if (code === "LEAVE_WFH_OVERLAP")
+    return "Leave cannot be applied because an active Work From Home request already exists for one or more selected dates. Withdraw or cancel the WFH request first, then apply for leave.";
+  return details || errorMessage || "We could not submit the leave request. Please try again.";
+};
+
 type WorkFromHomeContext = {
   isEligible?: boolean;
   weeklyLimit?: number;
@@ -438,14 +447,19 @@ export const LeaveApplication = (props: Props) => {
             handleRefresh?.();
           }
         } else {
-          throw new Error(data.statusCode.toString());
+          throw new Error(data.message || data.statusCode.toString());
         }
       } catch (error) {
-        toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as Error).message) }));
+        const message = (error as Error).message;
+        toast.error(message && !/^\d+$/.test(message)
+          ? getLeaveRequestErrorMessage(message)
+          : i({ id: getCustomStatusCodesErrorMessage(+message) }));
       } finally {
         setSubmitting(false);
         setStatus("");
-        props.handleRefresh && props.handleRefresh();
+        if (props.handleRefresh) {
+          props.handleRefresh();
+        }
       }
     }
   };
@@ -574,23 +588,6 @@ export const LeaveApplication = (props: Props) => {
                       >
                         <MenuItem value="FIRST_HALF">First half</MenuItem>
                         <MenuItem value="SECOND_HALF">Second half</MenuItem>
-                      </AppSelect>
-                    </FormControl>
-                  </Grid>
-                )}
-                {selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId)?.wfhCombinations && (
-                  <Grid size={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="wfh-combination-label">WFH attendance</InputLabel>
-                      <AppSelect labelId="wfh-combination-label" label="WFH attendance" value={values.wfhCombination ?? ""} onChange={(event) => {
-                        setFieldValue("wfhCombination", event.target.value);
-                        setFieldValue("isHalfDay", false);
-                      }}>
-                        <MenuItem value="">Full-day WFH</MenuItem>
-                        <MenuItem value="Mixed">WFH + WFO</MenuItem>
-                        <MenuItem value="WfhHd">WFH + HD</MenuItem>
-                        <MenuItem value="WfhSl">WFH + SL</MenuItem>
-                        <MenuItem value="WfhCl">WFH + CL</MenuItem>
                       </AppSelect>
                     </FormControl>
                   </Grid>

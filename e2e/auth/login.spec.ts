@@ -57,7 +57,7 @@ test.describe("Session Management", () => {
   });
 
   test("handles expired token gracefully", async ({ page }) => {
-    await page.evaluate(() => {
+    await page.addInitScript(() => {
       localStorage.setItem(
         "kt-auth-react-v",
         JSON.stringify({

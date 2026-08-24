@@ -87,15 +87,15 @@ export default function CalendarDays(props: Props) {
     function checkForOccasionForDate(day: number, event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
         let dateCheck: boolean = false
         const dateOccasions: Array<CalendarItem> = []
-        thisMonthsHolidays.length > 0 &&
-            thisMonthsHolidays.map((holiday) => {
+        if (thisMonthsHolidays.length > 0) {
+            thisMonthsHolidays.forEach((holiday) => {
                 const holidayDate = dayjs(formatServerDate(holiday.date, "YYYY-MM-DD")).date();
                 if (holidayDate == day) {
                     dateCheck = true
                     dateOccasions.push(holiday)
                 }
-            }
-            )
+            });
+        }
 
         if (dateCheck) {
             setSelectedDateOccasions(dateOccasions)

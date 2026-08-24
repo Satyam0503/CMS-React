@@ -28,10 +28,20 @@ export const AvatarCell = ({
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             variant="dot"
           >
-            <Avatar src={avatarSrc || DEFAULT_USER_AVATAR}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+            <Avatar
+              src={avatarSrc || DEFAULT_USER_AVATAR}
+              alt={`${title || "Employee"} profile photo`}
+            >
+              {title?.at(0)?.toLocaleUpperCase()}
+            </Avatar>
           </StyledBadge>
           :
-          <Avatar src={avatarSrc || DEFAULT_USER_AVATAR}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+          <Avatar
+            src={avatarSrc || DEFAULT_USER_AVATAR}
+            alt={`${title || "Employee"} profile photo`}
+          >
+            {title?.at(0)?.toLocaleUpperCase()}
+          </Avatar>
       }
       <Stack direction="column" sx={{ alignSelf: "center" }}>
         <Typography className="d-block fw-light"

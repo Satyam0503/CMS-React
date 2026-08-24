@@ -146,7 +146,7 @@ export const PersonalDetails = () => {
           />
         )}
       </Stack>
-      <Grid container spacing={1.5} sx={{ "& > .MuiGrid-root": { p: 1.5, borderRadius: 2, bgcolor: "action.hover", minHeight: 66 }, "& .MuiTypography-body2": { color: "text.secondary", fontSize: 12, mb: .4 }, "& .MuiTypography-body1": { fontWeight: 600, overflowWrap: "anywhere" } }}>
+      <Grid container spacing={1.5} alignItems="flex-start" sx={{ "& > .MuiGrid-root": { p: 1.5, borderRadius: 2, bgcolor: "action.hover", minHeight: 66 }, "& .MuiTypography-body2": { color: "text.secondary", fontSize: 12, mb: .4 }, "& .MuiTypography-body1": { fontWeight: 600, overflowWrap: "anywhere" } }}>
         <Grid size={12}>
           <Typography variant="body2">{i({ id: "USER.ADDRESS" })}</Typography>
           <Typography variant="body1">
@@ -156,10 +156,12 @@ export const PersonalDetails = () => {
 
         {canManageEmployeeShift && (
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="body2">Work shift</Typography>
-            <Typography variant="body1">{shiftAssignment?.scheduleName || "Department or company default"}</Typography>
-            <Typography variant="caption" color="text.secondary">{shiftAssignment?.source === "EmployeeOverride" ? "Individual employee override" : "Inherited from department or company default"}</Typography>
-            <AppButton size="small" variant="outlined" sx={{ mt: 1, display: "block" }} onClick={() => { void loadShiftAssignment(); setShiftAssignmentOpen(true); }}>Change shift</AppButton>
+            <Stack direction="row" alignItems="center" spacing={1} useFlexGap sx={{ flexWrap: { xs: "wrap", md: "nowrap" }, minHeight: 42 }}>
+              <Typography variant="body2" sx={{ mb: "0 !important", flexShrink: 0 }}>Work shift</Typography>
+              <Typography variant="body1" sx={{ flexShrink: 0 }}>{shiftAssignment?.scheduleName || "Department or company default"}</Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{shiftAssignment?.source === "EmployeeOverride" ? "Individual employee override" : "Inherited from department or company default"}</Typography>
+              <AppButton size="small" variant="outlined" sx={{ flexShrink: 0, ml: { md: "auto" } }} onClick={() => { void loadShiftAssignment(); setShiftAssignmentOpen(true); }}>Change shift</AppButton>
+            </Stack>
           </Grid>
         )}
 

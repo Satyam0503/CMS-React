@@ -72,9 +72,11 @@ const EmployeeAttendance = () => {
   const hasAnyAttendancePermission = (userData?.modulePermission ?? []).some((item) => item.startsWith(`${ModulesName.Attendance}.`));
   const canViewAllAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.ViewAll, userData?.modulePermission ?? []) ||
     (isHrAttendanceRole && hasAnyAttendancePermission);
-  const canManageAttendance = isAdministrator || hasModuleFeaturePermission(ModulesName.Attendance, Permission.CreateForEmployee, userData?.modulePermission ?? []) ||
-    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []) ||
-    (isHrAttendanceRole && hasAnyAttendancePermission);
+  // Updating a row can alter payroll and must mirror the API's explicit
+  // Attendance.Override requirement. Viewing or creating attendance does not
+  // grant access to source-owned WFH/leave correction controls.
+  const canManageAttendance = isAdministrator ||
+    hasModuleFeaturePermission(ModulesName.Attendance, Permission.Override, userData?.modulePermission ?? []);
 
   const [selectedPeriod, setSelectedPeriod] = React.useState<AttendancePeriod>("today");
   const [calendarOffset, setCalendarOffset] = React.useState(0);
@@ -322,9 +324,15 @@ const EmployeeAttendance = () => {
               Live summary for today
             </Typography>
           </Stack>
-          <Grid container spacing={{ xs: 1.5, md: 2 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
-          <Card onClick={() => setSummaryModal({ title: "Present employees", people: attendanceStats.members.Present })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+              gap: { xs: 1, sm: 1.5, md: 2 },
+            }}
+          >
+        <Box>
+          <Card onClick={() => setSummaryModal({ title: "Present employees", people: attendanceStats.members.Present })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" }, "&:focus-visible": { outline: "3px solid", outlineColor: "primary.main", outlineOffset: 2 } }}>
             <CardContent>
               <IconStat
                 iconBg={alpha(theme.palette.info.main, 0.18)}
@@ -335,9 +343,9 @@ const EmployeeAttendance = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+        <Box>
           <Card onClick={() => setSummaryModal({ title: "Employees on leave", people: attendanceStats.members.Leave })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
             <CardContent>
               <IconStat
@@ -349,9 +357,9 @@ const EmployeeAttendance = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+        <Box>
           <Card onClick={() => setSummaryModal({ title: "Absent employees", people: attendanceStats.members.Absent })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
             <CardContent>
               <IconStat
@@ -363,9 +371,9 @@ const EmployeeAttendance = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+        <Box>
           <Card onClick={() => setSummaryModal({ title: "WFH employees", people: attendanceStats.members.WFH })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
             <CardContent>
               <IconStat
@@ -377,14 +385,14 @@ const EmployeeAttendance = () => {
               />
             </CardContent>
           </Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+        </Box>
+        <Box>
           <Card onClick={() => setSummaryModal({ title: "Half-day attendance", people: attendanceStats.members["Half Day"] })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}><CardContent><IconStat iconBg={alpha(theme.palette.warning.main, 0.18)} iconColor="warning.dark" icon={<TimerOffOutlined fontSize="large" />} number={attendanceStats.halfDay} title="Half Day" /></CardContent></Card>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2 }}>
+        </Box>
+        <Box>
           <Card sx={{ height: "100%" }}><CardContent><IconStat iconBg={alpha(theme.palette.error.main, 0.14)} iconColor="error.main" icon={<ErrorOutline fontSize="large" />} number={attendanceStats.exceptions} title="Exceptions" /></CardContent></Card>
-        </Grid>
-          </Grid>
+        </Box>
+          </Box>
         </Card>
       </Grid>}
 
