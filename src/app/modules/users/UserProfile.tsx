@@ -21,6 +21,9 @@ import { usePageData } from "../../Context/PageDataProvider";
 import { useAppSelector } from "../../Redux/hooks";
 import LeaveCalendar from "./components/LeaveCalendar";
 import { getProfileTabs } from "./profileTabs";
+import { ResignationAction } from "./components/ResignationAction";
+import { EmployeeExitCaseCard } from "./components/EmployeeExitCaseCard";
+import { EmployeeExitManagementCard } from "./components/EmployeeExitManagementCard";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -104,6 +107,9 @@ const UserProfile = () => {
         >
           <ProfileHeader />
           <Stack spacing={2.5} className="flex-grow-1">
+            {!empId && <ResignationAction />}
+            {!empId && <EmployeeExitCaseCard />}
+            {empId && <EmployeeExitManagementCard employeeUserId={empId} />}
             <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" }, "& .tab-box": { flex: "0 0 auto", minWidth: { xs: 132, sm: 150 } } }}>
               {filteredTabs.map((tab) => {
                 const tabTo = empId

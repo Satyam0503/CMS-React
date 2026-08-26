@@ -18,6 +18,8 @@ export interface GetAllEmployeeResponseModel {
   dateOfBirth: string | null;
   dateOfJoining?: string | null;
   isVerified: boolean;
+  employmentStatus?: "Active" | "NoticePeriod" | "Resigned" | "Terminated";
+  lastWorkingDate?: string | null;
 }
 
 export interface EmployeeFilterModel {
@@ -52,6 +54,8 @@ export interface EmployeeModel {
   personalEmail: string | null;
   emergencyContact: string | null;
   status: string | boolean;
+  employmentStatus?: "Active" | "NoticePeriod" | "Resigned" | "Terminated";
+  lastWorkingDate?: string | null;
   isEmailVerified?: boolean;
   profileUrl?: string;
   birthDayThisYear?: Dayjs | string;
