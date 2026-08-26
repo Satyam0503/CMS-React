@@ -79,6 +79,28 @@ export const getDirectoryDepartments = () =>
     ServiceUrl.GET_DIRECTORY_DEPARTMENTS,
   );
 
+export const submitOwnResignation = (payload: { employeeUserId: string; exitType: "Resigned"; lastWorkingDate: string; reason?: string }) =>
+  postRequest<typeof payload, ApiResponse>("api/User/SubmitOwnResignation", payload);
+
+export const getOwnEmployeeExitCase = (userId: string) =>
+  getRequest<ResponseData<EmployeeExitCase>>(`api/User/EmployeeExit/${encodeURIComponent(userId)}`);
+
+export const withdrawOwnEmployeeExit = (payload: { employeeExitId: string; version: number; reason?: string }) =>
+  postRequest<typeof payload, ApiResponse>("api/User/WithdrawOwnEmployeeExit", payload);
+
+export const getEmployeeExitCaseForManagement = (userId: string) =>
+  getRequest<ResponseData<EmployeeExitCase>>(`api/User/EmployeeExitManagement/${encodeURIComponent(userId)}`);
+
+export const reviewEmployeeExit = (payload: { employeeExitId: string; version: number; action: "Approve" | "Reject"; notes?: string }) =>
+  postRequest<typeof payload, ApiResponse>("api/User/ReviewEmployeeExit", payload);
+
+export type EmployeeExitCase = {
+  employeeExitId: string; status: string; lastWorkingDate: string; version: number;
+  clearances: Array<{ clearanceId: string; category: string; status: string; isMandatory: boolean; dueAtUtc?: string }>;
+  auditHistory: Array<{ action: string; atUtc: string; notes?: string }>;
+  permittedActions: string[];
+};
+
 export const inviteNewEmployee = (payload: InviteNewEmployeeModel) => {
   return postRequest<
     InviteNewEmployeeModel,
