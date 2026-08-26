@@ -1,21 +1,19 @@
-import {
-  AccessTime,
-  AdminPanelSettings,
-  Book,
-  CalendarMonth,
-  Contacts,
-  CurrencyRupee,
-  Info,
-  Mail,
-  NoteAlt,
-  PermContactCalendar,
-  Person,
-  PersonSearch,
-  Settings,
-  ToggleOn,
-  Work,
-  WebRounded,
-} from "@mui/icons-material";
+import AccessTime from "@mui/icons-material/AccessTime";
+import AdminPanelSettings from "@mui/icons-material/AdminPanelSettings";
+import Book from "@mui/icons-material/Book";
+import CalendarMonth from "@mui/icons-material/CalendarMonth";
+import Contacts from "@mui/icons-material/Contacts";
+import CurrencyRupee from "@mui/icons-material/CurrencyRupee";
+import Info from "@mui/icons-material/Info";
+import Mail from "@mui/icons-material/Mail";
+import NoteAlt from "@mui/icons-material/NoteAlt";
+import PermContactCalendar from "@mui/icons-material/PermContactCalendar";
+import Person from "@mui/icons-material/Person";
+import PersonSearch from "@mui/icons-material/PersonSearch";
+import Settings from "@mui/icons-material/Settings";
+import ToggleOn from "@mui/icons-material/ToggleOn";
+import Work from "@mui/icons-material/Work";
+import WebRounded from "@mui/icons-material/WebRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";

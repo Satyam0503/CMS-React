@@ -1,4 +1,7 @@
-import { Add, DeleteOutline, Edit, Save } from "@mui/icons-material";
+import Add from "@mui/icons-material/Add";
+import DeleteOutline from "@mui/icons-material/DeleteOutline";
+import Edit from "@mui/icons-material/Edit";
+import Save from "@mui/icons-material/Save";
 import { Box, Card, Chip, FormControlLabel, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -17,6 +20,9 @@ const empty: AttendanceStatusSetting = {
   code: "", name: "", isActive: true, isSystem: false, sortOrder: 99,
   requiresTime: false, isAvailableForLeaveManagement: false, colorHex: "#607D8B", paidDayFraction: 1, unpaidDayFraction: 0,
 };
+
+const cloneStatuses = (statuses: AttendanceStatusSetting[]) =>
+  statuses.map((status) => ({ ...status }));
 
 const defaultStatuses: AttendanceStatusSetting[] = [
   ["P", "Present", true, 1, 0], ["A", "Absent", false, 0, 1], ["SL", "Sick Leave", false, 1, 0],
@@ -57,9 +63,9 @@ export default function AttendanceStatusSettings() {
     try {
       const result = (await getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=false")).data.methodResults ?? [];
       const loaded = result.length ? result : defaultStatuses;
-      setItems(loaded); setOriginalItems(loaded);
+      setItems(cloneStatuses(loaded)); setOriginalItems(cloneStatuses(loaded));
     } catch {
-      setItems(defaultStatuses); setOriginalItems(defaultStatuses);
+      setItems(cloneStatuses(defaultStatuses)); setOriginalItems(cloneStatuses(defaultStatuses));
       toast.error("Unable to load saved settings. Showing defaults.");
     }
   };
@@ -105,8 +111,8 @@ export default function AttendanceStatusSettings() {
   };
 
   const handleCancelEdit = () => {
-    setItems(originalItems);
-    setOffDays(originalOffDays);
+    setItems(cloneStatuses(originalItems));
+    setOffDays([...originalOffDays]);
     setDraft(empty);
     setIsEditing(false);
   };
@@ -141,30 +147,12 @@ export default function AttendanceStatusSettings() {
     : "90px minmax(220px, 1fr) 170px 120px 64px 64px 84px";
 
   const statusTableHeaders = isEditing
-    ? ["Code", "Status name", "Color", "Leave mapping", "Status", "Paid", "Unpaid", "Action"]
-    : ["Code", "Status name", "Leave mapping", "Status", "Paid", "Unpaid", "Action"];
+    ? ["Code", "Status name", "Color", "Status", "Leave mapping", "Paid", "Unpaid", "Action"]
+    : ["Code", "Status name", "Status", "Leave mapping", "Paid", "Unpaid", "Action"];
 
   return (
     <Card sx={{ p: { xs: 2, sm: 3, lg: 4 }, mb: 2, overflow: "visible" }}>
       <Stack spacing={3}>
-        {isEditing && (
-          <Box sx={{ ...sectionSx, bgcolor: "background.default" }}>
-            <Typography variant="subtitle1" fontWeight={750} sx={{ mb: 2 }}>Add a custom status</Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "120px minmax(180px, 1fr) 140px 140px" }, gap: 2 }}>
-              <AppTextField label="Code" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value.toUpperCase() })} />
-              <AppTextField label="Name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              <AppTextField label="Paid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.paidDayFraction} onChange={(e) => setDraft({ ...draft, paidDayFraction: +e.target.value })} />
-              <AppTextField label="Unpaid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.unpaidDayFraction} onChange={(e) => setDraft({ ...draft, unpaidDayFraction: +e.target.value })} />
-            </Box>
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={1.5} sx={{ mt: 2 }}>
-              <FormControlLabel control={<AppCheckbox checked={draft.requiresTime} onChange={(e) => setDraft({ ...draft, requiresTime: e.target.checked, isAvailableForLeaveManagement: e.target.checked ? false : draft.isAvailableForLeaveManagement })} />} label="Requires punch in and punch out time" />
-              <FormControlLabel control={<AppCheckbox checked={draft.isAvailableForLeaveManagement} disabled={draft.requiresTime} onChange={(e) => setDraft({ ...draft, isAvailableForLeaveManagement: e.target.checked })} />} label="Available for Leave" />
-              <AppButton startIcon={<Add />} variant="outlined" disabled={!draft.code.trim() || !draft.name.trim()} onClick={addDraft}>Add status</AppButton>
-            </Stack>
-            <Typography variant="caption" color="text.secondary">Available for Leave allows this no-time status to be selected in Leave Management policies.</Typography>
-          </Box>
-        )}
-
         <Box sx={sectionSx}>
           <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems={{ md: "center" }} gap={1} sx={{ mb: 2 }}>
             <Box>
@@ -193,10 +181,10 @@ export default function AttendanceStatusSettings() {
                   {isEditing && (
                     <AppTextField size="small" type="color" disabled={!isEditing} value={item.colorHex} inputProps={{ "aria-label": `${item.code} display color` }} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, colorHex: e.target.value } : x))} />
                   )}
+                  <FormControlLabel sx={{ m: 0 }} control={<AppCheckbox disabled={!isEditing} checked={item.isActive} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, isActive: e.target.checked } : x))} />} label={item.isActive ? "Active" : "Inactive"} />
                   <Tooltip title={item.requiresTime ? "Clocking statuses cannot be used for leave mapping." : "Allow this status to be selected in Leave Management policies."}>
                     <span><FormControlLabel sx={{ m: 0 }} control={<AppCheckbox disabled={!isEditing || item.requiresTime} checked={item.isAvailableForLeaveManagement} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, isAvailableForLeaveManagement: e.target.checked } : x))} />} label="Available" /></span>
                   </Tooltip>
-                  <FormControlLabel sx={{ m: 0 }} control={<AppCheckbox disabled={!isEditing} checked={item.isActive} onChange={(e) => setItems((value) => value.map((x) => x.code === item.code ? { ...x, isActive: e.target.checked } : x))} />} label={item.isActive ? "Active" : "Inactive"} />
                   <Typography>{item.paidDayFraction}</Typography>
                   <Typography>{item.unpaidDayFraction}</Typography>
                   {item.isSystem ? <Chip size="small" label="Default" variant="outlined" /> : <Tooltip title={isEditing ? `Delete ${item.code}` : "Edit settings to delete this custom status"}><span><IconButton size="small" color="error" disabled={!isEditing} onClick={() => requestDelete(item)} aria-label={`Delete ${item.code}`}><DeleteOutline fontSize="small" /></IconButton></span></Tooltip>}
@@ -205,6 +193,24 @@ export default function AttendanceStatusSettings() {
             </Box>
           </Box>
         </Box>
+
+        {isEditing && (
+          <Box sx={{ ...sectionSx, bgcolor: "background.default" }}>
+            <Typography variant="subtitle1" fontWeight={750} sx={{ mb: 2 }}>Add a custom status</Typography>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "120px minmax(180px, 1fr) 140px 140px" }, gap: 2 }}>
+              <AppTextField label="Code" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value.toUpperCase() })} />
+              <AppTextField label="Name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+              <AppTextField label="Paid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.paidDayFraction} onChange={(e) => setDraft({ ...draft, paidDayFraction: +e.target.value })} />
+              <AppTextField label="Unpaid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.unpaidDayFraction} onChange={(e) => setDraft({ ...draft, unpaidDayFraction: +e.target.value })} />
+            </Box>
+            <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={1.5} sx={{ mt: 2 }}>
+              <FormControlLabel control={<AppCheckbox checked={draft.requiresTime} onChange={(e) => setDraft({ ...draft, requiresTime: e.target.checked, isAvailableForLeaveManagement: e.target.checked ? false : draft.isAvailableForLeaveManagement })} />} label="Requires punch in and punch out time" />
+              <FormControlLabel control={<AppCheckbox checked={draft.isAvailableForLeaveManagement} disabled={draft.requiresTime} onChange={(e) => setDraft({ ...draft, isAvailableForLeaveManagement: e.target.checked })} />} label="Available for Leave" />
+              <AppButton startIcon={<Add />} variant="outlined" disabled={!draft.code.trim() || !draft.name.trim()} onClick={addDraft}>Add status</AppButton>
+            </Stack>
+            <Typography variant="caption" color="text.secondary">Available for Leave allows this no-time status to be selected in Leave Management policies.</Typography>
+          </Box>
+        )}
 
         <Box sx={sectionSx}>
           <Typography variant="h6" fontWeight={750}>Weekly off days</Typography>

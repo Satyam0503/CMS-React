@@ -79,6 +79,8 @@ stages:
               command: "custom"
               customCommand: "run test"
               workingDir: "$(Build.SourcesDirectory)"
+             env:
+               CI: "true"
 
           # Vite inlines env vars at build time, so .env must exist BEFORE `npm run build`.
           - task: PowerShell@2

@@ -1,7 +1,6 @@
-import {
-  Close,
-  Fullscreen,
-  FullscreenExit } from "@mui/icons-material";
+import Close from "@mui/icons-material/Close";
+import Fullscreen from "@mui/icons-material/Fullscreen";
+import FullscreenExit from "@mui/icons-material/FullscreenExit";
 import { Breakpoint,
   Dialog,
   DialogContent,
