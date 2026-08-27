@@ -186,7 +186,7 @@ export const postRequest = async <RequestData, ResponseData>(
 
   const response = await instance.post<ResponseData>(path, data, {
     ...config,
-    headers,
+    headers: { ...headers, ...config?.headers },
   });
   await invalidateApiQueries();
   return response;
