@@ -21,8 +21,9 @@ export const FilterComponent: FC<FilterComponentProps> = ({ open, anchorEl, hand
                 paper: {
                     sx: {
                         maxWidth: 450,
-                        width: 350,
-                        p: 2.5
+                        width: { xs: "calc(100vw - 32px)", sm: 350 },
+                        boxSizing: "border-box",
+                        p: { xs: 2, sm: 2.5 },
                     }
                 },
             }}

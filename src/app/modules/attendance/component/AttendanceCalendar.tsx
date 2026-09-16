@@ -60,6 +60,7 @@ interface Employee {
   employeeId: string;
   fullName: string;
   dateOfJoining?: string | null;
+  lastWorkingDate?: string | null;
   scheduleId?: string | null;
   scheduleName?: string | null;
   scheduledStartTime?: string | null;
@@ -162,16 +163,6 @@ const attendanceStatusOptions: Array<{
     label: "WFH with Half Day",
     colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
   },
-  {
-    value: "WFH+SL",
-    label: "Work From Home + Sick Leave",
-    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
-  },
-  {
-    value: "WFH+CL",
-    label: "Work From Home + Casual Leave",
-    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
-  },
 ];
 
 const attendanceStatusLabels = Object.fromEntries(
@@ -206,10 +197,21 @@ const createPunchPresets = (from?: string | null, until?: string | null, fallbac
   });
 };
 
-// Unpaid leave is assigned by the leave workflow and reconciles as an unpaid
-// absence. It must not be selectable while an admin is manually marking a day.
+// Leave and WFH statuses are owned by their respective request workflows.
+// Letting the generic attendance editor write one of these values would create
+// a visual attendance result without the leave balance, approval history, or
+// request-owned audit trail that payroll relies on.
+const workflowOwnedStatusCodes = new Set([
+  "SL", "CL", "EL", "UL", "COMP-OFF", "WFH", "WFH+WFO", "WFH-HD",
+  "WFH+SL", "WFH+CL", "CL-HALF", "SL-HALF",
+]);
+
 const isManualAttendanceStatus = (code: string) =>
-  code.trim().toUpperCase() !== "UL";
+  !workflowOwnedStatusCodes.has(code.trim().toUpperCase());
+
+const manualAttendanceStatusOptions = attendanceStatusOptions.filter((option) =>
+  isManualAttendanceStatus(option.value),
+);
 
 interface Props {
   employees: Employee[];
@@ -278,7 +280,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   const attendanceEmployeesPaneRef = useRef<HTMLDivElement>(null);
   const isSynchronizingAttendanceScroll = useRef(false);
   const isSynchronizingAttendanceVerticalScroll = useRef(false);
-  const [statusOptions, setStatusOptions] = useState(attendanceStatusOptions);
+  const [statusOptions, setStatusOptions] = useState(manualAttendanceStatusOptions);
 
   const syncAttendanceHorizontalScroll = (
     source: HTMLDivElement,
@@ -345,10 +347,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   requiresTime: x.requiresTime,
                   colorHex: x.colorHex || DEFAULT_ATTENDANCE_STATUS_COLOR,
                 }))
-            : attendanceStatusOptions,
+            : manualAttendanceStatusOptions,
         );
       } catch {
-        setStatusOptions(attendanceStatusOptions);
+        setStatusOptions(manualAttendanceStatusOptions);
       }
     };
 
@@ -761,7 +763,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     let absent = 0;
     let leave = 0;
     let wfh = 0;
-    let halfDay = 0;
     let exceptions = 0;
     const members = {
       Present: new Set<string>(),
@@ -770,6 +771,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       Leave: new Set<string>(),
       "Half Day": new Set<string>(),
     };
+    // A half-day workflow can produce more than one attendance row for the
+    // same employee/day (for example, a source-owned segment plus its derived
+    // status). The overview is an employee count, so retain a stable employee
+    // key while keeping names for the drill-down dialog.
+    const halfDayEmployees = new Map<string, string>();
 
     attendanceItems.forEach((item: any) => {
       const itemDate = dayjs(formatServerDate(item.date, "YYYY-MM-DD"));
@@ -806,8 +812,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         if (
           ["HD", "LHD", "WFH-HD", "CL-HALF", "SL-HALF"].includes(item.status)
         ) {
-          halfDay++;
-          if (employeeName) members["Half Day"].add(employeeName);
+          const employeeKey = normalizeUserId(item.userId) || employeeName;
+          if (employeeName && employeeKey) halfDayEmployees.set(employeeKey, employeeName);
         }
         if (item.exceptionId || item.hasException || item.lateCount > 0)
           exceptions++;
@@ -819,14 +825,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       absent,
       leave,
       wfh,
-      halfDay,
+      halfDay: halfDayEmployees.size,
       exceptions,
       members: {
         Present: [...members.Present],
         Absent: [...members.Absent],
         WFH: [...members.WFH],
         Leave: [...members.Leave],
-        "Half Day": [...members["Half Day"]],
+        "Half Day": [...halfDayEmployees.values()],
       },
     });
   }, [
@@ -884,6 +890,12 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const isBeforeJoining = Boolean(
       joiningDate?.isValid() && dayjs(dateObj).isBefore(joiningDate, "day"),
     );
+    const lastWorkingDate = row.lastWorkingDate
+      ? dayjs(row.lastWorkingDate).endOf("day")
+      : null;
+    const isAfterExit = Boolean(
+      lastWorkingDate?.isValid() && dayjs(dateObj).isAfter(lastWorkingDate, "day"),
+    );
     const firstHalf = value.halfDaySegments?.FIRST_HALF;
     const secondHalf = value.halfDaySegments?.SECOND_HALF;
     const hasHalfDaySegments = Boolean(firstHalf || secondHalf);
@@ -908,7 +920,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const statusLabel = value.status
       ? (attendanceStatusLabels[value.status as AttendanceStatus] ??
         value.status)
-      : isFutureDate
+      : isAfterExit
+        ? "Not employed on this date"
+        : isFutureDate
         ? "Future date — attendance is not calculated"
         : "No attendance recorded";
     const leaveDetail = relatedLeave
@@ -922,6 +936,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       .join("\n");
     const tooltipText = isBeforeJoining
       ? `Not applicable — employee joins on ${joiningDate?.format("DD MMM YYYY")}.`
+      : isAfterExit
+        ? `Not employed — last working date was ${lastWorkingDate?.format("DD MMM YYYY")}.`
       : hasHalfDaySegments
         ? `${halfDayDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}\nGenerated from approved attendance workflows.`
         : isLeaveGenerated
@@ -938,7 +954,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     ? "Weekend"
                     : statusLabel;
     const canEdit =
-      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining;
+      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining && !isAfterExit;
     const tooltipLines = tooltipText.split("\n");
     const tooltipTitle = (
       <Box sx={{ display: "grid", gap: 0.35, maxWidth: 280 }}>
@@ -1075,7 +1091,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: isBeforeJoining
+            backgroundColor: isBeforeJoining || isAfterExit
               ? theme.palette.action.disabledBackground
               : getBg(value),
             borderRight: "1px solid",
@@ -1083,7 +1099,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             borderBottom: "1px solid",
             borderBottomColor: "divider",
             opacity: isFutureDate ? 0.45 : 1,
-            cursor: isBeforeJoining
+            cursor: isBeforeJoining || isAfterExit
               ? "not-allowed"
               : isWorkflowOwned || isSourceOwnedSegment || canEdit
                 ? "pointer"
@@ -1098,7 +1114,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 : {},
           }}
         >
-          {isBeforeJoining ? (
+          {isBeforeJoining || isAfterExit ? (
             <Typography
               component="span"
               fontSize={10}
@@ -1209,6 +1225,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         employeeId: emp.employeeId ?? "",
         name: emp.name,
         dateOfJoining: emp.dateOfJoining,
+        lastWorkingDate: emp.lastWorkingDate,
         scheduleId: emp.scheduleId,
         scheduleName: emp.scheduleName,
         scheduledStartTime: emp.scheduledStartTime,
@@ -1286,10 +1303,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             ? err.message
             : undefined;
       const isLocked = /locked/i.test(responseMessage ?? "");
+      const message = responseMessage === "ATTENDANCE_WORKFLOW_STATUS_REQUIRES_LEAVE_OR_WFH_REQUEST"
+        ? "Leave and Work From Home must be created through their respective request workflows."
+        : responseMessage || "Failed to save attendance";
       setConfirmationModal({
         open: true,
         title: isLocked ? "Attendance Locked" : "Error",
-        content: responseMessage || "Failed to save attendance",
+        content: message,
       });
       return;
     }
@@ -1861,6 +1881,21 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 Effective shift: <Box component="span" sx={{ color: "text.primary", fontWeight: 800 }}>{selectedCell.employee.scheduleName} · {selectedCell.employee.scheduledStartTime}–{selectedCell.employee.scheduledEndTime}</Box>{selectedCell.employee.scheduleSource ? ` · ${selectedCell.employee.scheduleSource}` : ""}
               </Typography>
             )}
+
+            <Box
+              sx={{
+                px: 1.25,
+                py: 1,
+                borderRadius: 2,
+                bgcolor: "info.lighter",
+                border: "1px solid",
+                borderColor: "info.light",
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                This editor is for attendance corrections. Create or manage a Leave or WFH request for leave and work-from-home days; those workflows keep balances, approvals, and payroll history in sync.
+              </Typography>
+            </Box>
 
             <AppTextField
               select

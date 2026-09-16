@@ -538,7 +538,7 @@ export const getNotificationTitle = (
   const { formatMessage: i } = intl;
   // WFH notifications carry a server-generated title but do not have a legacy
   // translation entry, so use it instead of the generic fallback.
-  if (notification.title?.trim().startsWith("WFH")) return notification.title;
+  if (notification.title?.trim().startsWith("WFH") || notification.targetId?.startsWith("employee-exit-")) return notification.title;
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
       return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
@@ -583,6 +583,8 @@ export const redirectUserToTargetUrl = (
   if (notification.targetId?.startsWith("attendance-review-")) {
     redirectOption.targetPath = "/attendance";
     redirectOption.data = notification.targetId.substring("attendance-review-".length);
+  } else if (notification.targetId?.startsWith("employee-exit-")) {
+    redirectOption.targetPath = `/employees/${notification.targetId.substring("employee-exit-".length)}/about`;
   } else if (notification.title?.startsWith("WFH")) {
     redirectOption.targetPath = "/leavemanagement/work-from-home";
   } else switch (notification.notificationTypes) {

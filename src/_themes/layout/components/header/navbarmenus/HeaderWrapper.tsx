@@ -42,8 +42,8 @@ export const HeaderWrapper: FC<Props> = ({ openSideBar, sidebarState }) => {
     >
       <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }} sx={{ minWidth: 0, flexShrink: 1 }}>
         {isSmallScreen && (
-          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0, width: { xs: 32, sm: "auto" }, minWidth: { xs: 32, sm: 0 }, height: { xs: 32, sm: "auto" }, p: { xs: 0.5, sm: 1 } }} onClick={openSideBar}>
-            <MenuOutlined className="fs-32" />
+          <AppIconButton aria-label="Open navigation menu" sx={{ border: 0, width: { xs: 40, sm: "auto" }, minWidth: { xs: 40, sm: 0 }, height: { xs: 40, sm: "auto" }, p: { xs: 0.75, sm: 1 }, borderRadius: 2, "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 } }} onClick={openSideBar}>
+            <MenuOutlined sx={{ fontSize: { xs: 26, sm: 32 } }} />
           </AppIconButton>
         )}
         <Avatar

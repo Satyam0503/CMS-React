@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
 import { Close, KeyboardDoubleArrowLeft } from "@mui/icons-material";
-import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
+import { useCompanyTheme } from "../../../../app/modules/theme/companyTheme";
 
 type Props = {
   open: boolean;
@@ -16,7 +16,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
-  const { style: sidebarStyle } = useAppStyle();
+  const { theme: sidebarStyle } = useCompanyTheme();
 
   const handleSideBarToggle = () => {
     setMiniSidebar(!isMiniSidebar);

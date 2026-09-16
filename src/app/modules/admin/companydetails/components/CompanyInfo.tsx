@@ -20,6 +20,7 @@ import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { CompanyInfoModel, CompanyModel } from "../../models";
 import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence } from "../../adminservices";
+import { setCompanyTheme } from "../../../theme/companyTheme";
 import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
@@ -148,6 +149,7 @@ export const CompanyInfo = () => {
     formData.append("Address", values.address);
     formData.append("EmployeeIdPrefix", values.employeeIdPrefix ?? "");
     formData.append("AutoGenerateEmployeeId", String(values.autoGenerateEmployeeId ?? true));
+    formData.append("AppTheme", values.appTheme ?? "glass");
     if (values.applicationLanguage.length > 0) {
       values.applicationLanguage.forEach(language =>
         formData.append('ApplicationLanguage', language)
@@ -164,6 +166,7 @@ export const CompanyInfo = () => {
         }));
         changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         setCompanyInfo(methodResult);
+        setCompanyTheme(methodResult.appTheme);
         await refreshEmployeeIdSequence();
         toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
@@ -200,6 +203,7 @@ export const CompanyInfo = () => {
             address: methodResult.address,
             employeeIdPrefix: methodResult.employeeIdPrefix ?? "",
             autoGenerateEmployeeId: methodResult.autoGenerateEmployeeId ?? true,
+            appTheme: methodResult.appTheme ?? "glass",
           }));
           setLoading(false);
         }
@@ -408,6 +412,11 @@ export const CompanyInfo = () => {
                     />
                     : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang }) + ", ")}</Typography>
                 }
+              </Stack>
+              <Stack spacing={1}>
+                <Typography variant="body1">Company theme</Typography>
+                {isEdit ? <AppSelect fullWidth {...getFieldProps("appTheme")}><MenuItem value="glass">Glass</MenuItem><MenuItem value="slate">Slate</MenuItem><MenuItem value="dawn">Dawn</MenuItem><MenuItem value="blush">Blush</MenuItem></AppSelect> : <Typography variant="body2" sx={{ textTransform: "capitalize" }}>{values.appTheme ?? "glass"}</Typography>}
+                <Typography variant="caption" color="text.secondary">Applied to all signed-in users and this company’s public careers pages.</Typography>
               </Stack>
             </Grid>
           </Grid>

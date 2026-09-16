@@ -15,7 +15,7 @@ import { AccessTime, Cake, CalendarMonth, Celebration, NotificationsActive, Thum
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
 import { getNotificationTitle, redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
@@ -76,7 +76,7 @@ export default function HeaderNotificationMenu() {
     })
   }
 
-  const handleNewNotification = (notification: NotificationModel) => {
+  const handleNewNotification = useCallback((notification: NotificationModel) => {
     if (document.visibilityState === "hidden" && Notification.permission === "granted") {
       createNotifications(notification, intl);
     }
@@ -87,7 +87,7 @@ export default function HeaderNotificationMenu() {
     // Prepend new notification to the existing list
     setNotificationList(prev => [notification, ...prev,]);
     setNotificationCount(prev => ({ ...prev, totalNotification: prev.totalNotification + 1, unread: prev.unread + 1 }));
-  };
+  }, [intl]);
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -109,7 +109,7 @@ export default function HeaderNotificationMenu() {
     return () => {
       connection.off("notification", handleNewNotification);
     };
-  }, [connection])
+  }, [connection, handleNewNotification])
 
   useEffect(() => {
     (async () => {
@@ -140,7 +140,7 @@ export default function HeaderNotificationMenu() {
         setIsLoading(false);
       }
     })();
-  }, [activeTab, paginationValues.pageNo])
+  }, [activeTab, paginationValues.pageNo, paginationValues.records])
 
 
   const handleMarkNotificationAsRead = async (userNotificationId: string) => {

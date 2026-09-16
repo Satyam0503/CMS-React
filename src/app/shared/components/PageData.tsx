@@ -38,18 +38,18 @@ const PageData = () => {
     >
       {pageTitle && <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0 }}>{pageTitle}</Typography>}
       <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={{ xs: 1, sm: 2 }}
+        direction="row"
+        spacing={{ xs: 0.75, sm: 2 }}
         useFlexGap
         flexWrap="wrap"
-        alignItems={{ xs: "flex-start", md: "center" }}
+        alignItems="center"
         justifyContent={{ md: "flex-end" }}
-        sx={{ minWidth: 0, ml: { md: "auto" } }}
+        sx={{ minWidth: 0, ml: { md: "auto" }, rowGap: 0.75, columnGap: { xs: 0.5, sm: 1 } }}
       >
         {trail.length > 1 && (
           <Stack
             className="flex-row justify-content-start align-items-center"
-            sx={{ position: "relative", zIndex: 1, pointerEvents: "auto", minWidth: 0 }}
+            sx={{ position: "relative", zIndex: 1, pointerEvents: "auto", minWidth: 0, flex: "0 1 auto", "& .MuiBreadcrumbs-ol": { flexWrap: "nowrap" }, "& .MuiBreadcrumbs-li": { whiteSpace: "nowrap" } }}
           >
             <Breadcrumbs aria-label="breadcrumb">
               {trail.map((breadcrumb, index) => {
@@ -91,6 +91,10 @@ const PageData = () => {
             minWidth: 0,
             display: "flex",
             justifyContent: { xs: "flex-start", md: "flex-end" },
+            flex: "0 0 auto",
+            position: "relative",
+            zIndex: 2,
+            pointerEvents: "auto",
           }}
         />
       </Stack>

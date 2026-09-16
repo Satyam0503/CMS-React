@@ -249,9 +249,13 @@ const Employees = () => {
   );
 
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId);
+  const userRoleType = useAppSelector((state) => state.user.userData?.roleType);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
 
   const employeeFilters = useAppSelector((state) => state.filters.employee);
+  const employmentStatus = canAccessHrManagement(userRoleType)
+    ? employeeFilters?.employmentStatus ?? "Active"
+    : "Active";
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
   const columns = useEmployeeTableColumnList();
 
@@ -296,11 +300,12 @@ const Employees = () => {
         records: Math.max(totalRecords, 1),
         name: "",
         ...(employeeFilters ?? initialFilterValues),
+        employmentStatus,
       });
       const { success, methodResults } = response.data;
       if (!success) throw new Error("Failed to export employees");
 
-      const rows = methodResults.map((employee) => ({
+      const rows = (methodResults ?? []).map((employee) => ({
         "Employee ID": employee.employeeId,
         Name: employee.fullName,
         Email: employee.email,
@@ -313,6 +318,8 @@ const Employees = () => {
           ? Object.values(employee.jobRole)[0] ?? ""
           : "",
         "Date of Birth": employee.dateOfBirth ?? "",
+        "Employment Status": employee.employmentStatus ?? "Active",
+        "Last Working Date": employee.lastWorkingDate ?? "",
         Verified: employee.isVerified ? "Yes" : "No",
       }));
 
@@ -321,9 +328,9 @@ const Employees = () => {
       XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
       XLSX.writeFile(
         workbook,
-        `employees-${new Date().toISOString().slice(0, 10)}.xlsx`,
+        `employees-${employmentStatus.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.xlsx`,
       );
-      toast.success("Employees exported successfully");
+      toast.success(`${employmentStatus === "ExEmployees" ? "Ex-employees" : employmentStatus === "NoticePeriod" ? "Notice-period employees" : "Active employees"} exported successfully`);
     } catch (error) {
       console.error((error as Error).message);
       toast.error("Failed to export employees");
@@ -341,6 +348,7 @@ const Employees = () => {
           records: paginationValues.records,
           name: "",
           ...(employeeFilters ?? initialFilterValues),
+          employmentStatus,
         });
         const { success, methodResults, totalRecords } = response.data;
         if (success) {
@@ -354,7 +362,7 @@ const Employees = () => {
       }
     };
     getAllEmployeesList();
-  }, [paginationValues, employeeFilters, isRefresh]);
+  }, [paginationValues, employeeFilters, employmentStatus, isRefresh]);
 
   useEffect(() => {
     setPageTitle(i({ id: "PAGE.EMPLOYEES" }));

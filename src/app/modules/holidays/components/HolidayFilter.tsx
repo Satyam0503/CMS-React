@@ -93,7 +93,7 @@ export const HolidayFilter: FC<PropsType> = (props) => {
                     </Typography>
                     <CustomisedDatePicker
                         label={formatMessage({ id: "HOLIDAY.DATE" })}
-                        value={Boolean(values.date) ? dayjs(values.date) : null}
+                        value={values.date ? dayjs(values.date) : null}
                         setValue={(newDate: Dayjs | null) => {
                             setFieldValue("date", newDate?.format("YYYY-MM-DD"));
                             setFieldTouched("date", true);

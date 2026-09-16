@@ -25,7 +25,6 @@ export interface RequestLeaveModel {
   // Half-day requests must identify their segment so leave and WFH can share
   // one business date without overwriting each other.
   halfDayPeriod?: "FIRST_HALF" | "SECOND_HALF";
-  wfhCombination?: "" | "Mixed" | "WfhHd" | "WfhSl" | "WfhCl";
   reason: string;
 }
 
@@ -162,8 +161,6 @@ export type LeavePolicyModel = {
     mixedAttendanceStatusCode?: string | null;
     wfhWfoAttendanceStatusCode?: string | null;
     wfhHdAttendanceStatusCode?: string | null;
-    wfhSlAttendanceStatusCode?: string | null;
-    wfhClAttendanceStatusCode?: string | null;
     useEffectiveOfficeSchedule: boolean;
     fullDayRequiredWorkingMinutes?: number | null;
     halfDayRequiredWorkingMinutes?: number | null;

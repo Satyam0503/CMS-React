@@ -358,8 +358,6 @@ export default function AddLeavePolicy(props: Props) {
                               {[
                                 ["wfhWfoAttendanceStatusCode", "WFH + WFO status"],
                                 ["wfhHdAttendanceStatusCode", "WFH + HD status"],
-                                ["wfhSlAttendanceStatusCode", "WFH + SL status"],
-                                ["wfhClAttendanceStatusCode", "WFH + CL status"],
                               ].map(([field, label]) => <Grid key={field} size={{ xs:12, sm:6, lg:3 }}><AppTextField select fullWidth label={label} value={values.workFromHome?.[field as keyof typeof values.workFromHome] ?? ""} onChange={e=>setFieldValue(`workFromHome.${field}`, e.target.value)}>
                                 <MenuItem value="">Select attendance status</MenuItem>
                                 {leaveStatuses.filter(x => x.isActive).map(x => <MenuItem key={x.code} value={x.code}>{x.code} — {x.name}</MenuItem>)}

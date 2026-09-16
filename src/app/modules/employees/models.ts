@@ -25,7 +25,16 @@ export interface GetAllEmployeeResponseModel {
 export interface EmployeeFilterModel {
   departmentId: string[];
   gender: string[];
+  employmentStatus?: "Active" | "NoticePeriod" | "ExEmployees" | "All";
 }
+
+export type InitiateEmployeeExitRequest = {
+  employeeUserId: string;
+  exitType: "Resigned" | "Terminated";
+  lastWorkingDate: string;
+  reason?: string;
+  notes?: string;
+};
 
 export interface GetAllEmployeePayloadModel {
   name: string;
@@ -33,6 +42,7 @@ export interface GetAllEmployeePayloadModel {
   records: number;
   departmentId: string[];
   gender: string[];
+  employmentStatus?: "Active" | "NoticePeriod" | "ExEmployees" | "All";
 }
 export interface EmployeeModel {
   userId: string;

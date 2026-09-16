@@ -26,6 +26,8 @@ type PropsTypes = {
   // Lets complex forms opt into a wider responsive paper without changing the
   // sizing of every existing shared modal.
   paperSx?: SxProps<Theme>;
+  fullWidth?: boolean;
+  contentSx?: SxProps<Theme>;
 };
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -37,16 +39,23 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export const CustomisedModal = (props: PropsTypes) => {
-  const { open, handleClose, children, title, maxWidth = "md", allowMaximize = false, paperSx } = props;
+  const { open, handleClose, children, title, maxWidth = "md", allowMaximize = false, paperSx, fullWidth = false, contentSx } = props;
   const [isMaximized, setIsMaximized] = useState(false);
 
   return (
     <Dialog role="dialog" aria-modal={true} scroll="paper" open={open} onClose={handleClose}
-      maxWidth={isMaximized ? false : maxWidth} fullScreen={isMaximized} fullWidth={isMaximized} transitionDuration={500}
+      maxWidth={isMaximized ? false : maxWidth} fullScreen={isMaximized} fullWidth={isMaximized || fullWidth} transitionDuration={500}
       slots={{
         transition: Transition
       }}
       slotProps={{
+        backdrop: {
+          sx: {
+            backgroundColor: "rgba(15, 23, 42, 0.38)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+          },
+        },
         // the theme's MuiDialog styleOverrides hardcode paper maxWidth: 720px, which otherwise
         // wins over the maxWidth/fullWidth/fullScreen props above and caps the maximized width
         paper: {
@@ -81,7 +90,7 @@ export const CustomisedModal = (props: PropsTypes) => {
           </Stack>
         </DialogTitle>
       }
-      <DialogContent className={clsx({ "pt-2": Boolean(title) })}>{children}</DialogContent>
+      <DialogContent className={clsx({ "pt-2": Boolean(title) })} sx={contentSx}>{children}</DialogContent>
     </Dialog>
   );
 };

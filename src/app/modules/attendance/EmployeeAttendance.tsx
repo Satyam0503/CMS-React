@@ -123,6 +123,9 @@ const EmployeeAttendance = () => {
           records: 1000,
           departmentId: [],
           gender: [],
+          // Historical attendance must remain reportable for employees whose
+          // exit date overlaps the month currently being viewed.
+          employmentStatus: "All",
         });
 
         if (response.data.success) {
@@ -282,6 +285,7 @@ const EmployeeAttendance = () => {
       name: emp.fullName,
       fullName: emp.fullName,
       dateOfJoining: emp.dateOfJoining,
+      lastWorkingDate: emp.lastWorkingDate,
       scheduleId: effectiveSchedules[emp.userId]?.scheduleId,
       scheduleName: effectiveSchedules[emp.userId]?.scheduleName,
       scheduledStartTime: effectiveSchedules[emp.userId]?.startTime,

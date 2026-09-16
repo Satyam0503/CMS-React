@@ -514,6 +514,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       },
     },
     typography: {
+      fontFamily: '"Inter", "Segoe UI", Arial, sans-serif',
       h1: {
         fontWeight: 600,
         fontSize: 40,

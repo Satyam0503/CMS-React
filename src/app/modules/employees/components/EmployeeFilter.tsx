@@ -26,12 +26,20 @@ import { FilterComponentProps } from "../../../../utils/common_types";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DepartmentResponseModel } from "../../dashboard/model";
 import { LANGUAGE } from "../../../../utils/enums";
+import { canAccessHrManagement } from "../../../../utils/common";
 
 import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
   gender: [],
+  employmentStatus: "Active",
 };
+
+const employmentStatusOptions = [
+  { value: "Active", label: "Active" },
+  { value: "NoticePeriod", label: "Notice period" },
+  { value: "ExEmployees", label: "Ex-employees" },
+] as const;
 
 export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage } = useIntl();
@@ -51,6 +59,9 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
     });
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
+  const canFilterEmploymentStatus = canAccessHrManagement(
+    useAppSelector((state) => state.user.userData?.roleType),
+  );
 
   useEffect(() => {
     const getAllDepartments = async () => {
@@ -172,6 +183,26 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             )}
           />
         </Stack>
+        {canFilterEmploymentStatus && (
+          <Stack sx={{ mt: 1 }}>
+            <Typography variant="caption">Employment status</Typography>
+            <Autocomplete
+              size="small"
+              id="employment-status-dropdown"
+              options={employmentStatusOptions}
+              value={employmentStatusOptions.find(
+                (option) => option.value === (values.employmentStatus ?? "Active"),
+              ) ?? employmentStatusOptions[0]}
+              onChange={(_, selectedStatus) => {
+                setFieldValue("employmentStatus", selectedStatus?.value ?? "Active");
+              }}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <AppTextField {...params} placeholder="Employment status" />
+              )}
+            />
+          </Stack>
+        )}
 
         <Stack
           direction={"row"}

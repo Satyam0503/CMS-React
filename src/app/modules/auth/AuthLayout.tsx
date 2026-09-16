@@ -16,8 +16,7 @@ import {
 } from "@mui/icons-material";
 import { Languages } from "../../../_themes/layout/components/header/navbarmenus/Languages";
 import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
-import { AppStylePicker } from "../../../_themes/layout/components/header/navbarmenus/AppStylePicker";
-import { useAppStyle } from "../theme/useAppStyle";
+import { useCompanyTheme } from "../theme/companyTheme";
 
 const benefits = [
   { icon: <Groups2Rounded />, label: "People and operations, connected" },
@@ -31,7 +30,7 @@ const AuthLayout = () => {
   // lockstep with the shared header toggle.
   const { mode, systemMode } = useColorScheme();
   const isDark = (mode === "system" ? systemMode : mode) === "dark";
-  const { style } = useAppStyle();
+  const { theme: style } = useCompanyTheme();
   const isDawn = style === "dawn";
 
   return (
@@ -81,22 +80,6 @@ const AuthLayout = () => {
             />
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
-            <AppStylePicker
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 2.5,
-                color: isDark ? "common.white" : "primary.main",
-                bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
-                border: "1px solid",
-                borderColor: isDark ? "rgba(255,255,255,.24)" : "color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
-                "&:hover": {
-                  color: "common.white",
-                  bgcolor: "primary.main",
-                  borderColor: "primary.main",
-                },
-              }}
-            />
             <LightDarkMode
               sx={{
                 width: 40,

@@ -141,4 +141,65 @@ export const EmployeeExitCaseCard = () => {
       <AppButton variant="outlined" disabled={withdrawing || !requestDetails.trim()} onClick={() => void createRequest()}>Send request</AppButton>
     </Stack>
   </Box>;
+/* Alternate pre-merge compact modal implementation is retained in the named safety stash.
+      const response = await respondToEmployeeExitDiscussion({ employeeExitId: exitCase.employeeExitId, version: exitCase.version, notes: discussionResponse.trim() || undefined });
+      if (!response.data.success) throw new Error(response.data.message || "Unable to respond to the discussion.");
+      const refreshed = await getOwnEmployeeExitCase(userDetails.userId);
+      setExitCase(refreshed.data.success ? refreshed.data.methodResult : null); setDiscussionResponse(""); toast.success("Your response was sent to the reporting manager.");
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to respond to the discussion."); }
+    finally { setWithdrawing(false); }
+  };
+  return <>
+    <Box sx={{ width: "100%" }}>
+      <AppButton
+        fullWidth
+        variant="outlined"
+        onClick={() => setOpen(true)}
+        sx={{ minHeight: 44, borderRadius: 2, px: 1.25, textTransform: "none" }}
+      >
+        <Stack component="span" direction="row" alignItems="center" justifyContent="space-between" gap={1} sx={{ width: "100%", minWidth: 0 }}>
+          <Box component="span" sx={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "primary.main", fontSize: 12, fontWeight: 700 }}>
+            {formatExitStatus(exitCase.status)}
+          </Box>
+          <Box component="span" sx={{ flex: "0 0 auto", fontSize: 12, fontWeight: 800 }}>
+            View case
+          </Box>
+        </Stack>
+      </AppButton>
+    </Box>
+    <CustomisedModal
+      open={open}
+      handleClose={() => !withdrawing && setOpen(false)}
+      title="Your offboarding case"
+      maxWidth="sm"
+      fullWidth
+      paperSx={{ width: { xs: "calc(100% - 24px)", sm: 560 }, maxWidth: "calc(100% - 24px)", borderRadius: 3 }}
+      contentSx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}
+    >
+      <Stack spacing={2}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">Last working date</Typography>
+            <Typography fontWeight={700}>{new Date(exitCase.lastWorkingDate).toLocaleDateString()}</Typography>
+          </Box>
+          <Chip size="small" label={formatExitStatus(exitCase.status)} color="primary" />
+        </Stack>
+        {exitCase.clearances.length > 0 && <Alert severity="info">Clearance tasks: {exitCase.clearances.filter(x => x.status !== "Completed" && x.status !== "Waived").length} pending.</Alert>}
+        {exitCase.auditHistory.length > 0 && <Stack spacing={0.5}>
+          <Typography variant="caption" color="text.secondary">Recent activity</Typography>
+          {exitCase.auditHistory.slice(-3).reverse().map((event, index) => <Typography key={`${event.action}-${event.atUtc}-${index}`} variant="body2">{event.action} · {new Date(event.atUtc).toLocaleString()}</Typography>)}
+        </Stack>}
+        {exitCase.permittedActions.includes("Withdraw") && <Stack spacing={1}>
+          <TextField size="small" label="Withdrawal reason (optional)" value={withdrawReason} onChange={event => setWithdrawReason(event.target.value)} />
+          <AppButton color="warning" variant="outlined" disabled={withdrawing} onClick={withdraw}>{withdrawing ? "Withdrawing…" : "Withdraw resignation"}</AppButton>
+        </Stack>}
+        {exitCase.status === "DiscussionRequested" && <Stack spacing={1}>
+          <Alert severity="info">Your manager or HR requested a discussion before the resignation can proceed.</Alert>
+          <TextField size="small" multiline minRows={2} label="Your response" value={discussionResponse} onChange={event => setDiscussionResponse(event.target.value)} />
+          <AppButton variant="contained" disabled={withdrawing || !discussionResponse.trim()} onClick={() => void respondToDiscussion()}>Send response</AppButton>
+        </Stack>}
+      </Stack>
+    </CustomisedModal>
+  </>;
+*/
 };

@@ -43,6 +43,17 @@ const getStoredStyle = (): AppStyle => {
   }
 };
 
+// A missing preference is different from an explicit choice of Glass. Signed-in
+// users should inherit their company's theme until they deliberately choose a
+// personal style in the existing header selector.
+export const hasStoredAppStyle = () => {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+};
+
 // Subscriber registry for useSyncExternalStore. Listens for both the native
 // cross-tab `storage` event and our same-tab custom event so every component
 // using useAppStyle() re-renders when ANY of them calls setStyle().

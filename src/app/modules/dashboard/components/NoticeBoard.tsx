@@ -72,7 +72,16 @@ export default function NoticeBoard() {
             </Typography>
           ) : (
             <>
-              <Stack spacing={0.8} className="flex-grow-1">
+              <Stack
+                spacing={0.8}
+                className="flex-grow-1"
+                sx={{
+                  maxHeight: { xs: 320, sm: 360 },
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  scrollbarGutter: "stable",
+                }}
+              >
                 {noticeList.map((item) => (
                   <Stack
                     key={item.noticeId}

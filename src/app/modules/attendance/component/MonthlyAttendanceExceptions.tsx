@@ -9,6 +9,7 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Box,
   Card,
+  Alert,
   Chip,
   Collapse,
   CircularProgress,
@@ -33,6 +34,7 @@ type PayrollException = {
   id: string;
   userId: string;
   employeeId: string;
+  employeeName?: string;
   exceptionType?: string;
   affectedDates?: string[];
   lhdCount: number;
@@ -119,6 +121,9 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
   const [checkOutTime, setCheckOutTime] = useState("");
   const [correctionReason, setCorrectionReason] = useState("");
   const [savingCorrection, setSavingCorrection] = useState(false);
+  const [wfhCorrectionError, setWfhCorrectionError] = useState("");
+  const [overrideException, setOverrideException] = useState<PayrollException | null>(null);
+  const [overrideReason, setOverrideReason] = useState("");
   const [statusOptions, setStatusOptions] = useState<AttendanceStatusOption[]>([]);
   const [attendanceResolution, setAttendanceResolution] = useState<AttendanceResolution | null>(null);
   const [savingResolution, setSavingResolution] = useState(false);
@@ -343,12 +348,19 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
     setCheckInTime(`${localDate}T09:00`);
     setCheckOutTime(`${localDate}T18:00`);
     setCorrectionReason("");
+    setWfhCorrectionError("");
     setWfhException(item);
   };
 
   const saveWfhHoursCorrection = async () => {
     if (!wfhException || !checkInTime || !checkOutTime || !correctionReason.trim()) {
       toast.error("Punch in, punch out, and a correction reason are required.");
+      return;
+    }
+    if (correctionReason.trim().length < 3) {
+      const message = "Enter a correction reason of at least 3 characters.";
+      setWfhCorrectionError(message);
+      toast.error(message);
       return;
     }
     setSavingCorrection(true);
@@ -363,18 +375,39 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         exceptionVersion: wfhException.version,
       });
       if (!data.success) {
-        toast.error(data.message || "WFH hours could not be corrected.");
+        const message = data.message || "WFH hours could not be corrected.";
+        setWfhCorrectionError(message);
+        toast.error(message);
         return;
       }
       toast.success(data.message || "WFH hours updated and exception resolved.");
       setWfhException(null);
       await load(true);
     } catch (error: any) {
-      const message = error?.response?.data?.message || "WFH hours could not be corrected. Refresh and try again.";
+      const response = error?.response?.data;
+      const validationMessage = response?.errors
+        ? Object.values(response.errors as Record<string, string[]>).flat().find(Boolean)
+        : undefined;
+      const message = response?.message || validationMessage || response?.title || `WFH correction failed (${error?.response?.status ?? "network error"}). The server did not return a detailed reason.`;
+      setWfhCorrectionError(message);
       toast.error(message);
     } finally {
       setSavingCorrection(false);
     }
+  };
+
+  const overrideBlockingException = async () => {
+    if (!overrideException || overrideReason.trim().length < 3) { toast.error("Enter an HR/Admin override reason of at least 3 characters."); return; }
+    setSavingResolution(true);
+    try {
+      const { data } = await patchRequest<{ reason: string; exceptionVersion: number }, { success: boolean; message?: string }>(
+        `api/attendance/penalty/exceptions/${overrideException.id}/override`, { reason: overrideReason.trim(), exceptionVersion: overrideException.version },
+      );
+      if (!data.success) { toast.error(data.message || "The override could not be saved."); return; }
+      toast.success(data.message || "Exception overridden and payroll unblocked.");
+      setOverrideException(null); setOverrideReason(""); await load(true);
+    } catch (error: any) { toast.error(error?.response?.data?.message || "The override could not be saved."); }
+    finally { setSavingResolution(false); }
   };
 
   const resolveSourceConflict = async (resolution: "KEEP_LEAVE_CANCEL_WFH" | "KEEP_WFH_CANCEL_LEAVE") => {
@@ -512,7 +545,10 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
               key={item.id}
               sx={{ display: "grid", gridTemplateColumns: "150px minmax(330px, 1fr) 170px 180px", columnGap: 2, alignItems: "center", borderBottom: 1, borderColor: "divider", minHeight: 68, py: 1.25, px: 0.5, transition: "background-color .2s ease", "&:hover": { bgcolor: "action.hover" } }}
             >
-              <Typography sx={{ width: 150, flexShrink: 0 }}>{item.employeeId}</Typography>
+              <Box sx={{ width: 150, flexShrink: 0 }}>
+                <Typography fontWeight={700}>{item.employeeName || "Employee"}</Typography>
+                <Typography variant="caption" color="text.secondary">{item.employeeId}</Typography>
+              </Box>
               <Box sx={{ minWidth: 330, flex: 1 }}>
                 <Typography sx={{ textTransform: "capitalize" }}>{exceptionDescription(item)}</Typography>
                 {!!item.affectedDates?.length && (
@@ -552,6 +588,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                     Edit
                   </AppButton>
                   <AppButton size="small" onClick={() => void load(true)}>Recheck</AppButton>
+                  <AppButton size="small" color="warning" onClick={() => { setOverrideException(item); setOverrideReason(""); }}>Override</AppButton>
                 </Stack>
               ) : <Box sx={{ width: 180, flexShrink: 0 }} />}
             </Box>
@@ -567,7 +604,8 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <Box key={item.id} sx={{ p: 1.5, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.paper", boxShadow: "0 4px 12px rgba(46, 38, 69, 0.04)" }}>
             <Stack direction="row" justifyContent="space-between" spacing={1} alignItems="flex-start">
               <Box sx={{ minWidth: 0 }}>
-                <Typography fontWeight={800}>{item.employeeId}</Typography>
+                <Typography fontWeight={800}>{item.employeeName || "Employee"}</Typography>
+                <Typography variant="caption" color="text.secondary">{item.employeeId}</Typography>
                 <Typography variant="body2" sx={{ mt: 0.5, textTransform: "capitalize" }}>{exceptionDescription(item)}</Typography>
               </Box>
               <Chip label={item.status.replace(/_/g, " ")} color={exceptionStatusColor(item.status)} size="small" variant="outlined" sx={{ flexShrink: 0, textTransform: "capitalize" }} />
@@ -588,6 +626,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
             ) : item.status === "PENDING_REVIEW" ? (
               <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
                 <AppButton size="small" variant="outlined" disabled={!item.affectedDates?.length} onClick={() => item.exceptionType === "WFH_INSUFFICIENT_HOURS" ? openWfhHoursCorrection(item) : void openAttendanceResolution(item)} sx={{ flex: 1 }}>Edit</AppButton>
+                <AppButton size="small" color="warning" onClick={() => { setOverrideException(item); setOverrideReason(""); }} sx={{ flex: 1 }}>Override</AppButton>
                 <AppButton size="small" onClick={() => void load(true)} sx={{ flex: 1 }}>Recheck</AppButton>
               </Stack>
             ) : null}
@@ -641,6 +680,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
             Enter the verified working hours. The WFH attendance status is retained; this exception resolves only when the policy minimum is met.
           </Typography>
+          {!!wfhCorrectionError && <Alert severity="error" sx={{ mb: 2 }}><strong>Why it failed:</strong> {wfhCorrectionError}</Alert>}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Stack spacing={2} sx={{ pt: 1 }}>
               <DateTimePicker
@@ -657,7 +697,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
                 format="DD MMM YYYY, hh:mm A"
                 slotProps={{ textField: { fullWidth: true, required: true }, openPickerButton: { sx: { border: 0, boxShadow: "none", bgcolor: "transparent", "&:hover": { bgcolor: "action.hover" } } } }}
               />
-              <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required />
+              <AppTextField label="Correction reason" value={correctionReason} onChange={(event) => setCorrectionReason(event.target.value)} multiline minRows={3} required helperText="At least 3 characters. The office break is deducted from verified working hours." />
             </Stack>
           </LocalizationProvider>
         </DialogContent>
@@ -674,6 +714,20 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
           <AppButton color="error" disabled={savingResolution} onClick={() => void cancelLeaveAndResync()}>{savingResolution ? "Cancelling…" : "Cancel leave & re-sync"}</AppButton>
         </DialogActions>
       </Dialog>
+      <Dialog open={!!overrideException} onClose={() => !savingResolution && setOverrideException(null)} fullWidth maxWidth="xs">
+        <DialogTitle>HR/Admin exception override</DialogTitle>
+        <DialogContent>
+          {overrideException && <Stack spacing={1.5} sx={{ pt: 1 }}>
+            <Alert severity="warning">This is an auditable override. It removes this exception from payroll blocking, but does not alter the original attendance, leave, or WFH record.</Alert>
+            <Typography variant="body2" color="text.secondary">{overrideException.employeeId} • {exceptionDescription(overrideException)} • {overrideException.affectedDates?.map((date) => dayjs(date).format("DD MMM YYYY")).join(", ") || "No date recorded"}</Typography>
+            <AppTextField label="HR/Admin override reason" value={overrideReason} onChange={(event) => setOverrideReason(event.target.value)} multiline minRows={3} required helperText="This reason is stored in the exception audit trail." />
+          </Stack>}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <AppButton variant="outlined" disabled={savingResolution} onClick={() => setOverrideException(null)}>Cancel</AppButton>
+          <AppButton color="warning" disabled={savingResolution} onClick={() => void overrideBlockingException()}>{savingResolution ? "Saving…" : "Override & unblock"}</AppButton>
+        </DialogActions>
+      </Dialog>
       <Dialog open={!!sourceConflict} onClose={() => setSourceConflict(null)} fullWidth maxWidth="sm">
         <DialogTitle>WFH source conflict details</DialogTitle>
         <DialogContent>
@@ -684,7 +738,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
             <Typography variant="body2" color="text.secondary">Current source: {sourceConflict.sourceType || "Unknown"}{sourceConflict.sourceId ? ` (${sourceConflict.sourceId})` : ""}</Typography>
             <Typography variant="body2" color="text.secondary">Existing attendance: {sourceConflict.item.existingStatus || "Not recorded"}{sourceConflict.item.existingAttendanceId ? ` (${sourceConflict.item.existingAttendanceId})` : ""}</Typography>
             <Typography variant="body2" color="text.secondary">WFH request: {sourceConflict.item.leaveRequestId || "Not recorded"} • Source version: {sourceConflict.item.sourceVersion ?? "Not recorded"}</Typography>
-            <Typography variant="caption" color="text.secondary">For WFH+SL/WFH+CL, recheck after the combined status is saved. For any other source conflict, correct the linked leave or WFH request first; attendance ownership is intentionally preserved.</Typography>
+            <Typography variant="caption" color="text.secondary">Correct the linked leave or WFH request first; attendance ownership is intentionally preserved.</Typography>
             <AppTextField label="HR/Admin resolution reason" value={sourceConflictRemarks} onChange={(event) => setSourceConflictRemarks(event.target.value)} multiline minRows={2} required />
           </Stack>}
         </DialogContent>

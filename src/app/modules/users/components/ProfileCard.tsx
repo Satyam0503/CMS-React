@@ -194,45 +194,43 @@ export default function ProfileCard() {
         {!employeeId && (
           <Stack
             direction="row"
-            className="gap-2 align-items-end justify-content-center"
+            spacing={1}
+            alignItems="flex-end"
+            sx={{
+              width: "100%",
+              mt: 1.5,
+            }}
           >
-            <CustomisedDatePicker
-              label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
-              views={["month", "year"]}
-              value={date}
-              maxDate={dayjs().subtract(1, "month")}
-              setValue={handleDateChange}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: alpha(paySlipControlColor, 0.1),
-                  "& fieldset": {
-                    borderColor: alpha(paySlipControlColor, 0.82),
-                  },
-                  "&:hover:not(.Mui-focused)": {
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: paySlipControlColor,
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <CustomisedDatePicker
+                label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+                views={["month", "year"]}
+                value={date}
+                maxDate={dayjs().subtract(1, "month")}
+                setValue={handleDateChange}
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: alpha(paySlipControlColor, 0.1),
+                    "& fieldset": { borderColor: alpha(paySlipControlColor, 0.82) },
+                    "&:hover:not(.Mui-focused)": {
+                      "& .MuiOutlinedInput-notchedOutline": { borderColor: paySlipControlColor },
                     },
+                    "&.Mui-focused fieldset": { borderColor: paySlipControlColor },
+                    color: paySlipControlColor,
                   },
-                  "&.Mui-focused fieldset": {
-                    borderColor: paySlipControlColor,
-                  },
-                  color: paySlipControlColor,
-                },
-                "& .MuiInputLabel-root": {
-                  color: paySlipControlColor,
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: paySlipControlColor,
-                },
-                "& .MuiSvgIcon-root": {
-                  color: paySlipControlColor,
-                },
-              }}
-            />
+                  "& .MuiInputLabel-root": { color: paySlipControlColor },
+                  "& .MuiInputLabel-root.Mui-focused": { color: paySlipControlColor },
+                  "& .MuiSvgIcon-root": { color: paySlipControlColor },
+                }}
+              />
+            </Box>
             <AppIconButton
+              aria-label="View payslip"
               sx={{
                 height: 36,
                 width: 36,
+                flexShrink: 0,
                 borderRadius: 1,
                 border: "1px solid",
                 borderColor: alpha(paySlipControlColor, 0.82),
@@ -242,11 +240,7 @@ export default function ProfileCard() {
               onClick={viewPaySlip}
               disabled={loading}
             >
-              {loading ? (
-                <span className="loader" />
-              ) : (
-                <Visibility sx={{ color: paySlipControlColor }} />
-              )}
+              {loading ? <span className="loader" /> : <Visibility sx={{ color: paySlipControlColor }} />}
             </AppIconButton>
           </Stack>
         )}

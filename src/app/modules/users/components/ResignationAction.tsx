@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { AppButton } from "../../../shared/components/ui";
-import { submitOwnResignation } from "../../employees/employeeServices";
+import { getOwnEmployeeExitCase, submitOwnResignation } from "../../employees/employeeServices";
 import { useUserDetails } from "../UserDataProvider";
 import { useAppSelector } from "../../../Redux/hooks";
 
@@ -15,7 +15,24 @@ export const ResignationAction = () => {
   const [reason, setReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
-  if (!currentUserId || userDetails.userId !== currentUserId || userDetails.employmentStatus && userDetails.employmentStatus !== "Active") return null;
+  const [hasActiveExitCase, setHasActiveExitCase] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    if (!currentUserId || userDetails.userId !== currentUserId) return;
+    let isCurrent = true;
+    getOwnEmployeeExitCase(currentUserId)
+      .then((response) => {
+        if (isCurrent) setHasActiveExitCase(Boolean(response.data.success && response.data.methodResult));
+      })
+      .catch(() => {
+        // The resignation endpoint remains the authority; do not leave the
+        // profile action permanently unavailable after a transient lookup error.
+        if (isCurrent) setHasActiveExitCase(false);
+      });
+    return () => { isCurrent = false; };
+  }, [currentUserId, userDetails.userId]);
+
+  if (!currentUserId || userDetails.userId !== currentUserId || userDetails.employmentStatus && userDetails.employmentStatus !== "Active" || hasActiveExitCase !== false) return null;
   const submit = async () => {
     if (!date) return toast.error("Select your last working date.");
     setSaving(true);
@@ -23,6 +40,7 @@ export const ResignationAction = () => {
       const response = await submitOwnResignation({ employeeUserId: currentUserId, exitType: "Resigned", lastWorkingDate: date.format("YYYY-MM-DD"), reason: reason.trim() || undefined });
       if (!response.data.success) throw new Error(response.data.message || "Unable to submit resignation.");
       toast.success("Your resignation has been submitted.");
+      setHasActiveExitCase(true);
       setOpen(false);
       setRefresh();
     } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to submit resignation."); }

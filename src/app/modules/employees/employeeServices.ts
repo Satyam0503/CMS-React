@@ -11,6 +11,7 @@ import {
   GetAllEmployeeResponseData,
   InviteEmployeeResponse,
   InviteNewEmployeeModel,
+  InitiateEmployeeExitRequest,
 } from "./models";
 import { EditEmployeePayloadModel } from "../users/models";
 import { GetAllDepartmentDetailsResponseData } from "../dashboard/model";
@@ -74,6 +75,18 @@ export const getAllEmployees = async (
   >(ServiceUrl.GET_ALL_EMPLOYEE, payload);
 };
 
+export const initiateEmployeeExit = (payload: InitiateEmployeeExitRequest) =>
+  postRequest<InitiateEmployeeExitRequest, ApiResponse>(
+    ServiceUrl.INITIATE_EMPLOYEE_EXIT,
+    payload,
+  );
+
+export const completeEmployeeExit = (employeeUserId: string, notes?: string) =>
+  postRequest<{ employeeUserId: string; notes?: string }, ApiResponse>(
+    ServiceUrl.COMPLETE_EMPLOYEE_EXIT,
+    { employeeUserId, notes },
+  );
+
 export const getDirectoryDepartments = () =>
   getRequest<GetAllDepartmentDetailsResponseData>(
     ServiceUrl.GET_DIRECTORY_DEPARTMENTS,
@@ -91,7 +104,7 @@ export const withdrawOwnEmployeeExit = (payload: { employeeExitId: string; versi
 export const getEmployeeExitCaseForManagement = (userId: string) =>
   getRequest<ResponseData<EmployeeExitCase>>(`api/User/EmployeeExitManagement/${encodeURIComponent(userId)}`);
 
-export const reviewEmployeeExit = (payload: { employeeExitId: string; version: number; action: "Approve" | "Discuss" | "JointDiscussion"; notes?: string; proposedLastWorkingDate?: string }) =>
+export const reviewEmployeeExit = (payload: { employeeExitId: string; version: number; action: "Approve" | "Discuss" | "JointDiscussion" | "Reject" | "RequestDiscussion"; notes?: string; recommendedLastWorkingDate?: string }) =>
   postRequest<typeof payload, ApiResponse>("api/User/ReviewEmployeeExit", payload);
 
 export const respondToEmployeeExitDiscussion = (payload: { employeeExitId: string; version: number; notes?: string; proposedLastWorkingDate?: string }) =>
@@ -138,6 +151,10 @@ export const getEmployeeExitPolicies = () => getRequest<ResponseData<EmployeeExi
 export const saveEmployeeExitPolicy = (payload: EmployeeExitPolicy) => postRequest<EmployeeExitPolicy, ApiResponse>("api/User/EmployeeExitPolicy", payload);
 export const getEmployeeExitClearanceTemplates = () => getRequest<ResponseData<EmployeeExitClearanceTemplate>>("api/User/EmployeeExitClearanceTemplates");
 export const saveEmployeeExitClearanceTemplate = (payload: EmployeeExitClearanceTemplate) => postRequest<EmployeeExitClearanceTemplate, ApiResponse>("api/User/EmployeeExitClearanceTemplate", payload);
+export const recordEmployeeExitInterview = (payload: { employeeExitId: string; version: number; employeeFeedback?: string; managerFeedback?: string; hrNotes?: string; isRehireEligible?: boolean }) => postRequest<typeof payload, ApiResponse>("api/User/RecordEmployeeExitInterview", payload);
+export const calculateEmployeeFinalSettlement = (payload: { employeeExitId: string; version: number; salaryPayable: number; reimbursements: number; leaveEncashment: number; bonusesAndIncentives: number; deductions: number; noticeRecovery: number; outstandingDues: number }) => postRequest<typeof payload, ApiResponse>("api/User/CalculateEmployeeFinalSettlement", payload);
+export const markEmployeeFinalSettlementPaid = (payload: { employeeExitId: string; version: number }) => postRequest<typeof payload, ApiResponse>("api/User/MarkEmployeeFinalSettlementPaid", payload);
+export const generateEmployeeExitDocument = (payload: { employeeExitId: string; version: number; type: "RelievingLetter" | "ExperienceLetter" | "FinalSettlementStatement"; url?: string }) => postRequest<typeof payload, ApiResponse>("api/User/GenerateEmployeeExitDocument", payload);
 
 export type EmployeeExitCase = {
   employeeExitId: string; status: string; lastWorkingDate: string; version: number;
@@ -149,6 +166,8 @@ export type EmployeeExitCase = {
   benefitItems: Array<{ benefitItemId: string; category: string; status: string; effectiveEndDate?: string; reference?: string; notes?: string }>;
   evidence: Array<{ evidenceId: string; category: string; type: string; status: string; visibility: string; fileName?: string; contentType?: string; uploadedAtUtc: string }>;
   formerEmployeeRequests: Array<{ requestId: string; type: string; status: string; details: string; requestedAtUtc: string }>;
+  responsibilityReassignments: Array<{ responsibility: string; newOwnerUserId: string; notes?: string }>;
+  documents: Array<{ type: string; status: string; url?: string }>;
   auditHistory: Array<{ action: string; atUtc: string; notes?: string }>;
   permittedActions: string[];
   pendingHandoverCount: number; pendingAssetCount: number; pendingAccessCount: number; pendingFinanceCount: number; pendingBenefitCount: number;

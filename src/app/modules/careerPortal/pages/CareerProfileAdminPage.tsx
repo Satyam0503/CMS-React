@@ -14,7 +14,7 @@ import { getManagedCompanyProfile, saveManagedCompanyProfile } from "../services
 import { PublicCompanyProfile } from "../types/careerPortalTypes";
 
 const emptyProfile: PublicCompanyProfile = {
-  publicCompanyCode: "", displayName: "", officeLocations: [], values: [], benefits: [], technologies: [], socialLinks: {}, isPublished: false,
+  publicCompanyCode: "", displayName: "", officeLocations: [], values: [], benefits: [], technologies: [], socialLinks: {}, careerTheme: "glass", isPublished: false,
 };
 
 const parseCommaSeparatedValues = (value: string) =>

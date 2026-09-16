@@ -63,6 +63,7 @@ export type CompanyModel = {
   autoGenerateEmployeeId?: boolean;
   careerPortalEnabled?: boolean;
   address: string;
+  appTheme?: "glass" | "slate" | "dawn" | "blush";
 };
 
 export type JobTitleResponseModel = Pick<

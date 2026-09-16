@@ -32,8 +32,6 @@ const defaultStatuses: AttendanceStatusSetting[] = [
   ["WFH+WFO", "Half WFH and Half WFO", true, 1, 0], ["COMP-OFF", "Compensatory Off", false, 1, 0],
   ["CL-HALF", "Casual Leave (Half Day)", false, 1, 0], ["SL-HALF", "Sick Leave (Half Day)", false, 1, 0],
   ["WFH-HD", "WFH with Half Day", true, .5, .5],
-  ["WFH+SL", "Work From Home + Sick Leave", true, 1, 0],
-  ["WFH+CL", "Work From Home + Casual Leave", true, 1, 0],
 ].map(([code, name, requiresTime, paid, unpaid], index) => ({
   code: code as string, name: name as string, requiresTime: requiresTime as boolean,
   paidDayFraction: paid as number, unpaidDayFraction: unpaid as number,
@@ -153,24 +151,6 @@ export default function AttendanceStatusSettings() {
   return (
     <Card sx={{ p: { xs: 2, sm: 3, lg: 4 }, mb: 2, overflow: "visible" }}>
       <Stack spacing={3}>
-        {isEditing && (
-          <Box sx={{ ...sectionSx, bgcolor: "background.default" }}>
-            <Typography variant="subtitle1" fontWeight={750} sx={{ mb: 2 }}>Add a custom status</Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "120px minmax(180px, 1fr) 140px 140px" }, gap: 2 }}>
-              <AppTextField label="Code" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value.toUpperCase() })} />
-              <AppTextField label="Name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              <AppTextField label="Paid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.paidDayFraction} onChange={(e) => setDraft({ ...draft, paidDayFraction: +e.target.value })} />
-              <AppTextField label="Unpaid day" type="number" inputProps={{ min: 0, max: 1, step: .5 }} value={draft.unpaidDayFraction} onChange={(e) => setDraft({ ...draft, unpaidDayFraction: +e.target.value })} />
-            </Box>
-            <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "center" }} justifyContent="space-between" gap={1.5} sx={{ mt: 2 }}>
-              <FormControlLabel control={<AppCheckbox checked={draft.requiresTime} onChange={(e) => setDraft({ ...draft, requiresTime: e.target.checked, isAvailableForLeaveManagement: e.target.checked ? false : draft.isAvailableForLeaveManagement })} />} label="Requires punch in and punch out time" />
-              <FormControlLabel control={<AppCheckbox checked={draft.isAvailableForLeaveManagement} disabled={draft.requiresTime} onChange={(e) => setDraft({ ...draft, isAvailableForLeaveManagement: e.target.checked })} />} label="Available for Leave" />
-              <AppButton startIcon={<Add />} variant="outlined" disabled={!draft.code.trim() || !draft.name.trim()} onClick={addDraft}>Add status</AppButton>
-            </Stack>
-            <Typography variant="caption" color="text.secondary">Available for Leave allows this no-time status to be selected in Leave Management policies.</Typography>
-          </Box>
-        )}
-
         <Box sx={sectionSx}>
           <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems={{ md: "center" }} gap={1} sx={{ mb: 2 }}>
             <Box>
