@@ -36,4 +36,11 @@ Recommended reading order for a new contributor (human or AI):
 
 ## Companion: backend docs
 
-This repo only documents the frontend. The .NET backend lives in a sibling repo (`CMS-Backend-Core`). When implementing a feature that needs new API endpoints, also create or modify the corresponding controller, service, and DTO there.
+This repo documents the frontend. The .NET backend lives in the sibling `CMS-Backend-Core` repository. The current cross-module implementation references are:
+
+- [HRMS documentation index](../../CMS-Backend-Core/docs/hrms/README.md)
+- [Offboarding end-to-end flow](../../CMS-Backend-Core/docs/hrms/offboarding.md)
+- [Payroll end-to-end flow](../../CMS-Backend-Core/docs/hrms/payroll.md)
+- [Employee lifecycle end-to-end flow](../../CMS-Backend-Core/docs/hrms/employee-lifecycle.md)
+
+When changing one of these modules, update both the frontend-specific documentation and the corresponding end-to-end reference.

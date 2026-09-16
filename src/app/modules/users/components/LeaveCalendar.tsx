@@ -1,4 +1,5 @@
-import { Box, Card, Chip, Stack, Tooltip, Typography } from "@mui/material";
+import { CelebrationRounded } from "@mui/icons-material";
+import { Box, Card, Chip, Stack, Tooltip, Typography, alpha } from "@mui/material";
 import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
@@ -11,6 +12,8 @@ import { ResponseData } from "../../../../utils/common_types";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useUserDetails } from "../UserDataProvider";
 import { ModulesName, Permission, Roles } from "../../../../utils/enums";
+import { getHolidays } from "../../holidays/calendarServices";
+import { HolidayModel } from "../../holidays/models";
 
 type AttendanceStatusSetting = {
   code: string;
@@ -31,6 +34,7 @@ type CalendarDayAttendance = {
 function LeaveCalendar() {
   const [month, setMonth] = useState(dayjs().startOf("month"));
   const [attendance, setAttendance] = useState<AttendanceModel[]>([]);
+  const [holidays, setHolidays] = useState<Map<string, HolidayModel>>(new Map());
   const [statuses, setStatuses] = useState<AttendanceStatusSetting[]>([]);
   const { userDetails } = useUserDetails();
   const userData = useAppSelector((state) => state.user.userData);
@@ -40,14 +44,18 @@ function LeaveCalendar() {
   const mayViewCalendar = targetUserId === currentUserId || canViewOtherAttendance;
 
   useEffect(() => {
-    if (!targetUserId || !mayViewCalendar) { setAttendance([]); return; }
+    if (!targetUserId || !mayViewCalendar) { setAttendance([]); setHolidays(new Map()); return; }
 
     const load = async () => {
       const fromDate = month.startOf("month").format("YYYY-MM-DD");
       const toDate = month.endOf("month").format("YYYY-MM-DD");
       try {
-        const statusResponse = await getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=true");
+        const [statusResponse, holidayResponse] = await Promise.all([
+          getRequest<ResponseData<AttendanceStatusSetting>>("api/attendance-status-settings?activeOnly=true"),
+          getHolidays({ fromDate: month.startOf("month"), toDate: month.endOf("month") }),
+        ]);
         setStatuses(statusResponse.data.methodResults ?? []);
+        setHolidays(new Map((holidayResponse.data.methodResults ?? []).map((holiday) => [formatServerDate(holiday.date, "YYYY-MM-DD"), holiday])));
         if (targetUserId === currentUserId) {
           const response = await getRequest<{ items?: AttendanceModel[] }>(`api/attendance/me/calendar?year=${month.year()}&month=${month.month() + 1}`);
           setAttendance(response.data.items ?? []);
@@ -58,6 +66,7 @@ function LeaveCalendar() {
       } catch (error) {
         console.error("Unable to load the employee attendance calendar", error);
         setAttendance([]);
+        setHolidays(new Map());
       }
     };
 
@@ -99,7 +108,31 @@ function LeaveCalendar() {
   }
 
   const renderDay = (dayProps: PickersDayProps<Dayjs>) => {
-    const dayAttendance = attendanceByDay.get(dayProps.day.format("YYYY-MM-DD"));
+    const dateKey = dayProps.day.format("YYYY-MM-DD");
+    const holiday = holidays.get(dateKey);
+    if (holiday) {
+      const holidayName = holiday.name || "Public holiday";
+      return (
+        <Tooltip arrow placement="top" title={<Box><Typography variant="caption" display="block" fontWeight={800}>{holidayName}</Typography><Typography variant="caption" display="block">Public holiday · {dayProps.day.format("DD MMMM YYYY")}</Typography></Box>}>
+          <PickersDay
+            {...dayProps}
+            aria-label={`${holidayName}, public holiday`}
+            sx={{
+              bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16),
+              color: "secondary.dark",
+              fontWeight: 800,
+              border: "2px solid",
+              borderColor: "background.paper",
+              "&:hover, &:focus": { bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.26) },
+              "&.Mui-selected": { bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.3), color: "secondary.dark" },
+            }}
+          >
+            <CelebrationRounded fontSize="small" aria-hidden="true" />
+          </PickersDay>
+        </Tooltip>
+      );
+    }
+    const dayAttendance = attendanceByDay.get(dateKey);
     if (!dayAttendance) return <PickersDay {...dayProps} />;
 
     // Segments are authoritative whenever present: the daily compatibility row
@@ -147,14 +180,35 @@ function LeaveCalendar() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DateCalendar
           value={month}
+          // This profile widget is a compact attendance calendar. Keep the
+          // picker in day view so the header cannot leave it stuck in the
+          // year-selection grid inside the narrow profile rail.
+          views={["day"]}
+          openTo="day"
           onMonthChange={(value) => setMonth(value.startOf("month"))}
           onChange={(value) => value && setMonth(value.startOf("month"))}
           readOnly
           slots={{ day: renderDay }}
-          sx={{ width: "auto", button: { border: "none" }, ".MuiDayCalendar-header, .MuiDayCalendar-weekContainer": { justifyContent: "space-between" } }}
+          sx={{
+            width: "100%",
+            maxWidth: "100%",
+            minWidth: 0,
+            overflow: "hidden",
+            "& .MuiPickersCalendarHeader-root": { width: "100%", boxSizing: "border-box", px: 0, minHeight: 38, mb: 0.5 },
+            "& .MuiDayCalendar-monthContainer": { width: "100%" },
+            "& .MuiDayCalendar-weekContainer": { width: "100%", minWidth: 0 },
+            button: { border: "none" },
+            ".MuiDayCalendar-header, .MuiDayCalendar-weekContainer": { justifyContent: "space-between" },
+            "& .MuiPickersCalendarHeader-labelContainer": { flex: "1 1 auto", minWidth: 0, overflow: "hidden" },
+            "& .MuiPickersCalendarHeader-label": { fontSize: "0.9rem", lineHeight: 1.2, fontWeight: 800, whiteSpace: "nowrap" },
+            "& .MuiPickersCalendarHeader-switchViewButton": { mx: 0.25, p: 0.5 },
+            "& .MuiPickersArrowSwitcher-root": { gap: 0.25 },
+            "& .MuiPickersArrowSwitcher-button": { p: 0.5 },
+          }}
         />
       </LocalizationProvider>
-      <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 0.5 }}>
+      <Stack direction="row" flexWrap="wrap" gap={0.75} alignItems="center" sx={{ mt: 0.5 }}>
+        {holidays.size > 0 && <Tooltip title="Public holiday"><Box aria-label="Public holiday" sx={{ display: "grid", placeItems: "center", width: 28, height: 24, borderRadius: 1.5, bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16), color: "secondary.dark" }}><CelebrationRounded fontSize="small" /></Box></Tooltip>}
         {visibleStatuses.length ? visibleStatuses.map((status) => <Chip key={status.code} size="small" label={status.code} title={status.name} sx={{ borderRadius: 1.5, fontWeight: 800, bgcolor: status.color, color: "#fff" }} />) : <Chip size="small" label="No attendance this month" variant="outlined" />}
       </Stack>
     </Card>

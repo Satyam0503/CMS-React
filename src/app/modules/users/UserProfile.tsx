@@ -9,8 +9,7 @@ import {
 import { UserDetailsProvider } from "./UserDataProvider";
 import ProfileCard from "./components/ProfileCard";
 import { useIntl } from "react-intl";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useMemo } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 import { TabModel } from "../../../utils/common_types";
@@ -25,8 +24,9 @@ import { getProfileTabs } from "./profileTabs";
 import { ResignationAction } from "./components/ResignationAction";
 import { EmployeeExitCaseCard } from "./components/EmployeeExitCaseCard";
 import { EmployeeExitManagementCard } from "./components/EmployeeExitManagementCard";
-import { EmployeeExitPolicySettings } from "./components/EmployeeExitPolicySettings";
 import { EmployeeOffboardingAction } from "./components/EmployeeOffboardingAction";
+import { WorkShiftCard } from "./components/WorkShiftCard";
+import { EmployeeExitQueueAction } from "./components/EmployeeExitQueueAction";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -68,19 +68,8 @@ const UserProfile = () => {
   );
 
   const filteredTabs = tabsRoutes;
-  const [pageHeaderActionsTarget, setPageHeaderActionsTarget] =
-    useState<HTMLElement | null>(null);
-
-  // The page header is rendered outside this route. Resolve its portal target
-  // after this route has committed so client-side navigation never leaves the
-  // action attached to a stale header node.
-  useLayoutEffect(() => {
-    setPageHeaderActionsTarget(document.getElementById("page-header-actions"));
-  }, [empId]);
-
   return (
     <UserDetailsProvider>
-      {pageHeaderActionsTarget && createPortal(<EmployeeOffboardingAction />, pageHeaderActionsTarget)}
       <Grid container spacing={{ xs: 2, lg: 3 }} className="flex-grow-1" sx={{ width: "100%", minWidth: 0, pb: { xs: 2, sm: 3, md: 4 }, alignItems: "flex-start", position: "relative", isolation: "isolate", "&::before": { content: '""', position: "absolute", zIndex: -1, width: 280, height: 280, borderRadius: "50%", top: -80, right: 20, bgcolor: "primary.main", opacity: .06, filter: "blur(4px)" }, "&::after": { content: '""', position: "absolute", zIndex: -1, width: 220, height: 220, borderRadius: "50%", bottom: 60, left: 180, bgcolor: "secondary.main", opacity: .05, filter: "blur(8px)" } }}>
         <Grid
           size={{
@@ -103,16 +92,22 @@ const UserProfile = () => {
                 <ProfileCard />
               </Grid>
               <Grid size={12}>
+                <WorkShiftCard />
+              </Grid>
+              <Grid size={12}>
                 <LeaveCalendar />
               </Grid>
-              {!empId && (
-                <Grid size={12}>
-                  <EmployeeExitCaseCard />
-                </Grid>
-              )}
+              {!empId && <Grid size={12}><ResignationAction /></Grid>}
+              {!empId && <Grid size={12}><EmployeeExitQueueAction /></Grid>}
+              {empId && <Grid size={12}><EmployeeOffboardingAction /></Grid>}
               {empId && (
                 <Grid size={12}>
                   <EmployeeExitManagementCard employeeUserId={empId} />
+                </Grid>
+              )}
+              {!empId && (
+                <Grid size={12}>
+                  <EmployeeExitCaseCard />
                 </Grid>
               )}
             </Grid>
@@ -130,11 +125,6 @@ const UserProfile = () => {
         >
           <ProfileHeader />
           <Stack spacing={2.5} className="flex-grow-1">
-            {!empId && <ResignationAction />}
-            {!empId && <EmployeeExitCaseCard />}
-            {!empId && <EmployeeExitPolicySettings />}
-            {empId && <EmployeeExitManagementCard employeeUserId={empId} />}
-            <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" }, "& .tab-box": { flex: "0 0 auto", minWidth: { xs: 132, sm: 150 } } }}>
             {!empId && <EmployeeOffboardingAction />}
             <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" }, "& .tab-box": { flex: { xs: "0 0 auto", md: "1 1 0" }, minWidth: { xs: 132, md: 0 }, justifyContent: "center", textAlign: "center" } }}>
               {filteredTabs.map((tab) => {

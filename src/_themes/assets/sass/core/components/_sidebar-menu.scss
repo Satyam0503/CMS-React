@@ -4,9 +4,9 @@
   & .sidebar-paper {
     width: var(--sidebar-current-width);
     top: calc(var(--app-header-height) + 12px);
-    bottom: calc(var(--app-footer-height) + 12px);
-    left: 12px;
+    bottom: 12px;
     height: auto;
+    left: 12px;
     max-height: none;
     overflow: hidden;
     white-space: nowrap;
@@ -277,6 +277,87 @@
 
 .sidebar {
   background: transparent !important;
+}
+
+// Futuristic motion layer: restrained ambient light and tactile micro-motion
+// keep the rail alive without distracting from navigation.
+@keyframes sidebarAmbientPulse {
+  0%, 100% { opacity: 0.18; transform: translate3d(0, 0, 0) scale(1); }
+  50% { opacity: 0.32; transform: translate3d(6px, -4px, 0) scale(1.06); }
+}
+
+@keyframes sidebarActiveSweep {
+  0% { transform: translateY(-120%); opacity: 0; }
+  35%, 65% { opacity: 0.7; }
+  100% { transform: translateY(120%); opacity: 0; }
+}
+
+.sidebar .sidebar-paper {
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: -16%;
+    right: -22%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(94, 234, 212, 0.38), transparent 68%);
+    filter: blur(4px);
+    animation: sidebarAmbientPulse 5.5s ease-in-out infinite;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.sidebar .sidebar-menu-item {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: -80%;
+    left: 0;
+    width: 2px;
+    height: 260%;
+    opacity: 0;
+    background: linear-gradient(180deg, transparent, var(--mui-palette-primary-main), transparent);
+    transition: opacity 180ms ease;
+  }
+
+  &:hover::after,
+  &.Mui-selected::after {
+    opacity: 0.9;
+  }
+
+  &.Mui-selected::after {
+    animation: sidebarActiveSweep 1.8s ease-in-out infinite;
+  }
+
+  &:hover .MuiSvgIcon-root {
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--mui-palette-primary-main) 42%, transparent));
+  }
+}
+
+.sidebar .sidebar-edge-toggle {
+  &:hover .MuiSvgIcon-root,
+  &:focus-visible .MuiSvgIcon-root {
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--mui-palette-primary-main) 52%, transparent));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar .sidebar-paper::before,
+  .sidebar .sidebar-menu-item.Mui-selected::after {
+    animation: none !important;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -578,7 +659,7 @@
     &::before {
       position: absolute;
       content: "";
-      left: 5px;
+      left: 2px;
       top: 50%;
       width: 3px;
       height: 24px;
@@ -590,6 +671,8 @@
 
     & .MuiListItemIcon-root,
     & .MuiSvgIcon-root {
+      position: relative;
+      z-index: 1;
       color: var(--mui-palette-primary-main) !important;
     }
   }

@@ -19,6 +19,7 @@ interface Props<R extends GridValidRowModel> {
   showToolbar?: boolean;
   hidePagination?: boolean;
   rowClickHandler?: (param: GridRowParams<R>) => void;
+  rowClassName?: (param: GridRowParams<R>) => string;
   paginationModel?: GridPaginationModel;
   rowCount?: number;
   handlePaginationModelChange?: (model: GridPaginationModel) => void;
@@ -57,7 +58,10 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
             noRowsVariant: "skeleton",
           },
         }}
-        getRowClassName={() => (props.rowClickHandler ? "pointer-cursor" : "")}
+        getRowClassName={(params) => [
+          props.rowClickHandler ? "pointer-cursor" : "",
+          props.rowClassName?.(params) ?? "",
+        ].filter(Boolean).join(" ")}
         onRowClick={props.rowClickHandler}
         paginationMode="server"
         pageSizeOptions={[10, 25, 50, 100]}

@@ -22,7 +22,7 @@ export type PayRollDataModel = {
 };
 
 export type PayRollRequestModel = {
-  payMonth: Dayjs;
+  payMonth: string;
   payData: PayRollDataModel[];
 };
 
@@ -42,7 +42,7 @@ export type PayRollResponseModel = {
   payData: Nullable<PayRollDataModel>;
 };
 
-export type AddUpdatePayRollPayload = typeof initialPayRollValues;
+export type AddUpdatePayRollPayload = Omit<typeof initialPayRollValues, "payMonth"> & { payMonth: string };
 
 export type ProcessPayrollMonthPayload = {
   payMonth: string;

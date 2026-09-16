@@ -166,6 +166,17 @@ export type LeavePolicyModel = {
     halfDayRequiredWorkingMinutes?: number | null;
     breakMinutes: number;
   } | null;
+  lifecycle?: {
+    enabled: boolean;
+    eventType: "MedicalLeave" | "MaternityLeave" | "PaternityLeave" | "LongTermLeave" | "Sabbatical" | string;
+    requiresHrApproval: boolean;
+    requiresReason: boolean;
+    requiresDocument: boolean;
+    requiresExpectedReturnDate: boolean;
+    defaultAccountStatus?: "Active" | "TemporarilyDisabled" | string | null;
+    defaultPayrollStatus?: "Active" | "Hold" | "Paused" | string | null;
+    effectiveFromUtc?: string | null;
+  } | null;
 };
 
 export type EmployeeLeaveBalanceFilter = {

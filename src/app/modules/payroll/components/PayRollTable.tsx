@@ -183,13 +183,14 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
         sx={{
           width: "100%",
           minWidth: 0,
+          maxHeight: { xs: "60vh", md: "none" },
           overflowX: "auto",
-          overflowY: "hidden",
+          overflowY: { xs: "auto", md: "hidden" },
           touchAction: "pan-x",
-          "&::-webkit-scrollbar": { height: 7 },
+          "&::-webkit-scrollbar": { height: 7, width: 7 },
         }}
       >
-        <Table sx={{ minWidth: { xs: 1200, lg: 1440 } }}>
+        <Table size="small" stickyHeader sx={{ minWidth: { xs: 900, sm: 1100, lg: 1440 } }}>
           <TableHead>
             <TableRow>
               {columns.map((col) => (
@@ -197,6 +198,8 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   id={col.id}
                   sx={{
                     minWidth: col.minWidth,
+                    fontSize: { xs: 11.5, sm: 13 },
+                    whiteSpace: "nowrap",
                     ...(col.id === "actions" ? {
                       position: "sticky",
                       left: 0,
@@ -235,7 +238,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   {columns.map((column) => {
                     if (column.id === "employeeName") {
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 } }}>
                           <AvatarCell
                             avatarSrc={""}
                             title={row.employeeName}
@@ -246,7 +249,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                     }
                     if (column.id === "paidDate") {
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {dateFormatter(row.payData.paidDate, "DD MMM YYYY")}
                         </TableCell>
                       );
@@ -277,13 +280,13 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                     }
                     if (amountColumns.has(column.id)) {
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {currencyFormatter(row.payData[column.id] as number | null | undefined)}
                         </TableCell>
                       );
                     }
                     return (
-                      <TableCell key={column.id}>
+                      <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                         {row.payData[column.id]}
                       </TableCell>
                     );
@@ -314,11 +317,12 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
             minHeight: 48,
             px: { xs: 0, sm: 1 },
             flexWrap: "wrap",
-            justifyContent: { xs: "flex-end", sm: "initial" },
+            justifyContent: { xs: "center", sm: "initial" },
             gap: { xs: 0.5, sm: 0 },
           },
           "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
-          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 } },
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 }, mb: 0 },
+          "& .MuiTablePagination-actions": { ml: { xs: 0, sm: 2.5 } },
         }}
       />
       {

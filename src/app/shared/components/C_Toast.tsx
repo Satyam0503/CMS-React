@@ -2,7 +2,7 @@ import { toast, ToastContentProps } from "react-toastify";
 import { NOTIFICATION_TYPE } from "../../../utils/enums";
 import { NotificationModel } from "../../modules/users/models";
 import { Avatar, Stack, Typography } from "@mui/material";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import { NotificationIconMapper } from "../../../_themes/layout/components/header/navbarmenus/HeaderNotificationMenu";
 import { Message } from "@mui/icons-material";
 import { getNotificationTitle } from "../../../utils/common";
@@ -31,7 +31,15 @@ export const showCustomToast = (notification: NotificationModel) => {
                 className: "app-toast--notification"
             });
             break;
-        default: toast(<FormattedMessage id="NOTIFICATION.TITLES.FALLBACK" />);
+        default:
+            // Offboarding and other newer server notifications do not share the
+            // legacy enum values above. Render their supplied title/body in the
+            // standard notification layout instead of discarding it for the
+            // generic fallback message.
+            toast(<CustomNotificationWithAction notificationData={notification} />, {
+                autoClose: 4000,
+                className: "app-toast--notification"
+            });
     }
 }
 

@@ -124,16 +124,16 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
                     return <TableCell key={column.id}>{row.employeeId}</TableCell>;
                   }
                   if (column.id === "status") {
+                    const lifecycleStatus = row.lifecyclePayrollStatus;
+                    const statusLabel = lifecycleStatus && lifecycleStatus !== "Active"
+                      ? lifecycleStatus.replace(/([a-z])([A-Z])/g, "$1 $2")
+                      : row.activeSalary ? i({ id: "PAYROLL_SETTINGS.STATUS_ACTIVE" }) : i({ id: "PAYROLL_SETTINGS.STATUS_NOT_SET" });
                     return (
                       <TableCell key={column.id}>
                         <Chip
                           size="small"
-                          color={row.activeSalary ? "success" : "default"}
-                          label={i({
-                            id: row.activeSalary
-                              ? "PAYROLL_SETTINGS.STATUS_ACTIVE"
-                              : "PAYROLL_SETTINGS.STATUS_NOT_SET",
-                          })}
+                          color={lifecycleStatus && lifecycleStatus !== "Active" ? "warning" : row.activeSalary ? "success" : "default"}
+                          label={statusLabel}
                         />
                       </TableCell>
                     );

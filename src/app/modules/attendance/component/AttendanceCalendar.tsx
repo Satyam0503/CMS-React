@@ -61,6 +61,8 @@ interface Employee {
   fullName: string;
   dateOfJoining?: string | null;
   lastWorkingDate?: string | null;
+  employmentStatus?: string | null;
+  availabilityStatus?: string | null;
   scheduleId?: string | null;
   scheduleName?: string | null;
   scheduledStartTime?: string | null;
@@ -893,8 +895,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const lastWorkingDate = row.lastWorkingDate
       ? dayjs(row.lastWorkingDate).endOf("day")
       : null;
+    const employmentStatus = row.employmentStatus ?? "Active";
+    const usesExitCutoff = ["NoticePeriod", "Resigned", "Terminated"].includes(employmentStatus);
     const isAfterExit = Boolean(
-      lastWorkingDate?.isValid() && dayjs(dateObj).isAfter(lastWorkingDate, "day"),
+      usesExitCutoff && lastWorkingDate?.isValid() && dayjs(dateObj).isAfter(lastWorkingDate, "day"),
     );
     const firstHalf = value.halfDaySegments?.FIRST_HALF;
     const secondHalf = value.halfDaySegments?.SECOND_HALF;
@@ -917,13 +921,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
       : undefined;
     const statusCode = value.status || "—";
+    const availabilityLabel = row.availabilityStatus
+      ? row.availabilityStatus.replace(/([a-z])([A-Z])/g, "$1 $2")
+      : "";
     const statusLabel = value.status
       ? (attendanceStatusLabels[value.status as AttendanceStatus] ??
         value.status)
       : isAfterExit
         ? "Not employed on this date"
         : isFutureDate
-        ? "Future date — attendance is not calculated"
+          ? "Future date — attendance is not calculated"
+          : availabilityLabel && availabilityLabel !== "Working"
+          ? availabilityLabel
         : "No attendance recorded";
     const leaveDetail = relatedLeave
       ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
@@ -946,8 +955,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             ? `${statusCode} — ${statusLabel}\nApproved work-from-home request • Generated from WFH workflow\n${dayjs(dateObj).format("DD MMMM YYYY")}`
             : isSystemDefault
               ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
-              : isFutureDate
+                : isFutureDate
                 ? "Future date — attendance is not calculated."
+                : availabilityLabel && availabilityLabel !== "Working"
+                  ? `${availabilityLabel} — normal attendance is not expected for this date.`
                 : isHoliday
                   ? "Public Holiday"
                   : isWeekend
@@ -955,7 +966,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     : statusLabel;
     const canEdit =
       editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining && !isAfterExit;
-    const tooltipLines = tooltipText.split("\n");
+    const tooltipLines: string[] = tooltipText.split("\n");
     const tooltipTitle = (
       <Box sx={{ display: "grid", gap: 0.35, maxWidth: 280 }}>
         <Typography
@@ -1226,6 +1237,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         name: emp.name,
         dateOfJoining: emp.dateOfJoining,
         lastWorkingDate: emp.lastWorkingDate,
+        employmentStatus: emp.employmentStatus,
+        availabilityStatus: emp.availabilityStatus,
         scheduleId: emp.scheduleId,
         scheduleName: emp.scheduleName,
         scheduledStartTime: emp.scheduledStartTime,

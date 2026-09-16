@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { LANGUAGE, Modules, ModulesName, ModulesTitles } from "./enums";
+import { LANGUAGE, Modules, ModulesName, ModulesTitles, Permission } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
@@ -127,6 +127,7 @@ export interface SideBarTabListProps {
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
   isDefault: boolean;
   adminOnly?: boolean;
+  permission?: Permission;
 }
 
 export interface FiltersType {

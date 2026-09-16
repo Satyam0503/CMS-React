@@ -128,7 +128,7 @@ const PayRollManagement = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await getEmployeePayRollData({ employeeName: search, payMonth: payMonth! });
+                const { data } = await getEmployeePayRollData({ employeeName: search, payMonth: payMonth!.format("YYYY-MM-DD") });
                 if (data.success) {
                     setPayRollData(data.methodResults)
                 }
@@ -141,7 +141,7 @@ const PayRollManagement = () => {
 
     return (
         <>
-            <Card className="d-flex flex-column flex-grow-1" sx={{ gap: { xs: 2, md: 3 }, p: { xs: 1.5, sm: 2.5, md: 3 }, minWidth: 0, overflow: "hidden" }}>
+            <Card className="d-flex flex-column flex-grow-1" sx={{ gap: { xs: 1.5, sm: 2, md: 3 }, p: { xs: 1, sm: 1.5, md: 2.5, lg: 3 }, minWidth: 0, overflow: "hidden" }}>
                 <Stack
                     direction={{ xs: "column", lg: "row" }}
                     spacing={1.25}
@@ -255,7 +255,7 @@ const PayRollManagement = () => {
                     </Stack>
                 </Stack>
                 {payrollRows.length > 0 && !isMonthProcessed && (
-                    <Typography variant="body2" color="warning.main" sx={{ mt: -2 }}>
+                    <Typography variant="body2" color="warning.main" sx={{ mt: -2, fontSize: { xs: 12, sm: 14 } }}>
                         Draft payroll is visible only to authorized payroll users. It is not finalized, cannot generate payslips, and must pass attendance readiness before processing.
                     </Typography>
                 )}

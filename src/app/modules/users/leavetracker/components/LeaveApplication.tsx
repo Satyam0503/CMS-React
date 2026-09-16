@@ -27,7 +27,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
+import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createMyProfileLeaveRequestWithEvidence, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -37,9 +37,10 @@ import { useEffect, useState } from "react";
 import { getRequest } from "../../../../../server/axios";
 
 import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui";
+import { EmployeeLifecyclePolicy, getEmployeeLifecycleSelfServicePolicies } from "../../../employees/employeeServices";
 
 type SelectableLeaveType = EmployeeLeaveTypeBalance & {
-  policyType?: 1 | 2 | 3;
+  policyType?: 1 | 2 | 3 | 4;
 };
 type Props = {
   edit: boolean;
@@ -77,9 +78,16 @@ const getLeaveRequestErrorMessage = (errorMessage?: string) => {
   const [rawCode, ...rawDetails] = (errorMessage ?? "").split(":");
   const code = rawCode.trim();
   const details = rawDetails.join(":").trim();
-  if (code === "LEAVE_WFH_OVERLAP")
-    return "Leave cannot be applied because an active Work From Home request already exists for one or more selected dates. Withdraw or cancel the WFH request first, then apply for leave.";
-  return details || errorMessage || "We could not submit the leave request. Please try again.";
+  const messages: Record<string, string> = {
+    LEAVE_AFTER_EXIT: "Leave cannot be applied after the employee’s exit date.",
+    LEAVE_FORMER_EMPLOYEE: "Leave is unavailable because this employee is no longer active.",
+    LEAVE_EMPLOYEE_NOT_ACTIVE: "Leave is available only for active employees.",
+    LEAVE_WFH_OVERLAP: "Leave overlaps an active Work From Home request. Withdraw the WFH request first.",
+    LEAVE_OVERLAPPING_REQUEST: "A leave request already exists for one or more selected dates.",
+    LEAVE_DATE_LOCKED: "The selected attendance period is locked. Please contact HR.",
+    LEAVE_INSUFFICIENT_BALANCE: "You do not have enough leave balance for these dates.",
+  };
+  return messages[code] || details || errorMessage || "We could not submit the leave request. Please try again.";
 };
 
 type WorkFromHomeContext = {
@@ -119,10 +127,17 @@ export const LeaveApplication = (props: Props) => {
   const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
   const [wfhEligibility, setWfhEligibility] = useState<WorkFromHomeContext | null>(null);
   const [unpaidLeaveTypes, setUnpaidLeaveTypes] = useState<SelectableLeaveType[]>([]);
+  const [lifecycleLeaveTypes, setLifecycleLeaveTypes] = useState<SelectableLeaveType[]>([]);
+  const [lifecyclePolicies, setLifecyclePolicies] = useState<EmployeeLifecyclePolicy[]>([]);
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [filter, setFilter] = useState<HolidayPayload>({
     fromDate: null,
     toDate: null,
   })
+
+  useEffect(() => {
+    getEmployeeLifecycleSelfServicePolicies().then(({ data }) => setLifecyclePolicies(Array.isArray(data) ? data : [])).catch(() => setLifecyclePolicies([]));
+  }, []);
 
   useEffect(() => {
     if (props.targetEmployeeId || routeEmployeeId) {
@@ -210,13 +225,25 @@ export const LeaveApplication = (props: Props) => {
               policyType: 3,
             }))
         );
+        const lifecycleIds = new Set(lifecyclePolicies.map((item) => item.leavePolicyId).filter(Boolean));
+        setLifecycleLeaveTypes(
+          policies
+            .filter((policy) => policy.policyType === 1 && policy.id && lifecycleIds.has(policy.id) && appliesToEmployee(policy))
+            .map((policy) => ({
+              leaveBalanceId: `lifecycle-${policy.id}`, leavePolicyId: policy.id!, totalAllocated: 0, taken: 0, remaining: 0,
+              name: policy.name, code: policy.code, description: policy.description ?? "", paid: policy.paid,
+              minNoticeDays: policy.minNoticeDays, halfDayAllowed: policy.halfDayAllowed,
+              weekendInclusive: policy.weekendInclusive, holidayInclusive: policy.holidayInclusive,
+              attendanceStatusCode: policy.attendanceStatusCode, policyType: 4,
+            }))
+        );
       } catch (error) {
         console.error("Unable to load non-balance leave policies.", error);
       }
     };
 
     loadNonBalancePolicies();
-  }, [currentUserId, employeeId, props.targetEmployeeId]);
+  }, [currentUserId, employeeId, props.targetEmployeeId, lifecyclePolicies]);
 
   const selectableLeaveTypes: SelectableLeaveType[] = [
     ...leaveTypeBalance.map((leave) => ({ ...leave, policyType: 1 as const })),
@@ -225,6 +252,9 @@ export const LeaveApplication = (props: Props) => {
     ),
     ...unpaidLeaveTypes.filter((unpaid) =>
       !leaveTypeBalance.some((leave) => leave.leavePolicyId === unpaid.leavePolicyId)
+    ),
+    ...lifecycleLeaveTypes.filter((special) =>
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === special.leavePolicyId)
     ),
   ];
 
@@ -304,6 +334,12 @@ export const LeaveApplication = (props: Props) => {
     const selectedLeaveType = selectableLeaveTypes.find(
       (type) => type.leavePolicyId === values.leavePolicyId
     );
+    const lifecyclePolicy = lifecyclePolicies.find((policy) => policy.leavePolicyId === values.leavePolicyId);
+    if (!edit && lifecyclePolicy?.requiresDocument && !evidenceFile) {
+      setStatus("Supporting evidence is required for this special leave request.");
+      setSubmitting(false);
+      return;
+    }
 
     if (selectedLeaveType?.policyType === 2) {
       if (edit) {
@@ -398,7 +434,7 @@ export const LeaveApplication = (props: Props) => {
 
     // UL has no credit or balance. It remains a pending request and the backend
     // performs the final tenant-scoped policy validation before approval.
-    if (selectedLeaveForBalance?.policyType !== 3 && totalHolidayDays > remainingLeaveForTypes) {
+    if (![3, 4].includes(selectedLeaveForBalance?.policyType ?? 1) && totalHolidayDays > remainingLeaveForTypes) {
       setStatus(
         i(
           { id: "MESSAGE.INSUFFICIENT_LEAVE_ERROR" },
@@ -423,6 +459,8 @@ export const LeaveApplication = (props: Props) => {
           ? employeeId
             ? await updateLeaveRequest(payload)
             : await updateMyProfileLeaveRequest(payload)
+          : !employeeId && lifecyclePolicy?.requiresDocument && evidenceFile
+            ? await createMyProfileLeaveRequestWithEvidence(payload, evidenceFile)
           : employeeId
             ? await createEmployeeLeaveRequest(employeeId, payload)
             : await createMyProfileLeaveRequest(payload);
@@ -508,6 +546,7 @@ export const LeaveApplication = (props: Props) => {
                       value={values.leavePolicyId}
                       onChange={(e) => {
                         formik.resetForm();
+                        setEvidenceFile(null);
                         setFieldValue("leavePolicyId", e.target.value);
                       }}
                     >
@@ -521,6 +560,7 @@ export const LeaveApplication = (props: Props) => {
                       ))}
                     </AppSelect>
                   </FormControl>
+                  {(() => { const lifecycle = lifecyclePolicies.find(policy => policy.leavePolicyId === values.leavePolicyId); return lifecycle ? <AppAlert severity="info" sx={{ mt: 1 }}>This request may create a {lifecycle.eventType.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase()} employment case after approval. {lifecycle.requiresDocument ? "Supporting evidence will be required." : ""} {lifecycle.requiresExpectedReturnDate ? "An expected return date is required." : ""}</AppAlert> : null; })()}
                 </Grid>
                 {
                   <Grid size={12}>
@@ -733,6 +773,19 @@ export const LeaveApplication = (props: Props) => {
                     label={i({ id: "LEAVE.REASON" })}
                   />
                 </Grid>
+                {(() => {
+                  const lifecycle = lifecyclePolicies.find((policy) => policy.leavePolicyId === values.leavePolicyId);
+                  return lifecycle?.requiresDocument ? (
+                    <Grid size={12}>
+                      <Box sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+                        <Typography variant="subtitle2">Supporting evidence required</Typography>
+                        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>Upload one PDF, JPG, or PNG file (maximum 10 MB). HR can review it with this leave request.</Typography>
+                        <input type="file" accept="application/pdf,image/jpeg,image/png" onChange={(event) => setEvidenceFile(event.target.files?.[0] ?? null)} />
+                        {evidenceFile && <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>{evidenceFile.name}</Typography>}
+                      </Box>
+                    </Grid>
+                  ) : null;
+                })()}
               </Grid>
               </Stack>
               <Grid className="d-flex gap-2 flex-row justify-content-end mt-4">

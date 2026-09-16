@@ -262,7 +262,7 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
             return;
         }
         const payload: PayRollRequestModel = {
-            payMonth: paymonth,
+            payMonth: paymonth.format("YYYY-MM-DD"),
             payData: jsonData
         }
         try {

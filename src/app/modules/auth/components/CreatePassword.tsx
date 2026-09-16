@@ -22,7 +22,7 @@ import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
-import { AppAlert, AppIconButton } from "../../../shared/components/ui";
+import { AppAlert, AppIconButton, passwordVisibilityButtonSx } from "../../../shared/components/ui";
 const validationSchema = Yup.object().shape({
   newPassword: Yup.string()
     .matches(
@@ -133,6 +133,9 @@ export function CreatePassword() {
                       <InputAdornment position="end">
                         <AppIconButton
                           aria-label={showNewPassword ? "Hide new password" : "Show new password"}
+                          sx={passwordVisibilityButtonSx}
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
                           edge="end"
                           onClick={() => setShowNewPassword((visible) => !visible)}
                         >
@@ -154,6 +157,9 @@ export function CreatePassword() {
                     <InputAdornment position="end">
                       <AppIconButton
                         aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                        sx={passwordVisibilityButtonSx}
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
                         edge="end"
                         onClick={() => setShowConfirmPassword((visible) => !visible)}
                       >

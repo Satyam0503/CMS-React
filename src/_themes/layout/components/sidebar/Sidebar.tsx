@@ -9,10 +9,12 @@ type Props = {
   handleClose: () => void;
   isMiniSidebar: boolean;
   setMiniSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  isHoverExpanded: boolean;
+  setHoverExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }) => {
+const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, isHoverExpanded, setHoverExpanded }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
@@ -44,8 +46,15 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       }}
       onClose={handleClose}
       className="sidebar"
-      data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
+      data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar && !isHoverExpanded ? "true" : "false"}
+      data-sidebar-hover-expanded={!isSmallScreen && isHoverExpanded ? "true" : "false"}
       data-sidebar-style={sidebarStyle}
+      onMouseEnter={() => {
+        if (!isSmallScreen && isMiniSidebar) setHoverExpanded(true);
+      }}
+      onMouseLeave={() => {
+        if (!isSmallScreen) setHoverExpanded(false);
+      }}
     >
       <Stack role="presentation" onClick={handleClose} sx={{ height: "100%", minHeight: 0, flexGrow: 1, p: 2, overflow: "hidden" }}>
         {isSmallScreen && (
@@ -61,7 +70,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
         <SidebarMenuMain
           currentIndex={openIndex}
           handleToggle={handleToggle}
-          isMiniSidebar={!isSmallScreen && isMiniSidebar}
+          isMiniSidebar={!isSmallScreen && isMiniSidebar && !isHoverExpanded}
         />
 
         {!isSmallScreen && (

@@ -501,7 +501,7 @@ export const filterSideBarTabs = (
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         hasModuleFeaturePermission(
           subTab.constant,
-          Permission.View,
+          subTab.permission ?? Permission.View,
           userModulePermission
         )
       );
@@ -516,7 +516,7 @@ export const filterSideBarTabs = (
     if (
       hasModuleFeaturePermission(
         tab.constant,
-        Permission.View,
+        tab.permission ?? Permission.View,
         userModulePermission
       )
     ) {
@@ -538,7 +538,10 @@ export const getNotificationTitle = (
   const { formatMessage: i } = intl;
   // WFH notifications carry a server-generated title but do not have a legacy
   // translation entry, so use it instead of the generic fallback.
-  if (notification.title?.trim().startsWith("WFH") || notification.targetId?.startsWith("employee-exit-")) return notification.title;
+  if (notification.title?.trim().startsWith("WFH")) return notification.title;
+  if (notification.targetId?.startsWith("employee-exit-")) {
+    return notification.title?.trim() || "Offboarding action requires review";
+  }
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
       return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });

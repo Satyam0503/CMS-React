@@ -101,6 +101,7 @@ export enum ModulesTitles {
   Policies = "MODULES.POLICIES",
   PayrollSettings = "MODULES.PAYROLL_SETTINGS",
   CareerProfile = "MODULES.CAREER_PROFILE",
+  LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
 }
 
 export enum PayRollModuleTitles {

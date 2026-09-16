@@ -1,13 +1,12 @@
 import {
-  Box,
   Card,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
   Badge,
+  Box,
   Tooltip,
   CircularProgress,
-  Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import {
@@ -20,7 +19,7 @@ import {
   ViewList,
 } from "@mui/icons-material";
 
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { getAllEmployees, resendInvitationLink } from "./employeeServices";
 import { toast } from "react-toastify";
@@ -36,6 +35,7 @@ import { ModulesName, Permission } from "../../../utils/enums";
 import { useAppSelector } from "../../Redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { EmployeeGridView } from "./components/EmployeeGridView";
+import { EmployeeLifecycleDialog } from "./components/EmployeeLifecycleDialog";
 import { GetAllEmployeeResponseModel } from "./models";
 import {
   EmployeeFilter,
@@ -53,7 +53,6 @@ import {
 import { AvatarCell } from "../../shared/components/AvatarCell";
 import { SetDepartmentName } from "./components/SetDepartmentName";
 import { StyleStatus } from "../../shared/components/StyledStatus";
-import CustomisedButton from "../../shared/components/C_Button";
 import * as XLSX from "xlsx";
 
 import { AppButton, AppIconButton } from "../../shared/components/ui";
@@ -65,8 +64,7 @@ const CustomDataGrid = lazy(() =>
 
 type ViewMode = "table" | "grid";
 
-const useEmployeeTableColumnList =
-  (): GridColDef<GetAllEmployeeResponseModel>[] => {
+const useEmployeeTableColumnList = (canManageLifecycle = false, onLifecycleSaved?: () => void): GridColDef<GetAllEmployeeResponseModel>[] => {
     const { formatMessage: i } = useIntl();
     const modulePermission =
       useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -150,9 +148,11 @@ const useEmployeeTableColumnList =
         ? [
             {
               field: "isVerified",
-              headerName: i({ id: "FORM.VERIFICATION" }),
+              headerName: "Verification",
               description: i({ id: "FORM.VERIFICATION" }),
-              minWidth: 200,
+              minWidth: 165,
+              align: "center",
+              headerAlign: "center",
               sortable: true,
               resizable: false,
               display: "flex",
@@ -167,6 +167,17 @@ const useEmployeeTableColumnList =
             } satisfies GridColDef<GetAllEmployeeResponseModel>,
           ]
         : []),
+      ...(canManageLifecycle ? [{
+        field: "lifecycleAction",
+        headerName: "Manage lifecycle",
+        minWidth: 180,
+        flex: 0.9,
+        sortable: false,
+        filterable: false,
+        resizable: false,
+        display: "flex",
+        renderCell: (param) => <EmployeeLifecycleDialog employee={param.row} onSaved={onLifecycleSaved} />,
+      } satisfies GridColDef<GetAllEmployeeResponseModel>] : []),
     ];
   };
 
@@ -257,7 +268,9 @@ const Employees = () => {
     ? employeeFilters?.employmentStatus ?? "Active"
     : "Active";
   const totalAppliedFilter = countAppliedFilter(employeeFilters);
-  const columns = useEmployeeTableColumnList();
+  const canManageLifecycle = canAccessHrManagement(userRoleType)
+    && userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Edit}`);
+  const columns = useEmployeeTableColumnList(canManageLifecycle, () => setRefresh((value) => !value));
 
   const handlePaginationModelChange = (model: GridPaginationModel) => {
     setPaginationValues({
@@ -407,9 +420,14 @@ const Employees = () => {
             sx={{
               alignItems: "center",
               justifyContent: "flex-start",
-              width: { xs: "100%", md: "auto" },
+              width: "100%",
               columnGap: 1,
               rowGap: 1,
+              flexWrap: { xs: "wrap", sm: "nowrap" },
+              overflowX: "auto",
+              overflowY: "hidden",
+              scrollbarWidth: "thin",
+              pb: 0.25,
             }}
           >
             <Stack
@@ -417,7 +435,11 @@ const Employees = () => {
               spacing={0.75}
               alignItems="center"
               flexShrink={0}
-              sx={{ width: { xs: "100%", md: "auto" }, justifyContent: { xs: "space-between", md: "flex-start" } }}
+              sx={{
+                width: "auto",
+                justifyContent: "flex-start",
+                flexShrink: 0,
+              }}
             >
               <ToggleButtonGroup
                 orientation="horizontal"
@@ -458,9 +480,9 @@ const Employees = () => {
               </Badge>
             </Stack>
             {userPermissionForModule.includes(`${ModulesName.Employees}.${Permission.Create}`) && (
-              <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="wrap" sx={{ width: { xs: "100%", md: "auto" } }}>
-                <AppButton variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Import</AppButton>
-                <AppButton variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, borderRadius: 2, px: 1.5, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: { xs: "1 1 0", md: "0 1 auto" } }}>Bulk Export</AppButton>
+              <Stack direction="row" spacing={1} alignItems="center" useFlexGap flexWrap="nowrap" sx={{ width: "auto", flexShrink: 0 }}>
+                <AppButton aria-label="Bulk import employees" title="Bulk import employees" variant="outlined" size="small" startIcon={<UploadFile />} onClick={() => setShowBulkImportModal(true)} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Import</Box></AppButton>
+                <AppButton aria-label="Bulk export employees" title="Bulk export employees" variant="outlined" size="small" startIcon={isExporting ? <CircularProgress size={16} /> : <FileDownload />} onClick={handleBulkExport} disabled={isExporting || totalRecords === 0} sx={{ minHeight: 38, minWidth: { xs: 40, sm: 0 }, borderRadius: 2, px: { xs: 1, sm: 1.5 }, fontWeight: 700, color: "primary.main", borderColor: "divider", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" }, flex: "0 0 auto", whiteSpace: "nowrap", "& .MuiButton-startIcon": { mr: { xs: 0, sm: 1 } } }}><Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>Bulk Export</Box></AppButton>
                 <CustomIconButton icon={<Add />} handleClick={() => setShowAddEmployeeStepper(true)} tooltip={i({ id: "EMPLOYEE.ADD_NEW_EMP" })} ariaLabel="Add employee" sx={primaryToolbarIconSx} />
               </Stack>
             )}
@@ -498,9 +520,25 @@ const Employees = () => {
               pageSize: paginationValues.records,
             }}
             handlePaginationModelChange={handlePaginationModelChange}
+            rowClassName={({ row }) => {
+              const affected = row.employmentStatus !== "Active"
+                || row.availabilityStatus !== "Working"
+                || row.accountStatus !== "Active"
+                || row.payrollStatus !== "Active";
+              return canManageLifecycle && affected ? "employee-lifecycle-affected" : "";
+            }}
             sx={{
               backgroundColor: "background.paper",
               backgroundImage: "none",
+              borderRadius: { xs: 2, sm: 3 },
+              overflow: "hidden",
+              "& .MuiDataGrid-row": {
+                transition: "background-color .18s ease, transform .18s ease, box-shadow .18s ease",
+                animation: "employeeRowIn .28s ease both",
+                "&:hover": { transform: "translateY(-1px)", boxShadow: "0 4px 14px rgba(33, 93, 110, .08)" },
+              },
+              "@keyframes employeeRowIn": { from: { opacity: 0, transform: "translateY(5px)" }, to: { opacity: 1, transform: "translateY(0)" } },
+              "@media (prefers-reduced-motion: reduce)": { "& .MuiDataGrid-row": { animation: "none", transition: "none", "&:hover": { transform: "none" } } },
               "& .MuiDataGrid-main, & .MuiDataGrid-virtualScroller, & .MuiDataGrid-row, & .MuiDataGrid-cell, & .MuiDataGrid-footerContainer": {
                 backgroundColor: "background.paper",
                 backgroundImage: "none",
@@ -508,6 +546,15 @@ const Employees = () => {
               "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "background.paper",
                 backgroundImage: "none",
+              },
+              "& .employee-lifecycle-affected": {
+                backgroundColor: "rgba(255, 248, 235, 0.72)",
+                borderInlineStart: "3px solid",
+                borderInlineStartColor: "warning.main",
+                "&:hover": { backgroundColor: "rgba(255, 243, 224, 0.92)" },
+              },
+              "& .employee-lifecycle-affected .MuiDataGrid-cell:first-of-type": {
+                paddingInlineStart: "13px",
               },
             }}
           />
@@ -518,6 +565,8 @@ const Employees = () => {
             page={paginationValues.pageNo}
             pageSize={paginationValues.records}
             totalRecords={totalRecords}
+            canManageLifecycle={canManageLifecycle}
+            onLifecycleSaved={() => setRefresh((value) => !value)}
             onPaginationChange={(pageNo, records) => setPaginationValues({ pageNo, records })}
           />
         )}

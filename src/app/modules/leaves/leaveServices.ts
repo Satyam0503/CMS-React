@@ -87,6 +87,16 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
   );
 };
 
+export const unlinkLifecyclePolicy = (policy: LeavePolicyModel) => {
+  return updateLeavePolicy({
+    ...policy,lifecycle:null,
+  });
+};
+
+export const deleteLeavePolicy = (policyId: string) => {
+  return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_LEAVE_POLICY}/${policyId}`);
+};
+
 export const createEmployeeLeaveRequest = (
   employeeId: string,
   payload: RequestLeaveModel
@@ -102,6 +112,18 @@ export const createMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
     "api/LeaveManagement/me/requests",
     serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
   );
+};
+
+export const createMyProfileLeaveRequestWithEvidence = (payload: RequestLeaveModel, evidence: File) => {
+  const form = new FormData();
+  form.append("leavePolicyId", payload.leavePolicyId);
+  form.append("startDate", payload.startDate ? dayjs(payload.startDate).startOf("day").format("YYYY-MM-DD") : "");
+  form.append("endDate", payload.endDate ? dayjs(payload.endDate).startOf("day").format("YYYY-MM-DD") : "");
+  form.append("isHalfDay", String(payload.isHalfDay));
+  if (payload.halfDayPeriod) form.append("halfDayPeriod", payload.halfDayPeriod);
+  form.append("reason", payload.reason);
+  form.append("evidence", evidence);
+  return postRequest<FormData, ApiResponse>("api/LeaveManagement/me/requests/with-evidence", form, undefined, true);
 };
 
 export type WorkFromHomeRequestPayload = {

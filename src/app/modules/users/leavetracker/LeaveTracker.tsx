@@ -19,6 +19,7 @@ import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { resolveLeaveBalanceTargetUserId } from "./leaveTrackerUtils";
 import { getRequest, postRequest } from "../../../../server/axios";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
+import { getEmployeeLifecycleSelfServicePolicies } from "../../employees/employeeServices";
 
 type WorkFromHomeContext = {
   isEligible: boolean;
@@ -77,6 +78,7 @@ export const LeaveTracker: FC = () => {
   const [wfhRequestsOpen, setWfhRequestsOpen] = useState(false);
   const [todayWfhRequest, setTodayWfhRequest] = useState<WorkFromHomeRequest | null>(null);
   const [wfhTiming, setWfhTiming] = useState<WorkFromHomeTiming | null>(null);
+  const [hasLifecycleLeavePolicy, setHasLifecycleLeavePolicy] = useState(false);
   const [clocking, setClocking] = useState(false);
   const modulePermission =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -86,7 +88,7 @@ export const LeaveTracker: FC = () => {
   };
 
   const handleOpen = () => {
-    if (empLeaveTypeBalance.length > 0 || wfhContext?.isEligible) {
+    if (empLeaveTypeBalance.length > 0 || wfhContext?.isEligible || hasLifecycleLeavePolicy) {
       setOpen(true);
     } else {
       toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
@@ -123,6 +125,22 @@ export const LeaveTracker: FC = () => {
     };
     fetchEmployeeLeaveTypeBalance();
   }, [currentUserId, employeeId, refresh]);
+
+  useEffect(() => {
+    let mounted = true;
+    getEmployeeLifecycleSelfServicePolicies()
+      .then(({ data }) => {
+        if (!mounted) return;
+        const policies = Array.isArray(data) ? data : [];
+        setHasLifecycleLeavePolicy(policies.some((policy) =>
+          policy.isActive !== false && policy.leaveRequestsAllowed && Boolean(policy.leavePolicyId)
+        ));
+      })
+      .catch(() => {
+        if (mounted) setHasLifecycleLeavePolicy(false);
+      });
+    return () => { mounted = false; };
+  }, [refresh]);
 
   useEffect(() => {
     // The WFH context is identity-bound, so only load it on the employee's own

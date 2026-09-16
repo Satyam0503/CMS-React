@@ -1,5 +1,4 @@
 import type { ToastPosition } from "react-toastify";
-
 export type NotificationTheme = "system" | "light" | "dark";
 export type NotificationTransition = "slide" | "zoom" | "flip" | "bounce";
 export type NotificationConfig = {

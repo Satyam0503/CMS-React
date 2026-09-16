@@ -123,9 +123,10 @@ const EmployeeAttendance = () => {
           records: 1000,
           departmentId: [],
           gender: [],
-          // Historical attendance must remain reportable for employees whose
-          // exit date overlaps the month currently being viewed.
-          employmentStatus: "All",
+          // Keep the operational attendance roster current. Completed exits
+          // are available in employee/offboarding reporting, not as editable
+          // attendance cards.
+          employmentStatus: "AttendanceRoster",
         });
 
         if (response.data.success) {
@@ -286,6 +287,8 @@ const EmployeeAttendance = () => {
       fullName: emp.fullName,
       dateOfJoining: emp.dateOfJoining,
       lastWorkingDate: emp.lastWorkingDate,
+      employmentStatus: emp.employmentStatus,
+      availabilityStatus: emp.availabilityStatus,
       scheduleId: effectiveSchedules[emp.userId]?.scheduleId,
       scheduleName: effectiveSchedules[emp.userId]?.scheduleName,
       scheduledStartTime: effectiveSchedules[emp.userId]?.startTime,

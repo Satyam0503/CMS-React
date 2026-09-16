@@ -30,13 +30,15 @@ const PageData = () => {
 
   return (
     <Stack
-      direction={{ xs: "column", md: "row" }}
-      spacing={{ xs: 1.25, md: 3 }}
-      alignItems={{ xs: "stretch", md: "center" }}
-      justifyContent={{ md: "space-between" }}
+      direction="row"
+      spacing={{ xs: 1, md: 3 }}
+      useFlexGap
+      flexWrap="wrap"
+      alignItems="center"
+      justifyContent="space-between"
       sx={{ minWidth: 0, width: "100%" }}
     >
-      {pageTitle && <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0 }}>{pageTitle}</Typography>}
+      {pageTitle && <Typography variant="h4" className="fw-bold" sx={{ minWidth: 0, flex: "0 1 auto" }}>{pageTitle}</Typography>}
       <Stack
         direction="row"
         spacing={{ xs: 0.75, sm: 2 }}

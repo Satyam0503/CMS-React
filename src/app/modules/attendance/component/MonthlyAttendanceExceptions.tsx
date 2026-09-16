@@ -678,7 +678,7 @@ export default function MonthlyAttendanceExceptions({ month }: Props) {
         <DialogTitle>Correct WFH working hours</DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Enter the verified working hours. The WFH attendance status is retained; this exception resolves only when the policy minimum is met.
+            Enter the verified hours for the approved WFH half only. Any approved leave in the other half remains unchanged. The WFH status is retained and this exception resolves only when the policy minimum is met.
           </Typography>
           {!!wfhCorrectionError && <Alert severity="error" sx={{ mb: 2 }}><strong>Why it failed:</strong> {wfhCorrectionError}</Alert>}
           <LocalizationProvider dateAdapter={AdapterDayjs}>

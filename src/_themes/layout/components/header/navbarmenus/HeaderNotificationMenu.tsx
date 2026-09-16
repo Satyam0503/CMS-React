@@ -10,13 +10,14 @@ import {
   Stack,
   Tooltip,
   Typography,
+  Button,
 } from "@mui/material";
 import { AccessTime, Cake, CalendarMonth, Celebration, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
+import { dismissNotification, getNotifications, markAllNotificationAsRead, markNotificationAsRead, snoozeNotification } from "../../../../../app/modules/users/userservices";
 import { getNotificationTitle, redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
@@ -26,6 +27,7 @@ import { createNotifications } from "../../../../../app/modules/dashboard/compon
 import { toAbsoluteUrl } from "../../../../helpers";
 
 import { AppIconButton } from "../../../../../app/shared/components/ui";
+import { queryClient } from "../../../../../app/query/queryClient";
 export const NotificationIconMapper: {
   [index: number]: ReactNode
 } = {
@@ -77,6 +79,11 @@ export default function HeaderNotificationMenu() {
   }
 
   const handleNewNotification = useCallback((notification: NotificationModel) => {
+    // The notification is also the cross-user signal that server-backed data
+    // changed (leave requests, approvals, attendance, etc.). Invalidate and
+    // actively refetch cached reads so open admin/employee screens update
+    // without a manual refresh.
+    void queryClient.invalidateQueries({ refetchType: "all" });
     if (document.visibilityState === "hidden" && Notification.permission === "granted") {
       createNotifications(notification, intl);
     }
@@ -176,6 +183,19 @@ export default function HeaderNotificationMenu() {
     setAnchorEl(null);
   }
 
+  const handleDismiss = async (event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    const { data } = await dismissNotification(id);
+    if (data.success) setNotificationList(current => current.filter(item => item.userNotificationId !== id));
+  };
+
+  const handleSnooze = async (event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    const until = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await snoozeNotification(id, until);
+    if (data.success) setNotificationList(current => current.filter(item => item.userNotificationId !== id));
+  };
+
 
   return (
     <>
@@ -270,6 +290,8 @@ export default function HeaderNotificationMenu() {
                         <Box component="span" className="d-flex align-items-center gap-1">
                           <AccessTime className="fs-16" />
                           <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
+                          <Button size="small" onClick={event => handleSnooze(event, item.userNotificationId)} sx={{ minWidth: 0, px: .5, fontSize: 10 }}>Snooze</Button>
+                          <Button size="small" onClick={event => handleDismiss(event, item.userNotificationId)} sx={{ minWidth: 0, px: .5, fontSize: 10 }}>Dismiss</Button>
                         </Box>
                       </Box>} />
                 </ListItem>

@@ -51,7 +51,21 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
         if (!(success && statusCode === 200)) {
           throw new Error(message);
         }
-        setUserDetails(methodResult);
+        const profile = methodResult as EmployeeByIdResponse & {
+          lifecycle?: {
+            availabilityStatus?: string;
+            accountStatus?: string;
+            payrollStatus?: string;
+            alumniStatus?: string;
+          };
+        };
+        setUserDetails({
+          ...profile,
+          availabilityStatus: profile.availabilityStatus ?? profile.lifecycle?.availabilityStatus,
+          accountStatus: profile.accountStatus ?? profile.lifecycle?.accountStatus,
+          payrollStatus: profile.payrollStatus ?? profile.lifecycle?.payrollStatus,
+          alumniStatus: profile.alumniStatus ?? profile.lifecycle?.alumniStatus,
+        });
       })
       .catch(error => {
         console.error(error.message);
@@ -72,7 +86,6 @@ export const UserDetailsProvider: FC<PropTypes> = ({ children }) => {
   );
 };
 
-// hook for consuming userDetails Context
 export const useUserDetails = () => {
   const context = useContext(UserDetailsContext);
   if (context === undefined) {

@@ -33,12 +33,30 @@ export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
   gender: [],
   employmentStatus: "Active",
+  availabilityStatus: "",
 };
 
 const employmentStatusOptions = [
   { value: "Active", label: "Active" },
   { value: "NoticePeriod", label: "Notice period" },
   { value: "ExEmployees", label: "Ex-employees" },
+] as const;
+
+const availabilityStatusOptions = [
+  { value: "", label: "All availability" },
+  { value: "Working", label: "Working" },
+  { value: "AnnualLeave", label: "Annual leave" },
+  { value: "SickLeave", label: "Sick leave" },
+  { value: "MedicalLeave", label: "Medical leave" },
+  { value: "SickMedicalLeave", label: "Sick / medical leave" },
+  { value: "MaternityLeave", label: "Maternity leave" },
+  { value: "PaternityLeave", label: "Paternity leave" },
+  { value: "Sabbatical", label: "Sabbatical" },
+  { value: "LongTermLeave", label: "Long-term leave" },
+  { value: "AdministrativeLeave", label: "Administrative leave" },
+  { value: "UnauthorizedAbsence", label: "Unauthorized absence" },
+  { value: "AbscondingUnderReview", label: "Absconding under review" },
+  { value: "Suspended", label: "Suspended" },
 ] as const;
 
 export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
@@ -198,12 +216,43 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => (
-                <AppTextField {...params} placeholder="Employment status" />
+                <AppTextField
+                  {...params}
+                  placeholder="Employment status"
+                  helperText={values.employmentStatus === "ExEmployees"
+                    ? "Shows resigned, terminated, retired, contract-ended and deceased employees. Click Apply to load results."
+                    : "Select a status, then click Apply to update the employee list."}
+                  FormHelperTextProps={{ sx: { mx: 0, lineHeight: 1.35 } }}
+                />
               )}
             />
           </Stack>
         )}
-
+        {canFilterEmploymentStatus && (
+          <Stack sx={{ mt: 1 }}>
+            <Typography variant="caption">Availability status</Typography>
+            <Autocomplete
+              size="small"
+              id="availability-status-dropdown"
+              options={availabilityStatusOptions}
+              value={availabilityStatusOptions.find(
+                (option) => option.value === (values.availabilityStatus ?? ""),
+              ) ?? availabilityStatusOptions[0]}
+              onChange={(_, selectedStatus) => {
+                setFieldValue("availabilityStatus", selectedStatus?.value ?? "");
+              }}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <AppTextField
+                  {...params}
+                  placeholder="Availability status"
+                  helperText="Filter leave, absence and temporary availability states."
+                  FormHelperTextProps={{ sx: { mx: 0, lineHeight: 1.35 } }}
+                />
+              )}
+            />
+          </Stack>
+        )}
         <Stack
           direction={"row"}
           spacing={2}

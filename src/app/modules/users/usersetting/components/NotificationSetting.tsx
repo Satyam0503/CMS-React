@@ -1,35 +1,46 @@
-import { CheckCircleOutlineRounded, ErrorOutlineRounded, InfoOutlined, NotificationsOutlined, PlayArrowRounded, RestartAltRounded, SaveRounded, WarningAmberRounded } from "@mui/icons-material";
-import { Box, Button, Card, Chip, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { SaveRounded } from "@mui/icons-material";
+import { Box, Button, Card, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { getNotificationPreferences, updateNotificationPreferences } from "../../userservices";
 import { type NotificationPreferences } from "../../models";
-import { defaultNotificationConfig, notifications, readNotificationConfig, saveNotificationConfig, type NotificationConfig } from "../../../../shared/notifications";
+import { notifications } from "../../../../shared/notifications";
 import { ListSkeleton } from "../../about/components/ListSkeleton";
 
-type TabName = "Overview" | "Appearance" | "Behaviour" | "Advanced" | "Preview" | "Integration";
-const tabs: TabName[] = ["Overview", "Appearance", "Behaviour", "Advanced", "Preview", "Integration"];
-const sample = [["Success", "Employee profile updated", CheckCircleOutlineRounded, "success"], ["Error", "Unable to save changes", ErrorOutlineRounded, "error"], ["Warning", "Changes affect payroll", WarningAmberRounded, "warning"], ["Info", "Payroll processing queued", InfoOutlined, "info"], ["Loading", "Saving changes…", PlayArrowRounded, "loading"], ["Notification", "Exit approval required", NotificationsOutlined, "notification"]] as const;
+const labels: Record<string, { title: string; detail: string }> = {
+  notice: { title: "Notice board", detail: "Receive important company notices." },
+  birthday: { title: "Birthdays", detail: "Receive employee birthday reminders." },
+  workAnniversary: { title: "Work anniversaries", detail: "Receive service anniversary reminders." },
+  leaveStatusUpdate: { title: "Leave updates", detail: "Receive updates when leave requests change." },
+  holiday: { title: "Holiday reminders", detail: "Receive upcoming holiday reminders." },
+  message: { title: "Messages", detail: "Receive important company messages." },
+};
 
 export const NotificationSetting = () => {
-  const [activeTab, setActiveTab] = useState<TabName>("Overview");
-  const [config, setConfig] = useState<NotificationConfig>(readNotificationConfig);
-  const [saved, setSaved] = useState(config);
   const [preferences, setPreferences] = useState<NotificationPreferences>({} as NotificationPreferences);
   const [isLoading, setLoading] = useState(true);
-  const dirty = useMemo(() => JSON.stringify(config) !== JSON.stringify(saved), [config, saved]);
-  useEffect(() => { getNotificationPreferences().then(({ data }) => data.success && setPreferences(data.methodResult)).catch(() => notifications.error("Unable to load notification preferences.")).finally(() => setLoading(false)); }, []);
-  const update = <K extends keyof NotificationConfig>(key: K, value: NotificationConfig[K]) => setConfig((current) => ({ ...current, [key]: value }));
-  const save = () => { saveNotificationConfig(config); setSaved(config); notifications.success("Notification settings saved."); };
-  const reset = () => { setConfig(defaultNotificationConfig); saveNotificationConfig(defaultNotificationConfig); setSaved(defaultNotificationConfig); notifications.info("Notification settings restored to defaults."); };
-  const test = (kind: typeof sample[number][3], text: string) => { if (kind === "loading") { const id = notifications.loading(text); window.setTimeout(() => notifications.resolve(id, "success", "Changes saved."), 900); return; } if (kind === "notification") { notifications.notification(text, { action: { label: "View", onClick: () => notifications.info("Opening notification details.") }, dedupeKey: "preview-notification" }); return; } notifications[kind](text, kind === "error" ? { action: { label: "Retry", onClick: () => notifications.info("Retry started.") } } : undefined); };
-  const savePreferences = async () => { const { data } = await updateNotificationPreferences(preferences); if (data.success) { setPreferences(data.methodResult); notifications.success("Delivery preferences saved."); } };
+  const [isSaving, setSaving] = useState(false);
+
+  useEffect(() => {
+    getNotificationPreferences().then(({ data }) => data.success && setPreferences(data.methodResult)).catch(() => notifications.error("Unable to load notification preferences.")).finally(() => setLoading(false));
+  }, []);
+
+  const savePreferences = async () => {
+    setSaving(true);
+    try {
+      const { data } = await updateNotificationPreferences(preferences);
+      if (data.success) { setPreferences(data.methodResult); notifications.success("Notification preferences saved."); }
+    } catch { notifications.error("Unable to save notification preferences."); }
+    finally { setSaving(false); }
+  };
+
   if (isLoading) return <ListSkeleton />;
-  const SettingSwitch = ({ label, detail, field }: { label: string; detail: string; field: "newestOnTop" | "pauseOnHover" | "showCloseButton" | "closeOnClick" }) => <FormControlLabel sx={{ m: 0, py: 1, alignItems: "flex-start" }} control={<Switch checked={config[field]} onChange={(e) => update(field, e.target.checked)} />} label={<><Typography fontWeight={600}>{label}</Typography><Typography variant="body2" color="text.secondary">{detail}</Typography></>} />;
-  return <Card sx={{ p: { xs: 2, sm: 3 }, overflow: "hidden" }}><Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" gap={2} mb={3}><Box><Typography variant="h5" fontWeight={700}>Notification settings</Typography><Typography color="text.secondary">Control in-app alerts without changing notification-centre records.</Typography></Box><Stack direction="row" gap={1} alignSelf={{ xs: "flex-start", md: "center" }}><Button startIcon={<RestartAltRounded />} onClick={reset}>Reset to default</Button><Button variant="contained" startIcon={<SaveRounded />} onClick={save} disabled={!dirty}>Save changes</Button></Stack></Stack><Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)} variant="scrollable" scrollButtons="auto" aria-label="Notification settings sections" sx={{ mb: 3 }}>{tabs.map((tab) => <Tab key={tab} value={tab} label={tab} />)}</Tabs>
-    {(activeTab === "Overview" || activeTab === "Preview") && <Stack direction={{ xs: "column", lg: "row" }} gap={3}><Box flex={1}><Typography variant="h6">Quick actions</Typography><Typography variant="body2" color="text.secondary" mb={2}>Test the notification types used throughout Codeji.</Typography><Box display="grid" gridTemplateColumns={{ xs: "1fr", sm: "repeat(2, 1fr)" }} gap={1.5}>{sample.map(([title, text, Icon, kind]) => <Button key={title} variant="outlined" color={kind === "error" ? "error" : kind === "warning" ? "warning" : "primary"} onClick={() => test(kind, text)} sx={{ justifyContent: "flex-start", textAlign: "left", p: 1.5, textTransform: "none" }} startIcon={<Icon />}><Box><Typography fontWeight={700}>{title}</Typography><Typography variant="caption" display="block">{text}</Typography></Box></Button>)}</Box></Box><Card variant="outlined" sx={{ minWidth: { lg: 340 }, bgcolor: "action.hover", p: 2 }}><Stack direction="row" justifyContent="space-between"><Typography fontWeight={700}>Live configuration</Typography><Chip size="small" color="success" label="Ready" /></Stack><Divider sx={{ my: 1.5 }} /><Typography variant="body2">{config.position} · {config.autoClose / 1000}s · {config.limit} visible</Typography><Typography variant="body2" color="text.secondary" mt={1}>Loading notifications are replaced in place with their result.</Typography></Card></Stack>}
-    {activeTab === "Appearance" && <Stack gap={2} maxWidth={650}><Typography variant="h6">Appearance</Typography><FormControl fullWidth><InputLabel>Theme</InputLabel><Select label="Theme" value={config.theme} onChange={(e) => update("theme", e.target.value as NotificationConfig["theme"])}>{["system", "light", "dark"].map((value) => <MenuItem value={value} key={value}>{value === "system" ? "Match application" : value}</MenuItem>)}</Select></FormControl><FormControl fullWidth><InputLabel>Transition</InputLabel><Select label="Transition" value={config.transition} onChange={(e) => update("transition", e.target.value as NotificationConfig["transition"])}>{["slide", "zoom", "flip", "bounce"].map((value) => <MenuItem value={value} key={value}>{value}</MenuItem>)}</Select></FormControl></Stack>}
-    {activeTab === "Behaviour" && <Stack gap={1.5} maxWidth={650}><Typography variant="h6">Behaviour</Typography><FormControl fullWidth><InputLabel>Position</InputLabel><Select label="Position" value={config.position} onChange={(e) => update("position", e.target.value as NotificationConfig["position"])}>{["top-right", "top-center", "top-left", "bottom-right", "bottom-center", "bottom-left"].map((value) => <MenuItem key={value} value={value}>{value.replace("-", " ")}</MenuItem>)}</Select></FormControl><TextField label="Auto-close duration (milliseconds)" type="number" inputProps={{ min: 1000, max: 30000, step: 500 }} value={config.autoClose} onChange={(e) => update("autoClose", Math.max(1000, Number(e.target.value) || 1000))} /><TextField label="Visible toast limit" type="number" inputProps={{ min: 1, max: 5 }} value={config.limit} onChange={(e) => update("limit", Math.min(5, Math.max(1, Number(e.target.value) || 1)))} /><SettingSwitch field="newestOnTop" label="Newest on top" detail="Prioritise the latest update." /><SettingSwitch field="pauseOnHover" label="Pause on hover" detail="Give people time to read an alert." /><SettingSwitch field="showCloseButton" label="Show close button" detail="Keep an explicit accessible dismiss control." /><SettingSwitch field="closeOnClick" label="Dismiss when clicked" detail="Use only for non-actionable alerts." /></Stack>}
-    {activeTab === "Advanced" && <Stack gap={1}><Typography variant="h6">Smart delivery</Typography><Typography color="text.secondary">The notification facade applies severity-aware timing, suppresses duplicate visible messages, and supports safe action buttons.</Typography><Chip sx={{ alignSelf: "flex-start" }} label="Persistent errors remain visible" /><Chip sx={{ alignSelf: "flex-start" }} label="Loading uses stable IDs" /><Chip sx={{ alignSelf: "flex-start" }} label="SignalR and notification centre remain independent" /></Stack>}
-    {activeTab === "Integration" && <Stack gap={2}><Box><Typography variant="h6">Delivery preferences</Typography><Typography variant="body2" color="text.secondary">These server-backed preferences control durable notification categories.</Typography></Box><FormGroup>{Object.keys(preferences).map((key) => <FormControlLabel key={key} control={<Switch checked={Boolean(preferences[key as keyof NotificationPreferences])} onChange={(e) => setPreferences((current) => ({ ...current, [key]: e.target.checked }))} />} label={key.replace(/([A-Z])/g, " $1").trim()} />)}</FormGroup><Button variant="contained" sx={{ alignSelf: "flex-start" }} onClick={savePreferences}>Save delivery preferences</Button></Stack>}
+  return <Card sx={{ p: { xs: 2, sm: 3, lg: 4 }, minHeight: { md: 520 } }}>
+    <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" gap={2} mb={3}>
+      <Box><Typography variant="h5" fontWeight={700}>My notification preferences</Typography><Typography color="text.secondary">Choose the updates you want to receive. Company defaults are managed by your administrator.</Typography></Box>
+      <Button variant="contained" startIcon={<SaveRounded />} onClick={savePreferences} disabled={isSaving} sx={{ alignSelf: { xs: "stretch", sm: "center" } }}>{isSaving ? "Saving…" : "Save preferences"}</Button>
+    </Stack>
+    <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.5 }}>
+      {Object.keys(preferences).map((key) => { const copy = labels[key] ?? { title: key.replace(/([A-Z])/g, " $1").trim(), detail: "Receive this notification category." }; return <FormControlLabel key={key} sx={{ m: 0, px: 2, py: 1.5, minHeight: 76, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "background.paper", justifyContent: "space-between", gap: 2 }} control={<Switch checked={Boolean(preferences[key as keyof NotificationPreferences])} onChange={(e) => setPreferences((current) => ({ ...current, [key]: e.target.checked }))} />} label={<Box><Typography fontWeight={650}>{copy.title}</Typography><Typography variant="body2" color="text.secondary">{copy.detail}</Typography></Box>} labelPlacement="start" />; })}
+    </Box>
   </Card>;
 };

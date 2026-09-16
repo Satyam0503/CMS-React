@@ -13,7 +13,7 @@ import {
 
 type GetPayRollPayload = {
   employeeName: string;
-  payMonth: Dayjs;
+  payMonth: string;
 };
 
 export const uploadEmpPayRollData = (payload: PayRollRequestModel) => {

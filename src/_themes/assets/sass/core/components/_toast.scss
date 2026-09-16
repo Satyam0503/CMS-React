@@ -1,0 +1,275 @@
+// Lightweight application notifications.  These stay readable over dense pages
+// without the heavy card/alert styling of the stock Toastify theme.
+.app-toast-container {
+  --toastify-toast-width: min(380px, calc(100vw - 24px));
+}
+.app-toast-container.Toastify__toast-container--top-left {
+  top: 88px;
+  left: 18px;
+}
+
+.app-toast-container.Toastify__toast-container--top-center {
+  top: 88px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.app-toast-container.Toastify__toast-container--top-right {
+  top: 88px;
+  right: 18px;
+}
+
+.app-toast-container.Toastify__toast-container--bottom-left {
+  bottom: 24px;
+  left: 18px;
+}
+
+.app-toast-container.Toastify__toast-container--bottom-center {
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.app-toast-container.Toastify__toast-container--bottom-right {
+  bottom: 24px;
+  right: 18px;
+}
+
+.app-toast.Toastify__toast {
+  display: grid;
+  // Toastify renders three root-level children: icon, message body and close.
+  // Keep each in its own column so long content can never collapse beside the icon.
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  align-items: center;
+  min-height: 58px;
+  margin-bottom: 8px;
+  padding: 11px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, .22);
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .14), 0 3px 10px rgba(15, 23, 42, .06);
+  background: linear-gradient(135deg, rgba(255, 255, 255, .98), rgba(248, 250, 252, .94));
+  backdrop-filter: blur(20px) saturate(150%);
+  color: #1e293b;
+  transform-origin: top right;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.app-toast.Toastify__toast:hover {
+  transform: translateX(-3px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, .18), 0 5px 14px rgba(15, 23, 42, .08);
+}
+
+.app-toast .Toastify__toast-body {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.38;
+  overflow-wrap: anywhere;
+}
+
+// Newer server notifications render a richer React node. Give that node the
+// full message column so a long title cannot collapse into one character per
+// line beside the close button.
+.app-toast .Toastify__toast-body > * {
+  width: 100%;
+  min-width: 0;
+}
+
+.app-toast--notification .app-toast__dismiss {
+  display: block;
+}
+
+.app-toast .Toastify__toast-icon {
+  grid-column: 1;
+  grid-row: 1;
+  width: 28px;
+  min-width: 28px;
+  margin: 0;
+  align-self: center;
+}
+
+.app-toast .Toastify__toast-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.8;
+}
+
+.app-toast .Toastify__action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  margin-top: 7px;
+  padding: 3px 10px;
+  border: 1px solid rgba(15, 118, 110, .28);
+  border-radius: 7px;
+  color: #0f766e;
+  background: rgba(15, 118, 110, .07);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+.app-toast .Toastify__action-button:hover {
+  border-color: #0f766e;
+  background: rgba(15, 118, 110, .14);
+  transform: translateY(-1px);
+}
+
+.app-toast .Toastify__action-button:focus-visible {
+  outline: 2px solid #2383e2;
+  outline-offset: 2px;
+}
+
+.app-toast .Toastify__close-button {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: start;
+  justify-self: end;
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #64748b;
+  background: rgba(15, 23, 42, .055);
+  cursor: pointer;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  z-index: 10;
+  position: relative;
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.app-toast .Toastify__close-button:hover {
+  color: #1e293b;
+  background: rgba(15, 23, 42, .12);
+  transform: rotate(90deg);
+}
+
+.app-toast .Toastify__close-button:focus-visible {
+  outline: 2px solid #2383e2;
+  outline-offset: 2px;
+}
+
+.app-toast__dismiss {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 0;
+  border: 0;
+  color: #0f766e;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-toast__dismiss:hover {
+  color: #115e59;
+  text-decoration: underline;
+}
+
+.app-toast__dismiss:focus-visible {
+  outline: 2px solid #2383e2;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.app-toast .app-toast__progress.Toastify__progress-bar {
+  height: 4px;
+  opacity: 1;
+  border-radius: 0 0 12px 12px;
+}
+
+.app-toast.Toastify__toast--success { border-left: 4px solid #16a34a; }
+.app-toast.Toastify__toast--success .Toastify__progress-bar { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.app-toast.Toastify__toast--error { border-left: 4px solid #e5484d; }
+.app-toast.Toastify__toast--error .Toastify__progress-bar { background: linear-gradient(90deg, #dc2626, #fb7185); }
+.app-toast.Toastify__toast--warning { border-left: 4px solid #f59e0b; }
+.app-toast.Toastify__toast--warning .Toastify__progress-bar { background: linear-gradient(90deg, #d97706, #fbbf24); }
+.app-toast.Toastify__toast--info { border-left: 4px solid #2383e2; }
+.app-toast.Toastify__toast--info .Toastify__progress-bar { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+@media (max-width: 600px) {
+  .app-toast-container { top: 72px; right: 12px; left: 12px; width: auto; }
+  .app-toast.Toastify__toast { min-height: 58px; margin-bottom: 8px; padding: 10px; border-radius: 14px; }
+  .app-toast .Toastify__toast-body { font-size: 13px; }
+  .app-toast .Toastify__close-button { width: 26px; height: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-toast.Toastify__toast, .app-toast .Toastify__close-button { transition: none; }
+}
+.app-toast-container.Toastify__toast-container--bottom-center {
+  bottom: 24px;
+  left: 50%;
+  right: auto;
+  top: auto;
+  width: min(420px, calc(100vw - 24px));
+  transform: translateX(-50%);
+}
+
+.app-toast-container.Toastify__toast-container--bottom-center
+  .app-toast.Toastify__toast {
+  transform-origin: bottom center;
+  margin-bottom: 10px;
+}
+
+.app-toast-container.Toastify__toast-container--bottom-center
+  .app-toast.Toastify__toast:hover {
+  transform: translateY(-3px);
+}
+
+@media (max-width: 600px) {
+  .app-toast-container.Toastify__toast-container--bottom-center {
+    bottom: 16px;
+    width: calc(100vw - 24px);
+  }
+}
+@media (max-width: 600px) {
+  .app-toast-container {
+    width: calc(100vw - 24px);
+  }
+
+  .app-toast-container.Toastify__toast-container--top-left,
+  .app-toast-container.Toastify__toast-container--top-center,
+  .app-toast-container.Toastify__toast-container--top-right {
+    top: 72px;
+  }
+
+  .app-toast-container.Toastify__toast-container--bottom-left,
+  .app-toast-container.Toastify__toast-container--bottom-center,
+  .app-toast-container.Toastify__toast-container--bottom-right {
+    bottom: 16px;
+  }
+
+  .app-toast-container.Toastify__toast-container--top-left,
+  .app-toast-container.Toastify__toast-container--bottom-left {
+    left: 12px;
+  }
+
+  .app-toast-container.Toastify__toast-container--top-right,
+  .app-toast-container.Toastify__toast-container--bottom-right {
+    right: 12px;
+  }
+
+  .app-toast-container.Toastify__toast-container--top-center,
+  .app-toast-container.Toastify__toast-container--bottom-center {
+    left: 50%;
+  }
+}

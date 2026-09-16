@@ -23,7 +23,7 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 
-import { AppAlert, AppButton, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
+import { AppAlert, AppButton, AppCheckbox, AppIconButton, passwordVisibilityButtonSx } from "../../../shared/components/ui";
 import { toast } from "react-toastify";
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -105,8 +105,13 @@ export function Login() {
     }
   }
   return (
-    <Stack spacing={4.5}>
-      <Stack spacing={1.25}>
+   <Stack
+  spacing={{ xs: 2.5, sm: 3, md: 3.5 }}
+  sx={{
+    width: "100%",
+    mx: "auto",
+  }}
+>    
         <Box
           sx={{
             display: { xs: "inline-flex", md: "none" }, alignSelf: "flex-start",
@@ -122,7 +127,6 @@ export function Login() {
         <Typography variant="body1" color="text.secondary">
           Enter your details to continue to CodeJi CMS.
         </Typography>
-      </Stack>
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
@@ -188,6 +192,8 @@ export function Login() {
                             type="button"
                             size="small"
                             aria-label={showPassword ? "Hide password" : "Show password"}
+                            sx={passwordVisibilityButtonSx}
+                            onMouseDown={(event) => event.preventDefault()}
                             onClick={() => setShowPassword((visible) => !visible)}
                           >
                             {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}

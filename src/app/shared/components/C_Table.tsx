@@ -14,6 +14,7 @@ import { TableSorting } from "./TableSorting";
 import { getKeyForTableRow } from "../../../utils/common";
 import { useIntl } from "react-intl";
 import { ModulesName } from "../../../utils/enums";
+import { LinkOff } from "@mui/icons-material";
 
 interface PropsTypes<Row, Columns> {
   tabName?: string;
@@ -27,6 +28,7 @@ interface PropsTypes<Row, Columns> {
   handleEdit?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
   rowClickHandler?: (row: Row) => void;
+  openUnlinkModal?: (row:Row)=> void;
 }
 
 export const CustomisedTable = <Row, Column extends ColumnListTypes>(
@@ -44,7 +46,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
     loading,
     openConfirmationModal,
     openViewModal,
-    rowClickHandler
+    rowClickHandler,
+    openUnlinkModal
   } = props;
 
   useEffect(() => {
@@ -134,7 +137,8 @@ export const CustomisedTable = <Row, Column extends ColumnListTypes>(
                                       row,
                                       handleEdit,
                                       openConfirmationModal,
-                                      openViewModal
+                                      openViewModal,
+                                      openUnlinkModal
                                     )
                                     : (props.tabName === ModulesName.NoticeBoard && column.id === "noticeTitle") ? column.build(row) : column.build(value, row)
                                   : value}

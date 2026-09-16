@@ -3,7 +3,8 @@ import { useColorScheme } from "@mui/material";
 import { Bounce, CloseButtonProps, Flip, Slide, ToastContainer, Zoom } from "react-toastify";
 import { useEffect, useState } from "react";
 import { readNotificationConfig, type NotificationConfig } from "../../../app/shared/notifications";
-
+import { getRequest } from "../../../server/axios";
+import { useAppSelector } from "../../../app/Redux/hooks";
 // React-Toastify gives this component the exact close function for the toast
 // being rendered. Calling it directly avoids document-level event handlers and
 // ensures the visible button always dismisses its own notification.
@@ -26,6 +27,7 @@ const transitions = { slide: Slide, zoom: Zoom, flip: Flip, bounce: Bounce };
 
 export const ToastProvider = () => {
   const { mode, systemMode } = useColorScheme();
+  const { token, isUserAuthenticated } = useAppSelector((state) => state.auth);
   const currentTheme = mode === "system" ? systemMode : mode;
   const [config, setConfig] = useState<NotificationConfig>(readNotificationConfig);
 
@@ -35,6 +37,29 @@ export const ToastProvider = () => {
     return () => window.removeEventListener("codeji:notification-config", refresh);
   }, []);
 
+  useEffect(() => {
+    if (!token || !isUserAuthenticated) return;
+    let active = true;
+  const loadCompanyConfig = async () => {
+    try {
+      const { data } = await getRequest<{
+        success: boolean;
+        methodResult?: {
+          configuration?: Partial<NotificationConfig>;
+        };
+      }>("api/Company/NotificationPreferences");
+
+      if (active && data.success && data.methodResult?.configuration) {
+        setConfig((current) => ({ ...current, ...data.methodResult!.configuration }));
+      }
+    } catch {
+      // Keep cached/default settings when the company request fails.
+    }
+  };
+
+  void loadCompanyConfig();
+  return () => { active = false; };
+}, [isUserAuthenticated, token]);
   return (
     <ToastContainer
       position={config.position}

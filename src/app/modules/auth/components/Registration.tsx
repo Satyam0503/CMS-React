@@ -20,7 +20,7 @@ import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
-import { AppAlert, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
+import { AppAlert, AppCheckbox, AppIconButton, passwordVisibilityButtonSx } from "../../../shared/components/ui";
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -185,6 +185,7 @@ export function Registration() {
                           type="button"
                           size="small"
                           aria-label={showPassword ? "Hide password" : "Show password"}
+                          sx={passwordVisibilityButtonSx}
                           onMouseDown={(event) => event.preventDefault()}
                           onClick={() => setShowPassword((visible) => !visible)}
                         >
@@ -217,6 +218,7 @@ export function Registration() {
                           type="button"
                           size="small"
                           aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                          sx={passwordVisibilityButtonSx}
                           onMouseDown={(event) => event.preventDefault()}
                           onClick={() => setShowConfirmPassword((visible) => !visible)}
                         >

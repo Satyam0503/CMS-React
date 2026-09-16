@@ -204,6 +204,12 @@ export const markAllNotificationAsRead = async () => {
   );
 };
 
+export const snoozeNotification = (userNotificationId: string, untilUtc: string) =>
+  patchRequest<string, ApiResponse>(`api/User/Notification/${userNotificationId}/Snooze?untilUtc=${encodeURIComponent(untilUtc)}`);
+
+export const dismissNotification = (userNotificationId: string) =>
+  deleteRequest<ApiResponse>(`api/User/Notification/${userNotificationId}`);
+
 // work history
 export const getWorkHistory = async (userId?: string) => {
   if (userId) {

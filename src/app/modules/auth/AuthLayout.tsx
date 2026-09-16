@@ -86,13 +86,13 @@ const AuthLayout = () => {
                 height: 40,
                 borderRadius: 2.5,
                 color: isDark ? "secondary.light" : "primary.main",
-                bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
-                border: "1px solid",
+                // bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+                // border: "1px solid",
                 borderColor: isDark ? "rgba(255,255,255,.24)" : "color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
                 "&:hover": {
-                  color: "common.white",
-                  bgcolor: "primary.main",
-                  borderColor: "primary.main",
+                  color: "common.primary.main",
+                  // bgcolor: "primary.main",
+                  // borderColor: "primary.main",
                 },
               }}
             />
@@ -104,9 +104,10 @@ const AuthLayout = () => {
           sx={{
             display: "grid",
             gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.05fr) minmax(420px, .95fr)" },
-            minHeight: { md: "calc(100vh - 126px)" },
+            minHeight: "calc(100dvh - 126px)",
             borderRadius: { xs: 4, md: 6 },
             overflow: "hidden",
+            alignItems: "stretch",
             border: "1px solid",
             borderColor: isDark ? "rgba(255,255,255,.08)" : "rgba(15,23,42,.08)",
             boxShadow: isDark ? "0 32px 90px rgba(0,0,0,.34)" : "0 32px 90px rgba(15,23,42,.10)",
@@ -165,17 +166,26 @@ const AuthLayout = () => {
           </Box>
 
           <Stack
-            justifyContent="center"
-            sx={{
-              px: { xs: 3, sm: 6, lg: 9 },
-              py: { xs: 5, md: 6 },
-              minWidth: 0,
-            }}
-          >
-            <Box sx={{ width: "100%", maxWidth: 500, mx: "auto" }}>
-              <Outlet />
-            </Box>
-          </Stack>
+  justifyContent="center"
+  alignItems="center"
+  sx={{
+    width: "100%",
+    minHeight: "100%",
+    px: { xs: 2, sm: 4, md: 6 },
+    py: { xs: 4, md: 5 },
+    boxSizing: "border-box",
+  }}
+>
+  <Box
+    sx={{
+      width: "100%",
+      maxWidth: 500,
+      mx: "auto",
+    }}
+  >
+    <Outlet />
+  </Box>
+</Stack>
         </Box>
       </Container>
     </Box>

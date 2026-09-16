@@ -305,6 +305,8 @@ Always include `defaultMessage` on `<FormattedMessage>` so the UI degrades grace
 
 ## SignalR (realtime)
 
+Notifications received through the authenticated SignalR connection update the header notification list and trigger a global TanStack Query refresh for cached API reads. This keeps older screens that still use imperative `getRequest`/`fetchQuery` calls synchronized when another user submits leave or changes an HR workflow. Reconnect performs the same refresh, and stale queries refresh when the browser tab regains focus. The API remains the source of truth; SignalR is only the realtime refresh hint.
+
 [`@microsoft/signalr`](https://www.npmjs.com/package/@microsoft/signalr) connects after auth completes. It's used for:
 - Online-user presence → updates `onlineUsers` slice.
 - (Likely) chat / notifications. Search `chatHubInstance` in [`App.tsx`](../src/app/App.tsx) for the wiring.

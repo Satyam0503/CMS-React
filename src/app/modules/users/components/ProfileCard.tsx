@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Card,
+  Chip,
   Stack,
   Typography,
   alpha,
@@ -56,6 +57,32 @@ export default function ProfileCard() {
   const handleDateChange = (date: Dayjs | null) => {
     setDate(date);
   };
+
+  const lifecycleBadges = [
+  userDetails?.employmentStatus &&
+    userDetails.employmentStatus !== "Active" &&
+    {
+      label: userDetails.employmentStatus,
+      color: "warning" as const,
+      ariaLabel: `Employment status: ${userDetails.employmentStatus}`,
+    },
+  userDetails?.availabilityStatus &&
+    userDetails.availabilityStatus !== "Working" &&
+    {
+      label: userDetails.availabilityStatus.replace(
+        /([a-z])([A-Z])/g,
+        "$1 $2",
+      ),
+      color: "info" as const,
+      ariaLabel: `Availability status: ${userDetails.availabilityStatus}`,
+    },
+].filter(
+  (badge): badge is {
+    label: string;
+    color: "warning" | "info";
+    ariaLabel: string;
+  } => Boolean(badge),
+);
 
   const viewPaySlip = async () => {
     if (!date) {
@@ -151,6 +178,19 @@ export default function ProfileCard() {
             )}
           </Typography>
         </Stack>
+        {lifecycleBadges.length > 0 && (
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" justifyContent="center">
+            {lifecycleBadges.map((badge) => (
+              <Chip
+                key={badge.ariaLabel}
+                size="small"
+                color={badge.color}
+                label={badge.label}
+                aria-label={badge.ariaLabel}
+              />
+            ))}
+          </Stack>
+        )}
         <Stack direction="row" className="justify-content-around text-center">
           <Stack>
             <Typography
@@ -231,11 +271,15 @@ export default function ProfileCard() {
                 height: 36,
                 width: 36,
                 flexShrink: 0,
-                borderRadius: 1,
+                borderRadius: 1.5,
                 border: "1px solid",
-                borderColor: alpha(paySlipControlColor, 0.82),
-                backgroundColor: alpha(paySlipControlColor, 0.1),
-                "&:hover": { backgroundColor: alpha(paySlipControlColor, 0.2) },
+                borderColor: alpha(paySlipControlColor, 0.42),
+                backgroundColor: "background.paper",
+                color: paySlipControlColor,
+                boxShadow: "0 1px 2px rgba(15, 23, 42, .08)",
+                transition: "background-color 160ms ease, border-color 160ms ease, transform 160ms ease",
+                "&:hover": { backgroundColor: alpha(paySlipControlColor, 0.08), borderColor: paySlipControlColor, transform: "translateY(-1px)" },
+                "&:focus-visible": { outline: "2px solid", outlineColor: paySlipControlColor, outlineOffset: 2 },
               }}
               onClick={viewPaySlip}
               disabled={loading}

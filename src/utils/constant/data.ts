@@ -182,6 +182,7 @@ export const ServiceUrl = {
 
   CREATE_NEW_LEAVE_POLICY: `api/LeaveManagement/CreateLeavePolicy`,
   UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,
+  DELETE_LEAVE_POLICY: `api/LeaveManagement/DeleteLeavePolicy`,
 
   CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateLeaveRequest`,
   CREATE_EMPLOYEE_LEAVE_REQUEST: `api/LeaveManagement/CreateEmployeeLeaveRequest`,

@@ -62,6 +62,7 @@ export type CompanyModel = {
   employeeIdPrefix?: string;
   autoGenerateEmployeeId?: boolean;
   careerPortalEnabled?: boolean;
+  formerEmployeePortalEnabled?: boolean;
   address: string;
   appTheme?: "glass" | "slate" | "dawn" | "blush";
 };

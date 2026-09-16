@@ -121,7 +121,14 @@ export default function PayrollSettings() {
     (async () => {
       try {
         const { data } = await getCompanySalaries({ employeeName: search });
-        setSalaryData(data.methodResults ?? []);
+        const salaries = data.methodResults ?? [];
+        try {
+          const employeeResponse = await getAllEmployees({ pageNo: 1, records: 10000, name: search, departmentId: [], gender: [] });
+          const lifecycleByUserId = new Map((employeeResponse.data.methodResults ?? []).map((employee) => [employee.userId, employee.payrollStatus ?? "Active"]));
+          setSalaryData(salaries.map((salary) => ({ ...salary, lifecyclePayrollStatus: lifecycleByUserId.get(salary.userId) ?? "Active" })));
+        } catch {
+          setSalaryData(salaries);
+        }
       } catch (error) {
         try {
           const employeeResponse = await getAllEmployees({
@@ -152,10 +159,6 @@ export default function PayrollSettings() {
 
   const handleProcessSalary = async () => {
     if (!processMonth) return;
-    if (!attendanceLocked) {
-      toast.info("Validate and lock attendance before processing salary.");
-      return;
-    }
     setConfirmOpen(false);
     setIsProcessing(true);
     try {

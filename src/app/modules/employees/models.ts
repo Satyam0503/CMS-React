@@ -18,14 +18,22 @@ export interface GetAllEmployeeResponseModel {
   dateOfBirth: string | null;
   dateOfJoining?: string | null;
   isVerified: boolean;
-  employmentStatus?: "Active" | "NoticePeriod" | "Resigned" | "Terminated";
+  employmentStatus?: "Active" | "NoticePeriod" | "Suspended" | "Resigned" | "Terminated" | string;
   lastWorkingDate?: string | null;
+  availabilityStatus?: string;
+  accountStatus?: string;
+  payrollStatus?: string;
+  offboardingStatus?: string;
+  formerPortalStatus?: string;
+  alumniStatus?: string;
+  lifecycleVersion?: number;
 }
 
 export interface EmployeeFilterModel {
   departmentId: string[];
   gender: string[];
   employmentStatus?: "Active" | "NoticePeriod" | "ExEmployees" | "All";
+  availabilityStatus?: string;
 }
 
 export type InitiateEmployeeExitRequest = {
@@ -36,13 +44,33 @@ export type InitiateEmployeeExitRequest = {
   notes?: string;
 };
 
+export type ChangeEmployeeAvailabilityRequest = {
+  employeeUserId: string;
+  availabilityStatus: string;
+  version: number;
+  effectiveFromUtc: string;
+  expectedReturnDate?: string | null;
+  reasonCode?: string;
+  reason?: string;
+};
+
+export type ChangeEmployeeLifecycleDimensionRequest = {
+  employeeUserId: string;
+  dimension: "AccountStatus" | "PayrollStatus" | "AlumniStatus";
+  value: string;
+  version: number;
+  effectiveFromUtc: string;
+  reason?: string;
+};
+
 export interface GetAllEmployeePayloadModel {
   name: string;
   pageNo: number;
   records: number;
   departmentId: string[];
   gender: string[];
-  employmentStatus?: "Active" | "NoticePeriod" | "ExEmployees" | "All";
+  employmentStatus?: "Active" | "AttendanceRoster" | "NoticePeriod" | "ExEmployees" | "All";
+  availabilityStatus?: string;
 }
 export interface EmployeeModel {
   userId: string;
@@ -64,7 +92,11 @@ export interface EmployeeModel {
   personalEmail: string | null;
   emergencyContact: string | null;
   status: string | boolean;
-  employmentStatus?: "Active" | "NoticePeriod" | "Resigned" | "Terminated";
+  employmentStatus?: "Active" | "NoticePeriod" | "Suspended" | "Resigned" | "Terminated" | string;
+  availabilityStatus?: string;
+  accountStatus?: string;
+  payrollStatus?: string;
+  alumniStatus?: string;
   lastWorkingDate?: string | null;
   isEmailVerified?: boolean;
   profileUrl?: string;

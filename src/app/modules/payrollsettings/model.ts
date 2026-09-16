@@ -6,6 +6,7 @@ export type CompanySalaryResponseModel = {
   employeeName: string;
   jobTitle: Record<string, string> | null;
   activeSalary: SalaryModel | null;
+  lifecyclePayrollStatus?: string;
 };
 
 export type CompanySalaryFilterPayload = {

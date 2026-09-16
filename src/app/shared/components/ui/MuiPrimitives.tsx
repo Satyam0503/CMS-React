@@ -18,6 +18,22 @@ import {
 } from "@mui/material";
 import { forwardRef } from "react";
 
+/** Shared password visibility control: icon-only, no outlined/boxed affordance. */
+export const passwordVisibilityButtonSx = {
+  width: 32,
+  height: 32,
+  p: 0.5,
+  border: 0,
+  borderRadius: "50%",
+  color: "text.disabled",
+  bgcolor: "transparent",
+  transition: "color 160ms ease, transform 160ms ease",
+  "& svg": { fontSize: 19, transition: "transform 180ms ease, opacity 160ms ease" },
+  "&:hover": { bgcolor: "transparent", color: "primary.main", transform: "scale(1.08)" },
+  "&:active": { transform: "scale(.92)" },
+  "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 1 },
+} as const;
+
 /** Central MUI primitives. Keep product-wide defaults here instead of per page. */
 export const AppButton = forwardRef<HTMLButtonElement, ButtonProps>(
   function AppButton({ variant = "contained", disableElevation = true, ...props }, ref) {

@@ -9,7 +9,7 @@ import { PageData } from "../../app/shared/components/PageData";
 // import { ChatMessenger } from "./components/header/chats/ChatMessanger";
 import { PageDataProvider } from "../../app/Context/PageDataProvider";
 import { OnlineUsersListener } from "../../app/modules/employees/components/OnlineUsersListener";
-import { Footer } from "./components/footer/Footer";
+import { EmployeeExitQueueAction } from "../../app/modules/users/components/EmployeeExitQueueAction";
 
 const MasterLayout = () => {
   const theme = useTheme();
@@ -19,17 +19,19 @@ const MasterLayout = () => {
     theme.breakpoints.down(theme.breakpoints.values.md),
   );
   const [isMiniSidebar, setMiniSidebar] = useState(false);
+  const [isSidebarHoverExpanded, setSidebarHoverExpanded] = useState(false);
+  const isSidebarExpanded = !isMiniSidebar || isSidebarHoverExpanded;
   const sidebarState = isSmallScreen
     ? "mobile"
-    : isMiniSidebar
+    : !isSidebarExpanded
       ? "collapsed"
       : "expanded";
   const shellVariables = {
     "--sidebar-expanded-width": "265px",
-    "--sidebar-collapsed-width": "100px",
+    "--sidebar-collapsed-width": "76px",
     "--sidebar-current-width": isSmallScreen
       ? "0px"
-      : isMiniSidebar
+      : !isSidebarExpanded
         ? "var(--sidebar-collapsed-width)"
         : "var(--sidebar-expanded-width)",
   } as CSSProperties;
@@ -94,16 +96,18 @@ const MasterLayout = () => {
                   handleClose={handleSideBarClose}
                   isMiniSidebar={isMiniSidebar}
                   setMiniSidebar={setMiniSidebar}
+                  isHoverExpanded={isSidebarHoverExpanded}
+                  setHoverExpanded={setSidebarHoverExpanded}
                 />
                 <Container
-                  maxWidth={isSmallScreen || isMiniSidebar ? false : "lg"}
+                  maxWidth={isSmallScreen || isSidebarExpanded ? "lg" : false}
                   className="d-flex flex-column flex-grow-1 gap-4"
                   sx={{
                     width: "100%",
                     // The theme sets a standard desktop cap for every Container.
                     // Override it only in mini-sidebar mode so the reclaimed
                     // navigation space is available to the active page.
-                    maxWidth: { xs: "none", md: isMiniSidebar ? "none" : "1280px" },
+                    maxWidth: { xs: "none", md: isSidebarExpanded ? "1280px" : "none" },
                     minWidth: 0,
                     minHeight: "max-content",
                     overflow: "visible",
@@ -114,10 +118,10 @@ const MasterLayout = () => {
                   }}
                 >
                   <PageData />
+                  <EmployeeExitQueueAction showButton={false} />
                   <Outlet />
                 </Container>
               </Stack>
-              <Footer />
             </Stack>
           </Stack>
           {/* <ChatMessenger /> */}

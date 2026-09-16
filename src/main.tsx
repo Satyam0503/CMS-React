@@ -18,6 +18,12 @@ dayjs.extend(localeData)
 
 const container = document.getElementById("root");
 if (container) {
+  // Dismiss the index.html startup overlay as soon as React takes ownership
+  // of the page. Waiting for nested auth/layout effects causes a visible
+  // flash in Chrome, especially on a cold load.
+  document.body.classList.remove("page-loading");
+  document.getElementById("splash-screen")?.setAttribute("style", "display: none");
+
   createRoot(container).render(
     <I18nProvider>
       <ErrorBoundary>

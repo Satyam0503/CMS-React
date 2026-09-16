@@ -1686,6 +1686,35 @@ input[type="password"]::-ms-clear {
     margin-bottom: 0.75rem;
   }
 
+  .lifecycle-special-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+    .MuiSwitch-root { flex: 0 0 auto; margin: 0; }
+  }
+
+  .lifecycle-requirements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+
+    .MuiFormControlLabel-root {
+      min-height: 34px;
+      margin: 0;
+    }
+
+    .MuiCheckbox-root { padding: 0.35rem; }
+  }
+
   .policy-toggle-row {
     width: 100%;
     .MuiFormControlLabel-root {
@@ -1737,6 +1766,8 @@ input[type="password"]::-ms-clear {
       padding: 1rem;
       border-radius: 12px;
     }
+
+    .lifecycle-special-toggle { align-items: flex-start; }
 
     .policy-form-actions {
       margin-top: 1rem;

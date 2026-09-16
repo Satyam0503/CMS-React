@@ -17,7 +17,8 @@ import WebRounded from "@mui/icons-material/WebRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import { Modules, ModulesName, ModulesTitles } from "../enums";
+import AccountTreeRounded from "@mui/icons-material/AccountTreeRounded";
+import { Modules, ModulesName, ModulesTitles, Permission } from "../enums";
 import { SideBarTabListProps } from "../common_types";
 
 export const SideBarTabList: SideBarTabListProps[] = [
@@ -76,6 +77,15 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.PayrollSettings,
         route: "/settingspayroll",
         icon: <ReceiptLongIcon />,
+        isDefault: false,
+      },
+      {
+        id: Modules.Employees,
+        title: ModulesTitles.LifecycleManagement,
+        constant: ModulesName.Employees,
+        permission: Permission.Edit,
+        route: "/lifecycle-management",
+        icon: <AccountTreeRounded />,
         isDefault: false,
       },
     ],

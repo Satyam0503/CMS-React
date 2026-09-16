@@ -48,7 +48,7 @@ The client is created once at module scope. Do not create it inside a component,
 | `staleTime` | 30 seconds | Matching requests reuse successful fresh data without another network call. |
 | `gcTime` | 30 minutes | Unused entries remain in memory for up to 30 minutes. |
 | Query retries | Maximum 2 | Transient/network failures can retry; HTTP 4xx failures do not. |
-| `refetchOnWindowFocus` | `false` | Returning to the tab does not unexpectedly reload screens. |
+| `refetchOnWindowFocus` | `true` | Returning to an inactive tab refreshes stale server data changed by another user. |
 | `refetchOnReconnect` | `true` | Stale active data can refresh when connectivity returns. |
 | Mutation retries | `false` | Writes are not repeated automatically. |
 
@@ -88,7 +88,7 @@ POST, PUT, PATCH, and DELETE still execute through Axios. After a successful res
 queryClient.invalidateQueries();
 ```
 
-Invalidation marks cached server state stale. Active native queries can refetch, and the next `fetchQuery` reloads stale data. Failed writes do not invalidate the cache.
+Invalidation marks cached server state stale. Shared writes invalidate the cache after a successful response. SignalR notification and reconnect events use `refetchType: "all"` so imperative `fetchQuery` screens also actively reload; this is important for admin screens that remain open while an employee submits leave or another workflow changes data. Failed writes do not invalidate the cache.
 
 Global invalidation is a compatibility safety net while older screens retain their current request lifecycles. Native feature mutations should eventually use targeted invalidation.
 
@@ -250,13 +250,13 @@ Not cached:
 - Forms and editing drafts.
 - SignalR messages, unless a handler explicitly updates or invalidates a query.
 
-For a SignalR event that changes server data:
+For a feature-specific SignalR event that changes server data, invalidate the relevant namespace. The global notification handler already performs a compatibility refresh for older screens:
 
 ```ts
-queryClient.invalidateQueries({
-  queryKey: queryKeys.users,
-});
+void queryClient.invalidateQueries({ refetchType: "all" });
 ```
+
+This refreshes cached API reads without clearing authentication or local form state. A notification is persisted and delivered by the backend; the realtime event is a refresh hint, not the source of truth. Reconnect performs the same refresh to cover changes made while the connection was unavailable.
 
 ## Tests
 
@@ -284,7 +284,7 @@ For stale or incorrect data:
 1. Confirm the request uses `getRequest` or a native query.
 2. Ensure every response-changing input is in the key.
 3. Confirm successful writes invalidate the relevant query.
-4. Remember that data stays fresh for 30 seconds.
+4. Remember that data stays fresh for 30 seconds unless a successful write, notification event, reconnect, or window-focus refetch makes it stale/refreshes it sooner.
 5. Confirm the account and language produce distinct global keys.
 6. Check Axios interceptors and the browser network request.
 

@@ -388,6 +388,17 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       },
 
       MuiDialog: {
+        defaultProps: {
+          slotProps: {
+            backdrop: {
+              sx: {
+                backgroundColor: "rgba(15, 23, 42, 0.48)",
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+              },
+            },
+          },
+        },
         styleOverrides: {
           paper: {
             maxWidth: "720px",
@@ -400,6 +411,17 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             },
             "@media (min-width:1200px)": {
               minWidth: "600px", // For large screens and up
+            },
+          },
+        },
+      },
+
+      MuiDialogContent: {
+        styleOverrides: {
+          root: {
+            paddingTop: "24px !important",
+            "@media (max-width:599px)": {
+              paddingTop: "16px !important",
             },
           },
         },
