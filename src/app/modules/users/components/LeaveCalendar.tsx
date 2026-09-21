@@ -1,4 +1,3 @@
-import { CelebrationRounded } from "@mui/icons-material";
 import { Box, Card, Chip, Stack, Tooltip, Typography, alpha } from "@mui/material";
 import { DateCalendar, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -126,8 +125,8 @@ function LeaveCalendar() {
               "&:hover, &:focus": { bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.26) },
               "&.Mui-selected": { bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.3), color: "secondary.dark" },
             }}
-          >
-            <CelebrationRounded fontSize="small" aria-hidden="true" />
+            >
+            {dayProps.day.format("D")}
           </PickersDay>
         </Tooltip>
       );
@@ -208,7 +207,7 @@ function LeaveCalendar() {
         />
       </LocalizationProvider>
       <Stack direction="row" flexWrap="wrap" gap={0.75} alignItems="center" sx={{ mt: 0.5 }}>
-        {holidays.size > 0 && <Tooltip title="Public holiday"><Box aria-label="Public holiday" sx={{ display: "grid", placeItems: "center", width: 28, height: 24, borderRadius: 1.5, bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16), color: "secondary.dark" }}><CelebrationRounded fontSize="small" /></Box></Tooltip>}
+        {holidays.size > 0 && <Tooltip title="Public holiday"><Box aria-label="Public holiday" sx={{ display: "grid", placeItems: "center", width: 28, height: 24, borderRadius: 1.5, bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16), color: "secondary.dark", fontSize: 10 }}><Box component="span" sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: "currentColor" }} /></Box></Tooltip>}
         {visibleStatuses.length ? visibleStatuses.map((status) => <Chip key={status.code} size="small" label={status.code} title={status.name} sx={{ borderRadius: 1.5, fontWeight: 800, bgcolor: status.color, color: "#fff" }} />) : <Chip size="small" label="No attendance this month" variant="outlined" />}
       </Stack>
     </Card>

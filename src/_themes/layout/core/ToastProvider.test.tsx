@@ -14,10 +14,15 @@ const closeToast = vi.fn();
 
 vi.mock("@mui/material", () => ({
   useColorScheme: () => ({ mode: "light", systemMode: "light" }),
+  styled: () => () => null,
+  Badge: () => null,
 }));
 
 vi.mock("@mui/icons-material", () => ({
-  CloseRounded: () => <span aria-hidden="true">×</span>,
+    CloseRounded: () => <span aria-hidden="true">×</span>,
+    Groups2Rounded: () => <span aria-hidden="true" />,
+    ShieldRounded: () => <span aria-hidden="true" />,
+    AutoAwesomeRounded: () => <span aria-hidden="true" />,
 }));
 
 vi.mock("react-toastify", () => ({
@@ -26,6 +31,10 @@ vi.mock("react-toastify", () => ({
   Flip: "flip",
   Bounce: "bounce",
   ToastContainer: (props: unknown) => toastContainer(props),
+}));
+
+vi.mock("../../../app/Redux/hooks", () => ({
+  useAppSelector: (selector: (state: unknown) => unknown) => selector({ auth: { token: null, isUserAuthenticated: false } }),
 }));
 
 describe("ToastProvider", () => {

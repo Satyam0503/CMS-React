@@ -42,7 +42,7 @@ export const UserSkills = () => {
       <Stack className="flex-row justify-content-between" sx={{
         mb: 2
       }} >
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }}>
           {intl.formatMessage({ id: "PROFILE.SKILLS.TITLE" })}
         </Typography>
         {

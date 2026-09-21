@@ -4,6 +4,8 @@ import {
   PaginationModel,
 } from "../../../utils/common_types";
 
+export interface PublicJobApplicationResponse { applicationReference: string; resumeUploadToken: string; tokenExpiresAt: string; jobTitle: string; companyName: string; }
+
 export interface ApplicantModel {
   applicantId: string;
   firstName: string;
@@ -80,6 +82,16 @@ export interface JobModal {
   shiftType?: string;
   workingDays?: string;
   recruiterContactEmail?: string;
+  applicationMode?: "Internal" | "External";
+  externalApplicationUrl?: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  currency?: string;
+  showSalary?: boolean;
+  isWalkIn?: boolean;
+  walkInStartAt?: string | null;
+  walkInEndAt?: string | null;
+  walkInAddress?: string;
   applicationDeadline?: string | null;
   publishToCareerPortal?: boolean;
   publishToMasterPortal?: boolean;
@@ -115,3 +127,191 @@ export type CommentResponseModel = CommentModel &
     id: string;
     userName: string;
   };
+
+export interface RecruitmentApplicationStageCommand { applicationId?: string; applicantId: string; vacancyId: string; stage: "New" | "InProgress" | "OnHold" | "Shortlisted" | "Selected" | "Rejected" | "ReApply"; pipelineSnapshot?: string | null; reason?: string | null; idempotencyKey: string; expectedVersion?: number; }
+
+export interface RecruitmentInterviewCommand {
+  interviewId?: string;
+  applicantId: string;
+  vacancyId: string;
+  title: string;
+  startsAtUtc: string;
+  endsAtUtc: string;
+  timeZoneId?: string;
+  location?: string | null;
+  meetingUrl?: string | null;
+  panelistUserIds?: string[];
+  idempotencyKey: string;
+  expectedVersion?: number;
+  status?: "Draft" | "Scheduled" | "Confirmed" | "Cancelled" | "Completed";
+}
+
+export interface RecruitmentResumeExtractionReviewCommand { reviewId?: string; applicantId: string; vacancyId: string; resumeVersion?: string | null; extractedFields: Record<string, string>; decision: "Pending" | "Approved" | "Rejected"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
+export interface RecruitmentCandidateOfferActionCommand { token: string; decision: "Accepted" | "Declined" | "RequestOfferChange"; message?: string | null; idempotencyKey: string; }
+export interface RecruitmentCandidatePrivacyCommand { applicantId: string; action: "Grant" | "Revoke" | "Anonymize"; retentionDays?: number; idempotencyKey: string; reason?: string | null; }
+
+export interface RecruitmentOfferVersionCommand { offerId: string; salary: number; currency: string; startDateUtc?: string | null; status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "RevisedSent"; versionReason?: string | null; approvalReference?: string | null; expiresAtUtc?: string | null; idempotencyKey: string; expectedVersionNumber?: number; }
+export interface RecruitmentOfferCounterCommand { offerId: string; requestedSalary: number; requestedCurrency: string; requestedStartDateUtc?: string | null; message?: string | null; idempotencyKey: string; expectedBaseVersionNumber?: number; }
+
+export interface RecruitmentHiringDecisionCommand { decisionId?: string; applicantId: string; vacancyId: string; decision: "Approve" | "Hold" | "Reject"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
+
+export interface RecruitmentOfferCommand {
+  offerId?: string;
+  applicantId: string;
+  vacancyId: string;
+  salary: number;
+  currency: string;
+  startDateUtc?: string | null;
+  approvalReference?: string | null;
+  idempotencyKey: string;
+  expectedVersion?: number;
+  status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "Accepted" | "Declined" | "Expired" | "Withdrawn";
+}
+
+export interface RecruitmentOnboardingTask { code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped"; assigneeUserId?: string | null; }
+export interface RecruitmentOnboardingCase { caseId: string; applicantId: string; employeeUserId: string; status: "PendingActivation" | "InProgress" | "Completed"; tasks: RecruitmentOnboardingTask[]; version?: number; }
+export interface RecruitmentOnboardingUpdateCommand { caseId: string; status: RecruitmentOnboardingCase["status"]; tasks: Array<{ code: string; status: RecruitmentOnboardingTask["status"] }>; idempotencyKey: string; expectedVersion?: number; }
+
+export interface CandidateHandoffRequest {
+  applicantId: string;
+  idempotencyKey: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  employeeId: string;
+  roleId?: string;
+  departmentId?: string;
+  jobRoleId?: string;
+  gender?: string;
+  reportingManager?: string;
+  scheduleId?: string;
+}
+
+export interface RecruitmentRequisitionCommand {
+  requisitionId?: string;
+  vacancyId: string;
+  positionTitle: string;
+  departmentId?: string | null;
+  location?: string | null;
+  headcount: number;
+  approvedHeadcount?: number | null;
+  approvalReference?: string | null;
+  idempotencyKey: string;
+  expectedVersion?: number;
+  status: "Draft" | "PendingApproval" | "Approved" | "Rejected" | "Closed";
+}
+export interface RecruitmentScorecardCriterionCommand {
+  name: string;
+  rating: number;
+  notes?: string | null;
+}
+
+export interface RecruitmentInterviewPlanStageCommand { order: number; code: string; name: string; type?: string | null; requiredPanelSize: number; scorecardRequired: boolean; feedbackDueHours: number; }
+export interface RecruitmentInterviewPlanStage { order: number; code: string; name: string; type?: string | null; requiredPanelSize: number; scorecardRequired: boolean; feedbackDueHours: number; }
+export interface RecruitmentInterviewPlan { planId?: string; vacancyId?: string | null; name: string; isDefault: boolean; stages: RecruitmentInterviewPlanStage[]; version?: number; }
+export interface RecruitmentInterviewPlanCommand { planId?: string; vacancyId?: string | null; name: string; isDefault: boolean; stages: RecruitmentInterviewPlanStageCommand[]; idempotencyKey: string; expectedVersion?: number; }
+
+export interface RecruitmentInterviewDebriefCommand { interviewId: string; decision: "Advance" | "Hold" | "Reject"; notes?: string | null; idempotencyKey: string; expectedVersion?: number; }
+
+export interface RecruitmentScorecardCommand {
+  scorecardId?: string;
+  applicantId: string;
+  vacancyId: string;
+  interviewId?: string | null;
+  roundNumber?: number;
+  feedbackDueAtUtc?: string | null;
+  recommendation?: string | null;
+  reviewerUserId: string;
+  criteria: RecruitmentScorecardCriterionCommand[];
+  idempotencyKey: string;
+  expectedVersion?: number;
+  status: "Draft" | "Submitted" | "Locked";
+}
+export interface RecruitmentTalentPoolCommand {
+  memberId?: string;
+  applicantId: string;
+  poolName: string;
+  tags: string[];
+  notes?: string | null;
+  idempotencyKey: string;
+  expectedVersion?: number;
+  status: "Active" | "Archived";
+}
+
+export interface RecruitmentDuplicateLookupRequest { applicantId?: string; email?: string; phone?: string; linkedInUrl?: string; }
+export interface RecruitmentDuplicateCandidate { applicantId: string; fullName: string; email?: string; phone?: string; linkedInUrl?: string; matchReasons: string[]; }
+
+export interface RecruitmentApplicantMergeCommand { sourceApplicantId: string; targetApplicantId: string; idempotencyKey: string; expectedSourceVersion?: number; reason?: string | null; }
+export interface RecruitmentOfferApprovalPolicy { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; version?: number; }
+export interface RecruitmentOfferApprovalPolicyCommand { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; idempotencyKey: string; expectedVersion?: number; }
+export interface RecruitmentFeedbackSlaItem { interviewId: string; applicantId: string; vacancyId: string; roundNumber: number; dueAtUtc: string; assignedInterviewers: number; submittedScorecards: number; overdue: boolean; }
+export interface RecruitmentFeedbackSlaReport { totalOpenRounds: number; overdueRounds: number; items: RecruitmentFeedbackSlaItem[]; }
+export interface RecruitmentAnalytics { totalApplicants: number; activeApplicants: number; rejectedApplicants: number; mergedApplicants: number; byStage: Record<string, number>; }
+export interface RecruitmentStageSlaPolicyCommand { stage: string; targetHours: number; enabled: boolean; location?: string | null; idempotencyKey: string; }
+export interface RecruitmentEnterpriseConfig { configId?: string; locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview: boolean; hiringManagerReview: boolean; interviewRounds: boolean; parallelPanels: boolean; scorecards: boolean; offerApproval: boolean; offerNegotiation: boolean; candidateEmailActions: boolean; requisitions: boolean; slaTracking: boolean; automation: boolean; internalMobility: boolean; rehireLinks: boolean; defaultTimezone?: string | null; configSource?: string; overriddenFields?: string[]; }
+export interface RecruitmentEnterpriseConfigCommand { locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview?: boolean; hiringManagerReview?: boolean; interviewRounds?: boolean; parallelPanels?: boolean; scorecards?: boolean; offerApproval?: boolean; offerNegotiation?: boolean; candidateEmailActions?: boolean; requisitions?: boolean; slaTracking?: boolean; automation?: boolean; internalMobility?: boolean; rehireLinks?: boolean; defaultTimezone?: string | null; resetToDefaults?: boolean; idempotencyKey: string; }
+export interface RecruitmentRelationshipLinkCommand { applicantId: string; relationshipType: "InternalMobility" | "Rehire"; relatedPersonId: string; notes?: string | null; idempotencyKey: string; }
+export interface RecruitmentAutomationEventCommand { eventType: string; applicantId?: string | null; payload: Record<string, string>; idempotencyKey: string; }
+
+
+
+export interface RecruitmentWorkflowAction {
+  code: string;
+  enabled: boolean;
+  disabledReason?: string | null;
+}
+
+export interface RecruitmentWorkflow {
+  applicantId: string;
+  currentStage: number;
+  pipelineVersion: number;
+  actions: RecruitmentWorkflowAction[];
+}
+
+export interface RecruitmentScreeningCriterionCommand {
+  name: string;
+  passed: boolean;
+  notes?: string | null;
+}
+
+export interface RecruitmentScreeningQueueItem { applicantId: string; vacancyId: string; applicantName: string; email?: string | null; reviewId: string; decision: "Pending" | "Hold"; score: number; reviewerUserId?: string | null; rejectionReason?: string | null; submittedAtUtc: string; ageHours: number; overdue: boolean; }
+export interface RecruitmentScreeningQueueReport { totalPending: number; overdueCount: number; items: RecruitmentScreeningQueueItem[]; }
+
+export interface RecruitmentScreeningReviewCommand {
+  reviewId?: string;
+  applicantId: string;
+  vacancyId: string;
+  reviewerUserId?: string;
+  resumeVersion?: string | null;
+  score: number;
+  decision: "Pending" | "Pass" | "Hold" | "Reject";
+  rejectionReason?: string | null;
+  evidence?: string | null;
+  criteria: RecruitmentScreeningCriterionCommand[];
+  idempotencyKey: string;
+  expectedVersion?: number;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

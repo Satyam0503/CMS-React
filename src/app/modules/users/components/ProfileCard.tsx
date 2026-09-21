@@ -30,7 +30,7 @@ import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
 import { LANGUAGE } from "../../../../utils/enums";
 
-import { AppIconButton } from "../../../shared/components/ui";
+import { AppButton } from "../../../shared/components/ui";
 export default function ProfileCard() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -233,15 +233,13 @@ export default function ProfileCard() {
         </Stack>
         {!employeeId && (
           <Stack
-            direction="row"
             spacing={1}
-            alignItems="flex-end"
             sx={{
               width: "100%",
               mt: 1.5,
             }}
           >
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Box sx={{ width: "100%" }}>
               <CustomisedDatePicker
                 label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
                 views={["month", "year"]}
@@ -265,27 +263,19 @@ export default function ProfileCard() {
                 }}
               />
             </Box>
-            <AppIconButton
+            <AppButton
               aria-label="View payslip"
+              startIcon={<Visibility />}
+              fullWidth
               sx={{
-                height: 36,
-                width: 36,
-                flexShrink: 0,
-                borderRadius: 1.5,
-                border: "1px solid",
-                borderColor: alpha(paySlipControlColor, 0.42),
-                backgroundColor: "background.paper",
                 color: paySlipControlColor,
-                boxShadow: "0 1px 2px rgba(15, 23, 42, .08)",
-                transition: "background-color 160ms ease, border-color 160ms ease, transform 160ms ease",
-                "&:hover": { backgroundColor: alpha(paySlipControlColor, 0.08), borderColor: paySlipControlColor, transform: "translateY(-1px)" },
-                "&:focus-visible": { outline: "2px solid", outlineColor: paySlipControlColor, outlineOffset: 2 },
+                borderColor: alpha(paySlipControlColor, 0.42),
               }}
+              variant="outlined"
               onClick={viewPaySlip}
-              disabled={loading}
             >
-              {loading ? <span className="loader" /> : <Visibility sx={{ color: paySlipControlColor }} />}
-            </AppIconButton>
+              {loading ? "Generating..." : "View Pay Slip"}
+            </AppButton>
           </Stack>
         )}
       </Card>

@@ -109,15 +109,48 @@ export const ServiceUrl = {
   GET_ALL_APPLICANTS: `api/Applicants/GetApplicantList`,
   GET_APPLICANT_COMMENTS: `api/Applicants/GetAllComment`,
   GET_APPLICANT_BY_ID: `api/Applicants/ApplicantById`,
+  GET_APPLICANT_WORKFLOW: `api/Applicants/Workflow`,
+  UPSERT_APPLICATION_STAGE: `api/RecruitmentApplication/UpsertStage`,
   ADD_APPLICANT: `api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `api/Applicants/EditApplicant`,
-  UPLOAD_RESUME: `api/Applicants/UploadResume`,
+  UPLOAD_RESUME_FOR_APPLICANT: `api/Applicants/UploadResume`,
+  UPSERT_INTERVIEW: `api/Applicants/UpsertInterview`,
+  COMPLETE_INTERVIEW_DEBRIEF: `api/RecruitmentPlanning/CompleteInterviewDebrief`,
+  GET_INTERVIEW_PLAN: `api/RecruitmentPlanning/InterviewPlan`,
+  UPSERT_INTERVIEW_PLAN: `api/RecruitmentPlanning/UpsertInterviewPlan`,
+  UPSERT_OFFER: `api/Applicants/UpsertOffer`,
+  UPSERT_HIRING_DECISION: `api/RecruitmentHiringDecision/Upsert`,
+  APPLY_CANDIDATE_PRIVACY: `api/RecruitmentCandidatePrivacy/Apply`,
+  CREATE_OFFER_VERSION: `api/RecruitmentOfferNegotiation/CreateVersion`,
+  REQUEST_OFFER_COUNTER: `api/RecruitmentOfferNegotiation/RequestCounter`,
+  REVIEW_RESUME_EXTRACTION: `api/RecruitmentResumeExtraction/Review`,
+  HANDOFF_TO_PREBOARDING: `api/Applicants/HandoffToPreboarding`,
+  GET_ONBOARDING_BY_APPLICANT: `api/RecruitmentOnboarding/ByApplicant`,
+  UPDATE_ONBOARDING: `api/RecruitmentOnboarding/Update`,
+  UPSERT_REQUISITION: `api/RecruitmentPlanning/UpsertRequisition`,
+  UPSERT_SCORECARD: `api/RecruitmentPlanning/UpsertScorecard`,
+  UPSERT_SCREENING: `api/RecruitmentPlanning/UpsertScreening`,
+  RECRUITMENT_SCREENING_QUEUE: `api/RecruitmentScreening/Queue`,
+  UPSERT_TALENT_POOL: `api/RecruitmentPlanning/UpsertTalentPoolMember`,
+  FIND_DUPLICATES: `api/RecruitmentDuplicate/Find`,
+  MERGE_APPLICANTS: `api/RecruitmentEnterprise/MergeApplicants`,
+  RECRUITMENT_ANALYTICS: `api/RecruitmentEnterprise/Analytics`,
+  RECRUITMENT_FEEDBACK_SLA: `api/RecruitmentEnterprise/FeedbackSla`,
+  QUEUE_FEEDBACK_REMINDERS: `api/RecruitmentEnterprise/QueueFeedbackReminders`,
+  UPSERT_RECRUITMENT_SLA: `api/RecruitmentEnterprise/UpsertSlaPolicy`,
+  GET_OFFER_APPROVAL_POLICY: `api/RecruitmentPlanning/OfferApprovalPolicy`,
+  UPSERT_OFFER_APPROVAL_POLICY: `api/RecruitmentPlanning/UpsertOfferApprovalPolicy`,
+  GET_RECRUITMENT_CONFIG: `api/RecruitmentEnterprise/Config`,
+  UPSERT_RECRUITMENT_CONFIG: `api/RecruitmentEnterprise/UpsertConfig`,
+  LINK_RECRUITMENT_RELATIONSHIP: `api/RecruitmentEnterprise/LinkRelationship`,
+  QUEUE_RECRUITMENT_AUTOMATION: `api/RecruitmentEnterprise/QueueAutomation`,
 
   ADD_COMMENT: `api/Applicants/AddComment`,
   APPLY_JOB: `api/applicant/applyJob`,
 
   // process log
   GET_PROCESS_LOG: `api/Applicants/GetProcessLogData`,
+  EXPORT_RECRUITMENT_AUDIT: `api/RecruitmentAudit/Export`,
 
   // departments
   GET_DEPARTMENTLIST: `api/CompanyMaster/GetDepartmentList`,
@@ -656,3 +689,30 @@ export const modules_description = [
   { name: "Jobs", description: "JOBS_DESCRIPTION" },
   { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
 ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

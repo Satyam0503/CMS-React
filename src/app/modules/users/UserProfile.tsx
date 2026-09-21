@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Stack } from "@mui/material";
+import { Box, Card, Grid, Stack, Typography } from "@mui/material";
 import {
   CalendarMonth,
   Person,
@@ -123,6 +123,9 @@ const UserProfile = () => {
             xl: 9,
           }}
         >
+          <Typography component="h1" variant="h4" sx={{ fontWeight: 800, mb: -1 }}>
+            {i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" })}
+          </Typography>
           <ProfileHeader />
           <Stack spacing={2.5} className="flex-grow-1">
             {!empId && <EmployeeOffboardingAction />}
@@ -140,7 +143,10 @@ const UserProfile = () => {
                         tab_active: checkIsActive(location.pathname, tabTo),
                       })}
                       onClick={() => navigate(tab.to)}
-                      sx={{ color: "text.secondary" }}
+                      role="tab"
+                      aria-selected={checkIsActive(location.pathname, tabTo)}
+                      tabIndex={checkIsActive(location.pathname, tabTo) ? 0 : -1}
+                      sx={{ color: "text.secondary", fontWeight: 600 }}
                     >
                       {tab.icon}
                       {i({ id: tab.title })}

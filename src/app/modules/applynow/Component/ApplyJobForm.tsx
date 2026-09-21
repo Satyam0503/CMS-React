@@ -21,7 +21,7 @@ import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { toast } from "react-toastify";
 import { ApplicantModel, JobModal } from "../../recruitment/models";
-import { uploadResume } from "../../recruitment/services";
+import { uploadApplicationResume } from "../services";
 import { applyNow } from "../services";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { useIntl } from "react-intl";
@@ -79,7 +79,8 @@ export default function ApplyJobForm(props: Props) {
     try {
       const { data } = await applyNow(payload);
       if (!data.success) throw new Error(String(data.statusCode));
-      const uploadResumeResponse = await uploadResume(values.email, formData);
+      if (!data.resourceId || !data.actionToken) throw new Error("The application upload token was not returned.");
+      const uploadResumeResponse = await uploadApplicationResume(data.resourceId, data.actionToken, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) throw new Error(String(responseData.statusCode));
       toast.success(i({ id: "TOAST.SUCCESS.APPLICATION_SUBMITTED" }));
@@ -335,3 +336,4 @@ export default function ApplyJobForm(props: Props) {
     </CustomisedModal>
   );
 }
+

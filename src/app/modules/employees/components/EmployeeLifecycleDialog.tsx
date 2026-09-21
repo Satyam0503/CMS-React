@@ -37,7 +37,7 @@ const fallbackLifecyclePolicies: EmployeeLifecyclePolicy[] = [
   { eventType: "AbscondingUnderReview", requiresHrApproval: true, requiresReason: true, requiresExpectedReturnDate: false, defaultAvailabilityStatus: "AbscondingUnderReview", attendanceExpected: false, leaveRequestsAllowed: false, workFromHomeRequestsAllowed: false },
 ];
 
-const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave", "Sabbatical"]);
+const leaveDrivenLifecycleStatuses = new Set(["MedicalLeave", "MaternityLeave", "PaternityLeave", "LongTermLeave", "Sabbatical", "AdministrativeLeave"]);
 const directLifecycleOptions: Array<[string, string]> = [
   ["Working", "Working"], ["AdministrativeLeave", "Administrative leave"],
   ["UnauthorizedAbsence", "Unauthorized absence"], ["AbscondingUnderReview", "Absconding under review"],
@@ -86,6 +86,7 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
   const selectedPolicy = policies.find((policy) => policy.eventType === status) ?? fallbackLifecyclePolicies.find((policy) => policy.eventType === status);
   const isFallbackPolicy = selectedPolicy && !policies.some((policy) => policy.eventType === status);
   const currentLeaveDrivenStatus = leaveDrivenLifecycleStatuses.has(status);
+  const lifecycleIsLeaveOwned = leaveDrivenLifecycleStatuses.has(employee.availabilityStatus ?? "");
 
   const save = async () => {
     setSaving(true);
@@ -191,31 +192,32 @@ const EmployeeLifecycleDialog = ({ employee, onSaved }: Props) => {
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <FormControl fullWidth>
                 <InputLabel id={`lifecycle-account-${employee.userId}`}>Account access</InputLabel>
-                <Select labelId={`lifecycle-account-${employee.userId}`} value={accountStatus} label="Account access" onChange={(event) => setAccountStatus(event.target.value)}>
+                  <Select labelId={`lifecycle-account-${employee.userId}`} value={accountStatus} label="Account access" disabled={lifecycleIsLeaveOwned} onChange={(event) => setAccountStatus(event.target.value)}>
                   {["Active", "Locked", "Limited", "TemporarilyDisabled", "Suspended", "Closed"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}
                 </Select>
               </FormControl>
               <FormControl fullWidth>
                 <InputLabel id={`lifecycle-payroll-${employee.userId}`}>Payroll</InputLabel>
-                <Select labelId={`lifecycle-payroll-${employee.userId}`} value={payrollStatus} label="Payroll" onChange={(event) => setPayrollStatus(event.target.value)}>
+                <Select labelId={`lifecycle-payroll-${employee.userId}`} value={payrollStatus} label="Payroll" disabled={lifecycleIsLeaveOwned} onChange={(event) => setPayrollStatus(event.target.value)}>
                   {["Active", "Hold", "Paused", "FinalSettlement", "Closed"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}
                 </Select>
               </FormControl>
             </Stack>
+            {lifecycleIsLeaveOwned && <Alert severity="info" sx={{ borderRadius: 2 }}>Account and payroll controls are temporarily locked because Leave Management owns this active leave case. Change them from the linked lifecycle case or leave decision.</Alert>}
             <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap" aria-label="Workflow statuses" sx={{ p: { xs: 1, sm: 1.25 }, borderRadius: 2, bgcolor: "action.hover" }}>
               <Chip size="small" variant="outlined" label={`Employment: ${employee.employmentStatus ?? "Active"}`} />
               <Chip size="small" variant="outlined" label={`Offboarding: ${employee.offboardingStatus ?? "None"}`} />
               <Chip size="small" variant="outlined" label={`Former portal: ${employee.formerPortalStatus ?? "NotEligible"}`} />
               <Chip size="small" variant="outlined" label={`Alumni: ${alumniStatus}`} />
             </Stack>
-            {employee.employmentStatus && ["Resigned", "Terminated", "Retired", "ContractEnded", "Deceased"].includes(employee.employmentStatus) && (
+                  {employee.employmentStatus && ["Resigned", "Terminated", "Retired", "ContractEnded", "Deceased"].includes(employee.employmentStatus) && (
               <FormControl fullWidth>
                 <InputLabel id={`lifecycle-alumni-${employee.userId}`}>Alumni relationship</InputLabel>
-                <Select labelId={`lifecycle-alumni-${employee.userId}`} value={alumniStatus} label="Alumni relationship" onChange={(event) => setAlumniStatus(event.target.value)}>
+                    <Select labelId={`lifecycle-alumni-${employee.userId}`} value={alumniStatus} label="Alumni relationship" disabled={employee.employmentStatus === "Deceased"} onChange={(event) => setAlumniStatus(event.target.value)}>
                   {["Eligible", "Invited", "Member", "OptedOut", "Blocked"].map((value) => <MenuItem key={value} value={value}>{value}</MenuItem>)}
                 </Select>
-              </FormControl>
-            )}
+                  </FormControl>
+                )}
             {employee.availabilityStatus && employee.availabilityStatus !== "Working" && !currentLeaveDrivenStatus && (
               <Alert
                 severity="success"

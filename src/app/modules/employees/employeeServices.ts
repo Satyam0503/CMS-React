@@ -1,6 +1,6 @@
  import { deleteRequest, getBlobRequest, getRequest, patchRequest, postRequest, putRequest } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
-import { ServiceUrl } from "../../../utils/constant/Constant";
+import { ServiceUrl } from "../../../utils/constant/data";
 import {
   BulkImportEmployeesRequest,
   BulkImportEmployeesResponse,
@@ -82,6 +82,10 @@ export const initiateEmployeeExit = (payload: InitiateEmployeeExitRequest) =>
     ServiceUrl.INITIATE_EMPLOYEE_EXIT,
     payload,
   );
+
+export type UpdateEmployeeContractRequest = { employeeUserId: string; version: number; startDate?: string; endDate?: string; action: "Extend" | "End"; reason?: string };
+export const updateEmployeeContract = (payload: UpdateEmployeeContractRequest) =>
+  postRequest<UpdateEmployeeContractRequest, ApiResponse>("api/User/EmployeeLifecycle/Contract", payload);
 
 export const changeEmployeeAvailability = (payload: ChangeEmployeeAvailabilityRequest) =>
   postRequest<ChangeEmployeeAvailabilityRequest, ApiResponse>(
@@ -325,10 +329,11 @@ export const uploadEmployeeExitEvidence = (payload: FormData) => postRequest<For
 export const downloadEmployeeExitEvidence = (employeeExitId: string, evidenceId: string) =>
   getBlobRequest(`api/User/EmployeeExitEvidence/${encodeURIComponent(employeeExitId)}/${encodeURIComponent(evidenceId)}/download`);
 export type EmployeeExitFeatureConfiguration = { key: "SelfResignation" | "HrInitiatedExit" | "ManagerApproval" | "HrApproval" | "Discussion" | "NoticePeriod" | "NoticeAdjustments" | "Withdrawal" | "Handover" | "Clearance" | "Assets" | "ItAccess" | "Finance" | "Benefits" | "Evidence" | "FinalSettlement" | "ExitInterview" | "Documents" | "FormerEmployeePortal"; enabled: boolean; blocksCompletion: boolean; required: boolean; ownerPermission?: string; allowWaiver: boolean; waiverReasonRequired: boolean; dueDaysBeforeLastWorkingDate?: number };
-export type EmployeeExitPolicy = { employeeExitPolicyId?: string; version?: number; departmentId?: string; departmentIds?: string[]; consolidateDepartmentPolicies?: boolean; roleId?: string; minimumNoticeDays: number; noticePaySalaryBasis: "BasicMonthly" | "GrossMonthly"; noticePayDailyRateDivisor: number; enableOffboarding: boolean; requireManagerReview: boolean; requireHrReview: boolean; allowJointDiscussion: boolean; requireResignationEvidence: boolean; requireEmployeeAcknowledgement: boolean; enableFormerEmployeePortal: boolean; enableNoticePeriodReminders: boolean; noticePeriodReminderEveryDays: number; noticePeriodReminderOffsets: string[]; notifyNoticePeriodEmployee: boolean; notifyNoticePeriodReportingManager: boolean; notifyNoticePeriodHr: boolean; notifyNoticePeriodAdmins: boolean; noticePeriodReminderEmail: boolean; requireHandover: boolean; requireAssetClearance: boolean; requireAccessRevocation: boolean; requireFinanceClearance: boolean; requireBenefitClearance: boolean; requireFinalSettlement: boolean; presetLevel?: "Disabled" | "Basic" | "Structured" | "Operational" | "Advanced" | "Enterprise" | "Custom"; features?: EmployeeExitFeatureConfiguration[]; isActive: boolean };
+export type EmployeeExitPolicy = { employeeExitPolicyId?: string; version?: number; exitType?: "Resigned" | "Terminated" | "Retired" | "ContractEnded" | "Deceased"; departmentId?: string; departmentIds?: string[]; consolidateDepartmentPolicies?: boolean; roleId?: string; minimumNoticeDays: number; noticePaySalaryBasis: "BasicMonthly" | "GrossMonthly"; noticePayDailyRateDivisor: number; enableOffboarding: boolean; allowEmployeeSelfResignation: boolean; allowRejoin: boolean; requireManagerReview: boolean; requireHrReview: boolean; allowJointDiscussion: boolean; requireResignationEvidence: boolean; requireEmployeeAcknowledgement: boolean; enableFormerEmployeePortal: boolean; enableNoticePeriodReminders: boolean; noticePeriodReminderEveryDays: number; noticePeriodReminderOffsets: string[]; notifyNoticePeriodEmployee: boolean; notifyNoticePeriodReportingManager: boolean; notifyNoticePeriodHr: boolean; notifyNoticePeriodAdmins: boolean; noticePeriodReminderEmail: boolean; requireHandover: boolean; requireAssetClearance: boolean; requireAccessRevocation: boolean; requireFinanceClearance: boolean; requireBenefitClearance: boolean; requireFinalSettlement: boolean; presetLevel?: "Disabled" | "Basic" | "Structured" | "Operational" | "Advanced" | "Enterprise" | "Custom"; features?: EmployeeExitFeatureConfiguration[]; isActive: boolean };
 export type EmployeeExitClearanceTemplate = { employeeExitClearanceTemplateId?: string; templateKey?: string; scope?: "Global" | "Department"; departmentId?: string; category: string; description?: string; ownerRole?: string; ownerPermission?: string; requiredPolicyGate: "General" | "Handover" | "AssetClearance" | "AccessRevocation" | "FinanceClearance" | "BenefitClearance"; isMandatory: boolean; dueDaysBeforeLastWorkingDate: number; isActive: boolean; effectiveFromUtc?: string; effectiveToUtc?: string; version?: number };
 export const getEmployeeExitPolicies = () => getRequest<ResponseData<EmployeeExitPolicy>>("api/User/EmployeeExitPolicies");
 export const saveEmployeeExitPolicy = (payload: EmployeeExitPolicy) => postRequest<EmployeeExitPolicy, ApiResponse>("api/User/EmployeeExitPolicy", payload);
+export const updateEmployeeExitPolicy = (policyId: string, payload: EmployeeExitPolicy) => putRequest<EmployeeExitPolicy, ApiResponse>(`api/User/EmployeeExitPolicy/${encodeURIComponent(policyId)}`, payload);
 export const getEmployeeExitClearanceTemplates = () => getRequest<ResponseData<EmployeeExitClearanceTemplate>>("api/User/EmployeeExitClearanceTemplates");
 export const saveEmployeeExitClearanceTemplate = (payload: EmployeeExitClearanceTemplate) => postRequest<EmployeeExitClearanceTemplate, ApiResponse>("api/User/EmployeeExitClearanceTemplate", payload);
 export const deleteEmployeeExitClearanceTemplate = (templateId: string) => deleteRequest<ApiResponse>(`api/User/EmployeeExitClearanceTemplate/${encodeURIComponent(templateId)}`);
@@ -392,3 +397,4 @@ export const bulkImportEmployees = (payload: BulkImportEmployeesRequest) => {
     payload,
   );
 };
+

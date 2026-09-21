@@ -84,7 +84,7 @@ export const PersonalDetails = () => {
   return (
     <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={{ xs: 1, sm: 0 }} sx={{ mb: 2.5 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>{i({ id: "PROFILE.PI.TITLE" })}</Typography>
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }}>{i({ id: "PROFILE.PI.TITLE" })}</Typography>
         {hasEmployeeEditPermission && (
           <CustomIconButton
             tooltip={i({ id: "BUTTON.EDIT" })}
@@ -108,7 +108,9 @@ export const PersonalDetails = () => {
             sm: 6
           }}>
           <Typography variant="body2">{i({ id: "FORM.EMAIL" })}</Typography>
-          <Typography variant="body1">{userDetails?.email}</Typography>
+          <Typography variant="body1">
+            {userDetails?.email ? <a href={`mailto:${userDetails.email}`}>{userDetails.email}</a> : <FormattedMessage id="NOT_AVAILABLE" />}
+          </Typography>
         </Grid>
         <Grid
           size={{
@@ -117,7 +119,7 @@ export const PersonalDetails = () => {
           }}>
           <Typography variant="body2">{i({ id: "FORM.PHONE" })}</Typography>
           <Typography variant="body1">
-            {userDetails?.phoneNumber || (
+            {userDetails?.phoneNumber ? <a href={`tel:${userDetails.phoneNumber}`}>{userDetails.phoneNumber}</a> : (
               <FormattedMessage id="NOT_AVAILABLE" />
             )}
           </Typography>
@@ -210,7 +212,7 @@ export const PersonalDetails = () => {
             {i({ id: "USER.PERSONAL_EMAIL" })}
           </Typography>
           <Typography variant="body1">
-            {userDetails?.personalEmail || (
+            {userDetails?.personalEmail ? <a href={`mailto:${userDetails.personalEmail}`}>{userDetails.personalEmail}</a> : (
               <FormattedMessage id="NOT_AVAILABLE" />
             )}
           </Typography>

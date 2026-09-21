@@ -15,6 +15,9 @@ export interface ApiResponse {
   success: boolean;
   message: string;
   statusCode: number;
+  errorCode?: string | null;
+  resourceId?: string | null;
+  actionToken?: string | null;
 }
 
 export interface CreatePasswordModel {
@@ -113,6 +116,9 @@ export interface ResponseData<T> {
   success: boolean;
   totalRecords: number;
   statusCode: number;
+  errorCode?: string | null;
+  resourceId?: string | null;
+  actionToken?: string | null;
   methodResult: T;
   methodResults: T[];
 }
@@ -190,3 +196,4 @@ export interface DateRangeFilter {
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
+

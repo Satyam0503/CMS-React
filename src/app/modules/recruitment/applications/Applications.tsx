@@ -29,6 +29,7 @@ import { StyleStatus } from "../../../shared/components/StyledStatus";
 import clsx from "clsx";
 import { PaginationModel } from "../../../../utils/common_types";
 import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
+import RecruitmentScreeningQueueCard from "./components/RecruitmentScreeningQueueCard";
 
 const CustomDataGrid = lazy(() =>
   import("../../../shared/components/C_DataGrid").then((module) => ({
@@ -360,6 +361,7 @@ export const Applications = () => {
             )}
           </Stack>}
         />
+        <RecruitmentScreeningQueueCard vacancyId={jobId} />
         {open && (
           <ApplicationFilter
             open={open}
@@ -403,4 +405,6 @@ export const Applications = () => {
     </>
   );
 };
+
+
 

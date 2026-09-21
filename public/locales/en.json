@@ -15,6 +15,7 @@
     "LEAVE_MANAGEMENT": "Leave Management",
     "MY_PROFILE": "My Profile",
     "RECRUITMENT": "Recruitment",
+    "RECRUITMENT_SETTINGS": "Recruitment Settings",
     "ADMIN": "Admin",
     "HOLIDAYS": "Holidays",
     "NOTICE_BOARD": "Notice board",
@@ -1115,3 +1116,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Manages the complete hiring lifecycle including job postings, candidate applications, interview stages, evaluations, and detailed process logs. Provides end-to-end visibility into recruitment progress, actions taken, and hiring decisions to streamline and track the talent acquisition process."
   }
 }
+

@@ -175,6 +175,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         icon: <AccessTime />,
         isDefault: false,
       },
+      {
+        id: Modules.RecruitmentSettings,
+        title: ModulesTitles.RecruitmentSettings,
+        constant: ModulesName.RecruitmentSettings,
+        route: "/recruitment-settings",
+        icon: <AccountTreeRounded />,
+        isDefault: false,
+      },
     ],
   },
   {
@@ -202,3 +210,6 @@ export const SideBarTabList: SideBarTabListProps[] = [
     isDefault: false,
   },
 ];
+
+
+

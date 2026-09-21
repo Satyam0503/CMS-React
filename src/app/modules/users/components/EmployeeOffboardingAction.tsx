@@ -1,4 +1,4 @@
-import { CalendarMonth, ExitToApp, InfoOutlined, PersonOff } from "@mui/icons-material";
+import { CalendarMonth, ExitToApp, InfoOutlined, PersonOff, EventAvailable } from "@mui/icons-material";
 import { Alert, Box, Divider, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, Permission } from "../../../../utils/enums";
 import { useAppSelector } from "../../../Redux/hooks";
 import { AppButton } from "../../../shared/components/ui";
-import { getEmployeeExitCaseForManagement, initiateEmployeeExit } from "../../employees/employeeServices";
+import { getEmployeeExitCaseForManagement, initiateEmployeeExit, updateEmployeeContract } from "../../employees/employeeServices";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { useUserDetails } from "../UserDataProvider";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
@@ -18,13 +18,15 @@ export const EmployeeOffboardingAction = () => {
   const permissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [exitType, setExitType] = useState<"Resigned" | "Terminated">("Resigned");
-  const [lastWorkingDate, setLastWorkingDate] = useState<Dayjs | null>(null);
+  const [exitType, setExitType] =useState<"Resigned" | "Terminated" | "Retired" | "ContractEnded" | "Deceased">("Resigned");
+    const [lastWorkingDate, setLastWorkingDate] = useState<Dayjs | null>(null);
   const [reason, setReason] = useState("");
   const [hasActiveExit, setHasActiveExit] = useState<boolean | null>(null);
   const isOwnProfile = !userDetails.userId || userDetails.userId === currentUserId;
   const canManage = !isOwnProfile && hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, permissions);
   const status = userDetails.employmentStatus ?? "Active";
+
+
   useEffect(() => {
     if (!canManage || !userDetails.userId) { setHasActiveExit(false); return; }
     setHasActiveExit(null);
@@ -36,7 +38,7 @@ export const EmployeeOffboardingAction = () => {
       .catch(() => setHasActiveExit(false));
   }, [canManage, userDetails.userId]);
 
-  if (!canManage || hasActiveExit !== false || status === "Resigned" || status === "Terminated") return null;
+  if (!canManage || hasActiveExit !== false ||  ["Resigned", "Terminated", "Retired", "ContractEnded", "Deceased"].includes(status)) return null;
 
   const submit = async () => {
     if (!lastWorkingDate) { toast.error("Select the last working date."); return; }
@@ -58,9 +60,13 @@ export const EmployeeOffboardingAction = () => {
           <Alert severity="info" icon={<InfoOutlined />} sx={{ borderRadius: 2, "& .MuiAlert-message": { minWidth: 0 } }}>This creates an auditable offboarding record. Payroll, leave, attendance and the employee profile are kept.</Alert>
           <Paper variant="outlined" sx={{ p: 1.25, borderRadius: 2, display: "flex", gap: 1, alignItems: "flex-start", borderColor: "primary.light" }}><CalendarMonth color="primary" sx={{ fontSize: 20, mt: 0.1, flex: "0 0 auto" }} /><Box sx={{ minWidth: 0 }}><Typography variant="body2" fontWeight={700}>Employee remains active until the selected date</Typography><Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>No employee or historical data is deleted.</Typography></Box></Paper>
           <Divider />
-          <TextField select label="Exit type" value={exitType} onChange={(e) => setExitType(e.target.value as "Resigned" | "Terminated")} fullWidth>
-            <MenuItem value="Resigned">Resignation</MenuItem><MenuItem value="Terminated">Termination</MenuItem>
-          </TextField>
+          <TextField select label="Exit type" value={exitType} onChange={(e) => setExitType(e.target.value as typeof exitType)} fullWidth>
+        <MenuItem value="Resigned">Resignation</MenuItem>
+        <MenuItem value="Terminated">Termination</MenuItem>
+        <MenuItem value="Retired">Retirement</MenuItem>
+        <MenuItem value="ContractEnded">Contract end</MenuItem>
+        <MenuItem value="Deceased">Deceased</MenuItem>       
+           </TextField>
           <CustomisedDatePicker label="Last working date" name="lastWorkingDate" value={lastWorkingDate} setValue={setLastWorkingDate} minDate={userDetails.dateOfJoining ? dayjs(userDetails.dateOfJoining) : undefined} format="DD MMM YYYY" />
           <TextField label="Reason for exit" value={reason} onChange={(e) => setReason(e.target.value)} multiline minRows={3} fullWidth placeholder="Add a short reason for the employee record" />
           <AppButton variant="contained" color="error" disabled={submitting} onClick={submit} sx={{ minHeight: 44, borderRadius: 2, fontWeight: 800 }}>Start offboarding</AppButton>

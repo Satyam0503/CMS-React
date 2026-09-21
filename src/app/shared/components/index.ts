@@ -6,6 +6,7 @@ export { default as CustomSwitchButton } from "./C_SwitchButton";
 export { SearchInput } from "./SearchInput";
 export { ResponsiveTableToolbar } from "./ResponsiveTableToolbar";
 export { default as CustomisedDatePicker } from "./C_DatePicker";
+export { default as CustomisedDateTimePicker } from "./C_DateTimePicker";
 export { CustomisedTable } from "./C_Table";
 export { CircularLoader } from "./CircularLoader";
 export * from "./form-component/TextInput";
@@ -19,3 +20,4 @@ export { SearchInput as Search } from "./SearchInput";
 export { default as DatePicker } from "./C_DatePicker";
 export { CustomisedTable as Table } from "./C_Table";
 export { CircularLoader as Loader } from "./CircularLoader";
+

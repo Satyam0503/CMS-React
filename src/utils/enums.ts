@@ -57,6 +57,7 @@ export enum Modules {
   Policies = 16,
   PayrollSettings = 17,
   CareerProfile = 18,
+  RecruitmentSettings = 19,
 }
 
 export enum ModulesName {
@@ -79,6 +80,7 @@ export enum ModulesName {
   Policy = "Policy",
   PayrollSettings = "Payroll_Settings",
   CareerProfile = "Career_Profile",
+  RecruitmentSettings = "Recruitment_Settings",
 }
 
 export enum ModulesTitles {
@@ -101,6 +103,7 @@ export enum ModulesTitles {
   Policies = "MODULES.POLICIES",
   PayrollSettings = "MODULES.PAYROLL_SETTINGS",
   CareerProfile = "MODULES.CAREER_PROFILE",
+  RecruitmentSettings = "MODULES.RECRUITMENT_SETTINGS",
   LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
 }
 
@@ -216,3 +219,5 @@ export enum CALENDAR_ITEM {
   BIRTHDAY = 3,
   ANNIVERSARY = 4,
 }
+
+

@@ -38,7 +38,7 @@ export interface EmployeeFilterModel {
 
 export type InitiateEmployeeExitRequest = {
   employeeUserId: string;
-  exitType: "Resigned" | "Terminated";
+  exitType: "Resigned" | "Terminated" | "Retired" | "ContractEnded" | "Deceased";
   lastWorkingDate: string;
   reason?: string;
   notes?: string;

@@ -33,7 +33,7 @@
     padding-inline: 1rem;
     max-height: $app-notification-max-height;
     min-height: $app-notification-min-height;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: auto;
     margin-block: 0.5rem;
@@ -67,6 +67,15 @@
         max-width: 300px;
         min-width: 200px;
       }
+
+      .MuiListItemText-secondary .d-flex {
+        flex-wrap: wrap;
+        row-gap: 0.25rem;
+      }
+
+      .MuiListItemText-secondary button + button {
+        margin-left: 0.5rem;
+      }
     }
 
     .no-notification-box {
@@ -83,5 +92,11 @@
         margin-block-start: 0.5rem;
       }
     }
+  }
+
+  .notification-wrapper + .MuiBox-root {
+    display: block;
+    margin-top: 0.75rem;
+    padding-bottom: 0.25rem;
   }
 }

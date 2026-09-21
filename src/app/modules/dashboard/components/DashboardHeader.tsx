@@ -22,7 +22,7 @@ export const DashboardHeader = memo((props: { fullName: string }) => {
           size="small"
           className="dashboard-hero-chip"
         />
-        <Typography variant="h2" className="dashboard-welcome-title">
+        <Typography component="h1" variant="h2" className="dashboard-welcome-title">
           <span className="dashboard-welcome-word">
             {intl.formatMessage({ id: "MESSAGE.WELCOME" })}
           </span>{" "}

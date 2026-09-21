@@ -24,7 +24,7 @@ import {
   editApplicant,
   getAllJobVacancies,
   getApplicantById,
-  uploadResume,
+  uploadResumeForApplicant,
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
@@ -181,7 +181,7 @@ export const EditApplicant = () => {
       const { data } = await editApplicant(payload);
       if (!data.success) throw new Error(String(data.statusCode));
       if (values.resume) {
-        const resumeUploadResponse = await uploadResume(values.email, formData);
+        const resumeUploadResponse = await uploadResumeForApplicant(values.applicantId, formData);
         if (!resumeUploadResponse.data.success) {
           throw new Error(String(resumeUploadResponse.data.statusCode));
         }
@@ -508,3 +508,4 @@ export const EditApplicant = () => {
     </Card>
   );
 };
+

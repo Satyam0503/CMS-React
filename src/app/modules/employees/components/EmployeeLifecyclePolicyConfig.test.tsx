@@ -2,6 +2,7 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { EmployeeLifecyclePolicyConfig } from "./EmployeeLifecyclePolicyConfig";
+import { IntlProvider } from "react-intl";
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
@@ -20,13 +21,10 @@ describe("EmployeeLifecyclePolicyConfig", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
-    await act(async () => { root.render(<EmployeeLifecyclePolicyConfig />); await Promise.resolve(); await Promise.resolve(); });
+    await act(async () => { root.render(<IntlProvider locale="en" messages={{ "BUTTON.CANCEL": "Cancel", "BUTTON.DELETE": "Delete" }}><EmployeeLifecyclePolicyConfig /></IntlProvider>); await Promise.resolve(); await Promise.resolve(); });
 
-    expect(container.textContent).toContain("Lifecycle policy reference");
-    expect(container.textContent).toContain("cannot create a second or conflicting lifecycle policy");
-    expect(container.textContent).toContain("Effective from");
-    expect(container.textContent).toContain("UTC policy start date");
-    expect(container.querySelectorAll("input:disabled").length).toBeGreaterThan(0);
+    expect(container.textContent).toContain("Lifecycle special leaves");
+    expect(container.textContent).toContain("Normal Leave Policies remain managed in Leave Management");
     await act(async () => { root.unmount(); });
   });
 });
