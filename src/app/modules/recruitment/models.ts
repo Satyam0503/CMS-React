@@ -139,6 +139,11 @@ export interface RecruitmentInterviewCommand {
   endsAtUtc: string;
   timeZoneId?: string;
   location?: string | null;
+  employmentType?: string | null;
+  hiringManagerUserId?: string | null;
+  costCenter?: string | null;
+  targetStartDateUtc?: string | null;
+  justification?: string | null;
   meetingUrl?: string | null;
   panelistUserIds?: string[];
   idempotencyKey: string;
@@ -163,12 +168,14 @@ export interface RecruitmentOfferCommand {
   currency: string;
   startDateUtc?: string | null;
   approvalReference?: string | null;
+  expiresAtUtc?: string | null;
   idempotencyKey: string;
   expectedVersion?: number;
   status: "Draft" | "PendingApproval" | "Approved" | "Sent" | "Accepted" | "Declined" | "Expired" | "Withdrawn";
 }
 
 export interface RecruitmentOnboardingTask { code: string; title: string; status: "Pending" | "InProgress" | "Completed" | "Skipped"; assigneeUserId?: string | null; }
+export interface RecruitmentOnboardingQueueItem { caseId: string; applicantId: string; employeeUserId: string; status: RecruitmentOnboardingCase["status"]; version: number; totalTasks: number; completedTasks: number; requiredPendingTasks: number; completionPercent: number; firstBlockingTaskCode?: string | null; firstBlockingTaskTitle?: string | null; updatedDate?: string | null; }
 export interface RecruitmentOnboardingCase { caseId: string; applicantId: string; employeeUserId: string; status: "PendingActivation" | "InProgress" | "Completed"; tasks: RecruitmentOnboardingTask[]; version?: number; }
 export interface RecruitmentOnboardingUpdateCommand { caseId: string; status: RecruitmentOnboardingCase["status"]; tasks: Array<{ code: string; status: RecruitmentOnboardingTask["status"] }>; idempotencyKey: string; expectedVersion?: number; }
 
@@ -193,6 +200,11 @@ export interface RecruitmentRequisitionCommand {
   positionTitle: string;
   departmentId?: string | null;
   location?: string | null;
+  employmentType?: string | null;
+  hiringManagerUserId?: string | null;
+  costCenter?: string | null;
+  targetStartDateUtc?: string | null;
+  justification?: string | null;
   headcount: number;
   approvedHeadcount?: number | null;
   approvalReference?: string | null;
@@ -242,14 +254,16 @@ export interface RecruitmentDuplicateLookupRequest { applicantId?: string; email
 export interface RecruitmentDuplicateCandidate { applicantId: string; fullName: string; email?: string; phone?: string; linkedInUrl?: string; matchReasons: string[]; }
 
 export interface RecruitmentApplicantMergeCommand { sourceApplicantId: string; targetApplicantId: string; idempotencyKey: string; expectedSourceVersion?: number; reason?: string | null; }
-export interface RecruitmentOfferApprovalPolicy { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; version?: number; }
-export interface RecruitmentOfferApprovalPolicyCommand { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; idempotencyKey: string; expectedVersion?: number; }
+export interface RecruitmentOfferApprovalPolicy { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; delegatedApproverUserId?: string | null; delegationExpiresAtUtc?: string | null; version?: number; }
+export interface RecruitmentOfferApprovalPolicyCommand { policyId?: string; vacancyId?: string | null; legalEntityId?: string | null; departmentId?: string | null; grade?: string | null; currency: string; approvalThreshold: number; requireApprovalReference: boolean; approverRoleId?: string | null; delegatedApproverUserId?: string | null; delegationExpiresAtUtc?: string | null; idempotencyKey: string; expectedVersion?: number; }
 export interface RecruitmentFeedbackSlaItem { interviewId: string; applicantId: string; vacancyId: string; roundNumber: number; dueAtUtc: string; assignedInterviewers: number; submittedScorecards: number; overdue: boolean; }
+export interface RecruitmentCandidateShareCommand { applicantId: string; sharedWithUserId: string; scope?: "View"; expiresAtUtc?: string | null; idempotencyKey: string; }
+export interface RecruitmentCandidateShareItem { shareId: string; applicantId: string; sharedWithUserId: string; scope: string; expiresAtUtc?: string | null; revokedAtUtc?: string | null; }
 export interface RecruitmentFeedbackSlaReport { totalOpenRounds: number; overdueRounds: number; items: RecruitmentFeedbackSlaItem[]; }
 export interface RecruitmentAnalytics { totalApplicants: number; activeApplicants: number; rejectedApplicants: number; mergedApplicants: number; byStage: Record<string, number>; }
 export interface RecruitmentStageSlaPolicyCommand { stage: string; targetHours: number; enabled: boolean; location?: string | null; idempotencyKey: string; }
-export interface RecruitmentEnterpriseConfig { configId?: string; locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview: boolean; hiringManagerReview: boolean; interviewRounds: boolean; parallelPanels: boolean; scorecards: boolean; offerApproval: boolean; offerNegotiation: boolean; candidateEmailActions: boolean; requisitions: boolean; slaTracking: boolean; automation: boolean; internalMobility: boolean; rehireLinks: boolean; defaultTimezone?: string | null; configSource?: string; overriddenFields?: string[]; }
-export interface RecruitmentEnterpriseConfigCommand { locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview?: boolean; hiringManagerReview?: boolean; interviewRounds?: boolean; parallelPanels?: boolean; scorecards?: boolean; offerApproval?: boolean; offerNegotiation?: boolean; candidateEmailActions?: boolean; requisitions?: boolean; slaTracking?: boolean; automation?: boolean; internalMobility?: boolean; rehireLinks?: boolean; defaultTimezone?: string | null; resetToDefaults?: boolean; idempotencyKey: string; }
+export interface RecruitmentEnterpriseConfig { configId?: string; locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview: boolean; hiringManagerReview: boolean; interviewRounds: boolean; parallelPanels: boolean; scorecards: boolean; offerApproval: boolean; offerNegotiation: boolean; candidateEmailActions: boolean; requisitions: boolean; slaTracking: boolean; automation: boolean; internalMobility: boolean; rehireLinks: boolean; defaultTimezone?: string | null; configSource?: string; overriddenFields?: string[]; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; }
+export interface RecruitmentEnterpriseConfigCommand { locations: string[]; recruitmentMode: "Simple" | "Standard" | "Enterprise"; enableSla: boolean; enableAutomation: boolean; applicationReview?: boolean; hiringManagerReview?: boolean; interviewRounds?: boolean; parallelPanels?: boolean; scorecards?: boolean; offerApproval?: boolean; offerNegotiation?: boolean; candidateEmailActions?: boolean; requisitions?: boolean; slaTracking?: boolean; automation?: boolean; internalMobility?: boolean; rehireLinks?: boolean; defaultTimezone?: string | null; resetToDefaults?: boolean; idempotencyKey: string; screeningCriteria?: string[]; screeningPassScore?: number; preboardingChecklist?: string[]; }
 export interface RecruitmentRelationshipLinkCommand { applicantId: string; relationshipType: "InternalMobility" | "Rehire"; relatedPersonId: string; notes?: string | null; idempotencyKey: string; }
 export interface RecruitmentAutomationEventCommand { eventType: string; applicantId?: string | null; payload: Record<string, string>; idempotencyKey: string; }
 
@@ -274,6 +288,9 @@ export interface RecruitmentScreeningCriterionCommand {
   notes?: string | null;
 }
 
+export interface RecruitmentScreeningBulkItem { applicantId: string; vacancyId: string; }
+export interface RecruitmentScreeningBulkCommand { items: RecruitmentScreeningBulkItem[]; decision: "Pending" | "Pass" | "Hold" | "Reject"; score: number; criteria: RecruitmentScreeningCriterionCommand[]; evidence?: string | null; rejectionReason?: string | null; idempotencyKey: string; }
+export interface RecruitmentScreeningBulkResult { succeeded: number; failed: number; failedApplicantIds: string[]; }
 export interface RecruitmentScreeningQueueItem { applicantId: string; vacancyId: string; applicantName: string; email?: string | null; reviewId: string; decision: "Pending" | "Hold"; score: number; reviewerUserId?: string | null; rejectionReason?: string | null; submittedAtUtc: string; ageHours: number; overdue: boolean; }
 export interface RecruitmentScreeningQueueReport { totalPending: number; overdueCount: number; items: RecruitmentScreeningQueueItem[]; }
 
@@ -312,6 +329,21 @@ export interface RecruitmentScreeningReviewCommand {
 
 
 
+
+
+
+
+
+
+export interface RecruitmentApplicationStageEvent { fromStage: string; toStage: string; actorUserId: string; changedAtUtc: string; reason?: string | null; }
+
+export interface RecruitmentSelectedCandidateQueueItem { applicantId: string; vacancyId: string; applicantName: string; email?: string | null; stage: string; isEmployee: boolean; selectedAtUtc: string; }
+
+export interface RecruitmentOfferPendingQueueItem { offerId: string; applicantId: string; vacancyId: string; applicantName: string; status: string; salary: number; currency: string; approvalRequired: boolean; }
+
+export interface RecruitmentPreboardingQueueItem { caseId: string; applicantId: string; offerId: string; status: string; ownerUserId: string; pendingTaskCount: number; readyForHire: boolean; firstBlockerCode?: string | null; }
+
+export interface RecruitmentPreboardingUpdateCommand { caseId: string; status: string; tasks: Array<{ code: string; status: string; assigneeUserId?: string | null }>; expectedVersion?: number; idempotencyKey: string; }
 
 
 

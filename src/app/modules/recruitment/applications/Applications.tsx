@@ -13,6 +13,8 @@ import {
   ApplicationFilter,
   initialFilterValues,
 } from "./components/ApplicationFilter";
+import RecruitmentPipelineSummaryCard from "./components/RecruitmentPipelineSummaryCard";
+import RecruitmentOnboardingQueueCard from "./components/RecruitmentOnboardingQueueCard";
 import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
 import { Applicant, ApplicationPayload } from "../models";
 import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../utils/enums";
@@ -30,6 +32,8 @@ import clsx from "clsx";
 import { PaginationModel } from "../../../../utils/common_types";
 import { setApplicationFilter } from "../../../Redux/Reducers/filterSlice";
 import RecruitmentScreeningQueueCard from "./components/RecruitmentScreeningQueueCard";
+import RecruitmentSelectedOfferQueueCard from "./components/RecruitmentSelectedOfferQueueCard";
+import RecruitmentPreboardingQueueCard from "./components/RecruitmentPreboardingQueueCard";
 
 const CustomDataGrid = lazy(() =>
   import("../../../shared/components/C_DataGrid").then((module) => ({
@@ -361,7 +365,11 @@ export const Applications = () => {
             )}
           </Stack>}
         />
-        <RecruitmentScreeningQueueCard vacancyId={jobId} />
+        <RecruitmentPipelineSummaryCard vacancyId={jobId} onStageSelect={(stage) => { setPaginationValues((current) => ({ ...current, pageNo: 0 })); dispatch(setApplicationFilter({ ...initialFilterValues, ...(jobId ? { vacancyIds: [jobId] } : {}), activityTypes: [stage] })); }} />
+        <RecruitmentOnboardingQueueCard onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
+        <RecruitmentScreeningQueueCard vacancyId={jobId} onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
+        <RecruitmentSelectedOfferQueueCard vacancyId={jobId} onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
+        <RecruitmentPreboardingQueueCard onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
         {open && (
           <ApplicationFilter
             open={open}
@@ -405,6 +413,9 @@ export const Applications = () => {
     </>
   );
 };
+
+
+
 
 
 

@@ -111,10 +111,13 @@ export const ServiceUrl = {
   GET_APPLICANT_BY_ID: `api/Applicants/ApplicantById`,
   GET_APPLICANT_WORKFLOW: `api/Applicants/Workflow`,
   UPSERT_APPLICATION_STAGE: `api/RecruitmentApplication/UpsertStage`,
+  GET_APPLICATION_HISTORY: `api/RecruitmentApplication`,
   ADD_APPLICANT: `api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `api/Applicants/EditApplicant`,
   UPLOAD_RESUME_FOR_APPLICANT: `api/Applicants/UploadResume`,
+  GET_INTERVIEW_ROUNDS: "api/Applicants/InterviewRounds",
   UPSERT_INTERVIEW: `api/Applicants/UpsertInterview`,
+  RETRY_INTERVIEW_CALENDAR: `api/Applicants/RetryInterviewCalendar`,
   COMPLETE_INTERVIEW_DEBRIEF: `api/RecruitmentPlanning/CompleteInterviewDebrief`,
   GET_INTERVIEW_PLAN: `api/RecruitmentPlanning/InterviewPlan`,
   UPSERT_INTERVIEW_PLAN: `api/RecruitmentPlanning/UpsertInterviewPlan`,
@@ -126,16 +129,24 @@ export const ServiceUrl = {
   REVIEW_RESUME_EXTRACTION: `api/RecruitmentResumeExtraction/Review`,
   HANDOFF_TO_PREBOARDING: `api/Applicants/HandoffToPreboarding`,
   GET_ONBOARDING_BY_APPLICANT: `api/RecruitmentOnboarding/ByApplicant`,
+  GET_ONBOARDING_QUEUE: `api/RecruitmentOnboarding/Queue`,
   UPDATE_ONBOARDING: `api/RecruitmentOnboarding/Update`,
+  RETRY_ONBOARDING_ACTIVATION: `api/RecruitmentOnboarding/RetryActivation`,
   UPSERT_REQUISITION: `api/RecruitmentPlanning/UpsertRequisition`,
   UPSERT_SCORECARD: `api/RecruitmentPlanning/UpsertScorecard`,
   UPSERT_SCREENING: `api/RecruitmentPlanning/UpsertScreening`,
+  BULK_SCREENING: `api/RecruitmentPlanning/BulkScreening`,
   RECRUITMENT_SCREENING_QUEUE: `api/RecruitmentScreening/Queue`,
   UPSERT_TALENT_POOL: `api/RecruitmentPlanning/UpsertTalentPoolMember`,
   FIND_DUPLICATES: `api/RecruitmentDuplicate/Find`,
   MERGE_APPLICANTS: `api/RecruitmentEnterprise/MergeApplicants`,
   RECRUITMENT_ANALYTICS: `api/RecruitmentEnterprise/Analytics`,
   RECRUITMENT_FEEDBACK_SLA: `api/RecruitmentEnterprise/FeedbackSla`,
+  RECRUITMENT_DEBRIEF_PENDING: `api/RecruitmentEnterprise/DebriefPending`,
+  RECRUITMENT_SELECTED_CANDIDATES: `api/RecruitmentEnterprise/SelectedCandidates`,
+  RECRUITMENT_PENDING_OFFERS: `api/RecruitmentEnterprise/PendingOffers`,
+  RECRUITMENT_PREBOARDING_QUEUE: `api/RecruitmentEnterprise/PreboardingQueue`,
+  UPDATE_RECRUITMENT_PREBOARDING: `api/RecruitmentEnterprise/UpdatePreboarding`,
   QUEUE_FEEDBACK_REMINDERS: `api/RecruitmentEnterprise/QueueFeedbackReminders`,
   UPSERT_RECRUITMENT_SLA: `api/RecruitmentEnterprise/UpsertSlaPolicy`,
   GET_OFFER_APPROVAL_POLICY: `api/RecruitmentPlanning/OfferApprovalPolicy`,
@@ -151,6 +162,9 @@ export const ServiceUrl = {
   // process log
   GET_PROCESS_LOG: `api/Applicants/GetProcessLogData`,
   EXPORT_RECRUITMENT_AUDIT: `api/RecruitmentAudit/Export`,
+  GRANT_RECRUITMENT_CANDIDATE_SHARE: `api/RecruitmentCandidateShare/Grant`,
+  REVOKE_RECRUITMENT_CANDIDATE_SHARE: `api/RecruitmentCandidateShare/Revoke`,
+  GET_RECRUITMENT_CANDIDATE_SHARES: `api/RecruitmentCandidateShare/ByApplicant`,
 
   // departments
   GET_DEPARTMENTLIST: `api/CompanyMaster/GetDepartmentList`,
@@ -689,6 +703,11 @@ export const modules_description = [
   { name: "Jobs", description: "JOBS_DESCRIPTION" },
   { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
 ];
+
+
+
+
+
 
 
 

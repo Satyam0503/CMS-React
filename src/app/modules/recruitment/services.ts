@@ -4,7 +4,7 @@ import { ServiceUrl } from "../../../utils/constant/data";
 import {
   Applicant,
   RecruitmentWorkflow,
-  RecruitmentScreeningReviewCommand,
+  RecruitmentScreeningReviewCommand, RecruitmentScreeningBulkCommand, RecruitmentScreeningBulkResult,
   ApplicantModel,
   CommentModel,
   CommentResponseModel,
@@ -15,13 +15,14 @@ import {
   ProcessLogPayoadModel,
   RecruitmentApplicationStageCommand, RecruitmentInterviewCommand, RecruitmentInterviewDebriefCommand, RecruitmentFeedbackSlaReport, RecruitmentOfferApprovalPolicy, RecruitmentOfferApprovalPolicyCommand, RecruitmentInterviewPlan, RecruitmentInterviewPlanCommand,
   RecruitmentOfferCommand,
+  RecruitmentApplicationStageEvent, RecruitmentSelectedCandidateQueueItem, RecruitmentOfferPendingQueueItem, RecruitmentPreboardingQueueItem, RecruitmentPreboardingUpdateCommand,
   CandidateHandoffRequest,
   RecruitmentRequisitionCommand,
   RecruitmentScorecardCommand,
   RecruitmentTalentPoolCommand,
   RecruitmentDuplicateLookupRequest,
   RecruitmentDuplicateCandidate,
-  RecruitmentApplicantMergeCommand, RecruitmentAnalytics, RecruitmentEnterpriseConfig, RecruitmentStageSlaPolicyCommand, RecruitmentEnterpriseConfigCommand, RecruitmentRelationshipLinkCommand, RecruitmentAutomationEventCommand, RecruitmentOnboardingCase, RecruitmentOnboardingUpdateCommand, RecruitmentScreeningQueueReport, RecruitmentHiringDecisionCommand, RecruitmentCandidatePrivacyCommand, RecruitmentCandidateOfferActionCommand, RecruitmentOfferVersionCommand, RecruitmentOfferCounterCommand, RecruitmentResumeExtractionReviewCommand,
+  RecruitmentApplicantMergeCommand, RecruitmentCandidateShareCommand, RecruitmentCandidateShareItem, RecruitmentAnalytics, RecruitmentEnterpriseConfig, RecruitmentStageSlaPolicyCommand, RecruitmentEnterpriseConfigCommand, RecruitmentRelationshipLinkCommand, RecruitmentAutomationEventCommand, RecruitmentOnboardingCase, RecruitmentOnboardingQueueItem, RecruitmentOnboardingUpdateCommand, RecruitmentScreeningQueueReport, RecruitmentHiringDecisionCommand, RecruitmentCandidatePrivacyCommand, RecruitmentCandidateOfferActionCommand, RecruitmentOfferVersionCommand, RecruitmentOfferCounterCommand, RecruitmentResumeExtractionReviewCommand,
 } from "./models";
 
 export const addJobVacancy = async (payload: JobModal) => {
@@ -91,6 +92,9 @@ export const uploadResumeForApplicant = async (applicantId: string, payload: For
   );
 };
 
+export const grantRecruitmentCandidateShare = async (payload: RecruitmentCandidateShareCommand) => postRequest<RecruitmentCandidateShareCommand, ResponseData<string>>(ServiceUrl.GRANT_RECRUITMENT_CANDIDATE_SHARE, payload);
+export const revokeRecruitmentCandidateShare = async (shareId: string) => postRequest<undefined, ResponseData<string>>(`${ServiceUrl.REVOKE_RECRUITMENT_CANDIDATE_SHARE}/${encodeURIComponent(shareId)}`, undefined);
+export const getRecruitmentCandidateShares = async (applicantId: string) => getRequest<ResponseData<RecruitmentCandidateShareItem>>(`${ServiceUrl.GET_RECRUITMENT_CANDIDATE_SHARES}/${encodeURIComponent(applicantId)}`);
 export const exportRecruitmentAudit = async (payload?: { applicantId?: string; eventType?: string; fromUtc?: string; toUtc?: string; limit?: number }) => {
   const params = new URLSearchParams();
   Object.entries(payload ?? {}).forEach(([key, value]) => { if (value !== undefined && value !== null && value !== "") params.set(key, String(value)); });
@@ -120,6 +124,9 @@ export const getApplicantComments = async (payload: GetCommentPayloadModel) => {
 export const upsertRecruitmentApplicationStage = async (payload: RecruitmentApplicationStageCommand) =>
   postRequest<RecruitmentApplicationStageCommand, ResponseData<string>>(ServiceUrl.UPSERT_APPLICATION_STAGE, payload);
 
+export const getRecruitmentApplicationHistory = async (applicationId: string) =>
+  getRequest<ResponseData<RecruitmentApplicationStageEvent>>(`${ServiceUrl.GET_APPLICATION_HISTORY}/${encodeURIComponent(applicationId)}/History`);
+
 export const queueRecruitmentFeedbackReminders = async (vacancyId?: string) =>
   postRequest<unknown, ResponseData<number>>(`${ServiceUrl.QUEUE_FEEDBACK_REMINDERS}${vacancyId ? `?vacancyId=${encodeURIComponent(vacancyId)}` : ""}`, {});
 
@@ -128,6 +135,11 @@ export const getRecruitmentOfferApprovalPolicy = async (vacancyId?: string) =>
 export const upsertRecruitmentOfferApprovalPolicy = async (payload: RecruitmentOfferApprovalPolicyCommand) =>
   postRequest<RecruitmentOfferApprovalPolicyCommand, ResponseData<string>>(ServiceUrl.UPSERT_OFFER_APPROVAL_POLICY, payload);
 
+export const updateRecruitmentPreboarding = async (payload: RecruitmentPreboardingUpdateCommand) => postRequest<RecruitmentPreboardingUpdateCommand, ResponseData<string>>(ServiceUrl.UPDATE_RECRUITMENT_PREBOARDING, payload);
+export const getRecruitmentPreboardingQueue = async () => getRequest<ResponseData<RecruitmentPreboardingQueueItem[]>>(ServiceUrl.RECRUITMENT_PREBOARDING_QUEUE);
+export const getRecruitmentPendingOffers = async (vacancyId?: string) => getRequest<ResponseData<RecruitmentOfferPendingQueueItem[]>>(ServiceUrl.RECRUITMENT_PENDING_OFFERS, { params: { vacancyId } });
+export const getRecruitmentSelectedCandidates = async (vacancyId?: string) => getRequest<ResponseData<RecruitmentSelectedCandidateQueueItem[]>>(ServiceUrl.RECRUITMENT_SELECTED_CANDIDATES, { params: { vacancyId } });
+export const getRecruitmentDebriefPending = async (vacancyId?: string) => getRequest<ResponseData<RecruitmentFeedbackSlaReport>>(ServiceUrl.RECRUITMENT_DEBRIEF_PENDING, { params: { vacancyId } });
 export const getRecruitmentFeedbackSla = async (vacancyId?: string) =>
   getRequest<ResponseData<RecruitmentFeedbackSlaReport>>(`${ServiceUrl.RECRUITMENT_FEEDBACK_SLA}${vacancyId ? `?vacancyId=${encodeURIComponent(vacancyId)}` : ""}`);
 
@@ -146,6 +158,8 @@ export const upsertRecruitmentInterview = async (payload: RecruitmentInterviewCo
     payload
   );
 
+export const getRecruitmentInterviewRounds = async (applicantId: string, vacancyId: string) => getRequest<ResponseData<any[]>>(ServiceUrl.GET_INTERVIEW_ROUNDS + "/" + encodeURIComponent(applicantId) + "/" + encodeURIComponent(vacancyId));
+export const retryRecruitmentInterviewCalendar = async (interviewId: string) => postRequest<unknown, ResponseData<string>>(`${ServiceUrl.RETRY_INTERVIEW_CALENDAR}/${encodeURIComponent(interviewId)}`, {});
 export const createRecruitmentOfferVersion = async (payload: RecruitmentOfferVersionCommand) => postRequest<RecruitmentOfferVersionCommand, ResponseData<string>>(ServiceUrl.CREATE_OFFER_VERSION, payload);
 export const requestRecruitmentOfferCounter = async (payload: RecruitmentOfferCounterCommand) => postRequest<RecruitmentOfferCounterCommand, ResponseData<string>>(ServiceUrl.REQUEST_OFFER_COUNTER, payload);
 export const reviewRecruitmentResumeExtraction = async (payload: RecruitmentResumeExtractionReviewCommand) => postRequest<RecruitmentResumeExtractionReviewCommand, ResponseData<string>>(ServiceUrl.REVIEW_RESUME_EXTRACTION, payload);
@@ -159,9 +173,11 @@ export const upsertRecruitmentOffer = async (payload: RecruitmentOfferCommand) =
     payload
   );
 
-export const getRecruitmentScreeningQueue = async (vacancyId?: string, overdueAfterHours = 48) => getRequest<ResponseData<RecruitmentScreeningQueueReport>>(ServiceUrl.RECRUITMENT_SCREENING_QUEUE, { params: { vacancyId, overdueAfterHours } });
+export const getRecruitmentScreeningQueue = async (vacancyId?: string, overdueAfterHours = 48, filters?: { reviewerUserId?: string; minScore?: number; maxScore?: number; submittedAfterUtc?: string; submittedBeforeUtc?: string }) => getRequest<ResponseData<RecruitmentScreeningQueueReport>>(ServiceUrl.RECRUITMENT_SCREENING_QUEUE, { params: { vacancyId, overdueAfterHours, ...filters } });
 export const getRecruitmentOnboarding = async (applicantId: string) => getRequest<ResponseData<RecruitmentOnboardingCase>>(`${ServiceUrl.GET_ONBOARDING_BY_APPLICANT}/${encodeURIComponent(applicantId)}`);
+export const getRecruitmentOnboardingQueue = async (status?: RecruitmentOnboardingCase["status"], pageNo = 1, pageSize = 25) => getRequest<ResponseData<RecruitmentOnboardingQueueItem>>(ServiceUrl.GET_ONBOARDING_QUEUE, { params: { status, pageNo, pageSize } });
 export const updateRecruitmentOnboarding = async (payload: RecruitmentOnboardingUpdateCommand) => postRequest<RecruitmentOnboardingUpdateCommand, ResponseData<string>>(ServiceUrl.UPDATE_ONBOARDING, payload);
+export const retryRecruitmentOnboardingActivation = async (caseId: string) => postRequest<undefined, ResponseData<string>>(`${ServiceUrl.RETRY_ONBOARDING_ACTIVATION}/${encodeURIComponent(caseId)}`, undefined);
 
 export const handoffCandidateToPreboarding = async (payload: CandidateHandoffRequest) =>
   postRequest<CandidateHandoffRequest, ResponseData<string>>(
@@ -176,7 +192,9 @@ export const upsertRecruitmentRequisition = async (payload: RecruitmentRequisiti
     payload
   );
 export const upsertRecruitmentScreening = async (payload: RecruitmentScreeningReviewCommand) => postRequest<RecruitmentScreeningReviewCommand, ResponseData<string>>(ServiceUrl.UPSERT_SCREENING, payload);
+export const bulkRecruitmentScreening = async (payload: RecruitmentScreeningBulkCommand) => postRequest<RecruitmentScreeningBulkCommand, ResponseData<RecruitmentScreeningBulkResult>>(ServiceUrl.BULK_SCREENING, payload);
 
+export const getRecruitmentScorecards = async (applicantId: string, vacancyId: string) => getRequest<ResponseData<any[]>>("api/RecruitmentPlanning/Scorecards/" + encodeURIComponent(applicantId) + "/" + encodeURIComponent(vacancyId));
 export const upsertRecruitmentScorecard = async (payload: RecruitmentScorecardCommand) =>
   postRequest<RecruitmentScorecardCommand, ResponseData<string>>(
     ServiceUrl.UPSERT_SCORECARD,
@@ -205,6 +223,11 @@ export const getRecruitmentEnterpriseConfig = async () => getRequest<ResponseDat
 export const upsertRecruitmentEnterpriseConfig = async (payload: RecruitmentEnterpriseConfigCommand) => postRequest<RecruitmentEnterpriseConfigCommand, ResponseData<string>>(ServiceUrl.UPSERT_RECRUITMENT_CONFIG, payload);
 export const linkRecruitmentRelationship = async (payload: RecruitmentRelationshipLinkCommand) => postRequest<RecruitmentRelationshipLinkCommand, ResponseData<string>>(ServiceUrl.LINK_RECRUITMENT_RELATIONSHIP, payload);
 export const queueRecruitmentAutomation = async (payload: RecruitmentAutomationEventCommand) => postRequest<RecruitmentAutomationEventCommand, ResponseData<string>>(ServiceUrl.QUEUE_RECRUITMENT_AUTOMATION, payload);
+
+
+
+
+
 
 
 

@@ -298,22 +298,7 @@ export const EditApplicant = () => {
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid
-                        size={{
-                          xs: 12,
-                          sm: 4
-                        }}>
-                        <SelectInput
-                          label={formatMessage({ id: "STATUS" })}
-                          name="activityType"
-                        >
-                          {ApplicationEvaluationStatus.map((status) => (
-                            <MenuItem key={status.id} value={status.value}>
-                              {formatMessage({ id: status.label })}
-                            </MenuItem>
-                          ))}
-                        </SelectInput>
-                      </Grid>
+
                       <Grid
                         size={{
                           xs: 12,

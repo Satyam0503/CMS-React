@@ -410,7 +410,7 @@ export const ApplicantDetails = () => {
                       value={status.applicationStatus}
                       sx={{ width: { xs: "100%", sm: "170px" } }}
                       onChange={handleStatusChange}
-                      disabled={isTerminalStatus}
+                      disabled
                       className="select"
                       label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
                     >
@@ -418,7 +418,7 @@ export const ApplicantDetails = () => {
                         .filter((option) =>
                           isTerminalStatus
                             ? option.value === applicant.activityType
-                            : option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
+                            : option.value === applicant.activityType || option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
                         )
                         .map((status) => (
                         <MenuItem key={status.id} value={status.value}>
@@ -427,6 +427,7 @@ export const ApplicantDetails = () => {
                       ))}
                     </AppSelect>
                   </FormControl>
+                  <Typography variant="caption" color="text.secondary">Use Next step to change the recruitment stage.</Typography>
                 </Stack>
               </Grid>
               <Grid
