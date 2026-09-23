@@ -1,5 +1,7 @@
 import { useState } from "react";
+import dayjs from "dayjs";
 import { Alert, Button, Drawer, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { CustomisedDatePicker } from "../../../../shared/components";
 import { RecruitmentRequisitionCommand } from "../../models";
 import { upsertRecruitmentRequisition } from "../../services";
 
@@ -62,7 +64,7 @@ export const RecruitmentRequisitionDrawer = ({ open, jobId, jobTitle, vacancies,
       <TextField select label="Employment type" value={employmentType} onChange={event => setEmploymentType(event.target.value)} fullWidth>{["Full-time", "Part-time", "Contract", "Internship", "Consultant"].map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}</TextField>
       <TextField label="Hiring manager user ID" value={hiringManagerUserId} onChange={event => setHiringManagerUserId(event.target.value)} helperText="Optional; use the employee user ID." fullWidth />
       <TextField label="Cost center" value={costCenter} onChange={event => setCostCenter(event.target.value)} fullWidth />
-      <TextField label="Target start date" type="date" value={targetStartDateUtc} onChange={event => setTargetStartDateUtc(event.target.value)} InputLabelProps={{ shrink: true }} fullWidth />
+      <CustomisedDatePicker label="Target start date" value={targetStartDateUtc ? dayjs(targetStartDateUtc) : null} minDate={dayjs().startOf("day")} setValue={(value) => setTargetStartDateUtc(value?.format("YYYY-MM-DD") ?? "")} />
       <TextField label="Business justification" value={justification} onChange={event => setJustification(event.target.value)} multiline minRows={3} fullWidth />
       <TextField label="Approval reference" helperText="Required before approval" value={approvalReference} onChange={event => setApprovalReference(event.target.value)} fullWidth />
       <TextField select label="Status" value={status} onChange={event => setStatus(event.target.value as RecruitmentRequisitionCommand["status"])} fullWidth>

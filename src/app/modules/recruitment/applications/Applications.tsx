@@ -293,12 +293,45 @@ export const Applications = () => {
   }, [jobId]);
 
 
+  const [activeQueueTab, setActiveQueueTab] = useState<"none" | "screening" | "offers" | "preboarding" | "onboarding" | "all">("none");
+
+  const applicantLookup = useMemo(() => {
+    const map: Record<string, { fullName: string; email?: string; vacancyName?: string }> = {};
+    for (const row of applicationsList) {
+      if (row.applicantId) {
+        map[row.applicantId] = {
+          fullName: `${row.firstName || ""} ${row.lastName || ""}`.trim(),
+          email: row.email,
+          vacancyName: row.vacancyName,
+        };
+      }
+    }
+    return map;
+  }, [applicationsList]);
+
+  const activeStageFilter =
+    applicationFilters?.activityTypes && applicationFilters.activityTypes.length === 1
+      ? applicationFilters.activityTypes[0]
+      : null;
+
+  const queueTabs: Array<{
+    id: typeof activeQueueTab;
+    label: string;
+  }> = [
+    { id: "none", label: "Applications Table Only" },
+    { id: "screening", label: "Screening Queue" },
+    { id: "offers", label: "Selected & Offers" },
+    { id: "preboarding", label: "Preboarding Readiness" },
+    { id: "onboarding", label: "Onboarding Queue" },
+    { id: "all", label: "All Queues" },
+  ];
+
   return (
     <>
       <Card
         className="d-flex flex-column flex-grow-1"
         sx={{
-          gap: { xs: 1.75, md: 2.5 },
+          gap: { xs: 1.75, md: 2.25 },
           p: { xs: 1.5, sm: 2.5, md: 3 },
           borderRadius: 3,
           border: "1px solid",
@@ -365,11 +398,108 @@ export const Applications = () => {
             )}
           </Stack>}
         />
-        <RecruitmentPipelineSummaryCard vacancyId={jobId} onStageSelect={(stage) => { setPaginationValues((current) => ({ ...current, pageNo: 0 })); dispatch(setApplicationFilter({ ...initialFilterValues, ...(jobId ? { vacancyIds: [jobId] } : {}), activityTypes: [stage] })); }} />
-        <RecruitmentOnboardingQueueCard onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
-        <RecruitmentScreeningQueueCard vacancyId={jobId} onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
-        <RecruitmentSelectedOfferQueueCard vacancyId={jobId} onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
-        <RecruitmentPreboardingQueueCard onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)} />
+        <RecruitmentPipelineSummaryCard
+          vacancyId={jobId}
+          activeStage={activeStageFilter}
+          onStageSelect={(stage) => {
+            setPaginationValues((current) => ({ ...current, pageNo: 0 }));
+            dispatch(
+              setApplicationFilter({
+                ...initialFilterValues,
+                ...(jobId ? { vacancyIds: [jobId] } : {}),
+                activityTypes: activeStageFilter === stage ? [] : [stage],
+              })
+            );
+          }}
+          onClearStage={() => {
+            setPaginationValues((current) => ({ ...current, pageNo: 0 }));
+            dispatch(
+              setApplicationFilter({
+                ...initialFilterValues,
+                ...(jobId ? { vacancyIds: [jobId] } : {}),
+                activityTypes: [],
+              })
+            );
+          }}
+        />
+
+        {/* Operational Queue Workspace Switcher */}
+        <Stack
+          direction="row"
+          spacing={0.85}
+          alignItems="center"
+          useFlexGap
+          flexWrap="wrap"
+          sx={{
+            p: 1,
+            borderRadius: 2,
+            bgcolor: "action.hover",
+            border: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          {queueTabs.map((tab) => {
+            const active = activeQueueTab === tab.id;
+            return (
+              <Box
+                key={tab.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => setActiveQueueTab(tab.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveQueueTab(tab.id);
+                  }
+                }}
+                sx={{
+                  px: 1.5,
+                  py: 0.75,
+                  borderRadius: 1.5,
+                  fontSize: "0.78rem",
+                  fontWeight: active ? 800 : 600,
+                  cursor: "pointer",
+                  bgcolor: active ? "primary.main" : "background.paper",
+                  color: active ? "primary.contrastText" : "text.primary",
+                  border: "1px solid",
+                  borderColor: active ? "primary.main" : "divider",
+                  boxShadow: active ? "0 4px 12px rgba(32, 128, 125, 0.22)" : "none",
+                  transition: "all 150ms ease",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                  },
+                }}
+              >
+                {tab.label}
+              </Box>
+            );
+          })}
+        </Stack>
+
+        {(activeQueueTab === "screening" || activeQueueTab === "all") && (
+          <RecruitmentScreeningQueueCard
+            vacancyId={jobId}
+            onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
+          />
+        )}
+        {(activeQueueTab === "offers" || activeQueueTab === "all") && (
+          <RecruitmentSelectedOfferQueueCard
+            vacancyId={jobId}
+            onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
+          />
+        )}
+        {(activeQueueTab === "preboarding" || activeQueueTab === "all") && (
+          <RecruitmentPreboardingQueueCard
+            applicantLookup={applicantLookup}
+            onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
+          />
+        )}
+        {(activeQueueTab === "onboarding" || activeQueueTab === "all") && (
+          <RecruitmentOnboardingQueueCard
+            applicantLookup={applicantLookup}
+            onApplicantSelect={(applicantId) => navigate(`/recruitment/applicant/${applicantId}`)}
+          />
+        )}
         {open && (
           <ApplicationFilter
             open={open}

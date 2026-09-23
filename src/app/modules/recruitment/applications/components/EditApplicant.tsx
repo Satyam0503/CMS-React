@@ -200,11 +200,31 @@ export const EditApplicant = () => {
   };
 
   return (
-    <Card sx={{ p: 2.6 }}>
-      <Stack spacing={2}>
-        <Typography variant="h5" className="mb-2">
-          {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
-        </Typography>
+    <Card
+      sx={{
+        p: { xs: 2, sm: 3 },
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)",
+      }}
+    >
+      <Stack spacing={2.5}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems={{ sm: "center" }}
+          gap={1}
+        >
+          <Box>
+            <Typography variant="h5" fontWeight={800}>
+              {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              Update candidate contact details, experience, or resume. Stage transitions are managed via the Next Step workflow drawer.
+            </Typography>
+          </Box>
+        </Stack>
         <Grid container direction={"column"} sx={{
           gap: 1
         }}>

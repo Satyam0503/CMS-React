@@ -33,6 +33,8 @@ export type CalendarItem = {
   imageUrl: string | null;
   recurring: boolean;
   image?: File | null;
+  targetUserIds?: string[] | null;
+  restrictToTargetUsersAndHrAdmin?: boolean;
 };
 
 export interface HolidayFilterModel {

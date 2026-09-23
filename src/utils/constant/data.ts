@@ -125,6 +125,8 @@ export const ServiceUrl = {
   UPSERT_HIRING_DECISION: `api/RecruitmentHiringDecision/Upsert`,
   APPLY_CANDIDATE_PRIVACY: `api/RecruitmentCandidatePrivacy/Apply`,
   CREATE_OFFER_VERSION: `api/RecruitmentOfferNegotiation/CreateVersion`,
+  GET_OFFER_VERSIONS: `api/RecruitmentOfferNegotiation/Versions`,
+  GET_OFFER_COUNTERS: `api/RecruitmentOfferNegotiation/Counters`,
   REQUEST_OFFER_COUNTER: `api/RecruitmentOfferNegotiation/RequestCounter`,
   REVIEW_RESUME_EXTRACTION: `api/RecruitmentResumeExtraction/Review`,
   HANDOFF_TO_PREBOARDING: `api/Applicants/HandoffToPreboarding`,
