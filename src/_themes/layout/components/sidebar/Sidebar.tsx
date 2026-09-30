@@ -40,7 +40,21 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, 
       slotProps={{
         backdrop: { sx: { backgroundColor: "rgba(15, 23, 42, 0.44)", backdropFilter: "blur(2px)" } },
         paper: {
-          sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
+          sx: {
+            backgroundColor: 'background.sidebar',
+            backgroundImage: "none",
+            ...(isSmallScreen
+              ? {}
+              : {
+                  top: "calc(var(--app-header-height) + 16px) !important",
+                  bottom: "16px !important",
+                  marginTop: "auto !important",
+                  marginBottom: "auto !important",
+                  height: "clamp(500px, calc(100dvh - var(--app-header-height) - 72px), 680px) !important",
+                  maxHeight: "calc(100dvh - var(--app-header-height) - 32px) !important",
+                  transform: "translateZ(0) !important",
+                }),
+          },
           className: 'sidebar-paper',
         },
       }}
@@ -56,7 +70,22 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, 
         if (!isSmallScreen) setHoverExpanded(false);
       }}
     >
-      <Stack role="presentation" onClick={handleClose} sx={{ height: "100%", minHeight: 0, flexGrow: 1, p: 2, overflow: "hidden" }}>
+      <Stack
+        role="presentation"
+        onClick={handleClose}
+        sx={{
+          maxHeight: isSmallScreen
+            ? "calc(100dvh - 20px)"
+            : "calc(100dvh - var(--app-header-height) - 28px)",
+          height: "100%",
+          minHeight: 0,
+          flexGrow: 1,
+          justifyContent: "space-between",
+          px: 2,
+          py: 2,
+          overflow: "hidden",
+        }}
+      >
         {isSmallScreen && (
           <ButtonBase
             aria-label="Close navigation menu"
@@ -71,6 +100,7 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, 
           currentIndex={openIndex}
           handleToggle={handleToggle}
           isMiniSidebar={!isSmallScreen && isMiniSidebar && !isHoverExpanded}
+          onExpandSidebar={() => setMiniSidebar(false)}
         />
 
         {!isSmallScreen && (

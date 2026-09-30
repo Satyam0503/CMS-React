@@ -4,13 +4,14 @@ import RestoreOutlined from "@mui/icons-material/RestoreOutlined";
 import SaveOutlined from "@mui/icons-material/SaveOutlined";
 import CheckCircleOutlineRounded from "@mui/icons-material/CheckCircleOutlineRounded";
 import ArrowForwardRounded from "@mui/icons-material/ArrowForwardRounded";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { getRecruitmentEnterpriseConfig, upsertRecruitmentEnterpriseConfig } from "./services";
 import { RecruitmentEnterpriseConfig, RecruitmentEnterpriseConfigCommand } from "./models";
 import { usePageData } from "../../Context/PageDataProvider";
 import { AppButton, AppSwitch, AppTextField } from "../../shared/components/ui";
-import { INDIA_TIME_ZONE } from "../../../utils/common";
+import { sanitizeHtmlContent } from "../../../utils/common";
+
 import RecruitmentInterviewPlanEditor from "./RecruitmentInterviewPlanEditor";
 import RecruitmentFeedbackSlaCard from "./RecruitmentFeedbackSlaCard";
 import RecruitmentOfferApprovalPolicyEditor from "./RecruitmentOfferApprovalPolicyEditor";
@@ -18,8 +19,8 @@ import RecruitmentOfferApprovalPolicyEditor from "./RecruitmentOfferApprovalPoli
 const defaults: RecruitmentEnterpriseConfig = {
   locations: [],
   recruitmentMode: "Simple",
-  enableSla: true,
-  enableAutomation: true,
+  enableSla: false,
+  enableAutomation: false,
   applicationReview: true,
   hiringManagerReview: false,
   interviewRounds: false,
@@ -29,8 +30,8 @@ const defaults: RecruitmentEnterpriseConfig = {
   offerNegotiation: false,
   candidateEmailActions: true,
   requisitions: false,
-  slaTracking: true,
-  automation: true,
+  slaTracking: false,
+  automation: false,
   internalMobility: false,
   rehireLinks: false,
   autoAdvanceOnScreening: true,
@@ -40,12 +41,15 @@ const defaults: RecruitmentEnterpriseConfig = {
   screeningCriteria: ["Relevant experience", "Required skills", "Communication"],
   screeningPassScore: 60,
   preboardingChecklist: ["candidate-details", "documents", "verification"],
-  defaultTimezone: INDIA_TIME_ZONE,
+  defaultTimezone: "UTC",
   configSource: "SystemDefault",
   overriddenFields: [],
   compensationSchemeName: "Standard",
   compensationCurrency: "INR",
   compensationComponents: {},
+  defaultCandidateRetentionDays: 730,
+  offerLetterSubjectTemplate: "Your offer for [JobTitle]",
+  offerLetterBodyTemplate: "<p>Dear [CandidateName],</p><p>We are pleased to offer you the [JobTitle] position.</p><p>Compensation: [Currency] [TotalCtc]</p>",
 };
 
 const idempotencyKey = () => `${Date.now()}-${Math.random().toString(36).slice(2)}-recruitment-settings`;
@@ -172,11 +176,17 @@ const capabilityGroups: Array<{
 export default function RecruitmentSettings() {
   const { setPageTitle } = usePageData();
   const [config, setConfig] = useState<RecruitmentEnterpriseConfig>(defaults);
+  const [locationsText, setLocationsText] = useState("");
   const [criteriaText, setCriteriaText] = useState("Relevant experience, Required skills, Communication");
   const [checklistText, setChecklistText] = useState("candidate-details, documents, verification");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const selectedMode = modes[config.recruitmentMode];
+  const offerLetterPreview = useMemo(() => {
+    const values: Record<string, string> = { CandidateName: "Avery Taylor", JobTitle: "Senior Product Designer", Currency: config.compensationCurrency || "INR", TotalCtc: "1,200,000.00" };
+    const render = (template: string) => template.replace(/\[([A-Za-z][A-Za-z0-9_]*)\]/g, (match, key) => values[key] ?? match);
+    return { subject: render(config.offerLetterSubjectTemplate || "Your offer for [JobTitle]"), body: sanitizeHtmlContent(render(config.offerLetterBodyTemplate || "")) };
+  }, [config.compensationCurrency, config.offerLetterBodyTemplate, config.offerLetterSubjectTemplate]);
 
   const load = async () => {
     setLoading(true);
@@ -185,6 +195,7 @@ export default function RecruitmentSettings() {
       if (!data.success) throw new Error(data.message || "Unable to load recruitment settings.");
       const merged = { ...defaults, ...(data.methodResult ?? {}) };
       setConfig(merged);
+      setLocationsText((merged.locations ?? []).join(", "));
       setCriteriaText((merged.screeningCriteria ?? defaults.screeningCriteria ?? []).join(", "));
       setChecklistText((merged.preboardingChecklist ?? defaults.preboardingChecklist ?? []).join(", "));
     } catch (error) {
@@ -212,6 +223,11 @@ export default function RecruitmentSettings() {
   const save = async (resetToDefaults = false) => {
     setSaving(true);
     try {
+      const parsedLocations = locationsText
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .filter((item, index, all) => all.findIndex((candidate) => candidate.toLocaleLowerCase() === item.toLocaleLowerCase()) === index);
       const parsedCriteria = criteriaText
         .split(",")
         .map((item) => item.trim())
@@ -221,11 +237,16 @@ export default function RecruitmentSettings() {
         .map((item) => item.trim())
         .filter(Boolean);
 
+      const retentionDays = Number(config.defaultCandidateRetentionDays ?? 730);
+      if (!Number.isInteger(retentionDays) || retentionDays < 30 || retentionDays > 3650) {
+        throw new Error("Candidate retention must be a whole number between 30 and 3650 days.");
+      }
+
       const payload: RecruitmentEnterpriseConfigCommand = {
-        locations: resetToDefaults ? [] : config.locations,
+        locations: resetToDefaults ? [] : parsedLocations,
         recruitmentMode: resetToDefaults ? "Simple" : config.recruitmentMode,
-        enableSla: resetToDefaults ? true : config.enableSla,
-        enableAutomation: resetToDefaults ? true : config.enableAutomation,
+        enableSla: resetToDefaults ? false : config.enableSla,
+        enableAutomation: resetToDefaults ? false : config.enableAutomation,
         applicationReview: resetToDefaults ? true : config.applicationReview,
         hiringManagerReview: resetToDefaults ? false : config.hiringManagerReview,
         interviewRounds: resetToDefaults ? false : config.interviewRounds,
@@ -235,8 +256,8 @@ export default function RecruitmentSettings() {
         offerNegotiation: resetToDefaults ? false : config.offerNegotiation,
         candidateEmailActions: resetToDefaults ? true : config.candidateEmailActions,
         requisitions: resetToDefaults ? false : config.requisitions,
-        slaTracking: resetToDefaults ? true : config.slaTracking,
-        automation: resetToDefaults ? true : config.automation,
+        slaTracking: resetToDefaults ? false : config.slaTracking,
+        automation: resetToDefaults ? false : config.automation,
         internalMobility: resetToDefaults ? false : config.internalMobility,
         rehireLinks: resetToDefaults ? false : config.rehireLinks,
         autoAdvanceOnScreening: resetToDefaults ? true : config.autoAdvanceOnScreening,
@@ -248,7 +269,10 @@ export default function RecruitmentSettings() {
         preboardingChecklist: resetToDefaults ? defaults.preboardingChecklist : parsedChecklist,
         compensationSchemeName: resetToDefaults ? "Standard" : config.compensationSchemeName,
         compensationCurrency: resetToDefaults ? "INR" : config.compensationCurrency,
-        defaultTimezone: INDIA_TIME_ZONE,
+        defaultTimezone: resetToDefaults ? "UTC" : (config.defaultTimezone?.trim() || "UTC"),
+        defaultCandidateRetentionDays: resetToDefaults ? 730 : retentionDays,
+        offerLetterSubjectTemplate: resetToDefaults ? defaults.offerLetterSubjectTemplate : config.offerLetterSubjectTemplate,
+        offerLetterBodyTemplate: resetToDefaults ? defaults.offerLetterBodyTemplate : config.offerLetterBodyTemplate,
         resetToDefaults,
         idempotencyKey: idempotencyKey(),
       };
@@ -426,6 +450,15 @@ export default function RecruitmentSettings() {
               helperText="3-letter ISO currency code (e.g., INR, USD, EUR, GBP)."
             />
             <AppTextField
+              label="Candidate retention (days)"
+              type="number"
+              value={config.defaultCandidateRetentionDays ?? 730}
+              disabled={loading || saving}
+              onChange={(e) => update("defaultCandidateRetentionDays", Number(e.target.value))}
+              inputProps={{ min: 30, max: 3650, step: 1 }}
+              helperText="Default privacy retention for new consent grants. Allowed range: 30–3650 days."
+            />
+            <AppTextField
               label="Screening criteria (comma-separated)"
               value={criteriaText}
               disabled={loading || saving}
@@ -442,7 +475,27 @@ export default function RecruitmentSettings() {
           </Box>
         </Box>
 
+        <Box sx={{ p: { xs: 1.5, sm: 2 }, border: "1px solid", borderColor: "divider", borderRadius: 2.5 }}>
+          <Typography variant="subtitle2" fontWeight={800}>Offer letter template</Typography>
+          <Typography variant="caption" color="text.secondary">This company-only template is safely merged when an offer is sent. Use [CandidateName], [JobTitle], [Currency], and [TotalCtc].</Typography>
+          <Stack spacing={1.5} sx={{ mt: 1.5 }}>
+            <AppTextField label="Offer email subject" value={config.offerLetterSubjectTemplate ?? ""} disabled={loading || saving} onChange={(e) => update("offerLetterSubjectTemplate", e.target.value)} inputProps={{ maxLength: 160 }} />
+            <AppTextField label="Offer letter HTML" value={config.offerLetterBodyTemplate ?? ""} disabled={loading || saving} onChange={(e) => update("offerLetterBodyTemplate", e.target.value)} multiline minRows={6} inputProps={{ maxLength: 20000 }} helperText="Candidate details are HTML-encoded before template merge." />            <Box sx={{ p: 2, borderRadius: 2, bgcolor: "action.hover", border: "1px solid", borderColor: "divider" }}>
+              <Typography variant="overline" color="text.secondary" fontWeight={800}>Preview with sample candidate</Typography>
+              <Typography variant="subtitle2" fontWeight={800}>{offerLetterPreview.subject}</Typography>
+              <Box sx={{ mt: 1, color: "text.secondary", lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: offerLetterPreview.body }} />
+            </Box>
+          </Stack>
+        </Box>
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" }, gap: 2 }}>
+          <AppTextField
+            label="Hiring locations"
+            value={locationsText}
+            disabled={loading || saving}
+            onChange={(e) => setLocationsText(e.target.value)}
+            placeholder="Bengaluru, Mumbai, Remote"
+            helperText="Comma-separated locations available when creating jobs. At least one is required before publishing."
+          />
           <AppTextField
             select
             label="Recruitment mode"
@@ -456,11 +509,12 @@ export default function RecruitmentSettings() {
             <MenuItem value="Enterprise">Enterprise (Governance)</MenuItem>
           </AppTextField>
           <AppTextField
-            label="Project timezone"
-            value={INDIA_TIME_ZONE}
+            label="Recruitment timezone"
+            value={config.defaultTimezone ?? "UTC"}
             disabled={loading || saving}
-            InputProps={{ readOnly: true }}
-            helperText="Used across interviews, candidate communication, and recruitment timestamps. Stored as UTC."
+            onChange={(e) => update("defaultTimezone", e.target.value)}
+            placeholder="UTC or Asia/Kolkata"
+            helperText="Use a valid IANA/system timezone. Interview times are stored in UTC and displayed in this zone."
           />
           <Stack
             direction="row"

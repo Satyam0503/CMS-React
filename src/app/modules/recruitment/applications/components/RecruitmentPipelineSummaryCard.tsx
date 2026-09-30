@@ -79,6 +79,7 @@ export default function RecruitmentPipelineSummaryCard({
               variant="outlined"
               sx={{ fontWeight: 700 }}
             />
+            {analytics?.averageTimeToHireDays !== null && analytics?.averageTimeToHireDays !== undefined && <Chip size="small" label={`${analytics.averageTimeToHireDays}d avg time-to-hire · ${analytics.timeToHireSampleSize ?? 0} hires`} color="secondary" variant="outlined" sx={{ fontWeight: 700 }} />}
             {activeStage !== null && activeStage !== undefined && onClearStage && (
               <Chip
                 size="small"

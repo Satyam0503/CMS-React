@@ -4,16 +4,25 @@ import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { filterSideBarTabs } from "../../../../../utils/common";
 import { useIntl } from "react-intl";
 import { Box, Stack } from "@mui/material";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
+import { useLocation } from "react-router";
+import { checkIsActive } from "../../../../helpers";
 
 type Props = {
   currentIndex: number | null;
   handleToggle: (index: number | null) => void;
   isMiniSidebar: boolean;
+  onExpandSidebar?: () => void;
 };
 
-export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle, isMiniSidebar }) => {
+export const SidebarMenuMain: FC<Props> = ({
+  currentIndex,
+  handleToggle,
+  isMiniSidebar,
+  onExpandSidebar,
+}) => {
   const { formatMessage } = useIntl();
+  const { pathname } = useLocation();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
   );
@@ -25,25 +34,52 @@ export const SidebarMenuMain: FC<Props> = ({ currentIndex, handleToggle, isMiniS
     [modulePermission, userRoleType],
   );
 
+  // Automatically expand the parent menu group whose sub-route matches the active URL
+  useEffect(() => {
+    if (isMiniSidebar) return;
+    const matchedParentIndex = filteredTabList.findIndex(
+      (tab) =>
+        tab?.hasSubTabs &&
+        tab.subTabs?.some((subTab) => subTab?.route && checkIsActive(pathname, subTab.route)),
+    );
+    if (matchedParentIndex !== -1 && currentIndex !== matchedParentIndex) {
+      handleToggle(matchedParentIndex);
+    }
+  }, [pathname, filteredTabList, isMiniSidebar]);
+
   if (filteredTabList.length === 0) {
     return null;
   }
 
   return (
-    <Box className="sidebar-menu-main" sx={{ flex: "1 1 0", height: 0, minHeight: 0, my: 1 }}>
-      <Stack>
+    <Box
+      className="sidebar-menu-main"
+      sx={{
+        flex: "1 1 auto",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        my: 0.5,
+      }}
+    >
+      <Stack sx={{ my: "auto", width: "100%", gap: 0.25 }}>
         {filteredTabList.map((tab, index) => {
           if (tab?.hasSubTabs) {
+            const hasActiveChild = Boolean(
+              tab.subTabs?.some((subTab) => subTab?.route && checkIsActive(pathname, subTab.route)),
+            );
             return (
               <SidebarMenuItemWithSub
                 index={index}
                 key={tab?.id}
                 to={tab?.route}
                 isOpen={currentIndex === index}
+                hasActiveChild={hasActiveChild}
                 title={formatMessage({ id: tab?.title })}
                 icon={tab?.icon}
                 isMiniSidebar={isMiniSidebar}
                 setCurrentMenuIndex={handleToggle}
+                onExpandSidebar={onExpandSidebar}
               >
                 {tab?.subTabs?.map((subTab) => {
                   return (

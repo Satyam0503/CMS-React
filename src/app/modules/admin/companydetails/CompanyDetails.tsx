@@ -1,7 +1,7 @@
 import { useIntl } from "react-intl";
 import { Link as RouterLink, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { Box, ButtonBase, Tooltip } from "@mui/material";
-import { AccessTimeRounded, CorporateFare, Work, SettingsApplicationsRounded, NotificationsActiveRounded } from "@mui/icons-material";
+import { Box, ButtonBase, Stack, Tooltip } from "@mui/material";
+import { AccessTimeRounded, CorporateFare, Work, SettingsApplicationsRounded, NotificationsActiveRounded, FactCheckRounded } from "@mui/icons-material";
 import { useEffect } from "react";
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
@@ -13,6 +13,11 @@ import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { usePageData } from "../../../Context/PageDataProvider";
 import { EmployeeExitPolicySettings } from "../../users/components/EmployeeExitPolicySettings";
 import { CompanyNotificationSettings } from "./components/CompanyNotificationSettings";
+import { RecruitmentReadiness } from "./components/RecruitmentReadiness";
+import { PayrollConfigurationPanel } from "../../payrollsettings/components/PayrollConfigurationPanel";
+import { useAppSelector } from "../../../Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { ModulesName, Permission, Roles } from "../../../../utils/enums";
 
 const tabsRoutes: TabModel[] = [
   {
@@ -45,6 +50,8 @@ const tabsRoutes: TabModel[] = [
     title: "Notification defaults",
     icon: <NotificationsActiveRounded />,
   },
+  { tabId: 6, to: "/admin/companydetails/recruitment-readiness", title: "Recruitment readiness", icon: <FactCheckRounded /> },
+  { tabId: 7, to: "/admin/companydetails/payroll-configuration", title: "Payroll configuration", icon: <SettingsApplicationsRounded /> },
 ];
 
 export const CompanyDetailsTab = () => {
@@ -57,12 +64,22 @@ export const CompanyDetailsTab = () => {
         <Route path="office-schedule" element={<OfficeSchedule />} />
         <Route path="offboarding" element={<EmployeeExitPolicySettings />} />
         <Route path="notifications" element={<CompanyNotificationSettings />} />
+        <Route path="recruitment-readiness" element={<RecruitmentReadiness />} />
+        <Route path="payroll-configuration" element={<CompanyPayrollConfiguration />} />
       </Route>
       <Route path="*" element={<Navigate to={"/error"} />} />
     </Routes>
   );
 };
 
+
+const CompanyPayrollConfiguration = () => {
+  const userData = useAppSelector((state) => state.user.userData);
+  const permissions = userData?.modulePermission ?? [];
+  const canEdit = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Edit, permissions);
+  const canApprove = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Approve, permissions);
+  return <PayrollConfigurationPanel canEdit={canEdit} canApprove={canApprove} />;
+};
 
 const CompanyDetails = () => {
   const { setPageTitle } = usePageData();
@@ -175,3 +192,6 @@ const CompanyDetails = () => {
 };
 
 export { CompanyDetails };
+
+
+

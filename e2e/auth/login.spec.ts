@@ -11,10 +11,8 @@ test.describe("Authentication @smoke", () => {
     await expect(page.getByRole("button", { name: /sign in|log in/i })).toBeVisible();
   });
 
-  test("rejects empty submission with validation errors", async ({ page }) => {
-    await page.getByRole("button", { name: /sign in|log in/i }).click();
-    const errorMessages = page.locator('[class*="error"], [role="alert"], .Mui-error');
-    await expect(errorMessages.first()).toBeVisible({ timeout: 5000 });
+  test("keeps empty submission disabled", async ({ page }) => {
+    await expect(page.getByRole("button", { name: /sign in|log in/i })).toBeDisabled();
   });
 
   test("rejects invalid credentials", async ({ page }) => {

@@ -1,4 +1,5 @@
 import { Stack, Typography, Box, Avatar } from "@mui/material";
+import { CheckCircleOutlineRounded } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { CustomCard } from "../../../shared/components/C_Card";
 import { useEffect, useState } from "react";
@@ -55,11 +56,46 @@ export default function EmpOnLeave() {
         label={i({ id: "TITLES.EMP_ON_LEAVE" })}
         applyMinHeight={false}
       >
-        <Stack className="mt-3" spacing={1.25}>
+        <Stack className="mt-1" spacing={1.25}>
           {!leaveRequest.length ? (
-            <Box component="div" sx={{ minHeight: 112, display: "grid", placeItems: "center" }}>
-              <Typography className="text-center">{i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}</Typography>
-            </Box>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              sx={{
+                p: 1.5,
+                borderRadius: "12px",
+                backgroundColor: "rgba(255, 255, 255, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.85)",
+                boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "8px",
+                  display: "grid",
+                  placeItems: "center",
+                  backgroundColor: "#ECFDF5",
+                  border: "1px solid #A7F3D0",
+                  color: "#059669",
+                  flexShrink: 0,
+                }}
+              >
+                <CheckCircleOutlineRounded sx={{ fontSize: 20 }} />
+              </Box>
+              <Stack sx={{ minWidth: 0 }}>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#0F172A" }}>
+                  Full Team Available
+                </Typography>
+                <Typography sx={{ fontSize: "0.75rem", fontWeight: 500, color: "#64748B" }}>
+                  {i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}
+                </Typography>
+              </Stack>
+            </Stack>
           ) : (
             <Stack
               spacing={1.25}
@@ -68,17 +104,16 @@ export default function EmpOnLeave() {
               sx={{
                 maxHeight: 270,
                 overflowY: "auto",
-                pr: 0.75,
-                mr: -0.75,
-                scrollbarWidth: "none",
-                "&::-webkit-scrollbar": { width: 0 },
-                "&:hover, &:focus, &:focus-within": {
-                  scrollbarWidth: "thin",
-                  "&::-webkit-scrollbar": { width: 6 },
-                  "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: "color-mix(in srgb, var(--mui-palette-primary-main) 42%, transparent)",
-                    borderRadius: 99,
-                  },
+                pr: 0.5,
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "transparent",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#CBD5E1",
+                  borderRadius: "999px",
                 },
               }}
             >

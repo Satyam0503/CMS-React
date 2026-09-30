@@ -288,6 +288,7 @@
     "REGISTER": "注册",
     "SIGNIN": "登录",
     "T&C": "我接受条款与条件",
+    "TERMS_REQUIRED": "我接受条款和条件",
     "PASSWORD_NOTE": "使用8个或更多字符，包含字母、数字和符号。",
     "FORGOT_PASSWORD": "忘记密码?",
     "FORGOT_PASSWORD.NOTE": "请输入您的电子邮件以重置密码",

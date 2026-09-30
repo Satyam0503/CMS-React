@@ -4,15 +4,15 @@ import { frFR, enUS, deDE, jaJP, esES, zhCN } from "@mui/material/locale";
 
 export const colors = {
   primary: {
-    100: "#D9F3EF",
-    200: "#B7E7DF",
-    300: "#86D5C8",
-    400: "#57B9AC",
-    500: "#2F7D78",
-    600: "#286B67",
-    700: "#235955",
-    800: "#1D4946",
-    900: "#173C39",
+    100: "#EBF3FA",
+    200: "#C5DDF2",
+    300: "#8ABCE6",
+    400: "#3888D0",
+    500: "#0B5CAB",
+    600: "#084987",
+    700: "#063766",
+    800: "#042648",
+    900: "#02162B",
   },
   secondary: {
     100: "#F1F5F9",
@@ -65,14 +65,15 @@ export const getCurrentLocaleForMui = (lang: LANGUAGE) => {
       return enUS;
   }
 };
+
 export const darkPalette: ColorSystemOptions = {
   palette: {
     primary: {
       lighter: colors.primary[200],
       light: colors.primary[300],
-      main: colors.primary[400],
-      dark: colors.primary[600],
-      darker: colors.primary[800],
+      main: "#3888D0",
+      dark: colors.primary[500],
+      darker: colors.primary[700],
     },
     secondary: {
       lighter: colors.secondary[200],
@@ -82,20 +83,20 @@ export const darkPalette: ColorSystemOptions = {
       darker: colors.secondary[900],
     },
     background: {
-      default: "#101318",
-      paper: "#171c24",
-      body: "#101318",
-      header: "#161b22",
-      card: "#171c24",
-      box: "#1d2430",
-      sidebar: "#0c111b",
+      default: "#0B0F19",
+      paper: "#111827",
+      body: "#0B0F19",
+      header: "rgba(17, 24, 39, 0.85)",
+      card: "rgba(17, 24, 39, 0.82)",
+      box: "#1E293B",
+      sidebar: "#0F172A",
     },
     text: {
-      primary: "#f4f5f7",
-      secondary: "#b8bfca",
-      disabled: "#7e8795",
+      primary: "#F8FAFC",
+      secondary: "#CBD5E1",
+      disabled: "#64748B",
     },
-    divider: "rgba(226, 232, 240, 0.18)",
+    divider: "rgba(226, 232, 240, 0.14)",
     mode: "dark",
   },
 };
@@ -103,55 +104,56 @@ export const darkPalette: ColorSystemOptions = {
 export const lightPalette: ColorSystemOptions = {
   palette: {
     primary: {
-      lighter: colors.primary[200],
+      lighter: colors.primary[100],
       light: colors.primary[300],
       main: colors.primary[500],
-      dark: colors.primary[700],
-      darker: colors.primary[900],
+      dark: colors.primary[600],
+      darker: colors.primary[800],
     },
     secondary: {
-      lighter: colors.secondary[200],
+      lighter: colors.secondary[100],
       light: colors.secondary[300],
-      main: colors.secondary[500],
+      main: colors.secondary[600],
       dark: colors.secondary[700],
       darker: colors.secondary[900],
     },
     background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
-      body: "#f5f5f5",
-      header: "#ffffff",
-      card: "#ffffff",
-      sidebar: "#000000",
+      default: "#F4F6F9",
+      paper: "#FFFFFF",
+      body: "#F4F6F9",
+      header: "rgba(255, 255, 255, 0.95)",
+      card: "#FFFFFF",
+      box: "#F8FAFC",
+      sidebar: "#FFFFFF",
     },
     text: {
-      primary: "#20242d",
-      secondary: "#606978",
-      disabled: "#9299a6",
+      primary: "#0F172A",
+      secondary: "#334155",
+      disabled: "#64748B",
     },
-    divider: "rgba(32, 36, 45, 0.14)",
+    divider: "#E2E8F0",
     mode: "light",
   },
 };
 
-// Dawn uses clear lavender as its main accent and rose as its secondary color.
+// Dawn uses Corporate Teal & Cobalt instead of purple/lavender.
 export const dawnLightPalette: ColorSystemOptions = {
   ...lightPalette,
   palette: {
     ...lightPalette.palette,
     primary: {
-      lighter: "#EDE1F3",
-      light: "#C9A7D4",
-      main: "#87518E",
-      dark: "#673B70",
-      darker: "#4D2857",
+      lighter: "#E0F2FE",
+      light: "#7DD3FC",
+      main: "#0284C7",
+      dark: "#0369A1",
+      darker: "#075985",
     },
     secondary: {
-      lighter: "#FDE5EE",
-      light: "#F1ADC5",
-      main: "#D56892",
-      dark: "#AC426D",
-      darker: "#7D264B",
+      lighter: "#CCFBF1",
+      light: "#5EEAD4",
+      main: "#0D9488",
+      dark: "#0F766E",
+      darker: "#115E59",
     },
   },
 };
@@ -161,56 +163,55 @@ export const dawnDarkPalette: ColorSystemOptions = {
   palette: {
     ...darkPalette.palette,
     primary: {
-      lighter: "#E9D7ED",
-      light: "#CFA8D5",
-      main: "#B77DB8",
-      dark: "#8E5A90",
-      darker: "#6B426D",
+      lighter: "#E0F2FE",
+      light: "#7DD3FC",
+      main: "#38BDF8",
+      dark: "#0284C7",
+      darker: "#0369A1",
     },
     secondary: {
-      lighter: "#F9D9E4",
-      light: "#EEA9BE",
-      main: "#E38BA8",
-      dark: "#B75D7A",
-      darker: "#893C57",
+      lighter: "#CCFBF1",
+      light: "#5EEAD4",
+      main: "#2DD4BF",
+      dark: "#0D9488",
+      darker: "#115E59",
     },
   },
 };
 
-// chart palette
-
+// Enterprise Corporate Analytics Palette (Zero Purple/Violet)
 const chartColorpalette: { [key: string]: string[] } = {
   light: [
-    "#2F7D78", // muted teal
-    "#718096", // steel blue-grey
-    "#6B7280", // slate
-    "#C56C5C", // soft terracotta
-    "#7E8F4F", // olive
-    "#B57A9C", // dusty rose
-    "#667C9D", // steel blue
-    "#9A7A53", // sand
+    "#0B5CAB", // corporate cobalt blue (Workday / Salesforce anchor)
+    "#0D9488", // deep ocean teal (Gusto Kale)
+    "#0284C7", // cerulean sky blue
+    "#D97706", // executive warm amber
+    "#16A34A", // emerald forest green
+    "#EA580C", // warm terracotta coral
+    "#334155", // deep slate navy
+    "#64748B", // cool steel gray
   ],
   dark: [
-    "#5ED0C6", // teal
-    "#A8B8C8", // light steel blue-grey
-    "#A8B1C1", // slate
-    "#E58B78", // terracotta
-    "#A8C46B", // olive
-    "#DC9BBC", // rose
-    "#91AACD", // steel
-    "#C8A57A", // sand
+    "#38BDF8", // sky blue
+    "#2DD4BF", // teal
+    "#60A5FA", // cobalt light
+    "#FBBF24", // amber
+    "#34D399", // emerald
+    "#FB923C", // coral
+    "#94A3B8", // slate
+    "#CBD5E1", // light steel
   ],
 };
 
 const dawnChartColorPalette: { [key: string]: string[] } = {
-  light: ["#9B669C", "#D7839C", "#6B7280", "#B56A68", "#7E8F4F", "#B87A9C", "#657A9B", "#9A7A53"],
-  dark: ["#B77DB8", "#E38BA8", "#A8B1C1", "#E58B78", "#A8C46B", "#D19ABC", "#91AACD", "#C8A57A"],
+  light: ["#0284C7", "#0D9488", "#0B5CAB", "#D97706", "#16A34A", "#EA580C", "#334155", "#64748B"],
+  dark: ["#38BDF8", "#2DD4BF", "#60A5FA", "#FBBF24", "#34D399", "#FB923C", "#94A3B8", "#CBD5E1"],
 };
 
 export const getChartPalette = (
   mode: "light" | "dark" | "system" | undefined,
   systemMode: "light" | "dark" | undefined,
-  appStyle?: string
+  appStyle?: string,
 ) => {
   const resolvedMode = systemMode ?? (mode === "dark" ? "dark" : "light");
   return (appStyle === "dawn" ? dawnChartColorPalette : chartColorpalette)[resolvedMode];

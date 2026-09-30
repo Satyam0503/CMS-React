@@ -9,43 +9,29 @@ import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { usePageData } from "../../Context/PageDataProvider";
 import { PayRollTable } from "./components/PayRollTable";
-import { PayRollDataModel, PayRollResponseModel } from "./models";
+import { PayRollResponseModel } from "./models";
 import { SearchInput } from "../../shared/components/SearchInput";
 import dayjs, { Dayjs } from "dayjs";
-import { getEmployeePayRollData, processPayrollMonth } from "./services";
+import { getEmployeePayRollData, approvePayrollMonth, processPayrollMonth, recordPayrollPayment, closePayrollMonth } from "./services";
 import CustomisedDatePicker from "../../shared/components/C_DatePicker";
 import { UploadPayRollData } from "./components/UploadPayRollData";
-import { Add, CheckCircle, PlayArrow } from "@mui/icons-material";
+import { Add, CheckCircle, Lock, PlayArrow } from "@mui/icons-material";
 import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
-import { Nullable } from "../../../utils/common_types";
+
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
 import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
 import { ProcessPayrollModal } from "./components/ProcessPayrollModal";
+import { RecordPayrollPaymentModal, PaymentForm } from "./components/RecordPayrollPaymentModal";
+import { PayrollAuditHistoryModal } from "./components/PayrollAuditHistoryModal";
+import { initialPayRollValues } from "./payrollDefaults";
+import { ConfirmationModal } from "../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 
 
 import { AppButton } from "../../shared/components/ui";
-export const initialPayRollValues: Nullable<PayRollDataModel> & { payMonth: Dayjs } = {
-    employeeId: "",
-    paidDate: null,
-    basicPay: null,
-    paidDays: null,
-    bonus: null,
-    hra: null,
-    lta: null,
-    otherAllowance: null,
-    lossOfPayDays: null,
-    lossOfPay: null,
-    incomeTax: null,
-    healthInsurance: null,
-    epf: null,
-    esic: null,
-    isProcessed: false,
-    payMonth: dayjs().subtract(1, "month"),
-}
-
+import { PayrollRunsPanel } from "./components/PayrollRunsPanel";
 const PayRollManagement = () => {
     const { setPageTitle } = usePageData();
     const { formatMessage: i } = useIntl();
@@ -60,11 +46,23 @@ const PayRollManagement = () => {
     const hasCreatePermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Create, userModulePermissions);
     const hasEditPermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Edit, userModulePermissions);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isApproving, setIsApproving] = useState(false);
     const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
+    const [paymentRow, setPaymentRow] = useState<PayRollResponseModel | null>(null);
+    const [isRecordingPayment, setIsRecordingPayment] = useState(false);
+    const [isCloseConfirmOpen, setIsCloseConfirmOpen] = useState(false);
+    const [isClosingMonth, setIsClosingMonth] = useState(false);
+    const [auditRow, setAuditRow] = useState<PayRollResponseModel | null>(null);
 
     const payrollRows = payRollData.filter(row => Boolean(row.payData.payRollId));
     const processableRows = payrollRows.filter(row => !row.payData.isProcessed);
     const isMonthProcessed = payrollRows.length > 0 && payrollRows.every(row => row.payData.isProcessed);
+    const needsApproval = payrollRows.some(row => (row.payData.approvalStatus ?? "").toUpperCase() === "PENDING");
+    const allPaymentsRecorded = payrollRows.length > 0 && payrollRows.every(row => ["PAID", "CLOSED"].includes((row.payData.paymentStatus ?? "PENDING").toUpperCase()));
+    const workflowStatus = (row: PayRollResponseModel) => (row.payData.workflowStatus ?? row.payData.paymentStatus ?? (row.payData.isProcessed ? "PROCESSED" : "DRAFT")).toUpperCase();
+    const processedRows = payrollRows.filter(row => ["PROCESSED", "PAID", "CLOSED"].includes(workflowStatus(row)));
+    const paidRows = payrollRows.filter(row => ["PAID", "CLOSED"].includes(workflowStatus(row)));
+    const closedRows = payrollRows.filter(row => workflowStatus(row) === "CLOSED");
 
     const handleDateChange = (newValue: Dayjs | null) => {
         setPayMonth(newValue);
@@ -89,17 +87,53 @@ const PayRollManagement = () => {
         setIsModalOpen(true);
     }
 
+    const handleRecordPayment = (row: PayRollResponseModel) => setPaymentRow(row);
+    const handleViewAudit = (row: PayRollResponseModel) => setAuditRow(row);
+
+    const submitPayment = async (form: PaymentForm) => {
+        if (!paymentRow?.payData.payRollId) return;
+        setIsRecordingPayment(true);
+        try {
+            const { data } = await recordPayrollPayment({ payrollId: paymentRow.payData.payRollId, paymentMethod: form.paymentMethod, paymentReference: form.paymentReference, paymentDate: form.paymentDate, notes: form.notes });
+            if (data.success) { toast.success(data.message || "Payment recorded."); setPaymentRow(null); handlePageRefresh(); }
+            else toast.error(data.message || i({ id: "ERROR.500" }));
+        } catch (error) { toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" })); }
+        finally { setIsRecordingPayment(false); }
+    };
+    const handleApproveMonth = async () => {
+        if (!payMonth || isApproving || !needsApproval) return;
+        setIsApproving(true);
+        try {
+            const { data } = await approvePayrollMonth({ payMonth: payMonth.startOf("month").format("YYYY-MM-DD") });
+            if (data.success) { toast.success(data.message || "Payroll approved."); handlePageRefresh(); }
+            else toast.error(data.message || i({ id: "ERROR.500" }));
+        } catch (error) { toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" })); }
+        finally { setIsApproving(false); }
+    };
+
     const handlePageRefresh = () => {
         setRefresh(!refresh);
     }
 
-    const handleProcessMonth = async (employeeIds: string[]) => {
-        if (!payMonth || employeeIds.length === 0 || isMonthProcessed || isProcessing) return;
+    const requestCloseMonth = () => {
+        if (payMonth && isMonthProcessed && allPaymentsRecorded && hasEditPermission) setIsCloseConfirmOpen(true);
+    };
+
+    const handleCloseMonth = async () => {
+        if (!payMonth || !isMonthProcessed || !allPaymentsRecorded || isClosingMonth) return;
+        setIsClosingMonth(true);
+        try {
+            const { data } = await closePayrollMonth({ payMonth: payMonth.startOf("month").format("YYYY-MM-DD") });
+            if (data.success) { toast.success(data.message || "Payroll month closed."); setIsCloseConfirmOpen(false); handlePageRefresh(); }
+            else toast.error(data.message || i({ id: "ERROR.500" }));
+        } catch (error) { toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" })); }
+        finally { setIsClosingMonth(false); }
+    };    const handleProcessMonth = async () => {
+        if (!payMonth || isMonthProcessed || isProcessing) return;
         setIsProcessing(true);
         try {
             const { data } = await processPayrollMonth({
                 payMonth: payMonth.startOf("month").format("YYYY-MM-DD"),
-                employeeIds,
             });
             if (data.success) {
                 toast.success(data.message);
@@ -123,7 +157,7 @@ const PayRollManagement = () => {
 
     useEffect(() => {
         setPageTitle(i({ id: "PAGE.PAYROLL" }))
-    }, [])
+    }, [i, setPageTitle])
 
     useEffect(() => {
         (async () => {
@@ -178,7 +212,7 @@ const PayRollManagement = () => {
                             setValue={handleDateChange}
                         />
                     </Stack>
-                    <Stack sx={{ flex: "0 1 auto", width: { xs: "100%", lg: "auto" }, minWidth: 0 }}>
+                    <Stack sx={{ flex: "0 1 auto", width: { xs: "100%", sm: 280, lg: 320 }, minWidth: 0 }}>
                         <SearchInput search={search} setSearch={handleSearchChange} />
                     </Stack>
                     <Stack
@@ -191,8 +225,8 @@ const PayRollManagement = () => {
                             flexWrap: "wrap",
                             width: { xs: "100%", lg: "auto" },
                             justifyContent: { xs: "flex-start", lg: "flex-end" },
-                            ml: { lg: 0.25 },
-                            pl: { lg: 1.25 },
+                            ml: { lg: "auto" },
+                            pl: { lg: 1.5 },
                             borderLeft: { lg: 1 },
                             borderColor: { lg: "divider" },
                         }}
@@ -213,6 +247,20 @@ const PayRollManagement = () => {
                                 </Tooltip>
                             </>
                         }
+                        {needsApproval && hasEditPermission && !isMonthProcessed && (
+                            <Tooltip title="Approve payroll month" arrow placement="top">
+                                <AppButton variant="outlined" color="success" aria-label="Approve payroll month" disabled={isApproving} onClick={() => void handleApproveMonth()} sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}>
+                                    <CheckCircle fontSize="small" />
+                                </AppButton>
+                            </Tooltip>
+                        )}
+                        {isMonthProcessed && allPaymentsRecorded && hasEditPermission && (
+                            <Tooltip title="Close payroll month" arrow placement="top">
+                                <AppButton variant="outlined" color="success" aria-label="Close payroll month" onClick={requestCloseMonth} sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}>
+                                    <Lock fontSize="small" />
+                                </AppButton>
+                            </Tooltip>
+                        )}
                         {(hasCreatePermission || hasEditPermission) && payrollRows.length > 0 && (
                             isMonthProcessed ? (
                                 <Chip
@@ -235,7 +283,7 @@ const PayRollManagement = () => {
                                 />
                             ) : (
                                 <Tooltip
-                                    title={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
+                                    title={needsApproval ? "Approve payroll month before processing" : `Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
                                     arrow
                                     placement="top"
                                 >
@@ -244,7 +292,7 @@ const PayRollManagement = () => {
                                         color="primary"
                                         aria-label={`Process salary for ${processableRows.length} remaining employee${processableRows.length === 1 ? "" : "s"}`}
                                         sx={{ ...payrollActionButtonSx, flex: { xs: "1 1 0", lg: "0 0 auto" }, width: { xs: "100%", lg: 40 } }}
-                                        disabled={isProcessing || processableRows.length === 0}
+                                        disabled={isProcessing || processableRows.length === 0 || needsApproval}
                                         onClick={() => setIsProcessModalOpen(true)}
                                     >
                                         <PlayArrow fontSize="small" />
@@ -259,7 +307,27 @@ const PayRollManagement = () => {
                         Draft payroll is visible only to authorized payroll users. It is not finalized, cannot generate payslips, and must pass attendance readiness before processing.
                     </Typography>
                 )}
-                <PayRollTable payRollData={payRollData} payMonth={payMonth} handleRowClick={handleRowClick} />
+                {payrollRows.length > 0 && (
+                    <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        spacing={1}
+                        useFlexGap
+                        sx={{ flexWrap: "wrap", alignItems: { xs: "stretch", sm: "center" }, p: 1.25, border: 1, borderColor: "divider", borderRadius: 2, bgcolor: "background.paper" }}
+                        aria-label="Payroll month summary"
+                    >
+                        <Typography variant="body2" sx={{ fontWeight: 700, mr: { sm: 1 } }}>
+                            {payMonth?.format("MMMM YYYY")} status
+                        </Typography>
+                        <Chip size="small" label={`Draft ${payrollRows.length - processedRows.length}`} color={processedRows.length === payrollRows.length ? "default" : "warning"} variant="outlined" />
+                        <Chip size="small" label={`Processed ${processedRows.length}`} color="info" variant="outlined" />
+                        <Chip size="small" label={`Paid ${paidRows.length}`} color={paidRows.length === payrollRows.length ? "success" : "default"} variant="outlined" />
+                        <Chip size="small" label={`Closed ${closedRows.length}`} color={closedRows.length === payrollRows.length ? "success" : "default"} variant="outlined" />
+                    </Stack>
+                )}
+                <PayRollTable payRollData={payRollData} payMonth={payMonth} handleRowClick={handleRowClick} handleRecordPayment={handleRecordPayment} handleViewAudit={handleViewAudit} />
+                <RecordPayrollPaymentModal open={Boolean(paymentRow)} employeeName={paymentRow?.employeeName ?? ""} submitting={isRecordingPayment} onClose={() => setPaymentRow(null)} onSubmit={submitPayment} />
+                <PayrollAuditHistoryModal payrollId={auditRow?.payData.payRollId ?? null} employeeName={auditRow?.employeeName ?? ""} onClose={() => setAuditRow(null)} />
+                <ConfirmationModal open={isCloseConfirmOpen} title="Close payroll month" content={`Close payroll for ${payMonth?.format("MMMM YYYY")}? This will make it read-only.`} handleClose={() => !isClosingMonth && setIsCloseConfirmOpen(false)} handleConfirmation={() => void handleCloseMonth()} ok_btn confirming={isClosingMonth} />
             </Card>
             {
                 isModalOpen && <AddUpdateEmployeePayRoll edit={isEdit} open={isModalOpen} initialValues={initialValues} handleClose={handleModalClose} handlePageRefresh={handlePageRefresh} />

@@ -48,6 +48,7 @@ export function Registration() {
       companyName: values.companyName,
       email: values.email,
       password: values.password,
+      acceptTerms: values.acceptTerms,
     };
     try {
       const { data } = await registerCompany(payload);
@@ -235,16 +236,23 @@ export function Registration() {
                 />
               </Stack>
 
-              <Stack direction={"row"} className="ms-n2" sx={{
-                alignItems: "center"
-              }}>
-                <AppCheckbox
-                  checked={values.acceptTerms}
-                  {...getFieldProps("acceptTerms")}
-                />
-                <Link to="#">
-                  {i({ id: "AUTH.T&C" })}
-                </Link>
+              <Stack spacing={0.5}>
+                <Stack direction="row" className="ms-n2" sx={{ alignItems: "center" }}>
+                  <AppCheckbox
+                    id="acceptTerms"
+                    checked={values.acceptTerms}
+                    inputProps={{ "aria-label": i({ id: "AUTH.T&C" }) }}
+                    {...getFieldProps("acceptTerms")}
+                  />
+                  <Typography component="label" htmlFor="acceptTerms" variant="body2">
+                    {i({ id: "AUTH.T&C" })}
+                  </Typography>
+                </Stack>
+                {touched.acceptTerms && errors.acceptTerms && (
+                  <FormHelperText error>
+                    {i({ id: "AUTH.TERMS_REQUIRED" })}
+                  </FormHelperText>
+                )}
               </Stack>
 
               <Stack spacing={1}>

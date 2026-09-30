@@ -268,6 +268,7 @@
     "REGISTER": "Registrar",
     "SIGNIN": "Iniciar sesión",
     "T&C": "Acepto los términos y condiciones",
+    "TERMS_REQUIRED": "Acepto los términos y condiciones",
     "PASSWORD_NOTE": "Utilice 8 o más caracteres con una mezcla de letras, números y símbolos.",
     "FORGOT_PASSWORD": "¿Olvidó su contraseña?",
     "FORGOT_PASSWORD.NOTE": "Ingrese su correo electrónico para restablecer su contraseña",

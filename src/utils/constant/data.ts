@@ -53,6 +53,7 @@ export const ServiceUrl = {
   UPDATE_SALARY: `api/Salary/UpdateSalary`,
   GET_COMPANY_SALARIES: `api/Salary/GetCompanySalaries`,
   PROCESS_PAYROLL: `api/AutoPayroll/GeneratePayRollMonthly`,
+  APPROVE_PAYROLL_MONTH: `api/PayRoll/ApprovePayrollMonth`,
   PUBLISH_PAYROLL_MONTH: `api/PayRoll/ProcessPayrollMonth`,
 
   GET_NEXT_EMPLOYEE_ID: "api/User/GetNextEmployeeId",
@@ -255,10 +256,14 @@ export const ServiceUrl = {
 
   // payroll
   UPLOAD_PAYROLL: `api/PayRoll/UploadPayloadData`,
+  VALIDATE_PAYROLL: `api/PayRoll/ValidatePayrollData`,
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
   GENERATE_EMPLOYEE_PAY_SLIP: `api/PayRoll/GenerateEmployeePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
+  RECORD_PAYROLL_PAYMENT: `api/PayRoll/RecordPayrollPayment`,
+  CLOSE_PAYROLL_MONTH: `api/PayRoll/ClosePayrollMonth`,
+  GET_PAYROLL_AUDIT_HISTORY: `api/PayRoll/GetPayrollAuditHistory`,
 
   // signalR endpoints
 
@@ -705,35 +710,4 @@ export const modules_description = [
   { name: "Jobs", description: "JOBS_DESCRIPTION" },
   { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

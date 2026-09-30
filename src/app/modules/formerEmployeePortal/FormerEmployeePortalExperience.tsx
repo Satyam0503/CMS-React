@@ -125,22 +125,26 @@ export const FormerEmployeePortalExperience = () => {
       setLoading(false);
     }
   };
+  const tokenHandledRef = useRef(false);
   useEffect(() => {
     const token = params.get("token");
     if (params.get("verify-contact") === "true" && token) {
+      if (tokenHandledRef.current) return;
+      tokenHandledRef.current = true;
       verifyFormerEmployeeContact(token)
         .then(({ data: response }) => {
           if (!response.success) throw new Error();
           setNotice(
-            "Your post-exit email is verified. HR can now enable your access.",
+            "Your post-exit email is verified. You can sign in below with a secure code.",
           );
           navigate("/former-employee", { replace: true });
         })
-        .catch(() =>
+        .catch(() => {
           setError(
-            "This verification link is invalid, expired, or has already been used. Please ask HR for a new one.",
-          ),
-        )
+            "This verification link is invalid, expired, or has already been used. If your email is already verified, enter it below to receive a secure code.",
+          );
+          navigate("/former-employee", { replace: true });
+        })
         .finally(() => setLoading(false));
       return;
     }
@@ -148,6 +152,8 @@ export const FormerEmployeePortalExperience = () => {
       void load();
       return;
     }
+    if (tokenHandledRef.current) return;
+    tokenHandledRef.current = true;
     redeemFormerEmployeePortalInvite(token)
       .then(({ data: response }) => {
         if (!response.success || !response.methodResult) throw new Error();
@@ -163,8 +169,9 @@ export const FormerEmployeePortalExperience = () => {
       })
       .catch(() => {
         setError(
-          "This invitation link is invalid, expired, or has already been used. Please ask HR for a new invitation.",
+          "This invitation link is invalid, expired, or has already been used. Please ask HR for a new invitation or enter your email below.",
         );
+        navigate("/former-employee", { replace: true });
         setLoading(false);
       });
   }, []);

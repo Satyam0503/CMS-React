@@ -123,29 +123,51 @@ const UserProfile = () => {
             xl: 9,
           }}
         >
-          <Typography component="h1" variant="h4" sx={{ fontWeight: 800, mb: -1 }}>
-            {i({ id: empId ? "PAGE.PROFILE" : "PAGE.MY_PROFILE" })}
-          </Typography>
           <ProfileHeader />
           <Stack spacing={2.5} className="flex-grow-1">
-            {!empId && <EmployeeOffboardingAction />}
-            <Card className="tab-container d-flex flex-row" sx={{ borderRadius: 3, p: 0.75, gap: 0.5, boxShadow: "0 8px 24px rgba(0,0,0,.08)", overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" }, "& .tab-box": { flex: { xs: "0 0 auto", md: "1 1 0" }, minWidth: { xs: 132, md: 0 }, justifyContent: "center", textAlign: "center" } }}>
+            <Card
+              role="tablist"
+              aria-label="Employee profile sections"
+              className="tab-container d-flex flex-row"
+              sx={{
+                borderRadius: 3,
+                p: 0.75,
+                gap: 0.5,
+                boxShadow: "0 8px 24px rgba(0,0,0,.08)",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+                "& .tab-box": {
+                  flex: { xs: "0 0 auto", md: "1 1 0" },
+                  minWidth: { xs: 132, md: 0 },
+                  justifyContent: "center",
+                  textAlign: "center",
+                },
+              }}
+            >
               {filteredTabs.map((tab) => {
                 const tabTo = empId
                   ? `employees/${empId}/${tab.to}`
                   : `profile/${tab.to}`;
                 if (tab.isActive) {
+                  const isSelected = checkIsActive(location.pathname, tabTo);
                   return (
                     <Box
                       component="div"
                       key={tab.tabId}
                       className={clsx("tab-box", {
-                        tab_active: checkIsActive(location.pathname, tabTo),
+                        tab_active: isSelected,
                       })}
                       onClick={() => navigate(tab.to)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          navigate(tab.to);
+                        }
+                      }}
                       role="tab"
-                      aria-selected={checkIsActive(location.pathname, tabTo)}
-                      tabIndex={checkIsActive(location.pathname, tabTo) ? 0 : -1}
+                      aria-selected={isSelected}
+                      tabIndex={0}
                       sx={{ color: "text.secondary", fontWeight: 600 }}
                     >
                       {tab.icon}

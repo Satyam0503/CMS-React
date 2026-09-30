@@ -36,6 +36,7 @@ export enum Permission {
   ViewOwn = "ViewOwn",
   ViewAll = "ViewAll",
   CreateForEmployee = "CreateForEmployee",
+  Approve = "Approve",
   Override = "Override",
 }
 export enum Modules {

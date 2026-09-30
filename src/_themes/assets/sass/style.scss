@@ -15,7 +15,18 @@
 }
 
 @media print {
-  body {
+  .app-sidebar,
+  .app-header,
+  .no-print,
+  header,
+  nav {
     display: none !important;
+  }
+
+  .app-shell,
+  .app-content-surface {
+    height: auto !important;
+    overflow: visible !important;
+    margin-left: 0 !important;
   }
 }

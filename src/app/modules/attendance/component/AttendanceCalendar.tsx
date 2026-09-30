@@ -1384,11 +1384,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       </Typography>
       <Card
         sx={{
-          p: 2,
+          p: { xs: 1.5, sm: 2 },
           borderRadius: 3,
-          boxShadow: theme.shadows[2],
-          border: "1px solid",
-          borderColor: "divider",
+          bgcolor: "rgba(255, 255, 255, 0.65) !important",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
+          border: "1px solid rgba(255, 255, 255, 0.88) !important",
           overflow: "hidden",
         }}
       >
@@ -1396,8 +1398,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
-              gap: 1.5,
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 2,
               // A single employee must never be clipped by the company-grid
               // scrolling viewport. Let the page own vertical scrolling.
               alignItems: "stretch",
@@ -1410,6 +1412,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             {paginatedRows.map((row, index) => {
               const value = row["day-1"] as AttendanceData;
               const status = value.status || "Not marked";
+              const statusAccent = value.status
+                ? getStatusColor(value.status)
+                : "#94A3B8";
               const isWorkflowOwned = ["LEAVE", "WFH_REQUEST"].includes(
                 (value.sourceType ?? "").toUpperCase(),
               );
@@ -1419,9 +1424,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   "SYSTEM_DEFAULT_PRESENT",
                   "SYSTEM_OFFICE_START_PRESENT",
                 ].includes((value.sourceType ?? "").toUpperCase());
+              const initials = (row.name || "E")
+                .trim()
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((part: string) => part[0]?.toUpperCase() ?? "")
+                .join("");
+
               return (
                 <Card
                   key={row.id}
+                  className="interactive-card"
                   variant="outlined"
                   onClick={() => openTodayAttendance(row)}
                   role={!readOnly ? "button" : undefined}
@@ -1436,22 +1449,36 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     }
                   }}
                   sx={{
-                    p: 1.75,
-                    minHeight: 136,
-                    borderRadius: 2.5,
+                    p: 2,
+                    minHeight: 158,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    borderRadius: "12px",
                     cursor: readOnly ? "default" : "pointer",
-                    borderColor: value.status
-                      ? toAlphaHex(getStatusColor(value.status), 55)
-                      : "divider",
+                    bgcolor: "rgba(255, 255, 255, 0.72) !important",
+                    backdropFilter: "blur(14px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(14px) saturate(180%)",
+                    border: "1px solid rgba(255, 255, 255, 0.88) !important",
+                    borderLeft: `4px solid ${statusAccent} !important`,
+                    boxShadow:
+                      "0 8px 24px 0 rgba(11, 92, 171, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
                     animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
                     transition:
-                      "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+                      "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background 180ms ease",
                     "&:hover": readOnly
                       ? {}
                       : {
-                          transform: "translateY(-3px)",
-                          boxShadow: theme.shadows[4],
-                          borderColor: "primary.main",
+                          transform: "translateY(-4px)",
+                          bgcolor: "rgba(255, 255, 255, 0.88) !important",
+                          borderColor: "rgba(11, 92, 171, 0.3) !important",
+                          borderLeftColor: "#0B5CAB !important",
+                          boxShadow:
+                            "0 14px 28px -6px rgba(11, 92, 171, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.06), inset 0 1px 2px rgba(255, 255, 255, 1) !important",
+                          "& .attendance-card-cta": {
+                            color: "#0B5CAB",
+                            transform: "translateX(2px)",
+                          },
                         },
                     "&:focus-visible": {
                       outline: `2px solid ${theme.palette.primary.main}`,
@@ -1459,71 +1486,134 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     },
                   }}
                 >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    spacing={1}
-                  >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography fontWeight={800} noWrap title={row.name}>
-                        {row.name}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        noWrap
+                  <Box>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                      spacing={1.25}
+                    >
+                      <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
+                        <Avatar
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "9px",
+                            fontSize: "0.8rem",
+                            fontWeight: 700,
+                            bgcolor: "#EBF3FA",
+                            color: "#0B5CAB",
+                            border: "1px solid rgba(11, 92, 171, 0.18)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {initials}
+                        </Avatar>
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            fontWeight={700}
+                            noWrap
+                            title={row.name}
+                            sx={{ color: "#0F172A", fontSize: "0.925rem", lineHeight: 1.3 }}
+                          >
+                            {row.name}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            noWrap
+                            sx={{ color: "#64748B", fontWeight: 600, display: "block" }}
+                          >
+                            {row.employeeId || "Employee"}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Chip
+                        size="small"
+                        label={status}
+                        variant={isWorkflowOwned ? "filled" : "outlined"}
+                        sx={{
+                          ...getStatusChipStyle(value.status),
+                          height: 24,
+                          fontSize: "0.72rem",
+                          opacity: isWorkflowOwned ? 0.96 : 1,
+                          flexShrink: 0,
+                        }}
+                      />
+                    </Stack>
+
+                    {row.scheduleName && (
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          mt: 1.25,
+                          px: 1,
+                          py: 0.35,
+                          borderRadius: "6px",
+                          bgcolor: "#EBF3FA",
+                          border: "1px solid rgba(11, 92, 171, 0.18)",
+                        }}
                       >
-                        {row.employeeId || "Employee"}
-                      </Typography>
-                    </Box>
-                    <Chip
-                      size="small"
-                      label={status}
-                      variant={isWorkflowOwned ? "filled" : "outlined"}
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#0B5CAB", fontWeight: 700, fontSize: "0.72rem" }}
+                        >
+                          {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    <Box
                       sx={{
-                        ...getStatusChipStyle(value.status),
-                        opacity: isWorkflowOwned ? 0.96 : 1,
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: 1,
+                        mt: 1.25,
+                        p: 1,
+                        borderRadius: "8px",
+                        bgcolor: "#F8FAFC",
+                        border: "1px solid #E2E8F0",
+                        backdropFilter: "blur(8px)",
                       }}
-                    />
-                  </Stack>
-                  {row.scheduleName && (
-                    <Typography variant="caption" color="primary.main" fontWeight={700} sx={{ display: "block", mt: 0.75 }}>
-                      {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
-                    </Typography>
-                  )}
-                  <Stack direction="row" spacing={1.25} sx={{ mt: 1.25 }}>
-                    <Typography variant="caption" color="text.secondary">
-                      Punch in:{" "}
-                      <Box
-                        component="span"
-                        sx={{ color: "text.primary", fontWeight: 700 }}
-                      >
-                        {value.checkIn ||
-                          (isLegacySystemPresent ? "09:00" : "—")}
+                    >
+                      <Box>
+                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                          Punch in
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkIn || (isLegacySystemPresent ? "09:00" : "—")}
+                        </Typography>
                       </Box>
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Punch out:{" "}
-                      <Box
-                        component="span"
-                        sx={{ color: "text.primary", fontWeight: 700 }}
-                      >
-                        {value.checkOut ||
-                          (isLegacySystemPresent ? "18:00" : "—")}
+                      <Box sx={{ borderLeft: "1px solid #E2E8F0", pl: 1 }}>
+                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                          Punch out
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkOut || (isLegacySystemPresent ? "18:00" : "—")}
+                        </Typography>
                       </Box>
-                    </Typography>
-                  </Stack>
+                    </Box>
+                  </Box>
+
                   <Typography
+                    className="attendance-card-cta"
                     variant="caption"
-                    color="text.secondary"
-                    sx={{ display: "block", mt: 1.5 }}
+                    sx={{
+                      display: "block",
+                      mt: 1.25,
+                      pt: 1,
+                      borderTop: "1px dashed #E2E8F0",
+                      color: "#64748B",
+                      fontWeight: 600,
+                      fontSize: "0.73rem",
+                      transition: "color 180ms ease, transform 180ms ease",
+                    }}
                   >
                     {isWorkflowOwned
                       ? "Managed by approved workflow"
                       : readOnly
                         ? "Attendance status"
-                        : "Select to update attendance"}
+                        : "Select to update attendance →"}
                   </Typography>
                 </Card>
               );

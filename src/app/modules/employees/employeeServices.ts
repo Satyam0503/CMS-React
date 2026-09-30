@@ -361,7 +361,7 @@ export type EmployeeExitCase = {
   formerEmployeeRequests: Array<{ requestId: string; type: string; status: string; details: string; requestedAtUtc: string; evidenceId?: string; issuedAtUtc?: string }>;
   responsibilityReassignments: Array<{ responsibility: string; newOwnerUserId: string; notes?: string }>;
   exitInterview?: { employeeFeedback?: string; managerFeedback?: string; hrNotes?: string; isRehireEligible?: boolean; conductedAtUtc?: string };
-  finalSettlement?: { status: string; salaryPayable: number; deductions: number; noticeRecovery: number; netPayable: number; sourcePayrollId?: string; sourcePayrollMonth?: string; calculatedAtUtc?: string; approvedAtUtc?: string; paidAtUtc?: string };
+  finalSettlement?: { status: string; salaryPayable: number; deductions: number; noticeRecovery: number; netPayable: number; sourcePayrollId?: string; sourcePayrollMonth?: string; sourcePayrollRunId?: string; sourcePayrollRunEmployeeId?: string; calculatedAtUtc?: string; approvedAtUtc?: string; paidAtUtc?: string };
   documents: Array<{ type: string; status: string; url?: string }>;
   withdrawal?: { status: string; reason?: string };
   noticeAdjustments: Array<{ noticeAdjustmentId: string; type: string; status: string; requestedLastWorkingDate: string; requiredNoticeDays: number; servedNoticeDays: number; shortfallDays: number; waivedDays: number; recoveryAmount: number; reason?: string }>;

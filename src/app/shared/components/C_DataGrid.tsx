@@ -82,6 +82,11 @@ export const CustomDataGrid = <R extends GridValidRowModel>(
             {
               outline: "none",
             },
+          [`& .${gridClasses.cell}:focus-visible, & .${gridClasses.columnHeader}:focus-visible`]:
+            {
+              outline: "2px solid var(--mui-palette-primary-main)",
+              outlineOffset: "-2px",
+            },
           [`& .${gridClasses.columnHeader}:focus, & .${gridClasses.columnHeader}:focus-within`]:
             {
               outline: "none",

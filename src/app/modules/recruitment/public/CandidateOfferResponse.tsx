@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Card, CircularProgress, MenuItem, Stack, TextField, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { respondToRecruitmentOffer } from "../services";
+import { recordRecruitmentOfferView, respondToRecruitmentOffer } from "../services";
 
 export default function CandidateOfferResponse() {
   const [params] = useSearchParams();
@@ -9,6 +9,10 @@ export default function CandidateOfferResponse() {
   const [decision, setDecision] = useState<"Accepted" | "Declined" | "RequestOfferChange">("Accepted");
   const [message, setMessage] = useState("");
   const [state, setState] = useState<{ loading: boolean; error?: string; success?: string }>({ loading: false });
+  useEffect(() => {
+    if (!token) return;
+    void recordRecruitmentOfferView(token);
+  }, [token]);
   const submit = async () => {
     if (!token) { setState({ loading: false, error: "This offer link is missing its token." }); return; }
     if (decision === "RequestOfferChange" && !message.trim()) { setState({ loading: false, error: "Tell the hiring team what you would like changed." }); return; }

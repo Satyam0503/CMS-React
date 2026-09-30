@@ -1,14 +1,6 @@
-import {
-  Box,
-  CircularProgress,
-  Divider,
-  FormControlLabel,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
-import { AppButton, AppCheckbox } from "../../../shared/components/ui";
+import { AppButton } from "../../../shared/components/ui";
 import { PayRollResponseModel } from "../models";
 
 type Props = {
@@ -17,7 +9,7 @@ type Props = {
   employees: PayRollResponseModel[];
   processing: boolean;
   onClose: () => void;
-  onConfirm: (employeeIds: string[]) => void;
+  onConfirm: () => void;
 };
 
 export const ProcessPayrollModal = ({
@@ -27,122 +19,50 @@ export const ProcessPayrollModal = ({
   processing,
   onClose,
   onConfirm,
-}: Props) => {
-  const availableIds = useMemo(
-    () => employees.map((employee) => employee.employeeId),
-    [employees],
-  );
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (open) setSelectedIds(availableIds);
-  }, [open, availableIds]);
-
-  const allSelected =
-    availableIds.length > 0 && selectedIds.length === availableIds.length;
-  const partiallySelected =
-    selectedIds.length > 0 && selectedIds.length < availableIds.length;
-
-  const toggleAll = (checked: boolean) => {
-    setSelectedIds(checked ? availableIds : []);
-  };
-
-  const toggleEmployee = (employeeId: string, checked: boolean) => {
-    setSelectedIds((current) =>
-      checked
-        ? [...current, employeeId]
-        : current.filter((id) => id !== employeeId),
-    );
-  };
-
-  return (
-    <CustomisedModal
-      open={open}
-      handleClose={processing ? () => undefined : onClose}
-      title="Process salary"
-      maxWidth="sm"
-    >
-      <Stack spacing={2.5}>
-        <Typography color="text.secondary">
-          Confirm the employees whose salary should be processed for{" "}
-          <strong>{monthLabel}</strong>. Processed salaries become locked and
-          visible to the selected employees.
+}: Props) => (
+  <CustomisedModal
+    open={open}
+    handleClose={processing ? () => undefined : onClose}
+    title="Process salary"
+    maxWidth="sm"
+  >
+    <Stack spacing={2.5}>
+      <Typography color="text.secondary">
+        Confirm processing payroll for the complete <strong>{monthLabel}</strong> payroll month. All generated employee salaries will be locked together and payslips will become available after successful processing.
+      </Typography>
+      <Box
+        sx={{
+          maxHeight: 320,
+          overflowY: "auto",
+          border: 1,
+          borderColor: "divider",
+          borderRadius: 2,
+          p: 1.5,
+        }}
+      >
+        <Typography variant="body2" fontWeight={600}>
+          {employees.length} generated employee{employees.length === 1 ? "" : "s"} will be processed.
         </Typography>
-
-        <FormControlLabel
-          sx={{ m: 0 }}
-          control={
-            <AppCheckbox
-              checked={allSelected}
-              indeterminate={partiallySelected}
-              disabled={processing}
-              onChange={(event) => toggleAll(event.target.checked)}
-            />
-          }
-          label={`Select all employees (${availableIds.length})`}
-        />
-
-        <Divider />
-
-        <Box
-          sx={{
-            maxHeight: 320,
-            overflowY: "auto",
-            border: 1,
-            borderColor: "divider",
-            borderRadius: 2,
-          }}
-        >
+        <Stack spacing={0.5} sx={{ mt: 1 }}>
           {employees.map((employee) => (
-            <FormControlLabel
-              key={employee.employeeId}
-              sx={{
-                display: "flex",
-                m: 0,
-                px: 1.5,
-                py: 0.75,
-                borderBottom: 1,
-                borderColor: "divider",
-                "&:last-child": { borderBottom: 0 },
-              }}
-              control={
-                <AppCheckbox
-                  checked={selectedIds.includes(employee.employeeId)}
-                  disabled={processing}
-                  onChange={(event) =>
-                    toggleEmployee(employee.employeeId, event.target.checked)
-                  }
-                />
-              }
-              label={
-                <Stack>
-                  <Typography fontWeight={600}>{employee.employeeName}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {employee.employeeId}
-                  </Typography>
-                </Stack>
-              }
-            />
+            <Typography key={employee.employeeId} variant="body2" color="text.secondary">
+              {employee.employeeName} ({employee.employeeId})
+            </Typography>
           ))}
-        </Box>
-
-        <Typography variant="body2" color="text.secondary">
-          {selectedIds.length} of {availableIds.length} employees selected
-        </Typography>
-
-        <Stack direction="row" justifyContent="flex-end" spacing={1}>
-          <AppButton variant="outlined" disabled={processing} onClick={onClose}>
-            Cancel
-          </AppButton>
-          <AppButton
-            disabled={processing || selectedIds.length === 0}
-            onClick={() => onConfirm(selectedIds)}
-            startIcon={processing ? <CircularProgress size={16} color="inherit" /> : undefined}
-          >
-            {processing ? "Processing..." : "Confirm and process"}
-          </AppButton>
         </Stack>
+      </Box>
+      <Stack direction="row" justifyContent="flex-end" spacing={1}>
+        <AppButton variant="outlined" disabled={processing} onClick={onClose}>
+          Cancel
+        </AppButton>
+        <AppButton
+          disabled={processing || employees.length === 0}
+          onClick={onConfirm}
+          startIcon={processing ? <CircularProgress size={16} color="inherit" /> : undefined}
+        >
+          {processing ? "Processing..." : "Confirm and process month"}
+        </AppButton>
       </Stack>
-    </CustomisedModal>
-  );
-};
+    </Stack>
+  </CustomisedModal>
+);

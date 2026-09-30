@@ -1,5 +1,16 @@
 import { test, expect } from "../shared/fixtures";
 
+test.describe("Payroll — unauthenticated routing", () => {
+  for (const route of ["/payroll", "/settingspayroll"]) {
+    test(`${route} redirects to login without a session`, async ({ page }) => {
+      await page.goto(route);
+      await page.waitForURL("**/auth**", { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/auth$/);
+    });
+  }
+});
+
+
 test.describe("Payroll Module @smoke", () => {
   test.beforeEach(async ({ page, helpers }) => {
     await helpers.login();

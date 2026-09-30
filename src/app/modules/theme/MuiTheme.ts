@@ -11,74 +11,82 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
     case "glass":
       return {
         card: {
-          // Keep content readable first, then layer the glass effect over the
-          // shared app backdrop.  The previous 65% surface was too transparent
-          // on larger pages and made otherwise clear screens look washed out.
           background:
-            "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-common-white) 34%, transparent), transparent 46%), color-mix(in srgb, var(--mui-palette-background-paper) 82%, transparent)",
-          WebkitBackdropFilter: "blur(20px) saturate(145%)",
-          backdropFilter: "blur(20px) saturate(145%)",
-          border: "1px solid color-mix(in srgb, var(--mui-palette-common-white) 58%, var(--mui-palette-divider))",
+            "linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.62) 100%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          border: "1px solid rgba(255, 255, 255, 0.88)",
           boxShadow:
-            "0 14px 32px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent), 0 2px 8px color-mix(in srgb, var(--mui-palette-common-black) 7%, transparent)",
+            "0 10px 32px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
         },
         paper: {
           background:
-            "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-common-white) 24%, transparent), transparent 52%), color-mix(in srgb, var(--mui-palette-background-paper) 86%, transparent)",
-          WebkitBackdropFilter: "blur(18px) saturate(135%)",
-          backdropFilter: "blur(18px) saturate(135%)",
-          border: "1px solid color-mix(in srgb, var(--mui-palette-common-white) 46%, var(--mui-palette-divider))",
+            "linear-gradient(140deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.65) 100%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          border: "1px solid rgba(255, 255, 255, 0.88)",
+          boxShadow:
+            "0 8px 26px -4px rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
         },
       };
     case "slate":
       return {
         card: {
-          // Keep Slate surfaces token-driven.  The SCSS style layer changes
-          // these tokens for the selected color scheme, so dialogs, cards and
-          // page-level Paper components do not keep a light-only background
-          // after a dark-mode switch.
-          background: "var(--app-slate-surface, #ffffff)",
-          borderRadius: 14,
-          border: "1px solid var(--app-slate-border, #d9e2ec)",
-          boxShadow: "var(--app-slate-card-shadow, 0 10px 26px rgba(51, 65, 85, 0.08))",
+          background:
+            "var(--app-slate-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.74) 100%))",
+          WebkitBackdropFilter: "blur(24px) saturate(185%)",
+          backdropFilter: "blur(24px) saturate(185%)",
+          borderRadius: 16,
+          border: "1px solid var(--app-slate-border, rgba(255, 255, 255, 0.90))",
+          boxShadow:
+            "var(--app-slate-card-shadow, 0 14px 36px -6px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(79, 70, 229, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.96))",
         },
         paper: {
-          background: "var(--app-slate-surface, #ffffff)",
-          borderRadius: 12,
-          border: "1px solid var(--app-slate-border-soft, #e2e8f0)",
-          boxShadow: "var(--app-slate-paper-shadow, 0 6px 18px rgba(51, 65, 85, 0.06))",
+          background:
+            "var(--app-slate-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.76) 100%))",
+          WebkitBackdropFilter: "blur(22px) saturate(180%)",
+          backdropFilter: "blur(22px) saturate(180%)",
+          borderRadius: 14,
+          border: "1px solid var(--app-slate-border-soft, rgba(255, 255, 255, 0.88))",
+          boxShadow: "var(--app-slate-paper-shadow, 0 10px 28px -4px rgba(15, 23, 42, 0.07), inset 0 1px 1px 0 rgba(255, 255, 255, 0.94))",
         },
       };
     case "dawn":
       return {
-        // Dawn pairs its ambient backdrop with the warm coral action palette,
-        // while content remains on white surfaces.
         card: {
-          background: "var(--app-dawn-card-background, #ffffff)",
-          borderRadius: 14,
-          border: "1px solid var(--app-dawn-border, #e6ddeb)",
-          boxShadow: "var(--app-dawn-card-shadow, 0 12px 30px rgba(73, 59, 89, 0.08))",
+          background: "var(--app-dawn-card-background, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(250, 244, 253, 0.44) 100%))",
+          WebkitBackdropFilter: "blur(24px) saturate(185%)",
+          backdropFilter: "blur(24px) saturate(185%)",
+          borderRadius: 16,
+          border: "1px solid var(--app-dawn-border, rgba(255, 255, 255, 0.78))",
+          boxShadow: "var(--app-dawn-card-shadow, 0 14px 36px rgba(73, 59, 89, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.90))",
         },
         paper: {
-          background: "var(--app-dawn-surface, #ffffff)",
-          borderRadius: 12,
-          border: "1px solid var(--app-dawn-border-soft, #efe7f2)",
-          boxShadow: "var(--app-dawn-paper-shadow, 0 7px 20px rgba(73, 59, 89, 0.06))",
+          background: "var(--app-dawn-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.46) 100%))",
+          WebkitBackdropFilter: "blur(22px) saturate(180%)",
+          backdropFilter: "blur(22px) saturate(180%)",
+          borderRadius: 14,
+          border: "1px solid var(--app-dawn-border-soft, rgba(255, 255, 255, 0.74))",
+          boxShadow: "var(--app-dawn-paper-shadow, 0 10px 28px rgba(73, 59, 89, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.86))",
         },
       };
     case "blush":
       return {
         card: {
-          background: "var(--app-blush-surface, #ffffff)",
-          borderRadius: 14,
-          border: "1px solid var(--app-blush-border, #efd1df)",
-          boxShadow: "var(--app-blush-card-shadow, 0 12px 30px rgba(150, 82, 120, 0.10))",
+          background: "var(--app-blush-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 248, 251, 0.44) 100%))",
+          WebkitBackdropFilter: "blur(24px) saturate(185%)",
+          backdropFilter: "blur(24px) saturate(185%)",
+          borderRadius: 16,
+          border: "1px solid var(--app-blush-border, rgba(255, 255, 255, 0.78))",
+          boxShadow: "var(--app-blush-card-shadow, 0 14px 36px rgba(150, 82, 120, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.90))",
         },
         paper: {
-          background: "var(--app-blush-surface, #ffffff)",
-          borderRadius: 12,
-          border: "1px solid var(--app-blush-border-soft, #f5dfe8)",
-          boxShadow: "var(--app-blush-paper-shadow, 0 7px 20px rgba(150, 82, 120, 0.07))",
+          background: "var(--app-blush-surface, linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.46) 100%))",
+          WebkitBackdropFilter: "blur(22px) saturate(180%)",
+          backdropFilter: "blur(22px) saturate(180%)",
+          borderRadius: 14,
+          border: "1px solid var(--app-blush-border-soft, rgba(255, 255, 255, 0.74))",
+          boxShadow: "var(--app-blush-paper-shadow, 0 10px 28px rgba(150, 82, 120, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.86))",
         },
       };
     default:
@@ -88,7 +96,7 @@ const getSurfaceOverrides = (appStyle: AppStyle) => {
 
 export const createApplicationTheme = (locale: Localization, appStyle: AppStyle = DEFAULT_THEME) => {
   const surface = getSurfaceOverrides(appStyle);
-  const pageRadius = 12;
+  const pageRadius = 16;
   const theme = createTheme(
     {
       cssVariables: {
@@ -119,7 +127,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             textTransform: "none",
             marginLeft: 8,
             marginRight: 8,
-            fontSize: 10,
+            fontSize: 11,
           },
         },
       },
@@ -127,24 +135,49 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       MuiOutlinedInput: {
         styleOverrides: {
           input: {
-            paddingBlock: ".5rem",
-            paddingInline: "1rem",
+            paddingBlock: ".55rem",
+            paddingInline: ".9rem",
+            fontSize: "13.5px",
+            "&.Mui-disabled": {
+              WebkitTextFillColor: "#1E293B",
+              color: "#1E293B",
+              fontWeight: 600,
+              opacity: 1,
+            },
           },
           root: {
             padding: 0,
-            borderRadius: pageRadius,
+            borderRadius: 10,
+            backgroundColor: "#F8FAFC",
+            transition: "border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
+            "&.Mui-disabled": {
+              backgroundColor: "rgba(241, 245, 249, 0.90)",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "rgba(148, 163, 184, 0.65)",
+              },
+            },
             "& input:-webkit-autofill": {
-              backgroundColor: "transparent", // Removes autofill background
-              WebkitBoxShadow: "0 0 0 1000px transparent inset", // Ensures no background shadow
-              WebkitTextFillColor: theme.vars?.palette.text.secondary, // Optionally set text color
+              backgroundColor: "transparent",
+              WebkitBoxShadow: "0 0 0 1000px transparent inset",
+              WebkitTextFillColor: theme.vars?.palette.text.primary,
             },
             "&:hover:not(.Mui-focused)": {
+              backgroundColor: "#FFFFFF",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.vars?.palette.text.secondary,
+                borderColor: "#64748B",
+              },
+            },
+            "&.Mui-focused": {
+              backgroundColor: "#FFFFFF",
+              boxShadow: "0 0 0 3px color-mix(in srgb, var(--mui-palette-primary-main) 14%, transparent)",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderWidth: "1.5px",
+                borderColor: theme.vars?.palette.primary.main,
               },
             },
             ".MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.vars?.palette.text.disabled,
+              borderColor: "#CBD5E1",
+              transition: "border-color 0.2s ease",
             },
           },
         },
@@ -154,7 +187,43 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             color: theme.vars?.palette.text.secondary,
-            fontSize: 14,
+            fontSize: 13.5,
+            fontWeight: 600,
+            "&.Mui-disabled": {
+              color: "#475569",
+              fontWeight: 600,
+            },
+          },
+        },
+      },
+
+      MuiFormControlLabel: {
+        styleOverrides: {
+          label: {
+            fontSize: "13.5px",
+            fontWeight: 500,
+            "&.Mui-disabled": {
+              color: "#334155",
+              WebkitTextFillColor: "#334155",
+              fontWeight: 600,
+            },
+          },
+        },
+      },
+
+      MuiCheckbox: {
+        defaultProps: {
+          disableRipple: true,
+        },
+        styleOverrides: {
+          root: {
+            "&.Mui-disabled": {
+              color: "#94A3B8",
+              "&.Mui-checked": {
+                color: "rgba(79, 70, 229, 0.82)",
+              },
+            },
+            "& .MuiSvgIcon-root": { fontSize: 20 },
           },
         },
       },
@@ -162,7 +231,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       MuiInputAdornment: {
         styleOverrides: {
           root: {
-            color: theme.vars?.palette.text.primary,
+            color: theme.vars?.palette.text.secondary,
             padding: "5px",
           },
         },
@@ -171,14 +240,15 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       MuiCard: {
         styleOverrides: {
           root: {
-            fontSize: "12px",
+            fontSize: "13.5px",
             ...surface.card,
-            // Page cards are a shared surface. The important flag also makes
-            // legacy page-level sx values inherit the same visual language.
             borderRadius: `${pageRadius}px !important`,
             border: surface.card.border ?? "1px solid var(--mui-palette-divider)",
-            boxShadow: surface.card.boxShadow ??
-              "0px 1px 3px 0px rgba(0, 0, 0, .1), 0px 1px 2px -1px rgba(0, 0, 0, .1)",
+            boxShadow:
+              surface.card.boxShadow ??
+              "0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03)",
+            transition:
+              "transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease",
           },
         },
       },
@@ -198,8 +268,15 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         },
         styleOverrides: {
           root: {
-            borderRadius: 4,
+            borderRadius: 999,
             fontSize: "12px",
+            fontWeight: 600,
+            letterSpacing: "0.01em",
+            backdropFilter: "blur(8px)",
+          },
+          outlined: {
+            backgroundColor: "color-mix(in srgb, var(--mui-palette-background-paper) 75%, transparent)",
+            borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 24%, var(--mui-palette-divider))",
           },
         },
       },
@@ -207,30 +284,62 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
       MuiButton: {
         styleOverrides: {
           root: {
-            fontSize: 12,
-            borderRadius: 8,
-            textTransform: "capitalize",
+            fontSize: 13,
+            fontWeight: 600,
+            letterSpacing: "-0.005em",
+            borderRadius: 10,
+            textTransform: "none",
+            paddingInline: "16px",
+            transition:
+              "transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.18s ease, border-color 0.18s ease",
+            "&:active:not(.Mui-disabled)": {
+              transform: "translateY(0) scale(0.985)",
+            },
             "&.Mui-disabled": {
-              color: theme.vars?.palette.common.white,
-              backgroundColor: theme.vars?.palette.primary.light,
+              color: theme.vars?.palette.text.disabled,
+              backgroundColor: theme.vars?.palette.action.disabledBackground,
+              borderColor: theme.vars?.palette.divider,
+              boxShadow: "none",
+            },
+          },
+          containedPrimary: {
+            background:
+              "linear-gradient(135deg, var(--mui-palette-primary-main) 0%, var(--mui-palette-primary-dark) 100%)",
+            boxShadow:
+              "0 6px 16px -3px color-mix(in srgb, var(--mui-palette-primary-main) 35%, transparent), inset 0 1px 0 0 rgba(255, 255, 255, 0.22)",
+            "&:hover": {
+              background:
+                "linear-gradient(135deg, var(--mui-palette-primary-main) 15%, var(--mui-palette-primary-dark) 100%)",
+              boxShadow:
+                "0 10px 22px -3px color-mix(in srgb, var(--mui-palette-primary-main) 45%, transparent), inset 0 1px 0 0 rgba(255, 255, 255, 0.28)",
+              transform: "translateY(-1px)",
+            },
+          },
+          outlined: {
+            backgroundColor: "color-mix(in srgb, var(--mui-palette-background-paper) 78%, transparent)",
+            backdropFilter: "blur(8px)",
+            borderColor: "color-mix(in srgb, var(--mui-palette-primary-main) 28%, var(--mui-palette-divider))",
+            "&:hover": {
+              backgroundColor: "color-mix(in srgb, var(--mui-palette-primary-main) 7%, var(--mui-palette-background-paper))",
+              borderColor: theme.vars?.palette.primary.main,
+              transform: "translateY(-1px)",
+              boxShadow: "0 4px 12px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
             },
           },
         },
       },
 
       MuiIconButton: {
-        defaultProps: {
-          disableRipple: true,
-        },
         styleOverrides: {
           root: {
             borderRadius: 8,
-            padding: 4,
+            padding: 6,
             marginInline: 0,
-            border: "1px solid " + theme.vars?.palette.grey[500],
+            border: "1px solid transparent",
+            transition: "color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease",
             "&:hover": {
               color: theme.vars?.palette.primary.main,
-              borderColor: theme.vars?.palette.primary.main,
+              backgroundColor: theme.vars?.palette.action.hover,
             },
           },
           sizeSmall: {
@@ -296,7 +405,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
             "& .MuiMenuItem-root.MuiButtonBase-root": {
               marginBottom: 2,
               borderRadius: 4,
-              fontSize: 12,
+              fontSize: 13,
             },
           },
         },
@@ -325,7 +434,7 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           option: {
             marginBlockEnd: 2,
-            fontSize: 12,
+            fontSize: 13,
           },
           root: {
             "& .MuiOutlinedInput-root.MuiInputBase-sizeSmall": {
@@ -376,11 +485,12 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         styleOverrides: {
           root: {
             border: 0,
+            fontSize: 13.5,
           },
           head: {
             textTransform: "none",
-            fontSize: 12,
-            fontWeight: "bolder",
+            fontSize: 13,
+            fontWeight: 700,
             backgroundColor: "transparent",
             borderBottom: `2px solid ${theme.vars?.palette.grey[400]}`,
           },
@@ -401,16 +511,11 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         },
         styleOverrides: {
           paper: {
-            maxWidth: "720px",
-            minWidth: "300px", // Default min-width for small screens
-            "@media (min-width:600px)": {
-              minWidth: "400px", // For small and up screens
-            },
-            "@media (min-width:900px)": {
-              minWidth: "500px", // For medium and up screens
-            },
-            "@media (min-width:1200px)": {
-              minWidth: "600px", // For large screens and up
+            margin: "16px",
+            width: "calc(100% - 32px)",
+            "@media (max-width:599px)": {
+              margin: "12px",
+              width: "calc(100% - 24px)",
             },
           },
         },
@@ -433,8 +538,8 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
         },
         styleOverrides: {
           tooltip: {
-            padding: ".5rem 1rem",
-            fontSize: 10,
+            padding: ".5rem .85rem",
+            fontSize: 12,
             backgroundColor: theme.vars?.palette.primary.main,
           },
           arrow: {
@@ -505,20 +610,6 @@ export const createApplicationTheme = (locale: Localization, appStyle: AppStyle 
               backgroundColor: theme.vars?.palette.grey[400],
               opacity: 1,
             },
-          },
-        },
-      },
-
-      MuiCheckbox: {
-        defaultProps: {
-          disableRipple: true,
-        },
-        styleOverrides: {
-          root: {
-            "&.Mui-disabled": {
-              color: theme.vars?.palette.grey[500],
-            },
-            "& .MuiSvgIcon-root": { fontSize: 20 },
           },
         },
       },

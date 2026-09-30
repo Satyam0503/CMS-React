@@ -268,6 +268,7 @@
     "REGISTER": "登録",
     "SIGNIN": "サインイン",
     "T&C": "利用規約に同意します",
+    "TERMS_REQUIRED": "利用規約に同意します",
     "PASSWORD_NOTE": "8文字以上の文字、数字、記号を組み合わせて使用してください。",
     "FORGOT_PASSWORD": "パスワードを忘れましたか？",
     "FORGOT_PASSWORD.NOTE": "メールアドレスを入力してパスワードをリセットしてください",

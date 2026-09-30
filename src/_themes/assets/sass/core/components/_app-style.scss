@@ -7,6 +7,16 @@
 // useAppStyle.ts + a `surface` branch in MuiTheme.ts.
 // =============================================================================
 
+:root {
+  --app-content-background:
+    radial-gradient(ellipse 75% 60% at 4% 5%, rgba(11, 92, 171, 0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 55% at 96% 10%, rgba(13, 148, 136, 0.18) 0%, transparent 60%),
+    radial-gradient(circle 520px at 50% 45%, rgba(2, 132, 199, 0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(11, 92, 171, 0.15) 0%, transparent 65%),
+    radial-gradient(circle 450px at 15% 85%, rgba(13, 148, 136, 0.11) 0%, transparent 60%),
+    linear-gradient(180deg, #F6F9FD 0%, #EDF3FB 50%, #E4EDF7 100%);
+}
+
 body,
 .app-shell {
   background: var(--app-content-background, var(--mui-palette-background-body));
@@ -27,11 +37,20 @@ body,
 
 // ----- Glass: translucent surfaces with a soft, blurred application shell -----
 :root[data-app-style="glass"] {
+  --mui-palette-background-default: #F0F4FA;
+  --mui-palette-background-body: #F0F4FA;
+  --mui-palette-background-card: rgba(255, 255, 255, 0.76);
+  --mui-palette-background-paper: rgba(255, 255, 255, 0.80);
+  --mui-palette-background-box: rgba(248, 250, 252, 0.70);
+  --mui-palette-background-header: rgba(255, 255, 255, 0.74);
+
   --app-content-background:
-    radial-gradient(ellipse 58% 48% at 0% 0%, color-mix(in srgb, var(--mui-palette-primary-light) 42%, transparent), transparent 70%),
-    radial-gradient(ellipse 52% 46% at 100% 8%, color-mix(in srgb, var(--mui-palette-secondary-light) 36%, transparent), transparent 72%),
-    radial-gradient(ellipse 50% 45% at 88% 100%, color-mix(in srgb, var(--mui-palette-primary-main) 18%, transparent), transparent 74%),
-    linear-gradient(135deg, #eaf8f6 0%, #f9fcff 48%, #edf7f6 100%);
+    radial-gradient(ellipse 75% 60% at 4% 5%, rgba(11, 92, 171, 0.20) 0%, transparent 65%),
+    radial-gradient(ellipse 65% 55% at 96% 10%, rgba(13, 148, 136, 0.18) 0%, transparent 60%),
+    radial-gradient(circle 520px at 50% 45%, rgba(2, 132, 199, 0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 85% 90%, rgba(11, 92, 171, 0.15) 0%, transparent 65%),
+    radial-gradient(circle 450px at 15% 85%, rgba(13, 148, 136, 0.11) 0%, transparent 60%),
+    linear-gradient(180deg, #F6F9FD 0%, #EDF3FB 50%, #E4EDF7 100%);
 
   body {
     background: var(--app-content-background);
@@ -39,11 +58,122 @@ body,
   }
 
   & .app-header {
-    background: color-mix(in srgb, var(--mui-palette-background-header) 84%, transparent) !important;
-    -webkit-backdrop-filter: blur(22px) saturate(145%);
-    backdrop-filter: blur(22px) saturate(145%);
-    border-bottom: 1px solid color-mix(in srgb, var(--mui-palette-common-white) 56%, var(--mui-palette-divider));
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--mui-palette-primary-main) 7%, transparent);
+    background: rgba(255, 255, 255, 0.74) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.88) !important;
+    box-shadow: 0 4px 20px -2px rgba(11, 92, 171, 0.05), inset 0 -1px 0 rgba(11, 92, 171, 0.03) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .tab-container {
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.62) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    box-shadow:
+      0 10px 30px 0 rgba(11, 92, 171, 0.06),
+      0 2px 8px 0 rgba(15, 23, 42, 0.03),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.22s ease, background 0.22s ease !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card)[role="button"]:hover,
+  & .MuiCard-root:not(.profile-picture-card) .MuiCard-root:hover,
+  & .interactive-card:hover,
+  & .MuiCard-root:not(.profile-picture-card):hover {
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.70) 100%
+    ) !important;
+    border-color: rgba(11, 92, 171, 0.25) !important;
+    box-shadow:
+      0 16px 38px -4px rgba(11, 92, 171, 0.12),
+      0 4px 12px 0 rgba(15, 23, 42, 0.04),
+      inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+    transform: translateY(-2px);
+  }
+
+  & .MuiDialog-paper,
+  & .MuiMenu-paper,
+  & .MuiPopover-paper,
+  & .MuiAutocomplete-paper,
+  & .MuiPickersPopper-paper,
+  & .MuiDrawer-paper:not(.sidebar-paper) {
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.88) 0%,
+      rgba(255, 255, 255, 0.74) 100%
+    ) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.90) !important;
+    box-shadow:
+      0 16px 40px -4px rgba(11, 92, 171, 0.10),
+      0 4px 14px 0 rgba(15, 23, 42, 0.05),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card) .MuiPaper-root:not(.MuiCard-root) {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  & .MuiOutlinedInput-root {
+    background: rgba(255, 255, 255, 0.65) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+
+    & .MuiOutlinedInput-notchedOutline {
+      border-color: rgba(203, 213, 225, 0.75) !important;
+    }
+    &:hover {
+      background: rgba(255, 255, 255, 0.85) !important;
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: rgba(11, 92, 171, 0.45) !important;
+      }
+    }
+    &.Mui-focused {
+      background: #FFFFFF !important;
+      box-shadow: none !important;
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: #0B5CAB !important;
+        border-width: 1.5px !important;
+      }
+    }
+  }
+
+  & .MuiButton-outlined {
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(203, 213, 225, 0.8) !important;
+    &:hover {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #0B5CAB !important;
+      box-shadow: 0 4px 14px rgba(11, 92, 171, 0.08);
+    }
+  }
+
+  & .MuiTableHead-root .MuiTableCell-root {
+    background: rgba(248, 250, 252, 0.75) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+    color: #0F172A;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  }
+
+  & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
+    background-color: rgba(248, 250, 252, 0.50);
   }
 }
 
@@ -101,7 +231,7 @@ body,
 :root[data-app-style="aurora"] {
   --app-content-background:
     radial-gradient(ellipse 72% 60% at -8% -14%, rgba(45, 212, 191, 0.28), transparent 68%),
-    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(129, 140, 248, 0.16), transparent 70%),
+    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(11, 92, 171, 0.14), transparent 70%),
     radial-gradient(ellipse 55% 48% at 88% 108%, rgba(251, 191, 36, 0.12), transparent 72%),
     repeating-linear-gradient(115deg, rgba(15, 118, 110, 0.025) 0 1px, transparent 1px 18px),
     linear-gradient(135deg, #d8f1ee 0%, #f7fbfb 42%, #e5f3f3 100%);
@@ -115,104 +245,137 @@ body,
 :root.dark[data-app-style="aurora"] {
   --app-content-background:
     radial-gradient(ellipse 72% 60% at -8% -14%, rgba(20, 184, 166, 0.22), transparent 66%),
-    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(99, 102, 241, 0.16), transparent 70%),
+    radial-gradient(ellipse 58% 52% at 108% 2%, rgba(11, 92, 171, 0.16), transparent 70%),
     radial-gradient(ellipse 50% 45% at 88% 108%, rgba(245, 158, 11, 0.08), transparent 72%),
     repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 18px),
     linear-gradient(135deg, #102725 0%, #132a30 48%, #17252d 100%);
 }
 
-// ----- Slate: bright production workspace with subtle, cool page depth -----
+// ----- Slate: frosted cool-glass workspace with Corporate Cobalt mesh -----
 :root[data-app-style="slate"] {
-  // Slate is intentionally a light workspace: the background carries the
-  // colour while every interactive surface remains crisp and readable.  Keep
-  // these tokens centralised so legacy `bgcolor: background.*` usages and MUI
-  // overlays follow the selected style too.
-  --app-slate-surface: #ffffff;
-  --app-slate-surface-muted: #f7fafc;
-  --app-slate-border: #d7e1eb;
-  --app-slate-border-soft: #e4ebf2;
-  --app-slate-card-shadow: 0 12px 30px rgba(51, 65, 85, 0.09);
-  --app-slate-paper-shadow: 0 7px 20px rgba(51, 65, 85, 0.065);
-  --mui-palette-background-default: #f4f8fb;
-  --mui-palette-background-body: #f4f8fb;
-  --mui-palette-background-card: #ffffff;
-  --mui-palette-background-box: #f7fafc;
-  --mui-palette-background-header: #ffffff;
+  --app-slate-surface: rgba(255, 255, 255, 0.96);
+  --app-slate-surface-muted: #F8FAFC;
+  --app-slate-border: #E2E8F0;
+  --app-slate-border-soft: #E2E8F0;
+  --app-slate-card-shadow:
+    0 4px 18px -4px rgba(15, 23, 42, 0.05),
+    0 1px 3px 0 rgba(15, 23, 42, 0.03);
+  --app-slate-paper-shadow:
+    0 4px 16px -4px rgba(15, 23, 42, 0.05);
+  --mui-palette-background-default: #F4F6F9;
+  --mui-palette-background-body: #F4F6F9;
+  --mui-palette-background-card: rgba(255, 255, 255, 0.96);
+  --mui-palette-background-box: #F8FAFC;
+  --mui-palette-background-header: rgba(255, 255, 255, 0.95);
 
   --app-content-background:
-    radial-gradient(ellipse 62% 58% at -8% -14%, rgba(45, 212, 191, 0.20), transparent 68%),
-    radial-gradient(ellipse 58% 54% at 108% 4%, rgba(96, 165, 250, 0.18), transparent 70%),
-    radial-gradient(ellipse 54% 52% at 82% 108%, rgba(129, 140, 248, 0.13), transparent 72%),
-    radial-gradient(ellipse 48% 46% at 32% 76%, rgba(20, 184, 166, 0.09), transparent 74%),
-    linear-gradient(135deg, #f8fbfc 0%, #edf5f8 44%, #e2edf5 100%);
+    radial-gradient(ellipse 60% 50% at 15% 0%, rgba(11, 92, 171, 0.05), transparent 65%),
+    radial-gradient(ellipse 50% 45% at 88% 10%, rgba(13, 148, 136, 0.04), transparent 65%),
+    linear-gradient(180deg, #F4F6F9 0%, #EEF2F6 100%);
 
   & .app-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid #dce5ee;
-    box-shadow: 0 4px 14px rgba(51, 65, 85, 0.06);
+    background: rgba(255, 255, 255, 0.95) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   }
 
-  // Keep the workspace quiet, then use the brand color only where users act.
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .tab-container {
+    background: var(--app-slate-surface) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    border: 1px solid var(--app-slate-border) !important;
+    box-shadow: var(--app-slate-card-shadow) !important;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card)[role="button"]:hover,
+  & .MuiCard-root:not(.profile-picture-card) .MuiCard-root:hover,
+  & .interactive-card:hover {
+    border-color: #0B5CAB !important;
+    box-shadow:
+      0 12px 26px -6px rgba(11, 92, 171, 0.16),
+      0 4px 10px -2px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card) .MuiTableContainer-root,
+  & .MuiCard-root:not(.profile-picture-card) .MuiPaper-root:not(.MuiCard-root) {
+    background: #FFFFFF !important;
+    box-shadow: none !important;
+  }
+
   & .MuiButton-contained {
-    box-shadow: 0 8px 16px color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--mui-palette-primary-main) 20%, transparent);
+    font-weight: 600;
+    letter-spacing: 0.005em;
 
     &:hover {
-      box-shadow: 0 12px 22px color-mix(in srgb, var(--mui-palette-primary-main) 32%, transparent);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--mui-palette-primary-main) 28%, transparent);
       transform: translateY(-1px);
     }
   }
 
   & .MuiButton-outlined {
-    background-color: #ffffff;
-    border-color: #b8c7d8;
+    background: #FFFFFF;
+    border-color: #CBD5E1 !important;
 
     &:hover {
-      background-color: #f4f8fb;
-      border-color: var(--mui-palette-primary-main);
+      background: #F8FAFC;
+      border-color: var(--mui-palette-primary-main) !important;
     }
   }
 
   & .MuiOutlinedInput-root {
-    background-color: #ffffff;
+    background: #F8FAFC !important;
+    transition: background-color 0.18s ease, box-shadow 0.18s ease;
 
-    & .MuiOutlinedInput-notchedOutline { border-color: #cbd5e1; }
+    & .MuiOutlinedInput-notchedOutline {
+      border-color: #CBD5E1 !important;
+    }
 
-    &:hover .MuiOutlinedInput-notchedOutline { border-color: #94a3b8; }
+    &:hover {
+      background: #FFFFFF !important;
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: #64748B !important;
+      }
+    }
 
-    &.Mui-focused .MuiOutlinedInput-notchedOutline {
-      border-color: var(--mui-palette-primary-main);
+    &.Mui-focused {
+      background: #FFFFFF !important;
+      box-shadow: none !important;
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-primary-main) !important;
+        border-width: 1.5px !important;
+      }
     }
   }
 
   & .MuiTableHead-root .MuiTableCell-root {
-    background-color: #f3f7fa;
-    color: #475569;
+    background: rgba(255, 255, 255, 0.42) !important;
+    color: #334155;
     font-weight: 700;
   }
 
-  // Not every shared page uses Card/Paper.  These common MUI containers are
-  // used by menus, dialogs, data tables, pickers and portals, so styling them
-  // here prevents Slate from looking only partially applied between pages.
   & .MuiDialog-paper,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
-  & .MuiTableContainer-root,
   & .MuiPickersPopper-paper,
   & .MuiDrawer-paper:not(.sidebar-paper) {
-    background-color: var(--app-slate-surface) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.62) 100%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
     border-color: var(--app-slate-border-soft) !important;
     box-shadow: var(--app-slate-paper-shadow);
   }
 
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
-    background-color: color-mix(in srgb, var(--app-slate-surface-muted) 72%, transparent);
+    background-color: rgba(255, 255, 255, 0.22);
   }
 
-  // Inputs already expose their focused state through the fieldset.  Do not
-  // add a second browser-style ring around them.
   & :focus-visible:not(.MuiInputBase-input):not(.MuiInputBase-inputMultiline) {
     outline: 3px solid color-mix(in srgb, var(--mui-palette-primary-main) 36%, transparent);
     outline-offset: 2px;
@@ -290,29 +453,57 @@ body,
 
 // ----- Dawn: crisp lilac glass with rose product accents -------------------
 :root[data-app-style="dawn"] {
-  --app-dawn-surface: rgba(255, 255, 255, 0.91);
-  --app-dawn-surface-muted: #f3ecf7;
-  --app-dawn-card-background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 244, 253, 0.89));
-  --app-dawn-border: #cfb8d9;
-  --app-dawn-border-soft: #e1d1e8;
-  --app-dawn-card-shadow: 0 18px 38px rgba(105, 65, 124, 0.16), 0 4px 13px rgba(213, 104, 146, 0.10);
-  --app-dawn-paper-shadow: 0 10px 24px rgba(105, 65, 124, 0.11), 0 2px 8px rgba(213, 104, 146, 0.07);
-  --mui-palette-background-default: #f8f2fb;
-  --mui-palette-background-body: #f8f2fb;
-  --mui-palette-background-card: #ffffff;
-  --mui-palette-background-box: #fbf8fc;
-  --mui-palette-background-header: #ffffff;
+  --app-dawn-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.42) 100%);
+  --app-dawn-surface-muted: rgba(243, 236, 247, 0.42);
+  --app-dawn-card-background: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.40) 100%);
+  --app-dawn-border: rgba(255, 255, 255, 0.80);
+  --app-dawn-border-soft: rgba(255, 255, 255, 0.72);
+  --app-dawn-card-shadow: 0 16px 36px rgba(105, 65, 124, 0.10), 0 4px 13px rgba(213, 104, 146, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.92);
+  --app-dawn-paper-shadow: 0 10px 24px rgba(105, 65, 124, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.88);
+  --mui-palette-background-default: #f3e9fa;
+  --mui-palette-background-body: #f3e9fa;
+  --mui-palette-background-card: rgba(255, 255, 255, 0.56);
+  --mui-palette-background-box: rgba(255, 255, 255, 0.44);
+  --mui-palette-background-header: rgba(255, 255, 255, 0.58);
 
   --app-content-background:
     radial-gradient(ellipse 72% 74% at -8% -10%, rgba(189, 151, 214, 0.48), transparent 66%),
     radial-gradient(ellipse 64% 70% at 106% 15%, rgba(241, 170, 197, 0.40), transparent 70%),
     radial-gradient(ellipse 58% 66% at 48% 112%, rgba(213, 184, 234, 0.42), transparent 72%),
-    linear-gradient(118deg, #f5ecfa 0%, #fbf8fd 47%, #fff3f8 100%);
+    linear-gradient(118deg, #f1e4f8 0%, #f9f2fc 47%, #fcebf3 100%);
 
   & .app-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid #dcc8e4;
-    box-shadow: 0 6px 18px rgba(105, 65, 124, 0.10);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(250, 244, 253, 0.44) 100%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.78);
+    box-shadow: 0 6px 24px rgba(105, 65, 124, 0.08), inset 0 -1px 0 rgba(255, 255, 255, 0.85);
+  }
+
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
+  & .tab-container {
+    background: var(--app-dawn-card-background) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: var(--app-dawn-card-shadow) !important;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card)[role="button"]:hover,
+  & .MuiCard-root:not(.profile-picture-card) .MuiCard-root:hover,
+  & .interactive-card:hover {
+    border-color: #6366F1 !important;
+    box-shadow:
+      0 12px 26px -6px rgba(79, 70, 229, 0.16),
+      0 4px 10px -2px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card) .MuiTableContainer-root,
+  & .MuiCard-root:not(.profile-picture-card) .MuiPaper-root:not(.MuiCard-root) {
+    background: rgba(255, 255, 255, 0.28) !important;
+    box-shadow: none !important;
   }
 
   & .MuiButton-contained {
@@ -321,25 +512,39 @@ body,
   }
 
   & .MuiButton-outlined {
-    background-color: #ffffff;
-    border-color: #c5accf;
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-color: #CBD5E1 !important;
 
     &:hover {
-      background-color: #f3eafb;
-      border-color: var(--mui-palette-primary-main);
+      background: #FFFFFF;
+      border-color: var(--mui-palette-primary-main) !important;
     }
   }
 
   & .MuiOutlinedInput-root {
-    background-color: #ffffff;
+    background: #F8FAFC !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 
-    & .MuiOutlinedInput-notchedOutline { border-color: #cfbdd8; }
-    &:hover .MuiOutlinedInput-notchedOutline { border-color: #a879b0; }
-    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--mui-palette-primary-main); }
+    & .MuiOutlinedInput-notchedOutline { border-color: #CBD5E1 !important; }
+    &:hover {
+      background: #FFFFFF !important;
+      & .MuiOutlinedInput-notchedOutline { border-color: #64748B !important; }
+    }
+    &.Mui-focused {
+      background: #FFFFFF !important;
+      box-shadow: none !important;
+      & .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-primary-main) !important;
+        border-width: 1.5px !important;
+      }
+    }
   }
 
   & .MuiTableHead-root .MuiTableCell-root {
-    background: linear-gradient(90deg, #f0e5f6, #fff1f6);
+    background: rgba(255, 255, 255, 0.42) !important;
     color: #475569;
     font-weight: 700;
   }
@@ -348,17 +553,17 @@ body,
   & .MuiMenu-paper,
   & .MuiPopover-paper,
   & .MuiAutocomplete-paper,
-  & .MuiTableContainer-root,
-  & .MuiDataGrid-root,
   & .MuiPickersPopper-paper,
   & .MuiDrawer-paper:not(.sidebar-paper) {
-    background: var(--app-dawn-card-background) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(250, 244, 253, 0.64) 100%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
     border-color: var(--app-dawn-border-soft) !important;
     box-shadow: var(--app-dawn-paper-shadow);
   }
 
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
-    background-color: color-mix(in srgb, var(--app-dawn-surface-muted) 78%, transparent);
+    background-color: rgba(255, 255, 255, 0.22);
   }
 }
 
@@ -388,8 +593,8 @@ body,
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.32);
   }
 
-  & .MuiCard-root,
-  & .MuiPaper-root {
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.profile-picture-card) {
     background: var(--app-dawn-surface) !important;
     border-color: var(--app-dawn-border) !important;
     box-shadow: var(--app-dawn-card-shadow) !important;
@@ -419,18 +624,18 @@ body,
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) { background-color: rgba(148, 163, 184, 0.055); }
 }
 
-// ----- Blush: soft pink ambient background with clean white work surfaces --
+// ----- Blush: soft pink ambient background with frosted glass surfaces -----
 :root[data-app-style="blush"] {
-  --app-blush-surface: #ffffff;
-  --app-blush-border: #e5e7eb;
-  --app-blush-border-soft: #eef0f3;
-  --app-blush-card-shadow: 0 14px 32px rgba(15, 23, 42, 0.08), 0 3px 10px rgba(15, 23, 42, 0.04);
-  --app-blush-paper-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-  --mui-palette-background-default: #fff8fb;
-  --mui-palette-background-body: #fff8fb;
-  --mui-palette-background-card: #ffffff;
-  --mui-palette-background-box: #fffafd;
-  --mui-palette-background-header: #ffffff;
+  --app-blush-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.42) 100%);
+  --app-blush-border: #CBD5E1;
+  --app-blush-border-soft: #E2E8F0;
+  --app-blush-card-shadow: 0 14px 34px rgba(150, 82, 120, 0.09), inset 0 1px 1px rgba(255, 255, 255, 0.92);
+  --app-blush-paper-shadow: 0 10px 24px rgba(150, 82, 120, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.88);
+  --mui-palette-background-default: #f9eaf2;
+  --mui-palette-background-body: #f9eaf2;
+  --mui-palette-background-card: rgba(255, 255, 255, 0.56);
+  --mui-palette-background-box: rgba(255, 255, 255, 0.44);
+  --mui-palette-background-header: rgba(255, 255, 255, 0.58);
 
   --app-content-background:
     radial-gradient(ellipse 58% 54% at -8% -12%, rgba(225, 138, 181, 0.46), transparent 68%),
@@ -441,9 +646,11 @@ body,
     linear-gradient(135deg, #f7dce8 0%, #fff8fb 44%, #f9dce9 100%);
 
   & .app-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.06);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.64) 0%, rgba(255, 248, 251, 0.44) 100%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.78);
+    box-shadow: 0 5px 22px rgba(15, 23, 42, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.85);
   }
 
   & .app-content-surface {
@@ -452,62 +659,57 @@ body,
       radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.30), transparent 30%);
   }
 
-
   & .MuiOutlinedInput-root {
-    background: #ffffff;
+    background: #F8FAFC !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 
-    & .MuiOutlinedInput-notchedOutline { border-color: #d7dce3; }
-    &:hover .MuiOutlinedInput-notchedOutline { border-color: #94a3b8; }
-    &.Mui-focused .MuiOutlinedInput-notchedOutline { border-color: var(--mui-palette-primary-main); }
+    & .MuiOutlinedInput-notchedOutline { border: 1px solid #CBD5E1 !important; }
+    &:hover {
+      background: #FFFFFF !important;
+      & .MuiOutlinedInput-notchedOutline { border-color: #64748B !important; }
+    }
+    &.Mui-focused {
+      background: #FFFFFF !important;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12) !important;
+      & .MuiOutlinedInput-notchedOutline { border: 1.5px solid var(--mui-palette-primary-main) !important; }
+    }
   }
 
-  // Shared work surfaces stay neutral white. This also covers pages that use
-  // Paper, menus, dialogs, or table containers instead of the common Card.
-  & .MuiCard-root,
-  & .MuiPaper-root,
-  & .MuiDialog-paper,
-  & .MuiMenu-paper,
-  & .MuiPopover-paper,
-  & .MuiAutocomplete-paper,
-  & .MuiTableContainer-root,
-  & .MuiDataGrid-root,
-  & .MuiPickersPopper-paper,
+  & .MuiCard-root:not(.profile-picture-card),
+  & .MuiPaper-root:not(.sidebar-paper):not(.profile-picture-card),
   & .tab-container {
-    background: #ffffff !important;
-    background-image: none !important;
-    border-color: var(--app-blush-border-soft) !important;
+    background: var(--app-blush-surface) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    border: 1px solid var(--app-blush-border) !important;
+    box-shadow: var(--app-blush-card-shadow) !important;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+  }
+
+  & .MuiCard-root:not(.profile-picture-card)[role="button"]:hover,
+  & .MuiCard-root:not(.profile-picture-card) .MuiCard-root:hover,
+  & .interactive-card:hover {
+    border-color: #6366F1 !important;
+    box-shadow:
+      0 12px 26px -6px rgba(79, 70, 229, 0.16),
+      0 4px 10px -2px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  & .MuiCard-root .MuiTableContainer-root,
+  & .MuiCard-root .MuiPaper-root:not(.MuiCard-root) {
+    background: rgba(255, 255, 255, 0.28) !important;
+    box-shadow: none !important;
   }
 
   & .MuiTableHead-root .MuiTableCell-root {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.42) !important;
     color: #5f4960;
     font-weight: 700;
   }
 
   & .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) {
-    background-color: #fbfcfd;
-  }
-
-  // Keep the pink ambience outside the work areas. Dashboard-specific glass
-  // rules otherwise add translucent gradients back onto cards after the theme
-  // surface override has made the shared Card component white.
-  & .dashboard-modern {
-    background: transparent;
-
-    & .MuiCard-root,
-    & .dashboard-hero,
-    & .dashboard-date-card {
-      background: #ffffff !important;
-      background-image: none !important;
-      border-color: var(--app-blush-border) !important;
-      box-shadow: var(--app-blush-card-shadow) !important;
-      backdrop-filter: none;
-    }
-
-    & .MuiCard-root::after,
-    & .dashboard-hero::before {
-      display: none;
-    }
+    background-color: rgba(255, 255, 255, 0.22);
   }
 }
 

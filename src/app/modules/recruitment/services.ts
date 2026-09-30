@@ -166,6 +166,7 @@ export const getRecruitmentOfferCounters = async (offerId: string) => getRequest
 export const requestRecruitmentOfferCounter = async (payload: RecruitmentOfferCounterCommand) => postRequest<RecruitmentOfferCounterCommand, ResponseData<string>>(ServiceUrl.REQUEST_OFFER_COUNTER, payload);
 export const reviewRecruitmentResumeExtraction = async (payload: RecruitmentResumeExtractionReviewCommand) => postRequest<RecruitmentResumeExtractionReviewCommand, ResponseData<string>>(ServiceUrl.REVIEW_RESUME_EXTRACTION, payload);
 export const getRecruitmentResumeExtractionReview = async (applicantId: string, vacancyId: string) => getRequest<ResponseData<any>>(`${ServiceUrl.REVIEW_RESUME_EXTRACTION}/${encodeURIComponent(applicantId)}/${encodeURIComponent(vacancyId)}`);
+export const recordRecruitmentOfferView = async (token: string) => postRequest<{ token: string }, ResponseData<string>>("api/recruitment/candidate-actions/offer/view", { token });
 export const respondToRecruitmentOffer = async (payload: RecruitmentCandidateOfferActionCommand) => postRequest<RecruitmentCandidateOfferActionCommand, ResponseData<string>>("api/recruitment/candidate-actions/offer/respond", payload);
 export const applyRecruitmentCandidatePrivacy = async (payload: RecruitmentCandidatePrivacyCommand) => postRequest<RecruitmentCandidatePrivacyCommand, ResponseData<string>>(ServiceUrl.APPLY_CANDIDATE_PRIVACY, payload);
 export const upsertRecruitmentHiringDecision = async (payload: RecruitmentHiringDecisionCommand) => postRequest<RecruitmentHiringDecisionCommand, ResponseData<string>>(ServiceUrl.UPSERT_HIRING_DECISION, payload);
@@ -259,3 +260,7 @@ export const queueRecruitmentAutomation = async (payload: RecruitmentAutomationE
 
 
 
+
+export type RecruitmentReadinessItem = { code: string; label: string; complete: boolean };
+export type RecruitmentReadiness = { mode: string; timezone: string; readyToPublishJobs: boolean; completionPercent: number; required: RecruitmentReadinessItem[]; recommended: RecruitmentReadinessItem[] };
+export const getRecruitmentReadiness = async () => getRequest<ResponseData<RecruitmentReadiness>>("api/RecruitmentEnterprise/Readiness");

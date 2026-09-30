@@ -211,7 +211,7 @@ export function Login() {
                   />
                   <Link
                     to="/auth/forgot-password"
-                    state={{ email: values.email.trim(), autoSubmit: true }}
+                    state={{ email: values.email.trim() }}
                     style={{ fontWeight: 700, fontSize: 14 }}
                   >
                     {i({ id: "AUTH.FORGOT_PASSWORD" })}
@@ -235,7 +235,7 @@ export function Login() {
                     label={i({ id: "BUTTON.SIGNIN" })}
                     size="large"
                     loading={isSubmitting}
-                    disabled={isSubmitting || !(isValid && dirty)}
+                    disabled={isSubmitting || !values.email.trim() || !values.password}
                     Icon={<ArrowForwardRounded />}
                     className="auth-signin-button"
                   />

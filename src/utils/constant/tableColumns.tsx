@@ -184,7 +184,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
               },
             },
           }}
-          renderSurplus={(surplus) => <span>+{surplus.toString()[0]}</span>}
+          renderSurplus={(surplus) => <span>+{surplus}</span>}
         >
           {views.slice(0, 8).map((view) => (
             <Tooltip key={view.employeeId} title={view.employeeName}>

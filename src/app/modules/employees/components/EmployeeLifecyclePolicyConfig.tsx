@@ -50,8 +50,7 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
       if (!response.data?.success) { setMessage(response.data?.message ?? "Unable to delete special leave."); return; }
       setDeleteId(null); notifications.success("Special leave deleted successfully.");
        await loadData();
-    } catch { notifications.error
-      ("Unable to delete special leave."); }
+    } catch { notifications.error("Unable to delete special leave."); }
     finally { setBusy(false); }
   };
 
@@ -59,18 +58,15 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
     setBusy(true);
     try {
       const response = await unlinkSpecialLeave(id);
-      if (!response.data?.success) { notifications.warning
-        (response.data?.message ?? "Unable to unlink leave."); return; }
-      notifications.success
-      ("Leave unlinked successfully."); await loadData();
+      if (!response.data?.success) { notifications.warning(response.data?.message ?? "Unable to unlink leave."); return; }
+      notifications.success("Leave unlinked successfully."); await loadData();
     } catch { notifications.error("Unable to unlink leave."); }
     finally { setBusy(false); }
   };
 
   const createCard = async () => {
     const name = createName.trim();
-    if (!name) { notifications.warning
-      ("Special leave name is required."); return; }
+    if (!name) { notifications.warning("Special leave name is required."); return; }
     setBusy(true);
     try {
       const response = await createSpecialLeave({
@@ -84,8 +80,7 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
         leaveRequestsAllowed: true,
         workFromHomeRequestsAllowed: false,
       });
-      if (!response.data?.success) { notifications.warning
-        (response.data?.message ?? "Unable to create special leave."); return; }
+      if (!response.data?.success) { notifications.warning(response.data?.message ?? "Unable to create special leave."); return; }
       setCreateOpen(false); setCreateName(""); notifications.success("Special leave added successfully."); await loadData();
     } catch { notifications.error("Unable to create special leave."); }
     finally { setBusy(false); }
@@ -96,17 +91,13 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
   };
 
   const saveEdit = async () => {
-    if (!editItem?.id || !editName.trim()) { notifications.warning
-      ("Special leave name is required."); return; }
+    if (!editItem?.id || !editName.trim()) { notifications.warning("Special leave name is required."); return; }
     setBusy(true);
     try {
       const response = await updateSpecialLeave(editItem.id, { ...editItem, name: editName.trim(), eventType: editEventType });
-      if (!response.data?.success) { notifications.warning
-        (response.data?.message ?? "Unable to edit special leave."); return; }
-      setEditItem(null); notifications.success
-      ("Special leave updated successfully."); await loadData();
-    } catch { notifications.error
-      ("Unable to edit special leave."); }
+      if (!response.data?.success) { notifications.warning(response.data?.message ?? "Unable to edit special leave."); return; }
+      setEditItem(null); notifications.success("Special leave updated successfully."); await loadData();
+    } catch { notifications.error("Unable to edit special leave."); }
     finally { setBusy(false); }
   };
 
@@ -161,3 +152,5 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
 };
 
 const BoxTitle = () => <Typography variant="h6" sx={{ fontWeight: 800 }}>Lifecycle special leaves</Typography>;
+
+

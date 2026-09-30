@@ -1,6 +1,8 @@
 import {
   Table,
   TableBody,
+  Chip,
+  Stack,
   TableCell,
   TableContainer,
   TableHead,
@@ -8,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Visibility } from "@mui/icons-material";
+import { History, Visibility } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { PayRollDataModel, PayRollResponseModel } from "../models";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
@@ -29,6 +31,7 @@ interface Column {
   id:
     | keyof PayRollDataModel
     | "employeeName"
+    | "paymentStatus"
     | "grossPay"
     | "totalDeductions"
     | "netPay"
@@ -39,10 +42,11 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "actions", label: "ACTION", minWidth: 90 },
+  { id: "actions", label: "ACTION", minWidth: 108 },
   { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 120 },
   { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 200 },
   { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 130 },
+  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 135 },
   { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 100 },
   { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 100 },
   { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 100 },
@@ -81,9 +85,11 @@ type TableProps = {
   payRollData: PayRollResponseModel[];
   payMonth: Dayjs | null;
   handleRowClick: (row: PayRollResponseModel) => void;
+  handleRecordPayment: (row: PayRollResponseModel) => void;
+  handleViewAudit: (row: PayRollResponseModel) => void;
 };
 
-export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TableProps) => {
+export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleViewAudit }: TableProps) => {
   const { formatMessage: i } = useIntl();
   const userModulePermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -210,7 +216,9 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   align={col.align}
                   key={col.id}
                 >
-                  {i({ id: col.label })}
+                  {col.label === "PAYROLL.TABLE.PAYMENT_STATUS"
+                    ? i({ id: col.label, defaultMessage: "Payment Status" })
+                    : i({ id: col.label, defaultMessage: col.label.split(".").pop()?.replace(/_/g, " ") })}
                 </TableCell>
               ))}
             </TableRow>
@@ -254,6 +262,10 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                         </TableCell>
                       );
                     }
+                    if (column.id === "paymentStatus") {
+                      const status = (row.payData.workflowStatus ?? row.payData.paymentStatus ?? (row.payData.isProcessed ? "PROCESSED" : "DRAFT")).toUpperCase();
+                      return <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 } }}><Chip size="small" label={status} color={status === "CLOSED" ? "default" : status === "PAID" ? "success" : status === "PROCESSED" ? "info" : "warning"} /></TableCell>;
+                    }
                     if (column.id === "actions") {
                       const hasPayRoll = Boolean(row.payData.payRollId);
                       const isProcessed = Boolean(row.payData.isProcessed);
@@ -261,20 +273,35 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                         <TableCell
                           key={column.id}
                           className="pe-auto"
-                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper" }}
+                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper", whiteSpace: "nowrap" }}
                         >
-                          {hasPayRoll && !isProcessed ? (
-                            <Typography variant="caption" color="warning.main" fontWeight={700}>Draft</Typography>
-                          ) : (
+                          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexWrap: "nowrap" }}>
                             <AppIconButton
-                              aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                              title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                              disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
-                              onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
+                              aria-label="View payroll history"
+                              title="View payroll history"
+                              disabled={!hasPayRoll}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewAudit(row);
+                              }}
                             >
-                              <Visibility fontSize="small" />
+                              <History fontSize="small" />
                             </AppIconButton>
-                          )}
+                            {hasPayRoll && !isProcessed ? (
+                              <Typography variant="caption" color="warning.main" fontWeight={700}>
+                                Draft
+                              </Typography>
+                            ) : (
+                              <AppIconButton
+                                aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                                title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                                disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
+                                onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
+                              >
+                                <Visibility fontSize="small" />
+                              </AppIconButton>
+                            )}
+                          </Stack>
                         </TableCell>
                       );
                     }
@@ -334,3 +361,4 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
     </>
   );
 };
+

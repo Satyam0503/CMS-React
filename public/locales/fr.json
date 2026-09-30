@@ -269,6 +269,7 @@
     "REGISTER": "S'inscrire",
     "SIGNIN": "Se connecter",
     "T&C": "J'accepte les termes et conditions",
+    "TERMS_REQUIRED": "J'accepte les conditions générales",
     "PASSWORD_NOTE": "Utilisez 8 caractères ou plus avec un mélange de lettres, chiffres et symboles.",
     "FORGOT_PASSWORD": "Mot de passe oublié ?",
     "FORGOT_PASSWORD.NOTE": "Entrez votre e-mail pour réinitialiser votre mot de passe",

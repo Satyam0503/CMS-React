@@ -19,7 +19,14 @@ export const salaryValidationSchema =  Yup.object().shape({
       : null
   )
   .required("VALIDATION_ERR.REQUIRED_TYPE"),
-    effectiveTo: Yup.date().nullable(),
+    effectiveTo: Yup.date().nullable().test(
+        "effective-date-order",
+        "Effective to must be on or after Effective from.",
+        function (effectiveTo) {
+            const effectiveFrom = this.parent.effectiveFrom;
+            return !effectiveTo || !effectiveFrom || !dayjs(effectiveTo).isBefore(dayjs(effectiveFrom), "day");
+        },
+    ),
     paymentFrequency: Yup.string(),
     status: Yup.boolean(),
 })

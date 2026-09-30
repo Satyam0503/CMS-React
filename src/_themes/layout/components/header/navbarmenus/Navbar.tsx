@@ -6,9 +6,9 @@ import { AppStylePicker } from "./AppStylePicker";
 
 const Navbar = () => {
   return (
-    <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 2 }}>
-      <Stack direction="row" spacing={{ xs: 0.5, sm: 2 }}>
-        <Stack direction="row" spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
+    <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5, md: 2 }}>
+      <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5, md: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           <AppStylePicker />
           <LightDarkMode />
         </Stack>

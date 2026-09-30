@@ -157,7 +157,7 @@ export default function Dashboard() {
             lg: 4,
           }}
         >
-          {Notification.permission == "default" && <PushNotification />}
+          {typeof Notification !== "undefined" && Notification.permission === "default" && <PushNotification />}
           {hasAccessToEmpModule && <EmpOnLeave />}
           <UpComingHolidayAndEvents />
           <UpComingCelebration />

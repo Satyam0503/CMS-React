@@ -43,8 +43,6 @@ const MasterLayout = () => {
     setOpen(false);
   };
 
-  // The desktop collapse state and the mobile drawer state are intentionally
-  // separate. A temporary drawer must never survive a resize or route change.
   useEffect(() => {
     if (!isSmallScreen) setOpen(false);
   }, [isSmallScreen]);
@@ -86,7 +84,7 @@ const MasterLayout = () => {
                 sx={{
                   flex: "1 0 auto",
                   minHeight: 0,
-                  marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 24px)" },
+                  marginLeft: { xs: 0, md: "calc(var(--sidebar-current-width) + 16px)" },
                   width: { xs: "100%", md: "auto" },
                   transition: "margin-left 0.32s cubic-bezier(.2, .8, .2, 1)",
                 }}
@@ -100,20 +98,20 @@ const MasterLayout = () => {
                   setHoverExpanded={setSidebarHoverExpanded}
                 />
                 <Container
-                  maxWidth={isSmallScreen || isSidebarExpanded ? "lg" : false}
-                  className="d-flex flex-column flex-grow-1 gap-4"
+                  maxWidth={false}
+                  className="d-flex flex-column flex-grow-1 gap-3"
                   sx={{
                     width: "100%",
-                    // The theme sets a standard desktop cap for every Container.
-                    // Override it only in mini-sidebar mode so the reclaimed
-                    // navigation space is available to the active page.
-                    maxWidth: { xs: "none", md: isSidebarExpanded ? "1280px" : "none" },
+                    maxWidth: { xs: "none", md: "1680px" },
+                    mx: "auto",
                     minWidth: 0,
                     minHeight: "max-content",
                     overflow: "visible",
                     py: 2,
                     pb: 4,
                     px: { xs: 2, md: 3 },
+                    pl: { xs: 2, md: 2 },
+                    pr: { xs: 2, md: 3 },
                     transition: "max-width 0.32s cubic-bezier(.2, .8, .2, 1), padding 0.32s cubic-bezier(.2, .8, .2, 1)",
                   }}
                 >

@@ -1107,7 +1107,6 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
                       const checked = event.target.checked;
                       setRehireEligible(checked);
                       setRehireEligibilityChanged(true);
-                      toast.info(checked ? "Employee marked eligible for rehire." : "Employee marked not eligible for rehire.");
                     }}
                   />
                 }
@@ -1170,7 +1169,9 @@ export const EmployeeExitManagementCard = ({ employeeUserId }: Props) => {
                 <Alert severity="success">
                   {exitCase.finalSettlement.status} · Net payable:{" "}
                   {exitCase.finalSettlement.netPayable.toLocaleString()}{" "}
-                  {exitCase.finalSettlement.sourcePayrollMonth
+                  {exitCase.finalSettlement.sourcePayrollRunId
+                    ? `· final-settlement run ${exitCase.finalSettlement.sourcePayrollRunId}`
+                    : exitCase.finalSettlement.sourcePayrollMonth
                     ? `· payroll month ${new Date(exitCase.finalSettlement.sourcePayrollMonth).toLocaleDateString(undefined, { month: "short", year: "numeric" })}`
                     : ""}
                 </Alert>
