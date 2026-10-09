@@ -11,31 +11,46 @@ import dayjs,
   { Dayjs } from "dayjs";
 import {
   Alert,
+  alpha,
+  Box,
   Button,
+  Card,
+  Chip,
   FormControl,
   InputLabel,
   MenuItem,
   Typography,
 } from "@mui/material";
-import { CloudUploadRounded } from "@mui/icons-material";
+import {
+  CloudUploadRounded,
+  FileDownloadOutlined,
+  PaymentsOutlined,
+  AccountBalanceWalletOutlined,
+  CalendarMonthOutlined,
+  InfoOutlined,
+} from "@mui/icons-material";
+import { toast } from "react-toastify";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { useIntl } from "react-intl";
-import { getPayrollSalaryTemplates, previewEmployeeSalaryImport, previewEmployeeSalaryPdf, saveEmployeeSalaryStructure } from "../../payroll/services";
-import { EmployeeSalaryImportRowModel, EmployeeSalaryStructureModel, PayrollSalaryTemplateModel } from "../../payroll/models";
+import { getEmployeeSalaryHistory, getPayrollPayGroups, getPayrollSalaryComponents, getPayrollSalaryTemplates, previewEmployeeSalaryImport, previewEmployeeSalaryPdf, saveEmployeeSalaryStructure } from "../../payroll/services";
+import { EmployeeSalaryComponentValueModel, EmployeeSalaryImportRowModel, EmployeeSalaryStructureModel, PayrollPayGroupModel, PayrollSalaryComponentModel, PayrollSalaryTemplateModel } from "../../payroll/models";
 import { salaryValidationSchema } from "../../../../utils/Schema/salaryValidationSchema";
-import { rowToImport } from "../../payrollsettings/components/salaryImportMapping";
+import { downloadEmployeeSalarySampleTemplate, hasExplicitSalaryComponentValue, invalidStandardSalaryValues, rowToImport } from "../../payrollsettings/components/salaryImportMapping";
+import { salaryTemplateValues, calculateEmployeePayrollComponents, getSalaryComponentInputGuidance, isEmployeePayrollComponentEligible, normalizeImportedSalaryComponentValues, resolveEmployeePayrollComponentDefinition, resolveEmployeePayrollComponents, resolveEmployeeSalaryMetadata, resolveSalaryImportEffectiveDate } from "./employeeSalaryMetadata";
 import * as XLSX from "xlsx";
 
 import { CurrencyInput } from "../../../shared/components/form-component/CurrencyInput";
 interface PropsTypes {
   userId: string;
   employeeId: string;
+  employeeName?: string;
   onUserUpdate: (success: boolean) => void | Promise<void>;
   formRef: React.MutableRefObject<FormikProps<CreateEmployeeSalary> | null>;
   handleButtonLoading: (loading: boolean) => void;
   // pre-fills the form with the employee's current active salary when editing one that
   // already exists; omit for a brand new employee who has no salary yet
   existingSalary?: SalaryModel | null;
+  defaultEffectiveFrom?: string;
 }
 
 const employeeSalaryInitialValues: CreateEmployeeSalary = {
@@ -54,6 +69,21 @@ const employeeSalaryInitialValues: CreateEmployeeSalary = {
   status: true,
 };
 
+const fixedComponentFields: Record<string, keyof CreateEmployeeSalary> = {
+  BASIC: "basicPay",
+  BASIC_PAY: "basicPay",
+  HRA: "hra",
+  LTA: "lta",
+  OTHER_ALLOWANCE: "otherAllowance",
+  BONUS: "bonus",
+  HEALTH_INSURANCE: "healthInsurance",
+  TOTAL_DEDUCTIONS: "totalDeductions",
+};
+
+const formatInr = (amount: number) => new Intl.NumberFormat("en-IN", {
+  style: "currency", currency: "INR", maximumFractionDigits: 2,
+}).format(amount);
+
 export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   const {
     userId,
@@ -62,56 +92,146 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
     formRef,
     handleButtonLoading,
     existingSalary,
+    defaultEffectiveFrom,
   } = props;
   const { formatMessage: i } = useIntl();
   const [salaryTemplates, setSalaryTemplates] = useState<PayrollSalaryTemplateModel[]>([]);
+  const [salaryComponentDefinitions, setSalaryComponentDefinitions] = useState<PayrollSalaryComponentModel[]>([]);
+  const [componentCatalogLoaded, setComponentCatalogLoaded] = useState(false);
+  const [componentCatalogFailed, setComponentCatalogFailed] = useState(false);
+  const [payGroups, setPayGroups] = useState<PayrollPayGroupModel[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [selectedPayGroupId, setSelectedPayGroupId] = useState("");
+  const [importedSalaryMetadata, setImportedSalaryMetadata] = useState<{
+    offerId?: string | null;
+    offerVersion?: number | null;
+    employeeType?: string | null;
+    gradeId?: string | null;
+    departmentId?: string | null;
+  }>({});
+  const [importedSalaryComponents, setImportedSalaryComponents] = useState<EmployeeSalaryComponentValueModel[]>([]);
   const [isImportingSalary, setIsImportingSalary] = useState(false);
   const [importFeedback, setImportFeedback] = useState<{ severity: "success" | "error"; message: string } | null>(null);
   const salaryFileInput = useRef<HTMLInputElement>(null);
   const fixedComponentCodes = new Set(["BASIC", "HRA", "LTA", "OTHER_ALLOWANCE", "BONUS", "HEALTH_INSURANCE", "TOTAL_DEDUCTIONS"]);
+  const buildSalaryCalculation = (values: CreateEmployeeSalary, effectiveFrom: string) => {
+    const isEnabled = (code: string) => isEmployeePayrollComponentEligible(salaryComponentDefinitions, code, effectiveFrom, true);
+    const templateComponents = resolveEmployeePayrollComponents(
+      salaryComponentDefinitions,
+      salaryTemplates.find((template) => template.id === selectedTemplateId)?.components ?? [],
+      effectiveFrom,
+      importedSalaryComponents,
+    );
+    const fixedRows: [string, string, unknown, boolean, "EARNING" | "DEDUCTION"][] = [
+      ["BASIC", "Basic Pay", values.basicPay, true, "EARNING"],
+      ...(isEnabled("HRA") ? [["HRA", "HRA", values.hra, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isEnabled("LTA") ? [["LTA", "LTA", values.lta, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isEnabled("OTHER_ALLOWANCE") ? [["OTHER_ALLOWANCE", "Other Allowance", values.otherAllowance, true, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isEnabled("BONUS") ? [["BONUS", "Bonus", values.bonus, false, "EARNING"] as [string, string, unknown, boolean, "EARNING"]] : []),
+      ...(isEnabled("HEALTH_INSURANCE") ? [["HEALTH_INSURANCE", "Health Insurance", values.healthInsurance, true, "DEDUCTION"] as [string, string, unknown, boolean, "DEDUCTION"]] : []),
+    ];
+    const fixedComponents = fixedRows.map(([componentCode, defaultName, value, isRecurring, defaultKind]) => {
+      const definition = salaryComponentDefinitions.find((component) =>
+        component.code.trim().toUpperCase() === componentCode && isEmployeePayrollComponentEligible(salaryComponentDefinitions, componentCode, effectiveFrom),
+      );
+      const kind = definition?.kind ?? defaultKind;
+      return {
+        componentCode, componentName: definition?.name ?? defaultName, kind,
+        value: Number(value || 0), calculationType: definition?.calculationType ?? "FIXED",
+        baseComponentCode: definition?.baseComponentCode, isTaxable: definition?.isTaxable ?? kind !== "DEDUCTION",
+        isRecurring: Boolean(isRecurring), isStatutory: false, isEmployerContribution: false,
+      };
+    });
+    const configuredComponents = templateComponents
+      .filter((component) => !fixedComponentCodes.has(component.code.toUpperCase()))
+      .map((component) => ({ componentCode: component.code.toUpperCase(), componentName: component.name, kind: component.kind,
+        value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.code.toUpperCase()] || 0), calculationType: component.calculationType,
+        baseComponentCode: component.baseComponentCode, isTaxable: component.isTaxable, isRecurring: true, isStatutory: false, isEmployerContribution: false }));
+    const importedComponents = importedSalaryComponents.map((component) => ({
+      ...component,
+      value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
+      percentage: component.calculationType.toUpperCase() === "FIXED"
+        ? component.percentage
+        : Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.componentCode.toUpperCase()] ?? component.value),
+    }));
+    const components = [...fixedComponents, ...configuredComponents, ...importedComponents];
+    return { components, calculation: calculateEmployeePayrollComponents(components) };
+  };
+  useEffect(() => {
+    let mounted = true;
+    void getPayrollSalaryTemplates().then(({ data }) => {
+      if (mounted) setSalaryTemplates((data ?? []).filter((template) => template.isActive && template.id));
+    }).catch(() => { if (mounted) setSalaryTemplates([]); });
+    void getPayrollSalaryComponents().then(({ data }) => {
+      if (mounted) setSalaryComponentDefinitions(data ?? []);
+    }).catch(() => { if (mounted) { setSalaryComponentDefinitions([]); setComponentCatalogFailed(true); } }).finally(() => {
+      if (mounted) setComponentCatalogLoaded(true);
+    });
+    void getPayrollPayGroups().then(({ data }) => {
+      if (mounted) setPayGroups((data ?? []).filter((group) => group.isActive && group.id));
+    }).catch(() => { if (mounted) setPayGroups([]); });
+    return () => { mounted = false; };
+  }, []);
 
   useEffect(() => {
-    void getPayrollSalaryTemplates().then((response) => {
-      setSalaryTemplates((response.data ?? []).filter((template) => template.isActive));
-    }).catch(() => setSalaryTemplates([]));
-  }, []);
+    if (!existingSalary) return;
+    let mounted = true;
+    void getEmployeeSalaryHistory(employeeId).then(({ data }) => {
+      if (!mounted) return;
+      const current = (data ?? [])
+        .filter((salary) => salary.status === "ACTIVE" && salary.approvalStatus === "APPROVED")
+        .sort((left, right) => dayjs(right.effectiveFrom).valueOf() - dayjs(left.effectiveFrom).valueOf())[0];
+      if (!current) return;
+      setSelectedTemplateId(current.salaryTemplateId ?? "");
+      setSelectedPayGroupId(current.payGroupId ?? "");
+      setImportedSalaryMetadata({
+        offerId: current.offerId,
+        offerVersion: current.offerVersion,
+        employeeType: current.employeeType,
+        gradeId: current.gradeId,
+        departmentId: current.departmentId,
+      });
+    }).catch(() => undefined);
+    return () => { mounted = false; };
+  }, [employeeId, existingSalary]);
 
   async function UpadteSalaryData(
     values: CreateEmployeeSalary,
     setSubmittng: (isSubmitting: boolean) => void,
   ) {
     try {
+      if (!componentCatalogLoaded || componentCatalogFailed) {
+        toast.error(componentCatalogFailed
+          ? "Company payroll components could not be loaded. Refresh before saving this salary structure."
+          : "Company payroll components are still loading. Please try again in a moment.");
+        await onUserUpdate(false);
+        return;
+      }
       const effectiveFrom = values.effectiveFrom
         ? dayjs(values.effectiveFrom).format("YYYY-MM-DD")
         : dayjs().format("YYYY-MM-DD");
       const effectiveTo = values.effectiveTo
         ? dayjs(values.effectiveTo).format("YYYY-MM-DD")
         : null;
-      const monthlyGross =
-        Number(values.basicPay || 0) +
-        Number(values.hra || 0) +
-        Number(values.lta || 0) +
-        Number(values.otherAllowance || 0) +
-        Number(values.bonus || 0);
-      const fixedComponents = [
-        ["BASIC", "Basic Pay", values.basicPay, true, "EARNING"], ["HRA", "HRA", values.hra, true, "EARNING"],
-        ["LTA", "LTA", values.lta, true, "EARNING"], ["OTHER_ALLOWANCE", "Other Allowance", values.otherAllowance, true, "EARNING"],
-        ["BONUS", "Bonus", values.bonus, false, "EARNING"], ["HEALTH_INSURANCE", "Health Insurance", values.healthInsurance, false, "EARNING"],
-        ["TOTAL_DEDUCTIONS", "Total Deductions", values.totalDeductions, false, "DEDUCTION"],
-      ].map(([componentCode, componentName, value, isRecurring, kind]) => ({
-        componentCode: componentCode as string, componentName: componentName as string, kind: kind as "EARNING" | "DEDUCTION",
-        value: Number(value || 0), calculationType: "FIXED", isTaxable: kind !== "DEDUCTION", isRecurring: Boolean(isRecurring),
-        isStatutory: false, isEmployerContribution: false,
-      }));
-      const configuredComponents = (salaryTemplates.find((template) => template.id === selectedTemplateId)?.components ?? [])
-        .filter((component) => !fixedComponentCodes.has(component.code.toUpperCase()))
-        .map((component) => ({ componentCode: component.code.toUpperCase(), componentName: component.name, kind: component.kind,
-          value: Number((values as CreateEmployeeSalary & Record<string, unknown>)[component.code.toUpperCase()] || 0), calculationType: component.calculationType,
-          baseComponentCode: component.baseComponentCode, isTaxable: component.isTaxable, isRecurring: true, isStatutory: false, isEmployerContribution: false }));
+      const { components, calculation: payrollCalculation } = buildSalaryCalculation(values, effectiveFrom);
+      if (!payrollCalculation.success) {
+        toast.error(payrollCalculation.errorMessage);
+        await onUserUpdate(false);
+        return;
+      }
+      const monthlyGross = payrollCalculation.gross;
+      const selectedTemplate = salaryTemplates.find((template) => template.id === selectedTemplateId);
+      const requestedPayGroupId = selectedPayGroupId || selectedTemplate?.payGroupId || undefined;
+      const salaryMetadata = resolveEmployeeSalaryMetadata(selectedTemplateId, selectedPayGroupId, salaryTemplates, payGroups, importedSalaryMetadata);
+      if (requestedPayGroupId && !salaryMetadata.payGroupId) {
+        toast.error("The selected pay group is no longer active in this company. Choose an active group before saving.");
+        await onUserUpdate(false);
+        return;
+      }
       const canonicalPayload: EmployeeSalaryStructureModel = {
         employeeId,
         userId,
+        ...salaryMetadata,
         currency: "INR",
         paymentFrequency: values.paymentFrequency || "Monthly",
         annualCtc: monthlyGross * 12,
@@ -122,12 +242,19 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
         approvalStatus: "DRAFT",
         source: "ONBOARDING_MANUAL",
         version: 1,
-        components: [...fixedComponents, ...configuredComponents],
+        components,
       };
       const response = await saveEmployeeSalaryStructure(canonicalPayload);
-      await onUserUpdate(Boolean(response.data.success));
+      if (!response.data.success) {
+        toast.error(response.data.message || "Salary structure could not be saved. Please correct the issue and try again.");
+        await onUserUpdate(false);
+        return;
+      }
+      toast.success("Salary structure saved as a draft. It must be approved before payroll can use it.");
+      await onUserUpdate(true);
     } catch (error) {
-      console.error((error as Error).message);
+      toast.error(error instanceof Error ? error.message : "Salary structure could not be saved. Please try again.");
+      await onUserUpdate(false);
     } finally {
       setSubmittng(false);
       handleButtonLoading(false);
@@ -135,9 +262,15 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
   }
   return (
     <Stack spacing={2} sx={{ p: 1 }}>
+      {!existingSalary && (
+        <Alert severity="info">
+          A salary structure is required to finish employee setup. Optional earning and deduction fields follow this company’s enabled payroll components for the salary start date. Saving creates a draft; payroll can use it only after authorized approval.
+        </Alert>
+      )}
       <Formik
         initialValues={{
           ...employeeSalaryInitialValues,
+          effectiveFrom: defaultEffectiveFrom ? dayjs(defaultEffectiveFrom) : employeeSalaryInitialValues.effectiveFrom,
           ...(existingSalary && {
             basicPay: existingSalary.basicPay,
             hra: existingSalary.hra,
@@ -163,6 +296,27 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
           setFieldValue,
           handleSubmit,
         }) => {
+          const salaryEffectiveDate = values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
+          const salaryCalculationPreview = componentCatalogLoaded && !componentCatalogFailed
+            ? buildSalaryCalculation(values, salaryEffectiveDate).calculation
+            : null;
+          const activeTemplateComponents = resolveEmployeePayrollComponents(
+            salaryComponentDefinitions,
+            salaryTemplates.find((template) => template.id === selectedTemplateId)?.components ?? [],
+            salaryEffectiveDate,
+            importedSalaryComponents,
+          );
+          const bonusEnabled = componentCatalogLoaded && isEmployeePayrollComponentEligible(
+            salaryComponentDefinitions, "BONUS", salaryEffectiveDate, !componentCatalogFailed,
+          );
+          const componentEnabled = (code: string) => componentCatalogLoaded && isEmployeePayrollComponentEligible(
+            salaryComponentDefinitions, code, salaryEffectiveDate, !componentCatalogFailed,
+          );
+          const componentInputGuidance = (code: string) => {
+            const definition = resolveEmployeePayrollComponentDefinition(salaryComponentDefinitions, code, salaryEffectiveDate);
+            return definition ? getSalaryComponentInputGuidance(definition) : {};
+          };
+          const showConfiguredComponentWarning = componentCatalogFailed;
           const handleSalaryFile = async (file?: File) => {
             if (!file) return;
             setIsImportingSalary(true);
@@ -170,7 +324,11 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
             try {
               let importedRow: EmployeeSalaryImportRowModel;
               if (file.name.toLowerCase().endsWith(".pdf")) {
-                const response = await previewEmployeeSalaryPdf(file);
+                const response = await previewEmployeeSalaryPdf(
+                  file,
+                  employeeId,
+                  values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : undefined,
+                );
                 if (!response.data.row) throw new Error(response.data.errors?.join(" ") || "No salary data could be extracted from this PDF.");
                 importedRow = response.data.row;
               } else {
@@ -187,33 +345,71 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
                 const rowIndex = rowForEmployee ? sourceRows.indexOf(rowForEmployee) : -1;
                 const sourceRow = rowForEmployee ?? (sourceRows.length === 1 ? sourceRows[0] : undefined);
                 if (!sourceRow) throw new Error(`Select a spreadsheet with one row for employee ${employeeId}, or include an Employee ID column.`);
+                const invalidValues = invalidStandardSalaryValues(sourceRow);
+                if (invalidValues.length > 0) throw new Error(`The selected row has invalid numeric values for: ${invalidValues.join(", ")}.`);
+                if (!hasExplicitSalaryComponentValue(sourceRow)) throw new Error("The selected row has no numeric salary component values.");
                 importedRow = rowToImport(sourceRow, rowIndex >= 0 ? rowIndex + 2 : 2);
               }
 
+              const importedPaymentFrequency = String(importedRow.paymentFrequency ?? "").trim().toUpperCase();
+              if (importedPaymentFrequency && importedPaymentFrequency !== "MONTHLY" && importedPaymentFrequency !== "MONTH") {
+                throw new Error("This payroll currently supports monthly processing only. The offer uses a different payment frequency; confirm a monthly payroll arrangement before importing.");
+              }
               if (importedRow.employeeId && importedRow.employeeId.trim().toLowerCase() !== employeeId.trim().toLowerCase()) {
                 throw new Error(`The salary document is for ${importedRow.employeeId}, not this employee (${employeeId}).`);
               }
               importedRow.employeeId = employeeId;
               importedRow.userId = userId;
+              const importEffectiveDate = resolveSalaryImportEffectiveDate(
+                importedRow.effectiveFrom,
+                values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : undefined,
+                dayjs().format("YYYY-MM-DD"),
+              );
+              const unavailableComponents = importedRow.components.filter((component) => {
+                const code = component.componentCode.trim().toUpperCase();
+                if (code === "BASIC" || code === "BASIC_PAY") return false;
+                return !isEmployeePayrollComponentEligible(
+                  salaryComponentDefinitions,
+                  code,
+                  importEffectiveDate,
+                  salaryComponentDefinitions.length === 0 && !componentCatalogFailed,
+                );
+              });
+              if (unavailableComponents.length > 0) {
+                throw new Error(`The offer contains payroll components not enabled for ${importEffectiveDate}: ${unavailableComponents.map((component) => component.componentName).join(", ")}. Enable them in Payroll Settings or remove them from the import.`);
+              }
+              importedRow.components = normalizeImportedSalaryComponentValues(importedRow.components, salaryComponentDefinitions, importEffectiveDate);
+              const importedPayrollCalculation = calculateEmployeePayrollComponents(importedRow.components);
+              if (!importedPayrollCalculation.success) throw new Error(importedPayrollCalculation.errorMessage);
+              importedRow.monthlyGross = importedPayrollCalculation.gross;
+              importedRow.annualCtc = importedRow.annualCtc ?? importedPayrollCalculation.gross * 12;
               const preview = await previewEmployeeSalaryImport([importedRow]);
               const validation = preview.data?.[0];
               if (!validation?.isValid) {
                 throw new Error(validation?.errors?.join(" ") || "Salary data did not pass payroll validation.");
               }
 
-              const formFieldByCode: Record<string, keyof CreateEmployeeSalary> = {
-                BASIC: "basicPay", BASIC_PAY: "basicPay", HRA: "hra", LTA: "lta",
-                OTHER_ALLOWANCE: "otherAllowance", BONUS: "bonus", HEALTH_INSURANCE: "healthInsurance",
-                TOTAL_DEDUCTIONS: "totalDeductions",
-              };
               importedRow.components.forEach((component) => {
-                const field = formFieldByCode[component.componentCode.toUpperCase()];
+                const field = fixedComponentFields[component.componentCode.toUpperCase()];
                 if (field) void setFieldValue(field, component.value);
+                else void setFieldValue(component.componentCode.toUpperCase(), component.value);
               });
+              setImportedSalaryComponents(importedRow.components.filter((component) => !fixedComponentCodes.has(component.componentCode.toUpperCase())));
               if (importedRow.effectiveFrom) void setFieldValue("effectiveFrom", dayjs(importedRow.effectiveFrom));
               void setFieldValue("effectiveTo", importedRow.effectiveTo ? dayjs(importedRow.effectiveTo) : null);
-              void setFieldValue("paymentFrequency", importedRow.paymentFrequency || "Monthly");
-              setSelectedTemplateId("");
+              void setFieldValue("paymentFrequency", "MONTHLY");
+              const importedTemplateId = importedRow.salaryTemplateId && salaryTemplates.some((template) => template.id === importedRow.salaryTemplateId)
+                ? importedRow.salaryTemplateId
+                : "";
+              setSelectedTemplateId(importedTemplateId);
+              setSelectedPayGroupId(importedRow.payGroupId ?? "");
+              setImportedSalaryMetadata({
+                offerId: importedRow.offerId,
+                offerVersion: importedRow.offerVersion,
+                employeeType: importedRow.employeeType,
+                gradeId: importedRow.gradeId,
+                departmentId: importedRow.departmentId,
+              });
               setImportFeedback({ severity: "success", message: "Import validated. Review the extracted salary values and effective dates below; saving creates a draft that still needs approval." });
             } catch (error) {
               setImportFeedback({ severity: "error", message: error instanceof Error ? error.message : "Unable to import this salary document." });
@@ -222,174 +418,711 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
             }
           };
 
+          const handleDownloadSample = () => {
+            try {
+              const activeCustomComponents = [
+                ...activeTemplateComponents.filter((c) => !fixedComponentCodes.has(c.code.toUpperCase())),
+                ...importedSalaryComponents,
+              ].map((c) => ({
+                code: "code" in c ? c.code : c.componentCode,
+                name: "name" in c ? c.name : c.componentName,
+                value: Number((values as Record<string, unknown>)[("code" in c ? c.code : c.componentCode).toUpperCase()] ?? ("value" in c ? c.value : 0)),
+              }));
+
+              downloadEmployeeSalarySampleTemplate({
+                employeeId,
+                employeeName: props.employeeName,
+                basicPay: Number(values.basicPay || 0),
+                hra: Number(values.hra || 0),
+                lta: Number(values.lta || 0),
+                otherAllowance: Number(values.otherAllowance || 0),
+                bonus: Number(values.bonus || 0),
+                healthInsurance: Number(values.healthInsurance || 0),
+                effectiveFrom: values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : undefined,
+                effectiveTo: values.effectiveTo ? dayjs(values.effectiveTo).format("YYYY-MM-DD") : undefined,
+                customComponents: activeCustomComponents,
+              });
+              toast.success("Sample Excel template downloaded.");
+            } catch (err) {
+              toast.error("Failed to download sample template.");
+            }
+          };
+
+          const monthlyGross = salaryCalculationPreview?.gross ?? Number(values.basicPay || 0);
+          const monthlyDeductions = salaryCalculationPreview?.deductions ?? Number(values.healthInsurance || 0);
+
           return (
             <form onSubmit={handleSubmit}>
-              <Stack spacing={1}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} alignItems={{ xs: "stretch", sm: "center" }}>
-                  <input ref={salaryFileInput} hidden type="file" accept=".pdf,.xlsx,.xls" onChange={(event) => { void handleSalaryFile(event.target.files?.[0]); event.target.value = ""; }} />
-                  <Button type="button" variant="outlined" startIcon={<CloudUploadRounded />} disabled={isImportingSalary} onClick={() => salaryFileInput.current?.click()}>
-                    {isImportingSalary ? "Reading salary document…" : "Import offer salary (PDF / Excel)"}
-                  </Button>
-                  <Typography variant="caption" color="text.secondary">The file is previewed and checked before it fills this form; it is not saved automatically.</Typography>
-                </Stack>
-                {importFeedback && <Alert severity={importFeedback.severity}>{importFeedback.message}</Alert>}
-                {salaryTemplates.length > 0 && (
-                  <FormControl fullWidth>
-                    <InputLabel id="salary-template-label">Salary template</InputLabel>
-                    <AppSelect
-                      labelId="salary-template-label"
-                      value={selectedTemplateId}
-                      label="Salary template"
+              <Stack spacing={2.5}>
+                {/* 1. Action Toolbar: Sample Download & Import */}
+                <Box
+                  sx={{
+                    p: { xs: 1.5, sm: 2 },
+                    borderRadius: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
+                    alignItems: { xs: "stretch", md: "center" },
+                    justifyContent: "space-between",
+                    gap: 1.5,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                  }}
+                >
+                  <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+                    <input
+                      ref={salaryFileInput}
+                      hidden
+                      type="file"
+                      accept=".pdf,.xlsx,.xls"
                       onChange={(event) => {
-                        const templateId = String(event.target.value);
-                        const template = salaryTemplates.find((item) => item.id === templateId);
-                        setSelectedTemplateId(templateId);
-                        template?.components.forEach((component) => {
-                          const fieldByCode: Record<string, keyof CreateEmployeeSalary> = {
-                            BASIC: "basicPay",
-                            HRA: "hra",
-                            LTA: "lta",
-                            OTHER_ALLOWANCE: "otherAllowance",
-                            BONUS: "bonus",
-                            HEALTH_INSURANCE: "healthInsurance",
-                            TOTAL_DEDUCTIONS: "totalDeductions",
-                          };
-                          const field = fieldByCode[component.code.toUpperCase()];
-                          if (field) setFieldValue(field, component.value);
-                          else setFieldValue(component.code.toUpperCase(), component.value);
-                        });
+                        void handleSalaryFile(event.target.files?.[0]);
+                        event.target.value = "";
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      size="small"
+                      startIcon={<FileDownloadOutlined />}
+                      onClick={handleDownloadSample}
+                      sx={{
+                        borderRadius: 2,
+                        fontWeight: 650,
+                        textTransform: "none",
+                        py: 0.85,
+                        px: 2,
+                        borderColor: "divider",
+                        color: "text.primary",
+                        "&:hover": { borderColor: "primary.main", bgcolor: "action.hover" },
                       }}
                     >
-                      <MenuItem value=""><em>Manual structure</em></MenuItem>
-                      {salaryTemplates.map((template) => (
-                        <MenuItem key={template.id ?? template.name} value={template.id ?? ""}>{template.name}</MenuItem>
-                      ))}
-                    </AppSelect>
-                  </FormControl>
-                )}
-                <Grid container spacing={2}>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.BASIC_PAY" })}
-                      required
-                      name="basicPay"
-                    />
-                  </Grid>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.HRA" })}
-                      name="hra"
-                    />
-                  </Grid>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.LTA" })}
-                      name="lta"
-                    />
-                  </Grid>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
-                      name="otherAllowance"
-                    />
-                  </Grid>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.BONUS" })}
-                      name="bonus"
-                    />
-                  </Grid>
-                  <Grid size={{ md: 6, sm: 12, xs: 12 }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.HEALTH_INSURANCE" })}
-                      name="healthInsurance"
-                    />
-                  </Grid>
-                  <Grid size={12} sx={{ marginTop: "10px" }}>
-                    <CurrencyInput
-                      label={i({ id: "EMPLOYEE.SALARY.TOTAL_DEDUCTIONS" })}
-                      name="totalDeductions"
-                    />
-                  </Grid>
-                  {(salaryTemplates.find((template) => template.id === selectedTemplateId)?.components ?? [])
-                    .filter((component) => !fixedComponentCodes.has(component.code.toUpperCase()))
-                    .map((component) => (
-                      <Grid size={{ md: 6, sm: 12, xs: 12 }} key={component.code}>
-                        <CurrencyInput label={component.name} name={component.code.toUpperCase()} />
-                      </Grid>
-                    ))}
-                  <Grid size={12}>
-                    <CustomisedDatePicker
-                      label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_FROM" })}
-                      value={
-                        values.effectiveFrom
-                          ? dayjs(values.effectiveFrom)
-                          : null
-                      }
-                      setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("effectiveFrom", true);
-                        setFieldValue("effectiveFrom", newDate);
+                      Download Sample Template
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="contained"
+                      size="small"
+                      startIcon={<CloudUploadRounded />}
+                      disabled={isImportingSalary || !componentCatalogLoaded || componentCatalogFailed}
+                      onClick={() => salaryFileInput.current?.click()}
+                      sx={{
+                        borderRadius: 2,
+                        fontWeight: 650,
+                        textTransform: "none",
+                        py: 0.85,
+                        px: 2,
+                        boxShadow: "none",
+                        "&:hover": { boxShadow: "none" },
                       }}
-                      name="effectiveFrom"
-                    />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                      The first date this salary version applies. Use the approved offer/start date; payroll uses this date to choose the correct salary version.
+                    >
+                      {isImportingSalary
+                        ? "Reading salary document…"
+                        : !componentCatalogLoaded
+                          ? "Loading payroll components…"
+                          : "Import offer salary (PDF / Excel)"}
+                    </Button>
+                  </Stack>
+                  <Typography variant="caption" color="text.secondary" sx={{ maxWidth: { md: 450 }, textAlign: { xs: "left", md: "right" }, lineHeight: 1.4 }}>
+                    The file is previewed and checked before it fills this form; it is not saved automatically.
+                  </Typography>
+                </Box>
+
+                {importFeedback && <Alert severity={importFeedback.severity} sx={{ borderRadius: 2 }}>{importFeedback.message}</Alert>}
+                {showConfiguredComponentWarning && (
+                  <Alert severity="error" sx={{ borderRadius: 2 }}>
+                    Company payroll components could not be loaded. Refresh before saving to avoid an incomplete salary structure.
+                  </Alert>
+                )}
+
+                {/* 2. Top Executive KPI Bar: Live Salary Breakdown */}
+                <Box
+                  sx={{
+                    p: { xs: 2, sm: 2.25 },
+                    borderRadius: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                  }}
+                >
+                  <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} sx={{ mb: 1.5 }} spacing={1}>
+                    <div>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 750, color: "text.primary" }}>
+                          Live salary breakdown
+                        </Typography>
+                        <Chip size="small" label="Live Projection" color="success" variant="outlined" sx={{ height: 20, fontSize: "0.7rem", fontWeight: 650 }} />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary">
+                        Recalculates from the enabled company components and selected template.
+                      </Typography>
+                    </div>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: "text.secondary", bgcolor: "action.hover", px: 1, py: 0.35, borderRadius: 1.5 }}>
+                      Currency: INR (₹)
                     </Typography>
+                  </Stack>
+                  {!componentCatalogLoaded && (
+                    <Alert severity="info" sx={{ mb: 1.5, borderRadius: 2 }}>
+                      Loading company payroll components; the breakdown will appear when they are ready.
+                    </Alert>
+                  )}
+                  {componentCatalogFailed && (
+                    <Alert severity="error" sx={{ mb: 1.5, borderRadius: 2 }}>
+                      Salary totals are unavailable until company payroll components load successfully.
+                    </Alert>
+                  )}
+                  {salaryCalculationPreview && !salaryCalculationPreview.success && (
+                    <Alert severity="warning" sx={{ mb: 1.5, borderRadius: 2 }}>
+                      {salaryCalculationPreview.errorMessage}
+                    </Alert>
+                  )}
+                  {salaryCalculationPreview?.success && (
+                    <Grid container spacing={1.5}>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Card
+                          sx={{
+                            p: 2,
+                            borderRadius: 2,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            boxShadow: "none",
+                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary" fontWeight={650} letterSpacing="0.4px" textTransform="uppercase">
+                            Recurring monthly gross
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary" }}>
+                            <span data-testid="salary-preview-gross">{formatInr(salaryCalculationPreview.gross)}</span>
+                          </Typography>
+                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.72rem" }}>
+                            All earnings combined
+                          </Typography>
+                        </Card>
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Card
+                          sx={{
+                            p: 2,
+                            borderRadius: 2,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            boxShadow: "none",
+                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary" fontWeight={650} letterSpacing="0.4px" textTransform="uppercase">
+                            Configured monthly deductions
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary" }}>
+                            <span data-testid="salary-preview-deductions">{formatInr(salaryCalculationPreview.deductions)}</span>
+                          </Typography>
+                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.72rem" }}>
+                            Pre-tax company withholdings
+                          </Typography>
+                        </Card>
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Card
+                          sx={(theme) => ({
+                            p: 2,
+                            borderRadius: 2,
+                            border: "1.5px solid",
+                            borderColor: "primary.main",
+                            bgcolor: alpha(theme.palette.primary.main, 0.05),
+                            boxShadow: "none",
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                          })}
+                        >
+                          <Typography variant="caption" color="primary.main" fontWeight={750} letterSpacing="0.4px" textTransform="uppercase">
+                            Estimated net before statutory deductions
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "primary.main" }}>
+                            <span data-testid="salary-preview-net">{formatInr(salaryCalculationPreview.net)}</span>
+                          </Typography>
+                          <Typography variant="caption" color="primary.main" sx={{ fontSize: "0.72rem", opacity: 0.9 }}>
+                            Net take-home projection
+                          </Typography>
+                        </Card>
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                        <Card
+                          sx={{
+                            p: 2,
+                            borderRadius: 2,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            boxShadow: "none",
+                            bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary" fontWeight={650} letterSpacing="0.4px" textTransform="uppercase">
+                            Annual CTC (Gross × 12)
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 800, my: 0.5, color: "text.primary" }}>
+                            {formatInr(salaryCalculationPreview.gross * 12)}
+                          </Typography>
+                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.72rem" }}>
+                            Annualized compensation
+                          </Typography>
+                        </Card>
+                      </Grid>
+                    </Grid>
+                  )}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.5, fontSize: "0.73rem" }}>
+                    This estimate excludes EPF/ESIC/TDS, attendance and leave adjustments, and one-time earnings. Final payroll may differ.
+                  </Typography>
+                </Box>
+
+                {/* 3. Systematic 2-Column Corporate Grid */}
+                <Grid container spacing={2.5} alignItems="flex-start">
+                  {/* LEFT COLUMN: Earnings & Deductions */}
+                  <Grid size={{ xs: 12, lg: 7 }}>
+                    <Stack spacing={2.5}>
+                      {/* Card A: Earnings & Allowances */}
+                      <Box
+                        sx={{
+                          p: { xs: 2, sm: 2.5 },
+                          borderRadius: 2.5,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          bgcolor: "background.paper",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                        }}
+                      >
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                          <Stack direction="row" alignItems="center" spacing={1.25}>
+                            <Box
+                              sx={{
+                                width: 34,
+                                height: 34,
+                                borderRadius: 2,
+                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                                color: "primary.main",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <PaymentsOutlined fontSize="small" />
+                            </Box>
+                            <div>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 750, color: "text.primary" }}>
+                                Earnings & Allowances
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Monthly recurring compensation components
+                              </Typography>
+                            </div>
+                          </Stack>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip size="small" label="Monthly Recurring & Variable" variant="outlined" sx={{ height: 22, fontSize: "0.72rem" }} />
+                            <Chip
+                              size="small"
+                              label={`Gross: ${formatInr(monthlyGross)}`}
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: "0.75rem",
+                                borderRadius: 1.5,
+                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                                color: "primary.main",
+                                border: "1px solid",
+                                borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+                              }}
+                            />
+                          </Stack>
+                        </Stack>
+
+                        <Grid container spacing={2}>
+                          {/* Basic Pay anchor across full row */}
+                          <Grid size={{ xs: 12 }}>
+                            <Box
+                              sx={{
+                                p: 1.75,
+                                borderRadius: 2,
+                                border: "1px solid",
+                                borderColor: (theme) => alpha(theme.palette.primary.main, 0.25),
+                                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.025),
+                              }}
+                            >
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.BASIC_PAY" })}
+                                required
+                                name="basicPay"
+                              />
+                              <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5, fontSize: "0.72rem" }}>
+                                Core foundational component for statutory calculations (PF, Gratuity, and HRA exemption).
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          {/* Remaining allowances in balanced 2-column grid */}
+                          {componentEnabled("HRA") && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.HRA" })}
+                                name="hra"
+                                {...componentInputGuidance("HRA")}
+                              />
+                            </Grid>
+                          )}
+                          {componentEnabled("LTA") && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.LTA" })}
+                                name="lta"
+                                {...componentInputGuidance("LTA")}
+                              />
+                            </Grid>
+                          )}
+                          {componentEnabled("OTHER_ALLOWANCE") && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.OTHER_ALLOWANCE" })}
+                                name="otherAllowance"
+                                {...componentInputGuidance("OTHER_ALLOWANCE")}
+                              />
+                            </Grid>
+                          )}
+                          {bonusEnabled && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.BONUS" })}
+                                name="bonus"
+                                {...componentInputGuidance("BONUS")}
+                              />
+                            </Grid>
+                          )}
+                          {activeTemplateComponents
+                            .filter((component) => !fixedComponentCodes.has(component.code.toUpperCase()) && component.kind.toUpperCase() !== "DEDUCTION")
+                            .map((component) => (
+                              <Grid size={{ xs: 12, sm: 6 }} key={component.code}>
+                                <CurrencyInput
+                                  label={component.name}
+                                  name={component.code.toUpperCase()}
+                                  {...getSalaryComponentInputGuidance(component)}
+                                />
+                              </Grid>
+                            ))}
+                          {importedSalaryComponents
+                            .filter((component) => component.kind.toUpperCase() !== "DEDUCTION")
+                            .map((component) => (
+                              <Grid size={{ xs: 12, sm: 6 }} key={`imported-${component.componentCode}`}>
+                                <CurrencyInput
+                                  label={component.componentName}
+                                  name={component.componentCode.toUpperCase()}
+                                  {...getSalaryComponentInputGuidance(component)}
+                                />
+                              </Grid>
+                            ))}
+                        </Grid>
+                      </Box>
+
+                      {/* Card B: Deductions & Retentions */}
+                      <Box
+                        sx={{
+                          p: { xs: 2, sm: 2.5 },
+                          borderRadius: 2.5,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          bgcolor: "background.paper",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                        }}
+                      >
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                          <Stack direction="row" alignItems="center" spacing={1.25}>
+                            <Box
+                              sx={{
+                                width: 34,
+                                height: 34,
+                                borderRadius: 2,
+                                bgcolor: (theme) => alpha(theme.palette.error.main, 0.1),
+                                color: "error.main",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <AccountBalanceWalletOutlined fontSize="small" />
+                            </Box>
+                            <div>
+                              <Typography variant="subtitle2" sx={{ fontWeight: 750, color: "text.primary" }}>
+                                Deductions & Retentions
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Voluntary monthly withholdings and benefit premiums
+                              </Typography>
+                            </div>
+                          </Stack>
+                          <Stack direction="row" spacing={1} alignItems="center">
+                            <Chip size="small" label="Monthly Withholdings" variant="outlined" sx={{ height: 22, fontSize: "0.72rem" }} />
+                            <Chip
+                              size="small"
+                              label={`Deductions: ${formatInr(monthlyDeductions)}`}
+                              sx={{
+                                fontWeight: 700,
+                                fontSize: "0.75rem",
+                                borderRadius: 1.5,
+                                bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+                                color: "error.main",
+                                border: "1px solid",
+                                borderColor: (theme) => alpha(theme.palette.error.main, 0.2),
+                              }}
+                            />
+                          </Stack>
+                        </Stack>
+
+                        <Grid container spacing={2}>
+                          {componentEnabled("HEALTH_INSURANCE") && (
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                              <CurrencyInput
+                                label={i({ id: "EMPLOYEE.SALARY.HEALTH_INSURANCE" })}
+                                name="healthInsurance"
+                                {...componentInputGuidance("HEALTH_INSURANCE")}
+                              />
+                            </Grid>
+                          )}
+                          {activeTemplateComponents
+                            .filter((component) => !fixedComponentCodes.has(component.code.toUpperCase()) && component.kind.toUpperCase() === "DEDUCTION")
+                            .map((component) => (
+                              <Grid size={{ xs: 12, sm: 6 }} key={component.code}>
+                                <CurrencyInput
+                                  label={`${component.name} (deduction)`}
+                                  name={component.code.toUpperCase()}
+                                  {...getSalaryComponentInputGuidance(component)}
+                                />
+                              </Grid>
+                            ))}
+                          {importedSalaryComponents
+                            .filter((component) => component.kind.toUpperCase() === "DEDUCTION")
+                            .map((component) => (
+                              <Grid size={{ xs: 12, sm: 6 }} key={`imported-${component.componentCode}`}>
+                                <CurrencyInput
+                                  label={`${component.componentName} (deduction)`}
+                                  name={component.componentCode.toUpperCase()}
+                                  {...getSalaryComponentInputGuidance(component)}
+                                />
+                              </Grid>
+                            ))}
+                          {/* Balancing Callout when only single deduction exists */}
+                          {componentEnabled("HEALTH_INSURANCE") &&
+                            activeTemplateComponents.filter((c) => !fixedComponentCodes.has(c.code.toUpperCase()) && c.kind.toUpperCase() === "DEDUCTION").length === 0 &&
+                            importedSalaryComponents.filter((c) => c.kind.toUpperCase() === "DEDUCTION").length === 0 && (
+                              <Grid size={{ xs: 12, sm: 6 }}>
+                                <Box
+                                  sx={{
+                                    p: 1.75,
+                                    borderRadius: 2,
+                                    border: "1px dashed",
+                                    borderColor: "divider",
+                                    bgcolor: (theme) => alpha(theme.palette.info.main, 0.03),
+                                    height: "100%",
+                                    minHeight: 56,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <Typography variant="caption" fontWeight={700} color="text.secondary">
+                                    Statutory Taxes & Funds
+                                  </Typography>
+                                  <Typography variant="caption" color="text.disabled" sx={{ fontSize: "0.72rem", mt: 0.35, lineHeight: 1.35 }}>
+                                    EPF (12%), ESIC, PT, and TDS are automatically computed during the payroll execution run.
+                                  </Typography>
+                                </Box>
+                              </Grid>
+                            )}
+                        </Grid>
+                      </Box>
+                    </Stack>
                   </Grid>
 
-                  <Grid size={12}>
-                    <CustomisedDatePicker
-                      label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_TO" })}
-                      value={
-                        values.effectiveTo ? dayjs(values.effectiveTo) : null
-                      }
-                      setValue={(newDate: Dayjs | null) => {
-                        setFieldTouched("effectiveTo", true);
-                        setFieldValue("effectiveTo", newDate);
-                      }}
-                      name="effectiveTo"
-                    />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                      Optional last date for this version. Leave blank while it remains current. For a salary change, close this version the day before the new version starts.
-                    </Typography>
-                    {values.effectiveTo && values.effectiveFrom && dayjs(values.effectiveTo).isBefore(dayjs(values.effectiveFrom), "day") && (
-                      <Alert severity="error" sx={{ mt: 1 }}>Effective to must be on or after Effective from.</Alert>
-                    )}
-                  </Grid>
-                  <Grid size={12}>
-                    <div>
-                      <FormControl
-                        sx={{ minWidth: 80, width: "100%", marginTop: "10px" }}
+                  {/* RIGHT COLUMN: Classification & Schedule */}
+                  <Grid size={{ xs: 12, lg: 5 }}>
+                    <Stack spacing={2.5}>
+                      {/* Card C: Payroll Classification */}
+                      <Box
+                        sx={{
+                          p: { xs: 2, sm: 2.5 },
+                          borderRadius: 2.5,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          bgcolor: "background.paper",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                        }}
                       >
-                        <InputLabel id="demo-simple-select-autowidth-label">
-                          {i({ id: "EMPLOYEE.SALARY.PAYMENT_FREQUENCY" })}
-                        </InputLabel>
-                        <AppSelect
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.paymentFrequency}
-                          onChange={(e) => {
-                            setFieldValue("paymentFrequency", e.target.value);
+                        <Typography variant="subtitle2" sx={{ fontWeight: 750, color: "text.primary" }}>
+                          Payroll Classification
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+                          Assign template rules and schedule group
+                        </Typography>
+
+                        <Stack spacing={2}>
+                          {salaryTemplates.length > 0 && (
+                            <FormControl fullWidth size="small">
+                              <InputLabel id="salary-template-label">Salary template</InputLabel>
+                              <AppSelect
+                                labelId="salary-template-label"
+                                value={selectedTemplateId}
+                                label="Salary template"
+                                onChange={(event) => {
+                                  const templateId = String(event.target.value);
+                                  const template = salaryTemplates.find((item) => item.id === templateId);
+                                  setSelectedTemplateId(templateId);
+                                  if (!template) return;
+                                  setSelectedPayGroupId(template.payGroupId ?? "");
+                                  setImportedSalaryComponents([]);
+                                  const templateValues = salaryTemplateValues(template);
+                                  const fixedValues: Record<string, number> = {};
+                                  Object.entries(fixedComponentFields).forEach(([code, field]) => {
+                                    if (code !== "BASIC_PAY") fixedValues[field] = templateValues[code] ?? 0;
+                                  });
+                                  Object.entries(fixedValues).forEach(([field, value]) => setFieldValue(field, value));
+                                  const templateEffectiveFrom = values.effectiveFrom ? dayjs(values.effectiveFrom).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
+                                  resolveEmployeePayrollComponents(salaryComponentDefinitions, template.components ?? [], templateEffectiveFrom)
+                                    .filter((component) => !fixedComponentFields[component.code.trim().toUpperCase()])
+                                    .forEach((component) => setFieldValue(component.code.trim().toUpperCase(), templateValues[component.code.trim().toUpperCase()] ?? 0));
+                                }}
+                              >
+                                <MenuItem value=""><em>Manual structure</em></MenuItem>
+                                {salaryTemplates.map((template) => (
+                                  <MenuItem key={template.id ?? template.name} value={template.id ?? ""}>{template.name}</MenuItem>
+                                ))}
+                              </AppSelect>
+                            </FormControl>
+                          )}
+
+                          <FormControl fullWidth size="small">
+                            <InputLabel id="employee-pay-group-label">Payroll pay group</InputLabel>
+                            <AppSelect
+                              labelId="employee-pay-group-label"
+                              value={selectedPayGroupId}
+                              label="Payroll pay group"
+                              onChange={(event) => setSelectedPayGroupId(String(event.target.value))}
+                            >
+                              <MenuItem value=""><em>Use the selected template's pay group</em></MenuItem>
+                              {selectedPayGroupId && !payGroups.some((group) => group.id === selectedPayGroupId) && (
+                                <MenuItem value={selectedPayGroupId} disabled>Unavailable pay group: {selectedPayGroupId}</MenuItem>
+                              )}
+                              {payGroups.map((group) => (
+                                <MenuItem key={group.id ?? group.name} value={group.id ?? ""}>{group.name}</MenuItem>
+                              ))}
+                            </AppSelect>
+                          </FormControl>
+                          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: -0.5, lineHeight: 1.4 }}>
+                            This group supplies the employee's payroll schedule and statutory-policy default unless an approved employee assignment overrides it.
+                          </Typography>
+                        </Stack>
+                      </Box>
+
+                      {/* Card D: Validity & Effective Period */}
+                      <Box
+                        sx={{
+                          p: { xs: 2, sm: 2.5 },
+                          borderRadius: 2.5,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          bgcolor: "background.paper",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                        }}
+                      >
+                        <Stack direction="row" alignItems="center" spacing={1.25} sx={{ mb: 0.5 }}>
+                          <Box
+                            sx={{
+                              width: 34,
+                              height: 34,
+                              borderRadius: 2,
+                              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                              color: "primary.main",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <CalendarMonthOutlined fontSize="small" />
+                          </Box>
+                          <div>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 750, color: "text.primary" }}>
+                              When does this salary apply?
+                            </Typography>
+                          </div>
+                        </Stack>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2, lineHeight: 1.4 }}>
+                          These dates define one salary version. Payroll uses the version covering each pay date; a later approved change creates a new version.
+                        </Typography>
+
+                        <Grid container spacing={2}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomisedDatePicker
+                              label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_FROM" })}
+                              value={values.effectiveFrom ? dayjs(values.effectiveFrom) : null}
+                              setValue={(newDate: Dayjs | null) => {
+                                setFieldTouched("effectiveFrom", true);
+                                setFieldValue("effectiveFrom", newDate);
+                              }}
+                              name="effectiveFrom"
+                            />
+                            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5, fontSize: "0.72rem", lineHeight: 1.3 }}>
+                              Start date: prefilled from joining date. Change it only when the approved offer or salary start date differs.
+                            </Typography>
+                          </Grid>
+                          <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomisedDatePicker
+                              label={i({ id: "EMPLOYEE.SALARY.EFFECTIVE_TO" })}
+                              value={values.effectiveTo ? dayjs(values.effectiveTo) : null}
+                              setValue={(newDate: Dayjs | null) => {
+                                setFieldTouched("effectiveTo", true);
+                              }}
+                              name="effectiveTo"
+                            />
+                            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5, fontSize: "0.72rem", lineHeight: 1.3 }}>
+                              Optional end date. Leave blank for the current version. When a new version starts, the prior one normally ends the day before.
+                            </Typography>
+                          </Grid>
+                        </Grid>
+
+                        {values.effectiveTo && values.effectiveFrom && dayjs(values.effectiveTo).isBefore(dayjs(values.effectiveFrom), "day") && (
+                          <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
+                            End date must be on or after the start date.
+                          </Alert>
+                        )}
+
+                        <Box
+                          sx={{
+                            mt: 2,
+                            p: 1.5,
+                            borderRadius: 2,
+                            bgcolor: "action.hover",
+                            display: "flex",
+                            alignItems: "flex-start",
+                            gap: 1.25,
                           }}
-                          autoWidth
-                          label="Payment Frequency"
-                          name="paymentFrequency"
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
-                          <MenuItem value="Monthly">
-                            {i({ id: "LEAVE.ACCRUAL_PERIOD.MONTHLY" })}
-                          </MenuItem>
-                          <MenuItem value="Quaterly">
-                            {i({ id: "LEAVE.ACCRUAL_PERIOD.QUARTERLY" })}
-                          </MenuItem>
-                          <MenuItem value="Yearly">
-                            {i({ id: "LEAVE.ACCRUAL_PERIOD.YEARLY" })}
-                          </MenuItem>
-                        </AppSelect>
-                      </FormControl>
-                    </div>
+                          <InfoOutlined fontSize="small" color="info" sx={{ mt: 0.25 }} />
+                          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4 }}>
+                            Payroll cadence: monthly. Employee payment timing follows the assigned payroll pay group; weekly, biweekly, quarterly, and annual payroll runs are not currently supported.
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Stack>
                   </Grid>
                 </Grid>
               </Stack>

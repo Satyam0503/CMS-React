@@ -18,6 +18,7 @@ export interface ApiResponse {
   errorCode?: string | null;
   resourceId?: string | null;
   actionToken?: string | null;
+  errors?: Array<{ field: string; message: string }>;
 }
 
 export interface CreatePasswordModel {

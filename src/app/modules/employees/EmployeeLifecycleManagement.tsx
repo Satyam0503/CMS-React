@@ -1,41 +1,36 @@
-import { useEffect, useMemo } from "react";
-import {
-  AssignmentLateOutlined,
-  FactCheckOutlined,
-  TuneRounded,
-} from "@mui/icons-material";
-import { Box, Card, Paper, Tab, Tabs, Tooltip, Typography } from "@mui/material";
+import { useEffect } from "react";
+import AssignmentLateOutlined from "@mui/icons-material/AssignmentLateOutlined";
+import FactCheckOutlined from "@mui/icons-material/FactCheckOutlined";
+import TuneRounded from "@mui/icons-material/TuneRounded";
+import { Box, Card } from "@mui/material";
+import clsx from "clsx";
 import { useSearchParams } from "react-router-dom";
 import { usePageData } from "../../Context/PageDataProvider";
 import { EmployeeLifecycleCaseQueue } from "./components/EmployeeLifecycleCaseQueue";
 import { EmployeeLifecyclePolicyConfig } from "./components/EmployeeLifecyclePolicyConfig";
 import { EmployeeLifecycleReconciliationPanel } from "./components/EmployeeLifecycleReconciliationPanel";
 
-type LifecycleView = "policies" | "reconciliation" | "cases";
+type LifecycleView = "cases" | "policies" | "reconciliation";
 
 const views: Array<{
   value: LifecycleView;
   label: string;
-  description: string;
   icon: JSX.Element;
 }> = [
   {
+    value: "cases",
+    label: "Lifecycle Cases",
+    icon: <AssignmentLateOutlined fontSize="small" />,
+  },
+  {
     value: "policies",
-    label: "Policy reference",
-    description: "Read-only lifecycle rules sourced from Leave Management policies.",
-    icon: <TuneRounded />,
+    label: "Special Leaves & Policies",
+    icon: <TuneRounded fontSize="small" />,
   },
   {
     value: "reconciliation",
-    label: "Reconciliation",
-    description: "Review the read-only connection between approved leave and employment status.",
-    icon: <FactCheckOutlined />,
-  },
-  {
-    value: "cases",
-    label: "Lifecycle cases",
-    description: "Track documents, extensions, expected returns, and open HR actions.",
-    icon: <AssignmentLateOutlined />,
+    label: "Reconciliation Register",
+    icon: <FactCheckOutlined fontSize="small" />,
   },
 ];
 
@@ -48,112 +43,72 @@ const EmployeeLifecycleManagement = () => {
   const requestedView = searchParams.get("view");
   const activeView: LifecycleView = isLifecycleView(requestedView)
     ? requestedView
-    : "policies";
-  const activeDetails = useMemo(
-    () => views.find((view) => view.value === activeView) ?? views[0],
-    [activeView],
-  );
+    : "cases";
 
   useEffect(() => {
-    setPageTitle("Lifecycle Management");
+    setPageTitle("Employee Lifecycle");
   }, [setPageTitle]);
 
-  const handleViewChange = (_event: React.SyntheticEvent, value: LifecycleView) => {
+  const handleViewChange = (value: LifecycleView) => {
     setSearchParams({ view: value }, { replace: true });
   };
 
   return (
     <Box sx={{ width: "100%", maxWidth: "none", mx: 0, pb: { xs: 2, md: 3 } }}>
-      <Paper
-        variant="outlined"
+      {/* Codeji HRMS Consistent Theme Tab Container */}
+      <Card
+        role="tablist"
+        aria-label="Employee lifecycle sections"
+        className="tab-container d-flex flex-row"
         sx={{
-          mb: 2,
+          mb: 2.5,
           borderRadius: 3,
-          overflow: "hidden",
-          bgcolor: "background.paper",
+          p: 0.75,
+          gap: 0.5,
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+          "& .tab-box": {
+            flex: { xs: "0 0 auto", sm: "1 1 0" },
+            minWidth: { xs: 140, sm: 0 },
+            justifyContent: "center",
+            textAlign: "center",
+          },
         }}
       >
-        <Tabs
-          value={activeView}
-          onChange={handleViewChange}
-          variant="fullWidth"
-          aria-label="Lifecycle management sections"
-          sx={{
-            px: { xs: 0.5, sm: 1 },
-            minHeight: 58,
-            "& .MuiTab-root": {
-              minHeight: 58,
-              minWidth: 0,
-              flex: "1 1 0",
-              px: { xs: 0.5, sm: 2 },
-              fontWeight: 700,
-              textTransform: "none",
-              color: "text.secondary",
-              borderRadius: 2,
-              mx: 0.25,
-              "&:hover": { bgcolor: "action.hover", color: "primary.main" },
-              "&.Mui-selected": { color: "primary.main", bgcolor: "action.selected" },
-              "@media (max-width: 1023px)": {
-                minHeight: 52,
-                px: 0.5,
-                "& .lifecycle-tab-label": { display: "none" },
-                "& .MuiSvgIcon-root": { fontSize: 23, marginBottom: 0 },
-              },
-            },
-            "& .MuiTabs-indicator": { height: 3, borderRadius: 3, bgcolor: "primary.main" },
-          }}
-        >
-          {views.map((view) => (
-            <Tooltip key={view.value} title={view.label} placement="bottom">
-              <Tab
-                value={view.value}
-                label={<Box component="span" className="lifecycle-tab-label">{view.label}</Box>}
-                icon={view.icon}
-                iconPosition="start"
-                aria-label={view.label}
-                aria-controls={`lifecycle-panel-${view.value}`}
-                id={`lifecycle-tab-${view.value}`}
-              />
-            </Tooltip>
-          ))}
-        </Tabs>
-      </Paper>
+        {views.map((tab) => {
+          const isSelected = activeView === tab.value;
+          return (
+            <Box
+              component="div"
+              key={tab.value}
+              role="tab"
+              aria-selected={isSelected}
+              className={clsx("tab-box", {
+                tab_active: isSelected,
+              })}
+              onClick={() => handleViewChange(tab.value)}
+            >
+              {tab.icon}
+              {tab.label}
+            </Box>
+          );
+        })}
+      </Card>
 
+      {/* Tab Panels */}
       <Box
         role="tabpanel"
         id={`lifecycle-panel-${activeView}`}
         aria-labelledby={`lifecycle-tab-${activeView}`}
         sx={{ minWidth: 0 }}
       >
-        {activeView === "cases" ? (
-          <EmployeeLifecycleCaseQueue />
-        ) : (
-          <Card
-            sx={{
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-              boxShadow: "0 12px 30px rgba(33, 93, 110, .06)",
-              overflow: "hidden",
-            }}
-          >
-            <Box sx={{ p: { xs: 2, sm: 2.5 }, borderBottom: "1px solid", borderColor: "divider" }}>
-              <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                {activeDetails.label}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {activeDetails.description}
-              </Typography>
-            </Box>
-            <Box sx={{ p: { xs: 1.25, sm: 2.5 }, minWidth: 0, overflowX: "hidden" }}>
-              {activeView === "policies" && (
-                <EmployeeLifecyclePolicyConfig canEdit showHeader={false} />
-              )}
-              {activeView === "reconciliation" && (
-                <EmployeeLifecycleReconciliationPanel showHeader={false} />
-              )}
-            </Box>
-          </Card>
+        {activeView === "cases" && <EmployeeLifecycleCaseQueue />}
+        {activeView === "policies" && (
+          <EmployeeLifecyclePolicyConfig canEdit showHeader={false} />
+        )}
+        {activeView === "reconciliation" && (
+          <EmployeeLifecycleReconciliationPanel showHeader={false} />
         )}
       </Box>
     </Box>

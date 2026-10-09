@@ -21,6 +21,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 import { useIntl } from "react-intl";
 import { InviteNewEmployee } from "./InviteNewEmployee";
 import { UpdateEmployeeData } from "./UpdateEmployeeData";
@@ -28,7 +29,6 @@ import {
   CreateEmployeeSalary,
   InviteEmployeeResponse,
   InviteNewEmployeeModel,
-  SalaryModel,
 } from "../models";
 import { FormikProps } from "formik";
 import { EditEmployeePayloadModel } from "../../users/models";
@@ -82,6 +82,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
   const [activeStep, setActiveSteps] = useState(0);
   const [newEmployeeData, setNewEmployeeData] =
     useState<InviteEmployeeResponse>();
+  const [salaryEffectiveFrom, setSalaryEffectiveFrom] = useState<string>();
   const salaryUpdateRef = useRef<FormikProps<CreateEmployeeSalary> | null>(
     null,
   );
@@ -110,8 +111,24 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     }
   };
 
+  const handleEmployeeDataSaved = (success: boolean, dateOfJoining?: Dayjs | null) => {
+    if (!success) return;
+    setSalaryEffectiveFrom(dateOfJoining && dayjs(dateOfJoining).isValid()
+      ? dayjs(dateOfJoining).format("YYYY-MM-DD")
+      : undefined);
+    incrementStep();
+  };
+
   const handleSkip = () => {
     setActiveSteps((step) => step + 1);
+  };
+
+  const handleSalarySetupComplete = (saved: boolean) => {
+    if (saved) {
+      incrementStep();
+      return;
+    }
+    setButtonLoading(false);
   };
 
   const handleButtonLoading = (loading: boolean) => {
@@ -264,7 +281,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
               <div>
                 <UpdateEmployeeData
                   employeeData={newEmployeeData}
-                  onUserUpdate={incrementStep}
+                  onUserUpdate={handleEmployeeDataSaved}
                   formRef={updateFormRef}
                   handleButtonLoading={handleButtonLoading}
                 />
@@ -277,8 +294,9 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                 <UpdateEmployeeSalaryData
                   userId={newEmployeeData.userId}
                   employeeId={newEmployeeData.employeeId}
+                  defaultEffectiveFrom={salaryEffectiveFrom}
                   handleButtonLoading={handleButtonLoading}
-                  onUserUpdate={incrementStep}
+                  onUserUpdate={handleSalarySetupComplete}
                   formRef={salaryUpdateRef}
                 />
               </div>
@@ -328,11 +346,6 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
           }}
         >
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
-            <AppButton variant="outlined" onClick={handleClose}>
-              {i({ id: "BUTTON.CLOSE" })}
-            </AppButton>
-          )}
-          {activeStep === AddEmployeeSteps.UPDATE_SALARY && (
             <AppButton variant="outlined" onClick={handleClose}>
               {i({ id: "BUTTON.CLOSE" })}
             </AppButton>

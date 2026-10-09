@@ -4,10 +4,11 @@ import {
   SxProps,
   Theme,
 } from "@mui/material";
-import { Close, Search } from "@mui/icons-material";
-import { FC, memo, useEffect, useState } from "react";
+import Close from "@mui/icons-material/Close";
+import Search from "@mui/icons-material/Search";
+import { FC, memo, useContext, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useIntl } from "react-intl";
+import { IntlContext } from "react-intl";
 
 import { AppIconButton, AppTextField } from "./ui";
 type PropsType = {
@@ -21,7 +22,10 @@ export const SearchInput: FC<PropsType> = memo(
   ({ search, setSearch, placeholder = "PLACEHOLDER.SEARCH", sx }) => {
     const [value, setValue] = useState(search);
     const debouncedValue = useDebounce(value);
-    const { formatMessage: i } = useIntl();
+    const intl = useContext(IntlContext);
+    const resolvedPlaceholder = intl
+      ? intl.formatMessage({ id: placeholder, defaultMessage: placeholder })
+      : placeholder;
 
     useEffect(() => {
       if (debouncedValue.length >= 0) {
@@ -49,7 +53,7 @@ export const SearchInput: FC<PropsType> = memo(
           variant="outlined"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder={i({ id: placeholder })}
+          placeholder={resolvedPlaceholder}
           sx={{
             "& .MuiOutlinedInput-root": {
               height: 40,

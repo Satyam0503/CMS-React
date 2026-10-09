@@ -46,13 +46,18 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, 
             ...(isSmallScreen
               ? {}
               : {
-                  top: "calc(var(--app-header-height) + 16px) !important",
-                  bottom: "16px !important",
-                  marginTop: "auto !important",
-                  marginBottom: "auto !important",
-                  height: "clamp(500px, calc(100dvh - var(--app-header-height) - 72px), 680px) !important",
+                  top: "calc(50% + (var(--app-header-height) / 2)) !important",
+                  bottom: "auto !important",
+                  marginTop: "0 !important",
+                  marginBottom: "0 !important",
+                  height: isMiniSidebar && !isHoverExpanded
+                    ? "auto !important"
+                    : "clamp(560px, calc(100dvh - var(--app-header-height) - 120px), 640px) !important",
                   maxHeight: "calc(100dvh - var(--app-header-height) - 32px) !important",
-                  transform: "translateZ(0) !important",
+                  transform: "translateY(-50%) translateZ(0) !important",
+                  "&:hover": {
+                    transform: "translateY(calc(-50% - 2px)) translateZ(0) !important",
+                  },
                 }),
           },
           className: 'sidebar-paper',
@@ -76,13 +81,14 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, 
         sx={{
           maxHeight: isSmallScreen
             ? "calc(100dvh - 20px)"
-            : "calc(100dvh - var(--app-header-height) - 28px)",
-          height: "100%",
+            : "calc(100dvh - var(--app-header-height) - 32px)",
+          height: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? "auto" : "100%",
           minHeight: 0,
-          flexGrow: 1,
-          justifyContent: "space-between",
-          px: 2,
-          py: 2,
+          flexGrow: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? 0 : 1,
+          justifyContent: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? "flex-start" : "space-between",
+          px: isMiniSidebar && !isHoverExpanded ? 1 : 2,
+          py: 1.5,
+          gap: 0.5,
           overflow: "hidden",
         }}
       >

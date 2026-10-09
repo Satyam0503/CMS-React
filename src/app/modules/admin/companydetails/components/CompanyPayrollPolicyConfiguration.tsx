@@ -47,17 +47,6 @@ export function CompanyPayrollPolicyConfiguration() {
     return () => { active = false; };
   }, []);
 
-  const applyCompanyTierPreset = (mode: "Startup" | "Standard" | "Enterprise") => {
-    setPolicyConfig((current) => ({
-      ...current,
-      payrollMode: mode,
-      divisorPolicy: mode === "Enterprise" ? "WORKING_DAYS" : "CALENDAR_DAYS",
-      epfMode: mode === "Startup" ? "EXEMPT" : mode === "Enterprise" ? "ACTUAL_BASIC_12" : "CAPPED_CEILING",
-      esicMode: mode === "Startup" ? "EXEMPT" : "STATUTORY",
-      requireAttendanceLock: mode !== "Startup",
-    }));
-  };
-
   const handleSavePolicyConfig = async () => {
     setIsSavingPolicy(true);
     try {
@@ -77,7 +66,6 @@ export function CompanyPayrollPolicyConfiguration() {
       setPolicyConfig={setPolicyConfig}
       policyExpanded={policyExpanded}
       setPolicyExpanded={setPolicyExpanded}
-      applyCompanyTierPreset={applyCompanyTierPreset}
       handleSavePolicyConfig={handleSavePolicyConfig}
       isSavingPolicy={isSavingPolicy}
       canSavePolicy={canSavePolicy}

@@ -102,8 +102,8 @@ const MasterLayout = () => {
                   className="d-flex flex-column flex-grow-1 gap-3"
                   sx={{
                     width: "100%",
-                    maxWidth: { xs: "none", md: "1680px" },
-                    mx: "auto",
+                    maxWidth: "none",
+                    mx: 0,
                     minWidth: 0,
                     minHeight: "max-content",
                     overflow: "visible",

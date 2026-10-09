@@ -1,20 +1,16 @@
 ﻿import {
   AccountBalanceOutlined,
   CalendarMonthOutlined,
-  CheckCircleRounded,
-  DomainOutlined,
   HealthAndSafetyOutlined,
   LockClockOutlined,
   ReceiptLongOutlined,
   SaveRounded,
   ShieldOutlined,
-  StorefrontOutlined,
   TuneRounded,
 } from "@mui/icons-material";
 import {
   Box,
   Card,
-  Chip,
   Collapse,
   Divider,
   FormControl,
@@ -51,45 +47,16 @@ type Props = {
   setPolicyConfig: React.Dispatch<React.SetStateAction<PayrollDivisorPolicyConfig>>;
   policyExpanded: boolean;
   setPolicyExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  applyCompanyTierPreset: (mode: "Startup" | "Standard" | "Enterprise") => void;
   handleSavePolicyConfig: () => Promise<void>;
   isSavingPolicy: boolean;
   canSavePolicy: boolean;
 };
-
-const PRESET_TIERS = [
-  {
-    mode: "Startup" as const,
-    title: "Startup Mode",
-    headcount: "< 20 Employees",
-    desc: "Agile configuration: Calendar days divisor, EPF/ESIC exempt, optional lock gate.",
-    icon: <StorefrontOutlined sx={{ fontSize: 20 }} />,
-    accent: "#10B981",
-  },
-  {
-    mode: "Standard" as const,
-    title: "Standard SME",
-    headcount: "20 – 200 Employees",
-    desc: "Commercial standard: Calendar days, capped EPF (₹1,800), statutory ESIC (0.75%), Sec 115BAC TDS.",
-    icon: <AccountBalanceOutlined sx={{ fontSize: 20 }} />,
-    accent: "#0B5CAB",
-  },
-  {
-    mode: "Enterprise" as const,
-    title: "Enterprise",
-    headcount: "200+ Employees",
-    desc: "Strict statutory: Working days divisor, 12% actual basic EPF, statutory ESIC, mandatory attendance lock.",
-    icon: <DomainOutlined sx={{ fontSize: 20 }} />,
-    accent: "#7C3AED",
-  },
-];
 
 export function PayrollPolicyConfigCard({
   policyConfig,
   setPolicyConfig,
   policyExpanded,
   setPolicyExpanded,
-  applyCompanyTierPreset,
   handleSavePolicyConfig,
   isSavingPolicy,
   canSavePolicy,
@@ -175,22 +142,8 @@ export function PayrollPolicyConfigCard({
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Stack direction="row" spacing={1.25} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
               <Typography variant="h6" fontWeight={750} sx={{ letterSpacing: "-0.015em", color: "text.primary" }}>
-                Company Payroll Policy &amp; Statutory Engine
+                Company Payroll Policy & Statutory Engine
               </Typography>
-              <Chip
-                size="small"
-                label={`${policyConfig.payrollMode} Profile`}
-                sx={{
-                  height: 24,
-                  fontWeight: 700,
-                  fontSize: "0.75rem",
-                  borderRadius: "6px",
-                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
-                  color: "primary.main",
-                  border: "1px solid",
-                  borderColor: (theme) => alpha(theme.palette.primary.main, 0.2),
-                }}
-              />
               {policyConfig.isActive && (
                 <Stack direction="row" spacing={0.6} alignItems="center" sx={{ pl: 0.5 }}>
                   <Box
@@ -339,131 +292,6 @@ export function PayrollPolicyConfigCard({
         <Divider sx={{ my: 2.75, borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#E2E8F0" }} />
 
         <Stack spacing={3}>
-          {/* Preset Selector Deck (3 Glass Interactive Cards) */}
-          <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-              <Typography
-                variant="caption"
-                fontWeight={700}
-                sx={{
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  color: "text.secondary",
-                  fontSize: "0.74rem",
-                }}
-              >
-                Recommended Company Profile Presets
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
-                Click a profile to pre-fill statutory standard practices.
-              </Typography>
-            </Stack>
-
-            <Grid container spacing={2}>
-              {PRESET_TIERS.map((tier) => {
-                const isSelected = policyConfig.payrollMode === tier.mode;
-                return (
-                  <Grid size={{ xs: 12, md: 4 }} key={tier.mode}>
-                    <Box
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => applyCompanyTierPreset(tier.mode)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          applyCompanyTierPreset(tier.mode);
-                        }
-                      }}
-                      sx={{
-                        p: 2,
-                        borderRadius: "12px",
-                        cursor: "pointer",
-                        border: "1.5px solid",
-                        borderColor: isSelected
-                          ? "#0B5CAB"
-                          : isDark
-                          ? "rgba(255, 255, 255, 0.07)"
-                          : "#E2E8F0",
-                        bgcolor: isSelected
-                          ? isDark
-                            ? "rgba(11, 92, 171, 0.12)"
-                            : "rgba(11, 92, 171, 0.04)"
-                          : isDark
-                          ? "rgba(30, 41, 59, 0.3)"
-                          : "#FFFFFF",
-                        boxShadow: isSelected
-                          ? "0 4px 16px -2px rgba(11, 92, 171, 0.18)"
-                          : "none",
-                        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                        "&:hover": {
-                          borderColor: isSelected ? "#0B5CAB" : isDark ? "rgba(255,255,255,0.2)" : "#CBD5E1",
-                          transform: "translateY(-1px)",
-                        },
-                      }}
-                    >
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                        <Stack direction="row" spacing={1.25} alignItems="center">
-                          <Box
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: "8px",
-                              display: "grid",
-                              placeItems: "center",
-                              bgcolor: isSelected
-                                ? alpha(tier.accent, 0.12)
-                                : isDark
-                                ? "rgba(255, 255, 255, 0.05)"
-                                : "#F1F5F9",
-                              color: isSelected ? tier.accent : "text.secondary",
-                            }}
-                          >
-                            {tier.icon}
-                          </Box>
-                          <Box>
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight={750}
-                              sx={{
-                                color: isSelected ? "text.primary" : "text.primary",
-                                fontSize: "0.875rem",
-                              }}
-                            >
-                              {tier.title}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.72rem" }}>
-                              {tier.headcount}
-                            </Typography>
-                          </Box>
-                        </Stack>
-
-                        {isSelected && (
-                          <Chip
-                            size="small"
-                            icon={<CheckCircleRounded sx={{ fontSize: "14px !important", color: "#0B5CAB !important" }} />}
-                            label="Active Preset"
-                            sx={{
-                              height: 22,
-                              fontSize: "0.7rem",
-                              fontWeight: 700,
-                              bgcolor: alpha("#0B5CAB", 0.08),
-                              color: "#0B5CAB",
-                              borderRadius: "4px",
-                            }}
-                          />
-                        )}
-                      </Stack>
-
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.775rem", lineHeight: 1.45, mt: 0.5 }}>
-                        {tier.desc}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Box>
-
           {/* Form Rules Grid (3 Clean Enhanced Columns) */}
           <Grid container spacing={2}>
             {/* Column 1: Divisor & LOP */}
@@ -485,10 +313,10 @@ export function PayrollPolicyConfigCard({
                   </Box>
                   <Box>
                     <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.85rem" }}>
-                      1. Divisor &amp; LOP Rules
+                      1. Divisor & LOP Rules
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      Daily rate basis &amp; absent day deduction
+                      Daily rate basis & absent day deduction
                     </Typography>
                   </Box>
                 </Stack>
@@ -580,7 +408,7 @@ export function PayrollPolicyConfigCard({
                     >
                       <MenuItem value="CAPPED_CEILING">12% Capped at Wage Ceiling (₹1,800/mo)</MenuItem>
                       <MenuItem value="ACTUAL_BASIC_12">12% of Actual Basic Pay</MenuItem>
-                      <MenuItem value="EXEMPT">Exempt / Not Applicable (&lt;20 Staff)</MenuItem>
+                      <MenuItem value="EXEMPT">{"Exempt / Not Applicable (<20 Staff)"}</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -625,10 +453,10 @@ export function PayrollPolicyConfigCard({
                   </Box>
                   <Box>
                     <Typography variant="subtitle2" fontWeight={750} sx={{ fontSize: "0.85rem" }}>
-                      3. Tax &amp; Governance Gate
+                      3. Tax & Governance Gate
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: "0.72rem" }}>
-                      TDS tax withholding &amp; attendance freeze
+                      TDS tax withholding & attendance freeze
                     </Typography>
                   </Box>
                 </Stack>

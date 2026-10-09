@@ -96,24 +96,42 @@ export const createPayrollRun = (payload: CreatePayrollRunPayload) =>
 
 export const getPayrollRuns = () =>
   getRequest<PayrollRunModel[]>("api/payroll/runs");
-import type { CreatePayrollRunPayload, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunModel } from "./models";
+import type { CreatePayrollRunPayload, PayrollAdjustmentComponentModel, PayrollAdjustmentModel, PayrollRegisterRowModel, PayrollReportQuery, PayrollReportSummaryModel, PayrollRunEmployeeModel, PayrollRunModel, PayrollRunReviewModel } from "./models";
+
+export const getPayrollAdjustments = () =>
+  getRequest<ResponseData<PayrollAdjustmentModel[]>>("api/payroll/adjustments");
+export const getPayrollAdjustmentComponents = (effectiveDate: string) =>
+  getRequest<ResponseData<PayrollAdjustmentComponentModel[]>>(`api/payroll/adjustments/components?effectiveDate=${encodeURIComponent(effectiveDate)}`);
+export const approvePayrollAdjustment = (adjustmentId: string) =>
+  postRequest<undefined, ApiResponse>(`api/payroll/adjustments/${encodeURIComponent(adjustmentId)}/approve`, undefined);
+export const rejectPayrollAdjustment = (adjustmentId: string, reason: string) =>
+  postRequest<{ reason: string }, ApiResponse>(`api/payroll/adjustments/${encodeURIComponent(adjustmentId)}/reject`, { reason });
+
+export const getPayrollRunEmployees = (runId: string) =>
+  getRequest<ResponseData<PayrollRunEmployeeModel[]>>(`api/payroll/runs/${encodeURIComponent(runId)}/employees`);
+export const getPayrollRunReview = (runId: string) =>
+  getRequest<ResponseData<PayrollRunReviewModel>>(`api/payroll/runs/${encodeURIComponent(runId)}/review`);
 
 export const recordPayrollRunReview = (runId: string, comment?: string) =>
   postRequest<{ comment?: string }, ApiResponse>(`api/payroll/runs/${runId}/review`, { comment });
 export const approvePayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/approve`, undefined);
+export const processPayrollRun = (runId: string) =>
+  postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/process`, undefined);
 export const createPaymentBatch = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/payment-batches/from-run/${runId}`, undefined);
-export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; type: "ARREARS" | "CORRECTION" | "REVERSAL"; amount: number; reason: string }) =>
+export const createPayrollAdjustment = (payload: { originalPayrollRunId: string; employeeId: string; componentCode: string; targetPeriod: string; type: "ARREARS" | "CORRECTION" | "REVERSAL"; amount: number; reason: string }) =>
   postRequest<typeof payload, ApiResponse>("api/payroll/adjustments", payload);
-export type PayrollPaymentBatchModel = { id: string; payrollRunId: string; status: "DRAFT" | "SUBMITTED" | "RECONCILED"; providerReference?: string | null; employeeCount: number; totalNetAmount: number };
+export type PayrollPaymentBatchModel = { id: string; payrollRunId: string; status: "DRAFT" | "SUBMITTED" | "RECONCILING" | "RECONCILED"; providerReference?: string | null; reconciliationNote?: string | null; employeeCount: number; totalNetAmount: number };
 export const getPaymentBatch = (runId: string) => getRequest<PayrollPaymentBatchModel>(`api/payroll/payment-batches/from-run/${runId}`);
 export const submitPaymentBatch = (batchId: string, providerReference: string) => postRequest<{ providerReference: string }, ApiResponse>(`api/payroll/payment-batches/${batchId}/submit`, { providerReference });
-export const reconcilePaymentBatch = (batchId: string, note: string) => postRequest<{ note: string }, ApiResponse>(`api/payroll/payment-batches/${batchId}/reconcile`, { note });
+export const reconcilePaymentBatch = (batchId: string, note: string, paymentConfirmed: boolean) => postRequest<{ note: string; paymentConfirmed: boolean }, ApiResponse>(`api/payroll/payment-batches/${batchId}/reconcile`, { note, paymentConfirmed });
 
 
 export const calculatePayrollRun = (runId: string) =>
   postRequest<undefined, ApiResponse>(`api/payroll/runs/${runId}/calculate`, undefined);
+export const cancelPayrollRun = (runId: string, reason: string) =>
+  postRequest<{ reason: string }, ApiResponse>(`api/payroll/runs/${encodeURIComponent(runId)}/cancel`, { reason });
 
 
 const payrollReportQuery = (query: PayrollReportQuery) => {
@@ -146,6 +164,8 @@ export const getPayrollStatutoryRegisterCsv = (query: PayrollReportQuery) =>
   getBlobRequest(`api/payroll/reports/statutory/register.csv?${payrollReportQuery(query)}`);
 export const getEmployeeSalaryHistory = (employeeId: string) =>
   getRequest<EmployeeSalaryStructureModel[]>(`api/payroll/configuration/employee-salaries/${encodeURIComponent(employeeId)}`);
+export const getPendingEmployeeSalaryStructures = () =>
+  getRequest<EmployeeSalaryStructureModel[]>("api/payroll/configuration/employee-salaries/pending");
 export const saveEmployeeSalaryStructure = (payload: EmployeeSalaryStructureModel) =>
   postRequest<EmployeeSalaryStructureModel, ResponseData<EmployeeSalaryStructureModel>>("api/payroll/configuration/employee-salaries", payload);
 export const submitEmployeeSalaryStructure = (id: string, version: number) =>
@@ -170,9 +190,11 @@ export const getEmployeeSalaryImportBatch = (batchId: string) =>
   getRequest<import("./models").EmployeeSalaryImportBatchModel>(
     "api/payroll/configuration/employee-salaries/import/" + encodeURIComponent(batchId)
   );
-export const previewEmployeeSalaryPdf = (file: File) => {
+export const previewEmployeeSalaryPdf = (file: File, employeeId?: string, effectiveFrom?: string) => {
   const form = new FormData();
   form.append("pdf", file);
+  if (employeeId) form.append("employeeId", employeeId);
+  if (effectiveFrom) form.append("effectiveFrom", effectiveFrom);
   return postRequest<FormData, import("./models").EmployeeSalaryPdfImportParseResult>(
     "api/payroll/configuration/employee-salaries/import/pdf/preview", form, undefined, true
   );

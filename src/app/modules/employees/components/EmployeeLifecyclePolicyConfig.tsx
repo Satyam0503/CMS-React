@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Card, CardContent, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Card, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import AddRounded from "@mui/icons-material/AddRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import EditRounded from "@mui/icons-material/EditRounded";
@@ -10,7 +10,6 @@ import { getLeavePolicies } from "../../leaves/leaveServices";
 import { LeavePolicyModel } from "../../leaves/model";
 import { EmployeeLifecyclePolicy, createSpecialLeave, deleteSpecialLeave, getSpecialLeaves, linkSpecialLeave, unlinkSpecialLeave, updateSpecialLeave } from "../employeeServices";
 import {notifications}from "../../../shared/notifications";
-import { NotificationsNone } from "@mui/icons-material";
 const dateText = (v?: string) => v ? new Date(v).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "Not specified";
 
 export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = true }: { canEdit?: boolean; showHeader?: boolean }) => {
@@ -113,21 +112,134 @@ export const EmployeeLifecyclePolicyConfig = ({ canEdit = false, showHeader = tr
   };
 
   return <>
-    <Card sx={{ mb: showHeader ? 2 : 0 }}><CardContent>
-      <Stack spacing={1.5}>
-        {showHeader && <Stack direction="row" justifyContent="space-between" alignItems="center"><BoxTitle /><Button size="small" variant="contained" startIcon={<AddRounded />} onClick={() => setCreateOpen(true)}>Add special leave</Button></Stack>}
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "stretch", sm: "center" }}>
-          <Alert severity="info" sx={{ flex: 1 }}>Only lifecycle special leaves appear here. Normal Leave Policies remain managed in Leave Management.</Alert>
-          {canEdit && <Button size="small" variant="contained" startIcon={<AddRounded />} onClick={() => setCreateOpen(true)}>Add special leave</Button>}
+    <Card
+      sx={{
+        mb: showHeader ? 2 : 0,
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        p: { xs: 2, sm: 2.5 },
+        boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+        bgcolor: "background.paper",
+      }}
+    >
+      <Stack spacing={2}>
+        {showHeader && (
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <BoxTitle />
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<AddRounded />}
+              onClick={() => setCreateOpen(true)}
+              sx={{ borderRadius: 2, textTransform: "none", fontWeight: 700 }}
+            >
+              Add special leave
+            </Button>
+          </Stack>
+        )}
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1.5}
+          alignItems={{ xs: "stretch", sm: "center" }}
+        >
+          <Alert severity="info" sx={{ flex: 1, borderRadius: 2 }}>
+            Only lifecycle special leaves appear here. Normal Leave Policies remain managed in Leave Management.
+          </Alert>
+          {canEdit && (
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<AddRounded />}
+              onClick={() => setCreateOpen(true)}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 700,
+                whiteSpace: "nowrap",
+                height: 40,
+                px: 2,
+              }}
+            >
+              Add special leave
+            </Button>
+          )}
         </Stack>
         {/* {message && <Alert severity={message.startsWith("Unable") ? "error" : "success"}>{message}</Alert>} */}
         {loading ? <Stack alignItems="center" sx={{ py: 4 }}><CircularProgress size={28} /></Stack> : specialLeaves.length === 0 ? <Alert severity="warning">No special leaves are configured.</Alert> : specialLeaves.map((item, index) => {
           const policy = leavePolicies.find(p => p.id === item.leavePolicyId);
           const linked = Boolean(item.leavePolicyId);
-          return <Accordion key={item.id ?? `${item.eventType}-${index}`}><AccordionSummary expandIcon={<ExpandMoreRounded />}><Typography sx={{ fontWeight: 800, flex: 1 }}>{item.name || policy?.name || item.eventType || "Special leave"}</Typography><Chip size="small" label={linked ? "Linked" : "Not linked"} color={linked ? "success" : "default"} /></AccordionSummary><AccordionDetails><Stack spacing={1}><Typography variant="body2">Leave Policy: {policy?.name ?? "No Leave Policy linked"}</Typography><Typography variant="body2">Event: {item.eventType} · Effective: {dateText(item.effectiveFromUtc)}</Typography><Stack direction="row" justifyContent="flex-end" spacing={1}>{canEdit && !linked && <Button size="small" variant="outlined" startIcon={<LinkRounded />} disabled={busy} onClick={() => { setLinkItem(item); setLinkPolicyId(""); }}>Link</Button>}{canEdit && <Button size="small" variant="outlined" startIcon={<EditRounded />} disabled={busy} onClick={() => openEdit(item)}>Edit</Button>}{canEdit && linked && <Button size="small" variant="outlined" disabled={busy} onClick={() => void unlinkCard(item.id!)}>Unlink</Button>}{canEdit && <Button size="small" color="error" variant="outlined" disabled={busy} startIcon={<DeleteOutlineRounded />} onClick={() => setDeleteId(item.id ?? null)}>Delete</Button>}</Stack></Stack></AccordionDetails></Accordion>;
+          const displayName = item.name || policy?.name || item.eventType?.replace(/([a-z])([A-Z])/g, "$1 $2") || "Special leave";
+          return (
+            <Accordion
+              key={item.id ?? `${item.eventType}-${index}`}
+              disableGutters
+              sx={{
+                mb: 1.5,
+                borderRadius: "12px !important",
+                border: "1px solid",
+                borderColor: "divider",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                "&:before": { display: "none" },
+                overflow: "hidden",
+                bgcolor: "background.paper",
+              }}
+            >
+              <AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ px: 2.5, py: 1 }}>
+                <Stack direction="row" alignItems="center" spacing={1.5} sx={{ width: "100%", pr: 1 }}>
+                  <Typography sx={{ fontWeight: 750, flex: 1, fontSize: "0.95rem" }}>
+                    {displayName}
+                  </Typography>
+                  <Chip
+                    size="small"
+                    label={linked ? "Linked" : "Not linked"}
+                    color={linked ? "success" : "default"}
+                    variant={linked ? "filled" : "outlined"}
+                    sx={{ fontWeight: 650, height: 24 }}
+                  />
+                </Stack>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 2.5, pb: 2.5, pt: 0, borderTop: "1px solid", borderColor: "divider" }}>
+                <Stack spacing={1.75} sx={{ pt: 1.5 }}>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="space-between">
+                    <div>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Leave Policy:</strong> {policy?.name ?? "No Leave Policy linked"}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        <strong>Event Type:</strong> {item.eventType?.replace(/([a-z])([A-Z])/g, "$1 $2")} · <strong>Effective:</strong> {dateText(item.effectiveFromUtc)}
+                      </Typography>
+                    </div>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                      {canEdit && !linked && (
+                        <Button size="small" variant="outlined" startIcon={<LinkRounded />} disabled={busy} onClick={() => { setLinkItem(item); setLinkPolicyId(""); }} sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 650 }}>
+                          Link
+                        </Button>
+                      )}
+                      {canEdit && (
+                        <Button size="small" variant="outlined" startIcon={<EditRounded />} disabled={busy} onClick={() => openEdit(item)} sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 650 }}>
+                          Edit
+                        </Button>
+                      )}
+                      {canEdit && linked && (
+                        <Button size="small" variant="outlined" disabled={busy} onClick={() => void unlinkCard(item.id!)} sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 650 }}>
+                          Unlink
+                        </Button>
+                      )}
+                      {canEdit && (
+                        <Button size="small" color="error" variant="outlined" disabled={busy} startIcon={<DeleteOutlineRounded />} onClick={() => setDeleteId(item.id ?? null)} sx={{ borderRadius: 1.5, textTransform: "none", fontWeight: 650 }}>
+                          Delete
+                        </Button>
+                      )}
+                    </Stack>
+                  </Stack>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          );
         })}
       </Stack>
-    </CardContent></Card>
+    </Card>
     <Dialog open={Boolean(linkItem)} onClose={() => !busy && setLinkItem(null)} fullWidth maxWidth="sm"><DialogTitle>Link Leave Policy</DialogTitle><DialogContent><TextField select fullWidth label="Leave Policy" value={linkPolicyId} onChange={event => setLinkPolicyId(event.target.value)} sx={{ mt: 1 }}><MenuItem value="" disabled>Select a Leave Policy</MenuItem>{leavePolicies.filter(policy => policy.status && !policy.lifecycle?.enabled).map(policy => <MenuItem key={policy.id} value={policy.id ?? ""}>{policy.name}</MenuItem>)}</TextField></DialogContent><DialogActions><Button onClick={() => setLinkItem(null)} disabled={busy}>Cancel</Button><Button variant="contained" onClick={() => void saveLink()} disabled={busy}>Link</Button></DialogActions></Dialog>
     <Dialog open={Boolean(editItem)} onClose={() => !busy && setEditItem(null)} fullWidth maxWidth="sm"><DialogTitle>Edit special leave</DialogTitle><DialogContent><Stack spacing={2} sx={{ pt: 1 }}><TextField label="Special leave name" value={editName} onChange={event => setEditName(event.target.value)} fullWidth required /><TextField select label="Lifecycle event" value={editEventType} onChange={event => setEditEventType(event.target.value)} fullWidth><MenuItem value="MedicalLeave">Medical Leave</MenuItem><MenuItem value="MaternityLeave">Maternity Leave</MenuItem><MenuItem value="PaternityLeave">Paternity Leave</MenuItem><MenuItem value="LongTermLeave">Long-term Leave</MenuItem><MenuItem value="Sabbatical">Sabbatical</MenuItem></TextField></Stack></DialogContent><DialogActions><Button onClick={() => setEditItem(null)} disabled={busy}>Cancel</Button><Button variant="contained" onClick={() => void saveEdit()} disabled={busy}>Save</Button></DialogActions></Dialog>
     <Dialog open={createOpen} onClose={() => !busy && setCreateOpen(false)} fullWidth maxWidth="sm">

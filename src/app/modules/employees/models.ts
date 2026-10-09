@@ -127,7 +127,9 @@ export type GetAllEmployeeResponseData =
   ResponseData<GetAllEmployeeResponseModel>;
 
 export interface SalaryModel {
-  userId: string;
+  // Legacy salary projections may predate account linking; employee context
+  // still supplies the required account ID when creating a salary revision.
+  userId: string | null;
   employeeId: string;
   basicPay: number;
   hra: number;
@@ -146,7 +148,7 @@ export interface SalaryModel {
   status: boolean;
 }
 
-export type CreateEmployeeSalary = Pick<
+export type CreateEmployeeSalary = Omit<Pick<
   SalaryModel,
   | "userId"
   | "employeeId"
@@ -161,7 +163,7 @@ export type CreateEmployeeSalary = Pick<
   | "effectiveTo"
   | "paymentFrequency"
   | "status"
->;
+>, "userId"> & { userId: string };
 
 export type BulkImportEmployeeModel = {
   empId: string;

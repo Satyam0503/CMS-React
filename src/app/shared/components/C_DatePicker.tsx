@@ -18,6 +18,10 @@ interface PropsTypes {
   format?: string;
   sx?: SxProps<Theme>;
   shouldDisableDate?: (newDate: Dayjs) => boolean;
+  required?: boolean;
+  clearable?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 const CustomisedDatePicker = (props: PropsTypes) => {
@@ -33,6 +37,10 @@ const CustomisedDatePicker = (props: PropsTypes) => {
     sx,
     format,
     shouldDisableDate,
+    required = false,
+    clearable = false,
+    error = false,
+    helperText,
   } = props;
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -52,6 +60,7 @@ const CustomisedDatePicker = (props: PropsTypes) => {
           views={views}
           format={format}
           slotProps={{
+            field: { clearable },
             textField: {
               size: "small",
               className: "w-100",
@@ -61,6 +70,9 @@ const CustomisedDatePicker = (props: PropsTypes) => {
                   bgcolor: "background.paper",
                 },
               },
+              required,
+              error,
+              helperText,
               inputProps: {
                 readOnly: true,
                 onKeyDown: (e) => e.preventDefault(),

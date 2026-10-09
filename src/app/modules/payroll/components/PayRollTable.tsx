@@ -159,7 +159,10 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
         (row.payData.healthInsurance ?? 0) +
         (row.payData.lossOfPay ?? 0) +
         (row.payData.epf ?? 0) +
-        (row.payData.esic ?? 0);
+        (row.payData.esic ?? 0) +
+        (row.payData.deductionLines ?? [])
+          .filter((line) => line.code.toUpperCase() !== "LHD_ED_POLICY")
+          .reduce((sum, line) => sum + Math.max(0, line.amount || 0), 0);
       const netPay = grossPay - totalDeductions;
       return {
         ...row,
@@ -306,15 +309,18 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleView
                       );
                     }
                     if (amountColumns.has(column.id)) {
+                      const deductionDetails = column.id === "totalDeductions"
+                        ? (row.payData.deductionLines ?? []).filter((line) => line.code.toUpperCase() !== "LHD_ED_POLICY").map((line) => `${line.description}: ${currencyFormatter(line.amount)}`).join("; ")
+                        : undefined;
                       return (
-                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
+                        <TableCell key={column.id} title={deductionDetails || undefined} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {currencyFormatter(row.payData[column.id] as number | null | undefined)}
                         </TableCell>
                       );
                     }
                     return (
                       <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
-                        {row.payData[column.id]}
+                        {String(row.payData[column.id] ?? "")}
                       </TableCell>
                     );
                   })}

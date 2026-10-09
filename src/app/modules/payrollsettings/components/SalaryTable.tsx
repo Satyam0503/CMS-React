@@ -163,7 +163,7 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
                       bgcolor: `${alpha(theme.palette.primary.main, 0.055)} !important`,
                     },
                   })}
-                  onClick={() => handleRowClick(row)}
+                  onClick={() => { if (hasEditPermission) handleRowClick(row); }}
                 >
                   {columns.map((column) => {
                     if (column.id === "employeeName") {
@@ -239,6 +239,7 @@ export const SalaryTable = ({ salaryData, handleRowClick }: TableProps) => {
                           align="right"
                           sx={{
                             fontWeight: isHighlightColumn ? 700 : 500,
+                            whiteSpace: "nowrap",
                             color:
                               formatted === "NA"
                                 ? "text.disabled"

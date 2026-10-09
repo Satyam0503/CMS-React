@@ -18,6 +18,8 @@ export type PayRollDataModel = {
   healthInsurance: number;
   epf: number;
   esic: number;
+  deductionLines?: { code: string; description: string; amount: number; dayFraction?: number; sourceId?: string | null }[];
+  earningLines?: { code: string; description: string; amount: number }[];
   isProcessed: boolean;
   workflowStatus?: string;
   approvalStatus?: string;
@@ -61,6 +63,10 @@ export type GetPayRollResponseModel = ResponseData<PayRollResponseModel>;
 export type PayrollAuditEventModel = { action: string; actorId: string; occurredAtUtc: string; notes?: string | null };
 
 export type PayrollRunModel = { id: string; companyId: string; periodStart: string; periodEnd: string; payDate: string; runType: string; status: string; populationType: string; departmentId?: string | null; payGroupId?: string | null; employeeCount: number; readyCount: number; blockedCount: number; skippedCount: number; grossTotal: number; deductionTotal: number; netTotal: number; createdAtUtc: string; };
+export type PayrollRunReviewModel = { runId: string; status: string; employeeCount: number; calculatedCount: number; blockedCount: number; skippedCount: number; grossTotal: number; deductionTotal: number; netTotal: number; isReviewed: boolean; canApprove: boolean; blockingEmployeeIds: string[] };
+export type PayrollRunEmployeeModel = { employeeId: string; status: string; inclusionReason?: string | null; exclusionReason?: string | null; errorMessage?: string | null };
+export type PayrollAdjustmentModel = { id: string; originalPayrollRunId: string; correctionPayrollRunId?: string | null; employeeId: string; componentCode?: string | null; componentName?: string | null; componentKind?: string | null; isTaxable?: boolean | null; componentVersion?: number | null; targetPeriod?: string | null; type: string; status: string; amount: number; reason: string; createdBy?: string | null; createdAtUtc: string; approvedBy?: string | null; approvedAtUtc?: string | null; rejectedBy?: string | null; rejectedAtUtc?: string | null; rejectionReason?: string | null; processedBy?: string | null; processedAtUtc?: string | null };
+export type PayrollAdjustmentComponentModel = Pick<PayrollSalaryComponentModel, "code" | "name" | "kind" | "isTaxable" | "version">;
 export type CreatePayrollRunPayload = { periodStart: string; periodEnd: string; payDate: string; runType: string; populationType: string; departmentId?: string; payGroupId?: string; employeeIds?: string[]; idempotencyKey?: string; };
 
 export type PayrollReportQuery = {
@@ -185,7 +191,17 @@ export type PayrollSalaryTemplateComponentModel = {
 
 export type PayrollSalaryTemplateModel = {
   id?: string;
+  sourceTemplateId?: string | null;
+  sourceTemplateVersion?: number | null;
+  isRetired?: boolean;
+  retiredBy?: string | null;
+  retiredAtUtc?: string | null;
   name: string;
+  basicPay?: number | null;
+  hra?: number | null;
+  lta?: number | null;
+  otherAllowance?: number | null;
+  bonus?: number | null;
   payGroupId?: string | null;
   departmentId?: string | null;
   employeeType?: string | null;
@@ -239,6 +255,7 @@ export type EmployeeSalaryStructureModel = {
   currency: string;
   paymentFrequency: string;
   annualCtc?: number | null;
+  annualCtcSource?: string | null;
   monthlyGross?: number | null;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -246,6 +263,7 @@ export type EmployeeSalaryStructureModel = {
   approvalStatus: string;
   source: string;
   version: number;
+  submittedBy?: string | null;
   components: EmployeeSalaryComponentValueModel[];
 };
 

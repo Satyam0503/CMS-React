@@ -1,7 +1,7 @@
 import { useIntl } from "react-intl";
 import { Link as RouterLink, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { Box, ButtonBase, Stack, Tooltip } from "@mui/material";
-import { AccessTimeRounded, CorporateFare, Work, SettingsApplicationsRounded, NotificationsActiveRounded, FactCheckRounded } from "@mui/icons-material";
+import { alpha, Box, ButtonBase, Card, Stack, Tooltip, Typography } from "@mui/material";
+import { AccessTimeRounded, CorporateFare, Work, SettingsApplicationsRounded, NotificationsActiveRounded, FactCheckRounded, TuneRounded } from "@mui/icons-material";
 import { useEffect } from "react";
 import { TabModel } from "../../../../utils/common_types";
 import clsx from "clsx";
@@ -51,7 +51,7 @@ const tabsRoutes: TabModel[] = [
     icon: <NotificationsActiveRounded />,
   },
   { tabId: 6, to: "/admin/companydetails/recruitment-readiness", title: "Recruitment readiness", icon: <FactCheckRounded /> },
-  { tabId: 7, to: "/admin/companydetails/payroll-configuration", title: "Payroll configuration", icon: <SettingsApplicationsRounded /> },
+  { tabId: 7, to: "/admin/companydetails/payroll-configuration", title: "Payroll configuration", icon: <TuneRounded /> },
 ];
 
 export const CompanyDetailsTab = () => {
@@ -76,9 +76,11 @@ export const CompanyDetailsTab = () => {
 const CompanyPayrollConfiguration = () => {
   const userData = useAppSelector((state) => state.user.userData);
   const permissions = userData?.modulePermission ?? [];
-  const canEdit = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Edit, permissions);
-  const canApprove = userData?.roleType === Roles.Administrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Approve, permissions);
-  return <PayrollConfigurationPanel canEdit={canEdit} canApprove={canApprove} />;
+  const isAdministrator = userData?.roleType === Roles.Administrator;
+  const canEdit = isAdministrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Edit, permissions);
+  const canApprove = isAdministrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Approve, permissions);
+  const canDelete = isAdministrator || hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Delete, permissions);
+  return <PayrollConfigurationPanel canEdit={canEdit} canApprove={canApprove} canApproveEmployeeSalary={isAdministrator} canApprovePolicy={isAdministrator} canDeletePolicy={canDelete} />;
 };
 
 const CompanyDetails = () => {
@@ -92,84 +94,94 @@ const CompanyDetails = () => {
 
   return (
     <Box className="d-flex flex-column flex-grow-1" sx={{ minWidth: 0, width: "100%" }}>
-      <Box
+      <Card
+        variant="outlined"
         role="tablist"
         sx={{
-    bgcolor: "background.card",
-    p: { xs: 0.75, sm: 0.9 },
-    border: "1px solid",
-    borderColor: "divider",
-    borderRadius: { xs: 2.5, sm: 3 },
-    minWidth: 0,
-    maxWidth: "100%",
-    display: "flex",
-    overflowX: "hidden",
-    flexWrap: "nowrap",
-    gap: { xs: 0.5, sm: 0.75 },
-
-    "& .tab-box": {
-      minHeight: 54,
-      minWidth: 0,
-      flex: "1 1 0",
-      px: 1.25,
-      py: 1,
-      justifyContent: "center",
-      gap: 0.85,
-
-      "& .MuiSvgIcon-root": {
-        fontSize: 21,
-        flexShrink: 0,
-      },
-
-      "@media (max-width: 1023px)": {
-        px: 0.5,
-        gap: 0,
-
-        "& .tab-label": {
-          display: "none",
-        },
-
-        "& .MuiSvgIcon-root": {
-          fontSize: 23,
-        },
-      },
-
-      "&:hover": {
-        bgcolor: "action.hover",
-        color: "primary.main",
-      },
-
-      "&.tab_active": {
-        bgcolor: "primary.main",
-        color: "primary.contrastText",
-      },
-    },
+          borderRadius: 3,
+          p: 0.75,
+          bgcolor: "background.card",
+          border: "1px solid",
+          borderColor: "divider",
+          overflow: "hidden",
+          mb: 0.5,
         }}
       >
-        {tabsRoutes.map((tab) => {
-          const active = checkIsActive(location.pathname, tab.to);
-          return (
-            <Tooltip
-              key={tab.tabId}
-              title={formatMessage({ id: tab.title })}
-              placement="bottom"
-            >
-              <ButtonBase
-                component={RouterLink}
-                to={tab.to}
-                className={clsx("tab-box", { tab_active: active })}
-                role="tab"
-                aria-selected={active}
+        <Stack
+          direction="row"
+          spacing={0.75}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            width: "100%",
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          }}
+        >
+          {tabsRoutes.map((tab) => {
+            const active = checkIsActive(location.pathname, tab.to);
+            return (
+              <Tooltip
+                key={tab.tabId}
+                title={formatMessage({ id: tab.title })}
+                placement="bottom"
               >
-                {tab.icon}
-                <Box component="span" className="tab-label">
-                  {formatMessage({ id: tab.title })}
-                </Box>
-              </ButtonBase>
-            </Tooltip>
-          );
-        })}
-      </Box>
+                <ButtonBase
+                  component={RouterLink}
+                  to={tab.to}
+                  className={clsx("tab-box", { tab_active: active })}
+                  role="tab"
+                  aria-selected={active}
+                  sx={{
+                    flex: { xs: "0 0 auto", lg: "1 1 0" },
+                    minWidth: { xs: "auto", lg: 0 },
+                    minHeight: 46,
+                    px: { xs: 1.5, sm: 1.75 },
+                    py: 1,
+                    borderRadius: 2,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                    color: active ? "primary.main" : "text.secondary",
+                    fontWeight: active ? 750 : 650,
+                    fontSize: "0.84rem",
+                    bgcolor: active ? (theme) => alpha(theme.palette.primary.main, 0.12) : "transparent",
+                    border: "1px solid",
+                    borderColor: active ? (theme) => alpha(theme.palette.primary.main, 0.35) : "transparent",
+                    boxShadow: active
+                      ? (theme) => (theme.palette.mode === "dark" ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 8px rgba(11, 92, 171, 0.08)")
+                      : "none",
+                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "&:hover": {
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.07),
+                      color: "text.primary",
+                    },
+                    "& .MuiSvgIcon-root": {
+                      fontSize: 20,
+                      flexShrink: 0,
+                      color: active ? "primary.main" : "inherit",
+                    },
+                    "& .tab-label": {
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontSize: "0.835rem",
+                    },
+                  }}
+                >
+                  {tab.icon}
+                  <Box component="span" className="tab-label">
+                    {formatMessage({ id: tab.title })}
+                  </Box>
+                </ButtonBase>
+              </Tooltip>
+            );
+          })}
+        </Stack>
+      </Card>
       <Box
         component="div"
         className="d-flex flex-column flex-grow-1"

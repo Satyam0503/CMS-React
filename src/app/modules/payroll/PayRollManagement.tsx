@@ -21,6 +21,7 @@ import { AddUpdateEmployeePayRoll } from "./AddUpdateEmployeePayRoll";
 import { useAppSelector } from "../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../utils/common";
 import { ModulesName, Permission } from "../../../utils/enums";
+import { Roles } from "../../../utils/enums";
 import { payrollActionButtonSx } from "./components/payrollActionButtonSx";
 import { ProcessPayrollModal } from "./components/ProcessPayrollModal";
 import { RecordPayrollPaymentModal, PaymentForm } from "./components/RecordPayrollPaymentModal";
@@ -43,8 +44,13 @@ const PayRollManagement = () => {
     const [initialValues, setInitialValues] = useState<typeof initialPayRollValues>(initialPayRollValues);
     const [refresh, setRefresh] = useState<boolean>(false);
     const userModulePermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+    const currentUser = useAppSelector(state => state.user.userData);
     const hasCreatePermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Create, userModulePermissions);
     const hasEditPermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.Edit, userModulePermissions);
+    const isAdministrator = currentUser?.roleType === Roles.Administrator;
+    const hasPayrollViewPermission = hasModuleFeaturePermission(ModulesName.PayRoll, Permission.View, userModulePermissions);
+    const hasPayrollRunCreatePermission = hasModuleFeaturePermission(ModulesName.PayrollSettings, Permission.Create, userModulePermissions);
+    const hasEmployeeViewPermission = hasModuleFeaturePermission(ModulesName.Employees, Permission.View, userModulePermissions);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isApproving, setIsApproving] = useState(false);
     const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
@@ -329,6 +335,7 @@ const PayRollManagement = () => {
                 <PayrollAuditHistoryModal payrollId={auditRow?.payData.payRollId ?? null} employeeName={auditRow?.employeeName ?? ""} onClose={() => setAuditRow(null)} />
                 <ConfirmationModal open={isCloseConfirmOpen} title="Close payroll month" content={`Close payroll for ${payMonth?.format("MMMM YYYY")}? This will make it read-only.`} handleClose={() => !isClosingMonth && setIsCloseConfirmOpen(false)} handleConfirmation={() => void handleCloseMonth()} ok_btn confirming={isClosingMonth} />
             </Card>
+            {hasPayrollViewPermission && <PayrollRunsPanel canEdit={hasEditPermission} canApprove={isAdministrator} canCreate={hasPayrollRunCreatePermission} canSelectEmployees={hasEmployeeViewPermission} />}
             {
                 isModalOpen && <AddUpdateEmployeePayRoll edit={isEdit} open={isModalOpen} initialValues={initialValues} handleClose={handleModalClose} handlePageRefresh={handlePageRefresh} />
             }

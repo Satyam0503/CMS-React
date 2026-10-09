@@ -8,10 +8,12 @@ import { getPayrollAuditHistory } from "../services";
 vi.mock("../services", () => ({ getPayrollAuditHistory: vi.fn() }));
 
 const mockedGetHistory = vi.mocked(getPayrollAuditHistory);
+const roots: ReturnType<typeof createRoot>[] = [];
 
 const renderModal = async () => {
   const container = document.createElement("div");
   const root = createRoot(container);
+  roots.push(root);
   await act(async () => {
     root.render(<PayrollAuditHistoryModal payrollId="payroll-1" employeeName="Test Employee" onClose={vi.fn()} />);
   });
@@ -19,7 +21,10 @@ const renderModal = async () => {
 };
 
 describe("PayrollAuditHistoryModal", () => {
-  afterEach(() => {
+  afterEach(async () => {
+    for (const root of roots.splice(0)) {
+      await act(async () => root.unmount());
+    }
     document.body.innerHTML = "";
     mockedGetHistory.mockReset();
     vi.clearAllMocks();
@@ -54,4 +59,5 @@ describe("PayrollAuditHistoryModal", () => {
       root.render(<PayrollAuditHistoryModal payrollId={null} employeeName="Test Employee" onClose={vi.fn()} />);
     });
     expect(container.textContent).not.toContain("MONTH_PROCESSED");
-  });});
+  });
+});

@@ -24,12 +24,15 @@ import { ConfirmationModal } from "../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 import { getAllEmployees } from "../employees/employeeServices";
 import { getRequest, postRequest } from "../../../server/axios";
-import { ResponseData } from "../../../utils/common_types";
+import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { PayrollDivisorPolicyConfig } from "./components/PayrollPolicyConfigCard";
 import {
   AttendanceLockBlockingModal,
   AttendanceLockBlockingIssue,
 } from "./components/AttendanceLockBlockingModal";
+import { PayrollProcessingIssues, payrollProcessingFailure, type PayrollProcessingFailure } from "./components/PayrollProcessingIssues";
+import { AppAlert } from "../../shared/components/ui";
+import { downloadPayrollBulkSampleTemplate } from "./components/salaryImportMapping";
 
 type AttendanceMonthLockStatus = {
   payrollMonth: string;
@@ -61,8 +64,9 @@ export default function PayrollSettings() {
   const [attendanceLocked, setAttendanceLocked] = useState(false);
   const [isCheckingLock, setIsCheckingLock] = useState(false);
   const [blockingIssues, setBlockingIssues] = useState<AttendanceLockBlockingIssue[]>([]);
-  const [policyExpanded, setPolicyExpanded] = useState(false);
-  const [isSavingPolicy, setIsSavingPolicy] = useState(false);
+  const [processingFailure, setProcessingFailure] = useState<PayrollProcessingFailure | null>(null);
+  const [policyLoadError, setPolicyLoadError] = useState(false);
+  const [isLoadingPolicy, setIsLoadingPolicy] = useState(false);
   const [policyConfig, setPolicyConfig] = useState<PayrollDivisorPolicyConfig>({
     payrollMode: "Standard",
     divisorPolicy: "CALENDAR_DAYS",
@@ -82,11 +86,6 @@ export default function PayrollSettings() {
   const hasProcessPermission = hasModuleFeaturePermission(
     ModulesName.PayrollSettings,
     Permission.Create,
-    userModulesPermissions,
-  );
-  const hasEditPermission = hasModuleFeaturePermission(
-    ModulesName.PayrollSettings,
-    Permission.Edit,
     userModulesPermissions,
   );
 
@@ -110,71 +109,8 @@ export default function PayrollSettings() {
 
   const handleProcessMonthChange = (newValue: Dayjs | null) => {
     setProcessMonth(newValue);
-  };
-
-  const applyCompanyTierPreset = (mode: "Startup" | "Standard" | "Enterprise") => {
-    if (mode === "Startup") {
-      setPolicyConfig((prev) => ({
-        ...prev,
-        payrollMode: "Startup",
-        divisorPolicy: "CALENDAR_DAYS",
-        lopCalculationBase: "FIXED_GROSS",
-        epfMode: "EXEMPT",
-        epfWageCeiling: 15000,
-        esicMode: "EXEMPT",
-        tdsMode: "AUTO_NEW_REGIME",
-        requireAttendanceLock: false,
-      }));
-    } else if (mode === "Standard") {
-      setPolicyConfig((prev) => ({
-        ...prev,
-        payrollMode: "Standard",
-        divisorPolicy: "CALENDAR_DAYS",
-        lopCalculationBase: "FIXED_GROSS",
-        epfMode: "CAPPED_CEILING",
-        epfWageCeiling: 15000,
-        esicMode: "STATUTORY",
-        tdsMode: "AUTO_NEW_REGIME",
-        requireAttendanceLock: true,
-      }));
-    } else {
-      setPolicyConfig((prev) => ({
-        ...prev,
-        payrollMode: "Enterprise",
-        divisorPolicy: "WORKING_DAYS",
-        lopCalculationBase: "FIXED_GROSS",
-        epfMode: "ACTUAL_BASIC_12",
-        epfWageCeiling: 15000,
-        esicMode: "STATUTORY",
-        tdsMode: "AUTO_NEW_REGIME",
-        requireAttendanceLock: true,
-      }));
-    }
-  };
-
-  const handleSavePolicyConfig = async () => {
-    const effectiveMonth = (processMonth ?? dayjs()).startOf("month").format("YYYY-MM-01");
-    setIsSavingPolicy(true);
-    try {
-      const payload: PayrollDivisorPolicyConfig = {
-        ...policyConfig,
-        effectiveFrom: effectiveMonth,
-        isActive: true,
-      };
-      const { data } = await postRequest<PayrollDivisorPolicyConfig, { success: boolean; message?: string }>(
-        "api/payroll/divisor-policy",
-        payload,
-      );
-      if (data.success) {
-        toast.success(`Payroll calculation policy saved for ${(processMonth ?? dayjs()).format("MMMM YYYY")}.`);
-      } else {
-        toast.error(data.message || "Unable to save payroll calculation policy.");
-      }
-    } catch (error) {
-      toast.error((error as any)?.response?.data?.message ?? "Failed to save payroll calculation policy.");
-    } finally {
-      setIsSavingPolicy(false);
-    }
+    setProcessingFailure(null);
+    setBlockingIssues([]);
   };
 
   useEffect(() => {
@@ -184,7 +120,12 @@ export default function PayrollSettings() {
   useEffect(() => {
     let cancelled = false;
     setAttendanceLocked(false);
-    if (!processMonth) return;
+    setPolicyLoadError(false);
+    if (!processMonth) {
+      setIsCheckingLock(false);
+      setIsLoadingPolicy(false);
+      return;
+    }
     const monthKey = processMonth.format("YYYY-MM-01");
     setIsCheckingLock(true);
     getRequest<AttendanceMonthLockStatus>(
@@ -201,6 +142,7 @@ export default function PayrollSettings() {
         if (!cancelled) setIsCheckingLock(false);
       });
 
+    setIsLoadingPolicy(true);
     getRequest<PayrollDivisorPolicyConfig>(
       "api/payroll/divisor-policy",
       { params: { month: monthKey } },
@@ -224,7 +166,10 @@ export default function PayrollSettings() {
         }
       })
       .catch(() => {
-        // Keep default policy state if endpoint returns empty
+        if (!cancelled) setPolicyLoadError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingPolicy(false);
       });
 
     return () => {
@@ -289,21 +234,25 @@ export default function PayrollSettings() {
   }, [search, refresh]);
 
   const handleProcessSalary = async () => {
-    if (!processMonth) return;
+    if (!processMonth || isProcessing) return;
     setConfirmOpen(false);
+    setProcessingFailure(null);
     setIsProcessing(true);
     try {
       const { data } = await processPayroll({
-        payMonth: processMonth.format("YYYY-MM-DD"),
+        payMonth: processMonth.startOf("month").format("YYYY-MM-DD"),
       });
       if (data.success) {
         toast.success(data.message);
         handlePageRefresh();
       } else {
-        toast.error(data.message || i({ id: "ERROR.500" }));
+        setProcessingFailure(payrollProcessingFailure(data));
+        toast.error("Payroll could not be generated. Review the issues below.");
       }
     } catch (error) {
-      toast.error((error as any)?.response?.data?.message ?? i({ id: "ERROR.500" }));
+      const response = (error as { response?: { data?: ApiResponse } })?.response?.data;
+      setProcessingFailure(payrollProcessingFailure(response ?? { message: i({ id: "ERROR.500" }) }));
+      toast.error("Payroll could not be generated. Review the issues below.");
     } finally {
       setIsProcessing(false);
     }
@@ -348,11 +297,6 @@ export default function PayrollSettings() {
   };
 
   const openAttendanceCell = (issue: AttendanceLockBlockingIssue) => {
-    window.dispatchEvent(
-      new CustomEvent("edit-attendance-exception", {
-        detail: { employeeId: issue.employeeCode, date: issue.attendanceDate },
-      }),
-    );
     setBlockingIssues([]);
     navigate("/attendance", {
       state: {
@@ -365,6 +309,10 @@ export default function PayrollSettings() {
 
   const canRunDraftGeneration =
     Boolean(processMonth) &&
+    Boolean(processMonth?.startOf("month").isBefore(dayjs().startOf("month"))) &&
+    !isProcessing &&
+    !isLoadingPolicy &&
+    !policyLoadError &&
     !isCheckingLock &&
     !isLocking &&
     (attendanceLocked || !policyConfig.requireAttendanceLock);
@@ -374,6 +322,8 @@ export default function PayrollSettings() {
 
       <Card
         sx={(theme) => ({
+          minWidth: 0,
+          width: "100%",
           p: { xs: 2, sm: 2.5, md: 3 },
           borderRadius: 4,
           background:
@@ -463,6 +413,12 @@ export default function PayrollSettings() {
                 />
               </Box>
               <CustomisedButton
+                label="Sample Template"
+                variant="outlined"
+                handleClick={() => downloadPayrollBulkSampleTemplate(salaryData)}
+                sx={{ height: 40, borderRadius: 2.5, whiteSpace: "nowrap" }}
+              />
+              <CustomisedButton
                 label="Validate & Lock Attendance"
                 variant="outlined"
                 handleClick={() => void handleValidateAndLock()}
@@ -480,6 +436,10 @@ export default function PayrollSettings() {
             </Stack>
           )}
         </Stack>
+        {policyLoadError && <AppAlert severity="error" sx={{ mb: 2 }}>Payroll configuration could not be loaded. Refresh this page before generating payroll.</AppAlert>}
+        <PayrollProcessingIssues failure={processingFailure} onDismiss={() => setProcessingFailure(null)}
+          onPolicy={() => navigate("/admin/companydetails/payroll-configuration")}
+          onAttendance={() => navigate("/attendance")} />
         <SalaryTable salaryData={salaryData} handleRowClick={handleRowClick} />
       </Card>
       {isModalOpen && selectedEmployee && (

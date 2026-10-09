@@ -3,19 +3,18 @@
 .sidebar {
   & .sidebar-paper {
     width: var(--sidebar-current-width);
-    top: calc(var(--app-header-height) + 16px) !important;
-    bottom: 16px !important;
-    margin-top: auto !important;
-    margin-bottom: auto !important;
-    height: clamp(480px, calc(100dvh - var(--app-header-height) - 48px), 660px) !important;
+    top: calc(50% + (var(--app-header-height) / 2)) !important;
+    bottom: auto !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    height: clamp(560px, calc(100dvh - var(--app-header-height) - 120px), 640px) !important;
     max-height: calc(100dvh - var(--app-header-height) - 32px) !important;
     left: 16px;
     overflow: hidden;
     white-space: nowrap;
-    // Keep the navigation as one floating capsule centered vertically
-    // in the workspace area below the header.
+    // Compact floating capsule that adapts cleanly to content
     border: 1px solid rgba(255, 255, 255, 0.88);
-    border-radius: 34px !important;
+    border-radius: 28px !important;
     background-clip: padding-box;
     isolation: isolate;
     -webkit-backdrop-filter: blur(24px) saturate(190%);
@@ -30,7 +29,7 @@
       inset 0 1px 1px rgba(255, 255, 255, 0.95),
       0 18px 40px rgba(11, 92, 171, 0.10),
       0 4px 12px rgba(15, 23, 42, 0.04);
-    transform: translateZ(0) !important;
+    transform: translateY(-50%) translateZ(0) !important;
     will-change: width, border-radius, transform;
     transition:
       width 0.32s cubic-bezier(.2, .8, .2, 1),
@@ -39,21 +38,22 @@
       box-shadow 0.32s cubic-bezier(.2, .8, .2, 1);
 
     &:hover {
-      transform: translateY(-2px) translateZ(0) !important;
+      transform: translateY(calc(-50% - 2px)) translateZ(0) !important;
       box-shadow:
         0 20px 42px rgba(11, 92, 171, 0.14),
         0 4px 12px rgba(15, 23, 42, 0.06);
     }
   }
 
-  // Collapse toggle — centered cleanly inside the bottom curve of the capsule.
+  // Collapse toggle — sits cleanly directly below the menu items
   & .sidebar-footer {
     display: flex;
     justify-content: center;
     flex-shrink: 0;
-    padding-top: 0.5rem;
+    padding-top: 0.35rem;
     border-top: 1px solid var(--mui-palette-divider);
-    margin-top: 0.4rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.1rem;
   }
 
   & .sidebar-edge-toggle {
@@ -221,9 +221,10 @@
   &[data-sidebar-mini="true"] {
       & .sidebar-paper {
         width: var(--sidebar-current-width) !important;
+        height: auto !important;
         // A fully pill-shaped rail makes the collapsed navigation feel like a
         // deliberate compact control, with matching rounded top and bottom.
-        border-radius: 50px !important;
+        border-radius: 38px !important;
         box-shadow:
           0 14px 30px rgba(15, 23, 42, 0.16),
           0 3px 10px rgba(11, 92, 171, 0.10);

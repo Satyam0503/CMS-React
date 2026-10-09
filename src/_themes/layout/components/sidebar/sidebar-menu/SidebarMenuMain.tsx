@@ -7,6 +7,7 @@ import { Box, Stack } from "@mui/material";
 import { FC, useEffect, useMemo } from "react";
 import { useLocation } from "react-router";
 import { checkIsActive } from "../../../../helpers";
+import { ModulesTitles } from "../../../../../utils/enums";
 
 type Props = {
   currentIndex: number | null;
@@ -22,6 +23,13 @@ export const SidebarMenuMain: FC<Props> = ({
   onExpandSidebar,
 }) => {
   const { formatMessage } = useIntl();
+  const getTabTitle = (titleKey?: string) => {
+    if (!titleKey) return "";
+    if (titleKey === ModulesTitles.LifecycleManagement || titleKey === "MODULES.LIFECYCLE_MANAGEMENT") {
+      return "Employee Lifecycle";
+    }
+    return formatMessage({ id: titleKey });
+  };
   const { pathname } = useLocation();
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
@@ -59,10 +67,11 @@ export const SidebarMenuMain: FC<Props> = ({
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        my: 0.5,
+        my: 0,
+        overflowY: "auto",
       }}
     >
-      <Stack sx={{ my: "auto", width: "100%", gap: 0.25 }}>
+      <Stack sx={{ width: "100%", gap: 0.25 }}>
         {filteredTabList.map((tab, index) => {
           if (tab?.hasSubTabs) {
             const hasActiveChild = Boolean(
@@ -75,7 +84,7 @@ export const SidebarMenuMain: FC<Props> = ({
                 to={tab?.route}
                 isOpen={currentIndex === index}
                 hasActiveChild={hasActiveChild}
-                title={formatMessage({ id: tab?.title })}
+                title={getTabTitle(tab?.title)}
                 icon={tab?.icon}
                 isMiniSidebar={isMiniSidebar}
                 setCurrentMenuIndex={handleToggle}
@@ -86,7 +95,7 @@ export const SidebarMenuMain: FC<Props> = ({
                     <SidebarMenuItem
                       key={subTab?.id}
                       to={subTab?.route}
-                      title={formatMessage({ id: subTab?.title })}
+                      title={getTabTitle(subTab?.title)}
                       icon={subTab?.icon}
                       isMiniSidebar={isMiniSidebar}
                     />
@@ -101,7 +110,7 @@ export const SidebarMenuMain: FC<Props> = ({
                 key={tab.id}
                 to={tab.route}
                 icon={tab.icon}
-                title={formatMessage({ id: tab.title })}
+                title={getTabTitle(tab.title)}
                 isMiniSidebar={isMiniSidebar}
               />
             );
