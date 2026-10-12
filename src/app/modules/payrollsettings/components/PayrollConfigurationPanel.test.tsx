@@ -393,10 +393,10 @@ describe("PayrollConfigurationPanel optional salary components", () => {
     });
     const { container, root } = renderPanel();
     await act(async () => root.render(<PayrollConfigurationPanel canEdit canApprove={false} />));
-    const tab = Array.from(container.querySelectorAll('[role="tab"]')).find((item) => item.textContent?.includes("Salary Components"));
+    const tab = Array.from(container.querySelectorAll<HTMLElement>('[role="tab"]')).find((item) => item.textContent?.includes("Salary Components"));
     await act(async () => tab?.click());
 
-    const seedButton = container.querySelector('[data-testid="seed-standard-components-btn"]');
+    const seedButton = container.querySelector<HTMLButtonElement>('[data-testid="seed-standard-components-btn"]');
     expect(seedButton).not.toBeNull();
     await act(async () => seedButton?.click());
 
@@ -407,15 +407,15 @@ describe("PayrollConfigurationPanel optional salary components", () => {
     components = [];
     const { container, root } = renderPanel();
     await act(async () => root.render(<PayrollConfigurationPanel canEdit canApprove={false} />));
-    const tab = Array.from(container.querySelectorAll('[role="tab"]')).find((item) => item.textContent?.includes("Salary Components"));
+    const tab = Array.from(container.querySelectorAll<HTMLElement>('[role="tab"]')).find((item) => item.textContent?.includes("Salary Components"));
     await act(async () => tab?.click());
 
-    const hraChip = Array.from(container.querySelectorAll(".MuiChip-root")).find((chip) => chip.textContent?.includes("HRA"));
+    const hraChip = Array.from(container.querySelectorAll<HTMLElement>(".MuiChip-root")).find((chip) => chip.textContent?.includes("HRA"));
     expect(hraChip).toBeDefined();
     await act(async () => hraChip?.click());
 
-    const codeInput = container.querySelector('input[placeholder="MEAL_ALLOWANCE"]');
-    const nameInput = container.querySelector('input[placeholder="Meal allowance"]');
+    const codeInput = container.querySelector<HTMLInputElement>('input[placeholder="MEAL_ALLOWANCE"]');
+    const nameInput = container.querySelector<HTMLInputElement>('input[placeholder="Meal allowance"]');
     expect(codeInput?.value).toBe("HRA");
     expect(nameInput?.value).toBe("House Rent Allowance");
   });

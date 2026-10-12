@@ -4,7 +4,7 @@ import {
   Stack } from "@mui/system";
 import { Formik,
   FormikProps } from "formik";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CreateEmployeeSalary,
   SalaryModel } from "../models";
 import dayjs,
@@ -330,7 +330,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
             const definition = resolveEmployeePayrollComponentDefinition(salaryComponentDefinitions, code, salaryEffectiveDate);
             return definition ? getSalaryComponentInputGuidance(definition) : {};
           };
-          const standardCatalogAudit = useMemo(() => {
+          const standardCatalogAudit = (() => {
             if (!componentCatalogLoaded || componentCatalogFailed) return null;
             const hasDefinitions = salaryComponentDefinitions.length > 0;
             const configuredCodes = new Set(
@@ -355,7 +355,7 @@ export const UpdateEmployeeSalaryData = (props: PropsTypes) => {
               configuredCount: configuredCodes.size,
               unconfiguredStandardHeads,
             };
-          }, [componentCatalogLoaded, componentCatalogFailed, salaryComponentDefinitions, salaryEffectiveDate]);
+          })();
           const showConfiguredComponentWarning = componentCatalogFailed;
           const handleSalaryFile = async (file?: File) => {
             if (!file) return;
