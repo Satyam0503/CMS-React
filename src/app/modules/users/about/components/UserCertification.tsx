@@ -141,7 +141,7 @@ export const UserCertification = () => {
   return (
     <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
       <Stack className="flex-row justify-content-between" sx={{ mb: 2.5 }} >
-        <Typography variant="h5" sx={{ fontWeight: 700 }} >
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }} >
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION.TITLE" })}
         </Typography>
         {

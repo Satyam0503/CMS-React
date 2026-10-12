@@ -20,7 +20,7 @@ export const JobCard = ({ job, onSavedChange }: {
       component="article"
       onClick={() => navigate(`/careers/${job.companyPublicCode}/jobs/${job.slug}`)}
       sx={{
-        p: { xs: 2, sm: 2.5, md: 3 },
+        p: { xs: 2, sm: 2.25, md: 2.5 },
         borderRadius: { xs: 3, sm: 4 },
         border: "1px solid",
         borderColor: "divider",
@@ -34,12 +34,12 @@ export const JobCard = ({ job, onSavedChange }: {
         },
       }}
     >
-      <Stack direction="row" spacing={{ xs: 1.5, sm: 2.25 }} alignItems="flex-start">
+      <Stack direction="row" spacing={{ xs: 1.5, sm: 2 }} alignItems="flex-start">
         <Box sx={{ flexShrink: 0 }}><CompanyLogo src={job.companyLogo} name={job.companyName} size={48} /></Box>
         <Box sx={{ minWidth: 0, flex: 1 }}>
           <Stack direction="row" justifyContent="space-between" gap={1}>
             <Box>
-              <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 0.75 }}>
+              <Stack direction="row" flexWrap="wrap" gap={0.6} sx={{ mb: 0.6 }}>
                 {job.isFeatured && <Chip size="small" color="primary" label="Featured" />}
                 {job.isUrgentHiring && <Chip size="small" color="warning" label="Urgent hiring" />}
                 {job.isWalkIn && <Chip size="small" color="success" label="Walk-in" />}
@@ -49,18 +49,18 @@ export const JobCard = ({ job, onSavedChange }: {
             </Box>
             <SaveJobButton publicJobId={job.publicJobId} onChange={onSavedChange} />
           </Stack>
-          <Stack direction="row" flexWrap="wrap" gap={0.65} sx={{ mt: { xs: 1.5, sm: 2 } }}>
+          <Stack direction="row" flexWrap="wrap" gap={0.6} sx={{ mt: 1.25 }}>
             {job.location && <Chip size="small" icon={<LocationOnRounded />} label={job.location} />}
             {job.employmentType && <Chip size="small" icon={<WorkOutlineRounded />} label={job.employmentType} />}
             {job.workplaceType && <Chip size="small" label={job.workplaceType} />}
             {job.experienceMin != null && <Chip size="small" label={`${job.experienceMin}–${job.experienceMax ?? job.experienceMin}+ yrs`} />}
           </Stack>
           {(job.summary || job.shortDescription) && (
-            <Typography color="text.secondary" sx={{ mt: 1.5, lineHeight: 1.6, fontSize: { xs: "0.875rem", sm: "inherit" }, display: "-webkit-box", WebkitLineClamp: { xs: 3, sm: 2 }, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+            <Typography color="text.secondary" sx={{ mt: 1.25, lineHeight: 1.55, fontSize: { xs: "0.875rem", sm: "inherit" }, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
               {job.summary || job.shortDescription}
             </Typography>
           )}
-          <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" gap={1.25} sx={{ mt: 2 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" gap={1} sx={{ mt: 1.5 }}>
             <Stack direction="row" gap={0.7} flexWrap="wrap" sx={{ minWidth: 0 }}>
               {job.skills?.slice(0, 4).map((skill) => <Chip key={skill} size="small" variant="outlined" label={skill} />)}
             </Stack>

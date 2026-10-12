@@ -49,7 +49,7 @@ const employeeInitialValue: EditEmployeePayloadModel = {
 
 interface PropsTypes {
     employeeData: InviteNewEmployeeModel & { userId: string; department?: string | null };
-    onUserUpdate: (success: boolean) => void;
+    onUserUpdate: (success: boolean, dateOfJoining?: Dayjs | null) => void;
     formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>,
     handleButtonLoading: (loading: boolean) => void;
 }
@@ -81,7 +81,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
             const { success, message } = response.data;
             if (success) {
                 setSubmitting(false);
-                onUserUpdate(success);
+                onUserUpdate(success, values.dateOfJoining);
             } else {
                 toast.error(message || "Unable to update the employee. Verify the reporting manager is an active employee in the same company.");
             }
@@ -107,7 +107,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
             .catch((err) => {
                 console.log(err.message);
             });
-    }, []);
+    }, [i]);
 
     useEffect(() => {
         (async () => {

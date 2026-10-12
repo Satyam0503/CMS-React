@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Card,
+  Chip,
   Stack,
   Typography,
   alpha,
@@ -29,7 +30,7 @@ import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
 import { LANGUAGE } from "../../../../utils/enums";
 
-import { AppIconButton } from "../../../shared/components/ui";
+import { AppButton } from "../../../shared/components/ui";
 export default function ProfileCard() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -56,6 +57,32 @@ export default function ProfileCard() {
   const handleDateChange = (date: Dayjs | null) => {
     setDate(date);
   };
+
+  const lifecycleBadges = [
+  userDetails?.employmentStatus &&
+    userDetails.employmentStatus !== "Active" &&
+    {
+      label: userDetails.employmentStatus,
+      color: "warning" as const,
+      ariaLabel: `Employment status: ${userDetails.employmentStatus}`,
+    },
+  userDetails?.availabilityStatus &&
+    userDetails.availabilityStatus !== "Working" &&
+    {
+      label: userDetails.availabilityStatus.replace(
+        /([a-z])([A-Z])/g,
+        "$1 $2",
+      ),
+      color: "info" as const,
+      ariaLabel: `Availability status: ${userDetails.availabilityStatus}`,
+    },
+].filter(
+  (badge): badge is {
+    label: string;
+    color: "warning" | "info";
+    ariaLabel: string;
+  } => Boolean(badge),
+);
 
   const viewPaySlip = async () => {
     if (!date) {
@@ -151,6 +178,19 @@ export default function ProfileCard() {
             )}
           </Typography>
         </Stack>
+        {lifecycleBadges.length > 0 && (
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" justifyContent="center">
+            {lifecycleBadges.map((badge) => (
+              <Chip
+                key={badge.ariaLabel}
+                size="small"
+                color={badge.color}
+                label={badge.label}
+                aria-label={badge.ariaLabel}
+              />
+            ))}
+          </Stack>
+        )}
         <Stack direction="row" className="justify-content-around text-center">
           <Stack>
             <Typography
@@ -193,61 +233,49 @@ export default function ProfileCard() {
         </Stack>
         {!employeeId && (
           <Stack
-            direction="row"
-            className="gap-2 align-items-end justify-content-center"
+            spacing={1}
+            sx={{
+              width: "100%",
+              mt: 1.5,
+            }}
           >
-            <CustomisedDatePicker
-              label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
-              views={["month", "year"]}
-              value={date}
-              maxDate={dayjs().subtract(1, "month")}
-              setValue={handleDateChange}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: alpha(paySlipControlColor, 0.1),
-                  "& fieldset": {
-                    borderColor: alpha(paySlipControlColor, 0.82),
-                  },
-                  "&:hover:not(.Mui-focused)": {
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: paySlipControlColor,
+            <Box sx={{ width: "100%" }}>
+              <CustomisedDatePicker
+                label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+                views={["month", "year"]}
+                value={date}
+                maxDate={dayjs().subtract(1, "month")}
+                setValue={handleDateChange}
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: alpha(paySlipControlColor, 0.1),
+                    "& fieldset": { borderColor: alpha(paySlipControlColor, 0.82) },
+                    "&:hover:not(.Mui-focused)": {
+                      "& .MuiOutlinedInput-notchedOutline": { borderColor: paySlipControlColor },
                     },
+                    "&.Mui-focused fieldset": { borderColor: paySlipControlColor },
+                    color: paySlipControlColor,
                   },
-                  "&.Mui-focused fieldset": {
-                    borderColor: paySlipControlColor,
-                  },
-                  color: paySlipControlColor,
-                },
-                "& .MuiInputLabel-root": {
-                  color: paySlipControlColor,
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: paySlipControlColor,
-                },
-                "& .MuiSvgIcon-root": {
-                  color: paySlipControlColor,
-                },
-              }}
-            />
-            <AppIconButton
+                  "& .MuiInputLabel-root": { color: paySlipControlColor },
+                  "& .MuiInputLabel-root.Mui-focused": { color: paySlipControlColor },
+                  "& .MuiSvgIcon-root": { color: paySlipControlColor },
+                }}
+              />
+            </Box>
+            <AppButton
+              aria-label="View payslip"
+              startIcon={<Visibility />}
+              fullWidth
               sx={{
-                height: 36,
-                width: 36,
-                borderRadius: 1,
-                border: "1px solid",
-                borderColor: alpha(paySlipControlColor, 0.82),
-                backgroundColor: alpha(paySlipControlColor, 0.1),
-                "&:hover": { backgroundColor: alpha(paySlipControlColor, 0.2) },
+                color: paySlipControlColor,
+                borderColor: alpha(paySlipControlColor, 0.42),
               }}
+              variant="outlined"
               onClick={viewPaySlip}
-              disabled={loading}
             >
-              {loading ? (
-                <span className="loader" />
-              ) : (
-                <Visibility sx={{ color: paySlipControlColor }} />
-              )}
-            </AppIconButton>
+              {loading ? "Generating..." : "View Pay Slip"}
+            </AppButton>
           </Stack>
         )}
       </Card>

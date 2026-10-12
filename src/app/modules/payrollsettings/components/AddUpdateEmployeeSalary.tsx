@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { FormikProps } from "formik";
-import { DialogActions } from "@mui/material";
+import { alpha, Box, Chip, DialogActions, Stack, Theme, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { CustomisedModal } from "../../../shared/components/C_Modal";
@@ -52,22 +52,96 @@ export const AddUpdateEmployeeSalary = ({
     formRef.current?.handleSubmit();
   };
 
+  const modalTitle = (
+    <Stack direction="row" alignItems="center" spacing={1.75} flexWrap="wrap">
+      <Box
+        sx={{
+          width: 42,
+          height: 42,
+          borderRadius: 2.5,
+          bgcolor: (theme: Theme) => alpha(theme.palette.primary.main, 0.12),
+          color: "primary.main",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 800,
+          fontSize: "1.1rem",
+        }}
+      >
+        {employeeName ? employeeName.trim().charAt(0).toUpperCase() : "E"}
+      </Box>
+      <Box>
+        <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+          <Typography variant="h6" fontWeight={800} color="text.primary">
+            {employeeName}
+          </Typography>
+          <Chip
+            size="small"
+            label={employeeId}
+            sx={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 650,
+              bgcolor: "action.hover",
+              borderRadius: 1.5,
+              height: 22,
+              fontSize: "0.75rem",
+            }}
+          />
+          <Chip
+            size="small"
+            label="Payroll Structure"
+            color="primary"
+            variant="outlined"
+            sx={{ height: 22, fontWeight: 650, fontSize: "0.72rem" }}
+          />
+        </Stack>
+        <Typography variant="caption" color="text.secondary">
+          Configure monthly salary components, deductions, effective schedule, and attendance penalty policy.
+        </Typography>
+      </Box>
+    </Stack>
+  );
+
   return (
     <CustomisedModal
       open={open}
       handleClose={handleClose}
-      title={employeeName}
+      title={modalTitle}
+      fullWidth
+      maxWidth="lg"
+      allowMaximize
+      paperSx={{
+        width: "min(1240px, calc(100vw - 32px)) !important",
+        maxWidth: "1240px !important",
+        maxHeight: "92vh",
+        borderRadius: 3.5,
+      }}
+      contentSx={{
+        pt: 1.5,
+        pb: 2.5,
+        px: { xs: 2, sm: 3 },
+        bgcolor: (theme: Theme) => (theme.palette.mode === "dark" ? "background.default" : "#F8FAFC"),
+        maxHeight: "calc(92vh - 140px)",
+        overflowY: "auto",
+        scrollbarWidth: "thin",
+        "&::-webkit-scrollbar": { width: "6px" },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "divider",
+          borderRadius: "4px",
+        },
+      }}
     >
       <UpdateEmployeeSalaryData
         userId={userId}
         employeeId={employeeId}
+        employeeName={employeeName}
         formRef={formRef}
         handleButtonLoading={setLoading}
         onUserUpdate={handleUserUpdate}
         existingSalary={existingSalary}
       />
       <EmployeePayrollPenaltyPolicy ref={policyRef} employeeUserId={userId} />
-      <DialogActions className="mt-4">
+      <DialogActions sx={{ mt: 3, pt: 2, borderTop: "1px solid", borderColor: "divider", gap: 1 }}>
         <CustomisedButton
           label={i({ id: "BUTTON.CANCEL" })}
           variant="outlined"

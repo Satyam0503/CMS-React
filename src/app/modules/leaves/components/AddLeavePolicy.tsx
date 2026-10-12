@@ -194,7 +194,7 @@ export default function AddLeavePolicy(props: Props) {
                 ...values,
                 // WFH is an operational policy, not a leave entitlement.  Keep the
                 // shared request model valid without creating an employee balance.
-                ...(values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
+                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
                 attendanceStatusCode: values.attendanceStatusCode?.trim().toUpperCase() || null,
                 workFromHome: values.workFromHome ? {
                   ...values.workFromHome,
@@ -216,7 +216,7 @@ export default function AddLeavePolicy(props: Props) {
                 // Keep updates consistent with creation: WFH is paid attendance,
                 // not a leave entitlement, so it must not be rejected for a zero
                 // leave accrual balance.
-                ...(values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
+                ...(values.lifecycle?.enabled ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0 } : values.policyType === 2 ? { accrualAmount: 1, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: true, halfDayAllowed: values.workFromHome?.allowFirstHalf || values.workFromHome?.allowSecondHalf || false } : values.policyType === 3 ? { accrualPeriod: 3, accrualAmount: 0, maxBalance: 0, carryOverAllowed: false, carryOverLimit: 0, paid: false } : {}),
                 attendanceStatusCode: values.attendanceStatusCode?.trim().toUpperCase() || null,
                 workFromHome: values.workFromHome ? {
                   ...values.workFromHome,
@@ -358,8 +358,6 @@ export default function AddLeavePolicy(props: Props) {
                               {[
                                 ["wfhWfoAttendanceStatusCode", "WFH + WFO status"],
                                 ["wfhHdAttendanceStatusCode", "WFH + HD status"],
-                                ["wfhSlAttendanceStatusCode", "WFH + SL status"],
-                                ["wfhClAttendanceStatusCode", "WFH + CL status"],
                               ].map(([field, label]) => <Grid key={field} size={{ xs:12, sm:6, lg:3 }}><AppTextField select fullWidth label={label} value={values.workFromHome?.[field as keyof typeof values.workFromHome] ?? ""} onChange={e=>setFieldValue(`workFromHome.${field}`, e.target.value)}>
                                 <MenuItem value="">Select attendance status</MenuItem>
                                 {leaveStatuses.filter(x => x.isActive).map(x => <MenuItem key={x.code} value={x.code}>{x.code} — {x.name}</MenuItem>)}
@@ -499,6 +497,62 @@ export default function AddLeavePolicy(props: Props) {
                               inputProps={{ min: 0 }}
                             />
                           </Grid>
+
+                          {values.policyType === 1 && (
+                            <Grid size={12}>
+                              <Box className="policy-modal-section" sx={{ mt: 2, borderColor: values.lifecycle?.enabled ? "primary.main" : undefined }}>
+                                <Typography className="policy-section-title">Lifecycle special leave</Typography>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                                  Use this for medical, maternity, paternity, long-term, or sabbatical cases. It has no leave balance or accrual. Approval creates a temporary lifecycle case; pay treatment remains controlled by the Paid leave setting below.
+                                </Typography>
+                                <Box className="lifecycle-special-toggle">
+                                  <AppSwitch
+                                    checked={Boolean(values.lifecycle?.enabled)}
+                                    onChange={e => setFieldValue("lifecycle", e.target.checked ? { enabled: true, eventType: "MedicalLeave", requiresHrApproval: true, requiresReason: true, requiresDocument: true, requiresExpectedReturnDate: true, defaultAccountStatus: "Active", defaultPayrollStatus: "Active", effectiveFromUtc: new Date().toISOString() } : null)}
+                                    inputProps={{ "aria-label": "Approval-driven special leave" }}
+                                  />
+                                  <Typography variant="body2" fontWeight={600}>Approval-driven special leave</Typography>
+                                </Box>
+                                {values.lifecycle?.enabled && (
+                                  <Grid container spacing={1.5} sx={{ mt: 1 }}>
+                                    <Grid size={{ xs: 12, md: 6 }}>
+                                      <AppTextField select fullWidth label="Lifecycle event" value={values.lifecycle.eventType} onChange={e => setFieldValue("lifecycle.eventType", e.target.value)}>
+                                        <MenuItem value="MedicalLeave">Medical leave</MenuItem>
+                                        <MenuItem value="MaternityLeave">Maternity leave</MenuItem>
+                                        <MenuItem value="PaternityLeave">Paternity leave</MenuItem>
+                                        <MenuItem value="LongTermLeave">Long-term leave</MenuItem>
+                                        <MenuItem value="Sabbatical">Sabbatical</MenuItem>
+                                      </AppTextField>
+                                    </Grid>
+                                    <Grid size={{ xs: 12, md: 6 }}>
+                                      <AppTextField select fullWidth label="Account access during leave" value={values.lifecycle.defaultAccountStatus ?? "Active"} onChange={e => setFieldValue("lifecycle.defaultAccountStatus", e.target.value)} helperText="Choose whether the employee retains access; the prior state is restored safely when the case ends.">
+                                        <MenuItem value="Active">Active</MenuItem>
+                                        <MenuItem value="TemporarilyDisabled">Temporarily disabled</MenuItem>
+                                      </AppTextField>
+                                    </Grid>
+                                    <Grid size={{ xs: 12, md: 6 }}>
+                                      <AppTextField select fullWidth label="Payroll handling during leave" value={values.lifecycle.defaultPayrollStatus ?? "Active"} onChange={e => setFieldValue("lifecycle.defaultPayrollStatus", e.target.value)} helperText="Hold or Paused flags payroll processing; Paid leave still determines salary treatment.">
+                                        <MenuItem value="Active">Active</MenuItem>
+                                        <MenuItem value="Hold">Hold for review</MenuItem>
+                                        <MenuItem value="Paused">Paused</MenuItem>
+                                      </AppTextField>
+                                    </Grid>
+                                    <Grid size={12}>
+                                      <Box className="lifecycle-requirements">
+                                        <Typography variant="caption" color="text.secondary" fontWeight={600}>Required for every request</Typography>
+                                        <Stack direction="row" flexWrap="wrap" gap={{ xs: 0.5, sm: 1 }}>
+                                        <FormControlLabel control={<AppCheckbox checked={values.lifecycle.requiresHrApproval} onChange={e => setFieldValue("lifecycle.requiresHrApproval", e.target.checked)} />} label="HR approval" />
+                                        <FormControlLabel control={<AppCheckbox checked={values.lifecycle.requiresReason} onChange={e => setFieldValue("lifecycle.requiresReason", e.target.checked)} />} label="Reason" />
+                                        <FormControlLabel control={<AppCheckbox checked={values.lifecycle.requiresExpectedReturnDate} onChange={e => setFieldValue("lifecycle.requiresExpectedReturnDate", e.target.checked)} />} label="Return date" />
+                                        <FormControlLabel control={<AppCheckbox checked={values.lifecycle.requiresDocument} onChange={e => setFieldValue("lifecycle.requiresDocument", e.target.checked)} />} label="Evidence" />
+                                        </Stack>
+                                      </Box>
+                                    </Grid>
+                                  </Grid>
+                                )}
+                              </Box>
+                            </Grid>
+                          )}
 
                           <Grid size={12}>
                             <Box className="policy-toggle-row">

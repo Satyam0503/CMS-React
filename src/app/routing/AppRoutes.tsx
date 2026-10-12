@@ -10,6 +10,8 @@ import { CareerJobDetails } from "../modules/careerPortal/pages/CareerJobDetails
 import { SavedJobsPage } from "../modules/careerPortal/pages/SavedJobsPage";
 import { CareerPreferencesPage } from "../modules/careerPortal/pages/CareerPreferencesPage";
 import { SavedJobsProvider } from "../modules/careerPortal/context/SavedJobsContext";
+import { FormerEmployeePortalExperience } from "../modules/formerEmployeePortal/FormerEmployeePortalExperience";
+import CandidateOfferResponse from "../modules/recruitment/public/CandidateOfferResponse";
 
 const { BASE_URL } = import.meta.env;
 
@@ -27,6 +29,8 @@ const AppRoutes: FC = () => {
           <Route path="careers/preferences" element={<CareerPreferencesPage />} />
           <Route path="careers/:companyCode/jobs/:jobSlug" element={<CareerJobDetails />} />
           <Route path="careers/:companyCode" element={<CareerMarketplace />} />
+          <Route path="former-employee" element={<FormerEmployeePortalExperience />} />
+          <Route path="candidate/offer" element={<CandidateOfferResponse />} />
 
           {isUserAuthenticated ? (
             <>
@@ -47,3 +51,4 @@ const AppRoutes: FC = () => {
 };
 
 export { AppRoutes };
+

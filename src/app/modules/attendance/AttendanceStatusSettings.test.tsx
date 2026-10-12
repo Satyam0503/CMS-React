@@ -110,10 +110,8 @@ describe("AttendanceStatusSettings UI", () => {
     expect(container.textContent).not.toContain("Color");
     expect(container.querySelectorAll('input[type="color"]').length).toBe(0);
 
-    const activeCheckbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
-    expect(activeCheckbox).not.toBeNull();
-    expect(activeCheckbox?.checked).toBe(true);
-    expect(activeCheckbox?.disabled).toBe(true);
+    expect(container.textContent).toContain("Active");
+    expect(container.querySelector('input[type="checkbox"]')).toBeNull();
   });
 
   it("shows the color column and editable checkbox in edit mode", async () => {
@@ -193,8 +191,8 @@ describe("AttendanceStatusSettings UI", () => {
       await flush();
     });
 
-    const restoredCheckbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
-    expect(restoredCheckbox?.checked).toBe(true);
+    expect(container.textContent).toContain("Active");
+    expect(container.querySelector('input[type="checkbox"]')).toBeNull();
     expect(container.textContent).not.toContain("Color");
   });
 });

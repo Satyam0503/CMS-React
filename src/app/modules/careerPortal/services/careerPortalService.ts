@@ -24,6 +24,9 @@ export const discoverJobs = (companyCode: string | undefined, params: Record<str
 export const getCompanyProfile = (companyCode: string) =>
   getRequest<ResponseData<PublicCompanyProfile>>(
     `api/public/career/companies/${encodeURIComponent(companyCode)}/profile`,
+    // Branding is company-owned data. Never reuse an earlier browser session's
+    // profile response after an authorized user changes the company theme.
+    { headers: { "Cache-Control": "no-cache" } },
   );
 
 export const getCompanies = () =>

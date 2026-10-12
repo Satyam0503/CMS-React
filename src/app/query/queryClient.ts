@@ -20,7 +20,9 @@ export const queryClient = new QueryClient({
       staleTime: 30_000,
       gcTime: 30 * 60_000,
       retry: shouldRetry,
-      refetchOnWindowFocus: false,
+      // A screen may have been changed by another user while this tab was
+      // inactive. Refetch when the user returns instead of requiring F5.
+      refetchOnWindowFocus: true,
       refetchOnReconnect: true,
     },
     mutations: {

@@ -60,6 +60,9 @@ interface Employee {
   employeeId: string;
   fullName: string;
   dateOfJoining?: string | null;
+  lastWorkingDate?: string | null;
+  employmentStatus?: string | null;
+  availabilityStatus?: string | null;
   scheduleId?: string | null;
   scheduleName?: string | null;
   scheduledStartTime?: string | null;
@@ -163,14 +166,24 @@ const attendanceStatusOptions: Array<{
     colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
   },
   {
-    value: "WFH+SL",
-    label: "Work From Home + Sick Leave",
-    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
+    value: "MED",
+    label: "Medical Leave",
+    colorHex: "#0D9488",
   },
   {
-    value: "WFH+CL",
-    label: "Work From Home + Casual Leave",
-    colorHex: DEFAULT_ATTENDANCE_STATUS_COLOR,
+    value: "ML",
+    label: "Maternity Leave",
+    colorHex: "#7C3AED",
+  },
+  {
+    value: "SAB",
+    label: "Sabbatical Leave",
+    colorHex: "#6366F1",
+  },
+  {
+    value: "UL",
+    label: "Unpaid Leave",
+    colorHex: "#DC2626",
   },
 ];
 
@@ -206,10 +219,21 @@ const createPunchPresets = (from?: string | null, until?: string | null, fallbac
   });
 };
 
-// Unpaid leave is assigned by the leave workflow and reconciles as an unpaid
-// absence. It must not be selectable while an admin is manually marking a day.
+// Leave and WFH statuses are owned by their respective request workflows.
+// Letting the generic attendance editor write one of these values would create
+// a visual attendance result without the leave balance, approval history, or
+// request-owned audit trail that payroll relies on.
+const workflowOwnedStatusCodes = new Set([
+  "SL", "CL", "EL", "UL", "COMP-OFF", "WFH", "WFH+WFO", "WFH-HD",
+  "WFH+SL", "WFH+CL", "CL-HALF", "SL-HALF", "MED", "ML", "SAB",
+]);
+
 const isManualAttendanceStatus = (code: string) =>
-  code.trim().toUpperCase() !== "UL";
+  !workflowOwnedStatusCodes.has(code.trim().toUpperCase());
+
+const manualAttendanceStatusOptions = attendanceStatusOptions.filter((option) =>
+  isManualAttendanceStatus(option.value),
+);
 
 interface Props {
   employees: Employee[];
@@ -278,7 +302,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
   const attendanceEmployeesPaneRef = useRef<HTMLDivElement>(null);
   const isSynchronizingAttendanceScroll = useRef(false);
   const isSynchronizingAttendanceVerticalScroll = useRef(false);
-  const [statusOptions, setStatusOptions] = useState(attendanceStatusOptions);
+  const [statusOptions, setStatusOptions] = useState(manualAttendanceStatusOptions);
+  const [allStatusSettings, setAllStatusSettings] = useState<AttendanceStatusSetting[]>([]);
 
   const syncAttendanceHorizontalScroll = (
     source: HTMLDivElement,
@@ -314,16 +339,17 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       isSynchronizingAttendanceVerticalScroll.current = false;
     });
   };
-  const attendanceStatusColorMap = useMemo(
-    () =>
-      buildAttendanceStatusColorMap(
-        statusOptions.map((status) => ({
-          code: status.value,
-          colorHex: status.colorHex,
-        })),
-      ),
-    [statusOptions],
-  );
+  const attendanceStatusColorMap = useMemo(() => {
+    const baseList = attendanceStatusOptions.map((status) => ({
+      code: status.value,
+      colorHex: status.colorHex,
+    }));
+    const configuredList = allStatusSettings.map((status) => ({
+      code: status.code,
+      colorHex: status.colorHex,
+    }));
+    return buildAttendanceStatusColorMap([...baseList, ...configuredList]);
+  }, [allStatusSettings]);
 
   const getStatusColor = (status?: string | null) =>
     resolveAttendanceStatusColor(status, attendanceStatusColorMap);
@@ -335,6 +361,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           ResponseData<AttendanceStatusSetting>
         >("api/attendance-status-settings?activeOnly=true");
         const settings = data.methodResults ?? [];
+        setAllStatusSettings(settings);
         setStatusOptions(
           settings.length > 0
             ? settings
@@ -345,10 +372,10 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                   requiresTime: x.requiresTime,
                   colorHex: x.colorHex || DEFAULT_ATTENDANCE_STATUS_COLOR,
                 }))
-            : attendanceStatusOptions,
+            : manualAttendanceStatusOptions,
         );
       } catch {
-        setStatusOptions(attendanceStatusOptions);
+        setStatusOptions(manualAttendanceStatusOptions);
       }
     };
 
@@ -761,7 +788,6 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     let absent = 0;
     let leave = 0;
     let wfh = 0;
-    let halfDay = 0;
     let exceptions = 0;
     const members = {
       Present: new Set<string>(),
@@ -770,6 +796,11 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       Leave: new Set<string>(),
       "Half Day": new Set<string>(),
     };
+    // A half-day workflow can produce more than one attendance row for the
+    // same employee/day (for example, a source-owned segment plus its derived
+    // status). The overview is an employee count, so retain a stable employee
+    // key while keeping names for the drill-down dialog.
+    const halfDayEmployees = new Map<string, string>();
 
     attendanceItems.forEach((item: any) => {
       const itemDate = dayjs(formatServerDate(item.date, "YYYY-MM-DD"));
@@ -792,9 +823,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         if (item.status === "A" && employeeName)
           members.Absent.add(employeeName);
         if (
-          ["SL", "CL", "EL", "COMP-OFF", "CL-HALF", "SL-HALF"].includes(
-            item.status,
-          )
+          [
+            "SL",
+            "CL",
+            "EL",
+            "COMP-OFF",
+            "CL-HALF",
+            "SL-HALF",
+            "MED",
+            "ML",
+            "SAB",
+            "UL",
+          ].includes(item.status)
         ) {
           leave++;
           if (employeeName) members.Leave.add(employeeName);
@@ -806,8 +846,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         if (
           ["HD", "LHD", "WFH-HD", "CL-HALF", "SL-HALF"].includes(item.status)
         ) {
-          halfDay++;
-          if (employeeName) members["Half Day"].add(employeeName);
+          const employeeKey = normalizeUserId(item.userId) || employeeName;
+          if (employeeName && employeeKey) halfDayEmployees.set(employeeKey, employeeName);
         }
         if (item.exceptionId || item.hasException || item.lateCount > 0)
           exceptions++;
@@ -819,14 +859,14 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       absent,
       leave,
       wfh,
-      halfDay,
+      halfDay: halfDayEmployees.size,
       exceptions,
       members: {
         Present: [...members.Present],
         Absent: [...members.Absent],
         WFH: [...members.WFH],
         Leave: [...members.Leave],
-        "Half Day": [...members["Half Day"]],
+        "Half Day": [...halfDayEmployees.values()],
       },
     });
   }, [
@@ -884,18 +924,29 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const isBeforeJoining = Boolean(
       joiningDate?.isValid() && dayjs(dateObj).isBefore(joiningDate, "day"),
     );
+    const lastWorkingDate = row.lastWorkingDate
+      ? dayjs(row.lastWorkingDate).endOf("day")
+      : null;
+    const employmentStatus = row.employmentStatus ?? "Active";
+    const usesExitCutoff = ["NoticePeriod", "Resigned", "Terminated"].includes(employmentStatus);
+    const isAfterExit = Boolean(
+      usesExitCutoff && lastWorkingDate?.isValid() && dayjs(dateObj).isAfter(lastWorkingDate, "day"),
+    );
     const firstHalf = value.halfDaySegments?.FIRST_HALF;
     const secondHalf = value.halfDaySegments?.SECOND_HALF;
     const hasHalfDaySegments = Boolean(firstHalf || secondHalf);
     const isLeaveGenerated = value.sourceType?.toUpperCase() === "LEAVE";
     const isWfhGenerated = value.sourceType?.toUpperCase() === "WFH_REQUEST";
-    const isWorkflowOwned = isLeaveGenerated || isWfhGenerated;
+    const isLifecycleGenerated = value.sourceType?.toUpperCase() === "LIFECYCLE_CASE";
+    const isWorkflowOwned =
+      isLeaveGenerated || isWfhGenerated || isLifecycleGenerated;
     const isSourceOwnedSegment =
       hasHalfDaySegments &&
       [firstHalf, secondHalf].some(
         (half) =>
           half?.sourceType?.toUpperCase() === "LEAVE" ||
-          half?.sourceType?.toUpperCase() === "WFH_REQUEST",
+          half?.sourceType?.toUpperCase() === "WFH_REQUEST" ||
+          half?.sourceType?.toUpperCase() === "LIFECYCLE_CASE",
       );
     const isSystemDefault = [
       "SYSTEM_DEFAULT_PRESENT",
@@ -905,11 +956,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       ? leaveRequests.find((leave) => leave.leaveRequestId === value.sourceId)
       : undefined;
     const statusCode = value.status || "—";
+    const availabilityLabel = row.availabilityStatus
+      ? row.availabilityStatus.replace(/([a-z])([A-Z])/g, "$1 $2")
+      : "";
     const statusLabel = value.status
       ? (attendanceStatusLabels[value.status as AttendanceStatus] ??
         value.status)
-      : isFutureDate
-        ? "Future date — attendance is not calculated"
+      : isAfterExit
+        ? "Not employed on this date"
+        : isFutureDate
+          ? "Future date — attendance is not calculated"
+          : availabilityLabel && availabilityLabel !== "Working"
+          ? availabilityLabel
         : "No attendance recorded";
     const leaveDetail = relatedLeave
       ? `${relatedLeave.leavePolicyName} • ${relatedLeave.isHalfDay ? "Half day" : "Full day"} • Approved • Generated from leave request`
@@ -922,6 +980,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       .join("\n");
     const tooltipText = isBeforeJoining
       ? `Not applicable — employee joins on ${joiningDate?.format("DD MMM YYYY")}.`
+      : isAfterExit
+        ? `Not employed — last working date was ${lastWorkingDate?.format("DD MMM YYYY")}.`
       : hasHalfDaySegments
         ? `${halfDayDetail}\n${dayjs(dateObj).format("DD MMMM YYYY")}\nGenerated from approved attendance workflows.`
         : isLeaveGenerated
@@ -930,16 +990,18 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             ? `${statusCode} — ${statusLabel}\nApproved work-from-home request • Generated from WFH workflow\n${dayjs(dateObj).format("DD MMMM YYYY")}`
             : isSystemDefault
               ? `${statusCode} - System default Present\nCreated automatically. An authorized attendance, Leave, or WFH workflow can update it.`
-              : isFutureDate
+                : isFutureDate
                 ? "Future date — attendance is not calculated."
+                : availabilityLabel && availabilityLabel !== "Working"
+                  ? `${availabilityLabel} — normal attendance is not expected for this date.`
                 : isHoliday
                   ? "Public Holiday"
                   : isWeekend
                     ? "Weekend"
                     : statusLabel;
     const canEdit =
-      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining;
-    const tooltipLines = tooltipText.split("\n");
+      editable && !isWorkflowOwned && !isSourceOwnedSegment && !isBeforeJoining && !isAfterExit;
+    const tooltipLines: string[] = tooltipText.split("\n");
     const tooltipTitle = (
       <Box sx={{ display: "grid", gap: 0.35, maxWidth: 280 }}>
         <Typography
@@ -1075,7 +1137,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: isBeforeJoining
+            backgroundColor: isBeforeJoining || isAfterExit
               ? theme.palette.action.disabledBackground
               : getBg(value),
             borderRight: "1px solid",
@@ -1083,7 +1145,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             borderBottom: "1px solid",
             borderBottomColor: "divider",
             opacity: isFutureDate ? 0.45 : 1,
-            cursor: isBeforeJoining
+            cursor: isBeforeJoining || isAfterExit
               ? "not-allowed"
               : isWorkflowOwned || isSourceOwnedSegment || canEdit
                 ? "pointer"
@@ -1098,7 +1160,7 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 : {},
           }}
         >
-          {isBeforeJoining ? (
+          {isBeforeJoining || isAfterExit ? (
             <Typography
               component="span"
               fontSize={10}
@@ -1209,6 +1271,9 @@ export const AttendanceCalendarGrid: FC<Props> = ({
         employeeId: emp.employeeId ?? "",
         name: emp.name,
         dateOfJoining: emp.dateOfJoining,
+        lastWorkingDate: emp.lastWorkingDate,
+        employmentStatus: emp.employmentStatus,
+        availabilityStatus: emp.availabilityStatus,
         scheduleId: emp.scheduleId,
         scheduleName: emp.scheduleName,
         scheduledStartTime: emp.scheduledStartTime,
@@ -1286,10 +1351,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             ? err.message
             : undefined;
       const isLocked = /locked/i.test(responseMessage ?? "");
+      const message = responseMessage === "ATTENDANCE_WORKFLOW_STATUS_REQUIRES_LEAVE_OR_WFH_REQUEST"
+        ? "Leave and Work From Home must be created through their respective request workflows."
+        : responseMessage || "Failed to save attendance";
       setConfirmationModal({
         open: true,
         title: isLocked ? "Attendance Locked" : "Error",
-        content: responseMessage || "Failed to save attendance",
+        content: message,
       });
       return;
     }
@@ -1302,24 +1370,34 @@ export const AttendanceCalendarGrid: FC<Props> = ({
     const value = row["day-1"] as AttendanceData;
     const dateObj = visibleDates[0]?.toDate();
     if (!dateObj || readOnly || dayjs(dateObj).isAfter(today, "day")) return;
-    const isWorkflowOwned = ["LEAVE", "WFH_REQUEST"].includes(
-      (value.sourceType ?? "").toUpperCase(),
-    );
+    const isWorkflowOwned = [
+      "LEAVE",
+      "WFH_REQUEST",
+      "LIFECYCLE_CASE",
+    ].includes((value.sourceType ?? "").toUpperCase());
     const isSourceOwnedSegment = Object.values(
       value.halfDaySegments ?? {},
     ).some((segment) =>
-      ["LEAVE", "WFH_REQUEST"].includes(
+      ["LEAVE", "WFH_REQUEST", "LIFECYCLE_CASE"].includes(
         (segment?.sourceType ?? "").toUpperCase(),
       ),
     );
     if (isWorkflowOwned || isSourceOwnedSegment) {
       const isWfh = value.sourceType?.toUpperCase() === "WFH_REQUEST";
+      const isLifecycle =
+        value.sourceType?.toUpperCase() === "LIFECYCLE_CASE";
       setConfirmationModal({
         open: true,
-        title: isWfh ? "WFH-generated attendance" : "Workflow-owned attendance",
+        title: isWfh
+          ? "WFH-generated attendance"
+          : isLifecycle
+            ? "Lifecycle-managed attendance"
+            : "Workflow-owned attendance",
         content: isWfh
           ? "This status is maintained by the approved WFH request. Update or cancel that request to make a change."
-          : "This status is maintained by an approved leave or half-day workflow and cannot be edited from attendance.",
+          : isLifecycle
+            ? "This status is maintained by an approved employee lifecycle case (e.g. Medical/Maternity leave). Update or complete that lifecycle case to make a change."
+            : "This status is maintained by an approved leave or half-day workflow and cannot be edited from attendance.",
       });
       return;
     }
@@ -1351,11 +1429,13 @@ export const AttendanceCalendarGrid: FC<Props> = ({
       </Typography>
       <Card
         sx={{
-          p: 2,
+          p: { xs: 1.5, sm: 2 },
           borderRadius: 3,
-          boxShadow: theme.shadows[2],
-          border: "1px solid",
-          borderColor: "divider",
+          bgcolor: "rgba(255, 255, 255, 0.65) !important",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
+          border: "1px solid rgba(255, 255, 255, 0.88) !important",
           overflow: "hidden",
         }}
       >
@@ -1363,8 +1443,8 @@ export const AttendanceCalendarGrid: FC<Props> = ({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
-              gap: 1.5,
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 2,
               // A single employee must never be clipped by the company-grid
               // scrolling viewport. Let the page own vertical scrolling.
               alignItems: "stretch",
@@ -1377,18 +1457,31 @@ export const AttendanceCalendarGrid: FC<Props> = ({
             {paginatedRows.map((row, index) => {
               const value = row["day-1"] as AttendanceData;
               const status = value.status || "Not marked";
-              const isWorkflowOwned = ["LEAVE", "WFH_REQUEST"].includes(
-                (value.sourceType ?? "").toUpperCase(),
-              );
+              const statusAccent = value.status
+                ? getStatusColor(value.status)
+                : "#94A3B8";
+              const isWorkflowOwned = [
+                "LEAVE",
+                "WFH_REQUEST",
+                "LIFECYCLE_CASE",
+              ].includes((value.sourceType ?? "").toUpperCase());
               const isLegacySystemPresent =
                 value.status === "P" &&
                 [
                   "SYSTEM_DEFAULT_PRESENT",
                   "SYSTEM_OFFICE_START_PRESENT",
                 ].includes((value.sourceType ?? "").toUpperCase());
+              const initials = (row.name || "E")
+                .trim()
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((part: string) => part[0]?.toUpperCase() ?? "")
+                .join("");
+
               return (
                 <Card
                   key={row.id}
+                  className="interactive-card"
                   variant="outlined"
                   onClick={() => openTodayAttendance(row)}
                   role={!readOnly ? "button" : undefined}
@@ -1403,22 +1496,36 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     }
                   }}
                   sx={{
-                    p: 1.75,
-                    minHeight: 136,
-                    borderRadius: 2.5,
+                    p: 2,
+                    minHeight: 158,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    borderRadius: "12px",
                     cursor: readOnly ? "default" : "pointer",
-                    borderColor: value.status
-                      ? toAlphaHex(getStatusColor(value.status), 55)
-                      : "divider",
+                    bgcolor: "rgba(255, 255, 255, 0.72) !important",
+                    backdropFilter: "blur(14px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(14px) saturate(180%)",
+                    border: "1px solid rgba(255, 255, 255, 0.88) !important",
+                    borderLeft: `4px solid ${statusAccent} !important`,
+                    boxShadow:
+                      "0 8px 24px 0 rgba(11, 92, 171, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95) !important",
                     animation: `attendance-card-in 320ms ease-out ${Math.min(index * 35, 280)}ms both`,
                     transition:
-                      "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+                      "transform 200ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background 180ms ease",
                     "&:hover": readOnly
                       ? {}
                       : {
-                          transform: "translateY(-3px)",
-                          boxShadow: theme.shadows[4],
-                          borderColor: "primary.main",
+                          transform: "translateY(-4px)",
+                          bgcolor: "rgba(255, 255, 255, 0.88) !important",
+                          borderColor: "rgba(11, 92, 171, 0.3) !important",
+                          borderLeftColor: "#0B5CAB !important",
+                          boxShadow:
+                            "0 14px 28px -6px rgba(11, 92, 171, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.06), inset 0 1px 2px rgba(255, 255, 255, 1) !important",
+                          "& .attendance-card-cta": {
+                            color: "#0B5CAB",
+                            transform: "translateX(2px)",
+                          },
                         },
                     "&:focus-visible": {
                       outline: `2px solid ${theme.palette.primary.main}`,
@@ -1426,71 +1533,134 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                     },
                   }}
                 >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    spacing={1}
-                  >
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography fontWeight={800} noWrap title={row.name}>
-                        {row.name}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        noWrap
+                  <Box>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                      spacing={1.25}
+                    >
+                      <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
+                        <Avatar
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: "9px",
+                            fontSize: "0.8rem",
+                            fontWeight: 700,
+                            bgcolor: "#EBF3FA",
+                            color: "#0B5CAB",
+                            border: "1px solid rgba(11, 92, 171, 0.18)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {initials}
+                        </Avatar>
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            fontWeight={700}
+                            noWrap
+                            title={row.name}
+                            sx={{ color: "#0F172A", fontSize: "0.925rem", lineHeight: 1.3 }}
+                          >
+                            {row.name}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            noWrap
+                            sx={{ color: "#64748B", fontWeight: 600, display: "block" }}
+                          >
+                            {row.employeeId || "Employee"}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Chip
+                        size="small"
+                        label={status}
+                        variant={isWorkflowOwned ? "filled" : "outlined"}
+                        sx={{
+                          ...getStatusChipStyle(value.status),
+                          height: 24,
+                          fontSize: "0.72rem",
+                          opacity: isWorkflowOwned ? 0.96 : 1,
+                          flexShrink: 0,
+                        }}
+                      />
+                    </Stack>
+
+                    {row.scheduleName && (
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          mt: 1.25,
+                          px: 1,
+                          py: 0.35,
+                          borderRadius: "6px",
+                          bgcolor: "#EBF3FA",
+                          border: "1px solid rgba(11, 92, 171, 0.18)",
+                        }}
                       >
-                        {row.employeeId || "Employee"}
-                      </Typography>
-                    </Box>
-                    <Chip
-                      size="small"
-                      label={status}
-                      variant={isWorkflowOwned ? "filled" : "outlined"}
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "#0B5CAB", fontWeight: 700, fontSize: "0.72rem" }}
+                        >
+                          {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
+                        </Typography>
+                      </Box>
+                    )}
+
+                    <Box
                       sx={{
-                        ...getStatusChipStyle(value.status),
-                        opacity: isWorkflowOwned ? 0.96 : 1,
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: 1,
+                        mt: 1.25,
+                        p: 1,
+                        borderRadius: "8px",
+                        bgcolor: "#F8FAFC",
+                        border: "1px solid #E2E8F0",
+                        backdropFilter: "blur(8px)",
                       }}
-                    />
-                  </Stack>
-                  {row.scheduleName && (
-                    <Typography variant="caption" color="primary.main" fontWeight={700} sx={{ display: "block", mt: 0.75 }}>
-                      {row.scheduleName} · {row.scheduledStartTime}–{row.scheduledEndTime}
-                    </Typography>
-                  )}
-                  <Stack direction="row" spacing={1.25} sx={{ mt: 1.25 }}>
-                    <Typography variant="caption" color="text.secondary">
-                      Punch in:{" "}
-                      <Box
-                        component="span"
-                        sx={{ color: "text.primary", fontWeight: 700 }}
-                      >
-                        {value.checkIn ||
-                          (isLegacySystemPresent ? "09:00" : "—")}
+                    >
+                      <Box>
+                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                          Punch in
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkIn || (isLegacySystemPresent ? "09:00" : "—")}
+                        </Typography>
                       </Box>
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Punch out:{" "}
-                      <Box
-                        component="span"
-                        sx={{ color: "text.primary", fontWeight: 700 }}
-                      >
-                        {value.checkOut ||
-                          (isLegacySystemPresent ? "18:00" : "—")}
+                      <Box sx={{ borderLeft: "1px solid #E2E8F0", pl: 1 }}>
+                        <Typography variant="caption" sx={{ color: "#64748B", fontSize: "0.68rem", fontWeight: 600, display: "block" }}>
+                          Punch out
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "#0F172A", fontWeight: 700, fontSize: "0.8rem" }}>
+                          {value.checkOut || (isLegacySystemPresent ? "18:00" : "—")}
+                        </Typography>
                       </Box>
-                    </Typography>
-                  </Stack>
+                    </Box>
+                  </Box>
+
                   <Typography
+                    className="attendance-card-cta"
                     variant="caption"
-                    color="text.secondary"
-                    sx={{ display: "block", mt: 1.5 }}
+                    sx={{
+                      display: "block",
+                      mt: 1.25,
+                      pt: 1,
+                      borderTop: "1px dashed #E2E8F0",
+                      color: "#64748B",
+                      fontWeight: 600,
+                      fontSize: "0.73rem",
+                      transition: "color 180ms ease, transform 180ms ease",
+                    }}
                   >
                     {isWorkflowOwned
                       ? "Managed by approved workflow"
                       : readOnly
                         ? "Attendance status"
-                        : "Select to update attendance"}
+                        : "Select to update attendance →"}
                   </Typography>
                 </Card>
               );
@@ -1861,6 +2031,21 @@ export const AttendanceCalendarGrid: FC<Props> = ({
                 Effective shift: <Box component="span" sx={{ color: "text.primary", fontWeight: 800 }}>{selectedCell.employee.scheduleName} · {selectedCell.employee.scheduledStartTime}–{selectedCell.employee.scheduledEndTime}</Box>{selectedCell.employee.scheduleSource ? ` · ${selectedCell.employee.scheduleSource}` : ""}
               </Typography>
             )}
+
+            <Box
+              sx={{
+                px: 1.25,
+                py: 1,
+                borderRadius: 2,
+                bgcolor: "info.lighter",
+                border: "1px solid",
+                borderColor: "info.light",
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                This editor is for attendance corrections. Create or manage a Leave or WFH request for leave and work-from-home days; those workflows keep balances, approvals, and payroll history in sync.
+              </Typography>
+            </Box>
 
             <AppTextField
               select

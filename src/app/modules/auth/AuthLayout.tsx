@@ -1,195 +1,297 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { toAbsoluteUrl } from "../../../_themes/helpers";
 import {
   Box,
-  Chip,
   Container,
   Stack,
   Typography,
   useColorScheme,
 } from "@mui/material";
 import {
-  AutoAwesomeRounded,
-  CheckCircleRounded,
-  Groups2Rounded,
-  ShieldRounded,
+  LockOutlined,
+  ShieldOutlined,
 } from "@mui/icons-material";
 import { Languages } from "../../../_themes/layout/components/header/navbarmenus/Languages";
 import LightDarkMode from "../../../_themes/layout/components/header/navbarmenus/LightDarkMode";
-import { AppStylePicker } from "../../../_themes/layout/components/header/navbarmenus/AppStylePicker";
-import { useAppStyle } from "../theme/useAppStyle";
-
-const benefits = [
-  { icon: <Groups2Rounded />, label: "People and operations, connected" },
-  { icon: <ShieldRounded />, label: "Secure role-based workspace" },
-  { icon: <AutoAwesomeRounded />, label: "Simple, productive workflows" },
-];
+import { useCompanyTheme } from "../theme/companyTheme";
 
 const AuthLayout = () => {
-  // MUI CSS variables apply the selected scheme independently of the static
-  // theme.palette.mode. Use the resolved scheme so the auth shell changes in
-  // lockstep with the shared header toggle.
   const { mode, systemMode } = useColorScheme();
   const isDark = (mode === "system" ? systemMode : mode) === "dark";
-  const { style } = useAppStyle();
+  const { theme: style } = useCompanyTheme();
   const isDawn = style === "dawn";
 
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         position: "relative",
-        overflow: "hidden",
-        bgcolor: "background.default",
-        backgroundImage: isDawn
-          ? isDark
-            ? "radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--mui-palette-primary-main) 30%, transparent), transparent 38%), radial-gradient(circle at 96% 96%, color-mix(in srgb, var(--mui-palette-secondary-main) 18%, transparent), transparent 38%), linear-gradient(135deg, #211a27 0%, #2c2030 48%, #1f1b28 100%)"
-            : "radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--mui-palette-primary-light) 36%, transparent), transparent 36%), radial-gradient(circle at 96% 96%, color-mix(in srgb, var(--mui-palette-secondary-light) 28%, transparent), transparent 34%), linear-gradient(135deg, #fbf8fd 0%, #fffdfd 48%, #fff8fb 100%)"
-          : isDark
-            ? "radial-gradient(circle at 12% 15%, rgba(47, 125, 120, .18), transparent 32%), radial-gradient(circle at 88% 85%, rgba(20, 184, 166, .12), transparent 34%)"
-            : "linear-gradient(135deg, #f8fbff 0%, #ffffff 48%, #f1fffb 100%)",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          width: 420,
-          height: 420,
-          borderRadius: "50%",
-          top: -260,
-          right: -130,
-          background: isDawn
-            ? "linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-primary-light) 62%, transparent), color-mix(in srgb, var(--mui-palette-secondary-light) 42%, transparent))"
-            : isDark
-              ? "linear-gradient(135deg, rgba(47, 125, 120, .22), rgba(20, 184, 166, .08))"
-              : "linear-gradient(135deg, rgba(191, 219, 254, .72), rgba(204, 251, 241, .36))",
-          filter: "blur(2px)",
-        },
+        overflowX: "hidden",
+        bgcolor: isDark ? "#090d16" : "#f8fafc",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Container maxWidth="xl" sx={{ minHeight: "100vh", py: { xs: 2, md: 3 }, position: "relative" }}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 2, md: 2.5 },
+        }}
+      >
+        {/* Clean, Non-Colliding Top Navigation */}
         <Stack
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          sx={{ minHeight: 48, mb: { xs: 2, md: 3 } }}
+          sx={{
+            height: 48,
+            mb: { xs: 2, md: 3 },
+          }}
         >
-          <Stack direction="row" alignItems="center" spacing={1.25}>
+          {/* Brand Logo - Clean Image Lockup (No Overlapping Text) */}
+          <Box
+            component={Link}
+            to="/auth"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              textDecoration: "none",
+              transition: "opacity 0.2s ease",
+              "&:hover": { opacity: 0.85 },
+            }}
+          >
             <Box
               component="img"
               src={toAbsoluteUrl("media/logos/favicon.png")}
-              alt="CodeJi CMS"
-              sx={{ height: 34, width: "auto", objectFit: "contain" }}
+              alt="CodeJi"
+              sx={{
+                height: 32,
+                width: "auto",
+                maxWidth: 160,
+                objectFit: "contain",
+                display: "block",
+              }}
             />
-          </Stack>
+          </Box>
+
+          {/* Controls: Theme & Localization */}
           <Stack direction="row" spacing={1} alignItems="center">
-            <AppStylePicker
+            <Box
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 2.5,
-                color: isDark ? "common.white" : "primary.main",
-                bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+                borderRadius: 2,
+                bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#ffffff",
                 border: "1px solid",
-                borderColor: isDark ? "rgba(255,255,255,.24)" : "color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
-                "&:hover": {
-                  color: "common.white",
-                  bgcolor: "primary.main",
-                  borderColor: "primary.main",
-                },
+                borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)",
+                boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.03)",
+                display: "flex",
+                alignItems: "center",
+                p: 0.25,
               }}
-            />
-            <LightDarkMode
+            >
+              <LightDarkMode
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1.5,
+                  color: isDark ? "secondary.light" : "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    bgcolor: isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.04)",
+                  },
+                }}
+              />
+            </Box>
+            <Box
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 2.5,
-                color: isDark ? "secondary.light" : "primary.main",
-                bgcolor: isDark ? "rgba(255,255,255,.10)" : "color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent)",
+                borderRadius: 2,
+                bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#ffffff",
                 border: "1px solid",
-                borderColor: isDark ? "rgba(255,255,255,.24)" : "color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent)",
-                "&:hover": {
-                  color: "common.white",
-                  bgcolor: "primary.main",
-                  borderColor: "primary.main",
-                },
+                borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)",
+                boxShadow: isDark ? "none" : "0 1px 3px rgba(0,0,0,0.03)",
+                display: "flex",
+                alignItems: "center",
               }}
-            />
-            <Languages />
+            >
+              <Languages />
+            </Box>
           </Stack>
         </Stack>
 
+        {/* Central Auth Shell Card */}
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1.05fr) minmax(420px, .95fr)" },
-            minHeight: { md: "calc(100vh - 126px)" },
-            borderRadius: { xs: 4, md: 6 },
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr", lg: "0.95fr 1.05fr" },
+            flexGrow: 1,
+            minHeight: { xs: "auto", md: "calc(100dvh - 120px)" },
+            borderRadius: { xs: 3, md: 4 },
             overflow: "hidden",
             border: "1px solid",
-            borderColor: isDark ? "rgba(255,255,255,.08)" : "rgba(15,23,42,.08)",
-            boxShadow: isDark ? "0 32px 90px rgba(0,0,0,.34)" : "0 32px 90px rgba(15,23,42,.10)",
-            bgcolor: "background.paper",
-            backgroundImage: isDawn ? "var(--app-dawn-card-background, none)" : "none",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)",
+            boxShadow: isDark
+              ? "0 24px 60px rgba(0,0,0,0.5)"
+              : "0 20px 50px rgba(15,23,42,0.06)",
+            bgcolor: isDark ? "#0f172a" : "#ffffff",
+            mb: { xs: 2, md: 0 },
           }}
         >
+          {/* Left Hero Panel (Restrained, Classy Editorial) */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
+              flexDirection: "column",
+              justifyContent: "space-between",
               position: "relative",
               overflow: "hidden",
-              color: "common.white",
-              p: { md: 6, lg: 8 },
-              background: isDawn
-                ? "linear-gradient(145deg, var(--mui-palette-primary-darker) 0%, var(--mui-palette-primary-main) 52%, var(--mui-palette-secondary-main) 145%)"
-                : "linear-gradient(145deg, #16404b 0%, #0f766e 48%, #2f7d78 100%)",
-              "&::before": {
-                content: '""', position: "absolute", inset: 0,
-                backgroundImage: "radial-gradient(circle at 15% 25%, rgba(255,255,255,.18) 0 2px, transparent 3px), radial-gradient(circle at 75% 70%, rgba(255,255,255,.12) 0 1px, transparent 2px)",
-                backgroundSize: "70px 70px, 42px 42px", opacity: .7,
-              },
-              "&::after": {
-                content: '""', position: "absolute", width: 430, height: 430, borderRadius: "50%",
-                right: -190, bottom: -220, border: "75px solid rgba(255,255,255,.08)",
-              },
+              p: { md: 5, lg: 6, xl: 7 },
+              bgcolor: isDawn ? "#1e1628" : isDark ? "#0b1120" : "#0f172a",
+              color: "#ffffff",
             }}
           >
-            <Stack justifyContent="space-between" sx={{ position: "relative", zIndex: 1, width: "100%" }}>
-              <Box>
-                <Chip
-                  icon={<AutoAwesomeRounded sx={{ color: "white !important" }} />}
-                  label="Modern workforce management"
-                  sx={{ color: "white", bgcolor: "rgba(255,255,255,.14)", backdropFilter: "blur(8px)", mb: 4 }}
-                />
-                <Typography variant="h2" fontWeight={800} lineHeight={1.08} letterSpacing="-.045em" maxWidth={620} sx={{ color: "common.white" }}>
-                  Everything your team needs to do their best work.
-                </Typography>
-                <Typography variant="h6" fontWeight={400} sx={{ mt: 2.5, opacity: .82, lineHeight: 1.65, maxWidth: 570, color: "common.white" }}>
-                  Bring employee records, attendance, leave, payroll, and hiring into one calm, connected workspace.
-                </Typography>
-              </Box>
+            {/* Top Brand Statement */}
+            <Box sx={{ position: "relative", zIndex: 1, maxWidth: 480 }}>
+              <Typography
+                variant="overline"
+                sx={{
+                  color: "rgba(255,255,255,0.6)",
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  display: "block",
+                  mb: 2,
+                }}
+              >
+                Enterprise Workforce & Payroll
+              </Typography>
 
-              <Stack spacing={2.25} sx={{ mt: 6 }}>
-                {benefits.map((benefit) => (
-                  <Stack key={benefit.label} direction="row" spacing={1.5} alignItems="center">
-                    <Box sx={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 2.5, bgcolor: "rgba(255,255,255,.14)" }}>
-                      {benefit.icon}
-                    </Box>
-                    <Typography fontWeight={600} sx={{ color: "common.white" }}>{benefit.label}</Typography>
-                    <CheckCircleRounded sx={{ ml: "auto !important", opacity: .7, fontSize: 20 }} />
-                  </Stack>
-                ))}
+              <Typography
+                variant="h2"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { md: "2.1rem", lg: "2.35rem" },
+                  lineHeight: 1.2,
+                  letterSpacing: "-0.03em",
+                  color: "#ffffff",
+                  mb: 2,
+                }}
+              >
+                Workforce operations, perfected.
+              </Typography>
+
+              <Typography
+                sx={{
+                  color: "rgba(255, 255, 255, 0.7)",
+                  fontSize: "0.95rem",
+                  lineHeight: 1.65,
+                }}
+              >
+                A unified platform for team lifecycle, attendance automation, and statutory payroll compliance.
+              </Typography>
+            </Box>
+
+            {/* Middle Editorial Highlight */}
+            <Box
+              sx={{
+                position: "relative",
+                zIndex: 1,
+                my: 4,
+                p: 3,
+                borderRadius: 2.5,
+                bgcolor: "rgba(255, 255, 255, 0.04)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                backdropFilter: "blur(8px)",
+                maxWidth: 460,
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "rgba(255, 255, 255, 0.9)",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.6,
+                  fontStyle: "italic",
+                  mb: 2,
+                }}
+              >
+                &ldquo;CodeJi delivers the accuracy and speed required for multi-branch attendance and instant payroll reconciliation.&rdquo;
+              </Typography>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
+                    display: "grid",
+                    placeItems: "center",
+                    color: "primary.light",
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                  }}
+                >
+                  C
+                </Box>
+                <Box>
+                  <Typography sx={{ color: "common.white", fontSize: "0.82rem", fontWeight: 600 }}>
+                    Operations & People Team
+                  </Typography>
+                  <Typography sx={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "0.72rem" }}>
+                    CodeJi Enterprise Infrastructure
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+
+            {/* Bottom Security Reassurance */}
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={3}
+              sx={{
+                position: "relative",
+                zIndex: 1,
+                pt: 3,
+                borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                color: "rgba(255, 255, 255, 0.6)",
+                fontSize: "0.78rem",
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <LockOutlined sx={{ fontSize: 15 }} />
+                <span>256-Bit TLS Encryption</span>
+              </Stack>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <ShieldOutlined sx={{ fontSize: 15 }} />
+                <span>Tenant Data Isolation</span>
               </Stack>
             </Stack>
           </Box>
 
+          {/* Right Form Container */}
           <Stack
             justifyContent="center"
+            alignItems="center"
             sx={{
-              px: { xs: 3, sm: 6, lg: 9 },
-              py: { xs: 5, md: 6 },
-              minWidth: 0,
+              width: "100%",
+              height: "100%",
+              px: { xs: 2.5, sm: 4, md: 5, lg: 6 },
+              py: { xs: 4, md: 5 },
+              overflowY: "auto",
+              boxSizing: "border-box",
+              bgcolor: isDark ? "#0f172a" : "#ffffff",
             }}
           >
-            <Box sx={{ width: "100%", maxWidth: 500, mx: "auto" }}>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: { xs: "100%", sm: 440, md: 460 },
+                mx: "auto",
+              }}
+            >
               <Outlet />
             </Box>
           </Stack>

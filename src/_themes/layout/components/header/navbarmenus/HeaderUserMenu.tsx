@@ -1,11 +1,9 @@
 import * as React from "react";
 import {
   AccountCircleOutlined,
-  CheckRounded,
   DarkModeOutlined,
   LightModeOutlined,
   LogoutRounded,
-  PaletteOutlined,
   TranslateRounded,
 } from "@mui/icons-material";
 import {
@@ -27,7 +25,6 @@ import {
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../../../../app/Redux/hooks";
-import { APP_STYLES, useAppStyle } from "../../../../../app/modules/theme/useAppStyle";
 import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 import { Languages } from "./Languages";
 
@@ -40,7 +37,6 @@ export default function HeaderUserMenu() {
   const profileImageUrl = currentUser?.profileImage ?? DEFAULT_USER_AVATAR;
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const { mode, systemMode, setMode } = useColorScheme();
-  const { style, setStyle } = useAppStyle();
   const open = Boolean(anchorEl);
   const effectiveMode = mode === "system" ? systemMode : mode;
   const displayName = currentUser?.fullName?.trim()
@@ -132,11 +128,6 @@ export default function HeaderUserMenu() {
 
         {isMobile && <Divider />}
         {isMobile && <Box sx={{ p: 2 }}>
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.2 }}>
-            <PaletteOutlined color="primary" fontSize="small" />
-            <Typography variant="subtitle2" fontWeight={800}>Appearance</Typography>
-          </Stack>
-
           <Stack direction="row" role="group" aria-label="Color mode" sx={{ p: .5, bgcolor: "background.default", borderRadius: 2.5, border: "1px solid", borderColor: "divider" }}>
             {([
               { value: "light", label: "Light", icon: <LightModeOutlined fontSize="small" /> },
@@ -161,29 +152,6 @@ export default function HeaderUserMenu() {
             })}
           </Stack>
 
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1.8, mb: .8 }}>Interface style</Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" }, gap: .8 }}>
-            {APP_STYLES.map((option) => {
-              const selected = option.value === style;
-              return (
-                <ButtonBase
-                  key={option.value}
-                  aria-label={`${option.label} interface style`}
-                  aria-pressed={selected}
-                  onClick={() => setStyle(option.value)}
-                  sx={{
-                    position: "relative", justifyContent: "flex-start", p: 1, borderRadius: 2,
-                    border: "1px solid", borderColor: selected ? "primary.main" : "divider",
-                    bgcolor: selected ? "action.selected" : "transparent",
-                    "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" },
-                  }}
-                >
-                  <Typography variant="caption" fontWeight={selected ? 800 : 600} noWrap>{option.label}</Typography>
-                  {selected && <CheckRounded sx={{ position: "absolute", right: 5, top: 5, fontSize: 14, color: "primary.main" }} />}
-                </ButtonBase>
-              );
-            })}
-          </Box>
         </Box>}
 
         <Divider />

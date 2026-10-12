@@ -1,13 +1,21 @@
 import {
   DeleteOutline } from "@mui/icons-material";
 import {
+  Button,
   Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormHelperText,
   Grid,
   MenuItem,
   Stack,
   Typography,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { CustomisedModal } from "../../../../shared/components/C_Modal";
@@ -80,6 +88,7 @@ export const AddEditJob: FC<PropsTypes> = ({
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector((state) => state.user.userData?.defaultLanguage) || "en";
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [jobDescription, setJobDescription] = useState(
     initialValues.description ? initialValues.description : ""
   );
@@ -133,24 +142,46 @@ export const AddEditJob: FC<PropsTypes> = ({
 
   return (
     <CustomisedModal open={open} handleClose={handleClose} maxWidth="lg" allowMaximize
-      title={isEdit
-        ? i({ id: "JOB.DESCRIPTION_EDIT" })
-        : i({ id: "JOB.DESCRIPTION" })}
+      title={<Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: "100%" }}>
+        <Typography component="span" sx={{ fontSize: "inherit", fontWeight: "inherit" }}>{isEdit ? i({ id: "JOB.DESCRIPTION_EDIT" }) : i({ id: "JOB.DESCRIPTION" })}</Typography>
+        <Tooltip title="Field guidance">
+          <IconButton size="small" aria-label="Show field guidance" onClick={() => setHelpOpen(true)} sx={{ color: "primary.main", border: 0, p: 0.5, "&:hover": { border: 0, bgcolor: "action.hover" } }}>
+            <InfoOutlined fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Stack>}
     >
       <form onSubmit={handleSubmit}>
         <Grid container direction={"column"} sx={{
-          gap: 1
+          gap: { xs: 0.75, sm: 1.15 },
+          "& .MuiFormHelperText-root:not(.Mui-error)": {
+            display: "none",
+          },
+          "& .MuiFormHelperText-root": {
+            mt: 0.25,
+            ml: 0.5,
+            fontSize: "0.68rem",
+            lineHeight: 1.25,
+          },
+          "& > .MuiGrid-root": {
+            minHeight: 0,
+          },
+          "& > .MuiGrid-root:not(.MuiGrid-container)": {
+            alignItems: "center",
+          },
         }}>
           <Grid
             size={12}
             sx={{
               display: "flex",
-              gap: 1
+              gap: { xs: 0.75, sm: 1.5 },
+              py: { xs: 0.25, sm: 0.5 },
+              alignItems: "center",
             }}>
             <Grid
               size={{
                 xs: 4,
-                md: 6
+                md: 3
               }}>
               <Typography variant="body1">
                 {i({ id: "JOB.JOB_TITLE" })}
@@ -159,7 +190,7 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid
               size={{
                 xs: 8,
-                md: 6
+                md: 9
               }}>
               <AppTextField
                 fullWidth
@@ -178,12 +209,14 @@ export const AddEditJob: FC<PropsTypes> = ({
             size={12}
             sx={{
               display: "flex",
-              gap: 1
+              gap: { xs: 0.75, sm: 1.5 },
+              py: { xs: 0.25, sm: 0.5 },
+              alignItems: "center",
             }}>
             <Grid
               size={{
                 xs: 4,
-                md: 6
+                md: 3
               }}>
               <Typography variant="body1">
                 {i({ id: "JOB.VACANCIES" })}
@@ -192,7 +225,7 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid
               size={{
                 xs: 8,
-                md: 6
+                md: 9
               }}>
               <AppTextField
                 fullWidth
@@ -221,12 +254,14 @@ export const AddEditJob: FC<PropsTypes> = ({
             size={12}
             sx={{
               display: "flex",
-              gap: 1
+              gap: { xs: 0.75, sm: 1.5 },
+              py: { xs: 0.25, sm: 0.5 },
+              alignItems: "center",
             }}>
             <Grid
               size={{
                 xs: 4,
-                md: 6
+                md: 3
               }}>
               <Typography variant="body1">
                 {i({ id: "JOB.TYPE" })}
@@ -235,7 +270,7 @@ export const AddEditJob: FC<PropsTypes> = ({
             <Grid
               size={{
                 xs: 8,
-                md: 6
+                md: 9
               }}>
               <AppSelect
                 fullWidth
@@ -265,7 +300,8 @@ export const AddEditJob: FC<PropsTypes> = ({
             size={12}
             sx={{
               display: "flex",
-              alignItems: "center"
+              alignItems: "center",
+              py: { xs: 0.25, sm: 0.5 }
             }}>
             <Grid
               size={{
@@ -283,7 +319,12 @@ export const AddEditJob: FC<PropsTypes> = ({
                 md: 6
               }}
               sx={{
-                pl: 0.8
+                pl: { xs: 0, md: 0.8 },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                textAlign: "left",
+                "& .MuiSwitch-root": { ml: 0, mr: "auto" },
               }}>
               <AppSwitch
                 checked={values.status}
@@ -296,9 +337,9 @@ export const AddEditJob: FC<PropsTypes> = ({
             </Grid>
           </Grid>
 
-          <Divider sx={{ my: 1.5 }} />
-          <Typography variant="h6" fontWeight={800}>Career portal details</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Divider sx={{ my: 0.75 }} />
+          <Typography variant="h6" fontWeight={800} sx={{ lineHeight: 1.2 }}>Career portal details</Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.3 }}>
             These details are maintained by the HR or admin user posting the vacancy and are shown to candidates.
           </Typography>
           <Grid container spacing={1.5}>
@@ -353,7 +394,19 @@ export const AddEditJob: FC<PropsTypes> = ({
                   minDateTime={dayjs()}
                   ampm
                   timeSteps={{ minutes: 15 }}
-                  slotProps={{ textField: { fullWidth: true, helperText: "Final local date and time when applications are accepted." } }}
+                  slotProps={{ textField: {
+                    fullWidth: true,
+                    helperText: "Final local date and time when applications are accepted.",
+                    sx: {
+                      "& .MuiInputAdornment-root .MuiIconButton-root": {
+                        border: 0,
+                        boxShadow: "none",
+                        borderRadius: 1,
+                        p: 0.5,
+                        "&:hover": { bgcolor: "action.hover" },
+                      },
+                    },
+                  } }}
                 />
               </LocalizationProvider>
             </Grid>
@@ -428,6 +481,21 @@ export const AddEditJob: FC<PropsTypes> = ({
           />
         </Stack>
       </form>
+      <Dialog open={helpOpen} onClose={() => setHelpOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>Job form guidance</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={1} sx={{ "& strong": { color: "text.primary" } }}>
+            <Typography variant="body2"><strong>Job title:</strong> Public role name shown in searches and applications.</Typography>
+            <Typography variant="body2"><strong>Vacancies:</strong> Number of openings for this role.</Typography>
+            <Typography variant="body2"><strong>Job type:</strong> Controls onsite, hybrid, or remote work mode.</Typography>
+            <Typography variant="body2"><strong>Career details:</strong> Candidate-facing summary, location, employment type, experience, department, industry, and role information.</Typography>
+            <Typography variant="body2"><strong>Skills and lists:</strong> Enter multiple values separated by commas. Spaces inside a skill are allowed.</Typography>
+            <Typography variant="body2"><strong>Application deadline:</strong> Final local date and time when applications are accepted.</Typography>
+            <Typography variant="body2"><strong>Visibility:</strong> Controls whether the active role appears on company or master career portals.</Typography>
+          </Stack>
+        </DialogContent>
+        <DialogActions><Button onClick={() => setHelpOpen(false)}>Close</Button></DialogActions>
+      </Dialog>
     </CustomisedModal>
   );
 };

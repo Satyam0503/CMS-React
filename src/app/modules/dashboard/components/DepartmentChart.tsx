@@ -62,7 +62,7 @@ export const DepartmentChart: FC = () => {
           )}
         </Box>
       ) : (
-        <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.length} />
+        <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.reduce((total, department) => total + department.employeeCount, 0)} />
       )
       }
     </CustomCard >

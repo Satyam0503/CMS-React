@@ -3,7 +3,7 @@
 //
 
 html {
-  font-family: sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   text-size-adjust: 100%;
 }
 
@@ -20,7 +20,7 @@ body {
   --app-header-height: 72px;
   --app-footer-height: 48px;
   --sidebar-expanded-width: 265px;
-  --sidebar-collapsed-width: 100px;
+  --sidebar-collapsed-width: 76px;
   --sidebar-current-width: var(--sidebar-expanded-width);
 }
 

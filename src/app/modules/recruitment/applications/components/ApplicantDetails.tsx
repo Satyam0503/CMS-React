@@ -40,6 +40,7 @@ import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
+import { RecruitmentLifecycleDrawer } from "./RecruitmentLifecycleDrawer";
 
 import { AppSelect, AppSwitch } from "../../../../shared/components/ui";
 export const ApplicantDetails = () => {
@@ -61,6 +62,7 @@ export const ApplicantDetails = () => {
     pageSize: 10,
   });
   const [CvPreviewMode, setCVPreviewMode] = useState(false);
+  const [lifecycleOpen, setLifecycleOpen] = useState(false);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -252,12 +254,13 @@ export const ApplicantDetails = () => {
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: "flex-end", sm: "auto" }, "& button": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" } }}>
+          <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: "stretch", sm: "auto" }, justifyContent: "flex-end", flexWrap: "wrap", "& .ratio-1x1": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" } }}>
             <CustomIconButton
               icon={CvPreviewMode ? <Close /> : <Visibility />}
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
               handleClick={() => setCVPreviewMode(!CvPreviewMode)}
             />
+            {canEditApplicant && <CustomisedButton label="Next step" handleClick={() => setLifecycleOpen(true)} fullWidth={false} sx={{ minHeight: 40, minWidth: { xs: 110, sm: 104 }, px: { xs: 1.5, sm: 2 }, flex: "0 0 auto" }} />}
             {
               canEditApplicant &&
               <CustomIconButton
@@ -407,7 +410,7 @@ export const ApplicantDetails = () => {
                       value={status.applicationStatus}
                       sx={{ width: { xs: "100%", sm: "170px" } }}
                       onChange={handleStatusChange}
-                      disabled={isTerminalStatus}
+                      disabled
                       className="select"
                       label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
                     >
@@ -415,7 +418,7 @@ export const ApplicantDetails = () => {
                         .filter((option) =>
                           isTerminalStatus
                             ? option.value === applicant.activityType
-                            : option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
+                            : option.value === applicant.activityType || option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
                         )
                         .map((status) => (
                         <MenuItem key={status.id} value={status.value}>
@@ -424,6 +427,7 @@ export const ApplicantDetails = () => {
                       ))}
                     </AppSelect>
                   </FormControl>
+                  <Typography variant="caption" color="text.secondary">Use Next step to change the recruitment stage.</Typography>
                 </Stack>
               </Grid>
               <Grid
@@ -521,6 +525,8 @@ export const ApplicantDetails = () => {
           )}
         </Card>
       }
+      {canEditApplicant && <RecruitmentLifecycleDrawer open={lifecycleOpen} applicant={applicant} onClose={() => setLifecycleOpen(false)} onSaved={() => setRefresh(!refresh)} />}
     </Stack >
   );
 };
+

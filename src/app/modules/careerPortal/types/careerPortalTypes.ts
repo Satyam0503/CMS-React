@@ -23,6 +23,7 @@ export type PublicCompanyProfile = {
   workCultureHtml?: string | null;
   hiringProcessHtml?: string | null;
   diversityStatementHtml?: string | null;
+  careerTheme: "glass" | "slate" | "dawn" | "blush";
   isPublished: boolean;
 };
 

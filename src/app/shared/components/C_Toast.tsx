@@ -2,7 +2,7 @@ import { toast, ToastContentProps } from "react-toastify";
 import { NOTIFICATION_TYPE } from "../../../utils/enums";
 import { NotificationModel } from "../../modules/users/models";
 import { Avatar, Stack, Typography } from "@mui/material";
-import { FormattedMessage, useIntl } from "react-intl";
+import { useIntl } from "react-intl";
 import { NotificationIconMapper } from "../../../_themes/layout/components/header/navbarmenus/HeaderNotificationMenu";
 import { Message } from "@mui/icons-material";
 import { getNotificationTitle } from "../../../utils/common";
@@ -22,18 +22,24 @@ export const showCustomToast = (notification: NotificationModel) => {
         case NOTIFICATION_TYPE.WORK_ANNIVERSARY:
             toast(<CustomNotificationWithAction notificationData={notification} />, {
                 autoClose: 2000,
-                closeButton: false,
-                className: "p-3 shadow"
+                className: "app-toast--notification"
             });
             break;
         case NOTIFICATION_TYPE.MESSAGE:
             toast(<CustomMessageToast notificationData={notification} />, {
                 autoClose: 2000,
-                closeButton: false,
-                className: "p-3 shadow"
+                className: "app-toast--notification"
             });
             break;
-        default: toast(<FormattedMessage id="NOTIFICATION.TITLES.FALLBACK" />);
+        default:
+            // Offboarding and other newer server notifications do not share the
+            // legacy enum values above. Render their supplied title/body in the
+            // standard notification layout instead of discarding it for the
+            // generic fallback message.
+            toast(<CustomNotificationWithAction notificationData={notification} />, {
+                autoClose: 4000,
+                className: "app-toast--notification"
+            });
     }
 }
 
@@ -46,9 +52,9 @@ const CustomNotificationWithAction = ({ notificationData, closeToast }: CustomTo
             {NotificationIconMapper[notificationData.notificationTypes]}
             <Stack>
                 <Typography>{title}</Typography>
-                <span aria-label="close button" role="button" className="fw-bold d-inline-block mt-1" onClick={closeToast}>
+                <button type="button" className="app-toast__dismiss" onClick={() => closeToast?.(true)}>
                     {i({ id: "BUTTON.DISMISS" })}
-                </span>
+                </button>
             </Stack>
         </Stack>
     )
@@ -68,9 +74,9 @@ const CustomMessageToast = ({ closeToast, notificationData }: CustomToastCompone
                     <Typography variant="body1">{notificationData.sentBy}</Typography>
                 </Stack>
             </Stack>
-            <span aria-label="View button" role="button" className="fw-bold align-self-start ms-12 mt-1" onClick={closeToast}>
+            <button type="button" className="app-toast__dismiss" onClick={() => closeToast?.(true)}>
                 {i({ id: "BUTTON.DISMISS" })}
-            </span>
+            </button>
         </Stack>
     )
 }

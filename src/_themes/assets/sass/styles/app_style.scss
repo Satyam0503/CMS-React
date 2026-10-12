@@ -65,12 +65,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(145deg, var(--mui-palette-primary-dark), var(--mui-palette-primary-main) 58%, var(--mui-palette-secondary-main));
+  background: linear-gradient(145deg, #1E1B4B 0%, #3730A3 52%, #4F46E5 100%) !important;
+  color: #ffffff !important;
   gap: 1.25rem;
   padding: 1.5rem 1rem;
   border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
   overflow: hidden;
-  box-shadow: 0 16px 38px rgba(91, 43, 150, 0.2);
+  box-shadow: 0 16px 38px rgba(49, 46, 129, 0.28) !important;
   & > .profile-picture {
     display: flex;
     align-self: center;
@@ -496,57 +498,79 @@ button:hover .ql-fill,
   isolation: isolate;
   width: 100%;
   padding-bottom: 2rem;
-  background:
-    radial-gradient(circle at 8% 4%, color-mix(in srgb, var(--mui-palette-primary-light) 22%, transparent), transparent 28%),
-    radial-gradient(circle at 92% 20%, color-mix(in srgb, var(--mui-palette-secondary-light) 22%, transparent), transparent 30%),
-    linear-gradient(135deg, color-mix(in srgb, var(--mui-palette-background-paper) 56%, transparent), color-mix(in srgb, var(--mui-palette-primary-lighter) 22%, transparent));
-  border-radius: 24px;
+  background: transparent !important;
+  border-radius: 16px;
 
   .dashboard-side-column { gap: 1.5rem; }
 
   .MuiCard-root {
     position: relative;
-    border: 1px solid color-mix(in srgb, white 54%, var(--mui-palette-divider));
-    border-radius: 16px;
-    background-color: color-mix(in srgb, var(--mui-palette-background-paper) 72%, transparent);
-    background-image: linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-primary-main) 5%, transparent), transparent 40%);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.62) 100%
+    ) !important;
+    box-shadow:
+      0 10px 30px 0 rgba(11, 92, 171, 0.06),
+      0 2px 8px 0 rgba(15, 23, 42, 0.03),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
     overflow: hidden;
-    backdrop-filter: blur(18px) saturate(135%);
-    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 220ms ease,
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background 220ms ease !important;
 
-    &::after {
-      position: absolute;
-      content: "";
-      width: 90px;
-      height: 90px;
-      top: -55px;
-      right: -45px;
-      border-radius: 50%;
-      background: color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent);
-      pointer-events: none;
+    &::before {
+      display: none;
     }
 
     &:hover {
-      transform: translateY(-3px);
-      border-color: color-mix(in srgb, var(--mui-palette-primary-main) 42%, var(--mui-palette-divider));
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.16);
+      transform: translateY(-2px);
+      background: linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.86) 0%,
+        rgba(255, 255, 255, 0.70) 100%
+      ) !important;
+      border-color: rgba(11, 92, 171, 0.25) !important;
+      box-shadow:
+        0 16px 38px -4px rgba(11, 92, 171, 0.12),
+        0 4px 12px 0 rgba(15, 23, 42, 0.04),
+        inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
     }
   }
 
-  .MuiAvatar-root {
-    border: 2px solid color-mix(in srgb, var(--mui-palette-primary-main) 22%, transparent);
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.14);
+    .MuiAvatar-root {
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
   }
 
   a {
     color: var(--mui-palette-primary-main);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
-    &:hover { color: var(--mui-palette-primary-light); }
+    &:hover { color: var(--mui-palette-primary-dark); }
   }
 
   .dashboard-applications-card .MuiSelect-root { min-width: 90px; }
+}
+
+.notice-board-row {
+  gap: 1rem;
+
+  .notice-board-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  & > .MuiBox-root:last-child {
+    flex: 0 0 auto;
+  }
 }
 
 .dashboard-hero {
@@ -554,39 +578,46 @@ button:hover .ql-fill,
   align-items: center;
   margin-bottom: 1.5rem;
   padding: 1.5rem 1.75rem;
-  border: 1px solid var(--mui-palette-divider);
+  border: 1px solid rgba(255, 255, 255, 0.88);
   border-radius: 18px;
   background:
-    radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--mui-palette-secondary-main) 16%, transparent), transparent 30%),
-    linear-gradient(125deg, color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent), color-mix(in srgb, var(--mui-palette-background-paper) 68%, transparent) 55%);
-  box-shadow: 0 16px 36px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent);
-  backdrop-filter: blur(20px) saturate(140%);
+    radial-gradient(circle at 92% 12%, rgba(11, 92, 171, 0.06), transparent 40%),
+    radial-gradient(ellipse 55% 50% at 92% 20%, rgba(13, 148, 136, 0.14), transparent 55%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(11, 92, 171, 0.12), transparent 55%),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.84) 0%,
+      rgba(255, 255, 255, 0.66) 100%
+    );
+  box-shadow:
+    0 12px 36px -4px rgba(11, 92, 171, 0.08),
+    0 2px 8px -1px rgba(15, 23, 42, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   overflow: hidden;
 
   &::before {
-    position: absolute;
-    content: "";
-    width: 180px;
-    height: 180px;
-    right: 15%;
-    bottom: -145px;
-    border: 22px solid color-mix(in srgb, var(--mui-palette-primary-main) 8%, transparent);
-    border-radius: 50%;
+    display: none;
   }
 
   .dashboard-hero-chip {
     width: fit-content;
-    color: var(--mui-palette-primary-main);
-    background: color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
-    .MuiChip-icon { color: inherit; }
+    color: #0B5CAB;
+    font-weight: 600;
+    background: rgba(11, 92, 171, 0.08);
+    border: 1px solid rgba(11, 92, 171, 0.18);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    .MuiChip-icon { color: #0D9488; }
     animation: dashboard-hero-reveal 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .dashboard-welcome-title {
-    font-size: clamp(1.65rem, 3vw, 2.35rem);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
     font-weight: 800;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
 
     .dashboard-welcome-word,
     .dashboard-welcome-name {
@@ -595,28 +626,21 @@ button:hover .ql-fill,
     }
 
     .dashboard-welcome-word {
+      color: #0F172A;
       animation: dashboard-welcome-word 480ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
     }
 
     .dashboard-welcome-name {
       position: relative;
+      color: #0B5CAB;
       animation: dashboard-welcome-name 680ms cubic-bezier(0.22, 1, 0.36, 1) 290ms both;
-
-      &::after {
-        content: "";
-        display: inline-block;
-        width: 2px;
-        height: 0.85em;
-        margin-left: 0.08em;
-        vertical-align: -0.06em;
-        background: var(--mui-palette-primary-main);
-        animation: dashboard-caret 700ms steps(1, end) 970ms 3;
-      }
     }
   }
 
   .dashboard-welcome-copy {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
     animation: dashboard-hero-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) 520ms both;
   }
 
@@ -624,48 +648,15 @@ button:hover .ql-fill,
     position: relative;
     z-index: 1;
     align-items: center;
-    min-width: 224px;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid color-mix(in srgb, var(--mui-palette-primary-main) 24%, var(--mui-palette-divider));
-    border-radius: 18px;
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--mui-palette-background-paper) 88%, transparent),
-      color-mix(in srgb, var(--mui-palette-primary-main) 7%, var(--mui-palette-background-paper))
-    );
-    box-shadow: 0 10px 24px color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent);
-    backdrop-filter: blur(14px) saturate(130%);
+    min-width: 240px;
+    padding: 0.75rem 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 4px 18px rgba(11, 92, 171, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
     animation: dashboard-hero-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both;
-
-    .MuiTypography-h4 {
-      font-size: 1.35rem;
-      line-height: 1.1;
-      letter-spacing: -0.025em;
-    }
-
-    .MuiTypography-body2 {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-  }
-
-  .dashboard-weather-icon {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    padding: 0.4rem;
-    border: 1px solid color-mix(in srgb, var(--mui-palette-warning-main) 20%, transparent);
-    border-radius: 16px;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--mui-palette-warning-main) 18%, transparent), color-mix(in srgb, var(--mui-palette-secondary-main) 8%, transparent));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: grayscale(1) sepia(0.25) hue-rotate(235deg) saturate(0.8);
-    }
   }
 }
 
@@ -695,7 +686,7 @@ button:hover .ql-fill,
           padding-left: 15px;
           width: 100%;
 
-          @media (min-width: 600) {
+          @media (min-width: 600px) {
             width: 250px;
           }
         }
@@ -731,19 +722,14 @@ button:hover .ql-fill,
     font-weight: bolder;
     padding: 1rem 1.25rem;
     font-size: 0.92rem;
+    color: var(--mui-palette-text-secondary);
     white-space: nowrap;
+    cursor: pointer;
     transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
     &:hover {
       color: var(--mui-palette-primary-main) !important;
       background-color: var(--mui-palette-action-hover);
       transform: translateY(-1px);
-    }
-    cursor: pointer;
-    white-space: nowrap;
-    &:hover {
-      transition: background-color 0.2s ease-out;
-      background-color: var(--mui-palette-primary-lighter);
-      color: var(--mui-palette-primary-dark);
     }
 
     & > svg {
@@ -754,19 +740,28 @@ button:hover .ql-fill,
   }
 }
 
+.tab-container .tab-box:not(.tab_active) {
+  color: var(--mui-palette-text-primary);
+  opacity: 0.82;
+}
+
+.tab-container .tab-box.tab_active {
+  font-weight: 800;
+  border-bottom: 3px solid var(--mui-palette-primary-main);
+}
+
+/* Profile surfaces use the shared 8px radius token instead of one-off values. */
+.profile-picture-card,
+.profile-picture-card .MuiButton-root,
+.profile-picture-card .MuiOutlinedInput-root,
+.profile-picture-card .MuiIconButton-root {
+  border-radius: 8px;
+}
+
 .tab_active {
   background: color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent) !important;
   color: var(--mui-palette-primary-main) !important;
   box-shadow: none;
-}
-
-.truncate-multi-line {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  text-overflow: ellipsis;
 }
 
 // company details
@@ -805,7 +800,7 @@ button:hover .ql-fill,
   border-radius: 8px;
   transition: all 0.2s ease;
   &:hover {
-    border-color: (var--mui-palette-primary-main);
+    border-color: var(--mui-palette-primary-main);
   }
 }
 
@@ -1686,6 +1681,35 @@ input[type="password"]::-ms-clear {
     margin-bottom: 0.75rem;
   }
 
+  .lifecycle-special-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+    .MuiSwitch-root { flex: 0 0 auto; margin: 0; }
+  }
+
+  .lifecycle-requirements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+
+    .MuiFormControlLabel-root {
+      min-height: 34px;
+      margin: 0;
+    }
+
+    .MuiCheckbox-root { padding: 0.35rem; }
+  }
+
   .policy-toggle-row {
     width: 100%;
     .MuiFormControlLabel-root {
@@ -1737,6 +1761,8 @@ input[type="password"]::-ms-clear {
       padding: 1rem;
       border-radius: 12px;
     }
+
+    .lifecycle-special-toggle { align-items: flex-start; }
 
     .policy-form-actions {
       margin-top: 1rem;

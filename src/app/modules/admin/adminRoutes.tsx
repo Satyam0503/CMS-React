@@ -4,8 +4,10 @@ import { AddPermission } from "./permissions/components/AddPermission";
 import { EditPermission } from "./permissions/components/EditPermission";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { CompanyMasterTab } from "./companymaster/CompanyMaster";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CompanyDetailsTab } from './companydetails/CompanyDetails'
+import { useNavigate } from 'react-router-dom';
+import { getRecruitmentReadiness } from '../recruitment/services';
 
 const adminBreadcrumbs:Array<Breadcrumb> = [
   {
@@ -35,6 +37,27 @@ const adminBreadcrumbs:Array<Breadcrumb> = [
   },
 ] 
 
+const AdminLanding = () => {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    getRecruitmentReadiness()
+      .then(({ data }) => {
+        if (!active) return;
+        const requiredIncomplete = data.success && (data.methodResult?.required ?? []).some((item) => !item.complete);
+        navigate(requiredIncomplete ? "/admin/companydetails/recruitment-readiness" : "/admin/roles", { replace: true });
+      })
+      .catch(() => {
+        if (active) navigate("/admin/roles", { replace: true });
+      })
+      .finally(() => active && setChecking(false));
+    return () => { active = false; };
+  }, [navigate]);
+
+  return checking ? null : null;
+};
 const AdminRoutes = () => {
   const {setBreadcrumbs}= useBreadcrumbs();
   useEffect(()=>{
@@ -43,7 +66,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       <Route element={<Outlet />}>
-        <Route index element={<Navigate to={"/admin/roles"} />} />
+        <Route index element={<AdminLanding />} />
         <Route
           path="roles"
           element={<Roles />}

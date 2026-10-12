@@ -14,7 +14,14 @@ interface PropsTypes {
 
 export const ProtectedRoute: FC<PropsTypes> = ({ children, module, permission = Permission.View, permissions, adminOnly=false }) => {
   const userRoleType = useAppSelector(state=>state.user.userData?.roleType!);
+  const token = useAppSelector(state => state.auth.token);
+  const userData = useAppSelector(state => state.user.userData);
   const modulePermissions = useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  // AuthInit restores the user details asynchronously after a refresh. Do not
+  // redirect while the token exists but the permission list is still loading.
+  if (token && !userData) {
+    return null;
+  }
   // Administrators bypass module permission checks and always have access
   if (userRoleType === Roles.Administrator) {
     return <>{children}</>;

@@ -1,6 +1,8 @@
 import {
   Table,
   TableBody,
+  Chip,
+  Stack,
   TableCell,
   TableContainer,
   TableHead,
@@ -8,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Visibility } from "@mui/icons-material";
+import { History, Visibility } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { PayRollDataModel, PayRollResponseModel } from "../models";
 import { AvatarCell } from "../../../shared/components/AvatarCell";
@@ -29,6 +31,7 @@ interface Column {
   id:
     | keyof PayRollDataModel
     | "employeeName"
+    | "paymentStatus"
     | "grossPay"
     | "totalDeductions"
     | "netPay"
@@ -39,10 +42,11 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "actions", label: "ACTION", minWidth: 90 },
+  { id: "actions", label: "ACTION", minWidth: 108 },
   { id: "employeeId", label: "PAYROLL.TABLE.EMP_ID", minWidth: 120 },
   { id: "employeeName", label: "PAYROLL.TABLE.EMP_NAME", minWidth: 200 },
   { id: "paidDate", label: "PAYROLL.TABLE.PAID_DATE", minWidth: 130 },
+  { id: "paymentStatus", label: "PAYROLL.TABLE.PAYMENT_STATUS", minWidth: 135 },
   { id: "basicPay", label: "PAYROLL.TABLE.BASIC_PAY", minWidth: 100 },
   { id: "bonus", label: "PAYROLL.TABLE.BONUS", minWidth: 100 },
   { id: "paidDays", label: "PAYROLL.TABLE.PAID_DAYS", minWidth: 100 },
@@ -81,9 +85,11 @@ type TableProps = {
   payRollData: PayRollResponseModel[];
   payMonth: Dayjs | null;
   handleRowClick: (row: PayRollResponseModel) => void;
+  handleRecordPayment: (row: PayRollResponseModel) => void;
+  handleViewAudit: (row: PayRollResponseModel) => void;
 };
 
-export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TableProps) => {
+export const PayRollTable = ({ payRollData, payMonth, handleRowClick, handleViewAudit }: TableProps) => {
   const { formatMessage: i } = useIntl();
   const userModulePermissions =
     useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
@@ -153,7 +159,10 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
         (row.payData.healthInsurance ?? 0) +
         (row.payData.lossOfPay ?? 0) +
         (row.payData.epf ?? 0) +
-        (row.payData.esic ?? 0);
+        (row.payData.esic ?? 0) +
+        (row.payData.deductionLines ?? [])
+          .filter((line) => line.code.toUpperCase() !== "LHD_ED_POLICY")
+          .reduce((sum, line) => sum + Math.max(0, line.amount || 0), 0);
       const netPay = grossPay - totalDeductions;
       return {
         ...row,
@@ -183,13 +192,14 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
         sx={{
           width: "100%",
           minWidth: 0,
+          maxHeight: { xs: "60vh", md: "none" },
           overflowX: "auto",
-          overflowY: "hidden",
+          overflowY: { xs: "auto", md: "hidden" },
           touchAction: "pan-x",
-          "&::-webkit-scrollbar": { height: 7 },
+          "&::-webkit-scrollbar": { height: 7, width: 7 },
         }}
       >
-        <Table sx={{ minWidth: { xs: 1200, lg: 1440 } }}>
+        <Table size="small" stickyHeader sx={{ minWidth: { xs: 900, sm: 1100, lg: 1440 } }}>
           <TableHead>
             <TableRow>
               {columns.map((col) => (
@@ -197,6 +207,8 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   id={col.id}
                   sx={{
                     minWidth: col.minWidth,
+                    fontSize: { xs: 11.5, sm: 13 },
+                    whiteSpace: "nowrap",
                     ...(col.id === "actions" ? {
                       position: "sticky",
                       left: 0,
@@ -207,7 +219,9 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   align={col.align}
                   key={col.id}
                 >
-                  {i({ id: col.label })}
+                  {col.label === "PAYROLL.TABLE.PAYMENT_STATUS"
+                    ? i({ id: col.label, defaultMessage: "Payment Status" })
+                    : i({ id: col.label, defaultMessage: col.label.split(".").pop()?.replace(/_/g, " ") })}
                 </TableCell>
               ))}
             </TableRow>
@@ -235,7 +249,7 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                   {columns.map((column) => {
                     if (column.id === "employeeName") {
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 } }}>
                           <AvatarCell
                             avatarSrc={""}
                             title={row.employeeName}
@@ -246,10 +260,14 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                     }
                     if (column.id === "paidDate") {
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {dateFormatter(row.payData.paidDate, "DD MMM YYYY")}
                         </TableCell>
                       );
+                    }
+                    if (column.id === "paymentStatus") {
+                      const status = (row.payData.workflowStatus ?? row.payData.paymentStatus ?? (row.payData.isProcessed ? "PROCESSED" : "DRAFT")).toUpperCase();
+                      return <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 } }}><Chip size="small" label={status} color={status === "CLOSED" ? "default" : status === "PAID" ? "success" : status === "PROCESSED" ? "info" : "warning"} /></TableCell>;
                     }
                     if (column.id === "actions") {
                       const hasPayRoll = Boolean(row.payData.payRollId);
@@ -258,33 +276,51 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
                         <TableCell
                           key={column.id}
                           className="pe-auto"
-                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper" }}
+                          sx={{ position: "sticky", left: 0, zIndex: 2, bgcolor: "background.paper", whiteSpace: "nowrap" }}
                         >
-                          {hasPayRoll && !isProcessed ? (
-                            <Typography variant="caption" color="warning.main" fontWeight={700}>Draft</Typography>
-                          ) : (
+                          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexWrap: "nowrap" }}>
                             <AppIconButton
-                              aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                              title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
-                              disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
-                              onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
+                              aria-label="View payroll history"
+                              title="View payroll history"
+                              disabled={!hasPayRoll}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewAudit(row);
+                              }}
                             >
-                              <Visibility fontSize="small" />
+                              <History fontSize="small" />
                             </AppIconButton>
-                          )}
+                            {hasPayRoll && !isProcessed ? (
+                              <Typography variant="caption" color="warning.main" fontWeight={700}>
+                                Draft
+                              </Typography>
+                            ) : (
+                              <AppIconButton
+                                aria-label={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                                title={i({ id: "PAYROLL.TABLE.PREVIEW_PAYSLIP" })}
+                                disabled={!hasPayRoll || previewingEmployeeId === row.employeeId}
+                                onClick={(e) => handlePreviewPaySlip(e, row.employeeId, row.employeeName)}
+                              >
+                                <Visibility fontSize="small" />
+                              </AppIconButton>
+                            )}
+                          </Stack>
                         </TableCell>
                       );
                     }
                     if (amountColumns.has(column.id)) {
+                      const deductionDetails = column.id === "totalDeductions"
+                        ? (row.payData.deductionLines ?? []).filter((line) => line.code.toUpperCase() !== "LHD_ED_POLICY").map((line) => `${line.description}: ${currencyFormatter(line.amount)}`).join("; ")
+                        : undefined;
                       return (
-                        <TableCell key={column.id}>
+                        <TableCell key={column.id} title={deductionDetails || undefined} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
                           {currencyFormatter(row.payData[column.id] as number | null | undefined)}
                         </TableCell>
                       );
                     }
                     return (
-                      <TableCell key={column.id}>
-                        {row.payData[column.id]}
+                      <TableCell key={column.id} sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
+                        {String(row.payData[column.id] ?? "")}
                       </TableCell>
                     );
                   })}
@@ -314,11 +350,12 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
             minHeight: 48,
             px: { xs: 0, sm: 1 },
             flexWrap: "wrap",
-            justifyContent: { xs: "flex-end", sm: "initial" },
+            justifyContent: { xs: "center", sm: "initial" },
             gap: { xs: 0.5, sm: 0 },
           },
           "& .MuiTablePagination-spacer": { display: { xs: "none", sm: "block" } },
-          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 } },
+          "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows": { fontSize: { xs: 12, sm: 14 }, mb: 0 },
+          "& .MuiTablePagination-actions": { ml: { xs: 0, sm: 2.5 } },
         }}
       />
       {
@@ -330,3 +367,4 @@ export const PayRollTable = ({ payRollData, payMonth, handleRowClick }: TablePro
     </>
   );
 };
+

@@ -2,7 +2,13 @@ import { FC, MouseEvent, useState } from "react";
 import { Box, Popover, Stack, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import { Palette } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import { APP_STYLES, AppStyle, useAppStyle } from "../../../../../app/modules/theme/useAppStyle";
+import { APP_STYLES, AppStyle } from "../../../../../app/modules/theme/useAppStyle";
+import { useCompanyTheme } from "../../../../../app/modules/theme/companyTheme";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
+import { ModulesName, Permission, Roles } from "../../../../../utils/enums";
+import { putRequest } from "../../../../../server/axios";
+import { toast } from "react-toastify";
 
 import { AppIconButton } from "../../../../../app/shared/components/ui";
 
@@ -18,7 +24,8 @@ type AppStylePickerProps = {
 };
 
 const AppStylePicker: FC<AppStylePickerProps> = ({ sx }) => {
-  const { style, setStyle } = useAppStyle();
+  const { theme: style, setTheme } = useCompanyTheme();
+  const currentUser = useAppSelector((state) => state.user.userData);
   const { formatMessage: i } = useIntl();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -28,6 +35,21 @@ const AppStylePicker: FC<AppStylePickerProps> = ({ sx }) => {
   };
   const handleClose = () => setAnchorEl(null);
   const open = Boolean(anchorEl);
+  const canEditCompanyTheme = currentUser?.roleType === Roles.Administrator ||
+    hasModuleFeaturePermission(ModulesName.CareerProfile, Permission.Edit, currentUser?.modulePermission ?? []);
+
+  if (!canEditCompanyTheme) return null;
+
+  const selectTheme = async (theme: AppStyle) => {
+    try {
+      const { data } = await putRequest<{ appTheme: AppStyle }, { success: boolean; message?: string }>("api/CareerProfile/theme", { appTheme: theme });
+      if (!data.success) throw new Error(data.message || "Unable to update company theme.");
+      setTheme(theme);
+      handleClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to update company theme.");
+    }
+  };
 
   // Defaults to the literal label so the picker still works if no translation
   // key is present yet — translators can add APP_STYLE.PICKER later.
@@ -81,8 +103,7 @@ const AppStylePicker: FC<AppStylePickerProps> = ({ sx }) => {
                 spacing={1.5}
                 alignItems="center"
                 onClick={() => {
-                  setStyle(s.value);
-                  handleClose();
+                  void selectTheme(s.value);
                 }}
                 sx={{
                   cursor: "pointer",

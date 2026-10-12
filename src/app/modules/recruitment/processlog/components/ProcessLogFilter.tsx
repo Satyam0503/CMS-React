@@ -65,7 +65,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={i({ id: "FROM" })}
                 value={
-                  Boolean(values.filterFrom)
+                  values.filterFrom
                     ? dayjs(values.filterFrom)
                     : null
                 }
@@ -80,7 +80,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={i({ id: "TO" })}
                 value={
-                  Boolean(values.filterTo) ? dayjs(values.filterTo) : null
+                  values.filterTo ? dayjs(values.filterTo) : null
                 }
                 minDate={dayjs(values.filterFrom)}
                 maxDate={dayjs()}

@@ -10,6 +10,7 @@ import { GetAllEmployeeResponseModel } from "../models";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
 import { LANGUAGE } from "../../../../utils/enums";
+import { EmployeeLifecycleDialog } from "./EmployeeLifecycleDialog";
 
 interface Props {
   employeeList: GetAllEmployeeResponseModel[];
@@ -18,13 +19,22 @@ interface Props {
   pageSize: number;
   totalRecords: number;
   onPaginationChange: (page: number, pageSize: number) => void;
+  canManageLifecycle?: boolean;
+  onLifecycleSaved?: () => void;
 }
 
-const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, totalRecords, onPaginationChange }) => {
+const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, totalRecords, onPaginationChange, canManageLifecycle = false, onLifecycleSaved }) => {
   const currentEmpId = useAppSelector((state) => state.user.userData?.userId) ?? "";
   const navigate = useNavigate();
   const { currentLanguage } = useAppLang();
   const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
+  const lifecycleLabel = (value?: string) => (value ?? "Active").replace(/([a-z])([A-Z])/g, "$1 $2");
+  const lifecycleColor = (employment?: string, availability?: string): "success" | "warning" | "error" | "info" | "default" => {
+    if (employment === "Resigned" || employment === "Terminated") return "error";
+    if (availability && availability !== "Working") return "warning";
+    if (employment === "NoticePeriod") return "info";
+    return "success";
+  };
 
   const handleClick = (employeeId: string) => {
     if (employeeId === currentEmpId) {
@@ -50,6 +60,7 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, 
           <Card
             className="employee-card "
             key={emp.userId}
+            sx={{ position: "relative", overflow: "hidden" }}
             onClick={() => handleClick(emp.userId)}
             tabIndex={0}
             role="button"
@@ -66,7 +77,8 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, 
               }
               alt="employee-profile-image"
             />
-            <Box className="employee-card-content">
+            <Box className="employee-card-content" sx={{ position: "relative" }}>
+              {canManageLifecycle && <Box sx={{ position: "absolute", top: 10, right: 10, zIndex: 4, maxWidth: "calc(100% - 20px)" }}><EmployeeLifecycleDialog employee={emp} onSaved={onLifecycleSaved} /></Box>}
               <Chip
                 icon={<WorkOutline />}
                 label={
@@ -77,6 +89,30 @@ const EmployeeGridView: FC<Props> = ({ employeeList, isLoading, page, pageSize, 
                 size="small"
                 className="employee-role-chip"
               />
+              {canManageLifecycle && <Box sx={{ display: "flex", gap: 0.75, flexWrap: "wrap", mt: 1 }}>
+                <Chip
+                  size="small"
+                  color={lifecycleColor(emp.employmentStatus, emp.availabilityStatus)}
+                  variant="outlined"
+                  label={lifecycleLabel(emp.employmentStatus)}
+                  aria-label={`Employment status: ${lifecycleLabel(emp.employmentStatus)}`}
+                />
+                {emp.availabilityStatus && emp.availabilityStatus !== "Working" && (
+                  <Chip
+                    size="small"
+                    color="warning"
+                    variant="outlined"
+                    label={lifecycleLabel(emp.availabilityStatus)}
+                    aria-label={`Availability status: ${lifecycleLabel(emp.availabilityStatus)}`}
+                  />
+                )}
+                {emp.accountStatus && emp.accountStatus !== "Active" && (
+                  <Chip size="small" color="error" variant="outlined" label={`Account: ${lifecycleLabel(emp.accountStatus)}`} aria-label={`Account status: ${lifecycleLabel(emp.accountStatus)}`} />
+                )}
+                {emp.payrollStatus && emp.payrollStatus !== "Active" && (
+                  <Chip size="small" color="warning" variant="outlined" label={`Payroll: ${lifecycleLabel(emp.payrollStatus)}`} aria-label={`Payroll status: ${lifecycleLabel(emp.payrollStatus)}`} />
+                )}
+              </Box>}
               <Typography
                 variant="h6"
                 className="fw-bold employee-card-name"

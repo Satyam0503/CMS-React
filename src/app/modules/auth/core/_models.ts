@@ -11,6 +11,7 @@ export interface CompanyRegisterModel {
   companyName: string;
   email: string;
   password: string;
+  acceptTerms: boolean;
 }
 
 export type UserLoginModel = Pick<CompanyRegisterModel, "email" | "password">;

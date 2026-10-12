@@ -25,9 +25,14 @@ const getStoredAccessToken = (): string | null => {
   }
 };
 
+const storedAccessToken = getStoredAccessToken();
+
 const initialState: AuthenticationState = {
-  isUserAuthenticated: false,
-  token: getStoredAccessToken(),
+  // A stored token means the session is present while AuthInit validates it.
+  // Keeping this false until the async validation completes makes AppRoutes
+  // render /auth for one render, which causes the visible auth flicker.
+  token: storedAccessToken,
+  isUserAuthenticated: Boolean(storedAccessToken),
 };
 const authSlice = createSlice({
   name: "auth",

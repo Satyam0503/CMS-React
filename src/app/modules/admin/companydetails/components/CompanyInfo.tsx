@@ -19,7 +19,8 @@ import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { CompanyInfoModel, CompanyModel } from "../../models";
-import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence } from "../../adminservices";
+import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence, setCompanyFormerEmployeePortalAccess } from "../../adminservices";
+import { setCompanyTheme } from "../../../theme/companyTheme";
 import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
@@ -148,6 +149,7 @@ export const CompanyInfo = () => {
     formData.append("Address", values.address);
     formData.append("EmployeeIdPrefix", values.employeeIdPrefix ?? "");
     formData.append("AutoGenerateEmployeeId", String(values.autoGenerateEmployeeId ?? true));
+    formData.append("AppTheme", values.appTheme ?? "glass");
     if (values.applicationLanguage.length > 0) {
       values.applicationLanguage.forEach(language =>
         formData.append('ApplicationLanguage', language)
@@ -164,6 +166,7 @@ export const CompanyInfo = () => {
         }));
         changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         setCompanyInfo(methodResult);
+        setCompanyTheme(methodResult.appTheme);
         await refreshEmployeeIdSequence();
         toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
@@ -200,6 +203,7 @@ export const CompanyInfo = () => {
             address: methodResult.address,
             employeeIdPrefix: methodResult.employeeIdPrefix ?? "",
             autoGenerateEmployeeId: methodResult.autoGenerateEmployeeId ?? true,
+            appTheme: methodResult.appTheme ?? "glass",
           }));
           setLoading(false);
         }
@@ -227,6 +231,17 @@ export const CompanyInfo = () => {
   const [confirmationContent, setConfirmationContent] = useState("");
   const [confirmationAction, setConfirmationAction] = useState<(() => Promise<void>) | null>(null);
   const [confirmationLoading, setConfirmationLoading] = useState(false);
+  const toggleFormerEmployeePortal = async (enabled: boolean) => {
+    try {
+      setConfirmationLoading(true);
+      const { data } = await setCompanyFormerEmployeePortalAccess(enabled, enabled ? "Enabled by company administrator" : "Disabled by company administrator");
+      if (!data.success) { toast.error(data.message || "Unable to update former-employee portal access."); return; }
+      setCompanyInfo((current) => ({ ...current, formerEmployeePortalEnabled: enabled }));
+      setEditedInfo((current) => ({ ...current, formerEmployeePortalEnabled: enabled }));
+      toast.success(enabled ? "Former-employee portal enabled for this company." : "Former-employee portal disabled and all active portal sessions revoked.");
+    } catch { toast.error("Unable to update former-employee portal access."); }
+    finally { setConfirmationLoading(false); }
+  };
   const confirmSkip = async () => {
     const count = Number(skipCount);
     if (!Number.isInteger(count) || count <= 0) return toast.error("Skip count must be greater than 0.");
@@ -289,7 +304,7 @@ export const CompanyInfo = () => {
 
   return (
     <>
-      <Card sx={{ p: 3, mt: 1, height: "100%" }}>
+      <Card sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, mt: 0, height: "100%", minWidth: 0, border: "1px solid", borderColor: "divider", borderRadius: { xs: 2.5, sm: 3 }, boxShadow: "0 10px 28px rgba(24, 74, 82, .07)" }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2, flexWrap: "wrap" }}>
           <Stack spacing={.5}>
             <Typography variant="h5" sx={{ fontSize: 18 }}>
@@ -409,6 +424,11 @@ export const CompanyInfo = () => {
                     : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang }) + ", ")}</Typography>
                 }
               </Stack>
+              <Stack spacing={1}>
+                <Typography variant="body1">Company theme</Typography>
+                {isEdit ? <AppSelect fullWidth {...getFieldProps("appTheme")}><MenuItem value="glass">Glass</MenuItem><MenuItem value="slate">Slate</MenuItem><MenuItem value="dawn">Dawn</MenuItem><MenuItem value="blush">Blush</MenuItem></AppSelect> : <Typography variant="body2" sx={{ textTransform: "capitalize" }}>{values.appTheme ?? "glass"}</Typography>}
+                <Typography variant="caption" color="text.secondary">Applied to all signed-in users and this company’s public careers pages.</Typography>
+              </Stack>
             </Grid>
           </Grid>
           {companyInfo.autoGenerateEmployeeId !== false && <><Divider sx={{ my: 1 }} /><Grid container sx={{ gap: 3 }}>
@@ -434,6 +454,17 @@ export const CompanyInfo = () => {
               </Stack>
             </Grid>
           </Grid></>}
+          <Divider sx={{ my: 1 }} />
+          <Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Former-employee portal</Typography>
+              <Typography variant="body2">Company-wide access control. Turning this off immediately revokes every former employee session; employee records and issued documents are retained.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              <FormControlLabel control={<Switch checked={companyInfo.formerEmployeePortalEnabled !== false} onChange={(event) => void toggleFormerEmployeePortal(event.target.checked)} disabled={confirmationLoading} inputProps={{ "aria-label": "Enable former employee portal for this company" }} />} label={companyInfo.formerEmployeePortalEnabled !== false ? "Portal enabled for this company" : "Portal disabled for this company"} />
+              <Typography variant="caption" color="text.secondary" display="block">Former employees still need individual access enabled and a verified personal email to sign in with OTP.</Typography>
+            </Grid>
+          </Grid>
           <Divider sx={{ my: 1 }} />
           <Grid container sx={{ gap: 3 }}>
             <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>

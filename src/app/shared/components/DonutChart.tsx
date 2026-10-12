@@ -2,7 +2,7 @@ import { styled, useColorScheme } from "@mui/material";
 import { useDrawingArea } from "@mui/x-charts/hooks";
 import { PieChart, PieSeries } from "@mui/x-charts/PieChart"
 import { getChartPalette } from "../../modules/theme/themePalettes";
-import { useAppStyle } from "../../modules/theme/useAppStyle";
+import { useCompanyTheme } from "../../modules/theme/companyTheme";
 
 interface DonutChartProps {
     loading: boolean,
@@ -16,7 +16,7 @@ interface DonutChartProps {
 export const DonutChart = (props: DonutChartProps) => {
     const { loading, series, hideLegend = false, height = 200, centerLabel } = props;
     const { mode, systemMode } = useColorScheme();
-    const { style: appStyle } = useAppStyle();
+    const { theme: appStyle } = useCompanyTheme();
     return (
         <PieChart
             series={series}

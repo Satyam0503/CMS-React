@@ -15,21 +15,25 @@ export type AttendanceStatus =
   | "WFH-HD"
   | "WFH+SL"
   | "WFH+CL"
-  | "L";
+  | "L"
+  | "MED"
+  | "ML"
+  | "SAB"
+  | "UL";
 
 export interface AttendancePayload {
-  fromDate: string; 
-  toDate: string;   
-  userIds?: string[]; 
+  fromDate: string;
+  toDate: string;
+  userIds?: string[];
 }
 
 export interface AttendanceModel {
   attendanceId: string;
   userId: string;
-  employeeId: string;   
-  date: string; 
-  checkInTime?: string;  
-  checkOutTime?: string; 
+  employeeId: string;
+  date: string;
+  checkInTime?: string;
+  checkOutTime?: string;
   totalHours?: number;
   status: AttendanceStatus;
   remarks?: string;
@@ -43,9 +47,9 @@ export interface AttendanceModel {
 }
 
 export interface CalendarAttendanceRow {
-  id: string;  
+  id: string;
   userId: string;
-  employeeId: string;   
+  employeeId: string;
   userName: string;
   date: string;
   status: AttendanceStatus;
@@ -63,10 +67,10 @@ export interface GetAllAttendanceData {
 
 export interface AdminAttendanceCreateDto {
   UserId: string;
-  EmployeeId: string;   
-  Date: string;         
-  CheckInTime?: string; 
-  CheckOutTime?: string; 
+  EmployeeId: string;
+  Date: string;
+  CheckInTime?: string;
+  CheckOutTime?: string;
   Status: AttendanceStatus;
   Remarks?: string | null;
 }

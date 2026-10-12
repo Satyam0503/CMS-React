@@ -27,6 +27,7 @@
     "CALENDAR": "カレンダー",
     "POLICIES": "せいさく",
     "PAYROLL_SETTINGS": "給与設定",
+    "LIFECYCLE_MANAGEMENT": "ライフサイクル管理",
     "CAREER_PROFILE": "採用プロフィール"
   },
   "GENDER": {
@@ -267,6 +268,7 @@
     "REGISTER": "登録",
     "SIGNIN": "サインイン",
     "T&C": "利用規約に同意します",
+    "TERMS_REQUIRED": "利用規約に同意します",
     "PASSWORD_NOTE": "8文字以上の文字、数字、記号を組み合わせて使用してください。",
     "FORGOT_PASSWORD": "パスワードを忘れましたか？",
     "FORGOT_PASSWORD.NOTE": "メールアドレスを入力してパスワードをリセットしてください",
@@ -1060,3 +1062,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "求人情報、応募者管理、選考および面接プロセス、評価、詳細なプロセスログを含む採用業務全体を管理します。採用の進捗状況や対応履歴、採用判断を可視化し、効率的な人材獲得を支援します。"
   }
 }
+

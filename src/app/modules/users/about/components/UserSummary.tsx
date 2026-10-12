@@ -70,7 +70,7 @@ export const UserSummary = () => {
   return (
     <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={{ xs: 1, sm: 0 }} sx={{ mb: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }}>
           {formatMessage({ id: "PROFILE.ABOUT.TITLE" })}
         </Typography>
         {isEdit ? (

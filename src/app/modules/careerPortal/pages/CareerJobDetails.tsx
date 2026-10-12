@@ -36,14 +36,17 @@ import { getCareerSession, getCareerVisitorToken } from "../hooks/useCareerVisit
 import {
   discoverJobs,
   followCompany,
+  getCompanyProfile,
   getFollowStatus,
   trackCareerEvent,
   unfollowCompany,
 } from "../services/careerPortalService";
+import { PublicCompanyProfile } from "../types/careerPortalTypes";
 import { PublicJobSummary } from "../../applynow/publicCareerTypes";
 import { Alrt, Btn } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
 import { CompanyLogo } from "../components/CompanyLogo";
+import { CompanyCareerTheme } from "../components/CompanyCareerTheme";
 
 const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value?: React.ReactNode }) =>
   value ? <Stack direction="row" spacing={1.2} alignItems="flex-start"><Box sx={{ color: "primary.main", mt: 0.15 }}>{icon}</Box><Box><Typography variant="caption" color="text.secondary">{label}</Typography><Typography fontWeight={700}>{value}</Typography></Box></Stack> : null;
@@ -68,9 +71,19 @@ export const CareerJobDetails = () => {
   const [notice, setNotice] = useState("");
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [companyProfile, setCompanyProfile] = useState<PublicCompanyProfile | null>(null);
   const description = useMemo(() => ({ __html: DOMPurify.sanitize(job?.description || "") }), [job]);
 
   useEffect(() => { if (job) document.title = `${job.title} - ${job.companyName}`; }, [job]);
+
+  useEffect(() => {
+    if (!companyCode || !/^\d{6}$/.test(companyCode)) { setCompanyProfile(null); return; }
+    let active = true;
+    getCompanyProfile(companyCode)
+      .then(({ data }) => { if (active) setCompanyProfile(data.methodResult ?? null); })
+      .catch(() => active && setCompanyProfile(null));
+    return () => { active = false; };
+  }, [companyCode]);
 
   useEffect(() => {
     const session = getCareerSession();
@@ -156,6 +169,7 @@ export const CareerJobDetails = () => {
   };
 
   return (
+    <CompanyCareerTheme theme={companyProfile?.careerTheme}>
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
       <CareerHeader />
       <Container maxWidth="xl" sx={{ py: { xs: 3, md: 6 } }}>
@@ -270,5 +284,6 @@ export const CareerJobDetails = () => {
       <PublicJobApplyModal job={job} open={applyOpen} onClose={() => setApplyOpen(false)} onSubmitted={setNotice} />
       <Snackbar open={Boolean(notice)} autoHideDuration={7000} onClose={() => setNotice("")}><Alert severity="info" variant="filled" onClose={() => setNotice("")}>{notice}</Alert></Snackbar>
     </Box>
+    </CompanyCareerTheme>
   );
 };

@@ -115,6 +115,7 @@ type EmployeeIdSequence = { currentNextEmployeeId: string; format: string };
 export const getEmployeeIdSequence = () => getRequest<ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.GET_EMPLOYEE_ID_SEQUENCE);
 export const skipEmployeeIds = (skipCount: number) => postRequest<{ skipCount: number }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.SKIP_EMPLOYEE_IDS, { skipCount });
 export const startEmployeeIdSequence = (employeeId: string) => postRequest<{ employeeId: string }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.START_EMPLOYEE_ID_SEQUENCE, { employeeId });
+export const setCompanyFormerEmployeePortalAccess = (enabled: boolean, reason?: string) => postRequest<{ enabled: boolean; reason?: string }, ApiResponse>("api/User/CompanyFormerEmployeePortalAccess", { enabled, reason });
 
 // company jobTitles
 

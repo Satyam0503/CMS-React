@@ -7,19 +7,17 @@ test.describe("Authentication @smoke", () => {
 
   test("displays login form", async ({ page }) => {
     await expect(page.getByLabel(/email/i)).toBeVisible();
-    await expect(page.getByLabel(/password/i)).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
     await expect(page.getByRole("button", { name: /sign in|log in/i })).toBeVisible();
   });
 
-  test("rejects empty submission with validation errors", async ({ page }) => {
-    await page.getByRole("button", { name: /sign in|log in/i }).click();
-    const errorMessages = page.locator('[class*="error"], [role="alert"], .Mui-error');
-    await expect(errorMessages.first()).toBeVisible({ timeout: 5000 });
+  test("keeps empty submission disabled", async ({ page }) => {
+    await expect(page.getByRole("button", { name: /sign in|log in/i })).toBeDisabled();
   });
 
   test("rejects invalid credentials", async ({ page }) => {
     await page.getByLabel(/email/i).fill("wrong@test.com");
-    await page.getByLabel(/password/i).fill("WrongPassword1!");
+    await page.getByRole("textbox", { name: "Password" }).fill("WrongPassword1!");
     await page.getByRole("button", { name: /sign in|log in/i }).click();
 
     const errorMsg = page.locator('[role="alert"], .Toastify__toast--error, [class*="error"]');
@@ -33,7 +31,7 @@ test.describe("Authentication @smoke", () => {
   });
 
   test("password field masks input", async ({ page }) => {
-    const passwordField = page.getByLabel(/password/i);
+    const passwordField = page.getByRole("textbox", { name: "Password" });
     await expect(passwordField).toHaveAttribute("type", "password");
   });
 

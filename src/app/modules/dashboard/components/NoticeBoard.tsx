@@ -72,16 +72,25 @@ export default function NoticeBoard() {
             </Typography>
           ) : (
             <>
-              <Stack spacing={0.8} className="flex-grow-1">
+              <Stack
+                spacing={0.8}
+                className="flex-grow-1"
+                sx={{
+                  maxHeight: { xs: 320, sm: 360 },
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  scrollbarGutter: "stable",
+                }}
+              >
                 {noticeList.map((item) => (
                   <Stack
                     key={item.noticeId}
-                    className={clsx("flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary", { "unread-notice": !item.viewedStatus })}
+                    className={clsx("flex-row align-items-center px-2 py-1 rounded hover-secondary notice-board-row", { "unread-notice": !item.viewedStatus })}
                   >
                     <Box
                       component="div"
                       key={item.noticeId}
-                      className="d-flex flex-row align-items-center gap-2"
+                      className="d-flex flex-row align-items-center gap-2 notice-board-content"
                     >
                       <Avatar
                         src={item.userProfile || DEFAULT_USER_AVATAR}
@@ -113,7 +122,7 @@ export default function NoticeBoard() {
                       component="span"
                       sx={{
                         color: "secondary.main",
-                        mx: 2,
+                        ml: { xs: 0, sm: 1 },
                         "&:hover": {
                           color: "secondary.dark",
                         },

@@ -2,21 +2,23 @@ import { FC, useState } from "react";
 import { Box, ButtonBase, Drawer, Stack, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import { SidebarMenuMain } from "./sidebar-menu/SidebarMenuMain";
 import { Close, KeyboardDoubleArrowLeft } from "@mui/icons-material";
-import { useAppStyle } from "../../../../app/modules/theme/useAppStyle";
+import { useCompanyTheme } from "../../../../app/modules/theme/companyTheme";
 
 type Props = {
   open: boolean;
   handleClose: () => void;
   isMiniSidebar: boolean;
   setMiniSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  isHoverExpanded: boolean;
+  setHoverExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
-const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }) => {
+const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar, isHoverExpanded, setHoverExpanded }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down(theme.breakpoints.values.md));
   const [openIndex, setOpenIndex] = useState<number | null>(null); // Track the open item index
-  const { style: sidebarStyle } = useAppStyle();
+  const { theme: sidebarStyle } = useCompanyTheme();
 
   const handleSideBarToggle = () => {
     setMiniSidebar(!isMiniSidebar);
@@ -38,16 +40,58 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
       slotProps={{
         backdrop: { sx: { backgroundColor: "rgba(15, 23, 42, 0.44)", backdropFilter: "blur(2px)" } },
         paper: {
-          sx: { backgroundColor: 'background.sidebar', backgroundImage: "none" },
+          sx: {
+            backgroundColor: 'background.sidebar',
+            backgroundImage: "none",
+            ...(isSmallScreen
+              ? {}
+              : {
+                  top: "calc(50% + (var(--app-header-height) / 2)) !important",
+                  bottom: "auto !important",
+                  marginTop: "0 !important",
+                  marginBottom: "0 !important",
+                  height: isMiniSidebar && !isHoverExpanded
+                    ? "auto !important"
+                    : "clamp(560px, calc(100dvh - var(--app-header-height) - 120px), 640px) !important",
+                  maxHeight: "calc(100dvh - var(--app-header-height) - 32px) !important",
+                  transform: "translateY(-50%) translateZ(0) !important",
+                  "&:hover": {
+                    transform: "translateY(calc(-50% - 2px)) translateZ(0) !important",
+                  },
+                }),
+          },
           className: 'sidebar-paper',
         },
       }}
       onClose={handleClose}
       className="sidebar"
-      data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar ? "true" : "false"}
+      data-sidebar-mini={isSmallScreen ? "false" : isMiniSidebar && !isHoverExpanded ? "true" : "false"}
+      data-sidebar-hover-expanded={!isSmallScreen && isHoverExpanded ? "true" : "false"}
       data-sidebar-style={sidebarStyle}
+      onMouseEnter={() => {
+        if (!isSmallScreen && isMiniSidebar) setHoverExpanded(true);
+      }}
+      onMouseLeave={() => {
+        if (!isSmallScreen) setHoverExpanded(false);
+      }}
     >
-      <Stack role="presentation" onClick={handleClose} sx={{ height: "100%", minHeight: 0, flexGrow: 1, p: 2, overflow: "hidden" }}>
+      <Stack
+        role="presentation"
+        onClick={handleClose}
+        sx={{
+          maxHeight: isSmallScreen
+            ? "calc(100dvh - 20px)"
+            : "calc(100dvh - var(--app-header-height) - 32px)",
+          height: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? "auto" : "100%",
+          minHeight: 0,
+          flexGrow: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? 0 : 1,
+          justifyContent: isSmallScreen || (isMiniSidebar && !isHoverExpanded) ? "flex-start" : "space-between",
+          px: isMiniSidebar && !isHoverExpanded ? 1 : 2,
+          py: 1.5,
+          gap: 0.5,
+          overflow: "hidden",
+        }}
+      >
         {isSmallScreen && (
           <ButtonBase
             aria-label="Close navigation menu"
@@ -61,7 +105,8 @@ const Sidebar: FC<Props> = ({ open, handleClose, isMiniSidebar, setMiniSidebar }
         <SidebarMenuMain
           currentIndex={openIndex}
           handleToggle={handleToggle}
-          isMiniSidebar={!isSmallScreen && isMiniSidebar}
+          isMiniSidebar={!isSmallScreen && isMiniSidebar && !isHoverExpanded}
+          onExpandSidebar={() => setMiniSidebar(false)}
         />
 
         {!isSmallScreen && (

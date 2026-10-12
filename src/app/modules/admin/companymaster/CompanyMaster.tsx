@@ -1,6 +1,6 @@
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
-import { alpha, Box, ButtonBase, Card, Stack, Typography } from "@mui/material";
+import { alpha, Box, ButtonBase, Card, Stack, Tooltip, Typography } from "@mui/material";
 import { Departments } from "./components/Department";
 import { Add, CorporateFare, Work, LabelOutlined } from "@mui/icons-material";
 import {
@@ -136,24 +136,26 @@ const CompanyMaster = () => {
     <Stack spacing={{ xs: 2, md: 2.5 }} sx={{ minWidth: 0 }}>
       <Card variant="outlined" sx={{ borderRadius: 3, p: 0.75, overflow: "hidden" }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={0.75} alignItems={{ sm: "center" }}>
-          <Stack direction="row" spacing={0.75} sx={{ flex: 1, minWidth: 0, overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", "&::-webkit-scrollbar": { display: "none" } }}>
+          <Stack direction="row" spacing={0.75} sx={{ flex: 1, minWidth: 0, width: "100%", overflowX: "hidden", scrollbarWidth: "none", msOverflowStyle: "none", "&::-webkit-scrollbar": { display: "none" } }}>
             {tabsRoutes.map((tab) => {
               const active = checkIsActive(location.pathname, tab.to);
               return (
-                <ButtonBase
-                  key={tab.tabId}
+                <Tooltip key={tab.tabId} title={i({ id: tab.title })} placement="bottom">
+                  <ButtonBase
                   onClick={() => navigate(tab.to)}
                   sx={{
-                    flex: "0 0 auto", minHeight: 46, px: { xs: 1.25, sm: 1.75 }, borderRadius: 2,
+                    flex: "1 1 0", minWidth: 0, minHeight: 46, px: { xs: 1.25, sm: 1.75 }, borderRadius: 2,
                     display: "inline-flex", gap: 1, color: active ? "primary.main" : "text.secondary", fontWeight: active ? 800 : 700,
                     bgcolor: active ? (theme) => alpha(theme.palette.primary.main, 0.12) : "transparent",
                     border: "1px solid", borderColor: active ? (theme) => alpha(theme.palette.primary.main, 0.35) : "transparent",
                     "&:hover": { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08) },
+                    "@media (max-width: 1023px)": { px: 0.5, gap: 0, "& .company-master-tab-label": { display: "none" }, "& .MuiSvgIcon-root": { fontSize: 23 } },
                   }}
                 >
                   {tab.icon}
-                  <Typography component="span" fontSize={14} fontWeight="inherit" whiteSpace="nowrap">{i({ id: tab.title })}</Typography>
-                </ButtonBase>
+                  <Typography className="company-master-tab-label" component="span" fontSize={14} fontWeight="inherit" whiteSpace="nowrap">{i({ id: tab.title })}</Typography>
+                  </ButtonBase>
+                </Tooltip>
               );
             })}
             {namedCustomAttributes.map((attribute) => {

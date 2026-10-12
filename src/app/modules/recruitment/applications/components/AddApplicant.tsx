@@ -13,7 +13,7 @@ import { TextInput } from "../../../../shared/components/form-component/TextInpu
 import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
+import { addApplicant, getAllJobVacancies, uploadResumeForApplicant } from "../../services";
 import { toast } from "react-toastify";
 import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
@@ -86,7 +86,9 @@ export const AddApplicant: FC<PropsTypes> = ({
     try {
       const { data } = await addApplicant(payload);
       if (!data.success) throw new Error(String(data.statusCode));
-      const uploadResumeResponse = await uploadResume(values.email, formData);
+      const applicantId = data.resourceId;
+      if (!applicantId) throw new Error("The created applicant identity was not returned.");
+      const uploadResumeResponse = await uploadResumeForApplicant(applicantId, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) throw new Error(String(data.statusCode));
       toast.success(i({ id: "TOAST.SUCCESS.ADD_APPLICANT" }));
@@ -309,3 +311,4 @@ export const AddApplicant: FC<PropsTypes> = ({
     </>
   );
 };
+

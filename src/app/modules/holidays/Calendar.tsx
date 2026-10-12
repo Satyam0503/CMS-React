@@ -28,8 +28,13 @@ export default function Calendar() {
     const [importRows, setImportRows] = useState<CalendarImportItem[]>([]);
     const [importError, setImportError] = useState<string | null>(null);
     const [importing, setImporting] = useState(false);
-    const permissions = useAppSelector(state => state.user.userData?.modulePermission ?? []);
+    const userData = useAppSelector(state => state.user.userData);
+    const permissions = userData?.modulePermission ?? [];
     const canImport = hasModuleFeaturePermission(ModulesName.Calendar, Permission.Create, permissions);
+    const isHrOrAdmin = Boolean(
+        hasModuleFeaturePermission(ModulesName.Recruitment, Permission.View, permissions) ||
+        hasModuleFeaturePermission(ModulesName.Admin, Permission.View, permissions)
+    );
 
     const handleCategoryChange = (category: CalendarItemType) => {
         setCategory(category);
@@ -96,7 +101,21 @@ export default function Calendar() {
         const fetchedHolidayData = async () => {
             try {
                 const { data } = await getAllCalendarItem(payload);
-                if (data.success) setCalendarItems(data.methodResults);
+                if (data.success) {
+                    const currentUserId = (userData?.userId ?? "").trim().toLowerCase();
+                    const visibleItems = (data.methodResults ?? []).filter(item => {
+                        const isInterviewItem = Boolean(
+                            item.restrictToTargetUsersAndHrAdmin ||
+                            (item.name?.toLowerCase().startsWith("interview:") && item.description?.toLowerCase().includes("panel:"))
+                        );
+                        if (!isInterviewItem || isHrOrAdmin) return true;
+                        const panelSegment = item.description?.toLowerCase().split("panel:")[1] ?? "";
+                        const parsedPanelists = panelSegment.split(",").map(s => s.trim()).filter(Boolean);
+                        const allowedIds = [...(item.targetUserIds ?? []).map(s => s.trim().toLowerCase()), ...parsedPanelists];
+                        return Boolean(currentUserId && allowedIds.includes(currentUserId));
+                    });
+                    setCalendarItems(visibleItems);
+                }
             } catch (error) {
                 console.error((error as Error).message);
             } finally {
@@ -105,7 +124,7 @@ export default function Calendar() {
         }
 
         fetchedHolidayData()
-    }, [selectedDate?.year(), isRefresh, category]);
+    }, [selectedDate?.year(), isRefresh, category, isHrOrAdmin, userData?.userId]);
 
     useEffect(() => {
         setPageTitle(i({ id: "PAGE.CALENDAR" }))

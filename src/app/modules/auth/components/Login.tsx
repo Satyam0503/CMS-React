@@ -1,10 +1,8 @@
 import * as Yup from "yup";
-import {
-  Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import { login, resendEmailVerification } from "../core/_requests";
 import {
-  Box,
   FormControlLabel,
   InputAdornment,
   Stack,
@@ -14,7 +12,14 @@ import {
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import CustomisedButton from "../../../shared/components/C_Button";
-import { ArrowForwardRounded, LockOutlined, MailOutlineRounded, ShieldOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  ArrowForwardRounded,
+  LockOutlined,
+  MailOutlineRounded,
+  ShieldOutlined,
+  Visibility,
+  VisibilityOff,
+} from "@mui/icons-material";
 import { useState } from "react";
 import { setToken } from "../../../Redux/Reducers/authSlice";
 import { useAppDispatch } from "../../../Redux/hooks";
@@ -22,18 +27,21 @@ import { setLocalKey } from "../core/AuthHelpers";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
-
-import { AppAlert, AppButton, AppCheckbox, AppIconButton } from "../../../shared/components/ui";
+import {
+  AppAlert,
+  AppButton,
+  AppCheckbox,
+  AppIconButton,
+  passwordVisibilityButtonSx,
+} from "../../../shared/components/ui";
 import { toast } from "react-toastify";
+
 const loginSchema = Yup.object().shape({
   email: Yup.string()
     .matches(Regex.Email, "VALIDATION_ERR.WRONG_EMAIL")
     .required("VALIDATION_ERR.EMAIL_REQ"),
   password: Yup.string()
-    .matches(
-      Regex.Password,
-      "VALIDATION_ERR.INVALID_PASSWORD"
-    )
+    .matches(Regex.Password, "VALIDATION_ERR.INVALID_PASSWORD")
     .required("VALIDATION_ERR.PASSWORD_REQ"),
 });
 
@@ -50,22 +58,42 @@ export function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
-  const fieldSx = {
+
+  localStorage.removeItem("clientId");
+
+  const inputSx = {
     "& .MuiOutlinedInput-root": {
-      minHeight: 58,
-      borderRadius: 2.5,
-      bgcolor: "action.hover",
-      transition: "background-color .2s ease, box-shadow .2s ease",
-      "&:hover": { bgcolor: "action.selected" },
+      minHeight: 48,
+      borderRadius: 2,
+      bgcolor: alpha(theme.palette.background.paper, 0.8),
+      transition: "all 0.2s ease",
+      "&:hover": {
+        bgcolor: alpha(theme.palette.background.paper, 1),
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: alpha(theme.palette.primary.main, 0.4),
+        },
+      },
       "&.Mui-focused": {
-        bgcolor: "background.paper",
-        boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, .12)}`,
+        bgcolor: alpha(theme.palette.background.paper, 1),
+        boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.12)}`,
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: theme.palette.primary.main,
+          borderWidth: "1.5px",
+        },
       },
     },
-    "& .MuiInputAdornment-root": { color: "text.secondary" },
-    "& .MuiFormHelperText-root": { minHeight: 20, mx: .5 },
+    "& .MuiInputAdornment-root": {
+      color: "text.secondary",
+      mr: 1,
+    },
+    "& .MuiFormHelperText-root": {
+      minHeight: 18,
+      mx: 0.5,
+      mt: 0.5,
+      fontSize: "0.78rem",
+    },
   } as const;
-  localStorage.removeItem("clientId");
+
   async function handleLogin(
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void,
@@ -89,6 +117,7 @@ export function Login() {
       setSubmitting(false);
     }
   }
+
   async function handleResendVerification(email: string) {
     setIsResendingVerification(true);
     try {
@@ -104,25 +133,34 @@ export function Login() {
       setIsResendingVerification(false);
     }
   }
+
   return (
-    <Stack spacing={4.5}>
-      <Stack spacing={1.25}>
-        <Box
+    <Stack spacing={3} sx={{ width: "100%" }}>
+      {/* Header Block */}
+      <Stack spacing={0.75}>
+        <Typography
+          variant="h4"
           sx={{
-            display: { xs: "inline-flex", md: "none" }, alignSelf: "flex-start",
-            px: 1.5, py: .65, borderRadius: 99, color: "primary.main", bgcolor: alpha(theme.palette.primary.main, .1),
-            fontWeight: 700, fontSize: 12, letterSpacing: ".04em", textTransform: "uppercase",
+            fontWeight: 700,
+            letterSpacing: "-0.025em",
+            fontSize: { xs: "1.5rem", sm: "1.75rem" },
+            color: "text.primary",
           }}
         >
-          Welcome back
-        </Box>
-        <Typography variant="h3" fontWeight={800} letterSpacing="-.035em">
           Sign in to your workspace
         </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Enter your details to continue to CodeJi CMS.
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            fontSize: "0.875rem",
+            lineHeight: 1.5,
+          }}
+        >
+          Enter your credentials to continue to CodeJi CMS.
         </Typography>
       </Stack>
+
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
@@ -132,16 +170,14 @@ export function Login() {
       >
         {({
           status,
-          isValid,
-          dirty,
           isSubmitting,
           handleSubmit,
           values,
         }) => (
           <form onSubmit={handleSubmit} noValidate id="kt_login_signin_form">
-            <Stack spacing={2.25}>
+            <Stack spacing={2}>
               {status && (
-                <Stack spacing={1} sx={{ my: 2 }} className="mb-5">
+                <Stack spacing={1} role="alert">
                   <AppAlert severity="error">{status}</AppAlert>
                   {unverifiedEmail && (
                     <AppButton
@@ -151,105 +187,189 @@ export function Login() {
                       disabled={isResendingVerification}
                       onClick={() => handleResendVerification(unverifiedEmail)}
                     >
-                      {isResendingVerification ? "Sending verification email…" : "Resend verification email"}
+                      {isResendingVerification
+                        ? "Sending verification email…"
+                        : "Resend verification email"}
                     </AppButton>
                   )}
                 </Stack>
               )}
-              <Stack spacing={2}>
-                <Stack>
-                  <TextInput
-                    type="email"
-                    label={i({ id: "FORM.EMAIL" })}
-                    placeholder={i({ id: "FORM.EMAIL" })}
-                    name="email"
-                    sx={fieldSx}
-                    inputProps={{ autoComplete: "email" }}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start"><MailOutlineRounded color="action" fontSize="small" /></InputAdornment>,
-                      endAdornment: <Box sx={{ width: 40 }} />,
-                    }}
-                  />
-                </Stack>
 
-                <Stack>
-                  <TextInput
-                    type={showPassword ? "text" : "password"}
-                    label={i({ id: "FORM.PASSWORD" })}
-                    placeholder={i({ id: "FORM.PASSWORD" })}
-                    name="password"
-                    sx={fieldSx}
-                    inputProps={{ autoComplete: "current-password" }}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start"><LockOutlined color="action" fontSize="small" /></InputAdornment>,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <AppIconButton
-                            type="button"
-                            size="small"
-                            aria-label={showPassword ? "Hide password" : "Show password"}
-                            onClick={() => setShowPassword((visible) => !visible)}
-                          >
-                            {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                          </AppIconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Stack>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: -1 }}>
-                  <FormControlLabel
-                    control={<AppCheckbox size="small" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />}
-                    label={<Typography variant="body2" color="text.secondary">Remember me</Typography>}
-                    sx={{ m: 0 }}
-                  />
-                  <Link
-                    to="/auth/forgot-password"
-                    state={{ email: values.email.trim(), autoSubmit: true }}
-                    style={{ fontWeight: 700, fontSize: 14 }}
-                  >
-                    {i({ id: "AUTH.FORGOT_PASSWORD" })}
-                  </Link>
-                </Stack>
-                <Stack
-                  spacing={1}
-                  sx={{
-                    "& .auth-signin-button": {
-                      minHeight: 52,
-                      borderRadius: 2.5,
-                      fontWeight: 800,
-                      textTransform: "none",
-                      fontSize: 15,
-                      boxShadow: `0 12px 28px ${alpha(theme.palette.primary.main, .28)}`,
-                    },
+              {/* Email Input */}
+              <Stack spacing={0.5}>
+                <TextInput
+                  type="email"
+                  label={i({ id: "FORM.EMAIL", defaultMessage: "Work Email" })}
+                  placeholder="name@company.com"
+                  name="email"
+                  sx={inputSx}
+                  inputProps={{
+                    autoComplete: "email",
+                    autoCapitalize: "none",
+                    spellCheck: false,
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <MailOutlineRounded sx={{ fontSize: 19 }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+
+              {/* Password Input */}
+              <Stack spacing={0.5}>
+                <TextInput
+                  type={showPassword ? "text" : "password"}
+                  label={i({ id: "FORM.PASSWORD", defaultMessage: "Password" })}
+                  placeholder="••••••••••••"
+                  name="password"
+                  sx={inputSx}
+                  inputProps={{
+                    autoComplete: "current-password",
+                  }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockOutlined sx={{ fontSize: 19 }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <AppIconButton
+                          type="button"
+                          size="small"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          sx={passwordVisibilityButtonSx}
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => setShowPassword((visible) => !visible)}
+                        >
+                          {showPassword ? (
+                            <VisibilityOff sx={{ fontSize: 18 }} />
+                          ) : (
+                            <Visibility sx={{ fontSize: 18 }} />
+                          )}
+                        </AppIconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+
+              {/* Auxiliary Controls */}
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ pt: 0.25 }}
+              >
+                <FormControlLabel
+                  control={
+                    <AppCheckbox
+                      size="small"
+                      checked={rememberMe}
+                      onChange={(event) => setRememberMe(event.target.checked)}
+                      sx={{ p: 0.5 }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "text.secondary",
+                        fontSize: "0.85rem",
+                        userSelect: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remember me
+                    </Typography>
+                  }
+                  sx={{ m: 0 }}
+                />
+                <Link
+                  to="/auth/forgot-password"
+                  state={{ email: values.email.trim() }}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "0.85rem",
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                    transition: "opacity 0.15s ease",
                   }}
                 >
-                  <CustomisedButton
-                    type="submit"
-                    label={i({ id: "BUTTON.SIGNIN" })}
-                    size="large"
-                    loading={isSubmitting}
-                    disabled={isSubmitting || !(isValid && dirty)}
-                    Icon={<ArrowForwardRounded />}
-                    className="auth-signin-button"
-                  />
-                  <Typography variant="body2" align="center" color="text.secondary" sx={{ pt: 1.5 }}>
-                    {i({ id: "AUTH.NOT_REGISTERED" })}
-                    <Link to="/auth/registration">
-                      {i({ id: "AUTH.REGISTER" })}
-                    </Link>
-                  </Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
-                  justifyContent="center"
-                  sx={{ color: "text.secondary", pt: .5 }}
+                  {i({ id: "AUTH.FORGOT_PASSWORD", defaultMessage: "Forgot password?" })}
+                </Link>
+              </Stack>
+
+              {/* Submit CTA */}
+              <Stack spacing={1.5} sx={{ pt: 1 }}>
+                <CustomisedButton
+                  type="submit"
+                  label={i({ id: "BUTTON.SIGNIN", defaultMessage: "Sign In" })}
+                  size="large"
+                  loading={isSubmitting}
+                  disabled={isSubmitting || !values.email.trim() || !values.password}
+                  Icon={<ArrowForwardRounded sx={{ fontSize: 18 }} />}
+                  sx={{
+                    minHeight: 46,
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    fontSize: "0.95rem",
+                    letterSpacing: "-0.01em",
+                    textTransform: "none",
+                    boxShadow: `0 4px 14px 0 ${alpha(theme.palette.primary.main, 0.28)}`,
+                    transition: "all 0.18s ease",
+                    "&:hover:not(:disabled)": {
+                      transform: "translateY(-1px)",
+                      boxShadow: `0 6px 20px 0 ${alpha(theme.palette.primary.main, 0.38)}`,
+                    },
+                    "&:active:not(:disabled)": {
+                      transform: "translateY(0)",
+                    },
+                  }}
+                />
+
+                <Typography
+                  variant="body2"
+                  align="center"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "0.85rem",
+                    pt: 0.5,
+                  }}
                 >
-                  <ShieldOutlined sx={{ fontSize: 16, color: "success.main" }} />
-                  <Typography variant="caption">Protected by secure, encrypted authentication</Typography>
-                </Stack>
+                  Don&apos;t have a workspace?{" "}
+                  <Link
+                    to="/auth/registration"
+                    style={{
+                      fontWeight: 600,
+                      color: theme.palette.primary.main,
+                      textDecoration: "none",
+                    }}
+                  >
+                    Create an account
+                  </Link>
+                </Typography>
+              </Stack>
+
+              {/* Security Reassurance */}
+              <Stack
+                direction="row"
+                spacing={0.75}
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                  color: "text.secondary",
+                  pt: 1,
+                  opacity: 0.75,
+                }}
+              >
+                <ShieldOutlined sx={{ fontSize: 14, color: "success.main" }} />
+                <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                  256-bit encrypted authentication & tenant security
+                </Typography>
               </Stack>
             </Stack>
           </form>

@@ -123,6 +123,10 @@ const EmployeeAttendance = () => {
           records: 1000,
           departmentId: [],
           gender: [],
+          // Keep the operational attendance roster current. Completed exits
+          // are available in employee/offboarding reporting, not as editable
+          // attendance cards.
+          employmentStatus: "AttendanceRoster",
         });
 
         if (response.data.success) {
@@ -164,6 +168,43 @@ const EmployeeAttendance = () => {
   }, [loadMyCorrectionRequests]);
 
   useEffect(() => {
+    const stateObj =
+      location.state && typeof location.state === "object"
+        ? (location.state as {
+            focusEmployeeCode?: string;
+            focusEmployeeName?: string;
+            focusDate?: string;
+          })
+        : null;
+
+    if (stateObj && (stateObj.focusEmployeeCode || stateObj.focusEmployeeName || stateObj.focusDate)) {
+      if (stateObj.focusEmployeeName || stateObj.focusEmployeeCode) {
+        setSearchValue(stateObj.focusEmployeeName || stateObj.focusEmployeeCode || "");
+      }
+      if (stateObj.focusDate) {
+        const targetMonth = dayjs(stateObj.focusDate).startOf("month");
+        const currentMonth = dayjs().startOf("month");
+        const monthDiff = targetMonth.diff(currentMonth, "month");
+        setCalendarOffset(monthDiff);
+        if (monthDiff === 0) {
+          setSelectedPeriod("this-month");
+        }
+      }
+      if (stateObj.focusEmployeeCode && stateObj.focusDate) {
+        const timer = setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent("edit-attendance-exception", {
+              detail: { employeeId: stateObj.focusEmployeeCode, date: stateObj.focusDate },
+            }),
+          );
+        }, 450);
+        window.history.replaceState(null, document.title, window.location.pathname);
+        return () => clearTimeout(timer);
+      }
+      window.history.replaceState(null, document.title, window.location.pathname);
+      return;
+    }
+
     const requestId = typeof location.state === "string" ? location.state : null;
     if (!canViewAllAttendance || !requestId) return;
 
@@ -282,6 +323,9 @@ const EmployeeAttendance = () => {
       name: emp.fullName,
       fullName: emp.fullName,
       dateOfJoining: emp.dateOfJoining,
+      lastWorkingDate: emp.lastWorkingDate,
+      employmentStatus: emp.employmentStatus,
+      availabilityStatus: emp.availabilityStatus,
       scheduleId: effectiveSchedules[emp.userId]?.scheduleId,
       scheduleName: effectiveSchedules[emp.userId]?.scheduleName,
       scheduledStartTime: effectiveSchedules[emp.userId]?.startTime,
@@ -303,8 +347,11 @@ const EmployeeAttendance = () => {
           sx={{
             p: { xs: 1.5, sm: 2, md: 2.5 },
             borderRadius: 3,
-            bgcolor: "background.paper",
-            boxShadow: "0 8px 24px rgba(71, 46, 117, 0.08)",
+            bgcolor: "#FFFFFF",
+            borderColor: "#E2E8F0",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
           }}
         >
           <Stack
@@ -315,112 +362,402 @@ const EmployeeAttendance = () => {
             sx={{ mb: 2 }}
           >
             <Box>
-              <Typography fontWeight={800}>Today’s attendance overview</Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography fontWeight={800} sx={{ color: "#0F172A", fontSize: "1.05rem" }}>
+                Today’s attendance overview
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#64748B", fontWeight: 500 }}>
                 {todayOverview.startDate.format("dddd, DD MMMM YYYY")}
               </Typography>
             </Box>
-            <Typography variant="caption" color="text.secondary" fontWeight={700}>
-              Live summary for today
-            </Typography>
+            <Box
+              sx={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 0.75,
+                px: 1.25,
+                py: 0.5,
+                borderRadius: "999px",
+                bgcolor: "#EBF3FA",
+                border: "1px solid rgba(11, 92, 171, 0.22)",
+              }}
+            >
+              <Box sx={{ width: 6, height: 6, borderRadius: "50%", bgcolor: "#0B5CAB" }} />
+              <Typography variant="caption" sx={{ color: "#0B5CAB", fontWeight: 700 }}>
+                Live summary for today
+              </Typography>
+            </Box>
           </Stack>
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
-              gap: { xs: 1, sm: 1.5, md: 2 },
+              gap: { xs: 1.25, sm: 1.5, md: 2 },
             }}
           >
-        <Box>
-          <Card onClick={() => setSummaryModal({ title: "Present employees", people: attendanceStats.members.Present })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" }, "&:focus-visible": { outline: "3px solid", outlineColor: "primary.main", outlineOffset: 2 } }}>
-            <CardContent>
-              <IconStat
-                iconBg={alpha(theme.palette.info.main, 0.18)}
-                iconColor="info.dark"
-                icon={<EventAvailable fontSize="large" />}
-                number={attendanceStats.present}
-                title="Present"
-              />
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box>
-          <Card onClick={() => setSummaryModal({ title: "Employees on leave", people: attendanceStats.members.Leave })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
-            <CardContent>
-              <IconStat
-                iconBg={alpha(theme.palette.success.main, 0.18)}
-                icon={<TimerOffOutlined fontSize="large" />}
-                iconColor="success.light"
-                number={attendanceStats.leave}
-                title="Leave"
-              />
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box>
-          <Card onClick={() => setSummaryModal({ title: "Absent employees", people: attendanceStats.members.Absent })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
-            <CardContent>
-              <IconStat
-                iconBg={theme.palette.secondary.lighter}
-                icon={<EventBusy fontSize="large" />}
-                iconColor="warning.light"
-                number={attendanceStats.absent}
-                title="Absent"
-              />
-            </CardContent>
-          </Card>
-        </Box>
-
-        <Box>
-          <Card onClick={() => setSummaryModal({ title: "WFH employees", people: attendanceStats.members.WFH })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}>
-            <CardContent>
-              <IconStat
-                iconBg={theme.palette.primary.lighter}
-                icon={<HomeWorkOutlined fontSize="large" />}
-                iconColor="primary.main"
-                number={attendanceStats.wfh}
-                title="WFH"
-              />
-            </CardContent>
-          </Card>
-        </Box>
-        <Box>
-          <Card onClick={() => setSummaryModal({ title: "Half-day attendance", people: attendanceStats.members["Half Day"] })} role="button" tabIndex={0} sx={{ height: "100%", cursor: "pointer", transition: "transform .2s", "&:hover": { transform: "translateY(-3px)" } }}><CardContent><IconStat iconBg={alpha(theme.palette.warning.main, 0.18)} iconColor="warning.dark" icon={<TimerOffOutlined fontSize="large" />} number={attendanceStats.halfDay} title="Half Day" /></CardContent></Card>
-        </Box>
-        <Box>
-          <Card sx={{ height: "100%" }}><CardContent><IconStat iconBg={alpha(theme.palette.error.main, 0.14)} iconColor="error.main" icon={<ErrorOutline fontSize="large" />} number={attendanceStats.exceptions} title="Exceptions" /></CardContent></Card>
-        </Box>
+            {[
+              {
+                title: "Present",
+                modalTitle: "Present employees",
+                people: attendanceStats.members.Present,
+                number: attendanceStats.present,
+                icon: <EventAvailable fontSize="medium" />,
+                accent: "#0B5CAB",
+                iconBg: "rgba(11, 92, 171, 0.12)",
+                clickable: true,
+              },
+              {
+                title: "Leave",
+                modalTitle: "Employees on leave",
+                people: attendanceStats.members.Leave,
+                number: attendanceStats.leave,
+                icon: <TimerOffOutlined fontSize="medium" />,
+                accent: "#16A34A",
+                iconBg: "rgba(22, 163, 74, 0.12)",
+                clickable: true,
+              },
+              {
+                title: "Absent",
+                modalTitle: "Absent employees",
+                people: attendanceStats.members.Absent,
+                number: attendanceStats.absent,
+                icon: <EventBusy fontSize="medium" />,
+                accent: "#EA580C",
+                iconBg: "rgba(234, 88, 12, 0.12)",
+                clickable: true,
+              },
+              {
+                title: "WFH",
+                modalTitle: "WFH employees",
+                people: attendanceStats.members.WFH,
+                number: attendanceStats.wfh,
+                icon: <HomeWorkOutlined fontSize="medium" />,
+                accent: "#0D9488",
+                iconBg: "rgba(13, 148, 136, 0.12)",
+                clickable: true,
+              },
+              {
+                title: "Half Day",
+                modalTitle: "Half-day attendance",
+                people: attendanceStats.members["Half Day"],
+                number: attendanceStats.halfDay,
+                icon: <TimerOffOutlined fontSize="medium" />,
+                accent: "#D97706",
+                iconBg: "rgba(217, 119, 6, 0.12)",
+                clickable: true,
+              },
+              {
+                title: "Exceptions",
+                modalTitle: "Attendance exceptions",
+                people: [],
+                number: attendanceStats.exceptions,
+                icon: <ErrorOutline fontSize="medium" />,
+                accent: "#DC2626",
+                iconBg: "rgba(220, 38, 38, 0.12)",
+                clickable: false,
+              },
+            ].map((stat) => (
+              <Card
+                key={stat.title}
+                className="interactive-card"
+                onClick={
+                  stat.clickable
+                    ? () => setSummaryModal({ title: stat.modalTitle, people: stat.people })
+                    : undefined
+                }
+                role={stat.clickable ? "button" : undefined}
+                tabIndex={stat.clickable ? 0 : -1}
+                onKeyDown={(e) => {
+                  if (stat.clickable && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    setSummaryModal({ title: stat.modalTitle, people: stat.people });
+                  }
+                }}
+                sx={{
+                  height: "100%",
+                  cursor: stat.clickable ? "pointer" : "default",
+                  borderRadius: "12px",
+                  bgcolor: "#F8FAFC !important",
+                  border: "1px solid #CBD5E1 !important",
+                  backdropFilter: "blur(12px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(12px) saturate(180%)",
+                  borderLeft: `3.5px solid ${stat.accent} !important`,
+                   boxShadow: "0 4px 16px rgba(11, 92, 171, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important",
+                   transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, background-color 0.2s ease",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    bgcolor: "#FFFFFF !important",
+                    borderColor: `${stat.accent} !important`,
+                    boxShadow: `0 12px 24px -6px ${alpha(stat.accent, 0.22)}, 0 4px 10px -2px rgba(15, 23, 42, 0.06) !important`,
+                  },
+                  "&:focus-visible": {
+                    outline: `2px solid ${stat.accent}`,
+                    outlineOffset: 2,
+                  },
+                }}
+              >
+                <CardContent sx={{ p: "16px !important" }}>
+                  <IconStat
+                    iconBg={stat.iconBg}
+                    iconColor={stat.accent}
+                    icon={stat.icon}
+                    number={stat.number}
+                    title={stat.title}
+                  />
+                </CardContent>
+              </Card>
+            ))}
           </Box>
         </Card>
       </Grid>}
 
       {/* ----------- Attendance Section ----------- */}
       <Grid size={{ xs: 12 }} sx={{ order: 3 }}>
-        <Card sx={{ p: { xs: 1.5, md: 2.5 }, borderRadius: 3, boxShadow: "0 10px 30px rgba(71, 46, 117, 0.08)", containerType: "inline-size" }}>
-          <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
+        <Card
+          sx={{
+            p: { xs: 1.5, md: 2.5 },
+            borderRadius: 3,
+            bgcolor: "rgba(255, 255, 255, 0.78)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            border: "1px solid rgba(255, 255, 255, 0.88)",
+            boxShadow: "0 10px 30px 0 rgba(11, 92, 171, 0.06), 0 2px 8px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.95)",
+            containerType: "inline-size",
+          }}
+        >
+          <Typography component="h2" variant="h6" sx={{ mb: { xs: 1.5, sm: 2 }, textAlign: "center", fontWeight: 800, color: "#0F172A", fontSize: "clamp(1.05rem, 3.8vw, 1.25rem)", lineHeight: 1.25 }}>
             Attendance Report
           </Typography>
-          <Box sx={{ display: "grid", gridTemplateColumns: "minmax(220px, 1fr) minmax(150px, 190px) minmax(200px, 290px) auto", gap: 1.25, alignItems: "end", mb: 2.5, "@container (max-width: 1050px)": { gridTemplateColumns: "minmax(0, 1fr) minmax(150px, 190px)", "& .attendance-report-period": { gridColumn: "1 / -1" } }, "@container (max-width: 640px)": { gridTemplateColumns: "minmax(0, 1fr)", gap: 1 } }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "minmax(220px, 1fr) minmax(150px, 190px) minmax(200px, 290px) auto",
+              gap: 1.5,
+              alignItems: "end",
+              mb: 2.5,
+              p: 1.75,
+              borderRadius: "12px",
+              bgcolor: "#F8FAFC",
+              border: "1px solid #E2E8F0",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.85)",
+              "@container (max-width: 1050px)": {
+                gridTemplateColumns: "minmax(0, 1fr) minmax(150px, 190px)",
+                "& .attendance-report-period": { gridColumn: "1 / -1" },
+              },
+              "@container (max-width: 640px)": {
+                gridTemplateColumns: "minmax(0, 1fr)",
+                gap: 1.25,
+              },
+            }}
+          >
             <Box sx={{ minWidth: 0 }}>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: "block", minHeight: 17, lineHeight: "17px" }}>Search employee</Typography><SearchInput search={searchValue} setSearch={handleSearchChange} sx={{ width: "100%", maxWidth: "none", "& .MuiOutlinedInput-root": { minHeight: 40 } }} />
-              <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
-                {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
-              </Typography></Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.6, width: "100%", minWidth: 0, "& > *": { width: "100% !important", maxWidth: "100% !important", minWidth: 0 } }}>
+                <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, display: "block", minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+                  Search employee
+                </Typography>
+                <SearchInput
+                  search={searchValue}
+                  setSearch={handleSearchChange}
+                  sx={{
+                    width: "100%",
+                    maxWidth: "none",
+                    "& .MuiOutlinedInput-root": {
+                      minHeight: 40,
+                      height: 40,
+                      bgcolor: "#FFFFFF !important",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#CBD5E1 !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#64748B !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#0B5CAB !important",
+                      },
+                    },
+                  }}
+                />
+                <Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ display: { xs: "block", md: "none" }, mt: 0.75 }}>
+                  {dateRange.startDate.format("DD MMM YYYY")} – {dateRange.endDate.format("DD MMM YYYY")}
+                </Typography>
+              </Box>
             </Box>
-            {canViewAllAttendance && <Box sx={{ minWidth: 0 }}><Stack spacing={0.5}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ minHeight: 17, lineHeight: "17px" }}>Shift</Typography><AppSelect displayEmpty value={selectedShiftId} onChange={(event: any) => setSelectedShiftId(event.target.value)} renderValue={(value: unknown) => value ? shiftOptions.find((shift) => shift.scheduleId === value)?.name ?? "Selected shift" : "All shifts"} sx={{ height: 36, fontSize: 13 }}><MenuItem value="">All shifts</MenuItem>{shiftOptions.map((shift) => <MenuItem key={shift.scheduleId} value={shift.scheduleId}>{shift.name}</MenuItem>)}</AppSelect></Stack></Box>}
+            {canViewAllAttendance && (
+              <Box sx={{ minWidth: 0 }}>
+                <Stack spacing={0.6}>
+                  <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+                    Shift
+                  </Typography>
+                  <AppSelect
+                    displayEmpty
+                    value={selectedShiftId}
+                    onChange={(event: any) => setSelectedShiftId(event.target.value)}
+                    renderValue={(value: unknown) =>
+                      value
+                        ? shiftOptions.find((shift) => shift.scheduleId === value)?.name ?? "Selected shift"
+                        : "All shifts"
+                    }
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      fontSize: 13.5,
+                      fontWeight: 600,
+                      bgcolor: "#FFFFFF !important",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#CBD5E1 !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#64748B !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#0B5CAB !important",
+                      },
+                    }}
+                  >
+                    <MenuItem value="">All shifts</MenuItem>
+                    {shiftOptions.map((shift) => (
+                      <MenuItem key={shift.scheduleId} value={shift.scheduleId}>
+                        {shift.name}
+                      </MenuItem>
+                    ))}
+                  </AppSelect>
+                </Stack>
+              </Box>
+            )}
             <Box sx={{ minWidth: 0 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ width: "100%", height: 40, border: "1px solid", borderColor: "divider", borderRadius: 2, px: 0.5 }}>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value - 1)} aria-label="Previous month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowLeft /></Button>
-                <Typography fontWeight={800} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5 }}>{dateRange.startDate.format("MMMM YYYY")}</Typography>
-                <Button size="small" onClick={() => setCalendarOffset((value) => value + 1)} aria-label="Next month" sx={{ minWidth: 36, px: 0.5 }}><KeyboardArrowRight /></Button>
+              <Stack spacing={0.6}>
+                <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+                  Month
+                </Typography>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={0.5}
+                  sx={{
+                    width: "100%",
+                    height: 40,
+                    bgcolor: "#FFFFFF",
+                    border: "1px solid #CBD5E1",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    borderRadius: "10px",
+                    px: 0.5,
+                    transition: "border-color 0.18s ease, box-shadow 0.18s ease",
+                    "&:hover": {
+                      borderColor: "#64748B",
+                    },
+                  }}
+                >
+                  <Button
+                    size="small"
+                    onClick={() => setCalendarOffset((value) => value - 1)}
+                    aria-label="Previous month"
+                    sx={{
+                      minWidth: 32,
+                      height: 30,
+                      p: 0,
+                      borderRadius: "7px",
+                      color: "#475569",
+                      "&:hover": { bgcolor: "#EBF3FA", color: "#0B5CAB" },
+                    }}
+                  >
+                    <KeyboardArrowLeft fontSize="small" />
+                  </Button>
+                  <Typography fontWeight={700} noWrap sx={{ minWidth: 0, textAlign: "center", px: 0.5, fontSize: "0.875rem", color: "#0F172A" }}>
+                    {dateRange.startDate.format("MMMM YYYY")}
+                  </Typography>
+                  <Button
+                    size="small"
+                    onClick={() => setCalendarOffset((value) => value + 1)}
+                    aria-label="Next month"
+                    sx={{
+                      minWidth: 32,
+                      height: 30,
+                      p: 0,
+                      borderRadius: "7px",
+                      color: "#475569",
+                      "&:hover": { bgcolor: "#EBF3FA", color: "#0B5CAB" },
+                    }}
+                  >
+                    <KeyboardArrowRight fontSize="small" />
+                  </Button>
+                </Stack>
               </Stack>
             </Box>
             <Box className="attendance-report-period" sx={{ minWidth: 0 }}>
               <Stack direction={{ xs: "column", sm: "row" }} alignItems={{ sm: "flex-end" }} justifyContent="flex-start" gap={1.25} sx={{ width: "100%" }}>
-                <Stack spacing={0.5} sx={{ width: { xs: "100%", sm: 210 }, flexShrink: 0 }}><Typography variant="caption" color="text.secondary" fontWeight={700} sx={{ minHeight: 17, lineHeight: "17px" }}>Attendance Period</Typography><AppSelect name="attendance-period" value={selectedPeriod} onChange={(event: any) => { setCalendarOffset(0); setSelectedPeriod(event.target.value as AttendancePeriod); }} sx={{ height: 40 }}>{attendancePeriods.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</AppSelect></Stack>
-                {canViewAllAttendance && <Button variant="outlined" startIcon={<DownloadOutlined />} onClick={downloadMonthlyReport} disabled={isExporting} sx={{ height: 40, minHeight: 40, whiteSpace: "nowrap", width: { xs: "100%", sm: "auto" }, alignSelf: { xs: "stretch", sm: "flex-end" } }}>{isExporting ? "Preparing..." : "Export month"}</Button>}
+                <Stack spacing={0.6} sx={{ width: { xs: "100%", sm: 210 }, flexShrink: 0 }}>
+                  <Typography variant="caption" sx={{ color: "#334155", fontWeight: 700, minHeight: 17, lineHeight: "17px", letterSpacing: "0.01em" }}>
+                    Attendance Period
+                  </Typography>
+                  <AppSelect
+                    name="attendance-period"
+                    value={selectedPeriod}
+                    onChange={(event: any) => {
+                      setCalendarOffset(0);
+                      setSelectedPeriod(event.target.value as AttendancePeriod);
+                    }}
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      fontSize: 13.5,
+                      fontWeight: 600,
+                      bgcolor: "#FFFFFF !important",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#CBD5E1 !important",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#64748B !important",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#0B5CAB !important",
+                      },
+                    }}
+                  >
+                    {attendancePeriods.map((item) => (
+                      <MenuItem key={item.value} value={item.value}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+                  </AppSelect>
+                </Stack>
+                {canViewAllAttendance && (
+                  <Button
+                    variant="outlined"
+                    startIcon={<DownloadOutlined />}
+                    onClick={downloadMonthlyReport}
+                    disabled={isExporting}
+                    sx={{
+                      height: 40,
+                      minHeight: 40,
+                      borderRadius: "10px",
+                      fontWeight: 700,
+                      bgcolor: "#FFFFFF",
+                      borderColor: "#CBD5E1",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#1E293B",
+                      whiteSpace: "nowrap",
+                      width: { xs: "100%", sm: "auto" },
+                      alignSelf: { xs: "stretch", sm: "flex-end" },
+                      "&:hover": {
+                        bgcolor: "#EBF3FA",
+                        borderColor: "#0B5CAB",
+                        color: "#0B5CAB",
+                      },
+                    }}
+                  >
+                    {isExporting ? "Preparing..." : "Export month"}
+                  </Button>
+                )}
               </Stack>
             </Box>
           </Box>

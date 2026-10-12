@@ -5,15 +5,16 @@ import {
   DeleteOutlineOutlined,
   Edit,
 } from "@mui/icons-material";
-
+import { LinkOff } from "@mui/icons-material";
 interface ActionComponentProps<Row> {
   row: Row;
   handleEdit?: (row: Row) => void;
   openConfirmationModal?: (row: Row) => void;
   openViewModal?: (row: Row) => void;
+  openUnlinkModal?: (row: Row) => void;
 }
 export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
-  const { row, handleEdit, openConfirmationModal, openViewModal } = props;
+  const { row, handleEdit, openConfirmationModal, openViewModal, openUnlinkModal } = props;
 
   return (
     <Stack direction={"row"} spacing={1}>
@@ -28,6 +29,18 @@ export const ActionComponent = <Row,>(props: ActionComponentProps<Row>) => {
           ariaLabel="Edit"
         />
       )}
+      {
+        openUnlinkModal &&(
+          <CustomIconButton handleClick={(e)=>{
+            e.stopPropagation();
+            openUnlinkModal(row);
+          }}
+          icon={<LinkOff color="warning" />}
+          tooltip="Unlink lifecycle policy"
+          ariaLabel="Unlink lifecycle policy"
+          />
+        )
+      }
       {openConfirmationModal && (
         <CustomIconButton
           handleClick={(e) => {

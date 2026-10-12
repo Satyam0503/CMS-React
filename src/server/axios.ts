@@ -27,8 +27,13 @@ const anonymousAuthRoutes = new Set([
   "api/account/resend-email-verification",
 ]);
 
-const isAnonymousAuthRoute = (url?: string) =>
-  anonymousAuthRoutes.has((url ?? "").split("?")[0].replace(/^\//, ""));
+const isAnonymousAuthRoute = (url?: string) => {
+  const path = (url ?? "").split("?")[0].replace(/^\//, "");
+  // The former-employee portal authenticates with a separate one-time link or
+  // OTP session header. Its expected 401 responses must never invoke the HRMS
+  // refresh-token flow and redirect a former employee to the normal login page.
+  return anonymousAuthRoutes.has(path) || path.startsWith("api/public/former-employee/");
+};
 
 const timeout = 30000;
 
@@ -169,6 +174,10 @@ export const getRequest = <ResponseData>(
   });
 };
 
+/** Authenticated binary download. Do not use a browser-tab URL for protected files. */
+export const getBlobRequest = (path: string) =>
+  instance.get(path, { responseType: "blob", headers: { "Cache-Control": "no-cache" } });
+
 const invalidateApiQueries = () =>
   queryClient.invalidateQueries();
 
@@ -186,7 +195,7 @@ export const postRequest = async <RequestData, ResponseData>(
 
   const response = await instance.post<ResponseData>(path, data, {
     ...config,
-    headers,
+    headers: { ...headers, ...config?.headers },
   });
   await invalidateApiQueries();
   return response;

@@ -27,7 +27,11 @@ const PayRollManagement = lazy(
 const PayrollSettings = lazy(
   () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
+const EmployeeLifecycleManagement = lazy(
+  () => import("../modules/employees/EmployeeLifecycleManagement.tsx"),
+);
 const AttendanceStatusSettings = lazy(() => import("../modules/attendance/AttendanceStatusSettings.tsx"));
+const RecruitmentSettings = lazy(() => import("../modules/recruitment/RecruitmentSettings.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -117,6 +121,7 @@ const PrivateRoutes = () => {
           }
         />
         <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
+        <Route path="recruitment-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><RecruitmentSettings /></SuspensedView></ProtectedRoute>} />
         <Route
           path="leavemanagement/*"
           element={
@@ -143,6 +148,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute module={ModulesName.PayrollSettings}>
               <SuspensedView>
                 <PayrollSettings />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="lifecycle-management"
+          element={
+            <ProtectedRoute module={ModulesName.Employees} permission={Permission.View}>
+              <SuspensedView>
+                <EmployeeLifecycleManagement />
               </SuspensedView>
             </ProtectedRoute>
           }
@@ -193,3 +208,4 @@ const SuspensedView = ({ children }: PropsType) => {
 };
 
 export { PrivateRoutes };
+

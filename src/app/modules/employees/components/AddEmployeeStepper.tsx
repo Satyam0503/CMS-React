@@ -21,6 +21,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 import { useIntl } from "react-intl";
 import { InviteNewEmployee } from "./InviteNewEmployee";
 import { UpdateEmployeeData } from "./UpdateEmployeeData";
@@ -28,7 +29,6 @@ import {
   CreateEmployeeSalary,
   InviteEmployeeResponse,
   InviteNewEmployeeModel,
-  SalaryModel,
 } from "../models";
 import { FormikProps } from "formik";
 import { EditEmployeePayloadModel } from "../../users/models";
@@ -65,7 +65,7 @@ const steps = [
   {
     id: AddEmployeeSteps.UPDATE_SALARY,
     label: "EMPLOYEE.STEPPER.UPDATE_SALARY",
-    optional: false,
+    optional: true,
     icon: <CurrencyRupee />,
   },
   {
@@ -82,6 +82,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
   const [activeStep, setActiveSteps] = useState(0);
   const [newEmployeeData, setNewEmployeeData] =
     useState<InviteEmployeeResponse>();
+  const [salaryEffectiveFrom, setSalaryEffectiveFrom] = useState<string>();
   const salaryUpdateRef = useRef<FormikProps<CreateEmployeeSalary> | null>(
     null,
   );
@@ -110,8 +111,24 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     }
   };
 
+  const handleEmployeeDataSaved = (success: boolean, dateOfJoining?: Dayjs | null) => {
+    if (!success) return;
+    setSalaryEffectiveFrom(dateOfJoining && dayjs(dateOfJoining).isValid()
+      ? dayjs(dateOfJoining).format("YYYY-MM-DD")
+      : undefined);
+    incrementStep();
+  };
+
   const handleSkip = () => {
     setActiveSteps((step) => step + 1);
+  };
+
+  const handleSalarySetupComplete = (saved: boolean) => {
+    if (saved) {
+      incrementStep();
+      return;
+    }
+    setButtonLoading(false);
   };
 
   const handleButtonLoading = (loading: boolean) => {
@@ -164,16 +181,23 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
     <React.Fragment>
       <Dialog
         fullWidth={true}
-        maxWidth="md"
+        maxWidth={activeStep === AddEmployeeSteps.UPDATE_SALARY ? "lg" : "md"}
         open={open}
         PaperProps={{
           sx: {
+            width: activeStep === AddEmployeeSteps.UPDATE_SALARY
+              ? "min(1240px, calc(100vw - 32px)) !important"
+              : undefined,
+            maxWidth: activeStep === AddEmployeeSteps.UPDATE_SALARY
+              ? "1240px !important"
+              : undefined,
             borderRadius: { xs: 2.5, sm: 3.5 },
             overflow: "hidden",
             border: "1px solid",
             borderColor: "divider",
             backgroundColor: "background.paper",
             boxShadow: "0 28px 80px rgba(15, 23, 42, 0.34)",
+            transition: "all 0.25s ease-in-out",
           },
         }}
         slotProps={{
@@ -247,7 +271,21 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
             </Stepper>
           </Box>
         )}
-        <DialogContent sx={{ px: { xs: 2.5, sm: 4 }, py: { xs: 2.5, sm: 3 }, backgroundColor: "background.default" }}>
+        <DialogContent
+          sx={{
+            px: { xs: 2, sm: 3.5 },
+            py: { xs: 2, sm: 2.5 },
+            backgroundColor: "background.default",
+            maxHeight: "calc(88vh - 140px)",
+            overflowY: "auto",
+            scrollbarWidth: "thin",
+            "&::-webkit-scrollbar": { width: "6px" },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "divider",
+              borderRadius: "4px",
+            },
+          }}
+        >
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
             <Slide direction="left" in={open} mountOnEnter unmountOnExit>
               <div>
@@ -264,7 +302,7 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
               <div>
                 <UpdateEmployeeData
                   employeeData={newEmployeeData}
-                  onUserUpdate={incrementStep}
+                  onUserUpdate={handleEmployeeDataSaved}
                   formRef={updateFormRef}
                   handleButtonLoading={handleButtonLoading}
                 />
@@ -277,8 +315,9 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
                 <UpdateEmployeeSalaryData
                   userId={newEmployeeData.userId}
                   employeeId={newEmployeeData.employeeId}
+                  defaultEffectiveFrom={salaryEffectiveFrom}
                   handleButtonLoading={handleButtonLoading}
-                  onUserUpdate={incrementStep}
+                  onUserUpdate={handleSalarySetupComplete}
                   formRef={salaryUpdateRef}
                 />
               </div>
@@ -328,11 +367,6 @@ export const AddEmployeeStepper = (props: PropsTypes) => {
           }}
         >
           {activeStep === AddEmployeeSteps.CREATE_ACCOUNT && (
-            <AppButton variant="outlined" onClick={handleClose}>
-              {i({ id: "BUTTON.CLOSE" })}
-            </AppButton>
-          )}
-          {activeStep === AddEmployeeSteps.UPDATE_SALARY && (
             <AppButton variant="outlined" onClick={handleClose}>
               {i({ id: "BUTTON.CLOSE" })}
             </AppButton>

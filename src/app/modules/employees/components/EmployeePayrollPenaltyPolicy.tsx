@@ -87,34 +87,74 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
   useImperativeHandle(ref, () => ({ save }));
 
   return (
-    <Stack spacing={1.75} sx={{ mt: 3, p: { xs: 1.5, sm: 2 }, border: "1px solid", borderColor: "divider", borderRadius: 2.5, bgcolor: "background.paper" }}>
-      <Typography id="employee-payroll-policy-title" variant="subtitle1" fontWeight={800}>Payroll penalty policy</Typography>
-      <Typography variant="body2" color="text.secondary">
-        This policy applies only to this employee. Exceeded limits always require an audited HR/Admin review before payroll.
-      </Typography>
+    <Stack
+      spacing={2}
+      sx={{
+        mt: 2.5,
+        p: { xs: 2, sm: 2.5 },
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
+        bgcolor: (theme) => (theme.palette.mode === "dark" ? "background.paper" : "#FFFFFF"),
+        boxShadow: "0 1px 4px rgba(15, 23, 42, 0.04)",
+      }}
+    >
+      <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
+        <div>
+          <Typography id="employee-payroll-policy-title" variant="subtitle2" fontWeight={750} color="text.primary">
+            Attendance & Penalty Policy
+          </Typography>
+          <Typography variant="caption" color="text.secondary" display="block">
+            This policy applies only to this employee. Exceeded limits always require an audited HR/Admin review before payroll.
+          </Typography>
+        </div>
+      </Stack>
       <Box
         aria-labelledby="employee-payroll-policy-title"
         sx={{
           display: "grid",
           gridTemplateColumns: {
-            xs: "minmax(0, 1fr)",
-            sm: "repeat(2, minmax(0, 1fr))",
-            md: "minmax(220px, 1fr) minmax(220px, 1fr) max-content",
+            xs: "1fr",
+            sm: "1fr 1fr",
+            md: "minmax(240px, 1fr) minmax(220px, 1fr) auto",
           },
-          gap: { xs: 1.25, md: 1.5 },
+          gap: 2,
           alignItems: "end",
         }}
       >
-        <AppTextField disabled={loading} label="Combined LHD + ED monthly limit" type="number" inputProps={{ min: 0, max: 31, step: 1 }} value={policy.combinedLhdEdMonthlyLimit} onChange={(event) => setPolicy({ ...policy, combinedLhdEdMonthlyLimit: Number(event.target.value) })} sx={{ "& .MuiOutlinedInput-root": { minHeight: 44 } }} />
-        <CustomisedDatePicker disabled={loading} label="Effective from" format="DD-MM-YYYY" value={policy.effectiveFrom ? dayjs(policy.effectiveFrom) : null} setValue={(date) => date && setPolicy({ ...policy, effectiveFrom: date.format("YYYY-MM-DD") })} sx={{ "& .MuiPickersInputBase-root, & .MuiOutlinedInput-root": { minHeight: 44 }, "& .MuiFormControl-root": { width: "100%" } }} />
+        <AppTextField
+          disabled={loading}
+          label="Combined LHD + ED monthly limit"
+          type="number"
+          inputProps={{ min: 0, max: 31, step: 1 }}
+          value={policy.combinedLhdEdMonthlyLimit}
+          onChange={(event) => setPolicy({ ...policy, combinedLhdEdMonthlyLimit: Number(event.target.value) })}
+          sx={{ "& .MuiOutlinedInput-root": { minHeight: 44, borderRadius: 2 } }}
+        />
+        <CustomisedDatePicker
+          disabled={loading}
+          label="Effective from"
+          format="DD-MM-YYYY"
+          value={policy.effectiveFrom ? dayjs(policy.effectiveFrom) : null}
+          setValue={(date) => date && setPolicy({ ...policy, effectiveFrom: date.format("YYYY-MM-DD") })}
+          sx={{
+            "& .MuiPickersInputBase-root, & .MuiOutlinedInput-root": { minHeight: 44, borderRadius: 2 },
+            "& .MuiFormControl-root": { width: "100%" },
+          }}
+        />
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: { xs: "space-between", md: "flex-start" },
-            gap: 1,
+            gap: 1.25,
             minHeight: 44,
-            px: { xs: 0.25, md: 0 },
+            px: 1.75,
+            py: 0.5,
+            borderRadius: 2,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "action.hover",
             whiteSpace: "nowrap",
           }}
         >
@@ -126,7 +166,9 @@ export const EmployeePayrollPenaltyPolicy = forwardRef<EmployeePayrollPenaltyPol
             inputProps={{ "aria-label": "Enable employee payroll penalty policy" }}
             sx={{ m: 0 }}
           />
-          <Typography variant="body2" fontWeight={600}>Enabled</Typography>
+          <Typography variant="body2" fontWeight={650}>
+            {policy.isEnabled ? "Policy Active" : "Policy Disabled"}
+          </Typography>
         </Box>
       </Box>
     </Stack>

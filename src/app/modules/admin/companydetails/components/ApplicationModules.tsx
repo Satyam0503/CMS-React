@@ -190,13 +190,17 @@ export const ApplicationModules: FC = () => {
     <>
       <Card
         sx={{
-          mt: 1,
+          mt: 0,
           p: { xs: 2, sm: 3 },
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
           gap: { xs: 2, sm: 3 },
           minWidth: 0,
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: { xs: 2.5, sm: 3 },
+          boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
         }}
       >
         <Stack>

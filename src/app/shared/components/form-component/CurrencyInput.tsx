@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, InputBaseProps, OutlinedInputProps, SxProps, Theme } from "@mui/material";
+import { FormControl, FormLabel, InputAdornment, InputBaseProps, OutlinedInputProps, SxProps, Theme } from "@mui/material";
 import { ChangeEvent, FC } from "react";
 import { useField } from "formik";
 import { useIntl } from "react-intl";
@@ -11,6 +11,7 @@ interface CurrencyInputProps {
   required?: boolean;
   disabled?: boolean;
   helperText?: string;
+  valueUnit?: string;
   labelVarient?: "notched" | "seperate";
   showErrorLabel?: boolean;
   inputProps?: InputBaseProps["inputProps"];
@@ -26,6 +27,7 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
   inputProps,
   InputProps,
   helperText,
+  valueUnit,
   labelVarient = "notched",
   showErrorLabel = true,
   ...props
@@ -69,7 +71,15 @@ export const CurrencyInput: FC<CurrencyInputProps> = ({
             inputMode: "decimal",
             pattern: "-?[0-9]*[.]?[0-9]*",
           },
-          input: InputProps,
+          input: valueUnit ? {
+            ...InputProps,
+            endAdornment: (
+              <>
+                {InputProps?.endAdornment}
+                <InputAdornment position="end">{valueUnit}</InputAdornment>
+              </>
+            ),
+          } : InputProps,
         }}
       />
     </FormControl>

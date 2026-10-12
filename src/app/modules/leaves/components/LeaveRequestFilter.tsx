@@ -90,7 +90,7 @@ export const LeaveRequestFilter = () => {
                 </FormControl>
                 <CustomisedDatePicker
                     label={i({ id: "FORM.START_DATE" })}
-                    value={Boolean(values.startDate)
+                    value={values.startDate
                         ? dayjs(values.startDate)
                         : null
                     }
@@ -103,11 +103,11 @@ export const LeaveRequestFilter = () => {
                 />
                 <CustomisedDatePicker
                     label={i({ id: "FORM.END_DATE" })}
-                    value={Boolean(values.endDate)
+                    value={values.endDate
                         ? dayjs(values.endDate)
                         : null
                     }
-                    minDate={Boolean(values.startDate) ? dayjs(values.startDate) : undefined}
+                    minDate={values.startDate ? dayjs(values.startDate) : undefined}
                     setValue={(date: Dayjs | null) => {
                         setFieldValue(
                             "endDate",

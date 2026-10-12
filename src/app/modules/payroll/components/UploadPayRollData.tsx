@@ -16,7 +16,7 @@ import { useIntl } from "react-intl";
 import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { PayRollDataModel, PayRollRequestModel } from "../models";
-import { uploadEmpPayRollData } from "../services";
+import { uploadEmpPayRollData, validatePayrollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
 import { payrollActionButtonSx } from "./payrollActionButtonSx";
 
@@ -262,12 +262,18 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
             return;
         }
         const payload: PayRollRequestModel = {
-            payMonth: paymonth,
+            payMonth: paymonth.format("YYYY-MM-DD"),
             payData: jsonData
         }
         try {
             setIsUploading(true);
-            // frontend check above is UX only (fast feedback + avoids a round trip);
+            const validation = await validatePayrollData(payload);
+            if (!validation.data.success) {
+                setServerErrors(validation.data.methodResults ?? [validation.data.message]);
+                return;
+            }
+            // The backend validation runs before upload so users can correct all row errors without a partial write.
+
             // the backend independently re-validates the same rules so a direct API
             // call (e.g. via Postman) bypassing this UI still gets rejected
             const { data } = await uploadEmpPayRollData(payload);
@@ -281,7 +287,7 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
             } else {
                 toast.error(data.message || i({ id: "ERROR.500" }))
             }
-        } catch (error) {
+        } catch {
             toast.error(i({ id: "ERROR.500" }))
         } finally {
             setIsUploading(false);
@@ -375,3 +381,4 @@ export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }:
 
     )
 }
+

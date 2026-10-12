@@ -28,6 +28,7 @@
     "CALENDAR": "Kalender",
     "POLICIES": "Richtlinien",
     "PAYROLL_SETTINGS": "Gehaltsabrechnungseinstellungen",
+    "LIFECYCLE_MANAGEMENT": "Lebenszyklusverwaltung",
     "CAREER_PROFILE": "Karriereprofil"
   },
   "GENDER": {
@@ -267,6 +268,7 @@
     "REGISTER": "Registrieren",
     "SIGNIN": "Anmelden",
     "T&C": "Ich akzeptiere die Allgemeinen Geschäftsbedingungen",
+    "TERMS_REQUIRED": "Ich akzeptiere die Allgemeinen Geschäftsbedingungen",
     "PASSWORD_NOTE": "Verwenden Sie mindestens 8 Zeichen, einschließlich Buchstaben, Zahlen und Symbolen.",
     "FORGOT_PASSWORD": "Passwort vergessen?",
     "FORGOT_PASSWORD.NOTE": "Geben Sie Ihre E-Mail ein, um Ihr Passwort zurückzusetzen",
@@ -1051,3 +1053,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Verwaltet den gesamten Einstellungsprozess einschließlich Stellenausschreibungen, Bewerbungen, Interviewphasen, Bewertungen und detaillierter Prozessprotokolle. Bietet vollständige Transparenz über den Rekrutierungsfortschritt, durchgeführte Maßnahmen und Einstellungsentscheidungen zur Optimierung der Talentakquise."
   }
 }
+

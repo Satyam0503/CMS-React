@@ -3,6 +3,7 @@ import {
   CheckCircleRounded,
   CoffeeRounded,
   DeleteOutlineRounded,
+  InfoOutlined,
   LoginRounded,
   LogoutRounded,
   SaveRounded,
@@ -37,7 +38,7 @@ import { AddRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { createPortal } from "react-dom";
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { deleteRequest, getRequest, putRequest } from "../../../../../server/axios";
+import { deleteRequest, getRequest, postRequest, putRequest } from "../../../../../server/axios";
 import { AppButton } from "../../../../shared/components/ui";
 import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 
@@ -159,6 +160,8 @@ export const OfficeSchedule = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [editorHost, setEditorHost] = useState<HTMLDivElement | null>(null);
   const [schedulePendingDelete, setSchedulePendingDelete] = useState<OfficeScheduleForm | null>(null);
+  const [offDays, setOffDays] = useState<number[]>([0, 6]);
+  const [savingOffDays, setSavingOffDays] = useState(false);
   const visibleSchedules = form.scheduleId
     ? schedules
     : [...schedules, { ...form, scheduleId: "new" }];
@@ -200,6 +203,24 @@ export const OfficeSchedule = () => {
       })
       .catch(() => toast.error("Department shift assignments could not be loaded."));
   }, []);
+
+  useEffect(() => {
+    getRequest<{ offDays: number[] }>("api/attendance/weekly-offs")
+      .then(({ data }) => setOffDays(data.offDays ?? [0, 6]))
+      .catch(() => toast.error("Weekly off days could not be loaded."));
+  }, []);
+
+  const saveWeeklyOffs = async () => {
+    if (offDays.length === 0) { toast.error("Select at least one weekly off day."); return; }
+    setSavingOffDays(true);
+    try {
+      const { data } = await postRequest<{ offDays: number[] }, any>("api/attendance/weekly-offs", { offDays });
+      if (!data.success) throw new Error(data.message || "Weekly off days could not be saved.");
+      toast.success("Weekly off days saved.");
+    } catch (error) {
+      toast.error((error as Error).message || "Weekly off days could not be saved.");
+    } finally { setSavingOffDays(false); }
+  };
 
   const schedule = useMemo(() => {
     const start = toMinutes(form.standardCheckIn);
@@ -344,12 +365,13 @@ export const OfficeSchedule = () => {
     <Paper
       variant="outlined"
       sx={{
-        p: { xs: 1, sm: 2, md: 3 },
+        p: { xs: 1.25, sm: 2, md: 2.5 },
         borderRadius: { xs: 2.5, md: 3.5 },
         width: "100%",
         overflow: "hidden",
-        background: (theme) =>
-          `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${theme.palette.background.paper} 38%)`,
+        borderColor: "divider",
+        boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
+        bgcolor: "background.paper",
       }}
     >
       <Stack spacing={{ xs: 2.25, md: 3 }}>
@@ -511,9 +533,11 @@ export const OfficeSchedule = () => {
                 />
               </span>
             </Tooltip>
-            <AppButton variant="contained" size="small" startIcon={<SaveRounded />} onClick={save} disabled={saving || !schedule.isWorkTargetValid || Boolean(duplicateTimingSchedule)} sx={{ px: 1.5, minHeight: 36, flex: { xs: 1, sm: "initial" } }}>
-              {saving ? "Saving..." : "Save schedule"}
-            </AppButton>
+            <Tooltip title={saving ? "Saving schedule" : "Save schedule"} arrow>
+              <span>
+                <IconButton aria-label="Save schedule" color="primary" onClick={save} disabled={saving || !schedule.isWorkTargetValid || Boolean(duplicateTimingSchedule)} sx={{ width: 38, height: 38, borderRadius: 2, color: "primary.contrastText", bgcolor: "primary.main", boxShadow: "0 6px 14px rgba(21, 123, 122, .22)", "&:hover": { bgcolor: "primary.dark", transform: "translateY(-1px)", boxShadow: "0 9px 18px rgba(21, 123, 122, .28)" }, "&.Mui-disabled": { bgcolor: "action.disabledBackground", color: "action.disabled" }, transition: "transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease" }}><SaveRounded fontSize="small" /></IconButton>
+              </span>
+            </Tooltip>
           </Stack>
         </Stack>
             </Stack>
@@ -521,6 +545,28 @@ export const OfficeSchedule = () => {
           editorHost,
         )}
       </Stack>
+      <Paper variant="outlined" sx={{ mt: 2.5, p: { xs: 1.5, sm: 2 }, borderRadius: 2.5, bgcolor: "background.paper", borderColor: "divider" }}>
+        <Stack spacing={1.5}>
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} gap={1}>
+            <Typography fontWeight={800}>Weekly off days</Typography>
+            <Stack direction="row" spacing={0.75} alignItems="center" sx={{ alignSelf: { xs: "flex-end", sm: "auto" } }}>
+              <Tooltip title="These company-wide days are treated as Off in attendance. Public holidays are managed separately in Calendar." arrow>
+                <IconButton aria-label="About weekly off days" size="small" sx={{ width: 34, height: 34, border: "1px solid", borderColor: "divider", borderRadius: 1.75, color: "primary.main", bgcolor: "background.paper", "&:hover": { bgcolor: "action.hover", borderColor: "primary.main" } }}><InfoOutlined fontSize="small" /></IconButton>
+              </Tooltip>
+              <Tooltip title={savingOffDays ? "Saving weekly off days" : "Save weekly off days"} arrow>
+                <span>
+                  <IconButton aria-label="Save weekly off days" color="primary" disabled={savingOffDays} onClick={() => void saveWeeklyOffs()} sx={{ width: 34, height: 34, border: "1px solid", borderColor: "primary.main", borderRadius: 1.75, bgcolor: "background.paper", boxShadow: "none", "&:hover": { bgcolor: "primary.main", color: "primary.contrastText", boxShadow: "0 4px 10px rgba(21, 123, 122, .16)" }, transition: "background-color 160ms ease, color 160ms ease, box-shadow 160ms ease" }}><SaveRounded fontSize="small" /></IconButton>
+                </span>
+              </Tooltip>
+            </Stack>
+          </Stack>
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(4, minmax(0, 1fr))", lg: "repeat(7, minmax(0, 1fr))" }, gap: 1 }}>
+            {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((name, index) => (
+              <FormControlLabel key={name} sx={{ m: 0, minHeight: 44, px: 1, border: "1px solid", borderColor: offDays.includes(index) ? "primary.main" : "divider", borderRadius: 2, bgcolor: offDays.includes(index) ? "action.selected" : "background.paper", transition: "transform 160ms ease, background-color 160ms ease", "&:hover": { transform: "translateY(-1px)", bgcolor: "action.hover" }, "& .MuiFormControlLabel-label": { fontWeight: 700, fontSize: 13 } }} control={<Checkbox size="small" checked={offDays.includes(index)} onChange={(event) => setOffDays((current) => event.target.checked ? [...current, index] : current.filter((day) => day !== index))} />} label={name} />
+            ))}
+          </Box>
+        </Stack>
+      </Paper>
       {schedulePendingDelete && <ConfirmationModal open confirming={deleting} title={`Delete ${schedulePendingDelete.name}?`} content="This shift will no longer be available for future attendance scheduling. Default shifts cannot be deleted." handleClose={() => !deleting && setSchedulePendingDelete(null)} handleConfirmation={() => void deleteSchedule()} />}
     </Paper>
   );

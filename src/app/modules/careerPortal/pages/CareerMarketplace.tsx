@@ -39,6 +39,7 @@ import { buildCareerSearchParams, CareerSearchFilters } from "../utils/careerSea
 import { Alrt, Btn, Txt } from "../../../shared/components/ui";
 import { CircularLoader } from "../../../shared/components";
 import { CompanyLogo } from "../components/CompanyLogo";
+import { CompanyCareerTheme } from "../components/CompanyCareerTheme";
 
 type Filters = CareerSearchFilters;
 
@@ -87,11 +88,21 @@ const FilterContent = ({
       <MenuItem value="">Any time</MenuItem><MenuItem value="1">Past 24 hours</MenuItem><MenuItem value="7">Past week</MenuItem><MenuItem value="30">Past month</MenuItem>
     </Txt>
     <Divider />
-    <Stack spacing={0.25}>
-      <Typography variant="overline" color="text.secondary" fontWeight={800}>Role preferences</Typography>
-      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.featured} onChange={(e) => setFilters((x) => ({ ...x, featured: e.target.checked }))} />} label="Featured roles" />
-      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.urgentHiring} onChange={(e) => setFilters((x) => ({ ...x, urgentHiring: e.target.checked }))} />} label="Urgent hiring" />
-      <FormControlLabel sx={{ m: 0, minHeight: 36 }} control={<Switch checked={filters.walkIn} onChange={(e) => setFilters((x) => ({ ...x, walkIn: e.target.checked }))} />} label="Walk-in roles" />
+    <Stack spacing={0.75}>
+      <Typography variant="overline" color="text.secondary" fontWeight={800} sx={{ letterSpacing: ".08em", mb: 0.25 }}>Role preferences</Typography>
+      {[
+        ["Featured roles", "featured"],
+        ["Urgent hiring", "urgentHiring"],
+        ["Walk-in roles", "walkIn"],
+      ].map(([label, key]) => (
+        <FormControlLabel
+          key={key}
+          sx={{ m: 0, minHeight: 44, px: 1, border: "1px solid", borderColor: "divider", borderRadius: 2, bgcolor: "background.paper", justifyContent: "space-between", "& .MuiFormControlLabel-label": { fontSize: "0.875rem", fontWeight: 650 } }}
+          labelPlacement="start"
+          control={<Switch checked={filters[key as keyof Pick<Filters, "featured" | "urgentHiring" | "walkIn">]} onChange={(e) => setFilters((current) => ({ ...current, [key]: e.target.checked }))} />}
+          label={label}
+        />
+      ))}
     </Stack>
   </Stack>
 );
@@ -201,7 +212,8 @@ export const CareerMarketplace = () => {
   useEffect(() => { document.title = companyName ? `${companyName} Careers` : "Careers"; }, [companyName]);
 
   return (
-    <Box sx={{ minHeight: "100vh", color: "text.primary", background: "radial-gradient(circle at 0% 18%, color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent), transparent 32%), radial-gradient(circle at 100% 0%, rgba(129,140,248,.10), transparent 30%), linear-gradient(180deg, #fbfdfd 0%, #edf5f5 100%)" }}>
+    <CompanyCareerTheme theme={profile?.careerTheme}>
+    <Box sx={{ minHeight: "100vh", color: "text.primary", background: "radial-gradient(circle at 0% 18%, color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent), transparent 32%), radial-gradient(circle at 100% 0%, rgba(129,140,248,.10), transparent 30%), linear-gradient(180deg, var(--mui-palette-background-default) 0%, color-mix(in srgb, var(--mui-palette-primary-light) 20%, var(--mui-palette-background-default)) 100%)" }}>
       <CareerHeader />
       <Box sx={{ pt: { xs: 2.5, sm: 4, md: 7 }, pb: { xs: 4, md: 8 } }}>
         <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3 } }}>
@@ -211,7 +223,7 @@ export const CareerMarketplace = () => {
               overflow: "hidden",
               borderRadius: { xs: 4, md: 6 },
               p: { xs: 3, sm: 5, md: 7 },
-              minHeight: { xs: 310, sm: 350, md: 390 },
+              minHeight: { xs: 270, sm: 320, md: 360 },
               display: "flex",
               alignItems: "center",
               color: "#fff",
@@ -235,13 +247,13 @@ export const CareerMarketplace = () => {
             </Box>
           </Box>
 
-          <Paper sx={{ mx: { xs: 0, sm: 2, md: 5 }, mt: { xs: 3, md: -3.5 }, position: "relative", zIndex: 2, p: { xs: 1, sm: 1.25 }, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
+          <Paper sx={{ mx: { xs: 0, sm: 2, md: 5 }, mt: { xs: 2, md: -3.5 }, position: "relative", zIndex: 2, p: { xs: 1, sm: 1.25 }, borderRadius: 4, border: "1px solid", borderColor: "divider", boxShadow: "0 18px 50px color-mix(in srgb, var(--mui-palette-common-black) 10%, transparent)" }}>
             <Stack direction={{ xs: "column", sm: "row" }} gap={1}>
               <Txt fullWidth value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Job title, skill, company, or keyword" InputProps={{ startAdornment: <InputAdornment position="start"><SearchRounded /></InputAdornment> }} sx={{ "& fieldset": { border: 0 } }} />
               <Txt select value={filters.sort} onChange={(e) => setFilters((x) => ({ ...x, sort: e.target.value }))} sx={{ minWidth: { sm: 190 }, "& fieldset": { border: 0 } }}>
                 <MenuItem value="relevance">Most relevant</MenuItem><MenuItem value="newest">Newest first</MenuItem><MenuItem value="oldest">Oldest first</MenuItem><MenuItem value="deadline">Deadline soon</MenuItem><MenuItem value="salary-high">Salary: high to low</MenuItem><MenuItem value="salary-low">Salary: low to high</MenuItem><MenuItem value="most-saved">Most saved</MenuItem><MenuItem value="most-viewed">Most viewed</MenuItem>
               </Txt>
-              {!desktop && <Btn variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)}>Filters {activeFilters ? `(${activeFilters})` : ""}</Btn>}
+              {!desktop && <Btn variant="outlined" startIcon={<FilterListRounded />} onClick={() => setDrawer(true)} sx={{ minHeight: 46, whiteSpace: "nowrap" }}>Filters {activeFilters ? `(${activeFilters})` : ""}</Btn>}
             </Stack>
           </Paper>
 
@@ -333,11 +345,12 @@ export const CareerMarketplace = () => {
           )}
         </Container>
       </Box>
-      <Drawer anchor="bottom" open={drawer} onClose={() => setDrawer(false)} PaperProps={{ sx: { borderRadius: "28px 28px 0 0", p: 3, maxHeight: "88vh", overflowY: "auto" } }}>
+      <Drawer anchor="bottom" open={drawer} onClose={() => setDrawer(false)} PaperProps={{ sx: { borderRadius: "28px 28px 0 0", p: { xs: 2, sm: 3 }, maxHeight: "88vh", overflowY: "auto" } }}>
         <FilterContent filters={filters} setFilters={setFilters} reset={() => setFilters(defaults)} locations={locations} />
         <Btn variant="contained" onClick={() => setDrawer(false)} sx={{ mt: 3 }}>Show {total} jobs</Btn>
       </Drawer>
       <SubscribeModal open={subscribeOpen} onClose={() => setSubscribeOpen(false)} companyCode={companyCode} />
     </Box>
+    </CompanyCareerTheme>
   );
 };

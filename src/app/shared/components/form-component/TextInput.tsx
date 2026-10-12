@@ -38,7 +38,7 @@ export const TextInput: FC<InputFieldProps> = ({ label, inputProps, InputProps, 
     <FormControl fullWidth>
       {
         labelVarient === "seperate" &&
-        <FormLabel required sx={{ fontSize: 12, marginBlockEnd: .25 }}>{label} </FormLabel>
+        <FormLabel required={Boolean(props.required)} sx={{ fontSize: 12, marginBlockEnd: .25 }}>{label} </FormLabel>
       }
       <AppTextField
         fullWidth
