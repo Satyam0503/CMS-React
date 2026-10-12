@@ -23,7 +23,16 @@ parameters:
         branch: main
 
 variables:
-  nodeVersion: "20.x"
+  - name: nodeVersion
+    value: "20.x"
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/develop') }}:
+      - group: codeji-dep
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
+      - group: codeji-test
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - group: codeji-prod
+  - ${{ if not(in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/uat', 'refs/heads/main')) }}:
+      - group: codeji-dep
 
 stages:
   # ============================================
@@ -40,6 +49,8 @@ stages:
           - group: codeji-test
       - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
           - group: codeji-prod
+      - ${{ if not(in(variables['Build.SourceBranch'], 'refs/heads/develop', 'refs/heads/uat', 'refs/heads/main')) }}:
+          - group: codeji-dep
     jobs:
       - job: BuildJob
         displayName: "Build React App"
@@ -79,8 +90,8 @@ stages:
               command: "custom"
               customCommand: "run test"
               workingDir: "$(Build.SourcesDirectory)"
-             env:
-               CI: "true"
+            env:
+              CI: "true"
 
           # Vite inlines env vars at build time, so .env must exist BEFORE `npm run build`.
           - task: PowerShell@2
@@ -88,14 +99,54 @@ stages:
             inputs:
               targetType: "inline"
               script: |
-                $viteBase = "$(AppSettings.APIUrl)".TrimEnd('/', '\')
+                # Safely read pipeline variables via environment block (prevents PowerShell subexpression errors)
+                $rawBase = $env:APPSETTINGS_APIURL
+                if ([string]::IsNullOrWhiteSpace($rawBase) -or $rawBase.StartsWith('$')) {
+                  $rawBase = $env:API_URL
+                }
+                if ([string]::IsNullOrWhiteSpace($rawBase) -or $rawBase.StartsWith('$')) {
+                  $rawBase = $env:VITE_BASEURL
+                }
+                if ([string]::IsNullOrWhiteSpace($rawBase) -or $rawBase.StartsWith('$')) {
+                  $envPath = Join-Path "$(Build.SourcesDirectory)" ".env"
+                  if (Test-Path $envPath) {
+                    $existing = Get-Content $envPath | Where-Object { $_ -match '^VITE_BASEURL=(.+)' } | ForEach-Object { $matches[1] }
+                    if (-not [string]::IsNullOrWhiteSpace($existing)) {
+                      $rawBase = $existing
+                    }
+                  }
+                }
+                if ([string]::IsNullOrWhiteSpace($rawBase) -or $rawBase.StartsWith('$')) {
+                  Write-Warning "AppSettings.APIUrl not found in pipeline variables; defaulting to fallback URL."
+                  $rawBase = "http://localhost:5036"
+                }
+
+                $viteBase = $rawBase.TrimEnd('/', '\')
                 $envFile  = Join-Path "$(Build.SourcesDirectory)" ".env"
-                @"
-                VITE_BASEURL=$viteBase
-                VITE_CAPTCHA_SITE_KEY=$(VITE_CAPTCHA_SITE_KEY)
-                VITE_APP_I18N_CONFIG_KEY=$(VITE_APP_I18N_CONFIG_KEY)
-                "@ | Out-File -FilePath $envFile -Encoding UTF8 -Force
+
+                $captchaKey = $env:VITE_CAPTCHA_SITE_KEY
+                if ([string]::IsNullOrWhiteSpace($captchaKey) -or $captchaKey.StartsWith('$')) {
+                  $captchaKey = "6Len288qAAAAACuDohnNDB8Jyuc5zyhO4AA7up89"
+                }
+
+                $i18nKey = $env:VITE_APP_I18N_CONFIG_KEY
+                if ([string]::IsNullOrWhiteSpace($i18nKey) -or $i18nKey.StartsWith('$')) {
+                  $i18nKey = "i18nConfig"
+                }
+
+                $envLines = @(
+                  "VITE_BASEURL=$viteBase",
+                  "VITE_CAPTCHA_SITE_KEY=$captchaKey",
+                  "VITE_APP_I18N_CONFIG_KEY=$i18nKey"
+                )
+                Set-Content -Path $envFile -Value $envLines -Encoding UTF8 -Force
                 Write-Host "Wrote $envFile with VITE_BASEURL=$viteBase"
+            env:
+              APPSETTINGS_APIURL: $(AppSettings.APIUrl)
+              API_URL: $(APIUrl)
+              VITE_BASEURL: $(VITE_BASEURL)
+              VITE_CAPTCHA_SITE_KEY: $(VITE_CAPTCHA_SITE_KEY)
+              VITE_APP_I18N_CONFIG_KEY: $(VITE_APP_I18N_CONFIG_KEY)
 
           - task: Npm@1
             displayName: "Build for Development"
@@ -188,13 +239,18 @@ stages:
                         script: |
                           # Tolerant hostname extraction: matches anything between :// and the
                           # first / or \, so trailing slashes (forward or back) don't break parsing.
-                          $appUrlRaw = "$(AppSettings.AppUrl)"
+                          $appUrlRaw = $env:APPSETTINGS_APPURL
+                          if ([string]::IsNullOrWhiteSpace($appUrlRaw) -or $appUrlRaw.StartsWith('$')) {
+                            $appUrlRaw = "$(AppSettings.AppUrl)"
+                          }
                           if ($appUrlRaw -notmatch '^https?://([^/\\?#]+)') {
                             throw "Could not parse hostname from AppSettings.AppUrl: '$appUrlRaw'"
                           }
                           $appHost = $matches[1]
                           Write-Host "##vso[task.setvariable variable=AppHost]$appHost"
                           Write-Host "Resolved: AppHost=$appHost"
+                      env:
+                        APPSETTINGS_APPURL: $(AppSettings.AppUrl)
 
                     - task: PowerShell@2
                       displayName: "Deploy to ${{ env.name }} Web Server"
