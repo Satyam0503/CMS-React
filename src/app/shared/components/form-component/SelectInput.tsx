@@ -1,6 +1,10 @@
-import { FormControl, InputLabel, Select } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { useField } from "formik";
 import { FC, ReactNode } from "react";
+import { AppSelect } from "../ui";
 // import { useIntl } from "react-intl";
 
 interface PropsTypes {
@@ -9,16 +13,17 @@ interface PropsTypes {
   children: ReactNode;
   required?: boolean;
   disabled?: boolean;
+  onValueChange?: (value: string) => void;
 }
 
-export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
+export const SelectInput: FC<PropsTypes> = ({ label, children, onValueChange, ...props }) => {
   const [field, meta] = useField(props);
   // const { formatMessage: i } = useIntl()
 
   return (
     <FormControl fullWidth>
       <InputLabel id="select-label" required={props.required}>{label}</InputLabel>
-      <Select
+      <AppSelect
         fullWidth
         variant="outlined"
         labelId="select-label"
@@ -27,9 +32,13 @@ export const SelectInput: FC<PropsTypes> = ({ label, children, ...props }) => {
         {...field}
         {...props}
         value={field.value ?? ""}
+        onChange={(event) => {
+          field.onChange(event);
+          onValueChange?.(event.target.value as string);
+        }}
       >
         {children}
-      </Select>
+      </AppSelect>
       {/* {meta.touched && meta.error && (
         <FormHelperText
           sx={{

@@ -1,20 +1,21 @@
 import React from "react";
-import { PolicyVersionModel } from "../models";
-import { Formik, FormikProps } from "formik";
+import {
+  PolicyVersionModel } from "../models";
+import { Formik,
+  FormikProps } from "formik";
 import { policyVersionSchema } from "../../../../utils/Schema/policySchema";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { useIntl } from "react-intl";
-import { Grid, Stack } from "@mui/system";
+import { Grid,
+  Stack } from "@mui/system";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { CloudUpload } from "@mui/icons-material";
 import {
   FormControlLabel,
   FormLabel,
-  IconButton,
-  Switch,
   Typography,
 } from "@mui/material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
@@ -22,6 +23,7 @@ import { createPolicyVersion, editPolicyVersion } from "../policyServices";
 import { VisuallyHiddenInput } from "../../../shared/components/form-component/VisuallyHiddenInput";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 
+import { AppIconButton, AppSwitch } from "../../../shared/components/ui";
 type Props = {
   open: boolean;
   handleClose: () => void;
@@ -129,7 +131,7 @@ export default function PolilcyVersionForm(props: Props) {
                     className="p-6  align-items-center gap-1 rounded"
                     sx={{ border: "1px dashed grey" }}
                   >
-                    <IconButton
+                    <AppIconButton
                       component="label"
                       tabIndex={-1}
                       sx={{ border: 0, p: 0 }}
@@ -144,7 +146,7 @@ export default function PolilcyVersionForm(props: Props) {
                           handleFileChange(e, setFieldValue, setFieldTouched);
                         }}
                       />
-                    </IconButton>
+                    </AppIconButton>
 
                     <Typography variant="caption">
                       {i(
@@ -164,7 +166,7 @@ export default function PolilcyVersionForm(props: Props) {
                   <FormControlLabel
                     labelPlacement="start"
                     control={
-                      <Switch
+                      <AppSwitch
                         onChange={(e, checked) => {
                           setFieldValue("isCurrent", checked);
                         }}

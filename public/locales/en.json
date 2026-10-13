@@ -11,9 +11,11 @@
     "DASHBOARD": "Dashboard",
     "EMPLOYEES": "Employees",
     "ATTENDANCE": "Attendance",
+    "ATTENDANCE_SETTINGS": "Attendance Settings",
     "LEAVE_MANAGEMENT": "Leave Management",
     "MY_PROFILE": "My Profile",
     "RECRUITMENT": "Recruitment",
+    "RECRUITMENT_SETTINGS": "Recruitment Settings",
     "ADMIN": "Admin",
     "HOLIDAYS": "Holidays",
     "NOTICE_BOARD": "Notice board",
@@ -26,7 +28,9 @@
     "PAYROLL": "PayRoll",
     "CALENDAR": "Calendar",
     "POLICIES": "Policies",
-    "PAYROLL_SETTINGS": "Payroll Settings"
+    "PAYROLL_SETTINGS": "Payroll Settings",
+    "LIFECYCLE_MANAGEMENT": "Employee Lifecycle",
+    "CAREER_PROFILE": "Career Profile"
   },
   "GENDER": {
     "MALE": "Male",
@@ -54,7 +58,6 @@
     "PREVIOUS": "Previous",
     "SEND_INVITATION_LINK": "send invitation email"
   },
-
   "PAGE": {
     "JOBS": "Job Requirements",
     "PROCESS_LOG": "Process Log",
@@ -79,14 +82,12 @@
     "CALENDAR": "Calendar",
     "POLICIES": "Policies"
   },
-
   "LEAVE_REQUEST_STATUS": {
     "PENDING": "Pending",
     "APPROVED": "Approved",
     "REJECTED": "Rejected",
     "WITHDRAWN": "Withdrawn"
   },
-
   "CONFIRMATION": {
     "TITLE": {
       "DELETE_WORK_HISTORY": "Delete Work History",
@@ -123,7 +124,6 @@
       "DELETE_POLICY_VERSION": "Are you sure you want to delete this policy version?"
     }
   },
-
   "TOAST": {
     "SUCCESS": {
       "CREATED": "Created Successfully",
@@ -184,7 +184,6 @@
       "REQUIRED_DOCUMENT": "Required document missing."
     }
   },
-
   "BUTTON": {
     "OK": "Ok",
     "ADD": "Add",
@@ -216,7 +215,6 @@
     "SKIP": "Skip",
     "ASSIGN": "Assign"
   },
-
   "TITLES": {
     "BIRTHDAY": "Birthday",
     "WORK_ANNIVERSARY": "Work Anniversary",
@@ -235,7 +233,6 @@
     "NO_EVENT_HOLIDAY": "No upcoming holidays or events at the moment",
     "NO_UPCOMING_CELEBRATION": "No upcoming celebrations right now"
   },
-
   "FORM": {
     "FIRST_NAME": "First Name",
     "LAST_NAME": "Last Name",
@@ -266,7 +263,6 @@
     "EMPLOYEMENT_TYPE": "Employment Type",
     "VERIFICATION": "Verification Status"
   },
-
   "AUTH": {
     "REGISTRATION_TITLE": "Register Your Company",
     "ALREADY_REGISTERED": "Already Register ?",
@@ -274,6 +270,7 @@
     "REGISTER": "Register",
     "SIGNIN": "Sign In",
     "T&C": "I Accept the Terms & Conditions",
+    "TERMS_REQUIRED": "I Accept the Terms & Conditions",
     "PASSWORD_NOTE": "Use 8 or more characters with a mix of letters, numbers & symbols.",
     "FORGOT_PASSWORD": "Forgot Password?",
     "FORGOT_PASSWORD.NOTE": "Enter your email to reset your password",
@@ -286,7 +283,6 @@
     "NEW_PASSWORD": "New Password",
     "CONFIRM_PASSWORD": "Confirm Password"
   },
-
   "JOB": {
     "DESCRIPTION": "Job Description",
     "DESCRIPTION_EDIT": "Edit Job Description ",
@@ -304,7 +300,6 @@
     "JOB_TYPES": "Job Types",
     "TOTAL_SUBMISSION": "Total Submissions"
   },
-
   "APPLICATION": {
     "UPDATE_APPLICANT": "Update Appliant Details",
     "SELECT_STATE": "Select State",
@@ -327,7 +322,6 @@
       "REJECTED": "Rejected"
     }
   },
-
   "COMMENT": {
     "COMMENT_HISTORY": "Comment History",
     "ADD_COMMENT": "Add Comment",
@@ -346,7 +340,6 @@
     "COMMENT_BY": "Commented By",
     "COMMENT_ON": "Commented On"
   },
-
   "APPLICANT": {
     "NAME": "Applicant Name",
     "APPLICANT_DETAILS": "Applicant Details",
@@ -359,7 +352,6 @@
       "INACTIVE": "InActive"
     }
   },
-
   "LEAVE": {
     "TITLE": "Leave",
     "EMPLOYEE_NAME": "Employee Name",
@@ -435,7 +427,6 @@
       "NONE": "None"
     }
   },
-
   "PROFILE": {
     "TABS": {
       "ABOUT": "About",
@@ -485,7 +476,6 @@
       "NONE": "Add Your Education Details"
     }
   },
-
   "EMPLOYEE": {
     "ADD_NEW_EMP": "Add New Employee",
     "PROFILE": "Profile",
@@ -542,7 +532,6 @@
       "APPRENTICESHIP": "Apprenticeship"
     }
   },
-
   "STATUS": "Status",
   "ALLOWED": "Allowed",
   "NOT_ALLOWED": "Not Allowed",
@@ -550,7 +539,6 @@
   "NO": "No",
   "DAY": "Day",
   "DAYS": "Days",
-
   "APPLICATION.COPYRIGHT": "Copyright CodejiInfotech © 2022 Codeji InfoTech Pvt Ltd | Software Development Company | In Dehradun",
   "ATTENDANCE.PRESENT": "Present",
   "ATTENDANCE.ABSENT": "Absent",
@@ -561,15 +549,12 @@
   "ATTENDANCE.GRAPH": "My Attendance Graph of this year",
   "ATTENDANCE.LATE": "Late",
   "APPLICATION.DURATION": "Duration",
-
   "ALERT.HIRING": "We are hiring",
   "WORKING.CURRENT": "Current",
-
   "ACTIVE": "Active",
   "INACTIVE": "InActive",
   "COMPANY.PRESENT": "Codeji Infotech Private Limited",
   "COMPANY.DESCRIPTION": "Codeji InfoTech Pvt. Ltd. is a leading software development company, specializing in creating high-quality and reliable software solutions to meet corporate needs.",
-
   "FILE.SELECTED": "Uploded file",
   "INFO.DESCRIPTION": "Description",
   "IMPORT.EXCEL": "Import Excel",
@@ -581,7 +566,6 @@
   "Break": "Break",
   "Total_Hours": "Total Hours",
   "Shift": "Shift",
-
   "MENU.TOP_PUNCTUAL": "Top Punctual",
   "MENU.EMP_OF_MONTH": "Employee of the month",
   "MENU.HELP": "Need Help?",
@@ -594,7 +578,6 @@
   "MENU.ABOUT_US": "About us",
   "MENU.PERFORMANCE": "Overall Performance",
   "MENU.DOCUMENTS": "Documents",
-
   "PERFORMANCE.EMPLOYEE": "Employee performance",
   "PERFORMANCE.FEEDBACK": "Feedback",
   "PERFORMANCE.ACHIEVEMENTS": "Achievements",
@@ -618,20 +601,16 @@
   "PROMOTION.SR_DEVELOPER": "Promoted as Senior Developer",
   "POSITION.SR_DEVELOPER": "Senior Developer",
   "PROMOTION.JOINED": "Joined Codeji",
-
   "PERMISSION.VIEW": "View",
   "PERMISSION.EDIT": "Edit",
   "PERMISSION.DELETE": "Delete",
-
   "VACANCY.TEXT1": "Thank you for your interest in joining our team!",
   "VACANCY.TEXT2": "At the moment, we don’t have any open positions available. We’re currently updating our listings, and new opportunities will be posted soon.",
   "VACANCY.TEXT3": "Please check back again later. We appreciate your time and look forward to the possibility of working together in the future!",
-
   "MESSAGE.APPLICANT.ADD_SUCCESS": "Application has been submitted successfully",
   "MESSAGE.APPLICANT.ALREADY_APPLIED": "Application has already been submitted. Please reapply after the waiting period",
   "MESSAGE.APPLICANT.UPDATED": "Applicant Updated Successfully",
   "MESSAGE.APPLICATION.ACCESS_DENIED": "You Don't Have App Access",
-
   "NOT_AVAILABLE": "NA",
   "NONE": "None",
   "TRANSLATION_MISSING": "Translation Missing",
@@ -642,7 +621,6 @@
   "TO": "To",
   "ONLINE": "Online",
   "OFFLINE": "Offline",
-
   "USER": {
     "BLOOD_GROUP": "Blood Group",
     "GROUP": "Group",
@@ -667,14 +645,12 @@
     "PAN_NUMBER": "Pan Number",
     "BANK_ACCOUNT_NO": "Bank Account Number"
   },
-
   "LINK": {
     "REGISTER": "register",
     "TERM": "Term",
     "PLAN": "Plan",
     "CONTACTUS": "Contact Us"
   },
-
   "ROLE": {
     "ADD_ROLE": "Add New Role",
     "PERMISSION": "Permissions",
@@ -694,7 +670,6 @@
     "HAS_ACCESS": "Has Access",
     "NO_ACCESS": "No Access"
   },
-
   "NOTICE": {
     "MESSAGE": "Message",
     "TITLE": "Title",
@@ -718,7 +693,6 @@
       "ALL": "All"
     }
   },
-
   "COMPANY_MASTER": {
     "TAB": {
       "DEPARTMENTS": "Department",
@@ -738,11 +712,15 @@
     "TITLE2": "Title ({language})",
     "ADD_NEW": "Add New"
   },
-
   "COMPANY_DETAILS": {
     "TABS": {
       "COMPANY_DETAIL": "Company Details",
-      "APPLICATIONS_MODULE": "Application Modules"
+      "APPLICATIONS_MODULE": "Application Modules",
+      "OFFICE_SCHEDULE": "Office Schedule",
+      "OFFBOARDING": "Offboarding",
+      "NOTIFICATION_DEFAULTS": "Notification Defaults",
+      "RECRUITMENT_READINESS": "Recruitment Readiness",
+      "PAYROLL_CONFIGURATION": "Payroll Configuration"
     },
     "INSTALL_PLUGIN": "Install Plugin",
     "REMOVE_PLUGIN": "Remove Plugin",
@@ -763,19 +741,18 @@
     "ADDRESS": "Company Address",
     "ADDRESS_NOTE": "The company address is displayed on official documents and employee records"
   },
-
   "ERROR": {
+    "404": "We're sorry, the page you requested could not be found. Please go back to the homepage!",
+    "500": "Something went wrong! Please try again later!",
     "PAGE_NOT_FOUND": "Page Not Found",
     "UNAUTHORIZED_ACCESS": "Unauthorized Access",
     "SOMETHING_WRONG": "Something Went Wrong",
     "SYSTEM_ERROR": "System Error",
-    "404": "We're sorry, the page you requested could not be found. Please go back to the homepage!",
     "OPPS": "Opps!",
-    "500": "Something went wrong! Please try again later!",
     "DOC_LOAD_FAILED": "failed to load document"
   },
   "VALIDATION_ERR": {
-    "INVALID_FILE_TYPE": "Invalid file type. Only .xlsx or .xls files are allowed",
+    "INVALID_FILE_TYPE": "Unsupported file format. Please upload a .xlsx or .xls file",
     "MAX_LEAVE_DAY": "Maximum leave must be 1 day or more",
     "INVALID_LEAVE_TYPE": "Invalid leave type",
     "END_DATE_EARLIER_ERROR": "The end date cannot be earlier than the start date.",
@@ -823,7 +800,6 @@
     "COLLEGE_NAME_ERROR": "College name should be at least 3 characters long",
     "CERTIFICATION_NAME_ERROR": "Certification title should be at least 3 characters long",
     "COLLEGE_NAME_REQ": "Please enter college name",
-    "INVALID_FILE_TYPE": "Unsupported file format. Please upload a .xlsx or .xls file",
     "REQ_ALL_COLUMN": "Missing required column",
     "NEGATIVE_BALANCE": "Pay balance must be non-negative value",
     "INVALID_PAID_DAYS": "Paid days must be non-negative and cannot exceed total days in month",
@@ -833,7 +809,6 @@
     "CARRY_OVER_TOO_LOW": "max balance should be more than accrual value",
     "DOCUMENT_FORMAT": "Only .pdf, .doc and .docx documents are allowed"
   },
-
   "DATETIME": {
     "TODAY": "Today",
     "YEARS": "Years",
@@ -846,7 +821,6 @@
     "LAST_SIX_MONTHS": "Last Six Months",
     "LAST_12_MONTHS": "Last 12 Months"
   },
-
   "NOTIFICATION": {
     "TITLE": "Notifications",
     "NEW": "New",
@@ -864,7 +838,6 @@
       "FALLBACK": "You have new notification"
     }
   },
-
   "WORKHISTORY": {
     "TITLE": "Work History",
     "ADD": "Add Work History",
@@ -876,7 +849,6 @@
     "SEARCH_EMP": "Search by name ...",
     "TYPE_HERE": "Type here ..."
   },
-
   "OCCASION": {
     "NAME": "Occasion Name",
     "TYPE": "Type",
@@ -909,7 +881,6 @@
     "EVENT_OCCASIONS": "Events",
     "RECURRING": "Recurring"
   },
-
   "MESSAGE": {
     "WELCOME": "Welcome",
     "NO_EMPLOYEE": "No Employees",
@@ -930,6 +901,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Please select employee",
     "NO_RESULT": "No Result",
     "NO_DEPARTMENTS": "Please add departments",
+    "NO_DEPARTMENT_EMPLOYEES": "No employees assigned to a department yet",
     "ADD_LANGUAGE_TITLE": "Please enter a title for {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Leave days cannot be 0"
   },
@@ -980,7 +952,8 @@
     "44": "Cannot delete a policy with an active current version",
     "45": "Policy not found",
     "46": "Can not delete current active policy version",
-    "47": "Policy version not found"
+    "47": "Policy version not found",
+    "48": "Attendance status code was not found or cannot be used for leave. Choose an active status that does not require time."
   },
   "CHAT": {
     "TITLE": "Chats",

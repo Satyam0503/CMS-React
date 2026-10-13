@@ -1,5 +1,6 @@
 import { Close } from "@mui/icons-material"
-import { IconButton, Popover, Stack, Typography } from "@mui/material"
+import { Popover, Stack, Typography } from "@mui/material"
+import { AppIconButton } from "./ui"
 import { FC } from "react"
 import { useIntl } from "react-intl"
 import { FilterComponentProps } from "../../../utils/common_types"
@@ -20,8 +21,9 @@ export const FilterComponent: FC<FilterComponentProps> = ({ open, anchorEl, hand
                 paper: {
                     sx: {
                         maxWidth: 450,
-                        width: 350,
-                        p: 2.5
+                        width: { xs: "calc(100vw - 32px)", sm: 350 },
+                        boxSizing: "border-box",
+                        p: { xs: 2, sm: 2.5 },
                     }
                 },
             }}
@@ -34,9 +36,9 @@ export const FilterComponent: FC<FilterComponentProps> = ({ open, anchorEl, hand
                     <Typography variant="h6">
                         {formatMessage({ id: "FILTER" })}
                     </Typography>
-                    <IconButton className="border-0" onClick={handleClose}>
+                    <AppIconButton className="border-0" onClick={handleClose}>
                         <Close className="fs-20" />
-                    </IconButton>
+                    </AppIconButton>
                 </Stack>
                 {children}
             </Stack>

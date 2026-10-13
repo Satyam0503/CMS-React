@@ -1,20 +1,17 @@
 import {
   Box,
   Card,
-  Checkbox,
   Divider,
   FormControlLabel,
   FormGroup,
   Stack,
-  Switch,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import {
   ModulePermissoinModel,
   PermissionModel,
@@ -34,6 +31,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { usePageData } from "../../../../Context/PageDataProvider";
 
+import { AppCheckbox, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 const validationSchema = Yup.object().shape({
   description: Yup.string().required(),
   title: Yup.string().required(),
@@ -157,10 +155,10 @@ export const EditPermission = () => {
       if (success) {
         navigate("/admin/roles");
       } else {
-        toast.error(formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }))
+        toast.error(formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }));
       }
     } catch (error) {
-      console.error((error as Error).message);
+      toast.error((error as Error).message || formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }));
     }
   };
 
@@ -173,9 +171,11 @@ export const EditPermission = () => {
       if (res.data.success) {
         toast.success(formatMessage({ id: "ROLE.APP_ACCESS.UPDATED" }));
         setRefresh(!refresh);
+      } else {
+        toast.error(formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }));
       }
     } catch (error) {
-      console.log(error);
+      toast.error((error as Error).message || formatMessage({ id: "TOAST.FAILED.UPDATE_ROLE" }));
     }
   };
 
@@ -186,7 +186,7 @@ export const EditPermission = () => {
         className="flex-grow-1 d-flex flex-column gap-5"
       >
         <Stack spacing={2}>
-          <TextField
+          <AppTextField
             fullWidth
             required
             error={formik.touched.title && Boolean(formik.errors.title)}
@@ -194,7 +194,7 @@ export const EditPermission = () => {
             label={formatMessage({ id: "ROLE.NAME" })}
             {...formik.getFieldProps("title")}
           />
-          <TextField
+          <AppTextField
             fullWidth
             required
             multiline
@@ -224,7 +224,7 @@ export const EditPermission = () => {
                 )}{" "}
                 :
               </Typography>
-              <Switch
+              <AppSwitch
                 checked={currentRoleDetails?.hasAppAccess}
                 onChange={(_, checked) => handleAppAccessChange(checked)}
               />
@@ -250,57 +250,82 @@ export const EditPermission = () => {
               <Box
                 component={"div"}
                 sx={{
-                  border: "1px solid grey",
-                  borderRadius: 1,
-                  p: 2,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                  gap: 2,
                 }}
               >
-                {modulePermissionList.length !== 0 && (
-                  <Stack spacing={2} divider={<Divider />}>
-                    {modulePermissionList.map((module, index) => {
-                      return (
-                        <Stack spacing={0.5} key={index}>
-                          <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                            {module.moduleName}
-                          </Typography>
-                          <FormGroup
-                            row
-                            sx={{ paddingInlineStart: 2, fontSize: "12px" }}
-                            className="d-flex flex-row gap-2"
-                          >
-                            {module.permissions.map((permission) => {
-                              return (
-                                <FormControlLabel
-                                  labelPlacement="end"
-                                  label={permission.permissionName}
-                                  key={permission.modulePermissionId}
-                                  disabled={
-                                    currentRoleDetails?.isNotEditable ||
-                                    !currentRoleDetails?.hasAppAccess
-                                  }
-                                  value={permission.modulePermissionId}
-                                  control={
-                                    <Checkbox
-                                      onChange={(e) => {
-                                        handlePermissionChange(
-                                          permission,
-                                          e.target.checked
-                                        );
-                                      }}
-                                    />
-                                  }
-                                  checked={checkUserModulePermission(
-                                    permission.modulePermissionId
-                                  )}
-                                />
-                              );
-                            })}
-                          </FormGroup>
-                        </Stack>
-                      );
-                    })}
-                  </Stack>
-                )}
+                {modulePermissionList.length !== 0 &&
+                  modulePermissionList.map((module, index) => {
+                    return (
+                      <Stack
+                        spacing={1}
+                        key={index}
+                        sx={{
+                          p: 2,
+                          borderRadius: 3,
+                          background:
+                            "linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0%, rgba(248, 250, 252, 0.74) 100%)",
+                          backdropFilter: "blur(14px)",
+                          border: "1px solid rgba(79, 70, 229, 0.14)",
+                          boxShadow:
+                            "0 4px 14px -4px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                          transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+                          "&:hover": {
+                            transform: "translateY(-1px)",
+                            borderColor: "rgba(79, 70, 229, 0.30)",
+                            boxShadow: "0 10px 22px -6px rgba(79, 70, 229, 0.10)",
+                          },
+                        }}
+                      >
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            fontWeight: 700,
+                            color: "#1E1B4B",
+                            letterSpacing: "-0.01em",
+                            pb: 0.5,
+                            borderBottom: "1px solid rgba(79, 70, 229, 0.10)",
+                          }}
+                        >
+                          {module.moduleName}
+                        </Typography>
+                        <FormGroup
+                          row
+                          sx={{ fontSize: "12.5px" }}
+                          className="d-flex flex-row flex-wrap gap-2"
+                        >
+                          {module.permissions.map((permission) => {
+                            return (
+                              <FormControlLabel
+                                labelPlacement="end"
+                                label={permission.permissionName}
+                                key={permission.modulePermissionId}
+                                disabled={
+                                  currentRoleDetails?.isNotEditable ||
+                                  !currentRoleDetails?.hasAppAccess
+                                }
+                                value={permission.modulePermissionId}
+                                control={
+                                  <AppCheckbox
+                                    onChange={(e) => {
+                                      handlePermissionChange(
+                                        permission,
+                                        e.target.checked
+                                      );
+                                    }}
+                                  />
+                                }
+                                checked={checkUserModulePermission(
+                                  permission.modulePermissionId
+                                )}
+                              />
+                            );
+                          })}
+                        </FormGroup>
+                      </Stack>
+                    );
+                  })}
               </Box>
             </Stack>
             <Stack

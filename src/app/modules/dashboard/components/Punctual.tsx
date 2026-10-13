@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { useIntl } from "react-intl";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 
 export default function Punctual() {
   const intl = useIntl();

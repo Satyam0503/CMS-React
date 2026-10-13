@@ -1,6 +1,10 @@
-import { Card, Stack, TextField, Typography } from "@mui/material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import {
+  Card,
+  Stack,
+  Typography,
+} from "@mui/material";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { Edit } from "@mui/icons-material";
@@ -13,6 +17,7 @@ import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { UserSummaryModel } from "../../models";
 
+import { AppTextField } from "../../../../shared/components/ui";
 export const UserSummary = () => {
   const currentUser = useAppSelector((state) => state.user.userData)!;
   const [userSummary, setUserSummary] = useState<UserSummaryModel>();
@@ -63,9 +68,9 @@ export const UserSummary = () => {
   }, [refresh]);
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between mb-4"  >
-        <Typography variant="h5">
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
+      <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={{ xs: 1, sm: 0 }} sx={{ mb: 2 }}>
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }}>
           {formatMessage({ id: "PROFILE.ABOUT.TITLE" })}
         </Typography>
         {isEdit ? (
@@ -99,7 +104,7 @@ export const UserSummary = () => {
         )}
       </Stack>
       {isEdit ? (
-        <TextField
+        <AppTextField
           sx={{ mt: 1 }}
           fullWidth
           multiline
@@ -110,7 +115,7 @@ export const UserSummary = () => {
           onChange={(e) => setUpdatedSummary(e.target.value)}
         />
       ) : (
-        <Typography variant="body1" >
+        <Typography variant="body1" sx={{ color: "text.secondary", lineHeight: 1.7, minHeight: 28 }}>
           {userSummary && userSummary.summary.trim().length > 0
             ? userSummary.summary
             : formatMessage({ id: "PROFILE.ABOUT.ADD_SUMMARY" })}

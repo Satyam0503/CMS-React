@@ -6,7 +6,7 @@ import {
   LocalActivity,
 } from "@mui/icons-material";
 import { Card, Stack, Typography } from "@mui/material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import {
@@ -23,7 +23,7 @@ import {
 import { toast } from "react-toastify";
 
 import { AxiosError } from "axios";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { useParams } from "react-router-dom";
 import { ModulesName, Permission } from "../../../../../utils/enums";
 import { useAppSelector } from "../../../../Redux/hooks";
@@ -139,9 +139,9 @@ export const UserCertification = () => {
 
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Stack className="flex-row justify-content-between mb-4" >
-        <Typography variant="h5" >
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
+      <Stack className="flex-row justify-content-between" sx={{ mb: 2.5 }} >
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }} >
           {intl.formatMessage({ id: "PROFILE.CERTIFICATION.TITLE" })}
         </Typography>
         {

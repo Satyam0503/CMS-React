@@ -1,7 +1,7 @@
 import { IntlShape, useIntl } from "react-intl";
 import { FC, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { GenderModel } from "../model";
 import { defaultPieChartSeries, genderMapper } from "../../../../utils/common";
@@ -56,7 +56,11 @@ export const EmployeeChart: FC = () => {
 
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.TOTAL_EMP" })} value={totalEmployee} applyMinHeight={false}>
+      <CustomCard
+        label={i({ id: "TITLES.TOTAL_EMP" })}
+        applyMinHeight={false}
+        fillHeight
+      >
         {empData.length == 0 ? (
           <Box
             className="flex-grow-1 align-content-center text-center"
@@ -67,7 +71,7 @@ export const EmployeeChart: FC = () => {
             </Typography>
           </Box>
         ) : (
-          <DonutChart loading={loading} series={series} />
+          <DonutChart loading={loading} series={series} centerLabel={totalEmployee} />
         )}
       </CustomCard>
     </>

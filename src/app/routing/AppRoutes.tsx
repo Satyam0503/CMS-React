@@ -5,7 +5,13 @@ import { ErrorsPage } from "../modules/errors/ErrorsPage";
 import { Logout, AuthPage } from "../modules/auth";
 import { App } from "../App";
 import { useAppSelector } from "../Redux/hooks";
-import { Career } from "../modules/applynow/Career";
+import { CareerMarketplace } from "../modules/careerPortal/pages/CareerMarketplace";
+import { CareerJobDetails } from "../modules/careerPortal/pages/CareerJobDetails";
+import { SavedJobsPage } from "../modules/careerPortal/pages/SavedJobsPage";
+import { CareerPreferencesPage } from "../modules/careerPortal/pages/CareerPreferencesPage";
+import { SavedJobsProvider } from "../modules/careerPortal/context/SavedJobsContext";
+import { FormerEmployeePortalExperience } from "../modules/formerEmployeePortal/FormerEmployeePortalExperience";
+import CandidateOfferResponse from "../modules/recruitment/public/CandidateOfferResponse";
 
 const { BASE_URL } = import.meta.env;
 
@@ -14,9 +20,17 @@ const AppRoutes: FC = () => {
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
-        <Route element={<App />}>
+        <Route element={<SavedJobsProvider><App /></SavedJobsProvider>}>
           <Route path="error/*" element={<ErrorsPage />} />
-          <Route path="career/:id" element={<Career />} />
+          <Route path="career" element={<Navigate to="/careers" replace />} />
+          <Route path="career/:legacyValue" element={<Navigate to="/careers" replace />} />
+          <Route path="careers" element={<CareerMarketplace />} />
+          <Route path="careers/saved" element={<SavedJobsPage />} />
+          <Route path="careers/preferences" element={<CareerPreferencesPage />} />
+          <Route path="careers/:companyCode/jobs/:jobSlug" element={<CareerJobDetails />} />
+          <Route path="careers/:companyCode" element={<CareerMarketplace />} />
+          <Route path="former-employee" element={<FormerEmployeePortalExperience />} />
+          <Route path="candidate/offer" element={<CandidateOfferResponse />} />
 
           {isUserAuthenticated ? (
             <>
@@ -37,3 +51,4 @@ const AppRoutes: FC = () => {
 };
 
 export { AppRoutes };
+

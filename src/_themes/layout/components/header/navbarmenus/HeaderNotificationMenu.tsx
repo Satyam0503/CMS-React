@@ -2,29 +2,32 @@ import {
   Badge,
   Box,
   Chip,
-  IconButton,
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
   Popover,
   Stack,
   Tooltip,
   Typography,
+  Button,
 } from "@mui/material";
 import { AccessTime, Cake, CalendarMonth, Celebration, NotificationsActive, ThumbDownAlt, ThumbUpAlt } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import Connector from "../../../../../server/SignalR";
 import { NotificationModel, NotificationRequestPayload } from "../../../../../app/modules/users/models";
-import { ReactNode, useEffect, useState } from "react";
-import { getNotifications, markAllNotificationAsRead, markNotificationAsRead } from "../../../../../app/modules/users/userservices";
+import { ReactNode, useCallback, useEffect, useState } from "react";
+import { dismissNotification, getNotifications, markAllNotificationAsRead, markNotificationAsRead, snoozeNotification } from "../../../../../app/modules/users/userservices";
 import { getNotificationTitle, redirectUserToTargetUrl, relativeTimeFormatter } from "../../../../../utils/common";
 import clsx from "clsx";
 import { NOTIFICATION_TYPE } from "../../../../../utils/enums";
-import { showCustomToast } from "../../../../../app/shared/components/CustomToastComponents";
+import { showCustomToast } from "../../../../../app/shared/components/C_Toast";
 import { useNavigate } from "react-router-dom";
 import { createNotifications } from "../../../../../app/modules/dashboard/components/pushNotificationUtils";
 import { toAbsoluteUrl } from "../../../../helpers";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
+import { queryClient } from "../../../../../app/query/queryClient";
 export const NotificationIconMapper: {
   [index: number]: ReactNode
 } = {
@@ -46,6 +49,7 @@ export default function HeaderNotificationMenu() {
     totalNotification: 0,
     unread: 0
   })
+  const [isLoading, setIsLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const [paginationValues, setPaginationValues] = useState(initialPaginationValue);
@@ -74,7 +78,12 @@ export default function HeaderNotificationMenu() {
     })
   }
 
-  const handleNewNotification = (notification: NotificationModel) => {
+  const handleNewNotification = useCallback((notification: NotificationModel) => {
+    // The notification is also the cross-user signal that server-backed data
+    // changed (leave requests, approvals, attendance, etc.). Invalidate and
+    // actively refetch cached reads so open admin/employee screens update
+    // without a manual refresh.
+    void queryClient.invalidateQueries({ refetchType: "all" });
     if (document.visibilityState === "hidden" && Notification.permission === "granted") {
       createNotifications(notification, intl);
     }
@@ -85,7 +94,7 @@ export default function HeaderNotificationMenu() {
     // Prepend new notification to the existing list
     setNotificationList(prev => [notification, ...prev,]);
     setNotificationCount(prev => ({ ...prev, totalNotification: prev.totalNotification + 1, unread: prev.unread + 1 }));
-  };
+  }, [intl]);
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -107,11 +116,12 @@ export default function HeaderNotificationMenu() {
     return () => {
       connection.off("notification", handleNewNotification);
     };
-  }, [connection])
+  }, [connection, handleNewNotification])
 
   useEffect(() => {
     (async () => {
       try {
+        setIsLoading(true);
         const payload: NotificationRequestPayload = {
           type: activeTab === 1 ? "all" : "unread",
           pageNo: paginationValues.pageNo,
@@ -133,8 +143,11 @@ export default function HeaderNotificationMenu() {
       catch (error) {
         console.log((error as Error).message);
       }
+      finally {
+        setIsLoading(false);
+      }
     })();
-  }, [activeTab, paginationValues.pageNo])
+  }, [activeTab, paginationValues.pageNo, paginationValues.records])
 
 
   const handleMarkNotificationAsRead = async (userNotificationId: string) => {
@@ -170,12 +183,25 @@ export default function HeaderNotificationMenu() {
     setAnchorEl(null);
   }
 
+  const handleDismiss = async (event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    const { data } = await dismissNotification(id);
+    if (data.success) setNotificationList(current => current.filter(item => item.userNotificationId !== id));
+  };
+
+  const handleSnooze = async (event: React.MouseEvent, id: string) => {
+    event.stopPropagation();
+    const until = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await snoozeNotification(id, until);
+    if (data.success) setNotificationList(current => current.filter(item => item.userNotificationId !== id));
+  };
+
 
   return (
     <>
       <Tooltip title={i({ id: "TOOLTIP.NOTIFICATIONS" })} placement="bottom">
-        <Badge badgeContent={notificationCount.unread} color="primary">
-          <IconButton
+        <Badge badgeContent={notificationCount.unread || undefined} color="primary" aria-live="polite">
+          <AppIconButton
             onClick={handleClick}
             aria-describedby={id}
             sx={{ border: 0, p: 0 }}
@@ -183,7 +209,7 @@ export default function HeaderNotificationMenu() {
             aria-label="notification menu"
           >
             <NotificationsActive className="fs-32" />
-          </IconButton>
+          </AppIconButton>
         </Badge>
       </Tooltip>
       <Popover
@@ -233,33 +259,54 @@ export default function HeaderNotificationMenu() {
         </Box>
         <Stack>
           <List disablePadding className="notification-wrapper" >
-            {
-              notificationList.length > 0 ?
-                notificationList.map(item => (
-                  <ListItem key={item.userNotificationId} disablePadding className={clsx({ "unread-notification": !item.isRead })} onClick={() => handleNotificationClick(item)} >
-                    <Stack sx={{ bgcolor: "secondary.light" }}>
-                      <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.darker" }} >{NotificationIconMapper[item.notificationTypes]} </Stack>
-                    </Stack>
-                    <ListItemText
-                      primary={<Typography >{getNotificationTitle(item, intl)}</Typography>}
-                      secondary={
+            {isLoading && notificationList.length === 0 ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                <CircularProgress size={24} />
+              </Box>
+            ) : notificationList.length > 0 ? (
+              notificationList.map(item => (
+                <ListItem
+                  key={item.userNotificationId}
+                  disablePadding
+                  className={clsx({ "unread-notification": !item.isRead })}
+                  onClick={() => handleNotificationClick(item)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleNotificationClick(item);
+                    }
+                  }}
+                >
+                  <Stack sx={{ bgcolor: "secondary.light" }}>
+                    <Stack sx={{ alignItems: "center", justifyContent: "center", color: "secondary.darker" }} >{NotificationIconMapper[item.notificationTypes] ?? <NotificationsActive className="fs-32" />} </Stack>
+                  </Stack>
+                  <ListItemText
+                    primary={<Typography fontWeight={item.targetId?.startsWith("attendance-review-") ? 700 : undefined}>{item.targetId?.startsWith("attendance-review-") ? item.title : getNotificationTitle(item, intl)}</Typography>}
+                    secondary={
+                      <Box component="span">
+                        {item.targetId?.startsWith("attendance-review-") && <Typography variant="caption" component="span" sx={{ color: "text.secondary", display: "block", lineHeight: 1.35 }}>{item.body}</Typography>}
                         <Box component="span" className="d-flex align-items-center gap-1">
                           <AccessTime className="fs-16" />
                           <Typography variant="caption" sx={{ color: "text.secondary" }}> {relativeTimeFormatter(item.sentDateTime)}</Typography>
-                        </Box>} />
-                  </ListItem>
-                ))
-                :
-                <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
-                  <img src={toAbsoluteUrl("media/Icons/no-notification.png")} />
-                  <Typography sx={{ color: "text.secondary" }}>{i({ id: "NOTIFICATION.NONE" })}</Typography>
-                </Box>
-            }
+                          <Button size="small" onClick={event => handleSnooze(event, item.userNotificationId)} sx={{ minWidth: 0, px: .5, fontSize: 10 }}>Snooze</Button>
+                          <Button size="small" onClick={event => handleDismiss(event, item.userNotificationId)} sx={{ minWidth: 0, px: .5, fontSize: 10 }}>Dismiss</Button>
+                        </Box>
+                      </Box>} />
+                </ListItem>
+              ))
+            ) : (
+              <Box component="div" sx={{ height: "100%" }} className="no-notification-box">
+                <img src={toAbsoluteUrl("media/Icons/no-notification.png")} alt="no notifications" />
+                <Typography sx={{ color: "text.secondary" }}>{i({ id: "NOTIFICATION.NONE" })}</Typography>
+              </Box>
+            )}
           </List>
           {
             (activeTab == 1 ? notificationList.length < notificationCount.totalNotification :
               notificationList.length < notificationCount.unread) &&
-            <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification}  >
+            <Box component="span" sx={{ color: "primary.main", cursor: "pointer", mx: 2, mb: 1, fontSize: 12 }} onClick={handleLoadMoreNotification} role="button" tabIndex={0} onKeyDown={(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); handleLoadMoreNotification(); } }} >
               {i({ id: "BUTTON.SEE_MORE" })}
             </Box>
           }

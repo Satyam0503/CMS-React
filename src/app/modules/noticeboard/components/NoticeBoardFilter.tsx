@@ -1,11 +1,19 @@
-import { FC, useState } from "react";
+import {
+  FC,
+  useState } from "react";
 import { FilterComponent } from "../../../shared/components/FilterComponent"
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
-import { Autocomplete, Checkbox, ListItemText, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { NoticeTypes, TimePeriodOptions } from "../../../../utils/constant/Constant";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { NoticeBoardFilterModel } from "../models";
 import { useFormik } from "formik";
@@ -16,6 +24,7 @@ import { setNoticeBoardFilter } from "../../../Redux/Reducers/filterSlice";
 import { FilterComponentProps } from "../../../../utils/common_types";
 
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
     const { formatMessage } = useIntl();
     const [optionAnchorEl, setOptionAnchorEl] = useState<null | HTMLElement>(null);
@@ -155,12 +164,12 @@ export const NoticeBoardFilter: FC<FilterComponentProps> = (props) => {
                     }}
                     getOptionLabel={(option) => formatMessage({ id: option.label })}
                     renderInput={(params) => (
-                        <TextField {...params} placeholder={formatMessage({ id: "NOTICE.TYPE" })} />
+                        <AppTextField {...params} placeholder={formatMessage({ id: "NOTICE.TYPE" })} />
                     )}
                     renderOption={(props, option, state) => {
                         return (
                             <li {...props}>
-                                <Checkbox
+                                <AppCheckbox
                                     key={option.id}
                                     checked={state.selected}
                                     sx={{ mr: 1 }}

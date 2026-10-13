@@ -4,7 +4,6 @@ import {
   Box,
   Divider,
   Drawer,
-  IconButton,
   Stack,
   Tooltip,
   Typography,
@@ -17,6 +16,7 @@ import { useIntl } from "react-intl";
 import React, { useState } from "react";
 import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 
+import { AppIconButton } from "../../../../../app/shared/components/ui";
 export const ChatMessenger = () => {
   const theme = useTheme();
   const { formatMessage: i } = useIntl();
@@ -34,9 +34,9 @@ export const ChatMessenger = () => {
   return (
     <>
       <Tooltip title={i({ id: "TOOLTIP.CHATS" })}>
-        <IconButton className="chat-button" onClick={handleDrawerOpen}>
+        <AppIconButton className="chat-button" onClick={handleDrawerOpen}>
           <Chat />
-        </IconButton>
+        </AppIconButton>
       </Tooltip>
       <Drawer open={isDrawerOpen} onClose={handleDrawerClose} anchor="right" hideBackdrop
         slotProps={{
@@ -49,9 +49,9 @@ export const ChatMessenger = () => {
         <Box role="presentation" className="w-100 chat-wrapper" >
           <Stack direction="row" className="p-4 justify-content-between align-items-center border-bottom">
             <Typography variant="h5">{i({ id: "CHAT.TITLE" })}</Typography>
-            <IconButton className="border-0 p-0" onClick={handleDrawerClose}>
+            <AppIconButton className="border-0 p-0" onClick={handleDrawerClose}>
               <Close />
-            </IconButton>
+            </AppIconButton>
           </Stack >
           <Stack className="chat-box">
             <Typography variant="h6">{i({ id: "CHAT.ALLCHAT" })}</Typography>

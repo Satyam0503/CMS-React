@@ -6,10 +6,11 @@ type PropsTypes = {
   setRowPerPage: (rowPerPage: number) => void;
   setPage: (pageValue: number) => void;
   totalRecords: number;
+  rowsPerPageOptions?: number[];
 };
 
 export const Pagination = (props: PropsTypes) => {
-  const { page, rowsPerPage, setPage, setRowPerPage, totalRecords } = props;
+  const { page, rowsPerPage, setPage, setRowPerPage, totalRecords, rowsPerPageOptions } = props;
 
   const handlePageChange = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -33,6 +34,7 @@ export const Pagination = (props: PropsTypes) => {
         onPageChange={handlePageChange}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={rowsPerPageOptions}
       />
     </Stack>
   );

@@ -30,6 +30,15 @@
   outline-offset: 2px;
 }
 
+// MUI outlined controls already expose focus on their rounded fieldset. Applying
+// the global focus outline to the native input as well creates a second,
+// rectangular ring inside search fields and autocompletes.
+.MuiInputBase-input:focus-visible,
+.MuiInputBase-inputMultiline:focus-visible {
+  outline: none !important;
+  outline-offset: 0;
+}
+
 .country-flag {
   width: 1rem;
   height: 1rem;
@@ -56,9 +65,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--mui-palette-primary-main);
-  gap: 1rem;
-  padding: 1rem;
+  background: linear-gradient(145deg, #1E1B4B 0%, #3730A3 52%, #4F46E5 100%) !important;
+  color: #ffffff !important;
+  gap: 1.25rem;
+  padding: 1.5rem 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  overflow: hidden;
+  box-shadow: 0 16px 38px rgba(49, 46, 129, 0.28) !important;
   & > .profile-picture {
     display: flex;
     align-self: center;
@@ -67,7 +81,8 @@
     height: 150px;
     width: 150px;
     aspect-ratio: 1;
-    border: 3px solid var(--mui-palette-common-white);
+    border: 4px solid var(--mui-palette-common-white);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
     border-radius: 50%;
     position: relative;
     transition: "transform 0.8s ease-in-out";
@@ -297,8 +312,14 @@ button:hover .ql-fill,
 
 .breadcrumb-link {
   color: var(--mui-palette-grey-600);
+  cursor: pointer;
+  pointer-events: auto;
+  text-decoration: none;
+  transition: color 160ms ease;
+
   &:hover {
     color: var(--mui-palette-primary-main);
+    text-decoration: underline !important;
   }
 }
 
@@ -313,58 +334,98 @@ button:hover .ql-fill,
 
 .attribute-container {
   border: 1px solid var(--mui-palette-grey-500);
-  padding: 1rem;
+  padding: 0.75rem;
   border-radius: 0.25rem;
-  overflow-x: scroll;
+  overflow-x: auto;
   scrollbar-width: none;
 }
 
 .attribute-row {
   display: grid;
   align-items: center;
-  grid-template-columns: minmax(170px, 1fr) minmax(170px, 1fr) 70px 70px;
-  gap: 2rem;
-  padding-block: 0.6rem;
+  grid-template-columns: minmax(0, 1fr) 70px 44px;
+  gap: 0.75rem;
+  padding-block: 0.4rem;
+}
+
+.attribute-row--translated {
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) 70px 44px;
+}
+
+.attribute-row--department {
+  grid-template-columns: minmax(150px, 1fr) minmax(180px, 1fr) 70px 44px;
+}
+
+.attribute-row--translated.attribute-row--department {
+  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) minmax(160px, 1fr) 70px 44px;
+}
+
+@media (max-width: 767.98px) {
+  .attribute-row,
+  .attribute-row--translated,
+  .attribute-row--department,
+  .attribute-row--translated.attribute-row--department {
+    min-width: 620px;
+  }
 }
 
 .employee-grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
-  grid-template-rows: repeat(auto-fill, 270px);
-  justify-content: space-evenly;
-  gap: 2rem;
-  margin-block: 3rem !important;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 1.5rem;
+  margin-block: 0.5rem !important;
   flex-grow: 1;
 }
 
 .employee-card {
   position: relative;
-  height: 270px;
-  border-radius: 0.75rem;
+  min-width: 0;
+  height: 310px;
+  border-radius: 1rem;
+  border: 1px solid var(--mui-palette-divider);
   background-image: var(--mui-overlays-6);
-  box-shadow: var(--mui-shadows-2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
   cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-6px);
+    border-color: var(--mui-palette-primary-main);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.25);
+    outline: none;
+
+    & > img {
+      transform: scale(1.045);
+    }
+
+    .employee-card-link {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   & > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: inherit;
+    transition: transform 350ms ease;
   }
   &::before {
     border-radius: inherit;
     position: absolute;
     z-index: 2;
     content: "";
-    content: "";
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background: linear-gradient(
-      to top,
-      var(--mui-palette-grey-900),
-      transparent
-    );
+    background:
+      linear-gradient(to top, rgba(9, 12, 20, 0.98) 0%, rgba(9, 12, 20, 0.72) 34%, transparent 68%),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.16), transparent 30%);
   }
 
   & > .employee-card-content {
@@ -374,17 +435,236 @@ button:hover .ql-fill,
     content: "";
     width: 100%;
     height: 100%;
-    height: 100%;
     top: 0;
     left: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 1.25rem;
+
+    .employee-role-chip {
+      max-width: 100%;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+
+      .MuiChip-icon {
+        color: var(--mui-palette-primary-light);
+      }
+
+      .MuiChip-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .employee-card-name {
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .employee-card-link {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: rgba(255, 255, 255, 0.76);
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 180ms ease, transform 180ms ease;
+
+      svg {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .employee-grid-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .employee-card {
+    height: 290px;
+  }
+}
+
+.dashboard-modern {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  padding-bottom: 2rem;
+  background: transparent !important;
+  border-radius: 16px;
+
+  .dashboard-side-column { gap: 1.5rem; }
+
+  .MuiCard-root {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.62) 100%
+    ) !important;
+    box-shadow:
+      0 10px 30px 0 rgba(11, 92, 171, 0.06),
+      0 2px 8px 0 rgba(15, 23, 42, 0.03),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 1px 0 rgba(11, 92, 171, 0.02) !important;
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 220ms ease,
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background 220ms ease !important;
+
+    &::before {
+      display: none;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.86) 0%,
+        rgba(255, 255, 255, 0.70) 100%
+      ) !important;
+      border-color: rgba(11, 92, 171, 0.25) !important;
+      box-shadow:
+        0 16px 38px -4px rgba(11, 92, 171, 0.12),
+        0 4px 12px 0 rgba(15, 23, 42, 0.04),
+        inset 0 1px 2px 0 rgba(255, 255, 255, 1) !important;
+    }
+  }
+
+    .MuiAvatar-root {
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  }
+
+  a {
+    color: var(--mui-palette-primary-main);
+    font-weight: 600;
+    text-decoration: none;
+    &:hover { color: var(--mui-palette-primary-dark); }
+  }
+
+  .dashboard-applications-card .MuiSelect-root { min-width: 90px; }
+}
+
+.notice-board-row {
+  gap: 1rem;
+
+  .notice-board-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  & > .MuiBox-root:last-child {
+    flex: 0 0 auto;
+  }
+}
+
+.dashboard-hero {
+  position: relative;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 92% 12%, rgba(11, 92, 171, 0.06), transparent 40%),
+    radial-gradient(ellipse 55% 50% at 92% 20%, rgba(13, 148, 136, 0.14), transparent 55%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(11, 92, 171, 0.12), transparent 55%),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.84) 0%,
+      rgba(255, 255, 255, 0.66) 100%
+    );
+  box-shadow:
+    0 12px 36px -4px rgba(11, 92, 171, 0.08),
+    0 2px 8px -1px rgba(15, 23, 42, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  overflow: hidden;
+
+  &::before {
+    display: none;
+  }
+
+  .dashboard-hero-chip {
+    width: fit-content;
+    color: #0B5CAB;
+    font-weight: 600;
+    background: rgba(11, 92, 171, 0.08);
+    border: 1px solid rgba(11, 92, 171, 0.18);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    .MuiChip-icon { color: #0D9488; }
+    animation: dashboard-hero-reveal 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .dashboard-welcome-title {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+
+    .dashboard-welcome-word,
+    .dashboard-welcome-name {
+      display: inline-block;
+      will-change: opacity, transform, clip-path;
+    }
+
+    .dashboard-welcome-word {
+      color: #0F172A;
+      animation: dashboard-welcome-word 480ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+    }
+
+    .dashboard-welcome-name {
+      position: relative;
+      color: #0B5CAB;
+      animation: dashboard-welcome-name 680ms cubic-bezier(0.22, 1, 0.36, 1) 290ms both;
+    }
+  }
+
+  .dashboard-welcome-copy {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+    animation: dashboard-hero-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) 520ms both;
+  }
+
+  .dashboard-date-card {
+    position: relative;
+    z-index: 1;
     align-items: center;
-    gap: 0.25rem;
-    padding: 1rem 0.5rem;
-    gap: 0.25rem;
-    padding: 1rem 0.5rem;
+    min-width: 240px;
+    padding: 0.75rem 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.90);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 4px 18px rgba(11, 92, 171, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
+    animation: dashboard-hero-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both;
+  }
+}
+
+@media (max-width: 599px) {
+  .dashboard-hero {
+    align-items: stretch;
+    padding: 1.25rem;
+    .dashboard-date-card { width: 100%; min-width: 0; }
   }
 }
 
@@ -406,7 +686,7 @@ button:hover .ql-fill,
           padding-left: 15px;
           width: 100%;
 
-          @media (min-width: 600) {
+          @media (min-width: 600px) {
             width: 250px;
           }
         }
@@ -425,26 +705,31 @@ button:hover .ql-fill,
   }
 }
 .tab-container {
-  overflow-x: scroll !important ;
+  overflow-x: auto !important;
   scrollbar-width: none;
+  padding: 0.25rem;
+  border-radius: 14px;
   & > * {
     flex-grow: 1;
   }
   & .tab-box {
-    border-bottom: 2px solid var(--mui-palette-grey-500);
+    border: 0;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     font-weight: bolder;
-    padding: 1.5rem;
-    font-size: 1rem;
-    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-size: 0.92rem;
+    color: var(--mui-palette-text-secondary);
     white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
     &:hover {
-      transition: background-color 0.2s ease-out;
-      background-color: var(--mui-palette-primary-lighter);
-      color: var(--mui-palette-primary-dark);
+      color: var(--mui-palette-primary-main) !important;
+      background-color: var(--mui-palette-action-hover);
+      transform: translateY(-1px);
     }
 
     & > svg {
@@ -455,18 +740,28 @@ button:hover .ql-fill,
   }
 }
 
-.tab_active {
-  border-bottom: 2px solid var(--mui-palette-primary-main) !important;
-  color: var(--mui-palette-primary-main) !important;
+.tab-container .tab-box:not(.tab_active) {
+  color: var(--mui-palette-text-primary);
+  opacity: 0.82;
 }
 
-.truncate-multi-line {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  text-overflow: ellipsis;
+.tab-container .tab-box.tab_active {
+  font-weight: 800;
+  border-bottom: 3px solid var(--mui-palette-primary-main);
+}
+
+/* Profile surfaces use the shared 8px radius token instead of one-off values. */
+.profile-picture-card,
+.profile-picture-card .MuiButton-root,
+.profile-picture-card .MuiOutlinedInput-root,
+.profile-picture-card .MuiIconButton-root {
+  border-radius: 8px;
+}
+
+.tab_active {
+  background: color-mix(in srgb, var(--mui-palette-primary-main) 12%, transparent) !important;
+  color: var(--mui-palette-primary-main) !important;
+  box-shadow: none;
 }
 
 // company details
@@ -505,7 +800,7 @@ button:hover .ql-fill,
   border-radius: 8px;
   transition: all 0.2s ease;
   &:hover {
-    border-color: (var--mui-palette-primary-main);
+    border-color: var(--mui-palette-primary-main);
   }
 }
 
@@ -555,10 +850,25 @@ button:hover .ql-fill,
 }
 
 // Main Holiday Calendar
+@keyframes calendar-sidebar-enter {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes calendar-content-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .main-holiday-calendar {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
+  min-height: 0;
+
+  &.calendar-page-shell {
+    gap: 20px;
+  }
 
   @media (min-width: 1280px) {
     flex-direction: row;
@@ -566,10 +876,15 @@ button:hover .ql-fill,
 
   .calendar-sidebar {
     width: 100%;
-    height: inherit;
-    padding: 16px;
+    // Do not inherit an ancestor's full height. On tablet and mobile that
+    // created a large empty panel before the actual calendar controls.
+    height: auto;
+    padding: 18px;
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(51, 34, 85, 0.07);
 
     @media (min-width: 1280px) {
       width: 300px;
@@ -578,6 +893,16 @@ button:hover .ql-fill,
       align-items: center;
       justify-content: start;
       align-items: start;
+    }
+
+    .MuiButton-contained {
+      box-shadow: 0 8px 18px color-mix(in srgb, var(--mui-palette-primary-main) 28%, transparent);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 22px color-mix(in srgb, var(--mui-palette-primary-main) 36%, transparent);
+      }
     }
 
     .calendar-sidebar-upcoming {
@@ -611,9 +936,15 @@ button:hover .ql-fill,
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 5px 10px;
-        border-radius: 4px;
+        padding: 9px 10px;
+        border-radius: 8px;
         font-weight: 600;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+
+        &:hover {
+          transform: translateX(3px);
+          box-shadow: 0 5px 12px rgba(51, 34, 85, 0.09);
+        }
 
         .count-div {
           height: 20px;
@@ -653,42 +984,134 @@ button:hover .ql-fill,
 
   .calendar-header {
     display: flex;
-    padding: 20px;
-    gap: 15px;
+    flex: 0 0 auto;
+    min-height: 76px;
+    padding: 16px 20px;
+    gap: 16px;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(51, 34, 85, 0.07);
+    background: linear-gradient(120deg, color-mix(in srgb, var(--mui-palette-primary-main) 7%, var(--mui-palette-background-paper)), var(--mui-palette-background-paper) 42%);
 
-    @media (min-width: 600px) {
+    // Keep the controls aligned on one row whenever their usable space allows.
+    // Below this breakpoint they deliberately stack rather than compressing.
+    @media (min-width: 900px) {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      height: auto;
-    }
-
-    @media (min-width: 960px) {
-      justify-content: space-between;
-    }
-
-    @media (min-width: 1200px) {
-      width: 100%;
     }
 
     .calendar-controls {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      height: 100%;
+      height: auto;
+      min-width: 0;
+      flex: 1 1 360px;
+      flex-wrap: wrap;
+
+      .MuiButton-outlined,
+      .MuiIconButton-root {
+        transition: transform 180ms ease, background-color 180ms ease;
+
+        &:hover { transform: translateY(-1px); }
+      }
+
+      .calendar-input {
+        min-width: 180px;
+        flex: 1 1 180px;
+      }
+
+      .calendar-navigation {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 0 0 auto;
+
+        .MuiButtonBase-root,
+        .calendar-today-button {
+          min-height: 36px;
+        }
+
+        .calendar-today-button {
+          padding-inline: 0.85rem;
+          white-space: nowrap;
+        }
+      }
     }
 
-    .calendar-filters {
-      .MuiFormControl-root {
-        .MuiInputBase-root {
-          .MuiSelect-select {
-            display: flex;
-            font-size: 16px;
-            justify-content: start;
-            align-items: center;
-          }
+    .calendar-filter {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      flex-shrink: 0;
+
+      .calendar-filter-select {
+        width: 176px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .calendar-import-button {
+        height: 40px;
+        white-space: nowrap;
+        min-width: 132px;
+      }
+
+      .calendar-filter-label {
+        color: var(--mui-palette-text-secondary);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1;
+      }
+
+      .MuiInputBase-root {
+        min-height: 36px;
+        border-radius: 8px;
+      }
+
+      .MuiSelect-select {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+    }
+
+    @media (max-width: 899px) {
+      min-height: 0;
+      padding: 14px;
+      align-items: stretch;
+      justify-content: flex-start;
+
+      .calendar-controls {
+        width: 100%;
+        height: auto;
+        flex: 0 0 auto;
+        align-content: flex-start;
+
+        .calendar-input {
+          min-width: 0;
+          flex: 1;
+        }
+
+        .reset-padding {
+          flex: 1 1 100%;
+          min-width: 0;
+        }
+      }
+
+      .calendar-filter {
+        width: 100%;
+        align-items: end;
+
+        .calendar-filter-select {
+          flex: 1;
+          min-width: 0;
         }
       }
     }
@@ -697,6 +1120,8 @@ button:hover .ql-fill,
   .calendar-days {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
+    min-height: 0;
 
     .calendar-days-grid {
       display: grid;
@@ -704,29 +1129,89 @@ button:hover .ql-fill,
       align-items: stretch;
       justify-content: start;
       gap: 0;
-      grid-auto-rows: min-content;
+      grid-auto-rows: minmax(104px, 1fr);
       background-color: var(--mui-palette-background-card);
-      overflow-x: scroll;
+      border: 1px solid var(--mui-palette-divider);
+      border-radius: 14px;
+      overflow-x: auto;
       scrollbar-width: none;
+
+      &.calendar-month-grid {
+        box-shadow: 0 14px 34px rgba(51, 34, 85, 0.08);
+        background-color: var(--mui-palette-background-paper);
+      }
+
+      &.calendar-weekdays {
+        grid-auto-rows: 64px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(51, 34, 85, 0.05);
+
+        .MuiTypography-root {
+          color: var(--mui-palette-secondary-main);
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: 0.02em;
+        }
+      }
     }
 
     .calendar-day {
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--mui-palette-grey-300);
-      gap: 2px;
-      align-items: center;
-      justify-content: end;
-      aspect-ratio: 1;
+      border-right: 1px solid var(--mui-palette-divider);
+      border-bottom: 1px solid var(--mui-palette-divider);
+      gap: 6px;
+      align-items: stretch;
+      justify-content: flex-start;
+      min-width: 112px;
+      min-height: 104px;
+      padding: 12px 10px 8px;
       position: relative;
-      border-radius: 0.25rem;
+      border-radius: 0;
+      transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+
+      &:nth-child(7n) {
+        border-right: 0;
+      }
+
+      &:nth-last-child(-n + 7) {
+        border-bottom: 0;
+      }
+
+      &.calendar-day-empty {
+        background-color: color-mix(in srgb, var(--mui-palette-background-default) 55%, transparent);
+        cursor: default;
+      }
+
+      &:not(.calendar-day-empty):hover {
+        background-color: color-mix(in srgb, var(--mui-palette-primary-main) 7%, var(--mui-palette-background-paper));
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(51, 34, 85, 0.10);
+        z-index: 1;
+      }
+
+      &.selected-day {
+        background-color: color-mix(in srgb, var(--mui-palette-secondary-main) 10%, transparent);
+        box-shadow: inset 0 0 0 1px var(--mui-palette-secondary-main);
+      }
+
+      &.today-cell .MuiTypography-root {
+        display: inline-flex;
+        width: 34px;
+        height: 34px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: var(--mui-palette-secondary-main);
+        color: var(--mui-palette-secondary-contrastText);
+      }
 
       @media (min-width: 600px) {
-        justify-content: center;
+        justify-content: flex-start;
       }
 
       @media (min-width: 850px) {
-        overflow: auto;
+        overflow: hidden;
       }
 
       .calendar-day-holiday {
@@ -735,12 +1220,18 @@ button:hover .ql-fill,
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 4px;
+        border-radius: 6px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 600;
         font-size: 14px;
+        transition: transform 160ms ease, filter 160ms ease;
+
+        &:hover {
+          transform: scale(1.02);
+          filter: brightness(0.97);
+        }
 
         p {
           font-weight: 600;
@@ -784,6 +1275,163 @@ button:hover .ql-fill,
         border-bottom: 5px solid var(--mui-palette-primary-main);
       }
     }
+  }
+
+  .dashboard-card-skeleton {
+    overflow: hidden;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--mui-palette-primary-main) 6%, var(--mui-palette-background-paper)),
+      var(--mui-palette-background-paper)
+    );
+
+    .MuiSkeleton-root {
+      background-color: color-mix(in srgb, var(--mui-palette-primary-main) 11%, transparent);
+    }
+
+    .dashboard-skeleton-avatar {
+      border-radius: 12px;
+    }
+
+    .dashboard-skeleton-line-short {
+      width: 62%;
+    }
+  }
+}
+
+@media (max-width: 1279px) {
+  .main-holiday-calendar {
+    // The calendar needs a full row on tablets; keeping a desktop sidebar
+    // beside it leaves both the filters and seven-day grid too narrow.
+    flex-direction: column !important;
+
+    .calendar-sidebar {
+      width: 100%;
+      height: auto !important;
+      min-height: 0;
+      align-items: stretch;
+    }
+  }
+}
+
+@keyframes dashboard-hero-reveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dashboard-welcome-word {
+  from { opacity: 0; transform: translateY(14px); clip-path: inset(0 100% 0 0); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes dashboard-welcome-name {
+  from { opacity: 0; transform: translateX(-10px); clip-path: inset(0 100% 0 0); }
+  to { opacity: 1; transform: translateX(0); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes dashboard-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-hero .dashboard-hero-chip,
+  .dashboard-hero .dashboard-welcome-word,
+  .dashboard-hero .dashboard-welcome-name,
+  .dashboard-hero .dashboard-welcome-name::after,
+  .dashboard-hero .dashboard-welcome-copy,
+  .dashboard-hero .dashboard-date-card,
+  .dashboard-card-skeleton .MuiSkeleton-root {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .main-holiday-calendar {
+    &.calendar-page-shell { gap: 14px; }
+
+    .calendar-sidebar {
+      padding: 14px;
+      gap: 14px;
+      max-height: none;
+      overflow: visible;
+
+      .calendar-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem !important;
+
+        .occasion-type {
+          min-width: 0;
+          padding: 0.55rem;
+
+          .icon-container { display: none; }
+          .MuiTypography-root { font-size: 0.8rem; }
+        }
+      }
+    }
+
+    .calendar-header {
+      padding: 12px;
+      gap: 14px;
+
+      .calendar-controls {
+        display: grid;
+        grid-template-columns: auto auto minmax(0, 1fr);
+        align-items: center;
+        gap: 0.5rem;
+
+        .reset-padding {
+          grid-column: 1 / -1;
+          width: 100%;
+
+          .MuiStack-root { width: 100%; }
+        }
+
+        .calendar-input { grid-column: 1 / -1; }
+
+        .calendar-navigation { grid-column: 1 / -1; }
+      }
+
+      .calendar-filter {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        flex-wrap: wrap;
+
+        .calendar-filter-select { min-width: 100%; }
+        .calendar-import-button { width: 100%; }
+      }
+    }
+
+    .calendar-days .calendar-days-grid {
+      border-radius: 10px;
+      grid-auto-rows: minmax(64px, 1fr);
+      overflow-x: hidden;
+    }
+
+    .calendar-days {
+      .calendar-day {
+        min-width: 0;
+        min-height: 76px;
+        gap: 3px;
+        padding: 8px 4px 5px;
+
+        .calendar-day-holiday {
+          font-size: 0.6875rem;
+          padding: 0.1rem;
+        }
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-holiday-calendar *,
+  .main-holiday-calendar *::before,
+  .main-holiday-calendar *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 .date-box {
@@ -905,6 +1553,13 @@ button:hover .ql-fill,
 }
 
 // password strenght meter
+// Edge/IE add their own password reveal button. The application supplies a
+// single accessible toggle, so suppress the browser duplicate.
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
 .password-meter-container {
   display: flex;
   flex-direction: row;
@@ -977,7 +1632,156 @@ button:hover .ql-fill,
 }
 
 .leave-policy-checkbox {
-  margin-left: 0;
+  margin: 0;
+  min-height: 64px;
+  padding: 0.75rem 0.875rem;
+  width: 100%;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 10px;
+  background: var(--mui-palette-background-paper);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  .MuiFormControlLabel-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .MuiCheckbox-root,
+  .MuiSwitch-root {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .MuiFormControlLabel-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+}
+
+.leave-policy-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .policy-modal-section {
+    padding: 1.25rem;
+    border: 1px solid var(--mui-palette-grey-200);
+    border-radius: 16px;
+    background: var(--mui-palette-background-paper);
+    margin-bottom: 0.75rem;
+  }
+
+  .policy-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .lifecycle-special-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+    .MuiSwitch-root { flex: 0 0 auto; margin: 0; }
+  }
+
+  .lifecycle-requirements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-default);
+
+    .MuiFormControlLabel-root {
+      min-height: 34px;
+      margin: 0;
+    }
+
+    .MuiCheckbox-root { padding: 0.35rem; }
+  }
+
+  .policy-toggle-row {
+    width: 100%;
+    .MuiFormControlLabel-root {
+      width: 100%;
+      min-height: 64px;
+      margin: 0;
+      padding: 0.75rem 0.875rem;
+      border: 1px solid var(--mui-palette-divider);
+      border-radius: 10px;
+      background: var(--mui-palette-background-paper);
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      .MuiFormControlLabel-label {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        white-space: normal;
+      }
+      .MuiCheckbox-root,
+      .MuiSwitch-root {
+        flex: 0 0 auto;
+        margin: 0;
+      }
+      .MuiFormControlLabel-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+    }
+  }
+
+  .policy-toggle-row--single {
+    max-width: 360px;
+  }
+
+  .policy-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (max-width: 599px) {
+    gap: 0.75rem;
+
+    .policy-modal-section {
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .lifecycle-special-toggle { align-items: flex-start; }
+
+    .policy-form-actions {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@media (max-width: 599px) {
+  .tab-container {
+    scrollbar-width: thin;
+    padding: 0.35rem;
+
+    & .tab-box {
+      flex: 0 0 auto;
+      min-width: 164px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
 }
 
 //Policies Page Styles
@@ -1027,4 +1831,127 @@ button:hover .ql-fill,
 .current-active-policy {
   border-color: var(--mui-palette-primary-main);
 
+}
+
+.policy-document-viewer {
+  min-height: 0;
+
+  .policy-document-frame {
+    height: min(72dvh, 900px);
+    min-height: 520px;
+    overflow: auto;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 10px;
+    background: var(--mui-palette-background-paper);
+
+    .pdf_viewer {
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+    }
+  }
+}
+
+// App motion system: lightweight interaction feedback without changing layout.
+@keyframes app-page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes app-card-reveal {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes app-soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mui-palette-primary-main) 0%, transparent); }
+  50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--mui-palette-primary-main) 10%, transparent); }
+}
+
+.app-content-surface > .MuiContainer-root > :last-child {
+  animation: app-page-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.app-shell {
+  .MuiButton-root,
+  .MuiIconButton-root,
+  .MuiToggleButton-root {
+    transition:
+      transform 160ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease;
+
+    &:not(:disabled):active { transform: scale(0.96); }
+  }
+
+  .MuiButton-contained:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--mui-palette-primary-main) 24%, transparent);
+  }
+
+  .MuiIconButton-root:not(:disabled):hover { transform: translateY(-1px) scale(1.05); }
+
+  .MuiOutlinedInput-root {
+    transition: box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
+
+    &.Mui-focused {
+      // MUI's focused fieldset is the single focus indicator for inputs.
+      // A second shadow on the root creates a distracting double outline,
+      // particularly for compact search and autocomplete controls.
+      box-shadow: none;
+    }
+  }
+
+  .MuiSwitch-switchBase,
+  .MuiSwitch-thumb,
+  .MuiCheckbox-root svg { transition: transform 180ms ease, color 180ms ease; }
+
+  .MuiCheckbox-root:hover svg { transform: scale(1.08); }
+}
+
+.sidebar .sidebar-menu-item {
+  &:hover {
+    transform: translateX(3px);
+    .MuiSvgIcon-root { transform: scale(1.1); }
+  }
+
+  &.Mui-selected .MuiSvgIcon-root { animation: none; }
+}
+
+.dashboard-modern {
+  > .MuiGrid-root .MuiCard-root {
+    opacity: 0;
+    animation: app-card-reveal 440ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(1) .MuiCard-root { animation-delay: 60ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(2) .MuiCard-root { animation-delay: 110ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(3) .MuiCard-root { animation-delay: 160ms; }
+  > .MuiGrid-root > .MuiGrid-root:first-child .MuiGrid-root:nth-child(4) .MuiCard-root { animation-delay: 210ms; }
+  .dashboard-side-column .MuiCard-root { animation-delay: 180ms; }
+
+  .dashboard-weather-icon img {
+    transition: transform 300ms ease;
+    &:hover { transform: rotate(-6deg) scale(1.1); }
+  }
+}
+
+.employee-grid-container .employee-card {
+  animation: app-card-reveal 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

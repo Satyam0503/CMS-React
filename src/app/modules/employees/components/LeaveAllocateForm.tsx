@@ -1,9 +1,10 @@
-import { Formik, FormikProps } from "formik";
+import {
+  Formik,
+  FormikProps } from "formik";
 import * as Yup from "yup";
 import { useIntl } from "react-intl";
 import {
   Box,
-  Checkbox,
   FormControlLabel,
   Stack,
   Typography,
@@ -21,6 +22,7 @@ import {
 import { EmployeeLeaveBalance } from "../models";
 import { toast } from "react-toastify";
 
+import { AppCheckbox } from "../../../shared/components/ui";
 interface PropsTypes {
   formRef: React.MutableRefObject<FormikProps<{
     selectedPolicies: string[];
@@ -46,7 +48,9 @@ export const LeaveAllocateForm = ({
       try {
         const { data } = await getLeavePolicies(true);
         if (data.success) {
-          setLeavePolicies(data.methodResults);
+          // This step creates employee leave-credit balances. UL is approval-only
+          // and WFH has its own policy workflow, so neither belongs in this batch.
+          setLeavePolicies((data.methodResults ?? []).filter((policy) => policy.policyType === 1));
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -68,7 +72,7 @@ export const LeaveAllocateForm = ({
         (item) => ({
           employeeId: employeeId,
           leavePolicyId: item,
-          balance:
+          totalAllocated:
             leavePolicies.find((lp) => lp.id === item)?.accrualAmount ?? 0,
         }),
       );
@@ -78,9 +82,7 @@ export const LeaveAllocateForm = ({
         if (data.success) {
           handleLeaveAllocation();
         } else {
-          toast.error(
-            i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }),
-          );
+          toast.error(data.message || i({ id: getCustomStatusCodesErrorMessage(data.statusCode) }));
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -139,7 +141,7 @@ export const LeaveAllocateForm = ({
                       key={item.id}
                       className="leave-policy-item"
                       control={
-                        <Checkbox
+                        <AppCheckbox
                           checked={values.selectedPolicies.includes(item.id!)}
                           onChange={() => handleCheck(item.id!)}
                           sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}

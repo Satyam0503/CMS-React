@@ -1,17 +1,26 @@
-import { Add, Download } from "@mui/icons-material";
-import { Alert, Button, Link, Stack, Typography } from "@mui/material"
+import {
+  Download,
+  UploadFile } from "@mui/icons-material";
+import {
+  Link,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import * as XLSX from "xlsx";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { PayRollDataModel, PayRollRequestModel } from "../models";
-import { uploadEmpPayRollData } from "../services";
+import { uploadEmpPayRollData, validatePayrollData } from "../services";
 import { sanitizeHtmlContent } from "../../../../utils/common";
+import { payrollActionButtonSx } from "./payrollActionButtonSx";
 
+import { AppAlert, AppButton } from "../../../shared/components/ui";
 const ValidFileExtension = ["xlsx", "xls"];
 // Bonus, LTA, Other Allowance, Health Insurance, EPF, ESIC are optional - default to 0 if omitted
 const requiredHeaders = ["Income Tax", "Basic Pay", "Employee Id", "HRA", "Loss of Pay", "Loss of Pay Days", "Paid Days", "Paid Date"];
@@ -25,6 +34,7 @@ type KeyMappingType = {
 
 type PropsType = {
     handlePageRefresh: () => void;
+    fillToolbarRow?: boolean;
 }
 
 const keyMapper: KeyMappingType = {
@@ -143,7 +153,7 @@ const mapExcelRowtoPayLoad = (row: Record<string, unknown>): PayRollDataModel =>
     return mappedRow as PayRollDataModel;
 };
 
-export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
+export const UploadPayRollData = ({ handlePageRefresh, fillToolbarRow = false }: PropsType) => {
     const { formatMessage: i } = useIntl();
     const [workBookData, setWorkBookData] = useState<XLSX.WorkBook | null>(null);
     const [open, setOpen] = useState(false);
@@ -252,12 +262,18 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
             return;
         }
         const payload: PayRollRequestModel = {
-            payMonth: paymonth,
+            payMonth: paymonth.format("YYYY-MM-DD"),
             payData: jsonData
         }
         try {
             setIsUploading(true);
-            // frontend check above is UX only (fast feedback + avoids a round trip);
+            const validation = await validatePayrollData(payload);
+            if (!validation.data.success) {
+                setServerErrors(validation.data.methodResults ?? [validation.data.message]);
+                return;
+            }
+            // The backend validation runs before upload so users can correct all row errors without a partial write.
+
             // the backend independently re-validates the same rules so a direct API
             // call (e.g. via Postman) bypassing this UI still gets rejected
             const { data } = await uploadEmpPayRollData(payload);
@@ -271,7 +287,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
             } else {
                 toast.error(data.message || i({ id: "ERROR.500" }))
             }
-        } catch (error) {
+        } catch {
             toast.error(i({ id: "ERROR.500" }))
         } finally {
             setIsUploading(false);
@@ -280,24 +296,26 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
 
     return (
         <>
-            <Stack direction="row" spacing={2} className="align-items-center">
-                <Button variant="contained" component="label" role="button" aria-label="import excel" >
-                    <Add />
-                    {i({ id: "PAYROLL.IMPORT_EXCEL" })}
-                    <input
-                        hidden
-                        ref={inputRef}
-                        name="excel"
-                        type="file"
-                        accept=".xlsx,.xls"
-                        id="payrollImport"
-                        onChange={handleFileChange}
-                    />
-                </Button>
-                <Link href={SAMPLE_FILE_URL} download className="d-flex align-items-center gap-1">
-                    <Download fontSize="small" />
-                    {i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}
-                </Link>
+            <Stack direction="row" spacing={1} className="align-items-center" sx={fillToolbarRow ? { flex: { xs: "2 1 0", lg: "0 0 auto" }, minWidth: 0, "& .MuiButton-root": { flex: 1, width: { xs: "100%", lg: 40 } } } : undefined}>
+                <Tooltip title={i({ id: "PAYROLL.IMPORT_EXCEL" })} arrow placement="top">
+                    <AppButton variant="outlined" component="label" role="button" aria-label={i({ id: "PAYROLL.IMPORT_EXCEL" })} sx={payrollActionButtonSx}>
+                        <UploadFile fontSize="small" />
+                        <input
+                            hidden
+                            ref={inputRef}
+                            name="excel"
+                            type="file"
+                            accept=".xlsx,.xls"
+                            id="payrollImport"
+                            onChange={handleFileChange}
+                        />
+                    </AppButton>
+                </Tooltip>
+                <Tooltip title={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} arrow placement="top">
+                    <AppButton component="a" href={SAMPLE_FILE_URL} download variant="outlined" aria-label={i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })} sx={payrollActionButtonSx}>
+                        <Download fontSize="small" />
+                    </AppButton>
+                </Tooltip>
             </Stack>
             {
                 open && <CustomisedModal open={true} handleClose={handleCloseModal}
@@ -310,7 +328,7 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                             <Stack className="overflow-x-scroll flex-row gap-2 justify-content-start py-2 position-sticky top-0">
                                 {
                                     workBookData?.SheetNames.map((sheet, index) =>
-                                        <Button key={index} variant={selectedWorkSheet === sheet ? "contained" : "outlined"} onClick={() => handleWorkSheetChange(sheet)}>{sheet}</Button>
+                                        <AppButton key={index} variant={selectedWorkSheet === sheet ? "contained" : "outlined"} onClick={() => handleWorkSheetChange(sheet)}>{sheet}</AppButton>
                                     )
                                 }
                             </Stack>
@@ -326,25 +344,25 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
                         />
                         {
                             missingHeaders.length > 0 &&
-                            <Alert severity="error">
+                            <AppAlert severity="error">
                                 <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.MISSING_COLUMNS_TITLE" })}</Typography>
                                 <Typography variant="body2">{missingHeaders.join(", ")}</Typography>
                                 <Typography variant="body2">
                                     {i({ id: "PAYROLL.MISSING_COLUMNS_HINT" })}{" "}
                                     <Link href={SAMPLE_FILE_URL} download>{i({ id: "PAYROLL.DOWNLOAD_SAMPLE_FILE" })}</Link>
                                 </Typography>
-                            </Alert>
+                            </AppAlert>
                         }
                         {
                             missingHeaders.length === 0 && serverErrors.length > 0 &&
-                            <Alert severity="error">
+                            <AppAlert severity="error">
                                 <Typography variant="body2" className="fw-bold">{i({ id: "PAYROLL.UPLOAD_ERRORS_TITLE" })}</Typography>
                                 {
                                     serverErrors.map((errorMessage, index) =>
                                         <Typography key={index} variant="body2">{errorMessage}</Typography>
                                     )
                                 }
-                            </Alert>
+                            </AppAlert>
                         }
                         <Stack spacing={1}>
                             <Typography className="fs-16" >{i({ id: "PAYROLL.EXCEL_PREVIEW" })}</Typography>
@@ -363,3 +381,4 @@ export const UploadPayRollData = ({ handlePageRefresh }: PropsType) => {
 
     )
 }
+

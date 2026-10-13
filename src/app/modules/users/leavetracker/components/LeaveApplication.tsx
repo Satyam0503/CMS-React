@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Chip,
   FormControl,
@@ -8,19 +7,18 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Radio,
   RadioGroup,
-  Select,
   Stack,
   Typography,
 } from "@mui/material";
 
 import { useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import {
   EmployeeLeaveTypeBalance,
+  LeavePolicyModel,
   RequestLeaveModel,
 } from "../../../leaves/model";
 import { Formik } from "formik";
@@ -29,14 +27,21 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { ErrorLabel } from "../../../../shared/components/form-component/ErrorLabel";
 import dayjs, { Dayjs } from "dayjs";
-import { createLeaveRequest, updateLeaveRequest, } from "../../../leaves/leaveServices";
+import { createEmployeeLeaveRequest, createMyProfileLeaveRequest, createMyProfileLeaveRequestWithEvidence, createWorkFromHomeRequest, getLeavePolicies, getMySelfServiceLeavePolicies, updateLeaveRequest, updateMyProfileLeaveRequest, } from "../../../leaves/leaveServices";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { getHolidays } from "../../../holidays/calendarServices";
 import { HolidayModel, HolidayPayload } from "../../../holidays/models";
 import { useEffect, useState } from "react";
+import { getRequest } from "../../../../../server/axios";
 
+import { AppAlert, AppRadio, AppSelect } from "../../../../shared/components/ui";
+import { EmployeeLifecyclePolicy, getEmployeeLifecycleSelfServicePolicies } from "../../../employees/employeeServices";
+
+type SelectableLeaveType = EmployeeLeaveTypeBalance & {
+  policyType?: 1 | 2 | 3 | 4;
+};
 type Props = {
   edit: boolean;
   initialValues: RequestLeaveModel;
@@ -44,6 +49,65 @@ type Props = {
   open: boolean;
   handleClose: () => void;
   handleRefresh?: () => void;
+  targetEmployeeId?: string;
+};
+
+const getWorkFromHomeErrorMessage = (errorMessage?: string) => {
+  const [rawCode, ...rawDetails] = (errorMessage ?? "").split(":");
+  const code = rawCode.trim();
+  const details = rawDetails.join(":").trim();
+
+  const messages: Record<string, string> = {
+    WFH_WEEKLY_QUOTA_EXCEED: "You have already used this week's Work From Home allowance. You can apply again next Monday.",
+    WFH_WEEKLY_QUOTA_EXCEEDED: "You have already used this week's Work From Home allowance. You can apply again next Monday.",
+    WFH_OVERLAPPING_REQUEST: "You already have a Work From Home request for one or more of the selected dates.",
+    WFH_BACKDATED_NOT_ALLOWED: "Work From Home can only be requested for today or a future working day.",
+    WFH_ADVANCE_NOTICE_REQUIRED: "This request does not meet the required advance notice period.",
+    WFH_SAME_DAY_OFFICE_STARTED: details || "Work From Home for today must be requested before your office start time.",
+    WFH_WEEKLY_OFF_NOT_ALLOWED: "Work From Home cannot be requested on a weekly off day.",
+    WFH_HOLIDAY_NOT_ALLOWED: "Work From Home cannot be requested on a holiday.",
+    WFH_POLICY_NOT_ASSIGNED: "Work From Home is not available for your current profile. Please contact HR.",
+    WFH_POLICY_DISABLED: "Work From Home is not currently enabled for your company. Please contact HR.",
+    WFH_DATE_LOCKED: "The attendance period for the selected date is locked. Please contact HR.",
+  };
+
+  return messages[code] || details || errorMessage || "We could not submit your Work From Home request. Please try again.";
+};
+
+const getLeaveRequestErrorMessage = (errorMessage?: string) => {
+  const [rawCode, ...rawDetails] = (errorMessage ?? "").split(":");
+  const code = rawCode.trim();
+  const details = rawDetails.join(":").trim();
+  const messages: Record<string, string> = {
+    LEAVE_AFTER_EXIT: "Leave cannot be applied after the employee’s exit date.",
+    LEAVE_FORMER_EMPLOYEE: "Leave is unavailable because this employee is no longer active.",
+    LEAVE_EMPLOYEE_NOT_ACTIVE: "Leave is available only for active employees.",
+    LEAVE_WFH_OVERLAP: "Leave overlaps an active Work From Home request. Withdraw the WFH request first.",
+    LEAVE_OVERLAPPING_REQUEST: "A leave request already exists for one or more selected dates.",
+    LEAVE_DATE_LOCKED: "The selected attendance period is locked. Please contact HR.",
+    LEAVE_INSUFFICIENT_BALANCE: "You do not have enough leave balance for these dates.",
+  };
+  return messages[code] || details || errorMessage || "We could not submit the leave request. Please try again.";
+};
+
+type WorkFromHomeContext = {
+  isEligible?: boolean;
+  weeklyLimit?: number;
+  remainingThisWeek?: number;
+  businessDate?: string;
+  isSameDayRequestCutoffPassed?: boolean;
+  effectiveOfficeStartTime?: string | null;
+};
+
+const formatOfficeStartTime = (value?: string | null) => {
+  if (!value) return "your office start time";
+  const [rawHour, rawMinute] = value.split(":");
+  const hour = Number(rawHour);
+  const minute = Number(rawMinute);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return "your office start time";
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
 };
 
 export const LeaveApplication = (props: Props) => {
@@ -56,13 +120,45 @@ export const LeaveApplication = (props: Props) => {
     handleRefresh,
   } = props;
   const { formatMessage: i } = useIntl();
-  const employeeId = useParams().employeeid;
+  const routeEmployeeId = useParams().employeeid;
+  const employeeId = props.targetEmployeeId ?? routeEmployeeId;
   const currentUserId = useAppSelector((state) => state.user.userData?.userId)!;
   const [holidayList, setHolidayList] = useState<HolidayModel[]>([]);
+  const [workFromHomeTypes, setWorkFromHomeTypes] = useState<SelectableLeaveType[]>([]);
+  const [wfhEligibility, setWfhEligibility] = useState<WorkFromHomeContext | null>(null);
+  const [unpaidLeaveTypes, setUnpaidLeaveTypes] = useState<SelectableLeaveType[]>([]);
+  const [lifecycleLeaveTypes, setLifecycleLeaveTypes] = useState<SelectableLeaveType[]>([]);
+  const [lifecyclePolicies, setLifecyclePolicies] = useState<EmployeeLifecyclePolicy[]>([]);
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [filter, setFilter] = useState<HolidayPayload>({
     fromDate: null,
     toDate: null,
   })
+
+  useEffect(() => {
+    getEmployeeLifecycleSelfServicePolicies().then(({ data }) => setLifecyclePolicies(Array.isArray(data) ? data : [])).catch(() => setLifecyclePolicies([]));
+  }, []);
+
+  useEffect(() => {
+    if (props.targetEmployeeId || routeEmployeeId) {
+      setWfhEligibility(null);
+      return;
+    }
+
+    const loadWfhEligibility = async () => {
+      try {
+        const { data } = await getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context");
+        setWfhEligibility(data.methodResult ?? null);
+      } catch {
+        // Do not offer WFH until the authoritative eligibility check succeeds.
+        setWfhEligibility(null);
+      }
+    };
+
+    void loadWfhEligibility();
+    window.addEventListener("wfh-allocation-changed", loadWfhEligibility);
+    return () => window.removeEventListener("wfh-allocation-changed", loadWfhEligibility);
+  }, [props.targetEmployeeId, routeEmployeeId]);
 
   useEffect(() => {
     const fetchedHolidayData = async () => {
@@ -82,6 +178,85 @@ export const LeaveApplication = (props: Props) => {
       fetchedHolidayData();
     }
   }, [filter]);
+
+  useEffect(() => {
+    const loadNonBalancePolicies = async () => {
+      try {
+        const { data } = props.targetEmployeeId
+          ? await getLeavePolicies(true)
+          : await getMySelfServiceLeavePolicies();
+        const policies = (data.methodResults ?? []) as LeavePolicyModel[];
+        const targetUserId = props.targetEmployeeId ?? currentUserId;
+        const appliesToEmployee = (policy: LeavePolicyModel) =>
+          !policy.applicableTo || policy.applicableTo.length === 0 || policy.applicableTo.includes(targetUserId);
+        setWorkFromHomeTypes(
+          policies
+            .filter((policy) => !props.targetEmployeeId && policy.policyType === 2 && policy.id && appliesToEmployee(policy))
+            .map((policy) => ({
+              leaveBalanceId: `wfh-${policy.id}`,
+              leavePolicyId: policy.id!,
+              totalAllocated: 0,
+              taken: 0,
+              remaining: 0,
+              name: policy.name,
+              code: policy.code,
+              description: policy.description ?? "",
+              paid: policy.paid,
+              minNoticeDays: 0,
+              halfDayAllowed: Boolean(policy.workFromHome?.allowFirstHalf || policy.workFromHome?.allowSecondHalf),
+              weekendInclusive: Boolean(policy.workFromHome?.allowOnWeeklyOff),
+              holidayInclusive: Boolean(policy.workFromHome?.allowOnHoliday),
+              attendanceStatusCode: policy.attendanceStatusCode,
+              policyType: 2,
+            }))
+        );
+        setUnpaidLeaveTypes(
+          policies
+            // UL is approval-based and deliberately has no balance/credit record.
+            // It remains selectable only when it is assigned to the employee.
+            .filter((policy) => policy.policyType === 3 && policy.id && appliesToEmployee(policy))
+            .map((policy) => ({
+              leaveBalanceId: `ul-${policy.id}`,
+              leavePolicyId: policy.id!, totalAllocated: 0, taken: 0, remaining: 0,
+              name: policy.name, code: policy.code, description: policy.description ?? "",
+              paid: false, minNoticeDays: policy.minNoticeDays,
+              halfDayAllowed: policy.halfDayAllowed, weekendInclusive: policy.weekendInclusive,
+              holidayInclusive: policy.holidayInclusive, attendanceStatusCode: policy.attendanceStatusCode,
+              policyType: 3,
+            }))
+        );
+        const lifecycleIds = new Set(lifecyclePolicies.map((item) => item.leavePolicyId).filter(Boolean));
+        setLifecycleLeaveTypes(
+          policies
+            .filter((policy) => policy.policyType === 1 && policy.id && lifecycleIds.has(policy.id) && appliesToEmployee(policy))
+            .map((policy) => ({
+              leaveBalanceId: `lifecycle-${policy.id}`, leavePolicyId: policy.id!, totalAllocated: 0, taken: 0, remaining: 0,
+              name: policy.name, code: policy.code, description: policy.description ?? "", paid: policy.paid,
+              minNoticeDays: policy.minNoticeDays, halfDayAllowed: policy.halfDayAllowed,
+              weekendInclusive: policy.weekendInclusive, holidayInclusive: policy.holidayInclusive,
+              attendanceStatusCode: policy.attendanceStatusCode, policyType: 4,
+            }))
+        );
+      } catch (error) {
+        console.error("Unable to load non-balance leave policies.", error);
+      }
+    };
+
+    loadNonBalancePolicies();
+  }, [currentUserId, employeeId, props.targetEmployeeId, lifecyclePolicies]);
+
+  const selectableLeaveTypes: SelectableLeaveType[] = [
+    ...leaveTypeBalance.map((leave) => ({ ...leave, policyType: 1 as const })),
+    ...workFromHomeTypes.filter((wfh) => wfhEligibility?.isEligible &&
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === wfh.leavePolicyId)
+    ),
+    ...unpaidLeaveTypes.filter((unpaid) =>
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === unpaid.leavePolicyId)
+    ),
+    ...lifecycleLeaveTypes.filter((special) =>
+      !leaveTypeBalance.some((leave) => leave.leavePolicyId === special.leavePolicyId)
+    ),
+  ];
 
   //Gets the dates between two dates
   const getDatesBetween = (startDate: Dayjs, endDate: Dayjs) => {
@@ -117,7 +292,7 @@ export const LeaveApplication = (props: Props) => {
   ) {
     if (!startDate || !endDate || !leaveTypeId) return 0;
 
-    const selectedLeave = leaveTypeBalance.find(
+    const selectedLeave = selectableLeaveTypes.find(
       (leave) => leave.leavePolicyId === leaveTypeId
     );
     if (!selectedLeave) return 0;
@@ -156,8 +331,78 @@ export const LeaveApplication = (props: Props) => {
     setSubmitting: (isSubmitting: boolean) => void,
     setStatus: (status?: unknown) => void
   ) => {
+    const selectedLeaveType = selectableLeaveTypes.find(
+      (type) => type.leavePolicyId === values.leavePolicyId
+    );
+    const lifecyclePolicy = lifecyclePolicies.find((policy) => policy.leavePolicyId === values.leavePolicyId);
+    if (!edit && lifecyclePolicy?.requiresDocument && !evidenceFile) {
+      setStatus("Supporting evidence is required for this special leave request.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (selectedLeaveType?.policyType === 2) {
+      if (edit) {
+        setStatus("Work From Home requests cannot be edited here. Please cancel the request and submit a new one.");
+        setSubmitting(false);
+        return;
+      }
+
+      if (values.isHalfDay && !selectedLeaveType.halfDayAllowed) {
+        setStatus("Half-day Work From Home is not enabled in the current policy.");
+        setSubmitting(false);
+        return;
+      }
+
+      try {
+        // This only gives immediate feedback. The service repeats this check so a
+        // stale page, an altered request, or a boundary-time race cannot bypass it.
+        try {
+          const { data: contextResponse } = await getRequest<{ methodResult?: WorkFromHomeContext }>("api/wfh/context");
+          const context = contextResponse.methodResult;
+          const requestedToday = context?.businessDate && getDatesBetween(dayjs(values.startDate), dayjs(values.endDate))
+            .some((date) => date.isSame(dayjs(context.businessDate), "day"));
+          if (requestedToday && context?.isSameDayRequestCutoffPassed) {
+            const startTime = formatOfficeStartTime(context.effectiveOfficeStartTime);
+            setStatus(`Work From Home for today must be requested before your office start time (${startTime}).`);
+            setSubmitting(false);
+            return;
+          }
+        } catch {
+          // Continue to the authoritative server-side validation if context cannot be refreshed.
+        }
+
+        const wfhDuration = values.isHalfDay
+          ? values.halfDayPeriod === "SECOND_HALF" ? "SecondHalf" : "FirstHalf"
+          : "FullDay";
+        const { data } = await createWorkFromHomeRequest({
+          fromDate: dayjs(values.startDate).startOf("day").format("YYYY-MM-DD"),
+          toDate: dayjs(values.endDate).startOf("day").format("YYYY-MM-DD"),
+          durationType: wfhDuration,
+          reasonCode: "OTHER",
+          reasonText: values.reason.trim(),
+        });
+
+        if (!data.success) {
+          throw new Error(data.message || data.statusCode.toString());
+        }
+
+        toast.success("Work From Home request submitted successfully.");
+        handleClose();
+        props.handleRefresh?.();
+      } catch (error) {
+        const message = (error as Error).message;
+        toast.error(message && !/^\d+$/.test(message)
+          ? getWorkFromHomeErrorMessage(message)
+          : i({ id: getCustomStatusCodesErrorMessage(+message) }));
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     const minAdvanceNoticeDate =
-      leaveTypeBalance.find(
+      selectableLeaveTypes.find(
         (type) => type.leavePolicyId === values.leavePolicyId
       )?.minNoticeDays ?? 0;
     const currentNoticeDays = dayjs(values.startDate).diff(dayjs().startOf("day"), "days");
@@ -166,7 +411,7 @@ export const LeaveApplication = (props: Props) => {
         i(
           { id: "MESSAGE.ADVANCE_LEAVE_NOTICE_ERROR" },
           {
-            leaveType: leaveTypeBalance.find(
+            leaveType: selectableLeaveTypes.find(
               (leave) => leave.leavePolicyId === values.leavePolicyId
             )?.name,
             days: minAdvanceNoticeDate,
@@ -182,18 +427,20 @@ export const LeaveApplication = (props: Props) => {
       setSubmitting(false);
       return;
     }
-    const remainingLeaveForTypes =
-      leaveTypeBalance.find(
-        (type) => type.leavePolicyId === values.leavePolicyId
-      )?.balance ?? 0;
+    const selectedLeaveForBalance = selectableLeaveTypes.find(
+      (type) => type.leavePolicyId === values.leavePolicyId
+    );
+    const remainingLeaveForTypes = selectedLeaveForBalance?.remaining ?? 0;
 
-    if (totalHolidayDays > remainingLeaveForTypes) {
+    // UL has no credit or balance. It remains a pending request and the backend
+    // performs the final tenant-scoped policy validation before approval.
+    if (![3, 4].includes(selectedLeaveForBalance?.policyType ?? 1) && totalHolidayDays > remainingLeaveForTypes) {
       setStatus(
         i(
           { id: "MESSAGE.INSUFFICIENT_LEAVE_ERROR" },
           {
             remainingLeave: remainingLeaveForTypes,
-            leaveType: leaveTypeBalance.find(
+            leaveType: selectableLeaveTypes.find(
               (leave) => leave.leavePolicyId === values.leavePolicyId
             )?.name,
           }
@@ -209,8 +456,14 @@ export const LeaveApplication = (props: Props) => {
       };
       try {
         const { data } = props.edit
-          ? await updateLeaveRequest(payload)
-          : await createLeaveRequest(payload);
+          ? employeeId
+            ? await updateLeaveRequest(payload)
+            : await updateMyProfileLeaveRequest(payload)
+          : !employeeId && lifecyclePolicy?.requiresDocument && evidenceFile
+            ? await createMyProfileLeaveRequestWithEvidence(payload, evidenceFile)
+          : employeeId
+            ? await createEmployeeLeaveRequest(employeeId, payload)
+            : await createMyProfileLeaveRequest(payload);
         if (data.success) {
           toast.success(
             i({
@@ -224,14 +477,19 @@ export const LeaveApplication = (props: Props) => {
             handleRefresh?.();
           }
         } else {
-          throw new Error(data.statusCode.toString());
+          throw new Error(data.message || data.statusCode.toString());
         }
       } catch (error) {
-        toast.error(i({ id: getCustomStatusCodesErrorMessage(+(error as Error).message) }));
+        const message = (error as Error).message;
+        toast.error(message && !/^\d+$/.test(message)
+          ? getLeaveRequestErrorMessage(message)
+          : i({ id: getCustomStatusCodesErrorMessage(+message) }));
       } finally {
         setSubmitting(false);
         setStatus("");
-        props.handleRefresh && props.handleRefresh();
+        if (props.handleRefresh) {
+          props.handleRefresh();
+        }
       }
     }
   };
@@ -270,27 +528,29 @@ export const LeaveApplication = (props: Props) => {
           return (
             <form onSubmit={handleSubmit}>
               {status && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <AppAlert severity="error" sx={{ mb: 2 }}>
                   {status}
-                </Alert>
+                </AppAlert>
               )}
+              <Stack sx={{ maxHeight: "min(62vh, 560px)", overflowY: "auto", overflowX: "hidden", pr: 1.5 }}>
               <Grid container spacing={2}>
                 <Grid size={12}>
                   <FormControl fullWidth>
                     <InputLabel id="leave-policy-label">
                       {i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
                     </InputLabel>
-                    <Select
+                    <AppSelect
                       {...formik.getFieldProps("leavePolicyId")}
                       labelId="leave-policy-label"
                       label={i({ id: "LEAVE.TITLES.LEAVE_POLICIES" })}
                       value={values.leavePolicyId}
                       onChange={(e) => {
                         formik.resetForm();
+                        setEvidenceFile(null);
                         setFieldValue("leavePolicyId", e.target.value);
                       }}
                     >
-                      {leaveTypeBalance.map((type) => (
+                      {selectableLeaveTypes.map((type) => (
                         <MenuItem
                           key={type.leaveBalanceId}
                           value={type.leavePolicyId}
@@ -298,8 +558,9 @@ export const LeaveApplication = (props: Props) => {
                           {type.name}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
+                  {(() => { const lifecycle = lifecyclePolicies.find(policy => policy.leavePolicyId === values.leavePolicyId); return lifecycle ? <AppAlert severity="info" sx={{ mt: 1 }}>This request may create a {lifecycle.eventType.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase()} employment case after approval. {lifecycle.requiresDocument ? "Supporting evidence will be required." : ""} {lifecycle.requiresExpectedReturnDate ? "An expected return date is required." : ""}</AppAlert> : null; })()}
                 </Grid>
                 {
                   <Grid size={12}>
@@ -307,7 +568,7 @@ export const LeaveApplication = (props: Props) => {
                       fullWidth
                       className="d-flex flex-row align-items-center gap-4"
                       disabled={
-                        leaveTypeBalance.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
+                        selectableLeaveTypes.find((type) => type.leavePolicyId === values.leavePolicyId && !type.halfDayAllowed)
                           ? true
                           : false
                       }
@@ -323,6 +584,7 @@ export const LeaveApplication = (props: Props) => {
                         onChange={(e, value) => {
                           const half = value === "true";
                           setFieldValue("isHalfDay", half);
+                          setFieldValue("halfDayPeriod", half ? values.halfDayPeriod ?? "FIRST_HALF" : undefined);
 
                           if (half && values.startDate) {
                             setFieldValue("endDate", values.startDate);
@@ -334,18 +596,34 @@ export const LeaveApplication = (props: Props) => {
                       >
                         <FormControlLabel
                           value={true}
-                          control={<Radio />}
+                          control={<AppRadio />}
                           label={i({ id: "YES" })}
                         />
                         <FormControlLabel
                           value={false}
-                          control={<Radio />}
+                          control={<AppRadio />}
                           label={i({ id: "NO" })}
                         />
                       </RadioGroup>
                     </FormControl>
                   </Grid>
                 }
+                {values.isHalfDay && (
+                  <Grid size={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="half-day-period-label">Leave half</InputLabel>
+                      <AppSelect
+                        labelId="half-day-period-label"
+                        label="Leave half"
+                        value={values.halfDayPeriod ?? "FIRST_HALF"}
+                        onChange={(event) => setFieldValue("halfDayPeriod", event.target.value)}
+                      >
+                        <MenuItem value="FIRST_HALF">First half</MenuItem>
+                        <MenuItem value="SECOND_HALF">Second half</MenuItem>
+                      </AppSelect>
+                    </FormControl>
+                  </Grid>
+                )}
                 <Grid
                   size={{
                     xs: 12,
@@ -414,7 +692,7 @@ export const LeaveApplication = (props: Props) => {
                           (leave, index) => {
                             const isWeekend = checkIfWeekend(leave);
                             const isHoliday = checkIfHoliday(leave);
-                            const selectedPolicy = leaveTypeBalance.find(lb => lb.leavePolicyId === values.leavePolicyId);
+                            const selectedPolicy = selectableLeaveTypes.find(lb => lb.leavePolicyId === values.leavePolicyId);
 
                             const label = (!selectedPolicy?.weekendInclusive && isWeekend) ? "LEAVE.TITLES.LEAVE_WEEKEND" : (!selectedPolicy?.holidayInclusive && isHoliday) ? "LEAVE.TITLES.LEAVE_HOLIDAY" : "LEAVE.TITLES.LEAVE_FULL_DAY";
                             return (
@@ -495,7 +773,21 @@ export const LeaveApplication = (props: Props) => {
                     label={i({ id: "LEAVE.REASON" })}
                   />
                 </Grid>
+                {(() => {
+                  const lifecycle = lifecyclePolicies.find((policy) => policy.leavePolicyId === values.leavePolicyId);
+                  return lifecycle?.requiresDocument ? (
+                    <Grid size={12}>
+                      <Box sx={{ p: 1.5, border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+                        <Typography variant="subtitle2">Supporting evidence required</Typography>
+                        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>Upload one PDF, JPG, or PNG file (maximum 10 MB). HR can review it with this leave request.</Typography>
+                        <input type="file" accept="application/pdf,image/jpeg,image/png" onChange={(event) => setEvidenceFile(event.target.files?.[0] ?? null)} />
+                        {evidenceFile && <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>{evidenceFile.name}</Typography>}
+                      </Box>
+                    </Grid>
+                  ) : null;
+                })()}
               </Grid>
+              </Stack>
               <Grid className="d-flex gap-2 flex-row justify-content-end mt-4">
                 <CustomisedButton
                   variant="outlined"

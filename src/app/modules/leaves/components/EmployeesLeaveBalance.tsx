@@ -5,12 +5,10 @@ import {
   Grid,
   InputAdornment,
   Stack,
-  TextField,
   Typography,
-  IconButton,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { useEffect, useState } from "react";
 import {
   EmployeeLeaveBalanceData,
@@ -21,13 +19,14 @@ import { useAppSelector } from "../../../Redux/hooks";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { getAllEmployeeLeaveBalance } from "../leaveServices";
+import { getAllEmployeeLeaveBalance, getWorkFromHomeEmployeeAllocations, WorkFromHomeEmployeeAllocation } from "../leaveServices";
 import EditEmployeePoliciesForm from "./EditEmployeePoliciesForm";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useDebounce } from "../../../hooks/useDebounce";
 import FilterPolicySearch from "./FilterPolicySearch";
 import { CircularLoader } from "../../../shared/components/CircularLoader";
 
+import { AppIconButton, AppTextField } from "../../../shared/components/ui";
 export const EmployeesLeaveBalance = () => {
   const { formatMessage: i } = useIntl();
   const { currentLanguage } = useAppLang();
@@ -47,6 +46,7 @@ export const EmployeesLeaveBalance = () => {
     useState<EmployeeLeaveBalanceData>();
   const [refresh, setRefresh] = useState<boolean>(false);
   const [policies, setPolicies] = useState<Array<string>>([]);
+  const [wfhAllocations, setWfhAllocations] = useState<Record<string, WorkFromHomeEmployeeAllocation>>({});
 
   const open = Boolean(anchorEl);
 
@@ -66,6 +66,7 @@ export const EmployeesLeaveBalance = () => {
 
   function setRowPerPage(rowPerPage: number) {
     setPageSize(rowPerPage);
+    setPageNo(0);
   }
 
   function setPage(pageValue: number) {
@@ -73,11 +74,13 @@ export const EmployeesLeaveBalance = () => {
   }
 
   function handleRefresh() {
-    setRefresh(!refresh);
+    setRefresh((current) => !current);
+    window.dispatchEvent(new CustomEvent("leave-allocation-changed"));
   }
 
   function handleSelectingPolicies(policyIds: Array<string>) {
     setPolicies(policyIds);
+    setPageNo(0);
   }
 
   useEffect(() => {
@@ -92,8 +95,28 @@ export const EmployeesLeaveBalance = () => {
       try {
         const { data } = await getAllEmployeeLeaveBalance(payload);
         if (data.success) {
-          setEmployeeBalance(data.methodResults);
+          setEmployeeBalance(data.methodResults ?? []);
           setTotalRecords(data.totalRecords);
+        } else {
+          setEmployeeBalance([]);
+          setTotalRecords(0);
+        }
+
+        // WFH is deliberately not an EmployeeLeaveBalance. Load its explicit
+        // allocations separately so this HR screen shows the same persisted
+        // assignment state that the employee WFH context uses.
+        try {
+          const { data: allocationData } = await getWorkFromHomeEmployeeAllocations();
+          const byEmployeeId = (allocationData.methodResult ?? []).reduce<Record<string, WorkFromHomeEmployeeAllocation>>((result, allocation) => {
+            result[allocation.employeeId.trim().toUpperCase()] = allocation;
+            return result;
+          }, {});
+          setWfhAllocations(byEmployeeId);
+        } catch (error) {
+          // The leave-balance screen remains usable for roles without the
+          // dedicated WFH allocation permission.
+          console.error("Unable to load WFH allocation state.", error);
+          setWfhAllocations({});
         }
       } catch (error) {
         console.error((error as Error).message);
@@ -103,7 +126,7 @@ export const EmployeesLeaveBalance = () => {
     };
 
     getLeaveBalanceFunc();
-  }, [refresh, pageSize, debouncedValue, policies]);
+  }, [refresh, pageNo, pageSize, debouncedValue, policies]);
 
   if (isLoading) {
     return <Card sx={{ height: '400px' }}>
@@ -115,16 +138,26 @@ export const EmployeesLeaveBalance = () => {
     <>
       <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
         <Stack
-          direction={"row"}
-          sx={{ width: "100%", justifyContent: "space-between", gap: "15px" }}
+          direction="row"
+          alignItems="center"
+          sx={{ width: "100%", justifyContent: "space-between", gap: 1.25 }}
         >
-          <TextField
+          <AppTextField
             id="outlined-search"
             variant="outlined"
             placeholder={i({ id: "PLACEHOLDER.SEARCH" })}
             size="small"
+            sx={{
+              // Keep the search and filter actions on one row at every
+              // viewport width. The field uses all remaining space on mobile
+              // while the filter control retains a stable tap target.
+              minWidth: 0,
+              width: "100%",
+              flex: "1 1 auto",
+            }}
             onChange={(e) => {
               setSearch(e.target.value);
+              setPageNo(0);
             }}
             slotProps={{
               htmlInput: {
@@ -198,7 +231,7 @@ export const EmployeesLeaveBalance = () => {
                             : i({ id: "NOT_AVAILABLE" })}
                         </Typography>
                       </Stack>
-                      <IconButton
+                      <AppIconButton
                         aria-label=""
                         onClick={() => handleClickOptions(emp)}
                         sx={{
@@ -209,7 +242,7 @@ export const EmployeesLeaveBalance = () => {
                         }}
                       >
                         <MoreHorizIcon />
-                      </IconButton>
+                      </AppIconButton>
                     </Box>
 
                     <Box component="div" sx={{ padding: "0px 8px", }}>
@@ -240,6 +273,11 @@ export const EmployeesLeaveBalance = () => {
                           width: "100%",
                         }}
                       >
+                        {emp.leaveBalances.length === 0 && (
+                          <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
+                            No leave policies are currently assigned to this employee.
+                          </Typography>
+                        )}
                         {emp.leaveBalances.map((leave) => {
                           return (
                             <Grid
@@ -254,10 +292,24 @@ export const EmployeesLeaveBalance = () => {
                             >
                               <Grid size={5}>{leave.leavePolicyName}</Grid>
                               <Grid size={4}>{leave.remaining}</Grid>
-                              <Grid size={3}>{leave.usedLeave}</Grid>
+                              <Grid size={3}>{leave.taken}</Grid>
                             </Grid>
                           );
                         })}
+                        {(() => {
+                          const allocation = emp.employeeCode
+                            ? wfhAllocations[emp.employeeCode.trim().toUpperCase()]
+                            : undefined;
+                          if (!allocation) return null;
+
+                          return (
+                            <Grid container sx={{ display: "flex", width: "100%", minHeight: "24px" }} key="wfh-allocation">
+                              <Grid size={5}>Work from home</Grid>
+                              <Grid size={4}>{allocation.weeklyLimit} day(s)/week</Grid>
+                              <Grid size={3}>{allocation.isEligible ? "Assigned" : "Not assigned"}</Grid>
+                            </Grid>
+                          );
+                        })()}
                       </Stack>
                     </Box>
                   </Stack>
@@ -272,6 +324,7 @@ export const EmployeesLeaveBalance = () => {
           setRowPerPage={setRowPerPage}
           setPage={setPage}
           totalRecords={totalRecords}
+          rowsPerPageOptions={[10, 25, 50]}
         />
       </Card>
       {

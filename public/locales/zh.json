@@ -11,6 +11,7 @@
     "DASHBOARD": "仪表盘",
     "EMPLOYEES": "员工",
     "ATTENDANCE": "考勤",
+    "ATTENDANCE_SETTINGS": "考勤设置",
     "LEAVE_MANAGEMENT": "请假管理",
     "MY_PROFILE": "我的资料",
     "RECRUITMENT": "招聘",
@@ -26,7 +27,9 @@
     "PAYROLL": "工资单",
     "CALENDAR": "日历",
     "POLICIES": "政策",
-    "PAYROLL_SETTINGS": "薪资设置"
+    "PAYROLL_SETTINGS": "薪资设置",
+    "LIFECYCLE_MANAGEMENT": "生命周期管理",
+    "CAREER_PROFILE": "招聘资料"
   },
   "GENDER": {
     "MALE": "男性",
@@ -285,6 +288,7 @@
     "REGISTER": "注册",
     "SIGNIN": "登录",
     "T&C": "我接受条款与条件",
+    "TERMS_REQUIRED": "我接受条款和条件",
     "PASSWORD_NOTE": "使用8个或更多字符，包含字母、数字和符号。",
     "FORGOT_PASSWORD": "忘记密码?",
     "FORGOT_PASSWORD.NOTE": "请输入您的电子邮件以重置密码",
@@ -916,6 +920,7 @@
     "PLEASE_SELECT_EMPLOYEE": "请选择员工",
     "NO_RESULT": "无结果",
     "NO_DEPARTMENTS": "请添加部门",
+    "NO_DEPARTMENT_EMPLOYEES": "尚未有员工分配到部门",
     "ADD_LANGUAGE_TITLE": "请输入 {language} 的标题",
     "LEAVE_DAYS_CANT_BE_ZERO": "请假天数不能为0"
   },
@@ -1070,3 +1075,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "管理完整的招聘流程，包括职位发布、候选人申请、面试阶段、评估以及详细的流程记录。全面展示招聘进度、相关操作和录用决策，提升招聘效率。"
   }
 }
+

@@ -1,11 +1,15 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl';
 import AddIcon from '@mui/icons-material/Add';
 import HolidayForm from './HolidayForm';
 import { CalendarItem, GetCalendarItemPayload } from '../models';
 import dayjs, { Dayjs } from 'dayjs';
-import { hasModuleFeaturePermission } from '../../../../utils/common';
+import { formatServerDate, hasModuleFeaturePermission } from '../../../../utils/common';
 import { ModulesName, Permission } from '../../../../utils/enums';
 import { useAppSelector } from '../../../Redux/hooks';
 import { Cake, CalendarMonth, Celebration, Event } from '@mui/icons-material';
@@ -14,6 +18,7 @@ import { UpcomingHolidayCard } from './UpcomingHolidayCard';
 
 
 
+import { AppButton } from "../../../shared/components/ui";
 type Props = {
     occasions: Array<CalendarItem>,
     selectedDate: Dayjs | null,
@@ -80,12 +85,12 @@ export default function CalendarSidebar(props: Props) {
     useEffect(() => {
         const payload: GetCalendarItemPayload = {
             type: null,
-            year: dayjs().year()
+            year: props.selectedDate ? props.selectedDate.year() : dayjs().year()
         };
         const fetchedHolidayData = async () => {
             try {
                 const response = await getAllCalendarItem(payload);
-                const { success, methodResults, } = response.data;
+                const { success, methodResults } = response.data;
                 if (success) setAllOccasionsForYear(methodResults);
             } catch (error) {
                 console.error((error as Error).message);
@@ -93,7 +98,7 @@ export default function CalendarSidebar(props: Props) {
         }
 
         fetchedHolidayData()
-    }, []);
+    }, [props.selectedDate?.year(), props.isRefresh]);
 
     function handleClose() {
         setOpen(false);
@@ -108,8 +113,9 @@ export default function CalendarSidebar(props: Props) {
         if (allOccasionsForYear.length === 0) return [];
         const thisMonthHolidaysFinder = allOccasionsForYear.filter((occ) => {
             if (!occ.date) return false;
-            return dayjs(occ.date).isAfter(today);
-        }).sort((a, b) => dayjs(a.date).diff(dayjs(b.date))).slice(0, 4);
+            const occDate = dayjs(formatServerDate(occ.date, "YYYY-MM-DD"));
+            return occDate.isAfter(today);
+        }).sort((a, b) => dayjs(formatServerDate(a.date, "YYYY-MM-DD")).diff(dayjs(formatServerDate(b.date, "YYYY-MM-DD")))).slice(0, 4);
 
         // Update state with the filtered holidays
         return thisMonthHolidaysFinder;
@@ -123,7 +129,7 @@ export default function CalendarSidebar(props: Props) {
         let anniversaryCounter = 0
 
         props.occasions.filter(occ => {
-            const holidayMonth = dayjs(occ.date).month();
+            const holidayMonth = dayjs(formatServerDate(occ.date, "YYYY-MM-DD")).month();
             return holidayMonth === props.selectedDate?.month();
         }).forEach((occ) => {
             if (occ.type === 1) {
@@ -147,7 +153,7 @@ export default function CalendarSidebar(props: Props) {
     //Finds Occasions For Selected Day
     function findHolidaysForDay() {
         setDaysHolidays(props.occasions.filter(occ => {
-            const occassionDate = dayjs(occ.date);
+            const occassionDate = dayjs(formatServerDate(occ.date, "YYYY-MM-DD"));
             return occassionDate.date() === props.selectedDate?.date() && occassionDate.month() === props.selectedDate.month();
         }))
     }
@@ -160,22 +166,29 @@ export default function CalendarSidebar(props: Props) {
     return (
         <Stack
             className='gap-8 calendar-sidebar'
-            sx={{ backgroundColor: "background.card" }}
+            sx={{
+                backgroundColor: "background.card",
+                animation: "calendar-sidebar-enter 360ms ease-out both",
+                "@media (prefers-reduced-motion: reduce)": {
+                    animation: "none",
+                },
+            }}
         >
             <HolidayForm open={open} handleClose={handleClose} isEdit={isEdit} handleRefresh={props.handleRefresh} initialValues={initialHolidayValues} />
             {
                 // Add New Occasion Section
                 hasAddPermission &&
-                <Button variant="contained"
+                <AppButton variant="contained"
                     sx={{
                         width: 1,
-                        fontSize: 14
+                        fontSize: 14,
+                        minHeight: 44,
                     }}
                     onClick={() => setOpen(true)}
                 >
                     {i({ id: "BUTTON.ADD" })}
                     <AddIcon />
-                </Button>
+                </AppButton>
             }
 
             {/* Occasions For Selected Month */}
@@ -186,7 +199,7 @@ export default function CalendarSidebar(props: Props) {
                     {i({ id: "OCCASION.MONTH_OVERVIEW" })}
                 </Typography>
                 <Box component={'div'}
-                    className='gap-4 calendar-sidear-holidays-holder'
+                    className='gap-4 calendar-sidear-holidays-holder calendar-summary-grid'
                 >
                     {CalendarItems.map((item, index) => {
                         return (

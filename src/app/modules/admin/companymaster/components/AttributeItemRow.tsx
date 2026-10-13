@@ -1,18 +1,24 @@
-import { Box, IconButton, Switch, TextField } from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Delete } from "@mui/icons-material";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../../../Redux/hooks";
 import { LanguageNameMapper } from "../../../../../utils/common";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { useAppSelector } from "../../../../Redux/hooks";
 
+import { AppIconButton, AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 type Props<T> = {
   itemData: T;
   UpdatedItemData: (item: T) => void;
   translationLanguage: string;
   keyName: keyof T;
   handleDeleteAttribute: (id: string) => Promise<void>;
+  canDelete?: boolean;
+  selectField?: keyof T;
+  selectOptions?: Array<{ value: string; label: string }>;
 };
 
 export type ReqProps = {
@@ -27,13 +33,17 @@ export const AttributeItemRow = <T extends ReqProps>({
   translationLanguage,
   keyName,
   handleDeleteAttribute,
+  canDelete = false,
+  selectField,
+  selectOptions,
 }: Props<T>) => {
   const { formatMessage } = useIntl();
   const [item, setItem] = useState<T>(structuredClone(itemData));
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
   );
+  const currentLanguage = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const translatedTitle = item.titles[translationLanguage];
   const currentTitle = item.titles[currentLanguage];
   const [, setError] = useState(false);
@@ -48,10 +58,12 @@ export const AttributeItemRow = <T extends ReqProps>({
     } else {
       updatedTitles[updatedLanguage] = e.target.value;
     }
-    setItem({
+    const updatedItem = {
       ...item,
       titles: updatedTitles,
-    });
+    } as T;
+    setItem(updatedItem);
+    UpdatedItemData(updatedItem);
   };
 
   const handleItemDelete = async (str: string) => {
@@ -71,6 +83,13 @@ export const AttributeItemRow = <T extends ReqProps>({
     if (hasDefaultLangTitle) {
       UpdatedItemData(updateItem);
     }
+  };
+
+  const handleSelectChange = (value: string) => {
+    if (!selectField) return;
+    const updatedItem = { ...item, [selectField]: value } as T;
+    setItem(updatedItem);
+    UpdatedItemData(updatedItem);
   };
 
   const validateAndUpdateNewItemData = () => {
@@ -100,9 +119,9 @@ export const AttributeItemRow = <T extends ReqProps>({
 
   return (
     <>
-      <Box className="attribute-row">
+      <Box className={`attribute-row${translationLanguage ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
         <>
-          <TextField
+          <AppTextField
             name={currentLanguage}
             value={currentTitle ?? ""}
             onChange={handleChange}
@@ -110,28 +129,43 @@ export const AttributeItemRow = <T extends ReqProps>({
             error={!currentTitle?.length}
             required
           />
-          <TextField
-            disabled={!translationLanguage}
-            name={translationLanguage}
-            value={translatedTitle ?? ""}
-            onChange={handleChange}
-            onBlur={validateAndUpdateNewItemData}
-          />
-          <Switch
+          {translationLanguage && (
+            <AppTextField
+              name={translationLanguage}
+              value={translatedTitle ?? ""}
+              onChange={handleChange}
+              onBlur={validateAndUpdateNewItemData}
+            />
+          )}
+          {selectField && (
+            <FormControl fullWidth size="small">
+              <InputLabel id={`${String(selectField)}-label`}>Department</InputLabel>
+              <AppSelect
+                labelId={`${String(selectField)}-label`}
+                label="Department"
+                value={(item[selectField] as string) ?? ""}
+                onChange={(event) => handleSelectChange(event.target.value)}
+              >
+                {selectOptions?.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+              </AppSelect>
+            </FormControl>
+          )}
+          <AppSwitch
             checked={item.isActive}
             onChange={(_, checked) => handleSwitchChange(checked)}
           />
         </>
-        <div className="d-flex align-items-center gap-2">
-          <IconButton
+        {canDelete && <div className="d-flex align-items-center gap-2">
+          <AppIconButton
             onClick={() => setConfirmModalOpen(true)}
             className="border-0"
+            aria-label="Delete custom attribute value"
           >
             <Delete color="error" />
-          </IconButton>
-        </div>
+          </AppIconButton>
+        </div>}
       </Box>
-      {isConfirmModalOpen && (
+      {canDelete && isConfirmModalOpen && (
         <ConfirmationModal
           open={isConfirmModalOpen}
           title={formatMessage({ id: "CONFIRMATION.TITLE.DELETE_ATR_ITEM" })}

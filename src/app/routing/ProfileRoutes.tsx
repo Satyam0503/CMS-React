@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { useAppSelector } from "../Redux/hooks";
-import { hasModuleFeaturePermission } from "../../utils/common";
+import { canAccessHrManagement, hasModuleFeaturePermission } from "../../utils/common";
 import { ModulesName, Permission } from "../../utils/enums";
 
 const UserProfile = lazy(() => import("../modules/users/UserProfile"));
@@ -29,6 +29,7 @@ const SuspensedView = ({ children }: { children: JSX.Element }) => {
 
 const ProfileTabs = () => {
     const empId = useParams().employeeid;
+    const roleType = useAppSelector(state => state.user.userData?.roleType);
     const modulePermission = useAppSelector(state => state.user.userData?.modulePermission) ?? []
     const hasLeavePanelAccess = hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.View, modulePermission);
 
@@ -37,7 +38,7 @@ const ProfileTabs = () => {
             <Route element={<SuspensedView><UserProfile /></SuspensedView>}>
                 <Route index element={<Navigate to={"about"} />} />
                 <Route path="about" element={<SuspensedView><AboutUser /></SuspensedView>} />
-                <Route path="performance" element={<SuspensedView><UserPerformance /></SuspensedView>} />
+                <Route path="performance" element={canAccessHrManagement(roleType) ? <SuspensedView><UserPerformance /></SuspensedView> : <Navigate to="about" replace />} />
                 <Route path="workhistory" element={<SuspensedView><WorkHistory /></SuspensedView>} />
                 {
                     (!empId || hasLeavePanelAccess) &&

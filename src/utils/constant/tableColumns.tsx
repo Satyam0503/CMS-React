@@ -2,12 +2,12 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Button,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Check, Close } from "@mui/icons-material";
+import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 import clsx from "clsx";
@@ -25,6 +25,7 @@ import {
 import { ApplicantStatus, NOTICE_TYPE } from "../enums";
 import { Applicant, JobModal } from "../../app/modules/recruitment/models";
 import { ActionComponent } from "../../app/shared/components/ActionComponent";
+import { LeavePolicyModel } from "../../app/modules/leaves/model";
 import { StyleStatus } from "../../app/shared/components/StyledStatus";
 import { AvatarCell } from "../../app/shared/components/AvatarCell";
 import { RoleModel } from "../../app/modules/admin/models";
@@ -40,6 +41,7 @@ import {
 } from "../../app/modules/leaves/model";
 import { DEFAULT_USER_AVATAR } from "./data";
 
+import { AppButton } from "../../app/shared/components/ui";
 export const NoticeBoardTableColumnList: ColumnListTypes[] = [
   {
     id: "serialNo",
@@ -182,7 +184,7 @@ export const MyNoticeTableColumnList: ColumnListTypes[] = [
               },
             },
           }}
-          renderSurplus={(surplus) => <span>+{surplus.toString()[0]}</span>}
+          renderSurplus={(surplus) => <span>+{surplus}</span>}
         >
           {views.slice(0, 8).map((view) => (
             <Tooltip key={view.employeeId} title={view.employeeName}>
@@ -427,7 +429,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
     minWidth: 180,
     build: (row: RoleModel) => (
       <Link to={`/admin/roles/edit/${row.rolesId}`}>
-        <Button variant="contained">
+        <AppButton variant="contained">
           <FormattedMessage
             id={
               row.isNotEditable
@@ -435,7 +437,7 @@ export const RoleTableColumnList: ColumnListTypes[] = [
                 : "ROLE.EDIT_PERMISSION"
             }
           />
-        </Button>
+        </AppButton>
       </Link>
     ),
   },
@@ -664,7 +666,10 @@ export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
   {
     id: "accrualPeriod",
     label: "LEAVE.TYPES.POLICY_ACCURAL_PERIOD",
-    build: (value: number) => {
+    build: (value: number, row: { policyType?: number }) => {
+      if (row.policyType === 2) {
+        return <Typography>Weekly</Typography>;
+      }
       return (
         value &&
         (value === 1 ? (
@@ -718,8 +723,19 @@ export const EmployeeLeavePoliciesColumnList: ColumnListTypes[] = [
   {
     id: "action",
     label: "ACTION",
-    build: (row: LeaveType, handleLeaveTypeEdit: (row: LeaveType) => void) => (
-      <ActionComponent row={row} handleEdit={handleLeaveTypeEdit} />
+    build: (
+      row: LeavePolicyModel,
+      handleEdit: (row: LeavePolicyModel) => void,
+      openConfirmationModal?: (row: LeavePolicyModel) => void,
+      _openViewModal?: (row: LeavePolicyModel) => void,
+      openUnlinkModal?: (row: LeavePolicyModel) => void,
+    ) => (
+      <ActionComponent
+        row={row}
+        handleEdit={handleEdit}
+        openConfirmationModal={openConfirmationModal}
+        openUnlinkModal={row.lifecycle?.enabled ? openUnlinkModal : undefined}
+      />
     ),
   },
 ];

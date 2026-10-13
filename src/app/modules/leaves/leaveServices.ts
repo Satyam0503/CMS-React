@@ -1,8 +1,10 @@
+import dayjs from "dayjs";
 import {
   deleteRequest,
   getRequest,
   patchRequest,
   postRequest,
+  putRequest,
 } from "../../../server/axios";
 import { ApiResponse, ResponseData } from "../../../utils/common_types";
 import { ServiceUrl } from "../../../utils/constant/Constant";
@@ -68,9 +70,105 @@ export const getLeaveBalance = (payload: LeaveBalanceFilter) => {
   );
 };
 
+const serializeLeaveRequestPayload = (payload: RequestLeaveModel) => ({
+  ...payload,
+  startDate: payload.startDate
+    ? dayjs(payload.startDate).startOf("day").format("YYYY-MM-DD")
+    : null,
+  endDate: payload.endDate
+    ? dayjs(payload.endDate).startOf("day").format("YYYY-MM-DD")
+    : null,
+});
+
 export const createLeaveRequest = (payload: RequestLeaveModel) => {
   return postRequest<RequestLeaveModel, ApiResponse>(
     ServiceUrl.CREATE_LEAVE_REQUEST,
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const unlinkLifecyclePolicy = (policy: LeavePolicyModel) => {
+  return updateLeavePolicy({
+    ...policy,lifecycle:null,
+  });
+};
+
+export const deleteLeavePolicy = (policyId: string) => {
+  return deleteRequest<ApiResponse>(`${ServiceUrl.DELETE_LEAVE_POLICY}/${policyId}`);
+};
+
+export const createEmployeeLeaveRequest = (
+  employeeId: string,
+  payload: RequestLeaveModel
+) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    `${ServiceUrl.CREATE_EMPLOYEE_LEAVE_REQUEST}/${employeeId}`,
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const createMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
+  return postRequest<RequestLeaveModel, ApiResponse>(
+    "api/LeaveManagement/me/requests",
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const createMyProfileLeaveRequestWithEvidence = (payload: RequestLeaveModel, evidence: File) => {
+  const form = new FormData();
+  form.append("leavePolicyId", payload.leavePolicyId);
+  form.append("startDate", payload.startDate ? dayjs(payload.startDate).startOf("day").format("YYYY-MM-DD") : "");
+  form.append("endDate", payload.endDate ? dayjs(payload.endDate).startOf("day").format("YYYY-MM-DD") : "");
+  form.append("isHalfDay", String(payload.isHalfDay));
+  if (payload.halfDayPeriod) form.append("halfDayPeriod", payload.halfDayPeriod);
+  form.append("reason", payload.reason);
+  form.append("evidence", evidence);
+  return postRequest<FormData, ApiResponse>("api/LeaveManagement/me/requests/with-evidence", form, undefined, true);
+};
+
+export type WorkFromHomeRequestPayload = {
+  fromDate: string;
+  toDate: string;
+  durationType: "FullDay" | "FirstHalf" | "SecondHalf" | "Mixed";
+  reasonCode: string;
+  reasonText: string;
+};
+
+export const createWorkFromHomeRequest = (payload: WorkFromHomeRequestPayload) => {
+  return postRequest<WorkFromHomeRequestPayload, ApiResponse>(
+    "api/wfh/requests",
+    payload
+  );
+};
+
+export type WorkFromHomeEmployeeAllocation = {
+  employeeId: string;
+  weeklyLimit: number;
+  isEligible?: boolean;
+};
+
+export type WorkFromHomeEmployeeAllocationsResponse = {
+  // The WFH API returns this collection as Result<IEnumerable<T>>.
+  methodResult?: WorkFromHomeEmployeeAllocation[];
+};
+
+export const getMySelfServiceLeavePolicies = () => {
+  return getRequest<ResponseData<Omit<LeavePolicyModel, "applicableTo">>>(
+    "api/LeaveManagement/me/policies"
+  );
+};
+
+export const getWorkFromHomeEmployeeAllocations = () => {
+  return getRequest<WorkFromHomeEmployeeAllocationsResponse>(
+    "api/wfh/allocations"
+  );
+};
+
+export const saveWorkFromHomeEmployeeAllocation = (
+  payload: WorkFromHomeEmployeeAllocation
+) => {
+  return putRequest<WorkFromHomeEmployeeAllocation, ApiResponse>(
+    "api/wfh/allocations",
     payload
   );
 };
@@ -78,7 +176,14 @@ export const createLeaveRequest = (payload: RequestLeaveModel) => {
 export const updateLeaveRequest = (payload: RequestLeaveModel) => {
   return postRequest<RequestLeaveModel, ApiResponse>(
     ServiceUrl.UPDATE_LEAVE_REQUEST,
-    payload
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
+  );
+};
+
+export const updateMyProfileLeaveRequest = (payload: RequestLeaveModel) => {
+  return patchRequest<RequestLeaveModel, ApiResponse>(
+    "api/LeaveManagement/me/requests",
+    serializeLeaveRequestPayload(payload) as unknown as RequestLeaveModel
   );
 };
 
@@ -96,15 +201,34 @@ export const getMyLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
   );
 };
 
+export const getMyProfileLeaveRequest = (payload: GetLeaveRequestPayLoad) => {
+  return postRequest<GetLeaveRequestPayLoad, GetMyLeaveRequestsResponse>(
+    "api/LeaveManagement/me/requests/search",
+    payload
+  );
+};
+
 export const deleteLeaveRequest = (leaveRequestId: string) => {
   return deleteRequest<ApiResponse>(
     `${ServiceUrl.DELETE_LEAVE_REQUEST}/${leaveRequestId}`
   );
 };
 
+export const deleteMyProfileLeaveRequest = (leaveRequestId: string) => {
+  return deleteRequest<ApiResponse>(
+    `api/LeaveManagement/me/requests/${leaveRequestId}`
+  );
+};
+
 export const getEmployeeLeaveBalance = (employeeId: string) => {
   return getRequest<GetEmployeeLeaveBalanceResponse>(
     `${ServiceUrl.GET_EMP_LEAVE_BALANCE}/${employeeId}`
+  );
+};
+
+export const getMyProfileLeaveBalance = () => {
+  return getRequest<GetEmployeeLeaveBalanceResponse>(
+    "api/LeaveManagement/me/balances"
   );
 };
 

@@ -1,9 +1,16 @@
-import { Box, FormLabel, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  FormLabel,
+  Stack,
+} from "@mui/material";
 import { LanguageNameMapper } from "../../../../../utils/common";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
 import { useAppSelector } from "../../../../Redux/hooks";
 
+import { AppTextField } from "../../../../shared/components/ui";
 interface AttributeTitleProps {
   translationLang: string;
   attributeTitle: Record<string, string>;
@@ -17,9 +24,10 @@ export const AttributeTitleRow = ({
 }: AttributeTitleProps) => {
   const { formatMessage: i } = useIntl();
   const [title, setTitle] = useState<Record<string, string>>(attributeTitle);
-  const defaultLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
   );
+  const defaultLanguage = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = title[translationLang] ?? "";
   const currentLanguageTitle = title[defaultLanguage] ?? "";
@@ -35,6 +43,9 @@ export const AttributeTitleRow = ({
       updatedTitle[name] = value;
     }
     setTitle({ ...updatedTitle });
+    // Keep the parent payload current while typing. Saving immediately after an
+    // input loses focus previously raced the onBlur-only parent update.
+    updateAttributeTitle(updatedTitle);
   };
 
   const validateAndUpdateNewItemData = () => {
@@ -53,7 +64,7 @@ export const AttributeTitleRow = ({
   }, [attributeTitle]);
 
   return (
-    <Box className="attribute-row">
+    <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}`}>
       <Stack>
         <FormLabel sx={{ color: "text.secondary" }}>
           {i(
@@ -61,7 +72,7 @@ export const AttributeTitleRow = ({
             { language: i({ id: LanguageNameMapper[defaultLanguage] }) }
           )}
         </FormLabel>
-        <TextField
+        <AppTextField
           variant="standard"
           value={currentLanguageTitle}
           onChange={handleChange}
@@ -79,7 +90,7 @@ export const AttributeTitleRow = ({
               { language: i({ id: LanguageNameMapper[translationLang] }) }
             )}
           </FormLabel>
-          <TextField
+          <AppTextField
             variant="standard"
             disabled={!translationLang}
             value={translationLanguageTitle}

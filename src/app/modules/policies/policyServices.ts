@@ -42,6 +42,13 @@ export const editPolicyVersion = (payload: FormData) => {
   );
 };
 
+export const setCurrentPolicyVersion = (policyId: string, versionId: string) => {
+  return postRequest<{ policyId: string; versionId: string }, ResponseData<PolicyVersion>>(
+    ServiceUrl.SET_CURRENT_POLICY_VERSION,
+    { policyId, versionId },
+  );
+};
+
 export const getAllPolicyVersions = (policyId: string) => {
   return getRequest<ResponseData<PolicyVersion>>(
     `${ServiceUrl.GET_ALL_POLICY_VERSION}/${policyId}`,

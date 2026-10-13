@@ -9,7 +9,7 @@ const WordDocViewer = (props: DocViewerProps) => {
   const { palette } = useTheme();
   const { documents } = props;
   return (
-    <Box>
+    <Box sx={{ height: "100%", minHeight: 0 }}>
       <DocViewer
         documents={documents}
         pluginRenderers={DocViewerRenderers}
@@ -22,7 +22,7 @@ const WordDocViewer = (props: DocViewerProps) => {
             }
           }
         }
-        style={{ height: 500 }}
+        style={{ height: "100%" }}
         className="w-100"
         theme={{
           primary: palette.primary.lighter,

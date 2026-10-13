@@ -22,7 +22,7 @@ export const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";
 export const APP_THEME_MODE = "theme-mode";
 export const I18N_CONFIG_KEY =
   import.meta.env.VITE_APP_I18N_CONFIG_KEY || "i18nConfig";
-export const DEFAULT_USER_AVATAR = "/media/avatars/default-emp-imag.jpg";
+export const DEFAULT_USER_AVATAR = "/media/avatars/default-user-avatar.png";
 export const DEFAULT_COMPANY_LOGO = "/media/logos/default_logo.png";
 
 export const ServiceUrl = {
@@ -53,9 +53,18 @@ export const ServiceUrl = {
   UPDATE_SALARY: `api/Salary/UpdateSalary`,
   GET_COMPANY_SALARIES: `api/Salary/GetCompanySalaries`,
   PROCESS_PAYROLL: `api/AutoPayroll/GeneratePayRollMonthly`,
+  APPROVE_PAYROLL_MONTH: `api/PayRoll/ApprovePayrollMonth`,
+  PUBLISH_PAYROLL_MONTH: `api/PayRoll/ProcessPayrollMonth`,
 
-  GET_LAST_EMPLOYEE_ID: "api/User/GetLastEmployeeId",
+  GET_NEXT_EMPLOYEE_ID: "api/User/GetNextEmployeeId",
+  GET_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence",
+  SKIP_EMPLOYEE_IDS: "api/User/EmployeeIdSequence/Skip",
+  START_EMPLOYEE_ID_SEQUENCE: "api/User/EmployeeIdSequence/StartFrom",
   GET_ALL_EMPLOYEE: `api/User/GetAllEmployees`,
+  GET_EX_EMPLOYEES: `api/User/GetExEmployees`,
+  INITIATE_EMPLOYEE_EXIT: `api/User/InitiateEmployeeExit`,
+  COMPLETE_EMPLOYEE_EXIT: `api/User/CompleteEmployeeExit`,
+  GET_DIRECTORY_DEPARTMENTS: `api/User/GetDirectoryDepartments`,
   GET_EMPLOYEE_DETAILS: `api/User/GetEmployeeById`,
   GET_EMPLOYEE_CERTIFICATIONS: `api/User/GetEmployeeCertificationDetails`,
   GET_EMPLOYEE_EDUCATIONS: `api/User/GetEmployeeEducationDetails`,
@@ -101,15 +110,64 @@ export const ServiceUrl = {
   GET_ALL_APPLICANTS: `api/Applicants/GetApplicantList`,
   GET_APPLICANT_COMMENTS: `api/Applicants/GetAllComment`,
   GET_APPLICANT_BY_ID: `api/Applicants/ApplicantById`,
+  GET_APPLICANT_WORKFLOW: `api/Applicants/Workflow`,
+  UPSERT_APPLICATION_STAGE: `api/RecruitmentApplication/UpsertStage`,
+  GET_APPLICATION_HISTORY: `api/RecruitmentApplication`,
   ADD_APPLICANT: `api/Applicants/AddApplicant`,
   EDIT_APPLICANT: `api/Applicants/EditApplicant`,
-  UPLOAD_RESUME: `api/Applicants/UploadResume`,
+  UPLOAD_RESUME_FOR_APPLICANT: `api/Applicants/UploadResume`,
+  GET_INTERVIEW_ROUNDS: "api/Applicants/InterviewRounds",
+  UPSERT_INTERVIEW: `api/Applicants/UpsertInterview`,
+  RETRY_INTERVIEW_CALENDAR: `api/Applicants/RetryInterviewCalendar`,
+  COMPLETE_INTERVIEW_DEBRIEF: `api/RecruitmentPlanning/CompleteInterviewDebrief`,
+  GET_INTERVIEW_PLAN: `api/RecruitmentPlanning/InterviewPlan`,
+  UPSERT_INTERVIEW_PLAN: `api/RecruitmentPlanning/UpsertInterviewPlan`,
+  UPSERT_OFFER: `api/Applicants/UpsertOffer`,
+  UPSERT_HIRING_DECISION: `api/RecruitmentHiringDecision/Upsert`,
+  APPLY_CANDIDATE_PRIVACY: `api/RecruitmentCandidatePrivacy/Apply`,
+  CREATE_OFFER_VERSION: `api/RecruitmentOfferNegotiation/CreateVersion`,
+  GET_OFFER_VERSIONS: `api/RecruitmentOfferNegotiation/Versions`,
+  GET_OFFER_COUNTERS: `api/RecruitmentOfferNegotiation/Counters`,
+  REQUEST_OFFER_COUNTER: `api/RecruitmentOfferNegotiation/RequestCounter`,
+  REVIEW_RESUME_EXTRACTION: `api/RecruitmentResumeExtraction/Review`,
+  HANDOFF_TO_PREBOARDING: `api/Applicants/HandoffToPreboarding`,
+  GET_ONBOARDING_BY_APPLICANT: `api/RecruitmentOnboarding/ByApplicant`,
+  GET_ONBOARDING_QUEUE: `api/RecruitmentOnboarding/Queue`,
+  UPDATE_ONBOARDING: `api/RecruitmentOnboarding/Update`,
+  RETRY_ONBOARDING_ACTIVATION: `api/RecruitmentOnboarding/RetryActivation`,
+  UPSERT_REQUISITION: `api/RecruitmentPlanning/UpsertRequisition`,
+  UPSERT_SCORECARD: `api/RecruitmentPlanning/UpsertScorecard`,
+  UPSERT_SCREENING: `api/RecruitmentPlanning/UpsertScreening`,
+  BULK_SCREENING: `api/RecruitmentPlanning/BulkScreening`,
+  RECRUITMENT_SCREENING_QUEUE: `api/RecruitmentScreening/Queue`,
+  UPSERT_TALENT_POOL: `api/RecruitmentPlanning/UpsertTalentPoolMember`,
+  FIND_DUPLICATES: `api/RecruitmentDuplicate/Find`,
+  MERGE_APPLICANTS: `api/RecruitmentEnterprise/MergeApplicants`,
+  RECRUITMENT_ANALYTICS: `api/RecruitmentEnterprise/Analytics`,
+  RECRUITMENT_FEEDBACK_SLA: `api/RecruitmentEnterprise/FeedbackSla`,
+  RECRUITMENT_DEBRIEF_PENDING: `api/RecruitmentEnterprise/DebriefPending`,
+  RECRUITMENT_SELECTED_CANDIDATES: `api/RecruitmentEnterprise/SelectedCandidates`,
+  RECRUITMENT_PENDING_OFFERS: `api/RecruitmentEnterprise/PendingOffers`,
+  RECRUITMENT_PREBOARDING_QUEUE: `api/RecruitmentEnterprise/PreboardingQueue`,
+  UPDATE_RECRUITMENT_PREBOARDING: `api/RecruitmentEnterprise/UpdatePreboarding`,
+  QUEUE_FEEDBACK_REMINDERS: `api/RecruitmentEnterprise/QueueFeedbackReminders`,
+  UPSERT_RECRUITMENT_SLA: `api/RecruitmentEnterprise/UpsertSlaPolicy`,
+  GET_OFFER_APPROVAL_POLICY: `api/RecruitmentPlanning/OfferApprovalPolicy`,
+  UPSERT_OFFER_APPROVAL_POLICY: `api/RecruitmentPlanning/UpsertOfferApprovalPolicy`,
+  GET_RECRUITMENT_CONFIG: `api/RecruitmentEnterprise/Config`,
+  UPSERT_RECRUITMENT_CONFIG: `api/RecruitmentEnterprise/UpsertConfig`,
+  LINK_RECRUITMENT_RELATIONSHIP: `api/RecruitmentEnterprise/LinkRelationship`,
+  QUEUE_RECRUITMENT_AUTOMATION: `api/RecruitmentEnterprise/QueueAutomation`,
 
   ADD_COMMENT: `api/Applicants/AddComment`,
   APPLY_JOB: `api/applicant/applyJob`,
 
   // process log
   GET_PROCESS_LOG: `api/Applicants/GetProcessLogData`,
+  EXPORT_RECRUITMENT_AUDIT: `api/RecruitmentAudit/Export`,
+  GRANT_RECRUITMENT_CANDIDATE_SHARE: `api/RecruitmentCandidateShare/Grant`,
+  REVOKE_RECRUITMENT_CANDIDATE_SHARE: `api/RecruitmentCandidateShare/Revoke`,
+  GET_RECRUITMENT_CANDIDATE_SHARES: `api/RecruitmentCandidateShare/ByApplicant`,
 
   // departments
   GET_DEPARTMENTLIST: `api/CompanyMaster/GetDepartmentList`,
@@ -151,6 +209,7 @@ export const ServiceUrl = {
   //Calendar
   GET_ALL_CALENDAR_ITEMS: `api/Calendar/GetAllCalendarItems`,
   ADD_AND_UPDATE_CALENDAR_ITEMS: `api/Calendar/AddUpdateCalendarItem`,
+  IMPORT_CALENDAR_ITEMS: `api/Calendar/ImportCalendarItems`,
   DELETE_CALENDAR_ITEM: `api/Calendar/DeleteCalendarItem`,
   GET_HOLIDAYS: "api/Calendar/GetHolidays",
 
@@ -173,8 +232,10 @@ export const ServiceUrl = {
 
   CREATE_NEW_LEAVE_POLICY: `api/LeaveManagement/CreateLeavePolicy`,
   UPDATE_LEAVE_POLICY: `api/LeaveManagement/UpdateLeavePolicy`,
+  DELETE_LEAVE_POLICY: `api/LeaveManagement/DeleteLeavePolicy`,
 
   CREATE_LEAVE_REQUEST: `api/LeaveManagement/CreateLeaveRequest`,
+  CREATE_EMPLOYEE_LEAVE_REQUEST: `api/LeaveManagement/CreateEmployeeLeaveRequest`,
   UPDATE_LEAVE_REQUEST: `api/LeaveManagement/UpdateLeaveRequest`,
   GET_LEAVE_REQUESTS: `api/LeaveManagement/GetLeaveRequests`,
   DELETE_LEAVE_REQUEST: `api/LeaveManagement/DeleteLeaveRequest`,
@@ -190,14 +251,19 @@ export const ServiceUrl = {
   GET_COMPANY_CUSTOM_ATTRIBUTE: `api/CompanyMaster/GetAllCustomAttribute`,
   GET_CUSTOM_ATTRIBUTE_BY_ID: `api/CompanyMaster/GetCustomAttributeById`,
   UPDATE_CUSTOM_ATTRIBUTE: `api/CompanyMaster/UpdateCustomAttribute`,
+  DELETE_CUSTOM_ATTRIBUTE: `api/CompanyMaster/DeleteCustomAttribute`,
   DELETE_CUSTOM_ATTRIBUTE_VALUE: `api/CompanyMaster/DeleteCustomAttributeValue`,
 
   // payroll
   UPLOAD_PAYROLL: `api/PayRoll/UploadPayloadData`,
+  VALIDATE_PAYROLL: `api/PayRoll/ValidatePayrollData`,
   GENERATE_PAY_SLIP: `api/PayRoll/GeneratePaySlip`,
   GENERATE_EMPLOYEE_PAY_SLIP: `api/PayRoll/GenerateEmployeePaySlip`,
   GET_PAYROLL_DATA: `api/PayRoll/GetEmpPayRollData`,
   ADD_UPDATE_EMP_PAYROLL: `api/PayRoll/AddUpdatePayRoll`,
+  RECORD_PAYROLL_PAYMENT: `api/PayRoll/RecordPayrollPayment`,
+  CLOSE_PAYROLL_MONTH: `api/PayRoll/ClosePayrollMonth`,
+  GET_PAYROLL_AUDIT_HISTORY: `api/PayRoll/GetPayrollAuditHistory`,
 
   // signalR endpoints
 
@@ -210,6 +276,7 @@ export const ServiceUrl = {
   EDIT_POLICY: "api/Company/UpdatePolicy",
   CREATE_POLICY_VERSION: "api/Company/CreatePolicyVersion",
   EDIT_POLICY_VERSION: "api/Company/EditPolicyVersion",
+  SET_CURRENT_POLICY_VERSION: "api/Company/SetCurrentPolicyVersion",
   GET_ALL_POLICY_VERSION: "api/Company/GetAllPolicyVersion",
   DELETE_POLICY: "api/Company/DeletePolicy",
   DELETE_POLICY_VERSION: "api/Company/DeletePolicyVersion",
@@ -643,3 +710,4 @@ export const modules_description = [
   { name: "Jobs", description: "JOBS_DESCRIPTION" },
   { name: "PayRoll", description: "PAYROLL_DESCRIPTION" },
 ];
+

@@ -1,18 +1,16 @@
 import {
+  Box,
   Card,
   FormControl,
   Grid,
-  InputLabel,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Add, Close, Edit, Visibility } from "@mui/icons-material";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -32,17 +30,19 @@ import {
   CommentTableColumnList,
 } from "../../../../../utils/constant/Constant";
 
-import { CustomisedTable } from "../../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../../shared/components/C_Table";
 import { AddComment } from "./AddComment";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { ApplicantStatus, ModulesName, Permission } from "../../../../../utils/enums";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { ApplicantStatus, ApplicationStatus, ModulesName, Permission } from "../../../../../utils/enums";
 import { Applicant, CommentResponseModel } from "../../models";
 import { Pagination } from "../../../../shared/components/Pagination";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { PdfViewer } from "../../../../shared/components/PdfViewer";
+import { RecruitmentLifecycleDrawer } from "./RecruitmentLifecycleDrawer";
 
+import { AppSelect, AppSwitch } from "../../../../shared/components/ui";
 export const ApplicantDetails = () => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
@@ -62,6 +62,7 @@ export const ApplicantDetails = () => {
     pageSize: 10,
   });
   const [CvPreviewMode, setCVPreviewMode] = useState(false);
+  const [lifecycleOpen, setLifecycleOpen] = useState(false);
 
   const [status, setStatus] = useState({
     applicationStatus: 0,
@@ -144,7 +145,8 @@ export const ApplicantDetails = () => {
   const handleAddComment = async () => {
     setLoading(true);
     try {
-      if (status.applicationStatus !== applicant.activityType) {
+      const hasStatusChange = status.applicationStatus !== applicant.activityType;
+      if (hasStatusChange) {
         const payload = {
           applicantId: applicant.applicantId,
           firstName: applicant.firstName,
@@ -163,22 +165,24 @@ export const ApplicantDetails = () => {
           throw new Error();
         }
       }
-      const commentPayload = {
-        applicantId: applicant.applicantId,
-        userId: currentUser.userId,
-        description: comment,
-        activityCategory: commentActionEncoderForApplicationStatus(
-          status.applicationStatus
-        ),
-        jobTitle: applicant.vacancyName,
-      };
-      const commentResponse = await addComment(commentPayload);
-      if (!commentResponse.data.success) {
-        throw new Error();
+      if (comment.trim()) {
+        const commentPayload = {
+          applicantId: applicant.applicantId,
+          userId: currentUser.userId,
+          description: comment.trim(),
+          activityCategory: commentActionEncoderForApplicationStatus(
+            status.applicationStatus
+          ),
+          jobTitle: applicant.vacancyName,
+        };
+        const commentResponse = await addComment(commentPayload);
+        if (!commentResponse.data.success) {
+          throw new Error();
+        }
       }
-      toast.success(formatMessage({ id: "TOAST.SUCCESS.ADD_COMMENT" }));
+      toast.success(formatMessage({ id: hasStatusChange ? "TOAST.SUCCESS.APPLICANT_UPDATE" : "TOAST.SUCCESS.ADD_COMMENT" }));
       handleClose();
-      if (status.applicationStatus !== applicant.activityType) {
+      if (hasStatusChange) {
         setRefresh(!refresh);
       }
       setRefreshComment(!refreshComment);
@@ -202,6 +206,18 @@ export const ApplicantDetails = () => {
     }
   };
 
+  const getStatusLabel = (activityType: number) => {
+    const configuredStatus = ApplicationEvaluationStatus.find(item => item.value === activityType);
+    return configuredStatus ? formatMessage({ id: configuredStatus.label }) : "Re-apply";
+  };
+
+  const isStatusChangePending = status.applicationStatus !== applicant.activityType;
+  const isTerminalStatus = [
+    ApplicationStatus.Selected,
+    ApplicationStatus.Rejected,
+    ApplicationStatus.ReApply,
+  ].includes(applicant.activityType);
+
   const handlePageChange = (page: number) => {
     setPaginationValues({
       ...paginationValues,
@@ -217,19 +233,34 @@ export const ApplicantDetails = () => {
     });
   };
   return (
-    <Stack spacing={2} sx={{ flexGrow: 1 }}>
-      <Card className="p-6 h-auto">
-        <Stack className="flex-row mb-4 gap-2 flex-wrap justify-content-between">
-          <Typography variant="h5">
-            {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
-          </Typography>
+    <Stack spacing={{ xs: 1.5, sm: 2.5 }} sx={{ flexGrow: 1, pb: { xs: 2, sm: 3 }, minWidth: 0 }}>
+      <Card
+        sx={{
+          p: { xs: 1.5, sm: 2.5, md: 3 },
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          boxShadow: "0 12px 36px rgba(15,23,42,.07)",
+          overflow: "hidden",
+        }}
+      >
+        <Stack direction={{ xs: "column", sm: "row" }} mb={{ xs: 2, sm: 3 }} gap={1.5} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }}>
+          <Box>
+            <Typography variant="h5" fontWeight={800}>
+              {formatMessage({ id: "APPLICANT.APPLICANT_DETAILS" })}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              Review candidate information and manage this application.
+            </Typography>
+          </Box>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ alignSelf: { xs: "stretch", sm: "auto" }, justifyContent: "flex-end", flexWrap: "wrap", "& .ratio-1x1": { width: 40, height: 40, minWidth: 40, borderRadius: 1.75, bgcolor: "background.paper", border: "1px solid", borderColor: "divider" } }}>
             <CustomIconButton
               icon={CvPreviewMode ? <Close /> : <Visibility />}
               tooltip={formatMessage({ id: "TOOLTIP.VIEW_CV" })}
               handleClick={() => setCVPreviewMode(!CvPreviewMode)}
             />
+            {canEditApplicant && <CustomisedButton label="Next step" handleClick={() => setLifecycleOpen(true)} fullWidth={false} sx={{ minHeight: 40, minWidth: { xs: 110, sm: 104 }, px: { xs: 1.5, sm: 2 }, flex: "0 0 auto" }} />}
             {
               canEditApplicant &&
               <CustomIconButton
@@ -247,16 +278,39 @@ export const ApplicantDetails = () => {
         {
           CvPreviewMode ?
             <PdfViewer pdfUrl={applicant.resumeUrl ?? ""} /> :
-            <Grid container spacing={2.5}>
+            <Grid
+              container
+              spacing={2}
+              sx={{
+                "& > .MuiGrid-root > .MuiStack-root": {
+                  minHeight: { xs: 88, sm: 76 },
+                  p: { xs: 1.5, sm: 2 },
+                  borderRadius: 2.5,
+                  bgcolor: "action.hover",
+                  border: "1px solid",
+                  borderColor: "divider",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "center",
+                  alignContent: "center",
+                },
+                "& > .MuiGrid-root > .MuiStack-root .fw-bold": {
+                  color: "text.secondary",
+                  fontSize: "0.75rem",
+                  width: "100%",
+                  lineHeight: 1.2,
+                },
+              }}
+            >
               <Grid
                 size={{
                   xs: 12,
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.FULL_NAME" })} :
+                    {formatMessage({ id: "FORM.FULL_NAME" })}
                   </Typography>{" "}
                   <Typography variant="body1">
                     {applicant?.firstName + " " + applicant?.lastName}
@@ -270,9 +324,9 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.EMAIL" })} :
+                    {formatMessage({ id: "FORM.EMAIL" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.email}</Typography>
@@ -285,9 +339,9 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.PHONE" })} :
+                    {formatMessage({ id: "FORM.PHONE" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.phone}</Typography>
@@ -300,9 +354,9 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "JOB.POSITION" })} :
+                    {formatMessage({ id: "JOB.POSITION" })}
                   </Typography>
 
                   <Typography variant="body1">{applicant?.vacancyName}</Typography>
@@ -314,9 +368,9 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "FORM.EXPERIENCE" })} :
+                    {formatMessage({ id: "FORM.EXPERIENCE" })}
                   </Typography>
 
                   <Typography variant="body1">
@@ -330,9 +384,9 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2}>
+                <Stack spacing={0.5}>
                   <Typography className="fw-bold">
-                    {formatMessage({ id: "APPLICATION.APPLIED_DATE" })} :
+                    {formatMessage({ id: "APPLICATION.APPLIED_DATE" })}
                   </Typography>
                   <Typography variant="body1">
                     {dateFormatter(applicant?.applyDate, "DD MMM YYYY hh:mm A")}
@@ -346,29 +400,34 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+                <Stack spacing={0.75} sx={{ alignItems: "flex-start" }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
                   </Typography>
                   <FormControl>
-                    <InputLabel id="demo-simple-select-label">
-                      {formatMessage({ id: "APPLICATION.STATUS_LABEL" })} :
-                    </InputLabel>
-                    <Select
+                    <AppSelect
                       name="applicantStatus"
                       value={status.applicationStatus}
-                      sx={{ width: "150px" }}
+                      sx={{ width: { xs: "100%", sm: "170px" } }}
                       onChange={handleStatusChange}
+                      disabled
                       className="select"
                       label={formatMessage({ id: "APPLICATION.STATUS_LABEL" })}
                     >
-                      {ApplicationEvaluationStatus.map((status) => (
+                      {ApplicationEvaluationStatus
+                        .filter((option) =>
+                          isTerminalStatus
+                            ? option.value === applicant.activityType
+                            : option.value === applicant.activityType || option.value === ApplicationStatus.Rejected || option.value > applicant.activityType
+                        )
+                        .map((status) => (
                         <MenuItem key={status.id} value={status.value}>
                           {formatMessage({ id: status.label })}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
+                  <Typography variant="caption" color="text.secondary">Use Next step to change the recruitment stage.</Typography>
                 </Stack>
               </Grid>
               <Grid
@@ -377,13 +436,13 @@ export const ApplicantDetails = () => {
                   sm: 6,
                   lg: 4
                 }}>
-                <Stack direction="row" spacing={2} sx={{
-                  alignItems: "center"
+                <Stack spacing={0.75} sx={{
+                  alignItems: "flex-start"
                 }}>
                   <Typography className="fw-bold">
                     {formatMessage({ id: "APPLICANT.STATUS_LABEL" })}:
                   </Typography>
-                  <Switch
+                  <AppSwitch
                     checked={status.applicantStatus === ApplicantStatus.Active}
                     onChange={(event) => {
                       handleEditApplicant(
@@ -401,34 +460,55 @@ export const ApplicantDetails = () => {
       </Card>
       {
         !CvPreviewMode &&
-        <Card className="p-4 flex-grow-1 gap-4 d-flex flex-column">
-          <Stack className="gap-4 flex-row justify-content-between align-items-center flex-wrap">
-            <Typography variant="h5">
-              {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
-            </Typography>
+        <Card
+          sx={{
+            p: { xs: 1.5, sm: 2.5, md: 3 },
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: "0 12px 36px rgba(15,23,42,.07)",
+            backgroundImage: "none",
+            overflow: "hidden",
+          }}
+        >
+          <Stack direction={{ xs: "column", sm: "row" }} gap={1.5} justifyContent="space-between" alignItems={{ xs: "stretch", sm: "center" }} mb={{ xs: 2, sm: 2.5 }}>
+            <Box>
+              <Typography variant="h5" fontWeight={800}>
+                {formatMessage({ id: "COMMENT.COMMENT_HISTORY" })}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                A chronological record of updates and hiring decisions.
+              </Typography>
+            </Box>
             <CustomisedButton
               label={formatMessage({ id: "COMMENT.ADD_COMMENT" })}
               Icon={<Add />}
               handleClick={() => {
                 setModalOpen(true);
               }}
+              fullWidth={false}
+              sx={{ minHeight: 42, alignSelf: { xs: "stretch", sm: "auto" } }}
             />
           </Stack>
 
-          <CustomisedTable
-            keyName="id"
-            rows={commentList}
-            columns={CommentTableColumnList}
-            page={0}
-            rowsPerPage={0}
-          />
-          <Pagination
-            page={paginationValues.pageNo}
-            rowsPerPage={paginationValues.pageSize}
-            setPage={handlePageChange}
-            setRowPerPage={handleRowPerPageChange}
-            totalRecords={totalRecords}
-          />
+          <Box sx={{ border: "1px solid", borderColor: "divider", borderRadius: 2.5, overflowX: "auto", "&::-webkit-scrollbar": { height: 7 }, "&::-webkit-scrollbar-thumb": { bgcolor: "action.selected", borderRadius: 8 } }}>
+            <CustomisedTable
+              keyName="id"
+              rows={commentList}
+              columns={CommentTableColumnList}
+              page={0}
+              rowsPerPage={0}
+            />
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <Pagination
+              page={paginationValues.pageNo}
+              rowsPerPage={paginationValues.pageSize}
+              setPage={handlePageChange}
+              setRowPerPage={handleRowPerPageChange}
+              totalRecords={totalRecords}
+            />
+          </Box>
           {isModalOpen && (
             <AddComment
               loading={loading}
@@ -437,10 +517,16 @@ export const ApplicantDetails = () => {
               handleCommentChange={handleCommentChange}
               handleClose={handleClose}
               handleAddComment={handleAddComment}
+              statusChange={isStatusChangePending ? {
+                from: getStatusLabel(applicant.activityType),
+                to: getStatusLabel(status.applicationStatus),
+              } : undefined}
             />
           )}
         </Card>
       }
+      {canEditApplicant && <RecruitmentLifecycleDrawer open={lifecycleOpen} applicant={applicant} onClose={() => setLifecycleOpen(false)} onSaved={() => setRefresh(!refresh)} />}
     </Stack >
   );
 };
+

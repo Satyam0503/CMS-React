@@ -1,8 +1,8 @@
-import { Card, Stack, Typography } from "@mui/material";
+import { Alert, Button, Card, CircularProgress, Stack, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { toast } from "react-toastify";
-import { ConfirmationModal } from "../../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 import { getAllModulesInfo, updateModuleAccess } from "../../adminservices";
 import { ModulesInfoModel } from "../../models";
 import Grid from "@mui/material/Grid";
@@ -33,11 +33,18 @@ export const ApplicationModules: FC = () => {
 
   const [refresh, setRefresh] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [actionType, setActionType] = useState<ActionType>("SINGLE");
   const [currentModuleId, setCurrentModuleId] = useState<string | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [option, setOPtion] = useState<boolean>(false);
+  const friendlyModuleLabel = (module: ModulesInfoModel) => {
+    const translated = formatMessage({ id: `COMMON.${module.moduleConstant.toUpperCase()}` });
+    if (translated !== `COMMON.${module.moduleConstant.toUpperCase()}`) return translated;
+    return (module.moduleName || module.moduleConstant).replace(/[._-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  };
 
   const closeConfirmationModal = () => {
     setIsConfirmModalOpen(false);
@@ -132,10 +139,20 @@ export const ApplicationModules: FC = () => {
   useEffect(() => {
     const getAllModules = async () => {
       try {
+        setIsLoading(true);
+        setLoadError(null);
         const response = await getAllModulesInfo();
         const { success, methodResults } = response.data;
 
-        if (!success) return;
+        if (!success) {
+          setLoadError("Unable to load application modules. Please try again.");
+          return;
+        }
+
+        if (!Array.isArray(methodResults)) {
+          setLoadError("The application modules response is invalid. Please try again.");
+          return;
+        }
 
         const payrollValues = Object.values(PayRollModuleTitles) as string[];
         const recruitmentValues = Object.values(
@@ -159,8 +176,10 @@ export const ApplicationModules: FC = () => {
         setPayrollModules(payroll);
         setRecruitmentModules(recruitment);
         setOtherModules(remaining);
-      } catch (error) {
-        console.error(error);
+      } catch {
+        setLoadError("Unable to load application modules. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -169,7 +188,21 @@ export const ApplicationModules: FC = () => {
 
   return (
     <>
-      <Card className="px-8 py-6 d-flex flex-column flex-grow-1 gap-8">
+      <Card
+        sx={{
+          mt: 0,
+          p: { xs: 2, sm: 3 },
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          gap: { xs: 2, sm: 3 },
+          minWidth: 0,
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: { xs: 2.5, sm: 3 },
+          boxShadow: "0 10px 28px rgba(24, 74, 82, .07)",
+        }}
+      >
         <Stack>
           <Typography variant="h5" mb={1}>
             {formatMessage({
@@ -183,7 +216,20 @@ export const ApplicationModules: FC = () => {
           </Typography>
         </Stack>
 
-        <Grid container spacing={3}>
+        {isLoading ? (
+          <Stack alignItems="center" justifyContent="center" sx={{ minHeight: 240 }} spacing={2}>
+            <CircularProgress size={28} />
+            <Typography variant="body2" color="text.secondary">Loading application modules…</Typography>
+          </Stack>
+        ) : loadError ? (
+          <Alert
+            severity="error"
+            action={<Button color="inherit" size="small" onClick={() => setRefresh((previous) => !previous)}>Retry</Button>}
+          >
+            {loadError}
+          </Alert>
+        ) : (
+        <Grid container spacing={{ xs: 2, sm: 3 }}>
           {otherModules.map((module) => {
             const moduleDesc = modules_description.find(
               (m) =>
@@ -197,8 +243,9 @@ export const ApplicationModules: FC = () => {
                   moduleId={module.moduleId}
                   moduleCostant={module.moduleConstant}
                   titleMessageId={`COMMON.${module.moduleConstant.toUpperCase()}`}
+                  title={friendlyModuleLabel(module)}
                   descriptionMessageId={
-                    moduleDesc ? `COMMON.${moduleDesc.description}` : ""
+                    moduleDesc ? `COMMON.${moduleDesc.description}` : undefined
                   }
                   modules={[module]}
                   formatMessage={formatMessage}
@@ -249,6 +296,7 @@ export const ApplicationModules: FC = () => {
             />
           </Grid>
         </Grid>
+        )}
       </Card>
 
       {isConfirmModalOpen && (

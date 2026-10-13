@@ -26,7 +26,9 @@
     "PAYROLL": "給与管理",
     "CALENDAR": "カレンダー",
     "POLICIES": "せいさく",
-    "PAYROLL_SETTINGS": "給与設定"
+    "PAYROLL_SETTINGS": "給与設定",
+    "LIFECYCLE_MANAGEMENT": "ライフサイクル管理",
+    "CAREER_PROFILE": "採用プロフィール"
   },
   "GENDER": {
     "MALE": "男性",
@@ -61,6 +63,7 @@
     "EMPLOYEES": "従業員",
     "LEAVE_MANAGEMENT": "休暇管理",
     "ATTENDANCE": "出席",
+    "ATTENDANCE_SETTINGS": "勤怠設定",
     "HOLIDAYS": "休暇",
     "NOTICE_BOARD": "掲示板",
     "MY_NOTICE": "自分の通知",
@@ -265,6 +268,7 @@
     "REGISTER": "登録",
     "SIGNIN": "サインイン",
     "T&C": "利用規約に同意します",
+    "TERMS_REQUIRED": "利用規約に同意します",
     "PASSWORD_NOTE": "8文字以上の文字、数字、記号を組み合わせて使用してください。",
     "FORGOT_PASSWORD": "パスワードを忘れましたか？",
     "FORGOT_PASSWORD.NOTE": "メールアドレスを入力してパスワードをリセットしてください",
@@ -903,6 +907,7 @@
     "PLEASE_SELECT_EMPLOYEE": "従業員を選択してください",
     "NO_RESULT": "結果がありません",
     "NO_DEPARTMENTS": "部署を追加してください",
+    "NO_DEPARTMENT_EMPLOYEES": "まだ部署に割り当てられた従業員がいません",
     "ADD_LANGUAGE_TITLE": "{language} のタイトルを入力してください",
     "LEAVE_DAYS_CANT_BE_ZERO": "休暇日数を0にすることはできません"
   },
@@ -1057,3 +1062,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "求人情報、応募者管理、選考および面接プロセス、評価、詳細なプロセスログを含む採用業務全体を管理します。採用の進捗状況や対応履歴、採用判断を可視化し、効率的な人材獲得を支援します。"
   }
 }
+

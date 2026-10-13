@@ -1,5 +1,5 @@
 import { FC, useRef, useState } from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import ReactCrop, {
   centerCrop,
   Crop,
@@ -7,7 +7,7 @@ import ReactCrop, {
   PixelCrop,
 } from "react-image-crop";
 import { Box, Stack, Typography } from "@mui/material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 
 interface Props {

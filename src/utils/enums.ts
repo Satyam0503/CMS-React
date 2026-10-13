@@ -33,6 +33,11 @@ export enum Permission {
   Delete = "Delete",
   Edit = "Edit",
   Create = "Create",
+  ViewOwn = "ViewOwn",
+  ViewAll = "ViewAll",
+  CreateForEmployee = "CreateForEmployee",
+  Approve = "Approve",
+  Override = "Override",
 }
 export enum Modules {
   Dashboard = 1,
@@ -52,6 +57,8 @@ export enum Modules {
   CompanyDetails = 15,
   Policies = 16,
   PayrollSettings = 17,
+  CareerProfile = 18,
+  RecruitmentSettings = 19,
 }
 
 export enum ModulesName {
@@ -73,12 +80,15 @@ export enum ModulesName {
   CompanyDetails = "Company_Details",
   Policy = "Policy",
   PayrollSettings = "Payroll_Settings",
+  CareerProfile = "Career_Profile",
+  RecruitmentSettings = "Recruitment_Settings",
 }
 
 export enum ModulesTitles {
   Dashboard = "MODULES.DASHBOARD",
   Employees = "MODULES.EMPLOYEES",
   Attendance = "MODULES.ATTENDANCE",
+  AttendanceSettings = "MODULES.ATTENDANCE_SETTINGS",
   LeaveManagement = "MODULES.LEAVE_MANAGEMENT",
   Recruitment = "MODULES.RECRUITMENT",
   Admin = "MODULES.ADMIN",
@@ -93,6 +103,9 @@ export enum ModulesTitles {
   CompanyDetails = "MODULES.COMPANY_DETAILS",
   Policies = "MODULES.POLICIES",
   PayrollSettings = "MODULES.PAYROLL_SETTINGS",
+  CareerProfile = "MODULES.CAREER_PROFILE",
+  RecruitmentSettings = "MODULES.RECRUITMENT_SETTINGS",
+  LifecycleManagement = "MODULES.LIFECYCLE_MANAGEMENT",
 }
 
 export enum PayRollModuleTitles {
@@ -117,6 +130,7 @@ export enum Roles {
   Administrator = 1,
   HRManager = 2,
   Employee = 3,
+  HRExecutive = 4,
 }
 
 export enum TIME_PERIOD_MAP {
@@ -206,3 +220,5 @@ export enum CALENDAR_ITEM {
   BIRTHDAY = 3,
   ANNIVERSARY = 4,
 }
+
+

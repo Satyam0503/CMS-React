@@ -111,12 +111,21 @@ export const updateCompanyDetails = async (payload: FormData) => {
   );
 };
 
+type EmployeeIdSequence = { currentNextEmployeeId: string; format: string };
+export const getEmployeeIdSequence = () => getRequest<ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.GET_EMPLOYEE_ID_SEQUENCE);
+export const skipEmployeeIds = (skipCount: number) => postRequest<{ skipCount: number }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.SKIP_EMPLOYEE_IDS, { skipCount });
+export const startEmployeeIdSequence = (employeeId: string) => postRequest<{ employeeId: string }, ApiResponse & { methodResult?: EmployeeIdSequence }>(ServiceUrl.START_EMPLOYEE_ID_SEQUENCE, { employeeId });
+export const setCompanyFormerEmployeePortalAccess = (enabled: boolean, reason?: string) => postRequest<{ enabled: boolean; reason?: string }, ApiResponse>("api/User/CompanyFormerEmployeePortalAccess", { enabled, reason });
+
 // company jobTitles
 
-export const getJobTitles = async (isActive: boolean = false) => {
+export const getJobTitles = async (isActive: boolean = false, departmentId?: string) => {
+  const parameters = new URLSearchParams();
+  if (isActive) parameters.set("isActive", "true");
+  if (departmentId) parameters.set("departmentId", departmentId);
   return getRequest<GetJobTitleResponse>(
-    isActive
-      ? `${ServiceUrl.GET_JOB_TITLE}?isActive=${isActive}`
+    parameters.size > 0
+      ? `${ServiceUrl.GET_JOB_TITLE}?${parameters.toString()}`
       : ServiceUrl.GET_JOB_TITLE
   );
 };
@@ -141,12 +150,14 @@ export const getAllCustomAttributes = async () => {
 
 export const getCustomAttributeById = async (
   customAttributeId: string,
-  active: boolean = false
+  active: boolean = false,
+  forceRefresh: boolean = false
 ) => {
   return getRequest<GetCustomAttributeByIdResponse>(
     active
       ? `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}?active=${active}`
-      : `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}`
+      : `${ServiceUrl.GET_CUSTOM_ATTRIBUTE_BY_ID}/${customAttributeId}`,
+    forceRefresh ? { headers: { "Cache-Control": "no-cache" } } : undefined
   );
 };
 
@@ -165,3 +176,8 @@ export const updateCustomAttribute = (
     payload
   );
 };
+
+export const deleteCustomAttribute = (customAttributeId: string) =>
+  deleteRequest<ApiResponse>(
+    `${ServiceUrl.DELETE_CUSTOM_ATTRIBUTE}/${customAttributeId}`,
+  );

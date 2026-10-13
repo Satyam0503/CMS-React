@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import { checkIsActive } from "../../../../helpers";
 import { ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material";
 
@@ -18,15 +19,19 @@ const SidebarMenuItem: FC<Props> = ({
 }) => {
   const { pathname } = useLocation();
   const isActive = checkIsActive(pathname, to);
-  const navigate = useNavigate();
 
   return (
     <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
-      <ListItemButton className="sidebar-menu-item " sx={{ color: "common.white" }} selected={isActive} onClick={() => navigate(to)} >
-        <ListItemIcon sx={{ color: "common.white" }}>
+      <ListItemButton
+        component={Link}
+        to={to}
+        className="sidebar-menu-item"
+        selected={isActive}
+      >
+        <ListItemIcon>
           {icon}
         </ListItemIcon>
-        <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
+        <ListItemText primary={title} />
       </ListItemButton>
     </Tooltip>
   );

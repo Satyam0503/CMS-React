@@ -5,12 +5,14 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 type Props = {
   index: number;
   isOpen: boolean;
+  hasActiveChild?: boolean;
   to: string;
   title: string;
   icon?: ReactNode;
   children: ReactNode;
   isMiniSidebar: boolean;
   setCurrentMenuIndex: (index: number | null) => void;
+  onExpandSidebar?: () => void;
 };
 
 const SidebarMenuItemWithSub: React.FC<Props> = ({
@@ -19,32 +21,44 @@ const SidebarMenuItemWithSub: React.FC<Props> = ({
   icon,
   index,
   isOpen,
+  hasActiveChild = false,
   isMiniSidebar,
-  setCurrentMenuIndex
+  setCurrentMenuIndex,
+  onExpandSidebar,
 }) => {
 
   const handleMenuToggle = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    if (isMiniSidebar) {
+      onExpandSidebar?.();
+      setCurrentMenuIndex(index);
+      return;
+    }
     if (isOpen) {
-      setCurrentMenuIndex(null)
+      setCurrentMenuIndex(null);
     } else {
       setCurrentMenuIndex(index);
     }
-  }
+  };
 
   return (
     <>
       <Tooltip title={title} placement="right" arrow disableHoverListener={!isMiniSidebar}>
-        <ListItemButton onClick={handleMenuToggle} sx={{ color: 'common.white' }} className="sidebar-menu-item">
+        <ListItemButton
+          onClick={handleMenuToggle}
+          selected={hasActiveChild}
+          aria-expanded={isOpen}
+          className="sidebar-menu-item"
+        >
           <ListItemIcon>
             {icon}
           </ListItemIcon>
-          <ListItemText primary={title} slotProps={{ primary: { color: "common.white" } }} />
+          <ListItemText primary={title} />
           {isOpen ? <ExpandLess className="menu-arrow" /> : <ExpandMore className="menu-arrow" />}
         </ListItemButton>
       </Tooltip>
-      <Collapse in={isOpen} timeout="auto" unmountOnExit >
-        <List component="div" disablePadding sx={{ paddingInlineStart: 2 }}>
+      <Collapse in={!isMiniSidebar && isOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ paddingInlineStart: isMiniSidebar ? 0 : 2, width: "100%" }}>
           {children}
         </List>
       </Collapse>

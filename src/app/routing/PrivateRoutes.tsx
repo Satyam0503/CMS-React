@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { MasterLayout } from "../../_themes/layout/MasterLayout";
 import TopBarProgress from "react-topbar-progress-indicator";
 import { ProtectedRoute } from "../modules/users/about/components/ProtectedRoute.tsx";
-import { ModulesName } from "../../utils/enums.ts";
+import { ModulesName, Permission } from "../../utils/enums.ts";
 import { UnAuthorizedAccess } from "../shared/components/UnAuthorizedAccess.tsx";
 import { useTheme } from "@mui/material";
 
@@ -27,6 +27,11 @@ const PayRollManagement = lazy(
 const PayrollSettings = lazy(
   () => import("../modules/payrollsettings/PayrollSettings.tsx"),
 );
+const EmployeeLifecycleManagement = lazy(
+  () => import("../modules/employees/EmployeeLifecycleManagement.tsx"),
+);
+const AttendanceStatusSettings = lazy(() => import("../modules/attendance/AttendanceStatusSettings.tsx"));
+const RecruitmentSettings = lazy(() => import("../modules/recruitment/RecruitmentSettings.tsx"));
 
 const PrivateRoutes = () => {
   return (
@@ -115,6 +120,8 @@ const PrivateRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="attendance-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><AttendanceStatusSettings /></SuspensedView></ProtectedRoute>} />
+        <Route path="recruitment-settings" element={<ProtectedRoute adminOnly={true}><SuspensedView><RecruitmentSettings /></SuspensedView></ProtectedRoute>} />
         <Route
           path="leavemanagement/*"
           element={
@@ -141,6 +148,16 @@ const PrivateRoutes = () => {
             <ProtectedRoute module={ModulesName.PayrollSettings}>
               <SuspensedView>
                 <PayrollSettings />
+              </SuspensedView>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="lifecycle-management"
+          element={
+            <ProtectedRoute module={ModulesName.Employees} permission={Permission.View}>
+              <SuspensedView>
+                <EmployeeLifecycleManagement />
               </SuspensedView>
             </ProtectedRoute>
           }
@@ -191,3 +208,4 @@ const SuspensedView = ({ children }: PropsType) => {
 };
 
 export { PrivateRoutes };
+

@@ -1,11 +1,11 @@
 import {
+  Autocomplete,
   Card,
+  CircularProgress,
   Divider,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Stack,
   Table,
@@ -14,10 +14,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useIntl } from "react-intl";
 import { LEAVE_REQUEST_STATUS } from "../../../../utils/enums";
 import { LeaveRequestStatusTypes } from "../../../../utils/constant/Constant";
@@ -40,10 +39,22 @@ import {
 } from "./LeaveRequestFilter";
 import { useAppSelector } from "../../../Redux/hooks";
 import { StyleStatus } from "../../../shared/components/StyledStatus";
-import { Edit } from "@mui/icons-material";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import { Add, Edit } from "@mui/icons-material";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
+import CustomisedButton from "../../../shared/components/C_Button";
 
+import { AppIconButton, AppSelect, AppTextField } from "../../../shared/components/ui";
+import { ModulesName, Permission } from "../../../../utils/enums";
+import { hasModuleFeaturePermission } from "../../../../utils/common";
+import { getAllEmployees } from "../../employees/employeeServices";
+import { GetAllEmployeeResponseModel } from "../../employees/models";
+import { EmployeeLeaveTypeBalance, RequestLeaveModel } from "../model";
+import { getEmployeeLeaveBalance } from "../leaveServices";
+import { LeaveApplication } from "../../users/leavetracker/components/LeaveApplication";
+
+const emptyLeaveRequest: RequestLeaveModel = {
+  isHalfDay: false, startDate: null, endDate: null, reason: "", userId: "", leavePolicyId: "",
+};
 export const LeaveRequest = () => {
   const { formatMessage: i } = useIntl();
   const [leaveRequest, setLeaveRequest] = useState<LeaveRequestModel[]>([]);
@@ -56,6 +67,14 @@ export const LeaveRequest = () => {
   const [refresh, setRefresh] = useState(false);
   const [selectedLeaveRequest, setSelectedLeaveRequest] =
     useState<LeaveRequestModel | null>(null);
+  const [showCreateLeave, setShowCreateLeave] = useState(false);
+  const modulePermissions =
+    useAppSelector((state) => state.user.userData?.modulePermission) ?? [];
+  const canCreateForEmployee = useMemo(
+    () =>
+      hasModuleFeaturePermission(ModulesName.LeaveManagement, Permission.Edit, modulePermissions),
+    [modulePermissions],
+  );
   const appliedLeaveRequestFilter =
     useAppSelector((state) => state.filters.leaveRequest) ??
     initialLeaveRequestFilter;
@@ -104,13 +123,28 @@ export const LeaveRequest = () => {
     setRefresh(!refresh);
   };
   return (
-    <Card className="p-4 gap-4 d-flex flex-column flex-grow-1">
-      <Typography variant="h5">
-        {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
-      </Typography>
+    <Card className="d-flex flex-column flex-grow-1" sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, gap: { xs: 2, md: 2.5 }, minWidth: 0, overflow: "hidden" }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "stretch", sm: "center" }}
+        gap={2}
+      >
+        <Typography variant="h5">
+          {i({ id: "LEAVE.TITLES.LEAVE_REQUESTS" })}
+        </Typography>
+        {canCreateForEmployee && (
+          <CustomisedButton
+            Icon={<Add />}
+            label={i({ id: "LEAVE.CREATE_FOR_EMPLOYEE", defaultMessage: "Create Leave for Employee" })}
+            handleClick={() => setShowCreateLeave(true)}
+            sx={{ width: { xs: "100%", sm: "auto" }, whiteSpace: "nowrap" }}
+          />
+        )}
+      </Stack>
       <LeaveRequestFilter />
       <Divider className="mt-2" />
-      <TableContainer className="mb-2 h-100">
+      <TableContainer sx={{ mb: 0.5, width: "100%", overflowX: "auto", overflowY: "hidden", "&::-webkit-scrollbar": { height: 6 } }}>
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
             <TableRow>
@@ -121,13 +155,13 @@ export const LeaveRequest = () => {
               <TableCell>{i({ id: "LEAVE.REASON" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVED_BY" })}</TableCell>
               <TableCell>{i({ id: "LEAVE.APPROVAL_STATUS" })}</TableCell>
-              <TableCell>{i({ id: "ACTION" })}</TableCell>
+              {canCreateForEmployee && <TableCell>{i({ id: "ACTION" })}</TableCell>}
             </TableRow>
           </TableHead>
           {isLoading ? (
             <TableBody>
               <TableRow>
-                <TableCell colSpan={12} align="center">
+                <TableCell colSpan={canCreateForEmployee ? 8 : 7} align="center">
                   <TableSkeleton />
                 </TableCell>
               </TableRow>
@@ -136,7 +170,7 @@ export const LeaveRequest = () => {
             <TableBody>
               {leaveRequest.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={12} align="center">
+                  <TableCell colSpan={canCreateForEmployee ? 8 : 7} align="center">
                     {i({ id: "MESSAGE.NO_DATA_AVAILABLE" })}
                   </TableCell>
                 </TableRow>
@@ -191,14 +225,16 @@ export const LeaveRequest = () => {
                         }
                       />
                     </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => setSelectedLeaveRequest(row)}
-                        disabled={row.status === 4}
-                      >
-                        <Edit className="fs-20" />
-                      </IconButton>
-                    </TableCell>
+                    {canCreateForEmployee && (
+                      <TableCell>
+                        <AppIconButton
+                          onClick={() => setSelectedLeaveRequest(row)}
+                          disabled={row.status === 4}
+                        >
+                          <Edit className="fs-20" />
+                        </AppIconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
@@ -215,6 +251,12 @@ export const LeaveRequest = () => {
           totalRecords={totalRecords}
         />
       )}
+      {showCreateLeave && (
+        <CreateEmployeeLeaveModal
+          handleClose={() => setShowCreateLeave(false)}
+          handleRefresh={handleRefresh}
+        />
+      )}
       {selectedLeaveRequest && (
         <LeaveApprovalModal
           open={true}
@@ -224,6 +266,109 @@ export const LeaveRequest = () => {
         />
       )}
     </Card>
+  );
+};
+
+
+type CreateEmployeeLeaveModalProps = {
+  handleClose: () => void;
+  handleRefresh: () => void;
+};
+
+const CreateEmployeeLeaveModal = ({ handleClose, handleRefresh }: CreateEmployeeLeaveModalProps) => {
+  const { formatMessage: i } = useIntl();
+  const [employees, setEmployees] = useState<GetAllEmployeeResponseModel[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<GetAllEmployeeResponseModel | null>(null);
+  const [leaveBalances, setLeaveBalances] = useState<EmployeeLeaveTypeBalance[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showApplication, setShowApplication] = useState(false);
+
+  useEffect(() => {
+    const loadEmployees = async () => {
+      setLoading(true);
+      try {
+        const { data } = await getAllEmployees({
+          pageNo: 1, records: 1000, name: "", departmentId: [], gender: [],
+        });
+        if (data.success) setEmployees(data.methodResults);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadEmployees();
+  }, []);
+
+  const continueToApplication = async () => {
+    if (!selectedEmployee) return;
+    setLoading(true);
+    try {
+      const { data } = await getEmployeeLeaveBalance(selectedEmployee.userId);
+      if (!data.success || data.methodResults.length === 0) {
+        toast.error(i({ id: "VALIDATION_ERR.LEAVE_TYPES_NOT_AVAILABLE" }));
+        return;
+      }
+      setLeaveBalances(data.methodResults);
+      setShowApplication(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showApplication && selectedEmployee) {
+    return (
+      <LeaveApplication
+        edit={false}
+        open
+        initialValues={emptyLeaveRequest}
+        leaveTypeBalance={leaveBalances}
+        targetEmployeeId={selectedEmployee.userId}
+        handleClose={handleClose}
+        handleRefresh={handleRefresh}
+      />
+    );
+  }
+
+  return (
+    <CustomisedModal
+      open
+      handleClose={handleClose}
+      title={i({ id: "LEAVE.SELECT_EMPLOYEE", defaultMessage: "Select Employee" })}
+    >
+      <Stack spacing={3}>
+        <Autocomplete
+          options={employees}
+          value={selectedEmployee}
+          loading={loading}
+          getOptionLabel={(option) => `${option.fullName} (${option.employeeId})`}
+          isOptionEqualToValue={(option, value) => option.userId === value.userId}
+          onChange={(_event, value) => setSelectedEmployee(value)}
+          renderInput={(params) => (
+            <AppTextField
+              {...params}
+              label={i({ id: "LEAVE.EMPLOYEE_NAME" })}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress size={18} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+        <Stack direction="row" justifyContent="flex-end" gap={1}>
+          <CustomisedButton variant="outlined" label={i({ id: "BUTTON.CANCEL" })} handleClick={handleClose} />
+          <CustomisedButton
+            label={i({ id: "BUTTON.CONTINUE", defaultMessage: "Continue" })}
+            disabled={!selectedEmployee || loading}
+            loading={loading}
+            handleClick={continueToApplication}
+          />
+        </Stack>
+      </Stack>
+    </CustomisedModal>
   );
 };
 
@@ -244,10 +389,20 @@ export const LeaveApprovalModal = ({
     status: leaveRequest.status,
     comment: leaveRequest.comment,
   });
+  const [isUpdating, setIsUpdating] = useState(false);
+  const isRejection = leaveData.status === LEAVE_REQUEST_STATUS.REJECTED;
+  const friendlyMessage = (message: string | undefined, fallback: string) =>
+    message?.replace(/^[A-Z][A-Z0-9_]+:\s*/, "").trim() || fallback;
 
   // console.log(leaveData);
 
   const handleLeaveStatusUpdate = async () => {
+    if (isUpdating) return;
+    if (isRejection && !leaveData.comment?.trim()) {
+      toast.error(i({ id: "LEAVE.REJECTION_REASON_REQUIRED", defaultMessage: "Rejection requires a reason." }));
+      return;
+    }
+    setIsUpdating(true);
     try {
       const payload: LeaveRequestApprovalPayload = {
         ...leaveData,
@@ -261,9 +416,20 @@ export const LeaveApprovalModal = ({
         toast.success(i({ id: "TOAST.SUCCESS.UPDATE" }));
         refresh();
         handleClose();
+      } else {
+        toast.error(friendlyMessage(data.message, i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" })));
       }
     } catch (error) {
       console.error((error as Error).message);
+      const responseMessage =
+        typeof error === "object" && error !== null && "response" in error
+          ? (error as { response?: { data?: { message?: unknown } } }).response?.data?.message
+          : undefined;
+      toast.error(
+        friendlyMessage(typeof responseMessage === "string" ? responseMessage : undefined, i({ id: "TOAST.FAILED.UPDATE", defaultMessage: "Unable to update leave status" })),
+      );
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -290,7 +456,7 @@ export const LeaveApprovalModal = ({
           <InputLabel id="leave-request-status">
             {i({ id: "LEAVE.APPROVAL_STATUS" })}
           </InputLabel>
-          <Select
+          <AppSelect
             labelId="leave-request-status"
             label={i({ id: "LEAVE.APPROVAL_STATUS" })}
             size="small"
@@ -298,7 +464,10 @@ export const LeaveApprovalModal = ({
             value={leaveData.status}
             onChange={handleChange}
           >
-            {LeaveRequestStatusTypes.map((item) => (
+            {LeaveRequestStatusTypes.filter((item) =>
+              item.value === LEAVE_REQUEST_STATUS.APPROVED ||
+              item.value === LEAVE_REQUEST_STATUS.REJECTED
+            ).map((item) => (
               <MenuItem
                 value={item.value}
                 key={item.id}
@@ -311,10 +480,10 @@ export const LeaveApprovalModal = ({
                 {i({ id: item.label })}
               </MenuItem>
             ))}
-          </Select>
+          </AppSelect>
         </FormControl>
 
-        <TextField
+        <AppTextField
           fullWidth
           multiline
           type="text"
@@ -324,17 +493,20 @@ export const LeaveApprovalModal = ({
           placeholder={i({ id: "LEAVE.COMMENT" })}
           value={leaveData.comment}
           onChange={handleChange}
+          required={isRejection}
         />
 
         <Stack className="flex-row gap-2 justify-content-end">
           <CustomisedButton
             variant="outlined"
             label={i({ id: "BUTTON.CLOSE" })}
+            disabled={isUpdating}
             handleClick={handleClose}
           />
           <CustomisedButton
             label={i({ id: "BUTTON.UPDATE" })}
-            disabled={leaveRequest.status === leaveData.status}
+            disabled={isUpdating || leaveRequest.status === leaveData.status}
+            loading={isUpdating}
             handleClick={handleLeaveStatusUpdate}
           />
         </Stack>

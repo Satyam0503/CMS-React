@@ -1,20 +1,31 @@
-import { FC, useState, MouseEvent } from "react";
-import { Box, IconButton, Popover, Stack, Tooltip, Typography } from "@mui/material";
+import { FC, MouseEvent, useState } from "react";
+import { Box, Popover, Stack, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import { Palette } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import { APP_STYLES, AppStyle, useAppStyle } from "../../../../../app/modules/theme/useAppStyle";
+import { APP_STYLES, AppStyle } from "../../../../../app/modules/theme/useAppStyle";
+import { useCompanyTheme } from "../../../../../app/modules/theme/companyTheme";
+import { useAppSelector } from "../../../../../app/Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
+import { ModulesName, Permission, Roles } from "../../../../../utils/enums";
+import { putRequest } from "../../../../../server/axios";
+import { toast } from "react-toastify";
 
-// Visual preview of each style — shown as a small swatch in the picker.
+import { AppIconButton } from "../../../../../app/shared/components/ui";
+
 const SWATCH_BG: Record<AppStyle, string> = {
-  cobalt:   "linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%)",
-  classic:  "linear-gradient(180deg, #1e1b4b 0%, #312e81 100%)",
-  glass:    "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
-  gradient: "linear-gradient(180deg, #7c3aed 0%, #ec4899 100%)",
-  minimal:  "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+  glass: "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 100%)",
+  slate: "linear-gradient(135deg, #f8fafc 0%, #dce4ed 55%, #cbd5e1 100%)",
+  dawn: "linear-gradient(118deg, #ddc6eb 0%, #faf7fc 48%, #f9d7e5 100%)",
+  blush: "linear-gradient(135deg, #f3dbe8 0%, #fffafb 52%, #f7dce9 100%)",
 };
 
-const AppStylePicker: FC = () => {
-  const { style, setStyle } = useAppStyle();
+type AppStylePickerProps = {
+  sx?: SxProps<Theme>;
+};
+
+const AppStylePicker: FC<AppStylePickerProps> = ({ sx }) => {
+  const { theme: style, setTheme } = useCompanyTheme();
+  const currentUser = useAppSelector((state) => state.user.userData);
   const { formatMessage: i } = useIntl();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -24,6 +35,21 @@ const AppStylePicker: FC = () => {
   };
   const handleClose = () => setAnchorEl(null);
   const open = Boolean(anchorEl);
+  const canEditCompanyTheme = currentUser?.roleType === Roles.Administrator ||
+    hasModuleFeaturePermission(ModulesName.CareerProfile, Permission.Edit, currentUser?.modulePermission ?? []);
+
+  if (!canEditCompanyTheme) return null;
+
+  const selectTheme = async (theme: AppStyle) => {
+    try {
+      const { data } = await putRequest<{ appTheme: AppStyle }, { success: boolean; message?: string }>("api/CareerProfile/theme", { appTheme: theme });
+      if (!data.success) throw new Error(data.message || "Unable to update company theme.");
+      setTheme(theme);
+      handleClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to update company theme.");
+    }
+  };
 
   // Defaults to the literal label so the picker still works if no translation
   // key is present yet — translators can add APP_STYLE.PICKER later.
@@ -32,14 +58,17 @@ const AppStylePicker: FC = () => {
   return (
     <>
       <Tooltip title={tooltipLabel}>
-        <IconButton
+        <AppIconButton
           onClick={handleOpen}
-          sx={{ border: 0, p: 0 }}
+          sx={[
+            { border: 0, p: 0 },
+            ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+          ]}
           role="button"
           aria-label="choose app style"
         >
           <Palette className="fs-32" />
-        </IconButton>
+        </AppIconButton>
       </Tooltip>
       <Popover
         open={open}
@@ -55,6 +84,8 @@ const AppStylePicker: FC = () => {
               borderRadius: 2,
               boxShadow: "0 12px 40px rgba(0,0,0,0.18)",
               mt: 1,
+              maxHeight: "calc(100vh - 96px)",
+              overflowY: "auto",
             },
           },
         }}
@@ -72,8 +103,7 @@ const AppStylePicker: FC = () => {
                 spacing={1.5}
                 alignItems="center"
                 onClick={() => {
-                  setStyle(s.value);
-                  handleClose();
+                  void selectTheme(s.value);
                 }}
                 sx={{
                   cursor: "pointer",

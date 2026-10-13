@@ -1,6 +1,16 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState } from "react";
 import { EmployeeSearchModel } from "../../../../../utils/common_types";
-import { Autocomplete, Avatar, CircularProgress, ListItemAvatar, ListItemButton, ListItemText, TextField } from "@mui/material";
+import { Autocomplete,
+  Avatar,
+  CircularProgress,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  SxProps,
+  Theme,
+} from "@mui/material";
 import { ClearSharp, Search } from "@mui/icons-material";
 import { useIntl } from "react-intl";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -9,7 +19,13 @@ import { DEFAULT_USER_AVATAR } from "../../../../../utils/constant/Constant";
 import { useDebounce } from "../../../../../app/hooks/useDebounce";
 import { searchEmployee } from "../../../../../app/modules/users/userservices";
 
-export const EmployeeSearchInput = () => {
+import { AppTextField } from "../../../../../app/shared/components/ui";
+type EmployeeSearchInputProps = {
+    sx?: SxProps<Theme>;
+    autoFocus?: boolean;
+};
+
+export const EmployeeSearchInput = ({ sx, autoFocus = false }: EmployeeSearchInputProps) => {
     const { formatMessage } = useIntl();
     const [loading, setLoading] = useState(false);
     const [employeeList, setEmployeeList] = useState<EmployeeSearchModel[]>([]);
@@ -18,6 +34,10 @@ export const EmployeeSearchInput = () => {
     const [search, setSearch] = useState("");
     const debouncedValue = useDebounce(search);
     const navigate = useNavigate();
+    const mergedSx: SxProps<Theme> = [
+        { minWidth: 250 },
+        ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+    ];
     const handleSearchChange = async (event: React.SyntheticEvent, value: string) => {
         setSearch(value)
     };
@@ -49,7 +69,7 @@ export const EmployeeSearchInput = () => {
     return (
         <Autocomplete
             id="employee_search"
-            sx={{ minWidth: 250 }}
+            sx={mergedSx}
             size="small"
             open={open}
             onClose={() => {
@@ -66,8 +86,9 @@ export const EmployeeSearchInput = () => {
             loading={loading}
             noOptionsText={formatMessage({ id: "MESSAGE.NO_RESULT" })}
             renderInput={(params) => (
-                <TextField
+                <AppTextField
                     {...params}
+                    autoFocus={autoFocus}
                     placeholder={formatMessage({ id: "PLACEHOLDER.SEARCH_EMP" })}
                     slotProps={{
                         input: {

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { LANGUAGE, Modules, ModulesName, ModulesTitles } from "./enums";
+import { LANGUAGE, Modules, ModulesName, ModulesTitles, Permission } from "./enums";
 import {
   ApplicationFilterModel,
   JobsFilterModel,
@@ -15,6 +15,10 @@ export interface ApiResponse {
   success: boolean;
   message: string;
   statusCode: number;
+  errorCode?: string | null;
+  resourceId?: string | null;
+  actionToken?: string | null;
+  errors?: Array<{ field: string; message: string }>;
 }
 
 export interface CreatePasswordModel {
@@ -113,6 +117,9 @@ export interface ResponseData<T> {
   success: boolean;
   totalRecords: number;
   statusCode: number;
+  errorCode?: string | null;
+  resourceId?: string | null;
+  actionToken?: string | null;
   methodResult: T;
   methodResults: T[];
 }
@@ -127,6 +134,7 @@ export interface SideBarTabListProps {
   subTabs?: Omit<SideBarTabListProps, "subTabs" | "hasSubTabs">[];
   isDefault: boolean;
   adminOnly?: boolean;
+  permission?: Permission;
 }
 
 export interface FiltersType {
@@ -154,7 +162,7 @@ export interface BaseModel {
 export interface TabModel {
   to: string;
   title: string;
-  icon: JSX.Element;
+  icon?: ReactNode | null;
   tabId: number;
   isActive?: boolean;
 }
@@ -189,3 +197,4 @@ export interface DateRangeFilter {
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
 export type GetUserDetailsResponseData = ResponseData<UserModel>;
+

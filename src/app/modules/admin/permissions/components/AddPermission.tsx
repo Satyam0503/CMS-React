@@ -1,18 +1,16 @@
 import {
   Box,
   Card,
-  Checkbox,
   Divider,
   FormControlLabel,
   FormGroup,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { useEffect, useState } from "react";
 import { Check } from "@mui/icons-material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { addEditRole, getAllModulePermission } from "../../adminservices";
 import {
   ModulePermissoinModel,
@@ -25,6 +23,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { usePageData } from "../../../../Context/PageDataProvider";
 
+import { AppCheckbox, AppTextField } from "../../../../shared/components/ui";
 const initialValues = {
   description: "",
   roleTitle: "",
@@ -140,14 +139,14 @@ export const AddPermission = () => {
         className="flex-grow-1 d-flex flex-column gap-4"
       >
         <Stack spacing={2}>
-          <TextField
+          <AppTextField
             fullWidth
             required
             label={formatMessage({ id: "ROLE.NAME" })}
             error={formik.touched.roleTitle && Boolean(formik.errors.roleTitle)}
             {...formik.getFieldProps("roleTitle")}
           />
-          <TextField
+          <AppTextField
             fullWidth
             required
             multiline
@@ -196,7 +195,7 @@ export const AddPermission = () => {
                                   key={permission.modulePermissionId}
                                   value={permission.modulePermissionId}
                                   control={
-                                    <Checkbox
+                                    <AppCheckbox
                                       onChange={(e) => {
                                         handlePermissionChange(
                                           permission,

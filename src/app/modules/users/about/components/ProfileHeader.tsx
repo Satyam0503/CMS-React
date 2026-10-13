@@ -8,7 +8,7 @@ import IconStat from "../../../../shared/components/IconStat";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { useUserDetails } from "../../UserDataProvider";
 import { useIntl } from "react-intl";
-import dayjs from "dayjs";
+import { getYearsAtCurrentCompany } from "./profileHeaderUtils";
 
 export const ProfileHeader = () => {
   const companyName = useAppSelector((state) => state.user.userData?.companyName);
@@ -16,11 +16,11 @@ export const ProfileHeader = () => {
   const { formatMessage: i } = useIntl();
   const theme = useTheme();
   const experience = userDetails.totalWorkExperience ? (userDetails.totalWorkExperience / 12).toFixed(1) : 0;
-  const totalYearAtCurrentCompany = dayjs().diff(userDetails.dateOfJoining, "years");
+  const totalYearAtCurrentCompany = getYearsAtCurrentCompany(userDetails.dateOfJoining);
 
   return (
-    <Grid container spacing={1}>
-      <Grid size={{ xs: 12, sm: 4 }}>
+    <Grid container spacing={2}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.secondary.lighter}
           icon={<CalendarMonth fontSize="large" />}
@@ -29,7 +29,7 @@ export const ProfileHeader = () => {
           title={i({ id: "PROFILE.PI.YOE" }, { years: experience })}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.primary.lighter}
           icon={<CorporateFareOutlined fontSize="large" />}
@@ -38,7 +38,7 @@ export const ProfileHeader = () => {
           title={i({ id: "PROFILE.PI.TOTAL_YEAR" }, { years: totalYearAtCurrentCompany, companyName })}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
         <IconStat
           iconBg={theme.vars?.palette.secondary.lighter}
           icon={<Build fontSize="large" />}

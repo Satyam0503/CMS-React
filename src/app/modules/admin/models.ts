@@ -57,7 +57,14 @@ export type CompanyModel = {
   primaryContact: string;
   country: string;
   companyId?: string;
+  careerSlug?: string;
+  publicCompanyCode?: string;
+  employeeIdPrefix?: string;
+  autoGenerateEmployeeId?: boolean;
+  careerPortalEnabled?: boolean;
+  formerEmployeePortalEnabled?: boolean;
   address: string;
+  appTheme?: "glass" | "slate" | "dawn" | "blush";
 };
 
 export type JobTitleResponseModel = Pick<
@@ -65,10 +72,11 @@ export type JobTitleResponseModel = Pick<
   "isActive" | "titles"
 > & {
   jobTitleId?: string;
+  departmentId?: string;
 };
 export type JobTitleRequestModel = Pick<
   JobTitleResponseModel,
-  "isActive" | "jobTitleId"
+  "isActive" | "jobTitleId" | "departmentId"
 > & {
   titles: MultilingualModel[];
 };
@@ -102,6 +110,7 @@ export type CompanyInfoModel = BaseModel & CompanyModel;
 
 export type OutletContextType = {
   updateAttribute: (attribute: CompanyCustomAttributeModel) => void;
+  removeAttribute: (customAttributeId: string) => void;
 };
 
 export type GetAllRolesResponseData = ResponseData<RoleModel>;

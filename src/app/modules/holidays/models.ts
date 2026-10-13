@@ -33,6 +33,8 @@ export type CalendarItem = {
   imageUrl: string | null;
   recurring: boolean;
   image?: File | null;
+  targetUserIds?: string[] | null;
+  restrictToTargetUsersAndHrAdmin?: boolean;
 };
 
 export interface HolidayFilterModel {
@@ -54,3 +56,5 @@ export type HolidayModel = {
 
 export type GetAllCalendarItemData = ResponseData<CalendarItem>;
 export type AddHolidayResponseData = ResponseData<OccasionModel>;
+
+export type CalendarImportItem = { name: string; date: string; type: 1 | 2 };

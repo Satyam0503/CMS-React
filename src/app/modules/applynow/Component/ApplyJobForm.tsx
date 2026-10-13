@@ -1,15 +1,13 @@
 import React from "react";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import {
+  CustomisedModal } from "../../../shared/components/C_Modal";
 import { CloudUpload } from "@mui/icons-material";
 import {
   Typography,
-  TextField,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
   Autocomplete,
-  Button,
 } from "@mui/material";
 import { Grid, Stack } from "@mui/system";
 import { Formik } from "formik";
@@ -18,12 +16,12 @@ import {
   indianStates,
 } from "../../../../utils/constant/Constant";
 import { applicantValidationSchema } from "../../../../utils/Schema/applicantValidationSchema";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { toast } from "react-toastify";
 import { ApplicantModel, JobModal } from "../../recruitment/models";
-import { uploadResume } from "../../recruitment/services";
+import { uploadApplicationResume } from "../services";
 import { applyNow } from "../services";
 import { ApplicantStatus, ApplicationStatus } from "../../../../utils/enums";
 import { useIntl } from "react-intl";
@@ -31,6 +29,7 @@ import { VisuallyHiddenInput } from "../../../shared/components/form-component/V
 import { AxiosError } from "axios";
 import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 
+import { AppButton, AppSelect, AppTextField } from "../../../shared/components/ui";
 const initialValues: ApplicantModel = {
   applicantId: "",
   firstName: "",
@@ -80,7 +79,8 @@ export default function ApplyJobForm(props: Props) {
     try {
       const { data } = await applyNow(payload);
       if (!data.success) throw new Error(String(data.statusCode));
-      const uploadResumeResponse = await uploadResume(values.email, formData);
+      if (!data.resourceId || !data.actionToken) throw new Error("The application upload token was not returned.");
+      const uploadResumeResponse = await uploadApplicationResume(data.resourceId, data.actionToken, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) throw new Error(String(responseData.statusCode));
       toast.success(i({ id: "TOAST.SUCCESS.APPLICATION_SUBMITTED" }));
@@ -136,7 +136,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.FIRST_NAME",
@@ -152,7 +152,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.LAST_NAME",
@@ -168,7 +168,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({ id: "FORM.PHONE" })}
                     error={touched.phone && Boolean(errors.phone)}
@@ -182,7 +182,7 @@ export default function ApplyJobForm(props: Props) {
                     sm: 6,
                   }}
                 >
-                  <TextField
+                  <AppTextField
                     fullWidth
                     label={i({
                       id: "FORM.EMAIL",
@@ -204,7 +204,7 @@ export default function ApplyJobForm(props: Props) {
                       {i({ id: "JOB.POSITION" })}
                     </InputLabel>
 
-                    <Select
+                    <AppSelect
                       label={i({
                         id: "JOB.POSITION",
                       })}
@@ -232,7 +232,7 @@ export default function ApplyJobForm(props: Props) {
                           {jobPosition.title}
                         </MenuItem>
                       ))}
-                    </Select>
+                    </AppSelect>
                   </FormControl>
                   {touched.vacancyId && errors.vacancyId && (
                     <ErrorLabel errorLabel={errors.vacancyId} />
@@ -270,7 +270,7 @@ export default function ApplyJobForm(props: Props) {
                       setFieldValue("state", value?.value);
                     }}
                     renderInput={(param) => (
-                      <TextField {...param} label={"Select State"} />
+                      <AppTextField {...param} label={"Select State"} />
                     )}
                     getOptionLabel={(option) => option.label}
                   />
@@ -285,7 +285,7 @@ export default function ApplyJobForm(props: Props) {
               </Typography>
 
               <Stack className="p-6  align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
-                <Button
+                <AppButton
                   component="label"
                   role={undefined}
                   variant="contained"
@@ -302,7 +302,7 @@ export default function ApplyJobForm(props: Props) {
                       handleFileChange(e, setFieldValue);
                     }}
                   />
-                </Button>
+                </AppButton>
 
                 <Typography variant="caption">
                   {`${i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })} : ${values.resume?.name ?? ""}`}
@@ -336,3 +336,4 @@ export default function ApplyJobForm(props: Props) {
     </CustomisedModal>
   );
 }
+

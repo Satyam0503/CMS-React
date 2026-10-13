@@ -104,7 +104,7 @@ export const DefaultConfig: ILayout = {
     },
     footer: {
       componentName: "footer",
-      display: true,
+      display: false,
       container: "fluid",
       containerClass:
         "d-flex flex-column flex-md-row flex-center flex-md-stack py-3",

@@ -1,4 +1,4 @@
-import { AccountBalanceWallet, DynamicFeed, EditCalendar } from "@mui/icons-material";
+import { AccountBalanceWallet, EditCalendar, HomeWork } from "@mui/icons-material";
 import { Box, Card, Stack } from "@mui/material"
 import { Outlet, useNavigate } from "react-router-dom"
 import { TabModel } from "../../../../utils/common_types";
@@ -32,6 +32,12 @@ const tabsRoutes: TabModel[] = [
         title: "LEAVE.TITLES.LEAVE_POLICIES",
         icon: <PolicyIcon />,
     },
+    {
+        tabId: 5,
+        to: "work-from-home",
+        title: "Work from home",
+        icon: <HomeWork />,
+    },
 ];
 
 export const LeaveManagementTabs = () => {
@@ -39,7 +45,17 @@ export const LeaveManagementTabs = () => {
     const navigate = useNavigate();
     return (
         <Stack spacing={1} className="flex-grow-1">
-            <Card className="tab-container d-flex flex-row">
+            <Card
+                className="tab-container d-flex flex-row"
+                sx={{
+                    minWidth: 0,
+                    gap: { xs: 0.5, sm: 0.75 },
+                    p: { xs: 0.5, sm: 0.75 },
+                    "& .tab-box": {
+                        flex: { xs: "0 0 auto", sm: "1 1 0" },
+                    },
+                }}
+            >
                 {tabsRoutes.map((tab) => {
                     return (
                         <Box
@@ -52,7 +68,7 @@ export const LeaveManagementTabs = () => {
                             sx={{ color: "text.secondary" }}
                         >
                             {tab.icon}
-                            {i({ id: tab.title })}
+                            {tab.title.startsWith("LEAVE.") ? i({ id: tab.title }) : tab.title}
                         </Box>
                     );
                 })}

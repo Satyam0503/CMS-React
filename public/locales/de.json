@@ -11,6 +11,7 @@
     "DASHBOARD": "Dashboard",
     "EMPLOYEES": "Mitarbeiter",
     "ATTENDANCE": "Anwesenheit",
+    "ATTENDANCE_SETTINGS": "Anwesenheitseinstellungen",
     "LEAVE_MANAGEMENT": "Urlaubsverwaltung",
     "MY_PROFILE": "Mein Profil",
     "RECRUITMENT": "Rekrutierung",
@@ -26,7 +27,9 @@
     "PAYROLL": "Lohnabrechnung",
     "CALENDAR": "Kalender",
     "POLICIES": "Richtlinien",
-    "PAYROLL_SETTINGS": "Gehaltsabrechnungseinstellungen"
+    "PAYROLL_SETTINGS": "Gehaltsabrechnungseinstellungen",
+    "LIFECYCLE_MANAGEMENT": "Lebenszyklusverwaltung",
+    "CAREER_PROFILE": "Karriereprofil"
   },
   "GENDER": {
     "MALE": "Männlich",
@@ -265,6 +268,7 @@
     "REGISTER": "Registrieren",
     "SIGNIN": "Anmelden",
     "T&C": "Ich akzeptiere die Allgemeinen Geschäftsbedingungen",
+    "TERMS_REQUIRED": "Ich akzeptiere die Allgemeinen Geschäftsbedingungen",
     "PASSWORD_NOTE": "Verwenden Sie mindestens 8 Zeichen, einschließlich Buchstaben, Zahlen und Symbolen.",
     "FORGOT_PASSWORD": "Passwort vergessen?",
     "FORGOT_PASSWORD.NOTE": "Geben Sie Ihre E-Mail ein, um Ihr Passwort zurückzusetzen",
@@ -893,6 +897,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Bitte wählen Sie einen Mitarbeiter aus",
     "NO_RESULT": "Kein Ergebnis",
     "NO_DEPARTMENTS": "Bitte fügen Sie Abteilungen hinzu",
+    "NO_DEPARTMENT_EMPLOYEES": "Noch keine Mitarbeiter einer Abteilung zugewiesen",
     "ADD_LANGUAGE_TITLE": "Bitte geben Sie einen Titel für {language} ein",
     "LEAVE_DAYS_CANT_BE_ZERO": "Urlaubstage dürfen nicht 0 sein"
   },
@@ -1048,3 +1053,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Verwaltet den gesamten Einstellungsprozess einschließlich Stellenausschreibungen, Bewerbungen, Interviewphasen, Bewertungen und detaillierter Prozessprotokolle. Bietet vollständige Transparenz über den Rekrutierungsfortschritt, durchgeführte Maßnahmen und Einstellungsentscheidungen zur Optimierung der Talentakquise."
   }
 }
+

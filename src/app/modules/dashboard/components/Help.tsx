@@ -1,8 +1,8 @@
 import { Stack, Typography, Grid } from "@mui/material";
 import { useIntl } from "react-intl";
 import { Message } from "@mui/icons-material";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import CustomisedButton from "../../../shared/components/C_Button";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 
 export default function Help() {
@@ -37,6 +37,7 @@ export default function Help() {
                 variant="contained"
                 label="Contact"
                 Icon={<Message />}
+                handleClick={() => window.open("https://codeji.in/contact-us/", "_blank", "noopener,noreferrer")}
               />
             </Stack>
           </Grid>

@@ -2,24 +2,25 @@ import {
   Box,
   Card,
   FormControl,
-  InputLabel,
   MenuItem,
-  Select,
   Stack,
-  TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 import { AddNewAttributeItem } from "./AddNewAttributeItem";
 import { AttributeItemRow, ReqProps } from "./AttributeItemRow";
 import { languages } from "../../../../../utils/constant/Constant";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../../Redux/hooks";
-import { Add } from "@mui/icons-material";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { Add, DeleteOutline } from "@mui/icons-material";
 import { AttributeTitleRow } from "./AttributeTitleRow";
 import { v4 as uuidv4 } from "uuid";
+import { LANGUAGE } from "../../../../../utils/enums";
 
+import { AppIconButton, AppSelect, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
   isDefaultAttribute?: boolean;
   attributeName: string;
@@ -31,6 +32,10 @@ interface Props<T> {
     attributeTitle?: Record<string, string>
   ) => Promise<void>;
   handleDeleteAttribute: (id: string) => Promise<void>;
+  onDeleteCustomAttribute?: () => void;
+  selectField?: keyof T;
+  selectLabel?: string;
+  selectOptions?: Array<{ value: string; label: string }>;
 }
 
 export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
@@ -41,21 +46,31 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
     keyName,
     handleAttributeUpdate,
     handleDeleteAttribute,
+    onDeleteCustomAttribute,
     attributeTitle,
+    selectField,
+    selectLabel,
+    selectOptions,
   } = props;
 
   const { formatMessage: i } = useIntl();
-  const applicationLanguage = useAppSelector(
-    (state) => state.user.userData?.applicationLanguage ?? []
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
   );
-  const currentLanguage = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
-  );
-  const [translationLang, setTranslationLang] = useState<string>(
-    applicationLanguage.find((lang) => lang !== currentLanguage) ?? ""
-  );
+  const currentLanguage = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
+  // Translation is opt-in. Rendering an empty second column was misleading and
+  // made the language selector appear to have no effect.
+  const [translationLang, setTranslationLang] = useState<string>("");
+  // Keep the two visible language columns distinct when the app language changes.
+  useEffect(() => {
+    if (translationLang && translationLang === currentLanguage) {
+      setTranslationLang("");
+    }
+  }, [currentLanguage, translationLang]);
   const [itemsList, setItemsList] = useState<T[]>([]);
   const [newItemsList, setNewItemsList] = useState<T[]>([]);
+  const itemsRef = useRef<T[]>([]);
+  const newItemsRef = useRef<T[]>([]);
   const [newItemIds, setNewItemIds] = useState<string[]>([]);
   const [title, setTitle] = useState<Record<string, string>>({});
   const [initialAttributeValue, setInitialAttributeValue] = useState<T[]>([]);
@@ -74,25 +89,23 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   const UpdateExistingItemData = (updatedItem: T) => {
     if (updatedItem[keyName]) {
-      setItemsList(
-        itemsList.map((item) => {
-          if (item[keyName] === updatedItem[keyName]) {
-            return updatedItem;
-          }
-          return item;
-        })
-      );
+      const updated = itemsList.map((item) => (item[keyName] === updatedItem[keyName] ? updatedItem : item));
+      itemsRef.current = updated;
+      setItemsList(updated);
     } else {
-      setItemsList([...itemsList, updatedItem]);
+      const updated = [...itemsList, updatedItem];
+      itemsRef.current = updated;
+      setItemsList(updated);
     }
   };
 
   const UpdateNewItemsList = (list: T[]) => {
+    newItemsRef.current = list;
     setNewItemsList(list);
   };
 
   const handleUpdate = async () => {
-    const allItems = [...newItemsList, ...itemsList];
+    const allItems = [...newItemsRef.current, ...itemsRef.current];
     allItems.forEach(item => delete item.newItemKey);
 
     const shouldUpdate = allItems.length > 0 || Object.keys(title).length > 0;
@@ -103,8 +116,25 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
       } else {
         await handleAttributeUpdate(allItems, title);
       }
+
+      // Default attributes are self-contained. A custom attribute is reloaded
+      // by its parent after saving so that generated IDs, translations, and the
+      // persisted state replace the temporary draft.
+      if (!isDefaultAttribute) {
+        return;
+      }
+
+      const savedItems = structuredClone(allItems);
+      itemsRef.current = savedItems;
+      newItemsRef.current = [];
+      setItemsList(savedItems);
+      setInitialAttributeValue(structuredClone(savedItems));
+      setNewItemsList([]);
+      setNewItemIds([]);
+      if (!isDefaultAttribute) {
+        initialAttributeTitle.current = structuredClone(title);
+      }
     }
-    handleReset();
   };
 
 
@@ -114,12 +144,19 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   useEffect(() => {
     if (attributeData?.length) {
-      setItemsList(structuredClone(attributeData));
-      setInitialAttributeValue(structuredClone(attributeData));
+      const persistedItems = structuredClone(attributeData);
+      itemsRef.current = persistedItems;
+      newItemsRef.current = [];
+      setItemsList(persistedItems);
+      setInitialAttributeValue(structuredClone(persistedItems));
+      setNewItemsList([]);
       setNewItemIds([]);
     } else {
+      itemsRef.current = [];
+      newItemsRef.current = [];
       const id = uuidv4();
       setItemsList([]);
+      setNewItemsList([]);
       setNewItemIds([id]);
     }
   }, [attributeData]);
@@ -133,39 +170,49 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
 
   return (
     <Stack spacing={1} className="flex-grow-1">
-      <Card className="p-6 p-lg-10 py-8 d-flex flex-row gap-6 align-items-center">
+      <Card className="p-4 p-lg-6 py-4 d-flex flex-row gap-3 align-items-center">
         <Typography variant="h6">
           {i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.NAME" }) + ":"}
         </Typography>
-        <TextField
+        <AppTextField
           variant="outlined"
           value={attributeName}
           disabled={true}
           placeholder={i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.NAME" })}
         />
       </Card>
-      <Card className="p-6 p-lg-10 d-flex flex-column gap-8 flex-grow-1">
+      <Card className="p-4 p-lg-6 d-flex flex-column gap-4 flex-grow-1">
         <Stack
-          direction="row"
-          className="justify-content-end align-items-center flex-wrap gap-4"
+          direction={{ xs: "column", sm: "row" }}
+          className="justify-content-end align-items-stretch align-items-sm-center gap-3"
         >
-          <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel id="language-translation">
-              {i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" })}
-            </InputLabel>
-
-            <Select
-              label={i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" })}
-              labelId="language-translation"
+          <FormControl size="small" sx={{ minWidth: { xs: "100%", sm: 250 } }}>
+            <AppSelect
+              inputProps={{
+                "aria-label": i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" }),
+              }}
               variant="outlined"
+              displayEmpty
               value={translationLang}
               onChange={(e) => setTranslationLang(e.target.value)}
-              disabled={applicationLanguage.length <= 1}
+              renderValue={(selected) => {
+                const selectedLanguage = selected as string;
+                const language = languages.find((lang) => lang.lang === selectedLanguage);
+
+                return language
+                  ? i({ id: language.name })
+                  : i({ id: "COMPANY_MASTER.SELECT_TRAN_LANG" });
+              }}
+              sx={{
+                borderRadius: 2,
+                "& .MuiSelect-select": {
+                  color: translationLang ? "text.primary" : "text.secondary",
+                },
+              }}
             >
               {languages
                 .filter(
                   (lang) =>
-                    applicationLanguage.includes(lang.lang) &&
                     lang.lang !== currentLanguage
                 )
                 .map((lang) => {
@@ -175,7 +222,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                     </MenuItem>
                   );
                 })}
-            </Select>
+            </AppSelect>
           </FormControl>
         </Stack>
         {!isDefaultAttribute && (
@@ -188,7 +235,7 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
           </Box>
         )}
         <Stack className="attribute-container">
-          <Box className="attribute-row">
+          <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
             <Typography variant="body1" className="fw-bolder">
               {i(
                 { id: "COMPANY_MASTER.TITLE" },
@@ -200,9 +247,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                 }
               )}
             </Typography>
-            <Typography variant="body1" className="fw-bolder">
-              {Boolean(translationLang) &&
-                i(
+            {translationLang && <Typography variant="body1" className="fw-bolder">
+              {i(
                   { id: "COMPANY_MASTER.TITLE2" },
                   {
                     language: i({
@@ -212,7 +258,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
                     }),
                   }
                 )}
-            </Typography>
+            </Typography>}
+            {selectField && <Typography variant="body1" className="fw-bolder">{selectLabel}</Typography>}
             <Typography variant="body1" className="fw-bolder">
               {i({ id: "STATUS" })}
             </Typography>
@@ -226,6 +273,9 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
               translationLanguage={translationLang}
               keyName={keyName}
               handleDeleteAttribute={handleDeleteAttribute}
+              canDelete={!isDefaultAttribute}
+              selectField={selectField}
+              selectOptions={selectOptions}
             />
           ))}
           {newItemIds.map((item) => (
@@ -235,6 +285,8 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
               newItemKey={item}
               newItemsList={newItemsList}
               setNewItemList={UpdateNewItemsList}
+              selectField={selectField}
+              selectOptions={selectOptions}
             />
           ))}
           <span
@@ -252,6 +304,17 @@ export const AttributeTable = <T extends ReqProps>(props: Props<T>) => {
             direction={"row"}
             sx={{ justifyContent: "flex-end", mt: 3, flexShrink: 0 }}
           >
+            {onDeleteCustomAttribute && (
+              <Tooltip title="Delete custom attribute">
+                <AppIconButton
+                  color="error"
+                  aria-label="Delete custom attribute"
+                  onClick={onDeleteCustomAttribute}
+                >
+                  <DeleteOutline />
+                </AppIconButton>
+              </Tooltip>
+            )}
             <CustomisedButton
               variant="outlined"
               label={i({ id: "BUTTON.CANCEL" })}

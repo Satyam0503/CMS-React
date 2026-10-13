@@ -1,18 +1,20 @@
-import { EmployeeFilterModel } from "../models";
-import { FC, useEffect, useState } from "react";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
-import { useAppDispatch, useAppSelector } from "../../../Redux/hooks";
+import {
+  EmployeeFilterModel } from "../models";
+import { FC,
+  useEffect,
+  useState } from "react";
+import CustomisedButton from "../../../shared/components/C_Button";
+import { useAppDispatch,
+  useAppSelector } from "../../../Redux/hooks";
 import { setEmployeesFilter } from "../../../Redux/Reducers/filterSlice";
-import { getAllDepartmentInfo } from "../../dashboard/dashboardservices";
+import { getDirectoryDepartments } from "../employeeServices";
 import { useFormik } from "formik";
 
 import {
   Autocomplete,
-  Checkbox,
   Chip,
   ListItemText,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 
@@ -24,16 +26,44 @@ import { FilterComponentProps } from "../../../../utils/common_types";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DepartmentResponseModel } from "../../dashboard/model";
 import { LANGUAGE } from "../../../../utils/enums";
+import { canAccessHrManagement } from "../../../../utils/common";
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 export const initialFilterValues: EmployeeFilterModel = {
   departmentId: [],
   gender: [],
+  employmentStatus: "Active",
+  availabilityStatus: "",
 };
+
+const employmentStatusOptions = [
+  { value: "Active", label: "Active" },
+  { value: "NoticePeriod", label: "Notice period" },
+  { value: "ExEmployees", label: "Ex-employees" },
+] as const;
+
+const availabilityStatusOptions = [
+  { value: "", label: "All availability" },
+  { value: "Working", label: "Working" },
+  { value: "AnnualLeave", label: "Annual leave" },
+  { value: "SickLeave", label: "Sick leave" },
+  { value: "MedicalLeave", label: "Medical leave" },
+  { value: "SickMedicalLeave", label: "Sick / medical leave" },
+  { value: "MaternityLeave", label: "Maternity leave" },
+  { value: "PaternityLeave", label: "Paternity leave" },
+  { value: "Sabbatical", label: "Sabbatical" },
+  { value: "LongTermLeave", label: "Long-term leave" },
+  { value: "AdministrativeLeave", label: "Administrative leave" },
+  { value: "UnauthorizedAbsence", label: "Unauthorized absence" },
+  { value: "AbscondingUnderReview", label: "Absconding under review" },
+  { value: "Suspended", label: "Suspended" },
+] as const;
 
 export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage } = useIntl();
   const dispatch = useAppDispatch();
   const [deptList, setDeptList] = useState<DepartmentResponseModel[]>([]);
+  const [departmentLoadFailed, setDepartmentLoadFailed] = useState(false);
   const appliedEmpFilters = useAppSelector(state => state.filters.employee);
   const { values, handleSubmit, setFieldValue } =
     useFormik({
@@ -47,17 +77,26 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
     });
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage) ?? LANGUAGE.ENGLISH;
+  const canFilterEmploymentStatus = canAccessHrManagement(
+    useAppSelector((state) => state.user.userData?.roleType),
+  );
 
   useEffect(() => {
     const getAllDepartments = async () => {
       try {
-        const response = await getAllDepartmentInfo();
+        const response = await getDirectoryDepartments();
         const { success, methodResults } = response.data;
         if (success) {
           setDeptList(methodResults);
+          setDepartmentLoadFailed(false);
+        } else {
+          setDepartmentLoadFailed(true);
         }
       } catch (error) {
-        console.log((error as Error).message);
+        // An empty list is a valid tenant state.  Authorization/network failures are
+        // deliberately visible to the user rather than being mistaken for no departments.
+        console.error("Unable to load Employee Directory departments.", error);
+        setDepartmentLoadFailed(true);
       }
     };
     getAllDepartments();
@@ -88,12 +127,12 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             }}
             getOptionLabel={(option) => option.label[currentLanguage] || option.label[defaultLanguage]}
             renderInput={(params) => (
-              <TextField {...params} placeholder={formatMessage({ id: "FORM.DEPARTMENT" })} />
+              <AppTextField {...params} placeholder={formatMessage({ id: "FORM.DEPARTMENT" })} />
             )}
             renderOption={(props, option, state) => {
               return (
                 <li {...props}>
-                  <Checkbox
+                  <AppCheckbox
                     key={option.departmentId}
                     checked={state.selected}
                     sx={{ mr: 1 }}
@@ -103,6 +142,11 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
               );
             }}
           />
+          {departmentLoadFailed && (
+            <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+              Unable to load departments. Please refresh and try again.
+            </Typography>
+          )}
         </Stack>
         <Stack sx={{ mt: 1 }}>
           <Typography variant="caption">
@@ -125,12 +169,12 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             }}
             getOptionLabel={(option) => option.label}
             renderInput={(params) => (
-              <TextField {...params} placeholder={formatMessage({ id: "FORM.GENDER" })} />
+              <AppTextField {...params} placeholder={formatMessage({ id: "FORM.GENDER" })} />
             )}
             renderOption={(props, option, state) => {
               return (
                 <li {...props}>
-                  <Checkbox
+                  <AppCheckbox
                     key={option.id}
                     checked={state.selected}
                     sx={{ mr: 1 }}
@@ -157,7 +201,58 @@ export const EmployeeFilter: FC<FilterComponentProps> = (props) => {
             )}
           />
         </Stack>
-
+        {canFilterEmploymentStatus && (
+          <Stack sx={{ mt: 1 }}>
+            <Typography variant="caption">Employment status</Typography>
+            <Autocomplete
+              size="small"
+              id="employment-status-dropdown"
+              options={employmentStatusOptions}
+              value={employmentStatusOptions.find(
+                (option) => option.value === (values.employmentStatus ?? "Active"),
+              ) ?? employmentStatusOptions[0]}
+              onChange={(_, selectedStatus) => {
+                setFieldValue("employmentStatus", selectedStatus?.value ?? "Active");
+              }}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <AppTextField
+                  {...params}
+                  placeholder="Employment status"
+                  helperText={values.employmentStatus === "ExEmployees"
+                    ? "Shows resigned, terminated, retired, contract-ended and deceased employees. Click Apply to load results."
+                    : "Select a status, then click Apply to update the employee list."}
+                  FormHelperTextProps={{ sx: { mx: 0, lineHeight: 1.35 } }}
+                />
+              )}
+            />
+          </Stack>
+        )}
+        {canFilterEmploymentStatus && (
+          <Stack sx={{ mt: 1 }}>
+            <Typography variant="caption">Availability status</Typography>
+            <Autocomplete
+              size="small"
+              id="availability-status-dropdown"
+              options={availabilityStatusOptions}
+              value={availabilityStatusOptions.find(
+                (option) => option.value === (values.availabilityStatus ?? ""),
+              ) ?? availabilityStatusOptions[0]}
+              onChange={(_, selectedStatus) => {
+                setFieldValue("availabilityStatus", selectedStatus?.value ?? "");
+              }}
+              getOptionLabel={(option) => option.label}
+              renderInput={(params) => (
+                <AppTextField
+                  {...params}
+                  placeholder="Availability status"
+                  helperText="Filter leave, absence and temporary availability states."
+                  FormHelperTextProps={{ sx: { mx: 0, lineHeight: 1.35 } }}
+                />
+              )}
+            />
+          </Stack>
+        )}
         <Stack
           direction={"row"}
           spacing={2}

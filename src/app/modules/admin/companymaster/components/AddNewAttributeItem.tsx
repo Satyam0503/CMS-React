@@ -1,16 +1,22 @@
-import { useState } from "react";
-import { Box, Switch, TextField } from "@mui/material";
-import { useAppSelector } from "../../../../Redux/hooks";
+import {
+  useState } from "react";
+import { Box, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { ReqProps } from "./AttributeItemRow";
 import { toast } from "react-toastify";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper } from "../../../../../utils/common";
+import { LANGUAGE } from "../../../../../utils/enums";
+import { normalizeAppLanguage } from "../../../../../_themes/i18n/languageUtils";
+import { useAppSelector } from "../../../../Redux/hooks";
 
+import { AppSelect, AppSwitch, AppTextField } from "../../../../shared/components/ui";
 interface Props<T> {
   translationLang: string;
   newItemKey: string;
   newItemsList: T[];
   setNewItemList: (items: T[]) => void;
+  selectField?: keyof T;
+  selectOptions?: Array<{ value: string; label: string }>;
 }
 
 const AddNewAttributeItem = <T extends ReqProps>({
@@ -18,6 +24,8 @@ const AddNewAttributeItem = <T extends ReqProps>({
   newItemKey,
   newItemsList,
   setNewItemList,
+  selectField,
+  selectOptions,
 }: Props<T>) => {
   const [newAttributeValue, setNewAttributeValue] = useState<T>({
     isActive: true,
@@ -25,9 +33,10 @@ const AddNewAttributeItem = <T extends ReqProps>({
     titles: {},
   } as T);
   const { formatMessage: i } = useIntl();
-  const currentLang = useAppSelector(
-    (state) => state.user.userData?.defaultLanguage ?? ""
+  const defaultCompanyLanguage = useAppSelector(
+    (state) => state.user.userData?.defaultLanguage
   );
+  const currentLang = normalizeAppLanguage(defaultCompanyLanguage) ?? LANGUAGE.ENGLISH;
   const [error, setError] = useState(false);
   const translationLanguageTitle = newAttributeValue.titles[translationLang] ?? "";
   const currentLanguageTitle = newAttributeValue.titles[currentLang] ?? "";
@@ -111,23 +120,42 @@ const AddNewAttributeItem = <T extends ReqProps>({
     );
   };
 
+  const handleSelectChange = (value: string) => {
+    if (!selectField) return;
+    const updatedItem = { ...newAttributeValue, [selectField]: value } as T;
+    setNewAttributeValue(updatedItem);
+    setNewItemList(newItemsList.map((item) => item?.newItemKey === newAttributeValue?.newItemKey ? updatedItem : item));
+  };
+
   return (
-    <Box className="attribute-row">
-      <TextField
+    <Box className={`attribute-row${translationLang ? " attribute-row--translated" : ""}${selectField ? " attribute-row--department" : ""}`}>
+      <AppTextField
         value={currentLanguageTitle}
         onChange={handleChange}
         name={currentLang}
         onBlur={validateAndUpdateNewItemData}
         error={Boolean(error)}
       />
-      <TextField
-        disabled={!translationLang}
+      {translationLang && <AppTextField
         value={translationLanguageTitle}
         onChange={handleChange}
         name={translationLang}
         onBlur={validateAndUpdateNewItemData}
-      />
-      <Switch
+      />}
+      {selectField && (
+        <FormControl fullWidth size="small">
+          <InputLabel id={`${String(selectField)}-new-label`}>Department</InputLabel>
+          <AppSelect
+            labelId={`${String(selectField)}-new-label`}
+            label="Department"
+            value={(newAttributeValue[selectField] as string) ?? ""}
+            onChange={(event) => handleSelectChange(event.target.value)}
+          >
+            {selectOptions?.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+          </AppSelect>
+        </FormControl>
+      )}
+      <AppSwitch
         checked={newAttributeValue.isActive}
         onChange={(_, checked) => handleSwitchChange(checked)}
       />

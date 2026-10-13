@@ -23,17 +23,14 @@ import {
   ACCURAL_PERIOD,
   CALENDAR_ITEM,
 } from "./enums";
-import {
-  APP_FILTER_KEY,
-  I18N_CONFIG_KEY,
-  SideBarTabList,
-} from "./constant/Constant";
+import { APP_FILTER_KEY, I18N_CONFIG_KEY } from "./constant/data";
+import { SideBarTabList } from "./constant/sidebarMenu";
 import { NotificationModel } from "../app/modules/users/models";
 import { NavigateFunction } from "react-router-dom";
 import { MultilingualModel } from "../app/modules/admin/models";
 import { IntlShape } from "react-intl";
 import { NoticeBoardFilterModel } from "../app/modules/noticeboard/models";
-import { PieSeries } from "@mui/x-charts";
+import type { PieSeries } from "@mui/x-charts";
 
 export const dateFormatter = (
   date: Date | Dayjs | string | null,
@@ -43,6 +40,71 @@ export const dateFormatter = (
     return "NA";
   }
   return dayjs(date).format(format);
+};
+
+export const formatServerDate = (
+  date: Date | Dayjs | string | null | undefined,
+  format: string
+) => {
+  if (!date) {
+    return "NA";
+  }
+
+  const toIndiaDateString = (value: Date) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: INDIA_TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(value);
+    const year = parts.find((part) => part.type === "year")?.value;
+    const month = parts.find((part) => part.type === "month")?.value;
+    const day = parts.find((part) => part.type === "day")?.value;
+    return year && month && day ? `${year}-${month}-${day}` : null;
+  };
+
+  if (typeof date === "string") {
+    const normalized = date.trim();
+    const dateOnlyMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})$/);
+    if (dateOnlyMatch) {
+      return dayjs(dateOnlyMatch[1], "YYYY-MM-DD").format(format);
+    }
+
+    const midnightBusinessDateMatch = normalized.match(/^(\d{4}-\d{2}-\d{2})T00:00:00(?:\.0+)?$/);
+    if (midnightBusinessDateMatch) {
+      return dayjs(midnightBusinessDateMatch[1], "YYYY-MM-DD").format(format);
+    }
+
+    const parsed = new Date(normalized);
+    if (Number.isNaN(parsed.getTime())) {
+      return dayjs(normalized).format(format);
+    }
+
+    const indiaDate = toIndiaDateString(parsed);
+    return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(parsed).format(format);
+  }
+
+  if (date instanceof Date) {
+    const indiaDate = toIndiaDateString(date);
+    return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(date).format(format);
+  }
+
+  const value = date.toDate ? date.toDate() : new Date(String(date));
+  const indiaDate = toIndiaDateString(value);
+  return indiaDate ? dayjs(indiaDate, "YYYY-MM-DD").format(format) : dayjs(value).format(format);
+};
+
+/** CMS business timezone. Persisted timestamps stay UTC; user-facing times use IST. */
+export const INDIA_TIME_ZONE = "Asia/Kolkata";
+
+export const formatIndianTime = (date: Date | string | null | undefined) => {
+  if (!date) return "";
+  const value = new Date(date);
+  if (Number.isNaN(value.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("en-IN", { timeZone: INDIA_TIME_ZONE, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(value);
+  const hour = parts.find((part) => part.type === "hour")?.value;
+  const minute = parts.find((part) => part.type === "minute")?.value;
+  return hour && minute ? `${hour}:${minute}` : "";
 };
 
 export const currencyFormatter = (amount: number | null | undefined) => {
@@ -371,7 +433,10 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
   const ls = localStorage.getItem(I18N_CONFIG_KEY);
   if (ls) {
     try {
-      return (JSON.parse(ls) as AppLanguageProps).selectedLang;
+      const selectedLang = (JSON.parse(ls) as AppLanguageProps).selectedLang;
+      if (Object.values(LANGUAGE).includes(selectedLang as LANGUAGE)) {
+        return selectedLang as LANGUAGE;
+      }
     } catch (er) {
       console.error(er);
     }
@@ -380,7 +445,9 @@ export const getCurrentAppLanguage = (): LANGUAGE => {
 };
 
 export function setAppLanguage(lang: string) {
-  localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
+  if (Object.values(LANGUAGE).includes(lang as LANGUAGE)) {
+    localStorage.setItem(I18N_CONFIG_KEY, JSON.stringify({ selectedLang: lang }));
+  }
 }
 
 export const transformAttributeObjectToList = (
@@ -422,15 +489,19 @@ export const filterSideBarTabs = (
   userModulePermission: string[],
   userRoleType: number
 ) => {
+  // Administrators should see all sidebar tabs regardless of modulePermission entries
+  if (userRoleType === Roles.Administrator) {
+    return SideBarTabList;
+  }
+
   const filteredTabList = SideBarTabList.map((tab) => {
     if (tab.isDefault) return tab;
-    else if (tab.adminOnly)
-      return userRoleType === Roles.Administrator ? tab : null;
+    if (tab.adminOnly) return null; // non-admins can't see admin-only
     else if (tab.hasSubTabs) {
       const subTabsWithPermission = tab.subTabs?.filter((subTab) =>
         hasModuleFeaturePermission(
           subTab.constant,
-          Permission.View,
+          subTab.permission ?? Permission.View,
           userModulePermission
         )
       );
@@ -445,7 +516,7 @@ export const filterSideBarTabs = (
     if (
       hasModuleFeaturePermission(
         tab.constant,
-        Permission.View,
+        tab.permission ?? Permission.View,
         userModulePermission
       )
     ) {
@@ -456,12 +527,21 @@ export const filterSideBarTabs = (
   return filteredTabList;
 };
 
+export const canAccessHrManagement = (roleType?: number) =>
+  roleType === Roles.Administrator || roleType === Roles.HRManager || roleType === Roles.HRExecutive;
+
 
 export const getNotificationTitle = (
   notification: NotificationModel,
   intl: IntlShape
 ) => {
   const { formatMessage: i } = intl;
+  // WFH notifications carry a server-generated title but do not have a legacy
+  // translation entry, so use it instead of the generic fallback.
+  if (notification.title?.trim().startsWith("WFH")) return notification.title;
+  if (notification.targetId?.startsWith("employee-exit-")) {
+    return notification.title?.trim() || "Offboarding action requires review";
+  }
   switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE:
       return i({ id: "NOTIFICATION.TITLES.NEW_NOTICE" });
@@ -503,7 +583,14 @@ export const redirectUserToTargetUrl = (
     targetPath: "",
     data: null,
   };
-  switch (notification.notificationTypes) {
+  if (notification.targetId?.startsWith("attendance-review-")) {
+    redirectOption.targetPath = "/attendance";
+    redirectOption.data = notification.targetId.substring("attendance-review-".length);
+  } else if (notification.targetId?.startsWith("employee-exit-")) {
+    redirectOption.targetPath = `/employees/${notification.targetId.substring("employee-exit-".length)}/about`;
+  } else if (notification.title?.startsWith("WFH")) {
+    redirectOption.targetPath = "/leavemanagement/work-from-home";
+  } else switch (notification.notificationTypes) {
     case NOTIFICATION_TYPE.NOTICE: {
       redirectOption.targetPath = "/noticeboard/notices";
       redirectOption.data = notification.targetId;

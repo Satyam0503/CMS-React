@@ -5,7 +5,7 @@ import { DEFAULT_USER_AVATAR } from "../../../utils/constant/Constant";
 
 interface AvatarCellPropsTypes {
   title?: string;
-  subTitle?: null | Record<string, string>;
+  subTitle?: null | string | Record<string, string>;
   avatarSrc?: string | null;
   hasBadge?: boolean;
 }
@@ -28,10 +28,20 @@ export const AvatarCell = ({
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             variant="dot"
           >
-            <Avatar src={avatarSrc || DEFAULT_USER_AVATAR}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+            <Avatar
+              src={avatarSrc || DEFAULT_USER_AVATAR}
+              alt={`${title || "Employee"} profile photo`}
+            >
+              {title?.at(0)?.toLocaleUpperCase()}
+            </Avatar>
           </StyledBadge>
           :
-          <Avatar src={avatarSrc || DEFAULT_USER_AVATAR}>{title?.at(0)?.toLocaleUpperCase()}</Avatar>
+          <Avatar
+            src={avatarSrc || DEFAULT_USER_AVATAR}
+            alt={`${title || "Employee"} profile photo`}
+          >
+            {title?.at(0)?.toLocaleUpperCase()}
+          </Avatar>
       }
       <Stack direction="column" sx={{ alignSelf: "center" }}>
         <Typography className="d-block fw-light"
@@ -40,7 +50,9 @@ export const AvatarCell = ({
         </Typography>
         {
           (subTitle !== null && subTitle !== undefined) &&
-          <Typography variant="body2">{subTitle[currentLanguage] || subTitle[defaultLang]}</Typography>
+          <Typography variant="body2">
+            {typeof subTitle === "string" ? subTitle : subTitle[currentLanguage] || subTitle[defaultLang]}
+          </Typography>
         }
       </Stack>
     </Stack>

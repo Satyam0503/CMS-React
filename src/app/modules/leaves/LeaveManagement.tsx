@@ -18,10 +18,10 @@ const LeaveManagement: FC = () => {
   }, []);
 
   return (
-    <Stack className="gap-4 flex-grow-1">
-      <Grid container spacing={2} sx={{ alignItems: "stretch" }}>
+    <Stack className="flex-grow-1" sx={{ gap: { xs: 2, md: 3 }, minWidth: 0 }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ alignItems: "stretch", minWidth: 0 }}>
         <Grid
-          sx={{ display: "flex" }}
+          sx={{ display: "flex", minWidth: 0 }}
           size={{
             xs: 12,
             sm: 12,
@@ -30,13 +30,13 @@ const LeaveManagement: FC = () => {
           <LeaveRequestSummaryChart />
         </Grid>
         <Grid
-          sx={{ display: "flex" }}
-          size="grow"
+          sx={{ display: "flex", minWidth: 0 }}
+          size={{ xs: 12, md: 7 }}
         >
           <MonthlyLeaveTakenLineChart />
         </Grid>
       </Grid>
-      <Stack className="flex-grow-1">
+      <Stack className="flex-grow-1" sx={{ minWidth: 0 }}>
         <LeaveManagementRoutes />
       </Stack>
     </Stack>

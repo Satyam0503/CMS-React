@@ -1,7 +1,6 @@
 import {
   Box,
   Card,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -14,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Delete, Edit, MoreVertOutlined } from "@mui/icons-material";
 import FolderIcon from "@mui/icons-material/Folder";
 import { useIntl } from "react-intl";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -31,6 +30,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { PolicySkeleton } from "./PolicySkeleton";
 
+import { AppIconButton } from "../../../shared/components/ui";
 type Props = {
   addingPolicyFolder: boolean;
   handleCloseCreatePolicy: () => void;
@@ -184,7 +184,7 @@ export default function PoliciesFoldersListing(props: Props) {
                     : policy.policyName}
                 </Typography>
                 {hasPolicyEditPermission && (
-                  <IconButton
+                  <AppIconButton
                     id="policy-action-button"
                     onClick={(e) => {
                       handleActionButtonClick(e, policy);
@@ -192,7 +192,7 @@ export default function PoliciesFoldersListing(props: Props) {
                     }}
                   >
                     <MoreVertOutlined />
-                  </IconButton>
+                  </AppIconButton>
                 )}
               </Grid>
             ))

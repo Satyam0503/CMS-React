@@ -1,7 +1,7 @@
 import { Check, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material"
 import { Grid, Stack, InputAdornment } from "@mui/material"
-import CustomisedButton from "../../../../shared/components/CustomisedButton"
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal"
+import CustomisedButton from "../../../../shared/components/C_Button"
+import { CustomisedModal } from "../../../../shared/components/C_Modal"
 import { useIntl } from "react-intl"
 import { toAbsoluteUrl } from "../../../../../_themes/helpers"
 import { useState } from "react"
@@ -13,6 +13,7 @@ import { TextInput } from "../../../../shared/components/form-component/TextInpu
 import { toast } from "react-toastify"
 import { getStatusCodeString } from "../../../../../utils/common"
 import { PasswordStrenghtMeter } from "../../../../shared/components/form-component/PasswordStrengthMeter"
+import { AppIconButton, passwordVisibilityButtonSx } from "../../../../shared/components/ui"
 
 type PropsType = {
     open: boolean,
@@ -89,14 +90,16 @@ export const PasswordResetModel = ({ open, handleClose }: PropsType) => {
                                         label={i({ id: "AUTH.OLD_PASSWORD" })}
                                         placeholder={i({ id: "AUTH.OLD_PASSWORD" })}
                                         name="oldPassword"
-                                        type="text"
+                                        type={showPassword ? "text" : "password"}
+                                        InputProps={{ endAdornment: <InputAdornment position="end"><AppIconButton type="button" sx={passwordVisibilityButtonSx} aria-label={showPassword ? "Hide passwords" : "Show passwords"} onMouseDown={(event) => event.preventDefault()} onClick={handleClickShowPassword}>{showPassword ? <VisibilityOffOutlined fontSize="small" /> : <VisibilityOutlined fontSize="small" />}</AppIconButton></InputAdornment> }}
                                     />
                                     <Stack spacing={1}>
                                         <TextInput
                                             label={i({ id: "AUTH.NEW_PASSWORD" })}
                                             placeholder={i({ id: "AUTH.NEW_PASSWORD" })}
                                             name="newPassword"
-                                            type="password"
+                                            type={showPassword ? "text" : "password"}
+                                            InputProps={{ endAdornment: <InputAdornment position="end"><AppIconButton type="button" sx={passwordVisibilityButtonSx} aria-label={showPassword ? "Hide passwords" : "Show passwords"} onMouseDown={(event) => event.preventDefault()} onClick={handleClickShowPassword}>{showPassword ? <VisibilityOffOutlined fontSize="small" /> : <VisibilityOutlined fontSize="small" />}</AppIconButton></InputAdornment> }}
                                         />
                                         <PasswordStrenghtMeter password={formik.values.newPassword} />
                                     </Stack>
@@ -107,15 +110,7 @@ export const PasswordResetModel = ({ open, handleClose }: PropsType) => {
                                         type={showPassword ? "text" : "password"}
                                         name="confirmPassword"
                                         InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="end" className="pointer-cursor" >
-                                                    {showPassword ? (
-                                                        <VisibilityOutlined onClick={handleClickShowPassword} />
-                                                    ) : (
-                                                        <VisibilityOffOutlined onClick={handleClickShowPassword} />
-                                                    )}
-                                                </InputAdornment>
-                                            ),
+                                            endAdornment: <InputAdornment position="end"><AppIconButton type="button" sx={passwordVisibilityButtonSx} aria-label={showPassword ? "Hide passwords" : "Show passwords"} onMouseDown={(event) => event.preventDefault()} onClick={handleClickShowPassword}>{showPassword ? <VisibilityOffOutlined fontSize="small" /> : <VisibilityOutlined fontSize="small" />}</AppIconButton></InputAdornment>,
                                         }}
                                     />
                                     <Grid className="d-flex flex-row align-self-end gap-2 mt-2" size={12}>

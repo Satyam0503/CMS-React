@@ -26,6 +26,13 @@ export const login = async (payload: UserLoginModel) => {
   );
 };
 
+export const resendEmailVerification = async (email: string) => {
+  return postRequest<{ email: string }, ApiResponse>(
+    "api/account/resend-email-verification",
+    { email }
+  );
+};
+
 export const logoutUser = async (payload: RefreshTokenPayload) => {
   return postRequest<RefreshTokenPayload, ApiResponse>(
     ServiceUrl.LOGOUT,

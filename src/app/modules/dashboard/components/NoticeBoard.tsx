@@ -1,6 +1,6 @@
 import { Typography, Stack, Avatar, Box } from "@mui/material";
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { NoticeResponseModel } from "../../noticeboard/models";
@@ -57,7 +57,10 @@ export default function NoticeBoard() {
 
   return (
     <>
-      <CustomCard label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}>
+      <CustomCard
+        label={formatMessage({ id: "PAGE.NOTICE_BOARD" })}
+        applyMinHeight={false}
+      >
         <Stack
           className={clsx("flex-grow-1 gap-4 mt-4", {
             "justify-content-center": noticeList.length === 0,
@@ -69,16 +72,25 @@ export default function NoticeBoard() {
             </Typography>
           ) : (
             <>
-              <Stack spacing={0.8} className="flex-grow-1">
+              <Stack
+                spacing={0.8}
+                className="flex-grow-1"
+                sx={{
+                  maxHeight: { xs: 320, sm: 360 },
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  scrollbarGutter: "stable",
+                }}
+              >
                 {noticeList.map((item) => (
                   <Stack
                     key={item.noticeId}
-                    className={clsx("flex-row justify-content-between align-items-center px-2 py-1 rounded hover-secondary", { "unread-notice": !item.viewedStatus })}
+                    className={clsx("flex-row align-items-center px-2 py-1 rounded hover-secondary notice-board-row", { "unread-notice": !item.viewedStatus })}
                   >
                     <Box
                       component="div"
                       key={item.noticeId}
-                      className="d-flex flex-row align-items-center gap-2"
+                      className="d-flex flex-row align-items-center gap-2 notice-board-content"
                     >
                       <Avatar
                         src={item.userProfile || DEFAULT_USER_AVATAR}
@@ -110,7 +122,7 @@ export default function NoticeBoard() {
                       component="span"
                       sx={{
                         color: "secondary.main",
-                        mx: 2,
+                        ml: { xs: 0, sm: 1 },
                         "&:hover": {
                           color: "secondary.dark",
                         },

@@ -18,6 +18,23 @@ import { apiQueryKey } from "../app/query/queryKeys";
 let isRefreshing = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
 
+const anonymousAuthRoutes = new Set([
+  ServiceUrl.USER_LOGIN,
+  ServiceUrl.REGISTER_COMPANY,
+  ServiceUrl.REFRESH_TOKEN,
+  ServiceUrl.CREATE_NEW_PASSWORD,
+  ServiceUrl.RESET_PASSWORD,
+  "api/account/resend-email-verification",
+]);
+
+const isAnonymousAuthRoute = (url?: string) => {
+  const path = (url ?? "").split("?")[0].replace(/^\//, "");
+  // The former-employee portal authenticates with a separate one-time link or
+  // OTP session header. Its expected 401 responses must never invoke the HRMS
+  // refresh-token flow and redirect a former employee to the normal login page.
+  return anonymousAuthRoutes.has(path) || path.startsWith("api/public/former-employee/");
+};
+
 const timeout = 30000;
 
 const getAuthCacheScope = () => {
@@ -64,11 +81,12 @@ export const refreshToken = async () => {
 // using interceptors to automatically set token and current Language for each request
 instance.interceptors.request.use(
   (config) => {
+    const isAnonymousRoute = isAnonymousAuthRoute(config.url);
     const token = getLocalKey()?.token ?? "";
     config.headers["Accept-Language"] = getCurrentAppLanguage();
-    if (token) {
+    if (!isAnonymousRoute && token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else {
+    } else if (!isAnonymousRoute) {
       const cId = localStorage.getItem("clientId") || "";
       if (cId != null && cId != "") config.headers["cId"] = cId;
     }
@@ -89,6 +107,7 @@ instance.interceptors.response.use(
     if (error.response) {
       if (
         error.response.status === 401 &&
+        !isAnonymousAuthRoute(originalRequest?.url) &&
         !originalRequest?._retry &&
         !isRefreshing
       ) {
@@ -129,6 +148,7 @@ export const getRequest = <ResponseData>(
   path: string,
   config?: AxiosRequestConfig
 ) => {
+  const bypassQueryCache = config?.headers?.["Cache-Control"] === "no-cache";
   return queryClient.fetchQuery({
     queryKey: apiQueryKey(
       path,
@@ -142,11 +162,21 @@ export const getRequest = <ResponseData>(
         signal: config?.signal ?? signal,
         headers: {
           ...config?.headers,
-          "Cache-Control": "max-age=3600",
+          // Callers that display time-sensitive, token-derived data (for example
+          // an employee's own attendance) can explicitly opt out of a cached
+          // response. Preserve the default for the existing read-heavy screens.
+          "Cache-Control": config?.headers?.["Cache-Control"] ?? "max-age=3600",
         },
       }),
+    // `fetchQuery` otherwise returns a still-fresh TanStack cache entry before
+    // Axios has a chance to honour the caller's no-cache header.
+    staleTime: bypassQueryCache ? 0 : undefined,
   });
 };
+
+/** Authenticated binary download. Do not use a browser-tab URL for protected files. */
+export const getBlobRequest = (path: string) =>
+  instance.get(path, { responseType: "blob", headers: { "Cache-Control": "no-cache" } });
 
 const invalidateApiQueries = () =>
   queryClient.invalidateQueries();
@@ -165,7 +195,7 @@ export const postRequest = async <RequestData, ResponseData>(
 
   const response = await instance.post<ResponseData>(path, data, {
     ...config,
-    headers,
+    headers: { ...headers, ...config?.headers },
   });
   await invalidateApiQueries();
   return response;

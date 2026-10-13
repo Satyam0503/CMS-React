@@ -1,19 +1,16 @@
 import { useState } from "react";
 
 import {
-  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Popover,
-  Stack,
-  Typography,
+  Tooltip,
 } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import { languages } from "../../../../../utils/constant/Constant";
-import { useAppSelector } from "../../../../../app/Redux/hooks";
 import { useIntl } from "react-intl";
 import { LanguageNameMapper, } from "../../../../../utils/common";
 import { useAppLang } from "../../../../i18n/Metronici18n";
@@ -21,7 +18,6 @@ import { useAppLang } from "../../../../i18n/Metronici18n";
 const Languages = () => {
   const { currentLanguage, changeAppLanguage } = useAppLang();
   const { formatMessage } = useIntl();
-  const appLanguages = useAppSelector((state) => state.user.userData?.applicationLanguage) ?? [currentLanguage];
   const [languageAnchorEl, setLanguangeAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -41,23 +37,29 @@ const Languages = () => {
 
   const open = Boolean(languageAnchorEl);
   const id = open ? "language-popover" : undefined;
-  const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage);
+  const currentLanguageIcon = languages.find(lang => lang.lang === currentLanguage) ?? languages[0];
 
   return (
     <>
-      <Stack role="button" direction="row" className="align-items-center gap-2 mx-1 px-3 py-1" onClick={handleClick} >
-        <Typography variant="body1">{formatMessage({ id: LanguageNameMapper[currentLanguage] })}</Typography>
-        <img
-          className="rounded-circle country-flag"
-          src={currentLanguageIcon?.flag}
-          alt="countryflag"
-        />
-        <IconButton
-          className="p-0 border-0 bg-transparent"
+      <Tooltip title={formatMessage({ id: LanguageNameMapper[currentLanguage] })}>
+        <button
+          type="button"
+          className="border-0 bg-transparent d-flex align-items-center justify-content-center p-1 rounded-circle"
+          onClick={handleClick}
+          aria-describedby={id}
+          aria-haspopup="listbox"
+          aria-label={formatMessage({ id: LanguageNameMapper[currentLanguage] })}
+          aria-expanded={open}
+          style={{ width: 42, height: 32 }}
         >
-          {open ? <ArrowDropUp /> : <ArrowDropDown />}
-        </IconButton>
-      </Stack>
+          <img
+            className="rounded-circle country-flag"
+            src={currentLanguageIcon.flag}
+            alt=""
+          />
+          {open ? <ArrowDropUp fontSize="small" /> : <ArrowDropDown fontSize="small" />}
+        </button>
+      </Tooltip>
       <Popover
         id={id}
         open={open}
@@ -73,7 +75,7 @@ const Languages = () => {
         }}
       >
         <List>
-          {languages.filter(lang => appLanguages.includes(lang.lang)).map((lang) => (
+          {languages.map((lang) => (
             <ListItem disablePadding className="mb-1" key={lang.id}>
               <ListItemButton
                 onClick={() => {

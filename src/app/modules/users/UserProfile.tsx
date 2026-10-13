@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Stack } from "@mui/material";
+import { Box, Card, Grid, Stack, Typography } from "@mui/material";
 import {
   CalendarMonth,
   Person,
@@ -19,9 +19,14 @@ import { ProfileHeader } from "./about/components/ProfileHeader";
 import { Breadcrumb, useBreadcrumbs } from "react-breadcrumble";
 import { usePageData } from "../../Context/PageDataProvider";
 import { useAppSelector } from "../../Redux/hooks";
-import { hasModuleFeaturePermission } from "../../../utils/common";
-import { ModulesName, Permission } from "../../../utils/enums";
 import LeaveCalendar from "./components/LeaveCalendar";
+import { getProfileTabs } from "./profileTabs";
+import { ResignationAction } from "./components/ResignationAction";
+import { EmployeeExitCaseCard } from "./components/EmployeeExitCaseCard";
+import { EmployeeExitManagementCard } from "./components/EmployeeExitManagementCard";
+import { EmployeeOffboardingAction } from "./components/EmployeeOffboardingAction";
+import { WorkShiftCard } from "./components/WorkShiftCard";
+import { EmployeeExitQueueAction } from "./components/EmployeeExitQueueAction";
 
 const employeeBreadCrumbs: Array<Breadcrumb> = [
   {
@@ -46,6 +51,7 @@ const UserProfile = () => {
   const modulePermission = useAppSelector(
     (state) => state.user.userData?.modulePermission,
   );
+  const roleType = useAppSelector((state) => state.user.userData?.roleType);
   const userModulePermission = useMemo(
     () => modulePermission ?? [],
     [modulePermission],
@@ -56,74 +62,15 @@ const UserProfile = () => {
     setBreadcrumbs(employeeBreadCrumbs);
   }, [empId, i, setBreadcrumbs, setPageTitle]);
 
-  const isLeaveActive = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.NoticeBoard,
-        Permission.View,
-        userModulePermission,
-      ),
-    [userModulePermission],
+  const tabsRoutes = useMemo<TabModel[]>(
+    () => getProfileTabs(userModulePermission, empId, roleType),
+    [empId, roleType, userModulePermission],
   );
 
-  const tabsRoutes: TabModel[] = [
-    {
-      tabId: 1,
-      to: "about",
-      title: "PROFILE.TABS.ABOUT",
-      icon: <Person />,
-      isActive: true,
-    },
-    {
-      tabId: 2,
-      to: "leave",
-      title: "PROFILE.TABS.LEAVE_TRACKER",
-      icon: <CalendarMonth />,
-      isActive: isLeaveActive,
-    },
-    {
-      tabId: 3,
-      to: "performance",
-      title: "PROFILE.TABS.PERFORMANCE",
-      icon: <Speed />,
-      isActive: true,
-    },
-    {
-      tabId: 4,
-      to: "workhistory",
-      title: "PROFILE.TABS.WORKHISTORY",
-      icon: <WorkHistory />,
-      isActive: true,
-    },
-    {
-      tabId: 5,
-      to: "setting",
-      title: "PROFILE.TABS.SETTING",
-      icon: <Settings />,
-      isActive: true,
-    },
-  ];
-
-  const filteredTabs = tabsRoutes.filter((tab) => {
-    if (tab.to === "leave") {
-      return (
-        !empId ||
-        hasModuleFeaturePermission(
-          ModulesName.LeaveManagement,
-          Permission.View,
-          modulePermission ?? [],
-        )
-      );
-    }
-    if (tab.to === "setting") {
-      return !empId;
-    }
-    return true;
-  });
-
+  const filteredTabs = tabsRoutes;
   return (
     <UserDetailsProvider>
-      <Grid container spacing={{ xs: 2, lg: 3, xl: 2 }} className="flex-grow-1">
+      <Grid container spacing={{ xs: 2, lg: 3 }} className="flex-grow-1" sx={{ width: "100%", minWidth: 0, pb: { xs: 2, sm: 3, md: 4 }, alignItems: "flex-start", position: "relative", isolation: "isolate", "&::before": { content: '""', position: "absolute", zIndex: -1, width: 280, height: 280, borderRadius: "50%", top: -80, right: 20, bgcolor: "primary.main", opacity: .06, filter: "blur(4px)" }, "&::after": { content: '""', position: "absolute", zIndex: -1, width: 220, height: 220, borderRadius: "50%", bottom: 60, left: 180, bgcolor: "secondary.main", opacity: .05, filter: "blur(8px)" } }}>
         <Grid
           size={{
             xs: 12,
@@ -141,29 +88,34 @@ const UserProfile = () => {
                 lg: 12,
               }}
             >
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                  lg: 12,
-                }}
-              >
+              <Grid size={12}>
                 <ProfileCard />
               </Grid>
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 6,
-                  lg: 12,
-                }}
-              >
+              <Grid size={12}>
+                <WorkShiftCard />
+              </Grid>
+              <Grid size={12}>
                 <LeaveCalendar />
               </Grid>
+              {!empId && <Grid size={12}><ResignationAction /></Grid>}
+              {!empId && <Grid size={12}><EmployeeExitQueueAction /></Grid>}
+              {empId && <Grid size={12}><EmployeeOffboardingAction /></Grid>}
+              {empId && (
+                <Grid size={12}>
+                  <EmployeeExitManagementCard employeeUserId={empId} />
+                </Grid>
+              )}
+              {!empId && (
+                <Grid size={12}>
+                  <EmployeeExitCaseCard />
+                </Grid>
+              )}
             </Grid>
           </Grid>
         </Grid>
         <Grid
           className="d-flex flex-column gap-4"
+          sx={{ minWidth: 0 }}
           size={{
             xs: 12,
             md: 12,
@@ -172,22 +124,51 @@ const UserProfile = () => {
           }}
         >
           <ProfileHeader />
-          <Stack spacing={2} className="flex-grow-1">
-            <Card className="tab-container d-flex flex-row">
+          <Stack spacing={2.5} className="flex-grow-1">
+            <Card
+              role="tablist"
+              aria-label="Employee profile sections"
+              className="tab-container d-flex flex-row"
+              sx={{
+                borderRadius: 3,
+                p: 0.75,
+                gap: 0.5,
+                boxShadow: "0 8px 24px rgba(0,0,0,.08)",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+                "& .tab-box": {
+                  flex: { xs: "0 0 auto", md: "1 1 0" },
+                  minWidth: { xs: 132, md: 0 },
+                  justifyContent: "center",
+                  textAlign: "center",
+                },
+              }}
+            >
               {filteredTabs.map((tab) => {
                 const tabTo = empId
                   ? `employees/${empId}/${tab.to}`
                   : `profile/${tab.to}`;
                 if (tab.isActive) {
+                  const isSelected = checkIsActive(location.pathname, tabTo);
                   return (
                     <Box
                       component="div"
                       key={tab.tabId}
                       className={clsx("tab-box", {
-                        tab_active: checkIsActive(location.pathname, tabTo),
+                        tab_active: isSelected,
                       })}
                       onClick={() => navigate(tab.to)}
-                      sx={{ color: "text.secondary" }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          navigate(tab.to);
+                        }
+                      }}
+                      role="tab"
+                      aria-selected={isSelected}
+                      tabIndex={0}
+                      sx={{ color: "text.secondary", fontWeight: 600 }}
                     >
                       {tab.icon}
                       {i({ id: tab.title })}

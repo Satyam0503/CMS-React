@@ -204,6 +204,12 @@ export const markAllNotificationAsRead = async () => {
   );
 };
 
+export const snoozeNotification = (userNotificationId: string, untilUtc: string) =>
+  patchRequest<string, ApiResponse>(`api/User/Notification/${userNotificationId}/Snooze?untilUtc=${encodeURIComponent(untilUtc)}`);
+
+export const dismissNotification = (userNotificationId: string) =>
+  deleteRequest<ApiResponse>(`api/User/Notification/${userNotificationId}`);
+
 // work history
 export const getWorkHistory = async (userId?: string) => {
   if (userId) {
@@ -271,8 +277,9 @@ export const updateNotificationPreferences = (
   >(ServiceUrl.UPDATE_NOTIFICATION_PREFERENCES, payload);
 };
 
-//  get last employee id
-
-export const getLastAddedEmployeeId = () => {
-  return getRequest<ApiResponse>(ServiceUrl.GET_LAST_EMPLOYEE_ID);
+export const getNextEmployeeId = () => {
+  return getRequest<ApiResponse>(ServiceUrl.GET_NEXT_EMPLOYEE_ID);
 };
+
+export const assignMissingEmployeeId = (userId: string, employeeId?: string) =>
+  postRequest<{ employeeId?: string }, ApiResponse>(`api/User/Employees/${encodeURIComponent(userId)}/AssignEmployeeId`, { employeeId });

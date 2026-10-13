@@ -1,10 +1,9 @@
 import {
-    Grid,
-    Stack,
-    Typography,
-    MenuItem,
-    Autocomplete,
-    TextField,
+  Grid,
+  Stack,
+  Typography,
+  MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { Formik, FormikProps } from "formik";
@@ -12,20 +11,20 @@ import { useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { toast } from "react-toastify";
 import { EmploymentType, Gender, bloodGroups } from "../../../../utils/constant/Constant";
-import { employeeSchema } from "../../../../utils/Schema/employeeSchema";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import { employeeSchema, normalizeEmployeeNameFields } from "../../../../utils/Schema/employeeSchema";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import { ErrorLabel } from "../../../shared/components/form-component/ErrorLabel";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../shared/components/form-component/SelectInput";
 import { DepartmentModel, JobTitleResponseModel, RoleModel } from "../../admin/models";
 import { getAllDepartments, getAllRoles, getJobTitles } from "../../admin/adminservices";
 import { GetAllEmployeeResponseModel, InviteNewEmployeeModel } from "../models";
-import { getCustomStatusCodesErrorMessage } from "../../../../utils/common";
 import { getAllEmployees, updateEmployee } from "../employeeServices";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
 import { EditEmployeePayloadModel } from "../../users/models";
 
+import { AppTextField } from "../../../shared/components/ui";
 const employeeInitialValue: EditEmployeePayloadModel = {
     roleId: "",
     firstName: "",
@@ -49,8 +48,8 @@ const employeeInitialValue: EditEmployeePayloadModel = {
 };
 
 interface PropsTypes {
-    employeeData: InviteNewEmployeeModel & { userId: string };
-    onUserUpdate: (success: boolean) => void;
+    employeeData: InviteNewEmployeeModel & { userId: string; department?: string | null };
+    onUserUpdate: (success: boolean, dateOfJoining?: Dayjs | null) => void;
     formRef: React.MutableRefObject<FormikProps<EditEmployeePayloadModel> | null>,
     handleButtonLoading: (loading: boolean) => void;
 }
@@ -61,6 +60,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
     const [departmentList, setDepartmentList] = useState<DepartmentModel[]>([]);
     const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
     const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
+    const [selectedDepartment, setSelectedDepartment] = useState<string | null>(employeeData.department ?? null);
     const { formatMessage: i } = useIntl();
     const { currentLanguage } = useAppLang();
     const defaultLang = useAppSelector(state => state.user.userData?.defaultLanguage!);
@@ -69,17 +69,21 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
         values: EditEmployeePayloadModel,
         setSubmitting: (isSubmitting: boolean) => void
     ) {
-        const payload = {
-            ...values,
-        };
+        if (values.reportingManager === employeeData.userId) {
+            toast.error("You cannot select this employee as their own reporting manager. Choose another active employee or clear the manager field.");
+            setSubmitting(false);
+            handleButtonLoading(false);
+            return;
+        }
+        const payload = normalizeEmployeeNameFields(values);
         try {
             const response = await updateEmployee(payload, employeeData.userId);
-            const { success, statusCode } = response.data;
+            const { success, message } = response.data;
             if (success) {
                 setSubmitting(false);
-                onUserUpdate(success);
+                onUserUpdate(success, values.dateOfJoining);
             } else {
-                toast.error(i({ id: getCustomStatusCodesErrorMessage(statusCode) }));
+                toast.error(message || "Unable to update the employee. Verify the reporting manager is an active employee in the same company.");
             }
         } catch (error) {
             console.error((error as Error).message);
@@ -103,25 +107,32 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
             .catch((err) => {
                 console.log(err.message);
             });
-    }, []);
+    }, [i]);
 
     useEffect(() => {
         (async () => {
             try {
-                const result = await Promise.allSettled([getAllEmployees(), getJobTitles()]);
+                const result = await Promise.allSettled([getAllEmployees()]);
                 if (result[0].status === "fulfilled") {
                     const { success, methodResults } = result[0].value.data;
                     if (success) setEmployeeList(methodResults);
-                }
-                if (result[1].status === "fulfilled") {
-                    const { success, methodResults } = result[1].value.data;
-                    if (success) setJobTitleList(methodResults);
                 }
             } catch (error) {
                 console.log(error);
             }
         })();
     }, [])
+
+    useEffect(() => {
+        if (!selectedDepartment) {
+            setJobTitleList([]);
+            return;
+        }
+
+        getJobTitles(true, selectedDepartment)
+            .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
+            .catch((error) => console.log(error));
+    }, [selectedDepartment]);
 
     return (
         <Stack spacing={2} sx={{ p: 1, }}>
@@ -193,9 +204,9 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                     </Grid>
                                     <Grid container spacing={2} sx={{ width: "100%" }}>
                                         <Grid size={{ xs: 12, sm: 6 }}>
-                                            <SelectInput
+                                                <SelectInput
                                                 name="roleId"
-                                                label={i({ id: "FORM.ROLE" })}
+                                                label="Access Role"
                                                 required={true}
                                             >
                                                 {roles.map((role) => {
@@ -216,6 +227,11 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 name="department"
                                                 label={i({ id: "FORM.DEPARTMENT" })}
                                                 required={true}
+                                                onValueChange={(departmentId) => {
+                                                    setSelectedDepartment(departmentId);
+                                                    setFieldTouched("jobRole", true);
+                                                    setFieldValue("jobRole", "");
+                                                }}
                                             >
                                                 {departmentList.map((dep) => (
                                                     <MenuItem
@@ -254,10 +270,12 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                             <Autocomplete
                                                 id="job_title"
                                                 size="small"
+                                                disabled={!values.department}
                                                 value={jobTitleList.find(
                                                     (jt) => jt.jobTitleId === values.jobRole
                                                 ) || null}
                                                 options={jobTitleList}
+                                                noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
                                                 onChange={(event, value) => {
                                                     setFieldTouched("jobRole", true);
                                                     setFieldValue(
@@ -266,7 +284,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                     );
                                                 }}
                                                 renderInput={(param) => (
-                                                    <TextField
+                                                    <AppTextField
                                                         {...param}
                                                         label={i({
                                                             id: "FORM.JOB_ROLE",
@@ -288,7 +306,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                 value={employeeList.find(
                                                     (emp) => emp.userId === values.reportingManager
                                                 ) || null}
-                                                options={employeeList}
+                                                options={employeeList.filter((employee) => employee.userId !== employeeData.userId)}
                                                 onChange={(event, value) => {
                                                     setFieldTouched("reportingManager", true);
                                                     setFieldValue(
@@ -297,7 +315,7 @@ export const UpdateEmployeeData = (props: PropsTypes) => {
                                                     );
                                                 }}
                                                 renderInput={(param) => (
-                                                    <TextField
+                                                    <AppTextField
                                                         {...param}
                                                         label={i({
                                                             id: "USER.REPORTING_MANAGER",

@@ -2,18 +2,17 @@ import {
   Grid,
   Stack,
   MenuItem,
-  TextField,
   Autocomplete,
   CircularProgress,
 } from "@mui/material";
 import { FC, useEffect, useMemo, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
 import { Formik } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 import { bloodGroups, EmploymentType, Gender } from "../../../../../utils/constant/Constant";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import CustomisedButton from "../../../../shared/components/C_Button";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { userSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
@@ -23,15 +22,16 @@ import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useParams } from "react-router-dom";
-import { getStatusCodeString, hasModuleFeaturePermission } from "../../../../../utils/common";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
 import { ModulesName, Permission } from "../../../../../utils/enums";
-import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel } from "../../../admin/models";
-import { getAllCustomAttributes, getAllDepartments, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
+import { CompanyCustomAttributeModel, CustomAttributeModel, CustomAttributeValueModel, DepartmentModel, JobTitleResponseModel, RoleModel } from "../../../admin/models";
+import { getAllCustomAttributes, getAllDepartments, getAllRoles, getCustomAttributeById, getJobTitles } from "../../../admin/adminservices";
 import { GetAllEmployeeResponseModel } from "../../../employees/models";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { EditEmployeePayloadModel, EmployeeByIdResponse, EmployeeCustomAttribute } from "../../models";
 import React from "react";
 
+import { AppTextField } from "../../../../shared/components/ui";
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,9 +62,15 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
 
   const userPermissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
   const hasEditPermission = hasModuleFeaturePermission(ModulesName.Employees, Permission.Edit, userPermissions);
+  // Employee-management permission applies to other people.  A manager or HR
+  // user must use the same restricted self-service profile flow as an employee.
+  const isEditingOwnProfile = !employeeId || employeeId === user.userId;
+  const canEditEmploymentDetails = hasEditPermission && !isEditingOwnProfile;
   const [departments, setDepartments] = useState<DepartmentModel[]>([]);
   const [employeeList, setEmployeeList] = useState<GetAllEmployeeResponseModel[]>([]);
   const [jobTitleList, setJobTitleList] = useState<JobTitleResponseModel[]>([]);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(userData.department ?? null);
+  const [accessRoles, setAccessRoles] = useState<RoleModel[]>([]);
   const [allCustomAttributes, setAllCustomAttributes] = useState<CompanyCustomAttributeModel[]>([])
   const { currentLanguage } = useAppLang();
   const defaultLanguage = useAppSelector(state => state.user.userData?.defaultLanguage!);
@@ -102,12 +108,18 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
     values: typeof initialValues,
     setSubmitting: (isSubmitting: boolean) => void
   ) {
+    if (values.reportingManager === userData.userId) {
+      const employeeName = `${userData.firstName} ${userData.lastName}`.trim();
+      toast.error(`${employeeName || "This employee"} cannot be assigned as their own reporting manager. Please select another employee or clear the Reporting Manager field.`);
+      setSubmitting(false);
+      return;
+    }
+
     try {
       // Editing your own profile (no employeeId in the route) only requires the always-editable
       // self-service fields, so it shouldn't be blocked by the Employees module's Edit permission
       // (that permission is meant for HR/Admins managing *other* employees' records).
-      const isSelfEditWithoutManagePermission = !employeeId && !hasEditPermission;
-      const response = isSelfEditWithoutManagePermission
+      const response = isEditingOwnProfile
         ? await updateOwnProfile({
           firstName: values.firstName,
           lastName: values.lastName,
@@ -120,7 +132,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
           address: values.address,
         })
         : await updateEmployee(values, userData?.userId);
-      const { success, statusCode, methodResult } = response.data;
+      const { success, statusCode, methodResult, message } = response.data;
       if (success && statusCode === 200) {
         updateUserDetails(methodResult);
         if (!employeeId) {
@@ -137,7 +149,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
         handleClose();
       }
       else {
-        toast.error(i({ id: getStatusCodeString(statusCode) }))
+        toast.error(message || i({ id: "ERROR.SOMETHING_WRONG" }));
       }
     } catch (error) {
       console.error((error as Error).message);
@@ -164,24 +176,38 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await Promise.allSettled([getAllEmployees(), getJobTitles(), getAllCustomAttributes()]);
+        const result = await Promise.allSettled([getAllEmployees(), getAllCustomAttributes(), getAllRoles(true)]);
         if (result[0].status === "fulfilled") {
           const { success, methodResults } = result[0].value.data;
           if (success) setEmployeeList(methodResults);
         }
         if (result[1].status === "fulfilled") {
           const { success, methodResults } = result[1].value.data;
-          if (success) setJobTitleList(methodResults);
-        }
-        if (result[2].status === "fulfilled") {
-          const { success, methodResults } = result[2].value.data;
           if (success) setAllCustomAttributes(methodResults);
+        }
+        if (result[2].status === "fulfilled" && result[2].value.data.success) {
+          setAccessRoles(result[2].value.data.methodResults ?? []);
         }
       } catch (error) {
         console.log(error);
       }
     })();
   }, [])
+
+  useEffect(() => {
+    setSelectedDepartment(userData.department ?? null);
+  }, [userData.department]);
+
+  useEffect(() => {
+    if (!selectedDepartment) {
+      setJobTitleList([]);
+      return;
+    }
+
+    getJobTitles(true, selectedDepartment)
+      .then(({ data }) => setJobTitleList(data.success ? data.methodResults : []))
+      .catch((error) => console.log(error));
+  }, [selectedDepartment]);
 
   return (
     <>
@@ -228,6 +254,21 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                       name="lastName"
                       placeholder={i({ id: "FORM.LAST_NAME" })}
                     />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <SelectInput
+                      name="roleId"
+                      label="Access Role"
+                      disabled={!canEditEmploymentDetails}
+                      required
+                    >
+                      {accessRoles.map((role) => (
+                        <MenuItem key={role.rolesId} value={role.rolesId}>
+                          {role.titles}
+                        </MenuItem>
+                      ))}
+                    </SelectInput>
                   </Grid>
 
                   <Grid
@@ -298,11 +339,12 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="job_title"
                       size="small"
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails || !values.department}
                       value={jobTitleList.find(
                         (jt) => jt.jobTitleId === values.jobRole
                       ) || null}
                       options={jobTitleList}
+                      noOptionsText={values.department ? "No job roles are configured for this department." : "Select a department first."}
                       onChange={(event, value) => {
                         setFieldTouched("jobRole", true);
                         setFieldValue(
@@ -311,7 +353,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         );
                       }}
                       renderInput={(param) => (
-                        <TextField
+                        <AppTextField
                           {...param}
                           label={i({
                             id: "FORM.JOB_ROLE",
@@ -330,7 +372,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <SelectInput
                       name="employmentType"
                       label={i({ id: "FORM.EMPLOYEMENT_TYPE" })}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                     >
                       {EmploymentType.map((type) => (
                         <MenuItem
@@ -352,9 +394,9 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <Autocomplete
                       id="reporting_manager"
                       size="small"
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                       value={employeeList.find((emp) => emp.userId === values.reportingManager) || null}
-                      options={employeeList}
+                      options={employeeList.filter((employee) => employee.userId !== userData.userId)}
                       onChange={(event, value) => {
                         setFieldTouched("reportingManager", true);
                         setFieldValue(
@@ -363,7 +405,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         );
                       }}
                       renderInput={(param) => (
-                        <TextField
+                        <AppTextField
                           {...param}
                           label={i({
                             id: "USER.REPORTING_MANAGER",
@@ -381,7 +423,12 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                     <SelectInput
                       name="department"
                       label={i({ id: "FORM.DEPARTMENT" })}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
+                      onValueChange={(departmentId) => {
+                        setSelectedDepartment(departmentId);
+                        setFieldTouched("jobRole", true);
+                        setFieldValue("jobRole", "");
+                      }}
                     >
                       {departments.map((dep) => (
                         <MenuItem
@@ -464,11 +511,11 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
                         setFieldValue("dateOfJoining", newDate?.format('YYYY-MM-DD'));
                       }}
                       maxDate={dayjs()}
-                      disabled={!hasEditPermission}
+                      disabled={!canEditEmploymentDetails}
                     />
                   </Grid>
                   {
-                    hasEditPermission &&
+                    canEditEmploymentDetails &&
                     <>
                       <Grid
                         size={{
@@ -500,7 +547,7 @@ export const UpdateUserInfo: FC<Props> = ({ userData, open, setOpen }) => {
 
                 </Grid>
                 {
-                  hasEditPermission &&
+                  canEditEmploymentDetails &&
 
                   <Grid container spacing={2} sx={{ mt: 2 }}>
                     {
@@ -641,7 +688,7 @@ const UserCustomAttribute = (props: PropsType) => {
         getOptionLabel={option => option.titles[currentLanguage] ?? option.titles[defaultLang] ?? ""}
         getOptionKey={option => option.customAttributeValueId!}
         renderInput={(param) => (
-          <TextField
+          <AppTextField
             {...param}
             label={attribute.customAttributeTitle[currentLanguage] ?? `${i({ id: "COMPANY_MASTER.CUSTOM_ATTRIBUTE.TITLE" })} ${attribute.customAttributeNumber}`}
             slotProps={{

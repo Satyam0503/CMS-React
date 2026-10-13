@@ -1,8 +1,16 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState } from "react";
 
-import { Alert, Grid, Stack, Typography } from "@mui/material";
+import {
+  Grid,
+  InputAdornment,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import * as Yup from "yup";
 import { toAbsoluteUrl } from "../../../../_themes/helpers";
 import { Formik } from "formik";
@@ -14,6 +22,7 @@ import { Regex } from "../../../../utils/constant/Constant";
 import { getStatusCodeString } from "../../../../utils/common";
 import { PasswordStrenghtMeter } from "../../../shared/components/form-component/PasswordStrengthMeter";
 
+import { AppAlert, AppIconButton, passwordVisibilityButtonSx } from "../../../shared/components/ui";
 const validationSchema = Yup.object().shape({
   newPassword: Yup.string()
     .matches(
@@ -37,6 +46,8 @@ const initialValues = {
 export function CreatePassword() {
   const { formatMessage: i } = useIntl();
   const [loading, setLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const [queryParam] = useSearchParams();
 
@@ -106,25 +117,57 @@ export function CreatePassword() {
         {(formik) => (
           <form onSubmit={formik.handleSubmit}>
             {formik.status && (
-              <Alert variant="standard" severity="error" className="mb-8">
+              <AppAlert variant="standard" severity="error" className="mb-8">
                 {formik.status}
-              </Alert>
+              </AppAlert>
             )}
             <Stack spacing={2}>
               <Stack spacing={1}>
                 <TextInput
-                  type="password"
+                  type={showNewPassword ? "text" : "password"}
                   name="newPassword"
                   label={i({ id: "FORM.NEW_PASSWORD" })}
                   placeholder={i({ id: "FORM.NEW_PASSWORD" })}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <AppIconButton
+                          aria-label={showNewPassword ? "Hide new password" : "Show new password"}
+                          sx={passwordVisibilityButtonSx}
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
+                          edge="end"
+                          onClick={() => setShowNewPassword((visible) => !visible)}
+                        >
+                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                        </AppIconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
                 <PasswordStrenghtMeter password={formik.values.newPassword} />
               </Stack>
               <TextInput
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 label={i({ id: "FORM.CONFIRM_PASSWORD" })}
                 placeholder={i({ id: "FORM.CONFIRM_PASSWORD" })}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <AppIconButton
+                        aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                        sx={passwordVisibilityButtonSx}
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        edge="end"
+                        onClick={() => setShowConfirmPassword((visible) => !visible)}
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </AppIconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Stack>
             <Stack className="gap-2 mt-8">

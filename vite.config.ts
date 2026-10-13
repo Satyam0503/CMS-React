@@ -12,5 +12,9 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
     pool: "threads",
+    // Keep local runs parallel, but avoid exhausting file handles on the
+    // Windows self-hosted Azure DevOps agent.
+    maxWorkers: process.env.CI ? 2 : undefined,
+    fileParallelism: process.env.CI ? false : true,
   },
 })

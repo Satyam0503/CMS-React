@@ -7,14 +7,14 @@ import { useAppSelector } from "../../../Redux/hooks";
 import { hasModuleFeaturePermission } from "../../../../utils/common";
 import { ModulesName, NOTICE_TYPE, Permission } from "../../../../utils/enums";
 import { Card, Stack } from "@mui/material";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/C_Table";
 import { AddNotice } from "./AddNotice";
 import { MyNoticeTableColumnList } from "../../../../utils/constant/Constant";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { Add, KeyboardArrowLeft } from "@mui/icons-material";
 import { deleteMyNotice, getMyPostedNotices } from "../services";
 import { Pagination } from "../../../shared/components/Pagination";
-import { ConfirmationModal } from "../../../shared/components/ConfirmationModal";
+import { ConfirmationModal } from "../../../shared/components/ConfirmModal";
 import { toast } from "react-toastify";
 
 export const initialNoticeValuesObj: NoticeModel = {

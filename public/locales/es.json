@@ -11,6 +11,7 @@
     "DASHBOARD": "Panel de Control",
     "EMPLOYEES": "Empleados",
     "ATTENDANCE": "Asistencia",
+    "ATTENDANCE_SETTINGS": "Configuración de asistencia",
     "LEAVE_MANAGEMENT": "Gestión de Permisos",
     "MY_PROFILE": "Mi Perfil",
     "RECRUITMENT": "Reclutamiento",
@@ -26,7 +27,9 @@
     "PAYROLL": "Nómina",
     "CALENDAR": "Calendario",
     "POLICIES": "Políticas",
-    "PAYROLL_SETTINGS": "Configuración de nómina"
+    "PAYROLL_SETTINGS": "Configuración de nómina",
+    "LIFECYCLE_MANAGEMENT": "Gestión del ciclo de vida",
+    "CAREER_PROFILE": "Perfil profesional"
   },
 
   "GENDER": {
@@ -265,6 +268,7 @@
     "REGISTER": "Registrar",
     "SIGNIN": "Iniciar sesión",
     "T&C": "Acepto los términos y condiciones",
+    "TERMS_REQUIRED": "Acepto los términos y condiciones",
     "PASSWORD_NOTE": "Utilice 8 o más caracteres con una mezcla de letras, números y símbolos.",
     "FORGOT_PASSWORD": "¿Olvidó su contraseña?",
     "FORGOT_PASSWORD.NOTE": "Ingrese su correo electrónico para restablecer su contraseña",
@@ -894,6 +898,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Por favor selecciona un empleado",
     "NO_RESULT": "Sin resultados",
     "NO_DEPARTMENTS": "Por favor agrega departamentos",
+    "NO_DEPARTMENT_EMPLOYEES": "Aún no hay empleados asignados a un departamento",
     "ADD_LANGUAGE_TITLE": "Por favor ingrese un título para {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Los días de licencia no pueden ser 0"
   },
@@ -1049,3 +1054,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Gestiona todo el ciclo de contratación, incluyendo ofertas de empleo, solicitudes de candidatos, etapas de entrevistas, evaluaciones y registros detallados del proceso. Proporciona visibilidad completa del progreso del reclutamiento, las acciones realizadas y las decisiones de contratación."
   }
 }
+

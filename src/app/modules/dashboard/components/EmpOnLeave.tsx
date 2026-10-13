@@ -1,6 +1,7 @@
 import { Stack, Typography, Box, Avatar } from "@mui/material";
+import { CheckCircleOutlineRounded } from "@mui/icons-material";
 import { useIntl } from "react-intl";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { useEffect, useState } from "react";
 import { GetLeaveRequestPayLoad, LeaveRequestModel } from "../../leaves/model";
 import dayjs from "dayjs";
@@ -51,21 +52,78 @@ export default function EmpOnLeave() {
   }
   return (
     <>
-      <CustomCard label={i({ id: "TITLES.EMP_ON_LEAVE" })}>
-        <Stack className="flex-grow-1 justify-content-between mt-4 gap-2" >
+      <CustomCard
+        label={i({ id: "TITLES.EMP_ON_LEAVE" })}
+        applyMinHeight={false}
+      >
+        <Stack className="mt-1" spacing={1.25}>
           {!leaveRequest.length ? (
-            <Box component="div" className="flex-grow-1 align-content-center text-center">
-              <Typography variant="h5">{i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}</Typography>
-            </Box>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              sx={{
+                p: 1.5,
+                borderRadius: "12px",
+                backgroundColor: "rgba(255, 255, 255, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.85)",
+                boxShadow: "0 2px 6px rgba(15, 23, 42, 0.03), inset 0 1px 1px rgba(255, 255, 255, 0.9)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "8px",
+                  display: "grid",
+                  placeItems: "center",
+                  backgroundColor: "#ECFDF5",
+                  border: "1px solid #A7F3D0",
+                  color: "#059669",
+                  flexShrink: 0,
+                }}
+              >
+                <CheckCircleOutlineRounded sx={{ fontSize: 20 }} />
+              </Box>
+              <Stack sx={{ minWidth: 0 }}>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#0F172A" }}>
+                  Full Team Available
+                </Typography>
+                <Typography sx={{ fontSize: "0.75rem", fontWeight: 500, color: "#64748B" }}>
+                  {i({ id: "MESSAGE.NO_EMPLOYEE_ON_LEAVE" })}
+                </Typography>
+              </Stack>
+            </Stack>
           ) : (
-            <Stack className="gap-3">
-              {leaveRequest.slice(0, 5).map((leave) => {
+            <Stack
+              spacing={1.25}
+              tabIndex={0}
+              aria-label="Employees currently on leave"
+              sx={{
+                maxHeight: 270,
+                overflowY: "auto",
+                pr: 0.5,
+                "&::-webkit-scrollbar": {
+                  width: "4px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "transparent",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#CBD5E1",
+                  borderRadius: "999px",
+                },
+              }}
+            >
+              {leaveRequest.map((leave) => {
                 return (
                   <Stack
                     key={leave.leaveRequestId}
-                    className="justify-content-between flex-row align-items-center"
+                    className="justify-content-between flex-row align-items-center gap-2 p-1 rounded hover-secondary"
                   >
-                    <Stack className="justify-content-between flex-row gap-2  align-items-center" >
+                    <Stack className="justify-content-between flex-row gap-2 align-items-center" sx={{ minWidth: 0 }}>
                       <Avatar
                         alt={leave.employeeName}
                         src={leave.profileUrl ?? DEFAULT_USER_AVATAR}
@@ -76,8 +134,8 @@ export default function EmpOnLeave() {
                           backgroundColor: "secondary.main",
                         }}
                       />
-                      <Stack>
-                        <Typography variant="body1">{leave.employeeName}</Typography>
+                      <Stack sx={{ minWidth: 0 }}>
+                        <Typography variant="body1" noWrap>{leave.employeeName}</Typography>
                         {
                           leave.jobRole &&
                           <Typography variant="body2">{leave.jobRole[currentLanguage] || leave.jobRole[defaultLanguage]}</Typography>
@@ -85,7 +143,7 @@ export default function EmpOnLeave() {
                       </Stack>
                     </Stack>
 
-                    <Typography variant="subtitle2">
+                    <Typography variant="subtitle2" sx={{ flexShrink: 0, whiteSpace: "nowrap", color: "primary.main" }}>
                       {
                         `${dayjs().isSame(leave.startDate, "day") ? i({ id: "DATETIME.TODAY" }) : dateFormatter(leave.startDate, "DD MMM")} - ${!leave.isHalfDay ? dateFormatter(leave.endDate, "DD MMM") : "H"}`
                       }

@@ -5,26 +5,24 @@ import {
   FormHelperText,
   Stack,
   Box,
-  IconButton,
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio,
-  Checkbox,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
 import calendarItemSchema from "../../../../utils/Schema/calendarSchema";
-import { CustomisedModal } from "../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../shared/components/C_Modal";
 import { TextInput } from "../../../shared/components/form-component/TextInput";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { CalendarItem } from "../models";
 import { addEditCalendarItem } from "../calendarServices";
 import { toast } from "react-toastify";
 
+import { AppCheckbox, AppIconButton, AppRadio } from "../../../shared/components/ui";
 type PropsTypes = {
   open: boolean;
   handleClose: () => void;
@@ -65,7 +63,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
       }
       formData.append("name", values.name);
       formData.append("type", values.type.toString());
-      formData.append("date", dayjs(values.date).startOf("day").toISOString());
+      formData.append("date", dayjs(values.date).startOf("day").format("YYYY-MM-DD"));
       formData.append("image", values.image!);
       formData.append("description", values.description);
       formData.append("recurring", String(values.recurring));
@@ -170,12 +168,12 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   >
                     <FormControlLabel
                       value="1"
-                      control={<Radio />}
+                      control={<AppRadio />}
                       label={i({ id: "OCCASION.TYPES.HOLIDAY" })}
                     />
                     <FormControlLabel
                       value="2"
-                      control={<Radio />}
+                      control={<AppRadio />}
                       label={i({ id: "OCCASION.TYPES.EVENT" })}
                     />
                   </RadioGroup>
@@ -189,16 +187,15 @@ const HolidayForm: React.FC<PropsTypes> = ({
                 >
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        // defaultChecked
-                        value={formik.values.recurring}
+                      <AppCheckbox
+                        checked={formik.values.recurring}
+                        name="recurring"
                         onChange={(e, checked) => {
                           formik.setFieldValue("recurring", checked);
                         }}
                       />
                     }
                     label={i({ id: "OCCASION.RECURRING" })}
-                    // name="recurring"
                   />
                 </Grid>
 
@@ -228,7 +225,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                   }}
                   className="d-flex flex-column align-items-center text-center p-4 "
                 >
-                  <IconButton
+                  <AppIconButton
                     component="label"
                     role="button"
                     aria-label="select logo"
@@ -249,7 +246,7 @@ const HolidayForm: React.FC<PropsTypes> = ({
                       onChange={(e) => handleFileChange(e, formik)}
                       hidden
                     />
-                  </IconButton>
+                  </AppIconButton>
                   <Stack>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       {" "}

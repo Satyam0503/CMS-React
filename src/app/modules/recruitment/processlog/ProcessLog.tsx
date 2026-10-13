@@ -1,20 +1,21 @@
-import { Badge, Card, Stack, Typography } from "@mui/material";
+import { Badge, Card } from "@mui/material";
 import { useIntl } from "react-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CommentResponseModel,
   ProcessLogFilterModel,
   ProcessLogPayoadModel,
 } from "../models";
-import { getProcessLogData } from "../services";
+import { exportRecruitmentAudit, getProcessLogData } from "../services";
 import { SearchInput } from "../../../shared/components/SearchInput";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { ResponsiveTableToolbar } from "../../../shared/components/ResponsiveTableToolbar";
+import { CustomisedTable } from "../../../shared/components/C_Table";
 import { ModulesName } from "../../../../utils/enums";
 import { ProcessLogTableColumnList } from "../../../../utils/constant/Constant";
 import { Pagination } from "../../../shared/components/Pagination";
 import { useAppSelector } from "../../../Redux/hooks";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
-import { FilterList } from "@mui/icons-material";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
+import { Download, FilterList } from "@mui/icons-material";
 import { ProcessLogFilter } from "./components/ProcessLogFilter";
 import { countAppliedFilter } from "../../../../utils/common";
 import { usePageData } from "../../../Context/PageDataProvider";
@@ -78,6 +79,20 @@ const ProcessLogs = () => {
     setAnchorEl(null);
   };
 
+  const handleExport = async () => {
+    const response = await exportRecruitmentAudit({
+      fromUtc: processLogFilters.filterFrom ? new Date(processLogFilters.filterFrom as string).toISOString() : undefined,
+      toUtc: processLogFilters.filterTo ? new Date(processLogFilters.filterTo as string).toISOString() : undefined,
+      limit: 10000,
+    });
+    const url = window.URL.createObjectURL(response.data);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "recruitment-audit.csv";
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     setPageTitle(intl.formatMessage({ id: "PAGE.PROCESS_LOG" }));
   }, [])
@@ -108,12 +123,17 @@ const ProcessLogs = () => {
 
   return (
     <Card className="d-flex flex-column flex-grow-1 gap-4 p-4 p-md-6">
-      <Stack
-        direction="row"
-        className="align-items-center justify-content-between"
-      >
-        <SearchInput search={searchValue} setSearch={handleSearchChange} />
-        <Badge
+      <ResponsiveTableToolbar
+        search={<SearchInput search={searchValue} setSearch={handleSearchChange} />}
+        actions={<>
+          <CustomIconButton
+            icon={<Download />}
+            ariaLabel="Export recruitment audit"
+            tooltip="Export recruitment audit"
+            handleClick={() => void handleExport()}
+            toolbar
+          />
+          <Badge
           badgeContent={totalAppliedFilters}
           anchorOrigin={{ horizontal: "left", vertical: "top" }}
           color="primary"
@@ -121,16 +141,18 @@ const ProcessLogs = () => {
           <CustomIconButton
             icon={<FilterList />}
             handleClick={handleFilterClick}
+            toolbar
           />
         </Badge>
-        {open && (
-          <ProcessLogFilter
-            open={open}
-            handleClose={handleCloseFilter}
-            anchorEl={anchorEl}
-          />
-        )}
-      </Stack>
+        </>}
+      />
+      {open && (
+        <ProcessLogFilter
+          open={open}
+          handleClose={handleCloseFilter}
+          anchorEl={anchorEl}
+        />
+      )}
 
       <CustomisedTable
         tabName={ModulesName.ProcessLog}
@@ -156,3 +178,4 @@ const ProcessLogs = () => {
 };
 
 export default ProcessLogs;
+

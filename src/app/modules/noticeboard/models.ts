@@ -23,7 +23,7 @@ export interface NoticeResponseModel {
   noticeId: string;
   userName: string;
   userProfile: string | null;
-  userDesignation: null | Record<string, string>;
+  userDesignation: null | string | Record<string, string>;
   noticeMessage: string;
   noticeTitle: string;
   createdDateTime: string;
@@ -43,7 +43,7 @@ export type ViewModel = {
   viewedAt: string;
 }[];
 
-export type MyNoticeModel = NoticeModel & {};
+export type MyNoticeModel = NoticeModel;
 
 export type GetAllNoticeResponse = ResponseData<NoticeResponseModel>;
 export type GetMyNoticesResponse = ResponseData<NoticeModel>;

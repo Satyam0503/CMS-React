@@ -22,6 +22,9 @@ export interface RequestLeaveModel {
   startDate: Dayjs | null;
   endDate: Dayjs | null;
   isHalfDay: boolean;
+  // Half-day requests must identify their segment so leave and WFH can share
+  // one business date without overwriting each other.
+  halfDayPeriod?: "FIRST_HALF" | "SECOND_HALF";
   reason: string;
 }
 
@@ -84,8 +87,9 @@ export type LeaveBalance = {
 export type EmployeeLeaveTypeBalance = {
   leaveBalanceId: string;
   leavePolicyId: string;
-  balance: number;
-  usedBalance: number;
+  totalAllocated: number;
+  taken: number;
+  remaining: number;
   name: string;
   code: string;
   description: string;
@@ -94,6 +98,9 @@ export type EmployeeLeaveTypeBalance = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  attendanceStatusCode?: string | null;
+  fullDayAttendanceStatusCode?: string | null;
+  halfDayAttendanceStatusCode?: string | null;
 };
 
 export type LeaveRequestApprovalPayload = {
@@ -132,7 +139,44 @@ export type LeavePolicyModel = {
   halfDayAllowed: boolean;
   weekendInclusive: boolean;
   holidayInclusive: boolean;
+  attendanceStatusCode?: string | null;
+  fullDayAttendanceStatusCode?: string | null;
+  halfDayAttendanceStatusCode?: string | null;
   applicableTo?: Array<string> | null;
+  policyType: 1 | 2 | 3;
+  workFromHome?: {
+    approvalRequired: boolean;
+    approverStrategy: "REPORTING_MANAGER" | "DEPARTMENT_HEAD" | "HR_ADMIN";
+    reasonRequired: boolean;
+    maxDaysPerWeek?: number | null;
+    maxDaysPerMonth?: number | null;
+    allowFullDay: boolean;
+    allowFirstHalf: boolean;
+    allowSecondHalf: boolean;
+    allowMixedHalfDayLeave: boolean;
+    allowOnWeeklyOff: boolean;
+    allowOnHoliday: boolean;
+    fullDayAttendanceStatusCode: string;
+    halfDayAttendanceStatusCode: string;
+    mixedAttendanceStatusCode?: string | null;
+    wfhWfoAttendanceStatusCode?: string | null;
+    wfhHdAttendanceStatusCode?: string | null;
+    useEffectiveOfficeSchedule: boolean;
+    fullDayRequiredWorkingMinutes?: number | null;
+    halfDayRequiredWorkingMinutes?: number | null;
+    breakMinutes: number;
+  } | null;
+  lifecycle?: {
+    enabled: boolean;
+    eventType: "MedicalLeave" | "MaternityLeave" | "PaternityLeave" | "LongTermLeave" | "Sabbatical" | string;
+    requiresHrApproval: boolean;
+    requiresReason: boolean;
+    requiresDocument: boolean;
+    requiresExpectedReturnDate: boolean;
+    defaultAccountStatus?: "Active" | "TemporarilyDisabled" | string | null;
+    defaultPayrollStatus?: "Active" | "Hold" | "Paused" | string | null;
+    effectiveFromUtc?: string | null;
+  } | null;
 };
 
 export type EmployeeLeaveBalanceFilter = {
@@ -147,8 +191,10 @@ export type EmployeeLeaveInfo = {
   leavePolicyId: string;
   leavePolicyName: string;
   leavePolicyCode: string;
+  totalAllocated: number;
+  taken: number;
   remaining: number;
-  usedLeave: number;
+  version: number;
 };
 
 export type EmployeeLeaveBalanceData = {

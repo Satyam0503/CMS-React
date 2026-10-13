@@ -1,6 +1,7 @@
 // this hook connect to signalR hub
 import * as signalR from "@microsoft/signalr";
 import { BaseUrl, ServiceUrl } from "../utils/constant/Constant";
+import { queryClient } from "../app/query/queryClient";
 
 class Connector {
     private static instance: Connector | null = null;
@@ -40,7 +41,10 @@ class Connector {
                 .build();
 
             this.connection.onreconnected(() => {
-                // Optionally add logging here for development only
+                // Reconnection can follow a period in which another user
+                // changed data. Refresh all cached API reads when the channel
+                // becomes healthy again.
+                void queryClient.invalidateQueries({ refetchType: "all" });
             });
 
             this.connection.onclose((err) => {

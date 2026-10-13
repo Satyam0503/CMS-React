@@ -1,12 +1,12 @@
-import { UploadFile } from "@mui/icons-material";
 import {
-  Alert,
+  UploadFile } from "@mui/icons-material";
+import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Link,
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
@@ -15,6 +15,7 @@ import * as XLSX from "xlsx";
 import { bulkImportEmployees } from "../employeeServices";
 import { BulkImportEmployeeModel } from "../models";
 
+import { AppAlert, AppButton } from "../../../shared/components/ui";
 type Props = {
   open: boolean;
   handleClose: () => void;
@@ -30,6 +31,7 @@ const requiredHeaderAlias: Record<keyof BulkImportEmployeeModel, string[]> = {
   role: ["role", "role name"],
   department: ["department", "department name"],
   jobRole: ["job role", "jobrole", "job title", "designation"],
+  gender: ["gender", "sex"],
 };
 
 const normalizeHeader = (value: string) =>
@@ -56,6 +58,7 @@ const mapRowsToBulkEmployees = (
     role: getMappedHeader(headers, requiredHeaderAlias.role),
     department: getMappedHeader(headers, requiredHeaderAlias.department),
     jobRole: getMappedHeader(headers, requiredHeaderAlias.jobRole),
+    gender: getMappedHeader(headers, requiredHeaderAlias.gender),
   };
 
   if (
@@ -65,12 +68,13 @@ const mapRowsToBulkEmployees = (
     !headerMap.email ||
     !headerMap.role ||
     !headerMap.department ||
-    !headerMap.jobRole
+    !headerMap.jobRole ||
+    !headerMap.gender
   ) {
     throw new Error("Missing required headers");
   }
 
-  const { empId, firstName, lastName, email, role, department, jobRole } =
+  const { empId, firstName, lastName, email, role, department, jobRole, gender } =
     headerMap;
   return rows
     .map((row) => ({
@@ -81,6 +85,7 @@ const mapRowsToBulkEmployees = (
       role: String(row[role] ?? "").trim(),
       department: String(row[department] ?? "").trim(),
       jobRole: String(row[jobRole] ?? "").trim(),
+      gender: String(row[gender] ?? "").trim(),
     }))
     .filter(
       (employee) =>
@@ -90,7 +95,8 @@ const mapRowsToBulkEmployees = (
         employee.email &&
         employee.role &&
         employee.department &&
-        employee.jobRole,
+        employee.jobRole &&
+        employee.gender,
     );
 };
 
@@ -110,6 +116,26 @@ export const BulkImportEmployeesModal = ({
 
   const handleBulkImportClick = () => {
     bulkImportInputRef.current?.click();
+  };
+
+  const handleDownloadSample = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    event.preventDefault();
+    const csv =
+      "Emp ID,First Name,Last Name,Email,Gender,Role,Department,Job Role\r\n" +
+      "EMP001,John,Doe,john.doe@example.com,Male,Employee,Engineering,Software Engineer\r\n";
+    const blob = new Blob(["\uFEFF", csv], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "employee-bulk-import-sample.csv";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
   };
 
   const handleBulkImportFileChange = (
@@ -159,7 +185,7 @@ export const BulkImportEmployeesModal = ({
         // TODO: Wire backend API here.
       } catch (error) {
         toast.error(
-          "Invalid template. Required columns: Emp ID, First Name, Last Name, Email, Role, Department, Job Role.",
+          "Invalid template. Required columns: Emp ID, First Name, Last Name, Email, Gender, Role, Department, Job Role.",
         );
       }
     };
@@ -228,10 +254,17 @@ export const BulkImportEmployeesModal = ({
         <Box className="d-flex flex-column gap-2">
           <Typography variant="body2">
             Upload Excel/CSV with columns: Emp ID, First Name, Last Name, Email,
-            Role, Department, Job Role.
+            Gender, Role, Department, Job Role.
           </Typography>
           <Typography variant="body2">
-            Sample file: /employee-bulk-import-sample.csv
+            Sample file:{" "}
+            <Link
+              href="#"
+              onClick={handleDownloadSample}
+              underline="always"
+            >
+              employee-bulk-import-sample.csv
+            </Link>
           </Typography>
           {bulkImportFileName && (
             <Typography variant="caption">
@@ -243,15 +276,15 @@ export const BulkImportEmployeesModal = ({
               Parsed rows: {bulkImportedEmployees.length}
             </Typography>
           )}
-          {saveSummary && <Alert severity="success">{saveSummary}</Alert>}
+          {saveSummary && <AppAlert severity="success">{saveSummary}</AppAlert>}
           {saveErrors.length > 0 && (
-            <Alert severity="error">
+            <AppAlert severity="error">
               {saveErrors.map((errorMessage) => (
                 <Typography key={errorMessage} variant="body2">
                   {errorMessage}
                 </Typography>
               ))}
-            </Alert>
+            </AppAlert>
           )}
         </Box>
       </DialogContent>
@@ -263,14 +296,14 @@ export const BulkImportEmployeesModal = ({
           hidden
           onChange={handleBulkImportFileChange}
         />
-        <Button
+        <AppButton
           variant="contained"
           startIcon={<UploadFile />}
           onClick={handleBulkImportClick}
         >
           Upload File
-        </Button>
-        <Button
+        </AppButton>
+        <AppButton
           variant="contained"
           color="success"
           onClick={handleSave}
@@ -278,10 +311,10 @@ export const BulkImportEmployeesModal = ({
           disabled={!bulkImportedEmployees.length}
         >
           Save
-        </Button>
-        <Button variant="outlined" onClick={handleClose}>
+        </AppButton>
+        <AppButton variant="outlined" onClick={handleClose}>
           Close
-        </Button>
+        </AppButton>
       </DialogActions>
     </Dialog>
   );

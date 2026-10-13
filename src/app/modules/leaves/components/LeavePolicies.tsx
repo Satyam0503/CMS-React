@@ -1,17 +1,18 @@
 import { Add } from "@mui/icons-material";
-import { Card, Stack, Typography } from "@mui/material";
+import { Card, Stack, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useEffect, useState } from "react";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import { useIntl } from "react-intl";
 import AddLeavePolicy from "./AddLeavePolicy";
 import { LeavePolicyModel } from "../model";
 import {
-  getLeavePolicies,
+  getLeavePolicies, unlinkLifecyclePolicy, deleteLeavePolicy,
 } from "../leaveServices";
 import {
   EmployeeLeavePoliciesColumnList,
 } from "../../../../utils/constant/Constant";
-import { CustomisedTable } from "../../../shared/components/CustomisedTable";
+import { CustomisedTable } from "../../../shared/components/C_Table";
+import { useLocation } from "react-router-dom";
 
 const LeavePolicyModelInitials: LeavePolicyModel = {
   id: null,
@@ -29,20 +30,56 @@ const LeavePolicyModelInitials: LeavePolicyModel = {
   halfDayAllowed: true,
   weekendInclusive: false,
   holidayInclusive: false,
+  attendanceStatusCode: "",
   applicableTo: [],
+  policyType: 1,
+  workFromHome: null,
+  lifecycle: null,
 };
 
 function LeavePolicies() {
   const { formatMessage: i } = useIntl();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [leavePolicies, setLeavePolicies] = useState<Array<LeavePolicyModel>>(
     []
   );
+  const [selectedPolicy,setSelectedPolicy] = useState<LeavePolicyModel | null>(null);
+  const [action,setAction]=useState<"delete" | "unlink" | null>(null);
   const [refresh, setRefresh] = useState<boolean>(true);
   const [leavePoliciesValues, setLeavePoliciesValues] =
     useState<LeavePolicyModel>();
+
+    useEffect(()=>{
+      const state=location.state as{
+        createLifecycleLeave?:boolean;
+
+      }|null;
+      if(!state?.createLifecycleLeave) return;
+      setIsEdit(false);
+      setLeavePoliciesValues(LeavePolicyModelInitials);
+      setIsOpen(true);
+      window.history.replaceState({},document.title);
+
+    },[location.state]);
+
+  useEffect(() => {
+    const eventType = (location.state as { lifecycleEventType?: string } | null)?.lifecycleEventType;
+    if (!eventType) return;
+    setIsEdit(false);
+    setLeavePoliciesValues({ ...LeavePolicyModelInitials, lifecycle: {
+      enabled: true,
+      eventType,
+      requiresHrApproval: true,
+      requiresReason: true,
+      requiresDocument: true,
+      requiresExpectedReturnDate: true,
+    }});
+    setIsOpen(true);
+    window.history.replaceState({}, document.title);
+  }, [location.state]);
 
   function handleClose() {
     setIsOpen(false);
@@ -57,6 +94,22 @@ function LeavePolicies() {
     setIsEdit(true);
     setLeavePoliciesValues(row);
     setIsOpen(true);
+  };
+  const confirmPolicyAction=async()=>{
+    if(!selectedPolicy) return;
+    try{
+      if(action==="unlink"){
+        await unlinkLifecyclePolicy(selectedPolicy);
+      }
+      if(action==="delete" && selectedPolicy.id){
+        await deleteLeavePolicy(selectedPolicy.id);
+      }
+      setSelectedPolicy(null);
+      setAction(null);
+      handleRefresh();
+    }catch(error){
+      console.log("Policy action failed ", error)
+    }
   };
 
   useEffect(() => {
@@ -104,6 +157,14 @@ function LeavePolicies() {
           rowsPerPage={10}
           loading={loading}
           handleEdit={handleEdit}
+          openConfirmationModal={(row) => {
+            setSelectedPolicy(row);
+            setAction("delete");
+          }}
+          openUnlinkModal={(row) => {
+            setSelectedPolicy(row);
+            setAction("unlink");
+          }}
         />
       </Card>
       {isOpen && (
@@ -117,6 +178,20 @@ function LeavePolicies() {
           handleRefresh={handleRefresh}
         />
       )}
+      <Dialog open={Boolean(action && selectedPolicy)} onClose={() => { setAction(null); setSelectedPolicy(null); }}>
+        <DialogTitle>{action === "unlink" ? "Unlink lifecycle policy?" : "Delete leave policy?"}</DialogTitle>
+        <DialogContent>
+          {action === "unlink"
+            ? "The leave policy will remain available but will no longer create lifecycle cases."
+            : "This policy will be deactivated. Existing requests and history will be preserved."}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { setAction(null); setSelectedPolicy(null); }}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={confirmPolicyAction}>
+            {action === "unlink" ? "Unlink" : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

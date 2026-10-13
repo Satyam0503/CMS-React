@@ -1,24 +1,24 @@
-import {
-  AccessTime,
-  AdminPanelSettings,
-  Book,
-  CalendarMonth,
-  Contacts,
-  CurrencyRupee,
-  Info,
-  Mail,
-  NoteAlt,
-  PermContactCalendar,
-  Person,
-  PersonSearch,
-  Settings,
-  ToggleOn,
-  Work,
-} from "@mui/icons-material";
+import AccessTime from "@mui/icons-material/AccessTime";
+import AdminPanelSettings from "@mui/icons-material/AdminPanelSettings";
+import Book from "@mui/icons-material/Book";
+import CalendarMonth from "@mui/icons-material/CalendarMonth";
+import Contacts from "@mui/icons-material/Contacts";
+import CurrencyRupee from "@mui/icons-material/CurrencyRupee";
+import Info from "@mui/icons-material/Info";
+import Mail from "@mui/icons-material/Mail";
+import NoteAlt from "@mui/icons-material/NoteAlt";
+import PermContactCalendar from "@mui/icons-material/PermContactCalendar";
+import Person from "@mui/icons-material/Person";
+import PersonSearch from "@mui/icons-material/PersonSearch";
+import Settings from "@mui/icons-material/Settings";
+import ToggleOn from "@mui/icons-material/ToggleOn";
+import Work from "@mui/icons-material/Work";
+import WebRounded from "@mui/icons-material/WebRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import { Modules, ModulesName, ModulesTitles } from "../enums";
+import AccountTreeRounded from "@mui/icons-material/AccountTreeRounded";
+import { Modules, ModulesName, ModulesTitles, Permission } from "../enums";
 import { SideBarTabListProps } from "../common_types";
 
 export const SideBarTabList: SideBarTabListProps[] = [
@@ -79,6 +79,15 @@ export const SideBarTabList: SideBarTabListProps[] = [
         icon: <ReceiptLongIcon />,
         isDefault: false,
       },
+      {
+        id: Modules.Employees,
+        title: ModulesTitles.LifecycleManagement,
+        constant: ModulesName.Employees,
+        permission: Permission.Edit,
+        route: "/lifecycle-management",
+        icon: <AccountTreeRounded />,
+        isDefault: false,
+      },
     ],
   },
   {
@@ -112,6 +121,14 @@ export const SideBarTabList: SideBarTabListProps[] = [
         constant: ModulesName.ProcessLog,
         route: "/recruitment/processlog",
         icon: <Book />,
+        isDefault: false,
+      },
+      {
+        id: Modules.CareerProfile,
+        title: ModulesTitles.CareerProfile,
+        constant: ModulesName.CareerProfile,
+        route: "/recruitment/career-profile",
+        icon: <WebRounded />,
         isDefault: false,
       },
     ],
@@ -150,6 +167,22 @@ export const SideBarTabList: SideBarTabListProps[] = [
         icon: <Info />,
         isDefault: false,
       },
+      {
+        id: Modules.Attendance,
+        title: ModulesTitles.AttendanceSettings,
+        constant: ModulesName.Attendance,
+        route: "/attendance-settings",
+        icon: <AccessTime />,
+        isDefault: false,
+      },
+      {
+        id: Modules.RecruitmentSettings,
+        title: ModulesTitles.RecruitmentSettings,
+        constant: ModulesName.RecruitmentSettings,
+        route: "/recruitment-settings",
+        icon: <AccountTreeRounded />,
+        isDefault: false,
+      },
     ],
   },
   {
@@ -177,3 +210,6 @@ export const SideBarTabList: SideBarTabListProps[] = [
     isDefault: false,
   },
 ];
+
+
+

@@ -11,6 +11,7 @@
     "DASHBOARD": "Tableau de bord",
     "EMPLOYEES": "Employés",
     "ATTENDANCE": "Présence",
+    "ATTENDANCE_SETTINGS": "Paramètres de présence",
     "LEAVE_MANAGEMENT": "Gestion des congés",
     "MY_PROFILE": "Mon profil",
     "RECRUITMENT": "Recrutement",
@@ -26,7 +27,9 @@
     "PAYROLL": "Paie",
     "CALENDAR": "Calendrier",
     "POLICIES": "Politiques",
-    "PAYROLL_SETTINGS": "Paramètres de paie"
+    "PAYROLL_SETTINGS": "Paramètres de paie",
+    "LIFECYCLE_MANAGEMENT": "Gestion du cycle de vie",
+    "CAREER_PROFILE": "Profil de carrière"
   },
 
   "GENDER": {
@@ -266,6 +269,7 @@
     "REGISTER": "S'inscrire",
     "SIGNIN": "Se connecter",
     "T&C": "J'accepte les termes et conditions",
+    "TERMS_REQUIRED": "J'accepte les conditions générales",
     "PASSWORD_NOTE": "Utilisez 8 caractères ou plus avec un mélange de lettres, chiffres et symboles.",
     "FORGOT_PASSWORD": "Mot de passe oublié ?",
     "FORGOT_PASSWORD.NOTE": "Entrez votre e-mail pour réinitialiser votre mot de passe",
@@ -891,6 +895,7 @@
     "PLEASE_SELECT_EMPLOYEE": "Veuillez sélectionner un employé",
     "NO_RESULT": "Aucun résultat",
     "NO_DEPARTMENTS": "Veuillez ajouter des départements",
+    "NO_DEPARTMENT_EMPLOYEES": "Aucun employé assigné à un département pour le moment",
     "ADD_LANGUAGE_TITLE": "Veuillez saisir un titre pour {language}",
     "LEAVE_DAYS_CANT_BE_ZERO": "Les jours de congé ne peuvent pas être 0"
   },
@@ -1046,3 +1051,4 @@
     "RECRUITMENT_MANAGEMENT_DESCRIPTION": "Gère l’intégralité du cycle de recrutement, y compris les offres d’emploi, les candidatures, les étapes d’entretien, les évaluations et les journaux de processus détaillés. Offre une visibilité complète sur l’avancement du recrutement et les décisions d’embauche."
   }
 }
+

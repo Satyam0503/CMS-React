@@ -1,30 +1,41 @@
 import { Brightness4, LightModeOutlined } from "@mui/icons-material";
-import { IconButton, Tooltip, useColorScheme } from "@mui/material";
+import {
+  SxProps,
+  Theme,
+  Tooltip,
+  useColorScheme,
+} from "@mui/material";
 import { useIntl } from "react-intl";
 
 
-export default function LightDarkMode() {
+import { AppIconButton } from "../../../../../app/shared/components/ui";
+type LightDarkModeProps = {
+  sx?: SxProps<Theme>;
+};
+
+export default function LightDarkMode({ sx }: LightDarkModeProps) {
   const { mode, systemMode, setMode } = useColorScheme();
   const { formatMessage: i } = useIntl();
+  const effectiveMode = mode === "system" ? systemMode : mode;
 
   const handleThemeChange = () => {
-    if (systemMode) {
-      setMode(systemMode === "dark" ? "light" : "dark");
-    }
-    setMode(mode === "dark" ? "light" : "dark")
+    setMode(effectiveMode === "dark" ? "light" : "dark");
   }
 
   return (
     <>
       <Tooltip title={i({ id: "TOOLTIP.SWITCH_THEME" })}>
-        <IconButton
+        <AppIconButton
           onClick={handleThemeChange}
-          sx={{ border: 0, p: 0 }}
+          sx={[
+            { border: 0, p: 0 },
+            ...(Array.isArray(sx) ? sx : [sx]),
+          ]}
           role="button"
           aria-label="change theme"
         >
-          {mode === "light" ? <Brightness4 className="fs-32" /> : <LightModeOutlined className="fs-32" />}
-        </IconButton>
+          {effectiveMode === "light" ? <Brightness4 className="fs-32" /> : <LightModeOutlined className="fs-32" />}
+        </AppIconButton>
       </Tooltip >
     </>
   );

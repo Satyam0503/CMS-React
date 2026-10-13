@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import { useAppSelector } from "../../Redux/hooks";
 import React, { useEffect, useMemo } from "react";
 import { EmployeeChart } from "./components/EmployeeChart";
@@ -10,7 +10,7 @@ import EmpOnLeave from "./components/EmpOnLeave";
 import NoticeBoard from "./components/NoticeBoard";
 import Help from "./components/Help";
 import { hasModuleFeaturePermission } from "../../../utils/common";
-import { ModulesName, Permission } from "../../../utils/enums";
+import { ModulesName, Permission, Roles } from "../../../utils/enums";
 import { DashboardHeader } from "./components/DashboardHeader";
 import { UpComingCelebration } from "./components/UpcomingCelebration";
 import { PushNotification } from "./components/PushNotification";
@@ -21,13 +21,6 @@ import { usePageData } from "../../Context/PageDataProvider";
 export default function Dashboard() {
   const { setPageTitle } = usePageData();
   const user = useAppSelector((state) => state.user.userData)!;
-  const userRoleType = useAppSelector(
-    (state) => state.user.userData?.roleType!,
-  );
-  const modulePermission = useAppSelector(
-    (state) => state.user.userData?.modulePermission,
-  );
-
   const userModulesPermissions = useAppSelector(
     (state) => state.user.userData?.modulePermission ?? [],
   );
@@ -40,6 +33,19 @@ export default function Dashboard() {
         userModulesPermissions,
       ),
     [userModulesPermissions],
+  );
+
+  const canViewCompanyDashboard = useMemo(
+    () =>
+      user.roleType === Roles.Administrator ||
+      user.roleType === Roles.HRManager ||
+      user.roleType === Roles.HRExecutive ||
+      hasModuleFeaturePermission(
+        ModulesName.Dashboard,
+        Permission.ViewAll,
+        userModulesPermissions,
+      ),
+    [user.roleType, userModulesPermissions],
   );
 
   const hasAccessToJob = useMemo(
@@ -66,17 +72,36 @@ export default function Dashboard() {
     setPageTitle("");
   }, []);
 
+  if (!canViewCompanyDashboard) {
+    return (
+      <Box className="dashboard-modern">
+        <DashboardHeader fullName={user.fullName} />
+        <Grid container spacing={{ xs: 2, md: 3 }}>
+          <Grid size={{ xs: 12, lg: 8 }}>
+            {hasAccessToNoticeBoard && <NoticeBoard />}
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Stack spacing={{ xs: 2, md: 3 }}>
+              <UpComingHolidayAndEvents />
+              <UpComingCelebration />
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  }
+
   return (
-    <React.Fragment>
+    <Box className="dashboard-modern">
       <DashboardHeader fullName={user.fullName} />
-      <Grid container spacing={2} className="d-flex justify-content-between">
+      <Grid container spacing={{ xs: 2, md: 3 }} className="d-flex justify-content-between">
         <Grid
           size={{
             xs: 12,
             lg: 8,
           }}
         >
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, md: 3 }}>
             {hasAccessToEmpModule && (
               <Grid
                 size={{
@@ -87,14 +112,14 @@ export default function Dashboard() {
                 <EmployeeChart />
               </Grid>
             )}
-            <Grid
+            {hasAccessToEmpModule && <Grid
               size={{
                 xs: 12,
                 sm: 6,
               }}
             >
               <DepartmentChart />
-            </Grid>
+            </Grid>}
             {hasAccessToJob && (
               <Grid
                 size={{
@@ -107,7 +132,7 @@ export default function Dashboard() {
             )}
             {hasAccessToJob && (
               <Grid
-                sx={{ height: 310 }}
+                sx={{ minHeight: 330 }}
                 size={{
                   xs: 12,
                   sm: 6,
@@ -126,14 +151,14 @@ export default function Dashboard() {
           </Grid>
         </Grid>
         <Grid
-          className="d-flex flex-column gap-4"
+          className="dashboard-side-column d-flex flex-column"
           size={{
             xs: 12,
             lg: 4,
           }}
         >
-          {Notification.permission == "default" && <PushNotification />}
-          <EmpOnLeave />
+          {typeof Notification !== "undefined" && Notification.permission === "default" && <PushNotification />}
+          {hasAccessToEmpModule && <EmpOnLeave />}
           <UpComingHolidayAndEvents />
           <UpComingCelebration />
           {/* <Punctual />
@@ -141,6 +166,6 @@ export default function Dashboard() {
           <Help />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Box>
   );
 }

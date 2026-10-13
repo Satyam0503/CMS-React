@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useIntl } from "react-intl";
 import { Box, Typography } from "@mui/material";
-import { CustomCard } from "../../../shared/components/CustomCard";
+import { CustomCard } from "../../../shared/components/C_Card";
 import { CardSkeleton } from "./CardSkeleton";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { useAppSelector } from "../../../Redux/hooks";
@@ -20,6 +20,10 @@ export const DepartmentChart: FC = () => {
   const defaultLanguage = useAppSelector(
     (state) => state.user.userData?.defaultLanguage ?? ""
   );
+  // A pie series where every department has 0 employees (e.g. a brand-new company whose
+  // only employee has no department yet) renders as one indistinct full ring instead of
+  // a real breakdown, so treat it the same as having no departments to chart.
+  const hasAssignedEmployees = departmentList.some((dep) => dep.employeeCount > 0);
 
   const chartSeries = [
     {
@@ -41,14 +45,24 @@ export const DepartmentChart: FC = () => {
   return (
     <CustomCard
       label={i({ id: "TITLES.DEPARTMENT" })}
-      value={departmentList.length}
     >
-      {departmentList.length === 0 ? (
+      {!hasAssignedEmployees ? (
         <Box component="div" className="flex-grow-1 align-content-center text-center ">
-          <Typography variant="h5">{i({ id: "MESSAGE.NO_DEPARTMENTS" })}</Typography>
+          {departmentList.length === 0 ? (
+            <Typography variant="h5">{i({ id: "MESSAGE.NO_DEPARTMENTS" })}</Typography>
+          ) : (
+            <>
+              <Typography variant="h2" color="primary.main" fontWeight={700}>
+                {departmentList.length}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                {i({ id: "TITLES.DEPARTMENT" })}
+              </Typography>
+            </>
+          )}
         </Box>
       ) : (
-        <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.length} />
+        <DonutChart loading={loading} series={chartSeries} centerLabel={departmentList.reduce((total, department) => total + department.employeeCount, 0)} />
       )
       }
     </CustomCard >

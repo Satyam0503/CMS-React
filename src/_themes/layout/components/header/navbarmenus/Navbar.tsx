@@ -6,10 +6,12 @@ import { AppStylePicker } from "./AppStylePicker";
 
 const Navbar = () => {
   return (
-    <Stack className="flex-row gap-8 align-items-center">
-      <Stack direction="row" spacing={2}>
-        <AppStylePicker />
-        <LightDarkMode />
+    <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5, md: 2 }}>
+      <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5, md: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+          <AppStylePicker />
+          <LightDarkMode />
+        </Stack>
         <HeaderNotificationMenu />
       </Stack>
       <HeaderUserMenu />

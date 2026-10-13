@@ -8,12 +8,31 @@ interface AuthenticationState {
   token: string | null;
 }
 
+const getStoredAccessToken = (): string | null => {
+  const storedAuth = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY);
+  if (!storedAuth) {
+    return null;
+  }
+
+  try {
+    const authTokens = JSON.parse(storedAuth) as Partial<AuthTokens>;
+    return typeof authTokens.token === "string" && authTokens.token.length > 0
+      ? authTokens.token
+      : null;
+  } catch {
+    // A malformed legacy value must not prevent the application from loading.
+    return null;
+  }
+};
+
+const storedAccessToken = getStoredAccessToken();
+
 const initialState: AuthenticationState = {
-  isUserAuthenticated: false,
-  token: localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
-    ? (JSON.parse(localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)!) as AuthTokens)
-        .refreshToken
-    : null,
+  // A stored token means the session is present while AuthInit validates it.
+  // Keeping this false until the async validation completes makes AppRoutes
+  // render /auth for one render, which causes the visible auth flicker.
+  token: storedAccessToken,
+  isUserAuthenticated: Boolean(storedAccessToken),
 };
 const authSlice = createSlice({
   name: "auth",

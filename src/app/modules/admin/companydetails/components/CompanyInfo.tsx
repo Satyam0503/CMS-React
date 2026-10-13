@@ -4,22 +4,23 @@ import {
   Box,
   Card,
   Chip,
+  Button,
   Divider,
   Grid,
-  IconButton,
   ListItemText,
   MenuItem,
-  Select,
+  FormControlLabel,
   Stack,
-  TextField,
+  Switch,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { CompanyInfoModel, CompanyModel } from "../../models";
-import { getCompanyDetails, updateCompanyDetails } from "../../adminservices";
+import { getCompanyDetails, updateCompanyDetails, getEmployeeIdSequence, skipEmployeeIds, startEmployeeIdSequence, setCompanyFormerEmployeePortalAccess } from "../../adminservices";
+import { setCompanyTheme } from "../../../theme/companyTheme";
 import { DEFAULT_COMPANY_LOGO, languages } from "../../../../../utils/constant/Constant";
 import { CompanyInfoSkeleton } from "./CompanyInfoSkeleton";
 import { useFormik } from "formik";
@@ -32,6 +33,8 @@ import { setCurrentUser } from "../../../../Redux/Reducers/userSlice";
 import { useAppLang } from "../../../../../_themes/i18n/Metronici18n";
 import { LANGUAGE } from "../../../../../utils/enums";
 
+import { AppIconButton, AppSelect, AppTextField } from "../../../../shared/components/ui";
+import { ConfirmationModal } from "../../../../shared/components/ConfirmModal";
 const initialCompanyInfo: CompanyModel = {
   defaultLanguage: "",
   applicationLanguage: [],
@@ -52,16 +55,24 @@ export const CompanyInfo = () => {
   const [companyInfo, setCompanyInfo] = useState<CompanyInfoModel>({} as CompanyInfoModel);
   const [editedInfo, setEditedInfo] = useState<CompanyModel>(initialCompanyInfo);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
+  const [nextEmployeeId, setNextEmployeeId] = useState("");
+  const [employeeIdFormat, setEmployeeIdFormat] = useState("");
+  const [skipCount, setSkipCount] = useState("");
+  const [startFromId, setStartFromId] = useState("");
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [croppedLogo, setCroppedLogo] = useState<string | null>(null);
   const [isCropperOpen, setCropperOpen] = useState(false);
+  const [isLogoUploading, setIsLogoUploading] = useState(false);
+  const applyEmployeeIdSequence = (sequence: { currentNextEmployeeId: string; format: string }) => {
+    setNextEmployeeId(sequence.currentNextEmployeeId);
+    setEmployeeIdFormat(sequence.format);
+  };
 
   const userData = useAppSelector(state => state.user.userData)!;
   const dispatch = useAppDispatch();
 
   const defaultLanguage = languages.find(lang => lang.lang === companyInfo?.defaultLanguage)?.name ?? "NOT_AVAILABLE";
   const applicationLanguages = companyInfo?.applicationLanguage?.length > 0 ? languages.filter(lang => companyInfo?.applicationLanguage.includes(lang.lang)).map(lang => lang.name) : ["NOT_AVAILABLE"];
-
   const { values, dirty, handleSubmit, resetForm, setFieldValue, setFieldError, setFieldTouched, errors, touched, getFieldProps, submitForm } = useFormik({
     enableReinitialize: true,
     initialValues: editedInfo,
@@ -75,9 +86,12 @@ export const CompanyInfo = () => {
     setImgSrc("");
     setCropperOpen(false);
   };
-  const handleImageCropSuccess = (croppedImageDataUrl: string) => {
+  const handleImageCropSuccess = async (croppedImageDataUrl: string) => {
     setCroppedLogo(croppedImageDataUrl);
     setCropperOpen(false);
+    if (!isEdit) {
+      await handleUpdateCompanyDetails(croppedImageDataUrl, selectedLogo, true);
+    }
   };
 
   const handleFileChange = (
@@ -107,10 +121,14 @@ export const CompanyInfo = () => {
     }
   };
 
-  const handleUpdateCompanyDetails = async () => {
+  const handleUpdateCompanyDetails = async (
+    logoDataUrl = croppedLogo,
+    logoFile = selectedLogo,
+    logoOnly = false,
+  ) => {
     const formData = new FormData();
-    if (croppedLogo && selectedLogo) {
-      const base64Image = croppedLogo.split(",")[1];
+    if (logoDataUrl && logoFile) {
+      const base64Image = logoDataUrl.split(",")[1];
       const blob = new Blob(
         [
           new Uint8Array(
@@ -120,21 +138,25 @@ export const CompanyInfo = () => {
           ),
         ],
         {
-          type: selectedLogo.type,
+          type: logoFile.type,
         }
       );
-      formData.append("companyLogo", blob, selectedLogo.name);
+      formData.append("companyLogo", blob, logoFile.name);
     }
 
     formData.append("CompanyName", values.companyName);
     formData.append("DefaultLanguage", values.defaultLanguage);
     formData.append("Address", values.address);
+    formData.append("EmployeeIdPrefix", values.employeeIdPrefix ?? "");
+    formData.append("AutoGenerateEmployeeId", String(values.autoGenerateEmployeeId ?? true));
+    formData.append("AppTheme", values.appTheme ?? "glass");
     if (values.applicationLanguage.length > 0) {
       values.applicationLanguage.forEach(language =>
         formData.append('ApplicationLanguage', language)
       );
     }
     try {
+      if (logoOnly) setIsLogoUploading(true);
       const response = await updateCompanyDetails(formData);
       const { success, methodResult } = response.data;
       if (success) {
@@ -144,14 +166,20 @@ export const CompanyInfo = () => {
         }));
         changeAppLanguage?.(methodResult.defaultLanguage as LANGUAGE);
         setCompanyInfo(methodResult);
+        setCompanyTheme(methodResult.appTheme);
+        await refreshEmployeeIdSequence();
         toast.success(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
         setEdit(false);
         setSelectedLogo(null);
+        setCroppedLogo(null);
       } else {
-        toast.error(formatMessage({ id: "TOAST.SUCCESS.UPDATE" }));
+        toast.error(response.data.message || formatMessage({ id: "ERROR.500" }));
       }
     } catch (error) {
       console.error((error as Error).message);
+      toast.error(formatMessage({ id: "ERROR.500" }));
+    } finally {
+      if (logoOnly) setIsLogoUploading(false);
     }
   };
 
@@ -172,7 +200,10 @@ export const CompanyInfo = () => {
             companyName: methodResult.companyName,
             defaultLanguage: methodResult.defaultLanguage,
             applicationLanguage: methodResult.applicationLanguage,
-            address: methodResult.address
+            address: methodResult.address,
+            employeeIdPrefix: methodResult.employeeIdPrefix ?? "",
+            autoGenerateEmployeeId: methodResult.autoGenerateEmployeeId ?? true,
+            appTheme: methodResult.appTheme ?? "glass",
           }));
           setLoading(false);
         }
@@ -183,13 +214,97 @@ export const CompanyInfo = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    void getEmployeeIdSequence().then(({ data }) => {
+      if (data.success && data.methodResult) {
+        applyEmployeeIdSequence(data.methodResult);
+      }
+    });
+  }, []);
+
+  const refreshEmployeeIdSequence = async () => {
+    const { data } = await getEmployeeIdSequence();
+    if (data.success && data.methodResult) applyEmployeeIdSequence(data.methodResult);
+  };
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [confirmationTitle, setConfirmationTitle] = useState("");
+  const [confirmationContent, setConfirmationContent] = useState("");
+  const [confirmationAction, setConfirmationAction] = useState<(() => Promise<void>) | null>(null);
+  const [confirmationLoading, setConfirmationLoading] = useState(false);
+  const toggleFormerEmployeePortal = async (enabled: boolean) => {
+    try {
+      setConfirmationLoading(true);
+      const { data } = await setCompanyFormerEmployeePortalAccess(enabled, enabled ? "Enabled by company administrator" : "Disabled by company administrator");
+      if (!data.success) { toast.error(data.message || "Unable to update former-employee portal access."); return; }
+      setCompanyInfo((current) => ({ ...current, formerEmployeePortalEnabled: enabled }));
+      setEditedInfo((current) => ({ ...current, formerEmployeePortalEnabled: enabled }));
+      toast.success(enabled ? "Former-employee portal enabled for this company." : "Former-employee portal disabled and all active portal sessions revoked.");
+    } catch { toast.error("Unable to update former-employee portal access."); }
+    finally { setConfirmationLoading(false); }
+  };
+  const confirmSkip = async () => {
+    const count = Number(skipCount);
+    if (!Number.isInteger(count) || count <= 0) return toast.error("Skip count must be greater than 0.");
+    setConfirmationTitle("Confirm Skip");
+    setConfirmationContent(`Automatic Employee ID generation will skip ${count} ID(s). Existing employee IDs will not be changed. Continue?`);
+    setConfirmationAction(async () => {
+      try {
+        setConfirmationLoading(true);
+        const { data } = await skipEmployeeIds(count);
+        if (!data.success) {
+          void toast.error(data.message || "Unable to skip Employee IDs.");
+          return;
+        }
+        toast.success(data.message);
+        setSkipCount("");
+        if (data.methodResult) applyEmployeeIdSequence(data.methodResult);
+        else await refreshEmployeeIdSequence();
+      } catch (err) {
+        console.error(err);
+        toast.error("Unable to skip Employee IDs.");
+      } finally {
+        setConfirmationLoading(false);
+        setConfirmationOpen(false);
+      }
+      return;
+    });
+    setConfirmationOpen(true);
+  };
+  const confirmStartFrom = async () => {
+    if (!startFromId.trim()) return toast.error("Employee ID is required.");
+    setConfirmationTitle("Set Starting ID");
+    setConfirmationContent(`Automatic Employee ID generation will continue from ${startFromId.trim().toUpperCase()}. Existing employee IDs will not be changed. Continue?`);
+    setConfirmationAction(async () => {
+      try {
+        setConfirmationLoading(true);
+        const { data } = await startEmployeeIdSequence(startFromId);
+        if (!data.success) {
+          void toast.error(data.message || "Unable to update Employee ID sequence.");
+          return;
+        }
+        toast.success(data.message);
+        setStartFromId("");
+        if (data.methodResult) applyEmployeeIdSequence(data.methodResult);
+        else await refreshEmployeeIdSequence();
+      } catch (err) {
+        console.error(err);
+        toast.error("Unable to update Employee ID sequence.");
+      } finally {
+        setConfirmationLoading(false);
+        setConfirmationOpen(false);
+      }
+      return;
+    });
+    setConfirmationOpen(true);
+  };
+
   if (loading) {
     return <CompanyInfoSkeleton />;
   }
 
   return (
     <>
-      <Card sx={{ p: 3, mt: 1, height: "100%" }}>
+      <Card sx={{ p: { xs: 1.5, sm: 2.5, md: 3 }, mt: 0, height: "100%", minWidth: 0, border: "1px solid", borderColor: "divider", borderRadius: { xs: 2.5, sm: 3 }, boxShadow: "0 10px 28px rgba(24, 74, 82, .07)" }}>
         <Stack direction={"row"} sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2, flexWrap: "wrap" }}>
           <Stack spacing={.5}>
             <Typography variant="h5" sx={{ fontSize: 18 }}>
@@ -200,7 +315,7 @@ export const CompanyInfo = () => {
             </Typography>
           </Stack>
 
-          {
+              {
             isEdit ?
               <Stack direction="row" spacing={1}>
                 <CustomisedButton variant="outlined" label={formatMessage({ id: "BUTTON.CANCEL" })} handleClick={handleEditCancel} />
@@ -244,7 +359,7 @@ export const CompanyInfo = () => {
                 </Typography>
                 {
                   isEdit ?
-                    <Select
+                    <AppSelect
                       fullWidth
                       required
                       labelId="defaultLanguage"
@@ -259,7 +374,7 @@ export const CompanyInfo = () => {
                           <MenuItem key={item.id} value={item.lang}>{formatMessage({ id: item.name })}</MenuItem>
                         )
                       }
-                    </Select>
+                    </AppSelect>
                     :
                     <Typography variant="body2">{formatMessage({ id: defaultLanguage })}</Typography>
                 }
@@ -287,7 +402,7 @@ export const CompanyInfo = () => {
                       }}
                       getOptionLabel={(option) => option.name}
                       renderInput={(params) => (
-                        <TextField {...params} />
+                        <AppTextField {...params} />
                       )}
                       renderValue={(value, getTagProps) => (
                         value.map((option, index: number) => {
@@ -309,6 +424,62 @@ export const CompanyInfo = () => {
                     : <Typography variant="body2">{applicationLanguages.map(lang => formatMessage({ id: lang }) + ", ")}</Typography>
                 }
               </Stack>
+              <Stack spacing={1}>
+                <Typography variant="body1">Company theme</Typography>
+                {isEdit ? <AppSelect fullWidth {...getFieldProps("appTheme")}><MenuItem value="glass">Glass</MenuItem><MenuItem value="slate">Slate</MenuItem><MenuItem value="dawn">Dawn</MenuItem><MenuItem value="blush">Blush</MenuItem></AppSelect> : <Typography variant="body2" sx={{ textTransform: "capitalize" }}>{values.appTheme ?? "glass"}</Typography>}
+                <Typography variant="caption" color="text.secondary">Applied to all signed-in users and this company’s public careers pages.</Typography>
+              </Stack>
+            </Grid>
+          </Grid>
+          {companyInfo.autoGenerateEmployeeId !== false && <><Divider sx={{ my: 1 }} /><Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Employee ID sequence</Typography>
+              <Typography variant="body2">Control where automatic Employee ID generation continues. Existing employee IDs are never changed.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              <Stack spacing={1.5}>
+                <Box sx={{ px: 1.5, py: 1.25, border: 1, borderColor: "primary.light", borderRadius: 2, bgcolor: "action.hover" }}>
+                  <Typography variant="caption" color="text.secondary">Next automatic Employee ID</Typography>
+                  <Typography variant="h6" fontWeight={800} color="primary.main">{nextEmployeeId || "Loading..."}</Typography>
+                  <Typography variant="caption" color="text.secondary">Required format: {employeeIdFormat || "TT-0001"}</Typography>
+                </Box>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
+                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Skip unused IDs" placeholder="For example: 5" value={skipCount} onChange={e => setSkipCount(e.target.value)} inputProps={{ inputMode: "numeric", min: 1, step: 1 }} />
+                  <Button size="small" variant="contained" onClick={() => { void confirmSkip(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Skip IDs</Button>
+                </Stack>
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems="stretch">
+                  <AppTextField size="small" sx={{ flex: 1, minWidth: 0 }} label="Set next Employee ID" placeholder={nextEmployeeId || employeeIdFormat || "TT-0001"} value={startFromId} onChange={e => setStartFromId(e.target.value)} />
+                  <Button size="small" variant="outlined" onClick={() => { void confirmStartFrom(); }} sx={{ flex: "0 0 auto", minWidth: { xs: "100%", sm: 108 }, minHeight: 40, whiteSpace: "nowrap" }}>Set next ID</Button>
+                </Stack>
+              </Stack>
+            </Grid>
+          </Grid></>}
+          <Divider sx={{ my: 1 }} />
+          <Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Former-employee portal</Typography>
+              <Typography variant="body2">Company-wide access control. Turning this off immediately revokes every former employee session; employee records and issued documents are retained.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              <FormControlLabel control={<Switch checked={companyInfo.formerEmployeePortalEnabled !== false} onChange={(event) => void toggleFormerEmployeePortal(event.target.checked)} disabled={confirmationLoading} inputProps={{ "aria-label": "Enable former employee portal for this company" }} />} label={companyInfo.formerEmployeePortalEnabled !== false ? "Portal enabled for this company" : "Portal disabled for this company"} />
+              <Typography variant="caption" color="text.secondary" display="block">Former employees still need individual access enabled and a verified personal email to sign in with OTP.</Typography>
+            </Grid>
+          </Grid>
+          <Divider sx={{ my: 1 }} />
+          <Grid container sx={{ gap: 3 }}>
+            <Grid className="d-flex flex-column gap-1" size={{ xs: 12, sm: 4, md: 5 }}>
+              <Typography variant="h6">Employee ID format</Typography>
+              <Typography variant="body2">Set the company prefix, such as CD for Codeji. Automatic IDs use CD-0001; turn it off to enter IDs manually.</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 7, md: 6 }}>
+              {isEdit ? (
+                <Stack spacing={1}>
+                  <AppTextField label="Company employee code" inputProps={{ maxLength: 6 }} {...getFieldProps("employeeIdPrefix")} />
+                  <FormControlLabel control={<Switch checked={values.autoGenerateEmployeeId ?? true} onChange={(event) => setFieldValue("autoGenerateEmployeeId", event.target.checked)} />} label="Generate employee IDs automatically" />
+                </Stack>
+              ) : (
+                <Typography variant="body1">{companyInfo.autoGenerateEmployeeId === false ? "Manual employee IDs" : employeeIdFormat || "Loading..."}</Typography>
+              )}
             </Grid>
           </Grid>
           <Divider sx={{ my: 1 }} />
@@ -337,7 +508,7 @@ export const CompanyInfo = () => {
               }}>
               {
                 isEdit ?
-                  <TextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
+                  <AppTextField id="company-name" fullWidth required {...getFieldProps("companyName")} error={touched.companyName && Boolean(errors.companyName)} />
                   :
                   <Typography variant="body1">{companyInfo.companyName}</Typography>
               }
@@ -369,7 +540,7 @@ export const CompanyInfo = () => {
               }}>
               {
                 isEdit ?
-                  <TextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
+                  <AppTextField id="company-address" fullWidth required {...getFieldProps("address")} error={touched.address && Boolean(errors.address)} />
                   :
                   <Typography variant="body1">{companyInfo.address || formatMessage({ id: "NOT_AVAILABLE" })}</Typography>
               }
@@ -411,13 +582,11 @@ export const CompanyInfo = () => {
                 />
                 <Typography variant="h6">{companyInfo.companyName}</Typography>
               </Stack>
-              {
-                isEdit &&
-                <Box
+              <Box
                   className="logo-update-button"
                   sx={{ borderRadius: 1, border: 1, borderColor: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'text.secondary' }}
                 >
-                  <IconButton component="label" role="button" aria-label="select logo" sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
+                  <AppIconButton component="label" role="button" aria-label="upload company logo" disabled={isLogoUploading} sx={{ border: 0, color: touched.companyLogo && Boolean(errors.companyLogo) ? 'error.main' : 'primary.main' }}>
                     <CloudUploadOutlined />
                     <input
                       name="companyLogo"
@@ -429,7 +598,7 @@ export const CompanyInfo = () => {
                       }}
                       hidden
                     />
-                  </IconButton>
+                  </AppIconButton>
                   {
                     selectedLogo &&
                     <Typography variant="body2" sx={{ fontWeight: 600 }}> {formatMessage({ id: "COMPANY_DETAILS.SELECTED_LOGO" }, { image: selectedLogo.name })}</Typography>
@@ -437,10 +606,9 @@ export const CompanyInfo = () => {
                   {
                     touched.companyLogo && Boolean(errors.companyLogo) ?
                       <Typography variant="body2" sx={{ color: 'error.main' }}>{errors.companyLogo}</Typography> :
-                      <Typography variant="body2">{formatMessage({ id: "COMPANY_DETAILS.LOGO_UPDATE_NOTE" })}</Typography>
+                      <Typography variant="body2">{isLogoUploading ? "Uploading company logo..." : formatMessage({ id: "COMPANY_DETAILS.LOGO_UPDATE_NOTE" })}</Typography>
                   }
                 </Box>
-              }
 
             </Grid>
           </Grid>
@@ -459,6 +627,23 @@ export const CompanyInfo = () => {
           />
         )
       }
+      {confirmationOpen && (
+        <ConfirmationModal
+          open={confirmationOpen}
+          title={confirmationTitle}
+          content={confirmationContent}
+          handleClose={() => setConfirmationOpen(false)}
+          handleConfirmation={async (res: string) => {
+            if (res === "ok" && confirmationAction) {
+              await confirmationAction();
+            } else {
+              setConfirmationOpen(false);
+            }
+          }}
+          ok_btn={true}
+          confirming={confirmationLoading}
+        />
+      )}
     </>
   );
 };

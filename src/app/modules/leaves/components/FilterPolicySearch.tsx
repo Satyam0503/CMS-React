@@ -1,6 +1,4 @@
 import {
-  Checkbox,
-  TextField,
   Autocomplete,
   ListItemText,
 } from "@mui/material";
@@ -8,13 +6,14 @@ import { Stack } from "@mui/system";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 
-import CustomisedButton from "../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../shared/components/C_Button";
 import { getLeavePolicies } from "../leaveServices";
 import { useIntl } from "react-intl";
 import { LeavePolicyModel } from "../model";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
 import { FilterComponentProps } from "../../../../utils/common_types";
 
+import { AppCheckbox, AppTextField } from "../../../shared/components/ui";
 type Props = {
   selectedPolicies: Array<string>;
   handleSelectingPolicies: (policyIds: Array<string>) => void;
@@ -80,7 +79,7 @@ export default function FilterPolicySearch(props: Props) {
                 return option.name;
               }}
               renderInput={(params) => (
-                <TextField
+                <AppTextField
                   {...params}
                   placeholder={i({ id: "LEAVE.TITLES.LEAVE_POLICY" })}
                 />
@@ -88,7 +87,7 @@ export default function FilterPolicySearch(props: Props) {
               renderOption={(props, option, state) => {
                 return (
                   <li {...props} key={option.id}>
-                    <Checkbox
+                    <AppCheckbox
                       // key={option.id}
                       checked={state.selected}
                       sx={{ mr: 1 }}

@@ -6,12 +6,11 @@ import {
   Grid,
   MenuItem,
   Stack,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { useIntl } from "react-intl";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { CloudUploadOutlined } from "@mui/icons-material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -25,7 +24,7 @@ import {
   editApplicant,
   getAllJobVacancies,
   getApplicantById,
-  uploadResume,
+  uploadResumeForApplicant,
 } from "../../services";
 import { useAppSelector } from "../../../../Redux/hooks";
 import { toast } from "react-toastify";
@@ -44,6 +43,7 @@ import { getVacancyPayload } from "../../jobs/Jobs";
 import { usePageData } from "../../../../Context/PageDataProvider";
 import { AxiosError } from "axios";
 
+import { AppTextField } from "../../../../shared/components/ui";
 export const EditApplicant = () => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
@@ -137,7 +137,7 @@ export const EditApplicant = () => {
     if (success) {
       toast.success(formatMessage({ id: "TOAST.SUCCESS.APPLICANT_UPDATE" }));
       handleModalClose();
-      window.history.back();
+      navigate(`/recruitment/applicant/${applicantId}`, { replace: true });
     }
   };
 
@@ -181,7 +181,7 @@ export const EditApplicant = () => {
       const { data } = await editApplicant(payload);
       if (!data.success) throw new Error(String(data.statusCode));
       if (values.resume) {
-        const resumeUploadResponse = await uploadResume(values.email, formData);
+        const resumeUploadResponse = await uploadResumeForApplicant(values.applicantId, formData);
         if (!resumeUploadResponse.data.success) {
           throw new Error(String(resumeUploadResponse.data.statusCode));
         }
@@ -200,11 +200,31 @@ export const EditApplicant = () => {
   };
 
   return (
-    <Card sx={{ p: 2.6 }}>
-      <Stack spacing={2}>
-        <Typography variant="h5" className="mb-2">
-          {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
-        </Typography>
+    <Card
+      sx={{
+        p: { xs: 2, sm: 3 },
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        boxShadow: "0 12px 32px rgba(46, 38, 69, 0.08)",
+      }}
+    >
+      <Stack spacing={2.5}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          alignItems={{ sm: "center" }}
+          gap={1}
+        >
+          <Box>
+            <Typography variant="h5" fontWeight={800}>
+              {formatMessage({ id: "APPLICATION.UPDATE_APPLICANT" })}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              Update candidate contact details, experience, or resume. Stage transitions are managed via the Next Step workflow drawer.
+            </Typography>
+          </Box>
+        </Stack>
         <Grid container direction={"column"} sx={{
           gap: 1
         }}>
@@ -298,22 +318,7 @@ export const EditApplicant = () => {
                           ))}
                         </SelectInput>
                       </Grid>
-                      <Grid
-                        size={{
-                          xs: 12,
-                          sm: 4
-                        }}>
-                        <SelectInput
-                          label={formatMessage({ id: "STATUS" })}
-                          name="activityType"
-                        >
-                          {ApplicationEvaluationStatus.map((status) => (
-                            <MenuItem key={status.id} value={status.value}>
-                              {formatMessage({ id: status.label })}
-                            </MenuItem>
-                          ))}
-                        </SelectInput>
-                      </Grid>
+
                       <Grid
                         size={{
                           xs: 12,
@@ -330,7 +335,7 @@ export const EditApplicant = () => {
                             formik.setFieldValue("state", value?.value);
                           }}
                           renderInput={(param) => (
-                            <TextField {...param} label={formatMessage({ id: "APPLICATION.SELECT_STATE" })} />
+                            <AppTextField {...param} label={formatMessage({ id: "APPLICATION.SELECT_STATE" })} />
                           )}
                           getOptionLabel={(option) => option.label}
                         />
@@ -477,7 +482,7 @@ export const EditApplicant = () => {
                         variant="outlined"
                         size="medium"
                         label={formatMessage({ id: "BUTTON.CANCEL" })}
-                        handleClick={() => navigate(-1)}
+                        handleClick={() => navigate(`/recruitment/applicant/${applicantId}`)}
                       />
                       <CustomisedButton
                         variant="contained"
@@ -508,3 +513,4 @@ export const EditApplicant = () => {
     </Card>
   );
 };
+

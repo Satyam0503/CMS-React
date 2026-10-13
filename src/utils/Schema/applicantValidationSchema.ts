@@ -24,7 +24,7 @@ export const applicantValidationSchema = Yup.object().shape({
     .test("fileFormat", "VALIDATION_ERR.ONLY_PDF_FILE", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];
-        return supportedFormats.includes(value.name.split(".").pop());
+        return supportedFormats.includes(value.name.split(".").pop()?.toLowerCase());
       }
       return true;
     })
@@ -67,7 +67,7 @@ export const editApplicantValidationSchema = Yup.object().shape({
     .test("fileFormat", "VALIDATION_ERR.ONLY_PDF_FILE", (value: any) => {
       if (value) {
         const supportedFormats = ["pdf"];
-        return supportedFormats.includes(value.name.split(".").pop());
+        return supportedFormats.includes(value.name.split(".").pop()?.toLowerCase());
       }
       return true;
     })

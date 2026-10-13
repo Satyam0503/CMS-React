@@ -2,7 +2,7 @@ import { Card, Chip, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { AddUpdateSkills } from "./AddUpdateSkills";
-import { CustomIconButton } from "../../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../../shared/components/C_IconButton";
 import { Add } from "@mui/icons-material";
 import { getEmployeeSkills } from "../../userservices";
 import { useUserDetails } from "../../UserDataProvider";
@@ -38,11 +38,11 @@ export const UserSkills = () => {
   }, [refresh, employeeId]);
 
   return (
-    <Card sx={{ p: 2 }}>
+    <Card sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 3, border: 1, borderColor: "divider", boxShadow: "0 8px 24px rgba(0,0,0,.05)" }}>
       <Stack className="flex-row justify-content-between" sx={{
         mb: 2
       }} >
-        <Typography variant="h5">
+        <Typography component="h2" variant="h5" sx={{ fontWeight: 700 }}>
           {intl.formatMessage({ id: "PROFILE.SKILLS.TITLE" })}
         </Typography>
         {
@@ -66,7 +66,7 @@ export const UserSkills = () => {
           </Typography>
         ) : (
           userSkills?.map((skill, index) => (
-            <Chip key={index} label={skill.name} />
+            <Chip key={index} label={skill.name} sx={{ borderRadius: 2, px: .5, fontWeight: 600, bgcolor: "primary.lighter", color: "primary.dark", border: 1, borderColor: "primary.light" }} />
           ))
         )}
       </Stack>

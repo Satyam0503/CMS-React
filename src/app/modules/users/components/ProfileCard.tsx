@@ -2,34 +2,37 @@ import {
   Avatar,
   Box,
   Card,
-  IconButton,
+  Chip,
   Stack,
   Typography,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Edit, Visibility } from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useUserDetails } from "../UserDataProvider";
-import { CustomIconButton } from "../../../shared/components/CustomIconButton";
+import { CustomIconButton } from "../../../shared/components/C_IconButton";
 import {
   getDateDiffInYears,
   getStatusCodeString,
-  hasModuleFeaturePermission,
 } from "../../../../utils/common";
 import { PictureUpdateModal } from "./ProfileUpdateModal";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../../Redux/hooks";
 import { useAppLang } from "../../../../_themes/i18n/Metronici18n";
 import { DEFAULT_USER_AVATAR } from "../../../../utils/constant/Constant";
-import CustomisedDatePicker from "../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { toast } from "react-toastify";
 import { PayslipPayload } from "../../payroll/models";
 import { generatePaySlip } from "../../payroll/services";
 import { AxiosError } from "axios";
-import { LANGUAGE, ModulesName, Permission } from "../../../../utils/enums";
+import { LANGUAGE } from "../../../../utils/enums";
 
+import { AppButton } from "../../../shared/components/ui";
 export default function ProfileCard() {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const { formatMessage: i } = useIntl();
   const { userDetails } = useUserDetails();
@@ -43,14 +46,9 @@ export default function ProfileCard() {
     LANGUAGE.ENGLISH;
   const [date, setDate] = useState<Dayjs | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const modulePermission = useAppSelector(
-    (state) => state.user.userData?.modulePermission,
-  );
-  const userModulePermission = useMemo(
-    () => modulePermission ?? [],
-    [modulePermission],
-  );
+  const paySlipControlColor = theme.palette.mode === "light"
+    ? theme.palette.primary.dark
+    : theme.palette.common.white;
 
   const handleClose = () => {
     setOpen(false);
@@ -59,6 +57,32 @@ export default function ProfileCard() {
   const handleDateChange = (date: Dayjs | null) => {
     setDate(date);
   };
+
+  const lifecycleBadges = [
+  userDetails?.employmentStatus &&
+    userDetails.employmentStatus !== "Active" &&
+    {
+      label: userDetails.employmentStatus,
+      color: "warning" as const,
+      ariaLabel: `Employment status: ${userDetails.employmentStatus}`,
+    },
+  userDetails?.availabilityStatus &&
+    userDetails.availabilityStatus !== "Working" &&
+    {
+      label: userDetails.availabilityStatus.replace(
+        /([a-z])([A-Z])/g,
+        "$1 $2",
+      ),
+      color: "info" as const,
+      ariaLabel: `Availability status: ${userDetails.availabilityStatus}`,
+    },
+].filter(
+  (badge): badge is {
+    label: string;
+    color: "warning" | "info";
+    ariaLabel: string;
+  } => Boolean(badge),
+);
 
   const viewPaySlip = async () => {
     if (!date) {
@@ -93,16 +117,6 @@ export default function ProfileCard() {
       setDate(null);
     }
   };
-
-  const isPayRollActive = useMemo(
-    () =>
-      hasModuleFeaturePermission(
-        ModulesName.NoticeBoard,
-        Permission.View,
-        userModulePermission,
-      ),
-    [userModulePermission],
-  );
 
   return (
     <>
@@ -164,6 +178,19 @@ export default function ProfileCard() {
             )}
           </Typography>
         </Stack>
+        {lifecycleBadges.length > 0 && (
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" justifyContent="center">
+            {lifecycleBadges.map((badge) => (
+              <Chip
+                key={badge.ariaLabel}
+                size="small"
+                color={badge.color}
+                label={badge.label}
+                aria-label={badge.ariaLabel}
+              />
+            ))}
+          </Stack>
+        )}
         <Stack direction="row" className="justify-content-around text-center">
           <Stack>
             <Typography
@@ -204,55 +231,51 @@ export default function ProfileCard() {
             </Typography>
           </Stack>
         </Stack>
-        {!employeeId && isPayRollActive && (
+        {!employeeId && (
           <Stack
-            direction="row"
-            className="gap-2 align-items-end justify-content-center"
+            spacing={1}
+            sx={{
+              width: "100%",
+              mt: 1.5,
+            }}
           >
-            <CustomisedDatePicker
-              label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
-              views={["month", "year"]}
-              value={date}
-              maxDate={dayjs().subtract(1, "month")}
-              setValue={handleDateChange}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "common.white",
-                  },
-                  "&:hover:not(.Mui-focused)": {
-                    "& .MuiOutlinedInput-notchedOutline": {
-                      borderColor: "common.white",
+            <Box sx={{ width: "100%" }}>
+              <CustomisedDatePicker
+                label={i({ id: "PROFILE.PI.DOWNLOAD_PAY_SLIP" })}
+                views={["month", "year"]}
+                value={date}
+                maxDate={dayjs().subtract(1, "month")}
+                setValue={handleDateChange}
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: alpha(paySlipControlColor, 0.1),
+                    "& fieldset": { borderColor: alpha(paySlipControlColor, 0.82) },
+                    "&:hover:not(.Mui-focused)": {
+                      "& .MuiOutlinedInput-notchedOutline": { borderColor: paySlipControlColor },
                     },
+                    "&.Mui-focused fieldset": { borderColor: paySlipControlColor },
+                    color: paySlipControlColor,
                   },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "common.white",
-                  },
-                  color: "common.white",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "common.white",
-                },
-                "& .MuiInputLabel-root.Mui-focused": {
-                  color: "common.white",
-                },
-                "& .MuiSvgIcon-root": {
-                  color: "common.white",
-                },
+                  "& .MuiInputLabel-root": { color: paySlipControlColor },
+                  "& .MuiInputLabel-root.Mui-focused": { color: paySlipControlColor },
+                  "& .MuiSvgIcon-root": { color: paySlipControlColor },
+                }}
+              />
+            </Box>
+            <AppButton
+              aria-label="View payslip"
+              startIcon={<Visibility />}
+              fullWidth
+              sx={{
+                color: paySlipControlColor,
+                borderColor: alpha(paySlipControlColor, 0.42),
               }}
-            />
-            <IconButton
-              className="border-1 border-white"
-              sx={{ height: 36, width: 36, borderRadius: 1 }}
+              variant="outlined"
               onClick={viewPaySlip}
-              disabled={loading}
             >
-              {loading ? (
-                <span className="loader" />
-              ) : (
-                <Visibility sx={{ color: "#fff" }} />
-              )}
-            </IconButton>
+              {loading ? "Generating..." : "View Pay Slip"}
+            </AppButton>
           </Stack>
         )}
       </Card>

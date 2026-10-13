@@ -4,17 +4,16 @@ import {
   Grid,
   MenuItem,
   Stack,
-  TextField,
 } from "@mui/material";
 import { useIntl } from "react-intl";
 
 import { Formik, FormikProps } from "formik";
 import dayjs, { Dayjs } from "dayjs";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { userEducationSchema } from "../../../../../utils/Schema/userSchema";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
+import CustomisedButton from "../../../../shared/components/C_Button";
 
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
 import { EducationType } from "../../../../../utils/constant/Constant";
@@ -27,6 +26,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { UserEducationModel } from "../../models";
 
+import { AppTextField } from "../../../../shared/components/ui";
 type PropTypes = {
   isEdit: boolean;
   open: boolean;
@@ -209,7 +209,7 @@ export default function AddUpdateEducation(props: PropTypes) {
                       setSearchValue("");
                     }}
                     renderInput={(params) => (
-                      <TextField
+                      <AppTextField
                         {...params}
                         placeholder={i({ id: "PROFILE.EDUCATION.COLLEGE_NAME" })}
                         slotProps={{

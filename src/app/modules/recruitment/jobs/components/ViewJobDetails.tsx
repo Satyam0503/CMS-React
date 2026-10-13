@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { StyleStatus } from "../../../../shared/components/StyledStatus";
 import {
@@ -11,6 +11,11 @@ import {
 import { useIntl } from "react-intl";
 import { JobModal } from "../../models";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { RecruitmentRequisitionDrawer } from "./RecruitmentRequisitionDrawer";
+import { useAppSelector } from "../../../../Redux/hooks";
+import { hasModuleFeaturePermission } from "../../../../../utils/common";
+import { ModulesName, Permission } from "../../../../../utils/enums";
 
 interface PropsTypes {
   jobData: JobModal;
@@ -20,6 +25,9 @@ interface PropsTypes {
 
 export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) => {
   const { formatMessage: i } = useIntl();
+  const [requisitionOpen, setRequisitionOpen] = useState(false);
+  const permissions = useAppSelector(state => state.user.userData?.modulePermission) ?? [];
+  const canPlanHeadcount = hasModuleFeaturePermission(ModulesName.Jobs, Permission.Edit, permissions);
   const handleClose = () => {
     setOpen(false);
   };
@@ -133,13 +141,15 @@ export const ViewJobDetails: FC<PropsTypes> = memo(({ open, jobData, setOpen }) 
           __html: sanitizeHtmlContent(jobData.description),
         }}
       />
-      <Stack className="flex-row justify-content-end mt-4 gap-4">
+      <Stack direction={{ xs: "column", sm: "row" }} className="justify-content-end mt-4 gap-2">
+        {canPlanHeadcount && <CustomisedButton variant="outlined" label="Plan headcount" handleClick={() => setRequisitionOpen(true)} />}
         <CustomisedButton
           variant="outlined"
           label={i({ id: "BUTTON.CLOSE" })}
           handleClick={handleClose}
         />
       </Stack>
+      {canPlanHeadcount && <RecruitmentRequisitionDrawer open={requisitionOpen} jobId={jobData.jobId} jobTitle={jobData.title} vacancies={jobData.vacancies} onClose={() => setRequisitionOpen(false)} />}
     </CustomisedModal>
   );
 }

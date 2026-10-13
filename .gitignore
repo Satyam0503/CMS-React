@@ -124,3 +124,12 @@ dist
 /public/notToUse
 
 .env
+# Local validation output (not source)
+*-build*.txt
+*-tests*.txt
+*-regression*.txt
+*-typecheck*.txt
+*-e2e*.txt
+codex-write-test.txt
+NUL
+test-results/

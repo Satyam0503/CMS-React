@@ -1,9 +1,7 @@
 import {
   Autocomplete,
-  Checkbox,
   ListItemText,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -12,9 +10,9 @@ import { useIntl } from "react-intl";
 import { useAppDispatch, useAppSelector } from "../../../../Redux/hooks";
 import { processLogInitialFilter } from "../ProcessLog";
 import { processLogFilterSchema } from "../../../../../utils/Schema/filterValidationSchema";
-import CustomisedDatePicker from "../../../../shared/components/CustomisedDatePicker";
+import CustomisedDatePicker from "../../../../shared/components/C_DatePicker";
 import dayjs, { Dayjs } from "dayjs";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { resetFilter, setProcessLogFilter } from "../../../../Redux/Reducers/filterSlice";
 import { CommentActionCategory } from "../../../../../utils/constant/Constant";
 import { JobModal } from "../../models";
@@ -23,6 +21,7 @@ import { FilterComponent } from "../../../../shared/components/FilterComponent";
 import { FilterComponentProps } from "../../../../../utils/common_types";
 import { getVacancyPayload } from "../../jobs/Jobs";
 
+import { AppCheckbox, AppTextField } from "../../../../shared/components/ui";
 const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
   const { formatMessage: i } = useIntl();
   const processLogFilters = useAppSelector((state) => state.filters.processLog);
@@ -66,7 +65,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={i({ id: "FROM" })}
                 value={
-                  Boolean(values.filterFrom)
+                  values.filterFrom
                     ? dayjs(values.filterFrom)
                     : null
                 }
@@ -81,7 +80,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               <CustomisedDatePicker
                 label={i({ id: "TO" })}
                 value={
-                  Boolean(values.filterTo) ? dayjs(values.filterTo) : null
+                  values.filterTo ? dayjs(values.filterTo) : null
                 }
                 minDate={dayjs(values.filterFrom)}
                 maxDate={dayjs()}
@@ -109,7 +108,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => option.title}
               renderInput={(params) => (
-                <TextField {...params} placeholder={i({ id: "JOB.JOB_TITLE" })} />
+                <AppTextField {...params} placeholder={i({ id: "JOB.JOB_TITLE" })} />
               )}
             />
           </Stack>
@@ -135,7 +134,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               }}
               getOptionLabel={(option) => i({ id: option.label })}
               renderInput={(params) => (
-                <TextField
+                <AppTextField
                   {...params}
                   placeholder={i({
                     id: "COMMENT.ACTION_CATEGORY",
@@ -145,7 +144,7 @@ const ProcessLogFilter: FC<FilterComponentProps> = (props) => {
               renderOption={(props, option, state) => {
                 return (
                   <li {...props}>
-                    <Checkbox
+                    <AppCheckbox
                       key={option.id}
                       checked={state.selected}
                       sx={{ mr: 1 }}

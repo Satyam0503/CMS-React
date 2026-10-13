@@ -16,13 +16,52 @@ export interface GetAllEmployeeResponseModel {
   phoneNumber: string | null;
   fullProfileUrl: string | null;
   dateOfBirth: string | null;
+  dateOfJoining?: string | null;
   isVerified: boolean;
+  employmentStatus?: "Active" | "NoticePeriod" | "Suspended" | "Resigned" | "Terminated" | string;
+  lastWorkingDate?: string | null;
+  availabilityStatus?: string;
+  accountStatus?: string;
+  payrollStatus?: string;
+  offboardingStatus?: string;
+  formerPortalStatus?: string;
+  alumniStatus?: string;
+  lifecycleVersion?: number;
 }
 
 export interface EmployeeFilterModel {
   departmentId: string[];
   gender: string[];
+  employmentStatus?: "Active" | "NoticePeriod" | "ExEmployees" | "All";
+  availabilityStatus?: string;
 }
+
+export type InitiateEmployeeExitRequest = {
+  employeeUserId: string;
+  exitType: "Resigned" | "Terminated" | "Retired" | "ContractEnded" | "Deceased";
+  lastWorkingDate: string;
+  reason?: string;
+  notes?: string;
+};
+
+export type ChangeEmployeeAvailabilityRequest = {
+  employeeUserId: string;
+  availabilityStatus: string;
+  version: number;
+  effectiveFromUtc: string;
+  expectedReturnDate?: string | null;
+  reasonCode?: string;
+  reason?: string;
+};
+
+export type ChangeEmployeeLifecycleDimensionRequest = {
+  employeeUserId: string;
+  dimension: "AccountStatus" | "PayrollStatus" | "AlumniStatus";
+  value: string;
+  version: number;
+  effectiveFromUtc: string;
+  reason?: string;
+};
 
 export interface GetAllEmployeePayloadModel {
   name: string;
@@ -30,6 +69,8 @@ export interface GetAllEmployeePayloadModel {
   records: number;
   departmentId: string[];
   gender: string[];
+  employmentStatus?: "Active" | "AttendanceRoster" | "NoticePeriod" | "ExEmployees" | "All";
+  availabilityStatus?: string;
 }
 export interface EmployeeModel {
   userId: string;
@@ -51,6 +92,12 @@ export interface EmployeeModel {
   personalEmail: string | null;
   emergencyContact: string | null;
   status: string | boolean;
+  employmentStatus?: "Active" | "NoticePeriod" | "Suspended" | "Resigned" | "Terminated" | string;
+  availabilityStatus?: string;
+  accountStatus?: string;
+  payrollStatus?: string;
+  alumniStatus?: string;
+  lastWorkingDate?: string | null;
   isEmailVerified?: boolean;
   profileUrl?: string;
   birthDayThisYear?: Dayjs | string;
@@ -58,8 +105,8 @@ export interface EmployeeModel {
 
 export type InviteNewEmployeeModel = Pick<
   EmployeeModel,
-  "employeeId" | "firstName" | "lastName" | "email"
->;
+  "employeeId" | "firstName" | "lastName" | "email" | "reportingManager"
+> & { scheduleId?: string };
 
 export type InviteEmployeeResponse = InviteNewEmployeeModel & {
   userId: string;
@@ -69,7 +116,7 @@ export type EmployeeLeaveBalance = Array<{
   leaveBalanceId?: string;
   employeeId: string;
   leavePolicyId: string;
-  balance: number;
+  totalAllocated: number;
 }>;
 
 export type EditEmployeeResponseData = ResponseData<EmployeeByIdResponse>;
@@ -80,7 +127,9 @@ export type GetAllEmployeeResponseData =
   ResponseData<GetAllEmployeeResponseModel>;
 
 export interface SalaryModel {
-  userId: string;
+  // Legacy salary projections may predate account linking; employee context
+  // still supplies the required account ID when creating a salary revision.
+  userId: string | null;
   employeeId: string;
   basicPay: number;
   hra: number;
@@ -99,7 +148,7 @@ export interface SalaryModel {
   status: boolean;
 }
 
-export type CreateEmployeeSalary = Pick<
+export type CreateEmployeeSalary = Omit<Pick<
   SalaryModel,
   | "userId"
   | "employeeId"
@@ -114,7 +163,7 @@ export type CreateEmployeeSalary = Pick<
   | "effectiveTo"
   | "paymentFrequency"
   | "status"
->;
+>, "userId"> & { userId: string };
 
 export type BulkImportEmployeeModel = {
   empId: string;
@@ -124,6 +173,7 @@ export type BulkImportEmployeeModel = {
   role: string;
   department: string;
   jobRole: string;
+  gender: string;
 };
 
 export type BulkImportEmployeesRequest = {

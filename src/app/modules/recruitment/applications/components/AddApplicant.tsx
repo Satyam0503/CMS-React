@@ -1,21 +1,19 @@
 import {
   Autocomplete,
-  Button,
   Grid,
   MenuItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { CustomisedModal } from "../../../../shared/components/CustomisedModal";
+import { CustomisedModal } from "../../../../shared/components/C_Modal";
 import { FC, useEffect, useState } from "react";
 import { CloudUpload, } from "@mui/icons-material";
 import { Formik } from "formik";
 import { TextInput } from "../../../../shared/components/form-component/TextInput";
-import CustomisedButton from "../../../../shared/components/CustomisedButton";
+import CustomisedButton from "../../../../shared/components/C_Button";
 import { useIntl } from "react-intl";
 import { SelectInput } from "../../../../shared/components/form-component/SelectInput";
-import { addApplicant, getAllJobVacancies, uploadResume } from "../../services";
+import { addApplicant, getAllJobVacancies, uploadResumeForApplicant } from "../../services";
 import { toast } from "react-toastify";
 import { ApplicantStatus, ApplicationStatus } from "../../../../../utils/enums";
 import { applicantValidationSchema } from "../../../../../utils/Schema/applicantValidationSchema";
@@ -30,6 +28,7 @@ import { getCustomStatusCodesErrorMessage } from "../../../../../utils/common";
 import { VisuallyHiddenInput } from "../../../../shared/components/form-component/VisuallyHiddenInput";
 import { AxiosError } from "axios";
 
+import { AppButton, AppTextField } from "../../../../shared/components/ui";
 const initialValues: ApplicantModel = {
   applicantId: "",
   firstName: "",
@@ -87,7 +86,9 @@ export const AddApplicant: FC<PropsTypes> = ({
     try {
       const { data } = await addApplicant(payload);
       if (!data.success) throw new Error(String(data.statusCode));
-      const uploadResumeResponse = await uploadResume(values.email, formData);
+      const applicantId = data.resourceId;
+      if (!applicantId) throw new Error("The created applicant identity was not returned.");
+      const uploadResumeResponse = await uploadResumeForApplicant(applicantId, formData);
       const responseData = uploadResumeResponse.data;
       if (!responseData.success) throw new Error(String(data.statusCode));
       toast.success(i({ id: "TOAST.SUCCESS.ADD_APPLICANT" }));
@@ -239,7 +240,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           formik.setFieldValue("state", value?.value);
                         }}
                         renderInput={(param) => (
-                          <TextField {...param} label={i({ id: "APPLICATION.SELECT_STATE" })} />
+                          <AppTextField {...param} label={i({ id: "APPLICATION.SELECT_STATE" })} />
                         )}
                         getOptionLabel={(option) => option.label}
                       />
@@ -250,7 +251,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                     </Grid>
                   </Grid>
                   <Stack className="p-6 mt-4 align-items-center gap-1 rounded" sx={{ border: "1px dashed grey" }} >
-                    <Button
+                    <AppButton
                       component="label"
                       role={undefined}
                       variant="contained"
@@ -267,7 +268,7 @@ export const AddApplicant: FC<PropsTypes> = ({
                           handleFileChange(e, formik.setFieldValue);
                         }}
                       />
-                    </Button>
+                    </AppButton>
 
                     <Typography variant="caption">
                       {`${i({ id: "PROFILE.IMAGE.SELECTED_IMAGE" })} : ${formik.values.resume?.name ?? ""}`}
@@ -310,3 +311,4 @@ export const AddApplicant: FC<PropsTypes> = ({
     </>
   );
 };
+

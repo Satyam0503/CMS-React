@@ -3,7 +3,7 @@
 //
 
 html {
-  font-family: sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   text-size-adjust: 100%;
 }
 
@@ -14,6 +14,14 @@ body {
   padding: 0px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.app-shell {
+  --app-header-height: 72px;
+  --app-footer-height: 48px;
+  --sidebar-expanded-width: 265px;
+  --sidebar-collapsed-width: 76px;
+  --sidebar-current-width: var(--sidebar-expanded-width);
 }
 
 body {
